@@ -226,6 +226,12 @@ test -d manifests
 cp -av $(readlink -f manifest.xml) manifest.xml.old || true
 rm manifest.xml || true
 
+if test -e $repo_init_manifest && [[ $repo_init_manifest =~ ^/ ]]; then
+    ln -s $repo_init_manifest manifest.xml
+    touch $repo_init_manifest
+    exit
+fi
+
 mkdir -p local_manifests/
 if test -e local_manifests/local_manifist.xml; then
     mv local_manifests/local_manifist.xml local_manifests/local_manifist.xml.2

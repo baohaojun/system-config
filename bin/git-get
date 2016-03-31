@@ -1,12 +1,41 @@
 #!/bin/bash
 set -e
 
-if test $# != 2; then
-    die "Error: Usage $(basename $0) LOCAL_DIR REMOTE_GIT_URL"
-fi
 
-dir=$1
-url=$2
+## start code-generator "^\\s *#\\s *"
+# generate-getopt d:dir u:url
+## end code-generator
+## start generated code
+TEMP=$(getopt -o d:u: --long "dir:,url:"  -n $(basename $0) -- "$@")
+dir=
+url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -d|--dir)
+            dir=$2
+            shift 2
+            ;;
+        -u|--url)
+            url=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
+if test -z "$dir" -o -z "$url"; then
+    die "Error: Usage $(basename $0) -d LOCAL_DIR -u REMOTE_GIT_URL"
+fi
 
 if test ! -d $dir/.git; then
     mkdir -p $dir

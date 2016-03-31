@@ -4,9 +4,15 @@ if test $# = 0; then
     set -- -p system -o ~/tmp/system.img.$$
     echo "$@"
 fi
-TEMP=$(getopt -o p:o: --long part:output: -n $(basename $0) -- "$@")
-part=system
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:part o:out x:xml
+## end code-generator
+## start generated code
+TEMP=$(getopt -o p:o:x: --long "part:,out:,xml:"  -n $(basename $0) -- "$@")
+part=
 out=
+xml=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -14,8 +20,12 @@ while true; do
             part=$2
             shift 2
             ;;
-        -o|--output)
+        -o|--out)
             out=$2
+            shift 2
+            ;;
+        -x|--xml)
+            xml=$2
             shift 2
             ;;
         --)
@@ -27,8 +37,19 @@ while true; do
             ;;
     esac
 done
+
+## end generated code
+
+if test -z "$part"; then
+    part=system
+fi
+
+if test -z "$xml"; then
+    xml=rawprogram_unsparse.xml
+fi
+
 if test -z "$out"; then
-    out=${part}.img
+    out=~/tmp/${part}.img
 fi
 
 function die() {
@@ -42,7 +63,7 @@ fi
 if test -d sparse_images -a ! -e userdata_1.img; then
     cd sparse_images
 fi
-xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n ${1:-rawprogram_unsparse.xml} | grep ${part} |
+xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n $xml | grep ${part} |
 {
     while read img start; do
         if test $img = ${part}_1.img; then

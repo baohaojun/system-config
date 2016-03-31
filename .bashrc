@@ -52,7 +52,7 @@ else
         echo ~/system-config/etc/path/$uname-$march not exist?
     fi
 
-    if ask-if-not-bhj "Install cpan into your \$HOME/perl5?"; then
+    if test -e ~/system-config/.by-user/$USER/.home-perl5 -o -e ~/perl5; then
         cat <<'EOF' >> ~/.config/system-config/.bashrc-path
     export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
     export PERL_MB_OPT="--install_base $HOME/perl5";

@@ -154,13 +154,7 @@ fi
             echo -n 'git receive-pack ';
             for x in "${reviewers[@]}"; do
                 echo -n "--reviewer=$x "
-            done)" $REMOTE "$rev":$where/`repo-branch` 2>&1 |
-        grep -v 'x11 forwarding' -i |
-        perl -npe '
-    if (m,http://bear/gerrit/(\d+),) {
-        system("putclip", "git", "pull", $ENV{REMOTE},
-               "refs/changes/" . substr($1, -2) . "/$1/1");
-    }'
+            done)" $REMOTE "$rev":$where/`repo-branch` 2>&1
     echo
     echo '* git commit message:'
     echo
