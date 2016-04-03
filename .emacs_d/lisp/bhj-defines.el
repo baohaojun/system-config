@@ -1485,6 +1485,38 @@ to the value of `temporary-file-directory'."
                 desc
               (replace-regexp-in-string "/" "\\\\" path)))))
 
+(defun bhj-jwords-done ()
+  "Mark the jword as done (learned)."
+  (interactive)
+  (save-excursion
+    (save-restriction
+      (while (org-up-heading-safe))
+      (org-narrow-to-subtree)
+      (goto-char (point-min))
+      (replace-regexp "^\\* \\(TODO\\|DONE\\|SOMEDAY\\)" "* DONE")
+      (shell-command-on-region (point-min) (point-max) "jwords-done")
+      (show-all)))
+  (outline-next-visible-heading 1))
+
+(defun bhj-jwords-undone ()
+  "Re-mark the previous jword as not done."
+  (interactive)
+  (outline-previous-visible-heading 1)
+  (bhj-jwords-someday))
+
+(defun bhj-jwords-someday ()
+  "Mark the jword as someday (learn later)."
+  (interactive)
+  (save-excursion
+    (save-restriction
+      (while (org-up-heading-safe))
+      (org-narrow-to-subtree)
+      (goto-char (point-min))
+      (replace-regexp "^\\* \\(TODO\\|DONE\\|SOMEDAY\\)" "* SOMEDAY")
+      (shell-command-on-region (point-min) (point-max) "jwords-someday")
+      (show-all)))
+  (outline-next-visible-heading 1))
+
 (setq interprogram-cut-function 'bhj-select-text
       interprogram-paste-function 'bhj-select-value)
 

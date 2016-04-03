@@ -2,6 +2,10 @@
 
 use strict;
 
+if (system("timeout 1 ping -c 1 172.16.0.9") != 0) {
+    exit 0;
+}
+
 open(my $gerrit_pipe, "-|", "gerrit -h s query owner:baohaojun is:open; gerrit -h s query reviewer:baohaojun is:open")
     or die "Can't open gerrit pipe";
 

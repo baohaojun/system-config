@@ -2,8 +2,16 @@
 set -e
 
 if test "$#" = 0; then
-    while read -p "Please input the hanzi pinyin that you want as kanji 音訓：" pinyin; do
-        $0 $pinyin
+    while true; do
+        clear
+        if ! read -p "Please input the hanzi pinyin that you want as kanji 音訓：" pinyin; then
+            break;
+        fi
+        if test "$pinyin"; then
+            $0 $pinyin
+        else
+            break
+        fi
     done
     exit
 fi

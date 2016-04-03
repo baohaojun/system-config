@@ -111,3 +111,7 @@
   (define-key global-map [(control z)] 'undo-tree-undo))
 (define-key global-map [(super ?*)] 'enter-emoji)
 (global-set-key (kbd "C-M-j") 'skk-mode)
+
+(define-key org-mode-map [(control c) (meta j) (d)] 'bhj-jwords-done)
+(define-key org-mode-map [(control c) (meta j) (D)] 'bhj-jwords-undone)
+(define-key org-mode-map [(control c) (meta j) (s)] 'bhj-jwords-someday)
