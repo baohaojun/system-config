@@ -1,0 +1,2 @@
+#!/bin/bash
+git remote -v | pn 1 | sort -u
