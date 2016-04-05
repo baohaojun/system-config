@@ -173,7 +173,7 @@ function update-non-system-partitions() {
 }
 
 export tmpPostfix=$$
-sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 $(readlink -f $xml) >/dev/null 2>&1 || kill $$&
+sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 -x $(readlink -f $xml) >/dev/null 2>&1 || kill $$&
 
 if test $(basename $0) = android-rsync-phone-diff; then
     update-non-system-partitions

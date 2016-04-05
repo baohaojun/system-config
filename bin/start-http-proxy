@@ -1,19 +1,23 @@
 #!/bin/bash
-
 set -e
 port=8888
-if ! type tinyproxy >/dev/null 2>&1; then
-    sudo apt-get install -y tinyproxy
-fi
-export http_proxy=http://localhost:$port
-export https_proxy=http://localhost:$port
 
-if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
-    sudo ps-killall tinyproxy
-    sudo tsocks tinyproxy
-    sleep 1
-fi
+if test "$REMOTEIP" && yes-or-no-p -y use remote proxy?; then
+    export http_proxy=http://$REMOTEIP:$port
+    export https_proxy=http://$REMOTEIP:$port
+else
+    if ! type tinyproxy >/dev/null 2>&1; then
+        sudo apt-get install -y tinyproxy
+    fi
+    export http_proxy=http://localhost:$port
+    export https_proxy=http://localhost:$port
 
+    if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
+        sudo ps-killall tinyproxy
+        sudo tsocks tinyproxy
+        sleep 1
+    fi
+fi
 if test "$#" != 0; then
    "$@"
 else

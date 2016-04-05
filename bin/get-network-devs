@@ -1,0 +1,2 @@
+#!/bin/bash
+ifconfig |grep -v '^\s' -P |pn 1|grep . | perl -npe 's/://'|grep -v '^lo$' -P
