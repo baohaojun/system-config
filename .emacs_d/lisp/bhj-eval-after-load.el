@@ -24,6 +24,7 @@
   '(progn
      (org-defkey org-mode-map [?\e (shift return)] 'org-insert-todo-heading)
      (require 'org-jira)
+     (require 'bhj-defines)
      (require 'org-crypt)
      (org-crypt-use-before-save-magic)
      (setq org-tags-exclude-from-inheritance (quote ("crypt")))
@@ -55,6 +56,9 @@
                                 (define-key org-mode-map [(control c) (c) (c)] 'bhj-todo-copy-id)
                                 (define-key org-mode-map [(control c) (s)] (lambda () (interactive) (shell-command-to-string "ask-to-sync-org >/dev/null 2>&1&")))
                                 (define-key org-agenda-mode-map [(control c) (s)] (lambda () (interactive) (shell-command-to-string "ask-to-sync-org >/dev/null 2>&1&")))
+                                (define-key org-mode-map [(control c) (meta j) (d)] 'bhj-jwords-done)
+                                (define-key org-mode-map [(control c) (meta j) (D)] 'bhj-jwords-undone)
+                                (define-key org-mode-map [(control c) (meta j) (s)] 'bhj-jwords-someday)
                                 (org-jira-mode t)))))
 
 (eval-after-load "diff-mode"
