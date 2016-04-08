@@ -1950,7 +1950,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    local insert_text = function(contact)
       if contact ~= "" then
          putclip(contact)
-         adb_event"sleep .5 key scroll_lock sleep .5"
+         adb_event"sleep .8 key scroll_lock sleep .5"
       end
       adb_event"key DPAD_DOWN"
    end
