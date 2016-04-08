@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 if test "$SYSTEM_CONFIG_INITED" != true; then
     . ~/system-config/.bashrc
 fi
@@ -28,6 +29,7 @@ elif test -d ./.true_build_dir; then
 fi
 
 if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
+    set -x
     if test "$1" = sync; then
         if test -e "smartcm/.do-not-clean"; then
             true

@@ -47,5 +47,5 @@ fi
 if test -x /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient; then
     exec /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient "$@"
 else
-    exec /usr/bin/emacsclient "$@"
+    exec emacsclient "$@"
 fi

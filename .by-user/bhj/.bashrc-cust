@@ -1,0 +1,1 @@
+export PATH=~/external/local/emacs25/bin:$PATH

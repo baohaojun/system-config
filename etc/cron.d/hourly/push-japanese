@@ -1,6 +1,9 @@
 #!/bin/bash
-cd ~/src/github/private-config/japanese/ && git add . && git commit -m 'auto japanese commit'
-if ! git push; then
-git push $(repo-remote) HEAD:$(from-mac)
+set -x
+cd ~/src/github/private-config/japanese/
+if git-any-changes; then
+    git add . && git commit -m 'auto japanese commit'
+    if ! git push; then
+        git push $(repo-remote) HEAD:$(from-mac)
+    fi
 fi
-

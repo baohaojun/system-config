@@ -103,7 +103,7 @@ if test -x ~/external/firefox/firefox; then
     export BROWSER=firefox
 fi
 
-for cust in ~/src/github/smartcm/.bashrc-cust ~/.bashrc-cust ~/.config/system-config/.bashrc-cust; do
+for cust in ~/src/github/smartcm/.bashrc-cust ~/.bashrc-cust ~/.config/system-config/.bashrc-cust ~/system-config/.by-user/$USER/.bashrc-cust; do
     if test -e $cust; then
         . $cust
     fi

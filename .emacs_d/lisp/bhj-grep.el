@@ -213,6 +213,19 @@
     (call-interactively 'grep-bhj-dir)
     (setq grep-rgrep-history grep-history)))
 
+(defvar grep-abc-grep-history nil)
+
+;;;###autoload
+(defun bhj-abc-grep ()
+  (interactive)
+  (let ((grep-history grep-abc-grep-history)
+        (grep-buffer-name "*grep-abc-grep*")
+        (my-grep-command "abc-x grep -e pat")
+        (current-prefix-arg 4))
+    (nodup-ring-insert ajoke--marker-ring (point-marker))
+    (call-interactively 'grep-bhj-dir)
+    (setq grep-abc-grep-history grep-history)))
+
 (defvar bhj-grep-mode-map (make-sparse-keymap)
   "Bhj-Grep mode map.")
 (define-key bhj-grep-mode-map (kbd "M-g r") 'bhj-grep)
@@ -221,6 +234,7 @@
 (define-key bhj-grep-mode-map (kbd "M-s g") 'bhj-do-code-generation)
 (define-key bhj-grep-mode-map (kbd "M-s m") 'bhj-occur-merge-conflicts)
 (define-key bhj-grep-mode-map (kbd "M-s r") 'bhj-rgrep)
+(define-key bhj-grep-mode-map (kbd "M-g a") 'bhj-abc-grep)
 (define-key bhj-grep-mode-map (kbd "M-g o") 'bhj-occur)
 (define-key bhj-grep-mode-map (kbd "M-g f") 'grep-func-call)
 (define-key bhj-grep-mode-map (kbd "M-.") 'grep-gtags)

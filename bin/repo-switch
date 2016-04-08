@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
+    set -x
+fi
+
 repo_dir=$(lookup-file -e .repo)
 cd $(dirname $repo_dir)
 repo_init_url=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git-remote-url)
@@ -247,8 +251,11 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
         cd $(lookup-file .repo/repo)
         git config remote.origin.url $repo_url
     )
-    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name \
-         $(if test "$repo_reference"; then echo "$repo_reference"; fi)
+    (
+        cd $(lookup-file -e .repo/..)
+        repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name \
+             $(if test "$repo_reference"; then echo "$repo_reference"; fi)
+    )
 
     (
         cd $(lookup-file .repo/)

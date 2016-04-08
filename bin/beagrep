@@ -8,12 +8,13 @@ $ENV{'LANG'} = 'C';
 $ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case and gbk file recognized as binary
 
 delete $ENV{GREP_OPTIONS};
-if (-e glob("~/external/local/bin/mkbeagrepidx") and not -e "/usr/local/bin/mkbeagrepidx") {
+if (-e "$ENV{HOME}/external/local/bin/mkbeagrepidx" and not -e "/usr/local/bin/mkbeagrepidx") {
     if ($ENV{LD_LIBRARY_PATH}) {
-        $ENV{LD_LIBRARY_PATH} = glob("~/external/local/lib") . ":$ENV{LD_LIBRARY_PATH}"
+        $ENV{LD_LIBRARY_PATH} = "$ENV{HOME}/external/local/lib:$ENV{LD_LIBRARY_PATH}"
     } else {
-        $ENV{LD_LIBRARY_PATH} = glob("~/external/local/lib");
+        $ENV{LD_LIBRARY_PATH} = "$ENV{HOME}/external/local/lib";
     }
+    $ENV{PATH} = "$ENV{HOME}/external/local/bin:$ENV{PATH}"; # force using the right version
 }
 
 my $pat = '';
@@ -40,11 +41,11 @@ my @saved_args = @ARGV;
 my @fallback_dirs;
 my $only_grep_myself;
 
-open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
+open(my $log, ">>", "$ENV{HOME}/.beagrep.log") or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
-mkdir glob("~/.cache/system-config/logs");
-open(my $debuglog, ">", glob("~/.cache/system-config/logs/beagrep.log")) or die "Error openning log";
+mkdir "$ENV{HOME}/.cache/system-config/logs";
+open(my $debuglog, ">", "$ENV{HOME}/.cache/system-config/logs/beagrep.log") or die "Error openning log";
 
 sub debug(@) {
     print $debuglog "@_\n";
@@ -152,7 +153,7 @@ if ($abc_base) {
 
 
 my $pwd_save = $pwd;
-my $cache_dir = glob("~/.cache/system-config/for-code-reading");
+my $cache_dir = "$ENV{HOME}/.cache/system-config/for-code-reading";
 my $db_dir = "$cache_dir/$pwd";
 if ($use_beagrep_for_dir) {
     $use_beagrep_for_dir = realpath $use_beagrep_for_dir;

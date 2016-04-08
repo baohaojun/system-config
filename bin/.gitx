@@ -27,6 +27,8 @@ function git_svn() {
 
     case "$1" in
         st)
+            shift
+            set -- status "$@"
             NO_SVN_CHECK=true git "$@"
             return;
             ;;
@@ -66,7 +68,7 @@ function git()
 
     if test $# = 1 -a "$1" = st -a ! -e .git; then
         echo only stat the current folder 1>&2
-        set -- st .
+        set -- status .
     fi
 
     if test $# = 2 -a "$1" = st -a "$2" = ..; then
@@ -203,9 +205,7 @@ print $_ . "\n";
         if test "$1" = fetch -a $# = 1; then
             command git fetch $(select-output-line -o -m 1 git remote)
             exit
-        fi
-
-        if test "$1" = fetch -a "$#" = 2; then
+        elif test "$1" = fetch -a "$#" = 2; then
             if test "$2" = ?; then
                 set -- "$1" $(git-choose-branch)
             fi
@@ -215,8 +215,16 @@ print $_ . "\n";
                 command git fetch $remote $branch:$branch
                 exit
             fi
+        elif test "$1" = st; then
+            shift
+            set -- status "$@"
+        elif test "$1" = co; then
+            shift
+            set -- checkout "$@"
+        elif test "$1" = dt; then
+            shift
+            set -- difftool -t meld "$@"
         fi
-
         command git "$@"
     )
 
