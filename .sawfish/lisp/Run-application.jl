@@ -80,73 +80,73 @@
   :depends run-application:use-application-exclude)
 
 ;; FIXME: This could probably be better ...
-(define (prompt-application-executable file dir)
-   (let ((f (expand-file-name file dir)))
+(define (bhj-prompt-application-executable file dir)
+  (let ((f (expand-file-name file dir)))
     (and (not (file-directory-p f))
          (string-match "x" (file-modes-as-string f)))))
 
-(define (prompt-application-duplicate file dirs)
+(define (bhj-prompt-application-duplicate file dirs)
   (delete-if-not (lambda (dir)
                    (file-exists-p (expand-file-name file dir)))
                  dirs))
 
-(define (prompt-mismatch-application str dir file dirs)
+(define (bhj-prompt-mismatch-application str dir file dirs)
   (or (not (string-head-eq file str))
-      (prompt-application-duplicate file dirs)
-      (not (prompt-application-executable file dir))
+      (bhj-prompt-application-duplicate file dirs)
+      (not (bhj-prompt-application-executable file dir))
       (and run-application:use-application-exclude
            (string-match run-application:application-exclude file))))
 
-(define (prompt-application-path)
+(define (bhj-prompt-application-path)
   (let ((path (if run-application:use-custom-path
                   run-application:custom-path
-                  (getenv "PATH")))
+                (getenv "PATH")))
         (path-list '())
         (dir "")
         (start 0)
         (end 0))
-   (while (< start (length path))
-     (setq end (if (string-match ":" path start)
-                   (match-start) (length path)))
-     (setq dir (substring path start end))
-     (when (file-exists-p dir)
-       (setq path-list (append path-list (list dir))))
-     (setq start (1+ end)))
-   path-list))
+    (while (< start (length path))
+      (setq end (if (string-match ":" path start)
+                    (match-start) (length path)))
+      (setq dir (substring path start end))
+      (when (file-exists-p dir)
+        (setq path-list (append path-list (list dir))))
+      (setq start (1+ end)))
+    path-list))
 
-(define (prompt-complete-application str)
+(define (bhj-prompt-complete-application str)
   (let* ((output-stream (make-string-output-stream))
          (process (make-process output-stream))
          (lines nil))
     (apply #'call-process
-     process
-     "/dev/null"
-     (concat (getenv "HOME") "/system-config/bin/skeleton_compgen_word.pl")
-     "-d"
-     "\\n"
-     "-f"
-     "~/.cache/system-config/.bash_history.bak"
-     "--"
-     (string-split "\\s+" str))
+           process
+           "/dev/null"
+           (concat (getenv "HOME") "/system-config/bin/skeleton_compgen_word.pl")
+           "-d"
+           "\\n"
+           "-f"
+           "~/.cache/system-config/.bash_history.bak"
+           "--"
+           (string-split "\\s+" str))
     (setq lines (string-split "\n" (get-output-stream-string output-stream)))
     (if (and (= 2 (length lines))
-               (string-equal (cadr lines) ""))
+             (string-equal (cadr lines) ""))
         (list (car lines))
       lines)))
 
-(define (prompt-for-application #!optional title start default)
+(define (bhj-prompt-for-application #!optional title start default)
   "Prompt for an application in $PATH"
   (unless (stringp title)
     (setq title "Enter application:"))
-  (let* ((prompt-completion-fun prompt-complete-application)
-         (str (prompt title start)))
+  (let* ((bhj-prompt-completion-fun bhj-prompt-complete-application)
+         (str (bhj-prompt title start)))
     (when (and (string= str "") default)
       (setq str default))
     str))
 
 (define (run-application)
   "Prompt for an application and run it"
-  (setq prompt-window-position
+  (setq bhj-prompt-window-position
         (cons (case run-application:x-position
                 ('left run-application:x-offset)
                 ('right (- -1 run-application:x-offset))
@@ -155,6 +155,6 @@
                 ('top run-application:y-offset)
                 ('bottom (- -1 run-application:y-offset))
                 (nil nil))))
-  (system (format nil "%s &" (string-replace "&\\s*$" "" (prompt-for-application "Run application: ")))))
+  (system (format nil "%s &" (string-replace "&\\s*$" "" (bhj-prompt-for-application "Run application: ")))))
 
 (define-command 'run-application run-application)
