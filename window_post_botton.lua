@@ -77,5 +77,6 @@ map['com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity'
 map['com.ting.mp3.android/com.baidu.music.ui.UIMain'] = 'manual-post'
 map['com.youku.phone/com.youku.ui.activity.DetailActivity'] = 'weixin-chat'
 map['Keyguard'] = 'weixin-chat'
+map['org.mozilla.firefox/org.mozilla.firefox.App'] = 'manual-post'
 map['org.mozilla.firefox/org.mozilla.gecko.fxa.activities.FxAccountCreateAccountActivity'] = 'manual-post'
 return map
