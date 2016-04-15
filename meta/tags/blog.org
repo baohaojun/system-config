@@ -1,5 +1,15 @@
 #+title: Blogging
  * 2016
+  - 2016-04
+   * 2016-04-13
+
+     [[../../blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.org][system-config原理与使用的简要说明]]
+
+  - 2016-03
+   * 2016-03-02
+
+     [[../../blog/2016/03/02/0-steve-yegges-ten-predictions.org][偶像的十大预言]]
+
   - 2016-01
    * 2016-01-20
 

@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[system-config原理与使用的简要说明]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html"/>
+    <updated>2016-46-15T09:04:44+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[偶像的十大预言]]></title>
     <link href="http://baohaojun.github.io/blog/2016/03/02/0-steve-yegges-ten-predictions.html"/>
     <updated>2016-03-02T20:46:06+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/09/19/0-Wrench-changelog-and-download-location.html"/>
     <updated>2015-09-19T08:29:58+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/09/19/0-Wrench-changelog-and-download-location.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[被perl的glob给坑了]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html"/>
-    <updated>2015-09-15T09:37:16+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/09/14/0-Got-hit-by-perl-glob.html</id>
   </entry>
 </feed>

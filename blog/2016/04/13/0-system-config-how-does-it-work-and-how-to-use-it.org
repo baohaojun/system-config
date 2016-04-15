@@ -1,0 +1,154 @@
+#+title: system-config原理与使用的简要说明
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: blog
+
+首先，system-config只是对Linux系统的一些增强，并且最大程度的保证对系统原有功能的兼容，所以你可以像使用普通Linux系统一样使用system-config，并不需要特别的学习。这里说一下system-config里最有用、不容易发现的一些配置用法、原理等。
+
+* system-config原理
+
+不外乎以下几种方法：
+
+1. 改变系统原有行为
+
+   比如Bash自带的cd命令，使用起来有点麻烦，所以我先用 cd_bhj 作为名字定义了一个函数，然后再把 cd 别名到 cd_bhj ，这样每次我在命令行上打 cd 的时候，实际调用的是 cd_bhj 函数，这个函数会检查我给的参数，然后
+
+   - 如果所给的参数是原本合法的 cd 调用，则通过Bash的builtin关键字，调用内置的cd命令。这一点保证了与系统的兼容性，确保system-config不会是一个全新的系统，而是Linux用户拿来就能用的。
+   - 如果所给的参数是原本非法的 cd 调用，计算出我实际想去的路径，再调用内置的cd命令。这样有可能我可以打很少的几个字，就cd到一个很深的目录下去，比如下图所示
+
+     [[../../../../images/cd-t2-fr-base.png][file:../../../../images/cd-t2-fr-base.png]]
+
+2. 加入系统原来没有的程序
+
+   这个我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 [[../../../2011/12/23/beagrep.org][中文版博客]] / [[../../../2011/12/23/beagrep.org][英文版博客]] 。
+
+3. 组合调用以上
+
+   比如上面的 cd 的增强，如果计算到有多个路径与我给出的参数匹配，则 cd_bhj 会调用我写的 =select-output-line= 命令，对我显示一个命令行上的简易选择框（事实上根本就没有框）。见下图：
+
+   [[../../../../images/cd-fa-base]]
+
+   在以后你会在非常多的地方见到这个对话框。
+
+** system-config是一个采花大盗
+
+为什么说这个对话框会很常见呢？因为我就像一只勤劳的小蜜蜂一样，看见一朵花很漂亮，就飞过去猛采一通。同样的，如果我发现某个软件的某个功能很好用，我就会想办法给它移植到system-config里来。比如你看到的那个命令行选择框，其创意就来自于Emacs下的helm.el（和以前的anything.el），见下图：
+
+[[../../../../images/emacs-help-pack.png][file:../../../../images/emacs-help-pack.png]]
+
+类似的，你还会看到 system-config 里有时候会问你这样的问题（注意大小写，Yes/no代表直接回车相当于输入了yes；yes/No代表直接回车相当于输入了no，一般我会选一个我认为比较合适的选项作为默认值）：
+
+[[../../../../images/cli-yes-or-no-p.png][file:../../../../images/cli-yes-or-no-p.png]]
+
+这个也是从Emacs里学来的（我的命令行命令也叫yes-or-on-p，跟Emacs下的函数一模一样）：
+
+[[../../../../images/emacs-y-or-n-p.png][file:../../../../images/emacs-y-or-n-p.png]]
+
+
+
+* system-config使用
+
+** 对Terminal界面（命令行提示符）的改进
+
+默认Linux的命令行提示符是这样的：
+
+[[../../../../images/default-ps1.png][file:../../../../images/default-ps1.png]]
+
+增强后的提示符是这样的：
+
+[[../../../../images/system-config-ps1.png][file:../../../../images/system-config-ps1.png]]
+
+在这里你可以看到，原来只有一行的提示符，现在变成两行了，颜色也更丰富了。有些人非常受不了提示符被改变，一个劲的追问该怎么改回去，甚至因此就放弃了 system-config 或者忍不住差点破口大骂。其实大可不必。我就不告诉你怎么改，你自己 [[http://bing.com/search?q=bash+%e5%91%bd%e4%bb%a4%e8%a1%8c%e6%8f%90%e7%a4%ba%e7%ac%a6%e6%94%b9%e5%8a%a8][必应]] 一下吧。这里我只说一下我这么改的理由、好处。
+
+1. 我可以不折行输入的命令长度最大化了。
+
+   默认因为都是在一行上，并且提示符里包含了当前路径，所以输入的命令稍微长一点，就会发生折行。并且随着当前路径的深度而变化。
+
+2. 以前无法用鼠标双击选中当前路径名，必须用鼠标按下拖曳；现在因为在其前后各有一个空格，所以你鼠标双击一下，就能选中整个当前路径。
+
+3. 可以更方便的显示更多信息。
+
+   比如上面你看到的是远程登录的提示符， 其中有 =Remote:True= 字样。并且上一条命令失败的话，会显示返回值是多少，几点几分失败的。
+
+   如果是本地登录的话，颜色会更花哨，并且我可以方便的自定义更多的显示信息（通过 start-recursive-shell 命令或者另外的一些对它进行了调用的命令）：
+
+   [[../../../../images/start-recursive-shell-ps1.png][file:../../../../images/start-recursive-shell-ps1.png]]
+
+   比如上图中，我启动了一个代理（你懂的），然后用 =adb -s= 命令设置了一下当前的adb设备。
+
+*** 对adb的增强
+
+说到这儿，讲一下我对adb的一些增强。
+
+首先
+
+
+
+** 阅读源代码
+
+要成为一个高级的程序员，快速的阅读、理解代码的能力是不可获缺的。System-config提供了快速搜索、定位代码的业界最简单方法，只需要以下几个步骤：
+
+1. 在源代码的顶层目录运行
+   #+BEGIN_SRC sh
+   for-code-reading
+   #+END_SRC
+
+2. 在源代码的任意子目录下运行
+   #+BEGIN_SRC sh
+   beagrep -e "hello world"
+   #+END_SRC
+
+   以搜索 =hello world= 这个字符串在源码中出现的位置。
+
+3. 在源代码的任意子目录下运行
+
+   #+BEGIN_SRC sh
+   beatags -e "readlink"
+   #+END_SRC
+   以搜索 readlink 被定义的地方。
+
+4. 在源代码的任意子目录下运行
+
+   #+BEGIN_SRC sh
+   grep-func-call -e readlink -a --nc
+   #+END_SRC
+
+   以搜索 readlink 被调用的地方
+
+当然，以上只是搜索源代码，并不是阅读源代码。如果要阅读源代码的话，一般是用Emacs/Vim之类的文本编辑器打开源码文件进行阅读。虽然这些程序都可以在命令行上运行，但我平时一般都是通过在Emacs下调用它们，效果更好，比如可以直接跳转到搜到的文件：行号上。
+
+各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得。
+
+** 特殊的Shell使用方法
+
+system-config下对很多命令进行了定制，比如 =cd= 命令，正常的情况下你不会意识到它有增强的功能。
+
+注：可以用 =type -a XXX= 查看 =XXX= 命令有没有被定制过。
+
+*** =cd= 的增强用法
+
+如果你经常要到某个目录下工作，比如 =~/src/android/hardware/ti/omap4xxx/libstagefrighthw= ，每次都打出全路径或者一层一层的cd进去是比较没有效率的。所以system-config下增强版cd用法如下：
+
+1. 第一次老老实实的用老的方法cd到 =~/src/android/hardware/ti/omap4xxx/libstagefrighthw=
+2. 以后直接打 =cd hw= 或 =cd hw xx= 等比较随意的打法，可能会直接cd到你想要的目录下，也可能会出一个命令行选择对话让你选，注意如果有很多选项的话，可以通过输入更详细的匹配字符串来缩小选项数目。
+
+*** 历史命令的补齐
+
+先说一下很多人不知道的一条bash自带的历史命令搜索快捷键：C-r和C-s。
+
+（可以通过 =bind -p|grep -v 'not bound|self-insert' -P|less= 命令来系统学习一下bash下都有哪些目前可以使用的快捷键。然后想自定义快捷键的话，可以查看一下bash的相关文档。）
+
+这里要说的是 =re= 命令和相应的 =hir= 命令。
+
+举例：
+
+1. 我在命令行上写了一条长长的命令：
+
+   #+BEGIN_SRC sh
+   my-rfa -j1 'gerrit -h so create-project $(repo-project); git push so:$(repo-project) HEAD:refs/heads/master'
+   #+END_SRC
+
+2. 我想重新调出以前打过的这条命令，可能是想重新运行一下，或者只是想
+
+
+
+* system-config原理
