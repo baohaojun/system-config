@@ -1958,6 +1958,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    insert_text(to)
    insert_text(cc)
    insert_text(bcc)
+   adb_event"key DPAD_DOWN"
    insert_text(subject)
 
    adb_event"key DPAD_UP key DPAD_UP"
