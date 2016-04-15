@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+if test $# != 2; then
+    die "Error: Usage $(basename $0) from to"
+fi
+
+from=$1
+to=$2
+
+if test "$(readlink -m "$from")" != "$(readlink -m "$to")"; then
+    rm -rf "$to"
+    relative-link "$from" "$to"
+fi

@@ -24,6 +24,7 @@ sudo mkdir -p /boot/$cowname
 sudo cp $cowchroot/boot /boot/$cowname -av
 cowboot_dir=/boot/$cowname/boot
 
+sudo mkdir -p /$cowname
 cat <<EOF |sudo tee /$cowname/chroot-cow
 #!/bin/bash
 set -x

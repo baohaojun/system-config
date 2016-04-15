@@ -26,7 +26,7 @@ type -a java # 显示 java 的所以版本（alias、function、在PATH变量里
 
 注意如果要永久修改自己的 =PATH= 环境变量的话，一定要在 =~/.bashrc= 的末尾处修改，这样能保证 system-config 对 =PATH= 变量的修改已经完成。如果放在 system-config 之前修改 PATH 的话，system-config再修改的时候，你的修改会被冲掉。
 
-* TODO 应该安装何种java版本
+* 应该安装何种java版本
 
 安卓5.0之前的项目，比如我们的T1，用的必须是 oracle 的java 1.6。换成用openjdk 1.6是不行的。
 安卓5.0及之后的项目，比如T2、U1（升级之后），用的必须是 OpenJDK 的 java 1.7。类似的，换成 oracle 的 java 1.7 也是不行的。
@@ -34,3 +34,28 @@ type -a java # 显示 java 的所以版本（alias、function、在PATH变量里
 这两个版本的java在配置好system-config之后，都已经安装在系统上，你只需要按照需求配置一下你的环境变量即可。参考上节。
 
 如果自己安装了错误版本的java，请删掉该版本或请参考上面的方法更改环境变量。
+
+* 如何编译高通 oem
+
+1. 安装、升级system-config
+2. 运行 setup-oem-compiler
+3. 运行 oem 代码目录下的 oem-cm-scripts/build-all.sh 文件
+
+   上面这个命令会编译所有子系统。如果只想编译某个子系统，比如 rpm，可以打开 oem-cm-scripts/build-all.sh 文件搜一下相关子系统的编译命令。
+
+* 为什么我们不是高通的项目，gerrit上代码仓库也是在 qualcomm/ 目录下？
+
+这个是历史遗留的问题，当时就不应该起一个叫 qualcomm/ 的子目录名字，直接叫 smartisan/ 会更合适。
+
+另外注意一点，子目录是必须的，比如如果直接把谷歌的代码镜像下来，按理来说我们应该什么都不改就可以直接用repo init -u local:platform/manifest来从本地下载代码，但事实是，经试验发现，必须放到一个子目录下，才可以不改谷歌的manifest就能下载。谷歌的manifest里用的是相对路径的写法（..，比如
+
+#+BEGIN_EXAMPLE
+  <remote  name="aosp"
+           fetch=".."
+           review="https://android-review.googlesource.com/" />
+#+END_EXAMPLE
+），并且它自己的是可以写成不带子目录就下载的： =repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml --repo-url smartisan:googlesource/git-repo=
+
+*更正* 子目录不是必须的。如果用 local:platform/manifest 的形式就必须要有子目录，比如前面加个 google ，变成 local:google/platform/manifest 才能用相对路径下载，但如果写成 ssh://local/platform/manifest 的话，直接就可以下载。所以这应该是repo的一个Bug。
+
+所以我们应该把代码直接放在根目录下，是最合适的，别分什么厂商的了，那个应该用分支来区分。我现在怀疑搞太多git仓储会对gerrit的性能有影响。

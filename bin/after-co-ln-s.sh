@@ -419,11 +419,8 @@ if test -d ~/system-config/src/github/; then
     done
 fi
 
-if test -d ~/system-config/.emacs_d/elpa; then
-    if test "$(readlink -f ~/.emacs.d/elpa)" != "$(readlink -f ~/system-config/.emacs_d/elpa)"; then
-        rm -rf ~/.emacs.d/elpa
-        relative-link ~/system-config/.emacs_d/elpa ~/.emacs.d/
-    fi
+if test -d ~/src/github/elpa; then
+    force-symlink ~/src/github/elpa ~/.emacs.d/elpa
 fi || true
 
 if test -d ~/src/github/semi-offline.wikipedia; then

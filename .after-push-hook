@@ -1,22 +1,40 @@
 #!/bin/bash
 set -e
+
+function push-all-projects() {
+    (
+
+        projects=$(
+            . ~/system-config/etc/github-projects
+            echo ~/system-config
+            for x in ${github_projects[*]} ${smartcm_projects[*]}; do
+                echo ~/src/github/$x
+            done
+                )
+
+        for p in $projects; do
+            (
+                cd $p
+                git push s:baohaojun/$(basename $PWD) HEAD:refs/heads/dev || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; }
+            )
+        done
+    )&
+}
 if test -d ~/src/system-config/; then
     cd ~/system-config
-    psync -d -t ~/src/system-config/ localhost . -- --exclude .emacs_d/elpa --exclude src/&
+    rsync . ~/src/system-config/ --exclude .git/ -a
     mkdir -p ~/src/system-config/src/github
     (
         cd ~/src/github/
-        for x in emacs.d gapps-lp gapps-t1 DoubanMusic org-jira weibo.emacs twittering-mode guilt smartcm emacs-clang-complete-async; do
+        . ~/system-config/etc/github-projects
+        for x in ${github_projects[*]} ${smartcm_projects[*]}; do
             (
                 cd $x
-                psync -d -t ~/src/system-config/src/github/$x/ localhost .
+                mkdir ~/src/system-config/src/github/$x/ -p
+                rsync . ~/src/system-config/src/github/$x/ --exclude .git/ -a
             )&
         done
         wait
-    )&
-    (
-        cd ~/.emacs.d/elpa/
-        psync -d -t src/system-config/.emacs_d/elpa localhost .
     )&
 
     cp /usr/share/jenkins/cli/java/cli.jar ~/src/github/smartcm/jenkins-cli.jar&

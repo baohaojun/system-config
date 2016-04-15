@@ -1,0 +1,1 @@
+../../ajoke-get-type.pl

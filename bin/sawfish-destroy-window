@@ -1,0 +1,8 @@
+#!/bin/bash
+sawfish-client -e '
+    (mapcar
+        (lambda (w)
+            (when (string-equal (window-class w) "'$1'")
+              (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (window-class w)))
+              (destroy-window w)))
+        (managed-windows))'

@@ -62,4 +62,8 @@ fi
     done
 )
 
+if test -e ~/src/github/smartcm/smartcm-update; then
+    ~/src/github/smartcm/smartcm-update
+fi
+
 echo system-config update complete...

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+github_projects=(
+    elpa
+    opencc
+    twittering-mode
+    org-jira
+    weibo.emacs
+    emacs.d
+    DoubanMusic
+    guilt
+    emacs-clang-complete-async
+    mo-git-blame
+    bbyac
+    yasnippet-snippets
+    Firemacs
+    ajoke
+    beagrep
+    crossdict
+    gxr
+    ibus-sdim
+)
+
+smartcm_projects=(
+    gapps-lp
+    gapps-t1
+    smartcm
+)
