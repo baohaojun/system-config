@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
+ <link rel="stylesheet" href="/css/wheatgrass.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -329,6 +329,10 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 <pre class="src src-sh">for-code-reading
 </pre>
 </div>
+
+<p>
+以下所有步骤，都是以已经用这个命令创建完索引为前提的。
+</p>
 </li>
 
 <li>搜索字符串。比如在源代码的任意子目录下运行
@@ -374,7 +378,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 </p>
 
 <p>
-各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得。再次强烈建议使用system-config提供的这些程序本身来阅读system-config自身代码，以及其他所有工作中要用到的代码。我拿到任何代码，第一步是就是用 <code>for-code-reading</code> 创建索引。
+各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得（此外可以参考一下上面提到的关于beagrep的中英文博客）。再次强烈建议使用system-config提供的这些程序本身来阅读system-config自身代码，以及其他所有工作中要用到的代码。我拿到任何代码，第一步是就是用 <code>for-code-reading</code> 创建索引。
 </p>
 
 <p>
@@ -456,7 +460,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 <h3 id="sec-2-3"><span class="section-number-3">2.3</span> 对系统剪贴板的增强</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
-从cygwin下第一次发现它提供了在命令行上操作系统剪贴板的程序putclip/getclip，于是一发不可收拾，我在Linux底下也google了一下有没有类似的程序，还真有，就叫xclip。但因为我已经习惯了cygwin下的putclip/getclip，所以我在Linux下也封装了一下xclip，写了Linux版本putclip和getclip脚本。以及其他一系列操作路径的脚本。以下是用法：
+从cygwin下第一次发现它提供了在命令行上操作系统剪贴板的程序putclip/getclip，于是一发不可收拾，我在Linux底下也google了一下有没有类似的程序，还真有，叫xclip。但因为我已经习惯了cygwin下的putclip/getclip，所以我在Linux下也封装了一下xclip，写了Linux版本putclip和getclip脚本。以及其他一系列操作路径的脚本。以下是用法：
 </p>
 
 <ol class="org-ol">
@@ -584,7 +588,7 @@ of代表open file的意思，在终端上输入 <code>of FILENAME</code> 或 <co
 <h3 id="sec-2-6"><span class="section-number-3">2.6</span> Emacs介绍</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
-Emacs是一个非常强大的编辑器。很多人觉得太难了，不想学它或学了一阵子之后又放弃了。其实很多工具用下来最好比的还是看谁更能坚持。坚持用Emacs，坚持不懈的折腾它，何尝不是工匠精神的一种体现呢。工匠们一般都很在意自己使用的工具称不称手的。而编辑器对程序员来说，是最重要的工具了吧。
+Emacs是一个非常强大的编辑器。很多人觉得太难了，不想学它或学了一阵子之后又放弃了。其实很多工具用下来最后比的还是看谁更能坚持。坚持用Emacs，坚持不懈的折腾它，何尝不是工匠精神的一种体现呢。工匠们一般都很在意自己使用的工具称不称手的。而编辑器对程序员来说，是最重要的工具了吧。
 </p>
 
 <p>
@@ -701,10 +705,10 @@ Emacs下有各种补齐功能，这里讲几种我最常用的
 <li>yasnippet，比如输入codegen，这是一个我准备过的 yasnippet ，然后按一下 C-M-i ，就能补齐
 </li>
 
-<li>codegen，被yasnippet展开之后，按一下 <code>M-s g</code> ，就能生成代码
+<li>codegen，被yasnippet展开之后，按一下 <code>M-s g</code> ，就能生成代码，这些在我的那个视频里有介绍
 </li>
 
-<li>bbyac，输入一小段文字，按一下快捷键，被匹配、展开成当前文体中已经存在的文字。
+<li>bbyac，输入一小段文字，按一下快捷键，被匹配、展开成当前文本中已经存在的文字。
 </li>
 
 <li>Emacs自带的hippie-expand，这个用得不多了，基本上前面几个足够覆盖了它的功能。
@@ -731,7 +735,7 @@ Emacs下有各种补齐功能，这里讲几种我最常用的
 </p>
 
 <p>
-最后，我还偶尔会用org-mode搞一下文学编程，一边把自己的想法写出来，然后一边写代码去实现它。
+最后，我还偶尔会用org-mode搞一下文学编程，一边把自己的想法写出来，然后一边写代码去实现它。编程是一件很难的事，有时候可能难就难在头绪太多，把所有想法都放在脑子里，脑子就会有点儿不够用了，但如果你把很多想法都写出来，清空自己的脑子，最后就变成了做选择题，从自己写出来的想法中选一个或几个最靠谱的开始搞起来。所谓万事开头难嘛，没想到org-mode的文学编程可以让开头不再难。但至于是人都有的拖延症，就是另外的问题了。
 </p>
 </div>
 </div>
@@ -890,18 +894,22 @@ Tcl编程语言的一个插件，用来实现一些命令行上的自动化非�
 </li>
 <li>选用Emacs作编辑器
 </li>
-<li>选用Firefox作浏览器
+<li>选用Firefox作浏览器，装system-config自带的Firemacs插件（用link-firemacs命令）
 </li>
 <li>使用 Microsoft Natural Ergonomic 4000 键盘
 </li>
 </ol>
 
 <p>
-建议你不要上来就这样做，一步一步来，步子太大了容易扯着蛋，造成休克式学习。强烈建议这时候再打开Vim作者写的我翻译的 <a href="blog/2014/01/03/0-7-habits-of-highly-effective-editting.html">高效文本编辑的七个习惯</a> 一文读一读。把注意力放到自己需要完成的工作上，从此出发思考用哪些工具可以更好更快的完成自己的工作，而不是白学一堆看上去很高效，实际中却用不到的功能。
+建议你不要一上来就这样做，一步一步来，步子太大了容易扯着蛋，造成休克式学习。强烈建议这时候再打开Vim作者写的我翻译的 <a href="blog/2014/01/03/0-7-habits-of-highly-effective-editting.html">高效文本编辑的七个习惯</a> 一文读一读。把注意力放到自己需要完成的工作上，由此出发思考用哪些工具可以更好更快的完成自己的工作，而不是白学一堆看上去很高效，实际中却用不到的功能。
 </p>
 
 <p>
 最好能学会如何打造最适合自己的工具。如果你的工具箱中的一部分，是来自于system-config，那我就很荣幸了。
+</p>
+
+<p>
+如果你不信邪，或者有点轻微的自虐倾向，那你尽管放心大胆的用你喜欢的方式使用system-config吧，所有代码都是开源的，随便你怎么折腾。
 </p>
 </div>
 </div>
@@ -946,7 +954,40 @@ Tcl编程语言的一个插件，用来实现一些命令行上的自动化非�
 </li>
 </ol>
 </div>
+
+<ol class="org-ol"><li><a id="sec-2-10-1-1" name="sec-2-10-1-1"></a>my-rfa<br  /><div class="outline-text-5" id="text-2-10-1-1">
+<p>
+repo自带的repo forall命令运行起来非常慢，所以我提供了my-rfa命令，运行速度能快一点。
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-keyword">time</span> repo forall -c <span class="org-string">'pwd'</span>
+<span class="org-keyword">time</span> my-rfa -j1 <span class="org-string">'pwd'</span>
+</pre>
 </div>
+
+<p>
+同样是列一下所有仓储的路径，第一条命令第一次运行花了1分多钟，之后每次都要5、6秒钟，后者每次都只有不到1秒钟。
+</p>
+</div>
+</li>
+
+<li><a id="sec-2-10-1-2" name="sec-2-10-1-2"></a>repo-changes?<br  /><div class="outline-text-5" id="text-2-10-1-2">
+<p>
+在安卓代码顶层目录下运行，会帮你列出哪些仓储有改动。
+</p>
+</div>
+</li>
+
+<li><a id="sec-2-10-1-3" name="sec-2-10-1-3"></a>repo-cherry-find-all/repo-cherry-pick-all/repo-cherry-push-all<br  /><div class="outline-text-5" id="text-2-10-1-3">
+<p>
+这一系统脚本，用于方便的进行安卓开发基线升级。
+</p>
+</div>
+</li></ol>
+</div>
+
 
 <div id="outline-container-sec-2-10-2" class="outline-4">
 <h4 id="sec-2-10-2"><span class="section-number-4">2.10.2</span> 编译相关</h4>
@@ -977,6 +1018,9 @@ Tcl编程语言的一个插件，用来实现一些命令行上的自动化非�
 
 <li>其次是在多产品的情况下更容易配错，比如刚刚配了A目录下的A1产品，过了会到了B目录下不重新配就直接进行B1产品的编译，肯定会错的一塌糊涂。
 </li>
+
+<li>安卓4.4和5.0之间升级了对Java版本的要求，前者用oracle的java6，后者用openjdk的java7，如果你同时开发4.4和5.0版本的话，需要自己按照当前产品的安卓版本进行设置
+</li>
 </ol>
 
 <p>
@@ -984,7 +1028,7 @@ Tcl编程语言的一个插件，用来实现一些命令行上的自动化非�
 </p>
 
 <p>
-所以我提供的 android-make 就利用了这一机制，你可以通过 -c 参数比如 <code>android-make -c aosp_x86-eng</code> 指定用哪个编译配置，也可以不加-c参数，那么它就会用上一次加 -c 参数时指定的配置。
+所以我提供的 android-make 就利用了这一机制，你可以通过 -c 参数比如 <code>android-make -c aosp_x86-eng</code> 指定用哪个编译配置，之后也可以不加-c参数，那么它就会用上一次加 -c 参数时指定的配置。
 </p>
 </div>
 </div>
@@ -1013,7 +1057,7 @@ Tcl编程语言的一个插件，用来实现一些命令行上的自动化非�
 <h4 id="sec-2-10-4"><span class="section-number-4">2.10.4</span> 对boot.img进行拆分、合成</h4>
 <div class="outline-text-4" id="text-2-10-4">
 <p>
-在系统相关的开发中，尤其是bsp工程师，以及需要改系统启动脚本（init.rc系列文件）、sepolicy的情况下，对boot.img进行简单改动，是非常有用的一项技能，有时甚至完全不需要通过build来进行，比如对init.rc的改动。这个在system-config底下是通过 replace-bootimage 及其辅助肢本实现的。
+在系统相关的开发中，尤其是bsp工程师，以及需要改系统启动脚本（init.rc系列文件）、sepolicy的情况下，对boot.img进行简单改动，是非常有用的一项技能，有时甚至完全不需要通过build来进行，比如对init.rc的改动。这个在system-config底下是通过 replace-bootimage 及其辅助脚本实现的。
 </p>
 </div>
 </div>
