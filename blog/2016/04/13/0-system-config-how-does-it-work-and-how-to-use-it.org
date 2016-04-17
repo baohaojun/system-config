@@ -1,5 +1,4 @@
 #+title: system-config原理与使用的简要说明
-#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
 # bhj-tags: blog
 
 首先，system-config只是对Linux系统的一些增强，并且最大程度的保证对系统原有功能的兼容，所以你可以像使用普通Linux系统一样使用system-config，并不需要特别的学习。这里说一下system-config里最有用、不容易发现的一些配置用法、原理等。可能你已经看过我的十年Linux使用经验的视频（ [[http://www.bilibili.com/video/av3376647][B站]] 或 [[https://www.youtube.com/watch?v=qp2b3-Guej0][Youtube]] ），但对里面某些功能如何使用、如何实现一头雾水，这里做一简单介绍。
