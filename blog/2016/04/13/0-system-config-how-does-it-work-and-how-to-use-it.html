@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/wheatgrass.css" type="text/css" />
+ <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -234,10 +234,12 @@ system-config自定义的补齐机制脚本都放在 <code>~/system-config/.bash
 <p>
 这样的程序我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/grep-beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 <a href="../../../2011/12/23/beagrep.html">中文版博客</a> / <a href="../../../2011/12/23/beagrep.html">英文版博客</a> 。事实上，我非常推荐你用system-config本身提供的这些阅读源码的程序，来了解system-config本身，比如我想搜索上面提到的 cd_bhj 是在哪里定义的，我在~/system-config目录下一运行这个命令，马上就出来了： <code>grep-beatags -e cd_bhj</code> 。关于怎么用，非常简单，下文马上就会提到。
 </p>
+</div>
+</div>
 
-<ol class="org-ol">
-<li>组合调用以上
-
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 组合调用以上</h3>
+<div class="outline-text-3" id="text-1-3">
 <p>
 比如上面的 cd 的增强，如果计算到有多个路径与我给出的参数匹配，则 cd_bhj 会调用我写的 <code>select-output-line</code> 命令，对我显示一个命令行上的简易选择框（事实上根本就没有框）。见下图：
 </p>
@@ -251,13 +253,12 @@ system-config自定义的补齐机制脚本都放在 <code>~/system-config/.bash
 <p>
 在以后你会在非常多的地方见到这个对话框。
 </p>
-</li>
-</ol>
+</div>
 </div>
 
-<div id="outline-container-sec-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> system-config是一个采花大盗</h4>
-<div class="outline-text-4" id="text-1-2-1">
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> system-config是一个采花大盗</h3>
+<div class="outline-text-3" id="text-1-4">
 <p>
 为什么说这个对话框会很常见呢？因为我就像一只勤劳的小蜜蜂一样，看见一朵花很漂亮，就飞过去猛采一通。同样的，如果我发现某个软件的某个功能很好用，我就会想办法给它移植到system-config里来。比如你看到的那个命令行选择框，其创意就来自于Emacs下的helm.el（和以前的anything.el），见下图：
 </p>
@@ -286,7 +287,6 @@ system-config自定义的补齐机制脚本都放在 <code>~/system-config/.bash
 <div class="figure">
 <p><a href="../../../../images/emacs-y-or-n-p.png"><img src="../../../../images/emacs-y-or-n-p.png" alt="emacs-y-or-n-p.png" /></a>
 </p>
-</div>
 </div>
 </div>
 </div>
@@ -376,10 +376,12 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 <p>
 各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得。再次强烈建议使用system-config提供的这些程序本身来阅读system-config自身代码，以及其他所有工作中要用到的代码。我拿到任何代码，第一步是就是用 <code>for-code-reading</code> 创建索引。
 </p>
+
+<p>
+顺便说一句，以上这些都是比较细节的阅读代码工具。事实上有个大牛被问到“你如何阅读一个新项目的代码”时的回答，让我十分震撼：“我一般先用find/ls看一下里面的文件、目录结构，获取一个整体印象”。见 <a href="http://bing.com/search?q=coders+at+work">Coders at Work</a> 一书。
+</p>
 </div>
 </div>
-
-
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2"><span class="section-number-3">2.2</span> 对Terminal界面（命令行提示符）的改进</h3>
 <div class="outline-text-3" id="text-2-2">
@@ -710,12 +712,30 @@ Emacs下有各种补齐功能，这里讲几种我最常用的
 </ol>
 
 <p>
-以上这几种工具，是可以被应用于任意编程语言的，并且比较简单易用，所以单独说一下。除此之外，还可以自行研究一下如何配置你在用的编程语言的补齐及其他增强工具。比如C/C++程序，通过调用clang编译器，可以进行上下文智能补齐，非常强大，但用起来也比较折腾一些&#x2026;
+以上这几种工具，是可以被应用于任意编程语言的，并且比较简单易用，所以单独说一下。除此之外，还可以自行研究一下如何配置你在用的编程语言的补齐及其他增强工具。比如C/C++程序，通过调用clang编译器，可以进行上下文智能补齐，非常强大，但用起来也比较折腾一些&#x2026; 还有我写的ajoke.el，用于Java编程，这个就更扯了&#x2026;
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-sec-2-6-6" class="outline-4">
+<h4 id="sec-2-6-6"><span class="section-number-4">2.6.6</span> org-mode</h4>
+<div class="outline-text-4" id="text-2-6-6">
+<p>
+做为一个走技术路线的工程师，如何管理好自己的时间、项目进度是非常重要的。org-mode是一个非常强大的项目管理工具。强烈推荐。你都不会相信这么简单的一个工具会有这么强大的效率提升。其实人在很多时候并不需要多么花哨的工具，养成习惯，用一支笔，一张纸，列一个待办事项清单，然后一件一件的去做掉，去划掉，就是最强有力的执行力。当然，除此之外，就需要动脑筋思考自己的清单里哪些是重要的，哪些是可以放弃的，哪些是可以拖一下的，哪些是可以交给别人去做的&#x2026;
+</p>
+
+<p>
+另外，org-mode是一种强大的写文档的工具。我的博客全都是用org-mode写的。
+</p>
+
+<p>
+最后，我还偶尔会用org-mode搞一下文学编程，一边把自己的想法写出来，然后一边写代码去实现它。
 </p>
 </div>
 </div>
 </div>
-
 
 <div id="outline-container-sec-2-7" class="outline-3">
 <h3 id="sec-2-7"><span class="section-number-3">2.7</span> Sawfish介绍</h3>
@@ -791,16 +811,112 @@ Sawfish的主要功能有：
 </div>
 
 <div id="outline-container-sec-2-8" class="outline-3">
-<h3 id="sec-2-8"><span class="section-number-3">2.8</span> 安卓开发相关</h3>
+<h3 id="sec-2-8"><span class="section-number-3">2.8</span> 其他效率工具介绍</h3>
 <div class="outline-text-3" id="text-2-8">
+</div><div id="outline-container-sec-2-8-1" class="outline-4">
+<h4 id="sec-2-8-1"><span class="section-number-4">2.8.1</span> screen</h4>
+<div class="outline-text-4" id="text-2-8-1">
 <p>
-如果你不做安卓系统开发，可以直接跳过这部分内容。
+screen是一个终端管理工具，可以打开多个终端，方便的在终端之间切换。可以花时间学习一下它的快捷键。推荐程度：5星。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-2" class="outline-4">
+<h4 id="sec-2-8-2"><span class="section-number-4">2.8.2</span> expect</h4>
+<div class="outline-text-4" id="text-2-8-2">
+<p>
+Tcl编程语言的一个插件，用来实现一些命令行上的自动化非常方便。我的my-adb（对adb的增强，下文会提到）有一部分就使用了expect，另外还有一个bbs聊天工具，bbs-robot.exp，也是用expect写的。推荐程度：4.5星。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-3" class="outline-4">
+<h4 id="sec-2-8-3"><span class="section-number-4">2.8.3</span> 小扳手</h4>
+<div class="outline-text-4" id="text-2-8-3">
+<p>
+我写的一个从PC自动操作手机的程序，相当于给手机增加了一个按键精灵。操作手机的脚本都是用lua实现的，这部分是开源的。
+</p>
+
+<p>
+可以用它方便的聊天、拨打电话、发送邮件、发布社交软件信息（比如微博和/或微信朋友圈和/或QQ空间）、查找联系人、不仅仅是手机系统联系人、还包括QQ/微信联系人等等等等。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-4" class="outline-4">
+<h4 id="sec-2-8-4"><span class="section-number-4">2.8.4</span> Microsoft Natural Ergonomic 4000 键盘</h4>
+<div class="outline-text-4" id="text-2-8-4">
+<p>
+几个优点：
+</p>
+
+<ol class="org-ol">
+<li>手腕自然弯曲，不累
+</li>
+
+<li>键大，不容易按错
+</li>
+
+<li>在sawfish下可以自定义的快捷键多，比如最上面的一排，我在sawfish下分别定义成了如下功能：
+
+<dl class="org-dl">
+<dt> Edit with emacs </dt><dd>把当前GUI程序下在编辑的文本全部选中，发送给Emacs，在Emacs下进行编辑，编辑完成后把结果文本粘贴回到原来的GUI程序下。这样有时候我需要在Firefox、小扳手里进行大段的格式化文本编辑的时候，我可以用Emacs来做。
+</dd>
+
+<dt> Search </dt><dd>打开我目前在独自维护的 beagle 桌面搜索引擎
+</dd>
+
+<dt> Emacs edit complete </dt><dd>结束Emacs下对某个文件的编辑（该文件是被edit-wait/ew程序打开的，有“人”在等待它编辑结束，比如git commit message的编写，按一下这个键保存commit message，git commit就可以继续进行了）。
+</dd>
+
+<dt> Org-agenda </dt><dd>上面提到过org-mode，这个快捷键帮你把你所有的待办事项方便快捷的整理成一个一目了然的清单。
+</dd>
+
+<dt> 小扳手快捷键 </dt><dd>打开小扳手或将其调到前台
+</dd>
+</dl>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-9" class="outline-3">
+<h3 id="sec-2-9"><span class="section-number-3">2.9</span> 附：将system-config最大化发挥作用的方法</h3>
+<div class="outline-text-3" id="text-2-9">
+<ol class="org-ol">
+<li>选用Sawfish+Xfce4作桌面（系统登录时选sawfish即可）
+</li>
+<li>选用Emacs作编辑器
+</li>
+<li>选用Firefox作浏览器
+</li>
+<li>使用 Microsoft Natural Ergonomic 4000 键盘
+</li>
+</ol>
+
+<p>
+建议你不要上来就这样做，一步一步来，步子太大了容易扯着蛋，造成休克式学习。强烈建议这时候再打开Vim作者写的我翻译的 <a href="../../../2014/01/03/0-7-habits-of-highly-effective-editting.html">高效文本编辑的七个习惯</a> 一文读一读。把注意力放到自己需要完成的工作上，从此出发思考用哪些工具可以更好更快的完成自己的工作，而不是白学一堆看上去很高效，实际中却用不到的功能。
+</p>
+
+<p>
+最好能学会如何打造最适合自己的工具。如果你的工具箱中的一部分，是来自于system-config，那我就很荣幸了。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-10" class="outline-3">
+<h3 id="sec-2-10"><span class="section-number-3">2.10</span> 安卓开发相关</h3>
+<div class="outline-text-3" id="text-2-10">
+<p>
+如果你不做安卓系统开发，可以直接跳过这部分内容，剩下的都不用看了。
 </p>
 </div>
 
-<div id="outline-container-sec-2-8-1" class="outline-4">
-<h4 id="sec-2-8-1"><span class="section-number-4">2.8.1</span> 源代码相关</h4>
-<div class="outline-text-4" id="text-2-8-1">
+<div id="outline-container-sec-2-10-1" class="outline-4">
+<h4 id="sec-2-10-1"><span class="section-number-4">2.10.1</span> 源代码相关</h4>
+<div class="outline-text-4" id="text-2-10-1">
 <p>
 我对git/gerrit/repo有相当多的封装。主要是通过gerrit/repo工作的时候，一般需要处理多个产品、多条线的问题。在提review的时候，一定要搞清楚当前应该用哪个git remote，应该提到哪个git branch上。手动输入这些信息是非常痛苦的，一会是这个分支，一会又是那个分支，很容易搞错。即使不搞错，也容易打错字。
 </p>
@@ -832,9 +948,9 @@ Sawfish的主要功能有：
 </div>
 </div>
 
-<div id="outline-container-sec-2-8-2" class="outline-4">
-<h4 id="sec-2-8-2"><span class="section-number-4">2.8.2</span> 编译相关</h4>
-<div class="outline-text-4" id="text-2-8-2">
+<div id="outline-container-sec-2-10-2" class="outline-4">
+<h4 id="sec-2-10-2"><span class="section-number-4">2.10.2</span> 编译相关</h4>
+<div class="outline-text-4" id="text-2-10-2">
 <p>
 安卓编译系统有较多问题，所以我对其进行了一些封装。官方文档的流程是这样的：
 </p>
@@ -873,9 +989,9 @@ Sawfish的主要功能有：
 </div>
 </div>
 
-<div id="outline-container-sec-2-8-3" class="outline-4">
-<h4 id="sec-2-8-3"><span class="section-number-4">2.8.3</span> 加快编译速度</h4>
-<div class="outline-text-4" id="text-2-8-3">
+<div id="outline-container-sec-2-10-3" class="outline-4">
+<h4 id="sec-2-10-3"><span class="section-number-4">2.10.3</span> 加快编译速度</h4>
+<div class="outline-text-4" id="text-2-10-3">
 <p>
 在做安卓开发时，非常重要的一点是要尽量加快编译速度。除了让公司给你配更好的机器外，以下有几个方法：
 </p>
@@ -893,36 +1009,36 @@ Sawfish的主要功能有：
 </div>
 </div>
 
-<div id="outline-container-sec-2-8-4" class="outline-4">
-<h4 id="sec-2-8-4"><span class="section-number-4">2.8.4</span> 对boot.img进行拆分、合成</h4>
-<div class="outline-text-4" id="text-2-8-4">
+<div id="outline-container-sec-2-10-4" class="outline-4">
+<h4 id="sec-2-10-4"><span class="section-number-4">2.10.4</span> 对boot.img进行拆分、合成</h4>
+<div class="outline-text-4" id="text-2-10-4">
 <p>
 在系统相关的开发中，尤其是bsp工程师，以及需要改系统启动脚本（init.rc系列文件）、sepolicy的情况下，对boot.img进行简单改动，是非常有用的一项技能，有时甚至完全不需要通过build来进行，比如对init.rc的改动。这个在system-config底下是通过 replace-bootimage 及其辅助肢本实现的。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-8-5" class="outline-4">
-<h4 id="sec-2-8-5"><span class="section-number-4">2.8.5</span> 重刷某个分区</h4>
-<div class="outline-text-4" id="text-2-8-5">
+<div id="outline-container-sec-2-10-5" class="outline-4">
+<h4 id="sec-2-10-5"><span class="section-number-4">2.10.5</span> 重刷某个分区</h4>
+<div class="outline-text-4" id="text-2-10-5">
 <p>
 这个有很多种方法，比如fastboot，比如手机芯片厂商提供的刷机程序。但有一种更方便的方法，是在手机运行的过程中，把分区的刷机文件用adb push上去，然后用dd命令写入到相关分区。我为此专门封装了一个 adb-push-partition 的脚本。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-8-6" class="outline-4">
-<h4 id="sec-2-8-6"><span class="section-number-4">2.8.6</span> 伪工厂重置（清空/data目录，但保留某些重要文件）</h4>
-<div class="outline-text-4" id="text-2-8-6">
+<div id="outline-container-sec-2-10-6" class="outline-4">
+<h4 id="sec-2-10-6"><span class="section-number-4">2.10.6</span> 伪工厂重置（清空/data目录，但保留某些重要文件）</h4>
+<div class="outline-text-4" id="text-2-10-6">
 <p>
 有一个名为 adb-clean-data 的脚本，用来做这个事。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-8-7" class="outline-4">
-<h4 id="sec-2-8-7"><span class="section-number-4">2.8.7</span> 对adb的增强</h4>
-<div class="outline-text-4" id="text-2-8-7">
+<div id="outline-container-sec-2-10-7" class="outline-4">
+<h4 id="sec-2-10-7"><span class="section-number-4">2.10.7</span> 对adb的增强</h4>
+<div class="outline-text-4" id="text-2-10-7">
 <p>
 说到这儿，讲一下我对adb的一些增强。
 </p>
