@@ -6,20 +6,71 @@
 
 * system-config原理
 
-不外乎以下几种方法：
+从系统命令行用户界面来说，system-config主要使用的shell是bash，对shell进行增强，不外乎以下几种方法：
 
-1. 改变系统原有行为
+** 改变系统原有行为
 
    比如Bash自带的cd命令，使用起来有点麻烦，所以我先用 cd_bhj 作为名字定义了一个函数，然后再把 cd 别名到 cd_bhj ，这样每次我在命令行上打 cd 的时候，实际调用的是 cd_bhj 函数，这个函数会检查我给的参数，然后
 
-   - 如果所给的参数是原本合法的 cd 调用，则通过Bash的builtin关键字，调用内置的cd命令。这一点保证了与系统的兼容性，确保system-config不会是一个全新的系统，而是Linux用户拿来就能用的。
+   - 如果所给的参数是原本合法的 cd 调用，则通过Bash的builtin关键字，调用内置的cd命令。这一点保证了与系统的兼容性，确保system-config不会是一个全新的系统，而是Linux用户不用重新学习、拿来就能用的。
    - 如果所给的参数是原本非法的 cd 调用，计算出我实际想去的路径，再调用内置的cd命令。这样有可能我可以打很少的几个字，就cd到一个很深的目录下去，比如下图所示
 
      [[../../../../images/cd-t2-fr-base.png][file:../../../../images/cd-t2-fr-base.png]]
 
-2. 加入系统原来没有的程序
+   还有一种改变系统原有行为的方法，即提供一个与系统程序同名的程序，并且把它放到PATH环境变量的前面，确保系统执行的时候会先找到你的版本。在你自己的版本里，你可以选择是否是调用系统原有的版本来完成你想要达到的效果。比如我写了一个对命令行参数更友好的 =~/system-config/bin/rdesktop= ，在里面它会调来系统的 =/usr/bin/rdesktop= 。
 
-   这个我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 [[../../../2011/12/23/beagrep.org][中文版博客]] / [[../../../2011/12/23/beagrep.org][英文版博客]] 。
+   顺便说一句，想知道某个Bash命令有没有被修改过，有几种方法：
+
+   - =type CMD= 和 =type -a CMD=
+     这里 =type= 是Bash的一个Builtin（内置命令）。
+
+   - =which CMD=
+     这个其实没有 =type= 功能全
+
+   - =alias=
+     不带参数运行Bash的 =alias= 内置命令，它会列出你当前Bash会话中的所有alias。
+
+*** bash提供的对系统定制增强的机制
+
+这里顺便总结一下，bash都提供了哪些机制可以用来定制你的系统。
+
+1. 改变环境变量，比如PATH环境变量，命令行提示符变量等。
+
+2. 改变bash变量，比如 =set completion-ignore-case on= ，可以在补齐文件名的时候不区分大小写（这样比如你输入一个 =/bin/Bas= ，再按一下tab键，也能正确的补齐为 =/bin/bash= 。当然，这只是为了方便你验证这一功能而举的例子，实际操作中刚好相反，是为了 /避免/ 按Shift键输入大写字母而设置这个变量）。
+
+2. 使用bash alias（别名）
+
+3. 定义bash函数
+
+   如果你定义的函数或alias与某bash内置命令或某系统自带程序同名，在这个函数里你又想调用该内置命令或程序，你可以使用bash的 =builtin= 或 =command= 关键字。
+
+   比如我的ls其实是一个别名：
+
+   #+BEGIN_EXAMPLE
+   alias ls='ls -hF --color=tty --show-control-chars --block-size=1'
+   #+END_EXAMPLE
+
+   我想在命令行上交互地调用真正的ls程序，我可以用 =command ls= 命令，或者也可以用 =/bin/ls= 。又比如我的cd也是一个alias，因为它也是bash内置的关系，想调用bash内置版本cd的话，可以输入 =builtin cd DIRECTORY= 。
+
+4. 自定义补齐机制
+
+   这个可以参考debian/ubuntu下自带的 bash-completion deb包。也可以参考bash info手册。
+
+   system-config自定义的补齐机制脚本都放在 =~/system-config/.bash_completion.d/= 下。
+
+5. 自定义快捷键
+
+   在bash下有很多自定义的快捷键，比如Ctrl-r/Ctrl-s可以用来向前/向后搜索历史命令，这个非常有用，有很多同学只知道用Up/Down方向键一条一条的找历史命令，或者用Left/Right方向键一个字符一个字符的移动光标。其实找历史命令和移动光标都可以用Ctrl-r/Ctrl-s来做，很多情况下是最高效的！（其中移动光标的话用Ctrl-r/Ctrl-s找到正确位置之后，需要按一下Ctrl-j）
+
+   我自定义的最有用的bash快捷键是 Alt-k ，快速把当前命令行上的输入放置到系统剪贴板中，方便我先在命令行上试验，然后把试验成功的命令拷贝、粘贴到Emacs里正在编写的脚本程序里。
+
+   可以用 =bind -p|perl -ne 'print unless m/not bound|self-insert/'|less= 命令来看一下你的系统上bash定义了哪些快捷键，然后选几个你认为很有用的慢慢学起来。
+
+   想知道如何自定义bash快捷键的话，可以参考 =~/system-config/.inputrc= ，还有 readline 的 man 手册： =man readline= 。
+
+** 加入系统原来没有的程序
+
+   这样的程序我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/grep-beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 [[../../../2011/12/23/beagrep.org][中文版博客]] / [[../../../2011/12/23/beagrep.org][英文版博客]] 。事实上，我非常推荐你用system-config本身提供的这些阅读源码的程序，来了解system-config本身，比如我想搜索上面提到的 cd_bhj 是在哪里定义的，我在~/system-config目录下一运行这个命令，马上就出来了： =grep-beatags -e cd_bhj= 。关于怎么用，非常简单，下文马上就会提到。
 
 3. 组合调用以上
 
@@ -29,7 +80,7 @@
 
    在以后你会在非常多的地方见到这个对话框。
 
-** system-config是一个采花大盗
+*** system-config是一个采花大盗
 
 为什么说这个对话框会很常见呢？因为我就像一只勤劳的小蜜蜂一样，看见一朵花很漂亮，就飞过去猛采一通。同样的，如果我发现某个软件的某个功能很好用，我就会想办法给它移植到system-config里来。比如你看到的那个命令行选择框，其创意就来自于Emacs下的helm.el（和以前的anything.el），见下图：
 
@@ -43,11 +94,57 @@
 
 [[../../../../images/emacs-y-or-n-p.png][file:../../../../images/emacs-y-or-n-p.png]]
 
-
-
 * system-config使用
 
+System-config里提供的最有价值的功能，应该就是它的全套的阅读源代码的解决方案。我要研究任何项目的代码，都离不开这些工具。包括system-config自身的代码，我也会用这些工具来进行快速搜索、阅读。所以在使用部分，我们一开始就介绍一下这些工具。
+
+** 阅读源代码
+
+要成为一个高级的程序员，快速的阅读、理解代码的能力是不可获缺的。阅读代码除了打开一个源码文件一行一行的从头读到尾这个笨办法之外，经常需要进行以下三种操作：
+
+1. 搜索某一字符串在代码中出现的位置
+
+2. 搜索某一函数、变量被定义的位置
+
+3. 搜索某一函数、变量被使用（调用）的位置
+
+System-config提供了快速搜索、定位代码的业界最简单方法，只需要以下几个步骤：
+
+1. 创建索引。在源代码的顶层目录运行
+   #+BEGIN_SRC sh
+   for-code-reading
+   #+END_SRC
+
+2. 搜索字符串。比如在源代码的任意子目录下运行
+   #+BEGIN_SRC sh
+   beagrep -e "hello world"
+   #+END_SRC
+
+   以搜索 =hello world= 这个字符串在源码中出现的位置。
+
+3. 搜索定义。在源代码的任意子目录下运行
+
+   #+BEGIN_SRC sh
+   grep-beatags -e "readlink"
+   #+END_SRC
+   以搜索 readlink 被定义的地方。
+
+4. 搜索引用。在源代码的任意子目录下运行
+
+   #+BEGIN_SRC sh
+   grep-func-call -e "readlink" -a --nc
+   #+END_SRC
+
+   以搜索 readlink 被调用的地方
+
+这些程序都可以在命令行上运行，但我平时一般都是通过在Emacs下调用它们，效果更好，比如可以直接跳转到搜到的文件：行号上。
+
+各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得。再次强烈建议使用system-config提供的这些程序本身来阅读system-config自身代码，以及其他所有工作中要用到的代码。我拿到任何代码，第一步是就是用 =for-code-reading= 创建索引。
+
+
 ** 对Terminal界面（命令行提示符）的改进
+
+接下来我大致按照system-config的各种改动的常用、常见程度，介绍一下我认为比较有用的一些改动。首先是对命令行显示界面的改动，这个是最显著的，所以放在前面说一下。
 
 默认Linux的命令行提示符是这样的：
 
@@ -65,6 +162,8 @@
 
 2. 以前无法用鼠标双击选中当前路径名，必须用鼠标按下拖曳；现在因为在其前后各有一个空格，所以你鼠标双击一下，就能选中整个当前路径。
 
+   注意这是我以前觉得非常有需要的一个功能，现在我用更好的方法实现了，那就是 up 系列命令，接下来会讲到。
+
 3. 可以更方便的显示更多信息。
 
    比如上面你看到的是远程登录的提示符， 其中有 =Remote:True= 字样。并且上一条命令失败的话，会显示返回值是多少，几点几分失败的。
@@ -75,80 +174,70 @@
 
    比如上图中，我启动了一个代理（你懂的），然后用 =adb -s= 命令设置了一下当前的adb设备。
 
+** 对系统剪贴板的增强
+
+从cygwin下第一次发现它提供了在命令行上操作系统剪贴板的程序putclip/getclip，于是一发不可收拾，我在Linux底下也google了一下有没有类似的程序，还真有，就叫xclip。但因为我已经习惯了cygwin下的putclip/getclip，所以我在Linux下也封装了一下xclip，写了Linux版本putclip和getclip脚本。以及其他一系列操作路径的脚本。以下是用法：
+
+1. =putclip= 不加参数，会从stdin读取文本，放到剪贴板中
+2. =putclip ARGS...= 会把所有 =ARGS...= 拼成一个字符串，放到剪贴板中
+3. up/wp/swp/sup/bp等一系列程序，分别用某种格式拷贝当前路径或所带参数的路径。举个例子：在安卓代码 ~/src/android/frameworks/base 目录下，运行 =ap CleanSpec.mk= ，会输出 =frameworks/base/CleanSpec.mk= ，因为这是这个文件的“Android Path”，这也是ap这个名字的由来。类似的还有gitp等等。
+
+   这些Xp程序用于命令行界面与图形界面之间的通信是最方便的。比如有时候在Firefx/Email客户端下要上传一个文件，在图形界面上一层一层的改变目录、找到文件有时候挺麻烦的，有了up命令和system-config下方便的cd增强机制，很容易找到文件并拷贝其路径，这样在Firefx/Email客户端里一粘贴就好了。还有一个场景是系统设置里想配一下默认用哪个浏览器程序，我想配置成 =/usr/bin/chromium= ，如果用图形界面切到 =/usr/bin= 目录下的话，你会发现需要等待好长一段时间—— =/usr/bin= 目录下文件太多了，图形界面需要把它们全部显示出来相当费功夫，这时候用 =up $(which chromium)= 直接一拷贝一粘贴就搞定了。
+
+还有一个对剪贴板的增强，是在命令行上输入或用历史机制调出一条长长的命令之后，用一个快捷键把它拷贝下来（然后贴到Emacs里正在编辑的脚本里、邮件正文里等等）。这个在之前已经提到过了，快捷键是 Alt-k，也可以按 =Escape k= 。
+
+** 对Bash历史纪录的增强
+
+有些同学可能还不是很了解，Bash下用Ctrl-r/Ctrl-s可以交互式的用搜索的方法调出之前一段时间内运行过的命令。我经常用这两个快捷键。但是很多时候还嫌这两个键不够方便，所以我通过Bash的补齐机制，定义了一个re命令。使用方法如下：
+
+1. 运行一下hir命令（不是每次都需要，如果你发现你最近使用过的命令补齐不出来，可以这时候才用一下hir）。
+
+2. 输入re，然后输入你想调出的历史命令的几个子字符串。
+
+3. 按Tab键补齐。如果只有一条匹配的历史命令的话，会直接上屏，回车即可运行；如果有多条的话，可以再输入 =.0= / =.1= / =.N= 之后再按Tab，会选中第N条匹配的历史命令。
+
+
+
+** 安卓开发相关
+
 *** 对adb的增强
 
 说到这儿，讲一下我对adb的一些增强。
 
-首先
+system-config里的adb像cd一样，是一个别名，实际调用的是my-adb脚本。以下是与adb相关的最常用的一些增强：
 
+1. =adb -s= 直接设置 =ANDROID_SERIAL= 环境变量，如果有多个adb设备，非常方便，并且会在命令行提示符上显示当前bash会话里选的是哪个adb设备。
 
+2. =adb COMMAND= 直接运行相关的 =COMMAND= ，相当于输入了 =adb shell COMMAND= ，但不需要多打一个 =shell= （前提是 =COMMAND= 不是adb自带的子命令，比如 =sync= ， =adb sync= 是用于同步本地文件夹到adb设备的system或data分区； =adb shell sync= 则是调用 adb 设备上的 =sync= 命令，这是一个Linux系统程序，用于命令Kernel把内存中的缓存数据写回外部存储设备）。
 
-** 阅读源代码
+3. =adb COMMAND ARGS= 直接相当于在交互的 =adb shell= 下输入了 COMMAND ARGS ，不需要额外加引号，因为有时候稍微复杂一点的命令，把引号加正确就变成一件很困难的苦差。
 
-要成为一个高级的程序员，快速的阅读、理解代码的能力是不可获缺的。System-config提供了快速搜索、定位代码的业界最简单方法，只需要以下几个步骤：
-
-1. 在源代码的顶层目录运行
+   比如
    #+BEGIN_SRC sh
-   for-code-reading
+   command adb shell echo 'hello    world'
    #+END_SRC
-
-2. 在源代码的任意子目录下运行
+   你会看到结果跟先启动adb shell，然后再输入
    #+BEGIN_SRC sh
-   beagrep -e "hello world"
+   echo 'hello    world'
    #+END_SRC
-
-   以搜索 =hello world= 这个字符串在源码中出现的位置。
-
-3. 在源代码的任意子目录下运行
-
+   是不一样的，因为adb把引号给“吃掉”了。但system-config里，你可以直接输入
    #+BEGIN_SRC sh
-   beatags -e "readlink"
+   adb echo 'hello    world'
    #+END_SRC
-   以搜索 readlink 被定义的地方。
+   最后得到更合理的那个结果。
 
-4. 在源代码的任意子目录下运行
+   同理， =adb A_QUOTED_STRING_WITH_SPACES_IN_IT= 会把后面的参数交给 =sh -c= ，也就是说，在system-config下输入
 
    #+BEGIN_SRC sh
-   grep-func-call -e readlink -a --nc
+   adb 'echo "hello    world"'
    #+END_SRC
 
-   以搜索 readlink 被调用的地方
-
-当然，以上只是搜索源代码，并不是阅读源代码。如果要阅读源代码的话，一般是用Emacs/Vim之类的文本编辑器打开源码文件进行阅读。虽然这些程序都可以在命令行上运行，但我平时一般都是通过在Emacs下调用它们，效果更好，比如可以直接跳转到搜到的文件：行号上。
-
-各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得。
-
-** 特殊的Shell使用方法
-
-system-config下对很多命令进行了定制，比如 =cd= 命令，正常的情况下你不会意识到它有增强的功能。
-
-注：可以用 =type -a XXX= 查看 =XXX= 命令有没有被定制过。
-
-*** =cd= 的增强用法
-
-如果你经常要到某个目录下工作，比如 =~/src/android/hardware/ti/omap4xxx/libstagefrighthw= ，每次都打出全路径或者一层一层的cd进去是比较没有效率的。所以system-config下增强版cd用法如下：
-
-1. 第一次老老实实的用老的方法cd到 =~/src/android/hardware/ti/omap4xxx/libstagefrighthw=
-2. 以后直接打 =cd hw= 或 =cd hw xx= 等比较随意的打法，可能会直接cd到你想要的目录下，也可能会出一个命令行选择对话让你选，注意如果有很多选项的话，可以通过输入更详细的匹配字符串来缩小选项数目。
-
-*** 历史命令的补齐
-
-先说一下很多人不知道的一条bash自带的历史命令搜索快捷键：C-r和C-s。
-
-（可以通过 =bind -p|grep -v 'not bound|self-insert' -P|less= 命令来系统学习一下bash下都有哪些目前可以使用的快捷键。然后想自定义快捷键的话，可以查看一下bash的相关文档。）
-
-这里要说的是 =re= 命令和相应的 =hir= 命令。
-
-举例：
-
-1. 我在命令行上写了一条长长的命令：
-
+   结果与先启动 =adb shell= ，然后输入
    #+BEGIN_SRC sh
-   my-rfa -j1 'gerrit -h so create-project $(repo-project); git push so:$(repo-project) HEAD:refs/heads/master'
+   sh -c 'echo "hello    world"'
    #+END_SRC
+   是一样的。这个特性我想应该是从Perl的system函数得到的启发，参考 =perldoc -f system= 。
 
-2. 我想重新调出以前打过的这条命令，可能是想重新运行一下，或者只是想
+4. 其他一系列与adb相关的脚本，比如adb-push和adb-pull，adb自带的push和pull只支持一次处理一个文件或文件夹，于是我简单的封装了一下，adb-push/adb-pull一次可以处理多个文件或文件夹。
 
-
-
-* system-config原理
+   刚刚简单的看了一下，我的system-config的bin目录下，大约有170个adb相关的命令...
