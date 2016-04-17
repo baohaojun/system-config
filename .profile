@@ -27,7 +27,4 @@ if test "$QT4_IM_MODULE" -a ! "$QT_IM_MODULE"; then
     export QT_IM_MODULE=$QT4_IM_MODULE
 fi
 
-if test -e ~/.config/system-config/.bashrc-path; then
-    . ~/.config/system-config/.bashrc-path
-fi
 

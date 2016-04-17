@@ -852,7 +852,7 @@ Pop back to where ajoke was last invoked.
 \(fn)" t nil)
 
 
-(autoload 'grep-gtags "bhj-grep" "\
+(autoload 'grep-beatags "bhj-grep" "\
 
 
 \(fn &optional HISTORY-VAR DEF-GREP-COMMAND)" t nil)

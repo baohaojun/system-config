@@ -6,6 +6,8 @@ alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
 alias aptitude='sudo aptitude'
 alias umount='sudo umount'
 alias mplayer='mplayer -heartbeat-cmd "xscreensaver-command -deactivate"'
+alias adb=my-adb
+
 mount() {
     if test $# = 0; then
         command mount

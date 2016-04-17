@@ -1,8 +1,29 @@
 #!/bin/bash
 
-(echo "$PATH"|tr : \\n; echo) |
-    while read dir; do
-        if test -d "$dir"; then
-            find "$dir" -maxdepth 1 -name "*$1*"
+progs=$(
+    (echo "$PATH"|tr : \\n; echo) |
+        while read dir; do
+            if test -d "$dir"; then
+                find "$dir" -maxdepth 1 -name "*$1*"
+            fi
+        done | (
+        shift
+        if test "$#" = 0; then
+            cat
+        else
+            while read line; do
+                match=true
+                for x in "$@"; do
+                    if ! echo "$line" | grep -q -P "\Q$x\E" -i; then
+                        match=false
+                    fi
+                done
+                if test $match = true; then
+                    echo "$line"
+                fi
+            done
         fi
-    done | tee /dev/stderr | EMACS=t select-output-line cat | putclip
+    )
+     )
+
+select-args -p "Choose which command you want to copy:" "$progs" | tee /dev/stderr | putclip

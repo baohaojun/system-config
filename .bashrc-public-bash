@@ -200,11 +200,6 @@ start_recursive_shell()
     )
 }
 
-adb()
-{
-    my-adb "$@"
-}
-
 export -f start_recursive_shell
 alias start-recursive-shell=start_recursive_shell
 

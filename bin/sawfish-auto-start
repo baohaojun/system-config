@@ -1,9 +1,7 @@
 #!/bin/bash
 
 exec > ~/.xsession-errors 2>&1
-
-. ~/.config/system-config/.bashrc-path
-
+. ~/.profile
 for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; do
     export $x
 done

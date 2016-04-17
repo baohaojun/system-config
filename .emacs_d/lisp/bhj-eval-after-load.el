@@ -10,7 +10,7 @@
 
 (eval-after-load 'c-mode '(c-set-style 'k&r))
 
-(eval-after-load 'js '(define-key js-mode-map [(meta .)] 'grep-gtags))
+(eval-after-load 'js '(define-key js-mode-map [(meta .)] 'grep-beatags))
 
 (eval-after-load 'cc-vars '(require 'guess-offset))
 
@@ -209,7 +209,7 @@
      (bhj-bbdb-complete-mail start-pos)))
 
 (eval-after-load 'elisp-slime-nav
-  '(define-key elisp-slime-nav-mode-map (kbd "M-.") 'grep-gtags))
+  '(define-key elisp-slime-nav-mode-map (kbd "M-.") 'grep-beatags))
 
 (add-hook 'python-mode-hook
           (lambda ()

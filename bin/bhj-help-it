@@ -69,7 +69,7 @@ case $1 in
             firefox-open-url-pattern /android-sdk-linux/ file://"$html#$anchor"
         elif test -z "$html"; then
             word=$2
-            java=$(select-output-line -- "grep-gtags -e "$word" -d ~/src/android | grep -P -e '\.java:' | perl -npe 's/java:.*/java/'|sort -u")
+            java=$(select-output-line -- "grep-beatags -e "$word" -d ~/src/android | grep -P -e '\.java:' | perl -npe 's/java:.*/java/'|sort -u")
             java=$(basename "$java")
             start=$java
             start=${start%.java}

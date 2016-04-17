@@ -165,7 +165,7 @@
 (setq my-grep-command "beagrep -s -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
 
 
-(defvar grep-gtags-history nil)
+(defvar grep-beatags-history nil)
 (defvar bhj-occur-regexp nil)
 
 (put 'scroll-left 'disabled nil)

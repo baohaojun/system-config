@@ -66,7 +66,7 @@
 
 (global-set-key (kbd "s-h") help-map)
 
-(global-set-key (kbd "M-.") 'grep-gtags)
+(global-set-key (kbd "M-.") 'grep-beatags)
 
 (global-set-key (kbd "M-g f") 'grep-func-call)
 

@@ -105,17 +105,17 @@
     (call-interactively 'grep)))
 
 ;;;###autoload
-(defun grep-gtags (&optional history-var def-grep-command)
+(defun grep-beatags (&optional history-var def-grep-command)
   (interactive)
-  (let ((grep-history grep-gtags-history)
+  (let ((grep-history grep-beatags-history)
         (no-grep-quote t)
-        (my-grep-command (or def-grep-command "grep-gtags -e pat"))
-        (grep-buffer-name (if (boundp 'grep-buffer-name) grep-buffer-name "*grep-gtags*"))
+        (my-grep-command (or def-grep-command "grep-beatags -e pat"))
+        (grep-buffer-name (if (boundp 'grep-buffer-name) grep-buffer-name "*grep-beatags*"))
         (current-prefix-arg 4))
     (nodup-ring-insert ajoke--marker-ring (point-marker))
     (ajoke--setup-env)
     (call-interactively 'grep-bhj-dir)
-    (set (or history-var 'grep-gtags-history) grep-history)))
+    (set (or history-var 'grep-beatags-history) grep-history)))
 
 (defun grep-tag-default-path ()
   (or (and transient-mark-mode mark-active
@@ -237,7 +237,7 @@
 (define-key bhj-grep-mode-map (kbd "M-g a") 'bhj-abc-grep)
 (define-key bhj-grep-mode-map (kbd "M-g o") 'bhj-occur)
 (define-key bhj-grep-mode-map (kbd "M-g f") 'grep-func-call)
-(define-key bhj-grep-mode-map (kbd "M-.") 'grep-gtags)
+(define-key bhj-grep-mode-map (kbd "M-.") 'grep-beatags)
 (define-key bhj-grep-mode-map (kbd "M-g n") 'next-error)
 (define-key bhj-grep-mode-map (kbd "M-g p") 'previous-error)
 

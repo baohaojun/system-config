@@ -55,7 +55,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
     (dolist (charset '(kana han cjk-misc bopomofo))
-      (set-fontset-font t charset zh-font))))
+      (set-fontset-font t charset zh-font)))
+  (shell-command-to-string "sawfish-client -e '(maximize-window (input-focus))'&"))
 
 
 (defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
