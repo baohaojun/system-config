@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/adwaita.css" type="text/css" />
+ <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -105,25 +105,26 @@ for the JavaScript code in this tag.
 <h1 class="title">system-config原理与使用的简要说明</h1>
 <p style="color: red;"> <b>Not finished yet.</b> </p>
 <p>
-首先，system-config只是对Linux系统的一些增强，并且最大程度的保证对系统原有功能的兼容，所以你可以像使用普通Linux系统一样使用system-config，并不需要特别的学习。这里说一下system-config里最有用、不容易发现的一些配置用法、原理等。
+首先，system-config只是对Linux系统的一些增强，并且最大程度的保证对系统原有功能的兼容，所以你可以像使用普通Linux系统一样使用system-config，并不需要特别的学习。这里说一下system-config里最有用、不容易发现的一些配置用法、原理等。可能你已经看过我的十年Linux使用经验的视频（ <a href="http://www.bilibili.com/video/av3376647">B站</a> 或 <a href="https://www.youtube.com/watch?v=qp2b3-Guej0">Youtube</a> ），但对里面某些功能如何使用、如何实现一头雾水，这里做一简单介绍。
 </p>
 
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> system-config原理</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-不外乎以下几种方法：
+从系统命令行用户界面来说，system-config主要使用的shell是bash，对shell进行增强，不外乎以下几种方法：
 </p>
+</div>
 
-<ol class="org-ol">
-<li>改变系统原有行为
-
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 改变系统原有行为</h3>
+<div class="outline-text-3" id="text-1-1">
 <p>
 比如Bash自带的cd命令，使用起来有点麻烦，所以我先用 cd_bhj 作为名字定义了一个函数，然后再把 cd 别名到 cd_bhj ，这样每次我在命令行上打 cd 的时候，实际调用的是 cd_bhj 函数，这个函数会检查我给的参数，然后
 </p>
 
 <ul class="org-ul">
-<li>如果所给的参数是原本合法的 cd 调用，则通过Bash的builtin关键字，调用内置的cd命令。这一点保证了与系统的兼容性，确保system-config不会是一个全新的系统，而是Linux用户拿来就能用的。
+<li>如果所给的参数是原本合法的 cd 调用，则通过Bash的builtin关键字，调用内置的cd命令。这一点保证了与系统的兼容性，确保system-config不会是一个全新的系统，而是Linux用户不用重新学习、拿来就能用的。
 </li>
 <li>如果所给的参数是原本非法的 cd 调用，计算出我实际想去的路径，再调用内置的cd命令。这样有可能我可以打很少的几个字，就cd到一个很深的目录下去，比如下图所示
 
@@ -134,15 +135,108 @@ for the JavaScript code in this tag.
 </div>
 </li>
 </ul>
-</li>
-
-<li>加入系统原来没有的程序
 
 <p>
-这个我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 <a href="blog/2011/12/23/beagrep.html">中文版博客</a> / <a href="blog/2011/12/23/beagrep.html">英文版博客</a> 。
+还有一种改变系统原有行为的方法，即提供一个与系统程序同名的程序，并且把它放到PATH环境变量的前面，确保系统执行的时候会先找到你的版本。在你自己的版本里，你可以选择是否是调用系统原有的版本来完成你想要达到的效果。比如我写了一个对命令行参数更友好的 <code>~/system-config/bin/rdesktop</code> ，在里面它会调来系统的 <code>/usr/bin/rdesktop</code> 。
+</p>
+
+<p>
+顺便说一句，想知道某个Bash命令有没有被修改过，有几种方法：
+</p>
+
+<ul class="org-ul">
+<li><code>type CMD</code> 和 <code>type -a CMD</code>
+     这里 <code>type</code> 是Bash的一个Builtin（内置命令）。
+</li>
+
+<li><code>which CMD</code>
+     这个其实没有 <code>type</code> 功能全
+</li>
+
+<li><code>alias</code>
+     不带参数运行Bash的 <code>alias</code> 内置命令，它会列出你当前Bash会话中的所有alias。
+</li>
+</ul>
+</div>
+
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> bash提供的对系统定制增强的机制</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+这里顺便总结一下，bash都提供了哪些机制可以用来定制你的系统。
+</p>
+
+<ol class="org-ol">
+<li>改变环境变量，比如PATH环境变量，命令行提示符变量等。
+</li>
+
+<li>改变bash变量，比如 <code>set completion-ignore-case on</code> ，可以在补齐文件名的时候不区分大小写（这样比如你输入一个 <code>/bin/Bas</code> ，再按一下tab键，也能正确的补齐为 <code>/bin/bash</code> 。当然，这只是为了方便你验证这一功能而举的例子，实际操作中刚好相反，是为了 <i>避免</i> 按Shift键输入大写字母而设置这个变量）。
+</li>
+
+<li>使用bash alias（别名）
+</li>
+
+<li>定义bash函数
+
+<p>
+如果你定义的函数或alias与某bash内置命令或某系统自带程序同名，在这个函数里你又想调用该内置命令或程序，你可以使用bash的 <code>builtin</code> 或 <code>command</code> 关键字。
+</p>
+
+<p>
+比如我的ls其实是一个别名：
+</p>
+
+<pre class="example">
+alias ls='ls -hF --color=tty --show-control-chars --block-size=1'
+</pre>
+
+<p>
+我想在命令行上交互地调用真正的ls程序，我可以用 <code>command ls</code> 命令，或者也可以用 <code>/bin/ls</code> 。又比如我的cd也是一个alias，因为它也是bash内置的关系，想调用bash内置版本cd的话，可以输入 <code>builtin cd DIRECTORY</code> 。
 </p>
 </li>
 
+<li>自定义补齐机制
+
+<p>
+这个可以参考debian/ubuntu下自带的 bash-completion deb包。也可以参考bash info手册。
+</p>
+
+<p>
+system-config自定义的补齐机制脚本都放在 <code>~/system-config/.bash_completion.d/</code> 下。
+</p>
+</li>
+
+<li>自定义快捷键
+
+<p>
+在bash下有很多自定义的快捷键，比如Ctrl-r/Ctrl-s可以用来向前/向后搜索历史命令，这个非常有用，有很多同学只知道用Up/Down方向键一条一条的找历史命令，或者用Left/Right方向键一个字符一个字符的移动光标。其实找历史命令和移动光标都可以用Ctrl-r/Ctrl-s来做，很多情况下是最高效的！（其中移动光标的话用Ctrl-r/Ctrl-s找到正确位置之后，需要按一下Ctrl-j）
+</p>
+
+<p>
+我自定义的最有用的bash快捷键是 Alt-k ，快速把当前命令行上的输入放置到系统剪贴板中，方便我先在命令行上试验，然后把试验成功的命令拷贝、粘贴到Emacs里正在编写的脚本程序里。
+</p>
+
+<p>
+可以用 <code>bind -p|perl -ne 'print unless m/not bound|self-insert/'|less</code> 命令来看一下你的系统上bash定义了哪些快捷键，然后选几个你认为很有用的慢慢学起来。
+</p>
+
+<p>
+想知道如何自定义bash快捷键的话，可以参考 <code>~/system-config/.inputrc</code> ，还有 readline 的 man 手册： <code>man readline</code> 。
+</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 加入系统原来没有的程序</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+这样的程序我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/grep-beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 <a href="blog/2011/12/23/beagrep.html">中文版博客</a> / <a href="blog/2011/12/23/beagrep.html">英文版博客</a> 。事实上，我非常推荐你用system-config本身提供的这些阅读源码的程序，来了解system-config本身，比如我想搜索上面提到的 cd_bhj 是在哪里定义的，我在~/system-config目录下一运行这个命令，马上就出来了： <code>grep-beatags -e cd_bhj</code> 。关于怎么用，非常简单，下文马上就会提到。
+</p>
+
+<ol class="org-ol">
 <li>组合调用以上
 
 <p>
@@ -162,9 +256,9 @@ for the JavaScript code in this tag.
 </ol>
 </div>
 
-<div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> system-config是一个采花大盗</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> system-config是一个采花大盗</h4>
+<div class="outline-text-4" id="text-1-2-1">
 <p>
 为什么说这个对话框会很常见呢？因为我就像一只勤劳的小蜜蜂一样，看见一朵花很漂亮，就飞过去猛采一通。同样的，如果我发现某个软件的某个功能很好用，我就会想办法给它移植到system-config里来。比如你看到的那个命令行选择框，其创意就来自于Emacs下的helm.el（和以前的anything.el），见下图：
 </p>
@@ -197,15 +291,103 @@ for the JavaScript code in this tag.
 </div>
 </div>
 </div>
-
-
+</div>
 
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> system-config使用</h2>
 <div class="outline-text-2" id="text-2">
-</div><div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 对Terminal界面（命令行提示符）的改进</h3>
+<p>
+System-config里提供的最有价值的功能，应该就是它的全套的阅读源代码的解决方案。我要研究任何项目的代码，都离不开这些工具。包括system-config自身的代码，我也会用这些工具来进行快速搜索、阅读。所以在使用部分，我们一开始就先介绍一下这些工具。
+</p>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 阅读源代码</h3>
 <div class="outline-text-3" id="text-2-1">
+<p>
+要成为一个高级的程序员，快速的阅读、理解代码的能力是不可获缺的。阅读代码除了打开一个源码文件一行一行的从头读到尾这个笨办法之外，经常需要进行以下三种操作：
+</p>
+
+<ol class="org-ol">
+<li>搜索某一字符串在代码中出现的位置
+</li>
+
+<li>搜索某一函数、变量被定义的位置
+</li>
+
+<li>搜索某一函数、变量被使用（调用）的位置
+</li>
+</ol>
+
+<p>
+System-config提供了快速搜索、定位代码的业界最简单方法，只需要以下几个步骤：
+</p>
+
+<ol class="org-ol">
+<li>创建索引。在源代码的顶层目录运行
+<div class="org-src-container">
+
+<pre class="src src-sh">for-code-reading
+</pre>
+</div>
+</li>
+
+<li>搜索字符串。比如在源代码的任意子目录下运行
+<div class="org-src-container">
+
+<pre class="src src-sh">beagrep -e <span class="org-string">"hello world"</span>
+</pre>
+</div>
+
+<p>
+以搜索 <code>hello world</code> 这个字符串在源码中出现的位置。
+</p>
+</li>
+
+<li>搜索定义。在源代码的任意子目录下运行
+
+<div class="org-src-container">
+
+<pre class="src src-sh">grep-beatags -e <span class="org-string">"readlink"</span>
+</pre>
+</div>
+<p>
+以搜索 readlink 被定义的地方。
+</p>
+</li>
+
+<li>搜索引用。在源代码的任意子目录下运行
+
+<div class="org-src-container">
+
+<pre class="src src-sh">grep-func-call -e <span class="org-string">"readlink"</span> -a --nc
+</pre>
+</div>
+
+<p>
+以搜索 readlink 被调用的地方
+</p>
+</li>
+</ol>
+
+<p>
+这些程序都可以在命令行上运行，但我平时一般都是通过在Emacs下调用它们，效果更好，比如可以直接跳转到搜到的文件：行号上。
+</p>
+
+<p>
+各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得。再次强烈建议使用system-config提供的这些程序本身来阅读system-config自身代码，以及其他所有工作中要用到的代码。我拿到任何代码，第一步是就是用 <code>for-code-reading</code> 创建索引。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 对Terminal界面（命令行提示符）的改进</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+接下来我大致按照system-config的各种改动的常用、常见程度，介绍一下我认为比较有用的一些改动。首先是对命令行显示界面的改动，这个是最显著的，所以放在前面说一下。
+</p>
+
 <p>
 默认Linux的命令行提示符是这样的：
 </p>
@@ -239,6 +421,10 @@ for the JavaScript code in this tag.
 </li>
 
 <li>以前无法用鼠标双击选中当前路径名，必须用鼠标按下拖曳；现在因为在其前后各有一个空格，所以你鼠标双击一下，就能选中整个当前路径。
+
+<p>
+注意这是我以前觉得非常有需要的一个功能，现在我用更好的方法实现了，那就是 up 系列命令，接下来会讲到。
+</p>
 </li>
 
 <li>可以更方便的显示更多信息。
@@ -263,157 +449,556 @@ for the JavaScript code in this tag.
 </li>
 </ol>
 </div>
+</div>
 
-<div id="outline-container-sec-2-1-1" class="outline-4">
-<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> 对adb的增强</h4>
-<div class="outline-text-4" id="text-2-1-1">
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 对系统剪贴板的增强</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+从cygwin下第一次发现它提供了在命令行上操作系统剪贴板的程序putclip/getclip，于是一发不可收拾，我在Linux底下也google了一下有没有类似的程序，还真有，就叫xclip。但因为我已经习惯了cygwin下的putclip/getclip，所以我在Linux下也封装了一下xclip，写了Linux版本putclip和getclip脚本。以及其他一系列操作路径的脚本。以下是用法：
+</p>
+
+<ol class="org-ol">
+<li><code>putclip</code> 不加参数，会从stdin读取文本，放到剪贴板中
+</li>
+<li><code>putclip ARGS...</code> 会把所有 <code>ARGS...</code> 拼成一个字符串，放到剪贴板中
+</li>
+<li>up/wp/swp/sup/bp等一系列程序，分别用某种格式拷贝当前路径或所带参数的路径。举个例子：在安卓代码 ~/src/android/frameworks/base 目录下，运行 <code>ap CleanSpec.mk</code> ，会输出 <code>frameworks/base/CleanSpec.mk</code> ，因为这是这个文件的“Android Path”，这也是ap这个名字的由来。类似的还有gitp等等。
+
+<p>
+这些Xp程序用于命令行界面与图形界面之间的通信是最方便的。比如有时候在Firefx/Email客户端下要上传一个文件，在图形界面上一层一层的改变目录、找到文件有时候挺麻烦的，有了up命令和system-config下方便的cd增强机制，很容易找到文件并拷贝其路径，这样在Firefx/Email客户端里一粘贴就好了。还有一个场景是系统设置里想配一下默认用哪个浏览器程序，我想配置成 <code>/usr/bin/chromium</code> ，如果用图形界面切到 <code>/usr/bin</code> 目录下的话，你会发现需要等待好长一段时间—— <code>/usr/bin</code> 目录下文件太多了，图形界面需要把它们全部显示出来相当费功夫，这时候用 <code>up $(which chromium)</code> 直接一拷贝一粘贴就搞定了。
+</p>
+</li>
+</ol>
+
+<p>
+还有一个对剪贴板的增强，是在命令行上输入或用历史机制调出一条长长的命令之后，用一个快捷键把它拷贝下来（然后贴到Emacs里正在编辑的脚本里、邮件正文里等等）。这个在之前已经提到过了，快捷键是 Alt-k，也可以按 <code>Escape k</code> 。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> 对Bash历史纪录的增强</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+有些同学可能还不是很了解，Bash下用Ctrl-r/Ctrl-s可以交互式的用搜索的方法调出之前一段时间内运行过的命令。我经常用这两个快捷键。但是很多时候还嫌这两个键不够方便，所以我通过Bash的补齐机制，定义了一个re命令。使用方法如下：
+</p>
+
+<ol class="org-ol">
+<li>运行一下hir命令（不是每次都需要，如果你发现你最近使用过的命令补齐不出来，可以这时候才用一下hir）。
+</li>
+
+<li>输入re，然后输入你想调出的历史命令的几个子字符串。
+</li>
+
+<li>按Tab键补齐。如果只有一条匹配的历史命令的话，会直接上屏，回车即可运行；如果有多条的话，可以再输入 <code>.0</code> / <code>.1</code> / <code>.N</code> 之后再按Tab，会选中第N条（从0开始数）匹配的历史命令。
+</li>
+</ol>
+
+<p>
+举例：我之前运行过这样的命令：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">my-rfa <span class="org-string">'p=$(</span><span class="org-sh-quoted-exec">ap</span><span class="org-string">); P=$(</span><span class="org-sh-quoted-exec">repo-project</span><span class="org-string">); cd $ANDROID_TOP/.repo/projects; git clone --bare $PWD/$p.git /d/Downloads/android/$P.git; '</span>
+</pre>
+</div>
+
+<p>
+下回我想重新运行这条命令的话，用 Ctrl-r/Ctrl-s 可能不是很方便，有时候甚至找不回来（因为bash自带的历史文件 <code>~/.bash_history</code> 最多会记N条，老的会被冲掉）。所以我输入 <code>re my rfa ap</code> ，然后按Tab，会给我补出system-config的历史文件 <code>~/.cache/system-config/.bash_history.bak</code> 中匹配以上三个字符串 <code>my rfa ap</code> 的所有命令，我再输入相应的 <code>.N</code> 就可以选中实际我想要的第N条匹配的命令；也可以输入更多字符串使匹配更精确，再按Tab键更新缩小补齐选项，方便选择。
+</p>
+
+<p>
+这个主意受了Emacs下文本补齐方法 <code>hippie-expand</code> 的启发，其中有一条补齐方式就是在当前正在编辑的文件中寻找与当前输入的“部分文本”相匹配的更长的文本。
+</p>
+
+<p>
+另外，上面提到的hir命令会做两件事儿，
+</p>
+
+<ol class="org-ol">
+<li>把 ~/.bash_history 里的历史命令去重（去掉重复）保存到 ~/.cache/system-config/.bash_history.bak 里，方便给re补齐用
+</li>
+
+<li>把 ~/.bash_history 里的历史命令全部读到当前的bash会话中
+
+<p>
+为什么要做这件事儿呢？因为很多时候会打开多个终端窗口（或通过gnome-terminal/konsole/xfce4-terminal的新Tab，或通过screen/tmux命令），在一个终端窗口A下输入过一个命令后，在另一个已经存在的终端窗口B下是无法调出此命令历史的。想要能调出来，需要做两件事：1. 在终端A下保存历史命令到 ~/.bash_history ，这个可以手动做（Bash内置命令history，加-w参数） ，也可以设置bash每输入一个命令就自动保存，而非缓存在内存中，system-config采取的是自动存；2. 在终端B下把 ~/.bash_history 的内容重新读到当前Bash会话的历史中（同样用history内置命令，加-r参数）。
+</p>
+
+<p>
+以上。
+</p>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> 一些非常常用的命令介绍</h3>
+<div class="outline-text-3" id="text-2-5">
+</div><div id="outline-container-sec-2-5-1" class="outline-4">
+<h4 id="sec-2-5-1"><span class="section-number-4">2.5.1</span> s</h4>
+<div class="outline-text-4" id="text-2-5-1">
+<p>
+s代表search的意思，输入 <code>s hello world</code> ，会提示你选择哪个搜索引擎，然后用你选定的搜索引擎去搜索“hello world”。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-2" class="outline-4">
+<h4 id="sec-2-5-2"><span class="section-number-4">2.5.2</span> e</h4>
+<div class="outline-text-4" id="text-2-5-2">
+<p>
+e代表edit的意思，在终端上输入 <code>e FILENAME</code> ，会弹出当前正在运行的 <code>emacs</code> 窗口，并在其中打开 <code>FILENAME</code> 这个文件。它是对emacsclient的一层简单封装。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-3" class="outline-4">
+<h4 id="sec-2-5-3"><span class="section-number-4">2.5.3</span> ew</h4>
+<div class="outline-text-4" id="text-2-5-3">
+<p>
+ew代表edit and wait的意思，像上面的e一样，也调用了emacsclient，只不过它还会等待Emacs文件编辑结束。所以我把它配成了我的 <code>EDITOR</code> 环境变量。
+</p>
+
+<p>
+需要注意的是，这两个命令都支持在远程的ssh登录下使用，会在本地的Emacs窗口下打开远程文件进行编辑。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-4" class="outline-4">
+<h4 id="sec-2-5-4"><span class="section-number-4">2.5.4</span> of</h4>
+<div class="outline-text-4" id="text-2-5-4">
+<p>
+of代表open file的意思，在终端上输入 <code>of FILENAME</code> 或 <code>of URL</code> ，会用系统默认的关联程序打开相应的文件或网址。这个相当于Windows下用鼠标双击了某文件的图标。在Windows命令行cmd.exe下也有个相应的start命令；在cygwin下也有个cygstart命令；在Mac下好像也有个叫open的命令。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Emacs介绍</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+Emacs是一个非常强大的编辑器。很多人觉得太难了，不想学它或学了一阵子之后又放弃了。其实很多工具用下来最好比的还是看谁更能坚持。坚持用Emacs，坚持不懈的折腾它，何尝不是工匠精神的一种体现呢。工匠们一般都很在意自己使用的工具称不称手的。而编辑器对程序员来说，是最重要的工具了吧。
+</p>
+
+<p>
+其实Emacs下有很多快捷键，跟Bash下是一样的。你可能都已经学会了，比如 <code>Ctrl-a</code> 是移到行首， <code>Ctrl-e</code> 是移到行尾。 <code>Ctrl-r/Ctrl-s</code> 是搜索，等等等等，所以还有什么可怕的呢（另外你可能发现了，UNIX系统下各种idea相互杂交是非常普遍的，比如把Emacs的按键在Bash里也实现一番。所以system-config从Emacs下借鉴helm.el到命令行下等并不是首创，只是延续了这一传统）。
+</p>
+
+<p>
+在学习Emacs之前，强烈建议仔细阅读一下Vim作者写的我翻译的 <a href="blog/2014/01/03/0-7-habits-of-highly-effective-editting.html">高效文本编辑的七个习惯</a> 。对于掌握任何一门技术、一种工具，几乎都是非常有用的。
+</p>
+
+<p>
+比较基本的Emacs使用就不讲了，你可以从它的Help菜单里的Emacs Tutorial开始，第二个菜单项（choose language）里有中文版的。下面讲一下我认为比较重要的一些用法。从我认为最重要的获取帮助、阅读文档开始，因为我认为掌握这些技能，对你进一步深入学习Emacs和其他很多Linux程序都是很有帮助的。
+</p>
+</div>
+
+<div id="outline-container-sec-2-6-1" class="outline-4">
+<h4 id="sec-2-6-1"><span class="section-number-4">2.6.1</span> 用Emacs获取帮助、阅读文档</h4>
+<div class="outline-text-4" id="text-2-6-1">
+<p>
+Emacs是那种螺旋上升的工具，在你开始使用它之后，会不停地增强自己的能力。就像学语言一样，边学边用，用得越多，学得越好；学得越好，用得越爽。这是一种很少见的自增强的工具，造成这种现象，有几种原因，你可以好好利用一下这些特点：
+</p>
+
+<ol class="org-ol">
+<li>Emacs自带的帮助系统，是强大到没有谁了的。可能主要是因为Emacs是用Lisp写的，而Lisp系统可能都有非常强大的自我帮助功能。几乎任何一个Emacs命令、快捷键，都可以方便的查看它的帮助。一定要好好利用这一点。
+</li>
+
+<li>Emacs提供了非常方便的查看系统man手册，info手册，perldoc等各种手册的功能。好好利用Emacs自带的搜索功能、info自带的搜索功能，往往可以达到事半功倍的效果。
+</li>
+
+<li>Emacs下提供了Occur命令、helm.el命令，对它们善加利用，你会发现Emacs提供了自发现的功能，允许你主动的去 <b>发现</b> 系统有哪些功能。比如你当前正在试着用Emacs的info去读bash的info手册，但你对info模式还不是很了解，怎么办呢？
+
+<p>
+你可以在info模式下按一下 <code>Ctrl-h b</code> ，Emacs会列出所有当前模式下的快捷键。然后你用Emacs的occur命令，过滤出所有与info相关的快捷键。这下你就可以很轻松的发现有哪些与看info手册相关的有意思、值得一学的快捷键了：
+</p>
+
+
+<div class="figure">
+<p><a href="images/info-occur.png"><img src="images/info-occur.png" alt="info-occur.png" /></a>
+</p>
+</div>
+</li>
+
+<li>用Emacs打开某一程序，研读其源代码，善用Emacs的搜索功能、system-config的搜索工具，有时候比读文档更有效！
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-2" class="outline-4">
+<h4 id="sec-2-6-2"><span class="section-number-4">2.6.2</span> 在Emacs下调用system-config提供的阅读代码程序</h4>
+<div class="outline-text-4" id="text-2-6-2">
+<p>
+之前提到过，我一般都是用Emacs阅读代码。所有的代码搜索相关的操作，基本都是用Emacs及其grep模式实现。其中比较重要的几个快捷键是：
+</p>
+
+<dl class="org-dl">
+<dt> M-g r </dt><dd>默认运行 beagrep 程序，查找任意字符串。快捷键助记法： <code>M-g r</code> 后两个字母是 <code>grep</code> 的前两个字母。
+</dd>
+<dt> M-. </dt><dd>默认运行 grep-beatags 程序，查找函数、变量的定义
+</dd>
+<dt> M-g f </dt><dd>默认运行 grep-func-all 程序，查找引用
+</dd>
+<dt> M-g o </dt><dd>运行我定制过的 bhj-occur 命令，是对Emacs自带的occur的一点封装
+</dd>
+<dt> M-g i </dt><dd>Emacs自带的imenu命令，可以用来方便的在同一个文件内的函数、全局变量之间跳转
+</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-3" class="outline-4">
+<h4 id="sec-2-6-3"><span class="section-number-4">2.6.3</span> 从Emacs调用外部程序</h4>
+<div class="outline-text-4" id="text-2-6-3">
+<p>
+Emacs下有一系列的函数，可以调外部程序来完成你的工作。
+</p>
+
+<ol class="org-ol">
+<li>调用make等进行编译
+</li>
+
+<li>调用grep等进行搜索（前面提到的代码阅读程序都是用的这一机制）
+</li>
+
+<li>调用某shell命令，显示其输出的文本
+</li>
+
+<li>调用某shell命令，并把当前选中的文本pipe给这一程序进行处理，显示其输出的文本
+</li>
+
+<li>在上面的基础上，把当前选中的文本替换为处理完成后输出的文本
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-4" class="outline-4">
+<h4 id="sec-2-6-4"><span class="section-number-4">2.6.4</span> 从外部程序调用Emacs</h4>
+<div class="outline-text-4" id="text-2-6-4">
+<p>
+这个可以通过emacsclient实现。所以Emacs和终端基本是通的。双方可以相互调用，像搭积木似的，通过一些简单的基本模块，组建出非常强大的功能，以便更高效的完成你的工作。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-5" class="outline-4">
+<h4 id="sec-2-6-5"><span class="section-number-4">2.6.5</span> Emacs下的补齐</h4>
+<div class="outline-text-4" id="text-2-6-5">
+<p>
+Emacs下有各种补齐功能，这里讲几种我最常用的
+</p>
+
+<ol class="org-ol">
+<li>yasnippet，比如输入codegen，这是一个我准备过的 yasnippet ，然后按一下 C-M-i ，就能补齐
+</li>
+
+<li>codegen，被yasnippet展开之后，按一下 <code>M-s g</code> ，就能生成代码
+</li>
+
+<li>bbyac，输入一小段文字，按一下快捷键，被匹配、展开成当前文体中已经存在的文字。
+</li>
+
+<li>Emacs自带的hippie-expand，这个用得不多了，基本上前面几个足够覆盖了它的功能。
+</li>
+</ol>
+
+<p>
+以上这几种工具，是可以被应用于任意编程语言的，并且比较简单易用，所以单独说一下。除此之外，还可以自行研究一下如何配置你在用的编程语言的补齐及其他增强工具。比如C/C++程序，通过调用clang编译器，可以进行上下文智能补齐，非常强大，但用起来也比较折腾一些&#x2026;
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2-7" class="outline-3">
+<h3 id="sec-2-7"><span class="section-number-3">2.7</span> Sawfish介绍</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+Sawfish是一个窗口管理器，我在system-config中把它和xfce4配在了一起，后者提供了一个稍为更加现代化一点，但还是非常轻便的桌面系统。这样我就有了一个比较舒服的桌面环境。
+</p>
+
+<p>
+Sawfish的主要功能有：
+</p>
+
+<ol class="org-ol">
+<li>对窗口进行各种操作：最大化、最小化、调到前台等等。甚至可以自己创建、画窗口。
+</li>
+
+<li>对窗口可编程发送键盘事件。相当于拥有了Windows下的按键精灵的功能。
+</li>
+
+<li>用system函数在后台启动系统程序（相当于sawfish-&gt;命令行）
+</li>
+
+<li>提供sawfish-client程序，可以方便的从命令行对sawfish进行控制（相当于命令行-&gt;sawfish）
+
+<p>
+所以命令行和sawfish基本也是通的，就像命令行与Emacs一样。（事实上用于Sawfish配置的语言，也是一种Lisp方言，就是从Emacs Lisp演变来的）。
+</p>
+</li>
+</ol>
+
+<p>
+常用快捷键（这里s-代表Super-，也就是一般键盘上的Win键）：
+</p>
+
+<dl class="org-dl">
+<dt> s-h s-t </dt><dd>调出或启动终端
+</dd>
+<dt> s-h s-m </dt><dd>调出或启动Emacs
+</dd>
+<dt> s-h s-n </dt><dd>调出或启动Firefox
+</dd>
+<dt> s-h s-s </dt><dd>调出窗口列表，可键入文本进行选择，C-n/C-p上下选择窗口，回车将选中窗口调到前台
+</dd>
+<dt> s-h s-r </dt><dd>相当于Windows下的Run Dialog，输入命令以运行
+</dd>
+<dt> s-h k </dt><dd>快捷键的帮助，提示你按一个键，给出Sawfish对该键的相应绑定
+</dd>
+<dt> s-h s-k </dt><dd>更复杂的快捷键的帮助，主要加入了对 <code>s-h</code> 组合快捷键的帮助
+</dd>
+</dl>
+
+<p>
+想了解sawfish更多功能，可以运行一下sawfish-ui，里面有一些简单的绑定可以配（system-config里已经配了一些）。另外也可以打开 <code>~/system-config/.sawfishrc</code> 进行查看。
+</p>
+
+<p>
+可以在 <code>~/system-config/.sawfish/start</code> 下添加脚本，在桌面启动时该目录下的脚本会被启动。
+</p>
+
+<p>
+可以用
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">bhj-notify TITLE <span class="org-string">"NOTIFICATION TEXT"</span>
+</pre>
+</div>
+
+<p>
+弹出一个简单的sawfish桌面通知。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8" class="outline-3">
+<h3 id="sec-2-8"><span class="section-number-3">2.8</span> 安卓开发相关</h3>
+<div class="outline-text-3" id="text-2-8">
+<p>
+如果你不做安卓系统开发，可以直接跳过这部分内容。
+</p>
+</div>
+
+<div id="outline-container-sec-2-8-1" class="outline-4">
+<h4 id="sec-2-8-1"><span class="section-number-4">2.8.1</span> 源代码相关</h4>
+<div class="outline-text-4" id="text-2-8-1">
+<p>
+我对git/gerrit/repo有相当多的封装。主要是通过gerrit/repo工作的时候，一般需要处理多个产品、多条线的问题。在提review的时候，一定要搞清楚当前应该用哪个git remote，应该提到哪个git branch上。手动输入这些信息是非常痛苦的，一会是这个分支，一会又是那个分支，很容易搞错。即使不搞错，也容易打错字。
+</p>
+
+<p>
+所以我提供了一系列 repo-XXX 命令，比如repo-branch，可以给出当前git仓储提review的时候应该提到哪个分支。其规则如下：
+</p>
+
+<ol class="org-ol">
+<li>一般情况下，从repo的manifest里可以获取分支信息
+</li>
+
+<li>如果你用 <code>git checkout -B ...</code> 或 <code>git branch --set-upstream ...</code> 设置过当前分支及其对应的远程分支，则repo-branch会打印远程分支的名字，这种情况下提review一般就是要提到那个分支下。
+</li>
+</ol>
+
+<p>
+另外我需要提review的时候，不会直接输入 <code>git push $(repo-remote) HEAD:refs/for/$(repo-remote)</code> ，虽然这条命令是OK的，而是会用更进一步的封装 <code>gerrit-push-review</code> ，有几个好处：
+</p>
+
+<ol class="org-ol">
+<li>会自动先把你的代码rebase到服务器上最新提交
+</li>
+<li>可以在本地先自我review一下代码（加-R参数可以不review）
+</li>
+<li>可以在后面加gerrit用户名，直接添加reviewer
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-2" class="outline-4">
+<h4 id="sec-2-8-2"><span class="section-number-4">2.8.2</span> 编译相关</h4>
+<div class="outline-text-4" id="text-2-8-2">
+<p>
+安卓编译系统有较多问题，所以我对其进行了一些封装。官方文档的流程是这样的：
+</p>
+
+<ol class="org-ol">
+<li><code>. build/envsetup.sh</code> 设置环境
+</li>
+<li><code>lunch</code> 选择编译目标产品和编译类型
+</li>
+<li>make/mm/mmm等
+</li>
+</ol>
+
+<p>
+这样做有以下几个问题：
+</p>
+
+<ol class="org-ol">
+<li>每次新开Bash窗口都要做，比较费劲
+</li>
+
+<li>容易出错，首先是容易忘了做过了还是没做过，还没配env/lunch就开始make，结果编译的是错误的产品；或者多次冗余的进行env/lunch，浪费了时间。
+</li>
+
+<li>其次是在多产品的情况下更容易配错，比如刚刚配了A目录下的A1产品，过了会到了B目录下不重新配就直接进行B1产品的编译，肯定会错的一塌糊涂。
+</li>
+</ol>
+
+<p>
+其实Android自己提供了一个机制，方便你一劳永逸的配好一个代码目录，而不是每次都重新配一遍。那就是代码顶层目录下的 buildspec.mk 文件，可以把相关配置信息放在里面，以后不用配直接make就可以。我相信谷歌提供了这个机制，她内部的员工肯定都会用该机制，而不是只像官方文档里描述的那样，每次都那么麻烦。
+</p>
+
+<p>
+所以我提供的 android-make 就利用了这一机制，你可以通过 -c 参数比如 <code>android-make -c aosp_x86-eng</code> 指定用哪个编译配置，也可以不加-c参数，那么它就会用上一次加 -c 参数时指定的配置。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-3" class="outline-4">
+<h4 id="sec-2-8-3"><span class="section-number-4">2.8.3</span> 加快编译速度</h4>
+<div class="outline-text-4" id="text-2-8-3">
+<p>
+在做安卓开发时，非常重要的一点是要尽量加快编译速度。除了让公司给你配更好的机器外，以下有几个方法：
+</p>
+
+<ol class="org-ol">
+<li>用ccache，对full build来说，用过ccache之后速度能快一倍。
+</li>
+
+<li>避免读取所有Android.mk文件。比如想编译kernel或者lk，很多开发都只知道如何通过make去做，但这样会把所有Android.mk都读一遍，这是非常费时间的。所以可以对安卓编译机制做一番研究，最后得到怎样用类似mm的机制编译kernel、lk、sepolicy等的方法。如果是做这方面工作的朋友，可以关注一下。
+</li>
+
+<li>用mmm只编译相关模块，避免full build。
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-4" class="outline-4">
+<h4 id="sec-2-8-4"><span class="section-number-4">2.8.4</span> 对boot.img进行拆分、合成</h4>
+<div class="outline-text-4" id="text-2-8-4">
+<p>
+在系统相关的开发中，尤其是bsp工程师，以及需要改系统启动脚本（init.rc系列文件）、sepolicy的情况下，对boot.img进行简单改动，是非常有用的一项技能，有时甚至完全不需要通过build来进行，比如对init.rc的改动。这个在system-config底下是通过 replace-bootimage 及其辅助肢本实现的。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-5" class="outline-4">
+<h4 id="sec-2-8-5"><span class="section-number-4">2.8.5</span> 重刷某个分区</h4>
+<div class="outline-text-4" id="text-2-8-5">
+<p>
+这个有很多种方法，比如fastboot，比如手机芯片厂商提供的刷机程序。但有一种更方便的方法，是在手机运行的过程中，把分区的刷机文件用adb push上去，然后用dd命令写入到相关分区。我为此专门封装了一个 adb-push-partition 的脚本。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-6" class="outline-4">
+<h4 id="sec-2-8-6"><span class="section-number-4">2.8.6</span> 伪工厂重置（清空/data目录，但保留某些重要文件）</h4>
+<div class="outline-text-4" id="text-2-8-6">
+<p>
+有一个名为 adb-clean-data 的脚本，用来做这个事。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-7" class="outline-4">
+<h4 id="sec-2-8-7"><span class="section-number-4">2.8.7</span> 对adb的增强</h4>
+<div class="outline-text-4" id="text-2-8-7">
 <p>
 说到这儿，讲一下我对adb的一些增强。
 </p>
 
 <p>
-首先
-</p>
-</div>
-</div>
-</div>
-
-
-
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 阅读源代码</h3>
-<div class="outline-text-3" id="text-2-2">
-<p>
-要成为一个高级的程序员，快速的阅读、理解代码的能力是不可获缺的。System-config提供了快速搜索、定位代码的业界最简单方法，只需要以下几个步骤：
+system-config里的adb像cd一样，是一个别名，实际调用的是my-adb脚本。以下是与adb相关的最常用的一些增强：
 </p>
 
 <ol class="org-ol">
-<li>在源代码的顶层目录运行
-<div class="org-src-container">
-
-<pre class="src src-sh">for-code-reading
-</pre>
-</div>
+<li><code>adb -s</code> 直接设置 <code>ANDROID_SERIAL</code> 环境变量，如果有多个adb设备，非常方便，并且会在命令行提示符上显示当前bash会话里选的是哪个adb设备。
 </li>
 
-<li>在源代码的任意子目录下运行
+<li><code>adb COMMAND</code> 直接运行相关的 <code>COMMAND</code> ，相当于输入了 <code>adb shell COMMAND</code> ，但不需要多打一个 <code>shell</code> （前提是 <code>COMMAND</code> 不是adb自带的子命令，比如 <code>sync</code> ， <code>adb sync</code> 是用于同步本地文件夹到adb设备的system或data分区； <code>adb shell sync</code> 则是调用 adb 设备上的 <code>sync</code> 命令，这是一个Linux系统程序，用于命令Kernel把内存中的缓存数据写回外部存储设备）。
+</li>
+
+<li><code>adb COMMAND ARGS</code> 直接相当于在交互的 <code>adb shell</code> 下输入了 COMMAND ARGS ，不需要额外加引号，因为有时候稍微复杂一点的命令，把引号加正确就变成一件很困难的苦差。
+
+<p>
+比如
+</p>
 <div class="org-src-container">
 
-<pre class="src src-sh">beagrep -e <span class="org-string">"hello world"</span>
+<pre class="src src-sh"><span class="org-builtin">command</span> adb shell echo <span class="org-string">'hello    world'</span>
+</pre>
+</div>
+<p>
+你会看到结果跟先启动adb shell，然后再输入
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span class="org-builtin">echo</span> <span class="org-string">'hello    world'</span>
+</pre>
+</div>
+<p>
+是不一样的，因为adb把引号给“吃掉”了。但system-config里，你可以直接输入
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">adb echo <span class="org-string">'hello    world'</span>
+</pre>
+</div>
+<p>
+最后得到更合理的那个结果。
+</p>
+
+<p>
+同理， <code>adb A_QUOTED_STRING_WITH_SPACES_IN_IT</code> 会把后面的参数交给 <code>sh -c</code> ，也就是说，在system-config下输入
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">adb <span class="org-string">'echo "hello    world"'</span>
 </pre>
 </div>
 
 <p>
-以搜索 <code>hello world</code> 这个字符串在源码中出现的位置。
+结果与先启动 <code>adb shell</code> ，然后输入
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">sh -c <span class="org-string">'echo "hello    world"'</span>
+</pre>
+</div>
+<p>
+是一样的。这个特性我想应该是从Perl的system函数得到的启发，参考 <code>perldoc -f system</code> 。
 </p>
 </li>
 
-<li>在源代码的任意子目录下运行
-
-<div class="org-src-container">
-
-<pre class="src src-sh">beatags -e <span class="org-string">"readlink"</span>
-</pre>
-</div>
-<p>
-以搜索 readlink 被定义的地方。
-</p>
-</li>
-
-<li>在源代码的任意子目录下运行
-
-<div class="org-src-container">
-
-<pre class="src src-sh">grep-func-call -e readlink -a --nc
-</pre>
-</div>
+<li>其他一系列与adb相关的脚本，比如adb-push和adb-pull，adb自带的push和pull只支持一次处理一个文件或文件夹，于是我简单的封装了一下，adb-push/adb-pull一次可以处理多个文件或文件夹。
 
 <p>
-以搜索 readlink 被调用的地方
+刚刚简单的看了一下，我的system-config的bin目录下，大约有170个adb相关的命令&#x2026;
 </p>
 </li>
 </ol>
-
-<p>
-当然，以上只是搜索源代码，并不是阅读源代码。如果要阅读源代码的话，一般是用Emacs/Vim之类的文本编辑器打开源码文件进行阅读。虽然这些程序都可以在命令行上运行，但我平时一般都是通过在Emacs下调用它们，效果更好，比如可以直接跳转到搜到的文件：行号上。
-</p>
-
-<p>
-各个搜索程序都有一些更复杂的用法，这个目前只能通过阅读相应的脚本文件以获得。
-</p>
-</div>
-</div>
-
-<div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 特殊的Shell使用方法</h3>
-<div class="outline-text-3" id="text-2-3">
-<p>
-system-config下对很多命令进行了定制，比如 <code>cd</code> 命令，正常的情况下你不会意识到它有增强的功能。
-</p>
-
-<p>
-注：可以用 <code>type -a XXX</code> 查看 <code>XXX</code> 命令有没有被定制过。
-</p>
-</div>
-
-<div id="outline-container-sec-2-3-1" class="outline-4">
-<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> <code>cd</code> 的增强用法</h4>
-<div class="outline-text-4" id="text-2-3-1">
-<p>
-如果你经常要到某个目录下工作，比如 <code>~/src/android/hardware/ti/omap4xxx/libstagefrighthw</code> ，每次都打出全路径或者一层一层的cd进去是比较没有效率的。所以system-config下增强版cd用法如下：
-</p>
-
-<ol class="org-ol">
-<li>第一次老老实实的用老的方法cd到 <code>~/src/android/hardware/ti/omap4xxx/libstagefrighthw</code>
-</li>
-<li>以后直接打 <code>cd hw</code> 或 <code>cd hw xx</code> 等比较随意的打法，可能会直接cd到你想要的目录下，也可能会出一个命令行选择对话让你选，注意如果有很多选项的话，可以通过输入更详细的匹配字符串来缩小选项数目。
-</li>
-</ol>
-</div>
-</div>
-
-<div id="outline-container-sec-2-3-2" class="outline-4">
-<h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> 历史命令的补齐</h4>
-<div class="outline-text-4" id="text-2-3-2">
-<p>
-先说一下很多人不知道的一条bash自带的历史命令搜索快捷键：C-r和C-s。
-</p>
-
-<p>
-（可以通过 <code>bind -p|grep -v 'not bound|self-insert' -P|less</code> 命令来系统学习一下bash下都有哪些目前可以使用的快捷键。然后想自定义快捷键的话，可以查看一下bash的相关文档。）
-</p>
-
-<p>
-这里要说的是 <code>re</code> 命令和相应的 <code>hir</code> 命令。
-</p>
-
-<p>
-举例：
-</p>
-
-<ol class="org-ol">
-<li>我在命令行上写了一条长长的命令：
-
-<div class="org-src-container">
-
-<pre class="src src-sh">my-rfa -j1 <span class="org-string">'gerrit -h so create-project $(</span><span class="org-sh-quoted-exec">repo-project</span><span class="org-string">); git push so:$(</span><span class="org-sh-quoted-exec">repo-project</span><span class="org-string">) HEAD:refs/heads/master'</span>
-</pre>
-</div>
-</li>
-
-<li>我想重新调出以前打过的这条命令，可能是想重新运行一下，或者只是想
-</li>
-</ol>
-</div>
-</div>
-</div>
-</div>
-
-
-
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> system-config原理</h2>
-<div class="outline-text-2" id="text-3">
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
@@ -430,6 +1015,8 @@ system-config下对很多命令进行了定制，比如 <code>cd</code> 命令�
     </li>
   </ul>
 </nav>
+</div>
+</div>
 </div>
 </div>
 </div>

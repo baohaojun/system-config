@@ -4,90 +4,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>system-config原理与使用的简要说明</title>
-<!-- 2016-04-17 Sun 08:46 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
+ <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -136,44 +87,25 @@ for the JavaScript code in this tag.
 </script>
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
+
+  <h1 id="blog-title">
+
+    <a href="http://baohaojun.github.io/blog/2011/12/23/index.html">包昊军的博客</a>
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
+
+</div>
+</div>
+<div id='bhj_article'>
+  <div id='bhj_leftpane'>
 <div id="content">
 <h1 class="title">system-config原理与使用的简要说明</h1>
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1. system-config原理</a>
-<ul>
-<li><a href="#sec-1-1">1.1. 改变系统原有行为</a>
-<ul>
-<li><a href="#sec-1-1-1">1.1.1. bash提供的对系统定制增强的机制</a></li>
-</ul>
-</li>
-<li><a href="#sec-1-2">1.2. 加入系统原来没有的程序</a>
-<ul>
-<li><a href="#sec-1-2-1">1.2.1. system-config是一个采花大盗</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#sec-2">2. system-config使用</a>
-<ul>
-<li><a href="#sec-2-1">2.1. 阅读源代码</a></li>
-<li><a href="#sec-2-2">2.2. 对Terminal界面（命令行提示符）的改进</a></li>
-<li><a href="#sec-2-3">2.3. 安卓开发相关</a>
-<ul>
-<li><a href="#sec-2-3-1">2.3.1. 对adb的增强</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#sec-3">3. system-config原理</a></li>
-</ul>
-</div>
-</div>
 <p style="color: red;"> <b>Not finished yet.</b> </p>
 <p>
-首先，system-config只是对Linux系统的一些增强，并且最大程度的保证对系统原有功能的兼容，所以你可以像使用普通Linux系统一样使用system-config，并不需要特别的学习。这里说一下system-config里最有用、不容易发现的一些配置用法、原理等。
+首先，system-config只是对Linux系统的一些增强，并且最大程度的保证对系统原有功能的兼容，所以你可以像使用普通Linux系统一样使用system-config，并不需要特别的学习。这里说一下system-config里最有用、不容易发现的一些配置用法、原理等。可能你已经看过我的十年Linux使用经验的视频（ <a href="http://www.bilibili.com/video/av3376647">B站</a> 或 <a href="https://www.youtube.com/watch?v=qp2b3-Guej0">Youtube</a> ），但对里面某些功能如何使用、如何实现一头雾水，这里做一简单介绍。
 </p>
 
 <div id="outline-container-sec-1" class="outline-2">
@@ -238,7 +170,7 @@ for the JavaScript code in this tag.
 <li>改变环境变量，比如PATH环境变量，命令行提示符变量等。
 </li>
 
-<li>改变bash变量，比如 <code>set completion-ignore-case on</code> ，可以在补齐文件名的时候不区分大小写。
+<li>改变bash变量，比如 <code>set completion-ignore-case on</code> ，可以在补齐文件名的时候不区分大小写（这样比如你输入一个 <code>/bin/Bas</code> ，再按一下tab键，也能正确的补齐为 <code>/bin/bash</code> 。当然，这只是为了方便你验证这一功能而举的例子，实际操作中刚好相反，是为了 <i>避免</i> 按Shift键输入大写字母而设置这个变量）。
 </li>
 
 <li>使用bash alias（别名）
@@ -365,7 +297,7 @@ system-config自定义的补齐机制脚本都放在 <code>~/system-config/.bash
 <h2 id="sec-2"><span class="section-number-2">2</span> system-config使用</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-System-config里提供的最有价值的功能，应该就是它的全套的阅读源代码的解决方案。我要研究任何项目的代码，都离不开这些工具。包括system-config自身的代码，我也会用这些工具来进行快速搜索、阅读。所以在使用部分，我们一开始就介绍一下这些工具。
+System-config里提供的最有价值的功能，应该就是它的全套的阅读源代码的解决方案。我要研究任何项目的代码，都离不开这些工具。包括system-config自身的代码，我也会用这些工具来进行快速搜索、阅读。所以在使用部分，我们一开始就先介绍一下这些工具。
 </p>
 </div>
 
@@ -403,7 +335,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 <li>搜索字符串。比如在源代码的任意子目录下运行
 <div class="org-src-container">
 
-<pre class="src src-sh">beagrep -e <span style="color: #848ea9;">"hello world"</span>
+<pre class="src src-sh">beagrep -e <span class="org-string">"hello world"</span>
 </pre>
 </div>
 
@@ -416,7 +348,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 
 <div class="org-src-container">
 
-<pre class="src src-sh">grep-beatags -e <span style="color: #848ea9;">"readlink"</span>
+<pre class="src src-sh">grep-beatags -e <span class="org-string">"readlink"</span>
 </pre>
 </div>
 <p>
@@ -428,7 +360,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 
 <div class="org-src-container">
 
-<pre class="src src-sh">grep-func-call -e <span style="color: #848ea9;">"readlink"</span> -a --nc
+<pre class="src src-sh">grep-func-call -e <span class="org-string">"readlink"</span> -a --nc
 </pre>
 </div>
 
@@ -520,11 +452,478 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 </div>
 
 <div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 安卓开发相关</h3>
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 对系统剪贴板的增强</h3>
 <div class="outline-text-3" id="text-2-3">
-</div><div id="outline-container-sec-2-3-1" class="outline-4">
-<h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> 对adb的增强</h4>
-<div class="outline-text-4" id="text-2-3-1">
+<p>
+从cygwin下第一次发现它提供了在命令行上操作系统剪贴板的程序putclip/getclip，于是一发不可收拾，我在Linux底下也google了一下有没有类似的程序，还真有，就叫xclip。但因为我已经习惯了cygwin下的putclip/getclip，所以我在Linux下也封装了一下xclip，写了Linux版本putclip和getclip脚本。以及其他一系列操作路径的脚本。以下是用法：
+</p>
+
+<ol class="org-ol">
+<li><code>putclip</code> 不加参数，会从stdin读取文本，放到剪贴板中
+</li>
+<li><code>putclip ARGS...</code> 会把所有 <code>ARGS...</code> 拼成一个字符串，放到剪贴板中
+</li>
+<li>up/wp/swp/sup/bp等一系列程序，分别用某种格式拷贝当前路径或所带参数的路径。举个例子：在安卓代码 ~/src/android/frameworks/base 目录下，运行 <code>ap CleanSpec.mk</code> ，会输出 <code>frameworks/base/CleanSpec.mk</code> ，因为这是这个文件的“Android Path”，这也是ap这个名字的由来。类似的还有gitp等等。
+
+<p>
+这些Xp程序用于命令行界面与图形界面之间的通信是最方便的。比如有时候在Firefx/Email客户端下要上传一个文件，在图形界面上一层一层的改变目录、找到文件有时候挺麻烦的，有了up命令和system-config下方便的cd增强机制，很容易找到文件并拷贝其路径，这样在Firefx/Email客户端里一粘贴就好了。还有一个场景是系统设置里想配一下默认用哪个浏览器程序，我想配置成 <code>/usr/bin/chromium</code> ，如果用图形界面切到 <code>/usr/bin</code> 目录下的话，你会发现需要等待好长一段时间—— <code>/usr/bin</code> 目录下文件太多了，图形界面需要把它们全部显示出来相当费功夫，这时候用 <code>up $(which chromium)</code> 直接一拷贝一粘贴就搞定了。
+</p>
+</li>
+</ol>
+
+<p>
+还有一个对剪贴板的增强，是在命令行上输入或用历史机制调出一条长长的命令之后，用一个快捷键把它拷贝下来（然后贴到Emacs里正在编辑的脚本里、邮件正文里等等）。这个在之前已经提到过了，快捷键是 Alt-k，也可以按 <code>Escape k</code> 。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> 对Bash历史纪录的增强</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+有些同学可能还不是很了解，Bash下用Ctrl-r/Ctrl-s可以交互式的用搜索的方法调出之前一段时间内运行过的命令。我经常用这两个快捷键。但是很多时候还嫌这两个键不够方便，所以我通过Bash的补齐机制，定义了一个re命令。使用方法如下：
+</p>
+
+<ol class="org-ol">
+<li>运行一下hir命令（不是每次都需要，如果你发现你最近使用过的命令补齐不出来，可以这时候才用一下hir）。
+</li>
+
+<li>输入re，然后输入你想调出的历史命令的几个子字符串。
+</li>
+
+<li>按Tab键补齐。如果只有一条匹配的历史命令的话，会直接上屏，回车即可运行；如果有多条的话，可以再输入 <code>.0</code> / <code>.1</code> / <code>.N</code> 之后再按Tab，会选中第N条（从0开始数）匹配的历史命令。
+</li>
+</ol>
+
+<p>
+举例：我之前运行过这样的命令：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">my-rfa <span class="org-string">'p=$(</span><span class="org-sh-quoted-exec">ap</span><span class="org-string">); P=$(</span><span class="org-sh-quoted-exec">repo-project</span><span class="org-string">); cd $ANDROID_TOP/.repo/projects; git clone --bare $PWD/$p.git /d/Downloads/android/$P.git; '</span>
+</pre>
+</div>
+
+<p>
+下回我想重新运行这条命令的话，用 Ctrl-r/Ctrl-s 可能不是很方便，有时候甚至找不回来（因为bash自带的历史文件 <code>~/.bash_history</code> 最多会记N条，老的会被冲掉）。所以我输入 <code>re my rfa ap</code> ，然后按Tab，会给我补出system-config的历史文件 <code>~/.cache/system-config/.bash_history.bak</code> 中匹配以上三个字符串 <code>my rfa ap</code> 的所有命令，我再输入相应的 <code>.N</code> 就可以选中实际我想要的第N条匹配的命令；也可以输入更多字符串使匹配更精确，再按Tab键更新缩小补齐选项，方便选择。
+</p>
+
+<p>
+这个主意受了Emacs下文本补齐方法 <code>hippie-expand</code> 的启发，其中有一条补齐方式就是在当前正在编辑的文件中寻找与当前输入的“部分文本”相匹配的更长的文本。
+</p>
+
+<p>
+另外，上面提到的hir命令会做两件事儿，
+</p>
+
+<ol class="org-ol">
+<li>把 ~/.bash_history 里的历史命令去重（去掉重复）保存到 ~/.cache/system-config/.bash_history.bak 里，方便给re补齐用
+</li>
+
+<li>把 ~/.bash_history 里的历史命令全部读到当前的bash会话中
+
+<p>
+为什么要做这件事儿呢？因为很多时候会打开多个终端窗口（或通过gnome-terminal/konsole/xfce4-terminal的新Tab，或通过screen/tmux命令），在一个终端窗口A下输入过一个命令后，在另一个已经存在的终端窗口B下是无法调出此命令历史的。想要能调出来，需要做两件事：1. 在终端A下保存历史命令到 ~/.bash_history ，这个可以手动做（Bash内置命令history，加-w参数） ，也可以设置bash每输入一个命令就自动保存，而非缓存在内存中，system-config采取的是自动存；2. 在终端B下把 ~/.bash_history 的内容重新读到当前Bash会话的历史中（同样用history内置命令，加-r参数）。
+</p>
+
+<p>
+以上。
+</p>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> 一些非常常用的命令介绍</h3>
+<div class="outline-text-3" id="text-2-5">
+</div><div id="outline-container-sec-2-5-1" class="outline-4">
+<h4 id="sec-2-5-1"><span class="section-number-4">2.5.1</span> s</h4>
+<div class="outline-text-4" id="text-2-5-1">
+<p>
+s代表search的意思，输入 <code>s hello world</code> ，会提示你选择哪个搜索引擎，然后用你选定的搜索引擎去搜索“hello world”。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-2" class="outline-4">
+<h4 id="sec-2-5-2"><span class="section-number-4">2.5.2</span> e</h4>
+<div class="outline-text-4" id="text-2-5-2">
+<p>
+e代表edit的意思，在终端上输入 <code>e FILENAME</code> ，会弹出当前正在运行的 <code>emacs</code> 窗口，并在其中打开 <code>FILENAME</code> 这个文件。它是对emacsclient的一层简单封装。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-3" class="outline-4">
+<h4 id="sec-2-5-3"><span class="section-number-4">2.5.3</span> ew</h4>
+<div class="outline-text-4" id="text-2-5-3">
+<p>
+ew代表edit and wait的意思，像上面的e一样，也调用了emacsclient，只不过它还会等待Emacs文件编辑结束。所以我把它配成了我的 <code>EDITOR</code> 环境变量。
+</p>
+
+<p>
+需要注意的是，这两个命令都支持在远程的ssh登录下使用，会在本地的Emacs窗口下打开远程文件进行编辑。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-5-4" class="outline-4">
+<h4 id="sec-2-5-4"><span class="section-number-4">2.5.4</span> of</h4>
+<div class="outline-text-4" id="text-2-5-4">
+<p>
+of代表open file的意思，在终端上输入 <code>of FILENAME</code> 或 <code>of URL</code> ，会用系统默认的关联程序打开相应的文件或网址。这个相当于Windows下用鼠标双击了某文件的图标。在Windows命令行cmd.exe下也有个相应的start命令；在cygwin下也有个cygstart命令；在Mac下好像也有个叫open的命令。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Emacs介绍</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+Emacs是一个非常强大的编辑器。很多人觉得太难了，不想学它或学了一阵子之后又放弃了。其实很多工具用下来最好比的还是看谁更能坚持。坚持用Emacs，坚持不懈的折腾它，何尝不是工匠精神的一种体现呢。工匠们一般都很在意自己使用的工具称不称手的。而编辑器对程序员来说，是最重要的工具了吧。
+</p>
+
+<p>
+其实Emacs下有很多快捷键，跟Bash下是一样的。你可能都已经学会了，比如 <code>Ctrl-a</code> 是移到行首， <code>Ctrl-e</code> 是移到行尾。 <code>Ctrl-r/Ctrl-s</code> 是搜索，等等等等，所以还有什么可怕的呢（另外你可能发现了，UNIX系统下各种idea相互杂交是非常普遍的，比如把Emacs的按键在Bash里也实现一番。所以system-config从Emacs下借鉴helm.el到命令行下等并不是首创，只是延续了这一传统）。
+</p>
+
+<p>
+在学习Emacs之前，强烈建议仔细阅读一下Vim作者写的我翻译的 <a href="../../../2014/01/03/0-7-habits-of-highly-effective-editting.html">高效文本编辑的七个习惯</a> 。对于掌握任何一门技术、一种工具，几乎都是非常有用的。
+</p>
+
+<p>
+比较基本的Emacs使用就不讲了，你可以从它的Help菜单里的Emacs Tutorial开始，第二个菜单项（choose language）里有中文版的。下面讲一下我认为比较重要的一些用法。从我认为最重要的获取帮助、阅读文档开始，因为我认为掌握这些技能，对你进一步深入学习Emacs和其他很多Linux程序都是很有帮助的。
+</p>
+</div>
+
+<div id="outline-container-sec-2-6-1" class="outline-4">
+<h4 id="sec-2-6-1"><span class="section-number-4">2.6.1</span> 用Emacs获取帮助、阅读文档</h4>
+<div class="outline-text-4" id="text-2-6-1">
+<p>
+Emacs是那种螺旋上升的工具，在你开始使用它之后，会不停地增强自己的能力。就像学语言一样，边学边用，用得越多，学得越好；学得越好，用得越爽。这是一种很少见的自增强的工具，造成这种现象，有几种原因，你可以好好利用一下这些特点：
+</p>
+
+<ol class="org-ol">
+<li>Emacs自带的帮助系统，是强大到没有谁了的。可能主要是因为Emacs是用Lisp写的，而Lisp系统可能都有非常强大的自我帮助功能。几乎任何一个Emacs命令、快捷键，都可以方便的查看它的帮助。一定要好好利用这一点。
+</li>
+
+<li>Emacs提供了非常方便的查看系统man手册，info手册，perldoc等各种手册的功能。好好利用Emacs自带的搜索功能、info自带的搜索功能，往往可以达到事半功倍的效果。
+</li>
+
+<li>Emacs下提供了Occur命令、helm.el命令，对它们善加利用，你会发现Emacs提供了自发现的功能，允许你主动的去 <b>发现</b> 系统有哪些功能。比如你当前正在试着用Emacs的info去读bash的info手册，但你对info模式还不是很了解，怎么办呢？
+
+<p>
+你可以在info模式下按一下 <code>Ctrl-h b</code> ，Emacs会列出所有当前模式下的快捷键。然后你用Emacs的occur命令，过滤出所有与info相关的快捷键。这下你就可以很轻松的发现有哪些与看info手册相关的有意思、值得一学的快捷键了：
+</p>
+
+
+<div class="figure">
+<p><a href="../../../../images/info-occur.png"><img src="../../../../images/info-occur.png" alt="info-occur.png" /></a>
+</p>
+</div>
+</li>
+
+<li>用Emacs打开某一程序，研读其源代码，善用Emacs的搜索功能、system-config的搜索工具，有时候比读文档更有效！
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-2" class="outline-4">
+<h4 id="sec-2-6-2"><span class="section-number-4">2.6.2</span> 在Emacs下调用system-config提供的阅读代码程序</h4>
+<div class="outline-text-4" id="text-2-6-2">
+<p>
+之前提到过，我一般都是用Emacs阅读代码。所有的代码搜索相关的操作，基本都是用Emacs及其grep模式实现。其中比较重要的几个快捷键是：
+</p>
+
+<dl class="org-dl">
+<dt> M-g r </dt><dd>默认运行 beagrep 程序，查找任意字符串。快捷键助记法： <code>M-g r</code> 后两个字母是 <code>grep</code> 的前两个字母。
+</dd>
+<dt> M-. </dt><dd>默认运行 grep-beatags 程序，查找函数、变量的定义
+</dd>
+<dt> M-g f </dt><dd>默认运行 grep-func-all 程序，查找引用
+</dd>
+<dt> M-g o </dt><dd>运行我定制过的 bhj-occur 命令，是对Emacs自带的occur的一点封装
+</dd>
+<dt> M-g i </dt><dd>Emacs自带的imenu命令，可以用来方便的在同一个文件内的函数、全局变量之间跳转
+</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-3" class="outline-4">
+<h4 id="sec-2-6-3"><span class="section-number-4">2.6.3</span> 从Emacs调用外部程序</h4>
+<div class="outline-text-4" id="text-2-6-3">
+<p>
+Emacs下有一系列的函数，可以调外部程序来完成你的工作。
+</p>
+
+<ol class="org-ol">
+<li>调用make等进行编译
+</li>
+
+<li>调用grep等进行搜索（前面提到的代码阅读程序都是用的这一机制）
+</li>
+
+<li>调用某shell命令，显示其输出的文本
+</li>
+
+<li>调用某shell命令，并把当前选中的文本pipe给这一程序进行处理，显示其输出的文本
+</li>
+
+<li>在上面的基础上，把当前选中的文本替换为处理完成后输出的文本
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-4" class="outline-4">
+<h4 id="sec-2-6-4"><span class="section-number-4">2.6.4</span> 从外部程序调用Emacs</h4>
+<div class="outline-text-4" id="text-2-6-4">
+<p>
+这个可以通过emacsclient实现。所以Emacs和终端基本是通的。双方可以相互调用，像搭积木似的，通过一些简单的基本模块，组建出非常强大的功能，以便更高效的完成你的工作。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-6-5" class="outline-4">
+<h4 id="sec-2-6-5"><span class="section-number-4">2.6.5</span> Emacs下的补齐</h4>
+<div class="outline-text-4" id="text-2-6-5">
+<p>
+Emacs下有各种补齐功能，这里讲几种我最常用的
+</p>
+
+<ol class="org-ol">
+<li>yasnippet，比如输入codegen，这是一个我准备过的 yasnippet ，然后按一下 C-M-i ，就能补齐
+</li>
+
+<li>codegen，被yasnippet展开之后，按一下 <code>M-s g</code> ，就能生成代码
+</li>
+
+<li>bbyac，输入一小段文字，按一下快捷键，被匹配、展开成当前文体中已经存在的文字。
+</li>
+
+<li>Emacs自带的hippie-expand，这个用得不多了，基本上前面几个足够覆盖了它的功能。
+</li>
+</ol>
+
+<p>
+以上这几种工具，是可以被应用于任意编程语言的，并且比较简单易用，所以单独说一下。除此之外，还可以自行研究一下如何配置你在用的编程语言的补齐及其他增强工具。比如C/C++程序，通过调用clang编译器，可以进行上下文智能补齐，非常强大，但用起来也比较折腾一些&#x2026;
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-2-7" class="outline-3">
+<h3 id="sec-2-7"><span class="section-number-3">2.7</span> Sawfish介绍</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+Sawfish是一个窗口管理器，我在system-config中把它和xfce4配在了一起，后者提供了一个稍为更加现代化一点，但还是非常轻便的桌面系统。这样我就有了一个比较舒服的桌面环境。
+</p>
+
+<p>
+Sawfish的主要功能有：
+</p>
+
+<ol class="org-ol">
+<li>对窗口进行各种操作：最大化、最小化、调到前台等等。甚至可以自己创建、画窗口。
+</li>
+
+<li>对窗口可编程发送键盘事件。相当于拥有了Windows下的按键精灵的功能。
+</li>
+
+<li>用system函数在后台启动系统程序（相当于sawfish-&gt;命令行）
+</li>
+
+<li>提供sawfish-client程序，可以方便的从命令行对sawfish进行控制（相当于命令行-&gt;sawfish）
+
+<p>
+所以命令行和sawfish基本也是通的，就像命令行与Emacs一样。（事实上用于Sawfish配置的语言，也是一种Lisp方言，就是从Emacs Lisp演变来的）。
+</p>
+</li>
+</ol>
+
+<p>
+常用快捷键（这里s-代表Super-，也就是一般键盘上的Win键）：
+</p>
+
+<dl class="org-dl">
+<dt> s-h s-t </dt><dd>调出或启动终端
+</dd>
+<dt> s-h s-m </dt><dd>调出或启动Emacs
+</dd>
+<dt> s-h s-n </dt><dd>调出或启动Firefox
+</dd>
+<dt> s-h s-s </dt><dd>调出窗口列表，可键入文本进行选择，C-n/C-p上下选择窗口，回车将选中窗口调到前台
+</dd>
+<dt> s-h s-r </dt><dd>相当于Windows下的Run Dialog，输入命令以运行
+</dd>
+<dt> s-h k </dt><dd>快捷键的帮助，提示你按一个键，给出Sawfish对该键的相应绑定
+</dd>
+<dt> s-h s-k </dt><dd>更复杂的快捷键的帮助，主要加入了对 <code>s-h</code> 组合快捷键的帮助
+</dd>
+</dl>
+
+<p>
+想了解sawfish更多功能，可以运行一下sawfish-ui，里面有一些简单的绑定可以配（system-config里已经配了一些）。另外也可以打开 <code>~/system-config/.sawfishrc</code> 进行查看。
+</p>
+
+<p>
+可以在 <code>~/system-config/.sawfish/start</code> 下添加脚本，在桌面启动时该目录下的脚本会被启动。
+</p>
+
+<p>
+可以用
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">bhj-notify TITLE <span class="org-string">"NOTIFICATION TEXT"</span>
+</pre>
+</div>
+
+<p>
+弹出一个简单的sawfish桌面通知。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8" class="outline-3">
+<h3 id="sec-2-8"><span class="section-number-3">2.8</span> 安卓开发相关</h3>
+<div class="outline-text-3" id="text-2-8">
+<p>
+如果你不做安卓系统开发，可以直接跳过这部分内容。
+</p>
+</div>
+
+<div id="outline-container-sec-2-8-1" class="outline-4">
+<h4 id="sec-2-8-1"><span class="section-number-4">2.8.1</span> 源代码相关</h4>
+<div class="outline-text-4" id="text-2-8-1">
+<p>
+我对git/gerrit/repo有相当多的封装。主要是通过gerrit/repo工作的时候，一般需要处理多个产品、多条线的问题。在提review的时候，一定要搞清楚当前应该用哪个git remote，应该提到哪个git branch上。手动输入这些信息是非常痛苦的，一会是这个分支，一会又是那个分支，很容易搞错。即使不搞错，也容易打错字。
+</p>
+
+<p>
+所以我提供了一系列 repo-XXX 命令，比如repo-branch，可以给出当前git仓储提review的时候应该提到哪个分支。其规则如下：
+</p>
+
+<ol class="org-ol">
+<li>一般情况下，从repo的manifest里可以获取分支信息
+</li>
+
+<li>如果你用 <code>git checkout -B ...</code> 或 <code>git branch --set-upstream ...</code> 设置过当前分支及其对应的远程分支，则repo-branch会打印远程分支的名字，这种情况下提review一般就是要提到那个分支下。
+</li>
+</ol>
+
+<p>
+另外我需要提review的时候，不会直接输入 <code>git push $(repo-remote) HEAD:refs/for/$(repo-remote)</code> ，虽然这条命令是OK的，而是会用更进一步的封装 <code>gerrit-push-review</code> ，有几个好处：
+</p>
+
+<ol class="org-ol">
+<li>会自动先把你的代码rebase到服务器上最新提交
+</li>
+<li>可以在本地先自我review一下代码（加-R参数可以不review）
+</li>
+<li>可以在后面加gerrit用户名，直接添加reviewer
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-2" class="outline-4">
+<h4 id="sec-2-8-2"><span class="section-number-4">2.8.2</span> 编译相关</h4>
+<div class="outline-text-4" id="text-2-8-2">
+<p>
+安卓编译系统有较多问题，所以我对其进行了一些封装。官方文档的流程是这样的：
+</p>
+
+<ol class="org-ol">
+<li><code>. build/envsetup.sh</code> 设置环境
+</li>
+<li><code>lunch</code> 选择编译目标产品和编译类型
+</li>
+<li>make/mm/mmm等
+</li>
+</ol>
+
+<p>
+这样做有以下几个问题：
+</p>
+
+<ol class="org-ol">
+<li>每次新开Bash窗口都要做，比较费劲
+</li>
+
+<li>容易出错，首先是容易忘了做过了还是没做过，还没配env/lunch就开始make，结果编译的是错误的产品；或者多次冗余的进行env/lunch，浪费了时间。
+</li>
+
+<li>其次是在多产品的情况下更容易配错，比如刚刚配了A目录下的A1产品，过了会到了B目录下不重新配就直接进行B1产品的编译，肯定会错的一塌糊涂。
+</li>
+</ol>
+
+<p>
+其实Android自己提供了一个机制，方便你一劳永逸的配好一个代码目录，而不是每次都重新配一遍。那就是代码顶层目录下的 buildspec.mk 文件，可以把相关配置信息放在里面，以后不用配直接make就可以。我相信谷歌提供了这个机制，她内部的员工肯定都会用该机制，而不是只像官方文档里描述的那样，每次都那么麻烦。
+</p>
+
+<p>
+所以我提供的 android-make 就利用了这一机制，你可以通过 -c 参数比如 <code>android-make -c aosp_x86-eng</code> 指定用哪个编译配置，也可以不加-c参数，那么它就会用上一次加 -c 参数时指定的配置。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-3" class="outline-4">
+<h4 id="sec-2-8-3"><span class="section-number-4">2.8.3</span> 加快编译速度</h4>
+<div class="outline-text-4" id="text-2-8-3">
+<p>
+在做安卓开发时，非常重要的一点是要尽量加快编译速度。除了让公司给你配更好的机器外，以下有几个方法：
+</p>
+
+<ol class="org-ol">
+<li>用ccache，对full build来说，用过ccache之后速度能快一倍。
+</li>
+
+<li>避免读取所有Android.mk文件。比如想编译kernel或者lk，很多开发都只知道如何通过make去做，但这样会把所有Android.mk都读一遍，这是非常费时间的。所以可以对安卓编译机制做一番研究，最后得到怎样用类似mm的机制编译kernel、lk、sepolicy等的方法。如果是做这方面工作的朋友，可以关注一下。
+</li>
+
+<li>用mmm只编译相关模块，避免full build。
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-4" class="outline-4">
+<h4 id="sec-2-8-4"><span class="section-number-4">2.8.4</span> 对boot.img进行拆分、合成</h4>
+<div class="outline-text-4" id="text-2-8-4">
+<p>
+在系统相关的开发中，尤其是bsp工程师，以及需要改系统启动脚本（init.rc系列文件）、sepolicy的情况下，对boot.img进行简单改动，是非常有用的一项技能，有时甚至完全不需要通过build来进行，比如对init.rc的改动。这个在system-config底下是通过 replace-bootimage 及其辅助肢本实现的。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-5" class="outline-4">
+<h4 id="sec-2-8-5"><span class="section-number-4">2.8.5</span> 重刷某个分区</h4>
+<div class="outline-text-4" id="text-2-8-5">
+<p>
+这个有很多种方法，比如fastboot，比如手机芯片厂商提供的刷机程序。但有一种更方便的方法，是在手机运行的过程中，把分区的刷机文件用adb push上去，然后用dd命令写入到相关分区。我为此专门封装了一个 adb-push-partition 的脚本。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-6" class="outline-4">
+<h4 id="sec-2-8-6"><span class="section-number-4">2.8.6</span> 伪工厂重置（清空/data目录，但保留某些重要文件）</h4>
+<div class="outline-text-4" id="text-2-8-6">
+<p>
+有一个名为 adb-clean-data 的脚本，用来做这个事。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-8-7" class="outline-4">
+<h4 id="sec-2-8-7"><span class="section-number-4">2.8.7</span> 对adb的增强</h4>
+<div class="outline-text-4" id="text-2-8-7">
 <p>
 说到这儿，讲一下我对adb的一些增强。
 </p>
@@ -547,7 +946,7 @@ system-config里的adb像cd一样，是一个别名，实际调用的是my-adb�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #0072b2;">command</span> adb shell echo <span style="color: #848ea9;">'hello    world'</span>
+<pre class="src src-sh"><span class="org-builtin">command</span> adb shell echo <span class="org-string">'hello    world'</span>
 </pre>
 </div>
 <p>
@@ -555,7 +954,7 @@ system-config里的adb像cd一样，是一个别名，实际调用的是my-adb�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #0072b2;">echo</span> <span style="color: #848ea9;">'hello    world'</span>
+<pre class="src src-sh"><span class="org-builtin">echo</span> <span class="org-string">'hello    world'</span>
 </pre>
 </div>
 <p>
@@ -563,7 +962,7 @@ system-config里的adb像cd一样，是一个别名，实际调用的是my-adb�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh">adb echo <span style="color: #848ea9;">'hello    world'</span>
+<pre class="src src-sh">adb echo <span class="org-string">'hello    world'</span>
 </pre>
 </div>
 <p>
@@ -576,7 +975,7 @@ system-config里的adb像cd一样，是一个别名，实际调用的是my-adb�
 
 <div class="org-src-container">
 
-<pre class="src src-sh">adb <span style="color: #848ea9;">'echo "hello    world"'</span>
+<pre class="src src-sh">adb <span class="org-string">'echo "hello    world"'</span>
 </pre>
 </div>
 
@@ -585,7 +984,7 @@ system-config里的adb像cd一样，是一个别名，实际调用的是my-adb�
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh">sh -c <span style="color: #848ea9;">'echo "hello    world"'</span>
+<pre class="src src-sh">sh -c <span class="org-string">'echo "hello    world"'</span>
 </pre>
 </div>
 <p>
@@ -600,22 +999,140 @@ system-config里的adb像cd一样，是一个别名，实际调用的是my-adb�
 </p>
 </li>
 </ol>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../../03/02/0-steve-yegges-ten-predictions.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        偶像的十大预言 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../../../meta/Archive.html"> <!-- next-url -->
+        Archive <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
 </div>
 </div>
 </div>
+</div>
+<!-- {%html-mode%} -->
+
+<div id="disqus_container">
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
+    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
+    var disqus_url = 'http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+    <div style="margin-bottom:20px">
+    <script type="text/javascript" charset="utf-8">
+      (function(){
+      var _w = 86 , _h = 16;
+      var param = {
+      url:location.href,
+      type:'6',
+      count:'', /**是否显示分享数，1显示(可选)*/
+      appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+      title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+      pic:'', /**分享图片的路径(可选)*/
+      ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+      language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+      rnd:new Date().valueOf()
+      }
+      var temp = [];
+      for( var p in param ){
+      temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+      }
+      document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+      })()
+    </script>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+</div> <!-- bhj_leftpane -->
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
 
 
 
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> system-config原理</h2>
-</div>
-</div>
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+    <h2>Tags</h2>
+    <ul>
+                <li><a href="../../../../meta/tags/blog.html" title="Blogging">blog</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='../../03/02/0-steve-yegges-ten-predictions.html'> 偶像的十大预言 </a></li>
+<li><a href='../../02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html'> kmail --view can't display some maildir files corr... </a></li>
+<li><a href='../../01/20/0-my-brother-is-my-hero.html'> 那些年，我们一起追过的偶像 </a></li>
+<li><a href='../../01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html'> Cannot connect to adb under linux because of optio... </a></li>
+<li><a href='../../../2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html'> 大公司、小公司、自由开源软件社区的代码管理 </a></li>
+<li><a href='../../../2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html'> Qt QString indexOf不考虑大小写的坑 </a></li>
+<li><a href='../../../2015/11/04/0-blog-optimization-for-viewing-on-phone.html'> 优化了一下手机上看博客的效果 </a></li>
+<li><a href='../../../2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html'> 如何在Linux下运行小扳手（包含Ubuntu 12.04） </a></li>
+<li><a href='../../../2015/09/19/0-Wrench-changelog-and-download-location.html'> 小扳手更新记录及最新版下载地址 </a></li>
+<li><a href='../../../2015/09/14/0-Got-hit-by-perl-glob.html'> 被perl的glob给坑了 </a></li>
+    </ul>
+
+    <h2 class="sidebar-title">Archive</h2>
+      <ul id="archives">
+        <li><a href="/meta/Archive.html"> The complete archive </a></li>
+      </ul>
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
 <div id="postamble" class="status">
-<p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2016-04-17 Sun 08:46</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
-<p class="validation"></p>
+<!-- {%html-mode%} -->
+
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>
