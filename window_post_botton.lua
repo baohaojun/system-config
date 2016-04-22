@@ -23,6 +23,7 @@ map['com.booking/com.booking.activity.UserLoginWithFacebookActivity'] = 'manual-
 map['com.demon.weism/com.demon.weism.activity.InfoBoxesActivity'] = 'weixin-chat'
 map['com.demon.weism/com.demon.weism.activity.LoginActivity'] = 'manual-post'
 map['com.demon.weism/com.demon.weism.activity.NewMainActivity'] = 'weixin-chat'
+map['com.eg.android.AlipayGphone/com.alipay.android.widget.security.ui.NickNameSettingActivity_'] = 'manual-post'
 map['com.eg.android.AlipayGphone/com.alipay.mobile.security.login.ui.AlipayUserLoginActivity'] = 'manual-post'
 map['com.github.mobile/com.github.mobile.accounts.LoginActivity'] = 'manual-post'
 map['com.github.shadowsocks'] = 'manual-post'
