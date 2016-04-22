@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -x
+
+while true; do
+    (
+        flock 9
+        beagled --debug --mono-debug --indexing-delay 2
+        sleep 10
+    ) 9> ~/.cache/system-config/logs/beagled.lock
+done

@@ -65,6 +65,8 @@ def ali_mailbox_conv_to_remote(name):
 
 def ali_folder_match(folder, pats):
     folder = ali_mailbox_conv(folder).lower()
+    if folder.find('/') >= 0:
+        return False
     if folder.find("已删除邮件") >= 0:
         return False
     for pat in pats:

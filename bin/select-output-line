@@ -2,7 +2,7 @@
 set -e
 
 export SELECT_PROMPT="Please enter your selection: "
-ORDERED=false
+ORDERED=${SELECT_HISTORY_ORDER:-false}
 max=-1
 if test "${1:0:1}" = -; then
     TEMP=$(getopt -o m:O:op:i: --long order-name:,prompt:,init:,dist-sort: -n $(basename $0) -- "$@")
@@ -48,7 +48,7 @@ if test $ORDERED != false; then
     if test $ORDERED != true; then
         md5=$ORDERED
     else
-        md5=$(echo "$@" | md5sum | pn 1)
+        md5=$(echo $SELECT_PROMPT "$@" | md5sum | pn 1)
     fi
     cmdfile=~/.cache/system-config/bhj/select-output-line/$md5.cmd.$UID
     histfile=~/.cache/system-config/bhj/select-output-line/$md5.hist.$UID

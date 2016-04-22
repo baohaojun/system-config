@@ -1,0 +1,6 @@
+#!/bin/bash
+cat <<EOF | sudo tee /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 4.4.4.4
+nameserver 172.16.21.3
+EOF

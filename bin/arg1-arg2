@@ -1,7 +1,21 @@
 #!/usr/bin/env perl
 
+
+use Getopt::Long;
+my $split;
+GetOptions(
+    "split=s" => \$split,
+    );
+
+$split = q(\s|'|:) unless $split;
+$split = qr($split);
+
 $arg1 = $ARGV[0];
-@arg1 = split(/\s|'|:/, $arg1);
+@arg1 = split($split, $arg1);
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
 
 shift @ARGV;
 
@@ -13,7 +27,7 @@ if (@ARGV > 1) {
     @arg2 = @ARGV;
 } else {
     $arg2 = $ARGV[0];
-    @arg2 = split(/\s|'|:/, $arg2);
+    @arg2 = split($split, $arg2);
 }
 
 for (@arg2) {

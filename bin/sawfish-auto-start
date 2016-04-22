@@ -48,5 +48,6 @@ if test -e ~/src/github/private-config/bin/ugly; then
     ~/src/github/private-config/bin/ugly
 fi
 
+(setxkbmap -layout us -variant dvp; re-xmodmap 2>&1 | cat)&
 setsid run-dir-once ~/external/etc/sawfish/start&
 setsid run-dir-once ~/system-config/.sawfish/start&

@@ -4,5 +4,5 @@ set -e
 if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
     true
 else
-    failse
+    false
 fi

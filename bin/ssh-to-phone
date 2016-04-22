@@ -1,5 +1,7 @@
 #!/bin/bash -i
 
+set -e
+
 # instead of scp in the name, we are going to use rsync
 if test ! -e ~/.config/system-config/adb-device || test "$(cat ~/.config/system-config/adb-device)" = emulator-5554; then
     my-adb -S
@@ -50,9 +52,9 @@ unset TEMP
 set -x
 if test $(basename $0) = ssh-to-phone; then
     my-adb forward tcp:22222 tcp:22
-    rsync /etc/resolv.conf root@phone:/etc/ >/dev/null 2>&1 &
+    (rsync /etc/resolv.conf root@phone:/etc/ >/dev/null 2>&1 &)
     ssh phone -o ConnectTimeout=2 "$@"
-    exit 0
+    exit
 fi
 ssh media_rw@phone mkdir -p /data/media/0/$WHERE
 rsync --chmod=o=r -av "$@" media_rw@phone:/data/media/0/$WHERE

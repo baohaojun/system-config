@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+x=$(find ~/.offlineimap/*/* ~/Maildir -maxdepth 1 -name "*$1*" |
+           if test "$#" = 2; then
+               grep -P -e "$2\b" -i
+           else
+               cat
+           fi |
+           grep -v 'Maildir/\..*\.index|Repository-Local-' -P
+
+ )
+
+if yes-or-no-p -n "$x
+Remove the above folders? "; then
+    rm -rf $x
+fi

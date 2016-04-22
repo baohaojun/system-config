@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export JENKINS_SERVER_COOKIE=true
+export HUDSON_COOKIE=true

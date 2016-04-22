@@ -50,7 +50,10 @@ if test -e ~/.config/system-config/sudo-ssh; then
 
 else
     function sudo {
-        command sudo -E env PATH=$PATH  "$@"
+        (
+            unset PROMPT_COMMAND
+            exec sudo -E env PATH=$PATH  "$@"
+        )
     }
 fi
 export -f sudo

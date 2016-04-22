@@ -1,4 +1,11 @@
 #!/bin/bash
 set -e
+
+if test $# != 0; then
+    mkdir ~/tmp/$1
+    cd ~/tmp/$1
+    git-get -u "$1" -d .
+fi
+
 git fetch $(repo-remote) refs/*:refs/*
 git co refs/meta/config

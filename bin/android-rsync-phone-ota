@@ -227,24 +227,35 @@ if test ! -e xbin/busybox; then
     done
 fi
 
+# sudo find . \( -name 'AppStoreSmartisan.apk' -o -name 'GameStoreSmartisan.apk' \) -exec rm -v '{}' \;
 if test -e $gapps_updir/gapps-t1 -a $no_hack = false; then
     dest=$PWD
     sudo mv xbin/su xbin/su.copy || true
     (
+
+        gapps=$gapps_updir/gapps-lp/system
         if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
             # it's lp
-            cd $gapps_updir/gapps-lp/system
+            true
         else
-            cd $gapps_updir/gapps-t1
+            gapps=$gapps_updir/gapps-t1
         fi
 
-        find . -name '.git' -prune -o -type f -print |
-            if test $no_gapps = false; then
-                cat
-            else
-                grep 'install-recovery.sh|Superuser.apk|/xbin/|libsupol.so' -P
-            fi |
-            xargs sudo env PATH=$PATH cp-with-dir-struct $dest
+        supersu=~/src/github/smartcm/supersu-32
+        if my-adb uname -a | grep -q aarch64; then
+            supersu=~/src/github/smartcm/supersu-64
+        fi
+
+        for dir in $gapps $supersu; do
+            cd $dir
+            find . -name '.git' -prune -o -type f -print |
+                if test $no_gapps = false; then
+                    cat
+                else
+                    grep 'install-recovery.sh|Superuser.apk|/xbin/|libsupol.so' -P
+                fi |
+                xargs sudo env PATH=$PATH cp-with-dir-struct $dest
+        done
     )
 fi
 
@@ -263,7 +274,7 @@ sudo bash -c "
     fi
 "
 
-sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
     echo chcon u:object_r:zygote_exec:s0 ../system/xbin/sugote
