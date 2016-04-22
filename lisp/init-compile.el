@@ -48,6 +48,7 @@
     (with-current-buffer "*Shell Command Output*"
       (view-mode 1))))
 
+(ad-deactivate 'shell-command-on-region)
 
 (after-load 'compile
   (require 'ansi-color)
