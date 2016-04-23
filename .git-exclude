@@ -16,3 +16,4 @@ modules.order
 *.elc
 .~lock*
 core
+*.log

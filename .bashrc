@@ -47,7 +47,10 @@ else
             ) | tr '\n' ':'
                )
         export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
-        printf 'export PATH=%q\n' "$PATH" > ~/.config/system-config/.bashrc-path
+        if test "$PATH"; then
+            printf 'export PATH=%q\n' "$PATH" > ~/.config/system-config/.bashrc-path.$$
+            mv ~/.config/system-config/.bashrc-path.$$ ~/.config/system-config/.bashrc-path
+        fi
     else
         echo ~/system-config/etc/path/$uname-$march not exist?
     fi
