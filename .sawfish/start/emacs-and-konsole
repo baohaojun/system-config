@@ -3,6 +3,12 @@
 while test "$(sawfish-client -e '(window-exists-p "xfce4-panel")')" != t; do
     sleep 1
 done
+
+if xrandr | grep -P 'HDMI. connected|^DP1 connected'; then
+    switch-to-hdmi
+    switch-to-hdmi-and-laptop
+fi
+
 emacs.bhj&
 konsole.bhj&
 
