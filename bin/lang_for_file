@@ -1,1 +1,93 @@
-../gcode/ajoke/bin/lang_for_file
+#!/usr/bin/env perl
+
+use strict;
+use String::ShellQuote;
+
+if (@ARGV != 1 and @ARGV != 2) {
+    die "Error: Usage: $0 SOURCE_FILE [GLABALRC]"
+}
+
+my $globalrc = $ARGV[1];
+
+unless (-e $globalrc) {
+    chomp($globalrc = qx(lookup-file .globalrc));
+}
+
+unless (-e $globalrc) {
+    $globalrc = glob("~/.globalrc");
+}
+
+my $source_file = $ARGV[0];
+my $source_path = shell_quote($source_file);
+$source_file =~ s,.*/,,;
+$source_file =~ s,\.gz$,,;
+
+open(my $rcfile, "<", $globalrc) or die "Can not open globalrc $globalrc";
+
+sub debug(@) {
+    # print STDERR "@_\n";
+}
+
+my %lang_map;
+my $seen_plugin_example = 0;
+while (<$rcfile>) {
+    if (/plugin-example\|/) {
+        $seen_plugin_example = 1;
+    }
+    if (m/:langmap=(.*?)\\?:(.*):\\?$/) {
+        next unless $seen_plugin_example;
+        my $lang = $1;
+        my $pat = $2;
+
+        debug "lang is $lang, pat is $pat";
+        $lang_map{$lang} = [] unless exists $lang_map{$lang};
+
+        while ($pat =~ m/\((.*?)\)/g) {
+            push @{$lang_map{$lang}}, $1;
+        }
+        $pat =~ s/\(.*?\)//g;
+        push @{$lang_map{$lang}}, (map {'*.' . $_} (grep {$_} split(/\./, $pat)));
+        $,=' ';
+        debug "map for $lang is @{$lang_map{$lang}}";
+    }
+}
+
+use Text::Glob qw( match_glob );
+
+foreach my $lang (keys %lang_map) {
+    foreach my $glob (@{$lang_map{$lang}}) {
+        if (match_glob($glob, $source_file)) {
+            print $lang;
+            exit(0);
+        }
+    }
+}
+
+chomp(my $interp = qx(cat $source_path|head -n 1));
+
+if ($interp =~ m,^#!\s*\S*/(\S+),) {
+    $interp = $1;
+    if ($interp eq "env" and $' =~ m/\s+(\S+)/) { #' fix the fontlock
+        $interp = $1;
+    }
+    my %unk_lang_map = (
+        "bash" => "sh",
+        );
+
+    print ($unk_lang_map{$interp} or $interp);
+    exit 0;
+}
+
+my %emacs_mode_ctags_type_map = (
+    sawfish => "rep",
+    );
+
+open(my $source, "<", $ARGV[0]) or die "Can't open $source_file";
+my $first_line = <$source>;
+if ($first_line =~ m/-\*-\s*mode:\s*(\S+)\s*-\*-/) {
+    my $mode = $1;
+    print ($emacs_mode_ctags_type_map{$mode} or $mode);
+    exit;
+}
+
+print "unknown";

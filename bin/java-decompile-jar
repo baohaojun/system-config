@@ -1,1 +1,11 @@
-../gcode/ajoke/bin/java-decompile-jar
+#!/bin/bash
+
+set -e
+jar=$(readlink -f $1)
+td=~/.cache/system-config/for-code-reading/$jar
+mkdir -p $td
+cd $td
+unzip $jar
+for x in $(find . -name '*.class'); do 
+    javap ${x%.class} | grep -v '^Compiled from' > ${x%.class}.java&
+done | cat

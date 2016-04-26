@@ -1,1 +1,7 @@
-../gcode/ajoke/bin/pn
+#!/bin/bash
+which=$1
+shift
+if test $# = 1; then
+    set -- -F "$@"
+fi
+awk "$@" '{print $'$which'}'

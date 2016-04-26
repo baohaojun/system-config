@@ -1,1 +1,203 @@
-../gcode/ajoke/bin/relative-link
+#!/bin/bash
+set -e
+
+. relative-path
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+if test -z "$UNAME_CHECKED" -a "$USE_NT_SYMLINK"; then
+    export UNAME_CHECKED=true
+    function do_ln_1() {
+        if test "$1" = -d; then
+            dirf=/d
+        else
+            dirf=
+        fi
+        shift
+        cmd.exe /c mklink $dirf  "$1" "$2"
+    }
+
+    export -f do_ln_1
+
+    function ln() {
+        soft=false
+        force=false
+        TEMP=$(getopt -o sf --long soft,force -n ln -- "$@")
+        eval set -- "$TEMP"
+        while true; do
+            case "$1" in
+                -s|--soft)
+                    soft=true
+                    shift
+                    ;;
+                -f|--force)
+                    force=true
+                    shift
+                    ;;
+                --)
+                    shift
+                    break
+                    ;;
+                *)
+                    die "internal error"
+                    ;;
+            esac
+        done
+
+        if test $soft = false; then
+            die "Can not do hard link";
+        fi
+
+        if test $# = 1; then
+            set -- $# .
+        fi
+
+        args=("$@")
+
+        last=${args[${#args[@]} - 1]}
+        n_args=${#args[@]}
+
+        if test $n_args -gt 2 -a ! -d "$last"; then
+            die "$last not directory"
+        fi
+
+        if test ! -d "$last" -a -e "$last"; then
+            if test $force = false; then
+                die "$last already exist"
+            else
+                rm "$last"
+            fi
+        fi
+
+
+
+        for n in $(seq 0 $((${#args[@]} - 2))); do
+            dest=$last
+            if test -d $last; then
+                dest=$last/$(basename ${args[$n]})
+            fi
+
+            if test $force = true; then
+                rm -f $dest
+            elif test -e $dest; then
+                die "$dest already exist"
+            fi
+            if test -d "${args[$n]}"; then
+                dirf=-d
+            else
+                dirf=-f
+            fi
+            do_ln_1 $dirf "$(cygpath -wa "$dest")" "$(cygpath -wa "${args[$n]}")"
+        done
+    }
+    export -f ln
+fi
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt fln_force nno_clobber
+## end code-generator
+## start generated code
+TEMP=$(getopt -o fn --long "ln_force,no_clobber"  -n $(basename $0) -- "$@")
+ln_force=false
+no_clobber=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -f|--ln_force)
+            ln_force=true
+            shift
+            ;;
+        -n|--no_clobber)
+            no_clobber=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+target_file=''
+
+test $# = 0 && die "ln: missing file operand"
+
+if test $# = 1; then
+    set -- "$@" ./"$(basename "$1")"
+fi
+
+args=("$@")
+n_targets=$#
+((n_targets--))
+
+target_dir=${args[$#-1]}
+
+if test $# = 2 -a -L "$target_dir" -a "$(readlink -f "$target_dir")" = "$(readlink -f "$1")"; then
+    echo "$target_dir already linked to $1" 1>&2
+    exit 0
+fi
+
+if (($# > 2)) && test ! -d "$target_dir"; then
+    die "ln: target_dir \`$target_dir' is not a directory"
+fi
+
+if [[ "$target_dir" =~ /$ ]] && test ! -d "$target_dir"; then
+    die "target \`$target_dir' is not a directory"
+fi
+
+if test $# = 2; then
+    if test -L "$target_dir" -a -d "$target_dir" && yes-or-no-p -y "should rm dir-symlink $target_dir first?"; then
+        rm "$target_dir"
+    fi
+
+    if test -d "$target_dir"; then
+        { target_file=$(basename "$1"); }
+    else
+        { target_file=$(basename "$target_dir"); target_dir=$(dirname "$target_dir"); }
+    fi
+fi
+
+test -e "$target_dir" || die "ln: target_dir \`$target_dir does not exist"
+
+old_target_dir=$target_dir;
+target_dir=$(formal-path "$target_dir")
+
+echo -n > ~/.failed-rln
+
+target_file_save=$target_file
+ret=0
+for x in $(seq 1 $n_targets); do
+    source=${args[$x-1]}
+    if test -z "$target_file_save"; then
+        target_file=$(basename "$source")
+    fi
+    if test -e "$target_dir"/"$target_file"; then
+        if test $ln_force = true; then
+            echo "FORCE ->" "$target_dir"/"$target_file"
+        else
+            echo "$target_dir"/"$target_file" 'already exist!'
+            ret=1
+            continue
+        fi
+    fi
+    rm -f "$target_dir"/"$target_file"
+
+    normal_target=$(formal-path "$target_dir"/"$target_file")
+    relative_source=$(calc_relative "$source" "$normal_target")
+    # if test -z "target_file"; then
+    #   echo 1>&2 "$old_target_dir"/"$(basename "$relative_source")" =\> "$relative_source"
+    # else
+    #   echo 1>&2 "$old_target_dir"/"$target_file" =\> "$relative_source"
+    # fi
+    if ! ln -s -- "$relative_source" "$target_dir"/"$target_file"; then
+        die "error linking '$relative_source' '$target_dir'/'$target_file'"
+    fi
+done
+exit $ret

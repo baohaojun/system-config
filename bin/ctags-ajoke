@@ -1,1 +1,250 @@
-../gcode/ajoke/bin/ctags-ajoke
+#!/usr/bin/perl
+
+use strict;
+use File::Path qw(make_path);
+use String::ShellQuote;
+
+open(my $debug, ">>", glob("~/.cache/system-config/logs/ctags-exuberant.log"))
+    or die "Can not open debug log file ~/.cache/system-config/logs/ctags-exuberant.log";
+sub debug(@) {
+    print $debug "@_\n";
+}
+
+debug "$0", map {"'$_'"} @ARGV;
+
+my $last_line;
+my $package;
+my $package_file;
+my $is_java;
+my $terminator;
+my ($old_tag, $old_type, $old_line_num, $old_file);
+my ($tag, $type, $line_num, $file);
+my $custom_parser = qx(lookup-file -e ctags-custom);
+
+my %dir_custom_parser_map;
+my %checked_dir_custom_parser;
+
+sub check_dir_custom_parser($) {
+    my $dir = $_[0];
+    if (not $checked_dir_custom_parser{$dir}) {
+        $checked_dir_custom_parser{$dir} = 1;
+        if (not $dir) {
+            $dir_custom_parser_map{$dir} = $custom_parser;
+        } elsif (-x "$dir/ctags-custom") {
+            $dir_custom_parser_map{$dir} = "$dir/ctags-custom";
+        } else {
+            (my $parent_dir = $dir) =~ s,(.*)/.*,$1,;
+            $dir_custom_parser_map{$dir} = check_dir_custom_parser($parent_dir);
+        }
+    }
+    return $dir_custom_parser_map{$dir};
+}
+
+if (not grep {$_ eq "--filter"} @ARGV) {
+    use IPC::Open2;
+    $|++;
+
+    if ($custom_parser) {
+        system($custom_parser, @ARGV);
+    }
+    my $ctags_pid = open2(my $read, my $write, "ctags-exuberant", @ARGV);
+    my $is_java = grep {$_ eq "--language-force=java"} @ARGV;
+    while (<$read>) {
+        ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
+        if ($file ne $old_file) {
+            $package = "";
+        }
+        if ($is_java or $file =~ m/\.java|\.aidl/) {
+
+            if ($type eq 'package') {
+                $package = "$tag.";
+                $package_file = $file;
+                print;
+            } else {
+                if ($file ne $package_file) {
+                    $package = "";
+                }
+                $tag =~ s/.*\.//;
+                if (($tag ne $old_tag or $line_num != $old_line_num) and $old_tag !~ m/\./) {
+                    print "$package$last_line" if $last_line and $old_type ne 'package';
+                }
+                print "$package$_" if $tag =~ m/\./;
+            }
+            $last_line = $_;
+            ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
+        } else {
+            print;
+        }
+    }
+    if (($is_java or $old_file =~ m/\.java|\.aidl/) and $old_tag !~ m/\./) {
+        print "$package$last_line" if $last_line and $old_type ne 'package';
+    }
+    exit;
+}
+
+my ($terminator) = grep {$_ =~ m/--filter-terminator=/} @ARGV;
+
+$terminator =~ s/^--filter-terminator=//;
+
+use IPC::Open2;
+
+$|++;
+
+my $ctags_pid = open2(my $readCtags, my $writeCtags, "ctags-exuberant", @ARGV);
+my $jar_pid = open2(my $readJar, my $writeJar, "gtagsAntlrJavaParser");
+
+my ($read, $write) = ($readCtags, $writeCtags);
+
+sub check_tag_cached($$) {
+    my ($tag, $source) = @_;
+
+    if (-e $tag and -e $source and (stat($tag))[9] > (stat($source))[9]) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub output_tag_cache($) {
+    my ($tag) = @_;
+    open(my $cache, "<", $tag) or die "Can't open $tag";
+    while (<$cache>) {
+        print;
+    }
+    close($cache);
+}
+
+sub print_with_caching($$) {
+    my ($cache, $line) = @_;
+    $line =~ s/^((.*?)\s+\S+\s+\d+\s+)(\S+)/$1📁/;
+    print $line;
+    print $cache $line;
+}
+
+sub close_cache_and_rename($$$) {
+    my ($cache, $old, $new) = @_;
+    close($cache);
+    rename($old, $new);
+}
+
+while (<STDIN>) {
+
+    chomp(my $source = $_);
+    if ($source =~ m/\.jar$/i) {
+        ($read, $write) = ($readJar, $writeJar);
+    } else {
+        ($read, $write) = ($readCtags, $writeCtags);
+    }
+    (my $dir = $source) =~ s,(.*)/.*,$1,;
+    unless ($checked_dir_custom_parser{$dir}) {
+        check_dir_custom_parser($dir);
+    }
+    my $custom_parser = $dir_custom_parser_map{$dir};
+    my $abs_source = $source;
+    $abs_source = shell_quote($abs_source);
+    chomp($abs_source = qx(readlink -f $abs_source));
+
+    my $cache_f = "$ENV{HOME}/.cache/system-config/for-code-reading/$abs_source";
+
+    if (check_tag_cached("$cache_f.tag", $source)) {
+        output_tag_cache("$cache_f.tag");
+        print $terminator;
+        next;
+    }
+
+    (my $cache_d = $cache_f) =~ s,(.*)/.*,$1,;
+    make_path($cache_d);
+    open(my $cache, ">", "$cache_f.tag.$$") or die "Can't open $cache_f.tag.$$";
+
+
+
+    print $write "$_";
+
+    (my $file_tag = $source) =~ s,.*/,,;
+    print_with_caching($cache, "$file_tag  file  1 $source **\n");
+
+    $write->flush();
+    if ($custom_parser) {
+        debug "using custom_parser $custom_parser for $source";
+        open(my $custom_output, "-|", $custom_parser, $source) or die "Can't open pipe for $custom_parser";
+        while (<$custom_output>) {
+            print_with_caching($cache, $_);
+        }
+        close $custom_output;
+    }
+    my $is_java;
+    if ($_ =~ m/\.java|\.aidl/) {
+        $is_java = 1;
+    }
+
+    my $seen_terminator;
+    while (<$read>) {
+        $seen_terminator = 0;
+        if ($is_java) {
+            ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
+            if ($file ne $old_file) {
+                $package = "";
+            }
+            if ($type eq 'package') {
+                $package = $tag;
+                print_with_caching($cache, $_);
+            } else {
+                my $tag_no_dot = $tag;
+                $tag_no_dot =~ s/.*\.//;
+                if (($tag_no_dot ne $old_tag or $line_num != $old_line_num) and $old_tag !~ m/\./) {
+                    if ($last_line and $old_type ne 'package') {
+                        (my $to_print = $last_line) =~ s/(^\S+\.)(\w)/$2/g;
+                        print_with_caching($cache, $to_print);
+                        my $last_out = "$package.$last_line";
+                        print_with_caching($cache, $last_out) if $package;
+                    }
+                }
+                if ($_ eq $terminator) {
+                    print;
+                    close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
+                    $seen_terminator = 1;
+                    last;
+                }
+
+                if ($tag =~ m/\./) {
+                    (my $to_print = $_) =~ s/(^\S+\.)(\w)/$2/g;
+                    print_with_caching($cache, $to_print);
+                    my $last_out = "$package.$_";
+                    print_with_caching($cache, $last_out) if $package;
+                }
+            }
+            ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
+            $last_line = $_;
+        } else {
+            if ($_ eq $terminator) {
+                print;
+                close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
+                $seen_terminator = 1;
+                last;
+            } else {
+                print_with_caching($cache, $_);
+            }
+        }
+    }
+    if (not $seen_terminator) {
+        debug "Ctags-ajoke $$ failed on $source";
+        print $terminator;
+        close $read;
+        close $write;
+        close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
+
+
+        if ($source =~ m/\.jar$/i) {
+            waitpid $jar_pid, 0;
+            $jar_pid = open2($readJar, $writeJar, "gtagsAntlrJavaParser");
+        } else {
+            waitpid $ctags_pid, 0;
+            $ctags_pid = open2($readCtags, $writeCtags, "ctags-exuberant", @ARGV)
+                or die "Can not open ctags-exuberant pipe";
+
+        }
+    }
+}
+
+close($writeCtags);
+close($writeJar);

@@ -1,1 +1,71 @@
-../gcode/ajoke/bin/java-add-fallback
+#!/bin/bash
+
+me=$(basename $0)
+
+fallback=${me/-add-/-}
+
+if test "$DO_BOTH" != true; then
+    export DO_BOTH=true
+    if test "$me" = beagrep-add-fallback; then
+        java-add-fallback "$@"
+    else
+        beagrep-add-fallback "$@"
+    fi
+fi
+
+if test -e ~/system-config/etc/bash.d/cd_beagrep; then
+    . ~/system-config/etc/bash.d/cd_beagrep
+elif test "$AJOKE_DIR"; then
+    . $AJOKE_DIR/etc/bash.d/cd_beagrep
+fi
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+at_head=false
+if test "$1" = -a; then
+    at_head=true
+    shift
+fi
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) fallback_code_dir"
+fi
+
+if [[ "$PWD" =~ /for-code-reading/ ]]; then
+    set -- $(readlink -f "$1")
+    cd_beagrep
+fi
+
+if [[ "$1" =~ /for-code-reading/ ]]; then
+    set -- $(cd "$1"; cd_beagrep >/dev/null 2>&1; pwd)
+fi
+
+this_db_dir=$(cd -P .; cd_beagrep; pwd)
+that_db_dir=$(cd -P "$1"; cd_beagrep; pwd)
+
+if test $at_head = true; then
+    for x in $(seq 100 -1 0); do
+        ((y = x + 1)) || true
+        if test -e $this_db_dir/.$fallback.$x; then
+            if test $(readlink -f $this_db_dir/.$fallback.$x) = $(readlink -f $that_db_dir); then
+                rm $this_db_dir/.$fallback.$x
+            else
+                mv $this_db_dir/.$fallback.$x $this_db_dir/.$fallback.$y
+            fi
+        fi
+    done
+fi
+for x in $(seq 0 100); do
+    if test ! -e $this_db_dir/.$fallback.$x; then
+        break
+    fi
+    if test "$(readlink -f $this_db_dir/.$fallback.$x)" = $that_db_dir; then
+        die "$1 already a $fallback at $x"
+    fi
+done
+
+relative-link $that_db_dir $this_db_dir/.$fallback.$x
