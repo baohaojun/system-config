@@ -1,1 +1,1 @@
-../../../src/github/ajoke/bin/ajoke-get-imports.pl
+../../../../src/github/ajoke/bin/ajoke-get-imports.pl

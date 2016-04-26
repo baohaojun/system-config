@@ -1,1 +1,1 @@
-../../../src/github/ajoke/bin/ajoke-get-super-classes.pl
+../../../../src/github/ajoke/bin/ajoke-get-super-classes.pl

@@ -1,1 +1,1 @@
-../../../src/github/ajoke/bin/ajoke-get-hierarchy.pl
+../../../../src/github/ajoke/bin/ajoke-get-hierarchy.pl

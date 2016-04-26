@@ -1,1 +1,1 @@
-../../../src/github/ajoke/bin/java-find-def.pl
+../../../../src/github/ajoke/bin/java-find-def.pl

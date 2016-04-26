@@ -1,1 +1,1 @@
-../../../src/github/ajoke/bin/flatten.pl
+../../../../src/github/ajoke/bin/flatten.pl
