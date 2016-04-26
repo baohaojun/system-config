@@ -6,6 +6,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.user.profile.activities.EditP
 map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'manual-post'
 map['com.amazon.mShop.android.shopping/com.amazon.identity.auth.device.AuthPortalUIActivity'] = 'manual-post'
+map['com.android.browser/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'manual-post'
 map['com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactEditorActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactSelectionActivity'] = 'manual-post'
