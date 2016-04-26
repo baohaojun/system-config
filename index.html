@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/wheatgrass.css" type="text/css" />
+ <link rel="stylesheet" href="/css/pink-bliss.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -136,7 +136,7 @@ for the JavaScript code in this tag.
 </ul>
 
 <p>
-还有一种改变系统原有行为的方法，即提供一个与系统程序同名的程序，并且把它放到PATH环境变量的前面，确保系统执行的时候会先找到你的版本。在你自己的版本里，你可以选择是否是调用系统原有的版本来完成你想要达到的效果。比如我写了一个对命令行参数更友好的 <code>~/system-config/bin/rdesktop</code> ，在里面它会调来系统的 <code>/usr/bin/rdesktop</code> 。
+还有一种改变系统原有行为的方法，即提供一个与系统程序同名的程序，并且把它放到PATH环境变量的前面，确保系统执行的时候会先找到你的版本。在你自己的版本里，你可以选择是否调用系统原有的版本来完成你想要达到的效果。比如我写了一个对命令行参数更友好的 <code>~/system-config/bin/rdesktop</code> ，在里面它会调用系统的 <code>/usr/bin/rdesktop</code> 。
 </p>
 
 <p>
@@ -145,18 +145,31 @@ for the JavaScript code in this tag.
 
 <ul class="org-ul">
 <li><code>type CMD</code> 和 <code>type -a CMD</code>
-     这里 <code>type</code> 是Bash的一个Builtin（内置命令）。
+     这里 <code>type</code> 是Bash的一个Builtin（内置命令），也是最实用的方法，因为不论CMD是Shell内置命令、Shell别名、Shell函数还是外部程序，它都能告诉你相应的信息。
 </li>
 
 <li><code>which CMD</code>
-     这个其实没有 <code>type</code> 功能全
+     这个其实没有 <code>type</code> 功能全，因为 <code>which</code> 是一个外部程序，不是Bash内置的，所以它只能告诉你CMD是由哪个外部程序提供的，如果CMD其实还是一个 Shell别名 或/和 Shell函数的话，which是无能为力的。
 </li>
 
 <li><code>alias</code>
      不带参数运行Bash的 <code>alias</code> 内置命令，它会列出你当前Bash会话中的所有alias。
 </li>
+
+<li><code>hash</code>
+
+<p>
+<code>hash</code> 是一个Bash内置命令，它会告诉你当前的Bash记住了哪些外部程序的位置（通过用hash这种数据结构，这也是该命令名字的由来）。比如你输入ls命令，Bash会在PATH环境变量的每个目录下依次寻找ls，最后比如在 <code>/bin/ls</code> 这个位置找到了，那它就会记录下来 <code>ls =&gt; /bin/bash</code> ，这样下次再运行 ls 命令，Bash就不用重新搜索 PATH 里的每个目录了。
+</p>
+
+<p>
+下面还会提到hash的一个用途。
+</p>
+</li>
 </ul>
 </div>
+
+
 
 <div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> bash提供的对系统定制增强的机制</h4>
@@ -234,6 +247,27 @@ system-config自定义的补齐机制脚本都放在 <code>~/system-config/.bash
 <p>
 这样的程序我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/grep-beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 <a href="blog/2011/12/23/beagrep.html">中文版博客</a> / <a href="blog/2011/12/23/beagrep.html">英文版博客</a> 。事实上，我非常推荐你用system-config本身提供的这些阅读源码的程序，来了解system-config本身，比如我想搜索上面提到的 cd_bhj 是在哪里定义的，我在~/system-config目录下一运行这个命令，马上就出来了： <code>grep-beatags -e cd_bhj</code> 。关于怎么用，非常简单，下文马上就会提到。
 </p>
+</div>
+
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 删除系统中原有的（自己写的）程序</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+不能否认，有时候会写完一个程序，最后发现用途不大，或者其实系统里通过 <code>apt-get</code> 可以下载、安装一个功能类似的软件，为了避免自己重复造轮子，这时候会考虑把自己造的半调子轮子给删掉，这样就恢复了系统原有的行为。
+</p>
+
+<p>
+但这时候可能会出现一个问题。比如我写了一个rdesktop的封装命令，放在 <code>~/system-config/bin</code> 目录下，但后来我又决定还是用 <code>/usr/bin/rdesktop</code> 就可以了，于是我把 <code>~/system-config/bin/rdesktop</code> 删了，这时候再运行 <code>rdesktop</code> ，你会发现这样的输出：
+</p>
+
+<pre class="example">
+-bash: /home/smartcm/system-config/bin/rdesktop: No such file or directory
+</pre>
+
+<p>
+这是怎么回事儿呢？它不应该帮我执行 <code>/usr/bin/rdesktop</code> 吗，怎么还去 <code>~/system-config/bin/rdesktop</code> 这个位置找然后抱怨出错找不到呢？原因就是上面提到过的 <code>hash</code> 机制，删掉 <code>rdesktop</code> 后，当前的Bash会话的hash里还记着它原来的位置呢！这时候你可以用 <code>hash -d rdesktop</code> 这个命令清掉 <code>rdesktop =&gt; ~/system-config/bin/rdesktop</code> 的 hash。或者你关闭、重新打开一个Bash终端会话，也是可以的，因为Bash的hash是放在内存里、临时性的，每个进程都随着自己程序的执行慢慢的创建hash缓存。
+</p>
+</div>
 </div>
 </div>
 
@@ -435,11 +469,11 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 <li>可以更方便的显示更多信息。
 
 <p>
-比如上面你看到的是远程登录的提示符， 其中有 <code>Remote:True</code> 字样。并且上一条命令失败的话，会显示返回值是多少，几点几分失败的。
+比如上面你看到的是远程登录的提示符， 其中有 <code>Remote:True</code> 字样。并且上一条命令失败的话，会显示返回值是多少，失败的时间是几点几分。
 </p>
 
 <p>
-如果是本地登录的话，颜色会更花哨，并且我可以方便的自定义更多的显示信息（通过 start-recursive-shell 命令或者另外的一些对它进行了调用的命令）：
+如果是本地登录的话，颜色会更花哨，并且我可以方便的自定义更多的显示信息（通过 start_recursive_shell 函数或者其它会调用该函数的命令）：
 </p>
 
 
@@ -449,7 +483,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 </div>
 
 <p>
-比如上图中，我启动了一个代理（你懂的），然后用 <code>adb -s</code> 命令设置了一下当前的adb设备。
+比如上图中，我启动了一个代理（你懂的），然后用 <code>adb -s</code> 命令设置了一下当前的adb设备（后文会提到我对adb的这种封装）。
 </p>
 </li>
 </ol>
@@ -501,7 +535,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 </ol>
 
 <p>
-举例：我之前运行过这样的命令：
+举例：我之前运行过这样的命令、
 </p>
 
 <div class="org-src-container">
@@ -653,7 +687,24 @@ Emacs是那种螺旋上升的工具，在你开始使用它之后，会不停地
 </dd>
 <dt> M-g o </dt><dd>运行我定制过的 bhj-occur 命令，是对Emacs自带的occur的一点封装
 </dd>
-<dt> M-g i </dt><dd>Emacs自带的imenu命令，可以用来方便的在同一个文件内的函数、全局变量之间跳转
+<dt> M-g i </dt><dd>Emacs自带的imenu命令，可以用来方便的列出一个代码文件里有哪些函数、全局变量；通过helm.el你可以方便的过滤你感兴趣的函数、变量；并在这些函数、全局变量之间跳转
+
+<p>
+注意我专门把这个imenu命令的用途用三个分号隔开了，因为和上面提到的Occur命令一样，在阅读源代码的时候可以用来大幅缩小阅读的范围。就像上面提到的有个大牛说自己读代码先用find/ls看一下目录结构一样，用imenu/occur先看一下一个长长的代码文件里有哪些函数、全局变量，是非常高效的。这与Emacs自己对imenu命令的帮助文档是不一样的，Emacs只列出了imenu的一个用途，就是用来跳转，就像find/ls的man手册里也不会告诉你，可以用它们来阅读源码时看一下代码结构：
+</p>
+
+<pre class="example">
+imenu is an interactive autoloaded compiled Lisp function in
+‘imenu.el’.
+
+It is bound to M-g i.
+
+(imenu INDEX-ITEM)
+
+Jump to a place in the buffer chosen using a buffer menu or mouse menu.
+INDEX-ITEM specifies the position.  See ‘imenu-choose-buffer-index’
+for more information.
+</pre>
 </dd>
 </dl>
 </div>
@@ -954,8 +1005,11 @@ Tcl编程语言的一个插件，用来实现一些命令行上的自动化非�
 </li>
 </ol>
 </div>
+</div>
 
-<ol class="org-ol"><li><a id="sec-2-10-1-1" name="sec-2-10-1-1"></a>my-rfa<br  /><div class="outline-text-5" id="text-2-10-1-1">
+<div id="outline-container-sec-2-10-2" class="outline-4">
+<h4 id="sec-2-10-2"><span class="section-number-4">2.10.2</span> my-rfa</h4>
+<div class="outline-text-4" id="text-2-10-2">
 <p>
 repo自带的repo forall命令运行起来非常慢，所以我提供了my-rfa命令，运行速度能快一点。
 </p>
@@ -971,27 +1025,30 @@ repo自带的repo forall命令运行起来非常慢，所以我提供了my-rfa�
 同样是列一下所有仓储的路径，第一条命令第一次运行花了1分多钟，之后每次都要5、6秒钟，后者每次都只有不到1秒钟。
 </p>
 </div>
-</li>
+</div>
 
-<li><a id="sec-2-10-1-2" name="sec-2-10-1-2"></a>repo-changes?<br  /><div class="outline-text-5" id="text-2-10-1-2">
+<div id="outline-container-sec-2-10-3" class="outline-4">
+<h4 id="sec-2-10-3"><span class="section-number-4">2.10.3</span> repo-changes?</h4>
+<div class="outline-text-4" id="text-2-10-3">
 <p>
 在安卓代码顶层目录下运行，会帮你列出哪些仓储有改动。
 </p>
 </div>
-</li>
+</div>
 
-<li><a id="sec-2-10-1-3" name="sec-2-10-1-3"></a>repo-cherry-find-all/repo-cherry-pick-all/repo-cherry-push-all<br  /><div class="outline-text-5" id="text-2-10-1-3">
+<div id="outline-container-sec-2-10-4" class="outline-4">
+<h4 id="sec-2-10-4"><span class="section-number-4">2.10.4</span> repo-cherry-find-all/repo-cherry-pick-all/repo-cherry-push-all</h4>
+<div class="outline-text-4" id="text-2-10-4">
 <p>
 这一系统脚本，用于方便的进行安卓开发基线升级。
 </p>
 </div>
-</li></ol>
 </div>
 
 
-<div id="outline-container-sec-2-10-2" class="outline-4">
-<h4 id="sec-2-10-2"><span class="section-number-4">2.10.2</span> 编译相关</h4>
-<div class="outline-text-4" id="text-2-10-2">
+<div id="outline-container-sec-2-10-5" class="outline-4">
+<h4 id="sec-2-10-5"><span class="section-number-4">2.10.5</span> 编译相关</h4>
+<div class="outline-text-4" id="text-2-10-5">
 <p>
 安卓编译系统有较多问题，所以我对其进行了一些封装。官方文档的流程是这样的：
 </p>
@@ -1033,9 +1090,9 @@ repo自带的repo forall命令运行起来非常慢，所以我提供了my-rfa�
 </div>
 </div>
 
-<div id="outline-container-sec-2-10-3" class="outline-4">
-<h4 id="sec-2-10-3"><span class="section-number-4">2.10.3</span> 加快编译速度</h4>
-<div class="outline-text-4" id="text-2-10-3">
+<div id="outline-container-sec-2-10-6" class="outline-4">
+<h4 id="sec-2-10-6"><span class="section-number-4">2.10.6</span> 加快编译速度</h4>
+<div class="outline-text-4" id="text-2-10-6">
 <p>
 在做安卓开发时，非常重要的一点是要尽量加快编译速度。除了让公司给你配更好的机器外，以下有几个方法：
 </p>
@@ -1053,36 +1110,36 @@ repo自带的repo forall命令运行起来非常慢，所以我提供了my-rfa�
 </div>
 </div>
 
-<div id="outline-container-sec-2-10-4" class="outline-4">
-<h4 id="sec-2-10-4"><span class="section-number-4">2.10.4</span> 对boot.img进行拆分、合成</h4>
-<div class="outline-text-4" id="text-2-10-4">
+<div id="outline-container-sec-2-10-7" class="outline-4">
+<h4 id="sec-2-10-7"><span class="section-number-4">2.10.7</span> 对boot.img进行拆分、合成</h4>
+<div class="outline-text-4" id="text-2-10-7">
 <p>
 在系统相关的开发中，尤其是bsp工程师，以及需要改系统启动脚本（init.rc系列文件）、sepolicy的情况下，对boot.img进行简单改动，是非常有用的一项技能，有时甚至完全不需要通过build来进行，比如对init.rc的改动。这个在system-config底下是通过 replace-bootimage 及其辅助脚本实现的。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-10-5" class="outline-4">
-<h4 id="sec-2-10-5"><span class="section-number-4">2.10.5</span> 重刷某个分区</h4>
-<div class="outline-text-4" id="text-2-10-5">
+<div id="outline-container-sec-2-10-8" class="outline-4">
+<h4 id="sec-2-10-8"><span class="section-number-4">2.10.8</span> 重刷某个分区</h4>
+<div class="outline-text-4" id="text-2-10-8">
 <p>
 这个有很多种方法，比如fastboot，比如手机芯片厂商提供的刷机程序。但有一种更方便的方法，是在手机运行的过程中，把分区的刷机文件用adb push上去，然后用dd命令写入到相关分区。我为此专门封装了一个 adb-push-partition 的脚本。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-10-6" class="outline-4">
-<h4 id="sec-2-10-6"><span class="section-number-4">2.10.6</span> 伪工厂重置（清空/data目录，但保留某些重要文件）</h4>
-<div class="outline-text-4" id="text-2-10-6">
+<div id="outline-container-sec-2-10-9" class="outline-4">
+<h4 id="sec-2-10-9"><span class="section-number-4">2.10.9</span> 伪工厂重置（清空/data目录，但保留某些重要文件）</h4>
+<div class="outline-text-4" id="text-2-10-9">
 <p>
 有一个名为 adb-clean-data 的脚本，用来做这个事。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-10-7" class="outline-4">
-<h4 id="sec-2-10-7"><span class="section-number-4">2.10.7</span> 对adb的增强</h4>
-<div class="outline-text-4" id="text-2-10-7">
+<div id="outline-container-sec-2-10-10" class="outline-4">
+<h4 id="sec-2-10-10"><span class="section-number-4">2.10.10</span> 对adb的增强</h4>
+<div class="outline-text-4" id="text-2-10-10">
 <p>
 说到这儿，讲一下我对adb的一些增强。
 </p>

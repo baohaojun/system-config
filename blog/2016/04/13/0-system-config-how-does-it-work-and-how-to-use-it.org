@@ -16,18 +16,26 @@
 
      [[../../../../images/cd-t2-fr-base.png][file:../../../../images/cd-t2-fr-base.png]]
 
-   还有一种改变系统原有行为的方法，即提供一个与系统程序同名的程序，并且把它放到PATH环境变量的前面，确保系统执行的时候会先找到你的版本。在你自己的版本里，你可以选择是否是调用系统原有的版本来完成你想要达到的效果。比如我写了一个对命令行参数更友好的 =~/system-config/bin/rdesktop= ，在里面它会调来系统的 =/usr/bin/rdesktop= 。
+   还有一种改变系统原有行为的方法，即提供一个与系统程序同名的程序，并且把它放到PATH环境变量的前面，确保系统执行的时候会先找到你的版本。在你自己的版本里，你可以选择是否调用系统原有的版本来完成你想要达到的效果。比如我写了一个对命令行参数更友好的 =~/system-config/bin/rdesktop= ，在里面它会调用系统的 =/usr/bin/rdesktop= 。
 
    顺便说一句，想知道某个Bash命令有没有被修改过，有几种方法：
 
    - =type CMD= 和 =type -a CMD=
-     这里 =type= 是Bash的一个Builtin（内置命令）。
+     这里 =type= 是Bash的一个Builtin（内置命令），也是最实用的方法，因为不论CMD是Shell内置命令、Shell别名、Shell函数还是外部程序，它都能告诉你相应的信息。
 
    - =which CMD=
-     这个其实没有 =type= 功能全
+     这个其实没有 =type= 功能全，因为 =which= 是一个外部程序，不是Bash内置的，所以它只能告诉你CMD是由哪个外部程序提供的，如果CMD其实还是一个 Shell别名 或/和 Shell函数的话，which是无能为力的。
 
    - =alias=
      不带参数运行Bash的 =alias= 内置命令，它会列出你当前Bash会话中的所有alias。
+
+   - =hash=
+
+     =hash= 是一个Bash内置命令，它会告诉你当前的Bash记住了哪些外部程序的位置（通过用hash这种数据结构，这也是该命令名字的由来）。比如你输入ls命令，Bash会在PATH环境变量的每个目录下依次寻找ls，最后比如在 =/bin/ls= 这个位置找到了，那它就会记录下来 =ls => /bin/bash= ，这样下次再运行 ls 命令，Bash就不用重新搜索 PATH 里的每个目录了。
+
+     下面还会提到hash的一个用途。
+
+
 
 *** bash提供的对系统定制增强的机制
 
@@ -70,6 +78,18 @@
 ** 加入系统原来没有的程序
 
    这样的程序我可能写过很多，接下来我会挑几个重要的说一下。比如beagrep/grep-beatags，是阅读代码的利器，其中集成了一个搜索引擎，所以速度非常快。见 [[../../../2011/12/23/beagrep.org][中文版博客]] / [[../../../2011/12/23/beagrep.org][英文版博客]] 。事实上，我非常推荐你用system-config本身提供的这些阅读源码的程序，来了解system-config本身，比如我想搜索上面提到的 cd_bhj 是在哪里定义的，我在~/system-config目录下一运行这个命令，马上就出来了： =grep-beatags -e cd_bhj= 。关于怎么用，非常简单，下文马上就会提到。
+
+*** 删除系统中原有的（自己写的）程序
+
+    不能否认，有时候会写完一个程序，最后发现用途不大，或者其实系统里通过 =apt-get= 可以下载、安装一个功能类似的软件，为了避免自己重复造轮子，这时候会考虑把自己造的半调子轮子给删掉，这样就恢复了系统原有的行为。
+
+但这时候可能会出现一个问题。比如我写了一个rdesktop的封装命令，放在 =~/system-config/bin= 目录下，但后来我又决定还是用 =/usr/bin/rdesktop= 就可以了，于是我把 =~/system-config/bin/rdesktop= 删了，这时候再运行 =rdesktop= ，你会发现这样的输出：
+
+#+BEGIN_EXAMPLE
+-bash: /home/smartcm/system-config/bin/rdesktop: No such file or directory
+#+END_EXAMPLE
+
+这是怎么回事儿呢？它不应该帮我执行 =/usr/bin/rdesktop= 吗，怎么还去 =~/system-config/bin/rdesktop= 这个位置找然后抱怨出错找不到呢？原因就是上面提到过的 =hash= 机制，删掉 =rdesktop= 后，当前的Bash会话的hash里还记着它原来的位置呢！这时候你可以用 =hash -d rdesktop= 这个命令清掉 =rdesktop => ~/system-config/bin/rdesktop= 的 hash。或者你关闭、重新打开一个Bash终端会话，也是可以的，因为Bash的hash是放在内存里、临时性的，每个进程都随着自己程序的执行慢慢的创建hash缓存。
 
 ** 组合调用以上
 
@@ -167,13 +187,13 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 
 3. 可以更方便的显示更多信息。
 
-   比如上面你看到的是远程登录的提示符， 其中有 =Remote:True= 字样。并且上一条命令失败的话，会显示返回值是多少，几点几分失败的。
+   比如上面你看到的是远程登录的提示符， 其中有 =Remote:True= 字样。并且上一条命令失败的话，会显示返回值是多少，失败的时间是几点几分。
 
-   如果是本地登录的话，颜色会更花哨，并且我可以方便的自定义更多的显示信息（通过 start-recursive-shell 命令或者另外的一些对它进行了调用的命令）：
+   如果是本地登录的话，颜色会更花哨，并且我可以方便的自定义更多的显示信息（通过 start_recursive_shell 函数或者其它会调用该函数的命令）：
 
    [[../../../../images/start-recursive-shell-ps1.png][file:../../../../images/start-recursive-shell-ps1.png]]
 
-   比如上图中，我启动了一个代理（你懂的），然后用 =adb -s= 命令设置了一下当前的adb设备。
+   比如上图中，我启动了一个代理（你懂的），然后用 =adb -s= 命令设置了一下当前的adb设备（后文会提到我对adb的这种封装）。
 
 ** 对系统剪贴板的增强
 
@@ -197,7 +217,7 @@ System-config提供了快速搜索、定位代码的业界最简单方法，只�
 
 3. 按Tab键补齐。如果只有一条匹配的历史命令的话，会直接上屏，回车即可运行；如果有多条的话，可以再输入 =.0= / =.1= / =.N= 之后再按Tab，会选中第N条（从0开始数）匹配的历史命令。
 
-举例：我之前运行过这样的命令：
+举例：我之前运行过这样的命令、
 
 #+BEGIN_SRC sh
 my-rfa 'p=$(ap); P=$(repo-project); cd $ANDROID_TOP/.repo/projects; git clone --bare $PWD/$p.git /d/Downloads/android/$P.git; '
@@ -271,7 +291,23 @@ Emacs是那种螺旋上升的工具，在你开始使用它之后，会不停地
 - M-. :: 默认运行 grep-beatags 程序，查找函数、变量的定义
 - M-g f :: 默认运行 grep-func-all 程序，查找引用
 - M-g o :: 运行我定制过的 bhj-occur 命令，是对Emacs自带的occur的一点封装
-- M-g i :: Emacs自带的imenu命令，可以用来方便的在同一个文件内的函数、全局变量之间跳转
+- M-g i :: Emacs自带的imenu命令，可以用来方便的列出一个代码文件里有哪些函数、全局变量；通过helm.el你可以方便的过滤你感兴趣的函数、变量；并在这些函数、全局变量之间跳转
+
+           注意我专门把这个imenu命令的用途用三个分号隔开了，因为和上面提到的Occur命令一样，在阅读源代码的时候可以用来大幅缩小阅读的范围。就像上面提到的有个大牛说自己读代码先用find/ls看一下目录结构一样，用imenu/occur先看一下一个长长的代码文件里有哪些函数、全局变量，是非常高效的。这与Emacs自己对imenu命令的帮助文档是不一样的，Emacs只列出了imenu的一个用途，就是用来跳转，就像find/ls的man手册里也不会告诉你，可以用它们来阅读源码时看一下代码结构：
+
+           #+BEGIN_EXAMPLE
+             imenu is an interactive autoloaded compiled Lisp function in
+             ‘imenu.el’.
+
+             It is bound to M-g i.
+
+             (imenu INDEX-ITEM)
+
+             Jump to a place in the buffer chosen using a buffer menu or mouse menu.
+             INDEX-ITEM specifies the position.  See ‘imenu-choose-buffer-index’
+             for more information.
+
+           #+END_EXAMPLE
 
 *** 从Emacs调用外部程序
 
@@ -421,7 +457,7 @@ Tcl编程语言的一个插件，用来实现一些命令行上的自动化非�
 1. 可以在本地先自我review一下代码（加-R参数可以不review）
 2. 可以在后面加gerrit用户名，直接添加reviewer
 
-**** my-rfa
+*** my-rfa
 
 repo自带的repo forall命令运行起来非常慢，所以我提供了my-rfa命令，运行速度能快一点。
 
@@ -432,11 +468,11 @@ time my-rfa -j1 'pwd'
 
 同样是列一下所有仓储的路径，第一条命令第一次运行花了1分多钟，之后每次都要5、6秒钟，后者每次都只有不到1秒钟。
 
-**** repo-changes?
+*** repo-changes?
 
 在安卓代码顶层目录下运行，会帮你列出哪些仓储有改动。
 
-**** repo-cherry-find-all/repo-cherry-pick-all/repo-cherry-push-all
+*** repo-cherry-find-all/repo-cherry-pick-all/repo-cherry-push-all
 
 这一系统脚本，用于方便的进行安卓开发基线升级。
 
