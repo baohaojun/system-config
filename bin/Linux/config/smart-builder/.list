@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+me=$(readlink -f $0)
+mydir=$(dirname $me)
+cd $mydir
+
+for x in $(
+              cat <<EOF
+ruby2.0
+ruby2.0-dev
+ruby2.0-doc
+ruby2.1
+ruby2.1-dev
+ruby2.1-doc
+bundler
+nodejs
+zlib1g-dev
+libsqlite3-dev
+EOF
+          ); do
+    test -e $x || touch $x
+done
+echo ok
+
+# Local Variables: #
+# after-save-hook: (lambda () (shell-command-to-string "bash ~/system-config/bin/Linux/config/smart-builder/.list")) #
+# eval: (mmm-mode 1) #
+# End: #
