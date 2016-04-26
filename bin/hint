@@ -1,4 +1,30 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt t:TMOUT
+## end code-generator
+## start generated code
+TEMP=$(getopt -o t: --long "TMOUT:"  -n $(basename -- $0) -- "$@")
+TMOUT=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -t|--TMOUT)
+            TMOUT=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
 read -p "$@.
-请按‘回车’继续.. "
+请按‘回车’继续.. " || true

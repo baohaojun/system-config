@@ -273,8 +273,6 @@ sudo bash -c "
         cp $HOME/.ssh/id_rsa ~/.ssh/
     fi
 "
-
-sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
     echo chcon u:object_r:zygote_exec:s0 ../system/xbin/sugote
@@ -284,6 +282,9 @@ sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system 
     fi
 )|tee ../system.chcon
 my-adb push ../system.chcon /data/
+sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded ||
+    sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+
 my-adb 'cd /system; bash -x /data/system.chcon; sync'
 my-adb romount
 if test $debug = true; then

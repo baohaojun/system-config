@@ -1,6 +1,19 @@
 #!/bin/bash
 
 set -e
+
+function failed-to-update() {
+    if test "$?" != 0; then
+        hint "你的system-config-update好像失败了，需要重新运行 setup-system-config.sh "
+        if test -d ~/system-config/src/github || timeout 1 ping -c 1 172.16.0.9; then
+            bash -c "$(curl -s http://172.16.0.9/setup-system-config.sh)" setup-system-config.sh
+        fi
+        exit 0
+    fi
+}
+
+trap failed-to-update 0
+
 cd ~/system-config/
 
 if git status -s | grep . -q; then
@@ -55,7 +68,8 @@ fi
 (
     cd ~/system-config/bin/Linux/config/android-build
     for x in *; do
-        if ! dpkg-query -l $x; then
+        if ! dpkg-query -l $x >/dev/null 2>&1; then
+            hint -t 5 "需要重新安装 $x"
             install-pkgs android-build
             exit
         fi

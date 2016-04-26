@@ -15,7 +15,7 @@ function generate-getopt() {
         fi
     done
     cat << EOF
-TEMP=\$(getopt -o $shortopt --long "$(for x in "${longopt[@]}"; do echo -n $x,; done|perl -npe 's/,$//')"  -n \$(basename \$0) -- "\$@")
+TEMP=\$(getopt -o $shortopt --long "$(for x in "${longopt[@]}"; do echo -n $x,; done|perl -npe 's/,$//')"  -n \$(basename -- \$0) -- "\$@")
 $(
     for x in "${longopt[@]}"; do
         x=${x%,}
