@@ -4,9 +4,10 @@ set -e
 if test $# != 0; then
     mkdir -p ~/tmp/$1
     cd ~/tmp/$1
-    git-get -u "$1" -d . || true
+    git init .
+    git remote add  origin "$1" >/dev/null 2>&1 || true
 fi
 
 git fetch $(repo-remote) refs/meta/*:refs/meta/*
-git co refs/meta/config
+git co refs/meta/config || git reset --soft refs/meta/config
 start_recursive_shell update-meta
