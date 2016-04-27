@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+name=$1
+val=$2
+
+if test -z "$val"; then
+    die "$name must not be empty"
+fi
