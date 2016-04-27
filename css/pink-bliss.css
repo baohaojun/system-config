@@ -1282,7 +1282,7 @@
       }
       a:visited, .org-link-visited {
         /* link-visited */
-        color: #8b008b;
+        color: #3b706b;
         text-decoration: underline;
       }
       .org-log-edit-header {
