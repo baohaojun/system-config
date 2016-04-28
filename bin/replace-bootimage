@@ -74,7 +74,7 @@ mkdir $tmpd
 )
 
 if test $# = 0; then
-    ew $tmpd/mkbootimg.sh
+    ${EDITOR:-ew} $tmpd/mkbootimg.sh
 else
     export REPLACE_RAMDISK_TMPDIR=$tmpd.ram
     replace-ramdisk -r $tmpd/ramdisk.img "$@"
