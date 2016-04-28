@@ -15,13 +15,18 @@ function push-all-projects() {
         for p in $projects; do
             (
                 cd $p
-                git push s:baohaojun/$(basename $PWD) HEAD:refs/heads/dev >/dev/null 2>&1 || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; }
+                if git remote add s s:baohaojun/$(basename $PWD) >/dev/null 2>&1; then
+                    git fetch -v s
+                fi
+                if (git-is-ancestor s/dev HEAD && ! git-is-ancestor HEAD s/dev) >/dev/null 2>&1; then
+                    git push s:baohaojun/$(basename $PWD) HEAD:refs/heads/dev >/dev/null 2>&1 || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; }
+                fi
             )
         done
     )&
 }
 
-push-all-projects
+push-all-projects&
 if test -d ~/src/system-config/; then
     cd ~/system-config
     rsync . ~/src/system-config/ --exclude .git/ -a

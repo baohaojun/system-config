@@ -66,7 +66,7 @@ fi
 xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n $xml | grep ${part} |
 {
     while read img start; do
-        if test $img = ${part}_1.img; then
+        if [[ $img =~ ${part}_1\. ]]; then
             the_start=$start
         fi
         start=$((start - the_start)) || true

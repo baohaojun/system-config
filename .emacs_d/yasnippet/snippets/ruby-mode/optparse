@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: optparse
+# key: optparse
+# --
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: example.rb [options]"
+
+  opts.on("${1:-v}", "${2:--[no-]verbose}", "${3:Run verbosely}") do |v|
+    options[:verbose] = v
+  end
+end.parse!
+

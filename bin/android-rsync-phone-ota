@@ -89,8 +89,10 @@ if test ! -e "$xml"; then
         xml=rawprogram0_unsparse.xml
     elif test -e "sparse_images/$xml"; then
         xml=sparse_images/$xml
+    elif test -e rawprogram0.xml; then
+        xml=rawprogram0.xml
     else
-        die "can't find $xml"
+        die "Can't find $xml"
     fi
 fi
 
