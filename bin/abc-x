@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if test -e ~/.ssh/id_rsa_nopass; then
-    ssh() { unset SSH_AGENT_PID SSH_AUTH_SOCK ; command ssh -i ~/.ssh/id_rsa_nopass "$@"; }
+if test -e ~/src/github/private-config/etc/abc-x; then
+    . ~/src/github/private-config/etc/abc-x
 fi
 
 if test $PWD = ~/src/linux; then

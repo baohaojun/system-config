@@ -49,10 +49,34 @@ setup-ext-local
 
 cd ~/external/local
 
-if git status -s | grep . -q; then
-    die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
-fi
-git pull --rebase
+function update-git() {
+    (
+        if test ! -d "$1"; then
+            git-get -u smartisan:baohaojun/$(basename $1) -d "$1"
+        fi
+        cd "$1"
+        if git status -s | grep . -q; then
+            die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
+        fi
+        git pull --rebase
+    )
+}
+
+git_projects=(
+    ~/system-config
+    $(
+        if test ! -d ~/system-config/src/github; then
+            . ~/system-config/etc/github-projects
+            for p in ${github_projects[@]} ${smartcm_projects[@]}; do
+                echo ~/src/github/"$p"
+            done
+        fi
+    )
+)
+
+for p in "${github_projects[@]}"; do
+    update-git $p
+done
 
 cd ~/external/bin/Linux/ext/jdk
 if test -d .git; then
