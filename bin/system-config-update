@@ -74,7 +74,7 @@ git_projects=(
     )
 )
 
-for p in "${github_projects[@]}"; do
+for p in "${git_projects[@]}"; do
     echo update $p
     update-git $p
 done
