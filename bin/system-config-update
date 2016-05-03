@@ -26,11 +26,6 @@ rm ~/.config/system-config/.bashrc-path
 . ~/.bashrc
 ~/system-config/bin/after-co-ln-s </dev/null >/dev/null 2>&1 &
 
-hint() {
-    read -p "$@.
-    请按‘回车’继续.. "
-}
-
 function setup-ext-local() {
     if test ! -d ~/external/local/.git; then
         hint "即将从gerrit服务器获取 ~/external/local"
