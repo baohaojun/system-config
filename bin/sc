@@ -1,0 +1,41 @@
+#!/bin/bash
+
+. ~/system-config/etc/force-system-config
+. ~/system-config/.profile
+. ~/system-config/.bashrc
+
+if test -z "$1"; then
+    set -- "$(select-args -p "您想进行什么system-config操作？" \
+                         "start （以后默认要使用 system-config ，马上给我启动一个环境）" \
+                         "stop （以后不用system-config了，用的话自己加命令或启动环境）" \
+                         "try （还没有想好以后要不要默认用，先试用一下）" \
+                         "bg （默认继续使用system-config，将system-config临时挂起，启动一个无system-config环境）"
+                         "exit （什么也不做，退出此选择框）"|pn 1
+          )"
+fi
+
+action=$1
+
+
+if test "$action" = start; then
+    rm -f ~/.config/system-config/no-system-config
+    bash
+elif test "$action" = stop; then
+    touch ~/.config/system-config/no-system-config
+    hint "将退出此bash环境，并重新打开一个bash，请确认system-config环境已默认关闭"
+    hint "之后如果您改变主意，可以继续用sc start命令来使用system-config环境"
+    exec sc bg
+elif test "$action" = try; then
+    bash
+elif test "$action" = bg; then
+    . ~/system-config/etc/reinit-bash-env
+    exec bash
+elif test "$action" = exit; then
+    exit
+else
+    if is-tty-io; then
+        hint "即将为您在system-config环境下运行 $@"
+    fi
+    "$@"
+    exit
+fi

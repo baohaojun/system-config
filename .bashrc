@@ -1,3 +1,7 @@
+if ! . ~/system-config/etc/check-system-config; then
+    return 0
+fi
+
 export PATH=/bin:"$PATH"
 
 uname=$(uname)

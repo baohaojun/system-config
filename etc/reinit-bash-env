@@ -1,0 +1,22 @@
+#!/bin/bash
+unset FORCE_SYSTEM_CONFIG
+export FORCE_NO_SYSTEM_CONFIG=true
+for x in $(set |grep '^\w.*\(\)' -P|pn 1); do
+    unset -f "$x"
+done
+
+for x in $(alias|pn 2 | pn 1 =); do
+    unalias "$x"
+done
+
+for x in PS1 PROMPT_COMMAND; do
+    unset "$x"
+done
+
+. /etc/profile
+for f in ~/.bash_profile ~/.bash_login ~/.profile; do
+    if test -e "$f"; then
+        . "$f"
+        break
+    fi
+done
