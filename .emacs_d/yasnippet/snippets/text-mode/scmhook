@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: scmhook
+# key: scmhook
+# --
+#!/bin/bash
+
+# 此脚本运行在安卓代码顶层目录下
+# 以source的方式运行
+# 不要随意修改变量、当前目录！
