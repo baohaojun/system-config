@@ -44,6 +44,12 @@ if test -z "$LOCAL_EDIT" -a $# = 2 -a -e "$2"; then
     fi
 fi
 
+if test "$TMPDIR" -a "$TMPDIR" != /tmp; then
+    if ! emacsclient -e '()'; then
+        emacs.bhj&
+    fi
+fi
+
 if test -x /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient; then
     exec /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient "$@"
 else

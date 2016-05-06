@@ -2,6 +2,7 @@
 cat <<EOF
 ; {%emacs-lisp%}
 (let (org-export-with-toc
+      org-html-head-include-default-style
       org-export-with-timestamps
       org-export-time-stamp-file
       org-html-htmlize-output-type
@@ -31,7 +32,7 @@ cat <<EOF
               (expand-file-name "~/src/github/helm")
               (expand-file-name "~/src/github/org-mode/contrib/lisp"))
              load-path))
-  (setq org-html-style-include-default nil
+  (setq org-html-head-include-default-style nil
         org-export-with-toc nil
         org-export-with-timestamps nil
         org-export-time-stamp-file nil
@@ -82,6 +83,7 @@ cat <<EOF
 
   (find-file "$1")
   (org-html-export-to-html)
+  (advice-remove 'org-html--build-pre/postamble 'ad-Advice-org-html--build-pre/postamble)
   (kill-buffer "$(basename "$1")")
   ())
 ; {%/emacs-lisp%}

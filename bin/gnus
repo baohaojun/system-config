@@ -1,4 +1,5 @@
 #!/bin/bash
+export TMPDIR=~/tmp
 offlineimap -a $(grep '\baccounts\b' ~/.offlineimaprc|pn 3|perl -npe 's/,//') || bhj-short-notify "offlineimap" "failed to get your emails"&
 find-or-exec emacs
-emacsclient -e '(progn (switch-to-buffer "*scratch*") (gnus))'
+emacs.client -e '(progn (switch-to-buffer "*scratch*") (gnus))'

@@ -59,3 +59,9 @@ type -a java # 显示 java 的所以版本（alias、function、在PATH变量里
 *更正* 子目录不是必须的。如果用 local:platform/manifest 的形式就必须要有子目录，比如前面加个 google ，变成 local:google/platform/manifest 才能用相对路径下载，但如果写成 ssh://local/platform/manifest 的话，直接就可以下载。所以这应该是repo的一个Bug。
 
 所以我们应该把代码直接放在根目录下，是最合适的，别分什么厂商的了，那个应该用分支来区分。我现在怀疑搞太多git仓储会对gerrit的性能有影响。
+
+* system-config-update时提示安装包冲突
+
+很多情况下是因为在ubuntu的系统软件和升级设置里改了升级源引起的。默认情况下，IT给装的机器把所有升级都给配上了，比如security升级、backports升级。一旦你自己把它取消掉的话，以后很多包就无法再安装了，每次都会提示版本冲突。
+
+[[./images/software-updates.png]]

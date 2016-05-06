@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>faq-cn</title>
-<!-- 2016-04-13 Wed 13:32 -->
+<!-- 2016-05-05 Thu 14:57 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -56,10 +56,21 @@ for the JavaScript code in this tag.
 </script>
 </head>
 <body>
-<div id='bhj_article'>
-  <div id='bhj_leftpane'>
 <div id="content">
 <h1 class="title">faq-cn</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. 如何更改java版本</a></li>
+<li><a href="#sec-2">2. 如何更改其他软件版本</a></li>
+<li><a href="#sec-3">3. 应该安装何种java版本</a></li>
+<li><a href="#sec-4">4. 如何编译高通 oem</a></li>
+<li><a href="#sec-5">5. 为什么我们不是高通的项目，gerrit上代码仓库也是在 qualcomm/ 目录下？</a></li>
+<li><a href="#sec-6">6. system-config-update时提示安装包冲突</a></li>
+</ul>
+</div>
+</div>
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> 如何更改java版本</h2>
 <div class="outline-text-2" id="text-1">
@@ -104,9 +115,9 @@ system-config会修改你的系统的一些环境变量，其中最重要的一�
 
 <div class="org-src-container">
 
-<pre class="src src-sh">which java <span style="color: #74af68;"># </span><span style="color: #74af68;">&#26174;&#31034;java&#31243;&#24207;&#22312;PATH&#21464;&#37327;&#37324;&#25214;&#21040;&#30340;&#31532;&#19968;&#20010;&#36335;&#24452;</span>
-<span style="color: #23d7d7;">type</span> java <span style="color: #74af68;"># </span><span style="color: #74af68;">&#19982;&#19978;&#38754;&#31867;&#20284;&#65292;&#20294;&#22914;&#26524; java &#34987;&#23450;&#20041;&#25104;&#19968;&#20010; alias&#12289;function&#65292;&#20063;&#21487;&#20197;&#26377;&#26174;&#31034;</span>
-<span style="color: #23d7d7;">type</span> -a java <span style="color: #74af68;"># </span><span style="color: #74af68;">&#26174;&#31034; java &#30340;&#25152;&#20197;&#29256;&#26412;&#65288;alias&#12289;function&#12289;&#22312;PATH&#21464;&#37327;&#37324;&#33021;&#25214;&#21040;&#30340;&#25152;&#26377;&#29256;&#26412;&#65289;</span>
+<pre class="src src-sh">which java <span style="color: #99968b;"># </span><span style="color: #99968b;">&#26174;&#31034;java&#31243;&#24207;&#22312;PATH&#21464;&#37327;&#37324;&#25214;&#21040;&#30340;&#31532;&#19968;&#20010;&#36335;&#24452;</span>
+<span style="color: #e5786d;">type</span> java <span style="color: #99968b;"># </span><span style="color: #99968b;">&#19982;&#19978;&#38754;&#31867;&#20284;&#65292;&#20294;&#22914;&#26524; java &#34987;&#23450;&#20041;&#25104;&#19968;&#20010; alias&#12289;function&#65292;&#20063;&#21487;&#20197;&#26377;&#26174;&#31034;</span>
+<span style="color: #e5786d;">type</span> -a java <span style="color: #99968b;"># </span><span style="color: #99968b;">&#26174;&#31034; java &#30340;&#25152;&#20197;&#29256;&#26412;&#65288;alias&#12289;function&#12289;&#22312;PATH&#21464;&#37327;&#37324;&#33021;&#25214;&#21040;&#30340;&#25152;&#26377;&#29256;&#26412;&#65289;</span>
 </pre>
 </div>
 
@@ -117,7 +128,7 @@ system-config会修改你的系统的一些环境变量，其中最重要的一�
 </div>
 
 <div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> <span class="todo TODO">TODO</span> 应该安装何种java版本</h2>
+<h2 id="sec-3"><span class="section-number-2">3</span> 应该安装何种java版本</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 安卓5.0之前的项目，比如我们的T1，用的必须是 oracle 的java 1.6。换成用openjdk 1.6是不行的。
@@ -151,120 +162,56 @@ system-config会修改你的系统的一些环境变量，其中最重要的一�
 </ol>
 </div>
 </div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> 为什么我们不是高通的项目，gerrit上代码仓库也是在 qualcomm/ 目录下？</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+这个是历史遗留的问题，当时就不应该起一个叫 qualcomm/ 的子目录名字，直接叫 smartisan/ 会更合适。
+</p>
+
+<p>
+另外注意一点，子目录是必须的，比如如果直接把谷歌的代码镜像下来，按理来说我们应该什么都不改就可以直接用repo init -u local:platform/manifest来从本地下载代码，但事实是，经试验发现，必须放到一个子目录下，才可以不改谷歌的manifest就能下载。谷歌的manifest里用的是相对路径的写法（..，比如
+</p>
+
+<pre class="example">
+&lt;remote  name="aosp"
+         fetch=".."
+         review="https://android-review.googlesource.com/" /&gt;
+</pre>
+<p>
+），并且它自己的是可以写成不带子目录就下载的： <code>repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml --repo-url smartisan:googlesource/git-repo</code>
+</p>
+
+<p>
+<b>更正</b> 子目录不是必须的。如果用 local:platform/manifest 的形式就必须要有子目录，比如前面加个 google ，变成 local:google/platform/manifest 才能用相对路径下载，但如果写成 ssh://local/platform/manifest 的话，直接就可以下载。所以这应该是repo的一个Bug。
+</p>
+
+<p>
+所以我们应该把代码直接放在根目录下，是最合适的，别分什么厂商的了，那个应该用分支来区分。我现在怀疑搞太多git仓储会对gerrit的性能有影响。
+</p>
 </div>
-<!-- {%html-mode%} -->
-
-<div id="disqus_container">
-  <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
-    var disqus_url = 'http://172.16.0.251/baohaojun/blog/2015/06/16/0-how-to-cherry-pick-with-system-config.html';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-    <div style="margin-bottom:20px">
-    <script type="text/javascript" charset="utf-8">
-      (function(){
-      var _w = 86 , _h = 16;
-      var param = {
-      url:location.href,
-      type:'6',
-      count:'', /**是否显示分享数，1显示(可选)*/
-      appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
-      title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
-      pic:'', /**分享图片的路径(可选)*/
-      ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
-      language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
-      rnd:new Date().valueOf()
-      }
-      var temp = [];
-      for( var p in param ){
-      temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
-      }
-      document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
-      })()
-    </script>
-  </div>
-  <div id="disqus_thread"></div>
 </div>
 
-</div> <!-- bhj_leftpane -->
-<div id="sidebar"><div id="sidebar2">
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> system-config-update时提示安装包冲突</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+很多情况下是因为在ubuntu的系统软件和升级设置里改了升级源引起的。默认情况下，IT给装的机器把所有升级都给配上了，比如security升级、backports升级。一旦你自己把它取消掉的话，以后很多包就无法再安装了，每次都会提示版本冲突。
+</p>
 
 
-  <!-- Begin #profile-container -->
-
-   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
-<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
-<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
-<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
-
-<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
-
-  <!-- End #profile -->
-
-
-
-  <h2 class="sidebar-title">Feeds</h2>
-    <ul>
-        <li><a href="/baohaojun/atom.xml">Atom</a></li>
-    </ul>
-
-  <h2 class="sidebar-title">Projects</h2>
-    <dl>
-        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
-        <dd> Grep 2G source code in 0.23 second </dd>
-
-        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
-        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
-
-        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
-        <dd> Use JIRA with org-mode </dd>
-    </dl>
-
-    <h2>Tags</h2>
-    <ul>
-                <li><a href="../../../../meta/tags/system-config.html" title="My system-config github project">system-config</a></li>
-    </ul>
-
-  <h2 class="sidebar-title">Previous Posts</h2>
-    <ul id="recently">
-        <li><a href='../../05/14/0-smartcm-introduction.html'> CM 编译脚本 </a></li>
-<li><a href='../../04/18/0-How-to-enable-ramdump-for-simt.html'> 手机Ramdump使用方法 </a></li>
-<li><a href='../../03/06/0-abc-usage-manual.html'> abc usage manual </a></li>
-<li><a href='../../03/03/0-Use-Arm-Debian-On-Phone-To-Flash-Your-Phone.html'> 用手机上的arm版debian rsync刷机 </a></li>
-<li><a href='../../02/13/android-build-server-ci.html'> 安卓编译服务器、持续集成的设计与实现 </a></li>
-<li><a href='../../02/13/0-How-to-save-space-between-multiple-copies-of-android-repo-code.html'> 如何在多份安卓repo代码之间节省空间和带宽 </a></li>
-<li><a href='../../01/12/0-kernel-panic-and-ramdump-and-crash-and-core-dump-and-log-etc.html'> 重启、无响应、Dump、Crash、Log详解 </a></li>
-<li><a href='../../01/08/0-user-build-get-log-howto.html'> user build get log howto </a></li>
-<li><a href='../../../2014/12/19/0-A-bug-in-smartisan-os-build-scripts.html'> A bug in smartisan os build scripts </a></li>
-<li><a href='../../../2014/11/11/0-Android-Lost-Memory.html'> Lost Memory 问题 </a></li>
-    </ul>
-
-    <h2 class="sidebar-title">Archive</h2>
-      <ul id="archives">
-        <li><a href="/meta/Archive.html"> The complete archive </a></li>
-      </ul>
-
-  <!--
-  <p>This is a paragraph of text that could go in the sidebar.</p>
-  -->
-
-
-
-</div></div>
-<!-- End #sidebar -->
-</div> <!-- End #bhj_article -->
-<!-- {%/html-mode%} -->
+<div class="figure">
+<p><img src="./images/software-updates.png" alt="software-updates.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
 <div id="postamble" class="status">
 <p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2016-04-13 Wed 13:32</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.50.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="date">Created: 2016-05-05 Thu 14:57</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.92.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"></p>
 </div>
 </body>

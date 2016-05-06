@@ -7,21 +7,52 @@ function die() {
     exit -1
 }
 
-if test $# == 0; then
-    die "please specify whose changes you want to cherry pick"
-fi
+function skip-current-repo() {
+    exit 5
+}
 
+function skip-all-remaining-repos() {
+    kill $$
+    kill -9 $$
+}
+
+export -f skip-current-repo
+export -f skip-all-remaining-repos
+
+function cherry-ok() {
+    ap=$1
+    commit=$2
+
+    ok_file=$(lookup-file -e out)/diff/${ap//\//%}.ok
+
+    echo $commit ok | tee -a $ok_file
+}
+
+function cherry-fail() {
+    ap=$1
+    commit=$2
+
+    fail_file=$(lookup-file -e out)/diff/${ap//\//%}.fail
+
+    echo $commit failed | tee -a $fail_file
+    git cherry-pick --abort
+}
+
+export -f cherry-ok
+export -f cherry-fail
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run
+# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run o:ok-function f:fail-function
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o shnRd --long "shell,do_here,no_fetch,no_reverts,dry-run"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o shnRdo:f: --long "shell,do_here,no_fetch,no_reverts,dry-run,ok-function:,fail-function:"  -n $(basename -- $0) -- "$@")
 shell=false
 do_here=false
 no_fetch=false
 no_reverts=false
 dry_run=false
+ok_function=
+fail_function=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -45,6 +76,14 @@ while true; do
             dry_run=true
             shift
             ;;
+        -o|--ok-function)
+            ok_function=$2
+            shift 2
+            ;;
+        -f|--fail-function)
+            fail_function=$2
+            shift 2
+            ;;
         --)
             shift
             break
@@ -57,16 +96,29 @@ done
 
 ## end generated code
 
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) REGEXP_FOR_AUTHORS_AND_COMMITTERS"
+fi
+
 if test "$no_reverts" != true && yes-or-no-p -y "Skip reverted patches"; then
     no_reverts=true
 fi
 
+
 if test -d .repo; then
     diffs=$(rgrep -l -P -e "$1" out/diff | sort)
+    (
+        cd out/diff
+        rm *.ok *.fail -f
+    )
 else
-    diffs=$(lookup-file -e out/diff/$(ap . | perl -npe 's!/!%!g').log)
+    prefix=$(lookup-file -e out/diff)/$(ap . | perl -npe 's!/!%!g')
+    diffs=$(lookup-file -e $prefix.log)
+    rm $prefix.ok $prefix.fail -f
     if test ! -e "$diffs"; then
-        die "diff file not found"
+        echo "diff file not found"
+        exit 0
     fi
     if test "$ANDROID_TOP"; then
         cd "$ANDROID_TOP"
@@ -124,14 +176,14 @@ for diff_file in $diffs; do
             fi
         else
             if test $do_here = false; then
-                git co $target_branch -B $(
+                git checkout $target_branch -B $(
                     echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
                     ) || true
             fi
 
             if test "$no_reverts" = true; then
                 declare -A reverted_commits
-                cat $diff_file | (
+                grep -P -e "$1" $diff_file | (
                     while read line; do
                         if echo "$line" | grep '{{{Revert "' -q; then
                             subject=$(echo "$line" | perl -npe 's,.*\{\{\{Revert "(.*)"\}\}\}.*,$1,')
@@ -168,7 +220,11 @@ for diff_file in $diffs; do
                     continue
                 fi
                 if git cherry-pick -x --allow-empty $git_commit_id; then
-                    true
+                    if test "$ok_function"; then
+                        "$ok_function" $(ap) $git_commit_id
+                    fi
+                elif test "$fail_function"; then
+                    "$fail_function" $(ap) $git_commit_id
                 elif is-tty-io; then
                     start_recursive_shell "cherry failed: $git_commit_id" || ret=$?
                 else

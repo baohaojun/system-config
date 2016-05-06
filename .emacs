@@ -1,5 +1,8 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
+(let ((warning-minimum-level :error))
+  (server-start))
+
 ;;; Code:
 (when (file-exists-p (format "~/system-config/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type)))
   (load (format "~/system-config/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type))))
@@ -336,9 +339,6 @@
 (when (file-exists-p "~/external/.emacs_d/emacs-wide")
   (load "~/external/.emacs_d/emacs-wide"))
 
-(condition-case nil
-    (server-start)
-  (error (message "emacs server start failed")))
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface
 ;;----------------------------------------------------------------------------

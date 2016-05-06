@@ -52,6 +52,8 @@ def ali_mailbox_conv(name):
         box = "SentMail"
     elif box == '已删除邮件':
         box = "Deleted"
+    elif box == "Sent" or box == "SentMail" or box == "Deleted":
+        box = "HelloWorld-" + box
     return box
 
 def ali_mailbox_conv_to_remote(name):
@@ -61,6 +63,8 @@ def ali_mailbox_conv_to_remote(name):
          return '&XfJT0ZABkK5O9g-'
     elif name == "Deleted":
         return '&XfJSIJZkkK5O9g-'
+    elif name.find("HelloWorld-") == 0:
+        return name.replace('HelloWorld-', '')
     return name
 
 def ali_folder_match(folder, pats):

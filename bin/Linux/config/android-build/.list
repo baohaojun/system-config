@@ -29,10 +29,11 @@ libdatetime-perl
 liblua5.2-dev
 libstring-approx-perl
 libstring-shellquote-perl
+libswitch-perl
 libtext-glob-perl
-libxml-parser-perl
 libxml2:i386
 libxml2-utils
+libxml-parser-perl
 lua5.2
 mysql-client
 openjdk-7-jdk

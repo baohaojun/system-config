@@ -1,0 +1,26 @@
+#!/bin/bash
+cd ~/Maildir/smt.INBOX/cur
+
+declare -A md5_map
+declare -A size_done_map
+echo * | xargs stat -c "%s %n" | sort -n |
+    (
+        while read size file; do
+            if test "$size" = "$last_size"; then
+                if test "${size_done_map[$size]}" != true; then
+                    last_md5=$(md5sum "$last_file" | pn 1)
+                    md5_map[$last_md5]=$last_file
+                    size_done_map[$size]=true
+                fi
+                md5=$(md5sum "$file"|pn 1)
+                if test "${md5_map[$md5]}"; then
+                    echo "$file = ${md5_map[$md5]}"
+                else
+                    md5_map[$md5]=$file
+                fi
+            else
+                last_size=$size
+                last_file=$file
+            fi
+        done
+    )
