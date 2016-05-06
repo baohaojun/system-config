@@ -1,317 +1,856 @@
-#+title: 偶像的十大预言
-# bhj-tags: blog
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>偶像的十大预言</title>
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Bao Haojun" />
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
+ <link rel="stylesheet" href="/css/light-blue.css" type="text/css" />
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
-本文无耻地翻译自Steve Yegge博客的 [[https://sites.google.com/site/steveyegge2/ten-predictions][这篇文章]]。
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
 
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="preamble" class="status">
+<div id="header">
+
+  <h1 id="blog-title">
+
+    <a href="http://baohaojun.github.io/blog/2011/12/23/index.html">包昊军的博客</a>
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
+
+</div>
+</div>
+<div id='bhj_article'>
+  <div id='bhj_leftpane'>
+<div id="content">
+<h1 class="title">偶像的十大预言</h1>
+<p>
+本文无耻地翻译自Steve Yegge博客的 <a href="https://sites.google.com/site/steveyegge2/ten-predictions">这篇文章</a>。
+</p>
+
+<p>
 Steve Yegge于2004年的时候，写下了本篇博客，后来在2015年左右，有人在 HN（Hacker News）上贴了这篇文章并评论了每个预言，于是Steve Yegge自己也更新了这篇博客。
+</p>
 
+<p>
 更新，2015年9月：我在HN上看到了Dan Luu对这篇文章的评论，所有回复看下了，觉得大家对我的预言打得分有点太高了。所以我自己来打打分，并给出打分的依据。
+</p>
 
 
-1. *XML databases will surpass relational databases in popularity by 2011. （到2011年XML数据库会比关系数据库更流行）* 并没有。我找到了问题和正确的方向，但给出了错误的解。据我了解，在2014-2015年，各种NoSQL数据存储显然已经赶上甚至稍微超过了 RDBMS。如果我没有说得那么具体的话，我可能可以给自己打个高点的分。得分：0.2
+<ol class="org-ol">
+<li><b>XML databases will surpass relational databases in popularity by 2011. （到2011年XML数据库会比关系数据库更流行）</b> 并没有。我找到了问题和正确的方向，但给出了错误的解。据我了解，在2014-2015年，各种NoSQL数据存储显然已经赶上甚至稍微超过了 RDBMS。如果我没有说得那么具体的话，我可能可以给自己打个高点的分。得分：0.2
+</li>
 
-2. *Someone will make a lot of money by hosting open-source web applications. （有人会通过提供开源的Web App服务挣到大钱）* 是的，这条预言100%正确。这种技术就是PaaS，包括 Google App Engine、 Heroku都是。得分：1.0
+<li><b>Someone will make a lot of money by hosting open-source web applications. （有人会通过提供开源的Web App服务挣到大钱）</b> 是的，这条预言100%正确。这种技术就是PaaS，包括 Google App Engine、 Heroku都是。得分：1.0
+</li>
 
-3. *Multi-threaded programming will fall out of favor by 2012.（到2012年多线程编程已经不怎么流行了）* 根据编程语言的不同，这条预言开始成真了。谷歌的 Go 语言是个很好的例子，还是大数据中的并行处理也是。即使是在Java里，现在大家也一般用更高级健壮的方法处理多线程了，比如并发数据结构和工作线程池等。我不清楚现在它是不是已经“淡出”了，但过去的10年里，其他的方法已得到了长足的发展。得分：0.5
+<li><b>Multi-threaded programming will fall out of favor by 2012.（到2012年多线程编程已经不怎么流行了）</b> 根据编程语言的不同，这条预言开始成真了。谷歌的 Go 语言是个很好的例子，还是大数据中的并行处理也是。即使是在Java里，现在大家也一般用更高级健壮的方法处理多线程了，比如并发数据结构和工作线程池等。我不清楚现在它是不是已经“淡出”了，但过去的10年里，其他的方法已得到了长足的发展。得分：0.5
+</li>
 
-4. *Java's "market share" on the JVM will drop below 50% by 2010.（JVM上Java语言的市场占有率在2010年将掉到50以下）*  可以肯定没有达到50%。但是，Scala真的已经有很大的用户群了，好多大公司在用Scala写它们的相当一部分软件——LinkedIn, Twitter, Netflix, Tumblr, 等等。用Groovy的也很多，开始出现一些用Groovy写的大型系统，比如 Netflix Asgard，和Gradle编译系统。所以虽然Java当前在JVM虚拟机上仍占大头，已经有几个欣欣向荣的语言社区在JVM上大显身手。想当初2004年，JVM语言还都只是实验性质的，而今天它们已被相当多500强的公司所采用，所以我要给自己打个高点的分，虽然我说的百分比并没有达到。（说实话，我认为Java还能占大头的主要原因是今天的Java语言从2004年的Java 5到现在的Java 8已经有了翻天覆地的进步。）得分：0.7
+<li><b>Java's "market share" on the JVM will drop below 50% by 2010.（JVM上Java语言的市场占有率在2010年将掉到50以下）</b>  可以肯定没有达到50%。但是，Scala真的已经有很大的用户群了，好多大公司在用Scala写它们的相当一部分软件——LinkedIn, Twitter, Netflix, Tumblr, 等等。用Groovy的也很多，开始出现一些用Groovy写的大型系统，比如 Netflix Asgard，和Gradle编译系统。所以虽然Java当前在JVM虚拟机上仍占大头，已经有几个欣欣向荣的语言社区在JVM上大显身手。想当初2004年，JVM语言还都只是实验性质的，而今天它们已被相当多500强的公司所采用，所以我要给自己打个高点的分，虽然我说的百分比并没有达到。（说实话，我认为Java还能占大头的主要原因是今天的Java语言从2004年的Java 5到现在的Java 8已经有了翻天覆地的进步。）得分：0.7
+</li>
 
-5. *Lisp will be in the top 10 most popular programming languages by 2010.（Lisp会在2010年进入最流行编程语言前十）* 哈哈，没有。我曾经对Clojure满怀希望，但我发现这个社区对用户非常不友好，即使他们一再声称甚至强调并非如此。我认为在Lisp领域或许Racket是当前最棒的。但即便是我现在也已经不怎么用Lisp了，除了偶尔的Emacs Hacking。得分：0.0
+<li><b>Lisp will be in the top 10 most popular programming languages by 2010.（Lisp会在2010年进入最流行编程语言前十）</b> 哈哈，没有。我曾经对Clojure满怀希望，但我发现这个社区对用户非常不友好，即使他们一再声称甚至强调并非如此。我认为在Lisp领域或许Racket是当前最棒的。但即便是我现在也已经不怎么用Lisp了，除了偶尔的Emacs Hacking。得分：0.0
+</li>
 
-6. *A new internet community-hangout will appear. One that you and I will frequent.（会出现一个新的社交网络，你和我都经常出的）* 好吧，是这样的。现在回头来看这几乎太显而易见了，但当我写下这条预言的时候，脸书基本上还不存在呢。
+<li><b>A new internet community-hangout will appear. One that you and I will frequent.（会出现一个新的社交网络，你和我都经常出的）</b> 好吧，是这样的。现在回头来看这几乎太显而易见了，但当我写下这条预言的时候，脸书基本上还不存在呢。
+</li>
 
-7. *The mobile/wireless/handheld market is still at least 5 years out.（移动、无线、手持设备的市场爆发还要至少等5年）* 没有，事实上我们等了3年。iPhone是2007年出来的。这条的分就很好打了。得分：0.6
+<li><b>The mobile/wireless/handheld market is still at least 5 years out.（移动、无线、手持设备的市场爆发还要至少等5年）</b> 没有，事实上我们等了3年。iPhone是2007年出来的。这条的分就很好打了。得分：0.6
+</li>
 
-8. *Someday I will voluntarily pay Google for one of their services.（有一天我会乐意为谷歌提供的某项服务向其付费）* 是的，我现在就给谷歌付费使用它的云平台，用于我自己的外部/个人/非谷歌项目。在这点上我是非常专一的，我不用AWS。但我并没有料到我会付费使用的是它的计算服务，所以我不能给自己打满分了。得分：0.8
+<li><b>Someday I will voluntarily pay Google for one of their services.（有一天我会乐意为谷歌提供的某项服务向其付费）</b> 是的，我现在就给谷歌付费使用它的云平台，用于我自己的外部/个人/非谷歌项目。在这点上我是非常专一的，我不用AWS。但我并没有料到我会付费使用的是它的计算服务，所以我不能给自己打满分了。得分：0.8
+</li>
 
-9. *Apple's laptop sales will exceed those of HP/Compaq, IBM, Dell and Gateway combined by 2010.（苹果笔记本销量2010年会超过HP/Compaq、IBM、Dell和Gateway的总和）* 这条我给搞砸了。我应该省掉“笔记本”这个词，然后加上手机和平板，这样的话这条就能轻松得个满分。可惜，2014年底时苹果Mac本只有13%的市场份额。根据Wikipedia/Gartner的数据，我列的非苹果厂商的市占加起来约有40%。Windows让我觉得很奇怪还继续保持着成功，很大程度上这应归功于那些品牌忠诚度相当高的代代XBox和PC游戏玩家，虽然他们大多数都在两年前的E3展上被微软抛弃了。可惜，苹果并没有投向游戏市场，所于似乎Windows还能苟延残喘。唉。如果不只是局限于笔记本的话我会给自己打个0.8，现在，只能得0.3分。
+<li><b>Apple's laptop sales will exceed those of HP/Compaq, IBM, Dell and Gateway combined by 2010.（苹果笔记本销量2010年会超过HP/Compaq、IBM、Dell和Gateway的总和）</b> 这条我给搞砸了。我应该省掉“笔记本”这个词，然后加上手机和平板，这样的话这条就能轻松得个满分。可惜，2014年底时苹果Mac本只有13%的市场份额。根据Wikipedia/Gartner的数据，我列的非苹果厂商的市占加起来约有40%。Windows让我觉得很奇怪还继续保持着成功，很大程度上这应归功于那些品牌忠诚度相当高的代代XBox和PC游戏玩家，虽然他们大多数都在两年前的E3展上被微软抛弃了。可惜，苹果并没有投向游戏市场，所于似乎Windows还能苟延残喘。唉。如果不只是局限于笔记本的话我会给自己打个0.8，现在，只能得0.3分。
+</li>
 
-10. 这是个笑话，可能有点没品。所以，不记分。
+<li>这是个笑话，可能有点没品。所以，不记分。
+</li>
+</ol>
 
+<p>
 最终得分： (0.2 + 1.0 + 0.5 + 0.7 + 0.0 + 1.0 + 0.6 + 0.8 + 0.3) / 9 = 57%.  所以，考虑到我打得比较随意，我大概算是猜中了一半一半吧。咩。建议你也公开发表一下你对下一个十年的预言，看看能猜得有多准！
+</p>
 
+<p>
 HN上也有些关于我是否认为下一个大热门语言是JavaScript的讨论。是的，我确曾如此认为，并且在OSCON讲台上说过 —— 但当时我是在他们把往拖下台时这么喊了，所以我不确定大家是否听见了。我在博客里并没有关于这个话题说过太多，怕被人给喷死。我很高兴最后这成了事实，并且看上去JavaScript越来越热门。太好了！
+</p>
 
+<p>
 (原来的博客在下面，没有编辑过)
+</p>
 
+<p>
 Our industry seems to be changing faster over time. It's hard to keep up; the best way to keep up seems to be to read a lot. Serious programmers should read as much as they can. I read as much as I can, but I still wish I had more time for it.
+</p>
 
+<p>
 If you read a lot, you'll start to spot trends and undercurrents. You might see people talking more often about some theme or technology that you think is about to take off, or you'll just sense vaguely that some sort of tipping point is occurring in the industry. Or in your company, for that matter.
+</p>
 
+<p>
 I seem to have many of my best insights as I'm writing about stuff I already know. It occurred to me that writing about trends that seem obvious and inevitable might help me surface a few not-so-obvious ones. So I decided to make some random predictions based on trends I've noticed, and see what turns up. It's basically a mental exercise in mining for insights. Plus it's a wonderful opportunity to kick the beehive and see which ideas generate the most indignant blog comments, which is always fun.
+</p>
 
+<p>
 In this essay I'll make ten predictions based on undercurrents I've felt while reading techie stuff this year. As I write this paragraph, I have no idea yet what my ten predictions will be, except for the first one. It's an easy, obvious prediction, just to kick-start the creative thought process. Then I'll just throw out nine more, as they occur to me, and I'll try to justify them even if they sound crazy.
+</p>
 
+<p>
 Important Note: the predictions themselves don't matter! Most of them are probably wrong. The point of the exercise is the exercise itself, not in what results. You should try this experiment yourself — it may show you things you're thinking that you weren't really aware of. And other people might find it interesting reading, even if there are factual errors or whatever.
+</p>
 
+<p>
 Prediction #1:  XML databases will surpass relational databases in popularity by 2011.
+</p>
 
+<p>
 Reason for prediction: Nobody likes to do O/R mapping; everyone just wants a solution.
+</p>
 
+<p>
 XML is the most popular vehicle for representing loosely-structured, heirarchical data. Relational databases can't do this very well. Many common types of data are intrinsically heirarchical and loosely structured, so storing them in an RDBMS can be difficult. Examples: books, articles, and most other written documentation. HTML. Search indexes. Filesystems. Game worlds. Classical music scores. It's just easier to model some things this way.
+</p>
 
+<p>
 XML can be mapped straightforwardly to the objects and data structures of modern programming languages, so it works better than relational modeling for serializing things like object graphs. It leads to much more natural persistence interfaces in programming languages than what you get with, say, JDBC or DBI.
+</p>
 
+<p>
 The industry is in a heated race to improve XML databases. All major RDBMS vendors are starting to support persistent, indexable, queryable XML. There are various standards in the works, including XPath 2.0, XQuery, XQuery 2.0, XUpdate, XPointer, XLink, and who knows what else. XML databases already support (or will support soon) transactions, indexing, CRUD, schemas, and many of the other trappings normally associated with an RDBMS.
+</p>
 
+<p>
 Microsoft has prototyped embedding XPath support directly into the C# programming language; rumor has it that C# will have a great deal of XML support in the near future.
+</p>
 
+<p>
 XML is big, and it's useful. There's a huge amount of attention on persisting it in something other than CLOBs. XPath searching is amazingly rich, and XQuery, if it's anywhere near as usable as SQL, will surpass SQL in expressive power. So there's every reason to expect that most data stores will eventually be XML stores. (They may be relational under the hood, but that doesn't count if the database is being used as an XML database.)
+</p>
 
+<p>
 Incidentally, I just heard that that the University of Washington Databases course (CSE 444), which used to be almost 100% about relational databases, is now 50% relational and 50% XML, focusing for the last half the quarter on concepts like DTDs, Schemas, XPath, XML/SQL interfaces, and XQuery.
+</p>
 
+<p>
 Prediction #2:  Someone will make a lot of money by hosting open-source web applications.
+</p>
 
+<p>
 Reason for prediction: most small development shops would pay a monthly fee not to have to administer the apps themselves.
+</p>
 
+<p>
 We're rapidly entering the age of hosted web services, and big companies are taking advantage of their scalable infrastructure to host data and computing for companies without that expertise.
+</p>
 
+<p>
 Most software development shops have a set of fairly similar applications for supporting development, and traditionally they've administered these apps in-house. But they don't really want to be administering them. Having a high-quality bug database is an enabler, but it doesn't contribute directly to your bottom line. You want a bug database to be a commodity application. It just exists, and you enter bugs into it.
+</p>
 
+<p>
 Same goes for your source-control system. They're a lot of work that's just overhead. You almost need a full-time administrator for these systems. Backups, performance tuning, branch administration, lots of issues. All you really want is for it to work, so you can focus on your problem domain.
+</p>
 
+<p>
 For both bug databases and source-control systems, the obstacle to outsourcing them is trust. I think most companies would love it if they didn't have to pay someone to administer Bugzilla, Subversion, Twiki, etc. Heck, they'd probably like someone to outsource their email, too. This is exactly what dev teams within Amazon do. They use Perforce, Wiki, Exchange and so on as services, which frees them up to focus on their goals.
+</p>
 
+<p>
 But would an external dev team trust some big company like Amazon with with their intellectual property? Potential hosting companies might balk before trying it, guessing that most potential customers would hesitate before hosting their source code somewhere else.
+</p>
 
+<p>
 However, my prediction is that someone will decide to try it. And I think they'll find that there are many, many dev teams in the world who are willing to pay a reasonable recurring fee for this service. If a startup company were 100% confident that their intellectual property (IP) is secure with an outsourcer, then it would boil down to a simple ROI analysis. They'll do whatever's cheapest.
+</p>
 
+<p>
 One of the most important brand characteristics that Amazon has established is trustworthiness. Customers don't give their trust lightly, especially with online transactions, but people trust Amazon. It seems reasonable to assume that companies might trust Amazon as well.
+</p>
 
+<p>
 There are other companies that could potentially do this innovation-infrastructure outsourcing, but not many. They'd have to establish several different kinds of trust. If I'm planning on outsourcing my development infrastructure, I'd want an outsourcer who meets the following trust tests:
+</p>
 
-    Honest — I would want assurance that this company isn't out to steal my secrets, and that they will take the high road and not look at my stuff. And there would have to be agreements and contracts in place that give me recourse options if they were to violate this trust.
+<p>
+Honest — I would want assurance that this company isn't out to steal my secrets, and that they will take the high road and not look at my stuff. And there would have to be agreements and contracts in place that give me recourse options if they were to violate this trust.
+</p>
 
-    Secure — I'd want to feel confident that the outsourcer will keep my data secure. Even if the company is honest, I still want protection from people who are trying to steal my IP. Security is especially sensitive because an innovation-infrastructure outsourcer would be a prime target for attackers.
+<p>
+Secure — I'd want to feel confident that the outsourcer will keep my data secure. Even if the company is honest, I still want protection from people who are trying to steal my IP. Security is especially sensitive because an innovation-infrastructure outsourcer would be a prime target for attackers.
+</p>
 
-    Reliable — I'd want 24x7 service; my dev team should never be held up because the outsourcer's systems are down, or slow, or buggy. The outsourcer's service latency, throughput, availability and quality are all critical factors in my decision process.
+<p>
+Reliable — I'd want 24x7 service; my dev team should never be held up because the outsourcer's systems are down, or slow, or buggy. The outsourcer's service latency, throughput, availability and quality are all critical factors in my decision process.
+</p>
 
-    Responsive — If there are issues, I need someone to contact. I'd expect to have multiple cost/response options; if I want to minimize cost, I might settle for 2-day turnaround, but I'd be willing to pay more on a sliding scale for better support SLAs.
+<p>
+Responsive — If there are issues, I need someone to contact. I'd expect to have multiple cost/response options; if I want to minimize cost, I might settle for 2-day turnaround, but I'd be willing to pay more on a sliding scale for better support SLAs.
+</p>
 
-    Comprehensive — All else being equal, if two outsourcers offered similar packages, I'd go with the one who gives me the most functionality. I actually would want to put all my eggs in one basket. I wouldn't want my bugs at company A, and my source code at company B, and my email at company C.
+<p>
+Comprehensive — All else being equal, if two outsourcers offered similar packages, I'd go with the one who gives me the most functionality. I actually would want to put all my eggs in one basket. I wouldn't want my bugs at company A, and my source code at company B, and my email at company C.
+</p>
 
-    Stable — I don't want my outsourcer to go out of business; at best I'd have to take downtime to migrate everything in-house or to another outsourcer, and at worse, I'd lose all my data. It has to be a big, well-funded, stable company, which limits the field slightly.
+<p>
+Stable — I don't want my outsourcer to go out of business; at best I'd have to take downtime to migrate everything in-house or to another outsourcer, and at worse, I'd lose all my data. It has to be a big, well-funded, stable company, which limits the field slightly.
+</p>
 
+<p>
 Not all software development shops in the world are focused on building distributed computing platforms. There are plenty of people working on important but domain-specific software. Government, medical, automotive, insurance, aeronautics and astronautics, aviation, bioengineering, entertainment, education, you name it — there's a lot of software being written in the world, and a lot of money riding on it.
+</p>
 
+<p>
 So I predict that someone will come along and offer an innovation hosting service, and make a lot of money off it.
+</p>
 
+<p>
 If I were the hosting company, I'd use open-source products. There isn't a huge amount of precedent for this model, but it seems like a good one. So good, in fact, that it boggles my mind that nobody has started doing it yet.
+</p>
 
+<p>
 There are lots of reasons to go with open-source. For starters, there are plenty of polished, high-quality applications that you could begin hosting with almost no development effort. And good open-source apps are usually well-documented; you can even find books about most of the bigger ones. So you wouldn't have to spend a bunch of time writing your platform documentation. And you'd be able to tap into the thousands of developers who are already using those apps (but hosting them themselves); they'd have no learning curve and no technical barriers to migrating to your hosted version of the application.
+</p>
 
+<p>
 It's a no-brainer. In fact, I quit. I'm going to go do this. Bye!
+</p>
 
+<p>
 Oops, scratch that. Nobody would trust SteveySoft with their intellectual property. They'd be afraid that I'd laugh at their source code. And with good reason, I might add. So I guess someone else will have to do it.
+</p>
 
+<p>
 Prediction #3:   Multi-threaded programming will fall out of favor by 2012.
+</p>
 
+<p>
 Reason for prediction: Cost/benefit ratio isn't high enough.
+</p>
 
+<p>
 If I were going to write the Ten Golden Rules of Software, the top of the list would be:
+</p>
 
+<p>
 Error Prone == Evil
+</p>
 
+<p>
 Although this concept is obvious to 99.999% of the general population, it's only accepted by 2% of computer programmers. The remaining 98% subscribe to a competing philosophy, namely: "Error Prone = Manly". Never mind that they just assigned "Manly" to the variable "Error Prone", and the expression always returns true; that happens to be the correct value in this case, so it's an acceptable hack.
+</p>
 
+<p>
 So when safe alternatives to existing unsafe technologies come along, it takes about ten to fifteen years before everyone's switched over. Not that the unsafe users actually switch; that's just how long, on average, it takes the majority of them to be killed accidentally by their product, leaving only the new, safer programmers behind.
+</p>
 
+<p>
 Hence, many programmers prefer to use C++ instead of far safer alternatives such as Java or Objective-C. And many programmers prefer to use Perl instead of far safer alternatives such as Ruby or Python. Many programmers prefer debugging weird problems in production over the much safer alternative of writing unit tests for their own code. And virtually all programmers prefer programming by side-effect over safer alternatives such as functional or declarative programming.
+</p>
 
+<p>
 Multi-threaded programming has officially been declared hazardous to your health since, oh, roughly the week after it was invented. Everyone knew it was really tricky from the outset. It provided all sorts of exciting and (if I do say so myself) rather manly new failure modes: deadlocks, livelocks, missed signals, race conditions, read/write conflicts, write/write conflicts, and so on. But it did offer some ease-of-use advantages over IPC. And C++ programs already crash or corrupt data so often that occasional threading errors don't usually make much of a difference. So multi-threaded programming was an instant hit.
+</p>
 
+<p>
 Multithreading has been studied extensively to see if it can be made less error-prone. And it can! Concurrency theory researchers have generously provided us with a nice basket of rigorous mathematical tools for analyzing our concurrent programs, including the formal partial-order pi-calculus, the temporal propositional logic systems, the axiomatizing flat iteration scheduling algebrae, the much-loved quantum Chu space automata, and of course the ever-popular Brouwer-Heyting-Kolmogorov bisimulation and propositional intuitionistic logic, famous for its canonical model proving the bisimilarity of finite Kripke structures. Sign me up!
+</p>
 
+<p>
 Unfortunately the O'Reilly book for these models, The Quantum Chu-Space Cookbook (colophon: Schroedinger's Cat) hasn't hit the shelves yet; it's expected to be in copy-edit for another 47 years. So software-engineering researchers have stepped in and published many books describing patterns, idioms, and best practices for multi-threading. The most popular recommendation appears to be "don't use threads", although other thread design patterns include "don't let them ever talk to each other", "don't ever kill runaway threads", and "favor immutability over side-effects" (although that's widely considered to be an unmanly approach.) So we have a nice basket of patterns, and even some O'Reilly books.
+</p>
 
+<p>
 In the past, oh, 20 years since they invented threads, lots of new, safer models have arrived on the scene. Since 98% of programmers consider safety to be unmanly, the alternative models (e.g. CSP, fork/join tasks and lightweight threads, coroutines, Erlang-style message-passing, and other event-based programming models) have largely been ignored by the masses, including me.
+</p>
 
+<p>
 Ironically, multi-threaded programming is far more popular among Java and Ruby programmers than among C++ and Perl programmers, who generally prefer using OS processes over threads. I'm not sure if that's because Java and Ruby provide language-level thread support, or because it's virtually impossible to write correct multi-threaded programs in C++ and Perl, or some combination of the two. In any case, it's interesting that Java and Ruby programmers use the most error-prone concurrency framework.
+</p>
 
+<p>
 Anyway, the jury's been out on threading vs. event-based programming for a long time, but now we're in the distributed computing world, where event-based programming is the only option. It seems to make sense to migrate to the event-based models, purely in the interest of using the same messaging and parallelism constructs for your in-process, inter-process, and distributed code.
+</p>
 
+<p>
 I'd say this has been widely known for about five years, so I predict that the programming community at large, even Java programmers, will finally deprecate multithreaded programming around seven or eight years from now. That's about par for the course.
+</p>
 
+<p>
 Prediction #4:  Java's "market share" on the JVM will drop below 50% by 2010.
+</p>
 
+<p>
 In other words, over half the code written for the Java platform will not be Java. It'll be Python, Ruby, Haskell, Lisp, and a variety of other languages. The Java programming language will become more like "assembly-language for the JVM" — something you use for building frameworks in Java, but most app code will be in higher-level languages compiled into Java bytecode.
+</p>
 
+<p>
 Reason for prediction: The Java core language is the weakest part of the otherwise strong Java platform.
+</p>
 
+<p>
 People think they love Java because of the language, and to be sure, it's more expressive (in some ways) than C and a lot saner than C++. But that doesn't qualify it as a great language. People actually love Java for a variety of reasons that are unrelated to the core language. One reason is the huge, well-designed standard library. It's everything C++ should have had, but doesn't. Another reason is the platform: The JVM and libraries present a clean abstraction of the underlying operating system. It gives you access to the standard functionality of an OS, but that functionality is (almost) transparently portable. People also like the security model, the reasonably intelligent community-standardization process, the high-quality tools such as Ant and Eclipse, the widely-available documentation, the mostly-usable built-in multithreading, and of course the community and the hype.
+</p>
 
+<p>
 Oh, and they like Duke, Sun's version of Mr. Tooth.
+</p>
 
+<p>
 That's a whole lot of reasons to like Java, even if you have reservations about the core language.
+</p>
 
+<p>
 The Java language just isn't cutting it, though. It's really hard to see this if you're coming from a C/C++ background, because Java is so much better than C++ that it feels like you've died and gone to Programmer Heaven. Java has real strings, and real exceptions, and real namespaces, and and real runtime typing, and real pure-virtual interfaces, and a real security model, and real memory management, and a real library system, and fast compilation times, and it's portable, and it doesn't crash. C++ is a miserable, poisoned purgatory, and Java delivers you from it. So as you might imagine, it takes a few years before you start to chafe at Java's limitations.
+</p>
 
+<p>
 But Java is verbose and somewhat uncompressible: it lacks a macro system, so it's not extensible in the way XML and Lisp are extensible. What they decide to give you is all you've got. And it has no first-class functions, no preprocessor, no metaprogramming, and no templating system. So it takes forever to say certain complex things in Java, and it's hard to to avoid certain kinds of code duplication. Java code bases tend to be pretty large — smaller than equivalent C++ code bases, possibly, but you still wind up with a lot of code.
+</p>
 
+<p>
 Java's also not well-suited for dynamic, incremental development. Java still uses the old batch-based development cycle: shut the app down, make your changes, recompile, start the app back up, get it back to its previous state, and THEN test your changes. It sucks to restart your app every time you want to do so much as change a string literal in your code. Java development is much slower than it needs to be. Much faster than C++ development, but still slow.
+</p>
 
+<p>
 The JVM supports other languages — not very well, not as well as .NET or (maybe?) Parrot. But well enough. And Groovy has finally got the Java community is starting to notice higher-level languages, even if Groovy itself is awful. It will be interesting to see what happens. I suspect that most Java programmers won't upgrade to the new languages, but lots of people coming to the JVM from other platforms will use those languages. So I predict that in six years, less than half of all (new) Java bytecode will be compiled from Java code.
+</p>
 
+<p>
 Prediction #5:   Lisp will be in the top 10 most popular programming languages by 2010.
+</p>
 
+<p>
 Reason for prediction: Lisp is a keeper. And it's getting a lot of good press these days.
+</p>
 
+<p>
 I think it'll be in the top 10, but not in the top 5. If you count all Lisp dialects including Scheme, it might make #6, though. That would include ANSI Common Lisp, Emacs Lisp, Scheme, Guile, Arc, and probably a few other dialects as well.
+</p>
 
+<p>
 Heck, if you just count lines of code, Lisp is already the fourth most-used language in a RedHat Linux distribution.
+</p>
 
+<p>
 There are some other very solid functional-programming languages out there; Lisp isn't the only player in the field. Each of them has its advantages: Erlang has the world's best distributed-computing facilities; Haskell appears to be the world's most elegant and succinct language; OCaml binaries fairly consistently outperform C++. Most functional languages are pretty nice in at least one dimension.
+</p>
 
+<p>
 But Lisp has a secret weapon: Paul Graham. Programming languages don't become successful based on their technical merits. The masses of programmers out there don't know or care about technical merit. They just want someone to look up to, someone to tell them what to do. Languages are religions, and religions need a spiritual leader. It's best if it's a person, but a faceless corporation will do in a pinch, if they have a good marketing department. And now Lisp has a new thought-leader and champion in Paul Graham: successful author; influential essayist; inventor of Yahoo! Store; the man who killed Spam. He has an impressive resume, and he appears to be only just getting started. He's creating the next-generation Lisp (called "Arc"), and his essays have been making the world sit up and pay attention. Largely because of Paul's leadership, everyone's talking about Lisp.
+</p>
 
+<p>
 And as luck would have it, when the world started sniffing around for Lisp documentation, they found it. Lots of it. Lisp is the most thoroughly documented language in the world. There are hundreds of published books about Lisp, and hundreds of others in various fields that use Lisp as their primary language. Although many are out of print, since Lisp did go through a slump there in the 90's, there are at least a hundred Lisp books in print, with new ones coming out every month. There's more online documention available for Lisp than for any other language, in the form of articles, wikis, tutorials, manuals, and sample code.
+</p>
 
+<p>
 Once you start looking, it starts to feel like Lisp is everywhere. It's the extension language for many Gnu tools (Gimp, Gnome, Emacs). It's the first programming language they teach you at U.C. Berkeley, MIT, and several other major universities. There are several high-quality Lisp implementations for the Java VM that compile down to Java bytecode, and several implementations for .NET as well. Heck, they even used Lisp for much of the computer animation in Peter Jackson's Lord of the Rings.
+</p>
 
+<p>
 And wouldn't you know it: Lisp was one of the only two languages originally allowed at Amazon (the other being ANSI C). Bet you a dollar you didn't know what. Oh, and an Amazon dev team over in Slough is using Common Lisp right now. Hi, guys!
+</p>
 
+<p>
 Maybe I'm wrong. Maybe it will be in the top 5 by 2010. We'll see. But I think I need to brush up on my Lisp.
+</p>
 
+<p>
 Prediction #6:   A new internet community-hangout will appear. One that you and I will frequent.
+</p>
 
+<p>
 Reason for prediction: People like to socialize.
+</p>
 
+<p>
 Where's the internet community? I don't see it. People don't hang out on Amazon's website, or Google's, or eBay's, or Microsoft's. Not anywhere, really. There are little chat rooms here and there, and some static link-in sites where you can answer a bunch of questions about your hair color and favorite taco sauce. Yawn.
+</p>
 
+<p>
 Someone told me recently that the consensus among online gamers is that the success of Sony's EverQuest is largely due to its strong in-game community. In order to support so many simultaneous players, Sony had to make the monsters really tough, and you have to spend a long time (like half an hour) healing after every fight. So people have nothing to do but sit around campfires and taverns, and socialize.
+</p>
 
+<p>
 Hey, remember AOL? There's a blast from the past, eh? Oh wait, I guess they're still around. Admittedly no self-respecting geek would ever use AOL, but you have to admit: AOL's big draw, for those who use it, is the community features. And that's a big draw. Big enough to let AOL buy giant entertainment/media conglomerates like Time Warner.
+</p>
 
+<p>
 Socialization has to be real-time; i.e., things like chat rooms, IRQ, instant messaging. But those are so boring, so passé. People also need a reason to hang out, some sort of shared goal or shared frustration that gives them something to talk about during those awkward silences.
+</p>
 
+<p>
 Like, games. Or sports. Or gambling. Or discussion groups about books with names like "He's Just Not That Into You: The No-Excuses Truth to Understanding Guys."
+</p>
 
+<p>
 It's an uncomfortable truth that most Americans spend the majority of their free time watching television. They like their mindless entertainment. But going to the movies is more fun, because there are people there, all ooh-ing and aaah-ing and boo-ing along with you. Too bad you can't go to the movies and stay at home on your couch simultaneously, eh?
+</p>
 
+<p>
 Games, movies, and chat rooms are all converging, because people want to hang out, be entertained, and be slightly challenged, all while sitting on their couch. Or possibly sitting in an internet cafe, as 5 percent of the population of Korea does at any given time, playing the online game "Lineage". They've got it figured out better than most other countries.
+</p>
 
+<p>
 Wikis, newsgroups, mailing lists, bulletin boards, forums, commentable blogs — they're all bullshit. Home pages are bullshit. People want to socialize, and create content, and compete lightly with each other at different things, and learn things, and be entertained: all in the same place, all from their couch.
+</p>
 
+<p>
 Whoever solves this — i.e. whoever creates AOL for real people, or whatever the heck this thing turns out to be — is going to be really, really rich.
+</p>
 
+<p>
 Prediction #7:   The mobile/wireless/handheld market is still at least 5 years out.
+</p>
 
+<p>
 Reason for prediction: My spider-sense isn't tingling yet.
+</p>
 
+<p>
 Every year for at least the past decade, pundits have been predicting that next year will be the Year of Wireless Mobile Computing. They say every human being and most pets on the planet will spend the majority of their disposable income on mobile wireless services for their tiny handheld supercomputer phones. These devices will have 1900x1200 resolution, 1500-hour battery lives, T1 connection speeds, microsecond latency, a reception range that covers the planet surface to a depth of six miles, and will cost less than a pack of Mentos.
+</p>
 
+<p>
 Every year, it's next year. Every next year, it doesn't happen. And you know what? Frankly, I'm getting tired of hearing about it. When I go to Best Buy or Costco or Rat Shack, I don't see tiny handheld devices and service plans that are "almost" tempting. What I see is crap that I wouldn't buy with someone else's money.
+</p>
 
+<p>
 Every three years I buy the latest and greatest wireless handheld PDA gizmo, and without fail, the gizmos have wound up with a centimeter-thick layer of dust on them. I have a cold, dead Sharp Zaurus sitting within my peripheral vision even as we speak. They were going to offer some sort of wireless cellular modem for it, "any time now". I was ready to sign up for the service. I even tried — I called and called, and watched their website like a hawk. But the service was, alas, never to appear, not even after 18 months of waiting. My money is still safe in my wallet.
+</p>
 
+<p>
 The hip trend for dying companies these days is to change focus overnight, and announce: "We're making a play in the Wireless market". Look a Real Networks. Or Geoworks. Or AnythingWorks. Saying you're going into Wireless is a hail-Mary play; a last-ditch attempt to secure another round of VC funding while you pray for the mobile market to explode soon. Maybe even next year.
+</p>
 
+<p>
 But the carriers don't know what the hell they're doing, and the content and distribution models aren't worked out yet, and won't be for a long time. A lot of players need to get their collective acts together for the mobile market to take off, and it just hasn't been happening.
+</p>
 
+<p>
 And today's mobile devices still suck. I'm sure it's nice to be able to read your Outlook email on your $500 Blackberry, but I doubt teenagers are and housewives quite as enamored of the idea as you are. And I'm sure it's nice to be able to scrape enough grease off your PocketPC-phone LCD to deep-fry a country turkey, but it's maybe not so nice that the grease came from your face.
+</p>
 
+<p>
 Don't get me wrong: it will happen someday. But I think it's not going to be any time soon. Betcha!
+</p>
 
+<p>
 Prediction #8:   Someday I will voluntarily pay Google for one of their services.
+</p>
 
+<p>
 Reason for prediction: They're putting technological heroin in their services, and someday they're going to start charging.
+</p>
 
+<p>
 Every year I fork over hundreds and hundreds of dollars to Amazon, buying techie books, video games, clothes, kitchen stuff, all sorts of goodies. And I fork over about three times that much to Starbucks, for lattes. (My New Year's Resolution this year was to make absolutely sure I never calculated how much I spend at Starbucks. 2 months to go!)
+</p>
 
+<p>
 I've never paid Google a dime, as far as I know, and I'd venture to guess that I've spent a lot more time on their website than on Amazon's. Or Starbucks'. I do a lot of Googling for free, and so do you.
+</p>
 
+<p>
 For the life of me, I don't know how they make their money. Maybe I'm missing something really obvious here, but I don't see how they can be a 2 gazillion dollar company, or whatever they are nowadays, purely on search engine sales and ad revenues.
+</p>
 
+<p>
 I was under the impression that internet companies that make money make it from consumers. B2B failed. Eyeball counting failed. Well, that's what I thought, anyway.
+</p>
 
+<p>
 But I can tell you this: Google has changed my life. If I can't find what I'm looking for in Google in 3 tries, looking no further than the first 10 search results on each try, then it probably doesn't exist. Google is every bit as important a programmer-tool for me as my compiler is. And it's pretty darn important for my day-to-day life, too. As one example, I never use a phone book anymore. Want Uwajimaya's number? Type "Uwajimaya" into Google. You can even find it by spelling it incorrectly as "Uwajamaya". I just tried it.
+</p>
 
+<p>
 Google is, for now at least, the font of all knowledge. There are a few upstarts here and there — Wikipedia, IMDB, dictionary.com, and a handful of other reasonably useful information sources. Even Amazon's search-inside-the-book is handy pretty often. But I still use Google a hundred times as often as those other sources combined.
+</p>
 
+<p>
 And just when I thought they had it licked, they came out with the desktop search appliance. I just installed it yesterday. Only took 10 seconds. I proceeded to forget about it immediately. A few minutes later, one of my normal Google searches scared the pants off me — it turned up some stuff that I thought only existed on my computer.
+</p>
 
+<p>
 Oh. Duh.
+</p>
 
+<p>
 LXR? I doubt it'll be useful anymore, once Google has indexed my source code, which I'm sure it has. Lemme check. Yup. I just typed a Java identifier name into my IE Google toolbar, and the first two search results were source files that I'd written. (Bizarrely, it's not pulling up the file when I click on it, though. Maybe I have the .java extension bound to some app that's not starting up.)
+</p>
 
+<p>
 In any case, Google has just changed my life again, this time by organizing my filesystem for me. Sort of. It's just the way it was before, but now nothing is lost. And believe you me, up until yesterday, I used to misplace documents frequently. I had things stashed in too many places. But it's suddenly a non-issue. They're all in my browser window now.
+</p>
 
+<p>
 And I still haven't ever paid Google a dime. But I'm convinced — someday, I will. As soon as they want me to.
+</p>
 
+<p>
 Prediction #9:   Apple's laptop sales will exceed those of HP/Compaq, IBM, Dell and Gateway combined by 2010.
+</p>
 
+<p>
 Reason for prediction: Macs rule. Windows laptops are as exciting as a shiny disco ball in the ceiling.
+</p>
 
+<p>
 I bought a Powerbook for my wife Linh about 8 months ago, and she uses it so much that I can't even sneak a peek at it once in a while. I just looked over at its little spot on our desk, and it's not there. She's using it right now. I bet she's on that thing for 3 hours a day at least, maybe more — playing games, reading mail, surfing the web, sharing pictures with her sisters. Doing Google searches, and I didn't tell her about Google. She just sorta found it.
+</p>
 
+<p>
 Before I bought her that Powerbook, her average computer usage was around an hour a year.
+</p>
 
+<p>
 When's the last time you saw a movie in the theater, and someone was using a laptop, and it wasn't some flavor of Mac? I think it's been at least 3 years for me. Everyone in the movies uses Macs, because Macs are hip. They're in. That's what you use if you're cool. You see them in TV commercials, TV shows, movies. You see them on airplanes, and at Starbucks. You see them in your co-workers' cubes.
+</p>
 
+<p>
 Macs are a triple-threat right now: they're trendy (which rarely correlates with quality; it's simply a marketing feat), they're actually easy to use for non-computer users, and they're a powerful platform for developers and power-users. There's something there for everyone.
+</p>
 
+<p>
 Actually, I know exactly squat about laptop sales figures, and I don't know what Apple's market share is, or how fast it's growing. And this blog has gone on so long that I don't feel like researching it right now, even though Google would probably tell me in under 10 seconds. But I can tell you that their market share is growing. Fast. Any idiot could tell you that.
+</p>
 
+<p>
 I can tell you because I want one. Bad. And the desire is growing. My rule of thumb for products and services is: if I would go pay for it today, then it's going to be big. (If I'd stand in line to pre-order it, it'll be huge). It's not always an accurate predictor, but it's pretty reliable. If you're building a product or a service, and you keep thinking to yourself: "I wouldn't use this. Who would use this? I don't know anyone who would use this," then it's a sure bet that you're right, and nobody will use it.
+</p>
 
+<p>
 Investors and marketeers and executives and product managers regularly fool themselves into thinking that something will be cool, but when it lauches, it's a flop. That's because they're building things for other people. But that's not the way great things get built. You have to build them for yourself.
+</p>
 
+<p>
 Apple does things right. Steve Jobs is a smart guy. I don't think Microsoft really builds things for themselves, or maybe they're just not very good at knowing what they like. I'm using Windows machines today, but only because the open-source community has helped turn Windows into a reasonable platform. I'm using Windows mostly for the device drivers; in most respects, my Windows desktop looks like Unix.
+</p>
 
+<p>
 But now the open-source community likes Macs just as much as you and I do. So before long, maybe even now, Macs will be a better choice for the majority of my computer activities, including programming.
+</p>
 
+<p>
 And when that happens, who would buy a PC laptop? Not me, that's for sure. My next one will be a Mac.
+</p>
 
+<p>
 Prediction #10:   In five years' time, most programmers will still be average.
+</p>
 
+<p>
 Reason for prediction: That's just how the math works out.
+</p>
 
+<p>
 Of course most programmers will still be average, by definition. The problem is that the average level of quality and productivity probably won't have changed all that much. The difference between great hackers and average plodders is a hundred-fold, which implies great potential for improving the average. But I doubt the industry average productivty/quality per-capita output will go up even 50% over the next 5 years, let alone 2 orders of magnitude. Partly because there are too many J2EE consultants out there ruining the numbers. But more importantly, most people are just doing this gig for a living.
+</p>
 
+<p>
 So most people will still be average, and average will still be ho-hum.
+</p>
 
+<p>
 What will you be?
+</p>
 
+<p>
 (Published Nov 10th, 2004)
 Comments
+</p>
 
+<p>
 Interesting stuff all around. I just thought I would mention that I got the hairs raising on the back of my neck feeling when I reached number 4. Just this morning I dusted off my copy of "Jython Essentials" in another attempt to sneak into the world of Java development by using a different language, and had been enjoying it immensely.
+</p>
 
+<p>
 Do you happen to know the names of any of the LISP dialects that are available on the JVM?
+</p>
 
+<p>
 Posted by: Brian W. at November 12, 2004 11:35 PM
+</p>
 
+<p>
 Cool. Last time I got that feeling was after watching The Ring by myself one night.
+</p>
 
+<p>
 Jython's a good choice, possibly the best one right now. Clean, simple, powerful language, and it doesn't have anything missing; you can do anything in Jython that you can in Java, including subclassing Java classes. And there are at least two books out on it, maybe three. I've done a lot of programming in Jython, and I still enjoy it quite a bit.
+</p>
 
+<p>
 Armed Bear Common Lisp is (apparently) the best-supported CL implementation for the JVM. I'm going to be experimenting with it over the next week or two. Kawa Scheme is by far the most complete Lisp implementation for the JVM, and has bells and whistles you'd scarcely believe. It's even got CL-style macros and the ability to use static typing, which even Jython doesn't have. It's amazing.
+</p>
 
+<p>
 Kawa's main problem is that it's not yet a drop-in replacement for Java; for instance, when I checked 2 months ago, there was no way to declare a non-default constructor that took parameters, although Per Bothner was allegedly going to add it soon. But I don't think anyone has made a concerted effort to check whether Kawa matches Java feature-for-feature. Needs to happen at some point, or there will be certain Java APIs you simply can't use.
+</p>
 
+<p>
 A secondary problem with Kawa is that the docs don't teach you Scheme; they just explain the diffs between Scheme and Kawa, and give you a brief overview of what the JVM integration looks like. I think the only way to get up to speed on it, really, is to work your way through the examples in a Scheme book (or books) with Kawa, and whenever something doesn't work, look at Kawa's docs to figure out how Kawa does it.
+</p>
 
-Those are the two I'm planning on using from now on. I've decided that I can't waste any more time; if Lisp is the future, then I need to master it, and the only way to do that is to program in it. So I'm going to do ALL my personal coding in Lisp and Scheme from now on (*gulp*), mostly on the JVM though, so I can at least ease into it by knowing the libraries already.
+<p>
+Those are the two I'm planning on using from now on. I've decided that I can't waste any more time; if Lisp is the future, then I need to master it, and the only way to do that is to program in it. So I'm going to do ALL my personal coding in Lisp and Scheme from now on (<b>gulp</b>), mostly on the JVM though, so I can at least ease into it by knowing the libraries already.
+</p>
 
+<p>
 Good luck!
+</p>
 
+<p>
 Posted by: Steve Yegge at November 13, 2004 03:07 AM
+</p>
 
-Steve, you got yourself a bad case of 'Paul Graham'-itis... You need to seriously stop reading/buying into his Lisp self-indulgence. Lisp and the like have existed for years... you don't see them taking over yet, do you? They haven't and they won't. I admire the guy don't get me wrong, but sometimes I think he's on the verge of being delusional...
+<p>
+Steve, you got yourself a bad case of 'Paul Graham'-itis&#x2026; You need to seriously stop reading/buying into his Lisp self-indulgence. Lisp and the like have existed for years&#x2026; you don't see them taking over yet, do you? They haven't and they won't. I admire the guy don't get me wrong, but sometimes I think he's on the verge of being delusional&#x2026;
+</p>
 
+<p>
 Posted by: Anonymous at November 15, 2004 08:17 AM
+</p>
 
+<p>
 Hello Anonymous Commenting Person,
+</p>
 
+<p>
 Paul Graham has to be that way. Not just because he's a rich bastard who (with two friends) implemented an application in Lisp that we've been unable to match at Amazon, and Yahoo bought him out for $40 million in stock that proceeded to soar. That's not the main reason he comes off the way he does, although as far as I'm concerned, it gives him at least a halfway decent excuse.
+</p>
 
+<p>
 Paul comes off the way he does because he's good at marketing, and he realizes that in a world full of egotistical programmers, the only way to be heard in all the noise is to be an arrogant bastard.
+</p>
 
-Stroustroup's the same way, and James Gosling has a big company that can set him up on a pedestal, or he'd have to be that way too. And Larry Wall - well, Larry outdoes them all. Larry says that God talks to him and tells him He only likes Perl programmers. If Paul Graham appears to be delusional to you, read some of Larry's speeches sometime, like this one: http://www.wall.org/~larry/pm.html
+<p>
+Stroustroup's the same way, and James Gosling has a big company that can set him up on a pedestal, or he'd have to be that way too. And Larry Wall - well, Larry outdoes them all. Larry says that God talks to him and tells him He only likes Perl programmers. If Paul Graham appears to be delusional to you, read some of Larry's speeches sometime, like this one: <a href="http://www.wall.org/~larry/pm.html">http://www.wall.org/~larry/pm.html</a>
+</p>
 
+<p>
 We work in a fashion industry, and marketing really matters. Paul's marketing is getting the appropriate attention, so you can't fault his methods. I'll stick with my prediction.
+</p>
 
+<p>
 Posted by: Steve Yegge at November 15, 2004 11:21 PM
 Back to Stevey's Drunken Blog Rants™    image of my email address, steve dot yegge at ye olde gmail
+</p>
 
+<p>
 Sign in|Recent Site Activity|Report Abuse|Print Page|Powered By Google Sites
+</p>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../../02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        kmail --view can't display some maildir files correctly <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../04/13/0-system-config-how-does-it-work-and-how-to-use-it.html"> <!-- next-url -->
+        system-config原理与使用的简要说明 <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
+</div>
+<!-- {%html-mode%} -->
+
+<div id="disqus_container">
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
+    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
+    var disqus_url = 'http://baohaojun.github.io/blog/2016/03/02/0-steve-yegges-ten-predictions.html';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+    <div style="margin-bottom:20px">
+    <script type="text/javascript" charset="utf-8">
+      (function(){
+      var _w = 86 , _h = 16;
+      var param = {
+      url:location.href,
+      type:'6',
+      count:'', /**是否显示分享数，1显示(可选)*/
+      appkey:'', /**您申请的应用appkey,显示分享来源(可选)*/
+      title:'', /**分享的文字内容(可选，默认为所在页面的title)*/
+      pic:'', /**分享图片的路径(可选)*/
+      ralateUid:'1611427581', /**关联用户的UID，分享微博会@该用户(可选)*/
+      language:'zh_cn', /**设置语言，zh_cn|zh_tw(可选)*/
+      rnd:new Date().valueOf()
+      }
+      var temp = [];
+      for( var p in param ){
+      temp.push(p + '=' + encodeURIComponent( param[p] || '' ) )
+      }
+      document.write('<iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + temp.join('&') + '" width="'+ _w+'" height="'+_h+'"></iframe>')
+      })()
+    </script>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+</div> <!-- bhj_leftpane -->
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+  <!-- End #profile -->
+
+
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+    <h2>Tags</h2>
+    <ul>
+                <li><a href="../../../../meta/tags/blog.html" title="Blogging">blog</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='../../02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html'> kmail --view can't display some maildir files corr... </a></li>
+<li><a href='../../01/20/0-my-brother-is-my-hero.html'> 那些年，我们一起追过的偶像 </a></li>
+<li><a href='../../01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html'> Cannot connect to adb under linux because of optio... </a></li>
+<li><a href='../../../2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html'> 大公司、小公司、自由开源软件社区的代码管理 </a></li>
+<li><a href='../../../2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html'> Qt QString indexOf不考虑大小写的坑 </a></li>
+<li><a href='../../../2015/11/04/0-blog-optimization-for-viewing-on-phone.html'> 优化了一下手机上看博客的效果 </a></li>
+<li><a href='../../../2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html'> 如何在Linux下运行小扳手（包含Ubuntu 12.04） </a></li>
+<li><a href='../../../2015/09/19/0-Wrench-changelog-and-download-location.html'> 小扳手更新记录及最新版下载地址 </a></li>
+<li><a href='../../../2015/09/14/0-Got-hit-by-perl-glob.html'> 被perl的glob给坑了 </a></li>
+<li><a href='../../../2015/09/05/0-Linux-is-my-IDE.html'> Linux就是我的IDE </a></li>
+    </ul>
+
+    <h2 class="sidebar-title">Archive</h2>
+      <ul id="archives">
+        <li><a href="/meta/Archive.html"> The complete archive </a></li>
+      </ul>
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
+<div id="postamble" class="status">
+<!-- {%html-mode%} -->
+
+<!-- {%/html-mode%} -->
+</div>
+</body>
+</html>
