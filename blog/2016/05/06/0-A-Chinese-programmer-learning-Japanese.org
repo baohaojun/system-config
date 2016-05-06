@@ -10,7 +10,7 @@
 
 这次开始学习之后，先在Linux下学了一下如何进行日文输入。这个在Emacs底下有一个SKK的输入法，并且后来也被移植成ibus、scim等的插件了，所以花了点时间，练了练，马上就掌握了。
 
-然后，开始折腾Linux下的日文字典，不管是桌面软件，还是网页形式的。这里桌面版的推荐一个 Gjiten。网页版的字典则推荐 [[http://jisho.org]]、 [[https://www.google.co.uk/search?q%3D%25E8%259B%2587%25E5%258F%25A3%2B%25E8%258B%25B1%25E8%25AF%25AD][谷歌翻译]]、 [[https://en.wiktionary.org/wiki/%25E4%25BD%25A0#Japanese][维基字典日文释义]]、  最后一个则是对发音重读音节非常有帮助的 [[http://www.gavo.t.u-tokyo.ac.jp/ojad/search/index/sortprefix:accent/narabi1:kata_asc/narabi2:accent_asc/narabi3:mola_asc/yure:visible/curve:invisible/details:invisible/limit:20/word:%25E8%259B%2587%25E5%258F%25A3][东京大学的一个网站]]。 在用Gjiten的过程中，发现它有很多词语类型、词性的缩写，然后上网搜都是什么意思的时候，发现日本人做事情真的是好严谨，有一个专门的网页解释这些缩写： [[http://www.edrdg.org/wiki/index.php/Dictionary_Codes][日文字典缩写代码]]。
+然后，开始折腾Linux下的日文字典，不管是桌面软件，还是网页形式的。这里桌面版的推荐一个 Gjiten。网页版的字典则推荐 [[http://jisho.org]]、 [[https://www.google.co.uk/search?q%3D%E8%9B%87%E5%8F%A3%2B%E8%8B%B1%E6%96%87][谷歌翻译]]、 [[https://en.wiktionary.org/wiki/%E8%9B%87%E5%8F%A3#Japanese][维基字典日文释义]]、  最后一个则是对发音重读音节非常有帮助的 [[http://www.gavo.t.u-tokyo.ac.jp/ojad/search/index/sortprefix:accent/narabi1:kata_asc/narabi2:accent_asc/narabi3:mola_asc/yure:visible/curve:invisible/details:invisible/limit:20/word:%E8%9B%87%E5%8F%A3][东京大学的一个网站]]。 在用Gjiten的过程中，发现它有很多词语类型、词性的缩写，然后上网搜都是什么意思的时候，发现日本人做事情真的是好严谨，有一个专门的网页解释这些缩写： [[http://www.edrdg.org/wiki/index.php/Dictionary_Codes][日文字典缩写代码]]。
 
 接下来程序员的特质开始展开了。先是日文输入的问题。有时候想输入个日文汉字，因为不知道其读音，所以用日文输入法并不是太方便。想用中文输入法吧，日文汉字并不能简单的用简繁转换来映射。最早的时候日文汉字基本上就是繁体字，但后来跟中文简体字一样，日本人也对他们的汉字做了一些简化，有些与中文简体字的简化结果是一样的，但也有很多是不一样的。很多中文输入法是支持切换简繁体的，但并没有哪个支持切换成日文汉字的输出。比如簡体的“亚”字，如果是繁體的話，應該輸出成“亞”，但如果是日語的話，応該輸出成“亜”。
 
