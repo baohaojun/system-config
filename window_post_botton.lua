@@ -11,6 +11,7 @@ map['com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'ma
 map['com.android.contacts/com.android.contacts.activities.ContactEditorActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactSelectionActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.DialtactsActivity'] = 'manual-post'
+map['com.android.contacts/com.android.contacts.yellowpage.YellowPageActivity'] = 'manual-post'
 map['com.android.email/com.android.email.activity.setup.AccountSetupBasics'] = 'manual-post'
 map['com.android.incallui/com.android.incallui.InCallScreen'] = 'weixin-chat'
 map['com.android.mms/com.android.mms.ui.ComposeMessageActivity'] = 'weixin-confirm'
