@@ -15,6 +15,9 @@ export REPO_BRANCH=${REPO_BRANCH:-$(git-tracking-branch)}
 export REPO_REMOTE=$(repo-remote)
 
 action='--submit --verified +1 --code-review +2'
+if test -e ~/src/github/smartcm/hooks/gerrit-do-review; then
+    . ~/src/github/smartcm/hooks/gerrit-do-review
+fi
 
 do_update=true
 TEMP=$(getopt -o aU --long abort -n $(basename $0) -- "$@")

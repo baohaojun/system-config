@@ -135,6 +135,11 @@ for diff_file in $diffs; do
     (
         cd $dir || exit 0
         if test "$(basename $0)" = repo-cherry-push-all; then
+            if test "$ok_function"; then
+                echo running $ok_function in $PWD
+                $ok_function || true
+                exit
+            fi
             if ! start_recursive_shell repo-cherry-push-all; then
                 if yes-or-no-p -y "Exited abnormally... Do you want to continue with the rest repos?"; then
                     exit 0
