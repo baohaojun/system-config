@@ -48,11 +48,17 @@ if test ! -d $dir/.git; then
     mkdir -p $dir
     (
         cd $dir
-        git clone --single-branch -b $branch $url .
+        if ! git clone --single-branch -b $branch $url .; then
+            git init .
+            git commit -m 'init commit' --allow-empty --author 'qualcomm <someone@qualcomm.com>'
+            git push $url HEAD:refs/heads/$branch
+            rm .git -rf
+            git clone --single-branch -b $branch $url .
+        fi
     )
 else
     (
         cd $dir
-        git pull
+        git pull -q
     )
 fi
