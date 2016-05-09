@@ -35,6 +35,9 @@ if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
         --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; find . -name "*.xml"') \
         --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; find . -name "*.xml"')
     yes-or-no-p -y -- "You want run with $@?"
+    if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-find-all; then
+        . ~/src/github/smartcm/scm-helpers/repo-cherry-find-all "$@"
+    fi
 fi
 
 local_from=false
