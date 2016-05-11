@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if test "$(basename $0)" != lang; then
+    set -- $(basename $0) "$@"
+fi
+
+LANG=$1.UTF-8
+LC_ALL=$1.UTF-8
+LANGUAGE=$1:en
+shift
+"$@"

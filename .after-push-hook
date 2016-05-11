@@ -28,6 +28,12 @@ function push-all-projects() {
 
 if test -d ~/src/system-config/; then
     push-all-projects&
+    (
+        for x in ~/src/github/*/.after-push-hook; do
+            cd "$(dirname "$x")"
+            bash "$x"&
+        done
+    ) >/dev/null 2>&1
     cd ~/system-config
     rsync . ~/src/system-config/ --exclude .git/ -a
     mkdir -p ~/src/system-config/src/github

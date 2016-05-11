@@ -6,6 +6,10 @@ declare -A size_done_map
 echo * | xargs stat -c "%s %n" | sort -n |
     (
         while read size file; do
+            if ! test -f $file; then
+                continue
+            fi
+
             if test "$size" = "$last_size"; then
                 if test "${size_done_map[$size]}" != true; then
                     last_md5=$(md5sum "$last_file" | pn 1)

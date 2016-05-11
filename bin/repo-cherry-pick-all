@@ -25,7 +25,7 @@ function cherry-ok() {
 
     ok_file=$(lookup-file -e out)/diff/${ap//\//%}.ok
 
-    echo $commit ok | tee -a $ok_file
+    (echo -n 'ok: '; grep $commit ${ok_file/.ok/.log}) | tee -a $ok_file
 }
 
 function cherry-fail() {
@@ -34,7 +34,10 @@ function cherry-fail() {
 
     fail_file=$(lookup-file -e out)/diff/${ap//\//%}.fail
 
-    echo $commit failed | tee -a $fail_file
+    (echo -n 'failed: '; grep $commit ${fail_file/.fail/.log})| tee -a $fail_file
+    if test "$(wc -l $fail_file)" -gt 100; then
+        echo "有冲突的patch太多了，之后的patch不再处理" | tee -a $fail_file
+    fi
     git cherry-pick --abort
 }
 

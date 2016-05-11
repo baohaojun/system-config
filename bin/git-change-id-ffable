@@ -48,7 +48,7 @@ need_die=0
 perl -e '
      open($destlog, "<", $ENV{destlog});
      while (<$destlog>) {
-         $destcid{$1} = 1 if m/^\s*(?:old-)?Change-Id:\s+(.*)/i;
+         $destcid{$1} = 1 if m/^\s*(?:old-)?Change-Id:\s*(.*)/i;
      }
      close($destlog);
 
@@ -62,7 +62,7 @@ perl -e '
              $no_cid = $current_commit;
              $commit_info = $2;
          }
-         if (m/^\s*Change-Id:\s+(.*)/i) {
+         if (m/^\s*Change-Id:\s*(.*)/i) {
              $no_cid="";
              if (not $destcid{$1}) {
                  printf "%s commit %s cid %s not found in %s %s\n", $ENV{PWD}, $current_commit, $1, $ENV{dest}, $commit_info;

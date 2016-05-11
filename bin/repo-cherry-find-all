@@ -233,7 +233,8 @@ my-rfa -j $jobs '
     TOP=$ANDROID_TOP;
     log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
     if [[ $log =~ /\.log$ ]]; then
-        die "Error for $(ap): can not find repo path"
+        echo "Error for $(ap): can not find repo path"
+        exit 1
     fi
     mkdir -p $(dirname $log);
     if test -z "$to_manifest_xml"; then

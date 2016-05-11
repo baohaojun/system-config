@@ -82,22 +82,34 @@ while true; do
     esac
 done
 
+if git status -s | grep -q . && yes-or-no-p -y "你的git仓储还有改动，是否要退出？"; then
+    echo
+    echo 以下是尚未提交的改动，请先提交再重试 $0 "$@"
+    git status -s
+    exit
+fi
+
 if test -z "$REPO_BRANCH"; then
     head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
     merge_head=
     if test "$head_branch"; then
-        merge_head=$(git config branch.$head_branch.merge | perl -npe 's!^refs/heads/!!')
+        merge_head=$(git config branch.$head_branch.merge | perl -npe 's!^refs/heads/!!' || true)
+        if test -z "$merge_head"; then
+            die "请检查你的 git config branch.$head_branch.merge ，没有指定往远程的哪个分支上合"
+        fi
         if test "$merge_head" -a "$merge_head" != $head_branch -a "$merge_head" != refs/heads/$head_branch; then
             export REPO_REMOTE=$(git config branch.$head_branch.remote)
             head_branch=$merge_head
 
         fi
     fi
-    if test "$head_branch" && yes-or-no-p -y "use $head_branch as the target branch for review?"; then
+    if test "$head_branch" && yes-or-no-p -y "你的git设置了远程跟踪分支 $head_branch ，是否要push到此分支？"; then
         export REPO_BRANCH=$head_branch
         if test -z "$REPO_REMOTE" -a -z "$merge_head"; then
             export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
         fi
+    elif ! yes-or-no-p -y "根据repo manifest.xml计算出你的remote是 $(repo-remote) ，远程分支是 $(repo-branch)，确认？"; then
+        die "不知道如何自动帮你提交review，请自己确定远程名、分支名，然后运行 git push 远程名 HEAD:refs/for/分支名"
     fi
 fi
 
@@ -111,13 +123,20 @@ if test $do_fetch = true; then
     echo git fetch done
 fi
 
-if test $do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD; then
-    if true; then
+if test $do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/dev/null 2>&1; then
+    if yes-or-no-p -y "远程有提交，需要先rebase到远程，自动处理？"; then
         git rebase $(repo-remote-branch) ||
         die "Rebase failed"
     else
         die "Not fast-forward push is not allowed"
     fi
+fi
+
+n_commits=$(git log $(repo-remote-branch)..HEAD --pretty=%H|wc -l)
+if test "$n_commits" != 1; then
+   if ! yes-or-no-p -y "你要一次提交多个（$n_commits个）patch，确认？"; then
+       die "请确认自己是否要提交多个patch"
+   fi
 fi
 
 reviewers=()
@@ -138,7 +157,7 @@ done
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
 
-if is-tty-io && test $do_review = true; then
+if is-tty-io && test $do_review = true && yes-or-no-p -y "在请别人review之前，要不要先自己本地review一下（加-R参数可以跳过此提示）"; then
     (
         cd $(dirname $(lookup-file -e .git))
         FOR_REVIEW=true git-interactive-add
