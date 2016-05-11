@@ -48,7 +48,7 @@ if test "$yes" = true ; then
 fi
 
 user_prompt=$(echo -n "$@")
-if test "${user_prompt:0-1}" != '?'; then
+if [[ "${user_prompt:0-1}" =~ '\?$|？$' ]]; then
     user_prompt=${user_prompt}\?
 fi
 
