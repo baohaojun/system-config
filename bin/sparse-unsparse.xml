@@ -63,6 +63,10 @@ fi
 if test -d sparse_images -a ! -e userdata_1.img; then
     cd sparse_images
 fi
+bs=$(xmlstarlet sel -B -t -m //program -v @SECTOR_SIZE_IN_BYTES -n $xml|sort -u)
+if test "$(echo "$bs"|wc -l)" != 1; then
+    die "block size not decided: $bs"
+fi
 xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n $xml | grep ${part} |
 {
     while read img start; do
@@ -70,7 +74,7 @@ xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n $xml | gr
             the_start=$start
         fi
         start=$((start - the_start)) || true
-        dd if=$img of=${out} seek=$start
+        dd if=$img of=${out} seek=$start bs=$bs
     done
-    dd if=/dev/zero of=${out} seek=$(pretty 1000000+$(stat -c %s ${out})/512|pn 2) count=1
+    dd if=/dev/zero of=${out} seek=$(pretty 1000000+$(stat -c %s ${out})/512|pn 2) count=1 bs=$bs
 }
