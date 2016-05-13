@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+ctags_pid=$1
+while true; do
+    read ans;
+    if test "$ans" = start; then
+        if ! read -t 300 ans; then
+            bhj-notify hello "need to kill $ctags_pid"
+            kill $ctags_pid
+            exit 0
+        fi
+    fi
+done

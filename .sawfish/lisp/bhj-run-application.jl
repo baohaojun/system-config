@@ -1,14 +1,14 @@
-;; run-application.jl -- prompt for an application and run it
+;; bhj-run-application.jl -- prompt for an application and run it
 
 ;; Copyright (C) 2007 Sven Schoenung <sven.schoenung@gmail.com>
 ;; Copyright (C) 2000 John Harper <john@dcs.warwick.ac.uk>
 
-;; run-application is free software; you can redistribute it and/or
+;; bhj-run-application is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 2, or
 ;; (at your option) any later version.
 
-;; run-application is distributed in the hope that it will be useful,
+;; bhj-run-application is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
@@ -28,56 +28,56 @@
 (require 'bhj.prompt)
 (require 'rep.io.files)
 
-(defgroup run-application "Run application"
+(defgroup bhj-run-application "Run application"
   :group misc)
 
-(defcustom run-application:x-position nil
+(defcustom bhj-run-application:x-position nil
   "X:  Position: \\w"
   :type (choice (nil "Center")
                 (left "Left")
                 (right "Right"))
-  :group (misc run-application))
+  :group (misc bhj-run-application))
 
-(defcustom run-application:x-offset 0
+(defcustom bhj-run-application:x-offset 0
   "X:  Offset: \\w"
   :type (number 0)
-  :group (misc run-application)
-  :depends run-application:x-position)
+  :group (misc bhj-run-application)
+  :depends bhj-run-application:x-position)
 
-(defcustom run-application:y-position nil
+(defcustom bhj-run-application:y-position nil
   "Y:  Position: \\w"
   :type (choice (nil "Center")
                 (top "Top")
                 (bottom "Bottom"))
-  :group (misc run-application))
+  :group (misc bhj-run-application))
 
-(defcustom run-application:y-offset 0
+(defcustom bhj-run-application:y-offset 0
   "Y:  Offset: \\w"
   :type (number 0)
-  :group (misc run-application)
-  :depends run-application:y-position)
+  :group (misc bhj-run-application)
+  :depends bhj-run-application:y-position)
 
-(defcustom run-application:use-custom-path nil
+(defcustom bhj-run-application:use-custom-path nil
   "Use custom PATH: "
   :type boolean
-  :group (misc run-application))
+  :group (misc bhj-run-application))
 
-(defcustom run-application:custom-path (getenv "PATH")
+(defcustom bhj-run-application:custom-path (getenv "PATH")
   " (colon seperated list)"
   :type string
-  :group (misc run-application)
-  :depends run-application:use-custom-path)
+  :group (misc bhj-run-application)
+  :depends bhj-run-application:use-custom-path)
 
-(defcustom run-application:use-application-exclude t
+(defcustom bhj-run-application:use-application-exclude t
   "Exclude applications: "
   :type boolean
-  :group (misc run-application))
+  :group (misc bhj-run-application))
 
-(defcustom run-application:application-exclude "^\\."
+(defcustom bhj-run-application:application-exclude "^\\."
   " (regular expression)"
   :type string
-  :group (misc run-application)
-  :depends run-application:use-application-exclude)
+  :group (misc bhj-run-application)
+  :depends bhj-run-application:use-application-exclude)
 
 ;; FIXME: This could probably be better ...
 (define (bhj-prompt-application-executable file dir)
@@ -94,12 +94,12 @@
   (or (not (string-head-eq file str))
       (bhj-prompt-application-duplicate file dirs)
       (not (bhj-prompt-application-executable file dir))
-      (and run-application:use-application-exclude
-           (string-match run-application:application-exclude file))))
+      (and bhj-run-application:use-application-exclude
+           (string-match bhj-run-application:application-exclude file))))
 
 (define (bhj-prompt-application-path)
-  (let ((path (if run-application:use-custom-path
-                  run-application:custom-path
+  (let ((path (if bhj-run-application:use-custom-path
+                  bhj-run-application:custom-path
                 (getenv "PATH")))
         (path-list '())
         (dir "")
@@ -144,17 +144,17 @@
       (setq str default))
     str))
 
-(define (run-application)
+(define (bhj-run-application)
   "Prompt for an application and run it"
   (setq bhj-prompt-window-position
-        (cons (case run-application:x-position
-                ('left run-application:x-offset)
-                ('right (- -1 run-application:x-offset))
+        (cons (case bhj-run-application:x-position
+                ('left bhj-run-application:x-offset)
+                ('right (- -1 bhj-run-application:x-offset))
                 (nil nil))
-              (case run-application:y-position
-                ('top run-application:y-offset)
-                ('bottom (- -1 run-application:y-offset))
+              (case bhj-run-application:y-position
+                ('top bhj-run-application:y-offset)
+                ('bottom (- -1 bhj-run-application:y-offset))
                 (nil nil))))
   (system (format nil "%s &" (string-replace "&\\s*$" "" (bhj-prompt-for-application "Run application: ")))))
 
-(define-command 'run-application run-application)
+(define-command 'bhj-run-application bhj-run-application)

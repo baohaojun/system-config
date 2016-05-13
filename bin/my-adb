@@ -239,7 +239,11 @@ function adb() {
     fi
 
     if test $# = 2 -a "$1" = shell -a "$2" != restart; then # adb shell 'echo hello world'
-        exec $myname shell sh -c "$2"
+        if [[ "$2" =~ ^[-0-9a-z_]*$ ]]; then
+            exec the-true-adb shell "$2"
+        else
+            exec $myname shell sh -c "$2"
+        fi
     fi
 
     if test "$2" = su -a "$1" = shell; then

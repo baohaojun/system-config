@@ -3,18 +3,57 @@ set -e
 mkdir -p ~/src/android-mirror
 cd ~/src/android-mirror
 
+jobs=4
+if is-jenkins; then
+    jobs=2
+fi
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt j:jobs
+## end code-generator
+## start generated code
+TEMP=$(getopt -o j: --long "jobs:"  -n $(basename -- $0) -- "$@")
+jobs=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -j|--jobs)
+            jobs=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
 function sync-with-xml() {
     repo init -u smartisan:qualcomm/platform/manifest.git -b sanfrancisco -m $1 --repo-url smartisan:/googlesource/git-repo
-    repo sync -j4
+    repo sync -j$jobs
+    my-rfa -j2 'echo backup $PWD 1>&2; remote=back-$(repo-remote-url|md5sum|cut -b 1-3); git fetch $(repo-remote) refs/heads/*:refs/remotes/$remote/*' >/dev/null
 }
 
 repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror >/dev/null 2>&1 || true
-ln -s . qualcomm || true
+ln -s . qualcomm >/dev/null 2>&1 || true
+
+if test "$#" != 0; then
+    for x in "$@"; do
+        sync-with-xml "$x"
+    done
+    exit
+fi
 
 sync-with-xml 'default.xml -b master'
 sync-with-xml sfo-rom.xml
 sync-with-xml icesky-rom.xml
 sync-with-xml surabaya-rom-8996-r01200.3.xml
+sync-with-xml u1-l-rom.xml
 (
     cd kernel/msm.git
     git remote add msm310 smartisan:qualcomm/kernel/msm-3.10 || true

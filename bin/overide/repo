@@ -53,7 +53,12 @@ if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
 fi
 
 if test "$1" = sync; then
-    rm .repo/repo-paths -f
+    if test "$1" = init; then
+        (
+            cd .repo
+            rm repo-paths repo_info.pl -f
+        ) || true
+    fi
     set -- "$@" --no-tags
     time ~/system-config/bin/repo "$@" && (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'&)
     exit

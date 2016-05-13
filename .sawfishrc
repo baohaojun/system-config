@@ -7,7 +7,7 @@
 (load-file "~/system-config/.sawfish/bhj-draw-wininfo.jl")
 (load-file "~/system-config/.sawfish/bhj-draw-notification.jl")
 (require 'bhj-draw-notification)
-(require 'Run-application)
+(require 'bhj-run-application)
 (require 'bhj-draw-wininfo)
 (require 'sawfish.wm.commands.move-cursor)
 (bind-keys global-keymap "C-F23" '(move-cursor-left))
@@ -481,8 +481,8 @@
                  (show-desktop)
                (hide-desktop))))
 
-(bind-keys s-h-keymap "r" 'run-application)
-(bind-keys s-h-keymap "Super-r" 'run-application)
+(bind-keys s-h-keymap "r" 'bhj-run-application)
+(bind-keys s-h-keymap "Super-r" 'bhj-run-application)
 
 (require 'sawfish.wm.commands.x-cycle)
 

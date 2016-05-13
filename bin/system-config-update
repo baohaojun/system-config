@@ -90,6 +90,7 @@ fi
     for x in *; do
         if ! dpkg-query -l $x >/dev/null 2>&1; then
             hint -t 5 "需要重新安装 $x"
+            sudo apt-get update
             install-pkgs android-build
             exit
         fi

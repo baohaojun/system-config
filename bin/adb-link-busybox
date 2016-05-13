@@ -7,6 +7,7 @@ else
     bash_file=~/src/android/vendor/smartisanhw/log-crawler/bash
     if test ! -e $busybox_file; then
         busybox_file=~/system-config/doc/galaxy-nexus-root/system/xbin/busybox
+        bash_file=~/system-config/doc/galaxy-nexus-root/system/xbin/bash
     fi
     adb-push ~/src/android/vendor/smartisanhw/log-crawler/bash /system/bin/bash
     adb-push $busybox_file /system/xbin

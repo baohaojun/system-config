@@ -91,6 +91,14 @@ use IPC::Open2;
 $|++;
 
 my $ctags_pid = open2(my $readCtags, my $writeCtags, "ctags-exuberant", @ARGV);
+sub ctags_watch_dog($) {
+    my ($ctags_pid) = @_;
+    my $watch_pid = open2(my $ignoreDog, my $feedDog, "ctags-watch-dog", "$ctags_pid") or die "Can't open ctags-watch-dog";
+    return ($watch_pid, $feedDog);
+}
+
+my ($dog_pid, $feedDog) = ctags_watch_dog($ctags_pid);
+
 my $jar_pid = open2(my $readJar, my $writeJar, "gtagsAntlrJavaParser");
 
 my ($read, $write) = ($readCtags, $writeCtags);
@@ -159,6 +167,8 @@ while (<STDIN>) {
 
 
     print $write "$_";
+    print $feedDog "start\n";
+    $feedDog->flush();
 
     (my $file_tag = $source) =~ s,.*/,,;
     print_with_caching($cache, "$file_tag  file  1 $source **\n");
@@ -220,6 +230,8 @@ while (<STDIN>) {
                 print;
                 close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
                 $seen_terminator = 1;
+                print $feedDog "done\n";
+                $feedDog->flush();
                 last;
             } else {
                 print_with_caching($cache, $_);
@@ -241,6 +253,8 @@ while (<STDIN>) {
             waitpid $ctags_pid, 0;
             $ctags_pid = open2($readCtags, $writeCtags, "ctags-exuberant", @ARGV)
                 or die "Can not open ctags-exuberant pipe";
+
+            ($dog_pid, $feedDog) = ctags_watch_dog($ctags_pid);
 
         }
     }
