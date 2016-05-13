@@ -101,4 +101,9 @@ if test -e ~/src/github/smartcm/smartcm-update; then
     ~/src/github/smartcm/smartcm-update
 fi
 
+if test -z "$(command git config --global user.name)"; then
+    hint "你没有配过全局git user.name配置，现为你配成你的邮箱前缀"
+    command git config --global user.name "$(command git config --global user.email|perl -npe 's/\@.*//')"
+fi
+
 echo system-config update complete...
