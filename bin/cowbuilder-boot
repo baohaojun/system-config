@@ -56,6 +56,11 @@ initrd=${cowboot_dir#/boot}/$(
     find . -name 'initrd*'|sort -h|tail -n 1|cut -b 2-
       )
 
+if test "$(df /boot|pn 1)" = "$(df /|pn 1)"; then
+    vmlinux=/boot$vmlinux
+    initrd=/boot$initrd
+fi
+
 if ! yes-or-no-p -y $vmlinux $initrd; then
     die "can't use this $vmlinux/$initrd"
 fi

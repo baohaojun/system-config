@@ -44,9 +44,9 @@ sleep2=${SLEEP2:-2}
                 sleep .1
             fi
         done
-        xmodmap -e 'keycode 197 = F23'
-        xmodmap -e 'keycode 202 = F24'
-        ~/system-config/bin/do-keymap
+        xmodmap -e 'keycode 185 = F23' # scrollup for zoomin, see ~/system-config/etc/70-keyboard-custom.hwdb
+        xmodmap -e 'keycode 186 = F24' # scrolldown for zoomout
     )&
     date
 )  > ~/.cache/system-config/logs/re-xmodmap.log 2>&1 9> ~/.cache/system-config/logs/re-xmodmap.lock &
+# )  2>&1 9> ~/.cache/system-config/logs/re-xmodmap.lock | tee ~/.cache/system-config/logs/re-xmodmap.log &

@@ -297,8 +297,13 @@ if git-is-ancestor HEAD $origin/$branch; then
 fi
 
 git fetch $origin -v
-git rebase $origin/$branch
-git push $origin HEAD:refs/heads/$branch || die "you need to merge it!"
+if [[ "$(repo-remote-url $origin)" =~ github.com/baohaojun ]]; then
+    git rebase $origin/$branch
+fi
+git push $origin HEAD:refs/heads/$branch || {
+    bhj-notify git-push-rebase "you need to merge it in $PWD" >/dev/null 2>&1
+    die "you need to merge it!"
+}
 if test -e .after-push-hook; then
     bash .after-push-hook
 fi

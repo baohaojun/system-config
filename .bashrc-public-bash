@@ -160,6 +160,7 @@ cd_record()
     else
         export PROMPT_RET=
     fi
+    export PROMPT_COMMAND="cd_record"
     history -a
     if test -e ~/.reset-env; then
         . ~/.reset-env
@@ -183,7 +184,16 @@ cd_record()
         return $ret
     fi
     BHJ_PWD=$PWD
-
+    local repo_dir=$(lookup-file -e .repo || true)
+    if test "$repo_dir" -a -e "$repo_dir/../buildspec.mk"; then
+        local product=$(cat "$repo_dir/../buildspec.mk"|perl -ne 'print if s/TARGET_PRODUCT.*=//')
+        local variant=$(cat "$repo_dir/../buildspec.mk"|perl -ne 'print if s/TARGET_BUILD_VARIANT.*=//')
+        export PROMPT_ANDROID_INFO="[$product-$variant] "
+    elif test "$TARGET_PRODUCT" -a "$TARGET_BUILD_VARIANT"; then
+        export PROMPT_ANDROID_INFO="[$TARGET_PRODUCT-$TARGET_BUILD_VARIANT] "
+    else
+        unset PROMPT_ANDROID_INFO
+    fi
    (
        if test "$LC_ALL" != C -a "$has_python3"; then
            where;

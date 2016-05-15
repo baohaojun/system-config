@@ -8,6 +8,8 @@ system-config提供了一个java7和java6的命令，你可以直接运行，系
 
 * 如何更改其他软件版本
 
+可以参考一下 [[http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html][system-config原理与使用的简要说明]] 。
+
 system-config会修改你的系统的一些环境变量，其中最重要的一个是PATH，在ubuntu/debian自带的PATH变量前面，加上一些system-config自己的PATH路径，比如 =~/system-config/bin= 等。所以像系统java版本的问题，因为system-config会在 =~/external/bin/Linux/ext/jdk/bin= 下放一个 oracle 的 1.6 版java，并且这个路径在PATH变量里排在 =/usr/bin/= 前面，所以不管你怎么用 =update-alternatives= 修改 =/usr/bin/java= 的版本，你在命令行输入 =java -version= 看到的永远是 1.6 。
 
 所以，要修改你的java版本，有两种办法：
@@ -26,6 +28,16 @@ type -a java # 显示 java 的所以版本（alias、function、在PATH变量里
 
 注意如果要永久修改自己的 =PATH= 环境变量的话，一定要在 =~/.bashrc= 的末尾处修改，这样能保证 system-config 对 =PATH= 变量的修改已经完成。如果放在 system-config 之前修改 PATH 的话，system-config再修改的时候，你的修改会被冲掉。
 
+* 我的adb（或其他应用程序）好像被system-config改出问题来了，怎么办？
+
+还是请先参考一下 [[http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html][system-config原理与使用的简要说明]] ，里面有一些关于Bash的原理介绍。
+
+一般来说，你可以先用 =type -a adb= （或type -a 其他你认为有问题的程序）看一下我做了什么样的修改。这里你可以看到adb被我别名到my-adb了，所以你可以用这个办法绕过去：
+
+在 adb 的前面加一个Bash Builtin命令， =command= 。比如你认为adb logcat有问题，那你可以用 =command adb logcat= 把这个问题绕过去。
+
+又比如 =cd= 命令，如果你认为我改的有问题，你也可以用 =type -a cd= 看一下，然后发现它被我别名了，本身原来是一个Bash Builtin。所以你可以在cd的前面加另一个Bash Builtin命令， =builtin= ，把问题绕过去： =builtin cd args...= 。
+
 * 应该安装何种java版本
 
 安卓5.0之前的项目，比如我们的T1，用的必须是 oracle 的java 1.6。换成用openjdk 1.6是不行的。
@@ -34,31 +46,6 @@ type -a java # 显示 java 的所以版本（alias、function、在PATH变量里
 这两个版本的java在配置好system-config之后，都已经安装在系统上，你只需要按照需求配置一下你的环境变量即可。参考上节。
 
 如果自己安装了错误版本的java，请删掉该版本或请参考上面的方法更改环境变量。
-
-* 如何编译高通 oem
-
-1. 安装、升级system-config
-2. 运行 setup-oem-compiler
-3. 运行 oem 代码目录下的 oem-cm-scripts/build-all.sh 文件
-
-   上面这个命令会编译所有子系统。如果只想编译某个子系统，比如 rpm，可以打开 oem-cm-scripts/build-all.sh 文件搜一下相关子系统的编译命令。
-
-* 为什么我们不是高通的项目，gerrit上代码仓库也是在 qualcomm/ 目录下？
-
-这个是历史遗留的问题，当时就不应该起一个叫 qualcomm/ 的子目录名字，直接叫 smartisan/ 会更合适。
-
-另外注意一点，子目录是必须的，比如如果直接把谷歌的代码镜像下来，按理来说我们应该什么都不改就可以直接用repo init -u local:platform/manifest来从本地下载代码，但事实是，经试验发现，必须放到一个子目录下，才可以不改谷歌的manifest就能下载。谷歌的manifest里用的是相对路径的写法（..，比如
-
-#+BEGIN_EXAMPLE
-  <remote  name="aosp"
-           fetch=".."
-           review="https://android-review.googlesource.com/" />
-#+END_EXAMPLE
-），并且它自己的是可以写成不带子目录就下载的： =repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml --repo-url smartisan:googlesource/git-repo=
-
-*更正* 子目录不是必须的。如果用 local:platform/manifest 的形式就必须要有子目录，比如前面加个 google ，变成 local:google/platform/manifest 才能用相对路径下载，但如果写成 ssh://local/platform/manifest 的话，直接就可以下载。所以这应该是repo的一个Bug。
-
-所以我们应该把代码直接放在根目录下，是最合适的，别分什么厂商的了，那个应该用分支来区分。我现在怀疑搞太多git仓储会对gerrit的性能有影响。
 
 * system-config-update时提示安装包冲突
 

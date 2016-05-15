@@ -2,7 +2,7 @@
 
 if test -z "$SSH_CLIENT"; then
     HOSTNAME=$(hostname | perl -npe 's/\..*//')
-    export PS1='\n[01;34m{ [01;31m'$USER'[01;34m@[01;33m'$HOSTNAME'[01;34m [01;32m'\$PWD'[01;34m '\$PROMPT_RET\$RECURSIVE_SHELL'[01;34m}[0m\n\$'
+    export PS1='\n[01;34m{ [01;31m'$USER'[01;34m@[01;33m'$HOSTNAME'[01;34m [01;32m'\$PWD'[01;34m '\$PROMPT_ANDROID_INFO\$PROMPT_RET\$RECURSIVE_SHELL'[01;34m}[0m\n\$'
     . ~/system-config/bin/set-ssh-agent
 else
     . ~/system-config/.bashrc-remote

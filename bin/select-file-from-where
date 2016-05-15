@@ -1,5 +1,21 @@
 #!/bin/bash
 
+if test "$#" = 1; then
+    if which "$1" >/dev/null 2>&1; then
+        which "$1"
+        exit
+    fi
+fi
+
+file=$(select-output-line -p 'Which emacs recentf file do you whant? (Input ! to quit select)' \
+                          -- skeleton_compgen_word.pl -d '\n' -f ~/.emacs.d/recentf -- "$@"|perl -npe 's/^\s*(\d+:)?\s*//')
+
+file=${file//\"/}
+if test -e "$file"; then
+    echo "$file"
+    exit
+fi
+
 if test -e "$(lookup-file -e .git)"; then
     f "$@" && exit
 fi

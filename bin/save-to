@@ -1,0 +1,12 @@
+#!/bin/bash
+file=$1
+
+shift
+
+if test "$#" != 0; then
+    "$@"
+else
+    cat
+fi > "$file".$$
+mv "$file".$$ "$file"
+

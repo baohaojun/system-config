@@ -4,6 +4,16 @@ function die() {
     exit -1
 }
 
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
 PATH_PREPEND=
 TEMP=$(getopt -o vp:j: -n $(basename $0) -- "$@")
 jobs=-j8
@@ -75,8 +85,8 @@ EOF
     cd $oldpwd
 
     cd "$(dirname $(lookup-file Android.mk))"
-    ONE_SHOT_MAKEFILE=$(readlink -f $PWD/Android.mk)
-    export ONE_SHOT_MAKEFILE=${ONE_SHOT_MAKEFILE:1+${#top_dir}}
+    MY_ONE_SHOT_MAKEFILE=$(readlink -f $PWD/Android.mk)
+    export MY_ONE_SHOT_MAKEFILE=${MY_ONE_SHOT_MAKEFILE:1+${#top_dir}}
     project=$(ap)
 
     cd $top_dir
@@ -94,11 +104,15 @@ EOF
             echo using java 1.6
         fi
 
-        ONE_SHOT_MAKEFILE=$ONE_SHOT_MAKEFILE make $jobs $verbose all_modules "$@" 2>&1
-        echo mm build is ok
-    ) | tee ~/.cache/system-config/logs/mm.log.$$
+        if test "$(basename $0)" = mm; then
+            ONE_SHOT_MAKEFILE=$MY_ONE_SHOT_MAKEFILE make $jobs $verbose all_modules "$@" 2>&1
+        elif test "$(basename $0)" = mma; then
+            make $jobs $verbose -f build/core/main.mk $@ all_modules BUILD_MODULES_IN_PATHS="$project" 2>&1
+        fi
+        echo $b0 build is ok
+    ) | tee ~/.cache/system-config/logs/$b0.log.$$
 
     cd $top_dir/
-    mv ~/.cache/system-config/logs/mm.log.$$ $BHJ_OUT_DIR/mm.log
-    grep 'mm build is ok' $BHJ_OUT_DIR/mm.log
+    mv ~/.cache/system-config/logs/$b0.log.$$ $BHJ_OUT_DIR/$b0.log
+    grep '$b0 build is ok' $BHJ_OUT_DIR/$b0.log
 )

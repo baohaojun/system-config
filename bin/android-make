@@ -87,11 +87,13 @@ cd $top_dir || exit
 . build/envsetup.sh >/dev/null 2>&1
 
 if test ! "$config" -a ! -e buildspec.mk; then
-    die "lunch combo must be specified because a previous buildspec.mk is not found"
+    products=$(for x in "${LUNCH_MENU_CHOICES[@]}"; do echo ${x%-*}; done)
+    product=$(select-args -p "请选择你要编译的产品" -o -- ${products[@]})
+    variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )
+    config=$product-$variant
 fi
 
 if test -z "$config"; then
-
     config=$(
         cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_PRODUCT\s*.?=\s*(.*?)\s*$/')-$(
         cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_BUILD_VARIANT\s*.?=\s*(.*?)\s*$/')
@@ -110,17 +112,11 @@ fi
 
 . ~/system-config/bin/.android-set-outdir
 
-if test "$OUT_DIR" != out; then
-    touch $OUT_DIR/Android.mk $OUT_DIR/CleanSpec.mk || true # to make findleaves.py skip this folder.
-fi
 export CCACHE_DIR=$PWD/.repo/.ccache
-echo CCACHE_DIR is $CCACHE_DIR
 rm ~/.ccache || rm -rf ~/.ccache
 ln -s $CCACHE_DIR ~/.ccache
 
 android-set-product # this is for mm to use
-    # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR
-lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 
 export TARGET_PRODUCT=$TARGET_PRODUCT
 export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT
@@ -166,7 +162,7 @@ exec 9> $OUT_DIR/.android-full-build.lock
         echo make starts here
         export REALLY_DOING_BUILD=true
         if test $# != 0; then
-            if test $# = 1 -a $1 = msm-kernel; then
+            if test $# = 1 && test "$1" = msm-kernel -o "$1" = kernel; then
                 (
                     PRODUCT_OUTX=$(android-env get_build_var PRODUCT_OUT)
                     cat <<EOF > $OUT_DIR/Android.mk

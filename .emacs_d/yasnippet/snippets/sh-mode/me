@@ -10,3 +10,4 @@ if test ! -e "\$me"; then
         exit 1
     fi
 fi
+b0=\$(basename \$0)

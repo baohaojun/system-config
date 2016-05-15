@@ -10,10 +10,17 @@
 (require 'bhj-run-application)
 (require 'bhj-draw-wininfo)
 (require 'sawfish.wm.commands.move-cursor)
-(bind-keys global-keymap "C-F23" '(move-cursor-left))
-(bind-keys global-keymap "C-F24" '(move-cursor-right))
-(bind-keys global-keymap "Super-F23" '(move-cursor-up))
-(bind-keys global-keymap "Super-F24" '(move-cursor-down))
+(defun bind-both-global&window-keymaps (key map)
+  (bind-keys global-keymap key map)
+  (bind-keys window-keymap key map))
+(defun unbind-both-global&window-keymaps (key)
+  (unbind-keys global-keymap key)
+  (unbind-keys window-keymap key))
+
+(bind-both-global&window-keymaps "C-F23" '(move-cursor-left))
+(bind-both-global&window-keymaps "C-F24" '(move-cursor-right))
+(bind-both-global&window-keymaps "Super-F23" '(move-cursor-up))
+(bind-both-global&window-keymaps "Super-F24" '(move-cursor-down))
 
 (setq bhj-is-gnome? nil)
 (setq warp-to-window-offset 50
@@ -89,34 +96,34 @@
 (bind-keys s-h-keymap "F3"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "S"  '(system "os&"))
 (bind-keys s-h-keymap "n"  '(system "douban next&"))
-(bind-keys global-keymap "KP_Multiply" '(system "douban like&"))
-(bind-keys global-keymap "Super-KP_Multiply" '(system "douban loop-same-author&"))
-(bind-keys global-keymap "KP_Divide" '(system "douban unlike&"))
-(bind-keys global-keymap "Super-Down"  '(system "douban info&"))
-(bind-keys global-keymap "Super-Up" '(system "douban ba&"))
-(bind-keys global-keymap "Super-Right"  '(system "douban next&"))
-(bind-keys global-keymap "Super-Left"  '(system "douban prev&"))
-(bind-keys global-keymap "Super-S-Right"  '(system "douban forth&"))
-(bind-keys global-keymap "Super-S-Left"  '(system "douban back&"))
-(bind-keys global-keymap "XF86AudioNext"  '(system "douban next&"))
-(bind-keys global-keymap "XF86AudioPrev"  '(system "douban prev&"))
-(bind-keys global-keymap "Super-KP_Right"  '(system "douban jump-forth&"))
-(bind-keys global-keymap "Super-KP_Left"  '(system "douban jump-back&"))
-(bind-keys global-keymap "Super-XF86AudioPlay"  '(system "douban info&"))
-(bind-keys global-keymap "XF86AudioPlay"  '(system "douban pause&"))
-(bind-keys global-keymap "C-XF86AudioPlay"  '(system "douban lyrics&"))
+(bind-both-global&window-keymaps "KP_Multiply" '(system "douban like&"))
+(bind-both-global&window-keymaps "Super-KP_Multiply" '(system "douban loop-same-author&"))
+(bind-both-global&window-keymaps "KP_Divide" '(system "douban unlike&"))
+(bind-both-global&window-keymaps "Super-Down"  '(system "douban info&"))
+(bind-both-global&window-keymaps "Super-Up" '(system "douban ba&"))
+(bind-both-global&window-keymaps "Super-Right"  '(system "douban next&"))
+(bind-both-global&window-keymaps "Super-Left"  '(system "douban prev&"))
+(bind-both-global&window-keymaps "Super-S-Right"  '(system "douban forth&"))
+(bind-both-global&window-keymaps "Super-S-Left"  '(system "douban back&"))
+(bind-both-global&window-keymaps "XF86AudioNext"  '(system "douban next&"))
+(bind-both-global&window-keymaps "XF86AudioPrev"  '(system "douban prev&"))
+(bind-both-global&window-keymaps "Super-KP_Right"  '(system "douban jump-forth&"))
+(bind-both-global&window-keymaps "Super-KP_Left"  '(system "douban jump-back&"))
+(bind-both-global&window-keymaps "Super-XF86AudioPlay"  '(system "douban info&"))
+(bind-both-global&window-keymaps "XF86AudioPlay"  '(system "douban pause&"))
+(bind-both-global&window-keymaps "C-XF86AudioPlay"  '(system "douban lyrics&"))
 
 (bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
 (bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
-(bind-keys global-keymap "XF86Launch5" '(system "EMACS=t do-capture&"))
-(bind-keys global-keymap "XF86Launch6" '(system "find-or-exec T1Wrench%Smartisan T1Wrench&"))
-(bind-keys global-keymap "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
-(bind-keys global-keymap "XF86Launch8" '(system "custom-command&"))
-(bind-keys global-keymap "XF86Launch9" '(system "EMACS=t ssssh&"))
+(bind-both-global&window-keymaps "XF86Launch5" '(system "EMACS=t do-capture&"))
+(bind-both-global&window-keymaps "XF86Launch6" '(system "find-or-exec T1Wrench%Smartisan T1Wrench&"))
+(bind-both-global&window-keymaps "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
+(bind-both-global&window-keymaps "XF86Launch8" '(system "custom-command&"))
+(bind-both-global&window-keymaps "XF86Launch9" '(system "EMACS=t ssssh&"))
 
 
-(bind-keys global-keymap "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
-(bind-keys global-keymap "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
+(bind-both-global&window-keymaps "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
+(bind-both-global&window-keymaps "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys s-h-keymap "Super-i" '(read-event (format nil "Window is %s;\n\n WM_CLASS is: %s;\n\n and Window class is: %s\n\n and Window name is %s\n\nPress any key to continue..."
                                                      (input-focus)
                                                      (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
@@ -188,14 +195,14 @@
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/system-config/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
 
-(bind-keys global-keymap "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
-(bind-keys global-keymap "XF86Search" '(system "find-or-exec Search beagle-search&"))
+(bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
+(bind-both-global&window-keymaps "XF86Search" '(system "find-or-exec Search beagle-search&"))
 
-(bind-keys global-keymap "C-S-XF86PowerOff"  '(system "lock-screen&"))
-(bind-keys global-keymap "C-S-DEL"  '(system "lock-screen&"))
+(bind-both-global&window-keymaps "C-S-XF86PowerOff"  '(system "lock-screen&"))
+(bind-both-global&window-keymaps "C-S-DEL"  '(system "lock-screen&"))
 
-(bind-keys global-keymap "XF86AudioRaiseVolume"  '(system "adjust-volume&"))
-(bind-keys global-keymap "XF86AudioLowerVolume"  '(system "adjust-volume&"))
+(bind-both-global&window-keymaps "XF86AudioRaiseVolume"  '(system "adjust-volume&"))
+(bind-both-global&window-keymaps "XF86AudioLowerVolume"  '(system "adjust-volume&"))
 
 (defun classed-key-synthesize (from to)
   (when (eq (car to) 'quote)
@@ -220,8 +227,13 @@
 
 (defun bind-keys-nil-unbind (keymap key action)
   (if action
-      (bind-keys keymap key action)
-    (unbind-keys keymap key)))
+      (progn
+        (when (eq keymap global-keymap)
+          (bind-keys window-keymap key action))
+        (bind-keys keymap key action))
+    (unbind-keys keymap key)
+    (when (eq keymap global-keymap)
+      (unbind-keys window-keymap key))))
 
 (setq emacs-style-window-class-re "rdesktop|t1wrench|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
 (defvar global-remap-alist nil
@@ -276,7 +288,7 @@
         ("Super-&" . '((T1Wrench "Meta-&")))
         ("Super-*" . '((T1Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
-(bind-keys global-keymap "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
+(bind-both-global&window-keymaps "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
 
 (defun do-bind-keys-nil-unbind (keymap from to window-mapped-to class)
   (bind-keys-nil-unbind
@@ -306,7 +318,7 @@
                  (window-mapped-to (get-window-map to class)))
             (do-bind-keys-nil-unbind esc-g-map from to window-mapped-to class)))
         esc-g-remap-alist)
-  (bind-keys global-keymap "ESC" do-esc-map)
+  (bind-both-global&window-keymaps "ESC" do-esc-map)
   (bind-keys esc-map "ESC" `(synthesize-event-gnome? "ESC" ,(input-focus)))
   (bind-keys s-h-keymap "C-x" c-x-map)
   (bind-keys esc-map "g" '(do-esc-g-map)))
@@ -320,10 +332,10 @@
                 (progn
                   (setq window-mapped-to (get-window-map to class))
                   (do-bind-keys-nil-unbind global-keymap from to window-mapped-to class))
-              (unbind-keys global-keymap from))))
+              (unbind-both-global&window-keymaps from))))
         global-remap-alist)
-  (unbind-keys global-keymap "C-x")
-  (unbind-keys global-keymap "ESC"))
+  (unbind-both-global&window-keymaps "C-x")
+  (unbind-both-global&window-keymaps "ESC"))
 
 (setq no-tap-drag-window-class-re "acroread")
 (progn
@@ -356,16 +368,16 @@
 (mapc
  (lambda (arg)
    (let ((wclass nil) (wmark nil))
-     (bind-keys global-keymap (concat "C-M-" (format nil "%d" arg))
-                (lambda ()
-                  (setq wmark (input-focus))
-                  (setq wclass (bhj-window-class (input-focus)))))
-     (bind-keys global-keymap (concat "Super-" (format nil "%d" arg))
-                (lambda ()
-                  (if (and  (windowp wmark) (window-mapped-p wmark))
-                      (bhj-activate-window wmark)
-                    (if wclass
-                        (find-window-or-exec wclass)))))))
+     (bind-both-global&window-keymaps (concat "C-M-" (format nil "%d" arg))
+                                      (lambda ()
+                                        (setq wmark (input-focus))
+                                        (setq wclass (bhj-window-class (input-focus)))))
+     (bind-both-global&window-keymaps (concat "Super-" (format nil "%d" arg))
+                                      (lambda ()
+                                        (if (and  (windowp wmark) (window-mapped-p wmark))
+                                            (bhj-activate-window wmark)
+                                          (if wclass
+                                              (find-window-or-exec wclass)))))))
  '(0 1 2 3 4 5 6 7 8 9))
 
 (setq super-key-window-remap
@@ -457,9 +469,9 @@
       (eat-a-key-release key))))
 
 (defun bind-super-key (key)
-  (bind-keys global-keymap
-             (concat "Super-" key)
-             `(super-key-binding ,key))
+  (bind-both-global&window-keymaps
+   (concat "Super-" key)
+   `(super-key-binding ,key))
   (bind-keys window-keymap
              (concat "Super-" key)
              `(super-key-binding ,key)))
@@ -468,11 +480,11 @@
  #'bind-super-key
  '("a" "b" "c" "d" "e" "f" "g" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
 
-(bind-keys global-keymap "Super-Insert"  '(system "send-key&"))
-(bind-keys global-keymap "Super-S-RET"  '(system "send-key&"))
-(bind-keys global-keymap "Super-RET" '(synthesize-event "Menu" (input-focus)))
-(bind-keys global-keymap "Super-BS" '(synthesize-event "Prior" (input-focus)))
-(bind-keys global-keymap "Super-Control-o"  '(system "emacsclient -n ~/system-config/doc/notes.org&"))
+(bind-both-global&window-keymaps "Super-Insert"  '(system "send-key&"))
+(bind-both-global&window-keymaps "Super-S-RET"  '(system "send-key&"))
+(bind-both-global&window-keymaps "Super-RET" '(synthesize-event "Menu" (input-focus)))
+(bind-both-global&window-keymaps "Super-BS" '(synthesize-event "Prior" (input-focus)))
+(bind-both-global&window-keymaps "Super-Control-o"  '(system "emacsclient -n ~/system-config/doc/notes.org&"))
 
 
 (bind-keys s-h-keymap "Super-d"
@@ -506,7 +518,7 @@
   #:spec "%W")
 
 (bind-keys s-h-keymap "Super-c" 'cycle-class-bhj)
-(bind-keys global-keymap "Super-$" 'cycle-class-bhj)
+(bind-both-global&window-keymaps "Super-$" 'cycle-class-bhj)
 (bind-keys s-h-keymap "c"  '(system "do-capture&"))
 
 (define-cycle-command-pair
@@ -543,15 +555,15 @@
 (defun scroll-lock-off (&optional w)
   (when w
     (window-put w 'scroll-lock nil))
-  (unbind-keys global-keymap "SPC")
-  (unbind-keys global-keymap "BS")
+  (unbind-both-global&window-keymaps "SPC")
+  (unbind-both-global&window-keymaps "BS")
   (system "switch-caps-led off&"))
 
 (defun scroll-lock-on (&optional w)
   (when w
     (window-put w 'scroll-lock t))
-  (bind-keys global-keymap "SPC" '(synthesize-event "Next" (input-focus)))
-  (bind-keys global-keymap "BS" '(synthesize-event "Prior" (input-focus)))
+  (bind-both-global&window-keymaps "SPC" '(synthesize-event "Next" (input-focus)))
+  (bind-both-global&window-keymaps "BS" '(synthesize-event "Prior" (input-focus)))
   (system "switch-caps-led on&"))
 
 (defun scroll-lock-toggle ()
@@ -560,9 +572,9 @@
         (scroll-lock-off w)
       (scroll-lock-on w))))
 
-(bind-keys global-keymap "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
-(bind-keys global-keymap "Super-S-SPC" #'scroll-lock-toggle)
-(bind-keys global-keymap "C-ESC" '(synthesize-event "ESC" (input-focus)))
+(bind-both-global&window-keymaps "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
+(bind-both-global&window-keymaps "Super-S-SPC" #'scroll-lock-toggle)
+(bind-both-global&window-keymaps "C-ESC" '(synthesize-event "ESC" (input-focus)))
 (bind-keys s-h-keymap "g"  '(system "gnus&"))
 (bind-keys s-h-keymap "w"  '(system "s-weixin&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
@@ -581,11 +593,11 @@
       (emacs-code-reading-on w)
     (emacs-code-reading-off w))
   (if (string= (window-class w) "rdesktop")
-      (bind-keys global-keymap "M-C-RET" '(system "toggle-rdesktop-keys&"))
+      (bind-both-global&window-keymaps "M-C-RET" '(system "toggle-rdesktop-keys&"))
     (system "toggle-rdesktop-keys off&"))
   (if (string= (window-class w) "Emacs")
-      (unbind-keys global-keymap "Super-\\")
-    (bind-keys global-keymap "Super-\\"  '(system "xdotool-when-keyboard-clear key super+F12&"))))
+      (unbind-both-global&window-keymaps "Super-\\")
+    (bind-both-global&window-keymaps "Super-\\"  '(system "xdotool-when-keyboard-clear key super+F12&"))))
 
 (add-hook 'focus-in-hook ime-toggle)
 
@@ -630,16 +642,16 @@
     (while (setq line (read-line file))
       (when (string-match "bind-keys\\s+global-keymap\\s+\"(.*?)\"" line)
         (setq event (expand-last-match "\\1"))
-        (unbind-keys global-keymap event)))
+        (unbind-both-global&window-keymaps event)))
     (close-file file)))
 
 (defun emacs-code-reading-off (&optional w)
   (when w
     (window-put w 'code-reading nil))
   (unload-keys-in-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl")
-  (bind-keys global-keymap "F23" '(system "xdotool click 4&"))
-  (bind-keys global-keymap "F24" '(system "xdotool click 5&"))
-  (bind-keys global-keymap "XF86Back" '(system "xdotool click 1&"))
+  (bind-both-global&window-keymaps "F23" '(system "xdotool click 4&"))
+  (bind-both-global&window-keymaps "F24" '(system "xdotool click 5&"))
+  (bind-both-global&window-keymaps "XF86Back" '(system "xdotool click 1&"))
   (system "switch-caps-led off&"))
 
 (defun keypad-number-on ()
@@ -648,22 +660,22 @@
 (defun keypad-number-off ()
   (load-file "~/system-config/.sawfish/lisp/keypad.jl"))
 
-(bind-keys global-keymap "KP_Enter" '(system "toggle-number-lock&"))
+(bind-both-global&window-keymaps "KP_Enter" '(system "toggle-number-lock&"))
 
-(bind-keys global-keymap "Scroll_Lock" #'emacs-code-reading-toggle)
+(bind-both-global&window-keymaps "Scroll_Lock" #'emacs-code-reading-toggle)
 (bind-keys s-h-keymap "?"
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))
 
 (bind-keys s-h-keymap "F12" '(system "toggle-dvp-us.sh&"))
-(bind-keys global-keymap "XF86TouchpadToggle" '(system "edit-with-emacs&"))
-(bind-keys global-keymap "Super-(" '(system "sawfish-start-macro&"))
+(bind-both-global&window-keymaps "XF86TouchpadToggle" '(system "edit-with-emacs&"))
+(bind-both-global&window-keymaps "Super-(" '(system "sawfish-start-macro&"))
 (bind-keys s-h-keymap "e" '(system "sawfish-play-macro&"))
-(bind-keys global-keymap "XF86Mail" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
-(bind-keys global-keymap "XF86HomePage" '(system "qtcreator-edit-with-emacs&"))
+(bind-both-global&window-keymaps "XF86Mail" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
+(bind-both-global&window-keymaps "XF86HomePage" '(system "qtcreator-edit-with-emacs&"))
 (bind-keys s-h-keymap "k" '(system "sawfish-help-key&"))
 (bind-keys s-h-keymap "Super-k" '(system "sawfish-help-key-ask-map&"))
-(bind-keys global-keymap "Super-ESC" '(system "sawfish-clean-screen&"))
-(bind-keys global-keymap "Print" print-keymap)
+(bind-both-global&window-keymaps "Super-ESC" '(system "sawfish-clean-screen&"))
+(bind-both-global&window-keymaps "Print" print-keymap)
 (bind-keys print-keymap "Print" '(system "screenshot --full&"))
 (bind-keys print-keymap "f" '(system "screenshot --full&"))
 (bind-keys print-keymap "d" '(system "screenshot -d&"))
@@ -672,10 +684,10 @@
 (bind-keys print-keymap "k" '(system "sawfish-get-screen-shot-whole&"))
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
-(bind-keys global-keymap "XF86Favorites" '(system "do-work&"))
+(bind-both-global&window-keymaps "XF86Favorites" '(system "do-work&"))
 (bind-keys s-h-keymap "a" '(system "find-or-exec Okular&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
-(bind-keys global-keymap "Super-Control-F1" '(system "sawfish-force-maximize&"))
+(bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))
 (bind-keys s-h-keymap "Super-v" '(system "sendtext-sawfish&"))
 
@@ -704,5 +716,4 @@
              (let ((window (input-focus)))
                (unless (equal (window-class window) "Xfce4-panel")
                  (delete-window-safely window)))))
-(bind-keys global-keymap "Super-h" s-h-keymap)
-(bind-keys window-keymap "Super-h" s-h-keymap)
+(bind-both-global&window-keymaps "Super-h" s-h-keymap)
