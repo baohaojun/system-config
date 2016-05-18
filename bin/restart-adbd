@@ -1,0 +1,29 @@
+#!/bin/bash
+
+adbd_ppid=$(my-adb ps |grep adbd|pn 3)
+
+command=$(
+cat <<EOF
+    cd /data/local/tmp;
+    pwd
+    su 0 nohup bash -c "
+    cd /data/local/tmp;
+    stop adbd;
+    kill $adbd_ppid;
+    killall adbd;
+    setprop service.adb.root 1;
+    (
+        flock 1 &&
+            echo root ok &&
+            while true; do
+                timeout 10 adbd.noroot --root_seclabel=u:r:${1:-su}:s0;
+                sleep 1;
+                adbd;
+                sleep 1;
+            done
+    ) >>./adb.lock;"
+EOF
+
+)
+
+my-adb bash -c "set -x; $command"

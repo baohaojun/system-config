@@ -113,8 +113,7 @@ fi
 . ~/system-config/bin/.android-set-outdir
 
 export CCACHE_DIR=$PWD/.repo/.ccache
-rm ~/.ccache || rm -rf ~/.ccache
-ln -s $CCACHE_DIR ~/.ccache
+rm ~/.ccache >/dev/null 2>&1 || true
 
 android-set-product # this is for mm to use
 

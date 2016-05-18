@@ -35,7 +35,7 @@ if test "$edit" = true; then
 else
     edit=
 fi
-my-adb 'ln -s /dev/block/platform/soc.0/* /dev/block/platform/'
+my-adb 'ln -s /dev/block/platform/soc*/* /dev/block/platform/'
 if my-adb id | grep 'uid=0\b' -P -q; then
     su=
     adb-push $edit $root $1 /data/;

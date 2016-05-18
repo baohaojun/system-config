@@ -79,6 +79,7 @@ EOF
     locale-gen
     echo LANG=en_US.UTF-8 > /etc/default/locale
     ln -s /data/media/0 /sdcard
+    apt-get clean
 "
     my-adb -r stop
     my-adb shell sync

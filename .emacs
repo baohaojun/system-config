@@ -345,3 +345,8 @@
 (setq custom-file (expand-file-name "custom.el" "~/system-config/etc/"))
 (when (file-exists-p custom-file)
   (load custom-file))
+(when (file-exists-p (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs"))
+  (load (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs")))
+
+(when (file-exists-p "~/.emacs.cust")
+  (load "~/.emacs.cust"))

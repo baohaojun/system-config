@@ -3,11 +3,6 @@ set -e
 mkdir -p ~/src/android-mirror
 cd ~/src/android-mirror
 
-jobs=4
-if is-jenkins; then
-    jobs=2
-fi
-
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt j:jobs
 ## end code-generator
@@ -32,6 +27,13 @@ while true; do
 done
 
 ## end generated code
+
+if test -z "$jobs"; then
+    jobs=4
+    if is-jenkins; then
+        jobs=2
+    fi
+fi
 
 function sync-with-xml() {
     repo init -u smartisan:qualcomm/platform/manifest.git -b sanfrancisco -m $1 --repo-url smartisan:/googlesource/git-repo

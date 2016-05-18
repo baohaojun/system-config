@@ -14,27 +14,28 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
-PATH_PREPEND=
-TEMP=$(getopt -o vp:j: -n $(basename $0) -- "$@")
-jobs=-j8
-verbose=
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt vverbose j:jobs t:target
+## end code-generator
+## start generated code
+TEMP=$(getopt -o vj:t: --long "verbose,jobs:,target:"  -n $(basename -- $0) -- "$@")
+verbose=false
+jobs=
+target=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -p)
-            if test "$PATH_PREPEND"; then
-                PATH_PREPEND="$PATH_PREPEND:$2"
-            else
-                PATH_PREPEND=$2
-            fi
+        -v|--verbose)
+            verbose=true
+            shift
+            ;;
+        -j|--jobs)
+            jobs=$2
             shift 2
             ;;
-        -v)
-            verbose=showcommands
-            shift 1
-            ;;
-        -j)
-            jobs=-j$2
+        -t|--target)
+            target=$2
             shift 2
             ;;
         --)
@@ -46,6 +47,20 @@ while true; do
             ;;
     esac
 done
+
+## end generated code
+
+if test -z "$jobs"; then
+    jobs=-j8
+fi
+
+if test "$verbose" = true; then
+    verbose=showcommands
+fi
+
+if test -z "$target"; then
+    target=all_modules
+fi
 
 unset CLASSPATH
 
@@ -105,9 +120,9 @@ EOF
         fi
 
         if test "$(basename $0)" = mm; then
-            ONE_SHOT_MAKEFILE=$MY_ONE_SHOT_MAKEFILE make $jobs $verbose all_modules "$@" 2>&1
+            ONE_SHOT_MAKEFILE=$MY_ONE_SHOT_MAKEFILE make -j $jobs $verbose $target "$@" 2>&1
         elif test "$(basename $0)" = mma; then
-            make $jobs $verbose -f build/core/main.mk $@ all_modules BUILD_MODULES_IN_PATHS="$project" 2>&1
+            make $jobs $verbose -f build/core/main.mk $@ $target BUILD_MODULES_IN_PATHS="$project" 2>&1
         fi
         echo $b0 build is ok
     ) | tee ~/.cache/system-config/logs/$b0.log.$$

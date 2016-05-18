@@ -52,15 +52,26 @@ if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
     fi
 fi
 
+if test "$1" = init; then
+    (
+        cd .repo
+        rm repo-paths repo_info.pl -f
+    ) || true
+fi
+
 if test "$1" = sync; then
-    if test "$1" = init; then
-        (
-            cd .repo
-            rm repo-paths repo_info.pl -f
-        ) || true
-    fi
     set -- "$@" --no-tags
-    time ~/system-config/bin/repo "$@" && (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'&)
+    if time ~/system-config/bin/repo "$@"; then
+        (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'&)
+    elif is-jenkins && test "$REDO_REPO_SYNC" != true; then
+        export REDO_REPO_SYNC=true
+        (
+            cd $(lookup-file -e .repo/..)
+            rm * -rf
+            mail-cms "Repo sync failed at $PWD, will remove all and try again"
+            ~/system-config/bin/repo "$@"
+        )
+    fi
     exit
 else
     exec ~/system-config/bin/repo "$@"
