@@ -92,7 +92,10 @@ if test ! -e "$xml"; then
     elif test -e rawprogram0.xml; then
         xml=rawprogram0.xml
     else
-        die "Can't find $xml"
+        xml=$(find . -maxdepth 2 -name '*program*.xml')
+        for x in $xml; do echo $x; done;
+        echo
+        yes-or-no-p -y "没有找到唯一的xml文件，将使用以上所有.xml文件，确认？"
     fi
 fi
 
@@ -109,7 +112,7 @@ fi
 
 my-adb mount -t ext4 /dev/block/bootdevice/by-name/userdata /data
 my-adb mount /dev/block/bootdevice/by-name/system /system
-my-adb 'ln -s /dev/block/platform/soc.0/* /dev/block/platform/'
+my-adb 'ln -s /dev/block/platform/soc*/* /dev/block/platform/'
 # this is for debugging
 function update-partition() {
     size=$(stat -c %s $file)
@@ -151,19 +154,21 @@ if test $(basename $0) = android-rsync-phone-diff; then
 fi
 
 function update-non-system-partitions() {
-    xmlstarlet sel -t -m //program -v \@filename -o ' ' -v @label -n $xml|grep -v '^ ' |grep -v '_\d+' -P|perl -npe 'END{print "done done\n"}'|
+    xmlstarlet 2>&1 sel -t -m //program -v \@filename -o ' ' -v @label -n $xml |
+        sort -u|
+        while read f p; do if test -e $f; then echo $f $p; fi; done|
+        grep -v 'GPT|_\d+| .* ' -P| perl -npe 'END{print "done done\n"}'|
         while read file part; do
             if test -z "$part"; then
                 continue
             fi
             do_continue=false;
-            for part_comp in PrimaryGPT BackupGPT udisk alterable modemst1 modemst2 persist fsg $skip_partitions; do
-                if test $part = $part_comp; then
-                    do_continue=true
-                    break
-                fi
-            done
-            if test $do_continue = true; then
+
+            # aboot abootbak alterable boot cmnlib cmnlib64 cmnlib64bak
+            # cmnlibbak devcfg devcfgbak keymaster keymasterbak modem
+            # rpm rpmbak tz tzbak xbl xblbak
+
+            if test -z "$(arg1-arg2 "$part" PrimaryGPT BackupGPT udisk modemst1 modemst2 persist fsg factory sec security $skip_partitions)"; then
                 continue
             fi
             if test $part = done; then
@@ -175,7 +180,13 @@ function update-non-system-partitions() {
 }
 
 export tmpPostfix=$$
-sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 -x $(readlink -f $xml) >/dev/null 2>&1 || kill $$&
+
+if test -e "$xml"; then
+    system_xml=$xml
+else
+    system_xml=$(grep system_ *.xml -l |head -n 1)
+fi
+sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 -x $(readlink -f $system_xml) >/dev/null 2>&1 || kill $$&
 
 if test $(basename $0) = android-rsync-phone-diff; then
     update-non-system-partitions

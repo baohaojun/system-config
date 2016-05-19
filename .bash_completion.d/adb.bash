@@ -319,8 +319,12 @@ _adb_util_list_files() {
     fi
 
     toks=( ${toks[@]-} $(
-        command adb-quote ${args[@]} shell sh -c "find 2> /dev/null ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 ls -dF ${file}* 2>/dev/null" 2> /dev/null | tr -d '\r' | {
+        command adb-quote ${args[@]} shell sh -c "find 2> /dev/null ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 ls -dF 2>/dev/null" 2> /dev/null | tr -d '\r' | {
             while read -r tmp; do
+                if echo $SHELLOPTS | grep -q xtrace; then
+                    echo tmp is \'$tmp\' 1>&2
+                fi
+
                 filetype=${tmp%% *}
                 filename=${tmp:${#filetype}+1}
                 if test "${filename%/}" = "${file%/*}"; then

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+function jc-create-job() {
+    task_name=${1%.xml}
+    if cat $task_name.xml | jc update-job $task_name; then
+        exit
+    else
+        for n in $(seq 1 10); do
+            cat $task_name.xml | jc create-job $task_name && exit || true
+            cat $task_name.xml | jc update-job $task_name && exit || true
+            sleep 1
+        done
+    fi
+}
+
+jc-create-job "$1"
