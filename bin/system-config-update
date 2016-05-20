@@ -40,6 +40,10 @@ function setup-ext-local() {
         git clone smartisan:baohaojun/ext-local ~/external/local
     fi
 
+    if is-jenkins; then
+        return;
+    fi
+
     if test "$(readlink -f ~/external/local)" != "$(readlink -f /home/bhj/external/local)" -a ! -d /home/bhj/external/local; then
         hint "即将为你配置~/external/local，可能会需要输入你的sudo密码"
         # 必须保证能在 /home/bhj 目录下找到我的库文件。
@@ -87,13 +91,7 @@ for p in "${git_projects[@]}"; do
     update-git $p
 done
 
-cd ~/external/bin/Linux/ext/jdk
-if test -d .git; then
-    if git status -s | grep . -q; then
-        die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
-    fi
-    git pull --rebase
-fi
+git-get -u smartisan:tools/jdk6 -d ~/external/bin/Linux/ext/jdk
 
 ~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
 

@@ -56,6 +56,8 @@ sync-with-xml sfo-rom.xml
 sync-with-xml icesky-rom.xml
 sync-with-xml surabaya-rom-8996-r01200.3.xml
 sync-with-xml u1-l-rom.xml
+sync-with-xml bono-rom.xml
+sync-with-xml phoenix-rom.xml
 (
     cd kernel/msm.git
     git remote add msm310 smartisan:qualcomm/kernel/msm-3.10 || true
