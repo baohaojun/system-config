@@ -42,7 +42,7 @@ function can-sudo-and-ask-if-not-bhj() {
 }
 
 if test -d /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && can-sudo-and-ask-if-not-bhj "Make your sudo command not ask for password?"; then
-    sudo bash -c "echo $USER ALL=NOPASSWD: ALL > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
+    sudo bash -c "perl -npe 's/bhj/$USER/g' $HOME/system-config/etc/sudoers.d/bhj > /etc/sudoers.d/$USER; chmod 440 /etc/sudoers.d/$USER"
 fi
 
 if test $can_sudo = true -a $USER = bhj; then

@@ -155,6 +155,6 @@
                 ('top bhj-run-application:y-offset)
                 ('bottom (- -1 bhj-run-application:y-offset))
                 (nil nil))))
-  (system (format nil "%s &" (string-replace "&\\s*$" "" (bhj-prompt-for-application "Run application: ")))))
+  (system (format nil "setsid %s &" (string-replace "&\\s*$" "" (bhj-prompt-for-application "Run application: ")))))
 
 (define-command 'bhj-run-application bhj-run-application)

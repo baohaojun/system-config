@@ -1,9 +1,0 @@
-#!/bin/bash
-adb-browse-with-firefox http://localhost:2515
-sleep 5
-adb-swipe 20 1000 20 100 1
-adb-swipe 20 1000 20 100 1
-adb-wide-tap 679 300
-sleep 1
-adb-swipe 20 1000 20 100 1
-adb-wide-tap 161 1742

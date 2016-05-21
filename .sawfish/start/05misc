@@ -7,32 +7,11 @@ if test -e ~/.fonts/symbol.ttf; then
 fi
 
 rm ~/.fonts/monaco-windows.ttf -f
-sudo modprobe -r pcspkr
 while true; do
     python3 ~/system-config/gcode/scim-cs/ime-py/ime-server.py
     sleep 2
 done&
 
-# while true; do
-#     (
-#       cd ~/system-config/gcode/gmail-notify-1.6.1.1;
-#       GA_LABEL=/BigOne  ./notifier.py;
-#       sleep 5;
-#     )
-# done >~/.gmail-notifier.log 2>&1 &
-# qq
-
-
 download-today
 
 command renew-xauth
-
-# for x in /etc/xdg/autostart/*; do
-#     (
-#       $(cat "$x"|perl -ne '
-# if (m/^\s*Exec\s*=\s*(.*)/) {
-#     print $1;
-# }'
-#       )&
-#     )
-# done

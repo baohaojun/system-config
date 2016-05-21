@@ -7,5 +7,5 @@ if test -z "$pid"; then
     pid=$(ps.pl /bin/xorg|pn 1)
 fi
 
-ln -sf "$(command sudo sudo-find-xorg-tty "$pid")" ~/.xtty
+ln -sf "$(command sudo ~/system-config/bin/sudo-find-xorg-tty "$pid")" ~/.xtty
 

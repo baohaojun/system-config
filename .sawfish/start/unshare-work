@@ -1,4 +1,0 @@
-#!/bin/bash
-if test ! -e ~/.no-sudo; then
-    sudo mount --make-rprivate /home
-fi

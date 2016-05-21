@@ -14,4 +14,4 @@ test $(uname) = Linux || exit
     echo keycode 29 = Alt
     echo keycode 1 = CtrlL_Lock
     echo keycode 58 = Escape
-) | sudo loadkeys
+) | command sudo loadkeys

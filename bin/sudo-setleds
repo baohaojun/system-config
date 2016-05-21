@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@" 1>&2
+    exit -1
+}
+
+usage() {
+    die "usage: sudo-setleds +|- caps|num|scroll"
+}
+case "$1" in
+    +|-)
+        true;
+        ;;
+    *)
+        usage
+        ;;
+esac
+
+case "$2" in
+    caps|num|scroll)
+        true
+        ;;
+    *)
+        usage
+        ;;
+esac
+
+if ! [[ "$(readlink -f /home/$SUDO_USER/.xtty)" =~ ^/dev/tty ]]; then
+    die "Can't determine which tty are we on"
+fi
+
+setleds -D $1$2 < /home/$SUDO_USER/.xtty

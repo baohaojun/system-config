@@ -5,4 +5,5 @@ toggle=-
 if test "$1" = on; then
     toggle=+
 fi
-echo setleds -D ${toggle}$light \< ~/.xtty | sudo bash
+
+command sudo ~/system-config/bin/sudo-setleds

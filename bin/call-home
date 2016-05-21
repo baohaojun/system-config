@@ -27,18 +27,3 @@
     done
 ) 9>~/.cache/system-config/logs/$(basename $0).lock  2>&1 &
 
-exit
-(
-    flock -n 9 || { echo 'lock failed for vpn at '$(date); exit 0; }
-    if test -e ~/.at-home -o -e ~/.no-vpn; then
-        exit 0
-    fi
-
-    if nmcli con status id vpn-home |grep 'VPN connected'; then
-        sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
-    else
-        sudo su - -c 'nmcli con up id vpn-home'
-        sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
-        sudo route add $(host github.com|grep 'has address'|head -n 1|pn 4) gw 10.21.130.1
-    fi || true
-) 9>~/.cache/system-config/logs/$(basename $0).lock-vpn 2>&1 &
