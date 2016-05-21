@@ -89,6 +89,14 @@ void T1WrenchMainWindow::adbStateUpdated(const QString& state)
         ui->adbStateIndicator->setPixmap(QPixmap(":/images/green.png"));
     } else {
         ui->adbStateIndicator->setPixmap(QPixmap(":/images/red.png"));
+
+        qint64 currentSec = QDateTime::currentMSecsSinceEpoch();
+        static qint64 lastSec;
+        if (currentSec - lastSec > 5000) {
+            QProcess::startDetached("./the-true-adb", QStringList("start-server"));
+            lastSec = currentSec;
+        }
+
     }
 }
 
