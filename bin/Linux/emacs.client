@@ -23,7 +23,7 @@ else
             break
         fi
         if [[ "$x" =~ / ]] && test ! -e "$(dirname -- "$x")" &&
-           ! echo "$x" | grep -q -P -e '^/(scp|adb):'; then
+           ! echo "$x" | grep -q -P -e '^/(\w+):'; then
             die "$(dirname -- "$x") not exist, will cause trouble for emacs"
         fi
     done

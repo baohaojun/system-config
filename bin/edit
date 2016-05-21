@@ -55,6 +55,14 @@ if ($ENV{REMOTEIP} eq "127.0.0.1") {
 sub get_emacs_file_name($) {
   my ($file) = @_;
   if ($ENV{"REMOTEIP"} and $ENV{REMOTEIP} ne "127.0.0.1") {
+      if ($ENV{USER} eq 'root' and $ENV{REALUSER}) {
+          my ($myname, $myip, $myport) = @ENV{"REALUSER", "LOCALIP", "LOCALPORT"};
+
+          if ($myport eq "def") {
+              return "/ssh:$myname\@$myip|sudo:root\@$myip:$file";
+          }
+          return "/ssh:$myname\@$myip#$myport|sudo:root\@$myip#$myport:$file";
+      }
     my ($myname, $myip, $myport) = @ENV{"USER", "LOCALIP", "LOCALPORT"};
     if ($protocol eq "pscp") {
       # plink on win7 has a bug, can't handle ip connection, only hostname

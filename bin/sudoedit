@@ -17,7 +17,7 @@ function sudoedit()
     fi
 
     local file=$( readlink -m "$1" )
-    USER=root $EDITOR "$file"
+    REALUSER=$USER USER=root $EDITOR "$file"
 }
 
 export EDITOR=~/system-config/bin/edit
