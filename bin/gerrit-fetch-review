@@ -1,5 +1,34 @@
 #!/bin/bash
 set -e
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt r:remote
+## end code-generator
+## start generated code
+TEMP=$(getopt -o r: --long "remote:"  -n $(basename -- $0) -- "$@")
+remote=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--remote)
+            remote=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+export REPO_REMOTE=$remote
+
 tmpf=/tmp/$(basename $0).$$
 if test $# = 1 -a "${1:0:4}" = http; then
     if echo "$1" |grep -q "/\d+/\d+$" -P; then
@@ -8,6 +37,8 @@ if test $# = 1 -a "${1:0:4}" = http; then
         set -- "$(basename "$1")"
     fi
 fi
+
+
 gerrit query "$@" --current-patch-set > $tmpf
 
 function die() {
@@ -25,7 +56,7 @@ if test -n "$git_dir"; then
     cd $git_dir || die "$git_dir: cd failed"
 fi
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
-git fetch $(repo-remote-url) $ref
+git fetch $(repo-remote-url $remote) $ref
 if test $(basename $0) = gerrit-checkout-review; then
     git co FETCH_HEAD
 fi

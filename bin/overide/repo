@@ -68,7 +68,7 @@ if test "$1" = sync; then
         (
             cd $(lookup-file -e .repo/..)
             rm * -rf
-            mail-cms "Repo sync failed at $PWD, will remove all and try again"
+            mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
             ~/system-config/bin/repo "$@"
         )
     fi

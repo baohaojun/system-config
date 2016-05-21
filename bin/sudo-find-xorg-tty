@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+pid=$1
+if ! ps "$pid" | grep "xorg/xorg|bin/xorg" -P -i -q; then
+    exit 1
+fi
+
+ls -l "/proc/$pid/fd" | grep -e '/dev/tty[0-9]' | perl -npe 's/.*-> //'

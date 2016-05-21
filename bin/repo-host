@@ -1,2 +1,2 @@
 #!/bin/bash
-(repo-review-url $(repo-remote) | perl -npe 's,ssh://(.*?)/.*,$1,; s/:.*//; s/.*@//')
+(repo-review-url "${1:-$(repo-remote)}" | perl -npe 's,ssh://(.*?)/.*,$1,; s/:.*//; s/.*@//')

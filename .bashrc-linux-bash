@@ -33,27 +33,11 @@ function renew-xauth() { # so that in the saved gnu screen session, I can reset 
     fi
 }
 
-if test -e ~/.config/system-config/sudo-ssh; then
+function sudo {
+    (
+        unset PROMPT_COMMAND
+        exec sudo -E env PATH=$PATH  "$@"
+    )
+}
 
-    function sudo {
-        command=$(
-            echo 'true; true;'
-            printf "cd %q\n%q" "$PWD" "$1"
-            shift
-            for x in "$@"; do
-                printf " %q" "$x"
-            done
-            echo
-        )
-        ssh-exp root@localhost $(cat ~/.config/system-config/sudo-ssh) "$command"
-    }
-
-else
-    function sudo {
-        (
-            unset PROMPT_COMMAND
-            exec sudo -E env PATH=$PATH  "$@"
-        )
-    }
-fi
 export -f sudo

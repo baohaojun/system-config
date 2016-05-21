@@ -1,5 +1,18 @@
 #!/bin/bash
 set -x
+
+if [[ "$(tty)" =~ /dev/tty ]]; then
+    if test "$(cat ~/.config/system-config/am-keyboard)" = en; then
+        sudo setupcon dvp
+        swap-control-alt
+        echo dvp > ~/.config/system-config/am-keyboard
+    else
+        sudo setupcon en
+        echo en > ~/.config/system-config/am-keyboard
+    fi
+    exit
+fi
+
 if test $# != 0; then
     exec my-adb am "$@"
 fi

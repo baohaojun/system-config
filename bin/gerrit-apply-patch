@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+if test ! -d .repo; then
+    die "此脚本必须运行在repo同步代码顶层目录下"
+fi
+
+if ! [[ "$1" =~ ^http ]]; then
+    die "用法：gerrit-apply-patch GERRIT-REVIEW-网页地址"
+fi
+
+url=$1
+host=$(echo "$1"|perl -npe 's,.*//(.*?)(:\d+)?/.*,$1,')
+if echo "$1" |grep -q "/\d+/\d+$" -P; then
+    set -- $(echo "$1"|perl -npe 's,.*/(\d+)/\d+$,$1,')
+else
+    set -- "$(basename "$1")"
+fi
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+tmpf=~/.cache/system-config/$b0.$$
+gerrit -h $host query "$@" --current-patch-set > $tmpf
+export gerrit_project=$(cat $tmpf|grep "^\s*project:"|pn 2)
+
+local_dir=$(my-rfa 'repo_project=$(repo-project); if [[ $gerrit_project =~ $repo_project$ ]]; then pwd; fi')
+if test -z "$local_dir"; then
+    die "无法找到该review相关的代码目录"
+fi
+
+cd $local_dir
+gerrit-fetch-review $url
+
+git merge FETCH_HEAD
