@@ -4,7 +4,7 @@ alias arping='sudo arping'
 alias quilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
 alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
 alias aptitude='sudo aptitude'
-alias umount='sudo umount'
+alias umount='command sudo umount'
 alias mplayer='mplayer -heartbeat-cmd "xscreensaver-command -deactivate"'
 alias adb=my-adb
 

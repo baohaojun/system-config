@@ -5,6 +5,9 @@ if test "$SYSTEM_CONFIG_INITED" != true; then
 fi
 
 if test "$1" = init; then
+    if test -e .repo -a ! -e .repo/manifest.xml; then
+        rm -f .repo/manifest.xml
+    fi
     saved_args=()
     should_cd=false
     build_dir=
