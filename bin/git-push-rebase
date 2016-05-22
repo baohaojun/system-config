@@ -286,6 +286,10 @@ if test "$(wgit symbolic-ref --short HEAD)" != $branch; then
 fi
 
 origin=$(repo-remote)
+if [[ "$(repo-remote-url $origin)" =~ https://github.com/baohaojun ]]; then
+    git remote set-url $origin $(repo-remote-url $origin|perl -npe 's,https://github.com/baohaojun,git\@github.com:baohaojun,')
+fi
+
 if git diff --quiet $origin/$branch; then
     echo HEAD already contained in a remote $branch, no need to push
     exit
@@ -298,9 +302,6 @@ fi
 
 git fetch $origin -v
 if [[ "$(repo-remote-url $origin)" =~ github.com.baohaojun ]]; then
-    if [[ "$(repo-remote-url $origin)" =~ https://github.com/baohaojun ]]; then
-        git remote set-url $origin $(repo-remote-url $origin|perl -npe 's,https://github.com/baohaojun,git\@github.com:baohaojun,')
-    fi
     git rebase $origin/$branch
 fi
 git push $origin HEAD:refs/heads/$branch || {
