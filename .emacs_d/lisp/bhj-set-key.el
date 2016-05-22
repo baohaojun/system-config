@@ -111,3 +111,4 @@
   (define-key global-map [(control z)] 'undo-tree-undo))
 (define-key global-map [(super ?*)] 'enter-emoji)
 (global-set-key (kbd "C-M-j") 'skk-mode)
+(global-set-key [(f5)] 'evil-mode)
