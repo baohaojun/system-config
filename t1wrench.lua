@@ -28,7 +28,7 @@ local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
 local adb_get_last_pic, debugging
 local adb_weixin_lucky_money
 local adb_weixin_lucky_money_output
-local t1_find_weixin_contact, t1_find_qq_contact
+local t1_find_weixin_contact, t1_find_qq_contact, t1_find_dingding_contact
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
@@ -647,6 +647,23 @@ local function weixin_open_homepage()
    end
 end
 
+local function dingding_open_homepage()
+   local dingding_home = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.activity.HomeActivity"
+   adb_am("am start -n " .. dingding_home)
+   wait_top_activity_match("com.alibaba.android.rimet/")
+   for i = 1, 20 do
+      sleep(.1)
+      if adb_top_window() ~= dingding_home then
+         log("exit from search by key back")
+         adb_event"key back sleep .1"
+         sleep(.1)
+      else
+         break
+      end
+      adb_am("am start -n " .. dingding_home)
+   end
+end
+
 local function qq_open_homepage()
    adb_am("am start -n " .. qqChatActivity2)
 
@@ -1209,6 +1226,16 @@ weixin_find_friend = function(friend_name)
    wait_input_target("com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI")
    adb_event"sleep .2 key scroll_lock sleep .5"
    adb_event"adb-tap 245 382"
+end
+
+t1_find_dingding_contact = function(friend_name)
+   dingding_open_homepage()
+   adb_event"adb-tap 831 129"
+   putclip(friend_name)
+   wait_input_target("com.alibaba.android.rimet/com.alibaba.android.user.search.activity.GlobalSearchInputActivity")
+   adb_event"sleep .2 key scroll_lock sleep .8"
+
+   adb_event"adb-tap 276 354 sleep .8 adb-tap 140 1880"
 end
 
 qq_find_friend = function(friend_name)
@@ -2117,6 +2144,8 @@ t1_call = function(number)
          t1_find_qq_contact(who)
       elseif where == "wx" then
          t1_find_weixin_contact(who)
+      elseif where == "dd" then
+         t1_find_dingding_contact(who)
       end
       return
    end
