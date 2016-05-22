@@ -15,4 +15,4 @@ if test "$QT4_IM_MODULE" -a ! "$QT_IM_MODULE"; then
     export QT_IM_MODULE=$QT4_IM_MODULE
 fi
 
-
+export SUDO_ASKPASS=/usr/bin/ssh-askpass
