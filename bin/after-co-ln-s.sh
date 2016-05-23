@@ -46,11 +46,12 @@ if test -d /etc/sudoers.d/ -a ! -e /etc/sudoers.d/$USER && can-sudo-and-ask-if-n
 fi
 
 if test $can_sudo = true -a $USER = bhj; then
-    sudo apt-get remove -y pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
+    if dpkg-query -l pulseaudio 2>&1 | grep -q ^ii; then
+        sudo apt-get remove -y pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
+    fi
     sudo mkdir -p ~root/.ssh
     mkdir -p ~/.ssh/
     touch ~/.ssh/config
-    sudo cp ~/.ssh/* ~root/.ssh/ -r
 fi
 
 if ! which sudo >/dev/null 2>&1 ; then # for cygwin, where sudo is not available

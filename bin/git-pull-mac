@@ -4,6 +4,12 @@ set -e
 . ~/system-config/bin/.gitx
 
 test $PWD = ~ && cd ~/system-config/
+if test $PWD = ~/system-config -a -d ~/src/github/private-config/.git; then
+    (
+        cd ~/src/github/private-config
+        git fetch $(repo-remote)
+    ) >/dev/null 2>&1
+fi
 cd "$(dirname "$(lookup-file .git)")"
 origin=$(repo-remote)
 if git config remote.$origin.url; then
