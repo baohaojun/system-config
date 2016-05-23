@@ -8,5 +8,3 @@ fi
 
 mount-share-folders
 start-sshs
-
-cowbuilder-chroot -c /home/trusty/ /etc/init.d/ssh start

@@ -66,6 +66,8 @@ function git()
         git log -p -1 "$WORKING_REV"
     fi
 
+    local using_st=false
+
     if test "$1" = st; then
         using_st=true
     fi
