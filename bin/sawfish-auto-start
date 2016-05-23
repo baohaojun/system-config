@@ -2,13 +2,17 @@
 
 exec > ~/.xsession-errors 2>&1
 . ~/.profile
+set > ~/tmp/sawfish-auto-start.set
 for x in GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID; do
     export $x
 done
 
 rm ~/.renew-xauth -f
 if test "$USER" = bhj; then
-    redo-ssh-agent
+    if test -e ~/src/github/private-config/bin/ugly; then
+        ~/src/github/private-config/bin/ugly
+        redo-ssh-agent
+    fi
 fi
 . ~/system-config/bin/set-ssh-agent
 . ~/.profile
@@ -44,9 +48,6 @@ EOF
 )
 sawfish-client -e "$env"
 
-if test -e ~/src/github/private-config/bin/ugly; then
-    ~/src/github/private-config/bin/ugly
-fi
 
 (setxkbmap -layout us -variant dvp; re-xmodmap 2>&1 | cat)&
 setsid run-dir-once ~/external/etc/sawfish/start&

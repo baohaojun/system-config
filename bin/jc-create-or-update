@@ -4,7 +4,7 @@ set -e
 
 function jc-create-job() {
     task_name=${1%.xml}
-    if cat $task_name.xml | jc update-job $task_name; then
+    if cat $task_name.xml | jc update-job $task_name >/dev/null 2>&1; then
         exit
     else
         for n in $(seq 1 10); do

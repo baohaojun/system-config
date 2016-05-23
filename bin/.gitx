@@ -104,12 +104,12 @@ function git()
         if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone ||
             test "$(readlink -f .)" = "$(readlink -f ~/system-config/)"
         then
-            cd ~/system-config/;
+            builtin cd ~/system-config/;
             if test "$1" = st -o "$using_st" = true && test "$2" != -S; then
                 for x in ~/src/github/*; do
-                    if test -d $x -a ! -L $x -a -e $x/.git; then
+                    if test -d $x -a -e $x/.git; then
                         (
-                            cd $x
+                            builtin cd $x
 
                             y=$(git status -s)
                             if test "$y"; then
@@ -131,9 +131,9 @@ function git()
 
             if test "$1" = submodule -a "$2" = foreach; then
                 for x in ~/src/github/*; do
-                    if test -d $x -a ! -L $x -a -d $x/.git; then
+                    if test -d $x -a -d $x/.git; then
                         (
-                            cd $x
+                            builtin cd $x
                             shift 2
                             echo Entering \'$x\'
                             if test $# = 1; then
