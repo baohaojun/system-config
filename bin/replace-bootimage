@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=~/system-config/bin/Linux/:$PATH
 
 if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
