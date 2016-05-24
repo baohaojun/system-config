@@ -13,8 +13,8 @@ else
     export https_proxy=http://localhost:$port
 
     if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
-        sudo ps-killall tinyproxy
-        sudo tsocks tinyproxy
+        ps-killall tinyproxy
+        tsocks tinyproxy
         sleep 1
     fi
 fi

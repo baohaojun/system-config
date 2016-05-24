@@ -34,7 +34,7 @@ proc qx cmd {
 }
 
 if [string eq "" $password] {
-    set password [qx "get-authinfo $host $user $dport"]
+    set password [qx "cat"]
 }
 
 if ([string equal $password ""]) {
@@ -65,7 +65,6 @@ expect -timeout 150 "exists. Overwrite? (y/N)" {
     send "y\n"
 }
 
-interact;
 wait;
 
 # Local Variables: #
