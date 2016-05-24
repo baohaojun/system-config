@@ -286,8 +286,8 @@ if test "$(wgit symbolic-ref --short HEAD)" != $branch; then
 fi
 
 origin=$(repo-remote)
-if [[ "$(repo-remote-url $origin)" =~ https://github.com/baohaojun ]]; then
-    git remote set-url $origin $(repo-remote-url $origin|perl -npe 's,https://github.com/baohaojun,git\@github.com:baohaojun,')
+if [[ "$(repo-remote-url $origin)" =~ https?://github.com/baohaojun ]]; then
+    git remote set-url $origin $(repo-remote-url $origin|perl -npe 's,https?://github.com/baohaojun,git\@github.com:baohaojun,')
 fi
 
 if git diff --quiet $origin/$branch; then
