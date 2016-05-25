@@ -1,8 +1,9 @@
 #!/bin/bash
 
 for x in "$@"; do
+    block=$(my-adb "for y in /dev/block/platform/*/by-name/$x /dev/block/platform/*/*/by-name/$x; do if test -e \$y; then echo \$y; exit; fi; done")
     if test $(basename $0) = adb-back-partition; then
-        my-adb su -c "dd if=/dev/block/platform/msm_sdcc.1/by-name/$x of=/sdcard/pt-$x"
+        my-adb "dd if=$block of=/sdcard/pt-$x"
         my-adb pull /sdcard/pt-$x
     elif test $(basename $0) = adb-erase-partition; then
         adb-ntty -r 'if test -e /dev/block/platform/msm_sdcc.1/by-name/'$x'; then

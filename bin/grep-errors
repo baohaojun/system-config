@@ -13,6 +13,7 @@ fi
 
 false_positives=$(
     cat <<'EOF'
+:\d+:HEAD is now at
 Failed to open dex file .\..: Failed to find magic in .\..
 has no default or required localization
 has no default translation
@@ -34,5 +35,10 @@ static void LocationService_agps_data_conn_failed\(
 after.failed - before.failed, pos\);
 EOF
 
+    if test -e flashing-files/.scripts/false-build-error-filter; then
+        cat flashing-files/.scripts/false-build-error-filter |grep .
+    fi
+
 )
 echo grep -i -H -n $pcre -e "$pat" "$@" |bash | grep -v "$(echo -n "$false_positives" | rm-last-nl | tr \\n \|)" -P -i
+true
