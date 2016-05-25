@@ -97,10 +97,9 @@ if test -z "$REPO_BRANCH"; then
         if test -z "$merge_head"; then
             die "请检查你的 git config branch.$head_branch.merge ，没有指定往远程的哪个分支上合"
         fi
+        export REPO_REMOTE=$(git config branch.$head_branch.remote)
         if test "$merge_head" -a "$merge_head" != $head_branch -a "$merge_head" != refs/heads/$head_branch; then
-            export REPO_REMOTE=$(git config branch.$head_branch.remote)
             head_branch=$merge_head
-
         fi
     fi
     if test "$head_branch" && yes-or-no-p -y "你的git设置了远程跟踪分支 $head_branch ，是否要push到此分支？"; then

@@ -7,6 +7,14 @@ fi
 
 repo_dir=$(lookup-file -e .repo)
 cd $(dirname $repo_dir)
+if test "$#" = 0 && yes-or-no-p -y "先更新 .repo/manifests ？"; then
+    (
+        cd .repo/manifests
+        git pull
+    )
+fi
+
+
 repo_init_url=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git-remote-url)
 repo_init_branch=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge)
 repo_init_manifest=

@@ -444,6 +444,8 @@ fi
 
 if test ! -e ~/.cache/system-config/android-build-install-done &&
         yes-or-no-p -y "Do you want to install the debian/ubuntu packages for android build (requires sudo)?"; then
+    echo "Setup almost done, but you need install some .deb packages for android build (requires sudo)"
+    echo "Or press Ctrl-C if you want to install later."
     install-pkgs android-build && touch ~/.cache/system-config/android-build-install-done
 fi
 echo Simple config OK.
