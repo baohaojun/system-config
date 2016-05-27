@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/wheatgrass.css" type="text/css" />
+ <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -128,6 +128,10 @@ System-config是github上的一个项目，里面包含了我的所有配置文�
 （我后来录了一个两小时的视频，在bilibili上，<a href="http://www.bilibili.com/video/av3376647/">我的十年Linux使用经验</a> ，欢迎上去吐槽。）
 </p>
 
+<p>
+（后来又写了一篇 <a href="../../../2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html">system-config原理与使用的简要说明</a> ，讲了一些原理性的东西，可以对照着看一下。）
+</p>
+
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> system-config 是什么</h2>
 <div class="outline-text-2" id="text-1">
@@ -140,11 +144,11 @@ system-config 里面最重要的可以分为几个部分：整个系统相关的
 </p>
 
 <p>
-github上有一些跟system-config类似的项目，但好像还没有像我的这个这样，可以让我自己拿到一台新机器后，很方便地重现自己的工作环境的。比如这个项目：<a href="https://github.com/rupa/z">https://github.com/rupa/z</a> ，允许你方便地跳转目录。但这些项目有一个问题，就是你不能拥有一个完整的工作环境。
+github上有一些跟system-config类似的项目，但好像还没有像我的这个这样，可以让我自己拿到一台新机器后，很方便地完整的重现自己的工作环境。比如这个项目：<a href="https://github.com/rupa/z">https://github.com/rupa/z</a> ，允许你方便地跳转目录。但这些项目有一个问题，就是你不能拥有一个完整的工作环境。我这个属于一揽子解决方案。
 </p>
 
 <p>
-我最早开始折腾这些配置，是在当年很有名的清华大学王垠的博客上，看到他把自己的配置一条一条地粘贴在自己的文章里，我就一条一条地拷贝下来，中间经常容易出错。即使没有出错，我也非常担心自己是不是在拷贝的时候少拷了一行代码之类的，非常没有保证。所以后来我学会了svn之后就把这些程序放到了google-code上。后来学了git之后就转移到github了。不知道大家有没有过类似地从网上到处拷一小段配置、代码的经历😁。
+我最早开始折腾这些配置，是在当年很有名的清华大学王垠的博客上，看到他把自己的配置一条一条地粘贴在自己的文章里，我就一条一条地拷贝下来。但这种拷贝做法中间经常容易出错，即使没有出错，我也非常担心自己是不是在拷贝的时候少拷了一行代码之类的，非常没有保证。有时候原作者不小心漏贴了某条关键的配置文本也是有可能的，碰到这些情况的话，还是非常痛苦的。所以后来我学会了svn之后就把这些配置放到了google-code上。后来学了git之后就转移到github了。不知道大家有没有过类似地从网上到处拷一小段配置、代码的经历😁。
 </p>
 
 <p>
@@ -430,6 +434,9 @@ bash下自定义了很多快捷键。你可以用bind -p来查看都有哪些功
 <dt> C-h ? </dt><dd>你需要尽快学会查看Emacs下的帮助。这里会列出所有的帮助大纲。
 </dd>
 
+<dt> C-h b </dt><dd>列出当前模式下的所有快捷键。通过快速浏览和Emacs自带的搜索功能，你可以方便的“发现”里面有什么快捷键是你比较想要的。
+</dd>
+
 <dt> C-s 和 C-r </dt><dd>前后搜索。按C-h k看一下这个键的帮助，非常重要！如果看过 Vim 作都写的高效编辑器使用的七种习惯的话，就会明白搜索还是一种非常重要的移动、定位方法。
 </dd>
 
@@ -452,6 +459,10 @@ bash下自定义了很多快捷键。你可以用bind -p来查看都有哪些功
 
 <p>
 beagrep的使用帮助见 <a href="../../../2011/12/23/beagrep.html">beagrep, grep 2G source code in 0.23 second</a> 。
+</p>
+
+<p>
+前提是对整个源代码目录已经用 <code>for-code-reading</code> 命令创建过索引。
 </p>
 </dd>
 
