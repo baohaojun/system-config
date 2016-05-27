@@ -19,7 +19,7 @@ function push-all-projects() {
                     git fetch -v s
                 fi
                 if (git-is-ancestor s/dev HEAD && ! git-is-ancestor HEAD s/dev) >/dev/null 2>&1; then
-                    git push s:baohaojun/$(basename $PWD) HEAD:refs/heads/dev >/dev/null 2>&1 || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; }
+                    git push s HEAD:refs/heads/dev >/dev/null 2>&1 || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; }
                 fi
             )
         done

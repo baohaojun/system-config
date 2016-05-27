@@ -59,6 +59,8 @@ if test ! -d $dir/.git; then
 else
     (
         cd $dir
-        git pull -q
+        git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+        git fetch -v origin
+        git co -B $branch origin/$branch
     )
 fi
