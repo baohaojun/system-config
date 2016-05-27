@@ -148,8 +148,9 @@ exec 9> $OUT_DIR/.android-full-build.lock
         export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:$PATH
         echo CLASSPATH is \'$CLASSPATH\'
 
-        perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
-        perl -npe 's,^(\s+\Q$(CPU)\E)$,$1 \\,; s,^(\s+\Q-D__alignx\(x\)=__attribute__\(\(__aligned__\(x\)\)\)\E)$,$1 \\,' -i vendor/qcom/proprietary/mm-still/ipl/Android.mk
+        if test -e vendor/qcom/proprietary/mm-still/ipl/Android.mk; then
+            perl -npe 's,^(\s+\Q$(CPU)\E)$,$1 \\,; s,^(\s+\Q-D__alignx\(x\)=__attribute__\(\(__aligned__\(x\)\)\)\E)$,$1 \\,' -i vendor/qcom/proprietary/mm-still/ipl/Android.mk
+        fi
         if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
             PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
             echo using java 1.7
@@ -224,7 +225,7 @@ EOF
 if test $# = 0; then
     cp $OUT_DIR_LONG/build.log $OUT_DIR_LONG/full-build.log
 fi
-perl -npe 's!^#\$\(error stopping\)!\$(error stopping)!' -i build/core/main.mk
+
 relative-link $OUT_DIR_LONG out || true
 if grep -Hn -e 'full build result is' $OUT_DIR_LONG/build.log | grep -e "all ok"; then
     exit 0

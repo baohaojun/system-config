@@ -112,3 +112,5 @@
 (define-key global-map [(super ?*)] 'enter-emoji)
 (global-set-key (kbd "C-M-j") 'skk-mode)
 (global-set-key [(f5)] 'evil-mode)
+(define-key global-map (kbd "<S-escape>") esc-map)
+(define-key global-map (kbd "<S-escape> <tab>") 'yas-expand)
