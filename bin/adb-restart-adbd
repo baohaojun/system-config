@@ -1,0 +1,33 @@
+#!/bin/bash
+
+adb_ppid=$(my-adb ps |grep adbd|pn 3)
+
+my-adb su -c "
+       cd /data/local/tmp;
+       echo saving to \$PWD/$$.log
+       setsid setsid nohup nohup bash -c '
+           set -x;
+           cd /data;
+           if test $adb_ppid != 1; then
+               kill $adb_ppid;
+           fi
+           while true; do
+               if test \$(cat /sys/class/power_supply/usb/online) = 1; then
+                   sleep 1
+                   echo \$\$ is alive
+                   continue
+               else
+                   break
+               fi
+           done
+           ps |grep adbd
+           echo 0 > /sys/class/android_usb/android0/enable
+           (           sleep 1
+                       setprop service.adb.root 0
+                       echo 1 > /sys/class/android_usb/android0/enable
+                       start adbd
+           )&
+           killall -9 adbd
+           killall -9 adbd
+       ' > $$.log 2>&1
+"

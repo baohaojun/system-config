@@ -32,7 +32,8 @@ if echo "$current_window_text"| grep -P -q -e "$search"; then
     exit
 fi
 
-xdotool key super+space apostrophe
+xdotool key super+space
+xdotool key apostrophe
 sleep .05
 xdotool type "$name"
 sleep .05

@@ -23,7 +23,7 @@ elif [[ "$file" =~ " " ]]; then
     shift
     (
         cd ~/system-config/doc/projects
-        file=$(F_FIND_OPTS='-maxdepth 1' f "$@")
+        file=$(F_FIND_OPTS='-maxdepth 1' f "$@" '!# .org')
         file=$(readlink -f "$file")
         find-or-exec emacs
         emacs.client -d -e "(progn

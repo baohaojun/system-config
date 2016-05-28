@@ -18,6 +18,9 @@ if ($ENV{EMACS}) {
 }
 
 my $accrue_prompt = "$ENV{ORIGINAL_MATCHER}";
+if ($accrue_prompt) {
+    $accrue_prompt = "$accrue_prompt\n";
+}
 sub tty(@) {
     if ($tty) {
         print $tty "@_";

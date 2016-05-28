@@ -88,7 +88,7 @@
       class))))
 
 (defun bhj-window-class (window)
-  (format nil "%s%%%s" (window-class window) (window-name window)))
+  (window-class window))
 
 (bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "F1"  '(system "EMACS=t s&"))
@@ -155,9 +155,7 @@
   (if (eq (catch 'wFound
             (mapc (lambda (window)
                     (when (if (stringp wclass-or-lambda)
-                              (or
-                               (string-match wclass-or-lambda (bhj-window-class window) 0 t)
-                               (string= wclass-or-lambda (window-name window)))
+                              (string-match wclass-or-lambda (bhj-window-class window) 0 t)
                             (when functionp wclass-or-lambda
                                   (wclass-or-lambda window)))
                       (bhj-activate-window window)
@@ -180,7 +178,7 @@
                 (lambda ()
                   (find-window-or-exec (eval wclass) wcommand)))))
  '(
-   ("Super-m"          "Emacs%" "emacs.bhj")
+   ("Super-m"          "Emacs" "emacs.bhj")
    ("v"                "adjust-volume" "adjust-volume")
    ("C-,"              "hello world no such thing" "firefox pop")
    ("C-."              "hello world no such thing" "firefox push")
