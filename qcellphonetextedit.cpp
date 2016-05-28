@@ -5,9 +5,19 @@
 #include <QTextBlock>
 
 
-QCellPhoneTextEdit::QCellPhoneTextEdit(QWidget* parent) : QTextEdit(parent)
+QCellPhoneTextEdit::QCellPhoneTextEdit(QWidget* parent) :
+    QTextEdit(parent),
+    mSettings("Smartisan", "Wrench", parent)
 {
     L = NULL;
+
+    int savedSize = mSettings.value("textEditFontSize", 0).toInt();
+
+    if (savedSize != 0) {
+        QFont newFont(this->font().family(), savedSize);
+        this->setFont(newFont);
+        resizeImages();
+    }
 }
 
 QCellPhoneTextEdit::~QCellPhoneTextEdit()
@@ -57,11 +67,13 @@ void QCellPhoneTextEdit::keyPressEvent(QKeyEvent *e)
         QFont newFont(this->font().family(), this->font().pointSize() + 2);
         this->setFont(newFont);
         resizeImages();
+        mSettings.setValue("textEditFontSize", this->font().pointSize());
         return;
     } else if (key == Qt::Key_Minus && (m & ~Qt::ShiftModifier) == Qt::ControlModifier) {
         QFont newFont(this->font().family(), this->font().pointSize() > 10 ? this->font().pointSize() - 2 : this->font().pointSize());
         this->setFont(newFont);
         resizeImages();
+        mSettings.setValue("textEditFontSize", this->font().pointSize());
         return;
     }
     if ((key == Qt::Key_8 || key == Qt::Key_Asterisk) && (m & (Qt::AltModifier | Qt::MetaModifier))) {

@@ -3,6 +3,7 @@
 #define _QCELLPHONETEXTEDIT_H_
 #include <QTextEdit>
 #include <lua.hpp>
+#include <QSettings>
 
 class QCellPhoneTextEdit : public QTextEdit
 {
@@ -23,6 +24,7 @@ private:
     QString replaceImagesWithEmoji(const QString& text, const QString& html);
     void keyPressEvent(QKeyEvent *);
     void resizeImages();
+    QSettings mSettings;
     lua_State* L;
 };
 

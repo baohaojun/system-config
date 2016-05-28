@@ -29,6 +29,7 @@
                    "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed"
                    "-I/usr/include/x86_64-linux-gnu"
                    "-I/usr/include"
+                   "-I/usr/include/linux"
                    "-I/usr/include/lua5.2"
                    "-I/home/bhj/tmp/build-t1"
                    "-I/usr/include/c++/5/utility"
