@@ -24,8 +24,17 @@ $source_file =~ s,\.gz$,,;
 
 open(my $rcfile, "<", $globalrc) or die "Can not open globalrc $globalrc";
 
+my $debug;
+my $logfile = $0;
+$logfile =~ s!.*/!!;
+if ($ENV{DEBUG} eq 'true') {
+    $debug = *STDERR;
+} else {
+    open($debug, ">", glob("~/.cache/system-config/logs/$logfile.log"))
+        or die "Can not open debug log file ~/.cache/system-config/logs/$logfile.log";
+}
 sub debug(@) {
-    # print STDERR "@_\n";
+    print $debug "@_\n";
 }
 
 my %lang_map;
@@ -39,7 +48,7 @@ while (<$rcfile>) {
         my $lang = $1;
         my $pat = $2;
 
-        debug "lang is $lang, pat is $pat";
+        # debug "lang is $lang, pat is $pat";
         $lang_map{$lang} = [] unless exists $lang_map{$lang};
 
         while ($pat =~ m/\((.*?)\)/g) {
@@ -63,7 +72,7 @@ foreach my $lang (keys %lang_map) {
     }
 }
 
-chomp(my $interp = qx(cat $source_path|head -n 1));
+chomp(my $interp = qx(cat $source_path 2>/dev/null|head -n 1));
 
 if ($interp =~ m,^#!\s*\S*/(\S+),) {
     $interp = $1;
@@ -82,12 +91,21 @@ my %emacs_mode_ctags_type_map = (
     sawfish => "rep",
     );
 
-open(my $source, "<", $ARGV[0]) or die "Can't open $source_file";
-my $first_line = <$source>;
-if ($first_line =~ m/-\*-\s*mode:\s*(\S+)\s*-\*-/) {
-    my $mode = $1;
-    print ($emacs_mode_ctags_type_map{$mode} or $mode);
-    exit;
+if (open(my $source, "<", $ARGV[0])) {
+    my $first_line = <$source>;
+    if ($first_line =~ m/-\*-\s*mode:\s*(\S+)\s*-\*-/) {
+        my $mode = $1;
+        print ($emacs_mode_ctags_type_map{$mode} or $mode);
+        exit;
+    }
+}
+
+if ($ENV{MAJOR_MODE}) {
+    my $mode = $ENV{MAJOR_MODE};
+    $mode =~ s/-mode//;
+    print $mode;
+    debug "got mode: $mode\n";
+    exit
 }
 
 print "unknown";

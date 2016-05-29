@@ -311,8 +311,8 @@ is set, call FUNC with the start and end of the matched region."
           (shell-command-on-region
            (point-min)
            (point-max)
-           (concat "imenu-ctags "
-                   (file-name-nondirectory (ajoke--buffer-file-name-local source-buffer)))
+           (concat "MAJOR_MODE=" (symbol-name major-mode) " imenu-ctags "
+                   (shell-quote-argument (file-name-nondirectory (ajoke--buffer-file-name-local source-buffer))))
            temp-buffer))
         (with-current-buffer temp-buffer
           (goto-char (point-min))

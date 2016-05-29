@@ -62,3 +62,8 @@
 --regex-scala=/^[ \t]*class[ \t]+([[:alnum:]]+)/\1/c,class/
 --regex-scala=/^[ \t]*trait[ \t]+([[:alnum:]]+)/\1/c,class/
 --regex-scala=/^[ \t]*interface[ \t]+([[:alnum:]]+)/\1/c,class/
+
+--langdef=sh
+--langmap=sh:.sh.SH.bsh.bash.ksh.zsh
+--regex-sh=/^[ \t]*(([[:alnum:]]|-)+)[ \t]*\([ \t]*\)/\1/f,function/
+--regex-sh=/^[ \t]*function[ \t]+(([[:alnum:]]|-)+)[ \t]*\([ \t]*\)/\1/f,function/

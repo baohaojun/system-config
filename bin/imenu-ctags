@@ -2,6 +2,7 @@
 
 use strict;
 use Encode;
+use String::ShellQuote;
 
 my $filename = $ARGV[0];
 chomp(my $stdin = qx(readlink -f /dev/stdin));
@@ -13,7 +14,9 @@ if (@ARGV > 1) { # this is for mac, where it can't readlink the /dev/stdin
 my $point = 1;
 my %line_point_map;
 my $line = 0;
-chomp(my $mode = qx(lang_for_file $filename));
+
+my $quoted_filename = shell_quote($filename);
+chomp(my $mode = qx(lang_for_file $quoted_filename));
 
 my $debug;
 my $logfile = $0;
@@ -27,6 +30,8 @@ if ($ENV{DEBUG} eq 'true') {
 sub debug(@) {
     print $debug "@_\n";
 }
+
+debug "working with $filename (mode: $mode, major-mode: $ENV{MAJOR_MODE})";
 
 system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin > ~/.imenu-ctags.$$");
 
