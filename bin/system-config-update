@@ -27,6 +27,7 @@ else # jenkins
     cd ~/system-config/
     git reset --hard
     git clean -xfd
+    git-get -u smartisan:tools/released-manifests -d ~/src/released-manifests
 fi
 
 rm ~/.config/system-config/.bashrc-path
