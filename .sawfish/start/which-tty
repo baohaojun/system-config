@@ -6,6 +6,6 @@ pid=$(ps.pl xorg/Xorg|pn 1)
 if test -z "$pid"; then
     pid=$(ps.pl /bin/xorg|pn 1)
 fi
-
-ln -sf "$(command sudo ~/system-config/bin/sudo-find-xorg-tty "$pid")" ~/.xtty
-
+if test "$USER" = bhj; then
+   ln -sf "$(command sudo ~/system-config/bin/sudo-find-xorg-tty "$pid")" ~/.xtty
+fi

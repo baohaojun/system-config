@@ -6,4 +6,6 @@ if test "$1" = on; then
     toggle=+
 fi
 
-command sudo ~/system-config/bin/sudo-setleds
+if test "$USER" = bhj; then
+    command sudo ~/system-config/bin/sudo-setleds
+fi

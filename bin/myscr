@@ -10,8 +10,8 @@ if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
 fi
 
-if test $# = 0 || test $# = 1 -a "$1" = first; then
-. ~/system-config/.bashrc-ssh-agent
+if test "$USER" = bhj && test $# = 0 || test $# = 1 -a "$1" = first; then
+    . ~/system-config/.bashrc-ssh-agent
 fi
 
 if test -x /opt/local/bin/bash; then

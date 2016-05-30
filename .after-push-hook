@@ -35,7 +35,7 @@ if test -d ~/src/system-config/; then
         done
     ) >/dev/null 2>&1
     cd ~/system-config
-    rsync . ~/src/system-config/ --exclude .git/ -a
+    rsync . ~/src/system-config/ --exclude .git/ -a --delete --exclude src
     mkdir -p ~/src/system-config/src/github
     (
         cd ~/src/github/
@@ -44,7 +44,7 @@ if test -d ~/src/system-config/; then
             (
                 cd $x
                 mkdir ~/src/system-config/src/github/$x/ -p
-                rsync . ~/src/system-config/src/github/$x/ --exclude .git/ -a
+                rsync . ~/src/system-config/src/github/$x/ --exclude .git/ -a --delete
             )&
         done
         wait
