@@ -54,7 +54,8 @@ cat /proc/self/mounts | while read what where x; do
     fi
 done
 
-for x in "$chroot"/$HOME "$chroot"/$HOME/src "$chroot"/$HOME/.ssh "$chroot"/$HOME/src "$chroot"/$HOME/system-config; do
+for x in external src .ssh system-config ; do
+    x=$chroot/$HOME/$x
     sudo mkdir -p "$x"
     sudo chown $USER\. "$x"
 done
@@ -73,6 +74,7 @@ done
     sudo perl -npe "s/bhj/$USER/; s/adduser/adduser --uid $UIDX/" -i "$chroot"/root/cowbuilder-chroot.prepare
     sudo mount -o bind ~/src "$chroot"/$HOME/src
     sudo mount -o bind ~/system-config "$chroot"/$HOME/system-config
+    sudo mount -o bind ~/external "$chroot"/$HOME/external
     if test ! -e "$chroot"/$HOME/.bashrc-cust; then
         echo 'export PS1HOSTNAME=$(lsb_release -c -s)' > "$chroot"/$HOME/.bashrc-cust
     fi

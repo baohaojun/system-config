@@ -7,7 +7,7 @@ if test "$REMOTEIP" && yes-or-no-p -y use remote proxy?; then
     export https_proxy=http://$REMOTEIP:$port
 else
     if ! type tinyproxy >/dev/null 2>&1; then
-        sudo apt-get install -y tinyproxy
+        die sudo apt-get install -y tinyproxy
     fi
     export http_proxy=http://localhost:$port
     export https_proxy=http://localhost:$port

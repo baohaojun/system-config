@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if test -e ~/.config/system-config/vim-is-evil; then
+    hint "你已经在使用evil模式"
+fi
+
+touch ~/.config/system-config/vim-is-evil
+emacsclient -e "(evil-mode 1)" >/dev/null 2>&1&

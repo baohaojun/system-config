@@ -347,6 +347,8 @@
   (load custom-file))
 (when (file-exists-p (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs"))
   (load (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs")))
+(when (file-exists-p "~/.config/system-config/vim-is-evil")
+  (evil-mode 1))
 
 (when (file-exists-p "~/.emacs.cust")
   (load "~/.emacs.cust"))

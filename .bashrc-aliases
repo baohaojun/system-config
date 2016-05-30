@@ -15,3 +15,11 @@ mount() {
         sudo mount "$@"
     fi
 }
+
+if test -e ~/.config/system-config/vim-is-evil; then
+    alias vi=e
+    alias vim=e
+    if test "$(lsb_release -cs)" = trusty; then
+        export PATH=~/external/local/emacs25u/bin:$PATH
+    fi
+fi
