@@ -15,19 +15,19 @@ function push-all-projects() {
         for p in $projects; do
             (
                 cd $p
-                if git remote add s s:baohaojun/$(basename $PWD) >/dev/null 2>&1; then
-                    git fetch -v s
+
+                if ! git remote add s s:baohaojun/$(basename $PWD) >/dev/null 2>&1; then
+                    true
                 fi
-                if (git-is-ancestor s/dev HEAD && ! git-is-ancestor HEAD s/dev) >/dev/null 2>&1; then
-                    git push s HEAD:refs/heads/dev >/dev/null 2>&1 || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; }
-                fi
+                git push s HEAD:refs/heads/dev || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; } || true
             )
         done
     )&
 }
 
 if test -d ~/src/system-config/; then
-    push-all-projects&
+    push-all-projects >/dev/null 2>&1&
+
     (
         for x in ~/src/github/*/.after-push-hook; do
             cd "$(dirname "$x")"

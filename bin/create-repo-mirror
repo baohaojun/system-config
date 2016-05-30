@@ -38,7 +38,7 @@ fi
 function sync-with-xml() {
     repo init -u smartisan:qualcomm/platform/manifest.git -b sanfrancisco -m $1 --repo-url smartisan:/googlesource/git-repo
     repo sync -j$jobs
-    my-rfa -j2 'echo backup $PWD 1>&2; remote=back-$(repo-remote-url|md5sum|cut -b 1-3); git fetch $(repo-remote) refs/heads/*:refs/remotes/$remote/*' >/dev/null
+    my-rfa -j2 'echo backup $PWD 1>&2; remote=back-$(repo-remote-url|md5sum|cut -b 1-3); git fetch -f $(repo-remote) refs/heads/*:refs/remotes/$remote/*' >/dev/null
 }
 
 repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --mirror >/dev/null 2>&1 || true
