@@ -116,3 +116,4 @@ for cust in ~/src/github/smartcm/.bashrc-cust ~/.bashrc-cust ~/.config/system-co
     fi
 done
 export SYSTEM_CONFIG_INITED=true
+. ~/system-config/.bashrc-aliases

@@ -1,5 +1,8 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
+(when (file-exists-p "~/.config/system-config/vim-is-evil")
+  (setq warning-minimum-level :error))
+
 (let ((warning-minimum-level :error))
   (server-start))
 
@@ -348,7 +351,13 @@
 (when (file-exists-p (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs"))
   (load (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs")))
 (when (file-exists-p "~/.config/system-config/vim-is-evil")
-  (evil-mode 1))
+  (menu-bar-mode 1)
+  (tool-bar-mode 1)
+  (scroll-bar-mode 1)
+  (evil-mode 1)
+  (setq-default initial-scratch-message
+                (concat initial-scratch-message
+                        "请访问此网页查看Emacs作弊手册： http://baohaojun.github.io/emacs-cheat-sheet.html")))
 
 (when (file-exists-p "~/.emacs.cust")
   (load "~/.emacs.cust"))

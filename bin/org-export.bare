@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if test "$#" != 0; then
+    true
+else
+    set -- *.org
+fi
+for x in "$@"; do
+    if test -e "$x"; then
+        emacsclient -e "$(org-export-bare.sh $x)"
+    fi
+done

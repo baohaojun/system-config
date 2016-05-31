@@ -14,7 +14,7 @@ else
 
     if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
         ps-killall tinyproxy
-        tsocks tinyproxy
+        tsocks tinyproxy -c ~/system-config/etc/tinyproxy.conf
         sleep 1
     fi
 fi
