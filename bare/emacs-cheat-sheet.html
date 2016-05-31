@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Eamcs作弊手册</title>
+<!-- 2016-05-31 Tue 12:05 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Bao Haojun" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Eamcs作弊手册</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. 按键说明</a></li>
+<li><a href="#sec-2">2. 帮助按键</a></li>
+<li><a href="#sec-3">3. 常用按键</a></li>
+<li><a href="#sec-4">4. Evil模式说明</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 按键说明</h2>
+<div class="outline-text-2" id="text-1">
+<ol class="org-ol">
+<li>C-h 或 Ctrl-h 代表 Control 加 h
+</li>
+<li>M-h 或 Meta-h 代表 Alt 加 h （Alt键在Unix术语里常常称为Meta键）
+</li>
+<li>s-h 或 Super-h 代表 Win 加 h （Win键在Unix术语里常常称为Super键）
+</li>
+<li>S-SPC 代表 Shift 加 Space
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 帮助按键</h2>
+<div class="outline-text-2" id="text-2">
+<dl class="org-dl">
+<dt> C-h ? </dt><dd>在线帮助系统 （在线的意思是不用离开Emacs就可以查看帮助）
+</dd>
+<dt> C-h b </dt><dd>查看当前编辑模式所有快捷键（请善用occur、搜索功能，查找自己最感兴趣的命令）
+</dd>
+<dt> C-h m </dt><dd>查看当前编辑模式帮助
+</dd>
+<dt> C-h k </dt><dd>提示按一个快捷键、显示该键相关帮助
+</dd>
+</dl>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 常用按键</h2>
+<div class="outline-text-2" id="text-3">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">按键</td>
+<td class="left">功能</td>
+<td class="left">模块</td>
+<td class="left">备注</td>
+</tr>
+
+<tr>
+<td class="left">F5</td>
+<td class="left">切换Vim/Emacs模式</td>
+<td class="left">Evil</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-x C-s</td>
+<td class="left">保存文件</td>
+<td class="left">基本</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-x C-c</td>
+<td class="left">退出Emacs</td>
+<td class="left">基本</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-x C-f</td>
+<td class="left">打开文件</td>
+<td class="left">基本</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-g</td>
+<td class="left">中止当前操作</td>
+<td class="left">基本</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-f/C-b</td>
+<td class="left">前后移动一个字符</td>
+<td class="left">移动</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-p/C-n</td>
+<td class="left">上下移动一行</td>
+<td class="left">移动</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">M-f/M-b</td>
+<td class="left">前后移动一个单词</td>
+<td class="left">移动</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-a/C-e</td>
+<td class="left">移动到行首/行尾</td>
+<td class="left">移动</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-v/M-v</td>
+<td class="left">前后翻页</td>
+<td class="left">移动</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">M-g g</td>
+<td class="left">行数跳转</td>
+<td class="left">移动</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-s/C-r</td>
+<td class="left">向前/向后搜索</td>
+<td class="left">搜索+移动</td>
+<td class="left">请C-h k C-s查看其帮助</td>
+</tr>
+
+<tr>
+<td class="left">C-x 1</td>
+<td class="left">关闭其他窗口</td>
+<td class="left">窗口</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-x 2</td>
+<td class="left">分割当前窗口</td>
+<td class="left">窗口</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-x o</td>
+<td class="left">切换到其他</td>
+<td class="left">窗口</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-x _</td>
+<td class="left">上下分割当前窗口</td>
+<td class="left">窗口</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-x 竖线</td>
+<td class="left">水平分割当前窗口</td>
+<td class="left">窗口</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-/</td>
+<td class="left">撤销</td>
+<td class="left">编辑</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-?</td>
+<td class="left">反撤销</td>
+<td class="left">编辑</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">M-/</td>
+<td class="left">基本补齐</td>
+<td class="left">编辑</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">M-g 回车</td>
+<td class="left">按单词补齐</td>
+<td class="left">编辑</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">M-g s</td>
+<td class="left">按句子补齐</td>
+<td class="left">编辑</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">M-g o</td>
+<td class="left">Occur</td>
+<td class="left">全局查找</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">M-!</td>
+<td class="left">运行外部命令</td>
+<td class="left">集成</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">C-SPC</td>
+<td class="left">标记</td>
+<td class="left">区域</td>
+<td class="left">选择区域开始</td>
+</tr>
+
+<tr>
+<td class="left">M-竖线</td>
+<td class="left">管道</td>
+<td class="left">集成</td>
+<td class="left">当前区域作为外部命令的标准输入</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Evil模式说明</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+原来用惯Vim的用户，在Emacs下可以使用Evil代替，大部分Vim的键都是可以用的。上面列出来的一些键也大部分继续可用（编辑功能键一般在Vim的插入模式下才能用），但有些键被Vim重新定义了，比如C-r。
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Bao Haojun</p>
+<p class="date">Created: 2016-05-31 Tue 12:05</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.94.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"></p>
+</div>
+</body>
+</html>
