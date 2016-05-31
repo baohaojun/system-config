@@ -442,10 +442,26 @@ fi
     done
 ) >/dev/null 2>&1 &
 
-if test ! -e ~/.cache/system-config/android-build-install-done &&
+if ! is-jenkins &&
+        test ! -e ~/.cache/system-config/android-build-install-done &&
         yes-or-no-p -y "Do you want to install the debian/ubuntu packages for android build (requires sudo)?"; then
+
     echo "Setup almost done, but you need install some .deb packages for android build (requires sudo)"
     echo "Or press Ctrl-C if you want to install later."
-    install-pkgs android-build && touch ~/.cache/system-config/android-build-install-done
+
+    for pkgdir in ~/system-config/bin/Linux/config/android-build; do
+        (
+            cd $pkgdir
+            for x in *; do
+                if ! dpkg-query -l $x >/dev/null 2>&1; then
+                    install-pkgs android-build && touch ~/.cache/system-config/android-build-install-done
+                    exit
+                fi
+            done
+        )
+    done
+
+
+
 fi
 echo Simple config OK.

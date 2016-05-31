@@ -39,7 +39,14 @@ function setup-ext-local() {
         hint "即将从gerrit服务器获取 ~/external/local"
         rmdir ~/external/local >/dev/null 2>&1 || true
         git clone smartisan:baohaojun/ext-local ~/external/local
+    else
+        (
+            cd ~/external/local
+            git pull
+        )
     fi
+
+
 
     if is-jenkins; then
         return;
