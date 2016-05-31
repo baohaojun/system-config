@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Eamcs作弊手册</title>
-<!-- 2016-05-31 Tue 12:05 -->
+<!-- 2016-05-31 Tue 12:30 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -88,6 +88,13 @@
     { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
 </style>
+<style>
+table {
+border-collapse: collapse;
+}
+table, th, td {
+border: 1px solid black;
+} </style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -149,6 +156,7 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> 按键说明</h2>
 <div class="outline-text-2" id="text-1">
@@ -208,7 +216,7 @@ for the JavaScript code in this tag.
 <td class="left">F5</td>
 <td class="left">切换Vim/Emacs模式</td>
 <td class="left">Evil</td>
-<td class="left">&#xa0;</td>
+<td class="left">system-config定义</td>
 </tr>
 
 <tr>
@@ -348,14 +356,14 @@ for the JavaScript code in this tag.
 <td class="left">M-g 回车</td>
 <td class="left">按单词补齐</td>
 <td class="left">编辑</td>
-<td class="left">&#xa0;</td>
+<td class="left">system-config定义</td>
 </tr>
 
 <tr>
 <td class="left">M-g s</td>
 <td class="left">按句子补齐</td>
 <td class="left">编辑</td>
-<td class="left">&#xa0;</td>
+<td class="left">system-config定义</td>
 </tr>
 
 <tr>
@@ -376,7 +384,7 @@ for the JavaScript code in this tag.
 <td class="left">C-SPC</td>
 <td class="left">标记</td>
 <td class="left">区域</td>
-<td class="left">选择区域开始</td>
+<td class="left">选择区域开始，此后移动命令同时改变区域范围</td>
 </tr>
 
 <tr>
@@ -385,23 +393,41 @@ for the JavaScript code in this tag.
 <td class="left">集成</td>
 <td class="left">当前区域作为外部命令的标准输入</td>
 </tr>
+
+<tr>
+<td class="left">C-u</td>
+<td class="left">参数前缀</td>
+<td class="left">杂项</td>
+<td class="left">改变当前命令行为，具体参考各命令帮助说明<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup></td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
 
+
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> Evil模式说明</h2>
 <div class="outline-text-2" id="text-4">
 <p>
-原来用惯Vim的用户，在Emacs下可以使用Evil代替，大部分Vim的键都是可以用的。上面列出来的一些键也大部分继续可用（编辑功能键一般在Vim的插入模式下才能用），但有些键被Vim重新定义了，比如C-r。
+原来用惯Vim的用户，在Emacs下可以使用Evil代替，大部分Vim的键都是可以用的。上面列出来的这些键也大部分继续可用（编辑功能键一般在Vim的插入模式下才能用），但有些键被Vim重新定义了，比如C-r，C-e等键。
 </p>
 </div>
 </div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+比如 M-! 运行外部命令，不加C-u，命令的输出只显示一下；加上C-u，命令的输出会被插入当前编辑的位置上。
+</p></div>
+
+
 </div>
+</div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2016-05-31 Tue 12:05</p>
+<p class="date">Created: 2016-05-31 Tue 12:30</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.94.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"></p>
 </div>
