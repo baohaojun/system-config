@@ -11,7 +11,9 @@ fi
 sleep1=${SLEEP1:-2}
 sleep2=${SLEEP2:-2}
 
-. ~/.renew-xauth
+if test -e ~/.renew-xauth; then
+    . ~/.renew-xauth
+fi
 (
     rm ~/.config/system-config/keyboard-dev-ids
     set -x
