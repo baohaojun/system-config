@@ -277,6 +277,9 @@ if test "$USER" = bhj; then
     symlink-map-files ~/system-config/etc/subdir-symlinks ~
     mkdir -p ~/.local/share/applications
     symlink-map ~/system-config/etc/local-app/ ~/.local/share/applications
+else
+    mkdir -p ~/.config/autostart
+    cp ~/system-config/etc/subdir-symlinks/.config/autostart/xbindkeys.desktop  ~/.config/autostart
 fi
 
 if test -e ~/system-config/.gitconfig.$USER &&
