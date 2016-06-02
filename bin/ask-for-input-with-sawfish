@@ -27,6 +27,13 @@ while true; do
     esac
 done
 
+if test "$DESKTOP_SESSION" != sawfish; then
+    title=$(echo "$prompt" | tail -n 1)
+    text=$prompt
+    zenity --entry --text="$text" --title="$title"
+    exit
+fi
+
 tmpf=/tmp/$(basename $0).$$
 
 echo -n "$prompt " > $tmpf

@@ -46,10 +46,31 @@ if test $# = 0; then
 fi
 
 window_not_found_command=${2:-true}
+
+
+to_match=$1
+if test "$1" = konsole; then
+    to_match='konsole|xfce4-terminal'
+fi
+if test "$DESKTOP_SESSION" != sawfish; then
+    wmctrl -l -x|while read wid desktop class user name; do
+        if [[ $class =~ $to_match ]]; then
+            wmctrl -a $wid -i
+            exit
+        fi
+    done
+
+    $window_not_found_command &
+
+    if test "$error_exit" = true; then
+        exit 1
+    fi
+    exit 0
+fi
+
 if test "$error_exit" = true; then
     window_not_found_command="${2:-touch ~/tmp/find-or-exec-failed.$$}"
 fi
-
 if test "$1" = konsole; then
     sawfish_exp=$(printf '(find-window-or-exec %s "%s")' \
                          '(lambda (w) (and
