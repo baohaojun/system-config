@@ -1,31 +1,46 @@
 #!/bin/bash
 # once start code-generator "^\\s *#\\s *"
 function generate-getopt() {
-    shortopt=
-    longopt=()
-    for x in "$@"; do
-        shortopt=$shortopt${x:0:1}
-        x=${x:1}
-        if test "${x:0:1}" = :; then
-            shortopt=$shortopt:
-            x=${x:1}
-            longopt=("${longopt[@]}" "$x:")
+    declare -A short_opts_map
+    declare -A long_opts_map
+    declare -A help_map
+    declare -A default_val_map
+
+    for spec in "$@"; do
+        if [[ $spec =~ ^@ ]]; then
+            short=
         else
-            longopt=("${longopt[@]}" "$x")
+            short=${spec:0:1}
         fi
+        spec=${spec:1}
+        if [[ $spec =~ ^: ]]; then
+            short=$short:
+            spec=${spec:1}
+        fi
+
+        long=$(echo "$spec"|perl -npe 's/(\?|=).*//')
+        help=$(echo "$spec" | perl -ne 'print if s/.*\?(.*?)(=.*|$)/$1/')
+        default=$(echo "$spec" | perl -ne 'print if s/.*=(.*?)(\?.*|$)/$1/')
+
+        short_opts_map[$long]=$short
+        long_opts_map[$long]=$long
+        if [[ $short =~ : ]]; then
+            long_opts_map[$long]=$long:
+        fi
+
+        if test -z "$default" && ! [[ $short =~ : ]]; then
+            default=false
+        fi
+
+        default_val_map[$long]=$default
+        help_map[$long]=$help
     done
     cat << EOF
-TEMP=\$(getopt -o $shortopt --long "$(for x in "${longopt[@]}"; do echo -n $x,; done|perl -npe 's/,$//')"  -n \$(basename -- \$0) -- "\$@")
+TEMP=\$(getopt -o $(string-join '' "${short_opts_map[@]}") --long $(string-join , ${long_opts_map[@]})  -n \$(basename -- \$0) -- "\$@")
 $(
-    for x in "${longopt[@]}"; do
-        x=${x%,}
-        x=${x//-/_}
-        echo -n ${x%:}=
-        if [[ $x =~ :$ ]]; then
-            echo
-        else
-            echo false
-        fi
+    for long in "${!long_opts_map[@]}"; do
+        var=${long//-/_}
+        echo ${var}=${default_val_map[$long]}
     done
 )
 eval set -- "\$TEMP"
@@ -33,33 +48,41 @@ while true; do
     case "\$1" in
 $(
     p=0
-    while true; do
-        s=${shortopt:0:1}
-        shortopt=${shortopt:1}
-        require_arg=false
-        if test "${shortopt:0:1}" = :; then
-            require_arg=true
-            shortopt=${shortopt:1}
-        fi;
-        l=${longopt[p++]}
-        l=${l%,}
-        l=${l%:}
+    for long in "${!long_opts_map[@]}"; do
+        s=${short_opts_map[$long]}
+        is_boolean=true
+        if [[ $s =~ : ]]; then
+            is_boolean=false
+        fi
+        s=${s/:/}
+        var=${long//-/_}
         cat << EOF2
-        -$s|--$l)
         $(
-            if test $require_arg = true; then
-                echo ${l//-/_}=\$2
+            if test "$s"; then
+                echo -n "-$s|"
+            fi
+            echo -n "--$long";
+            if test "$is_boolean" = true; then
+                echo -n "|--no-$long"
+            fi
+            echo ")"
+        )
+        $(
+            if test $is_boolean = false; then
+                echo ${var}=\$2
                 echo shift 2
             else
-                echo ${l//-/_}=true
-                echo shift
+                cat << EOF3
+                if test "\$1" = --no-$long; then
+                    ${var}=false
+                else
+                    ${var}=true
+                fi
+EOF3
             fi
         )
 EOF2
         echo ";;"
-        if test -z "$shortopt"; then
-            break
-        fi
     done
 )
     --)
