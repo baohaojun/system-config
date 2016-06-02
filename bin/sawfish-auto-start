@@ -49,6 +49,8 @@ EOF
 sawfish-client -e "$env"
 
 
-(setxkbmap -layout us -variant dvp; re-xmodmap 2>&1 | cat)&
+if test "$USER" = bhj; then
+    (setxkbmap -layout us -variant dvp; re-xmodmap 2>&1 | cat)&
+fi
 setsid run-dir-once ~/external/etc/sawfish/start&
 setsid run-dir-once ~/system-config/.sawfish/start&

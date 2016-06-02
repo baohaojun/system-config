@@ -30,6 +30,12 @@ done
 if test "$DESKTOP_SESSION" != sawfish; then
     title=$(echo "$prompt" | tail -n 1)
     text=$prompt
+    (
+        for x in $(seq 1 10); do
+            sleep .$x;
+            find-or-exec -e zenity && exit
+        done
+    )&
     zenity --entry --text="$text" --title="$title"
     exit
 fi

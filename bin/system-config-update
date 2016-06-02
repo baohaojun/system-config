@@ -32,6 +32,20 @@ fi
 
 rm ~/.config/system-config/.bashrc-path
 . ~/.bashrc
+
+if ! is-jenkins; then
+    (
+        cd ~/system-config/bin/Linux/config/android-build
+        for x in *; do
+            if ! dpkg-query -l $x >/dev/null 2>&1; then
+                hint "你需要安装 $x 程序，可能需要输入sudo密码"
+                install-pkgs android-build
+                exit
+            fi
+        done
+    )
+fi
+
 ~/system-config/bin/after-co-ln-s </dev/null >/dev/null 2>&1 &
 
 function setup-ext-local() {
