@@ -3,7 +3,11 @@
 . ~/system-config/bin/set-ssh-agent
 EMACS=emacs
 
-GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS -mm "$@"&
+if test "$USER" = bhj; then
+    unset GTK_IM_MODULE XMODIFIERS XIM
+fi
+
+$EMACS -mm "$@"&
 
 while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
     sleep 1

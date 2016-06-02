@@ -44,15 +44,15 @@
 ;; (set-numlock! #f or #t)
 ;; (set-scrolllock! #f or #t)
 ;; (set-capslock! #f or #t)
-;; 
+;;
 ;; Shell command key:
 ;; (xbindkey key "foo-bar-command [args]")
 ;; (xbindkey '(modifier* key) "foo-bar-command [args]")
-;; 
+;;
 ;; Scheme function key:
 ;; (xbindkey-function key function-name-or-lambda-function)
 ;; (xbindkey-function '(modifier* key) function-name-or-lambda-function)
-;; 
+;;
 ;; Other functions:
 ;; (remove-xbindkey key)
 ;; (run-command "foo-bar-command [args]")
@@ -66,6 +66,9 @@
 
 (xbindkey '(control shift q) "xbindkeys_show")
 (xbindkey '(release alt mod4 F1) "do-capture")
+(xbindkey '(release alt mod4 m) "find-or-exec emacs emacs.bhj")
+(xbindkey '(release alt mod4 t) "find-or-exec gnome-terminal konsole.bhj")
+
 
 ;; set directly keycode (here control + f with my keyboard)
 ;; (xbindkey '("m:0x4" "c:41") "xterm")
@@ -87,40 +90,40 @@
 
 ;; Extra features
 ;; (xbindkey-function '(control a)
-;;      	   (lambda ()
-;;      	     (display "Hello from Scheme!")
-;;      	     (newline)))
+;;                 (lambda ()
+;;                   (display "Hello from Scheme!")
+;;                   (newline)))
 
 ;; (xbindkey-function '(shift p)
-;;      	   (lambda ()
-;;      	     (run-command "xterm")))
+;;                 (lambda ()
+;;                   (run-command "xterm")))
 
 
 ;; Double click test
 ;; (xbindkey-function '(control w)
-;;      	   (let ((count 0))
-;;      	     (lambda ()
-;;      	       (set! count (+ count 1))
-;;      	       (if (> count 1)
-;;      		   (begin
-;;      		    (set! count 0)
-;;      		    (run-command "xterm"))))))
+;;                 (let ((count 0))
+;;                   (lambda ()
+;;                     (set! count (+ count 1))
+;;                     (if (> count 1)
+;;                         (begin
+;;                          (set! count 0)
+;;                          (run-command "xterm"))))))
 
 ;; Time double click test:
 ;;  - short double click -> run an xterm
 ;;  - long  double click -> run an rxvt
 ;; (xbindkey-function '(shift w)
-;;      	   (let ((time (current-time))
-;;      		 (count 0))
-;;      	     (lambda ()
-;;      	       (set! count (+ count 1))
-;;      	       (if (> count 1)
-;;      		   (begin
-;;      		    (if (< (- (current-time) time) 1)
-;;      			(run-command "xterm")
-;;      			(run-command "rxvt"))
-;;      		    (set! count 0)))
-;;      	       (set! time (current-time)))))
+;;                 (let ((time (current-time))
+;;                       (count 0))
+;;                   (lambda ()
+;;                     (set! count (+ count 1))
+;;                     (if (> count 1)
+;;                         (begin
+;;                          (if (< (- (current-time) time) 1)
+;;                              (run-command "xterm")
+;;                              (run-command "rxvt"))
+;;                          (set! count 0)))
+;;                     (set! time (current-time)))))
 
 
 ;; Chording keys test: Start differents program if only one key is
@@ -135,17 +138,17 @@
 ;;     (xbindkey-function key1 (lambda () (set! k1 #t)))
 ;;     (xbindkey-function key2 (lambda () (set! k2 #t)))
 ;;     (xbindkey-function (cons 'release key1)
-;;      	       (lambda ()
-;;      		 (if (and k1 k2)
-;;      		     (run-command cmd-k1-k2)
-;;      		     (if k1 (run-command cmd-k1)))
-;;      		 (set! k1 #f) (set! k2 #f)))
+;;                     (lambda ()
+;;                       (if (and k1 k2)
+;;                           (run-command cmd-k1-k2)
+;;                           (if k1 (run-command cmd-k1)))
+;;                       (set! k1 #f) (set! k2 #f)))
 ;;     (xbindkey-function (cons 'release key2)
-;;      	       (lambda ()
-;;      		 (if (and k1 k2)
-;;      		     (run-command cmd-k2-k1)
-;;      		     (if k2 (run-command cmd-k2)))
-;;      		 (set! k1 #f) (set! k2 #f)))))
+;;                     (lambda ()
+;;                       (if (and k1 k2)
+;;                           (run-command cmd-k2-k1)
+;;                           (if k2 (run-command cmd-k2)))
+;;                       (set! k1 #f) (set! k2 #f)))))
 
 
 ;; Example:

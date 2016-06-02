@@ -1,3 +1,11 @@
 #!/bin/bash
 # konsole --profile myscr --hide-menubar --hide-tabbar&
-xfce4-terminal --hide-menubar --maximize --hide-borders -x myscr
+if which xfce4-terminal >/dev/null 2>&1; then
+    xfce4-terminal --hide-menubar --maximize --hide-borders -x myscr
+elif which gnome-terminal >/dev/null 2>&1; then
+    gnome-terminal -e myscr
+elif which konsole >/dev/null 2>&1; then
+    konsole -e myscr
+elif which xterm >/dev/null 2>&1; then
+    xterm myscr
+fi

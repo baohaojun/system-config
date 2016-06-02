@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if test "$DESKTOP_SESSION" = sawfish; then
+    true
+else
+    xbindkeys
+fi

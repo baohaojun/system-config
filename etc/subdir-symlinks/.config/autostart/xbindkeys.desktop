@@ -1,0 +1,5 @@
+[Desktop Entry]
+Exec=env start-xbindkeys
+Name=Start Xbindkeys
+Terminal=false
+Type=Application

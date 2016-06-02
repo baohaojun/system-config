@@ -53,18 +53,22 @@ if test "$1" = konsole; then
     to_match='konsole|xfce4-terminal'
 fi
 if test "$DESKTOP_SESSION" != sawfish; then
-    wmctrl -l -x|while read wid desktop class user name; do
-        if [[ $class =~ $to_match ]]; then
-            wmctrl -a $wid -i
-            exit
-        fi
-    done
-
-    $window_not_found_command &
-
-    if test "$error_exit" = true; then
+    wmctrl -l -x|(
+        while read wid desktop class user name; do
+            if [[ $class =~ $to_match ]]; then
+                wmctrl -a $wid -i
+                exit 0
+            fi
+        done
         exit 1
-    fi
+    ) || (
+        $window_not_found_command &
+
+        if test "$error_exit" = true; then
+            exit 1
+        fi
+        exit 0
+    )
     exit 0
 fi
 
