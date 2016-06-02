@@ -49,7 +49,6 @@ if test $can_sudo = true -a $USER = bhj; then
     if dpkg-query -l pulseaudio 2>&1 | grep -q ^ii; then
         sudo apt-get remove -y pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
     fi
-    sudo mkdir -p ~root/.ssh
     mkdir -p ~/.ssh/
     touch ~/.ssh/config
 fi
@@ -309,7 +308,9 @@ fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
 if can-sudo-and-ask-if-not-bhj "Do you want to make power button to hibernate?"; then
-    sudo cp ~/system-config/etc/systemd/logind.conf /etc/systemd/logind.conf || true
+    if ! diff -q ~/system-config/etc/systemd/logind.conf /etc/systemd/logind.conf >/dev/null 2>&1; then
+        sudo cp ~/system-config/etc/systemd/logind.conf /etc/systemd/logind.conf || true
+    fi
 fi
 
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
@@ -327,7 +328,9 @@ if test -L /etc/rc.local || can-sudo-and-yes-or-no-p "Replace /etc/rc.local with
     if ! test -L /etc/rc.local; then
         sudo cp /etc/rc.local /etc/rc.local.bak
     fi
-    sudo ln -sf ~/system-config/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
+    if test "$(readlink -f /etc/rc.local)" != ~/system-config/etc/rc.local; then
+        sudo ln -sf ~/system-config/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
+    fi
 fi
 mkdir -p ~/system-config/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 if test -L ~/.git; then rm -f ~/.git; fi
@@ -372,20 +375,23 @@ if test -x ~/src/github/private-config/bin/bhj-after-co.sh; then
     ~/src/github/private-config/bin/bhj-after-co.sh
 fi
 
-if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
-    sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
-    sudo chmod a+X /etc/systemd/system/rc-local.service
-    sudo systemctl --system daemon-reload
-    sudo systemctl enable rc-local.service
-    sudo systemctl start rc-local.service
-else
-    sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service || true
+
+if ! diff -q ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service; then
+    if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
+        sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
+        sudo chmod a+X /etc/systemd/system/rc-local.service
+        sudo systemctl --system daemon-reload
+        sudo systemctl enable rc-local.service
+        sudo systemctl start rc-local.service
+    else
+        sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service || true
+    fi
 fi
 
+if test ! -d /etc/acpi/local/; then
+    sudo mkdir -p /etc/acpi/local/
+fi
 
-sudo mkdir -p /etc/acpi/local/
-
-sync-etc-files
 mkdir -p ~/.cache # just in case the following command will create
 # .cache with root permission.
 

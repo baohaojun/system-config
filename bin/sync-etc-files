@@ -1,9 +1,0 @@
-#!/bin/bash
-
-perl -npe "s,/home/bhj,${HOME},g; s,bhj,${USER},g" ~/system-config/etc/udev/rules.d/90-bhj-personal.rules | sudo tee /etc/udev/rules.d/90-$USER-personal.rules
-sudo cp ~/system-config/etc/lib/udev/keymaps/microsoft-ergonomic-keyboard /lib/udev/keymaps/microsoft-ergonomic-keyboard || true
-sudo cp ~/system-config/doc/usr/lib/pm-utils/sleep.d/bhj-hibernate-hook.sh /lib/systemd/system-sleep/zz-switch-touchpad
-sudo cp ~/system-config/etc/tsocks.conf /etc/tsocks.conf
-sudo cp ~/system-config/etc/tinyproxy.conf /etc/
-cat ~/system-config/etc/news/leafnode/config | sudo tee /etc/news/leafnode/config >/dev/null 2>&1 || true
-sudo /etc/init.d/udev restart || true
