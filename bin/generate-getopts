@@ -1,79 +1,192 @@
-#!/usr/bin/perl
-use strict;
+#!/bin/bash
 
-use Getopt::Long;
-my $local;
-GetOptions(
-    "l!" => sub {$local = "local "; },
-    );
+# [[file:~/src/github/private-config/doc/generate-getopts.org::*%E6%9C%80%E7%BB%88%E8%84%9A%E6%9C%AC][the-ultimate-script]]
 
-my @args;
-for (@ARGV) {
-    my $opt = substr($_, 0, 1);
-    $_ = substr($_, 1);
+# All bash scripts should start with ~set -e~ to fail early and loudly.
+set -e
+declare -A short_opts_map
+declare -A long_opts_map
+declare -A help_map
+declare -A default_val_map
+declare -A var_name_map
+is_local=
 
-    my $need_arg = 0;
-    if (m/^:/) {
-        $need_arg = 1;
-        $_ = substr($_, 1);
-    }
-    my $name = $_;
-    my $take_init_value = 0;
-    if ($name =~ s/=$//) {
-        $take_init_value = 1;
-    }
-    push @args, {
-        opt => $opt,
-        need_arg => $need_arg,
-        name => $name,
-        take_init_value => $take_init_value,
-    };
-}
+if test "$1" = -l; then
+    is_local=local
+    shift
+fi
 
-for (@args) {
-    print $local, $_->{name};
-    if ($_->{name} =~ m/=/) {
-        $_->{name} =~ s/=.*//;
-    } else {
-        print "=";
-        if ($_->{take_init_value}) {
-            print "\${$_->{name}}";
-        }
-    }
+for spec in "$@"; do
+    if [[ $spec =~ ^\? ]]; then
+        description=${spec:1}
+        continue
+    fi
 
-    if (not $_->{need_arg}) {
-        print "false";
-    }
-    print "\n";
-}
+    if [[ $spec =~ ^@ ]]; then
+        short=
+    else
+        short=${spec:0:1}
+    fi
+    spec=${spec:1}
+    if [[ $spec =~ ^: ]]; then
+        short=$short:
+        spec=${spec:1}
+    fi
 
-printf "$local" . "OPTIND=1\n";
-printf "while getopts '%s' opt; do\n", join ("", map {$_->{opt} . ($_->{need_arg} ? ':' : '')} @args);
-print 'case "$opt" in' . "\n";
+    long=$(echo "$spec"|perl -npe 's/(\?|=|\@).*//')
+    help=$(echo "$spec" | perl -ne 'print if s/.*\?(.*?)(=.*|\@.*|$)/$1/')
+    default=$(echo "$spec" | perl -ne 'print if s/.*=(.*?)(\?.*|\@.*|$)/$1/')
+    var_name=$(echo "$spec" | perl -ne 'print if s/.*\@(.*?)(\?.*|=.*|$)/$1/')
 
-for (@args) {
-    my ($opt, $need_arg, $name) = @$_{"opt", "need_arg", "name"};
-    if ($need_arg) {
-        printf '%s)    %s=$OPTARG;;%s', $opt, $name, "\n";
-    } else {
-        printf '%s)    %s=true;;%s', $opt, $name, "\n";
-    }
-}
+    short_opts_map[$long]=$short
+    long_opts_map[$long]=$long
+    var_name_map[$long]=$var_name
+    if [[ $short =~ : ]]; then
+        long_opts_map[$long]=$long:
+    fi
 
-print <<'EOF';
-    *)    echo Usage Error; exit 2;;
-    esac
+    if test -z "$default" && ! [[ $short =~ : ]]; then
+        default=false
+    fi
+
+    default_val_map[$long]=$default
+    help_map[$long]=$help
 done
-shift $(($OPTIND - 1))
+
+output-no-long-opts() {
+    output_done=false
+    for long in "${!long_opts_map[@]}"; do
+        short=${short_opts_map[$long]}
+        if ! [[ $short =~ : ]]; then
+            echo -n ,no-$long
+        fi
+    done
+}
+
+cat <<EOF
+
+$(
+for long in "${!long_opts_map[@]}"; do
+    var=${long//-/_}
+    echo $is_local ${var}=${default_val_map[$long]}
+done
+echo $is_local OPTIND=1
+)
+while getopts "$(string-join '' "${short_opts_map[@]}" h)" opt; do
+  case "\$opt" in
+
+$(
+for long in "${!long_opts_map[@]}"; do
+    s=${short_opts_map[$long]}
+    is_boolean=true
+    if [[ $s =~ : ]]; then
+        is_boolean=false
+    fi
+    s=${s/:/}
+    var=${long//-/_}
+    cat << EOF2
+        $(
+            if test "$s"; then
+                echo -n "$s) "
+            else
+                die "s not specified for $long"
+            fi
+            if test $is_boolean = false; then
+                echo -n ${var}=\$OPTARG \;\;
+            else
+             echo -n ${var}=true \;\;
+            fi
+        )
+EOF2
+done
+
+)
+h)
+    $(
+        echo echo "$description"
+        echo echo
+        for long in ${!long_opts_map[@]}; do
+            echo $long
+        done | sort | while read long; do
+            short=${short_opts_map[$long]}
+            is_boolean=true
+            if [[ $short =~ : ]]; then
+                is_boolean=false
+            fi
+            short=${short/:/}
+            if test "$short"; then
+                echo printf "%06s" "'-$short '"
+            else
+                echo 'printf "%06s" " "'
+            fi
+            long_output=$(
+                if test "$is_boolean" = true; then
+                    true
+                else
+                    uc_long=${var_name_map[$long]}
+                    if test -z "$uc_long"; then
+                        uc_long=$long
+                    fi
+                    uc_long=${uc_long^^}
+                    echo -n ${uc_long//-/_}
+                fi
+                       )
+            opt_chars=$(( ${#long_output} + 6))
+            echo printf "%-24s" "'$long_output'"
+            if test "$opt_chars" -gt 30; then
+                echo echo
+                echo 'printf "%30s" ""'
+            fi
+            echo echo "'${help_map[$long]}'"
+        done
+    )
+    shift
+    exit 0
+    ;;
+   *)
+       $(
+           echo echo "$description"
+           echo echo
+           for long in ${!long_opts_map[@]}; do
+               echo $long
+           done | sort | while read long; do
+               short=${short_opts_map[$long]}
+               is_boolean=true
+               if [[ $short =~ : ]]; then
+                   is_boolean=false
+               fi
+               short=${short/:/}
+               if test "$short"; then
+                   echo printf "%06s" "'-$short '"
+               else
+                   echo 'printf "%06s" " "'
+               fi
+               long_output=$(
+                   if test "$is_boolean" = true; then
+                       true
+                   else
+                       uc_long=${var_name_map[$long]}
+                       if test -z "$uc_long"; then
+                           uc_long=$long
+                       fi
+                       uc_long=${uc_long^^}
+                       echo -n ${uc_long//-/_}
+                   fi
+                          )
+               opt_chars=$(( ${#long_output} + 6))
+               echo printf "%-24s" "'$long_output'"
+               if test "$opt_chars" -gt 30; then
+                   echo echo
+                   echo 'printf "%30s" ""'
+               fi
+               echo echo "'${help_map[$long]}'"
+           done
+       )
+       exit 2
+       ;;
+   esac
+done
+
 EOF
 
-
-# while getopts "n:h" opt; do
-#         case "$opt" in
-#         n)      LinesPerPage=$OPTARG;;
-#         h)      phelp; exit 0;;
-#         *)      usage; exit 2;;
-#         esac
-# done
-
-# shift $(($OPTIND - 1))
+# the-ultimate-script ends here
