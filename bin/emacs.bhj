@@ -1,6 +1,13 @@
 #!/bin/bash
 . ~/.profile
 . ~/system-config/bin/set-ssh-agent
+
+if test -e ~/external/local/emacs25u/bin/emacs; then
+    if test "$(lsb_release -cs)" = trusty; then
+        export PATH=~/external/local/emacs25u/bin:$PATH
+    fi
+fi
+
 EMACS=emacs
 
 if test "$USER" = bhj; then
