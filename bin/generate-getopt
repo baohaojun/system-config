@@ -58,7 +58,7 @@ output-no-long-opts() {
 }
 
 cat <<EOF
-TEMP=\$(getopt -o $(string-join '' "${short_opts_map[@]}" h) \\
+TEMP=\$(getopt -o $(string-join '' $(for x in "${short_opts_map[@]}"; do if test "$x" != :; then echo $x; fi; done) h) \\
  --long $(string-join , ${long_opts_map[@]} help; output-no-long-opts) \\
  -n \$(basename -- \$0) -- "\$@")
 $(
@@ -113,8 +113,10 @@ done
 )
 -h|--help)
     $(
+        echo set +x
         echo echo "$description"
         echo echo
+        echo echo Options and arguments:
         for long in ${!long_opts_map[@]}; do
             echo $long
         done | sort | while read long; do
@@ -143,11 +145,14 @@ done
                        )
             opt_chars=$(( ${#long_output} + 6))
             echo printf "%-24s" "'$long_output'"
-            if test "$opt_chars" -gt 30; then
-                echo echo
-                echo 'printf "%30s" ""'
+    
+            if test "${help_map[$long]}"; then
+                if test "$opt_chars" -gt 30; then
+                    echo echo
+                    echo 'printf "%30s" ""'
+                fi
+                echo echo "'${help_map[$long]}'"
             fi
-            echo echo "'${help_map[$long]}'"
         done
         echo exit
     )

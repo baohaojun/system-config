@@ -117,7 +117,7 @@ if test "$prog" = search-jaccent; then
 fi
 
 if test "$prog" = search-jenkins; then
-    url="http://build1:8080/job/$fill"
+    url="http://build1:8080/job/$fill/configure"
 fi
 
 set -x
