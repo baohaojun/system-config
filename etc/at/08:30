@@ -1,7 +1,0 @@
-#! /bin/bash
-
-if dayofweek | grep -e "Sat|Sun"; then
-    exit 0
-fi
-. ~/.renew-xauth
-ps-killall aliwangwang
