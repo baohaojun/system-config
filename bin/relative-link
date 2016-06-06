@@ -182,8 +182,12 @@ for x in $(seq 1 $n_targets); do
         if test $ln_force = true; then
             echo "FORCE ->" "$target_dir"/"$target_file"
         else
-            echo "$target_dir"/"$target_file" 'already exist!'
-            ret=1
+            if test "$(readlink -f "$target_dir"/"$target_file")" = "$(readlink -f "$source")"; then
+                true # "$target_dir"/"$target_file" already linked to "$source"
+            else
+                echo "$target_dir"/"$target_file" 'already exist!'
+                ret=1
+            fi
             continue
         fi
     fi

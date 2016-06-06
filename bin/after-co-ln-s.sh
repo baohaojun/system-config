@@ -261,7 +261,7 @@ for x in $(find ~/system-config/.sc-symlinks/ -type l); do
     fi
     base=$(basename "$x");
     if test "$(readlink -f ~/"$base")" = "$(readlink -f "$x")"; then
-        echo already linked system-config\'s version of  ~/"$base"
+        # echo already linked system-config\'s version of  ~/"$base"
         continue
     fi
     if test ! -e ~/"$base" || ask-if-not-bhj "Use system-config's version of ~/$base?"; then
@@ -455,14 +455,13 @@ if ! is-jenkins &&
         test ! -e ~/.cache/system-config/android-build-install-done &&
         yes-or-no-p -y "Do you want to install the debian/ubuntu packages for android build (requires sudo)?"; then
 
-    echo "Setup almost done, but you need install some .deb packages for android build (requires sudo)"
-    echo "Or press Ctrl-C if you want to install later."
-
     for pkgdir in ~/system-config/bin/Linux/config/android-build; do
         (
             cd $pkgdir
             for x in *; do
                 if ! dpkg-query -l $x >/dev/null 2>&1; then
+                    echo "Setup almost done, but you need install some .deb packages for android build (requires sudo)"
+                    echo "Or press Ctrl-C if you want to install later."
                     install-pkgs android-build && touch ~/.cache/system-config/android-build-install-done
                     exit
                 fi
