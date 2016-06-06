@@ -36,7 +36,7 @@ while true; do
 done
 
 if test ${#board[@]} = 0; then
-    firefox "http://ar.newsmth.net/searchArticle.do?subject=&author=$author&boardname=&body=&start=&end=$att"
+    firefox "http://www.jinghuasoft.com/smth.jsp?board=&orderBy=&asc=&d=&dm=&dc=&p=&pp=true&view=0&author=$author&page=1"
     exit
 fi
 
