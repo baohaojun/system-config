@@ -16,6 +16,7 @@ map['com.android.contacts/com.android.contacts.yellowpage.YellowPageActivity'] =
 map['com.android.email/com.android.email.activity.setup.AccountSetupBasics'] = 'manual-post'
 map['com.android.incallui/com.android.incallui.InCallScreen'] = 'weixin-chat'
 map['com.android.mms/com.android.mms.ui.ComposeMessageActivity'] = 'weixin-confirm'
+map['com.android.settings/com.android.settings.applications.ManageApplicationsActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.AdvancedAccessPointSettingsActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.WifiSetupActivity'] = 'manual-post'
 map['com.android.vending/com.google.android.finsky.activities.MainActivity'] = 'manual-post'
