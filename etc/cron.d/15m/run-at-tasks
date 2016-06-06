@@ -18,12 +18,13 @@ for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
         fi
         logdir=~/.cache/system-config/logs/at-tasks/$logdir
         mkdir -p $logdir
-
         (
             echo
             echo '****************************************************************'
             echo "running $x at $(date)"
-            bash $x
+            bash $x ||
+                mail-bhj "run-at-tasks $(basename $x) failed"
         )>> $logdir/$(basename $x) 2>&1
     fi
 done
+exit 0
