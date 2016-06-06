@@ -30,7 +30,7 @@ else # jenkins
     git-get -u smartisan:tools/released-manifests -d ~/src/released-manifests
 fi
 
-rm ~/.config/system-config/.bashrc-path
+rm ~/.config/system-config/.bashrc-path -f
 . ~/.bashrc
 
 if ! is-jenkins; then
@@ -46,7 +46,7 @@ if ! is-jenkins; then
     )
 fi
 
-~/system-config/bin/after-co-ln-s
+~/system-config/bin/after-co-ln-s.sh
 if ! is-jenkins; then
     if ! test -d ~/src/github/projects/.git && ! test -e ~/src/github/projects/test.org; then
         mkdir -p ~/src/github/projects
