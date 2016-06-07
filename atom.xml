@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[记一次紧张、刺激的考试]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/06/07/0-My-University-Entrance-Exam.html"/>
+    <updated>2016-28-07T10:06:11+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/06/07/0-My-University-Entrance-Exam.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[最近读完了日文版的“海边的卡夫卡”]]></title>
     <link href="http://baohaojun.github.io/blog/2016/05/06/0-A-Chinese-programmer-learning-Japanese.html"/>
     <updated>2016-05-06T21:00:44+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html"/>
     <updated>2015-11-04T13:20:01+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[如何在Linux下运行小扳手（包含Ubuntu 12.04）]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html"/>
-    <updated>2015-10-22T13:20:08+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.html</id>
   </entry>
 </feed>
