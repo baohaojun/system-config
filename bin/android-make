@@ -176,11 +176,11 @@ EOF
                 (
                     cat <<'EOF' > $OUT_DIR/Android.mk
 LOCAL_PATH:= $(call my-dir)
-selinux_bhj: $(foreach se,seapp_contexts selinux_version sepolicy service_contexts,${PRODUCT_OUT}/root/${se})
+selinux_bhj: $(foreach se,seapp_contexts selinux_version sepolicy service_contexts,${PRODUCT_OUT}/root/${se}) sepolicy.recovery
 ifeq (${ONE_SHOT_MAKEFILE},${LOCAL_PATH}/Android.mk)
 $(info including the main sepolicy file)
 ONE_SHOT_MAKEFILE := external/sepolicy/Android.mk
-include device/qcom/sepolicy/Android.mk
+-include device/qcom/sepolicy/Android.mk
 include external/sepolicy/Android.mk
 # include cts/tests/tests/security/Android.mk
 # CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
