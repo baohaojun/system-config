@@ -152,6 +152,8 @@ done
                     echo 'printf "%30s" ""'
                 fi
                 echo echo "'${help_map[$long]}'"
+            else
+                echo echo
             fi
         done
         echo exit
