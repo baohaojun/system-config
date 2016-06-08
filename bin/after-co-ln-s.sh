@@ -24,7 +24,11 @@ fi
 export can_sudo=true
 if test -e /etc/sudoers.d/$USER -a "$USER" = bhj; then
     # can do sudo, but only if it's bhj
-    true
+    function sudo() {
+        echo SUDO: "$@"
+        command sudo -E env PATH="$PATH"  "$@"
+    }
+    export -f sudo
 elif ! yes-or-no-p "Do you have sudo power?"; then
     function sudo() {
         true
