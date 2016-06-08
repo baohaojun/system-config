@@ -118,6 +118,8 @@ fi
 
 if test "$prog" = search-jenkins; then
     url="http://build1:8080/job/$fill/configure"
+elif test "$prog" = search-jenkins-search; then
+    url="http://build1:8080/search/?q=$fill"
 fi
 
 set -x

@@ -131,6 +131,7 @@
                                                      (window-name (input-focus)))))
 (bind-keys s-h-keymap "i" '(system "indent-clipboard&"))
 (bind-keys s-h-keymap "I" '(system "deindent-clipboard&"))
+(bind-keys s-h-keymap "Insert" '(system "sync-x-clip&"))
 
 (defun bhj-activate-window (window)
   (if (window-iconified-p window)
