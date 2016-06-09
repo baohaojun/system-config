@@ -648,7 +648,7 @@ local function weixin_open_homepage()
 end
 
 local function dingding_open_homepage()
-   local dingding_splash = "com.alibaba.android.rimet/.biz.SplashActivity"
+   local dingding_splash = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.SplashActivity"
    local dingding_home = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.activity.HomeActivity"
    adb_am("am start -n " .. dingding_splash)
    wait_top_activity_match("com.alibaba.android.rimet/")
@@ -656,13 +656,17 @@ local function dingding_open_homepage()
       sleep(.1)
       local window = adb_top_window()
       if window ~= dingding_splash and window ~= dingding_home then
-         log("exit from search by key back")
+         log("window is %s", window)
          adb_event"key back sleep .1"
          sleep(.1)
+         adb_am("am start -n " .. dingding_splash)
+         wait_top_activity_match("com.alibaba.android.rimet/")
+      elseif window == dingding_splash then
+         adb_event"adb-tap 863 222"
       else
          break
       end
-      adb_am("am start -n " .. dingding_splash)
+
    end
 end
 
