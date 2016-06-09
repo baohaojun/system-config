@@ -1,5 +1,9 @@
 #!/bin/bash
-pass=$(ssh-askpass "password for your id_rsa keys")
+if test "$#" != 0; then
+    pass=$(cat)
+else
+    pass=$(ssh-askpass "password for your id_rsa keys")
+fi
 for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'|sort); do
     (
         host=

@@ -13,8 +13,6 @@ else
     done
 fi
 
-pass=$(ssh-askpass "Gpg password for back-to-gmail")
-
 for x in "$@"; do
 
     if test -d "$x"; then
@@ -42,7 +40,7 @@ for x in "$@"; do
 
     set -x
     rm "$back" -f
-    echo -n "$pass" | en_US gpg-expect -- -- --no-use-agent -o "$back" -c "$x"
+    gpg --output "$back" --encrypt --recipient baohaojun@gmail.com "$x"
     if test -d "$new_x"; then
         rm "$x"
     fi

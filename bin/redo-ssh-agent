@@ -68,7 +68,7 @@ fi
 if test "$RUNNING_IN_CRON" = true; then
     do-ssh-add&
 else
-    do-ssh-add-all&
+    do-ssh-add-all "$@"
 fi
 
 if is-tty-io; then

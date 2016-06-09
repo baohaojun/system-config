@@ -61,6 +61,8 @@ expect -timeout 150 passphrase {
 } timeout {
     puts "timed out\n";
     exp_continue;
+} "Identity added:" {
+    exit
 }
 
 expect -timeout 150 "Identity added:" {
