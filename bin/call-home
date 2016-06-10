@@ -1,5 +1,6 @@
 #! /bin/bash
 
+. ensure-at-work
 (
     flock -n 9 || { set +e; echo 'lock failed for home at '$(date); ps-killall sleep.51555005; exit 0; }
     for home in realhome; do
