@@ -10,7 +10,7 @@ if test -z "$CHECKING_SUBMODULE"; then
     rm -f $signal
 fi
 
-git config remote.origin.url | grep -q baohaojun || { echo do not check http git repo $(pwd); exit 0; }
+git config remote.$(repo-remote).url | grep -q baohaojun || { echo do not check non baohaojun git repo $(pwd); exit 0; }
 if git status -s | grep -q .; then
     echo "git repo $(pwd) not clean; need push"
     touch $signal
