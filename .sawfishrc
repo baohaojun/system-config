@@ -194,7 +194,7 @@
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/system-config/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
 
-(bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
+; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-both-global&window-keymaps "XF86Search" '(system "find-or-exec Search beagle-search&"))
 
 (bind-both-global&window-keymaps "C-S-XF86PowerOff"  '(system "lock-screen&"))
