@@ -1,0 +1,3 @@
+#!/bin/bash
+
+perl -npe 's/\s+/\n/g' | perl -pne 's/^/    / unless 1..1'
