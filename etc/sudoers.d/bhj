@@ -9,4 +9,5 @@ bhj ALL = NOPASSWD: /usr/bin/apt-get update, \
     SETLEDS, \
     /bin/loadkeys, \
     /bin/chvt, \
+    /bin/umount, \
     /bin/true
