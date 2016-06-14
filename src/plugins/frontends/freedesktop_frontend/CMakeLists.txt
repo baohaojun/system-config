@@ -22,12 +22,12 @@ if(Qt5DBus_FOUND)
         if(WIN32)
             set(SNORE_LOCATION ../bin/snorenotify)
         else()
-            set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
+            set(SNORE_LOCATION ${KDE_INSTALL_BINDIR}/snorenotify)
         endif()
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/org.freedesktop.Notifications.service.cmake ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service)
 
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
-                              DESTINATION share/dbus-1/services/)
+                              DESTINATION ${KDE_INSTALL_DBUSSERVICEDIR})
     endif()
 
     install(TARGETS libsnore_frontend_freedesktop ${SNORE_PLUGIN_INSTALL_PATH})
