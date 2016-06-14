@@ -35,6 +35,10 @@ if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
         --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; find . -name "*.xml"') \
         --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; find . -name "*.xml"')
     yes-or-no-p -y -- "You want run with $@?"
+    if test -d out/diff; then
+        rm out/diff -rf
+    fi
+    mkdir -p out/diff
     if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-find-all; then
         . ~/src/github/smartcm/scm-helpers/repo-cherry-find-all "$@"
     fi
@@ -123,6 +127,12 @@ else
     elif test -z "$from_manifest_xml"; then
         from_manifest_xml=$(basename $(readlink -f $(lookup-file -e .repo/manifest.xml)))
     fi
+
+    cat <<EOF > out/diff/$(basename $0).info
+from_xml=$from_manifest_xml
+to_xml=$to_manifest_xml
+EOF
+
 
     if test "$local_from" = true -o "$local_to" = true -o "$from" -o "$to" -o "$remote"; then
         die "when using xml, these variables must not be set"

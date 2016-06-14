@@ -19,6 +19,14 @@ function skip-all-remaining-repos() {
 export -f skip-current-repo
 export -f skip-all-remaining-repos
 
+function cherry-skip() {
+    ap=$1
+    commit=$2
+
+    skip_file=$(lookup-file -e out)/diff/${ap//\//%}.skip
+    (echo -n 'skip: '; grep $commit ${skip_file/.skip/.log}) | tee -a $skip_file
+}
+
 function cherry-ok() {
     ap=$1
     commit=$2
@@ -43,49 +51,114 @@ function cherry-fail() {
 
 export -f cherry-ok
 export -f cherry-fail
+export -f cherry-skip
+
+if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help; then
+    . ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help
+fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run o:ok-function f:fail-function
+# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run o:ok-function f:fail-function S:skip-function
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o shnRdo:f: --long "shell,do_here,no_fetch,no_reverts,dry-run,ok-function:,fail-function:"  -n $(basename -- $0) -- "$@")
-shell=false
-do_here=false
-no_fetch=false
-no_reverts=false
+TEMP=$(getopt -o dRno:hsf:S:h \
+              --long dry-run,no_reverts,no_fetch,ok-function:,do_here,shell,fail-function:,skip-function:,help,no-dry-run,no-no_reverts,no-no_fetch,no-do_here,no-shell \
+              -n $(basename -- $0) -- "$@")
 dry_run=false
+no_reverts=false
+no_fetch=false
 ok_function=
+do_here=false
+shell=false
 fail_function=
+skip_function=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -s|--shell)
-            shell=true
+
+        -d|--dry-run|--no-dry-run)
+            if test "$1" = --no-dry-run; then
+                dry_run=false
+            else
+                dry_run=true
+            fi
             shift
             ;;
-        -h|--do_here)
-            do_here=true
+        -R|--no_reverts|--no-no_reverts)
+            if test "$1" = --no-no_reverts; then
+                no_reverts=false
+            else
+                no_reverts=true
+            fi
             shift
             ;;
-        -n|--no_fetch)
-            no_fetch=true
-            shift
-            ;;
-        -R|--no_reverts)
-            no_reverts=true
-            shift
-            ;;
-        -d|--dry-run)
-            dry_run=true
+        -n|--no_fetch|--no-no_fetch)
+            if test "$1" = --no-no_fetch; then
+                no_fetch=false
+            else
+                no_fetch=true
+            fi
             shift
             ;;
         -o|--ok-function)
             ok_function=$2
             shift 2
             ;;
+        -h|--do_here|--no-do_here)
+            if test "$1" = --no-do_here; then
+                do_here=false
+            else
+                do_here=true
+            fi
+            shift
+            ;;
+        -s|--shell|--no-shell)
+            if test "$1" = --no-shell; then
+                shell=false
+            else
+                shell=true
+            fi
+            shift
+            ;;
         -f|--fail-function)
             fail_function=$2
             shift 2
+            ;;
+        -S|--skip-function)
+            skip_function=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-h, '
+            printf %-24s '--[no-]do_here'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--[no-]dry-run'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--fail-function=FAIL_FUNCTION'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--[no-]no_fetch'
+            echo
+            printf %06s '-R, '
+            printf %-24s '--[no-]no_reverts'
+            echo
+            printf %06s '-o, '
+            printf %-24s '--ok-function=OK_FUNCTION'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]shell'
+            echo
+            printf %06s '-S, '
+            printf %-24s '--skip-function=SKIP_FUNCTION'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -137,6 +210,7 @@ for diff_file in $diffs; do
     dir=$(echo $diff_file|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
     (
         cd $dir || exit 0
+        repo_project=$(repo-project)
         if test "$(basename $0)" = repo-cherry-push-all; then
             if test "$ok_function"; then
                 echo running $ok_function in $PWD
@@ -206,45 +280,86 @@ for diff_file in $diffs; do
 
             declare -A skiped_later_reverted_commits
 
-            for git_commit_id in $(grep -P -e "$1" $diff_file |grep -v 'Merge commit.*into'| pn 3|uniq-even-non-ajacent); do
-                export WORKING_REV=$git_commit_id
-                ret=0
-                if test "$no_reverts" = true; then
-                    . $diff_file.env
-                    subject=$(git log -1 --pretty=%s $git_commit_id)
-                    if test "${reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, it is reverted later?; then
+            # /home/bhj/src/android/build commit 43762abec244028673342090b29c6d04a96b1f6f cid I85848cd29536e96e9d330bf1b38f184ac9e6b3f7 not found in remotes/smartisan/tools_r22.2 jinxiaodong@smartisan.cn(2016-03-03 18:03:26 +0800) jinxiaodong@smartisan.cn(2016-03-03 19:22:05 +0800) : {{{use full boot.img if imgdiff failure}}}
+
+            ap=$(ap)
+            grep -P -e "$1" $diff_file |grep -v 'Merge commit.*into'|
+                while read path 'commit' git_commit_id remaining; do
+                    if ! [[ $git_commit_id =~ ^[a-f0-9]{40}$ ]]; then
+                        echo $path $commit $git_commit_id is invalid
+                        continue
+                    fi
+                    subject=${remaining#*\{\{\{}
+                    subject=${subject%\}\}\}*}
+                    change_id=
+
+                    if [[ $remaining =~ ^'has no change id' ]]; then
+                        read has no change id target_branch remaining <<<$remaining
+                    else
+                        read cid change_id not found in target_branch remaining <<<$remaining
+                    fi
+
+                    author=${remaining%%\(*}
+                    atime=${remaining#$author\(}
+                    atime=${atime%%\)*}
+                    remaining=${remaining#*\) }
+                    committer=${remaining%%\(*}
+                    ctime=${remaining#$committer\(}
+                    ctime=${ctime%%\)*}
+
+
+                    export WORKING_REV=$git_commit_id
+                    ret=0
+                    if test "$no_reverts" = true; then
+                        . $diff_file.env
+                        if test "${reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, it is reverted later?; then
+                            echo skip $git_commit_id: $subject
+                            skiped_later_reverted_commits[Revert \"$subject\"]=1
+                            if test "$skip_function"; then
+                                "$skip_function" $(ap) $git_commit_id
+                            fi
+                            continue
+                        fi
+
+                        if test "${skiped_later_reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, the original has been skipped?; then
+                            echo skip $git_commit_id: $subject
+                            skiped_later_reverted_commits[Revert \"$subject\"]=1
+                            if test "$skip_function"; then
+                                "$skip_function" $(ap) $git_commit_id
+                            fi
+                            continue
+                        fi
+                    fi
+
+                    if test -z "$change_id"; then
                         echo skip $git_commit_id: $subject
-                        skiped_later_reverted_commits[Revert \"$subject\"]=1
+                        if test "$skip_function"; then
+                            "$skip_function" $ap $git_commit_id
+                        fi
                         continue
                     fi
 
-                    if test "${skiped_later_reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, the original has been skipped?; then
-                        echo skip $git_commit_id: $subject
-                        skiped_later_reverted_commits[Revert \"$subject\"]=1
+                    if test "$dry_run" = true; then
                         continue
                     fi
-                fi
-                if test "$dry_run" = true; then
-                    continue
-                fi
-                if git cherry-pick -x --allow-empty $git_commit_id; then
-                    if test "$ok_function"; then
-                        "$ok_function" $(ap) $git_commit_id
+                    if git cherry-pick -x --allow-empty $git_commit_id; then
+                        if test "$ok_function"; then
+                            "$ok_function" $(ap) $git_commit_id
+                        fi
+                    elif test "$fail_function"; then
+                        "$fail_function" $(ap) $git_commit_id
+                    elif is-tty-io; then
+                        start_recursive_shell "cherry failed: $git_commit_id" || ret=$?
+                    else
+                        exit -1
                     fi
-                elif test "$fail_function"; then
-                    "$fail_function" $(ap) $git_commit_id
-                elif is-tty-io; then
-                    start_recursive_shell "cherry failed: $git_commit_id" || ret=$?
-                else
-                    exit -1
-                fi
-                if test $ret = 5; then
-                    exit
-                elif test $ret = 4; then
-                    echo cherry-failed: $WORKING_REV in $(ap) |tee -a ~/tmp/repo-cherry-pick-all.txt
-                    break
-                fi
-            done
+                    if test $ret = 5; then
+                        exit
+                    elif test $ret = 4; then
+                        echo cherry-failed: $WORKING_REV in $(ap) |tee -a ~/tmp/repo-cherry-pick-all.txt
+                        break
+                    fi
+                done
         fi
     )
 done
