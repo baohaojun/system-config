@@ -43,6 +43,7 @@ map['com.google.android.gsf.login/com.google.android.gsf.login.UsernamePasswordA
 map['com.google.android.talk/com.google.android.apps.hangouts.phone.ConversationActivity'] = 'weixin-chat'
 map['com.google.android.youtube'] = 'manual-post'
 map['com.nike.ntc/com.nike.ntc.ui.NikeLoginActivity'] = 'manual-post'
+map['com.qq.reader/com.qq.reader.module.bookstore.qnative.activity.NativeBookStoreEndPageActivity'] = 'weixin-chat'
 map['com.qzone/com.qzonex.module.global.FeedActionPanelActivity'] = 'weixin-chat'
 map['com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity'] = 'weibo-share'
 map['com.sdu.didi.psnger/com.didi.sdk.webview.WebActivity'] = 'manual-post'
