@@ -43,9 +43,6 @@ function cherry-fail() {
     fail_file=$(lookup-file -e out)/diff/${ap//\//%}.fail
 
     (echo -n 'failed: '; grep $commit ${fail_file/.fail/.log})| tee -a $fail_file
-    if test "$(wc -l $fail_file)" -gt 100; then
-        echo "有冲突的patch太多了，之后的patch不再处理" | tee -a $fail_file
-    fi
     git cherry-pick --abort
 }
 
