@@ -1,4 +1,5 @@
 local map = {}
+map['cmb.pb/cmb.pb.ui.PBWebViewActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'weixin-chat'
 map['com.alibaba.android.rimet/com.alibaba.android.user.contact.activities.OrgContactActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpActivity'] = 'manual-post'
@@ -76,6 +77,7 @@ map['com.tencent.mm/com.tencent.mm.ui.contact.ContactRemarkInfoModUI'] = 'manual
 map['com.tencent.mm/com.tencent.mm.ui.contact.SelectContactUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.LauncherUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.ui.transmit.SelectConversationUI'] = 'manual-post'
+map['com.tencent.mm/com.tencent.mm.ui.transmit.SendAppMessageWrapperUI'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.AddFriendVerifyActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.aio.photo.AIOGalleryActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.AutoRemarkActivity'] = 'manual-post'
