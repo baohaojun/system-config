@@ -207,7 +207,7 @@ for diff_file in $diffs; do
     dir=$(echo $diff_file|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
     (
         cd $dir || exit 0
-        repo_project=$(repo-project)
+        repo_project=$(ap)
         if test "$(basename $0)" = repo-cherry-push-all; then
             if test "$ok_function"; then
                 echo running $ok_function in $PWD

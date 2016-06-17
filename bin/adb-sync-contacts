@@ -16,4 +16,6 @@ sleep 5
 while true; do my-adb -r 'fuser /sdcard/smartisan/contact/00001.vcf && echo yes' | grep yes || break; sleep 1; done
 
 cd ~/.android
-my-adb pull /sdcard/smartisan/contact/00001.vcf contacts.vcf
+my-adb pull /sdcard/smartisan/contact/00001.vcf contacts.vcf.$$
+cat contacts.vcf.$$ > contacts.vcf
+rm contacts.vcf.$$

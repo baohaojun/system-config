@@ -62,8 +62,11 @@ if test "$1" = init; then
     ) || true
 fi
 
-if test "$1" = sync; then
+if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help "$@")" = --help; then
     set -- "$@" --no-tags
+    if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
+        set -- "$@" --force-sync
+    fi
     if time ~/system-config/bin/repo "$@"; then
         (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'&)
     elif is-jenkins && test "$REDO_REPO_SYNC" != true; then
@@ -77,5 +80,9 @@ if test "$1" = sync; then
     fi
     exit
 else
-    exec ~/system-config/bin/repo "$@"
+    if ! ~/system-config/bin/repo "$@"; then
+        if test "$1" = init -a -e ".repo/local_manifests"; then
+            echo 1>&2 "Warning: you have local_manifest set, might cause error"
+        fi
+    fi
 fi

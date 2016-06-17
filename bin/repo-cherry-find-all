@@ -128,6 +128,7 @@ else
         from_manifest_xml=$(basename $(readlink -f $(lookup-file -e .repo/manifest.xml)))
     fi
 
+    mkdir -p out/diff
     cat <<EOF > out/diff/$(basename $0).info
 from_xml=$from_manifest_xml
 to_xml=$to_manifest_xml
