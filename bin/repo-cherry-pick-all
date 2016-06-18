@@ -180,7 +180,7 @@ fi
 
 
 if test -d .repo; then
-    diffs=$(rgrep -l -P -e "$1" out/diff | sort)
+    diffs=$(rgrep -l -P -e "$1" out/diff/*.log | sort)
     (
         cd out/diff
         rm *.ok *.fail -f
