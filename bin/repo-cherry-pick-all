@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 function die() {
     echo Error: "$@"
@@ -24,7 +24,7 @@ function cherry-skip() {
     commit=$2
 
     skip_file=$(lookup-file -e out)/diff/${ap//\//%}.skip
-    (echo -n 'skip: '; grep $commit ${skip_file/.skip/.log}) | tee -a $skip_file
+    (echo -n 'skip: '; grep $commit ${skip_file/.skip/.log}|head -n 1) | tee -a $skip_file
 }
 
 function cherry-ok() {
@@ -33,16 +33,13 @@ function cherry-ok() {
 
     ok_file=$(lookup-file -e out)/diff/${ap//\//%}.ok
 
-    (echo -n 'ok: '; grep $commit ${ok_file/.ok/.log}) | tee -a $ok_file
+    (echo -n 'ok: '; grep $commit ${ok_file/.ok/.log}|head -n 1) | tee -a $ok_file
 }
 
 function cherry-fail() {
-    ap=$1
-    commit=$2
-
     fail_file=$(lookup-file -e out)/diff/${ap//\//%}.fail
 
-    (echo -n 'failed: '; grep $commit ${fail_file/.fail/.log})| tee -a $fail_file
+    (echo -n 'failed: '; grep $git_commit_id ${fail_file/.fail/.log}|head -n 1)| tee -a $fail_file
     git cherry-pick --abort
 }
 
@@ -226,6 +223,7 @@ for diff_file in $diffs; do
         fi
         git reset --hard
         command git clean -xfd
+        git cherry-skip --abort || true
         if test $no_fetch = false; then
             git fetch $(repo-remote)
         fi
@@ -240,7 +238,7 @@ for diff_file in $diffs; do
             target_branch=$(grep -o 'not found in .*' $diff_file|pn 4|head -n 1)
         fi
 
-        if test -z "$target_branch"; then
+        if ! is-jenkins && test -z "$target_branch"; then
             echo target branch is not found in $diff_file'!'
             if is-tty-io; then
                 start_recursive_shell "No target branch" || ret=$?
@@ -254,7 +252,7 @@ for diff_file in $diffs; do
                 break
             fi
         else
-            if test $do_here = false; then
+            if test $do_here = false -a "$target_branch"; then
                 git checkout $target_branch -B $(
                     echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
                     ) || true
@@ -280,8 +278,19 @@ for diff_file in $diffs; do
             # /home/bhj/src/android/build commit 43762abec244028673342090b29c6d04a96b1f6f cid I85848cd29536e96e9d330bf1b38f184ac9e6b3f7 not found in remotes/smartisan/tools_r22.2 jinxiaodong@smartisan.cn(2016-03-03 18:03:26 +0800) jinxiaodong@smartisan.cn(2016-03-03 19:22:05 +0800) : {{{use full boot.img if imgdiff failure}}}
 
             ap=$(ap)
-            grep -P -e "$1" $diff_file |grep -v 'Merge commit.*into'|
+            if type check-merged-commit >/dev/null 2>&1; then
+                check-merged-commit $ap $(cat $diff_file | pn 3)
+            fi
+            declare -A already_handled_commit_map
+            grep -P -e "$1" $diff_file |
                 while read path 'commit' git_commit_id remaining; do
+                    if test "${already_handled_commit_map[$git_commit_id]}" = 1; then
+                        echo $git_commit_id already handled
+                        continue
+                    fi
+
+                    already_handled_commit_map[$git_commit_id]=1
+
                     if ! [[ $git_commit_id =~ ^[a-f0-9]{40}$ ]]; then
                         echo $path $commit $git_commit_id is invalid
                         continue
@@ -313,7 +322,7 @@ for diff_file in $diffs; do
                             echo skip $git_commit_id: $subject
                             skiped_later_reverted_commits[Revert \"$subject\"]=1
                             if test "$skip_function"; then
-                                "$skip_function" $(ap) $git_commit_id
+                                skip_reason=reverted "$skip_function" $ap $git_commit_id
                             fi
                             continue
                         fi
@@ -322,7 +331,7 @@ for diff_file in $diffs; do
                             echo skip $git_commit_id: $subject
                             skiped_later_reverted_commits[Revert \"$subject\"]=1
                             if test "$skip_function"; then
-                                "$skip_function" $(ap) $git_commit_id
+                                skip_reason=reverted "$skip_function" $ap $git_commit_id
                             fi
                             continue
                         fi
@@ -331,7 +340,7 @@ for diff_file in $diffs; do
                     if test -z "$change_id"; then
                         echo skip $git_commit_id: $subject
                         if test "$skip_function"; then
-                            "$skip_function" $ap $git_commit_id
+                            skip_reason=no-change-id "$skip_function" $ap $git_commit_id
                         fi
                         continue
                     fi
