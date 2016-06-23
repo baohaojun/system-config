@@ -289,7 +289,7 @@ sudo bash -c "
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
     echo chcon u:object_r:zygote_exec:s0 ../system/xbin/sugote
-    if test $no_hack = false; then
+    if test "$no_hack" = false; then
         echo chmod 755 /system/etc/install-recovery.sh
         echo ln -sf /system/etc/install-recovery.sh /system/bin/install-recovery.sh
     fi

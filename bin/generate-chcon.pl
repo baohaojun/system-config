@@ -18,8 +18,8 @@ while (<>) {
         $paren_open = 1;
         $last_chcon = "";
 
-    } elsif (m,(u:object_r:\S*)\s+(\S+),) {
-        print "\n    chcon $1 $2;" unless $1 eq 'u:object_r:system_data_file:s0';
+    } elsif (m,(u:object_r:\S*)\s+(.+),) {
+        print "\n    chcon $1 '$2';" unless $1 eq 'u:object_r:system_data_file:s0';
     }
 }
 if ($paren_open) {

@@ -60,7 +60,7 @@ elif test $(basename $0) = adb-restore-data-no-sdcard; then
     adb-stop-all-services
     adb-fix-gms
     generate-chcon.pl data/chcon.txt > data/chcon.sh
-    sudo rsync data root@phone:/android/ -av "$@" --delete --exclude='data/media/*' --exclude=data/debian
+    sudo rsync data root@phone:/android/ -avc "$@" --delete --exclude='data/media/*' --exclude=data/debian
     my-adb shell 'cd /; bash /data/chcon.sh'
 elif test $(basename $0) = adb-backup-su; then
     gapp_dir=~/src/github/private-config/bin/gapps-system
