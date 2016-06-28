@@ -86,10 +86,15 @@ unset CLASSPATH
 cd $top_dir || exit
 . build/envsetup.sh >/dev/null 2>&1
 
-if test ! "$config" -a ! -e buildspec.mk; then
-    products=$(for x in "${LUNCH_MENU_CHOICES[@]}"; do echo ${x%-*}; done)
-    product=$(select-args -p "请选择你要编译的产品" -o -- ${products[@]})
-    variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )
+if test -z "$config" -a ! -e buildspec.mk; then
+    if test "$TARGET_PRODUCT" -a "$TARGET_BUILD_VARIANT"; then
+        product=$TARGET_PRODUCT
+        variant=$TARGET_BUILD_VARIANT
+    else
+        products=$(for x in "${LUNCH_MENU_CHOICES[@]}"; do echo ${x%-*}; done)
+        product=$(select-args -p "请选择你要编译的产品" -o -- ${products[@]})
+        variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )
+    fi
     config=$product-$variant
 fi
 

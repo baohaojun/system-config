@@ -348,6 +348,10 @@ for diff_file in $diffs; do
                     if test "$dry_run" = true; then
                         continue
                     fi
+                    if test "$should_function" && ! "$should_function"; then
+                        echo should not cherry $git_commit_id
+                        continue
+                    fi
                     if git cherry-pick -x --allow-empty $git_commit_id; then
                         if test "$ok_function"; then
                             "$ok_function" $(ap) $git_commit_id

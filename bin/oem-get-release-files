@@ -1,18 +1,16 @@
 #!/bin/bash
 set -e
-cd common-git
 git reset --hard
+git clean -xfd
 
-for x in *; do
-    rm ../$x -rf;
-done
-cp * .. -av
-
-cd ..
 find . -type f |xargs touch
 touch ~/tmp/mark.$$
 cd common/build
-python update_common_info.py
+if test $# != 0; then
+    "$@"
+else
+    python update_common_info.py
+fi || true
 cd ../..
 
 find . -anewer ~/tmp/mark.$$ -type f > ~/tmp/newer.$$

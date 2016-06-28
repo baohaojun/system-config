@@ -8,3 +8,5 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", OWNER="bhj"
 SUBSYSTEM=="usb", ATTR{idVendor}=="1004", OWNER="bhj"
 
 SUBSYSTEM=="usb", ATTR{idVendor}=="0bb4", OWNER="bhj"
+SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", OWNER="bhj"
+SUBSYSTEM=="usb", ATTR{idVendor}=="0489", OWNER="bhj"

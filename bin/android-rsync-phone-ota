@@ -33,41 +33,98 @@ if test ! "$ANDROID_SERIAL"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt  Sno-system Gno-gapps ssystem-only ddebug x:skip-partitions Hno-hack
+# generate-getopt  @do-system=true Gno-gapps @system-only ddebug x:skip-partitions @hack=true @:system-image
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o SGsdx:H --long "no-system,no-gapps,system-only,debug,skip-partitions:,no-hack"  -n $(basename $0) -- "$@")
-no_system=false
+TEMP=$(getopt -o Gdx:h \
+              --long hack,no-gapps,system-only,system-image:,do-system,debug,skip-partitions:,help,no-hack,no-no-gapps,no-system-only,no-do-system,no-debug \
+              -n $(basename -- $0) -- "$@")
+hack=true
 no_gapps=false
 system_only=false
+system_image=
+do_system=true
 debug=false
 skip_partitions=
-no_hack=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -S|--no-system)
-            no_system=true
+
+        --hack|--no-hack)
+            if test "$1" = --no-hack; then
+                hack=false
+            else
+                hack=true
+            fi
             shift
             ;;
-        -G|--no-gapps)
-            no_gapps=true
+        -G|--no-gapps|--no-no-gapps)
+            if test "$1" = --no-no-gapps; then
+                no_gapps=false
+            else
+                no_gapps=true
+            fi
             shift
             ;;
-        -s|--system-only)
-            system_only=true
+        --system-only|--no-system-only)
+            if test "$1" = --no-system-only; then
+                system_only=false
+            else
+                system_only=true
+            fi
             shift
             ;;
-        -d|--debug)
-            debug=true
+        --system-image)
+            system_image=$2
+            shift 2
+            ;;
+        --do-system|--no-do-system)
+            if test "$1" = --no-do-system; then
+                do_system=false
+            else
+                do_system=true
+            fi
+            shift
+            ;;
+        -d|--debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
             shift
             ;;
         -x|--skip-partitions)
             skip_partitions=$2
             shift 2
             ;;
-        -H|--no-hack)
-            no_hack=true
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]debug'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]do-system'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]hack'
+            echo
+            printf %06s '-G, '
+            printf %-24s '--[no-]no-gapps'
+            echo
+            printf %06s '-x, '
+            printf %-24s '--skip-partitions=SKIP_PARTITIONS'
+            echo
+            printf "%06s" " "
+            printf %-24s '--system-image=SYSTEM_IMAGE'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]system-only'
+            echo
+            exit
             shift
             ;;
         --)
@@ -79,6 +136,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -101,7 +159,7 @@ fi
 
 my-adb -r id | grep 'uid=0\b'
 
-if test $no_system = false; then
+if test $do_system = true; then
     if ! my-adb 'which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
         adb-fix-busybox
     elif ! my-adb 'test -d /data/debian/ && which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
@@ -127,7 +185,7 @@ function update-partition() {
         return 0
     fi
     if test $(basename $file) = boot.img; then
-        if test $no_hack = true; then
+        if test $hack = false; then
             adb-push $file /data
         else
             adb-push -d $file /data
@@ -186,13 +244,17 @@ if test -e "$xml"; then
 else
     system_xml=$(grep system_ *.xml -l |head -n 1)
 fi
-sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 -x $(readlink -f $system_xml) >/dev/null 2>&1 || kill $$&
+if test "$system_image"; then
+    ln -s $system_image ~/tmp/system-$tmpPostfix.img.2
+else
+    sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 -x $(readlink -f $system_xml) >/dev/null 2>&1 || kill $$&
+fi
 
 if test $(basename $0) = android-rsync-phone-diff; then
     update-non-system-partitions
 else
     update-non-system-partitions
-    if test $no_system = true; then
+    if test $do_system = false; then
         exit
     fi
 fi
@@ -241,13 +303,13 @@ if test ! -e xbin/busybox; then
 fi
 
 # sudo find . \( -name 'AppStoreSmartisan.apk' -o -name 'GameStoreSmartisan.apk' \) -exec rm -v '{}' \;
-if test -e $gapps_updir/gapps-t1 -a $no_hack = false; then
+if test -e $gapps_updir/gapps-t1 -a $hack = true; then
     dest=$PWD
     sudo mv xbin/su xbin/su.copy || true
     (
 
         gapps=$gapps_updir/gapps-lp/system
-        if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
+        if ! version-lower-than "$(my-adb getprop ro.build.version.release)" 5.0; then
             # it's lp
             true
         else
@@ -289,7 +351,7 @@ sudo bash -c "
 (
     sudo find ../system -type l -prune -o -print |sort |sudo xargs ls -Zd |grep -v 'u:object_r:system_file:s0\|\?'|perl -npe 's/^/chcon /'
     echo chcon u:object_r:zygote_exec:s0 ../system/xbin/sugote
-    if test "$no_hack" = false; then
+    if test "$hack" = true; then
         echo chmod 755 /system/etc/install-recovery.sh
         echo ln -sf /system/etc/install-recovery.sh /system/bin/install-recovery.sh
     fi

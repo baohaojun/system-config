@@ -2,6 +2,13 @@
 adb-ignite-device
 my-adb start-activity com.android.settings/com.android.settings.BrightnessSettingsActivity
 adb-tap 274 806
-adb-tap 339 1455
+sleep 1
+if test "$(adb-top-activity)" != com.android.settings/com.android.settings.OptionsActivity; then
+    adb-tap 698 1004
+    adb-tap 331 1247
+else
+    adb-tap 339 1455
+fi
+
 adb-key BACK
 adb-key BACK

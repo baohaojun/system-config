@@ -76,7 +76,7 @@ else
 fi
 
 if test ! -d "$dir"; then
-    dir=~/tmp/$(basename $base)
+    dir=~/tmp/$(basename $0)
     mkdir -p "$dir"
     cd "$dir"
     repo init -u smartisan:/qualcomm/platform/manifest.git -b sanfrancisco -m sfo-rom.xml --repo-url smartisan:/googlesource/git-repo --reference ~/src/android-mirror/
