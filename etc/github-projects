@@ -23,6 +23,7 @@ github_projects=(
 
 smartcm_projects=(
     gapps-lp
+    gapps-6.0
     gapps-t1
     smartcm
 )

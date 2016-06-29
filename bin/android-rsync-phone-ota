@@ -149,6 +149,8 @@ if test ! -e "$xml"; then
         xml=sparse_images/$xml
     elif test -e rawprogram0.xml; then
         xml=rawprogram0.xml
+    elif test -e MT6797_Android_scatter.txt; then
+        true
     else
         xml=$(find . -maxdepth 2 -name '*program*.xml')
         for x in $xml; do echo $x; done;
@@ -170,12 +172,13 @@ fi
 
 my-adb mount -t ext4 /dev/block/bootdevice/by-name/userdata /data
 my-adb mount /dev/block/bootdevice/by-name/system /system
-my-adb 'ln -s /dev/block/platform/soc*/* /dev/block/platform/'
+
+adb_partition_prefix=$(my-adb "for y in /dev/block/platform/*/by-name /dev/block/platform/*/*/by-name; do if test -d \$y; then echo \$y; exit; fi; done")
 # this is for debugging
 function update-partition() {
     size=$(stat -c %s $file)
     echo $file $size
-    my-adb "dd if=\$(echo /dev/block/platform/*/by-name/$part) of=/data/$file.x"
+    my-adb "dd if=\$(echo $adb_partition_prefix/$part) of=/data/$file.x"
     my-adb pull /data/$file.x ~/tmp
     bindiff.py ~/tmp/$file.x $file
 }
@@ -194,14 +197,14 @@ function update-partition() {
         my-adb push $file /data
     fi
 
-    my-adb "dd if=/data/$file of=\$(echo /dev/block/platform/*/by-name/$part) && rm /data/$file && sync && echo yes$$" | grep yes$$
+    my-adb "dd if=/data/$file of=\$(echo $adb_partition_prefix/$part) && rm /data/$file && sync && echo yes$$" | grep yes$$
 }
 
 if test $(basename $0) = android-rsync-phone-diff; then
     function update-partition() {
         md5sum=$(md5sum $file | pn 1)
         size=$(stat -c %s $file)
-        remote_md5sum=$(my-adb "dd if=\$(echo /dev/block/platform/*/by-name/$part) bs=$size count=1 2>/dev/null | md5sum" | pn 1)
+        remote_md5sum=$(my-adb "dd if=\$(echo $adb_partition_prefix/$part) bs=$size count=1 2>/dev/null | md5sum" | pn 1)
         if test "$md5sum" != $remote_md5sum; then
             if test "$part" = boot && yes-or-no-p </dev/tty "continue for boot.img?"; then
                 return 0
@@ -212,7 +215,11 @@ if test $(basename $0) = android-rsync-phone-diff; then
 fi
 
 function update-non-system-partitions() {
-    xmlstarlet 2>&1 sel -t -m //program -v \@filename -o ' ' -v @label -n $xml |
+    if test -e MT6797_Android_scatter.txt; then
+        mtk-print-file-partitions MT6797_Android_scatter.txt
+    else
+        xmlstarlet 2>&1 sel -t -m //program -v \@filename -o ' ' -v @label -n $xml
+    fi |
         sort -u|
         while read f p; do if test -e $f; then echo $f $p; fi; done|
         grep -v 'GPT|_\d+| .* ' -P| perl -npe 'END{print "done done\n"}'|
@@ -246,6 +253,8 @@ else
 fi
 if test "$system_image"; then
     ln -s $system_image ~/tmp/system-$tmpPostfix.img.2
+elif test -e system.img; then
+    simg2img system.img ~/tmp/system-$tmpPostfix.img.2 || kill $$ &
 else
     sparse-unsparse.xml -p system -o ~/tmp/system-$tmpPostfix.img.2 -x $(readlink -f $system_xml) >/dev/null 2>&1 || kill $$&
 fi
@@ -309,7 +318,10 @@ if test -e $gapps_updir/gapps-t1 -a $hack = true; then
     (
 
         gapps=$gapps_updir/gapps-lp/system
-        if ! version-lower-than "$(my-adb getprop ro.build.version.release)" 5.0; then
+        phone_version=$(my-adb getprop ro.build.version.release)
+        if test -e $gapps_updir/gapps-$phone_version/system; then
+            gapps=$gapps_updir/gapps-$phone_version/system
+        elif ! version-lower-than "$(my-adb getprop ro.build.version.release)" 5.0; then
             # it's lp
             true
         else
@@ -333,14 +345,6 @@ if test -e $gapps_updir/gapps-t1 -a $hack = true; then
         done
     )
 fi
-
-(
-    sudo perl -npe 's/factory udisk alterable/factory udisk alterable boot/' -i bin/log-crawler.sh
-    cat <<EOF | sudo tee etc/stcmd-scripts/write-boot-partition
-#!/bin/bash
-dd if=/sdcard/boot.img of=\$(echo /dev/block/platform/*/by-name/boot)
-EOF
-) || true
 
 sudo bash -c "
     mkdir ~/.ssh -p

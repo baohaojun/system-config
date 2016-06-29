@@ -35,7 +35,7 @@ if test "$edit" = true; then
 else
     edit=
 fi
-my-adb 'ln -s /dev/block/platform/soc*/* /dev/block/platform/'
+adb_partition_prefix=$(my-adb "for y in /dev/block/platform/*/by-name /dev/block/platform/*/*/by-name; do if test -d \$y; then echo \$y; exit; fi; done")
 if my-adb id | grep 'uid=0\b' -P -q; then
     su=
     adb-push $edit $root $1 /data/;
@@ -43,5 +43,5 @@ else
     su='su -c'
     adb push $1 /data/$(basename $1)
 fi
-my-adb shell $su "set -x; dd if=/data/$(basename $1) of=\$(echo /dev/block/platform/*/by-name/$2)"
+my-adb shell $su "set -x; dd if=/data/$(basename $1) of=$adb_partition_prefix/$2"
 my-adb shell sync

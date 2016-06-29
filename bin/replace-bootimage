@@ -1,5 +1,5 @@
 #!/bin/bash
-export PATH=~/system-config/bin/Linux/:$PATH
+export PATH=~/system-config/bin/Linux:$PATH
 
 if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
@@ -45,8 +45,8 @@ if test ! -e "$boot"; then
     if test "$output" = "$boot"; then
         output=~/tmp/boot.img
     fi
-    my-adb 'ln -s /dev/block/platform/soc.0/* /dev/block/platform/'
-    boot_part=$(my-adb 'echo /dev/block/platform/*/by-name/boot')
+    adb_partition_prefix=$(my-adb "for y in /dev/block/platform/*/by-name /dev/block/platform/*/*/by-name; do if test -d \$y; then echo \$y; exit; fi; done")
+    boot_part=$adb_partition_prefix/boot
     if test "$boot" = adb; then
         my-adb -r echo hello
         my-adb shell sh -c "cat $boot_part > /data/boot.img"
@@ -54,7 +54,7 @@ if test ! -e "$boot"; then
         boot=$output
     elif test "$boot" = adb.recovery; then
         my-adb -r echo hello
-        my-adb shell sh -c "cat $boot_part > /data/boot.img"
+        my-adb shell sh -c "cat $adb_partition_prefix/recovery > /data/boot.img"
         my-adb pull /data/boot.img $output
         boot=$output
     else
