@@ -52,17 +52,18 @@ if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run o:ok-function f:fail-function S:skip-function
+# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run o:ok-function f:fail-function S:skip-function @:should-function
 ## end code-generator
 ## start generated code
 TEMP=$(getopt -o dRno:hsf:S:h \
-              --long dry-run,no_reverts,no_fetch,ok-function:,do_here,shell,fail-function:,skip-function:,help,no-dry-run,no-no_reverts,no-no_fetch,no-do_here,no-shell \
+              --long dry-run,no_reverts,no_fetch,ok-function:,do_here,should-function:,shell,fail-function:,skip-function:,help,no-dry-run,no-no_reverts,no-no_fetch,no-do_here,no-shell \
               -n $(basename -- $0) -- "$@")
 dry_run=false
 no_reverts=false
 no_fetch=false
 ok_function=
 do_here=false
+should_function=
 shell=false
 fail_function=
 skip_function=
@@ -106,6 +107,10 @@ while true; do
             fi
             shift
             ;;
+        --should-function)
+            should_function=$2
+            shift 2
+            ;;
         -s|--shell|--no-shell)
             if test "$1" = --no-shell; then
                 shell=false
@@ -147,6 +152,9 @@ while true; do
             echo
             printf %06s '-s, '
             printf %-24s '--[no-]shell'
+            echo
+            printf "%06s" " "
+            printf %-24s '--should-function=SHOULD_FUNCTION'
             echo
             printf %06s '-S, '
             printf %-24s '--skip-function=SKIP_FUNCTION'
@@ -223,7 +231,7 @@ for diff_file in $diffs; do
         fi
         git reset --hard
         command git clean -xfd
-        git cherry-skip --abort || true
+        git cherry-pick --abort || true
         if test $no_fetch = false; then
             git fetch $(repo-remote)
         fi
@@ -358,8 +366,8 @@ for diff_file in $diffs; do
                         fi
                     elif test "$fail_function"; then
                         "$fail_function" $(ap) $git_commit_id
-                    elif is-tty-io; then
-                        start_recursive_shell "cherry failed: $git_commit_id" || ret=$?
+                    elif is-tty-io </dev/stderr ; then
+                        start_recursive_shell "cherry failed: $git_commit_id" </dev/stderr || ret=$?
                     else
                         exit -1
                     fi
