@@ -34,19 +34,9 @@ elif test -d ./.true_build_dir; then
     cd "$(readlink -f ./.true_build_dir)"
 fi
 
-if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
+if is-jenkins; then
     set -x
-    if test "$1" = sync; then
-        if test -e "smartcm/.do-not-clean"; then
-            true
-        else
-            my-rfa "git clean -xfd; git reset --hard" || true
-        fi
-        if test -e .repo/do-not-sync; then
-            echo admin set this as not sync, for testing?
-            exit 0
-        fi
-    elif test "$1" = init -a -d .repo/manifests/.git; then
+    if test "$1" = init -a -d .repo/manifests/.git; then
         my-rfa "git clean -xfd; git reset --hard" || true
         echo "repo sync failed?" > .repo/grep-errors.txt
         (
@@ -71,7 +61,11 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
         set -- "$@" --force-sync
     fi
     if time ~/system-config/bin/repo "$@"; then
-        (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'&)
+        if is-jenkins; then
+            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags')
+        else
+            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'&)
+        fi || true
     elif is-jenkins && test "$REDO_REPO_SYNC" != true; then
         export REDO_REPO_SYNC=true
         (

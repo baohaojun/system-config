@@ -9,9 +9,9 @@ if test -z "$1"; then
                          "start （以后默认要使用 system-config ，马上给我启动一个环境）" \
                          "stop （以后不用system-config了，用的话自己加命令或启动环境）" \
                          "try （还没有想好以后要不要默认用，先试用一下）" \
-                         "bg （默认继续使用system-config，将system-config临时挂起，启动一个无system-config环境）"
-                         "exit （什么也不做，退出此选择框）"|pn 1
-          |pn 1)"
+                         "bg （默认继续使用system-config，将system-config临时挂起，启动一个无system-config环境）" \
+                         "exit （什么也不做，退出此选择框）" |
+                         pn 1)"
 fi
 
 action=$1

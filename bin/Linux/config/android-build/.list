@@ -8,6 +8,9 @@ cd $mydir
 for x in $(
               cat <<EOF
 ant
+time
+bc
+unzip
 bison
 build-essential
 ccache

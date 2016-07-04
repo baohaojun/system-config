@@ -1,0 +1,69 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt b:branch i:change-id h:host
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h:b:i:h \
+              --long host:,branch:,change-id:,help \
+              -n $(basename -- $0) -- "$@")
+host=
+branch=
+change_id=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -h|--host)
+            host=$2
+            shift 2
+            ;;
+        -b|--branch)
+            branch=$2
+            shift 2
+            ;;
+        -i|--change-id)
+            change_id=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--branch=BRANCH'
+            echo
+            printf %06s '-i, '
+            printf %-24s '--change-id=CHANGE_ID'
+            echo
+            printf %06s '-h, '
+            printf %-24s '--host=HOST'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+arg-not-empty change_id "$change_id"
+arg-not-empty branch "$branch"
+arg-not-empty host "$host"
+
+tmpf=~/tmp/gerrit-submit.$$
+if gerrit -h "$host" query  --current-patch-set "$change_id branch:$branch" > $tmpf; then
+    rev=$(cat $tmpf | grep revision: | pn 2)
+    gerrit -h "$host" review $rev --submit --code-review +2 >/dev/null 2>&1 ||
+        gerrit -h "$host" review $rev --submit --code-review +2 --verified +1 >/dev/null 2>&1
+fi

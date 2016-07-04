@@ -164,7 +164,7 @@ if is-tty-io && test $do_review = true && yes-or-no-p -y "在请别人review之�
 fi
 
 (
-    if [[ "$(git log --pretty=%ae -1 "$rev")" =~ cmbuild@ ]] ; then
+    if [[ "$(git log --pretty=%ae -1 "$rev")" =~ cmbuild@ ]] && test "$SMARTCM_ALLOW_CMBUILD_AUTHOR" != true; then
         die "Must not push with author as cmbuild@"
     fi
     echo git push $REMOTE "$rev":$where/`repo-branch`
@@ -177,9 +177,15 @@ fi
     echo '* git commit message:'
     echo
     git log -1 "$rev"
-) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty ~/.cache/system-config/logs/gerrit-review.log.$$
+) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| if is-tty-io; then
+    tee /dev/tty ~/.cache/system-config/logs/gerrit-review.log.$$
+else
+    tee ~/.cache/system-config/logs/gerrit-review.log.$$
+fi
 
-set +x
+if ! is-jenkins; then
+    set +x
+fi
 echo push ok.
 
 (

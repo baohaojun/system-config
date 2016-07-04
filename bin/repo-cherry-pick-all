@@ -20,16 +20,13 @@ export -f skip-current-repo
 export -f skip-all-remaining-repos
 
 function cherry-skip() {
-    ap=$1
-    commit=$2
-
+    commit=$git_commit_id
     skip_file=$(lookup-file -e out)/diff/${ap//\//%}.skip
     (echo -n 'skip: '; grep $commit ${skip_file/.skip/.log}|head -n 1) | tee -a $skip_file
 }
 
 function cherry-ok() {
-    ap=$1
-    commit=$2
+    commit=$git_commit_id
 
     ok_file=$(lookup-file -e out)/diff/${ap//\//%}.ok
 
@@ -39,7 +36,7 @@ function cherry-ok() {
 function cherry-fail() {
     fail_file=$(lookup-file -e out)/diff/${ap//\//%}.fail
 
-    (echo -n 'failed: '; grep $git_commit_id ${fail_file/.fail/.log}|head -n 1)| tee -a $fail_file
+    (echo -n 'failed: '; grep $git_commit_id ${fail_file/.fail/.log}|head -n 1) | tee -a $fail_file
     git cherry-pick --abort
 }
 
@@ -182,6 +179,9 @@ fi
 if test "$no_reverts" != true && yes-or-no-p -y "Skip reverted patches"; then
     no_reverts=true
 fi
+if test "$should_function" && is-jenkins; then
+    no_reverts=false
+fi
 
 
 if test -d .repo; then
@@ -231,7 +231,7 @@ for diff_file in $diffs; do
         fi
         git reset --hard
         command git clean -xfd
-        git cherry-pick --abort || true
+        (git cherry-pick --abort || true) >/dev/null 2>&1
         if test $no_fetch = false; then
             git fetch $(repo-remote)
         fi
@@ -330,7 +330,7 @@ for diff_file in $diffs; do
                             echo skip $git_commit_id: $subject
                             skiped_later_reverted_commits[Revert \"$subject\"]=1
                             if test "$skip_function"; then
-                                skip_reason=reverted "$skip_function" $ap $git_commit_id
+                                skip_reason=reverted "$skip_function" $ap $git_commit_id </dev/null
                             fi
                             continue
                         fi
@@ -339,7 +339,7 @@ for diff_file in $diffs; do
                             echo skip $git_commit_id: $subject
                             skiped_later_reverted_commits[Revert \"$subject\"]=1
                             if test "$skip_function"; then
-                                skip_reason=reverted "$skip_function" $ap $git_commit_id
+                                skip_reason=reverted "$skip_function" $ap $git_commit_id </dev/null
                             fi
                             continue
                         fi
@@ -348,7 +348,7 @@ for diff_file in $diffs; do
                     if test -z "$change_id"; then
                         echo skip $git_commit_id: $subject
                         if test "$skip_function"; then
-                            skip_reason=no-change-id "$skip_function" $ap $git_commit_id
+                            skip_reason=no-change-id "$skip_function" $ap $git_commit_id </dev/null
                         fi
                         continue
                     fi
@@ -356,16 +356,27 @@ for diff_file in $diffs; do
                     if test "$dry_run" = true; then
                         continue
                     fi
-                    if test "$should_function" && ! "$should_function"; then
-                        echo should not cherry $git_commit_id
-                        continue
-                    fi
-                    if git cherry-pick -x --allow-empty $git_commit_id; then
-                        if test "$ok_function"; then
-                            "$ok_function" $(ap) $git_commit_id
+
+                    if test "$should_function"; then
+                        if (set -o pipefail; "$should_function" | tee $diff_file.$git_commit_id.should); then
+                            true
+                        elif test $? = 2; then
+                            exit # do not cherry any patches
+                        else
+                            echo should not cherry $git_commit_id
+                            continue
                         fi
+                    fi
+                    if (set -o pipefail; git cherry-pick -x --allow-empty $git_commit_id 2>&1 | tee $diff_file.$git_commit_id.cp ); then
+                        if test "$ok_function"; then
+                            "$ok_function" $(ap) $git_commit_id </dev/null
+                        fi
+                    elif grep -q 'The previous cherry-pick is now empty, possibly due to conflict resolution' $diff_file.$git_commit_id.cp; then
+                        echo $git_commit_id is now empty
+                        git cherry-pick --abort
+                        true
                     elif test "$fail_function"; then
-                        "$fail_function" $(ap) $git_commit_id
+                        "$fail_function" $(ap) $git_commit_id </dev/null
                     elif is-tty-io </dev/stderr ; then
                         start_recursive_shell "cherry failed: $git_commit_id" </dev/stderr || ret=$?
                     else
