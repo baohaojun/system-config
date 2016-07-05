@@ -1,6 +1,75 @@
 #!/bin/bash
 
 set -e
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt s:style=default c:color=default
+## end code-generator
+## start generated code
+TEMP=$(getopt -o s:c:h \
+              --long style:,color:,help \
+              -n $(basename -- $0) -- "$@")
+style=default
+color=default
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -s|--style)
+            style=$2
+            shift 2
+            ;;
+        -c|--color)
+            color=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--color=COLOR'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--style=STYLE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$style" = s; then
+    style=$(select-args -o -p "您想使用哪种风格？" $(
+                cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/theme/
+                for x in *; do
+                    echo ${x%.*}
+                done|perl -npe 's/beamertheme//'
+                        ))
+fi
+
+if test "$color" = s; then
+    color=$(
+        select-args -o -p "您想使用哪种颜色？" $(
+            cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/color/
+            for x in *; do
+                echo ${x%.*}
+            done|perl -npe 's/beamercolortheme//'
+            )
+         )
+fi
 export ORG2PDF=true
 function die() {
     echo Error: "$@"
@@ -92,6 +161,10 @@ END {
 perl -npe 's/\QCJKbookmarks]\E/dvipdfmx,CJKbookmarks]/;
 s/\Q\documentclass[11pt]{article}\E/\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}/' -i $1
 
+perl -npe "s,\\\\usetheme\\{\\w+\\},\\\\usetheme{$style}," -i "$1"
+if test "$color" != default; then
+    perl -npe "s,(\\\\usetheme\\{\\w+\\}),\$1 \\\\usecolortheme{$color}," -i "$1"
+fi
 latex -shell-escape $1
 latex -shell-escape $1
 dvipdfmx ${1/%.tex/.dvi}
