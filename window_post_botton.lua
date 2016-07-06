@@ -1,4 +1,5 @@
 local map = {}
+map['cmb.pb/cmb.pb.ui.PBEntryActivity'] = 'manual-post'
 map['cmb.pb/cmb.pb.ui.PBWebViewActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'weixin-chat'
 map['com.alibaba.android.rimet/com.alibaba.android.user.contact.activities.OrgContactActivity'] = 'manual-post'

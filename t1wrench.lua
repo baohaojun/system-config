@@ -656,6 +656,10 @@ local function dingding_open_homepage()
       sleep(.1)
       local window = adb_top_window()
       if window ~= dingding_splash and window ~= dingding_home then
+         if window == "com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpWithPwdActivity" then
+            log("You need to sign in dingding")
+            break
+         end
          log("window is %s", window)
          adb_event"key back sleep .1"
          sleep(.1)
