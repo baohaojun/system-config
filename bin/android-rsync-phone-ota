@@ -1,6 +1,8 @@
 #!/bin/bash
 
 set -e
+echo 此脚本会使用到sudo权限，可能需要车输入sudo密码
+sudo echo ok
 
 if test "$(pretty 20|pn 3)" != 0x14; then
     read -p "You need to install libmarpa-r2-perl.
