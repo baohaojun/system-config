@@ -1,0 +1,76 @@
+#!/usr/bin/perl
+
+use strict;
+
+my %name_tels_map;
+my %name_emails_map;
+my %name_photo_map;
+
+my $name;
+
+sub unquote($) {
+    my ($quoted_s) = @_;
+    if ($quoted_s =~ s/^CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE://) {
+        $quoted_s =~ s/=(..)/pack("C", hex("0x$1"))/eg;
+    }
+    return $quoted_s;
+}
+
+sub quote($) {
+    my ($unquoted_s) = @_;
+    if ($unquoted_s =~ m/^CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:/) {
+        return $unquoted_s;
+    }
+    if ($unquoted_s =~ m/^[[:ascii:]]*$/i) {
+        return $unquoted_s;
+    }
+    $unquoted_s =~ s#(.)#sprintf("=%02x", ord($1))#seg;
+    return "CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:$unquoted_s";
+}
+
+while (<>) {
+    if (m/^BEGIN:VCARD/) {
+        $name = "";
+    } elsif (m/^FN[;:](.*)/) {
+        $name = unquote($1);
+    } elsif (m/^TEL[:;](.*)/) {
+            $name_tels_map{$name} = {} unless $name_tels_map{$name};
+            $name_tels_map{$name}{unquote $1} = 1;
+    } elsif (m/^EMAIL[;:](.*)/) {
+        $name_emails_map{$name} = {} unless $name_emails_map{$name};
+        $name_emails_map{$name}{unquote $1} = 1;
+    } elsif (m/^PHOTO;/) {
+        my $photo = $_;
+        while (<>) {
+            $photo .= $_;
+            if (m/^\s*$/) {
+                last;
+            }
+        }
+        $name_photo_map{$name} = $photo;
+    }
+}
+
+for my $name (sort keys %name_emails_map) {
+    $name_tels_map{$name} = {} unless $name_tels_map{$name};
+}
+
+for my $name (sort keys %name_tels_map) {
+    print "BEGIN:VCARD\r\n";
+    if ($name =~ m/^[[:ascii:]]*$/i) {
+        print "FN:$name\r\n";
+    } else {
+        print "FN;" . quote($name) . "\r\n";
+    }
+    for my $tel (keys %{$name_tels_map{$name}}) {
+        print "TEL:$tel\r\n";
+    }
+    for my $email (keys %{$name_emails_map{$name}}) {
+        print "EMAIL:$email\r\n";
+        delete ${name_emails_map}{$name}{$email};
+    }
+    if ($name_photo_map{$name}) {
+        print "$name_photo_map{$name}";
+    }
+    print "END:VCARD\r\n";
+}

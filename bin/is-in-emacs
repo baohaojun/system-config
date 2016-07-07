@@ -1,2 +1,2 @@
 #!/bin/bash
-test "$INSIDE_EMACS"
+test "$INSIDE_EMACS" -o "$EMACS"
