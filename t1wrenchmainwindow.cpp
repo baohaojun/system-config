@@ -25,7 +25,7 @@
 #include "bhj_help.hpp"
 #include <stdlib.h>
 #include "lua.hpp"
-#include "screencapture.h"
+//#include "screencapture.h"
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QSharedPointer>
 #include <QInputDialog>
@@ -363,16 +363,13 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
 
 void T1WrenchMainWindow::on_tbScreenCapture_clicked()
 {
-    if (mScreenCapture.isNull()) {
-        mScreenCapture = QSharedPointer<ScreenCapture>(new ScreenCapture());
-        connect(mScreenCapture.data(), SIGNAL(screenCaptured(const QPixmap &)), SLOT(slotHandleCaptureScreen(const QPixmap &)));
-    }
+    prompt_user("屏幕截图功能因为使用了来自Linux版阿里旺旺的非开源代码，已经在此开源版本的小扳手中被删除");
 }
 
 void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
 {
     QObject::sender()->deleteLater();
-    mScreenCapture.clear();
+    //mScreenCapture.clear();
     if (pix.isNull()) return;
 
     pix.save("screen-shot.png", "PNG");

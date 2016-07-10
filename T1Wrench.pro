@@ -40,7 +40,6 @@ SOURCES += main.cpp\
         bhj_help.cpp \
         luaexecutethread.cpp \
         qcellphonetextedit.cpp \
-        screencapture.cpp \
         painterwidget.cpp \
         painterrectitem.cpp \
         painterpathitem.cpp \
@@ -61,7 +60,6 @@ HEADERS  += t1wrenchmainwindow.h \
             adbphonescreenthread.hpp \
             luaexecutethread.hpp \
             qcellphonetextedit.h \
-            screencapture.h \
             painterwidget.h \
             painteritem.h \
             painterrectitem.h \

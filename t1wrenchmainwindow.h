@@ -5,7 +5,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QRadioButton>
 #include "luaexecutethread.hpp"
-#include "screencapture.h"
+//#include "screencapture.h"
 #include <QtCore/QSettings>
 #include "dialoggetentry.h"
 #include <QMenu>
@@ -108,7 +108,7 @@ private:
     QSystemTrayIcon* trayIcon;
     QMenu* trayIconMenu;
     bool mQuit;
-    QSharedPointer<ScreenCapture> mScreenCapture;
+    //QSharedPointer<ScreenCapture> mScreenCapture;
     QSharedPointer<LuaExecuteThread> mLuaThread;
     QSharedPointer<DialogGetEntry> mEmojiDialog;
     QSharedPointer<DialogGetEntry> mContactDialog;

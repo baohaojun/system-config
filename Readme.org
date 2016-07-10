@@ -1,0 +1,51 @@
+#+title: Wrench: control your Android phone from your Desktop
+
+* Install
+
+Under Linux, compile Wrench with the =build-linux.sh= script. You should be able to run this script directly.
+
+For Windows version, I compile with Wine under Linux, with the Qt for msys installed as compiler. Please refer to the =./build-wine.sh= script.
+
+For Mac version, please refer to the =./build-mac.sh= script.
+
+You need to adapt the =./build-wine.sh= and =./build-mac.sh= scripts, there are some hardcoded parameters (such as the PATH environment and the Mac hostname).
+
+* How does it work
+
+Android has builtin =input= command, which allows you to fake touch, keyboard, text events and so on.
+
+Starting from the =input= command, I made some improvements.
+
+You can use =adb shell input text <string>= to input a string, but the string is limited: it can't contain spaces or any other special characters, such as quote and double quote, or Chinese characters.
+
+So I decided to use the android clipboard. When I want to input any string, I put the string into the android clipboard. Then I trigger a special key with =adb shell input=, which will cause my Wrench helper input method to send the desired string in the clipboard to the current App, like a IME candidate has been chosen.
+
+Then, there are some performance improvements. =adb shell input= is very slow, because every time it will load an Input.jar. =adb shell am= is used a lot, to start Activities or Services. It is also very slow, because every time it will load an Am.jar.
+
+I wrote an Setclip.apk, which will also be open sourced when I find time. It contains the functionality of Input.jar and Am.jar, and it will reside in the background, so that do not need to load the .jar/.apk files everytime.
+
+WrenchIme.apk will also be open sourced later. It's a very small change to the Google Pinyin Ime.
+
+Here's the workflow of Wrench:
+
+1. Use app_process to start Setclip.apk in the background, for the functionality of Input.jar and Am.jar.
+
+   The background process will listen for commands on a UNIX domain socket. Input commands and Am commands are allowed. Only shell/root users are allowed to connect to the socket.
+
+2. Use =adb forward= to create a TCP socket on the Desktop which will delegate to Input/Am on the phone.
+
+3. Write =am start Setclip.apk putclip <string>= (something like that) to the local TCP socket. The Am.jar functionality got executed on the phone. The Setclip.apk's service got started, which put the string in the android clipboard.
+
+4. Write =input key scroll_lock= to the local TCP socket. The key is interpreted by WrenchIme.apk, and the clipboard string is sent to the current Apk.
+
+* How to use Wrench
+
+Please refer to [[https://www.youtube.com/watch?v%3Dv8QVFbYDnCQ][this youtube video]].
+
+* Contribute
+
+Bug reports, patches, ideas are welcome.
+
+If you like Wrench, you may also donate to me with alipay:
+
+[[./bhj-alipay.png]]
