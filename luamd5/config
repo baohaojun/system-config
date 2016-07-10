@@ -1,0 +1,31 @@
+# Installation directories -*- mode: makefile -*-
+
+# Default prefix
+PREFIX = ${HOME}/src/github/Wrench/
+
+# System's libraries directory (where binary libraries are installed)
+LUA_LIBDIR= $(PREFIX)/lua/5.2
+
+# System's lua directory (where Lua libraries are installed)
+LUA_DIR= $(PREFIX)/lua/5.2
+
+# Lua includes directory
+LUA_INC= $(PREFIX)/lua/5.2
+
+# OS dependent
+
+ifeq (${PLATFORM}, mingw)
+LIB_OPTION ?= -shared $(shell readlink -f ../lua/src/lua52.dll) #for Linux
+SO_SUFFIX ?= dll
+else ifeq (${PLATFORM}, macx)
+LIB_OPTION ?= -bundle -undefined dynamic_lookup #for MacOS X
+endif
+#LIB_OPTION= -bundle -undefined dynamic_lookup #for MacOS X
+
+# Compilation directives
+WARN= -O2 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -Wpointer-arith
+INCS= -I$(LUA_INC)
+CFLAGS= $(WARN) $(INCS)
+CC= gcc
+
+# $Id: config,v 1.6 2007/10/29 23:00:23 carregal Exp $
