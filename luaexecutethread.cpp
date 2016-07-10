@@ -7,7 +7,7 @@
 #include "lua.hpp"
 #include <QtWidgets/QMessageBox>
 #include <QTcpSocket>
-#include "t1wrench.h"
+#include "wrench.h"
 #include "adbclient.h"
 
 LuaExecuteThread* that;
@@ -257,14 +257,14 @@ void LuaExecuteThread::run()
     lua_pushcfunction(L, l_t1_load_mail_heads);
     lua_setglobal(L, "t1_load_mail_heads");
 
-    int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
+    int error = luaL_loadstring(L, "wrench = require('wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {
-        emit gotSomeLog("exit", QString().sprintf("Can't load t1wrench: %s", lua_tolstring(L, -1, NULL)));
+        emit gotSomeLog("exit", QString().sprintf("Can't load wrench: %s", lua_tolstring(L, -1, NULL)));
         lua_close(L);
         return;
     }
 
-    lua_getglobal(L, "t1wrench");
+    lua_getglobal(L, "wrench");
     while (true) {
         QStringList script;
         mMutex.lock();

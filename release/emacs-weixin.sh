@@ -33,7 +33,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
             flock 10
             (
                 exec 9>/dev/null 10>&9
-                PUTCLIP_ANDROID_FILE=/tmp/$USE_BUFFER_NAME.out t1wrench.lua putclip
+                PUTCLIP_ANDROID_FILE=/tmp/$USE_BUFFER_NAME.out wrench.lua putclip
 
                 function emacs-cell-phone() {
                     case "$1" in
@@ -53,9 +53,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             ;;
                         weibo-brand-new)
                             if tail -n 1 /tmp/$USE_BUFFER_NAME.out| grep -P '^\(图\)$'; then
-                                t1wrench-get-pictures | xargs -d \\n t1wrench.lua picture_to_weibo_share
+                                wrench-get-pictures | xargs -d \\n wrench.lua picture_to_weibo_share
                             fi
-                            t1wrench.lua t1_share_to_weibo
+                            wrench.lua t1_share_to_weibo
                             ;;
                         weixin-brand-new)
                             adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI --ei sns_comment_type 1
@@ -101,7 +101,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             fi
                             ;;
                         *) # most cases
-                            t1wrench.lua t1_post
+                            wrench.lua t1_post
                             ;;
                     esac
                 }

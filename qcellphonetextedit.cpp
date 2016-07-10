@@ -1,7 +1,7 @@
 #include <QKeyEvent>
 #include "qcellphonetextedit.h"
 #include <QDebug>
-#include "t1wrench.h"
+#include "wrench.h"
 #include <QTextBlock>
 
 
@@ -108,7 +108,7 @@ QString QCellPhoneTextEdit::replaceImagesWithEmoji(const QString& text, const QS
         L = luaL_newstate();
         luaL_openlibs(L);        /* opens the standard libraries */
 
-        int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
+        int error = luaL_loadstring(L, "wrench = require('wrench')") || lua_pcall(L, 0, 0, 0);
         if (error) {
             prompt_user(QString().sprintf("Error loading emojis: %s", lua_tolstring(L, -1, NULL)));
             lua_close(L);
@@ -117,7 +117,7 @@ QString QCellPhoneTextEdit::replaceImagesWithEmoji(const QString& text, const QS
         }
     }
 
-    lua_getglobal(L, "t1wrench");
+    lua_getglobal(L, "wrench");
     lua_getfield(L, -1, "replace_img_with_emoji");
     lua_pushstring(L, text.toUtf8().constData());
     lua_pushstring(L, html.toUtf8().constData());

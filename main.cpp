@@ -1,4 +1,4 @@
-#include "t1wrenchmainwindow.h"
+#include "wrenchmainwindow.h"
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -26,7 +26,7 @@
 #include <QFileOpenEvent>
 #include "fileopenfilter.h"
 #include <QProcess>
-#include "t1wrench.h"
+#include "wrench.h"
 
 using namespace std;
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     }
 #endif
     QString appDir = QCoreApplication::applicationDirPath();
-    if (appDir.isEmpty()) { // happens on mac, =open T1Wrench.app=
+    if (appDir.isEmpty()) { // happens on mac, =open Wrench.app=
         // google for "When OS X is set to use Japanese, a bug causes this sequence"
 #ifndef Q_OS_WIN32
         char exe[PATH_MAX] = "";
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         setenv("HOME", qPrintable(home), 1);
     }
 #endif
-    T1WrenchMainWindow w;
+    WrenchMainWindow w;
     a.setActivationWindow(&w);
     w.show();
 
@@ -128,8 +128,8 @@ int main(int argc, char *argv[])
 
     QString str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, ".", QStandardPaths::LocateDirectory);
     QDir configDir(str);
-    configDir.mkdir("T1Wrench");
-    str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "T1Wrench", QStandardPaths::LocateDirectory);
+    configDir.mkdir("Wrench");
+    str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "Wrench", QStandardPaths::LocateDirectory);
     configDirPath = str;
 
     return a.exec();

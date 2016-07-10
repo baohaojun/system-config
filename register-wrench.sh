@@ -1,0 +1,1 @@
+linux/binaries/register-wrench.sh

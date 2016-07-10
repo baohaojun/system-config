@@ -1,5 +1,5 @@
-#ifndef _T1WRENCH_H_
-#define _T1WRENCH_H_
+#ifndef _WRENCH_H_
+#define _WRENCH_H_
 #include <stdio.h>
 #include <QtCore>
 #include <QMessageBox>
@@ -10,4 +10,4 @@ extern bool gScreenCapJpg;
 extern QString configDirPath;
 
 
-#endif /* _T1WRENCH_H_ */
+#endif /* _WRENCH_H_ */

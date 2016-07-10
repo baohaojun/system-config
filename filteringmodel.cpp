@@ -69,8 +69,8 @@ void FilteringModel::setFilter(QString filter)
         return;
     }
     mFilter = filter;
-    int error = luaL_loadstring(L, "t1wrench = require('t1wrench')") || lua_pcall(L, 0, 0, 0);
-    lua_getglobal(L, "t1wrench");
+    int error = luaL_loadstring(L, "wrench = require('wrench')") || lua_pcall(L, 0, 0, 0);
+    lua_getglobal(L, "wrench");
     lua_getfield(L, -1, "split");
     lua_pushstring(L, " ");
     lua_pushstring(L, filter.toUtf8().constData());

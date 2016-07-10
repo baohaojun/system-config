@@ -1,12 +1,12 @@
 #include "phonescreendialog.h"
-#include "t1wrench.h"
+#include "wrench.h"
 #include "ui_phonescreendialog.h"
 #include <QMouseEvent>
 #include <QTime>
 #include "adbphonescreenthread.hpp"
 #include <QPixmap>
 #include <QDebug>
-#include "t1wrenchmainwindow.h"
+#include "wrenchmainwindow.h"
 
 
 PhoneScreenDialog::PhoneScreenDialog(QWidget *parent) :
@@ -15,14 +15,14 @@ PhoneScreenDialog::PhoneScreenDialog(QWidget *parent) :
 {
     isShelled = false;
     ui->setupUi(this);
-    mT1Wrench = (T1WrenchMainWindow *)parent;
+    mWrench = (WrenchMainWindow *)parent;
     mPhoneScreenThread = new AdbPhoneScreenThread(this);
     mPhoneScreenThread->start();
 }
 
 QSharedPointer<LuaExecuteThread> PhoneScreenDialog::mLuaThread()
 {
-    return mT1Wrench->mLuaThread;
+    return mWrench->mLuaThread;
 }
 
 void qSystem(QString str)
@@ -32,14 +32,14 @@ void qSystem(QString str)
 
 void PhoneScreenDialog::phoneScreenUpdated()
 {
-    QString screenFile = "t1wrench-screen.png";
+    QString screenFile = "wrench-screen.png";
     if (gScreenCapJpg) {
-        screenFile = "t1wrench-screen.jpg";
+        screenFile = "wrench-screen.jpg";
     }
     QImage screen(screenFile);
     if (screen.isNull()) {
         qDebug() << "using" << screenFile;
-        system("bash -c 'pwd; ls -l t1wrench-screen.jpg'");
+        system("bash -c 'pwd; ls -l wrench-screen.jpg'");
     }
     if (isShelled) {
         ui->phoneScreenLabel->setPixmap(QPixmap::fromImage(screen.scaled(this->width() * 1080 / 1187, this->height() * 1920 / 2457)));

@@ -7,7 +7,7 @@ function die() {
 }
 
 cd $(dirname $(readlink -f $0))
-export DOING_T1WRENCH_RELEASE=true
+export DOING_WRENCH_RELEASE=true
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts ssmb r:ReleaseVersion
@@ -43,8 +43,8 @@ if git st -s | grep . -q; then
     die "Can't do release build when git not clean: see output above"
 fi
 
-oldVersion=$(perl -ne 'print $1 if m!<string>Smartisan T1聊天小扳手\s*(.*)</string>!' t1wrenchmainwindow.ui)
-perl -npe 's!<string>Smartisan T1聊天小扳手.*</string>!<string>Smartisan T1聊天小扳手 $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i t1wrenchmainwindow.ui
+oldVersion=$(perl -ne 'print $1 if m!<string>Smartisan T1聊天小扳手\s*(.*)</string>!' wrenchmainwindow.ui)
+perl -npe 's!<string>Smartisan T1聊天小扳手.*</string>!<string>Smartisan T1聊天小扳手 $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
 
 if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
     if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
@@ -56,7 +56,7 @@ if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
 fi
 
 if is-tty-io; then
-    src_version=$(cd ~/src/github/T1Wrench-debian; cat .src-version.txt)
+    src_version=$(cd ~/src/github/Wrench-debian; cat .src-version.txt)
     git log $src_version..HEAD
     yes-or-no-p -y "Continue '$oldVersion' -> '$shortVersion'?"
 fi
@@ -72,7 +72,7 @@ git submodule foreach 'git clean -xfd'
 
 (
     rm ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/ -rf
-    ssh trusty "export DOING_T1WRENCH_RELEASE=true; cd $PWD; ./build-linux.sh -r T1Wrench-ubuntu-14.04"
+    ssh trusty "export DOING_WRENCH_RELEASE=true; cd $PWD; ./build-linux.sh -r Wrench-ubuntu-14.04"
     touch ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok
 )&
 
@@ -108,10 +108,10 @@ if test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
 fi
 
-for x in ~/src/github/T1Wrench-debian \
-             ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/ \
-             ~/src/github/T1Wrench-windows \
-             ~/src/github/T1Wrench-ubuntu-14.04 \
+for x in ~/src/github/Wrench-debian \
+             ~/src/github/Wrench-macos/Wrench.app/Contents/MacOS/ \
+             ~/src/github/Wrench-windows \
+             ~/src/github/Wrench-ubuntu-14.04 \
          ; do
     (
         cd $x
@@ -124,7 +124,7 @@ for x in ~/src/github/T1Wrench-debian \
         cd ..
 
         file=~/tmp/$dir.zip
-        if test "$dir" = T1Wrench-debian -o "$dir" = T1Wrench-ubuntu-14.04; then
+        if test "$dir" = Wrench-debian -o "$dir" = Wrench-ubuntu-14.04; then
             file=~/tmp/$dir.tgz
             tar czfv $file $dir --exclude-vcs
         else
@@ -134,12 +134,12 @@ for x in ~/src/github/T1Wrench-debian \
         if test $smb = true; then
             bfile=$(basename $file)
             (
-                cd ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench
+                cd ~/smb/share.smartisan.cn/share/baohaojun/Wrench
                 mkdir -p old-versions
                 mv ${bfile%.*}* old-versions || true
             )
-            smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/T1Wrench/${bfile%.*}-$shortVersion.${bfile##*.}
-            rsync $file rem:/var/www/html/baohaojun/T1Wrench/ -v
+            smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/Wrench/${bfile%.*}-$shortVersion.${bfile##*.}
+            rsync $file rem:/var/www/html/baohaojun/Wrench/ -v
         fi || true&
     )
 done

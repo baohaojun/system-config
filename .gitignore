@@ -1,10 +1,10 @@
-T1Wrench
+Wrench
 *.user
 ./Makefile
 *.autosave
-moc_t1wrenchmainwindow.cpp
-ui_t1wrenchmainwindow.h
+moc_wrenchmainwindow.cpp
+ui_wrenchmainwindow.h
 moc_adbstatethread.cpp
-qrc_T1Wrench.cpp
+qrc_Wrench.cpp
 moc_*.cpp
 last-pic-notes.png

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>T1WrenchMainWindow</class>
- <widget class="QMainWindow" name="T1WrenchMainWindow">
+ <class>WrenchMainWindow</class>
+ <widget class="QMainWindow" name="WrenchMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -56,7 +56,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/emoji.png</normaloff>:/skin/default/resources/emoji.png</iconset>
             </property>
            </widget>
@@ -70,7 +70,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/picture.png</normaloff>:/skin/default/resources/picture.png</iconset>
             </property>
            </widget>
@@ -84,7 +84,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/capture-screen.png</normaloff>:/skin/default/resources/capture-screen.png</iconset>
             </property>
            </widget>
@@ -98,7 +98,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/com_sina_weibo_icon.png</normaloff>:/skin/default/resources/com_sina_weibo_icon.png</iconset>
             </property>
             <property name="checkable">
@@ -115,7 +115,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/com_tencent_mm_icon.png</normaloff>:/skin/default/resources/com_tencent_mm_icon.png</iconset>
             </property>
             <property name="checkable">
@@ -132,7 +132,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/qq.png</normaloff>:/skin/default/resources/qq.png</iconset>
             </property>
             <property name="checkable">
@@ -149,7 +149,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/momo.png</normaloff>:/skin/default/resources/momo.png</iconset>
             </property>
             <property name="checkable">
@@ -166,7 +166,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/notes.png</normaloff>:/skin/default/resources/notes.png</iconset>
             </property>
             <property name="checkable">
@@ -196,7 +196,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/phone-screen.png</normaloff>:/skin/default/resources/phone-screen.png</iconset>
             </property>
             <property name="checkable">
@@ -226,7 +226,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/phone-call.png</normaloff>:/skin/default/resources/phone-call.png</iconset>
             </property>
            </widget>
@@ -240,7 +240,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/mms.png</normaloff>:/skin/default/resources/mms.png</iconset>
             </property>
            </widget>
@@ -254,7 +254,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/thumbs_up.png</normaloff>:/skin/default/resources/thumbs_up.png</iconset>
             </property>
            </widget>
@@ -268,7 +268,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/config.png</normaloff>:/skin/default/resources/config.png</iconset>
             </property>
            </widget>
@@ -282,7 +282,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/smartisan.png</normaloff>:/skin/default/resources/smartisan.png</iconset>
             </property>
            </widget>
@@ -340,7 +340,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
             </property>
            </widget>
@@ -351,7 +351,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
             </property>
            </widget>
@@ -375,7 +375,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
             </property>
            </widget>
@@ -439,7 +439,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
             </property>
            </widget>
@@ -477,7 +477,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/mail-clear.png</normaloff>:/skin/default/resources/mail-clear.png</iconset>
             </property>
            </widget>
@@ -491,7 +491,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/mail-save.png</normaloff>:/skin/default/resources/mail-save.png</iconset>
             </property>
            </widget>
@@ -505,7 +505,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/add-recipients.png</normaloff>:/skin/default/resources/add-recipients.png</iconset>
             </property>
            </widget>
@@ -519,7 +519,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="T1Wrench.qrc">
+             <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/mail-new.png</normaloff>:/skin/default/resources/mail-new.png</iconset>
             </property>
            </widget>
@@ -586,7 +586,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="T1Wrench.qrc">:/images/red.png</pixmap>
+         <pixmap resource="Wrench.qrc">:/images/red.png</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -639,7 +639,7 @@
   <tabstop>cmdOutputEdit</tabstop>
  </tabstops>
  <resources>
-  <include location="T1Wrench.qrc"/>
+  <include location="Wrench.qrc"/>
  </resources>
  <connections/>
 </ui>

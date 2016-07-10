@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*- */
-#ifndef T1WRENCHMAINWINDOW_H
-#define T1WRENCHMAINWINDOW_H
+#ifndef WRENCHMAINWINDOW_H
+#define WRENCHMAINWINDOW_H
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QRadioButton>
@@ -20,16 +20,16 @@
 #include <QShowEvent>
 
 namespace Ui {
-class T1WrenchMainWindow;
+class WrenchMainWindow;
 }
 
-class T1WrenchMainWindow : public QMainWindow
+class WrenchMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit T1WrenchMainWindow(QWidget *parent = 0);
-    ~T1WrenchMainWindow();
+    explicit WrenchMainWindow(QWidget *parent = 0);
+    ~WrenchMainWindow();
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 
@@ -117,7 +117,7 @@ private:
     void afterUsingContactDialog();
     ContactModel* mContactModel;
     void initContactDialog(bool isMail = false);
-    Ui::T1WrenchMainWindow *ui;
+    Ui::WrenchMainWindow *ui;
     QSettings mSettings;
     QStringList mPictures;
     QString get_text();
@@ -131,4 +131,4 @@ signals:
     void activateWindow();
 };
 
-#endif // T1WRENCHMAINWINDOW_H
+#endif // WRENCHMAINWINDOW_H

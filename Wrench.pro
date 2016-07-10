@@ -11,11 +11,11 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = T1Wrench
+TARGET = Wrench
 TEMPLATE = app
 
 win32 {
-    RC_FILE = T1Wrench.rc
+    RC_FILE = Wrench.rc
     INCLUDEPATH += ./windows
     LIBS += -L./windows -llua52
     CONFIG += console
@@ -28,13 +28,13 @@ unix {
   } else {
     INCLUDEPATH += ./macx
     LIBS += -L./macx -llua
-    ICON = T1Wrench.icns
+    ICON = Wrench.icns
   }
 }
 
 SOURCES += main.cpp\
         adbclient.cpp \
-	t1wrenchmainwindow.cpp \
+	wrenchmainwindow.cpp \
         adbstatethread.cpp \
         adbphonescreenthread.cpp \
         bhj_help.cpp \
@@ -54,7 +54,7 @@ SOURCES += main.cpp\
     phonescreendialog.cpp \
     phonescreensyncer.cpp
 
-HEADERS  += t1wrenchmainwindow.h \
+HEADERS  += wrenchmainwindow.h \
             adbclient.h \
 	    adbstatethread.hpp \
             adbphonescreenthread.hpp \
@@ -68,7 +68,7 @@ HEADERS  += t1wrenchmainwindow.h \
             filteringmodel.h \
             contactmodel.h \
             strlistmodel.h \
-            t1wrench.h \
+            wrench.h \
             filteringedit.h \
             filteringlistview.h \
             filteringmodel.h \
@@ -77,9 +77,9 @@ HEADERS  += t1wrenchmainwindow.h \
     phonescreendialog.h \
     phonescreensyncer.h
 
-FORMS    += t1wrenchmainwindow.ui \
+FORMS    += wrenchmainwindow.ui \
             dialoggetentry.ui \
     phonescreendialog.ui
 
 RESOURCES += \
-    T1Wrench.qrc
+    Wrench.qrc

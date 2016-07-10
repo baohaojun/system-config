@@ -1475,7 +1475,7 @@ local function upload_pics(...)
    local pics = {...}
    adb_shell(
       [[
-            for x in /sdcard/DCIM/Camera/t1wrench-*; do
+            for x in /sdcard/DCIM/Camera/wrench-*; do
                if test -e "$x"; then
                   rm -rf "$x";
                   am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
@@ -1488,7 +1488,7 @@ local function upload_pics(...)
    time = os.time()
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/t1wrench-%d-%d%s'):format(time, i, ext)
+      local target = ('/sdcard/DCIM/Camera/wrench-%d-%d%s'):format(time, i, ext)
       targets[#targets + 1] = target
       adb_push{pics[i], target}
       adb_am{"am", "startservice", "--user", "0", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
@@ -2277,7 +2277,7 @@ M.weixin_find_friend = weixin_find_friend
 M.qq_open_homepage = qq_open_homepage
 
 local function do_it()
-   if arg and type(arg) == 'table' and string.find(arg[0], "t1wrench.lua") then
+   if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then
       -- t1_post(join(' ', arg))
       local file = io.open("setclip.apk.md5")
       if file then

@@ -1,5 +1,5 @@
 #include "filteringlistview.h"
-#include "t1wrench.h"
+#include "wrench.h"
 
 FilteringListView::FilteringListView(QWidget *parent) :
     QListView(parent)

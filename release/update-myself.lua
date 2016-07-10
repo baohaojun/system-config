@@ -8,14 +8,14 @@ error = function(msg, level)
    my_error(msg, level)
 end
 
-local t1wrench, system, debug
+local wrench, system, debug
 do
-   t1wrench = require"t1wrench"
-   system = t1wrench.system
-   debug = t1wrench.debug
+   wrench = require"wrench"
+   system = wrench.system
+   debug = wrench.debug
 end
 
-local md5file = io.open("t1wrench.md5")
+local md5file = io.open("wrench.md5")
 if not md5file then
    error("Can't open local md5 file")
 end
@@ -35,15 +35,15 @@ if urls_here.myself:match("-windows/") then
 end
 
 
-local _s = system{"./download", urls_here.myself, "t1wrench.md5.up"}
+local _s = system{"./download", urls_here.myself, "wrench.md5.up"}
 
 local md5s_remote = {}
 local urls_remote = {}
 local remote_files_md5 = ""
 
-local remote_md5file = io.open("t1wrench.md5.up", "rb")
+local remote_md5file = io.open("wrench.md5.up", "rb")
 if not remote_md5file then
-   error("Can't open t1wrench.md5.up, download failed?")
+   error("Can't open wrench.md5.up, download failed?")
 end
 
 local md5lib = require"md5"
@@ -60,7 +60,7 @@ end
 remote_md5file:close()
 
 if md5lib.sumhexa(remote_files_md5) ~= md5s_remote["myself"] then
-   error ("Invalid t1wrench.md5 md5, download invalid data? " .. md5lib.sumhexa(remote_files_md5) .. " : " .. md5s_remote["myself"])
+   error ("Invalid wrench.md5 md5, download invalid data? " .. md5lib.sumhexa(remote_files_md5) .. " : " .. md5s_remote["myself"])
 end
 
 for file, md5 in pairs(md5s_remote) do
@@ -106,7 +106,7 @@ for file, md5 in pairs(md5s_remote) do
    ::continue::
 end
 
-system{rm, "t1wrench.md5"}
-system{mv, "t1wrench.md5.up", "t1wrench.md5"}
+system{rm, "wrench.md5"}
+system{mv, "wrench.md5.up", "wrench.md5"}
 print("Update OK!, press Enter to exit... ")
 io.stdin:read("*l")

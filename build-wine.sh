@@ -35,22 +35,22 @@ function make-release-tgz()
 {
     rsync readme.* ./release/
     rsync -av *.png ./release/
-    command rsync -av -d release/ download/release/ t1wrench-release --exclude="*.obj" \
+    command rsync -av -d release/ download/release/ wrench-release --exclude="*.obj" \
             --exclude="*.o" \
             --exclude="*.cpp" \
             --exclude="*.moc" \
             --delete
 
     set -x
-    if test "$DOING_T1WRENCH_RELEASE"; then
-        command rsync T1Wrench-windows/ $release_dir -av -L --delete --exclude=.git
+    if test "$DOING_WRENCH_RELEASE"; then
+        command rsync Wrench-windows/ $release_dir -av -L --delete --exclude=.git
     fi
 
     exit
     cd $release_dir
     rm build.bat -f
     mkfifo /tmp/build-wine.$$
-    myscr bash -c "wine ./T1Wrench.exe >/tmp/build-wine.$$ 2>&1"
+    myscr bash -c "wine ./Wrench.exe >/tmp/build-wine.$$ 2>&1"
     cat /tmp/build-wine.$$
     rm /tmp/build-wine.$$
 }
@@ -71,7 +71,7 @@ EOF
 }
 
 build_dir=~/tmp/build-t1-windows
-release_dir=~/src/github/T1Wrench-windows
+release_dir=~/src/github/Wrench-windows
 rsync * $build_dir -av --exclude release
 rsync release $build_dir -av -L
 cd $build_dir
@@ -101,6 +101,6 @@ done
 
 copy-dlls ~/.wine/drive_c/Qt/Qt*/[0-9]*/mingw*/
 set -x
-rm -f T1Wrench-windows
-ln -sf t1wrench-release T1Wrench-windows
+rm -f Wrench-windows
+ln -sf wrench-release Wrench-windows
 make-release-tgz

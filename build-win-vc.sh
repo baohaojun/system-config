@@ -3,7 +3,7 @@
 function copy-dlls()
 {
     rsync windows/binaries/* ./release -v -L
-    rsync t1wrench.lua ./release -v
+    rsync wrench.lua ./release -v
 
     for x in icudt52.dll icuin52.dll icuuc52.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL; do
         rsync $1/bin/$x ./release -av
@@ -24,13 +24,13 @@ function make-release-tgz()
 {
     rsync readme.* ./release/
     rsync -av *.png ./release/
-    command rsync -av -d release/ t1wrench-release --exclude="*.obj" \
+    command rsync -av -d release/ wrench-release --exclude="*.obj" \
             --exclude="*.o" \
             --exclude="*.cpp"
 
 
     set -x
-    tar czfv ${1:-T1Wrench-windows.tgz} T1Wrench-windows -h
+    tar czfv ${1:-Wrench-windows.tgz} Wrench-windows -h
 }
 
 if test $# = 0; then
@@ -39,23 +39,23 @@ fi
 if test $(uname) = Linux; then
     psync $1 .; ssh $1 "cd $PWD; ./$(basename $0)"
     echo doing windows to linux rsync
-    command rsync $1:$(up .)/T1Wrench-windows/ ../T1Wrench-windows/ -av
-    rm -fv ../T1Wrench-windows/screen-shot.png
-    rsync $1:$(up .)/T1Wrench-windows.tgz ~/today/
-    smb-push ~/today/T1Wrench-windows.tgz
+    command rsync $1:$(up .)/Wrench-windows/ ../Wrench-windows/ -av
+    rm -fv ../Wrench-windows/screen-shot.png
+    rsync $1:$(up .)/Wrench-windows.tgz ~/today/
+    smb-push ~/today/Wrench-windows.tgz
     (
         cd ~/today
-        mv T1Wrench-windows.tgz T1Wrench-windows-$(today).tgz
-        smb-push T1Wrench-windows-$(today).tgz
+        mv Wrench-windows.tgz Wrench-windows-$(today).tgz
+        smb-push Wrench-windows-$(today).tgz
     )
 else
     set -e
     set -o pipefail
-    /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" T1Wrench.exe || true
+    /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" Wrench.exe || true
     /cygdrive/c/Python2/python.exe "C:\cygwin64\home\bhj\system-config\bin\windows\terminateModule.py" adb.exe || true
 
     if test $(basename $0) = build-win-vc.sh; then
-        perl -npe "$(grep 's/.*ord' ~/bin/vc-utf8-escape)" -i t1wrenchmainwindow.cpp
+        perl -npe "$(grep 's/.*ord' ~/bin/vc-utf8-escape)" -i wrenchmainwindow.cpp
         /c/Qt/5.3/msvc2013_64/bin/qmake.exe
 
         vc2013env nmake | perl -npe 's/\\/\//g'
@@ -70,11 +70,11 @@ else
         mingw32-make.exe | perl -npe 's/\\/\//g'
         copy-dlls /c/Qt-mingw/./Qt5.3.1/5.3/mingw482_32
         set -x
-        rm -f T1Wrench-windows
-        ln -sf t1wrench-release T1Wrench-windows
-        make-release-tgz T1Wrench-windows.tgz
+        rm -f Wrench-windows
+        ln -sf wrench-release Wrench-windows
+        make-release-tgz Wrench-windows.tgz
         (
-            myscr bash -c 'cd T1Wrench-windows; of ./T1Wrench.exe'
+            myscr bash -c 'cd Wrench-windows; of ./Wrench.exe'
         )&
 
     fi

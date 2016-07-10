@@ -7,7 +7,7 @@
 #include <QtDebug>
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
-#include "t1wrench.h"
+#include "wrench.h"
 #include <QTime>
 
 bool gScreenCapJpg;

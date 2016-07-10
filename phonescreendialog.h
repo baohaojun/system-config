@@ -10,7 +10,7 @@ class AdbPhoneScreenThread;
 #include <QWindow>
 #include "luaexecutethread.hpp"
 #include <QSharedPointer>
-class T1WrenchMainWindow;
+class WrenchMainWindow;
 
 namespace Ui {
 class PhoneScreenDialog;
@@ -41,8 +41,8 @@ private:
     void showEvent(QShowEvent*);
     void hideEvent(QHideEvent*);
     QSharedPointer<LuaExecuteThread> mLuaThread();
-    T1WrenchMainWindow* mT1Wrench;
-    friend class T1WrenchMainWindow;
+    WrenchMainWindow* mWrench;
+    friend class WrenchMainWindow;
 };
 
 #endif // PHONESCREEN_H

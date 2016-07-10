@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Contents/MacOS/ ~/src/github/T1Wrench-windows; do
+for x in ~/src/github/Wrench-linux ~/src/github/Wrench-macos/Wrench.app/Contents/MacOS/ ~/src/github/Wrench-windows; do
     (
         cd $x
         if test -e last-pic-notes.png; then
@@ -11,7 +11,7 @@ for x in ~/src/github/T1Wrench-linux ~/src/github/T1Wrench-macos/T1Wrench.app/Co
         cd ..
 
         file=~/tmp/$dir.zip
-        if test "$dir" = T1Wrench-linux; then
+        if test "$dir" = Wrench-linux; then
             file=~/tmp/$dir.tgz
             tar czfv $file $dir --exclude-vcs
         else

@@ -1,8 +1,8 @@
 /**** start of bhj auto includes ****/
 /**** end of bhj auto includes ****/
 
-#include "t1wrenchmainwindow.h"
-#include "ui_t1wrenchmainwindow.h"
+#include "wrenchmainwindow.h"
+#include "ui_wrenchmainwindow.h"
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
 #include "luaexecutethread.hpp"
@@ -42,13 +42,13 @@
 #include "strlistmodel.h"
 #include "phonescreendialog.h"
 #include <QStandardPaths>
-#include "t1wrench.h"
+#include "wrench.h"
 
 QString emacsWeixinSh;
-T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
+WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     mQuit(false),
-    ui(new Ui::T1WrenchMainWindow),
+    ui(new Ui::WrenchMainWindow),
     mSettings("Smartisan", "Wrench", parent)
 {
     on_configurePushButton_clicked();
@@ -70,12 +70,12 @@ T1WrenchMainWindow::T1WrenchMainWindow(QWidget *parent) :
     ui->ptMailAttachments->installEventFilter(this);
 }
 
-T1WrenchMainWindow::~T1WrenchMainWindow()
+WrenchMainWindow::~WrenchMainWindow()
 {
     delete ui;
 }
 
-void T1WrenchMainWindow::adbStateUpdated(const QString& state)
+void WrenchMainWindow::adbStateUpdated(const QString& state)
 {
     if (state.toLower() == "online" && ui->adbStateLabel->text().toLower() != "online") {
         if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
@@ -146,7 +146,7 @@ QString fixPathName(const QString& path)
 #endif
 }
 
-QString T1WrenchMainWindow::get_text()
+QString WrenchMainWindow::get_text()
 {
     QString text = ui->phoneTextEdit->getMyText();
     while (text.endsWith("\r") || text.endsWith("\n") || text.endsWith("\t") ||
@@ -156,7 +156,7 @@ QString T1WrenchMainWindow::get_text()
     return text;
 }
 
-void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
+void WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 {
     static int nTasks;
 
@@ -184,7 +184,7 @@ void T1WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
     }
 }
 
-void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
+void WrenchMainWindow::onSelectArgs(const QStringList& args)
 {
     if (args.size() == 1) {
         if (yes_or_no_p(args[0]) == "yes") {
@@ -213,7 +213,7 @@ void T1WrenchMainWindow::onSelectArgs(const QStringList& args)
     dialog.disconnect();
 }
 
-bool T1WrenchMainWindow::anyShareChecked()
+bool WrenchMainWindow::anyShareChecked()
 {
     return  ui->tbWeibo->isChecked() ||
         ui->tbWeixin->isChecked() ||
@@ -221,7 +221,7 @@ bool T1WrenchMainWindow::anyShareChecked()
         ui->tbMomo->isChecked();
 }
 
-void T1WrenchMainWindow::on_sendItPushButton_clicked()
+void WrenchMainWindow::on_sendItPushButton_clicked()
 {
     QString text = get_text();
     if (text.isEmpty() && mPictures.isEmpty()) {
@@ -316,7 +316,7 @@ void T1WrenchMainWindow::on_sendItPushButton_clicked()
     ui->phoneTextEdit->selectAll();
 }
 
-void T1WrenchMainWindow::on_configurePushButton_clicked()
+void WrenchMainWindow::on_configurePushButton_clicked()
 {
     bool is_starting = false;
     if (mLuaThread.isNull()) {
@@ -361,12 +361,12 @@ void T1WrenchMainWindow::on_configurePushButton_clicked()
     }
 }
 
-void T1WrenchMainWindow::on_tbScreenCapture_clicked()
+void WrenchMainWindow::on_tbScreenCapture_clicked()
 {
     prompt_user("屏幕截图功能因为使用了来自Linux版阿里旺旺的非开源代码，已经在此开源版本的小扳手中被删除");
 }
 
-void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
+void WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
 {
     QObject::sender()->deleteLater();
     //mScreenCapture.clear();
@@ -398,7 +398,7 @@ void T1WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
     }
 }
 
-void T1WrenchMainWindow::on_tbPicture_clicked()
+void WrenchMainWindow::on_tbPicture_clicked()
 {
     if (anyShareChecked() && !mPictures.isEmpty()) {
         ui->tbPicture->setChecked(false);
@@ -429,7 +429,7 @@ void T1WrenchMainWindow::on_tbPicture_clicked()
     }
 }
 
-void T1WrenchMainWindow::on_tbEmoji_clicked()
+void WrenchMainWindow::on_tbEmoji_clicked()
 {
     if (mEmojiDialog.isNull()) {
         mEmojiDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(new EmojiModel(0), "表情过滤", this));
@@ -444,7 +444,7 @@ void T1WrenchMainWindow::on_tbEmoji_clicked()
     mSettings.setValue("emoji-dialog-pos", QVariant(pos));
 }
 
-void T1WrenchMainWindow::on_tbWeibo_clicked()
+void WrenchMainWindow::on_tbWeibo_clicked()
 {
     if (ui->tbWeibo->isChecked() && mSettings.value("firstTimeWeibo", 1).toInt() == 1) {
         mSettings.setValue("firstTimeWeibo", 0);
@@ -458,7 +458,7 @@ void T1WrenchMainWindow::on_tbWeibo_clicked()
 
 }
 
-void T1WrenchMainWindow::on_tbWeixin_clicked()
+void WrenchMainWindow::on_tbWeixin_clicked()
 {
     if (ui->tbWeixin->isChecked() && mSettings.value("firstTimeWeixin", 1).toInt() == 1) {
         mSettings.setValue("firstTimeWeixin", 0);
@@ -470,7 +470,7 @@ void T1WrenchMainWindow::on_tbWeixin_clicked()
     }
 }
 
-void T1WrenchMainWindow::on_tbQq_clicked()
+void WrenchMainWindow::on_tbQq_clicked()
 {
     if (ui->tbQq->isChecked() && mSettings.value("firstTimeQq", 1).toInt() == 1) {
         mSettings.setValue("firstTimeQq", 0);
@@ -482,7 +482,7 @@ void T1WrenchMainWindow::on_tbQq_clicked()
     }
 }
 
-void T1WrenchMainWindow::on_tbMomo_clicked()
+void WrenchMainWindow::on_tbMomo_clicked()
 {
     if (ui->tbMomo->isChecked() && mSettings.value("firstTimeMomo", 1).toInt() == 1) {
         mSettings.setValue("firstTimeMomo", 0);
@@ -494,13 +494,13 @@ void T1WrenchMainWindow::on_tbMomo_clicked()
     }
 }
 
-void T1WrenchMainWindow::on_tbThumbsUp_clicked()
+void WrenchMainWindow::on_tbThumbsUp_clicked()
 {
     mLuaThread->addScript(QStringList() << "t1_spread_it");
     mLuaThread->addScript(QStringList() << "t1_follow_me");
 }
 
-void T1WrenchMainWindow::initContactDialog(bool isMail)
+void WrenchMainWindow::initContactDialog(bool isMail)
 {
     QString placeHolder = "联系人过滤";
     if (mContactDialog.isNull()) {
@@ -524,7 +524,7 @@ void T1WrenchMainWindow::initContactDialog(bool isMail)
     mContactModel->setMail(isMail);
 }
 
-void T1WrenchMainWindow::on_tbMms_clicked()
+void WrenchMainWindow::on_tbMms_clicked()
 {
     if (ui->tbWeixin->isChecked()) {
         ui->tbWeixin->setChecked(false);
@@ -549,7 +549,7 @@ void T1WrenchMainWindow::on_tbMms_clicked()
     mLuaThread->addScript(QStringList() << "t1_add_mms_receiver" << receivers);
 }
 
-void T1WrenchMainWindow::afterUsingContactDialog()
+void WrenchMainWindow::afterUsingContactDialog()
 {
     QPoint pos = mSettings.value("contact-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
     if (pos != QPoint(0, 0)) {
@@ -560,7 +560,7 @@ void T1WrenchMainWindow::afterUsingContactDialog()
     pos = mContactDialog->pos();
     mSettings.setValue("contact-dialog-pos", QVariant(pos));
 }
-void T1WrenchMainWindow::on_tbPhoneCall_clicked()
+void WrenchMainWindow::on_tbPhoneCall_clicked()
 {
 
     initContactDialog();
@@ -570,7 +570,7 @@ void T1WrenchMainWindow::on_tbPhoneCall_clicked()
     ui->tbQq->setChecked(false);
 }
 
-void T1WrenchMainWindow::on_tbNotes_clicked()
+void WrenchMainWindow::on_tbNotes_clicked()
 {
     if (ui->tbNotes->isChecked() && mSettings.value("firstTimeNotes", 1).toInt() == 1) {
         mSettings.setValue("firstTimeNotes", 0);
@@ -578,7 +578,7 @@ void T1WrenchMainWindow::on_tbNotes_clicked()
     }
 }
 
-void T1WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString& display)
+void WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString& display)
 {
     if (mMmsReceiverMap.contains(contact) && yes_or_no_p(mMmsReceiverMap[contact] +
                                                          "已经在短信接收人名单里，删除？") == "yes") {
@@ -589,7 +589,7 @@ void T1WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString&
     mMmsReceiverMap[contact] = display;
 }
 
-void T1WrenchMainWindow::on_Dial(const QString&contact)
+void WrenchMainWindow::on_Dial(const QString&contact)
 {
     if (ui->tbWeixin->isChecked()) {
         mLuaThread->addScript(QStringList() << "t1_find_weixin_contact" << contact);
@@ -602,13 +602,13 @@ void T1WrenchMainWindow::on_Dial(const QString&contact)
     mLuaThread->addScript(QStringList() << "t1_call" << contact);
 }
 
-void T1WrenchMainWindow::quitMyself()
+void WrenchMainWindow::quitMyself()
 {
     mQuit = true;
     close();
 }
 
-void T1WrenchMainWindow::createTrayIcon()
+void WrenchMainWindow::createTrayIcon()
 {
 
     quitAction = new QAction(tr("&Quit"), this);
@@ -628,7 +628,7 @@ void T1WrenchMainWindow::createTrayIcon()
     trayIcon->show();
 }
 
-void T1WrenchMainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
+void WrenchMainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
     case QSystemTrayIcon::Trigger:
@@ -641,7 +641,7 @@ void T1WrenchMainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void T1WrenchMainWindow::closeEvent(QCloseEvent *event)
+void WrenchMainWindow::closeEvent(QCloseEvent *event)
 {
     if (mQuit == true) {
         if (!mPhoneScreenDialog.isNull()) {
@@ -660,14 +660,14 @@ void T1WrenchMainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void T1WrenchMainWindow::showEvent(QShowEvent *event)
+void WrenchMainWindow::showEvent(QShowEvent *event)
 {
     if (mPhoneScreenDialog && ui->tbPhoneScreen->isChecked()) {
         mPhoneScreenDialog->show();
     }
 }
 
-void T1WrenchMainWindow::startTask(const QString& task)
+void WrenchMainWindow::startTask(const QString& task)
 {
     qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__));
     showNormal();
@@ -681,12 +681,12 @@ void T1WrenchMainWindow::startTask(const QString& task)
 
 }
 
-void T1WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
+void WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();
 }
 
-void T1WrenchMainWindow::dropEvent(QDropEvent *event)
+void WrenchMainWindow::dropEvent(QDropEvent *event)
 {
     event->acceptProposedAction();
     if (event->mimeData()->hasUrls()) {
@@ -697,14 +697,14 @@ void T1WrenchMainWindow::dropEvent(QDropEvent *event)
     }
 }
 
-void T1WrenchMainWindow::on_argSelected(const QString& arg)
+void WrenchMainWindow::on_argSelected(const QString& arg)
 {
     mSelectArgDialog->close();
     mSelectArgDialog = NULL;
     mLuaThread->on_argSelected(arg);
 }
 
-void T1WrenchMainWindow::on_tbMailAddTo_clicked()
+void WrenchMainWindow::on_tbMailAddTo_clicked()
 {
     initContactDialog(true);
     connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailTo(QString)));
@@ -720,36 +720,36 @@ static void addMailContact(const QString& contact, QPlainTextEdit* where)
     where->setPlainText(text + contact + ",");
 }
 
-void T1WrenchMainWindow::on_MailTo(const QString& to)
+void WrenchMainWindow::on_MailTo(const QString& to)
 {
     addMailContact(to, ui->ptMailTo);
 }
 
-void T1WrenchMainWindow::on_tbMailAddCc_clicked()
+void WrenchMainWindow::on_tbMailAddCc_clicked()
 {
     initContactDialog(true);
     connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailCc(QString)));
     afterUsingContactDialog();
 }
 
-void T1WrenchMainWindow::on_MailCc(const QString& to)
+void WrenchMainWindow::on_MailCc(const QString& to)
 {
     addMailContact(to, ui->ptMailCc);
 }
 
-void T1WrenchMainWindow::on_tbMailAddBcc_clicked()
+void WrenchMainWindow::on_tbMailAddBcc_clicked()
 {
     initContactDialog(true);
     connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailBcc(QString)));
     afterUsingContactDialog();
 }
 
-void T1WrenchMainWindow::on_MailBcc(const QString& to)
+void WrenchMainWindow::on_MailBcc(const QString& to)
 {
     addMailContact(to, ui->ptMailBcc);
 }
 
-void T1WrenchMainWindow::on_tbMailAddAttachment_clicked()
+void WrenchMainWindow::on_tbMailAddAttachment_clicked()
 {
     QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择附件"), QString(), tr("All Files(*)"));
     if (fns.isEmpty()) {
@@ -760,7 +760,7 @@ void T1WrenchMainWindow::on_tbMailAddAttachment_clicked()
     }
 }
 
-static QStringList getMailHeads(Ui::T1WrenchMainWindow* ui)
+static QStringList getMailHeads(Ui::WrenchMainWindow* ui)
 {
     return QStringList() << ui->ptMailSubject->toPlainText()
                          << ui->ptMailTo->toPlainText()
@@ -769,31 +769,31 @@ static QStringList getMailHeads(Ui::T1WrenchMainWindow* ui)
                          << ui->ptMailAttachments->toPlainText();
 }
 
-void T1WrenchMainWindow::on_tbMailDone_clicked()
+void WrenchMainWindow::on_tbMailDone_clicked()
 {
     ui->tabWidget->setCurrentIndex(0);
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLuaThread->addScript((QStringList() << "t1_adb_mail") + getMailHeads(ui));
 }
 
-void T1WrenchMainWindow::on_tbMailLoad_clicked()
+void WrenchMainWindow::on_tbMailLoad_clicked()
 {
     QString file = QFileDialog::getOpenFileName(0, "请选择打开哪个邮件小扳手脚本文件", QString(), "小扳手脚本文件(*.twa)");
     mLuaThread->addScript(QStringList() << "t1_run" << file);
 }
 
-void T1WrenchMainWindow::on_tbMailSave_clicked()
+void WrenchMainWindow::on_tbMailSave_clicked()
 {
     QString file = QFileDialog::getSaveFileName(0, "请选择保存常用联系方式到哪个文件", QString(), "小扳手脚本文件(*.twa)");
     mLuaThread->addScript((QStringList() << "t1_save_mail_heads" << file) + getMailHeads(ui));
 }
 
-void T1WrenchMainWindow::on_tbMailClear_clicked()
+void WrenchMainWindow::on_tbMailClear_clicked()
 {
     onLoadMailHeads("", "", "", "", "");
 }
 
-void T1WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
+void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
 {
     ui->ptMailSubject->setPlainText(subject);
     ui->ptMailTo->setPlainText(to);
@@ -803,7 +803,7 @@ void T1WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& 
     ui->tabWidget->setCurrentIndex(1);
 }
 
-void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
+void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     static int x, y;
     if (checked) {
@@ -826,7 +826,7 @@ void T1WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
     }
 }
 
-bool T1WrenchMainWindow::eventFilter(QObject *obj, QEvent *ev)
+bool WrenchMainWindow::eventFilter(QObject *obj, QEvent *ev)
 {
     if (ev->type() == QEvent::KeyPress) {
         QWidget* w = (QWidget *)obj;
@@ -837,7 +837,7 @@ bool T1WrenchMainWindow::eventFilter(QObject *obj, QEvent *ev)
     return QMainWindow::eventFilter(obj, ev);
 }
 
-bool T1WrenchMainWindow::handleEmacsKeys(QWidget *w, QKeyEvent *e)
+bool WrenchMainWindow::handleEmacsKeys(QWidget *w, QKeyEvent *e)
 {
     int key = e->key();
     Qt::KeyboardModifiers m = e->modifiers();

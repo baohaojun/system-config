@@ -5,7 +5,7 @@
   (flycheck-mode . nil)
   (ac-clang-cflags "-DQT_BOOTSTRAPPED"
                    "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent"
-                   "-I/home/bhj/src/github/T1Wrench/qt-solutions/qtsingleapplication/src/"
+                   "-I/home/bhj/src/github/Wrench/qt-solutions/qtsingleapplication/src/"
                    "-I/usr/include/x86_64-linux-gnu/qt5/QtCore"
                    "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus"
                    "-I/usr/include/x86_64-linux-gnu/qt5/QtGui"

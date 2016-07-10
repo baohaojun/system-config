@@ -1,5 +1,5 @@
 #include "phonescreensyncer.h"
-#include "t1wrench.h"
+#include "wrench.h"
 
 PhoneScreenSyncer::PhoneScreenSyncer(QObject *parent) : QObject(parent)
 {
@@ -12,9 +12,9 @@ PhoneScreenSyncer::PhoneScreenSyncer(QObject *parent) : QObject(parent)
 
 void PhoneScreenSyncer::syncScreen()
 {
-    const char *screenFile = "t1wrench-screen.png";
+    const char *screenFile = "wrench-screen.png";
     if (gScreenCapJpg) {
-        screenFile = "t1wrench-screen.jpg";
+        screenFile = "wrench-screen.jpg";
     }
 
 #ifdef Q_OS_WIN32

@@ -6,14 +6,14 @@ if test $(uname) = Linux; then
     rsync --exclude=release -av * bhj-mac:$(up $PWD)
     rsync release bhj-mac:$(up .) -av -L --exclude=*/adb_usb_driver_smartisan
     remote-cmd bhj-mac bash -c "
-        export DOING_T1WRENCH_RELEASE=$DOING_T1WRENCH_RELEASE;
+        export DOING_WRENCH_RELEASE=$DOING_WRENCH_RELEASE;
         export ReleaseVersion=$ReleaseVersion;
         set -x;
         cd $(up .);
         ./build-mac.sh"
 
-    if test "$DOING_T1WRENCH_RELEASE"; then
-        rsync bhj-mac:$(up .)/T1Wrench.app ../T1Wrench-macos/ -av --delete
+    if test "$DOING_WRENCH_RELEASE"; then
+        rsync bhj-mac:$(up .)/Wrench.app ../Wrench-macos/ -av --delete
     fi
 else
     set -e
@@ -25,7 +25,7 @@ else
         cd luamd5
         make PLATFORM=macx
     )
-    rm T1Wrench.app -rf
+    rm Wrench.app -rf
     if test ! -d ~/Qt5 -a -d ~/Qt5.bak; then
         mv ~/Qt5.bak ~/Qt5
     fi
@@ -36,13 +36,13 @@ else
             make -j8
         )
     done
-    rsync -L t1wrench.lua macx/binaries/* release/* T1Wrench.app/Contents/MacOS/ -r
-    rm T1Wrench.dmg -f
-    macdeployqt T1Wrench.app -dmg -verbose=1 -executable=T1Wrench.app/Contents/MacOS/download
+    rsync -L wrench.lua macx/binaries/* release/* Wrench.app/Contents/MacOS/ -r
+    rm Wrench.dmg -f
+    macdeployqt Wrench.app -dmg -verbose=1 -executable=Wrench.app/Contents/MacOS/download
     mv ~/Qt5 ~/Qt5.bak
-    if test "$DOING_T1WRENCH_RELEASE"; then
+    if test "$DOING_WRENCH_RELEASE"; then
         exit
     fi
 
-    myscr bash -c 'ps-killall T1Wrench; of T1Wrench.app; oc T1Wrench.app' || true
+    myscr bash -c 'ps-killall Wrench; of Wrench.app; oc Wrench.app' || true
 fi

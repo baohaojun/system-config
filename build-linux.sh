@@ -18,7 +18,7 @@ shift $(($OPTIND - 1))
 ## end generated code
 
 if test -z "$release_dir"; then
-    release_dir=T1Wrench-debian
+    release_dir=Wrench-debian
 fi
 
 cd $(dirname $(readlink -f $0))
@@ -27,7 +27,7 @@ if test $# = 1 && [[ "$1" =~ debug ]]; then
     build_dir=~/tmp/build-t1-debug
 fi
 
-relative-link -f $build_dir/T1Wrench ~/system-config/bin/overide
+relative-link -f $build_dir/Wrench ~/system-config/bin/overide
 
 mkdir -p $build_dir
 rsync -L * $build_dir -av --exclude=release --exclude=windows --exclude=macx --exclude=emojis
@@ -50,22 +50,22 @@ relative-link -f $oldpwd/release/* .
 relative-link -f $oldpwd/linux/binaries/* .
 ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
-    if test "$DOING_T1WRENCH_RELEASE"; then
+    if test "$DOING_WRENCH_RELEASE"; then
         mkdir -p ~/src/github/$release_dir
-        command rsync -L $oldpwd/linux/binaries/* T1Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/T1Wrench/release-exclude.txt
+        command rsync -L $oldpwd/linux/binaries/* Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/Wrench/release-exclude.txt
         exit
     fi
 
-    destroy-windows T1Wrench || true
-    ps-killall T1Wrench.\!pro || true
+    destroy-windows Wrench || true
+    ps-killall Wrench.\!pro || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
-        ps-killall gdb.T1Wrench
-        myscr gdb ./T1Wrench
+        ps-killall gdb.Wrench
+        myscr gdb ./Wrench
         find-or-exec konsole
     else
-        rm $build_dir-debug/T1Wrench -f || true
+        rm $build_dir-debug/Wrench -f || true
         mkfifo /tmp/build-linux.$$
-        myscr bash -c "echo T1Wrench; ./T1Wrench > /tmp/build-linux.$$ 2>&1"
+        myscr bash -c "echo Wrench; ./Wrench > /tmp/build-linux.$$ 2>&1"
         cat /tmp/build-linux.$$
         rm /tmp/build-linux.$$
     fi
