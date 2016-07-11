@@ -31,15 +31,22 @@ if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
         }
     fi
 
-    set -- \
-        --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; find . -name "*.xml"') \
-        --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; find . -name "*.xml"')
-    yes-or-no-p -y -- "You want run with $@?"
-    if test -d out/diff; then
-        rm out/diff -rf
+    if test -d .repo; then
+        set -- \
+            --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; find . -name "*.xml"') \
+            --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; find . -name "*.xml"')
+
+        if test -d out/diff; then
+            rm out/diff -rf
+        fi
+        mkdir -p out/diff
+    else
+        set -- \
+            -f $(git-choose-branch -p "From which branch in $PWD") -F \
+            -t $(git-choose-branch -p "To which branch in $PWD") -T
     fi
-    mkdir -p out/diff
-    if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-find-all; then
+    yes-or-no-p -y -- "You want run with $@?"
+    if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-find-all -a -d .repo; then
         . ~/src/github/smartcm/scm-helpers/repo-cherry-find-all "$@"
     fi
 fi

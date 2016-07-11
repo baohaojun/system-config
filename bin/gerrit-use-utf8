@@ -3,16 +3,20 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt h:host p:password d:database
+# generate-getopt h:host p:password d:database t:tables
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h:p:d: --long "host:,password:,database:"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o h:p:t:d:h \
+              --long host:,password:,tables:,database:,help \
+              -n $(basename -- $0) -- "$@")
 host=
 password=
+tables=
 database=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
         -h|--host)
             host=$2
             shift 2
@@ -21,9 +25,33 @@ while true; do
             password=$2
             shift 2
             ;;
+        -t|--tables)
+            tables=$2
+            shift 2
+            ;;
         -d|--database)
             database=$2
             shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--database=DATABASE'
+            echo
+            printf %06s '-h, '
+            printf %-24s '--host=HOST'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--password=PASSWORD'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--tables=TABLES'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -35,6 +63,7 @@ while true; do
     esac
 done
 
+
 ## end generated code
 
 if test -z "$password"; then
@@ -45,7 +74,10 @@ if test -z "$database"; then
     database=reviewdb
 fi
 
-tables=$(mysql -B -s -e 'show tables' -u root -p$password $database)
+if test -z "$tables"; then
+    tables=$(mysql -B -s -e 'show tables' -u root -p$password $database)
+fi
 for t in $tables; do
+    echo working with $t
     mysql -B -s -e "alter table $t engine=innodb; ALTER TABLE $t CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;" -u root -p$password $database
 done

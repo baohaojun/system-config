@@ -139,7 +139,7 @@ case "$1" in
                             exit
                         fi
                         touch "$song".like
-                        if test -e "$song" -a -e "$icon"; then
+                        if test -e "$song"; then
                             like-mp3-tags "$song"
                             douban_action=info douban-misc
                         fi

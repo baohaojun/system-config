@@ -28,11 +28,16 @@ album=$(basename "$(dirname "$mp3")")
 singer=$(basename "$(dirname "$(dirname "$mp3")")")
 title=$(basename "$mp3"|perl -npe 's/\.mp3$//i')
 png=${mp3/%.mp3/.png}
+if test ! -e "$png"; then
+    if test ! -e "$(dirname "$png")"/album.png; then
+        cp ~/.sawfish/Kill.png "$(dirname "$png")"/album.png
+    fi
+    png=$(dirname "$png")/album.png
+fi
 if file "$png" | grep 'jpeg image data' -i; then
     ln -s "$png" "${png/%.png/.jpg}" || true
     png=${mp3/%.mp3/.jpg}
 fi
-
 
 if my-adb "test -e /sdcard/Music/\"""$(basename "$mp3")""\" && echo $$" | grep ^${$}$; then
     my-adb rm /sdcard/Music/"$(basename "$mp3")"

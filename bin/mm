@@ -108,8 +108,6 @@ EOF
 
     cd $top_dir
 
-    perl -npe 's!^\$\(error stopping\)!#\$(error stopping)!' -i build/core/main.mk
-
     (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"

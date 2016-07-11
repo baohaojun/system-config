@@ -58,23 +58,15 @@ export https_proxy=http://localhost:8888
     ) || true
 
     repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml
-    if repo sync -j1 -f; then
-        my-rfa '
-            (
-                pwd;
-                git push --no-thin s:qualcomm/$(repo-project) refs/heads/*:refs/heads/* 2>&1 || (
-                    gerrit -h smartisan create-project qualcomm/$(repo-project) --parent virtual_hw_frameworks
-                    git push --no-thin s:qualcomm/$(repo-project) refs/heads/*:refs/heads/* 2>&1
-                )
-            )|tee git-push.txt'
-        if my-rfa 'grep rejected git-push.txt -q && pwd' | grep .; then
-            my-rfa 'grep -nH "rejected.*non-fast-forward" $PWD/git-push.txt' | mailx baohaojun@gmail.com -s "Some android branches failed to sync"
-        fi
-    else
-        if (( day % 5 == 1 )); then
-            mailx baohaojun@gmail.com -s "Android mirror failed to sync" </dev/null
-        fi
-    fi
+    branches=$(
+        cd .repo/manifests
+        git branch -a|perl -npe 's,.*/,,'|grep -e '-dev'|grep -v -e '-.*-' | grep -v 'chromium-dev|droiddriver-dev|gradle-dev' -P
+        echo master
+            )
+    git-get -u smartisan:qualcomm/platform/manifest.git -d ~/src/manifests -b sanfrancisco
+    for branch is $branches; do
+        scm sync-android-to-gerrit -b $branch
+    done
     if ! is-tty-io; then
         (
             cd ~/src/android-mirror/kernel/msm.git || exit 0
