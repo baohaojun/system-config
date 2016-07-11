@@ -3,28 +3,28 @@
 set -e
 
 base0=$(basename $0)
-symbol=
-xmodmap -e 'pointer = 1 2 3 4 5 6 7 8 9 10'
+
 if test "$base0" = do-natural-scrolling; then
-    symbol=-
-fi
-
-
-evdev=0
-for device in $(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/'); do
-    if xinput set-prop "$device" "Evdev Scrolling Distance" ${symbol}1 ${symbol}1 ${symbol}1; then
-        evdev=1
-    fi
-    xinput set-prop "$device" "Synaptics Scrolling Distance" ${symbol}112 ${symbol}112 || true
-done >/dev/null 2>&1
-
-if test -z "$symbol"; then
-    exit
-fi
-
-if test $evdev = 0; then
     xmodmap -e 'pointer = 1 2 3 5 4 6 7 8 9 10'
-    for device in $(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/'); do
-        xinput set-prop "$device" "Synaptics Scrolling Distance" 112 112 >/dev/null 2>&1|| true
-    done
+    symbol=-
+    natural_enabled=1
+else
+    xmodmap -e 'pointer = 1 2 3 4 5 6 7 8 9 10'
+    symbol=
+    natural_enabled=0
+fi
+
+
+devices=$(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/')
+if xinput list-props $devices | grep -q 'libinput Natural Scrolling Enabled'; then
+    xmodmap -e 'pointer = 1 2 3 4 5 6 7 8 9 10'
+fi
+for device in $devices; do
+    xinput set-prop "$device" "libinput Natural Scrolling Enabled" $natural_enabled ||
+        xinput set-prop "$device" "Evdev Scrolling Distance" ${symbol}1 ${symbol}1 ${symbol}1 ||
+        xinput set-prop "$device" "Synaptics Scrolling Distance" ${symbol}112 ${symbol}112 || true
+done 2>&1 | if echo $SHELLOPTS | grep -q xtrace; then
+    cat
+else
+    cat > /dev/null
 fi

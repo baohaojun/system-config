@@ -116,7 +116,7 @@
 (bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
 (bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-both-global&window-keymaps "XF86Launch5" '(system "EMACS=t do-capture&"))
-(bind-both-global&window-keymaps "XF86Launch6" '(system "find-or-exec T1Wrench%Smartisan T1Wrench&"))
+(bind-both-global&window-keymaps "XF86Launch6" '(system "find-or-exec Wrench%Smartisan Wrench&"))
 (bind-both-global&window-keymaps "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
 (bind-both-global&window-keymaps "XF86Launch8" '(system "custom-command&"))
 (bind-both-global&window-keymaps "XF86Launch9" '(system "EMACS=t ssssh&"))
@@ -234,7 +234,7 @@
     (when (eq keymap global-keymap)
       (unbind-keys window-keymap key))))
 
-(setq emacs-style-window-class-re "rdesktop|t1wrench|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
+(setq emacs-style-window-class-re "rdesktop|wrench|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
 (defvar global-remap-alist nil
   "Window specific remap list")
 
@@ -284,8 +284,8 @@
                       (t nil)))
         ("M-Right" . '((qpdfview "C-S-RET")))
         ("C-x" . '((Firefox "C-x") (Iceweasel "C-x") (t do-c-x-map)))
-        ("Super-&" . '((T1Wrench "Meta-&")))
-        ("Super-*" . '((T1Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
+        ("Super-&" . '((Wrench "Meta-&")))
+        ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
 (bind-both-global&window-keymaps "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
 
@@ -684,7 +684,7 @@
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
 (bind-both-global&window-keymaps "XF86Favorites" '(system "do-work&"))
-(bind-keys s-h-keymap "a" '(system "find-or-exec Okular&"))
+(bind-keys s-h-keymap "a" '(system "find-or-exec qpdfview&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))
