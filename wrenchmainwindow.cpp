@@ -165,7 +165,7 @@ void WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
     } else if (key == "prompt") {
         prompt_user(val);
     } else if (key == "exit") {
-        if (yes_or_no_p(QString().sprintf("后台出错，请确认是否重启后台？\n\n    %s", qPrintable(val))) == "yes") {
+        if (yes_or_no_p(QString().sprintf("Lua crashed in the background, restart it?\n\n    %s", qPrintable(val))) == "yes") {
             on_configurePushButton_clicked();
         }
     } else if (key == "") {
@@ -225,12 +225,12 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
 {
     QString text = get_text();
     if (text.isEmpty() && mPictures.isEmpty()) {
-        prompt_user("输入手机中的文字必须不能为空", QMessageBox::Ok);
+        prompt_user("Composed text must not be empty", QMessageBox::Ok);
         return;
     }
 
     if (anyShareChecked() && mSettings.value("firstTimeWeibo", 1).toInt() == -1) {
-        if (yes_or_no_p("你输入的文字将被分享到社交网络，请点击OK以确认") != "yes") {
+        if (yes_or_no_p("Your text will be shared to social networks, please confirm") != "yes") {
             return;
         }
     }
@@ -296,7 +296,7 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
     if (ui->tbMomo->isChecked()) {
         share = 1;
         if (mPictures.isEmpty()) {
-            prompt_user("陌陌分享失败，没有图片不能分享（可以考虑用便签）。");
+            prompt_user("Failed to share to Momo, must have at least 1 picture.");
         } else {
             mLuaThread->addScript(QStringList() << "picture_to_momo_share");
             mLuaThread->addScript(QStringList() << "t1_post" << text);
@@ -325,7 +325,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     QProcess::startDetached("./the-true-adb", QStringList("start-server"));
     if (!mLuaThread.isNull()) {
         if (mLuaThread->isRunning()) {
-            if (yes_or_no_p("后台仍在运行，点 确定 按钮重新配置，点 取消 继续使用当前设置？") != "yes") {
+            if (yes_or_no_p("Lua is still running in the background, click OK to re-configure, click Cancel to continue to use current script.") != "yes") {
                 return;
             }
         }
@@ -363,7 +363,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
 
 void WrenchMainWindow::on_tbScreenCapture_clicked()
 {
-    prompt_user("屏幕截图功能因为使用了来自Linux版阿里旺旺的非开源代码，已经在此开源版本的小扳手中被删除");
+    prompt_user("Screen capture used some Linux Ali Wangwang's closed source code, and is removed for the moment");
 }
 
 void WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
@@ -387,7 +387,7 @@ void WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
         ui->tbScreenCapture->setCheckable(true);
         ui->tbScreenCapture->setChecked(true);
         if (text.isEmpty()) {
-            if (yes_or_no_p("不想说点儿什么了？\n\n点 确定 直接分享，点 取消 输入文字再点 扳动 分享") != "yes") {
+            if (yes_or_no_p("No more to say？\n\nClick OK to share, click Cancel to compose some text and Send") != "yes") {
                 return;
             }
         }
@@ -418,7 +418,7 @@ void WrenchMainWindow::on_tbPicture_clicked()
         ui->tbPicture->setCheckable(true);
         ui->tbPicture->setChecked(true);
         if (text.isEmpty()) {
-            if (yes_or_no_p("不想说点儿什么了？\n\n点 确定 直接分享，点 取消 输入文字再点 扳动 分享") != "yes") {
+            if (yes_or_no_p("No more to say？\n\nClick OK to share, click Cancel to compose some text and Send") != "yes") {
                 return;
             }
         }
@@ -448,7 +448,7 @@ void WrenchMainWindow::on_tbWeibo_clicked()
 {
     if (ui->tbWeibo->isChecked() && mSettings.value("firstTimeWeibo", 1).toInt() == 1) {
         mSettings.setValue("firstTimeWeibo", 0);
-        prompt_user("您之后输入的文字和选择的照片、截图将被分享到微博");
+        prompt_user("Your text/picture will be shared to Sina Weibo");
     }
 
     if (!anyShareChecked()) {
@@ -462,7 +462,7 @@ void WrenchMainWindow::on_tbWeixin_clicked()
 {
     if (ui->tbWeixin->isChecked() && mSettings.value("firstTimeWeixin", 1).toInt() == 1) {
         mSettings.setValue("firstTimeWeixin", 0);
-        prompt_user("您之后输入的文字和选择的照片、截图将被分享到微信朋友圈");
+        prompt_user("Your text/picture will be shared to Weixin Friend Zone");
     }
     if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
@@ -474,7 +474,7 @@ void WrenchMainWindow::on_tbQq_clicked()
 {
     if (ui->tbQq->isChecked() && mSettings.value("firstTimeQq", 1).toInt() == 1) {
         mSettings.setValue("firstTimeQq", 0);
-        prompt_user("您之后输入的文字和选择的照片、截图将被分享到QQ空间");
+        prompt_user("Your text/picture will be shared to QQ Zone");
     }
     if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
@@ -486,7 +486,7 @@ void WrenchMainWindow::on_tbMomo_clicked()
 {
     if (ui->tbMomo->isChecked() && mSettings.value("firstTimeMomo", 1).toInt() == 1) {
         mSettings.setValue("firstTimeMomo", 0);
-        prompt_user("您之后输入的文字和选择的照片、截图将被分享到陌陌留言板");
+        prompt_user("Your text/picture will be shared to Momo");
     }
     if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
@@ -574,18 +574,18 @@ void WrenchMainWindow::on_tbNotes_clicked()
 {
     if (ui->tbNotes->isChecked() && mSettings.value("firstTimeNotes", 1).toInt() == 1) {
         mSettings.setValue("firstTimeNotes", 0);
-        prompt_user("您之后输入的文字将生成便笺再发送");
+        prompt_user("Your text will be rendered with Smartisan Notes before sharing");
     }
 }
 
 void WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString& display)
 {
     if (mMmsReceiverMap.contains(contact) && yes_or_no_p(mMmsReceiverMap[contact] +
-                                                         "已经在短信接收人名单里，删除？") == "yes") {
+                                                         "Already in SMS receiver, delete？") == "yes") {
         mMmsReceiverMap.remove(contact);
         return;
     }
-    onInfoUpdate("info", "发短信给 " + display);
+    onInfoUpdate("info", "Send SMS to " + display);
     mMmsReceiverMap[contact] = display;
 }
 

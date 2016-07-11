@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Smartisan T1聊天小扳手 V3.1.0 (ddc793c)</string>
+   <string>Wrench V3.1.0 (ddc793c)</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QToolButton { qproperty-iconSize: 24px 24px; }</string>
@@ -25,7 +25,7 @@
       </property>
       <widget class="QWidget" name="tabChat">
        <attribute name="title">
-        <string>聊天专区</string>
+        <string>Compose Here</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -33,13 +33,13 @@
           <item>
            <widget class="QCellPhoneTextEdit" name="phoneTextEdit">
             <property name="toolTip">
-             <string>在这里输入聊天内容</string>
+             <string>Input what you want to say here</string>
             </property>
             <property name="tabChangesFocus">
              <bool>true</bool>
             </property>
             <property name="placeholderText">
-             <string>在此输入文字、表情</string>
+             <string>Input text and emojis</string>
             </property>
            </widget>
           </item>
@@ -50,7 +50,7 @@
           <item>
            <widget class="QToolButton" name="tbEmoji">
             <property name="toolTip">
-             <string>表情</string>
+             <string>Emojis (Shortcut: Alt-8)</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -64,7 +64,7 @@
           <item>
            <widget class="QToolButton" name="tbPicture">
             <property name="toolTip">
-             <string>上传图片</string>
+             <string>Upload pictures</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -78,7 +78,7 @@
           <item>
            <widget class="QToolButton" name="tbScreenCapture">
             <property name="toolTip">
-             <string>屏幕截图</string>
+             <string>Desktop Screenshot</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -92,7 +92,7 @@
           <item>
            <widget class="QToolButton" name="tbWeibo">
             <property name="toolTip">
-             <string>分享到微博</string>
+             <string>Share to Sina Weibo</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -109,7 +109,7 @@
           <item>
            <widget class="QToolButton" name="tbWeixin">
             <property name="toolTip">
-             <string>分享到微信朋友圈</string>
+             <string>Share to Wechat Friend Zone （微信朋友圈）</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -126,7 +126,7 @@
           <item>
            <widget class="QToolButton" name="tbQq">
             <property name="toolTip">
-             <string>分享到QQ空间</string>
+             <string>Share to QQ Zones</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -143,7 +143,7 @@
           <item>
            <widget class="QToolButton" name="tbMomo">
             <property name="toolTip">
-             <string>分享到陌陌留言板</string>
+             <string>Share to Momo</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -160,7 +160,7 @@
           <item>
            <widget class="QToolButton" name="tbNotes">
             <property name="toolTip">
-             <string>生成便笺再发送</string>
+             <string>Generate a Smartisan Note before sharing</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -190,7 +190,7 @@
           <item>
            <widget class="QToolButton" name="tbPhoneScreen">
             <property name="toolTip">
-             <string>显示手机屏幕</string>
+             <string>Display phone screen</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -220,7 +220,7 @@
           <item>
            <widget class="QToolButton" name="tbPhoneCall">
             <property name="toolTip">
-             <string>打电话</string>
+             <string>Make phone calls (Shortcut: Alt-7)</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -234,7 +234,7 @@
           <item>
            <widget class="QToolButton" name="tbMms">
             <property name="toolTip">
-             <string>发短信</string>
+             <string>Write SMS</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -248,7 +248,7 @@
           <item>
            <widget class="QToolButton" name="tbThumbsUp">
             <property name="toolTip">
-             <string>点赞有惊喜，只是不知道是惊还是喜</string>
+             <string>Do not click!</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -262,7 +262,7 @@
           <item>
            <widget class="QToolButton" name="configurePushButton">
             <property name="toolTip">
-             <string>重新配置一下小扳手</string>
+             <string>Configure Wrench again (esp. if you updated wrench.lua)</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -276,7 +276,7 @@
           <item>
            <widget class="QToolButton" name="sendItPushButton">
             <property name="toolTip">
-             <string>发送（Ctrl-Enter）</string>
+             <string>Send（Shortcut: Ctrl-Enter）</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -293,7 +293,7 @@
       </widget>
       <widget class="QWidget" name="tabMail">
        <attribute name="title">
-        <string>发送邮件</string>
+        <string>Send Emails</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
@@ -471,7 +471,7 @@
           <item>
            <widget class="QToolButton" name="tbMailClear">
             <property name="toolTip">
-             <string>清除所有输入</string>
+             <string>Clear all</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -485,7 +485,7 @@
           <item>
            <widget class="QToolButton" name="tbMailSave">
             <property name="toolTip">
-             <string>保存为常用邮件联系人</string>
+             <string>Save as frequent email setting</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -499,7 +499,7 @@
           <item>
            <widget class="QToolButton" name="tbMailLoad">
             <property name="toolTip">
-             <string>打开邮件常用联系人</string>
+             <string>Open frequent email setting</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -513,7 +513,7 @@
           <item>
            <widget class="QToolButton" name="tbMailDone">
             <property name="toolTip">
-             <string>打开邮件应用，用小扳手输入邮件正文</string>
+             <string>Open Smartisan Email App, switch to Wrench Composer for Email body.</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -563,13 +563,13 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Log显示窗口</string>
+         <string>Log Window</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
         <property name="placeholderText">
-         <string>这里显示调试输出...</string>
+         <string>Here's debug output...</string>
         </property>
        </widget>
       </item>

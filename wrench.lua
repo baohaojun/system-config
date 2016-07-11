@@ -510,13 +510,13 @@ check_scroll_lock = function()
    end
 
    while not using_wrench_ime() do
+      local prompt_str = ("Your phone's current input method：%s does not work with Wrench, must use “小扳手输入法”, please make sure you have installed it (it comes with Wrench source code), and set it as the current input method."):format(current_input_method)
       if select_args then
-         local prompt_str = ("您的手机系统及当前输入法：%s不支持小扳手，必须使用小扳手输入法才能正常输入，请确保已安装并设置小扳手输入法为当前手机输入法。"):format(current_input_method)
          if select_args{prompt_str} == "" then
-            error("您取消了本次操作，请在手机上配置好小扳手输入法后再继续使用小扳手")
+            error("You've canceled, please configure “小扳手输入法” on your phone before you continue with Wrench")
          end
       else
-         debug("您的手机系统及当前输入法：%s不支持小扳手，必须使用小扳手输入法才能正常输入，请确保已安装并设置小扳手输入法为当前手机输入法", current_input_method)
+         debug("%s", prompt_str)
          sleep(1)
       end
    end
@@ -525,8 +525,8 @@ end
 local function weibo_text_share(window)
    local repost = '?'
    if window == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
-      repost = select_args{'转发还是评论', '转发', '评论', '转发并评论'}
-      if repost:match('转发') then
+      repost = select_args{'Repost or comment', 'Repost', 'Comment', 'Repost and comment'}
+      if repost:match('Repost') then
          debugging("doing post")
          adb_tap_bot_left()
       else
@@ -534,7 +534,7 @@ local function weibo_text_share(window)
       end
       sleep(1)
    end
-   if repost:match('并') then
+   if repost:match('and') then
       adb_event("sleep .1 adb-tap 57 1704")
    end
    adb_event{'key', 'scroll_lock', 991, 166}
@@ -730,7 +730,7 @@ adb_start_weixin_share = function(text_or_image)
    if wait_top_activity("com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI") == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI" then
       adb_event("sleep .2 " .. click .. " 961 160")
    else
-      log("无法切换到朋友圈界面")
+      log("Can't switch to the Friend Zone page.")
    end
    if text_or_image == 'image' then
       adb_event("adb-tap 213 929") -- choose picture
@@ -1004,7 +1004,7 @@ local check_file_pushed = function(file, md5)
    io.close(md5file)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
-      log("需要把%s上传到手机。", file)
+      log("Need to upload %s to your phone.", file)
       adb_push{file, "/data/data/com.android.shell/" .. file .. ".bak"}
       adb_shell(("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(file, file))
 
@@ -1014,7 +1014,7 @@ local check_file_pushed = function(file, md5)
       if md5_on_phone ~= md5_on_PC then
          error("Can't mark the " .. file .. " as been installed: \n'" .. md5_on_phone .. "'\n : \n'" .. md5_on_PC .. "'")
       else
-         log("小扳手辅助文件 %s 上传成功", file)
+         log("Wrench helper file %s upload OK.", file)
       end
    end
 end
@@ -1028,7 +1028,7 @@ local check_apk_installed = function(apk, md5)
    io.close(md5file)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
-      log("需要在手机上安装小扳手辅助应用 %s，请确保手机允许安装未知来源的apk。", apk)
+      log("Need to install on your phone Wrench helper App %s, please make sure your phone allows it.", apk)
       local install_output = adb_install(apk)
       if install_output:match("\nSuccess") then
          adb_push{md5, "/sdcard/" .. md5}
@@ -1037,7 +1037,7 @@ local check_apk_installed = function(apk, md5)
          if md5_on_phone ~= md5_on_PC then
             error("Can't mark the " .. apk .. " as been installed: \n'" .. md5_on_phone .. "'\n : \n'" .. md5_on_PC .. "'")
          else
-            log("小扳手辅助应用 %s 安装成功", apk)
+            log("Wrench helper App %s install OK.", apk)
          end
       else
          if not os.execute("test -e .quiet-apk-install-failure") then
@@ -1110,7 +1110,7 @@ t1_config = function(passedConfigDirPath)
       if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listcontacts 1", "/sdcard/listcontacts.txt") then
          adb_pull{"/sdcard/listcontacts.txt", "weixin-phones.txt"}
       else
-         log("无法同步微信联系人")
+         log("Can't sync Wechat contacts")
       end
    end
 
@@ -1199,7 +1199,7 @@ get_a_note = function(text)
             adb-tap 711 151
    ]])
    if wait_top_activity(notePicPreview) ~= notePicPreview then
-      log("便签好像出问题了")
+      log("Seems to have a problem with Smartisan Notes")
    end
 
    while (wait_top_activity_match("com.smartisanos.notes")):match("com.smartisanos.notes/") do
@@ -1414,23 +1414,23 @@ t1_post = function(text) -- use weixin
 
       local window_type = window_post_button_map[window]
       if not window_type then
-         window_type = select_args{'发送按钮在哪儿',
-                                   '像微信聊天一样在输入法窗口右上方',
-                                   '像QQ那样在输入法窗口右上方，隔着一排按钮',
-                                   '像微信聊天一样，但发送前让我确认',
-                                   '像微博分享一样在屏幕右上方',
-                                   '像微博分享一样，但发送前让我确认',
-                                   '我自己手动来按发送按钮',
+         window_type = select_args{'Where is the send button',
+                                   'Above the input method, the right end',
+                                   'Above the input method, the right end, with a row of buttons in between (like QQ)',
+                                   'Above the input method, the right end, confirm before send',
+                                   "Top-right corner of phone's screen",
+                                   "Top-right corner of phone's screen, confirm before send",
+                                   'I will click the send button myself',
          }
-         if window_type == '像微信聊天一样在输入法窗口右上方' then
+         if window_type == 'Above the input method, the right end' then
             window_type = 'weixin-chat'
-         elseif window_type == '像QQ那样在输入法窗口右上方，隔着一排按钮' then
+         elseif window_type == 'Above the input method, the right end, with a row of buttons in between (like QQ)' then
             window_type = 'qq-chat'
-         elseif window_type == '像微博分享一样在屏幕右上方' then
+         elseif window_type == "Top-right corner of phone's screen" then
             window_type = 'weibo-share'
-         elseif window_type == '像微信聊天一样，但发送前让我确认' then
+         elseif window_type == 'Above the input method, the right end, confirm before send' then
             window_type = 'weixin-confirm'
-         elseif window_type == '像微博分享一样，但发送前让我确认' then
+         elseif window_type == "Top-right corner of phone's screen, confirm before send" then
             window_type = 'weibo-confirm'
          else
             window_type = 'manual-post'
@@ -1443,7 +1443,7 @@ t1_post = function(text) -- use weixin
       elseif window_type == 'qq-chat' then
          post_button = ('975 %d'):format(1920 - ime_height - 200)
       elseif window_type == 'weixin-confirm' then
-         if yes_or_no_p("像微信聊天一样发送，请确认") then
+         if yes_or_no_p("Send button is above the input method, on the right end. Confirm?") then
             post_button = post_button
          else
             post_button = ''
@@ -1451,7 +1451,7 @@ t1_post = function(text) -- use weixin
       elseif window_type == 'weibo-share' then
          post_button = '991 166'
       elseif window_type == 'weibo-confirm' then
-         if yes_or_no_p("像微博分享一样发送，请确认") then
+         if yes_or_no_p("Send button is top-right corner of phone's screen. Confirm?") then
             post_button = '991 166'
          else
             post_button = ''
@@ -1577,7 +1577,7 @@ picture_to_weibo_comment = function(pics, ...)
 
    local weiboShareActivity = adb_top_window() -- comment or forward
    if #pics ~= 1 then
-      log("微博评论、转发只支持一张图片")
+      log("Weibo comment/repost supports only 1 picture")
    end
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
@@ -1707,7 +1707,7 @@ local function picture_to_qq_chat(pics, ...)
    local input_method, ime_height = adb_get_input_window_dump()
    if (ime_height ~= 0) then
       ime_height = 0
-      log("发送back键以隐藏输入法")
+      log("Send the back key to hide IME.")
       adb_event("key back")
    end
    local chatWindow
@@ -1942,7 +1942,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
       for i in ipairs(files) do
          local file = files[i]
          if paste_attachment_only then
-            if yes_or_no_p("请在手机上点击添加附件的按钮") then
+            if yes_or_no_p("Please click on the phone the button for adding attachments") then
                sleep(.5)
             else
                return
@@ -1951,15 +1951,15 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
             adb_event"adb-tap 993 883 sleep .5"
          end
 
-         if not rows_mail_att_finder or rows_mail_att_finder == "手动点" then
-            rows_mail_att_finder = select_args{"有几行邮件附件添加应用图标？", "一行", "两行", "手动点（训练）"}
+         if not rows_mail_att_finder or rows_mail_att_finder:match"^Manual Click" then
+            rows_mail_att_finder = select_args{"How many lines of Apps are there？", "One", "Two", "Manual Click (OI File Manager is not the first App yet)"}
          end
-         if rows_mail_att_finder == "一行" then
+         if rows_mail_att_finder == "One" then
             adb_event"adb-tap 201 1760"
-         elseif rows_mail_att_finder == "两行" then
+         elseif rows_mail_att_finder == "Two" then
             adb_event"adb-tap 153 1455"
          else
-            select_args{"手动点完之后请回车", "请回车", "请回车!"}
+            prompt_user("Click OK to dismiss after you clicked OI File Manager manually.")
          end
 
 
@@ -1973,7 +1973,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
          local window = adb_focused_window()
          if window ~= oiFileChooseActivity then
             window = window:gsub("/.*", "")
-            error("必须安装并使用OI文件管理器才能选择附件，你使用的是： " .. window)
+            error("Must install and use OI File Manager, you are using: " .. window)
          end
          adb_event"sleep .5 key back key scroll_lock sleep .5"
          adb_event"adb-tap 959 1876 sleep 1"
@@ -2129,17 +2129,17 @@ local press_dial_key = function()
    if not where_is_dial_key then
       where_is_dial_key = phone_info_map[phone_serial .. ":拨号键位置"]
       if not where_is_dial_key then
-         where_is_dial_key = select_args{"拨号键在哪儿呢？", "中间", "左数第一个", "左数第二个"}
+         where_is_dial_key = select_args{"Where is the dial button？", "Middle", "First from left", "Second from left"}
          phone_info_map[phone_serial .. ":拨号键位置"] = where_is_dial_key
          save_phone_info()
       end
    end
    debugging("where_is_dial_key is %s", where_is_dial_key)
-   if where_is_dial_key == "中间" then
+   if where_is_dial_key == "Middle" then
       adb_event("adb-tap 554 1668")
-   elseif where_is_dial_key == "左数第一个" then
+   elseif where_is_dial_key == "First from left" then
       adb_event"adb-tap 156 1633"
-   elseif where_is_dial_key == "左数第二个" then
+   elseif where_is_dial_key == "Second from left" then
       adb_event"adb-tap 420 1634"
    else
       where_is_dial_key = nil
@@ -2162,7 +2162,7 @@ t1_call = function(number)
 
    adb_am("am start -a android.intent.action.DIAL tel:" .. number)
    adb_event("sleep .5")
-   if not yes_or_no_p("确认拨打电话") then
+   if not yes_or_no_p("Phone number correct and dial it?") then
        return
    end
    press_dial_key()
@@ -2181,7 +2181,7 @@ t1_add_mms_receiver = function(number)
    putclip(number .. ',')
 
    adb_event("sleep 1 key scroll_lock")
-   return "请在小扳手文字输入区输入短信内容并发送"
+   return "Please input your SMS in the Wrench Composer and click Send."
 end
 
 log = function(fmt, ...)
