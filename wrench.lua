@@ -394,7 +394,7 @@ local function adb_event(events)
       end
 
       if tonumber(events[i]) then
-         local width_ratio, height_ratio = app_width_ratio, app_height
+         local width_ratio, height_ratio = app_width_ratio, app_height_ratio
          if (events[i - 1] == 'adb-no-virt-key-tap') then
             width_ratio, height_ratio = real_width_ratio, real_height_ratio
          end
