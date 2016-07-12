@@ -49,9 +49,10 @@ local is_windows = false
 local debug_set_x = ""
 local ime_height_ref = 874
 local default_width, default_height = 1080, 1920
-local init_width, init_height = 1080, 1920
+local real_width, real_height = 1080, 1920
 local app_width, app_height = 1080,1920
-local width_ratio, height_ratio = app_width / default_width,  app_height / default_height
+local app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
+local real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
 local using_oppo_os = false
 local brand = "smartisan"
 local model = "T1"
@@ -393,12 +394,12 @@ local function adb_event(events)
       end
 
       if tonumber(events[i]) then
-         local add = ('input tap %d %d;'):format(events[i] * width_ratio, events[i+1] * height_ratio)
+         local add = ('input tap %d %d;'):format(events[i] * app_width_ratio, events[i+1] * app_height_ratio)
          command_str = command_str .. add
          i = i + 2
       elseif events[i] == 'tap2' or events[i] == 'adb-tap-2' then
          i = i + 1
-         local add = ('input tap %d %d;'):format(events[i] * width_ratio, events[i+1] * height_ratio)
+         local add = ('input tap %d %d;'):format(events[i] * app_width_ratio, events[i+1] * app_height_ratio)
          command_str = command_str .. add .. add
          i = i + 2
       elseif (events[i]):match('^adb%-long%-press') then
@@ -410,8 +411,8 @@ local function adb_event(events)
             ms = ""
          end
          local add = ('input touchscreen swipe %d %d %d %d %s;'):format(
-            events[i+1] * width_ratio, events[i+2] * height_ratio,
-            events[i+1] * width_ratio, events[i+2] * height_ratio, ms)
+            events[i+1] * app_width_ratio, events[i+2] * app_height_ratio,
+            events[i+1] * app_width_ratio, events[i+2] * app_height_ratio, ms)
          if sdk_version < 17 then
             add = add:gsub("touchscreen ", "")
          end
@@ -435,10 +436,15 @@ local function adb_event(events)
       elseif events[i] == 'sleep' then
          command_str = command_str .. ('sleep %s || busybox sleep %s;'):format(events[i+1], events[i+1])
          i = i + 2
-      elseif events[i] == 'swipe' or (events[i]):match('adb%-swipe%-') then
+      elseif events[i] == 'swipe' or (events[i]):match('adb%-swipe%-') or (events[i]):match('adb%-no%-virt%-key%-swipe%-') then
          ms = 500
+         local width_ratio, height_ratio = app_width_ratio, app_height_ratio
+
          if (events[i]):match('adb%-swipe%-') then
             ms = (events[i]):sub(#'adb-swipe-' + 1)
+         elseif (events[i]):match('adb%-no%-virt%-key%-swipe%-') then
+            ms = (events[i]):sub(#'adb-no-virt-key-swipe-' + 1)
+            width_ratio, height_ratio = real_width_ratio, real_height_ratio
          end
          if sdk_version < 18 then
             ms = ""
@@ -849,14 +855,14 @@ adb_get_input_window_dump = function()
    local ime_height = 0
    if input_method_active and ime_xy:match('Requested w=%d+ h=') then
       ime_height = ime_xy:match('Requested w=%d+ h=(%d+)')
-      if tonumber((ime_height - (init_height - app_height)) * default_height / init_height ) >= 800 then -- new version of google pinyin ime?
+      if tonumber((ime_height - (real_height - app_height)) * default_height / real_height ) >= 800 then -- new version of google pinyin ime?
          if input_window_dump:match('package=com.google.android.inputmethod.pinyin') then
-            ime_height = (1920 - 1140) * init_height / default_height + (init_height - app_height)
+            ime_height = (1920 - 1140) * real_height / default_height + (real_height - app_height)
          elseif input_window_dump:match('package=com.wrench.inputmethod.pinyin') then
-            ime_height = (1920 - 1125) * init_height / default_height + (init_height - app_height)
+            ime_height = (1920 - 1125) * real_height / default_height + (real_height - app_height)
          elseif input_window_dump:match('package=com.google.android.inputmethod.latin') or
             input_window_dump:match('package=com.android.inputmethod.latin') then
-            ime_height = 800 * init_height / default_height + (init_height - app_height)
+            ime_height = 800 * real_height / default_height + (real_height - app_height)
          end
       end
    end
@@ -1124,15 +1130,16 @@ t1_config = function(passedConfigDirPath)
        error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 16")
    end
    local dump = adb_pipe{'dumpsys', 'window'}
-   init_width = dump:match('init=(%d+x%d+)')
-   init_height = tonumber(init_width:match('x(%d+)'))
-   init_width = tonumber(init_width:match('(%d+)x'))
+   real_width = dump:match('init=(%d+x%d+)')
+   real_height = tonumber(real_width:match('x(%d+)'))
+   real_width = tonumber(real_width:match('(%d+)x'))
 
    app_width = dump:match('app=(%d+x%d+)')
    app_height = app_width:match('x(%d+)')
    app_width = app_width:match('(%d+)x')
-   width_ratio, height_ratio = app_width / default_width,  app_height / default_height
-   log("width_ratio is %f, height_ratio is %f ", width_ratio, height_ratio)
+   app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
+   real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
+   log("app_width_ratio is %f, app_height_ratio is %f ", app_width_ratio, app_height_ratio)
 
    local id = adb_pipe("id")
    if id:match("uid=0") then

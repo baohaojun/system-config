@@ -112,7 +112,7 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
         int y = mev->y() * 1920 / this->height();
         QTime now = QTime::currentTime();
         if (abs(x - phone_x) + abs(y - phone_y) > 20) {
-            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-swipe-%d %d %d %d %d", now.msecsTo(press_time), phone_x, phone_y, x, y));
+            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-swipe-%d %d %d %d %d", now.msecsTo(press_time), phone_x, phone_y, x, y));
         } else {
             if (isShelled) {
                 static int phonePowerButtonX = 953;
@@ -153,7 +153,7 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
                     int x = (phoneLastX - phoneScreenLeftX);
                     int y = (phoneLastY - phoneScreenUpY);
 
-                    mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-tap %d %d", x, y));
+                    mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-tap %d %d", x, y));
                     mPhoneScreenThread->syncScreen();
                     return true;
                 }
@@ -181,7 +181,7 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
                     }
                 }
             } else {
-                mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-tap %d %d", x, y));
+                mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-tap %d %d", x, y));
             }
         }
         mPhoneScreenThread->syncScreen();
@@ -242,7 +242,7 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
         QWheelEvent *wev = (QWheelEvent *)ev;
         int y = wev->angleDelta().y();
         int x = wev->angleDelta().x();
-        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-swipe-50 %d %d %d %d", wev->x(), wev->y(), wev->x() + x, wev->y() + y));
+        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-swipe-50 %d %d %d %d", wev->x(), wev->y(), wev->x() + x, wev->y() + y));
         mPhoneScreenThread->syncScreen();
     }
     return QDialog::eventFilter(obj, ev);
