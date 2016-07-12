@@ -394,7 +394,11 @@ local function adb_event(events)
       end
 
       if tonumber(events[i]) then
-         local add = ('input tap %d %d;'):format(events[i] * app_width_ratio, events[i+1] * app_height_ratio)
+         local width_ratio, height_ratio = app_width_ratio, app_height
+         if (events[i - 1] == 'adb-no-virt-key-tap') then
+            width_ratio, height_ratio = real_width_ratio, real_height_ratio
+         end
+         local add = ('input tap %d %d;'):format(events[i] * width_ratio, events[i+1] * height_ratio)
          command_str = command_str .. add
          i = i + 2
       elseif events[i] == 'tap2' or events[i] == 'adb-tap-2' then
@@ -461,7 +465,7 @@ local function adb_event(events)
             command_str = command_str .. add
          end
          i = i + 5
-      elseif events[i] == 'adb-tap' then
+      elseif events[i] == 'adb-tap' or events[i] == 'adb-no-virt-key-tap' then
          i = i + 1
       else
          error(string.format("Error: unknown event: %d: '%s' (%s)", i, events[i], join(' ', events)))
