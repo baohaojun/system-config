@@ -10,6 +10,8 @@ user_email = String.new(ARGV[0])
 
 user_email2 = user_email.sub(/\.com$/, ".cn")
 
+user_email = user_email.sub(/\.cn$/, ".com")
+
 
 [user_email, user_email2].each { | user |
   result = ldap.bind_as(:base => "dc=smartisan, dc=cn",
