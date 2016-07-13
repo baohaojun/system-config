@@ -1,4 +1,21 @@
 #!/bin/bash
+
+
+if test -z "ANDROID_SERIAL"; then
+    ANDROID_SERIAL=$(my-adb getprop ro.serialno)
+fi
+
+if test ! -e ~/.config/system-config/adb-tap.$ANDROID_SERIAL; then
+    my-adb dumpsys window|perl -ne 's/^\s*//; print $1 if m/^(init=\d+x\d+) /' > ~/.config/system-config/adb-tap.$ANDROID_SERIAL.$$
+    mv ~/.config/system-config/adb-tap.$ANDROID_SERIAL.$$ ~/.config/system-config/adb-tap.$ANDROID_SERIAL
+fi
+
+. ~/.config/system-config/adb-tap.$ANDROID_SERIAL
+if test "$init" != 1080x1920; then
+    export width=${init%x*}
+    export height=${init#*x}
+fi
+
 while true; do
     cmd=$1
     if test $cmd = adb-tap; then
@@ -19,6 +36,11 @@ while true; do
     if test $# = 0; then
         break
     fi
-done | xargs -d \\n adb-quote sh $(if echo $SHELLOPTS | grep -q xtrace; then
-                                    echo -x
-                                fi) -c
+done | if test "$init" = 1080x1920; then
+    cat
+else
+    perl -npe 's|input tap (\d+) (\d+)|sprintf "input tap %d %d", $1 * $ENV{width} / 1080, $2 * $ENV{height} / 1920|eg'
+fi | xargs -d \\n adb-quote sh $(
+        if echo $SHELLOPTS | grep -q xtrace; then
+            echo -x
+        fi) -c

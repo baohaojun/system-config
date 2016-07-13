@@ -1,5 +1,5 @@
 #!/bin/bash
-date +%Y-%m-%d-%H:%M:%S "$@" |
+date +%Y-%m-%d-%H:%M:%S "$@" |tr -d \\n|
     if test $(basename $0) = now; then
         cat
     else
