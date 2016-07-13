@@ -2153,6 +2153,8 @@ local press_dial_key = function()
    elseif where_is_dial_key == "Second from left" then
       adb_event"adb-tap 420 1634"
    else
+      adb_event("adb-tap 554 1668")
+      log("Error: unknown where_is_dial_key: %s, must be one of Middle, First from left, Second from left.\n\nPlease update %s", where_is_dial_key, configDir .. package.config:sub(1, 1) .. "phone_info.lua")
       where_is_dial_key = nil
    end
 end
