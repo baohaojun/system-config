@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-echo 此脚本会使用到sudo权限，可能需要车输入sudo密码
+echo 此脚本会使用到sudo权限，可能需要输入sudo密码
 sudo echo ok
 
 if test "$(pretty 20|pn 3)" != 0x14; then
@@ -192,6 +192,8 @@ function update-partition() {
     if test $(basename $file) = boot.img; then
         if test $hack = false; then
             adb-push $file /data
+        elif test -e boot-root.img; then
+            adb-push boot-root.img /data/boot.img
         else
             adb-push -d $file /data
         fi
