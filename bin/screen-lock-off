@@ -1,13 +1,7 @@
 #!/bin/bash
 exec > ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
 if test $(basename $0) = screen-lock-off; then
-    if test -e ~/.cache/system-config/logs/do-review-login; then
-        rm ~/.cache/system-config/logs/do-review-login;
-        if EMACS=t yes-or-no-p -y "Will now do review login, continue? "; then
-            sleep 2
-            review-login
-        fi
-    fi
+    find-or-exec emacs
 else
     true
 fi

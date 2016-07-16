@@ -141,7 +141,7 @@ for x in "$@"; do
     else
         echo found $target for your $x
     fi
-    if bash -x my-rsync -v $x $target; then
+    if cp -av $x $target; then
         true;
     else
         ew $target
@@ -149,7 +149,7 @@ for x in "$@"; do
 done
 
 if test "$root_folder"; then
-    rsync "$root_folder"/* $tdir -av
+    cp "$root_folder"/* $tdir -av
     fix-adbd-and-debug
 fi
 
@@ -157,7 +157,7 @@ echo tdir is $tdir
 dir2ramdisk $tdir > $ramdisk.2
 
 mv $ramdisk.2 $ramdisk
-if echo $SHELLOPTS | grep -q xtrace; then
+if echo $SHELLOPTS | grep -q xtrace || test "$SC_DEBUG" = true; then
     true;
 else
     rm -rf $(dirname $tdir)
