@@ -13,6 +13,7 @@
 set +e
 set -x
 mount -a || true
+echo 'core.%e.%p' > /proc/sys/kernel/core_pattern
 if test -d ~bhj/.cache/system-config/logs; then
     exec > ~bhj/.cache/system-config/logs/rc.local.log 2>&1
 else
