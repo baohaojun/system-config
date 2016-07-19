@@ -44,6 +44,13 @@ if my-adb "test -e /sdcard/Music/\"""$(basename "$mp3")""\" && echo $$" | grep ^
     adb-scan-media /sdcard/Music/"$(basename "$mp3")"
 fi
 
+n_devices=$(my-adb devices?|wc -l)
+if test $n_devices -gt 1 -a -e ~/.config/system-config/bhj/weixin-adb-serial; then
+    export ANDROID_SERIAL=$(cat ~/.config/system-config/bhj/weixin-adb-serial)
+elif test "$n_devices" = 1; then
+    export ANDROID_SERIAL=$(my-adb getprop ro.serialno)
+fi
+
 if my-adb "test -e /sdcard/Music/\"""$(mp3path "$mp3")""\" && echo $$" | grep ^${$}$; then
     exit 1
 else
@@ -52,12 +59,13 @@ else
     eyeD3 --remove-all "$mp3"-$$.mp3
     eyeD3 --set-encoding=utf8 -t "$title" -a "$singer" -A "$album" --add-image="$png":$type "$mp3"-$$.mp3
 
-    my-adb mkdir -p /sdcard/Music/"$(mp3dir "$mp3")"
+    (
+        my-adb mkdir -p /sdcard/Music/"$(mp3dir "$mp3")"
+        my-adb push "$mp3"-$$.mp3 /sdcard/Music/"$(mp3path "$mp3")".x
+        my-adb mv /sdcard/Music/"$(mp3path "$mp3")".x /sdcard/Music/"$(mp3path "$mp3")"
+    ) || true
 
-    my-adb push "$mp3"-$$.mp3 /sdcard/Music/"$(mp3path "$mp3")".x
-    my-adb mv /sdcard/Music/"$(mp3path "$mp3")".x /sdcard/Music/"$(mp3path "$mp3")"
     mv "$mp3"-$$.mp3 "$mp3"
-    # rm "$mp3"-$$.mp3 -f
     adb-scan-media /sdcard/Music/"$(mp3path "$mp3")"
     true
 fi

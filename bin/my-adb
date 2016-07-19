@@ -312,7 +312,7 @@ function adb() {
         if test "${1:0:1}" = :; then
             x=$1
             shift 1
-            exec the-true-adb logcat ${format:+-v $format} "$@" *:s $(echo -n ${x:1} | perl -npe 's/,|$/:v /g')
+            exec the-true-adb logcat ${format:+-v $format} "$@" *:W $(echo -n ${x:1} | perl -npe 's/,|$/:v /g')
         elif test "${1:0:2}" = s:; then
             x=$1
             shift 1

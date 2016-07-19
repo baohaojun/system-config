@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -e
+if test "$SC_DEBUG" = true; then
+    set -x
+fi
 cd $(lookup-file .repo/..)
 if test $# != 0; then
     . build/envsetup.sh

@@ -68,6 +68,9 @@ unset CLASSPATH
 
 time (
     set -e
+    if test "$SC_DEBUG" = true; then
+        set -x
+    fi
     set -o pipefail
     build_env=$(lookup-file build/envsetup.sh)
     top_dir=$(dirname $build_env)
@@ -96,6 +99,10 @@ EOF
         fi
     fi
     cd $top_dir/
+    if test "$TARGET_PRODUCT" -a "$TARGET_BUILD_VARIANT" -a ! -e buildspec.mk; then
+        echo Set product to $TARGET_PRODUCT-$TARGET_BUILD_VARIANT at $PWD
+        android-set-product $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+    fi
     . build/envsetup.sh
     set_stuff_for_environment
     BHJ_OUT_DIR=${OUT%target/*}
@@ -111,7 +118,9 @@ EOF
     (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"
-        . $BHJ_OUT_DIR/.buildenv.sh
+        if test -e $BHJ_OUT_DIR/.buildenv.sh; then
+            . $BHJ_OUT_DIR/.buildenv.sh
+        fi
         if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
             PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
             echo using java 1.7
