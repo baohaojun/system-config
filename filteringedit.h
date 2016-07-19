@@ -17,6 +17,7 @@ signals:
     void firstEntry();
     void lastEntry();
     void selectedCurrentEntryWithText(QString);
+    void selectedCurrentText(QString);
     void selectAllEntries();
 public slots:
 

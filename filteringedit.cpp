@@ -40,6 +40,10 @@ void FilteringEdit::keyPressEvent(QKeyEvent *e)
             emit selectAllEntries();
             return;
         }
+        if (m == Qt::ControlModifier) {
+            emit selectedCurrentText(this->toPlainText());
+            return;
+        }
     }
 
     if (m == Qt::ControlModifier) {
