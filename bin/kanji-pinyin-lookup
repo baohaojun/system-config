@@ -25,8 +25,7 @@ fi
 if test -e ~/system-config/cache/$(basename $0)/$pinyin; then
     $pager ~/system-config/cache/$(basename $0)/$pinyin;
 else
-    grep ^\"z$pinyin\" ~/system-config/gcode/ime-py/wubi86.py|
-        perl -npe 's/.*?://; s/[()a-z", ]+/ /g; s/\s+/\n/g'|grep .|
+    grep "\b$pinyin\d" -P  ~/src/github/Wrench/uc-to-py.tbl| pn 1|perl -M'Encode' -npe 's/.*/encode_utf8 chr(hex("0x$&"))/e' | grep .|
         while read kanji; do
             jkanji=$(s2j-wc $kanji)
             skanji=$(j2s-wc $jkanji)
