@@ -53,11 +53,9 @@ fi
 
 sync-with-xml 'default.xml -b master'
 sync-with-xml sfo-rom.xml
-sync-with-xml icesky-rom.xml
-sync-with-xml surabaya-rom-8996-r01200.3.xml
-sync-with-xml u1-l-rom.xml
-sync-with-xml bono-rom.xml
-sync-with-xml phoenix-rom.xml
+if test -e ~/src/github/smartcm/scm-helpers/.mirror-xmls; then
+    . ~/src/github/smartcm/scm-helpers/.mirror-xmls
+fi
 (
     cd kernel/msm.git
     git remote add msm310 smartisan:qualcomm/kernel/msm-3.10 || true
