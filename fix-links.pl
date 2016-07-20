@@ -89,12 +89,15 @@ sub fix_link($)
                 die "$link matched with multiple files or no files at all";
             }
 
-            if (system("yes-or-no-p", "-y", "Save '$link' so that it won't bother you again?")) {
+            if (system("yes-or-no-p", "-y", "Save '$link' so that it won't bother you again?") == 0) {
                 use File::Path qw(make_path);
-                make_path "$ENV{HOME}/.config/system-config/fix-links/$md5_head"
-                    or die "Can't make path $ENV{HOME}/.config/system-config/fix-links/$md5_head";
+                if (not -e "$ENV{HOME}/.config/system-config/fix-links/$md5_head") {
+                    make_path "$ENV{HOME}/.config/system-config/fix-links/$md5_head"
+                        or die "Can't make path $ENV{HOME}/.config/system-config/fix-links/$md5_head";
+                }
                 open(my $md5file, ">", "$ENV{HOME}/.config/system-config/fix-links/$md5_head/$md5_tail")
                     or die "Can't open $ENV{HOME}/.config/system-config/fix-links/$md5_head/$md5_tail";
+                print $md5file "$link";
                 close($md5file);
             }
         }
