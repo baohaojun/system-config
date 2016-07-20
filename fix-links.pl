@@ -80,8 +80,23 @@ sub fix_link($)
     }
 
     if (not -e $org_file and $link !~ m/^\s.*\s$/ and $link !~ m,^https?://,) {
-        if (system("yes-or-no-p", "-y", "$link does not exist or matched with too many files, continue?") != 0) {
-            die "$link matched with multiple files or no files at all";
+        use Digest::MD5 qw(md5_hex);
+        my $link_digest = md5_hex($link);
+        my $md5_head = substr($link_digest, 0, 2);
+        my $md5_tail = substr($link_digest, 2);
+        if (not -e "$ENV{HOME}/.config/system-config/fix-links/$md5_head/$md5_tail") {
+            if (system("yes-or-no-p", "-y", "'$link' does not exist or matched with too many files, continue?") != 0) {
+                die "$link matched with multiple files or no files at all";
+            }
+
+            if (system("yes-or-no-p", "-y", "Save '$link' so that it won't bother you again?")) {
+                use File::Path qw(make_path);
+                make_path "$ENV{HOME}/.config/system-config/fix-links/$md5_head"
+                    or die "Can't make path $ENV{HOME}/.config/system-config/fix-links/$md5_head";
+                open(my $md5file, ">", "$ENV{HOME}/.config/system-config/fix-links/$md5_head/$md5_tail")
+                    or die "Can't open $ENV{HOME}/.config/system-config/fix-links/$md5_head/$md5_tail";
+                close($md5file);
+            }
         }
     } else {
         $file = $org_file;
