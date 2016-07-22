@@ -13,6 +13,8 @@ sub debug(@) {
 our $working_file_sq;
 our $working_file;
 our $working_file_dir;
+our %anchors;
+
 sub fix_link($)
 {
     my ($link) = @_;
@@ -45,7 +47,7 @@ sub fix_link($)
                 }
             }
 
-            system("mv $q_link $ENV{PWD}/images/$base");
+            system("mkdir -p images; mv $q_link $ENV{PWD}/images/$base");
             $link = "$ENV{PWD}/images/$base";
         }
     }
@@ -71,7 +73,7 @@ sub fix_link($)
 
     $org_file = shell_quote($org_file);
     chomp($org_file =
-          (qx(find blog -name $org_file) or
+          (qx(if test -e blog; then find blog -name $org_file; fi) or
            qx(find . -name $org_file)));
 
     if ($org_file =~ m/\n/) {
@@ -79,7 +81,7 @@ sub fix_link($)
         chomp($org_file = qx(select-args $org_file));
     }
 
-    if (not -e $org_file and $link !~ m/^\s.*\s$/ and $link !~ m,^https?://,) {
+    if (not -e $org_file and not $anchors{$link} and $link !~ m/^\s.*\s$/ and $link !~ m,^https?://,) {
         use Digest::MD5 qw(md5_hex);
         my $link_digest = md5_hex($link);
         my $md5_head = substr($link_digest, 0, 2);
@@ -120,6 +122,14 @@ sub fix_link($)
 }
 
 for my $filename (@ARGV) {
+    open (my $fh, "<", $filename) or die "Can not open $filename";
+    %anchors = ();
+    while (<$fh>) {
+        while (m/<<(.*?)>>/g) {
+            $anchors{$1} = 1;
+        }
+    }
+    close $fh;
     open (my $fh, "<", $filename) or die "Can not open $filename";
     open (my $fh_new, ">", "$filename.$$") or die "Can not open $filename.$$";
 
