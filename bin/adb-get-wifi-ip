@@ -8,4 +8,13 @@ if ! my-adb devices? >/dev/null 2>&1 ; then
     cat ~/.cache/system-config/adb-wifi-ip
     exit
 fi
-my-adb shell netcfg | grep wlan0|pn 3|perl -npe 's!/.*!!' | tee ~/.cache/system-config/adb-wifi-ip /dev/stderr | $cat
+ip=$(my-adb shell netcfg | grep wlan0|pn 3|perl -npe 's!/.*!!')
+if test -z "$ip"; then
+    ip=$(my-adb ifconfig wlan0 | perl -ne 'print $1 if m/(?:inet addr:|^\s*inet\s*)(\d+\.\S+)/')
+fi
+
+if test -z "$ip"; then
+    die "can't get adb ip"
+fi
+
+echo "$ip"| tee ~/.cache/system-config/adb-wifi-ip /dev/stderr | $cat

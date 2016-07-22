@@ -78,7 +78,7 @@ done
     if test ! -e "$chroot"/$HOME/.bashrc-cust; then
         echo 'export PS1HOSTNAME=$(lsb_release -c -s)' > "$chroot"/$HOME/.bashrc-cust
     fi
-    sudo chown $USER\. -R $chroot/$HOME
+    sudo chown $USER\. $chroot/$HOME
 )
 
 sudo chroot "$chroot" "$@"

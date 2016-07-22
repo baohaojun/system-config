@@ -2,16 +2,18 @@
 cat <<EOF
 ; {%emacs-lisp%}
 
-(let ((my-loaded-themes custom-enabled-themes))
+(let ((my-loaded-themes custom-enabled-themes)
+      (interprogram-cut-function nil))
   (global-font-lock-mode)
-  (dolist (theme custom-enabled-themes)
-    (disable-theme theme))
+  (when custom-enabled-themes
+      (dolist (theme custom-enabled-themes)
+    (disable-theme theme)))
   (require 'ox-html)
   (find-file "$1")
   (org-html-export-to-html)
-  (kill-buffer "$(basename "$1")")
-  (dolist (theme my-loaded-themes)
-    (load-theme theme))
+  (when my-loaded-themes
+    (dolist (theme my-loaded-themes)
+      (load-theme theme)))
   ())
 ; {%/emacs-lisp%}
 EOF
