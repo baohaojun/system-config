@@ -234,7 +234,7 @@
     (when (eq keymap global-keymap)
       (unbind-keys window-keymap key))))
 
-(setq emacs-style-window-class-re "rdesktop|wrench|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer")
+(setq emacs-style-window-class-re "rdesktop|wrench|emacs|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|wine")
 (defvar global-remap-alist nil
   "Window specific remap list")
 
@@ -285,6 +285,7 @@
         ("M-Right" . '((qpdfview "C-S-RET")))
         ("C-x" . '((Firefox "C-x") (Iceweasel "C-x") (t do-c-x-map)))
         ("Super-&" . '((Wrench "Meta-&")))
+        ("j" . '((Wine "c")))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
 (bind-both-global&window-keymaps "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
@@ -337,21 +338,18 @@
   (unbind-both-global&window-keymaps "ESC"))
 
 (setq no-tap-drag-window-class-re "acroread")
-(progn
-  (add-hook 'focus-in-hook
-            (lambda (w focus-mode)
-              (let ((class (window-class w)))
-                (when (string= "Wine" class)
-                  (setq class (translate-string (substring (caddr (get-x-property w (quote WM_CLASS))) 0) "|")))
-                (if (string-match emacs-style-window-class-re class 0 t)
-                    (undo-global-remap (intern class)) ; it will map emacs style windows if specified
-                  (do-global-remap (intern class)))
-                (if (string-match gnome-windows-re (window-class w) 0 t)
-                    (setq bhj-is-gnome? t)
-                  (setq bhj-is-gnome? nil))
-                (if (string-match no-tap-drag-window-class-re (window-class w) 0 t)
-                    (system "synclient TapAndDragGesture=0&")
-                  (system "synclient TapAndDragGesture=1&"))))))
+(defun do-focus-global-remap (w focus-mode)
+  (let ((class (window-class w)))
+    (if (string-match emacs-style-window-class-re class 0 t)
+        (undo-global-remap (intern class)) ; it will map emacs style windows if specified
+      (do-global-remap (intern class)))
+    (if (string-match gnome-windows-re (window-class w) 0 t)
+        (setq bhj-is-gnome? t)
+      (setq bhj-is-gnome? nil))
+    (if (string-match no-tap-drag-window-class-re (window-class w) 0 t)
+        (system "synclient TapAndDragGesture=0&")
+      (system "synclient TapAndDragGesture=1&"))))
+(add-hook 'focus-in-hook do-focus-global-remap)
 
 ;; (setq focus-in-hook (cons (nth 2 focus-in-hook)
 ;;                         (cons (nth 4 focus-in-hook))))

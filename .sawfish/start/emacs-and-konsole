@@ -21,5 +21,5 @@ if xrandr | grep -P 'HDMI. connected|^DP1 connected'; then
     switch-to-hdmi-and-laptop
 fi
 
-do-natural-scrolling
 after-emacs-start
+do-natural-scrolling
