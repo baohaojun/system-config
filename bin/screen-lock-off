@@ -1,5 +1,7 @@
 #!/bin/bash
-exec > ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
+exec >> ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
+set -x
+date
 if test $(basename $0) = screen-lock-off; then
     find-or-exec emacs emacs.bhj
     sleep 1

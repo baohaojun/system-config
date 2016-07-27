@@ -27,15 +27,15 @@ done
 xrandr_out=$(xrandr | grep -v ' disconnected ')
 lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
 if test -z "$lvds"; then
-    lvds=$(echo "$xrandr_out" | grep '^eDP1' | pn 1)
+    lvds=$(echo "$xrandr_out" | grep -P '^eDP-?1' | pn 1)
 fi
 
 vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
 hdmi=$(echo "$xrandr_out" | grep '^HDMI' | pn 1)
 if test -z "$hdmi"; then
-    hdmi=$(echo "$xrandr_out" | grep '^DP1' | pn 1)
+    hdmi=$(echo "$xrandr_out" | grep '^DP-?1' -P | pn 1)
 fi
-if echo "$xrandr_out" | grep '^VGA\S* disconnected' -P; then
+if echo "$xrandr_out" | grep '^VGA\S* disconnected' -P || test -z "$vga"; then
     vga=$hdmi
 fi
 
@@ -60,7 +60,7 @@ elif test $(basename $0) = switch-to-laptop; then
     xrandr --output $lvds --auto
     xrandr --output $hdmi --off
     xrandr --output $vga --off
-else
+else # both display
 
     (
         set +x
@@ -96,6 +96,6 @@ if test $(basename $0) = switch-to-both-display; then
     sawfish-client -e '(bind-keys window-keymap "Super-F1" '\''(system "sawfish-force-maximize&"))'
 else
     sawfish-client -e '(bind-keys window-keymap "Super-F1" '\''maximize-window-toggle)'
-fi
+fi >/dev/null 2>&1
 
-sawfish-re-maximize
+sawfish-re-maximize >/dev/null 2>&1

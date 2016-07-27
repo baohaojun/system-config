@@ -192,6 +192,8 @@ function update-partition() {
     if test $(basename $file) = boot.img; then
         if test $hack = false; then
             adb-push $file /data
+        elif test -e boot-root-debuggable\=0.img; then
+            adb-push boot-root-debuggable\=0.img /data/boot.img
         elif test -e boot-root.img; then
             adb-push boot-root.img /data/boot.img
         else

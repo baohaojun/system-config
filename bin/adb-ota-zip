@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+adb push "$1" /cache/ota.zip
+my-adb "echo -n --show_text --update_package=/cache/ota.zip > /cache/recovery/command; sync"
+my-adb "reboot recovery"
