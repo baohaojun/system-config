@@ -109,6 +109,11 @@ sub fix_link($)
 
     if (-e $file) {
         debug "file is $file";
+        if ($0 =~ /org2pdf/) {
+            (my $ps_file = $file) =~ s/\.(png|jpg)$/.ps/;
+            system("convert", "$file", "$ps_file");
+            $file = $ps_file;
+        }
         $file = shell_quote($file);
         chomp ($file = qx(relative-path $file $working_file_sq));
         if ($file !~ m!/!) {
@@ -140,7 +145,9 @@ for my $filename (@ARGV) {
     while (<$fh>) {
         my $old = $_;
         s/\[\[(.*?)\]/"[[" . fix_link($1) . "]"/eg;
-        s/\[\[([^]:]*\.(png|jpg))\]\]/[[$1][file:$1]]/gi; # make images clickable
+        unless ($0 =~ /org2pdf/) {
+            s/\[\[([^]:]*\.(png|jpg))\]\]/[[$1][file:$1]]/gi; # make images clickable
+        }
         print $fh_new $_;
         if ($_ ne $old) {
             $changed = 1;
