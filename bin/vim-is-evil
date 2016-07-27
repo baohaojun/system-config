@@ -4,5 +4,8 @@ if test -e ~/.config/system-config/vim-is-evil; then
     hint "你已经在使用evil模式"
 fi
 
+hint 将安装Emacs相关的一些deb包，可能要用到sudo密码
+sudo apt-get build-dep emacs24-lucid
+
 touch ~/.config/system-config/vim-is-evil
 emacsclient -e "(evil-mode 1)" >/dev/null 2>&1&
