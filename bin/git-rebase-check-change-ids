@@ -14,7 +14,7 @@ done_revs=$(git rev-list $1 ^HEAD)
 done_logs=$(for x in $done_revs; do git log -1 $x; done)
 head=$(git rev-parse HEAD)
 
-git co $1 || true
+git checkout $1 || true
 for x in $todo_revs; do
     change_id=$(git log -1 $x|grep Change-Id:|pn 2)
     if ! [[ "$change_id" =~ ^I[a-f0-9]{40} ]]; then

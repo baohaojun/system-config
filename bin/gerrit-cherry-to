@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-git co -B cherry-from-this HEAD
+git checkout -B cherry-from-this HEAD
 repo-cherry-find-all -f cherry-from-this -F -t $(git-choose-branch -p to) -T
 repo-cherry-pick-all baohaojun@.*@
 if yes-or-no-p -y "Push for review and submit?"; then
@@ -10,4 +10,4 @@ if yes-or-no-p -y "Push for review and submit?"; then
 else
     start_recursive_shell "Should push for review" || true
 fi
-git co cherry-from-this@{0}
+git checkout cherry-from-this@{0}

@@ -3,7 +3,7 @@
 set -ex
 test -e boot.img
 git clean -xfd 
-git co -- . 
+git checkout -- . 
 
 unpackbootimg -i boot.img
 mkdir ramdisk

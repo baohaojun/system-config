@@ -9,7 +9,7 @@ y=; for x in $(cat ~/1.txt); do
 	    true; 
 	fi; 
 	
-	git co $x -- . ;
+	git checkout $x -- . ;
 	git rm -rf --ignore-unmatch -- $(
 	    git ls-tree --name-only $y gcode/offline.wikipedia/|xargs bash -c 'for x in "$@"; do basename $x; done' true 
 	)

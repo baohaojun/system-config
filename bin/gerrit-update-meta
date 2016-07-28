@@ -9,5 +9,5 @@ if test $# != 0; then
 fi
 
 git fetch $(repo-remote) refs/meta/*:refs/meta/*
-git co refs/meta/config || git reset --soft refs/meta/config
+git checkout refs/meta/config || git reset --soft refs/meta/config
 start_recursive_shell update-meta

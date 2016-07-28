@@ -62,6 +62,6 @@ else
         cd $dir
         git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
         git fetch -v origin
-        git co -B $branch origin/$branch
+        git checkout -B $branch origin/$branch
     )
 fi

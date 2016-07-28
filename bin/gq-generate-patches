@@ -11,7 +11,7 @@ head=$(git symbolic-ref HEAD 2>/dev/null || git rev-parse HEAD)
     commits=$(git rev-list ^$(repo-remote-branch) HEAD)
     tmp_branch=$(basename $0).$$
     git branch -D $tmp_branch >/dev/null 2>&1 || true
-    git co -b $tmp_branch $(repo-remote-branch)
+    git checkout -b $tmp_branch $(repo-remote-branch)
 
     gq init
 
@@ -22,4 +22,4 @@ head=$(git symbolic-ref HEAD 2>/dev/null || git rev-parse HEAD)
     gq bpe-export $(repo-remote-branch)
     git branch -D $tmp_branch >/dev/null 2>&1 || true
 ) || true
-git co $head
+git checkout $head

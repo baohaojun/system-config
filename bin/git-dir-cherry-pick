@@ -10,8 +10,8 @@ git add . >/dev/null >/dev/null 2>&1
 git rm debian/ -rf >/dev/null 2>&1 || true
 $3
 git rm beagrep-grep-readme.org -f ||true
-git co HEAD conf-data/config-files/FilesQueryable.xml
-(git status -s |grep '^D'|pn 2|xargs git reset  HEAD >/dev/null; git st -s |grep '^ D'|pn 2|xargs git co HEAD >/dev/null;) || true
+git checkout HEAD conf-data/config-files/FilesQueryable.xml
+(git status -s |grep '^D'|pn 2|xargs git reset  HEAD >/dev/null; git st -s |grep '^ D'|pn 2|xargs git checkout HEAD >/dev/null;) || true
 (echo; echo; git diff HEAD --name-status |sed -e 's/^/#/') >> $tmp_msg 
 git diff --quiet HEAD || git commit -m "$(get-stdin $tmp_msg|perl -ne 'print unless m/^#/')"
 

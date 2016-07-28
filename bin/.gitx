@@ -190,20 +190,21 @@ print $_ . "\n";
             exit
         fi
 
-        if test $# = 2 -a "$1" = co -a "$2" = -B; then
-            git co -B "$(git-choose-branch remotes/ )"
-            exit
-        fi
-        if test $# = 3 -a "$1" = co -a "$2" = -B; then
-            echo git checkout -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
-            git checkout -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
-            exit
+        if test "$2" = -B && test "$1" = co -o "$1" = checkout; then
+            if test "$#" = 2; then
+                git checkout -B "$(git-choose-branch remotes/ )"
+                exit
+            elif test "$#" = 3; then
+                echo git checkout -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
+                git checkout -B $(echo $3|perl -npe 's!^remotes/!!; s!^[^/]+/!!') $3
+                exit
+            fi
         fi
 
         if test "$1" = co -a $# = 2; then
             command git "$@" || {
                 git fetch -v $(repo-remote) || true
-                git co $(git-choose-branch "$2")
+                git checkout $(git-choose-branch "$2")
             }
             exit
         fi

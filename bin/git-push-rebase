@@ -90,9 +90,9 @@ fi
 
 if test ! "$(wgit symbolic-ref --short HEAD)"; then
     if git-is-ancestor master HEAD; then
-        command git co -B master
+        command git checkout -B master
     elif git-is-ancestor HEAD master; then
-        command git co master
+        command git checkout master
     else
         die HEAD not setup correctly, please check $PWD
     fi
@@ -281,7 +281,7 @@ fi
 
 if test "$(wgit symbolic-ref --short HEAD)" != $branch; then
     if git-is-ancestor $branch HEAD; then
-        git co -B $branch
+        git checkout -B $branch
     fi
 fi
 
@@ -296,7 +296,7 @@ if git diff --quiet $origin/$branch; then
 fi
 
 if git-is-ancestor HEAD $origin/$branch; then
-    git co -B $branch $origin/$branch
+    git checkout -B $branch $origin/$branch
     exit
 fi
 

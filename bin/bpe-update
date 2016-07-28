@@ -72,7 +72,7 @@ for x in $args; do
 	    (
                 git branch -D $qx || true # to make sure
             ) >/dev/null 2>&1 
-	    git co -b $qx $git_base
+	    git checkout -b $qx $git_base
 	    git reset --hard $git_base
 	    git clean -xfd >/dev/null 2>&1 
 	    gq init

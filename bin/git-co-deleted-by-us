@@ -1,3 +1,3 @@
 #!/bin/bash
 
-git co $WORKING_REV $(git st -s | grep ^DU | pn 2)
+git checkout $WORKING_REV $(git st -s | grep ^DU | pn 2)

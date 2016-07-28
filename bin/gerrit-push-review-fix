@@ -18,11 +18,11 @@ while true; do
 
     gerrit-fetch-review "$cid"
     head=$(git rev-parse HEAD)
-    git co FETCH_HEAD
+    git checkout FETCH_HEAD
     git merge $(repo-remote-branch)
     gerrit-push-review
     gerrit-do-review
     repo sync -n $(repo-project)
-    git co $head
+    git checkout $head
     git rebase $(repo-remote-branch)
 done

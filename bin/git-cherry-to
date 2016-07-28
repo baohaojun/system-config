@@ -25,9 +25,9 @@ while true; do
 done
 
 if test ! "$branch"; then
-    git co -B
+    git checkout -B
 else
-    git co $branch
+    git checkout $branch
 fi
 
 git cherry-pick $rev

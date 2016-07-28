@@ -71,7 +71,7 @@ function compile_local_beagrep() {
     git clean -xfd
     . .gitx
 
-    git co -B origin/sans-glib
+    git checkout -B origin/sans-glib
     git merge master
     psync -d code3 .
     ssh code3 "cd $PWD; autoreconf -i && ./configure --prefix=$(echo ~/external/local) && make -j200 && make install"

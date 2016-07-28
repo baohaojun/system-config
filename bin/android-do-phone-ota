@@ -33,7 +33,7 @@ if ! running-as-root; then
         flock 9
         cd $android_dir/build/tools/releasetools
         git fetch smartisan sandbox-for-linux-ota
-        git co FETCH_HEAD
+        git checkout FETCH_HEAD
         sudo modprobe loop >/dev/null 2>&1 || true
     ) 9> /tmp/$(basename $0).patch.lock
 fi

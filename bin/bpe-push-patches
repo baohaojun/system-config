@@ -44,7 +44,7 @@ for x in $args; do
 	    (
                 git branch -D $qx || true # to make sure
             ) >/dev/null 2>&1 
-	    git co -b $qx $(repo-remote-branch)
+	    git checkout -b $qx $(repo-remote-branch)
 	    gq init
 	    cp $patch_dir/* .git/patches/$qx/
 	    gq push -a

@@ -137,7 +137,7 @@ for x in "$@" $(
         fi
 
         if test "$out" = discard; then
-            git co "$x"
+            git checkout "$x"
             break
         fi
 

@@ -15,7 +15,7 @@ export from=$(git rev-parse $1)
 export to=$(git rev-parse $2)
 export base=$(git merge-base $from $to)
 
-git co -B quilt.$$ $base
+git checkout -B quilt.$$ $base
 
 (
     commits=$(git rev-list ^$from $to)
@@ -33,6 +33,6 @@ git co -B quilt.$$ $base
     
 ) || true
 start_recursive_shell patching...
-git co $1
+git checkout $1
 git branch -D quilt.$$
 
