@@ -82,7 +82,7 @@ bash有个补齐扩展机制，大致是这样用的： =complete comp_func cmd1
 
 后来又专门封装了一下，成了一个 git-choose-branch 的脚本。
 
-后来干脆把 git 命令改了一下，以错为对，写了个名为git的函数，如果发现我的输入是 =git co -B= ，这个本来是个非法的git命令，是要出错的，但我赋给了它新的含义，先用 git-choose-branch 获得远程分支的名字REMOTE_BRANCH，然后根据远程分支名计算得到本地BRANCH名，最后组合成 =command git co -B $BRANCH $REMOTE_BRANCH= 。
+后来干脆把 git 命令改了一下，以错为对，写了个名为git的函数，如果发现我的输入是 =git checkout -B= ，这个本来是个非法的git命令，是要出错的，但我赋给了它新的含义，先用 git-choose-branch 获得远程分支的名字REMOTE_BRANCH，然后根据远程分支名计算得到本地BRANCH名，最后组合成 =command git checkout -B $BRANCH $REMOTE_BRANCH= 。
 
 如果你觉得这么瞎改git命令不对的话，请想想为什么bash有个alias机制允许你把 =rm= 改成 ~alias rm='rm -'i~ 来让它变得更安全呢？...
 

@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
+ <link rel="stylesheet" href="/css/dichromacy.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -257,7 +257,7 @@ bash有个补齐扩展机制，大致是这样用的： <code>complete comp_func
 </p>
 
 <p>
-后来干脆把 git 命令改了一下，以错为对，写了个名为git的函数，如果发现我的输入是 <code>git co -B</code> ，这个本来是个非法的git命令，是要出错的，但我赋给了它新的含义，先用 git-choose-branch 获得远程分支的名字REMOTE_BRANCH，然后根据远程分支名计算得到本地BRANCH名，最后组合成 <code>command git co -B $BRANCH $REMOTE_BRANCH</code> 。
+后来干脆把 git 命令改了一下，以错为对，写了个名为git的函数，如果发现我的输入是 <code>git checkout -B</code> ，这个本来是个非法的git命令，是要出错的，但我赋给了它新的含义，先用 git-choose-branch 获得远程分支的名字REMOTE_BRANCH，然后根据远程分支名计算得到本地BRANCH名，最后组合成 <code>command git checkout -B $BRANCH $REMOTE_BRANCH</code> 。
 </p>
 
 <p>
