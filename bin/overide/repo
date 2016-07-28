@@ -4,6 +4,10 @@ if test "$SYSTEM_CONFIG_INITED" != true; then
     . ~/system-config/.bashrc
 fi
 
+if [[ $PWD =~ /\.repo($|/) ]]; then
+    cd $(lookup-file .repo)/..
+fi
+
 if test "$1" = init; then
     if test -e .repo/manifest.xml; then
         xmlstarlet sel -t -m //copyfile -v @dest -n .repo/manifest.xml|xargs rm -f

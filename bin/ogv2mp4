@@ -1,3 +1,5 @@
 #!/bin/bash
-set -- "$(readlink -f "$1")"
-ffmpeg -i "$1" -strict -2 "${1%.ogv}".mp4
+
+ogv_file=$(readlink -f "$1")
+shift
+ffmpeg -i "$ogv_file" "$@" -strict -2 "${ogv_file%.ogv}".mp4

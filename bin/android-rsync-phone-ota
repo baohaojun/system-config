@@ -142,7 +142,9 @@ done
 
 ## end generated code
 
-
+if test -z "$skip_partitions" -a -e ~/.config/system-config/android-rsync-phone-ota.skip-partitions; then
+    skip_partitions=$(cat ~/.config/system-config/android-rsync-phone-ota.skip-partitions)
+fi
 xml=rawprogram_unsparse.xml
 if test ! -e "$xml"; then
     if test -e rawprogram0_unsparse.xml; then
@@ -173,7 +175,7 @@ if test $do_system = true; then
 fi
 
 my-adb mount -t ext4 /dev/block/bootdevice/by-name/userdata /data
-my-adb mount /dev/block/bootdevice/by-name/system /system
+my-adb mount -t ext4 /dev/block/bootdevice/by-name/system /system
 
 adb_partition_prefix=$(my-adb "for y in /dev/block/platform/*/by-name /dev/block/platform/*/*/by-name; do if test -d \$y; then echo \$y; exit; fi; done")
 # this is for debugging

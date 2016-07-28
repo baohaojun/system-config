@@ -682,7 +682,7 @@
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
 (bind-both-global&window-keymaps "XF86Favorites" '(system "do-work&"))
-(bind-keys s-h-keymap "a" '(system "find-or-exec qpdfview&"))
+(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular'&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))

@@ -1,20 +1,56 @@
 #!/bin/bash
 
-exec 9> ~/.cache/system-config/logs/$(basename $0).lock2
-flock 9
+set -e
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:prompt='"> "' ssecret kdo-kill
+## end code-generator
+## start generated code
+TEMP=$(getopt -o ksp:h \
+              --long do-kill,secret,prompt:,help,no-do-kill,no-secret \
+              -n $(basename -- $0) -- "$@")
+do_kill=false
+secret=false
 prompt="> "
-TEMP=$(getopt -o p:s --long prompt: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
-secret=0
 while true; do
     case "$1" in
+
+        -k|--do-kill|--no-do-kill)
+            if test "$1" = --no-do-kill; then
+                do_kill=false
+            else
+                do_kill=true
+            fi
+            shift
+            ;;
+        -s|--secret|--no-secret)
+            if test "$1" = --no-secret; then
+                secret=false
+            else
+                secret=true
+            fi
+            shift
+            ;;
         -p|--prompt)
             prompt=$2
             shift 2
             ;;
-        -s)
-            secret=1
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-k, '
+            printf %-24s '--[no-]do-kill'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--prompt=PROMPT'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]secret'
+            echo
+            exit
             shift
             ;;
         --)
@@ -26,6 +62,18 @@ while true; do
             ;;
     esac
 done
+
+
+## end generated code
+
+if test "$do_kill" = true; then
+    fuser ~/.cache/system-config/logs/$(basename $0).lock2|xargs ps 1
+    fuser -k ~/.cache/system-config/logs/$(basename $0).lock2
+    exit 0
+fi
+
+exec 9> ~/.cache/system-config/logs/$(basename $0).lock2
+flock 9
 
 if test "$DESKTOP_SESSION" != sawfish; then
     title=$(echo "$prompt" | tail -n 1)

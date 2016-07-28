@@ -28,7 +28,7 @@ done
 ## end generated code
 
 if test -z "$window_class"; then
-    window_class=T1Wrench
+    window_class=Wrench
 fi
 
 recordmydesktop "$@" --on-the-fly-encoding $(sawfish-get-window-xy "$window_class" | tr -d \") -o $dir/out-$(now).ogv
