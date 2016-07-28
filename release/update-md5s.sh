@@ -6,7 +6,7 @@ function die() {
     exit -1
 }
 
-(git co HEAD .start-upgrade.hash || true)>/dev/null 2>&1
+(git checkout HEAD .start-upgrade.hash || true)>/dev/null 2>&1
 if test ! -e .start-upgrade.hash; then
     echo -n > wrench.md5
     exit
@@ -14,7 +14,7 @@ fi
 
 start=$(cat .start-upgrade.hash)
 if test -e lua52.dll; then
-    git co HEAD lua52.dll lua.exe luac.exe md5/des56.dll md5/core.dll
+    git checkout HEAD lua52.dll lua.exe luac.exe md5/des56.dll md5/core.dll
 fi
 
 gitdir=$(relative-path $(dirname $(lookup-file -e .git)) .)
