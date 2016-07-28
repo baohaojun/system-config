@@ -4,6 +4,7 @@
 local M
 
 -- functions
+local adb_input_method_is_null
 local window_post_button_map = {}
 local mail_group_map = {}
 local phone_info_map = {}
@@ -12,6 +13,7 @@ local save_phone_info
 local phone_serial = ""
 local configDir = "."
 local last_uploaded_pics = {}
+local weixin_open_homepage
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
@@ -32,6 +34,7 @@ local t1_find_weixin_contact, t1_find_qq_contact, t1_find_dingding_contact
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
+local wait_input_target_n
 local t1_eval, log, share_pics_to_app, share_text_to_app
 local picture_to_weibo_comment
 local check_scroll_lock, prompt_user, yes_or_no_p
@@ -598,11 +601,15 @@ wait_top_activity_match = function(activity)
 end
 
 wait_input_target = function(...)
+   return wait_input_target_n(20, ...)
+end
+
+wait_input_target_n = function(n_loop, ...)
    activities = {...}
    for i = 1, #activities do
       debug("wait for input method for %s", activities[i])
    end
-   for i = 1, 20 do
+   for i = 1, n_loop do
       local window = adb_focused_window()
       for ai = 1, #activities do
          local activity = activities[ai]
@@ -634,23 +641,60 @@ adb_top_window = function()
    return top_window:sub(1, -2)
 end
 
-local function weixin_open_homepage()
+local function get_coffee()
+   for i = 1, 5 do
+      weixin_open_homepage()
+      log("Start to click for the favsearch " .. i)
+      adb_event"adb-tap 927 1830 sleep .2 adb-tap 337 772 sleep 1 adb-tap 833 145 sleep .2"
+      if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
+         break
+      end
+      log("Need retry " .. i)
+   end
+   putclip"我正在使用咕咕机"
+   adb_event"key scroll_lock sleep .5 adb-tap 535 458 sleep 3 adb-tap 15 612"
+   for i = 1, 50 do
+      local input_target = wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI")
+      if input_target:match"com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI" then
+         break
+      end
+      log("Click for coffee input: %s %d", input_target, i)
+
+      adb_event"adb-tap 15 612"
+      sleep(.1)
+   end
+   putclip"秦师傅，给我来一杯拿铁，谢谢❤"
+   adb_event"key scroll_lock sleep .5"
+end
+
+weixin_open_homepage = function()
    adb_am("am start -n " .. weixinLauncherActivity)
    wait_top_activity_match("com.tencent.mm/")
    for i = 1, 20 do
       sleep(.1)
-      log("touch the search button")
+      log("touch the search button " .. i)
 
       adb_event"adb-tap 801 132"
-      sleep(.4)
-      if adb_top_window() == weixinSearchActivity then
-         log("exit from search by key back")
-         wait_input_target(weixinSearchActivity)
-         adb_event"key back sleep .1 key back sleep .1"
+      local waiting_search = true
+      for i_search = 1, 4 do
          sleep(.1)
-         break
+         local top_window = adb_top_window()
+         if top_window == weixinSearchActivity then
+            log("exit from search by key back " .. i_search)
+            wait_input_target(weixinSearchActivity)
+            adb_event"key back sleep .1 key back sleep .1"
+            sleep(.1)
+            waiting_search = false
+            return
+         elseif top_window ~= weixinLauncherActivity then
+            log("exit the current %s by back key %d", top_window, i)
+            waiting_search = false
+         end
+         if not waiting_search then
+            break
+         end
       end
-      log("exit the current by touching back botton")
+      log("exit the current by touching back botton " .. i)
       adb_event"88 170 sleep .1 88 170 sleep .1"
       sleep(.1)
       adb_am("am start -n " .. weixinLauncherActivity)
@@ -685,9 +729,9 @@ local function dingding_open_homepage()
 end
 
 local function qq_open_homepage()
-   adb_am("am start -n " .. qqChatActivity2)
+   adb_start_activity(qqChatActivity2)
 
-   while true do
+   for qq_try = 1, 40 do
       sleep(.2)
       local ime_active, height, ime_connected = adb_get_input_window_dump()
       log("ime activity is %s, height is %d, ime_connected is %s", ime_active, height, ime_connected)
@@ -875,7 +919,7 @@ adb_get_input_window_dump = function()
    return input_method_active, ime_height, ime_connected, current_input_method
 end
 
-local function adb_input_method_is_null()
+adb_input_method_is_null = function ()
    --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
    local dump = adb_pipe{'dumpsys', 'input_method'}
    if dump:match("mServedInputConnection=null") then
@@ -1265,10 +1309,12 @@ qq_find_friend = function(friend_name)
    qq_open_homepage()
    adb_event"adb-tap 391 288 sleep .8"
    local top_window = wait_input_target(qqChatActivity2, qqGroupSearch)
-      adb_event"key scroll_lock sleep .6"
+   adb_event"key scroll_lock sleep .6"
    if top_window and top_window:match(qqGroupSearch) then
+      log"Fonud qqGroupSearch"
       adb_event"adb-tap 365 384"
    else
+      log("Got stuck in qqChatActivity2: %s", top_window)
       adb_event"adb-tap 303 291"
    end
 end
@@ -2169,6 +2215,10 @@ t1_call = function(number)
          t1_find_weixin_contact(who)
       elseif where == "dd" then
          t1_find_dingding_contact(who)
+      elseif where == "coffee" then
+         get_coffee()
+      else
+         prompt_user("Don't know how to do it: " .. where)
       end
       return
    end
