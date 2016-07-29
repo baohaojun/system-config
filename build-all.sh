@@ -129,7 +129,7 @@ fi
 if is-platform-needed linux; then
     (
         rm ~/tmp/build-t1 -rf
-        ./build-linux.sh -d ~/tmp/build-t1
+        ./build-linux.sh -b ~/tmp/build-t1
         touch ~/tmp/build-t1/build-ok
     )&
 fi
