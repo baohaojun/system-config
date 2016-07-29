@@ -565,14 +565,14 @@ local function t1_share_to_qq(text)
    t1_send_action()
 end
 
-wait_top_activity = function(...)
+local wait_top_activity_n = function(n_retry, ...)
    activities = {...}
    for i = 1, #activities do
       debug("wait for top activity: %s", activities[i])
    end
 
    local window
-   for i = 1, 20 do
+   for i = 1, n_retry do
       for ai = 1, #activities do
          local activity = activities[ai]
          window = adb_focused_window()
@@ -584,6 +584,10 @@ wait_top_activity = function(...)
       sleep(.1)
    end
    return window
+end
+
+wait_top_activity = function(...)
+   return wait_top_activity_n(20, ...)
 end
 
 wait_top_activity_match = function(activity)
@@ -641,7 +645,7 @@ adb_top_window = function()
    return top_window:sub(1, -2)
 end
 
-local function get_coffee()
+local function get_coffee(what)
    for i = 1, 5 do
       weixin_open_homepage()
       log("Start to click for the favsearch " .. i)
@@ -663,8 +667,14 @@ local function get_coffee()
       adb_event"adb-tap 15 612"
       sleep(.1)
    end
-   putclip"秦师傅，给我来一杯拿铁，谢谢❤"
+   if what == "" then
+      what = "秦师傅，给我来一杯拿铁，谢谢❤"
+   end
+   putclip(what)
    adb_event"key scroll_lock sleep .5"
+   if yes_or_no_p("确认发送秦师傅咖啡订单？") then
+      adb_event"adb-tap 539 957"
+   end
 end
 
 weixin_open_homepage = function()
@@ -714,7 +724,7 @@ local function dingding_open_homepage()
             log("You need to sign in dingding")
             break
          end
-         log("window is %s", window)
+         log("window is %s at %d", window, i)
          adb_event"key back sleep .1"
          sleep(.1)
          adb_am("am start -n " .. dingding_splash)
@@ -1306,16 +1316,19 @@ end
 qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
    log("qq find friend: %s", friend_name)
-   qq_open_homepage()
-   adb_event"adb-tap 391 288 sleep .8"
-   local top_window = wait_input_target(qqChatActivity2, qqGroupSearch)
-   adb_event"key scroll_lock sleep .6"
-   if top_window and top_window:match(qqGroupSearch) then
-      log"Fonud qqGroupSearch"
-      adb_event"adb-tap 365 384"
-   else
-      log("Got stuck in qqChatActivity2: %s", top_window)
-      adb_event"adb-tap 303 291"
+   for i = 1, 5 do
+      qq_open_homepage()
+      adb_event"sleep .3 adb-tap 391 288 sleep .8"
+      local top_window = wait_input_target(qqChatActivity2, qqGroupSearch)
+      adb_event"key scroll_lock sleep .6"
+      if top_window and top_window:match(qqGroupSearch) then
+         log"Fonud qqGroupSearch"
+         adb_event"adb-tap 365 384"
+         break
+      else
+         log("Got stuck in qqChatActivity2: %s", top_window)
+         adb_event"adb-tap 303 291"
+      end
    end
 end
 
@@ -1345,10 +1358,18 @@ qq_find_group_friend = function(friend_name)
    wait_input_target(troopList)
    adb_event("key scroll_lock key space key DEL sleep .5 adb-tap 326 320")
    local troopMember = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberCardActivity"
-   window = wait_top_activity(troopMember)
-   if window ~= troopMember then
-      log("did not get troopMember: %s", window)
-      return
+   for i = 1, 5 do
+      window = wait_top_activity_n(2, troopMember)
+      if window == troopMember then
+         break
+      else
+         log("Did not get into troopMember, try " .. i)
+         adb_event("key space key DEL sleep .5 adb-tap 326 320")
+         if i == 5 then
+            log("Giving up...")
+            return
+         end
+      end
    end
    adb_event("sleep .5 adb-tap 864 1800")
 end
@@ -1532,7 +1553,7 @@ local function upload_pics(...)
    local pics = {...}
    adb_shell(
       [[
-            for x in /sdcard/DCIM/Camera/wrench-*; do
+            for x in /sdcard/DCIM/Camera/000-wrench-*; do
                if test -e "$x"; then
                   rm -rf "$x";
                   am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
@@ -1545,7 +1566,7 @@ local function upload_pics(...)
    time = os.time()
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = ('/sdcard/DCIM/Camera/wrench-%d-%d%s'):format(time, i, ext)
+      local target = ('/sdcard/DCIM/Camera/000-wrench-%d-%d%s'):format(time, i, ext)
       targets[#targets + 1] = target
       adb_push{pics[i], target}
       adb_am{"am", "startservice", "--user", "0", "-n", "com.bhj.setclip/.PutClipService", "--es", "picture", target}
@@ -1642,10 +1663,7 @@ picture_to_weibo_comment = function(pics, ...)
 
       if i == 1 then
          wait_input_target(weiboShareActivity)
-         local input_method, ime_height = adb_get_input_window_dump()
-         if ime_height ~= 0 then
-            adb_event("key back sleep .5")
-         end
+         local input_method, ime_height = close_ime()
          for n = 1,10 do
             if adb_top_window() == weiboShareActivity then
                adb_event("adb-tap 62 1843")
@@ -1679,11 +1697,7 @@ local function picture_to_weixin_chat(pics, ...)
       pics = {pics, ...}
    end
 
-   local input_method, ime_height = adb_get_input_window_dump()
-   if (ime_height ~= 0) then
-       ime_height = 0
-       adb_event("key back")
-   end
+   local input_method, ime_height = close_ime()
    local post_button = ('984 %d'):format(1920 - 50)
    local chatWindow = adb_top_window()
    for i = 1, #pics do
@@ -1745,14 +1759,92 @@ local function picture_to_weixin_chat(pics, ...)
    for n = 1, 10 do
       sleep(.1)
       adb_event("adb-tap 553 1796 sleep .1")
-      local input_method, ime_height = adb_get_input_window_dump()
-      if ime_height ~= 0 then
-         adb_event("sleep .1 adb-key back")
-         break
-      end
+      local input_method, ime_height = close_ime()
       if not (adb_top_window()):match("^PopupWindow:") then
          break
       end
+   end
+end
+
+local function close_ime()
+   local input_method, ime_height = adb_get_input_window_dump()
+   if (ime_height ~= 0) then
+      ime_height = 0
+      log("Send the back key to hide IME.")
+      adb_event("key back")
+   end
+   return input_method, ime_height
+end
+
+local function click_to_album_wx_chat_style(event1, activity1, ...)
+   local input_method, ime_height = close_ime()
+   local post_button = ('984 %d'):format(1920 - 50)
+   local old_top_window = adb_top_window()
+
+   adb_event(post_button .. " sleep .2 " .. event1)
+   local top_window = activity1
+   if top_window ~= activity1 then
+      log("Can't get to %s, got %s", activity1, top_window)
+      return nil
+   end
+   return true
+end
+
+local function picture_to_dingding_chat(pics, ...)
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
+   adb_shell(
+      [[
+            for x in /sdcard/Wrench-DingDing/*; do
+               if test -e "$x"; then
+                  rm -rf "$x";
+                  am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
+               fi;
+            done;
+            mkdir /sdcard/Wrench-DingDing/;
+            cp /sdcard/DCIM/Camera/000-wrench-* /sdcard/Wrench-DingDing/;
+            for x in /sdcard/Wrench-DingDing/000-wrench-*; do
+                if test -e "$x"; then
+                    am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
+                fi;
+            done
+
+   ]])
+
+   if not click_to_album_wx_chat_style("adb-tap 173 1359", "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.AlbumActivity") then
+      return
+   end
+
+   local pic_share_buttons = {
+      "adb-tap 587 314", "adb-tap 1007 348", "adb-tap 284 712",
+      "adb-tap 649 666", "adb-tap 969 676", "adb-tap 292 1053",
+      "adb-tap 598 1029", "adb-tap 980 1027", "adb-tap 260 1407"
+   }
+   for i = 1, #pics do
+      local target = pics[i]
+      local button = pic_share_buttons[i]
+      if i == 1 then
+         for n = 1, 10 do
+            local window = adb_top_window()
+            if window == "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.AlbumActivity" then
+               adb_event"sleep .2"
+               adb_event(button .. " sleep .2 adb-tap 907 1860")
+            elseif window == "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.AlbumPreviewActivity" then
+               adb_event"sleep .5 adb-tap 859 1850 sleep .2 adb-tap 85 169 sleep .3"
+               break
+            end
+         end
+      end
+      adb_event("sleep .2 " .. button .. " sleep .1")
+   end
+   adb_event"adb-tap 930 1876 sleep .2 adb-tap 96 1860 sleep .2"
+   if yes_or_no_p"Confirm to send these pictures to dingding" then
+      adb_event"adb-tap 888 128 sleep .2"
+   end
+   if not wait_top_activity_n(2, old_top_window) then
+      log"Can't get old dd chat window"
    end
 end
 
@@ -1761,17 +1853,11 @@ local function picture_to_qq_chat(pics, ...)
       pics = {pics, ...}
    end
 
-   local input_method, ime_height = adb_get_input_window_dump()
-   if (ime_height ~= 0) then
-      ime_height = 0
-      log("Send the back key to hide IME.")
-      adb_event("key back")
-   end
+   local input_method, ime_height = close_ime()
    local chatWindow
    local image_button = ('288 %d'):format(1920 - ime_height - 50)
    local post_button = ('159 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
-      local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
       if i == 1 then
          for n = 1,50 do
@@ -1820,50 +1906,12 @@ local function picture_to_qq_chat(pics, ...)
    wait_top_activity(chatWindow)
 end
 
-local function picture_to_qqlite_chat(pics, ...)
-   if type(pics) ~= "table" then
-      pics = {pics, ...}
-   end
-
-   local input_method, ime_height = adb_get_input_window_dump()
-   if (ime_height ~= 0) then
-       ime_height = 0
-       adb_event("key back")
-   end
-   local post_button = ('984 %d'):format(1920 - ime_height - 50)
-   for i = 1, #pics do
-      local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = pics[i]
-      if i == 1 then
-         local events = post_button .. " sleep .1 adb-tap 203 1430 sleep .1"
-         adb_event(events)
-         while adb_focused_window() ~= "com.tencent.qqlite/com.tencent.mobileqq.activity.photo.AlbumListActivity" do
-            adb_event{118, 152, "sleep", .5}
-         end
-         adb_event{457, 493, 'sleep', .5}
-      end
-      local pic_share_buttons = {
-         "adb-tap 191 394",
-         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
-         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
-         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
-      }
-      local i_button = pic_share_buttons[i]
-      adb_event(i_button)
-   end
-   adb_event("adb-tap 519 1841 adb-tap 434 1071 adb-tap 918 1862 sleep .5 adb-tap 279 1221")
-end
-
 local function picture_to_weibo_chat(pics, ...)
    if type(pics) ~= "table" then
       pics = {pics, ...}
    end
 
-   local input_method, ime_height = adb_get_input_window_dump()
-   if (ime_height ~= 0) then
-       ime_height = 0
-       adb_event("key back")
-   end
+   local input_method, ime_height = close_ime()
    local post_button = ('984 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
@@ -1908,10 +1956,10 @@ local function t1_picture(...)
       picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI" then
       picture_to_weixin_chat(pics)
-   elseif window == "com.tencent.qqlite/com.tencent.mobileqq.activity.ChatActivity" then
-      picture_to_qqlite_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
       picture_to_qq_chat(pics)
+   elseif window == "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" then
+      picture_to_dingding_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity" then
       picture_to_qq_chat(pics)
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
@@ -2216,7 +2264,7 @@ t1_call = function(number)
       elseif where == "dd" then
          t1_find_dingding_contact(who)
       elseif where == "coffee" then
-         get_coffee()
+         get_coffee(who)
       else
          prompt_user("Don't know how to do it: " .. where)
       end
