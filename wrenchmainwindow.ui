@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Wrench V3.1.0 (ddc793c)</string>
+   <string>Wrench V3.1.1 (b99c326)</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QToolButton { qproperty-iconSize: 24px 24px; }</string>
