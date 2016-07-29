@@ -10,48 +10,58 @@ cd $(dirname $(readlink -f $0))
 export DOING_WRENCH_RELEASE=true
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts ssmb r:ReleaseVersion p:platforms=all
+# generate-getopt ssmb r:ReleaseVersion p:platforms=all
 ## end code-generator
 ## start generated code
-
+TEMP=$(getopt -o sr:p:h \
+              --long smb,ReleaseVersion:,platforms:,help,no-smb \
+              -n $(basename -- $0) -- "$@")
 smb=false
 ReleaseVersion=
 platforms=all
-OPTIND=1
-while getopts "sr:p:h" opt; do
-    case "$opt" in
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-        s) smb=true ;;
-        r) ReleaseVersion=$OPTARG ;;
-        p) platforms=$OPTARG ;;
-        h)
-            echo
-            echo
-            printf %06s '-p '
-            printf %-24s 'PLATFORMS'
-            echo ''
-            printf %06s '-r '
-            printf %-24s 'RELEASEVERSION'
-            echo ''
-            printf %06s '-s '
-            printf %-24s ''
-            echo ''
+        -s|--smb|--no-smb)
+            if test "$1" = --no-smb; then
+                smb=false
+            else
+                smb=true
+            fi
             shift
-            exit 0
+            ;;
+        -r|--ReleaseVersion)
+            ReleaseVersion=$2
+            shift 2
+            ;;
+        -p|--platforms)
+            platforms=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--platforms=PLATFORMS'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--ReleaseVersion=RELEASEVERSION'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]smb'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
             ;;
         *)
-            echo
-            echo
-            printf %06s '-p '
-            printf %-24s 'PLATFORMS'
-            echo ''
-            printf %06s '-r '
-            printf %-24s 'RELEASEVERSION'
-            echo ''
-            printf %06s '-s '
-            printf %-24s ''
-            echo ''
-            exit 2
+            die "internal error"
             ;;
     esac
 done
