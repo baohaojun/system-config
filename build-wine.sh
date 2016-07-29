@@ -7,7 +7,7 @@ function copy-dlls()
     rsync windows/binaries/* ./release -v -L -r
     rsync *.lua  ./release -v
 
-    req_dlls=( icudt5?.dll icuin5?.dll icuuc5?.dll
+    req_dlls=( #icudt5?.dll icuin5?.dll icuuc5?.dll
                qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL
              )
 
@@ -16,7 +16,7 @@ function copy-dlls()
         chmod 555 $(find ./release/ -iname $x)
     done
 
-    rsync ~/.wine/drive_c/OpenSSL-Win32/*.dll ./release/ -av
+    # rsync ~/.wine/drive_c/OpenSSL-Win32/*.dll ./release/ -av
     chmod 555 ./release/*.dll
 
     for x in libEGL.dll libGLESv2.dll libstdc++-6.dll libwinpthread-1.dll libgcc_s_dw2-1.dll; do
@@ -33,7 +33,7 @@ function copy-dlls()
 
 function make-release-tgz()
 {
-    rsync readme.* ./release/
+    # rsync readme.* ./release/
     rsync -av *.png ./release/
     command rsync -av -d release/ download/release/ wrench-release --exclude="*.obj" \
             --exclude="*.o" \
@@ -77,7 +77,7 @@ rsync release $build_dir -av -L
 cd $build_dir
 
 if ! which i686-w64-mingw32-nm; then
-    apt-get install mingw32
+    sudo apt-get install mingw32
 fi
 (
     cd lua
