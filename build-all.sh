@@ -10,20 +10,52 @@ cd $(dirname $(readlink -f $0))
 export DOING_WRENCH_RELEASE=true
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts ssmb r:ReleaseVersion
+# generate-getopts ssmb r:ReleaseVersion p:platforms=all
 ## end code-generator
 ## start generated code
+
 smb=false
 ReleaseVersion=
+platforms=all
 OPTIND=1
-while getopts 'sr:' opt; do
+while getopts "sr:p:h" opt; do
     case "$opt" in
-        s)    smb=true;;
-        r)    ReleaseVersion=$OPTARG;;
-        *)    echo Usage Error; exit 2;;
+
+        s) smb=true ;;
+        r) ReleaseVersion=$OPTARG ;;
+        p) platforms=$OPTARG ;;
+        h)
+            echo
+            echo
+            printf %06s '-p '
+            printf %-24s 'PLATFORMS'
+            echo ''
+            printf %06s '-r '
+            printf %-24s 'RELEASEVERSION'
+            echo ''
+            printf %06s '-s '
+            printf %-24s ''
+            echo ''
+            shift
+            exit 0
+            ;;
+        *)
+            echo
+            echo
+            printf %06s '-p '
+            printf %-24s 'PLATFORMS'
+            echo ''
+            printf %06s '-r '
+            printf %-24s 'RELEASEVERSION'
+            echo ''
+            printf %06s '-s '
+            printf %-24s ''
+            echo ''
+            exit 2
+            ;;
     esac
 done
-shift $(($OPTIND - 1))
+
 
 ## end generated code
 export ReleaseVersion
@@ -43,8 +75,8 @@ if git st -s | grep . -q; then
     die "Can't do release build when git not clean: see output above"
 fi
 
-oldVersion=$(perl -ne 'print $1 if m!<string>Smartisan T1聊天小扳手\s*(.*)</string>!' wrenchmainwindow.ui)
-perl -npe 's!<string>Smartisan T1聊天小扳手.*</string>!<string>Smartisan T1聊天小扳手 $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
+oldVersion=$(perl -ne 'print $1 if m!<string>Wrench\s*(V.*)</string>!' wrenchmainwindow.ui)
+perl -npe 's!<string>Wrench\s*V.*</string>!<string>Wrench $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
 
 if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
     if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
@@ -64,55 +96,69 @@ fi
 git clean -xfd
 git submodule foreach 'git clean -xfd'
 
-(
-    rm ~/tmp/build-t1-windows -rf
-    ./build-wine.sh
-    touch ~/tmp/build-t1-windows/build-ok
-)&
+function is-platform-needed() {
+    test "$platforms" = all -o -z "$(arg1-arg2 "$1" "$platforms")"
+}
 
-(
-    rm ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/ -rf
-    ssh trusty "export DOING_WRENCH_RELEASE=true; cd $PWD; ./build-linux.sh -r Wrench-ubuntu-14.04"
-    touch ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok
-)&
+if is-platform-needed wine; then
+    (
+        rm ~/tmp/build-t1-windows -rf
+        ./build-wine.sh
+        touch ~/tmp/build-t1-windows/build-ok
+    )&
+fi
 
-(
-    rm ~/tmp/build-t1 -rf
-    ./build-linux.sh
-    touch ~/tmp/build-t1/build-ok
-)&
-(
+if is-platform-needed ubuntu; then
+    (
+        rm ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/ -rf
+        ssh trusty "export DOING_WRENCH_RELEASE=true; cd $PWD; ./build-linux.sh -r Wrench-ubuntu-14.04"
+        touch ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok
+    )&
+fi
 
-    ssh bhj-mac rm $(up) -rf
-    rm ~/tmp/build-t1-mac -rf
-    mkdir ~/tmp/build-t1-mac -p
-    ./build-mac.sh
-    touch ~/tmp/build-t1-mac/build-ok
-)&
+if is-platform-needed linux; then
+    (
+        rm ~/tmp/build-t1 -rf
+        ./build-linux.sh -d ~/tmp/build-t1
+        touch ~/tmp/build-t1/build-ok
+    )&
+fi
+
+if is-platform-needed mac; then
+    (
+
+        ssh bhj-mac rm $(up) -rf
+        rm ~/tmp/build-t1-mac -rf
+        mkdir ~/tmp/build-t1-mac -p
+        ./build-mac.sh
+        touch ~/tmp/build-t1-mac/build-ok
+    )&
+fi
 
 wait
 
-if test ! -e ~/tmp/build-t1-windows/build-ok; then
+if is-platform-needed wine && test ! -e ~/tmp/build-t1-windows/build-ok; then
     die "Windows build failed"
 fi
 
-if test ! -e ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok; then
+if is-platform-needed ubuntu && test ! -e ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok; then
     die "ubuntu build failed"
 fi
 
-if test ! -e ~/tmp/build-t1/build-ok; then
+if is-platform-needed linux && test ! -e ~/tmp/build-t1/build-ok; then
     die "Linux build failed"
 fi
 
-if test ! -e ~/tmp/build-t1-mac/build-ok; then
+if is-platform-needed mac &&  test ! -e ~/tmp/build-t1-mac/build-ok; then
     die "Mac build failed"
 fi
 
-for x in ~/src/github/Wrench-debian \
-             ~/src/github/Wrench-macos/Wrench.app/Contents/MacOS/ \
-             ~/src/github/Wrench-windows \
-             ~/src/github/Wrench-ubuntu-14.04 \
-         ; do
+for x in $(
+              is-platform-needed linux && echo ~/src/github/Wrench-debian;
+              is-platform-needed mac && echo ~/src/github/Wrench-macos/Wrench.app/Contents/MacOS/;
+              is-platform-needed wine && echo ~/src/github/Wrench-windows;
+              is-platform-needed ubuntu && echo ~/src/github/Wrench-ubuntu-14.04;
+          ); do
     (
         cd $x
         if test -e last-pic-notes.png; then
