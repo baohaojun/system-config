@@ -286,6 +286,7 @@
         ("C-x" . '((Firefox "C-x") (Iceweasel "C-x") (t do-c-x-map)))
         ("Super-&" . '((Wrench "Meta-&")))
         ("j" . '((Wine "c")))
+        ("o" . '((Wine "s")))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
 (bind-both-global&window-keymaps "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
