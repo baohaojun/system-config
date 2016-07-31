@@ -16,7 +16,9 @@
 ;;
 ;; Simply bind a key to `fence-edit-code-at-point' and call it from
 ;; within any code block matching one of the patterns described in
-;; `fence-edit-blocks'.
+;; `fence-edit-blocks'.  Based on a language symbol extracted from the
+;; fence block pattern, the corresponding mode in
+;; `fence-edit-lang-modes' will be set for the edit buffer.
 
 ;;; Code:
 (defcustom fence-edit-lang-modes
