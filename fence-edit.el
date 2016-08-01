@@ -70,6 +70,19 @@ that list, the `fence-edit-default-mode' will be used."
 (defvar-local fence-edit-previous-mode nil
   "Mode set before narrowing, restored upon widening.")
 
+(defvar-local fence-edit-overlay nil
+  "An overlay used to indicate the original text being edited.")
+
+(defvar-local fence-edit-mark-beg nil
+  "A marker at the beginning of the edited text block.
+
+Used to replace the text upon completion of editing.")
+
+(defvar-local fence-edit-mark-end nil
+  "A marker at the end of the edited text block.
+
+Used to replace the text upon completion of editing.")
+
 (defvar fence-edit-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c '") 'fence-edit-exit)
