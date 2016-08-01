@@ -645,6 +645,24 @@ adb_top_window = function()
    return top_window:sub(1, -2)
 end
 
+local function search_mail(what)
+   putclip_nowait(what)
+   for i = 1, 5 do
+      adb_start_activity"com.android.email/com.android.email.activity.Welcome"
+      adb_event"sleep .5 adb-tap 66 155 sleep .5"
+      if adb_top_window() == "com.android.email/com.android.email.activity.setup.AccountSettings" then
+         break
+      end
+      log("Did not get mail settings at %d", i)
+      adb_event"key back"
+   end
+   if adb_top_window() ~= "com.android.email/com.android.email.activity.setup.AccountSettings" then
+      log("Failed to get mail settings")
+      return
+   end
+   adb_event"key back sleep .5 adb-tap 218 343 sleep .2 key scroll_lock"
+end
+
 local function get_coffee(what)
    for i = 1, 5 do
       weixin_open_homepage()
@@ -2265,6 +2283,8 @@ t1_call = function(number)
          t1_find_dingding_contact(who)
       elseif where == "coffee" then
          get_coffee(who)
+      elseif where == "mail" then
+         search_mail(who)
       else
          prompt_user("Don't know how to do it: " .. where)
       end
