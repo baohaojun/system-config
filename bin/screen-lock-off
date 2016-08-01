@@ -6,6 +6,7 @@ if test $(basename $0) = screen-lock-off; then
     find-or-exec emacs emacs.bhj
     sleep 1
     find-or-exec emacs
+    xdotool mousemove 20 10
 else
     true
 fi
