@@ -37,8 +37,8 @@
   :type '(symbol))
 
 (defcustom fence-edit-blocks
-  '(("^[ \t]*\\(?:~\\{3,\\}\\|`\\{3,\\}\\)\\(.*\\)\n"
-     "^[ \t]*\\(?:~\\{3,\\}\\|`\\{3,\\}\\)"
+  '(("^[[:blank:]]*\\(```\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\([[:space:]]*?\\)$"
+     "^[[:blank:]]*\\(```\\)\\s *?$"
      1))
   "Alist of regexps matching editable blocks.
 
@@ -116,6 +116,19 @@ don't work well in the snippet view.")
   "Make an edit buffer name from BASE-BUFFER-NAME and LANG."
   (concat "*Narrowed Edit " base-buffer-name "[" lang "]*"))
 
+(defun fence-edit--next-line-beginning-position-at-pos (pos)
+  "Return the position of the beginning of the line after the line at POS.
+
+Used to find the position at which the code to edit begins, covering
+for a common case where the block start regexp doesn't match the
+ending line break and that break gets sucked into the block of code to
+edit."
+  (interactive)
+  (save-excursion
+    (goto-char pos)
+    (forward-line)
+    (line-beginning-position)))
+
 (defun fence-edit--get-block-around-point ()
   "Return metadata about block surrounding point.
 
@@ -133,7 +146,7 @@ Return nil if no block is found."
           (if (or (looking-at re-start)
                   (re-search-backward re-start nil t))
               (progn
-                (setq start (match-end 0)
+                (setq start (fence-edit--next-line-beginning-position-at-pos (match-end 0))
                       lang (cond ((integerp lang-id)
                                   (match-string lang-id))
                                  ((functionp lang-id)
