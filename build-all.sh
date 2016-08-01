@@ -175,6 +175,7 @@ for x in $(
             rm -f last-pic-notes.png
         fi
         ./update-md5s.sh
+        lookup-file -e .git
         cd $(dirname $(lookup-file -e .git))
         dir=$(basename $PWD)
         cd ..
