@@ -1,0 +1,2 @@
+#!/bin/bash
+sawfish-client -e '(read-event (format nil "%d x %d" (car (query-pointer)) (cdr (query-pointer))))'

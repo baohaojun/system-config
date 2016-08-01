@@ -688,6 +688,8 @@
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))
 (bind-keys s-h-keymap "Super-v" '(system "sendtext-sawfish&"))
+(bind-keys s-h-keymap "C-p" '(system "sawfish-show-pointer&"))
+(bind-keys s-h-keymap "XF86Favorites" '(system "mm6-bless.sh&"))
 
 (defun get-window-xy-size (class)
   (let ((x 100000)
