@@ -14,7 +14,7 @@ fi
 
 start=$(cat .start-upgrade.hash)
 if test -e lua52.dll; then
-    git checkout HEAD lua52.dll lua.exe luac.exe md5/des56.dll md5/core.dll
+    git checkout HEAD lua52.dll lua.exe luac.exe md5/des56.dll md5/core.dll || true
 fi
 
 gitdir=$(relative-path $(dirname $(lookup-file -e .git)) .)
