@@ -144,7 +144,7 @@ Return nil if no block is found."
                     (throw 'exit `(,start ,(match-beginning 0) ,lang))))))))))
 
 (defun fence-edit--get-mode-for-lang (lang)
-  "Try to get a mode name from language name LANG.
+  "Try to get a mode function from language name LANG.
 
 The assumption is that language `LANG' has a mode `LANG-mode'."
   (let ((mode-name (intern (concat lang "-mode"))))
