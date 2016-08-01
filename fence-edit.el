@@ -185,7 +185,7 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
           (condition-case e
               (funcall mode)
             (error
-             (message "Language mode `%s' fails with: %S" lang-f (nth 1 e))))
+             (message "Language mode `%s' fails with: %S" mode (nth 1 e))))
           (fence-edit-mode)
           (fence-edit-set-local 'fence-edit-editor t)
           (fence-edit-set-local 'fence-edit-mark-beg beg)
