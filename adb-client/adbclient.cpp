@@ -4,9 +4,18 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QDir>
+#include <QProcessEnvironment>
+#include <QString>
 
 AdbClient::AdbClient()
 {
+    static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");
+    static QByteArray adb_serial_buffer = adb_serial.toUtf8();
+    if (adb_serial.isEmpty()) {
+        __adb_serial = NULL;
+    } else {
+        __adb_serial = adb_serial_buffer.data();
+    }
     isOK = true;
     adbSock.connectToHost("127.0.0.1", 5037, QIODevice::ReadWrite);
     adbSock.waitForConnected();

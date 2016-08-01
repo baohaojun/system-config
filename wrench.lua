@@ -1177,7 +1177,7 @@ t1_config = function(passedConfigDirPath)
          adb_kill_server()
          error("Done config for your adb devices, please try again")
       else
-         error("No phone found, can't set up, uname is: " .. uname)
+         error(string.format("No phone found, can't set up, uname is: '%s', ANDROID_SERIAL is '%s'", uname, os.getenv("ANDROID_SERIAL")))
       end
    end
    check_apk_installed("Setclip.apk", "Setclip.apk.md5")
@@ -1337,14 +1337,14 @@ qq_find_friend = function(friend_name)
    for i = 1, 5 do
       qq_open_homepage()
       adb_event"sleep .3 adb-tap 391 288 sleep .8"
-      local top_window = wait_input_target(qqChatActivity2, qqGroupSearch)
+      local top_window = wait_input_target_n(5, qqChatActivity2, qqGroupSearch)
       adb_event"key scroll_lock sleep .6"
       if top_window and top_window:match(qqGroupSearch) then
          log"Fonud qqGroupSearch"
          adb_event"adb-tap 365 384"
          break
       else
-         log("Got stuck in qqChatActivity2: %s", top_window)
+         log("Got stuck in qqChatActivity2: %s at %d", top_window, i)
          adb_event"adb-tap 303 291"
       end
    end
