@@ -159,20 +159,6 @@ namespace android {
         return size;
     }
 
-    ssize_t bytesPerPixel(PixelFormat format)
-    {
-        PixelFormatInfo info;
-        status_t err = getPixelFormatInfo(format, &info);
-        return (err < 0) ? err : info.bytesPerPixel;
-    }
-
-    ssize_t bitsPerPixel(PixelFormat format)
-    {
-        PixelFormatInfo info;
-        status_t err = getPixelFormatInfo(format, &info);
-        return (err < 0) ? err : info.bitsPerPixel;
-    }
-
     status_t getPixelFormatInfo(PixelFormat format, PixelFormatInfo* info)
     {
         if (format <= 0)
@@ -273,7 +259,7 @@ extern "C" int init_flinger()
     sp<IBinder> display = SurfaceComposerClient::getBuiltInDisplay(DEFAULT_DISPLAY_ID);
     if (display == NULL)
         return -1;
-    errno = screenshotClient->update(display);
+    errno = screenshotClient->update(display, Rect(), true);
     if (errno != NO_ERROR) {
         return -1;
     }
@@ -289,7 +275,7 @@ extern "C" unsigned int *readfb_flinger()
     sp<IBinder> display = SurfaceComposerClient::getBuiltInDisplay(DEFAULT_DISPLAY_ID);
     if (display == NULL)
         return NULL;
-    if (screenshotClient->update(display) != NO_ERROR) {
+    if (screenshotClient->update(display, Rect(), true) != NO_ERROR) {
         return NULL;
     }
     return (unsigned int*)screenshotClient->getPixels();
