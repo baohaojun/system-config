@@ -18,13 +18,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "common.h"
-#include "framebuffer.h"
-#include "adb.h"
 
 #include "gui.h"
 #include "input.h"
-#include "flinger.h"
-#include "gralloc.h"
 
 #include "libvncserver/scale.h"
 #include "rfb/rfb.h"
@@ -57,9 +53,6 @@ char *rhost = NULL;
 int rport = 5500;
 
 void (*update_screen)(void)=NULL;
-
-enum method_type {AUTO,FRAMEBUFFER,ADB,GRALLOC,FLINGER};
-enum method_type method=AUTO;
 
 #define PIXEL_TO_VIRTUALPIXEL_FB(i,j) ((j+scrinfo.yoffset)*scrinfo.xres_virtual+i+scrinfo.xoffset)
 #define PIXEL_TO_VIRTUALPIXEL(i,j) ((j*(screenformat.width + screenformat.pad))+i)
@@ -249,16 +242,7 @@ void rotate(int value)
 
 void close_app()
 { 	
-  L("Cleaning up...\n");
-  if (method == FRAMEBUFFER)
-    closeFB();
-  else if (method == ADB)
-    closeADB(); 
-  else if (method == GRALLOC)
-    closeGralloc();
-  else if (method == FLINGER)
-    closeFlinger();
-  
+  closeScreenRecord();
   cleanupInput();
   sendServerStopped();
   unbindIPCserver();
@@ -291,43 +275,10 @@ void extractReverseHostPort(char *str)
   } 
 }
 
-void initGrabberMethod()
-{
-  if (method == AUTO) {
-    L("No grabber method selected, auto-detecting...\n"); 
-    if (initFlinger() != -1)
-      method = FLINGER;
-    else if (initGralloc()!=-1)
-      method = GRALLOC;
-    else if (initFB() != -1) {
-      method = FRAMEBUFFER;
-    }
-    #if 0
-    else if (initADB() != -1) {
-      method = ADB;
-      readBufferADB();
-    }
-    #endif
-  } else if (method == FRAMEBUFFER)
-    initFB();
-  #if 0
-  else if (method == ADB) {
-    initADB(); 
-    readBufferADB();
-  }
-  #endif
-  else if (method == GRALLOC)
-    initGralloc();
-  else if (method == FLINGER)
-    initFlinger();
-}
-
 void printUsage(char **argv)
 {
   L("\nandroidvncserver [parameters]\n"
-    "-f <device>\t- Framebuffer device (only with -m fb, default is /dev/graphics/fb0)\n"
     "-h\t\t- Print this help\n"
-    "-m <method>\t- Display grabber method\n\tfb: framebuffer\n\tgb: gingerbread+ devices\n\tadb: slower, but should be compatible with all devices\n"
     "-p <password>\t- Password to access server\n"
     "-r <rotation>\t- Screen rotation (degrees) (0,90,180,270)\n"
     "-R <host:port>\t- Host for reverse connection\n" 
@@ -352,72 +303,50 @@ int main(int argc, char **argv)
     while(i < argc) {
       if(*argv[i] == '-') {
         switch(*(argv[i] + 1)) {
-          case 'h':
+        case 'h':
           printUsage(argv);
           exit(0); 
           break;
-          case 'p': 
+        case 'p': 
           i++; 
           strcpy(VNC_PASSWORD,argv[i]);
           break;
-          case 'f': 
-          i++; 
-          FB_setDevice(argv[i]);
-          break;
-          case 'z': 
+        case 'z': 
           i++; 
           display_rotate_180=1;
           break;
-          case 'P': 
+        case 'P': 
           i++; 
           VNC_PORT=atoi(argv[i]);
           break;
-          case 'r':
+        case 'r':
           i++; 
           r = atoi(argv[i]);
           if (r==0 || r==90 || r==180 || r==270)
-          rotation = r;
+            rotation = r;
           L("rotating to %d degrees\n",rotation);
           break;
-          case 's':
+        case 's':
           i++;
           r=atoi(argv[i]); 
           if (r >= 1 && r <= 150)
-          scaling = r;
+            scaling = r;
           else 
-          scaling = 100;
+            scaling = 100;
           L("scaling to %d%%\n",scaling);
           break;
-          case 'R':
+        case 'R':
           i++;
           extractReverseHostPort(argv[i]);
           break;
-          case 'm':
-          i++;
-          if (!strcmp(argv[i],"adb")){
-            method = ADB;
-            L("ADB display grabber selected\n");
-          } else if (!strcmp(argv[i],"fb")) {
-            method = FRAMEBUFFER;
-            L("Framebuffer display grabber selected\n");
-          } else if (!strcmp(argv[i],"gralloc")) {
-            method = GRALLOC;
-            L("Gralloc display grabber selected\n");
-          } else if (!strcmp(argv[i],"flinger")) {
-            method = FLINGER;
-            L("Flinger display grabber selected\n");
-          } else {
-            L("Grab method \"%s\" not found, sticking with auto-detection.\n",argv[i]);
-          }
-          break;
-          }
+        }
         }
       i++;
       }
     }
 
     L("Initializing grabber method...\n");
-    initGrabberMethod();
+    initScreenRecord();
 
     L("Initializing virtual keyboard and touch device...\n");
     initInput(); 

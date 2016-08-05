@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #define COMMON_H
 
 #include <android/log.h>
+#include "screenFormat.h"
 #include <strings.h>
 #ifndef __cplusplus
 
@@ -76,10 +77,18 @@ void setIdle(int i);
 void close_app();
 screenFormat screenformat;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+    int initScreenRecord(void);
+    int closeScreenRecord(void);
+    unsigned char *readBufferFlinger(void);
+#ifdef __cplusplus
+}
+#endif
+
 #define DVNC_FILES_PATH "/data/data/org.onaips.vnc/files/"
 #define DVNC_LIB_PATH "/data/data/org.onaips.vnc/lib/"
 
 #define ARR_LEN(a) (sizeof(a)/sizeof(a)[0])
-static int compiled_sdks[] = {10, 14};
-
 #endif

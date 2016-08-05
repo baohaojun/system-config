@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include "common.h"
 #include <assert.h>
 #include <ctype.h>
 #include <fcntl.h>
@@ -877,7 +877,10 @@ static void usage() {
 /*
  * Parses args and kicks things off.
  */
-int mainx(int argc, char* const argv[]) {
+int initScreenRecord(void)
+{
+    int argc = 0;
+    char* const argv[] = {};
     static const struct option longOptions[] = {
         { "help",               no_argument,        NULL, 'h' },
         { "verbose",            no_argument,        NULL, 'v' },
@@ -1003,4 +1006,14 @@ int mainx(int argc, char* const argv[]) {
     }
     ALOGD(err == NO_ERROR ? "success" : "failed");
     return (int) err;
+}
+
+int closeScreenRecord()
+{
+    return 0;
+}
+
+unsigned char *readBufferFlinger(void)
+{
+    return NULL;
 }

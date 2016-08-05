@@ -51,15 +51,10 @@ LOCAL_SRC_FILES += \
                 droidvncserver.c \
                 gui.c \
                 inputMethods/input.c \
-                screenMethods/adb.c \
-                screenMethods/framebuffer.c \
-                screenMethods/gralloc.c \
-                screenMethods/flinger.c \
                 suinput/suinput.c 
 
 LOCAL_C_INCLUDES += \
 		 $(LOCAL_PATH) \
-                 $(LOCAL_PATH)/screenMethods \
 		 $(LOCAL_PATH)/inputMethods \
 		 $(LOCAL_PATH)/suinput \
 		 external/libpng \
