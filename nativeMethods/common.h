@@ -20,7 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <android/log.h> 
+#include <android/log.h>
+#include <strings.h>
 #ifndef __cplusplus
 
 #include <dirent.h>

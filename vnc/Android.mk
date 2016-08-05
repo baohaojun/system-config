@@ -38,40 +38,63 @@ LIBVNCSERVER_SRC_FILES:= \
 	$(LIBVNCSERVER_ROOT)/common/turbojpeg.c
 
 LOCAL_CFLAGS  +=  -Wall \
-									-O3 \
-									-DLIBVNCSERVER_WITH_WEBSOCKETS \
-									-DLIBVNCSERVER_HAVE_LIBPNG \
-									-DLIBVNCSERVER_HAVE_ZLIB \
-									-DLIBVNCSERVER_HAVE_LIBJPEG
+              -O3 \
+              -DLIBVNCSERVER_WITH_WEBSOCKETS \
+	      -DLIBVNCSERVER_HAVE_LIBPNG \
+	      -DLIBVNCSERVER_HAVE_ZLIB \
+	      -DLIBVNCSERVER_HAVE_LIBJPEG
 
-LOCAL_LDLIBS +=  -llog -lz -ldl -ljpeg -lpng
+LOCAL_LDLIBS +=  -llog -lz -ldl
 
 LOCAL_SRC_FILES += \
-									 $(LIBVNCSERVER_SRC_FILES)\
-									 droidvncserver.c \
-									 gui.c \
-									 inputMethods/input.c \
-									 screenMethods/adb.c \
-									 screenMethods/framebuffer.c \
-									 screenMethods/gralloc.c \
-									 screenMethods/flinger.c \
-									 suinput/suinput.c 
+	        $(LIBVNCSERVER_SRC_FILES)\
+                droidvncserver.c \
+                gui.c \
+                inputMethods/input.c \
+                screenMethods/adb.c \
+                screenMethods/framebuffer.c \
+                screenMethods/gralloc.c \
+                screenMethods/flinger.c \
+                suinput/suinput.c 
 
 LOCAL_C_INCLUDES += \
-										$(LOCAL_PATH) \
-										$(LOCAL_PATH)/screenMethods \
-										$(LOCAL_PATH)/inputMethods \
-										$(LOCAL_PATH)/suinput \
-										external/libpng \
-										external/jpeg \
-										$(LOCAL_PATH)/../openssl/include \
-										$(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/libvncserver \
-										$(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/common \
-										$(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/rfb \
-										$(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/ \
-										$(LOCAL_PATH)/../../nativeMethods/
+		 $(LOCAL_PATH) \
+                 $(LOCAL_PATH)/screenMethods \
+		 $(LOCAL_PATH)/inputMethods \
+		 $(LOCAL_PATH)/suinput \
+		 external/libpng \
+		 external/jpeg \
+                 external/zlib \
+                 $(LOCAL_PATH)/../openssl/include \
+                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/libvncserver \
+                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/common \
+                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/rfb \
+                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/ \
+                 $(LOCAL_PATH)/../nativeMethods/
 
 LOCAL_STATIC_LIBRARIES := libssl_static libcrypto_static
+
+LOCAL_SHARED_LIBRARIES := libjpeg libpng
+
+LOCAL_SRC_FILES += \
+	screenrecord.cpp \
+	EglWindow.cpp \
+	FrameOutput.cpp \
+	TextRenderer.cpp \
+	Overlay.cpp \
+	Program.cpp
+
+LOCAL_SHARED_LIBRARIES += \
+	libstagefright libmedia libutils libbinder libstagefright_foundation \
+	libjpeg libgui libcutils liblog libEGL libGLESv2
+
+LOCAL_C_INCLUDES += \
+	frameworks/av/media/libstagefright \
+	frameworks/av/media/libstagefright/include \
+	$(TOP)/frameworks/native/include/media/openmax \
+	external/jpeg
+
+LOCAL_CFLAGS += -Wno-multichar
 
 LOCAL_MODULE := androidvncserver
 

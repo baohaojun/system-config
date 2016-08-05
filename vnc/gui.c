@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gui.h"
 #include "common.h"
+#include <strings.h>
 
 #define SOCKET_ERROR        -1
 #define BUFFER_SIZE         1024
