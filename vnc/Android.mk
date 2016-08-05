@@ -44,7 +44,7 @@ LOCAL_CFLAGS  +=  -Wall \
 									-DLIBVNCSERVER_HAVE_ZLIB \
 									-DLIBVNCSERVER_HAVE_LIBJPEG
 
-LOCAL_LDLIBS +=  -llog -lz -ldl 
+LOCAL_LDLIBS +=  -llog -lz -ldl -ljpeg -lpng
 
 LOCAL_SRC_FILES += \
 									 $(LIBVNCSERVER_SRC_FILES)\
@@ -62,9 +62,8 @@ LOCAL_C_INCLUDES += \
 										$(LOCAL_PATH)/screenMethods \
 										$(LOCAL_PATH)/inputMethods \
 										$(LOCAL_PATH)/suinput \
-										$(LOCAL_PATH)/../libpng \
-										$(LOCAL_PATH)/../jpeg \
-										$(LOCAL_PATH)/../jpeg-turbo \
+										external/libpng \
+										external/jpeg \
 										$(LOCAL_PATH)/../openssl/include \
 										$(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/libvncserver \
 										$(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/common \
@@ -72,7 +71,7 @@ LOCAL_C_INCLUDES += \
 										$(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/ \
 										$(LOCAL_PATH)/../../nativeMethods/
 
-LOCAL_STATIC_LIBRARIES := libjpeg libpng libssl_static libcrypto_static
+LOCAL_STATIC_LIBRARIES := libssl_static libcrypto_static
 
 LOCAL_MODULE := androidvncserver
 
