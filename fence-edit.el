@@ -235,7 +235,7 @@ The edit buffer is expected to be the current buffer."
         (end fence-edit-mark-end)
         (edit-point (point))
         (ovl fence-edit-overlay))
-    (if (not (string-match-p "\\n$" code))
+    (if (not (string-match-p (rx "\n" string-end) code))
         (setq code (concat code "\n")))
     (fence-edit--abandon-edit-buffer (marker-buffer beg))
     (goto-char beg)
