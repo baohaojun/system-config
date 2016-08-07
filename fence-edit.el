@@ -37,8 +37,8 @@
   :type '(symbol))
 
 (defcustom fence-edit-blocks
-  '(("^[[:blank:]]*\\(```\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\([[:space:]]*?\\)$"
-     "^[[:blank:]]*\\(```\\)\\s *?$"
+  '(("^[[:blank:]]*\\(?:```\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\(?:[[:space:]]*?\\)$"
+     "^[[:blank:]]*\\(?:```\\)\\s *?$"
      1))
   "Alist of regexps matching editable blocks.
 
