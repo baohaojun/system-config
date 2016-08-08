@@ -71,8 +71,4 @@ extern "C" {
 }
 #endif
 
-#define DVNC_FILES_PATH "/data/data/org.onaips.vnc/files/"
-#define DVNC_LIB_PATH "/data/data/org.onaips.vnc/lib/"
-
-#define ARR_LEN(a) (sizeof(a)/sizeof(a)[0])
 #endif
