@@ -49,22 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #define L(...) do{ __android_log_print(ANDROID_LOG_INFO,"VNCserver",__VA_ARGS__);printf(__VA_ARGS__); } while (0);
 #endif
 
-struct fbinfo {
-    unsigned int version;
-    unsigned int bpp;
-    unsigned int size;
-    unsigned int width;
-    unsigned int height;
-    unsigned int red_offset;
-    unsigned int red_length;
-    unsigned int blue_offset;
-    unsigned int blue_length;
-    unsigned int green_offset;
-    unsigned int green_length;
-    unsigned int alpha_offset;
-    unsigned int alpha_length;
-} __attribute__((packed));
-
 typedef int (*init_fn_type)(void);
 typedef int (*close_fn_type)(void);
 typedef unsigned char * (*readfb_fn_type)(void);
