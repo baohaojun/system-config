@@ -10,6 +10,7 @@ if test $(whoami) = bhj; then
 zh_CN.GBK GBK
 zh_CN.UTF-8 UTF-8
 en_US.UTF-8 UTF-8
+ja_JP.UTF-8 UTF-8
 EOF
     sudo locale-gen
     echo LANG=en_US.UTF-8 |sudo tee /etc/default/locale

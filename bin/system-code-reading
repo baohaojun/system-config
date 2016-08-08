@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for d in /usr/include/ /usr/share/qt5/doc/ /usr/lib /usr/share/java /var/lib/gems/; do
+    (
+        cd $d && for-code-reading
+    )
+done

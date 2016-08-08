@@ -13,13 +13,15 @@ fi
 new=$1
 
 cd ~
+rsync .ssh/ $new:.ssh/ -av
 rsync system-config $new: -av --delete
-sudo rsync ~/Downloads/ root@$new:~bhj/Downloads/ -av --delete
-# rsync src/github/* $new:src/github/ -av --delete
+rsync src/github/* $new:src/github/ -av --delete
 # rsync Mail Maildir $new: -av --delete
 sudo rsync /usr/local $new:/usr -av --delete
+rsync ~/.config $new: -av --delete
 find . -maxdepth 1 -type d -name '.*'|
     grep '\./' |
-    xargs -d \\n bash -c 'rsync -avz --delete --exclude "*/*code-reading*/" "$@" '$new': '  true
+    xargs -d \\n bash -c 'rsync -avz --delete --exclude .beagle --exclude "*/*code-reading*/" "$@" '$new': '  true
 
 find . -maxdepth 1 -type f | xargs -d \\n bash -c 'rsync -avz --delete --exclude "*/*code-reading*/" "$@" '$new': '  true
+sudo rsync ~/Downloads/ root@$new:~bhj/Downloads/ -av --delete

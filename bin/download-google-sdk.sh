@@ -10,7 +10,12 @@ function wget() {
     command wget -4 -t 2 "$@"
 }
 
-mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p
+export -f wget
+
+if ! mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p; then
+    mount-share-folders
+    mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p
+fi
 if test -e ~/external/bin/Linux/ext/android-sdk-linux/google/download-all; then
     export DOWNLOAD_ALL=true
 fi
@@ -25,27 +30,6 @@ for x in $(grep -P -o -e 'https?://dl(-ssl)?.google.com/android/.*?"' sdk.html |
         wget -N $x
     fi
 done&
-
-(
-    x=$(if test -e ndk.ver; then cat ndk.ver; else echo 8; fi)
-    ((x++))
-    while true; do
-        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
-        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
-        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x-windows-x86.zip
-        ((x++))
-    done
-
-    ((x--))
-    for r in f e d c b; do
-        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x$r-linux-x86.tar.bz2 || continue
-        if tty >/dev/null 2>&1; then
-            break;
-        fi
-        wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x$r-darwin-x86.tar.bz2 || continue
-        if wget -N http://dl-ssl.google.com/android/ndk/android-ndk-r$x$r-windows-x86.zip; then break; fi
-    done
-)&
 
 wget -N -r http://dl-ssl.google.com/android/repository/addons_list-2.xml
 
@@ -92,6 +76,29 @@ else
     vpattern=shit
 fi
 
+function check-shasum-or-download() {
+    if test ! -e $(basename $1).shasum; then
+        if test $(shasum </dev/null $(basename $1)|pn 1)x = ${2}x; then
+            echo $1 already downloaded
+            touch $(basename $1).shasum
+            return
+        fi
+    fi
+    xhost=$3
+    set -e
+    (echo download $1; if [[ $1 =~ :// ]]; then wget -c $1; else wget -c http://$xhost/$(basename $1); fi)
+    if test $(shasum </dev/null $(basename $1)|pn 1)x = ${2}x; then
+        rm -f $(basename $1)
+        if [[ $1 =~ :// ]]; then wget -c $1; else wget -c http://$xhost/$(basename $1); fi
+    fi
+
+    if test $(shasum </dev/null $(basename $1)|pn 1)x = ${2}x; then
+        touch $(basename $1).shasum
+    fi
+}
+
+export -f check-shasum-or-download
+
 for x in $(find *.google.com -name '*.xml'); do
     xhost=$(dirname $x)
     xmlstarlet sel -N \
@@ -125,7 +132,7 @@ for x in $(find *.google.com -name '*.xml'); do
             cs => $cs,
         }
     } else {
-        debug "$non_version version $version is old than $cur_ver, not selected"
+        debug "$file version $version is old than $cur_ver, not selected"
     }
 
     END {
@@ -133,7 +140,7 @@ for x in $(find *.google.com -name '*.xml'); do
             print "$hash{$_}{file}:$hash{$_}{cs}\n";
         }
     }
-' | grep -v '^:$' | sort -u | perl -npe 's,(.*):(.*),if test ! -e \$(basename $1).shasum; then if test `shasum </dev/null \$(basename $1)|awk "{print \\\\\$1}"`x = $2x; then echo $1 already exist; touch \$(basename $1).shasum; else (echo download $1; if [[ $1 =~ :// ]]; then wget -N $1; else wget -N http://'$xhost'/\$(basename $1); fi); fi; fi,g'|grep -i -e "${vpattern:-shit}" -v || true
+' | grep -v '^:$' | sort -u | perl -npe 's,(.*):(.*),check-shasum-or-download $1 $2 '$xhost',g'|grep -i -e "${vpattern:-shit}" -v || true
 done |sort -R|xargs -d \\n -P 3 -n 1 bash -c 'for x in "$@"; do bash -x -c "$x"; done' true
 
 mkdir -p ../temp

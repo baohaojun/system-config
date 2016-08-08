@@ -132,9 +132,8 @@ EOF
             ONE_SHOT_MAKEFILE=$MY_ONE_SHOT_MAKEFILE make -j $jobs $verbose $target "$@"
         elif test "$(basename $0)" = mma; then
             make $jobs $verbose -f build/core/main.mk $@ $target BUILD_MODULES_IN_PATHS="$project"
-        fi
-        echo $b0 build is ok
-    ) 2>&1 | tee $BHJ_OUT_DIR/$b0.log
+        fi && echo $b0 build is ok
+    ) 2>&1 | tee $BHJ_OUT_DIR/$b0.log $BHJ_OUT_DIR/build.log || true
 
     cd $top_dir/
     grep "$b0 build is ok" $BHJ_OUT_DIR/$b0.log

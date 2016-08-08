@@ -17,7 +17,7 @@ use_testing=false
 if is-debian && yes-or-no-p "Do you want to use debian testing?"; then
     use_testing=true
 fi
-if is-debian && test "$use_testing" = true; then
+if test "$use_testing" = true; then
     if ! grep -q -P -e 'debian/? testing main' /etc/apt/sources.list; then
         if ! perl -e 'use String::Escape' >/dev/null 2>&1; then
             sudo apt-get install libstring-escape-perl # select-output-line -- below will use this module

@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
-perl -ne 'print unless m/^iface wlan0 inet manual/' /etc/network/interfaces |sudo tee /tmp/stop-ap.$$
+wlan0=wlan0
+if test -e ~/.config/system-config/start-ap; then
+    . ~/.config/system-config/start-ap
+fi
+perl -ne "print unless m/^iface $wlan0 inet manual/" /etc/network/interfaces |sudo tee /tmp/stop-ap.$$
 sudo mv /tmp/stop-ap.$$ /etc/network/interfaces.$$
 sudo mv /etc/network/interfaces.$$ /etc/network/interfaces
 sudo ps-killall hostapd

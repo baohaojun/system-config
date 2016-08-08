@@ -329,7 +329,7 @@ if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; the
 fi
 
 if test -L /etc/rc.local || can-sudo-and-yes-or-no-p "Replace /etc/rc.local with system-config's version?"; then
-    if ! test -L /etc/rc.local; then
+    if test -e /etc/rc.local && ! test -L /etc/rc.local; then
         sudo cp /etc/rc.local /etc/rc.local.bak
     fi
     if test "$(readlink -f /etc/rc.local)" != ~/system-config/etc/rc.local; then

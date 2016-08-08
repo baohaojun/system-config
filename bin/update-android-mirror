@@ -4,8 +4,8 @@ set -ex
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent
 
-export http_proxy=http://localhost:8888
-export https_proxy=http://localhost:8888
+export http_proxy=http://localhost:19999
+export https_proxy=http://localhost:19999
 
 (
     if test ! -d ~/src/android-mirror.google/; then
@@ -64,7 +64,7 @@ export https_proxy=http://localhost:8888
         echo master
             )
     git-get -u smartisan:qualcomm/platform/manifest.git -d ~/src/manifests -b sanfrancisco
-    for branch is $branches; do
+    for branch in $branches; do
         scm sync-android-to-gerrit -b $branch
     done
     if ! is-tty-io; then

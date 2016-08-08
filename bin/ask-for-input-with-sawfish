@@ -108,7 +108,7 @@ sawfish_script=$(cat <<EOF
 (let* ((bhj-prompt-completion-fun (lambda ()))
        (bhj-prompt-window-position
         (cons 200 200))
-      $(if test $secret = 1; then
+      $(if test $secret = true; then
           echo '(bhj-prompt-display-fun (lambda (s) (make-string (length s) ?*)))';
           echo '(bhj-prompt-history (make-ring 16))';
       fi))
