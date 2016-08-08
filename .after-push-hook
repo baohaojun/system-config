@@ -50,8 +50,6 @@ if test -d ~/src/system-config/; then
         wait
     )&
 
-    cp /usr/share/jenkins/cli/java/cli.jar ~/src/github/smartcm/jenkins-cli.jar&
-    wait
     cd ~/src/system-config/
     rm -f .gitmodules
     git add .
