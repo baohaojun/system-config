@@ -148,7 +148,6 @@ status_t FrameOutput::copyFrame(long timeoutUsec) {
     if (kShowTiming) {
         pixWhenNsec = systemTime(CLOCK_MONOTONIC);
     }
-    reduceRgbaToRgb(mPixelBuf, width * height);
     if (kShowTiming) {
         endWhenNsec = systemTime(CLOCK_MONOTONIC);
         ALOGD("got pixels (get=%.3f ms, reduce=%.3fms)",
@@ -170,21 +169,6 @@ status_t FrameOutput::copyFrame(long timeoutUsec) {
                 (endWhenNsec - startWhenNsec) / 1000000.0);
     }
     return NO_ERROR;
-}
-
-void FrameOutput::reduceRgbaToRgb(uint8_t* buf, unsigned int pixelCount) {
-    // Convert RGBA to RGB.
-    //
-    // Unaligned 32-bit accesses are allowed on ARM, so we could do this
-    // with 32-bit copies advancing at different rates (taking care at the
-    // end to not go one byte over).
-    const uint8_t* readPtr = buf;
-    for (unsigned int i = 0; i < pixelCount; i++) {
-        *buf++ = *readPtr++;
-        *buf++ = *readPtr++;
-        *buf++ = *readPtr++;
-        readPtr++;
-    }
 }
 
 // Callback; executes on arbitrary thread.

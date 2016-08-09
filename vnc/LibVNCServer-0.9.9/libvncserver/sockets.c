@@ -404,7 +404,7 @@ rfbProcessNewConnection(rfbScreenInfoPtr rfbScreen)
     }
     if (FD_ISSET(rfbScreen->listenSock, &listen_fds)) 
       chosen_listen_sock = rfbScreen->listenSock;
-    if (FD_ISSET(rfbScreen->listen6Sock, &listen_fds)) 
+    if (rfbScreen->listen6Sock >= 0 && FD_ISSET(rfbScreen->listen6Sock, &listen_fds)) 
       chosen_listen_sock = rfbScreen->listen6Sock;
 
     if ((sock = accept(chosen_listen_sock,

@@ -65,9 +65,6 @@ private:
     // (overrides GLConsumer::FrameAvailableListener method)
     virtual void onFrameAvailable(const BufferItem& item);
 
-    // Reduces RGBA to RGB, in place.
-    static void reduceRgbaToRgb(uint8_t* buf, unsigned int pixelCount);
-
     // Put a 32-bit value into a buffer, in little-endian byte order.
     static void setValueLE(uint8_t* buf, uint32_t value);
 

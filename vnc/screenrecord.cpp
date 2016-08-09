@@ -70,9 +70,9 @@ static bool gVerbose = false;           // chatty on stdout
 static bool gRotate = false;            // rotate 90 degrees
 static bool gSizeSpecified = false;     // was size explicitly requested?
 static bool gWantInfoScreen = false;    // do we want initial info screen?
-static bool gWantFrameTime = false;     // do we want times on each frame?
-static uint32_t gVideoWidth = 0;        // default width+height
-static uint32_t gVideoHeight = 0;
+static bool gWantFrameTime = true;     // do we want times on each frame?
+static uint32_t gVideoWidth = 480;        // default width+height
+static uint32_t gVideoHeight = 640;
 static uint32_t gBitRate = 4000000;     // 4Mbps
 static uint32_t gTimeLimitSec = kMaxTimeLimitSec;
 
@@ -391,19 +391,19 @@ static status_t recordScreen() {
 
     screenFormat &format = screenformat;
 
-    format.bitsPerPixel = 24;
+    format.bitsPerPixel = 32;
     format.width = gVideoWidth;
     format.pad = 0;
     format.height =     gVideoHeight;
     format.size = format.bitsPerPixel * format.width * format.height / CHAR_BIT;
-    format.redShift = 16;
-    format.redMax = 24;
+    format.redShift = 0;
+    format.redMax = 8;
     format.greenShift = 8;
     format.greenMax = 16;
-    format.blueShift = 0;
-    format.blueMax = 8;
-    format.alphaShift = 0;
-    format.alphaMax = 0;
+    format.blueShift = 16;
+    format.blueMax = 24;
+    format.alphaShift = 24;
+    format.alphaMax = 32;
     return err;
 }
 
