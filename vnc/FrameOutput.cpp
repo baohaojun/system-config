@@ -87,7 +87,11 @@ status_t FrameOutput::createInputSurface(int width, int height,
     return NO_ERROR;
 }
 
-status_t FrameOutput::copyFrame(FILE* fp, long timeoutUsec, bool rawFrames) {
+unsigned char* FrameOutput::getPixelBuf() {
+    return mPixelBuf;
+}
+
+status_t FrameOutput::copyFrame(long timeoutUsec) {
     Mutex::Autolock _l(mMutex);
     ALOGV("copyFrame %ld\n", timeoutUsec);
 
@@ -154,39 +158,17 @@ status_t FrameOutput::copyFrame(FILE* fp, long timeoutUsec, bool rawFrames) {
 
     size_t rgbDataLen = width * height * kOutBytesPerPixel;
 
-    if (!rawFrames) {
-        // Fill out the header.
-        size_t headerLen = sizeof(uint32_t) * 5;
-        size_t packetLen = headerLen - sizeof(uint32_t) + rgbDataLen;
-        uint8_t header[headerLen];
-        setValueLE(&header[0], packetLen);
-        setValueLE(&header[4], width);
-        setValueLE(&header[8], height);
-        setValueLE(&header[12], width * kOutBytesPerPixel);
-        setValueLE(&header[16], HAL_PIXEL_FORMAT_RGB_888);
-        fwrite(header, 1, headerLen, fp);
-    }
-
     // Currently using buffered I/O rather than writev().  Not expecting it
     // to make much of a difference, but it might be worth a test for larger
     // frame sizes.
     if (kShowTiming) {
         startWhenNsec = systemTime(CLOCK_MONOTONIC);
     }
-    fwrite(mPixelBuf, 1, rgbDataLen, fp);
-    fflush(fp);
     if (kShowTiming) {
         endWhenNsec = systemTime(CLOCK_MONOTONIC);
         ALOGD("wrote pixels (%.3f ms)",
                 (endWhenNsec - startWhenNsec) / 1000000.0);
     }
-
-    if (ferror(fp)) {
-        // errno may not be useful; log it anyway
-        ALOGE("write failed (errno=%d)", errno);
-        return UNKNOWN_ERROR;
-    }
-
     return NO_ERROR;
 }
 

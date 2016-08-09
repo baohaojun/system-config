@@ -59,7 +59,7 @@ int getCurrentRotation();
 int isIdle();
 void setIdle(int i);
 void close_app();
-screenFormat screenformat;
+extern screenFormat screenformat;
 
 #ifdef __cplusplus
 extern "C" {

@@ -68,9 +68,6 @@ static const char* kMimeTypeAvc = "video/avc";
 // Command-line parameters.
 static bool gVerbose = false;           // chatty on stdout
 static bool gRotate = false;            // rotate 90 degrees
-static enum {
-    FORMAT_MP4, FORMAT_H264, FORMAT_FRAMES, FORMAT_RAW_FRAMES
-} gOutputFormat = FORMAT_MP4;           // data format for output
 static bool gSizeSpecified = false;     // was size explicitly requested?
 static bool gWantInfoScreen = false;    // do we want initial info screen?
 static bool gWantFrameTime = false;     // do we want times on each frame?
@@ -304,223 +301,9 @@ static status_t prepareVirtualDisplay(const DisplayInfo& mainDpyInfo,
 
     return NO_ERROR;
 }
-
-/*
- * Runs the MediaCodec encoder, sending the output to the MediaMuxer.  The
- * input frames are coming from the virtual display as fast as SurfaceFlinger
- * wants to send them.
- *
- * Exactly one of muxer or rawFp must be non-null.
- *
- * The muxer must *not* have been started before calling.
- */
-static status_t runEncoder(const sp<MediaCodec>& encoder,
-        const sp<MediaMuxer>& muxer, FILE* rawFp, const sp<IBinder>& mainDpy,
-        const sp<IBinder>& virtualDpy, uint8_t orientation) {
-    static int kTimeout = 250000;   // be responsive on signal
-    status_t err;
-    ssize_t trackIdx = -1;
-    uint32_t debugNumFrames = 0;
-    int64_t startWhenNsec = systemTime(CLOCK_MONOTONIC);
-    int64_t endWhenNsec = startWhenNsec + seconds_to_nanoseconds(gTimeLimitSec);
-    DisplayInfo mainDpyInfo;
-
-    assert((rawFp == NULL && muxer != NULL) || (rawFp != NULL && muxer == NULL));
-
-    Vector<sp<ABuffer> > buffers;
-    err = encoder->getOutputBuffers(&buffers);
-    if (err != NO_ERROR) {
-        fprintf(stderr, "Unable to get output buffers (err=%d)\n", err);
-        return err;
-    }
-
-    // This is set by the signal handler.
-    gStopRequested = false;
-
-    // Run until we're signaled.
-    while (!gStopRequested) {
-        size_t bufIndex, offset, size;
-        int64_t ptsUsec;
-        uint32_t flags;
-
-        if (systemTime(CLOCK_MONOTONIC) > endWhenNsec && rawFp != stdout) {
-            if (gVerbose) {
-                printf("Time limit reached\n");
-            }
-            break;
-        }
-
-        ALOGV("Calling dequeueOutputBuffer");
-        err = encoder->dequeueOutputBuffer(&bufIndex, &offset, &size, &ptsUsec,
-                &flags, kTimeout);
-        ALOGV("dequeueOutputBuffer returned %d", err);
-        switch (err) {
-        case NO_ERROR:
-            // got a buffer
-            if ((flags & MediaCodec::BUFFER_FLAG_CODECCONFIG) != 0) {
-                ALOGV("Got codec config buffer (%zu bytes)", size);
-                if (muxer != NULL) {
-                    // ignore this -- we passed the CSD into MediaMuxer when
-                    // we got the format change notification
-                    size = 0;
-                }
-            }
-            if (size != 0) {
-                ALOGV("Got data in buffer %zu, size=%zu, pts=%" PRId64,
-                        bufIndex, size, ptsUsec);
-
-                { // scope
-                    ATRACE_NAME("orientation");
-                    // Check orientation, update if it has changed.
-                    //
-                    // Polling for changes is inefficient and wrong, but the
-                    // useful stuff is hard to get at without a Dalvik VM.
-                    err = SurfaceComposerClient::getDisplayInfo(mainDpy,
-                            &mainDpyInfo);
-                    if (err != NO_ERROR) {
-                        ALOGW("getDisplayInfo(main) failed: %d", err);
-                    } else if (orientation != mainDpyInfo.orientation) {
-                        ALOGD("orientation changed, now %d", mainDpyInfo.orientation);
-                        SurfaceComposerClient::openGlobalTransaction();
-                        setDisplayProjection(virtualDpy, mainDpyInfo);
-                        SurfaceComposerClient::closeGlobalTransaction();
-                        orientation = mainDpyInfo.orientation;
-                    }
-                }
-
-                // If the virtual display isn't providing us with timestamps,
-                // use the current time.  This isn't great -- we could get
-                // decoded data in clusters -- but we're not expecting
-                // to hit this anyway.
-                if (ptsUsec == 0) {
-                    ptsUsec = systemTime(SYSTEM_TIME_MONOTONIC) / 1000;
-                }
-
-                if (muxer == NULL) {
-                    fwrite(buffers[bufIndex]->data(), 1, size, rawFp);
-                    // Flush the data immediately in case we're streaming.
-                    // We don't want to do this if all we've written is
-                    // the SPS/PPS data because mplayer gets confused.
-                    if ((flags & MediaCodec::BUFFER_FLAG_CODECCONFIG) == 0) {
-                        fflush(rawFp);
-                    }
-                } else {
-                    // The MediaMuxer docs are unclear, but it appears that we
-                    // need to pass either the full set of BufferInfo flags, or
-                    // (flags & BUFFER_FLAG_SYNCFRAME).
-                    //
-                    // If this blocks for too long we could drop frames.  We may
-                    // want to queue these up and do them on a different thread.
-                    ATRACE_NAME("write sample");
-                    assert(trackIdx != -1);
-                    err = muxer->writeSampleData(buffers[bufIndex], trackIdx,
-                            ptsUsec, flags);
-                    if (err != NO_ERROR) {
-                        fprintf(stderr,
-                            "Failed writing data to muxer (err=%d)\n", err);
-                        return err;
-                    }
-                }
-                debugNumFrames++;
-            }
-            err = encoder->releaseOutputBuffer(bufIndex);
-            if (err != NO_ERROR) {
-                fprintf(stderr, "Unable to release output buffer (err=%d)\n",
-                        err);
-                return err;
-            }
-            if ((flags & MediaCodec::BUFFER_FLAG_EOS) != 0) {
-                // Not expecting EOS from SurfaceFlinger.  Go with it.
-                ALOGI("Received end-of-stream");
-                gStopRequested = true;
-            }
-            break;
-        case -EAGAIN:                       // INFO_TRY_AGAIN_LATER
-            ALOGV("Got -EAGAIN, looping");
-            break;
-        case INFO_FORMAT_CHANGED:           // INFO_OUTPUT_FORMAT_CHANGED
-            {
-                // Format includes CSD, which we must provide to muxer.
-                ALOGV("Encoder format changed");
-                sp<AMessage> newFormat;
-                encoder->getOutputFormat(&newFormat);
-                if (muxer != NULL) {
-                    trackIdx = muxer->addTrack(newFormat);
-                    ALOGV("Starting muxer");
-                    err = muxer->start();
-                    if (err != NO_ERROR) {
-                        fprintf(stderr, "Unable to start muxer (err=%d)\n", err);
-                        return err;
-                    }
-                }
-            }
-            break;
-        case INFO_OUTPUT_BUFFERS_CHANGED:   // INFO_OUTPUT_BUFFERS_CHANGED
-            // Not expected for an encoder; handle it anyway.
-            ALOGV("Encoder buffers changed");
-            err = encoder->getOutputBuffers(&buffers);
-            if (err != NO_ERROR) {
-                fprintf(stderr,
-                        "Unable to get new output buffers (err=%d)\n", err);
-                return err;
-            }
-            break;
-        case INVALID_OPERATION:
-            ALOGW("dequeueOutputBuffer returned INVALID_OPERATION");
-            return err;
-        default:
-            fprintf(stderr,
-                    "Got weird result %d from dequeueOutputBuffer\n", err);
-            return err;
-        }
-    }
-
-    ALOGV("Encoder stopping (req=%d)", gStopRequested);
-    if (gVerbose) {
-        printf("Encoder stopping; recorded %u frames in %" PRId64 " seconds\n",
-                debugNumFrames, nanoseconds_to_seconds(
-                        systemTime(CLOCK_MONOTONIC) - startWhenNsec));
-    }
-    return NO_ERROR;
-}
-
-/*
- * Raw H.264 byte stream output requested.  Send the output to stdout
- * if desired.  If the output is a tty, reconfigure it to avoid the
- * CRLF line termination that we see with "adb shell" commands.
- */
-static FILE* prepareRawOutput(const char* fileName) {
-    FILE* rawFp = NULL;
-
-    if (strcmp(fileName, "-") == 0) {
-        if (gVerbose) {
-            fprintf(stderr, "ERROR: verbose output and '-' not compatible");
-            return NULL;
-        }
-        rawFp = stdout;
-    } else {
-        rawFp = fopen(fileName, "w");
-        if (rawFp == NULL) {
-            fprintf(stderr, "fopen raw failed: %s\n", strerror(errno));
-            return NULL;
-        }
-    }
-
-    int fd = fileno(rawFp);
-    if (isatty(fd)) {
-        // best effort -- reconfigure tty for "raw"
-        ALOGD("raw video output to tty (fd=%d)", fd);
-        struct termios term;
-        if (tcgetattr(fd, &term) == 0) {
-            cfmakeraw(&term);
-            if (tcsetattr(fd, TCSANOW, &term) == 0) {
-                ALOGD("tty successfully configured for raw");
-            }
-        }
-    }
-
-    return rawFp;
-}
+sp<FrameOutput> frameOutput;
+sp<IGraphicBufferProducer> encoderInputSurface;
+sp<IBinder> dpy;
 
 /*
  * Main "do work" start point.
@@ -528,7 +311,8 @@ static FILE* prepareRawOutput(const char* fileName) {
  * Configures codec, muxer, and virtual display, then starts moving bits
  * around.
  */
-static status_t recordScreen(const char* fileName) {
+sp<Overlay> overlay;
+static status_t recordScreen() {
     status_t err;
 
     // Configure signal handler.
@@ -563,41 +347,13 @@ static status_t recordScreen(const char* fileName) {
         gVideoHeight = rotated ? mainDpyInfo.w : mainDpyInfo.h;
     }
 
-    // Configure and start the encoder.
-    sp<MediaCodec> encoder;
-    sp<FrameOutput> frameOutput;
-    sp<IGraphicBufferProducer> encoderInputSurface;
-    if (gOutputFormat != FORMAT_FRAMES && gOutputFormat != FORMAT_RAW_FRAMES) {
-        err = prepareEncoder(mainDpyInfo.fps, &encoder, &encoderInputSurface);
 
-        if (err != NO_ERROR && !gSizeSpecified) {
-            // fallback is defined for landscape; swap if we're in portrait
-            bool needSwap = gVideoWidth < gVideoHeight;
-            uint32_t newWidth = needSwap ? kFallbackHeight : kFallbackWidth;
-            uint32_t newHeight = needSwap ? kFallbackWidth : kFallbackHeight;
-            if (gVideoWidth != newWidth && gVideoHeight != newHeight) {
-                ALOGV("Retrying with 720p");
-                fprintf(stderr, "WARNING: failed at %dx%d, retrying at %dx%d\n",
-                        gVideoWidth, gVideoHeight, newWidth, newHeight);
-                gVideoWidth = newWidth;
-                gVideoHeight = newHeight;
-                err = prepareEncoder(mainDpyInfo.fps, &encoder,
-                        &encoderInputSurface);
-            }
-        }
-        if (err != NO_ERROR) return err;
-
-        // From here on, we must explicitly release() the encoder before it goes
-        // out of scope, or we will get an assertion failure from stagefright
-        // later on in a different thread.
-    } else {
-        // We're not using an encoder at all.  The "encoder input surface" we hand to
-        // SurfaceFlinger will just feed directly to us.
-        frameOutput = new FrameOutput();
-        err = frameOutput->createInputSurface(gVideoWidth, gVideoHeight, &encoderInputSurface);
-        if (err != NO_ERROR) {
-            return err;
-        }
+    // We're not using an encoder at all.  The "encoder input surface" we hand to
+    // SurfaceFlinger will just feed directly to us.
+    frameOutput = new FrameOutput();
+    err = frameOutput->createInputSurface(gVideoWidth, gVideoHeight, &encoderInputSurface);
+    if (err != NO_ERROR) {
+        return err;
     }
 
     // Draw the "info" page by rendering a frame with GLES and sending
@@ -609,13 +365,12 @@ static status_t recordScreen(const char* fileName) {
 
     // Configure optional overlay.
     sp<IGraphicBufferProducer> bufferProducer;
-    sp<Overlay> overlay;
+
     if (gWantFrameTime) {
         // Send virtual display frames to an external texture.
         overlay = new Overlay();
         err = overlay->start(encoderInputSurface, &bufferProducer);
         if (err != NO_ERROR) {
-            if (encoder != NULL) encoder->release();
             return err;
         }
         if (gVerbose) {
@@ -627,167 +382,29 @@ static status_t recordScreen(const char* fileName) {
     }
 
     // Configure virtual display.
-    sp<IBinder> dpy;
     err = prepareVirtualDisplay(mainDpyInfo, bufferProducer, &dpy);
     if (err != NO_ERROR) {
-        if (encoder != NULL) encoder->release();
         return err;
     }
 
-    sp<MediaMuxer> muxer = NULL;
-    FILE* rawFp = NULL;
-    switch (gOutputFormat) {
-        case FORMAT_MP4: {
-            // Configure muxer.  We have to wait for the CSD blob from the encoder
-            // before we can start it.
-            int fd = open(fileName, O_CREAT | O_LARGEFILE | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
-            if (fd < 0) {
-                fprintf(stderr, "ERROR: couldn't open file\n");
-                abort();
-            }
-            muxer = new MediaMuxer(fd, MediaMuxer::OUTPUT_FORMAT_MPEG_4);
-            close(fd);
-            if (gRotate) {
-                muxer->setOrientationHint(90);  // TODO: does this do anything?
-            }
-            break;
-        }
-        case FORMAT_H264:
-        case FORMAT_FRAMES:
-        case FORMAT_RAW_FRAMES: {
-            rawFp = prepareRawOutput(fileName);
-            if (rawFp == NULL) {
-                if (encoder != NULL) encoder->release();
-                return -1;
-            }
-            break;
-        }
-        default:
-            fprintf(stderr, "ERROR: unknown format %d\n", gOutputFormat);
-            abort();
-    }
+    frameOutput->prepareToCopy();
 
-    if (gOutputFormat == FORMAT_FRAMES || gOutputFormat == FORMAT_RAW_FRAMES) {
-        // TODO: if we want to make this a proper feature, we should output
-        //       an outer header with version info.  Right now we never change
-        //       the frame size or format, so we could conceivably just send
-        //       the current frame header once and then follow it with an
-        //       unbroken stream of data.
+    screenFormat &format = screenformat;
 
-        // Make the EGL context current again.  This gets unhooked if we're
-        // using "--bugreport" mode.
-        // TODO: figure out if we can eliminate this
-        frameOutput->prepareToCopy();
-
-        while (!gStopRequested) {
-            // Poll for frames, the same way we do for MediaCodec.  We do
-            // all of the work on the main thread.
-            //
-            // Ideally we'd sleep indefinitely and wake when the
-            // stop was requested, but this will do for now.  (It almost
-            // works because wait() wakes when a signal hits, but we
-            // need to handle the edge cases.)
-            bool rawFrames = gOutputFormat == FORMAT_RAW_FRAMES;
-            err = frameOutput->copyFrame(rawFp, 250000, rawFrames);
-            if (err == ETIMEDOUT) {
-                err = NO_ERROR;
-            } else if (err != NO_ERROR) {
-                ALOGE("Got error %d from copyFrame()", err);
-                break;
-            }
-        }
-    } else {
-        // Main encoder loop.
-        err = runEncoder(encoder, muxer, rawFp, mainDpy, dpy,
-                mainDpyInfo.orientation);
-        if (err != NO_ERROR) {
-            fprintf(stderr, "Encoder failed (err=%d)\n", err);
-            // fall through to cleanup
-        }
-
-        if (gVerbose) {
-            printf("Stopping encoder and muxer\n");
-        }
-    }
-
-    // Shut everything down, starting with the producer side.
-    encoderInputSurface = NULL;
-    SurfaceComposerClient::destroyDisplay(dpy);
-    if (overlay != NULL) overlay->stop();
-    if (encoder != NULL) encoder->stop();
-    if (muxer != NULL) {
-        // If we don't stop muxer explicitly, i.e. let the destructor run,
-        // it may hang (b/11050628).
-        muxer->stop();
-    } else if (rawFp != stdout) {
-        fclose(rawFp);
-    }
-    if (encoder != NULL) encoder->release();
-
+    format.bitsPerPixel = 24;
+    format.width = gVideoWidth;
+    format.pad = 0;
+    format.height =     gVideoHeight;
+    format.size = format.bitsPerPixel * format.width * format.height / CHAR_BIT;
+    format.redShift = 16;
+    format.redMax = 24;
+    format.greenShift = 8;
+    format.greenMax = 16;
+    format.blueShift = 0;
+    format.blueMax = 8;
+    format.alphaShift = 0;
+    format.alphaMax = 0;
     return err;
-}
-
-/*
- * Sends a broadcast to the media scanner to tell it about the new video.
- *
- * This is optional, but nice to have.
- */
-static status_t notifyMediaScanner(const char* fileName) {
-    // need to do allocations before the fork()
-    String8 fileUrl("file://");
-    fileUrl.append(fileName);
-
-    const char* kCommand = "/system/bin/am";
-    const char* const argv[] = {
-            kCommand,
-            "broadcast",
-            "-a",
-            "android.intent.action.MEDIA_SCANNER_SCAN_FILE",
-            "-d",
-            fileUrl.string(),
-            NULL
-    };
-    if (gVerbose) {
-        printf("Executing:");
-        for (int i = 0; argv[i] != NULL; i++) {
-            printf(" %s", argv[i]);
-        }
-        putchar('\n');
-    }
-
-    pid_t pid = fork();
-    if (pid < 0) {
-        int err = errno;
-        ALOGW("fork() failed: %s", strerror(err));
-        return -err;
-    } else if (pid > 0) {
-        // parent; wait for the child, mostly to make the verbose-mode output
-        // look right, but also to check for and log failures
-        int status;
-        pid_t actualPid = TEMP_FAILURE_RETRY(waitpid(pid, &status, 0));
-        if (actualPid != pid) {
-            ALOGW("waitpid(%d) returned %d (errno=%d)", pid, actualPid, errno);
-        } else if (status != 0) {
-            ALOGW("'am broadcast' exited with status=%d", status);
-        } else {
-            ALOGV("'am broadcast' exited successfully");
-        }
-    } else {
-        if (!gVerbose) {
-            // non-verbose, suppress 'am' output
-            ALOGV("closing stdout/stderr in child");
-            int fd = open("/dev/null", O_WRONLY);
-            if (fd >= 0) {
-                dup2(fd, STDOUT_FILENO);
-                dup2(fd, STDERR_FILENO);
-                close(fd);
-            }
-        }
-        execv(kCommand, const_cast<char* const*>(argv));
-        ALOGE("execv(%s) failed: %s\n", kCommand, strerror(errno));
-        exit(1);
-    }
-    return NO_ERROR;
 }
 
 /*
@@ -874,146 +491,44 @@ static void usage() {
         );
 }
 
+screenFormat screenformat;
+
 /*
  * Parses args and kicks things off.
  */
 int initScreenRecord(void)
 {
-    int argc = 0;
-    char* const argv[] = {};
-    static const struct option longOptions[] = {
-        { "help",               no_argument,        NULL, 'h' },
-        { "verbose",            no_argument,        NULL, 'v' },
-        { "size",               required_argument,  NULL, 's' },
-        { "bit-rate",           required_argument,  NULL, 'b' },
-        { "time-limit",         required_argument,  NULL, 't' },
-        { "bugreport",          no_argument,        NULL, 'u' },
-        // "unofficial" options
-        { "show-device-info",   no_argument,        NULL, 'i' },
-        { "show-frame-time",    no_argument,        NULL, 'f' },
-        { "rotate",             no_argument,        NULL, 'r' },
-        { "output-format",      required_argument,  NULL, 'o' },
-        { NULL,                 0,                  NULL, 0 }
-    };
-
-    while (true) {
-        int optionIndex = 0;
-        int ic = getopt_long(argc, argv, "", longOptions, &optionIndex);
-        if (ic == -1) {
-            break;
-        }
-
-        switch (ic) {
-        case 'h':
-            usage();
-            return 0;
-        case 'v':
-            gVerbose = true;
-            break;
-        case 's':
-            if (!parseWidthHeight(optarg, &gVideoWidth, &gVideoHeight)) {
-                fprintf(stderr, "Invalid size '%s', must be width x height\n",
-                        optarg);
-                return 2;
-            }
-            if (gVideoWidth == 0 || gVideoHeight == 0) {
-                fprintf(stderr,
-                    "Invalid size %ux%u, width and height may not be zero\n",
-                    gVideoWidth, gVideoHeight);
-                return 2;
-            }
-            gSizeSpecified = true;
-            break;
-        case 'b':
-            if (parseValueWithUnit(optarg, &gBitRate) != NO_ERROR) {
-                return 2;
-            }
-            if (gBitRate < kMinBitRate || gBitRate > kMaxBitRate) {
-                fprintf(stderr,
-                        "Bit rate %dbps outside acceptable range [%d,%d]\n",
-                        gBitRate, kMinBitRate, kMaxBitRate);
-                return 2;
-            }
-            break;
-        case 't':
-            gTimeLimitSec = atoi(optarg);
-            if (gTimeLimitSec == 0 || gTimeLimitSec > kMaxTimeLimitSec) {
-                fprintf(stderr,
-                        "Time limit %ds outside acceptable range [1,%d]\n",
-                        gTimeLimitSec, kMaxTimeLimitSec);
-                return 2;
-            }
-            break;
-        case 'u':
-            gWantInfoScreen = true;
-            gWantFrameTime = true;
-            break;
-        case 'i':
-            gWantInfoScreen = true;
-            break;
-        case 'f':
-            gWantFrameTime = true;
-            break;
-        case 'r':
-            // experimental feature
-            gRotate = true;
-            break;
-        case 'o':
-            if (strcmp(optarg, "mp4") == 0) {
-                gOutputFormat = FORMAT_MP4;
-            } else if (strcmp(optarg, "h264") == 0) {
-                gOutputFormat = FORMAT_H264;
-            } else if (strcmp(optarg, "frames") == 0) {
-                gOutputFormat = FORMAT_FRAMES;
-            } else if (strcmp(optarg, "raw-frames") == 0) {
-                gOutputFormat = FORMAT_RAW_FRAMES;
-            } else {
-                fprintf(stderr, "Unknown format '%s'\n", optarg);
-                return 2;
-            }
-            break;
-        default:
-            if (ic != '?') {
-                fprintf(stderr, "getopt_long returned unexpected value 0x%x\n", ic);
-            }
-            return 2;
-        }
-    }
-
-    if (optind != argc - 1) {
-        fprintf(stderr, "Must specify output file (see --help).\n");
-        return 2;
-    }
-
-    const char* fileName = argv[optind];
-    if (gOutputFormat == FORMAT_MP4) {
-        // MediaMuxer tries to create the file in the constructor, but we don't
-        // learn about the failure until muxer.start(), which returns a generic
-        // error code without logging anything.  We attempt to create the file
-        // now for better diagnostics.
-        int fd = open(fileName, O_CREAT | O_RDWR, 0644);
-        if (fd < 0) {
-            fprintf(stderr, "Unable to open '%s': %s\n", fileName, strerror(errno));
-            return 1;
-        }
-        close(fd);
-    }
-
-    status_t err = recordScreen(fileName);
-    if (err == NO_ERROR) {
-        // Try to notify the media scanner.  Not fatal if this fails.
-        notifyMediaScanner(fileName);
-    }
+    status_t err = recordScreen();
     ALOGD(err == NO_ERROR ? "success" : "failed");
     return (int) err;
 }
 
 int closeScreenRecord()
 {
+    encoderInputSurface = NULL;
+    SurfaceComposerClient::destroyDisplay(dpy);
+    if (overlay != NULL) overlay->stop();
     return 0;
 }
 
 unsigned char *readBufferFlinger(void)
 {
+    while (!gStopRequested) {
+        // Poll for frames, the same way we do for MediaCodec.  We do
+        // all of the work on the main thread.
+        //
+        // Ideally we'd sleep indefinitely and wake when the
+        // stop was requested, but this will do for now.  (It almost
+        // works because wait() wakes when a signal hits, but we
+        // need to handle the edge cases.)
+        status_t err = frameOutput->copyFrame(250000);
+        if (err == ETIMEDOUT) {
+            err = NO_ERROR;
+            return frameOutput->getPixelBuf();
+        } else if (err != NO_ERROR) {
+            ALOGE("Got error %d from copyFrame()", err);
+            break;
+        }
+    }
     return NULL;
 }
