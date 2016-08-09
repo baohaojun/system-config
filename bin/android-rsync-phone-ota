@@ -227,9 +227,8 @@ function update-non-system-partitions() {
         mtk-print-file-partitions MT6797_Android_scatter.txt
     else
         xmlstarlet 2>&1 sel -t -m //program -v \@filename -o ' ' -v @label -n $xml
-    fi |
-        sort -u|
-        while read f p; do if test -e $f; then echo $f $p; fi; done|
+    fi | sort -u|
+        while read f p; do if test -e $f; then echo "working with $f -> $p" 1>&2; echo $f $p; else echo "$f not exist" 1>&2; fi; done|
         grep -v 'GPT|_\d+| .* ' -P| perl -npe 'END{print "done done\n"}'|
         while read file part; do
             if test -z "$part"; then
@@ -242,13 +241,14 @@ function update-non-system-partitions() {
             # rpm rpmbak tz tzbak xbl xblbak
 
             if test -z "$(arg1-arg2 "$part" PrimaryGPT BackupGPT udisk modemst1 modemst2 persist fsg factory sec security $skip_partitions)"; then
+                echo "Setup to skip $part"
                 continue
             fi
             if test $part = done; then
                 break
             fi
             echo doing $file to $part
-            update-partition $file $part || exit 5
+            update-partition $file $part </dev/null || { echo "$file -> $part failed"; exit 5; }
         done
 }
 

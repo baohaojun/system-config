@@ -1,0 +1,111 @@
+#!/bin/bash
+
+ignored_dirs=(
+    时光网
+    adb-mail
+    Alarms
+    alipay
+    amap
+    Android
+    appmanager
+    apsamapapi
+    autonavi
+    backup
+    backups
+    baidu
+    cmb
+    codoonsports
+    com.eg.android.AlipayGphone
+    com.immomo.momo
+    com.tencent.mobileqq
+    crossdict
+    data
+    didi
+    didiImg
+    DidiScreenAd
+    ExtDataTunnel
+    hce_minidmp
+    HotKnot
+    httpcache
+    imagepipeline_cache
+    immomo
+    libs
+    log
+    mfcache
+    Mob
+    msc
+    mtklog
+    netease
+    netease_pushservice
+    Notifications
+    Pictures
+    Podcasts
+    QQBrowser
+    qqmusic
+    QQReader
+    Ringtones
+    Sdk
+    shading
+    shading_otp
+    ShareSDK
+    sina
+    sogou
+    step_log
+    sysdata
+    system
+    tbs
+    tencent
+    DidiUuid
+    tencentmapsdk
+    tingshu
+    TouchPalContactOem50
+    TouchPalv5_ST
+    UCDownloads
+    UxinSDK
+    VideoCache
+    Wrench-DingDing
+    Youdao
+    youku
+    zapya
+    Setclip.apk.md5
+    WrenchIME.apk.md5
+    am.jar.md5
+    contacts-manual-generation.vcf
+    contacts.vcf
+    listcontacts.txt
+    ota.zip
+    setclip-apk.txt
+    sha1-ota.zip
+    0
+    10002068@Rimet-dingtalk-2.12.0.apk
+    t1wrench-screen.jpg
+    wrench-screen.jpg
+)
+
+ignored_pats=(
+    '.*\.trace'
+)
+
+my-adb bash -c 'cd /sdcard/; ls'|while read d; do
+    skip=false
+    for pat in "${ignored_dirs[@]}"; do
+        if test "$d" = "$pat"; then
+            skip=true
+            break
+        fi
+    done
+    if test "$skip" = true; then
+        continue
+    fi
+
+    for pat in "${ignored_pats[@]}"; do
+        if [[ $d =~ $pat ]]; then
+            skip=true
+            break
+        fi
+    done
+
+    if test $skip = false; then
+        echo "adb pull '/sdcard/$d' ./'$d' </dev/null"
+    fi
+done

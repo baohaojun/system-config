@@ -41,7 +41,10 @@ if (@ARGV == 1) {
 my $dest = pop( @ARGV);
 my $qdest = shell_quote($dest);
 
-my $dest_is_dir = qx(my-adb shell 'test -d $qdest && echo -n yes');
+my $dest_is_dir = qx(my-adb shell 'test -d $qdest && echo -n yes && echo $$') =~ m/yes\d/;
+if ($dest_is_dir) {
+    debug "Dest is a dir";
+}
 
 my $dir;
 if ($dest =~ m,^/data\b,) {

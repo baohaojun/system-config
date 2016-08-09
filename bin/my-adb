@@ -1,7 +1,18 @@
 #!/bin/bash
 
-if echo $SHELLOPTS | grep -q xtrace; then
-    export SHELLOPTS
+if test "$1" = -s; then
+    export MULTIPLE_ADBDEVICES_OK=true
+fi
+
+if test "$MULTIPLE_ADBDEVICES_OK" != true; then
+    (
+        export MULTIPLE_ADBDEVICES_OK=true
+        if test -z "$ANDROID_SERIAL" -a "$(my-adb devices? | wc -l)" -gt 1 -a "$1" != -s; then
+            if EMACS=t yes-or-no-p -y "You have more than 1 adb devices, but ANDROID_SERIAL not set, exit?"; then
+                kill -TERM -$(cat /proc/$$/stat|pn 5)
+            fi
+        fi
+    )
 fi
 
 if test "$(which adb)" != ~/system-config/bin/Linux/adb; then
@@ -218,7 +229,7 @@ function adb() {
         exit 0
     fi
     if test "$#" = 1 -a "$1" = romount; then
-        command my-adb shell su -c 'mount -o ro,remount /system; mount | grep /system'
+        my-adb -r sh -c 'mount -o ro,remount /system; mount | grep /system'
         exit
     fi
 

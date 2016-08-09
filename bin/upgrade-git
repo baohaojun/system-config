@@ -1,10 +1,10 @@
 #!/bin/bash
 if ! which apt-add-repository >/dev/null 2>&1; then
-    sudo apt-get install python-software-properties || true
+    sudo apt-get install -y python-software-properties || true
 fi
 
 if ! which apt-add-repository >/dev/null 2>&1; then
-    sudo apt-get install software-properties-common
+    sudo apt-get install -y software-properties-common
 fi
 
 sudo add-apt-repository ppa:git-core/ppa -y

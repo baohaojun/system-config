@@ -52,7 +52,7 @@ if ! is-jenkins; then
         mkdir -p ~/src/github/projects
         echo '* TODO hello world' > ~/src/github/projects/test.org
     fi
-    if ! ps.pl xbindkeys; then
+    if ! ps.pl xbindkeys && test -z "$REMOTEIP"; then
         relative-link ~/system-config/.xbindkeysrc.scm ~/ || true
         xbindkeys&
     fi
