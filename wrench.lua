@@ -693,6 +693,7 @@ local function get_coffee(what)
    if yes_or_no_p("确认发送秦师傅咖啡订单？") then
       adb_event"adb-tap 539 957"
    end
+   system{'alarm', '15', 'coffee'}
 end
 
 weixin_open_homepage = function()
