@@ -429,6 +429,6 @@ function gdbserver() {
         return 0;
     fi
     $the_adb forward tcp:$port tcp:$port || true
-    exec_the_adb shell gdbserver :$port "$@"
+    exec_the_adb shell gdbserver64 :$port "$@"
 }
 adb "$@"

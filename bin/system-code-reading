@@ -1,7 +1,21 @@
 #!/bin/bash
 
-for d in /usr/include/ /usr/share/qt5/doc/ /usr/lib /usr/share/java /var/lib/gems/; do
+code_reading_dirs=(
+    /usr/include/ /usr/share/qt5/doc/ /usr/lib /usr/share/java /var/lib/gems/ ~/src/android
+)
+
+for d in "${code_reading_dirs[@]}"; do
     (
-        cd $d && for-code-reading
+        cd $d || exit
+        if test ! -e .for-code-reading; then
+            sudo touch .for-code-reading
+        fi
+    )
+done
+
+for d in "${code_reading_dirs[@]}"; do
+    (
+        cd $d || exit
+        for-code-reading
     )
 done
