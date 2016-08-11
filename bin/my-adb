@@ -184,13 +184,13 @@ function adb() {
                     echo -n '.' 1>&2
                     if $the_adb shell id | grep uid=0 -q; then
                         echo "root is here" 1>&2
+                        $the_adb shell setprop persist.smartisan.dev-tweaks 1
                         break
                     else
                         sleep 1
                     fi
                 done
             fi
-            $the_adb shell setprop persist.smartisan.dev-tweaks 1
         )
         shift
     fi

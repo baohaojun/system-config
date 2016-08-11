@@ -83,7 +83,7 @@ sub push_one_file($$)
     print "adb push $file $true_dest\n";
     if (system("adb", "push", $file, "$true_dest")) {
         debug "push failed, try to use sdcard";
-        system("adb", "mkdir", "-p", "/sdcard/adb-push");
+        system("my-adb", "mkdir", "-p", "/sdcard/adb-push");
         system("adb", "push", $_, "/sdcard/adb-push/$base");
         (my $true_dest_dir = $true_dest) =~ s!(.*)/.*!$1!;
         system("adb", "shell", "su", "-c", "cp -r /sdcard/adb-push/$base \"$true_dest_dir\"");
