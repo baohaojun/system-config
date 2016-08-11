@@ -437,13 +437,6 @@ if test -d ~/src/github/elpa; then
     force-symlink ~/src/github/elpa ~/.emacs.d/elpa
 fi || true
 
-if test -d ~/src/github/semi-offline.wikipedia; then
-    (
-        cd ~/src/github/semi-offline.wikipedia
-        git config remote.origin.url home:repos/semi-offline.wikipedia
-    )
-fi&
-
 if test $can_sudo = true; then
     check-perl-module String::ShellQuote libstring-shellquote-perl
     check-perl-module Marpa::R2           libmarpa-r2-perl
