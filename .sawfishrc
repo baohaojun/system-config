@@ -287,7 +287,31 @@
         ("Super-&" . '((Wrench "Meta-&")))
         ("j" . '((Wine "c")))
         ("o" . '((Wine "s")))
+        ("F1" . '((Wine mm6-save)))
+        ("F2" . '((Wine mm6-load)))
+        ("&" . '((Wine mm7-1)))
+        ("[" . '((Wine mm7-2)))
+        ("{" . '((Wine mm7-3)))
+        ("}" . '((Wine mm7-4)))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
+
+(defun mm7-1 ()
+  (system "mm7 1&"))
+
+(defun mm7-2 ()
+  (system "mm7 2&"))
+
+(defun mm7-3 ()
+  (system "mm7 3&"))
+
+(defun mm7-4 ()
+  (system "mm7 4&"))
+
+(defun mm6-save ()
+  (system "mm7-bless.sh save&"))
+
+(defun mm6-load ()
+  (system "mm7-bless.sh load&"))
 
 (bind-both-global&window-keymaps "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
 
@@ -689,7 +713,9 @@
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))
 (bind-keys s-h-keymap "Super-v" '(system "sendtext-sawfish&"))
 (bind-keys s-h-keymap "C-p" '(system "sawfish-show-pointer&"))
-(bind-keys s-h-keymap "XF86Favorites" '(system "mm6-bless.sh&"))
+(bind-keys s-h-keymap "M-C-p" '(system "sawfish-show-pointer&"))
+(bind-keys s-h-keymap "C-XF86Favorites" '(system "mm7-bless.sh all&"))
+(bind-keys s-h-keymap "XF86Favorites" '(system "mm7-bless.sh bless-heroism&"))
 
 (defun get-window-xy-size (class)
   (let ((x 100000)
