@@ -70,7 +70,7 @@ static bool gVerbose = false;           // chatty on stdout
 static bool gRotate = false;            // rotate 90 degrees
 static bool gSizeSpecified = false;     // was size explicitly requested?
 static bool gWantInfoScreen = false;    // do we want initial info screen?
-static bool gWantFrameTime = true;     // do we want times on each frame?
+static bool gWantFrameTime = false;     // do we want times on each frame?
 static uint32_t gVideoWidth = 480;        // default width+height
 static uint32_t gVideoHeight = 640;
 static uint32_t gBitRate = 4000000;     // 4Mbps
@@ -399,11 +399,11 @@ static status_t recordScreen() {
     format.redShift = 0;
     format.redMax = 8;
     format.greenShift = 8;
-    format.greenMax = 16;
+    format.greenMax = 8;
     format.blueShift = 16;
-    format.blueMax = 24;
+    format.blueMax = 8;
     format.alphaShift = 24;
-    format.alphaMax = 32;
+    format.alphaMax = 8;
     return err;
 }
 
@@ -524,11 +524,12 @@ unsigned char *readBufferFlinger(void)
         status_t err = frameOutput->copyFrame(250000);
         if (err == ETIMEDOUT) {
             err = NO_ERROR;
-            return frameOutput->getPixelBuf();
+            continue;
         } else if (err != NO_ERROR) {
             ALOGE("Got error %d from copyFrame()", err);
             break;
         }
+        return frameOutput->getPixelBuf();
     }
     return NULL;
 }

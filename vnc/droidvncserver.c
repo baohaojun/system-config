@@ -391,7 +391,7 @@ int main(int argc, char **argv)
       if (idle)
         standby+=2;
       else
-        standby=2;
+        standby= -vncscr->deferUpdateTime;
       
       if (vncscr->clientHead == NULL)
       {
