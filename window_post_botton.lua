@@ -24,6 +24,7 @@ map['com.android.settings/com.android.settings.applications.ManageApplicationsAc
 map['com.android.settings/com.android.settings.wifi.AdvancedAccessPointSettingsActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.WifiSetupActivity'] = 'manual-post'
 map['com.android.vending/com.google.android.finsky.activities.MainActivity'] = 'manual-post'
+map['com.android.vending/com.google.android.finsky.activities.RateReviewActivity'] = 'manual-post'
 map['com.baidu.tieba_mini/com.baidu.tieba.imMessageCenter.im.chat.PersonalChatActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.mention.SingleMentionActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.pb.pb.main.PbActivity'] = 'weixin-chat'
