@@ -1337,15 +1337,18 @@ qq_find_friend = function(friend_name)
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
       qq_open_homepage()
-      adb_event"sleep .3 adb-tap 391 288 sleep .8"
-      local top_window = wait_input_target_n(5, qqChatActivity2, qqGroupSearch)
+      adb_event"sleep .3 adb-tap 391 288"
+      local top_window = wait_input_target_n(15, qqChatActivity2, qqGroupSearch)
       adb_event"key scroll_lock sleep .6"
       if top_window and top_window:match(qqGroupSearch) then
          log"Fonud qqGroupSearch"
          adb_event"adb-tap 365 384"
          break
       else
-         log("Got stuck in qqChatActivity2: %s at %d", top_window, i)
+         log("Got stuck in qqChatActivity2, ime stuck?: %s at %d", top_window, i)
+         if i == 5 then
+            error("Can't get to qqGroupSearch in the end")
+         end
          adb_event"adb-tap 303 291"
       end
    end
