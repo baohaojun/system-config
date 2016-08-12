@@ -150,10 +150,10 @@ void initVncServer(int argc, char **argv)
   vncscr->desktopName = "Android";
   vncscr->frameBuffer =(char *)vncbuf;
   vncscr->port = VNC_PORT;
-  vncscr->kbdAddEvent = keyEvent;
-  vncscr->ptrAddEvent = ptrEvent;
+  //vncscr->kbdAddEvent = keyEvent;
+  //vncscr->ptrAddEvent = ptrEvent;
   vncscr->newClientHook = (rfbNewClientHookPtr)clientHook;
-  vncscr->setXCutText = CutText;
+  //vncscr->setXCutText = CutText;
 
   if (strcmp(VNC_PASSWORD,"")!=0)
   {
@@ -243,7 +243,7 @@ void rotate(int value)
 void close_app()
 { 	
   closeScreenRecord();
-  cleanupInput();
+  //cleanupInput();
   sendServerStopped();
   unbindIPCserver();
   exit(0); /* normal exit status */
@@ -347,9 +347,6 @@ int main(int argc, char **argv)
 
     L("Initializing grabber method...\n");
     initScreenRecord();
-
-    L("Initializing virtual keyboard and touch device...\n");
-    initInput(); 
 
     L("Initializing VNC server:\n");
     L("	width:  %d\n", (int)screenformat.width);

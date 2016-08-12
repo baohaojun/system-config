@@ -49,14 +49,11 @@ LOCAL_LDLIBS +=  -llog -lz -ldl
 LOCAL_SRC_FILES += \
 	        $(LIBVNCSERVER_SRC_FILES)\
                 droidvncserver.c \
-                gui.c \
-                inputMethods/input.c \
-                suinput/suinput.c 
+                gui.c 
 
 LOCAL_C_INCLUDES += \
 		 $(LOCAL_PATH) \
 		 $(LOCAL_PATH)/inputMethods \
-		 $(LOCAL_PATH)/suinput \
 		 external/libpng \
 		 external/jpeg \
                  external/zlib \
