@@ -48,8 +48,7 @@ LOCAL_LDLIBS +=  -llog -lz -ldl
 
 LOCAL_SRC_FILES += \
 	        $(LIBVNCSERVER_SRC_FILES)\
-                droidvncserver.c \
-                gui.c 
+                droidvncserver.c 
 
 LOCAL_C_INCLUDES += \
 		 $(LOCAL_PATH) \

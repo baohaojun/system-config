@@ -19,14 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "common.h"
 
-#include "gui.h"
-#include "input.h"
-
-#include "libvncserver/scale.h"
 #include "rfb/rfb.h"
+#include "libvncserver/scale.h"
 #include "rfb/keysym.h"
-#include "suinput.h"
-
 
 #define CONCAT2(a,b) a##b
 #define CONCAT2E(a,b) CONCAT2(a,b)
@@ -47,10 +42,6 @@ uint32_t standby = 1;
 uint16_t rotation = 0;
 uint16_t scaling = 100;
 uint8_t display_rotate_180 = 0;
-
-//reverse connection
-char *rhost = NULL;
-int rport = 5500;
 
 void (*update_screen)(void)=NULL;
 
@@ -79,12 +70,6 @@ void setIdle(int i)
   idle=i; 
 }
 
-ClientGoneHookPtr clientGone(rfbClientPtr cl)
-{
-  sendMsgToGui("~DISCONNECTED|\n");
-  return 0;
-}
-
 rfbNewClientHookPtr clientHook(rfbClientPtr cl)
 {
   if (scaling!=100)
@@ -94,42 +79,9 @@ rfbNewClientHookPtr clientHook(rfbClientPtr cl)
     //rfbSendNewScaleSize(cl);
   }
 
-  cl->clientGoneHook=(ClientGoneHookPtr)clientGone;
-
-  char *header="~CONNECTED|";
-  char *msg=malloc(sizeof(char)*((strlen(cl->host)) + strlen(header)+1));
-  msg[0]='\0';
-  strcat(msg,header);
-  strcat(msg,cl->host);
-  strcat(msg,"\n");
-  sendMsgToGui(msg);
-  free (msg);
-
   return RFB_CLIENT_ACCEPT;
 }
 
-
-void CutText(char* str,int len, struct _rfbClientRec* cl)
-{
-  str[len]='\0';
-  char *header="~CLIP|\n";
-  char *msg=malloc(sizeof(char)*(strlen(str) + strlen(header)+1));
-  msg[0]='\0';
-  strcat(msg,header);
-  strcat(msg,str);
-  strcat(msg,"\n");
-  sendMsgToGui(msg);
-  free(msg);
-}
-
-void sendServerStarted(){
-  sendMsgToGui("~SERVERSTARTED|\n");
-}
-
-void sendServerStopped()
-{
-  sendMsgToGui("~SERVERSTOPPED|\n");
-}
 
 void initVncServer(int argc, char **argv)
 { 
@@ -196,7 +148,6 @@ void initVncServer(int argc, char **argv)
       L("Unsupported pixel depth: %d\n",
         vncscr->serverFormat.bitsPerPixel);
 
-      sendMsgToGui("~SHOW|Unsupported pixel depth, please send bug report.\n");
       close_app();
       exit(-1);
     }
@@ -243,37 +194,9 @@ void rotate(int value)
 void close_app()
 { 	
   closeScreenRecord();
-  //cleanupInput();
-  sendServerStopped();
-  unbindIPCserver();
   exit(0); /* normal exit status */
 }
 
-
-void extractReverseHostPort(char *str)
-{
-  int len = strlen(str);
-  char *p;
-  /* copy in to host */
-  rhost = (char *) malloc(len+1);
-  if (! rhost) {
-    L("reverse_connect: could not malloc string %d\n", len);
-    exit(-1);
-  }
-  strncpy(rhost, str, len);
-  rhost[len] = '\0';
-
-  /* extract port, if any */
-  if ((p = strrchr(rhost, ':')) != NULL) {
-    rport = atoi(p+1);
-    if (rport < 0) {
-      rport = -rport;
-    } else if (rport < 20) {
-      rport = 5500 + rport;
-    }
-    *p = '\0';
-  } 
-}
 
 void printUsage(char **argv)
 {
@@ -335,15 +258,11 @@ int main(int argc, char **argv)
             scaling = 100;
           L("scaling to %d%%\n",scaling);
           break;
-        case 'R':
-          i++;
-          extractReverseHostPort(argv[i]);
-          break;
         }
-        }
-      i++;
       }
+      i++;
     }
+  }
 
     L("Initializing grabber method...\n");
     initScreenRecord();
@@ -359,26 +278,6 @@ int main(int argc, char **argv)
       screenformat.redMax,screenformat.greenMax,screenformat.blueMax,screenformat.alphaMax);  
 
     initVncServer(argc, argv);
-
-    bindIPCserver();
-    sendServerStarted();
-
-    if (rhost) {
-      rfbClientPtr cl;
-      cl = rfbReverseConnection(vncscr, rhost, rport);
-      if (cl == NULL) {
-        char *str=malloc(255*sizeof(char));
-        sprintf(str,"~SHOW|Couldn't connect to remote host:\n%s\n",rhost);
-
-        L("Couldn't connect to remote host: %s\n",rhost);
-        sendMsgToGui(str);
-        free(str);
-      } else {
-        cl->onHold = FALSE;
-        rfbStartOnHoldClient(cl);
-      }
-    }
-
 
     while (1) {
         usec=(vncscr->deferUpdateTime+standby)*1000;
