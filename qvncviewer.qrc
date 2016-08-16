@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>translations/qvncviewer_de.qm</file>
+        <file>translations/qvncviewer_us.qm</file>
+        <file>translations/qt_de.qm</file>
+        <file>images/qvncviewer.png</file>
+        <file>images/connected.png</file>
+        <file>images/disconnected.png</file>
+        <file>images/toggle_fullscreen.png</file>
+        <file>images/toolbox.png</file>
+        <file>images/log.png</file>
+        <file>images/camera.png</file>
+        <file>images/encoding.png</file>
+    </qresource>
+</RCC>

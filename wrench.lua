@@ -72,7 +72,7 @@ local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.Sns
 local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
 local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
 local qqShareActivity = "com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity"
-local emailSmartisanActivity = "com.android.email/com.android.email.activity.ComposeActivityEmail"
+local emailSmartisanActivity = "com.android.email/com.android.mail.compose.ComposeActivity"
 local oiFileChooseActivity = "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity"
 local weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity"
 local weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
@@ -2058,7 +2058,8 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
       cc = expand_mail_groups(cc)
       bcc = expand_mail_groups(bcc)
 
-      adb_am("am start -n " .. emailSmartisanActivity .. " mailto:; mkdir -p /sdcard/adb-mail")
+      adb_am("am start -n " .. emailSmartisanActivity .. " mailto:")
+      adb_shell"mkdir -p /sdcard/adb-mail"
       wait_input_target(emailSmartisanActivity)
 
       adb_event("adb-tap 842 434 sleep 1.5") -- 展开

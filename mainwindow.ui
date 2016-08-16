@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>523</width>
+    <height>395</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Qt VNC Viewer</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="tabsMovable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>523</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuConnection">
+    <property name="title">
+     <string>Connection</string>
+    </property>
+    <widget class="QMenu" name="menuConnectionRecent">
+     <property name="title">
+      <string>Recent</string>
+     </property>
+    </widget>
+    <addaction name="actionConnectionNew"/>
+    <addaction name="menuConnectionRecent"/>
+    <addaction name="separator"/>
+    <addaction name="actionConnectionPreferences"/>
+    <addaction name="separator"/>
+    <addaction name="actionConnectionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <widget class="QMenu" name="menuWindowViewMode">
+     <property name="toolTip">
+      <string>Choose view mode</string>
+     </property>
+     <property name="statusTip">
+      <string>Choose view mode</string>
+     </property>
+     <property name="title">
+      <string>View mode</string>
+     </property>
+     <addaction name="actionWindowViewModeWindowed"/>
+     <addaction name="actionWindowViewModeTabbed"/>
+     <addaction name="separator"/>
+     <addaction name="actionWindowViewModeToggleFullScreen"/>
+    </widget>
+    <addaction name="actionWindowNext"/>
+    <addaction name="actionWindowPrevious"/>
+    <addaction name="separator"/>
+    <addaction name="actionWindowTile"/>
+    <addaction name="actionWindowCascade"/>
+    <addaction name="separator"/>
+    <addaction name="actionWindowClose"/>
+    <addaction name="actionWindowCloseAll"/>
+    <addaction name="separator"/>
+    <addaction name="menuWindowViewMode"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHelpAbout"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpWiki"/>
+    <addaction name="actionHelpForum"/>
+    <addaction name="actionHelpBugTracker"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpAboutQt"/>
+   </widget>
+   <addaction name="menuConnection"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionConnectionNew">
+   <property name="text">
+    <string>New...</string>
+   </property>
+   <property name="iconText">
+    <string>New connection</string>
+   </property>
+   <property name="toolTip">
+    <string>New connection</string>
+   </property>
+   <property name="statusTip">
+    <string>New connection</string>
+   </property>
+  </action>
+  <action name="actionDisconnect">
+   <property name="text">
+    <string>Disconnect</string>
+   </property>
+  </action>
+  <action name="actionConnectionPreferences">
+   <property name="text">
+    <string>Preferences...</string>
+   </property>
+   <property name="iconText">
+    <string>Open preferences dialog</string>
+   </property>
+   <property name="toolTip">
+    <string>Open preferences dialog</string>
+   </property>
+   <property name="statusTip">
+    <string>Open preferences dialog</string>
+   </property>
+  </action>
+  <action name="actionConnectionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="iconText">
+    <string>Exit Qt VNC Viewer</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit Qt VNC Viewer</string>
+   </property>
+   <property name="statusTip">
+    <string>Exit Qt VNC Viewer</string>
+   </property>
+  </action>
+  <action name="actionWindowNext">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Next</string>
+   </property>
+   <property name="iconText">
+    <string>Next connection window</string>
+   </property>
+   <property name="toolTip">
+    <string>Next connection window</string>
+   </property>
+   <property name="statusTip">
+    <string>Next connection window</string>
+   </property>
+  </action>
+  <action name="actionWindowPrevious">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Previous</string>
+   </property>
+   <property name="iconText">
+    <string>Previous connection window</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous connection window</string>
+   </property>
+   <property name="statusTip">
+    <string>Previous connection window</string>
+   </property>
+  </action>
+  <action name="actionWindowTile">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Tile</string>
+   </property>
+   <property name="iconText">
+    <string>Tile connection windows</string>
+   </property>
+   <property name="toolTip">
+    <string>Tile connection windows</string>
+   </property>
+   <property name="statusTip">
+    <string>Tile connection windows</string>
+   </property>
+  </action>
+  <action name="actionWindowCascade">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Cascade</string>
+   </property>
+   <property name="iconText">
+    <string>Cascade connection windows</string>
+   </property>
+   <property name="toolTip">
+    <string>Cascade connection windows</string>
+   </property>
+   <property name="statusTip">
+    <string>Cascade connection windows</string>
+   </property>
+  </action>
+  <action name="actionWindowClose">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="iconText">
+    <string>Close window (and connection)</string>
+   </property>
+   <property name="toolTip">
+    <string>Close window (and connection)</string>
+   </property>
+   <property name="statusTip">
+    <string>Close window (and connection)</string>
+   </property>
+  </action>
+  <action name="actionWindowCloseAll">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Close all</string>
+   </property>
+   <property name="iconText">
+    <string>Close all windows (and connections)</string>
+   </property>
+   <property name="toolTip">
+    <string>Close all windows (and connections)</string>
+   </property>
+   <property name="statusTip">
+    <string>Close all windows (and connections)</string>
+   </property>
+  </action>
+  <action name="actionWindowViewModeWindowed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Windowed</string>
+   </property>
+   <property name="iconText">
+    <string>View mode 'windowed'</string>
+   </property>
+   <property name="toolTip">
+    <string>View mode 'windowed'</string>
+   </property>
+   <property name="statusTip">
+    <string>View mode 'windowed'</string>
+   </property>
+  </action>
+  <action name="actionWindowViewModeTabbed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tabbed</string>
+   </property>
+   <property name="iconText">
+    <string>View mode 'tabbed'</string>
+   </property>
+   <property name="toolTip">
+    <string>View mode 'tabbed'</string>
+   </property>
+   <property name="statusTip">
+    <string>View mode 'tabbed'</string>
+   </property>
+  </action>
+  <action name="actionHelpAbout">
+   <property name="text">
+    <string>About...</string>
+   </property>
+   <property name="iconText">
+    <string>About Qt VNC Viewer</string>
+   </property>
+   <property name="toolTip">
+    <string>About Qt VNC Viewer</string>
+   </property>
+   <property name="statusTip">
+    <string>About Qt VNC Viewer</string>
+   </property>
+  </action>
+  <action name="actionHelpWiki">
+   <property name="text">
+    <string>Wiki...</string>
+   </property>
+   <property name="iconText">
+    <string>Open wiki in web browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Open wiki in web browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Open wiki in web browser</string>
+   </property>
+  </action>
+  <action name="actionHelpForum">
+   <property name="text">
+    <string>Forum...</string>
+   </property>
+   <property name="iconText">
+    <string>Open forum in web browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Open forum in web browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Open forum in web browser</string>
+   </property>
+  </action>
+  <action name="actionHelpBugTracker">
+   <property name="text">
+    <string>Bug tracker...</string>
+   </property>
+   <property name="iconText">
+    <string>Open bug tracker in web browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Open bug tracker in web browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Open bug tracker in web browser</string>
+   </property>
+  </action>
+  <action name="actionHelpAboutQt">
+   <property name="text">
+    <string>About Qt...</string>
+   </property>
+   <property name="statusTip">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionWindowViewModeToggleFullScreen">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Toggle full screen</string>
+   </property>
+   <property name="iconText">
+    <string>Toggle full screen</string>
+   </property>
+   <property name="statusTip">
+    <string>Toggle full screen</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

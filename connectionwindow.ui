@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConnectionWindow</class>
+ <widget class="QMdiSubWindow" name="ConnectionWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>574</width>
+    <height>122</height>
+   </rect>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="qvncviewer.qrc">
+    <normaloff>:/images/qvncviewer.png</normaloff>:/images/qvncviewer.png</iconset>
+  </property>
+  <widget class="QFrame" name="frameConnectionMenu">
+   <property name="geometry">
+    <rect>
+     <x>2</x>
+     <y>2</y>
+     <width>571</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <layout class="QGridLayout" name="gridLayoutConnectionMenu">
+    <property name="margin">
+     <number>2</number>
+    </property>
+    <property name="spacing">
+     <number>2</number>
+    </property>
+    <item row="0" column="3">
+     <widget class="QToolButton" name="toolButtonConnect">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="toolTip">
+       <string>Connect to VNC server</string>
+      </property>
+      <property name="statusTip">
+       <string>Connect to VNC server</string>
+      </property>
+      <property name="icon">
+       <iconset resource="qvncviewer.qrc">
+        <normaloff>:/images/disconnected.png</normaloff>:/images/disconnected.png</iconset>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLineEdit" name="lineEditHostname">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>VNC server host name or IP address</string>
+      </property>
+      <property name="statusTip">
+       <string>VNC server host name or IP address</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="7">
+     <widget class="QToolButton" name="toolButtonToggleFullScreen">
+      <property name="toolTip">
+       <string>Toggle full screen</string>
+      </property>
+      <property name="statusTip">
+       <string>Toggle full screen</string>
+      </property>
+      <property name="icon">
+       <iconset resource="qvncviewer.qrc">
+        <normaloff>:/images/toggle_fullscreen.png</normaloff>:/images/toggle_fullscreen.png</iconset>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QSpinBox" name="spinBoxDisplay">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>VNC server display number</string>
+      </property>
+      <property name="statusTip">
+       <string>VNC server display number</string>
+      </property>
+      <property name="minimum">
+       <number>0</number>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string notr="true">&lt;b&gt;:&lt;/b&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="6">
+     <widget class="QToolButton" name="toolButtonSettings">
+      <property name="toolTip">
+       <string>Settings</string>
+      </property>
+      <property name="statusTip">
+       <string>Settings</string>
+      </property>
+      <property name="icon">
+       <iconset resource="qvncviewer.qrc">
+        <normaloff>:/images/toolbox.png</normaloff>:/images/toolbox.png</iconset>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::InstantPopup</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QMdiSubWindow</class>
+   <extends>QWidget</extends>
+   <header>qmdisubwindow.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>lineEditHostname</tabstop>
+  <tabstop>spinBoxDisplay</tabstop>
+  <tabstop>toolButtonConnect</tabstop>
+  <tabstop>toolButtonSettings</tabstop>
+  <tabstop>toolButtonToggleFullScreen</tabstop>
+ </tabstops>
+ <resources>
+  <include location="qvncviewer.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>lineEditHostname</sender>
+   <signal>returnPressed()</signal>
+   <receiver>toolButtonConnect</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>215</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>497</x>
+     <y>22</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -1,0 +1,4 @@
+- Add joystick support (joystick-to-key and/or joystick-to-mouse)
+- Add support for typical VNC authentication and encryption schemes
+- Add support for a MAME/MESS/UME (VNC OSD) specific audio protocol
+- Add support for a MAME/MESS/UME (VNC OSD) specific match-making protocol

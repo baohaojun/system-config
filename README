@@ -1,0 +1,11 @@
+This project provides a Qt based VNC client with specific extensions appropriate
+for use with the VNC OSD interface for MAME/MESS/UME.
+
+Please see the project's wiki-page for more details:
+http://wiki.batcom-it.net/index.php?title=VNC_OSD_interface
+
+The Qt VNC Viewer, Copyright (C) 2015 René Reucher, is free software
+distributed under the terms of the MAME license (http://mamedev.org/legal.html).
+
+The RFB protocol client code is based on LibVNCServer v0.9.9, Copyright (C)
+2001 - 2012 Johannes E. Schindelin (http://libvncserver.sourceforge.net/).
