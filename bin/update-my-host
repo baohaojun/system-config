@@ -2,9 +2,6 @@
 ssh-exp root@${1:-home} "
 set -x
 mkdir -p .ssh
-cat << EOF > ~/.ssh/authorized_keys
-$(cat ~/.ssh/authorized_keys)
-EOF
 mkdir -p ~bhj/.ssh
 cp ~/.ssh/authorized_keys ~bhj/.ssh/
 chown bhj. ~bhj/.ssh -R

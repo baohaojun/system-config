@@ -11,7 +11,7 @@ alias adb=my-adb
 jcd() {
     # http://build1:8080/job/Daily-surabaya-dev-colombo-Vuserdebug-Onone/6/console
     local task=$(echo "$1"|perl -npe 's,.*/job/(.*?)/.*,$1,')
-    local build=$(echo "$1"|perl -npe "s,.*/\Q$task\E/(\d+).*,\$1,")
+    local build=$(echo "$1"|perl -npe "s,.*/\Q$task\E/(\d+|lastFailedBuild).*,\$1,")
     cd /var/lib/jenkins/jobs/$task/builds/$build
 }
 

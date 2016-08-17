@@ -19,6 +19,10 @@ else
     die "Can't find the java binary for $number at /usr/lib/jvm/java-$number-openjdk-amd64/bin"
 fi
 if test $# = 0; then
+    . ~/system-config/etc/force-system-config
+    . ~/system-config/.profile
+    . ~/system-config/.bashrc
+
     start_recursive_shell $(basename $0)
 else
     "$@"

@@ -27,7 +27,6 @@ else
     rsync ~/.ssh/id_rsa_nopass $host:.ssh/id_rsa
 fi
 
-ssh-exp $host "sudo mkdir -p ~root/.ssh/; cat ~/.ssh/authorized_keys | sudo tee -a ~root/.ssh/authorized_keys"
 ssh-exp $host "mkdir -p ~/.config/system-config/; touch ~/.config/system-config/no-texlive"
 
 if test "$NO_SYSTEM_CONFIG" = true; then

@@ -51,7 +51,7 @@ done
 ## end generated code
 
 if test -z "$jobs"; then
-    jobs=-j8
+    jobs=-j$(cat /proc/cpuinfo |grep ^processor|wc -l)
 fi
 
 if test "$verbose" = true; then
