@@ -28,6 +28,10 @@
 #include <QProcess>
 #include "wrench.h"
 
+#include "macros.h"
+#include "mainwindow.h"
+#include "qvncviewersettings.h"
+
 using namespace std;
 
 #ifdef Q_OS_WIN32
@@ -38,6 +42,9 @@ void setenv(const char* name, const char* val, int overide)
     _putenv(qPrintable(str));
 }
 #endif
+
+QtVncViewerSettings *globalConfig = 0;
+MainWindow *mainWindow = 0;
 
 int main(int argc, char *argv[])
 {
@@ -55,6 +62,10 @@ int main(int argc, char *argv[])
     FileOpenFilter fof(NULL);
     a.installEventFilter(&fof);
 #endif
+
+    globalConfig = new QtVncViewerSettings();
+    globalConfig->setApplicationVersion(QVNCVIEWER_APP_VERSION);
+
 
 #ifdef Q_OS_WIN32
     HWND hwnd = GetConsoleWindow();
@@ -132,7 +143,9 @@ int main(int argc, char *argv[])
     str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "Wrench", QStandardPaths::LocateDirectory);
     configDirPath = str;
 
-    return a.exec();
+    int result = a.exec();
+    globalConfig->deleteLater();
+    return result;
 }
 
 QString configDirPath;

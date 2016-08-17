@@ -43,6 +43,7 @@
 #include "phonescreendialog.h"
 #include <QStandardPaths>
 #include "wrench.h"
+#include "mainwindow.h"
 
 QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
@@ -806,6 +807,16 @@ void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     static int x, y;
+    extern MainWindow* mainWindow;
+    if (checked) {
+        if (mainWindow == NULL) {
+            mainWindow = new MainWindow(this);
+        }
+        mainWindow->show();
+    } else if (mainWindow) {
+        mainWindow->hide();
+    }
+    return;
     if (checked) {
         if (mPhoneScreenDialog.isNull()) {
             mPhoneScreenDialog = QSharedPointer<PhoneScreenDialog>(new PhoneScreenDialog(this));

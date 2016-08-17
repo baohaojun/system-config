@@ -180,7 +180,7 @@ void MainWindow::init()
 
 void MainWindow::initClientFromArguments()
 {
-    QStringList lastArgumentList = qApp->arguments().last().split(":");
+    QStringList lastArgumentList = {"localhost", "1"};
     if ( lastArgumentList.count() == 2 ) {
         QString hostName = lastArgumentList[0];
         int displayNumber = lastArgumentList[1].toInt();
