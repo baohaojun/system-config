@@ -47,7 +47,7 @@ type -a java # 显示 java 的所以版本（alias、function、在PATH变量里
 
 如果自己安装了错误版本的java，请删掉该版本或请参考上面的方法更改环境变量。
 
-* system-config-update时提示安装包冲突
+* <<canceled-backports>> system-config-update时提示安装包冲突
 
 很多情况下是因为在ubuntu的系统软件和升级设置里改了升级源引起的。默认情况下，IT给装的机器把所有升级都给配上了，比如security升级、backports升级。一旦你自己把它取消掉的话，以后很多包就无法再安装了，每次都会提示版本冲突。
 

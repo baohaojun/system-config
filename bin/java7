@@ -16,6 +16,8 @@ if test -e /usr/lib/jvm/java-$number-openjdk-amd64/bin; then
 elif test "$number" = 6; then
     PATH=~/external/bin/Linux/ext/jdk/bin:$PATH
 else
+    hint "在 /usr/lib/jvm/java-$number-openjdk-amd64/bin 下没有发现java程序，可能是系统安装不完全，
+请参考 http://172.16.2.18/docs/cm/workflow.html#java7-not-found"
     die "Can't find the java binary for $number at /usr/lib/jvm/java-$number-openjdk-amd64/bin"
 fi
 if test $# = 0; then

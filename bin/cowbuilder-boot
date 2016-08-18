@@ -85,10 +85,14 @@ root_uuid=$(
     get-uuid $root_dev
          )
 
-if test $boot_dev = /dev/sda1; then
-    hdNmsdosN=hd0,msdos1
-elif test $boot_dev = /dev/sdb1; then
-    hdNmsdosN=hd1,msdos1
+if [[ $boot_dev =~ ^/dev/sd[a-f][0-9]$ ]]; then
+    type=msdos
+    if grep -q 'hd\d+,gpt\d+' /boot/grub/grub.cfg -P; then
+        type=gpt
+    fi
+    hdNmsdosN=$(
+        perl -e "'$boot_dev' =~ m,/dev/sd([a-f])([0-9]),; printf 'hd%d,$type%d', (ord(\$1) - ord 'a'), \$2"
+             )
 else
     die "can't decide hdNmsdosN"
 fi

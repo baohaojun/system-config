@@ -28,6 +28,8 @@ if test -e ~/.config/system-config/vim-is-evil; then
     alias vim=e
     if test "$(lsb_release -cs)" = trusty; then
         export PATH=~/external/local/emacs25u/bin:$PATH
+    elif test -d ~/external/local/emacs25-$(lsb_release -c -s); then
+        export PATH=~/external/local/emacs25-$(lsb_release -c -s)/bin:$PATH
     fi
 fi
 
