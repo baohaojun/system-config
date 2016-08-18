@@ -1,7 +1,6 @@
 #ifndef CONNECTIONWINDOW_H
 #define CONNECTIONWINDOW_H
 
-#include <QMdiSubWindow>
 #include <QElapsedTimer>
 #include <QWidgetAction>
 #include <QCloseEvent>
@@ -21,6 +20,7 @@
 #include "surfacewidget.h"
 #include "surfacewidget_gl.h"
 #include "rangeslider.h"
+#include <QGridLayout>
 
 namespace Ui {
 class ConnectionWindow;
@@ -56,7 +56,7 @@ private:
     static bool m_connecting;
 };
 
-class ConnectionWindow : public QMdiSubWindow
+class ConnectionWindow : public QWidget
 {
     Q_OBJECT
 
@@ -65,7 +65,7 @@ class ConnectionWindow : public QMdiSubWindow
     int mDisplayNumber;
 
 public:
-    explicit ConnectionWindow(QString name, QWidget *parent = 0);
+    explicit ConnectionWindow(QWidget *parent = 0);
     ~ConnectionWindow();
 
     static void setQuiet(bool quiet) { m_quiet = quiet; }
@@ -102,7 +102,7 @@ public:
 
 public slots:
     // callbacks
-    void on_toolButtonConnect_clicked();
+    void doConnect();
     void doDisconnect();
     void hostNameLookedUp(const QHostInfo &host);
     void configurationMenu_aboutToShow();
@@ -119,6 +119,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
+    QGridLayout mLayout;
     static bool m_quiet;
     static quint64 m_nextConnectionNumber;
     static QHash<rfbClient *, QList<QPixmap> > m_updatePixmaps;

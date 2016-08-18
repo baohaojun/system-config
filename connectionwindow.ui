@@ -1,30 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ConnectionWindow</class>
- <widget class="QMdiSubWindow" name="ConnectionWindow">
+ <widget class="QWidget" name="ConnectionWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>574</width>
-    <height>122</height>
+    <width>360</width>
+    <height>640</height>
    </rect>
   </property>
-  <property name="windowIcon">
-   <iconset resource="qvncviewer.qrc">
-    <normaloff>:/images/qvncviewer.png</normaloff>:/images/qvncviewer.png</iconset>
-  </property>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QMdiSubWindow</class>
-   <extends>QWidget</extends>
-   <header>qmdisubwindow.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
- <resources>
-  <include location="qvncviewer.qrc"/>
- </resources>
  <connections/>
 </ui>

@@ -72,9 +72,7 @@ fi
 
 oldpwd=$PWD
 cd $build_dir
-if test $# = 1 -a "$1" = debug; then
-    perl -npe 'print "CONFIG += debug\n" if 1..1' -i *.pro
-fi
+
 set -o pipefail
 for x in . download; do
     (
@@ -82,7 +80,12 @@ for x in . download; do
         qtchooser -qt=5 -run-tool=qmake && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
     )
 done
-relative-link -f $oldpwd/*.* .
+relative-link -f $(for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P) .
+
+if test $# = 1 -a "$1" = debug; then
+    perl -npe 'print "CONFIG += debug\n" if 1..1' -i *.pro
+fi
+
 relative-link -f $oldpwd/release/* .
 relative-link -f $oldpwd/linux/binaries/* .
 ln -s $oldpwd/linux/binaries/the-true-adb . -f

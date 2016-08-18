@@ -24,8 +24,8 @@ QHash<rfbClient *, ConnectionWindow *> ConnectionWindow::m_clientToWindowHash;
 QMutex PollServerThread::m_mutex;
 bool PollServerThread::m_connecting = false;
 
-ConnectionWindow::ConnectionWindow(QString name, QWidget *parent) :
-    QMdiSubWindow(parent),
+ConnectionWindow::ConnectionWindow(QWidget *parent) :
+    QWidget(parent),
     ui(new Ui::ConnectionWindow),
     m_connected(false),
     m_rfbClient(0),
@@ -42,6 +42,8 @@ ConnectionWindow::ConnectionWindow(QString name, QWidget *parent) :
         if ( QVNCVIEWER_ARG_OPENGL )
             setSurfaceType(QVNCVIEWER_ARG_OPENGL);
     }
+    this->setLayout(&mLayout);
+    layout()->setContentsMargins(0, 0, 0, 0);
     switch ( surfaceType() ) {
     case QVNCVIEWER_SURFACE_OPENGL:
         m_surfaceWidgetGL = new SurfaceWidgetGL(this, this);
@@ -54,10 +56,6 @@ ConnectionWindow::ConnectionWindow(QString name, QWidget *parent) :
         break;
     }
     layout()->setSpacing(0);
-    if ( name.isEmpty() )
-        name = tr("Disconnected-%1").arg(m_nextConnectionNumber++);
-    m_defaultWindowTitle = name;
-    setWindowTitle(m_defaultWindowTitle);
 
     // configuration menu
     switch ( surfaceType() ) {
@@ -155,7 +153,7 @@ void ConnectionWindow::startSessionFromArguments(QString hostName, int displayNu
         showMaximized();
     mHostName = hostName;
     mDisplayNumber = displayNumber;
-    QTimer::singleShot(1000, this, SLOT(on_toolButtonConnect_clicked()));
+    QTimer::singleShot(1000, this, SLOT(doConnect()));
 }
 
 QList<QPixmap> &ConnectionWindow::updatePixmaps(rfbClient *client)
@@ -356,7 +354,7 @@ void PollServerThread::run()
     }
 }
 
-void ConnectionWindow::on_toolButtonConnect_clicked()
+void ConnectionWindow::doConnect()
 {
     if ( connected() )
         doDisconnect();

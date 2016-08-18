@@ -87,7 +87,6 @@ SOURCES += main.cpp\
     phonescreensyncer.cpp \
     mainwindow.cpp \
     connectionwindow.cpp \
-    preferencesdialog.cpp \
     common/d3des.c \
     common/md5.c \
     common/minilzo.c \
@@ -206,7 +205,6 @@ HEADERS  += wrenchmainwindow.h \
     phonescreensyncer.h \
     mainwindow.h \
     connectionwindow.h \
-    preferencesdialog.h \
     qvncviewersettings.h \
     macros.h \
     surfacewidget.h \
@@ -227,7 +225,6 @@ FORMS    += wrenchmainwindow.ui \
             dialoggetentry.ui \
             phonescreendialog.ui \
             mainwindow.ui \
-            preferencesdialog.ui \
             connectionwindow.ui \
             aboutdialog.ui \
             rangeslider.ui

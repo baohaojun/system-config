@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>523</width>
-    <height>395</height>
+    <width>360</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,15 +27,11 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <item row="0" column="0">
-     <widget class="QMdiArea" name="mdiArea">
-      <property name="tabsClosable">
-       <bool>true</bool>
-      </property>
-      <property name="tabsMovable">
-       <bool>true</bool>
-      </property>
-     </widget>
+     <widget class="ConnectionWindow" name="connectionWindow" native="true"/>
     </item>
    </layout>
   </widget>
@@ -302,6 +298,14 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ConnectionWindow</class>
+   <extends>QWidget</extends>
+   <header location="global">connectionwindow.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
