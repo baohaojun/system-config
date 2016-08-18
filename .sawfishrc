@@ -285,33 +285,68 @@
         ("M-Right" . '((qpdfview "C-S-RET")))
         ("C-x" . '((Firefox "C-x") (Iceweasel "C-x") (t do-c-x-map)))
         ("Super-&" . '((Wrench "Meta-&")))
-        ("j" . '((Wine "c")))
         ("o" . '((Wine "s")))
         ("F1" . '((Wine mm6-save)))
         ("F2" . '((Wine mm6-load)))
-        ("&" . '((Wine mm7-1)))
-        ("[" . '((Wine mm7-2)))
-        ("{" . '((Wine mm7-3)))
-        ("}" . '((Wine mm7-4)))
+        ("F3" . '((Wine mm6-bless)))
+        ("F4" . '((Wine mm6-heroism)))
+        ("F5" . '((Wine mm6-dragon-fly)))
+        ("F6" . '((Wine mm6-wizard-eye)))
+        ("F7" . '((Wine mm6-torch)))
+        ("F8" . '((Wine mm6-shield)))
+        ("F9" . '((Wine mm6-stone-skin)))
+        ("F10" . '((Wine mm6-regeneration)))
+        ("&" . '((Wine mm8-1)))
+        ("[" . '((Wine mm8-2)))
+        ("{" . '((Wine mm8-3)))
+        ("}" . '((Wine mm8-4)))
+        ("(" . '((Wine mm8-5)))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
-(defun mm7-1 ()
-  (system "mm7 1&"))
+(defun mm6-dragon-fly ()
+  (system "mm8 cast dragon.fly&"))
 
-(defun mm7-2 ()
-  (system "mm7 2&"))
+(defun mm6-bless ()
+  (system "mm8 cast bless&"))
 
-(defun mm7-3 ()
-  (system "mm7 3&"))
+(defun mm6-regeneration ()
+  (system "mm8 cast regeneration&"))
 
-(defun mm7-4 ()
-  (system "mm7 4&"))
+(defun mm6-shield ()
+  (system "mm8 cast shield&"))
+
+(defun mm6-stone-skin ()
+  (system "mm8 cast stone.skin&"))
+
+(defun mm6-heroism ()
+  (system "mm8 cast heroism&"))
+
+(defun mm6-wizard-eye ()
+  (system "mm8 cast eye&"))
+
+(defun mm6-torch ()
+  (system "mm8 cast torch&"))
+
+(defun mm8-1 ()
+  (system "mm8 1&"))
+
+(defun mm8-2 ()
+  (system "mm8 2&"))
+
+(defun mm8-3 ()
+  (system "mm8 3&"))
+
+(defun mm8-4 ()
+  (system "mm8 4&"))
+
+(defun mm8-5 ()
+  (system "mm8 5&"))
 
 (defun mm6-save ()
-  (system "mm7-bless.sh save&"))
+  (system "mm8-bless.sh save&"))
 
 (defun mm6-load ()
-  (system "mm7-bless.sh load&"))
+  (system "mm8-bless.sh load&"))
 
 (bind-both-global&window-keymaps "Super-XF86Favorites" '(system "sawfish-gimp-stroke&"))
 
@@ -420,6 +455,7 @@
         ("l" . ((Firefox . ("C-x" "C-l")) (Iceweasel . ("C-x" "C-l"))))
         ("r" . ((Firefox . ("C-x" "C-r")) (Iceweasel . ("C-x" "C-r"))))
         ("s" . ((Firefox . ("C-x" "C-s")) (Iceweasel . ("C-x" "C-s"))
+                (Gimp . ("C-M-s"))
                 (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))
         ("d" . ((Firefox . ("C-x" "C-d")) (Iceweasel . ("C-x" "C-d"))))))
@@ -597,8 +633,8 @@
 (bind-both-global&window-keymaps "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
 (bind-both-global&window-keymaps "Super-S-SPC" #'scroll-lock-toggle)
 (bind-both-global&window-keymaps "C-ESC" '(synthesize-event "ESC" (input-focus)))
-(bind-keys s-h-keymap "g"  '(system "gnus&"))
-(bind-keys s-h-keymap "w"  '(system "s-weixin&"))
+(bind-keys s-h-keymap "g"  '(system "find-or-exec Gimp&"))
+(bind-keys s-h-keymap "w"  '(system "find-or-exec wine&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
 (bind-keys s-h-keymap "l" '(system "sawfish-move-to-laptop&"))
 (bind-keys s-h-keymap "L" '(system "sawfish-move-to-home-screen&"))
@@ -714,8 +750,8 @@
 (bind-keys s-h-keymap "Super-v" '(system "sendtext-sawfish&"))
 (bind-keys s-h-keymap "C-p" '(system "sawfish-show-pointer&"))
 (bind-keys s-h-keymap "M-C-p" '(system "sawfish-show-pointer&"))
-(bind-keys s-h-keymap "C-XF86Favorites" '(system "mm7-bless.sh all&"))
-(bind-keys s-h-keymap "XF86Favorites" '(system "mm7-bless.sh bless-heroism&"))
+(bind-keys s-h-keymap "C-XF86Favorites" '(system "mm8-bless.sh all&"))
+(bind-keys s-h-keymap "XF86Favorites" '(system "mm8-bless.sh bless-heroism&"))
 
 (defun get-window-xy-size (class)
   (let ((x 100000)
