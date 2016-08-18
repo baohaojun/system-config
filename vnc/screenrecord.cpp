@@ -71,7 +71,7 @@ static bool gRotate = false;            // rotate 90 degrees
 static bool gSizeSpecified = false;     // was size explicitly requested?
 static bool gWantInfoScreen = false;    // do we want initial info screen?
 static bool gWantFrameTime = false;     // do we want times on each frame?
-static uint32_t gVideoWidth = 480;        // default width+height
+static uint32_t gVideoWidth = 480;
 static uint32_t gVideoHeight = 640;
 static uint32_t gBitRate = 4000000;     // 4Mbps
 static uint32_t gTimeLimitSec = kMaxTimeLimitSec;
@@ -346,6 +346,8 @@ static status_t recordScreen() {
     if (gVideoHeight == 0) {
         gVideoHeight = rotated ? mainDpyInfo.w : mainDpyInfo.h;
     }
+    gVideoWidth = (mainDpyInfo.w * gVideoHeight / mainDpyInfo.h + 7 ) / 8 * 8;
+    fprintf(stderr, "%s:%d: gVideoWidth is %d\n", __FILE__, __LINE__, gVideoWidth);
 
 
     // We're not using an encoder at all.  The "encoder input surface" we hand to
