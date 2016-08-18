@@ -43,11 +43,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::log(QString message)
 {
-    if ( !ConnectionWindow::quiet() ) {
-        message.prepend(QTime::currentTime().toString("hh:mm:ss.zzz") + ": ");
-        printf("%s\n", message.trimmed().toLocal8Bit().constData());
-        fflush(stdout);
-    }
+    message.prepend(QTime::currentTime().toString("hh:mm:ss.zzz") + ": ");
+    printf("%s\n", message.trimmed().toLocal8Bit().constData());
+    fflush(stdout);
 }
 
 void MainWindow::on_actionConnectionNew_triggered(bool checked)
@@ -132,13 +130,6 @@ void MainWindow::on_actionWindowViewModeTabbed_triggered(bool checked)
 
 void MainWindow::on_actionWindowViewModeToggleFullScreen_triggered(bool checked)
 {
-    if ( fullScreenWindow() )
-        fullScreenWindow()->on_toolButtonToggleFullScreen_clicked();
-    else {
-        ConnectionWindow *connectionWindow = (ConnectionWindow *)ui->mdiArea->activeSubWindow();
-        if ( connectionWindow )
-            connectionWindow->on_toolButtonToggleFullScreen_clicked();
-    }
 }
 
 void MainWindow::on_actionHelpAbout_triggered(bool checked)
@@ -173,8 +164,6 @@ void MainWindow::init()
     if ( QVNCVIEWER_ARG_QUIET )
         ConnectionWindow::setQuiet(true);
     m_recentConnections = globalConfig->mainWindowRecentConnections();
-    foreach (QString tgt, m_recentConnections)
-        ui->menuConnectionRecent->addAction(tgt, this, SLOT(openRecentConnection()));
     QTimer::singleShot(0, this, SLOT(initClientFromArguments()));
 }
 
@@ -230,34 +219,6 @@ void MainWindow::saveSettings()
     globalConfig->setMainWindowViewMode(ui->actionWindowViewModeWindowed->isChecked() ? QVNCVIEWER_VIEWMODE_WINDOWED : QVNCVIEWER_VIEWMODE_TABBED);
 }
 
-void MainWindow::addRecentConnection(const QString &serverAddress, const int &displayNumber)
-{
-    if ( !serverAddress.isEmpty() and displayNumber >= 0 ) {
-        QString vncTarget(serverAddress + ":" + QString::number(displayNumber));
-        m_recentConnections.removeAll(vncTarget);
-        m_recentConnections.insert(0, vncTarget);
-        if ( m_recentConnections.count() > QVNCVIEWER_MAX_RECENT_CONNECTIONS )
-            m_recentConnections.removeAt(m_recentConnections.count() - 1);
-        ui->menuConnectionRecent->clear();
-        foreach (QString tgt, m_recentConnections)
-            ui->menuConnectionRecent->addAction(tgt, this, SLOT(openRecentConnection()));
-        globalConfig->setMainWindowRecentConnections(m_recentConnections);
-    }
-}
-
-void MainWindow::openRecentConnection()
-{
-    QAction *action = (QAction *)sender();
-    QStringList tgt = action->text().split(":", QString::SkipEmptyParts);
-    if ( tgt.count() == 2 ) {
-        QString hostName = tgt[0];
-        int displayNumber = tgt[1].toInt();
-        on_actionConnectionNew_triggered();
-        ConnectionWindow *connectionWindow = (ConnectionWindow *)mdiArea()->subWindowList().last();
-        connectionWindow->startSessionFromArguments(hostName, displayNumber, false, false);
-    }
-}
-
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
     if ( event->type() == QEvent::KeyPress ) {
@@ -272,5 +233,5 @@ void MainWindow::closeEvent(QCloseEvent *e)
 {
     saveSettings();
     e->accept();
-    QTimer::singleShot(0, qApp, SLOT(quit()));
+    // QTimer::singleShot(0, qApp, SLOT(quit()));
 }

@@ -44,6 +44,7 @@
 #include <QStandardPaths>
 #include "wrench.h"
 #include "mainwindow.h"
+#include "adbvncthread.hpp"
 
 QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
@@ -808,7 +809,13 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     static int x, y;
     extern MainWindow* mainWindow;
+    static AdbVncThread* vncThread;
     if (checked) {
+        if (vncThread == NULL) {
+            vncThread = new AdbVncThread();
+            vncThread->start();
+        }
+
         if (mainWindow == NULL) {
             mainWindow = new MainWindow(this);
         }

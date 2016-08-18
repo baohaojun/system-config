@@ -1,6 +1,6 @@
 Wrench
 *.user
-./Makefile
+Makefile
 *.autosave
 moc_wrenchmainwindow.cpp
 ui_wrenchmainwindow.h
@@ -8,3 +8,12 @@ moc_adbstatethread.cpp
 qrc_Wrench.cpp
 moc_*.cpp
 last-pic-notes.png
+qrc_qvncviewer.cpp
+ui_aboutdialog.h
+ui_connectionwindow.h
+ui_dialoggetentry.h
+ui_mainwindow.h
+ui_phonescreendialog.h
+ui_preferencesdialog.h
+ui_rangeslider.h
+weixin-phones.txt

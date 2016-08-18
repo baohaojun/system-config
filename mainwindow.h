@@ -59,8 +59,6 @@ public slots:
     void updateWindowActions();
     void loadSettings();
     void saveSettings();
-    void addRecentConnection(const QString &serverAddress, const int &displayNumber);
-    void openRecentConnection();
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);

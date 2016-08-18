@@ -1,0 +1,7 @@
+* TODO Should make phone screen sync use VNC.
+
+** TODO Should start the vnc process automatically.
+
+** TODO Should not spin the CPU when screen is not shown.
+
+** TODO Should connect automatically when the phone screen button is clicked.

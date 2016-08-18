@@ -1089,7 +1089,7 @@ local check_file_pushed = function(file, md5)
    if md5_on_phone ~= md5_on_PC then
       log("Need to upload %s to your phone.", file)
       adb_push{file, "/data/data/com.android.shell/" .. file .. ".bak"}
-      adb_shell(("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s"):format(file, file))
+      adb_shell(("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s; chmod 755 /data/data/com.android.shell/%s"):format(file, file, file))
 
       adb_push{md5, "/sdcard/" .. md5}
       local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
@@ -1183,6 +1183,9 @@ t1_config = function(passedConfigDirPath)
    end
    check_apk_installed("Setclip.apk", "Setclip.apk.md5")
    check_file_pushed("am.jar", "am.jar.md5")
+   check_file_pushed("androidvncserver", "androidvncserver.md5")
+   check_file_pushed("busybox", "busybox.md5")
+   adb_shell("/data/data/com.android.shell/busybox killall androidvncserver")
 
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
    if not vcf_file then

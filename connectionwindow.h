@@ -60,6 +60,10 @@ class ConnectionWindow : public QMdiSubWindow
 {
     Q_OBJECT
 
+    private:
+    QString mHostName;
+    int mDisplayNumber;
+
 public:
     explicit ConnectionWindow(QString name, QWidget *parent = 0);
     ~ConnectionWindow();
@@ -99,21 +103,6 @@ public:
 public slots:
     // callbacks
     void on_toolButtonConnect_clicked();
-    void on_toolButtonToggleFullScreen_clicked();
-    void on_lineEditHostname_textChanged(const QString &);
-
-    // other
-    void hostEditTimer_timeout();
-    void menuBarTimer_timeout();
-    void toggleScaledAction_triggered(bool checked);
-    void toggleBilinearFilterAction_triggered(bool checked);
-    void toggleKeepAspectAction_triggered(bool checked);
-    void showFpsAction_triggered(bool checked);
-    void takeScreenShotAction_triggered(bool checked);
-    void takeScreenShotToClipboardAction_triggered(bool checked);
-    void qualityLevelChanged(int qualityLevel);
-    void compressionLevelChanged(int compressionLevel);
-    void encodingChangedAction_triggered(bool checked);
     void doDisconnect();
     void hostNameLookedUp(const QHostInfo &host);
     void configurationMenu_aboutToShow();
@@ -145,18 +134,6 @@ private:
     SurfaceWidget *m_surfaceWidget;
     SurfaceWidgetGL *m_surfaceWidgetGL;
     int m_lookUpId;
-    QMenu *m_configurationMenu;
-    QMenu *m_encodingsMenu;
-    QAction *m_toggleScaledAction;
-    QAction *m_toggleBilinearFilterAction;
-    QAction *m_toggleKeepAspectAction;
-    QAction *m_takeScreenShotAction;
-    QAction *m_takeScreenShotToClipboardAction;
-    QAction *m_showFpsAction;
-    QWidgetAction *m_qualitySliderAction;
-    RangeSlider *m_qualitySlider;
-    QWidgetAction *m_compressionSliderAction;
-    RangeSlider *m_compressionSlider;
     QString m_currentEncoding;
     int m_surfaceType;
 };

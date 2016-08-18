@@ -15,7 +15,16 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <item row="0" column="0">
@@ -30,81 +39,9 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>523</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuConnection">
-    <property name="title">
-     <string>Connection</string>
-    </property>
-    <widget class="QMenu" name="menuConnectionRecent">
-     <property name="title">
-      <string>Recent</string>
-     </property>
-    </widget>
-    <addaction name="actionConnectionNew"/>
-    <addaction name="menuConnectionRecent"/>
-    <addaction name="separator"/>
-    <addaction name="actionConnectionPreferences"/>
-    <addaction name="separator"/>
-    <addaction name="actionConnectionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>Window</string>
-    </property>
-    <widget class="QMenu" name="menuWindowViewMode">
-     <property name="toolTip">
-      <string>Choose view mode</string>
-     </property>
-     <property name="statusTip">
-      <string>Choose view mode</string>
-     </property>
-     <property name="title">
-      <string>View mode</string>
-     </property>
-     <addaction name="actionWindowViewModeWindowed"/>
-     <addaction name="actionWindowViewModeTabbed"/>
-     <addaction name="separator"/>
-     <addaction name="actionWindowViewModeToggleFullScreen"/>
-    </widget>
-    <addaction name="actionWindowNext"/>
-    <addaction name="actionWindowPrevious"/>
-    <addaction name="separator"/>
-    <addaction name="actionWindowTile"/>
-    <addaction name="actionWindowCascade"/>
-    <addaction name="separator"/>
-    <addaction name="actionWindowClose"/>
-    <addaction name="actionWindowCloseAll"/>
-    <addaction name="separator"/>
-    <addaction name="menuWindowViewMode"/>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionHelpAbout"/>
-    <addaction name="separator"/>
-    <addaction name="actionHelpWiki"/>
-    <addaction name="actionHelpForum"/>
-    <addaction name="actionHelpBugTracker"/>
-    <addaction name="separator"/>
-    <addaction name="actionHelpAboutQt"/>
-   </widget>
-   <addaction name="menuConnection"/>
-   <addaction name="menuWindow"/>
-   <addaction name="menuHelp"/>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionConnectionNew">
    <property name="text">
-    <string>New...</string>
+    <string>&amp;New...</string>
    </property>
    <property name="iconText">
     <string>New connection</string>
@@ -123,7 +60,7 @@
   </action>
   <action name="actionConnectionPreferences">
    <property name="text">
-    <string>Preferences...</string>
+    <string>&amp;Preferences...</string>
    </property>
    <property name="iconText">
     <string>Open preferences dialog</string>
@@ -137,7 +74,7 @@
   </action>
   <action name="actionConnectionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
    <property name="iconText">
     <string>Exit Qt VNC Viewer</string>
@@ -154,7 +91,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Next</string>
+    <string>&amp;Next</string>
    </property>
    <property name="iconText">
     <string>Next connection window</string>
@@ -171,7 +108,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Previous</string>
+    <string>&amp;Previous</string>
    </property>
    <property name="iconText">
     <string>Previous connection window</string>
@@ -188,7 +125,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Tile</string>
+    <string>&amp;Tile</string>
    </property>
    <property name="iconText">
     <string>Tile connection windows</string>
@@ -205,7 +142,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Cascade</string>
+    <string>&amp;Cascade</string>
    </property>
    <property name="iconText">
     <string>Cascade connection windows</string>
@@ -222,7 +159,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Close</string>
+    <string>C&amp;lose</string>
    </property>
    <property name="iconText">
     <string>Close window (and connection)</string>
@@ -239,7 +176,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Close all</string>
+    <string>Close &amp;all</string>
    </property>
    <property name="iconText">
     <string>Close all windows (and connections)</string>
@@ -256,7 +193,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Windowed</string>
+    <string>&amp;Windowed</string>
    </property>
    <property name="iconText">
     <string>View mode 'windowed'</string>
@@ -273,7 +210,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Tabbed</string>
+    <string>&amp;Tabbed</string>
    </property>
    <property name="iconText">
     <string>View mode 'tabbed'</string>
@@ -287,7 +224,7 @@
   </action>
   <action name="actionHelpAbout">
    <property name="text">
-    <string>About...</string>
+    <string>&amp;About...</string>
    </property>
    <property name="iconText">
     <string>About Qt VNC Viewer</string>
@@ -301,7 +238,7 @@
   </action>
   <action name="actionHelpWiki">
    <property name="text">
-    <string>Wiki...</string>
+    <string>&amp;Wiki...</string>
    </property>
    <property name="iconText">
     <string>Open wiki in web browser</string>
@@ -315,7 +252,7 @@
   </action>
   <action name="actionHelpForum">
    <property name="text">
-    <string>Forum...</string>
+    <string>&amp;Forum...</string>
    </property>
    <property name="iconText">
     <string>Open forum in web browser</string>
@@ -329,7 +266,7 @@
   </action>
   <action name="actionHelpBugTracker">
    <property name="text">
-    <string>Bug tracker...</string>
+    <string>&amp;Bug tracker...</string>
    </property>
    <property name="iconText">
     <string>Open bug tracker in web browser</string>
@@ -343,7 +280,7 @@
   </action>
   <action name="actionHelpAboutQt">
    <property name="text">
-    <string>About Qt...</string>
+    <string>About &amp;Qt...</string>
    </property>
    <property name="statusTip">
     <string>About Qt</string>
@@ -354,7 +291,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Toggle full screen</string>
+    <string>Toggle &amp;full screen</string>
    </property>
    <property name="iconText">
     <string>Toggle full screen</string>
