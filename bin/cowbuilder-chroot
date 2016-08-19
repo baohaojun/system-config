@@ -27,7 +27,7 @@ shift $(($OPTIND - 1))
 ## end generated code
 
 if test -z "$cow"; then
-    cow=$(select-output-line -o -- find ~/external/cowbuilder -maxdepth 1 -type d -name '*-*')
+    cow=$(select-output-line -o -- find ~/external/cowbuilder/ -maxdepth 1 -type d -name '*-*')
 fi
 
 if test -d "$cow/home/bhj"; then
@@ -78,6 +78,10 @@ done
     if test ! -e "$chroot"/$HOME/.bashrc-cust; then
         echo 'export PS1HOSTNAME=$(lsb_release -c -s)' > "$chroot"/$HOME/.bashrc-cust
     fi
+    find $chroot/etc/skel/ -type f|while read f; do
+        cp $f $chroot/$HOME -n
+        sudo chown $USER\. $chroot/$HOME/$(basename $f)
+    done
     sudo chown $USER\. $chroot/$HOME
 )
 
