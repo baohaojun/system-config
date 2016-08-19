@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 #include "qvncviewersettings.h"
 #include "aboutdialog.h"
+#include "wrenchmainwindow.h"
 
 extern QtVncViewerSettings *globalConfig;
 
@@ -25,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
     m_fullScreenWindow = 0;
+    mWrench = (WrenchMainWindow *)parent;
     if ( encodings().isEmpty() ) {
         encodings() << "Raw" << "Hextile" << "Tight" << "CoRRE" << "Zlib" << "Ultra";
         encodings().sort();
@@ -33,6 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
     installEventFilter(this);
     QTimer::singleShot(0, this, SLOT(init()));
     rfbClientLog = rfbClientErr = ConnectionWindow::rfbLog;
+}
+
+QSharedPointer<LuaExecuteThread> MainWindow::mLuaThread()
+{
+    return mWrench->mLuaThread;
 }
 
 MainWindow::~MainWindow()
@@ -79,14 +86,77 @@ void MainWindow::saveSettings()
     globalConfig->setMainWindowViewMode(ui->actionWindowViewModeWindowed->isChecked() ? QVNCVIEWER_VIEWMODE_WINDOWED : QVNCVIEWER_VIEWMODE_TABBED);
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event)
+bool MainWindow::eventFilter(QObject *object, QEvent *ev)
 {
-    if ( event->type() == QEvent::KeyPress ) {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        if ( QVNCVIEWER_FULLSCREEN_TOGGLED )
-            QTimer::singleShot(0, this, SLOT(on_actionWindowViewModeToggleFullScreen_triggered()));
+    static int phone_x, phone_y;
+    static QTime press_time;
+
+    static int last_x, last_y;
+
+    if (ev->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mev = (QMouseEvent*) ev;
+        last_x = mev->x();
+        last_y = mev->y();
+        phone_x = mev->x() * 1080 / this->width();
+        phone_y = mev->y() * 1920 / this->height();
+        press_time = QTime::currentTime();
+    } else if (ev->type() == QEvent::MouseButtonRelease) {
+        QMouseEvent *mev = (QMouseEvent*) ev;
+        int x = mev->x() * 1080 / this->width();
+        int y = mev->y() * 1920 / this->height();
+        QTime now = QTime::currentTime();
+        if (abs(x - phone_x) + abs(y - phone_y) > 20) {
+            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-swipe-%d %d %d %d %d", now.msecsTo(press_time), phone_x, phone_y, x, y));
+        } else {
+            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-tap %d %d", x, y));
+        }
+        return true;
+    } else if (ev->type() == QEvent::KeyPress) {
+        QKeyEvent *kev = (QKeyEvent *)ev;
+        int key = kev->key();
+        Qt::KeyboardModifiers m = kev->modifiers();
+
+        if (m == 0) {
+            if (key == Qt::Key_Home ) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key home");
+                return true;
+            } else if (key == Qt::Key_Escape) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key back");
+                return true;
+            } else if (key == Qt::Key_Pause) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key power");
+                return true;
+            } else if (key == Qt::Key_Backspace) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key DEL");
+                return true;
+            }
+        }
+
+        if (!kev->text().isEmpty()) {
+
+            if (key == Qt::Key_Enter || key == Qt::Key_Return) {
+                if (m == Qt::ControlModifier) {
+                    mLuaThread()->addScript(QStringList() << "t1_send_action");
+                } else if (m == 0) {
+                    mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key enter");
+                }
+            } else if (key == Qt::Key_Space || key == Qt::Key_Tab) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key space");
+            } else if (key == Qt::Key_Backspace) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key DEL");
+                return true;
+            } else if (kev->text()[0].isPrint()) {
+                mLuaThread()->addScript(QStringList() << "adb_event" << QString("adb-text ") + kev->text());
+            }
+            return true;
+        }
+    } else if (ev->type() == QEvent::Wheel) {
+        QWheelEvent *wev = (QWheelEvent *)ev;
+        int y = wev->angleDelta().y();
+        int x = wev->angleDelta().x();
+        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-swipe-50 %d %d %d %d", wev->x(), wev->y(), wev->x() + x, wev->y() + y));
     }
-    return QMainWindow::eventFilter(object, event);
+    return QMainWindow::eventFilter(object, ev);
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)

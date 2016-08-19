@@ -18,6 +18,7 @@
 #include <QMap>
 #include "phonescreendialog.h"
 #include <QShowEvent>
+#include "mainwindow.h"
 
 namespace Ui {
 class WrenchMainWindow;
@@ -126,6 +127,7 @@ private:
     virtual bool eventFilter(QObject *obj, QEvent *ev);
     bool handleEmacsKeys(QWidget *w, QKeyEvent *e);
     friend class PhoneScreenDialog;
+    friend class MainWindow;
 
 signals:
     void activateWindow();

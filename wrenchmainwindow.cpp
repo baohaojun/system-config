@@ -818,6 +818,8 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 
         if (mainWindow == NULL) {
             mainWindow = new MainWindow(this);
+            mainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
+            mainWindow->installEventFilter(mainWindow);
         }
         mainWindow->show();
     } else if (mainWindow) {

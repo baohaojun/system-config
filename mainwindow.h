@@ -9,6 +9,10 @@
 #include "ui_mainwindow.h"
 #include "connectionwindow.h"
 
+#include "luaexecutethread.hpp"
+#include <QSharedPointer>
+class WrenchMainWindow;
+
 namespace Ui {
 class MainWindow;
 }
@@ -43,6 +47,9 @@ private:
     ConnectionWindow *m_fullScreenWindow;
     QStringList m_recentConnections;
     static QStringList m_encodings;
+    WrenchMainWindow* mWrench;
+    QSharedPointer<LuaExecuteThread> mLuaThread();
+    friend class WrenchMainWindow;
 };
 
 #endif // MAINWINDOW_H
