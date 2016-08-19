@@ -47,7 +47,6 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function bp() {
         basename "$FILE"
-        putclip "$(basename "$FILE")"
     }
 
     function sup()
@@ -193,6 +192,9 @@ else # we are being sourced
             FILE=${1:-`pwd`}
             FILE=`lookup-file "$FILE"`
             history -s '$x' "$(printf %q "$FILE")"
+        }'
+        eval 'function '$x-r'() {
+            '$x' $(readlink -f "$1")
         }'
     done
 fi
