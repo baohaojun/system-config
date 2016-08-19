@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ps.tree $$
+set -x
+kill -TERM -$(cat /proc/$$/stat|pn 5)
