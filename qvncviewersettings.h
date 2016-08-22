@@ -91,15 +91,15 @@ public slots:
     void setPreferencesEncoding(QString encoding) { setValue("Preferences/Encoding", encoding); }
     QString preferencesEncoding() { return value("Preferences/Encoding", "Hextile").toString(); }
 
-    // MainWindow
-    void setMainWindowState(QByteArray state) { setValue("MainWindow/State", state); }
-    QByteArray mainWindowState() { return value("MainWindow/State", QByteArray()).toByteArray(); }
-    void setMainWindowGeometry(QByteArray geom) { setValue("MainWindow/Geometry", geom); }
-    QByteArray mainWindowGeometry() { return value("MainWindow/Geometry", QByteArray()).toByteArray(); }
-    void setMainWindowViewMode(int mode) { setValue("MainWindow/ViewMode", mode); }
-    int mainWindowViewMode() { return value("MainWindow/ViewMode", QVNCVIEWER_VIEWMODE_WINDOWED).toInt(); }
-    void setMainWindowRecentConnections(QStringList recentConnections) { setValue("MainWindow/RecentConnections", recentConnections); }
-    QStringList mainWindowRecentConnections() { return value("MainWindow/RecentConnections", QStringList()).toStringList(); }
+    // VncMainWindow
+    void setMainWindowState(QByteArray state) { setValue("VncMainWindow/State", state); }
+    QByteArray mainWindowState() { return value("VncMainWindow/State", QByteArray()).toByteArray(); }
+    void setMainWindowGeometry(QByteArray geom) { setValue("VncMainWindow/Geometry", geom); }
+    QByteArray mainWindowGeometry() { return value("VncMainWindow/Geometry", QByteArray()).toByteArray(); }
+    void setMainWindowViewMode(int mode) { setValue("VncMainWindow/ViewMode", mode); }
+    int mainWindowViewMode() { return value("VncMainWindow/ViewMode", QVNCVIEWER_VIEWMODE_WINDOWED).toInt(); }
+    void setMainWindowRecentConnections(QStringList recentConnections) { setValue("VncMainWindow/RecentConnections", recentConnections); }
+    QStringList mainWindowRecentConnections() { return value("VncMainWindow/RecentConnections", QStringList()).toStringList(); }
 };
 
 #endif // QVNCVIEWERSETTINGS_H

@@ -236,242 +236,242 @@
     </message>
 </context>
 <context>
-    <name>MainWindow</name>
+    <name>VncMainWindow</name>
     <message>
-        <location filename="../mainwindow.ui" line="14"/>
+        <location filename="../vncmainwindow.ui" line="14"/>
         <source>Qt VNC Viewer</source>
         <translation>Qt VNC Viewer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="44"/>
+        <location filename="../vncmainwindow.ui" line="44"/>
         <source>Connection</source>
         <translation>Verbindung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="48"/>
+        <location filename="../vncmainwindow.ui" line="48"/>
         <source>Recent</source>
         <translation>Zuletzt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="60"/>
+        <location filename="../vncmainwindow.ui" line="60"/>
         <source>Window</source>
         <translation>Fenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="64"/>
-        <location filename="../mainwindow.ui" line="67"/>
+        <location filename="../vncmainwindow.ui" line="64"/>
+        <location filename="../vncmainwindow.ui" line="67"/>
         <source>Choose view mode</source>
         <translation>Ansichtsmodus auswählen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="70"/>
+        <location filename="../vncmainwindow.ui" line="70"/>
         <source>View mode</source>
         <translation>Ansichtsmodus</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="90"/>
+        <location filename="../vncmainwindow.ui" line="90"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="107"/>
+        <location filename="../vncmainwindow.ui" line="107"/>
         <source>New...</source>
         <translation>Neu...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="110"/>
-        <location filename="../mainwindow.ui" line="113"/>
-        <location filename="../mainwindow.ui" line="116"/>
+        <location filename="../vncmainwindow.ui" line="110"/>
+        <location filename="../vncmainwindow.ui" line="113"/>
+        <location filename="../vncmainwindow.ui" line="116"/>
         <source>New connection</source>
         <translation>Neue Verbindung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="121"/>
+        <location filename="../vncmainwindow.ui" line="121"/>
         <source>Disconnect</source>
         <translation>Trennen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="126"/>
+        <location filename="../vncmainwindow.ui" line="126"/>
         <source>Preferences...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="129"/>
-        <location filename="../mainwindow.ui" line="132"/>
-        <location filename="../mainwindow.ui" line="135"/>
+        <location filename="../vncmainwindow.ui" line="129"/>
+        <location filename="../vncmainwindow.ui" line="132"/>
+        <location filename="../vncmainwindow.ui" line="135"/>
         <source>Open preferences dialog</source>
         <translation>Einstellungen vornehmen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="140"/>
+        <location filename="../vncmainwindow.ui" line="140"/>
         <source>Exit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="143"/>
-        <location filename="../mainwindow.ui" line="146"/>
-        <location filename="../mainwindow.ui" line="149"/>
+        <location filename="../vncmainwindow.ui" line="143"/>
+        <location filename="../vncmainwindow.ui" line="146"/>
+        <location filename="../vncmainwindow.ui" line="149"/>
         <source>Exit Qt VNC Viewer</source>
         <translation>Qt VNC Viewer beenden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="157"/>
+        <location filename="../vncmainwindow.ui" line="157"/>
         <source>Next</source>
         <translation>Nächstes</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="160"/>
-        <location filename="../mainwindow.ui" line="163"/>
-        <location filename="../mainwindow.ui" line="166"/>
+        <location filename="../vncmainwindow.ui" line="160"/>
+        <location filename="../vncmainwindow.ui" line="163"/>
+        <location filename="../vncmainwindow.ui" line="166"/>
         <source>Next connection window</source>
         <translation>Nächstes Verbindungsfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="174"/>
+        <location filename="../vncmainwindow.ui" line="174"/>
         <source>Previous</source>
         <translation>Voriges</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="177"/>
-        <location filename="../mainwindow.ui" line="180"/>
-        <location filename="../mainwindow.ui" line="183"/>
+        <location filename="../vncmainwindow.ui" line="177"/>
+        <location filename="../vncmainwindow.ui" line="180"/>
+        <location filename="../vncmainwindow.ui" line="183"/>
         <source>Previous connection window</source>
         <translation>Voriges Verbindungsfenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="191"/>
+        <location filename="../vncmainwindow.ui" line="191"/>
         <source>Tile</source>
         <translation>Teilen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="194"/>
-        <location filename="../mainwindow.ui" line="197"/>
-        <location filename="../mainwindow.ui" line="200"/>
+        <location filename="../vncmainwindow.ui" line="194"/>
+        <location filename="../vncmainwindow.ui" line="197"/>
+        <location filename="../vncmainwindow.ui" line="200"/>
         <source>Tile connection windows</source>
         <translation>Verbindungsfenster aufteilen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="208"/>
+        <location filename="../vncmainwindow.ui" line="208"/>
         <source>Cascade</source>
         <translation>Kaskadieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="211"/>
-        <location filename="../mainwindow.ui" line="214"/>
-        <location filename="../mainwindow.ui" line="217"/>
+        <location filename="../vncmainwindow.ui" line="211"/>
+        <location filename="../vncmainwindow.ui" line="214"/>
+        <location filename="../vncmainwindow.ui" line="217"/>
         <source>Cascade connection windows</source>
         <translation>Verbindungsfenster kaskadieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="225"/>
+        <location filename="../vncmainwindow.ui" line="225"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="228"/>
-        <location filename="../mainwindow.ui" line="231"/>
-        <location filename="../mainwindow.ui" line="234"/>
+        <location filename="../vncmainwindow.ui" line="228"/>
+        <location filename="../vncmainwindow.ui" line="231"/>
+        <location filename="../vncmainwindow.ui" line="234"/>
         <source>Close window (and connection)</source>
         <translation>Fenster (und Verbindung) schließen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="242"/>
+        <location filename="../vncmainwindow.ui" line="242"/>
         <source>Close all</source>
         <translation>Alle schließen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="245"/>
-        <location filename="../mainwindow.ui" line="248"/>
-        <location filename="../mainwindow.ui" line="251"/>
+        <location filename="../vncmainwindow.ui" line="245"/>
+        <location filename="../vncmainwindow.ui" line="248"/>
+        <location filename="../vncmainwindow.ui" line="251"/>
         <source>Close all windows (and connections)</source>
         <translation>Alle Fenster (und Verbindungen) schließen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="259"/>
+        <location filename="../vncmainwindow.ui" line="259"/>
         <source>Windowed</source>
         <translation>Fenster</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="262"/>
-        <location filename="../mainwindow.ui" line="265"/>
-        <location filename="../mainwindow.ui" line="268"/>
+        <location filename="../vncmainwindow.ui" line="262"/>
+        <location filename="../vncmainwindow.ui" line="265"/>
+        <location filename="../vncmainwindow.ui" line="268"/>
         <source>View mode &apos;windowed&apos;</source>
         <translation>Ansichtsmodus &apos;Fenster&apos;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="276"/>
+        <location filename="../vncmainwindow.ui" line="276"/>
         <source>Tabbed</source>
         <translation>Tabs</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="279"/>
-        <location filename="../mainwindow.ui" line="282"/>
-        <location filename="../mainwindow.ui" line="285"/>
+        <location filename="../vncmainwindow.ui" line="279"/>
+        <location filename="../vncmainwindow.ui" line="282"/>
+        <location filename="../vncmainwindow.ui" line="285"/>
         <source>View mode &apos;tabbed&apos;</source>
         <translation>Ansichtsmodus &apos;Tabs&apos;</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="290"/>
+        <location filename="../vncmainwindow.ui" line="290"/>
         <source>About...</source>
         <translation>Über...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="293"/>
-        <location filename="../mainwindow.ui" line="296"/>
-        <location filename="../mainwindow.ui" line="299"/>
+        <location filename="../vncmainwindow.ui" line="293"/>
+        <location filename="../vncmainwindow.ui" line="296"/>
+        <location filename="../vncmainwindow.ui" line="299"/>
         <source>About Qt VNC Viewer</source>
         <translation>Über Qt VNC Viewer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="304"/>
+        <location filename="../vncmainwindow.ui" line="304"/>
         <source>Wiki...</source>
         <translation>Wiki...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="307"/>
-        <location filename="../mainwindow.ui" line="310"/>
-        <location filename="../mainwindow.ui" line="313"/>
+        <location filename="../vncmainwindow.ui" line="307"/>
+        <location filename="../vncmainwindow.ui" line="310"/>
+        <location filename="../vncmainwindow.ui" line="313"/>
         <source>Open wiki in web browser</source>
         <translation>Wiki im Web Browser öffnen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="318"/>
+        <location filename="../vncmainwindow.ui" line="318"/>
         <source>Forum...</source>
         <translation>Forum...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="321"/>
-        <location filename="../mainwindow.ui" line="324"/>
-        <location filename="../mainwindow.ui" line="327"/>
+        <location filename="../vncmainwindow.ui" line="321"/>
+        <location filename="../vncmainwindow.ui" line="324"/>
+        <location filename="../vncmainwindow.ui" line="327"/>
         <source>Open forum in web browser</source>
         <translation>Forum im Web Browser öffnen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="332"/>
+        <location filename="../vncmainwindow.ui" line="332"/>
         <source>Bug tracker...</source>
         <translation>Bug Tracker...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="335"/>
-        <location filename="../mainwindow.ui" line="338"/>
-        <location filename="../mainwindow.ui" line="341"/>
+        <location filename="../vncmainwindow.ui" line="335"/>
+        <location filename="../vncmainwindow.ui" line="338"/>
+        <location filename="../vncmainwindow.ui" line="341"/>
         <source>Open bug tracker in web browser</source>
         <translation>Bug Tracker im Web Browser öffnen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="346"/>
+        <location filename="../vncmainwindow.ui" line="346"/>
         <source>About Qt...</source>
         <translation>Über Qt...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="349"/>
+        <location filename="../vncmainwindow.ui" line="349"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="357"/>
-        <location filename="../mainwindow.ui" line="360"/>
-        <location filename="../mainwindow.ui" line="363"/>
+        <location filename="../vncmainwindow.ui" line="357"/>
+        <location filename="../vncmainwindow.ui" line="360"/>
+        <location filename="../vncmainwindow.ui" line="363"/>
         <source>Toggle full screen</source>
         <translation>Vollbild-/Fenter-Modus wechseln</translation>
     </message>

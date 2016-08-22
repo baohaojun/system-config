@@ -29,7 +29,7 @@
 #include "wrench.h"
 
 #include "macros.h"
-#include "mainwindow.h"
+#include "vncmainwindow.h"
 #include "qvncviewersettings.h"
 
 using namespace std;
@@ -44,7 +44,7 @@ void setenv(const char* name, const char* val, int overide)
 #endif
 
 QtVncViewerSettings *globalConfig = 0;
-MainWindow *mainWindow = 0;
+VncMainWindow *vncMainWindow = 0;
 
 int main(int argc, char *argv[])
 {

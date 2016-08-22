@@ -207,9 +207,9 @@ bool VncView::start()
         showDotCursor(RemoteView::CursorOn);
 #ifndef QTONLY
         // KRDC does always just have one main window, so at(0) is safe
-        KXMLGUIClient *mainWindow = dynamic_cast<KXMLGUIClient*>(KMainWindow::memberList().at(0));
-        if (mainWindow)
-            mainWindow->actionCollection()->action("show_local_cursor")->setChecked(true);
+        KXMLGUIClient *vncMainWindow = dynamic_cast<KXMLGUIClient*>(KMainWindow::memberList().at(0));
+        if (vncMainWindow)
+            vncMainWindow->actionCollection()->action("show_local_cursor")->setChecked(true);
 #endif
     }
 

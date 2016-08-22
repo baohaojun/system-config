@@ -12,7 +12,7 @@ qrc_qvncviewer.cpp
 ui_aboutdialog.h
 ui_connectionwindow.h
 ui_dialoggetentry.h
-ui_mainwindow.h
+ui_vncmainwindow.h
 ui_phonescreendialog.h
 ui_preferencesdialog.h
 ui_rangeslider.h

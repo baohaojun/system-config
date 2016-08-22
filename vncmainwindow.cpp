@@ -10,18 +10,18 @@
 #include <stdio.h>
 
 #include "macros.h"
-#include "mainwindow.h"
+#include "vncmainwindow.h"
 #include "qvncviewersettings.h"
 #include "aboutdialog.h"
 #include "wrenchmainwindow.h"
 
 extern QtVncViewerSettings *globalConfig;
 
-QStringList MainWindow::m_encodings;
+QStringList VncMainWindow::m_encodings;
 
-MainWindow::MainWindow(QWidget *parent) :
+VncMainWindow::VncMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::VncMainWindow)
 {
     ui->setupUi(this);
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
@@ -37,17 +37,17 @@ MainWindow::MainWindow(QWidget *parent) :
     rfbClientLog = rfbClientErr = ConnectionWindow::rfbLog;
 }
 
-QSharedPointer<LuaExecuteThread> MainWindow::mLuaThread()
+QSharedPointer<LuaExecuteThread> VncMainWindow::mLuaThread()
 {
     return mWrench->mLuaThread;
 }
 
-MainWindow::~MainWindow()
+VncMainWindow::~VncMainWindow()
 {
     delete ui;
 }
 
-void MainWindow::log(QString message)
+void VncMainWindow::log(QString message)
 {
     message.prepend(QTime::currentTime().toString("hh:mm:ss.zzz") + ": ");
     printf("%s\n", message.trimmed().toLocal8Bit().constData());
@@ -55,7 +55,7 @@ void MainWindow::log(QString message)
 }
 
 
-void MainWindow::init()
+void VncMainWindow::init()
 {
     if ( QVNCVIEWER_ARG_QUIET )
         ConnectionWindow::setQuiet(true);
@@ -63,7 +63,7 @@ void MainWindow::init()
     QTimer::singleShot(0, this, SLOT(initClientFromArguments()));
 }
 
-void MainWindow::initClientFromArguments()
+void VncMainWindow::initClientFromArguments()
 {
     QStringList lastArgumentList = {"localhost", "1"};
     if ( lastArgumentList.count() == 2 ) {
@@ -73,20 +73,20 @@ void MainWindow::initClientFromArguments()
     }
 }
 
-void MainWindow::loadSettings()
+void VncMainWindow::loadSettings()
 {
     restoreGeometry(globalConfig->mainWindowGeometry());
     restoreState(globalConfig->mainWindowState());
 }
 
-void MainWindow::saveSettings()
+void VncMainWindow::saveSettings()
 {
     globalConfig->setMainWindowGeometry(saveGeometry());
     globalConfig->setMainWindowState(saveState());
     globalConfig->setMainWindowViewMode(ui->actionWindowViewModeWindowed->isChecked() ? QVNCVIEWER_VIEWMODE_WINDOWED : QVNCVIEWER_VIEWMODE_TABBED);
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *ev)
+bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
 {
     static int phone_x, phone_y;
     static QTime press_time;
@@ -159,7 +159,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *ev)
     return QMainWindow::eventFilter(object, ev);
 }
 
-void MainWindow::closeEvent(QCloseEvent *e)
+void VncMainWindow::closeEvent(QCloseEvent *e)
 {
     saveSettings();
     e->accept();

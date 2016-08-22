@@ -6,7 +6,7 @@
 #include <QStringList>
 #include <QString>
 
-#include "ui_mainwindow.h"
+#include "ui_vncmainwindow.h"
 #include "connectionwindow.h"
 
 #include "luaexecutethread.hpp"
@@ -14,16 +14,16 @@
 class WrenchMainWindow;
 
 namespace Ui {
-class MainWindow;
+class VncMainWindow;
 }
 
-class MainWindow : public QMainWindow
+class VncMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit VncMainWindow(QWidget *parent = 0);
+    ~VncMainWindow();
 
     ConnectionWindow *fullScreenWindow() { return m_fullScreenWindow; }
     void setFullScreenWindow(ConnectionWindow *w) { m_fullScreenWindow = w; }
@@ -43,7 +43,7 @@ protected:
     void closeEvent(QCloseEvent *e);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::VncMainWindow *ui;
     ConnectionWindow *m_fullScreenWindow;
     QStringList m_recentConnections;
     static QStringList m_encodings;

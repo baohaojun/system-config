@@ -85,7 +85,7 @@ SOURCES += main.cpp\
     fileopenfilter.cpp \
     phonescreendialog.cpp \
     phonescreensyncer.cpp \
-    mainwindow.cpp \
+    vncmainwindow.cpp \
     connectionwindow.cpp \
     common/d3des.c \
     common/md5.c \
@@ -203,7 +203,7 @@ HEADERS  += wrenchmainwindow.h \
     fileopenfilter.h \
     phonescreendialog.h \
     phonescreensyncer.h \
-    mainwindow.h \
+    vncmainwindow.h \
     connectionwindow.h \
     qvncviewersettings.h \
     macros.h \
@@ -224,7 +224,7 @@ HEADERS  += wrenchmainwindow.h \
 FORMS    += wrenchmainwindow.ui \
             dialoggetentry.ui \
             phonescreendialog.ui \
-            mainwindow.ui \
+            vncmainwindow.ui \
             connectionwindow.ui \
             aboutdialog.ui \
             rangeslider.ui

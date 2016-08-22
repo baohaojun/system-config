@@ -11,10 +11,10 @@
 #include "connectionwindow.h"
 #include "ui_connectionwindow.h"
 #include "qvncviewersettings.h"
-#include "mainwindow.h"
+#include "vncmainwindow.h"
 
 extern QtVncViewerSettings *globalConfig;
-extern MainWindow *mainWindow;
+extern VncMainWindow *vncMainWindow;
 
 bool ConnectionWindow::m_quiet = false;
 quint64 ConnectionWindow::m_nextConnectionNumber = 0;
@@ -254,7 +254,7 @@ void ConnectionWindow::rfbLog(const char *format, ...)
         message.vsprintf(format, args);
         message.prepend(tr("RFB") + ": ");
         va_end(args);
-        MainWindow::log(message);
+        VncMainWindow::log(message);
     }
 }
 
@@ -396,12 +396,12 @@ void ConnectionWindow::doConnect()
                 QString rfbDesktopName(m_rfbClient->desktopName);
                 if ( !rfbDesktopName.isEmpty() )
                     setWindowTitle(rfbDesktopName);
-                MainWindow::log(tr("Setting encoding to '%1'").arg(m_currentEncoding));
+                VncMainWindow::log(tr("Setting encoding to '%1'").arg(m_currentEncoding));
                 m_rfbClient->appData.encodingsString = (const char*)m_currentEncoding.constData();
                 m_rfbClient->appData.qualityLevel = 95;
                 m_rfbClient->appData.compressLevel = 9;
                 if ( !SetFormatAndEncodings(m_rfbClient) )
-                    MainWindow::log(tr("WARNING: Failed sending formats and encondings to %1:%2").arg(mHostName).arg(mDisplayNumber));
+                    VncMainWindow::log(tr("WARNING: Failed sending formats and encondings to %1:%2").arg(mHostName).arg(mDisplayNumber));
                 m_rfbClient->width = m_rfbClient->si.framebufferWidth;
                 m_rfbClient->height = m_rfbClient->si.framebufferHeight;
                 m_rfbClient->frameBuffer = (uint8_t *)malloc(m_rfbClient->width * m_rfbClient->height * QVNCVIEWER_BYTES_PER_PIXEL);
@@ -416,7 +416,7 @@ void ConnectionWindow::doConnect()
                 m_clientToWindowHash.remove(m_rfbClient);
                 m_rfbClient = 0;
                 setWindowTitle(m_defaultWindowTitle);
-                MainWindow::log(tr("WARNING: Failed RFB client initialization for %1:%2").arg(mHostName).arg(mDisplayNumber));
+                VncMainWindow::log(tr("WARNING: Failed RFB client initialization for %1:%2").arg(mHostName).arg(mDisplayNumber));
             }
         } else {
             PollServerThread::setConnecting(false);
@@ -425,7 +425,7 @@ void ConnectionWindow::doConnect()
             m_clientToWindowHash.remove(m_rfbClient);
             m_rfbClient = 0;
             setWindowTitle(m_defaultWindowTitle);
-            MainWindow::log(tr("WARNING: Failed connection to %1:%2").arg(mHostName).arg(mDisplayNumber));
+            VncMainWindow::log(tr("WARNING: Failed connection to %1:%2").arg(mHostName).arg(mDisplayNumber));
         }
     }
 }

@@ -43,7 +43,7 @@
 #include "phonescreendialog.h"
 #include <QStandardPaths>
 #include "wrench.h"
-#include "mainwindow.h"
+#include "vncmainwindow.h"
 #include "adbvncthread.hpp"
 
 QString emacsWeixinSh;
@@ -808,7 +808,7 @@ void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     static int x, y;
-    extern MainWindow* mainWindow;
+    extern VncMainWindow* vncMainWindow;
     static AdbVncThread* vncThread;
     if (checked) {
         if (vncThread == NULL) {
@@ -816,14 +816,14 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             vncThread->start();
         }
 
-        if (mainWindow == NULL) {
-            mainWindow = new MainWindow(this);
-            mainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
-            mainWindow->installEventFilter(mainWindow);
+        if (vncMainWindow == NULL) {
+            vncMainWindow = new VncMainWindow(this);
+            vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
+            vncMainWindow->installEventFilter(vncMainWindow);
         }
-        mainWindow->show();
-    } else if (mainWindow) {
-        mainWindow->hide();
+        vncMainWindow->show();
+    } else if (vncMainWindow) {
+        vncMainWindow->hide();
     }
     return;
     if (checked) {
