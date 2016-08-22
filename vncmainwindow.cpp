@@ -83,7 +83,6 @@ void VncMainWindow::saveSettings()
 {
     globalConfig->setMainWindowGeometry(saveGeometry());
     globalConfig->setMainWindowState(saveState());
-    globalConfig->setMainWindowViewMode(ui->actionWindowViewModeWindowed->isChecked() ? QVNCVIEWER_VIEWMODE_WINDOWED : QVNCVIEWER_VIEWMODE_TABBED);
 }
 
 bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)

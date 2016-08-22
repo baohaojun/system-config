@@ -822,6 +822,7 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             vncMainWindow->installEventFilter(vncMainWindow);
         }
         vncMainWindow->show();
+        vncMainWindow->move(this->x() + this->size().width() + 15, this->y() + 22);
     } else if (vncMainWindow) {
         vncMainWindow->hide();
     }
