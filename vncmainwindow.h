@@ -37,10 +37,13 @@ public slots:
     void initClientFromArguments();
     void loadSettings();
     void saveSettings();
+    void onVncUpdate(QString);
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);
     void closeEvent(QCloseEvent *e);
+    void hideEvent(QHideEvent *e);
+    void showEvent(QShowEvent *e);
 
 private:
     Ui::VncMainWindow *ui;

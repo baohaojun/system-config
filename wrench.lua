@@ -1185,7 +1185,6 @@ t1_config = function(passedConfigDirPath)
    check_file_pushed("am.jar", "am.jar.md5")
    check_file_pushed("androidvncserver", "androidvncserver.md5")
    check_file_pushed("busybox", "busybox.md5")
-   adb_shell("/data/data/com.android.shell/busybox killall androidvncserver")
 
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
    if not vcf_file then

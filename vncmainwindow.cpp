@@ -164,3 +164,21 @@ void VncMainWindow::closeEvent(QCloseEvent *e)
     e->accept();
     // QTimer::singleShot(0, qApp, SLOT(quit()));
 }
+
+void VncMainWindow::hideEvent(QHideEvent *e)
+{
+    fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
+    ui->connectionWindow->doDisconnect();
+}
+
+void VncMainWindow::showEvent(QShowEvent *e)
+{
+    fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
+    QTimer::singleShot(10, ui->connectionWindow, SLOT(doConnect()));
+}
+
+void VncMainWindow::onVncUpdate(QString) {
+    if (this->isVisible() && ! ui->connectionWindow->connected()) {
+        QTimer::singleShot(0, ui->connectionWindow, SLOT(doConnect()));
+    }
+}

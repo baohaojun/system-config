@@ -40,6 +40,7 @@ public slots:
     void onSelectArgs(const QStringList& args);
     void startTask(const QString& task);
     void on_argSelected(const QString& arg);
+    void moveVncMainWin();
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);

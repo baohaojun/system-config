@@ -805,6 +805,12 @@ void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to
     ui->tabWidget->setCurrentIndex(1);
 }
 
+void WrenchMainWindow::moveVncMainWin()
+{
+    extern VncMainWindow* vncMainWindow;
+    vncMainWindow->move(this->x() + this->size().width() + 15, this->y() + 22);
+}
+
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     static int x, y;
@@ -821,8 +827,10 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
             vncMainWindow->installEventFilter(vncMainWindow);
         }
+        connect(vncThread, SIGNAL(adbVncUpdate(QString)), vncMainWindow, SLOT(onVncUpdate(QString)));
         vncMainWindow->show();
         vncMainWindow->move(this->x() + this->size().width() + 15, this->y() + 22);
+        QTimer::singleShot(0, this, SLOT(moveVncMainWin()));
     } else if (vncMainWindow) {
         vncMainWindow->hide();
     }

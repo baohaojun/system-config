@@ -49,7 +49,6 @@ void AdbStateThread::inputServerFinished()
 
 void AdbStateThread::onDisconnected()
 {
-    qDebug() << "onDisconnected" << QThread::currentThreadId();
     if (!mConnectTimer) {
         mConnectTimer = new QTimer();
         mConnectTimer->setSingleShot(true);

@@ -26,6 +26,7 @@ AdbVncThread::~AdbVncThread()
 void AdbVncThread::onInputDataReady()
 {
     qDebug() << mAdbInput->getSock()->readAll();
+    emit adbVncUpdate("Online");
 }
 
 void AdbVncThread::inputServerFinished()
@@ -35,15 +36,15 @@ void AdbVncThread::inputServerFinished()
 
 void AdbVncThread::onDisconnected()
 {
-    qDebug() << __FUNCTION__ << ": onDisconnected" << QThread::currentThreadId();
+    fprintf(stderr, "%s:%d: %xu\n", __FILE__, __LINE__, QThread::currentThreadId());
     if (!mConnectTimer) {
-        mConnectTimer = new QTimer();
+        mConnectTimer = new QTimer(this);
         mConnectTimer->setSingleShot(true);
         connect(mConnectTimer, SIGNAL(timeout()), this, SLOT(onDisconnected()));
 
     }
     // at the start, suppose the adb not connected.
-    QStringList args1 = QStringList() << "sh" << "-c" << "if test \"$(getprop sys.boot_completed)\" = 1; then { echo -n Lin && echo -n ux; }; fi";
+    QStringList args1 = QStringList() << "sh" << "-c" << "if test \"$(getprop sys.boot_completed)\" = 1; then { echo -n Lin && echo -n ux; /data/data/com.android.shell/busybox killall androidvncserver; }; fi";
 
 
     QString uname = adb_quote_shell(args1);
@@ -69,6 +70,7 @@ void AdbVncThread::onDisconnected()
         mAdbInputFinished = false;
         connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));
         connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));
+        connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()));
     }
 
     static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");
@@ -83,6 +85,6 @@ void AdbVncThread::onDisconnected()
 void AdbVncThread::run()
 {
     this->moveToThread(this);
-    onDisconnected();
+    QTimer::singleShot(0, this, SLOT(onDisconnected()));
     exec();
 }
