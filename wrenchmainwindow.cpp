@@ -807,16 +807,14 @@ void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to
     ui->tabWidget->setCurrentIndex(1);
 }
 
-void WrenchMainWindow::moveVncMainWinWhenCreated()
+void WrenchMainWindow::moveVncMainWinWhenMoving()
 {
-    extern VncMainWindow* vncMainWindow;
     QRect rect = this->frameGeometry();
     vncMainWindow->move(rect.right(), rect.top());
 }
 
 void WrenchMainWindow::moveVncMainWin()
 {
-    extern VncMainWindow* vncMainWindow;
     QRect rectWithFrame = this->frameGeometry();
     QRect rectNoFrame = this->geometry();
 
@@ -832,7 +830,6 @@ void WrenchMainWindow::moveVncMainWin()
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     static int x, y;
-    extern VncMainWindow* vncMainWindow;
     static AdbVncThread* vncThread;
     if (checked) {
         if (vncThread == NULL) {
@@ -997,4 +994,11 @@ bool WrenchMainWindow::handleEmacsKeys(QWidget *w, QKeyEvent *e)
 
 default_filter:
     return QMainWindow::eventFilter(w, e);
+}
+
+void WrenchMainWindow::moveEvent(QMoveEvent* ev)
+{
+    if (vncMainWindow && vncMainWindow->isVisible()) {
+        QTimer::singleShot(100, this, SLOT(moveVncMainWinWhenMoving()));
+    }
 }

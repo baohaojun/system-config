@@ -19,6 +19,7 @@
 #include "phonescreendialog.h"
 #include <QShowEvent>
 #include "vncmainwindow.h"
+#include <QMoveEvent>
 
 namespace Ui {
 class WrenchMainWindow;
@@ -41,7 +42,8 @@ public slots:
     void startTask(const QString& task);
     void on_argSelected(const QString& arg);
     void moveVncMainWin();
-    void moveVncMainWinWhenCreated();
+    void moveVncMainWinWhenMoving();
+    void moveEvent(QMoveEvent*);
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
