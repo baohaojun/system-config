@@ -109,20 +109,49 @@ croot() {
 }
 
 abc-base-build() {
-    if test "$base_build"; then
-        echo $base_build
-        return
+    . ~/src/github/smartcm/smartcm-setup.sh
+    my_base=$(
+        if test "$base_build"; then
+            echo $base_build
+            exit
+        fi
+        (
+            croot
+            readlink -f ./.repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,; s,\.xml$,,; s,/,%,g'
+        )
+           )
+    for product_branch in ${!android_manifests[@]} ${!oem_manifests[@]}; do
+        for manifest in ${android_manifests[$product_branch]} ${oem_manifests[$product_branch]}; do
+            base_from_manifest=$(
+                echo ${manifest} | perl -npe 's/.xml$//; s,/,%,g'
+                              )
+            if test "$my_base" = "$base_from_manifest"; then
+                echo "$my_base"
+                return
+            fi
+        done
+    done
+
+    product_branch=$(select-args </dev/tty -o -p "请选择你想使用的代码索引的产品、分支" ${!android_manifests[@]} ${!oem_manifests[@]})
+    android_or_oem=$(
+        select-args </dev/tty -o -p "请选择你要索引安卓代码还是OEM代码" android oem
+                  )
+    if test "$android_or_oem" = android; then
+        manifest=${android_manifests[$product_branch]}
+    else
+        manifest=${oem_manifests[$product_branch]}
     fi
-    (
-        croot
-        readlink -f ./.repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,; s,\.xml$,,; s,/,%,g'
-    )
+
+    if test -z "$manifest"; then
+        echo "抱歉，你选的产品、分支 $product_branch 没有 $android_or_oem 部分代码" 1>&2
+        kill $$
+    fi
+    echo ${manifest} | perl -npe 's/.xml$//; s,/,%,g'
 }
 
 abc-grep() {
     (
         croot
-        echo "make: Entering directory \`$PWD'"
         ## start code-generator "^\\s *#\\s *"
         # generate-getopt e:entry rremote ttags b:base-build
         ## end code-generator
@@ -199,7 +228,17 @@ abc-grep() {
             entry=$1
             shift
         fi
+        if test -z "$entry"; then
+            (
+                echo -n 'abc-x grep 用法错误： '
+                abc-x grep -h
+            )
+            echo
+            echo 注意：-e ENTRY 也可以不写-e，前提是ENTRY不以-开头（与grep -e参数用法类似）。
+            exit 1
+        fi
 
+        echo "make: Entering directory \`$PWD'"
         if test "$remote" = true; then
             echo "$entry" | ssh $abc_host abc abc-beagrep -b "$(abc-base-build)"
             exit
