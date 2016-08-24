@@ -6,10 +6,13 @@ function die() {
     exit -1
 }
 
+LANG=en_US.UTF-8
+LC_ALL=en_US.UTF-8
+
 md5sum=$(
     for x in "$@"; do
         echo "$x"
-    done | md5sum | pn 1
+    done | md5sum | awk '{print $1}'
       )
 md5dir=.cache/${md5sum:0:1}/${md5sum:1:1}
 md5file=$md5dir/${md5sum:2}
@@ -55,8 +58,8 @@ if test ! -d "$start_dir"; then
     die "Can not find beagrep database"
 fi
 
-source_dir=${start_dir#*for-code-reading/}
-beagrep_dir=$start_dir/.beagrep
+export source_dir=${start_dir#*for-code-reading/}
+export beagrep_dir=$start_dir/.beagrep
 if test "$tags" = true; then
     beagrep_dir=$start_dir/.beatags
     export SOURCECODETAGSMODE=true
@@ -86,7 +89,7 @@ fi
 
 if test "$FIND_FILE_ONLY"; then
     tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
-    mkdir -p ~/.logs
+    mkdir -p ~/.cache/system-config/logs
     echo $tokens > ~/.cache/system-config/logs/$(basename $0).log
 fi
 
@@ -94,6 +97,8 @@ tokens="$tokens $additional_tokens"
 
 if test "$quote" = true; then
     tokens=$(echo $tokens | perl -npe 's/^\s*/"/; s/\s*$/"/')
+else
+    tokens=${tokens//\"/}
 fi
 
 if test -e "$beagrep_dir"/../.beagrep-abc && test "$local_index" != true; then
