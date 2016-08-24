@@ -58,8 +58,8 @@ if test ! -d "$start_dir"; then
     die "Can not find beagrep database"
 fi
 
-source_dir=${start_dir#*for-code-reading/}
-beagrep_dir=$start_dir/.beagrep
+export source_dir=${start_dir#*for-code-reading/}
+export beagrep_dir=$start_dir/.beagrep
 if test "$tags" = true; then
     beagrep_dir=$start_dir/.beatags
     export SOURCECODETAGSMODE=true
@@ -97,6 +97,8 @@ tokens="$tokens $additional_tokens"
 
 if test "$quote" = true; then
     tokens=$(echo $tokens | perl -npe 's/^\s*/"/; s/\s*$/"/')
+else
+    tokens=${tokens//\"/}
 fi
 
 if test -e "$beagrep_dir"/../.beagrep-abc && test "$local_index" != true; then
