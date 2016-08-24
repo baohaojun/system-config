@@ -45,6 +45,8 @@
 #include "wrench.h"
 #include "vncmainwindow.h"
 #include "adbvncthread.hpp"
+#include <QtCore/QRect>
+#include <QProcessEnvironment>
 
 QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
@@ -805,10 +807,26 @@ void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to
     ui->tabWidget->setCurrentIndex(1);
 }
 
+void WrenchMainWindow::moveVncMainWinWhenCreated()
+{
+    extern VncMainWindow* vncMainWindow;
+    QRect rect = this->frameGeometry();
+    vncMainWindow->move(rect.right(), rect.top());
+}
+
 void WrenchMainWindow::moveVncMainWin()
 {
     extern VncMainWindow* vncMainWindow;
-    vncMainWindow->move(this->x() + this->size().width() + 15, this->y() + 22);
+    QRect rectWithFrame = this->frameGeometry();
+    QRect rectNoFrame = this->geometry();
+
+    int xDelta = 0;
+    int yDelta = 0;
+    if (QProcessEnvironment::systemEnvironment().value("DESKTOP_SESSION") == "sawfish") {
+        xDelta  = rectWithFrame.right() - rectNoFrame.right();
+        yDelta = rectNoFrame.top() - rectWithFrame.top();
+    }
+    vncMainWindow->move(rectWithFrame.right() + xDelta, rectWithFrame.top() + yDelta);
 }
 
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
@@ -827,13 +845,15 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
             vncMainWindow->installEventFilter(vncMainWindow);
         }
-        connect(vncThread, SIGNAL(adbVncUpdate(QString)), vncMainWindow, SLOT(onVncUpdate(QString)));
         vncMainWindow->show();
-        vncMainWindow->move(this->x() + this->size().width() + 15, this->y() + 22);
-        QTimer::singleShot(0, this, SLOT(moveVncMainWin()));
+        moveVncMainWin();
+
+        connect(vncThread, SIGNAL(adbVncUpdate(QString)), vncMainWindow, SLOT(onVncUpdate(QString)));
+
     } else if (vncMainWindow) {
         vncMainWindow->hide();
     }
+
     return;
     if (checked) {
         if (mPhoneScreenDialog.isNull()) {

@@ -75,7 +75,6 @@ void VncMainWindow::initClientFromArguments()
 
 void VncMainWindow::loadSettings()
 {
-    restoreGeometry(globalConfig->mainWindowGeometry());
     restoreState(globalConfig->mainWindowState());
 }
 

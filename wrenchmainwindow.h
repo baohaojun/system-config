@@ -41,6 +41,7 @@ public slots:
     void startTask(const QString& task);
     void on_argSelected(const QString& arg);
     void moveVncMainWin();
+    void moveVncMainWinWhenCreated();
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);

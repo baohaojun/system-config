@@ -1,7 +1,19 @@
-* TODO Should make phone screen sync use VNC.
+* DONE Should make phone screen sync use VNC.
+  CLOSED: [2016-08-23 Tue 10:09]
+  :LOGBOOK:
+  - State "DONE"       from "TODO"       [2016-08-23 Tue 10:09]
+  :END:
 
-** TODO Should start the vnc process automatically.
+** DONE Should start the vnc process automatically.
+   CLOSED: [2016-08-23 Tue 10:09]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-08-23 Tue 10:09]
+   :END:
 
 ** TODO Should not spin the CPU when screen is not shown.
 
-** TODO Should connect automatically when the phone screen button is clicked.
+** DONE Should connect automatically when the phone screen button is clicked.
+   CLOSED: [2016-08-23 Tue 10:14]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-08-23 Tue 10:14]
+   :END:
