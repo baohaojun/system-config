@@ -23,5 +23,5 @@ find "$TARGET_OUT" -type f -newer $mark_file|while read x; do
     fi
     y=$(echo $x|perl -npe 's,.*/target/product/.*?/,/,')
     printf "adb-push %q %q\n" "$x" "$y"
-    adb-push $x $y >/dev/null 2>&1
+    adb-push $x $y >/dev/null 2>&1 </dev/null
 done
