@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
+saved_args=("$@")
+atexit() {
+    ret=$?
+    if test $? != 0 && is-jenkins; then
+        echo "${saved_args[@]}" | mail-cms -i "git-get failed in $(jenkins-info)"
+    fi
+    exit $ret
+}
 
+trap atexit 0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt d:dir u:url b:branch

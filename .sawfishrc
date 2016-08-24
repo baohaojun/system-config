@@ -296,7 +296,7 @@
         ("F5" . '((Wine mm6-dragon-fly)))
         ("F6" . '((Wine mm6-wizard-eye)))
         ("F7" . '((Wine mm6-torch)))
-        ("F8" . '((Wine mm6-shield)))
+        ("F8" . '((Wine mm6-cure-weakness)))
         ("F9" . '((Wine mm6-stone-skin)))
         ("F10" . '((Wine mm6-regeneration)))
         ("&" . '((Wine mm8-1)))
@@ -307,7 +307,7 @@
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
 (defun mm6-dragon-fly ()
-  (system "mm8 cast dragon.fly&"))
+  (system "mm8 cast air.fly&"))
 
 (defun mm6-bless ()
   (system "mm8 cast bless&"))
@@ -329,6 +329,9 @@
 
 (defun mm6-torch ()
   (system "mm8 cast torch&"))
+
+(defun mm6-cure-weakness ()
+  (system "mm8 cast cure.weakness&"))
 
 (defun mm8-1 ()
   (system "mm8 1&"))
