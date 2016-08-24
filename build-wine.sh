@@ -8,7 +8,7 @@ function copy-dlls()
     rsync *.lua  ./release -v
 
     req_dlls=( #icudt5?.dll icuin5?.dll icuuc5?.dll
-               qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL
+               qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL Qt5Test.dll Qt5Svg.dll
              )
 
     for x in "${req_dlls[@]}"; do

@@ -176,8 +176,7 @@ SOURCES += main.cpp\
     surfacewidget.cpp \
     qt2keysym.cpp \
     aboutdialog.cpp \
-    rangeslider.cpp \
-    surfacewidget_gl.cpp
+    rangeslider.cpp
 
 
 HEADERS  += wrenchmainwindow.h \
@@ -211,7 +210,6 @@ HEADERS  += wrenchmainwindow.h \
     qt2keysum.h \
     aboutdialog.h \
     rangeslider.h \
-    surfacewidget_gl.h \
     rfb/default8x16.h \
     rfb/keysym.h \
     rfb/rfb.h \

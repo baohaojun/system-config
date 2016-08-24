@@ -31,7 +31,6 @@ ConnectionWindow::ConnectionWindow(QWidget *parent) :
     m_rfbClient(0),
     m_pollServerThread(0),
     m_surfaceWidget(0),
-    m_surfaceWidgetGL(0),
     m_lookUpId(-1),
     m_surfaceType(globalConfig->preferencesSurfaceType())
 {
@@ -45,10 +44,6 @@ ConnectionWindow::ConnectionWindow(QWidget *parent) :
     this->setLayout(&mLayout);
     layout()->setContentsMargins(0, 0, 0, 0);
     switch ( surfaceType() ) {
-    case QVNCVIEWER_SURFACE_OPENGL:
-        m_surfaceWidgetGL = new SurfaceWidgetGL(this, this);
-        layout()->addWidget(surfaceWidgetGL());
-        break;
     case QVNCVIEWER_SURFACE_RASTER:
     default:
         m_surfaceWidget = new SurfaceWidget(this, this);
@@ -59,9 +54,6 @@ ConnectionWindow::ConnectionWindow(QWidget *parent) :
 
     // configuration menu
     switch ( surfaceType() ) {
-    case QVNCVIEWER_SURFACE_OPENGL:
-        surfaceWidgetGL()->setShowFps(globalConfig->preferencesShowFps());
-        break;
     case QVNCVIEWER_SURFACE_RASTER:
     default:
         surfaceWidget()->setShowFps(globalConfig->preferencesShowFps());
@@ -84,8 +76,6 @@ ConnectionWindow::~ConnectionWindow()
     }
     if ( surfaceWidget() )
         delete surfaceWidget();
-    if ( surfaceWidgetGL() )
-        delete surfaceWidgetGL();
     delete ui;
 }
 
@@ -97,12 +87,6 @@ void ConnectionWindow::setConnected(bool conn)
          connect(pollServerThread(), SIGNAL(messageArrived()), this, SLOT(messageArrived()));
          connect(pollServerThread(), SIGNAL(connectionClosed()), this, SLOT(connectionClosed()));
          switch ( surfaceType() ) {
-         case QVNCVIEWER_SURFACE_OPENGL:
-             surfaceWidgetGL()->setSurfaceSize(QSize(m_rfbClient->width, m_rfbClient->height));
-             surfaceWidgetGL()->setDefaultMessage(tr("Connected"));
-             surfaceWidgetGL()->update();
-             surfaceWidgetGL()->setFocus();
-             break;
          case QVNCVIEWER_SURFACE_RASTER:
          default:
              surfaceWidget()->setSurfaceSize(QSize(m_rfbClient->width, m_rfbClient->height));
@@ -124,11 +108,6 @@ void ConnectionWindow::setConnected(bool conn)
              m_pollServerThread = 0;
          }
          switch ( surfaceType() ) {
-         case QVNCVIEWER_SURFACE_OPENGL:
-             surfaceWidgetGL()->clearSurface();
-             surfaceWidgetGL()->setDefaultMessage(tr("Disconnected"));
-             surfaceWidgetGL()->update();
-             break;
          case QVNCVIEWER_SURFACE_RASTER:
          default:
              surfaceWidget()->clearSurface();
@@ -192,9 +171,6 @@ rfbBool ConnectionWindow::rfbResize(rfbClient *client)
         client->frameBuffer = (uint8_t *)malloc(client->width * client->height * QVNCVIEWER_BYTES_PER_PIXEL);
         free(oldFB);
         switch ( connectionWindow->surfaceType() ) {
-        case QVNCVIEWER_SURFACE_OPENGL:
-            connectionWindow->surfaceWidgetGL()->setSurfaceSize(QSize(client->width, client->height));
-            break;
         case QVNCVIEWER_SURFACE_RASTER:
         default:
             connectionWindow->surfaceWidget()->setSurfaceSize(QSize(client->width, client->height));
@@ -219,9 +195,6 @@ void ConnectionWindow::rfbUpdate(rfbClient *client, int x, int y, int w, int h)
     ConnectionWindow *connectionWindow = clientWindow(client);
     if ( connectionWindow ) {
         switch ( connectionWindow->surfaceType() ) {
-        case QVNCVIEWER_SURFACE_OPENGL:
-            connectionWindow->surfaceWidgetGL()->update();
-            break;
         case QVNCVIEWER_SURFACE_RASTER:
         default:
             connectionWindow->surfaceWidget()->update();
@@ -272,9 +245,6 @@ void ConnectionWindow::doDisconnect()
     }
     setWindowTitle(m_defaultWindowTitle);
     switch ( surfaceType() ) {
-    case QVNCVIEWER_SURFACE_OPENGL:
-        surfaceWidgetGL()->setDefaultMessage(tr("Disconnected"));
-        break;
     case QVNCVIEWER_SURFACE_RASTER:
     default:
         surfaceWidget()->setDefaultMessage(tr("Disconnected"));
@@ -359,10 +329,6 @@ void ConnectionWindow::doConnect()
     if (connected())
         return;
     switch ( surfaceType() ) {
-    case QVNCVIEWER_SURFACE_OPENGL:
-        surfaceWidgetGL()->setDefaultMessage(tr("Connecting..."));
-        surfaceWidgetGL()->update();
-        break;
     case QVNCVIEWER_SURFACE_RASTER:
     default:
         surfaceWidget()->setDefaultMessage(tr("Connecting..."));

@@ -18,7 +18,6 @@
 #include <rfb/rfbclient.h>
 
 #include "surfacewidget.h"
-#include "surfacewidget_gl.h"
 #include "rangeslider.h"
 #include <QGridLayout>
 
@@ -82,7 +81,6 @@ public:
     void startSessionFromArguments(QString hostName, int displayNumber, bool fullScreen, bool maximize);
 
     SurfaceWidget *surfaceWidget() { return m_surfaceWidget; }
-    SurfaceWidgetGL *surfaceWidgetGL() { return m_surfaceWidgetGL; }
     PollServerThread *pollServerThread() { return m_pollServerThread; }
     rfbClient *rfbClientPtr() { return m_rfbClient; }
 
@@ -133,7 +131,6 @@ private:
     QString m_defaultWindowTitle;
     PollServerThread *m_pollServerThread;
     SurfaceWidget *m_surfaceWidget;
-    SurfaceWidgetGL *m_surfaceWidgetGL;
     int m_lookUpId;
     QString m_currentEncoding;
     int m_surfaceType;

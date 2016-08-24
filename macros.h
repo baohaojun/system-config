@@ -84,7 +84,6 @@
 
 // surface implementations
 #define QVNCVIEWER_SURFACE_RASTER           0
-#define QVNCVIEWER_SURFACE_OPENGL           1
 
 // debugging macros
 #define QVNCVIEWER_PRINT_TXT(t)             { printf("%s\n", #t); fflush(stdout); }
