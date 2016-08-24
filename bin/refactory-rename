@@ -42,6 +42,11 @@ while true; do
     esac
 done
 
+if test -z "$prepend" -a -z "$postpend" && [[ "$1" =~ ^\\b.*\\b$ ]]; then
+    prepend="\b"
+    postpend="\b"
+fi
+
 if test $# != 2; then
     die "Error: Usage $(basename $0) from to"
 fi

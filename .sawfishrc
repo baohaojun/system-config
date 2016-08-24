@@ -116,7 +116,7 @@
 (bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
 (bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-both-global&window-keymaps "XF86Launch5" '(system "EMACS=t do-capture&"))
-(bind-both-global&window-keymaps "XF86Launch6" '(system "find-or-exec Wrench Wrench.sh&"))
+(bind-both-global&window-keymaps "XF86Launch6" '(system "find-or-exec 'Wrench V%Wrench' Wrench.sh&"))
 (bind-both-global&window-keymaps "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
 (bind-both-global&window-keymaps "XF86Launch8" '(system "custom-command&"))
 (bind-both-global&window-keymaps "XF86Launch9" '(system "EMACS=t ssssh&"))
@@ -156,7 +156,10 @@
   (if (eq (catch 'wFound
             (mapc (lambda (window)
                     (when (if (stringp wclass-or-lambda)
-                              (string-match wclass-or-lambda (bhj-window-class window) 0 t)
+                              (if (string-match "%" wclass-or-lambda)
+                                  (and (string-match (string-replace "%.*" "" wclass-or-lambda) (window-name window) 0 t)
+                                       (string-match (string-replace ".*%" "" wclass-or-lambda) (bhj-window-class window) 0 t))
+                                (string-match wclass-or-lambda (bhj-window-class window) 0 t))
                             (when functionp wclass-or-lambda
                                   (wclass-or-lambda window)))
                       (bhj-activate-window window)

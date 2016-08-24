@@ -187,7 +187,9 @@ function mkbeagrepidx() {
                             "$relativeSrcDir" 2>&1
     }
 
-    do_build | tee "$outDir"/$subdir-build-log
+    if do_build; then
+        echo $PWD > $outDir/$subdir/top-source-dir
+    fi | tee "$outDir"/$subdir-build-log
 
     if test "$SOURCECODETAGSMODE" != true; then
         cat "$outDir"/$subdir-build-log |

@@ -14,7 +14,7 @@ if (-e "$ENV{HOME}/external/local/bin/mkbeagrepidx" and not -e "/usr/local/bin/m
     } else {
         $ENV{LD_LIBRARY_PATH} = "$ENV{HOME}/external/local/lib";
     }
-    $ENV{PATH} = "$ENV{HOME}/external/local/bin:$ENV{PATH}"; # force using the right version
+    $ENV{PATH} = "$ENV{HOME}/external/bin/Linux/ext/debug/:$ENV{HOME}/external/local/bin:$ENV{PATH}"; # force using the right version
 }
 
 my $pat = '';

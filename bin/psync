@@ -3,7 +3,13 @@
 if test $# = 0 -o $# = 1; then
     cd ~/system-config/
     function do_x() {
+        echo doing system-config to "$x"
         psync "$x" .
+        (
+            cd ~/external/local/
+            echo doing external/local/ to "$x"
+            psync "$x" .
+        )
     }
 
     if test $# = 1; then
@@ -18,19 +24,7 @@ if test $# = 0 -o $# = 1; then
         exit
     fi
     x=code3
-    do_x >/dev/null 2>&1
-    remotes=$(
-        if test -e ~/.config/system-config/psync-remotes; then
-            cat ~/.config/system-config/psync-remotes;
-        else
-            echo rem build build2 pub;
-        fi
-           )
-    for x in $remotes; do
-        (
-            do_x
-        )&
-    done >/dev/null 2>&1
+    do_x
     exit
 fi
 

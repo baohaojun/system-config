@@ -124,24 +124,90 @@ abc-grep() {
         croot
         echo "make: Entering directory \`$PWD'"
         ## start code-generator "^\\s *#\\s *"
-        # generate-getopts -l e:entry
+        # generate-getopt e:entry rremote ttags b:base-build
         ## end code-generator
         ## start generated code
-        local entry=
-        local OPTIND=1
-        while getopts 'e:' opt; do
-            case "$opt" in
-                e)    entry=$OPTARG;;
-                *)    echo Usage Error;;
+        TEMP=$(getopt -o tb:e:rh \
+                      --long tags,base-build:,entry:,remote,help,no-tags,no-remote \
+                      -n $(basename -- $0) -- "$@")
+        tags=false
+        base_build=
+        entry=
+        remote=false
+        eval set -- "$TEMP"
+        while true; do
+            case "$1" in
+
+                -t|--tags|--no-tags)
+                    if test "$1" = --no-tags; then
+                        tags=false
+                    else
+                        tags=true
+                    fi
+                    shift
+                    ;;
+                -b|--base-build)
+                    base_build=$2
+                    shift 2
+                    ;;
+                -e|--entry)
+                    entry=$2
+                    shift 2
+                    ;;
+                -r|--remote|--no-remote)
+                    if test "$1" = --no-remote; then
+                        remote=false
+                    else
+                        remote=true
+                    fi
+                    shift
+                    ;;
+                -h|--help)
+                    set +x
+                    echo
+                    echo
+                    echo Options and arguments:
+                    printf %06s '-b, '
+                    printf %-24s '--base-build=BASE_BUILD'
+                    echo
+                    printf %06s '-e, '
+                    printf %-24s '--entry=ENTRY'
+                    echo
+                    printf %06s '-r, '
+                    printf %-24s '--[no-]remote'
+                    echo
+                    printf %06s '-t, '
+                    printf %-24s '--[no-]tags'
+                    echo
+                    exit
+                    shift
+                    ;;
+                --)
+                    shift
+                    break
+                    ;;
+                *)
+                    die "internal error"
+                    ;;
             esac
         done
-        shift $(($OPTIND - 1))
+
 
         ## end generated code
 
         if test -z "$entry" -a $# != 0; then
             entry=$1
             shift
+        fi
+
+        if test "$remote" = true; then
+            echo "$entry" | ssh $abc_host abc abc-beagrep -b "$(abc-base-build)"
+            exit
+        fi
+
+        if test "$tags" = true; then
+            echo "$entry" | ssh $abc_host abc abc-grep-beatags -b "$(abc-base-build)"
+            exit
         fi
 
         ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|xargs -d \\n grep -H -n -e "$entry" "$@" /dev/null

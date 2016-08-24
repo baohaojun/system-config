@@ -37,6 +37,8 @@ for dir in ~/system-config/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; d
         test -e $x || continue
         ld=$logdir/$x/$(date +%A)/
         mkdir -p $ld
-        ($x || mail-bhj cron-runner "$x failed: errno $?" &) > $ld/$(date +%H:%M) 2>&1
+        touch $ld
+        time=$(date +%H:%M)
+        ($x || mail-bhj cron-runner "$x failed@$time: errno $?" &) > $ld/$time 2>&1
     done
 done&

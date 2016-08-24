@@ -17,6 +17,12 @@ if echo "$SSH_ORIGINAL_COMMAND" | grep -o -P -e '[^-%a-z0-9:./_ ]+' -i; then
     die "The above characters are not allowed"
 fi
 
+if test -z "$SSH_ORIGINAL_COMMAND"; then
+    echo Android Build Cake: available commands:
+    grep ^function $(which abc) | pn 2|perl -npe 's/^/    /; s/\(|\)//g'|sort
+    exit 1
+fi
+
 if test "$(echo "$SSH_ORIGINAL_COMMAND" | pn 1)" != abc; then
     die Android Build Cake: "$(echo "$SSH_ORIGINAL_COMMAND" | pn 1)": command not found.
 fi
