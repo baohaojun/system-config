@@ -10,6 +10,7 @@ void qSystem(QString str);
 extern bool gScreenCapJpg;
 extern QString configDirPath;
 extern VncMainWindow* vncMainWindow;
+extern volatile bool gPhoneScreenSyncOn;
 
 
 #endif /* _WRENCH_H_ */

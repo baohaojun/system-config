@@ -36,12 +36,16 @@ void AdbVncThread::inputServerFinished()
 
 void AdbVncThread::onDisconnected()
 {
-    fprintf(stderr, "%s:%d: %xu\n", __FILE__, __LINE__, QThread::currentThreadId());
     if (!mConnectTimer) {
         mConnectTimer = new QTimer(this);
         mConnectTimer->setSingleShot(true);
         connect(mConnectTimer, SIGNAL(timeout()), this, SLOT(onDisconnected()));
 
+    }
+
+    if (!gPhoneScreenSyncOn) {
+        mConnectTimer->start(1000);
+        return;
     }
     // at the start, suppose the adb not connected.
     QStringList args1 = QStringList() << "sh" << "-c" << "if test \"$(getprop sys.boot_completed)\" = 1; then { echo -n Lin && echo -n ux; /data/data/com.android.shell/busybox killall androidvncserver; }; fi";

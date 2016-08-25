@@ -17,7 +17,7 @@ local weixin_open_homepage
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
-local shell_quote, putclip, t1_post, push_text, t1_post2
+local shell_quote, putclip, t1_post, push_text, t1_post2, kill_android_vnc
 local adb_start_activity
 local picture_to_weixin_share, picture_to_weibo_share, picture_to_qq_share
 local picture_to_momo_share, t1_add_mms_receiver
@@ -1420,6 +1420,10 @@ save_phone_info = function()
    infofile:close()
 end
 
+kill_android_vnc = function()
+   adb_shell"busybox killall -INT androidvncserver"
+end
+
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
@@ -2377,6 +2381,7 @@ M = {}
 M.putclip = putclip
 M.start_weibo_share = start_weibo_share
 M.t1_post = t1_post
+M.kill_android_vnc = kill_android_vnc
 M.t1_find_weixin_contact = t1_find_weixin_contact
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe

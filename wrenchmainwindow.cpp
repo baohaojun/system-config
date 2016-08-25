@@ -827,11 +827,13 @@ void WrenchMainWindow::moveVncMainWin()
     vncMainWindow->move(rectWithFrame.right() + xDelta, rectWithFrame.top() + yDelta);
 }
 
+volatile bool gPhoneScreenSyncOn;
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     static int x, y;
     static AdbVncThread* vncThread;
     if (checked) {
+        gPhoneScreenSyncOn = true;
         if (vncThread == NULL) {
             vncThread = new AdbVncThread();
             vncThread->start();
@@ -848,6 +850,8 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
         connect(vncThread, SIGNAL(adbVncUpdate(QString)), vncMainWindow, SLOT(onVncUpdate(QString)));
 
     } else if (vncMainWindow) {
+        gPhoneScreenSyncOn = false;
+        mLuaThread->addScript(QStringList("kill_android_vnc"));
         vncMainWindow->hide();
     }
 
