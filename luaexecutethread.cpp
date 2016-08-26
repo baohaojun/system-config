@@ -204,6 +204,26 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
     return res;
 }
 
+void LuaExecuteThread::setVariableLocked(const QString& name, const QString& val)
+{
+    mVariableMutex.lock();
+    mVariableHash[name] = val;
+    mVariableMutex.unlock();
+}
+
+QString LuaExecuteThread::getVariableLocked(const QString& name, const QString& defaultVal)
+{
+    QString res;
+    mVariableMutex.lock();
+    if (mVariableHash.contains(name)) {
+        res = mVariableHash[name];
+    } else {
+        res = defaultVal;
+    }
+    mVariableMutex.unlock();
+    return res;
+}
+
 //f:write(('t1_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments));
 static int l_t1_load_mail_heads(lua_State* L)
 {
@@ -214,6 +234,14 @@ static int l_t1_load_mail_heads(lua_State* L)
     QString attachments = QString::fromUtf8(lua_tolstring(L, 5, NULL));
 
     that->load_mail_heads(subject, to, cc, bcc, attachments);
+    return 0;
+}
+
+static int l_t1_set_variable(lua_State* L)
+{
+    QString name = QString::fromUtf8(lua_tolstring(L, 1, NULL));
+    QString val = QString::fromUtf8(lua_tolstring(L, 2, NULL));
+    that->setVariableLocked(name, val);
     return 0;
 }
 
@@ -256,6 +284,9 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_t1_load_mail_heads);
     lua_setglobal(L, "t1_load_mail_heads");
+
+    lua_pushcfunction(L, l_t1_set_variable);
+    lua_setglobal(L, "t1_set_variable");
 
     int error = luaL_loadstring(L, "wrench = require('wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {

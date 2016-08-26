@@ -14,6 +14,7 @@ local phone_serial = ""
 local configDir = "."
 local last_uploaded_pics = {}
 local weixin_open_homepage
+local file_exists
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
@@ -1078,7 +1079,11 @@ putclip = function(text)
    adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', '/sdcard/putclip.txt')
 end
 
-local check_file_pushed = function(file, md5)
+local check_file_push_and_renamed = function(file, md5, rename_to)
+   if not rename_to then
+      rename_to = file:gsub(".*/", "")
+   end
+
    local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
    md5_on_phone = md5_on_phone:gsub("\n", "")
    local md5file = io.open(md5)
@@ -1088,8 +1093,8 @@ local check_file_pushed = function(file, md5)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
       log("Need to upload %s to your phone.", file)
-      adb_push{file, "/data/data/com.android.shell/" .. file .. ".bak"}
-      adb_shell(("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s; chmod 755 /data/data/com.android.shell/%s"):format(file, file, file))
+      adb_push{file, "/data/data/com.android.shell/" .. rename_to .. ".bak"}
+      adb_shell(("mv /data/data/com.android.shell/%s.bak /data/data/com.android.shell/%s; chmod 755 /data/data/com.android.shell/%s"):format(rename_to, rename_to, rename_to))
 
       adb_push{md5, "/sdcard/" .. md5}
       local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
@@ -1100,6 +1105,10 @@ local check_file_pushed = function(file, md5)
          log("Wrench helper file %s upload OK.", file)
       end
    end
+end
+
+local check_file_pushed = function(file, md5)
+   return check_file_push_and_renamed(file, md5, nil)
 end
 
 local check_apk_installed = function(apk, md5)
@@ -1127,6 +1136,11 @@ local check_apk_installed = function(apk, md5)
             error("Install " .. apk .. " failed, output is " .. install_output)
          end
       end
+   end
+end
+
+if not t1_set_variable then
+   t1_set_variable = function(name, val)
    end
 end
 
@@ -1183,7 +1197,6 @@ t1_config = function(passedConfigDirPath)
    end
    check_apk_installed("Setclip.apk", "Setclip.apk.md5")
    check_file_pushed("am.jar", "am.jar.md5")
-   check_file_pushed("androidvncserver", "androidvncserver.md5")
    check_file_pushed("busybox", "busybox.md5")
 
    local weixin_phone_file, _, errno = io.open("weixin-phones.txt", "rb")
@@ -1202,6 +1215,15 @@ t1_config = function(passedConfigDirPath)
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
+   arm_arch = adb_pipe("/data/data/com.android.shell/busybox uname -m")
+   androidvncserver = ("androidvncserver-%s.sdk%s"):format(arm_arch, sdk_version)
+
+   if file_exists(androidvncserver) then
+      check_file_push_and_renamed(androidvncserver, androidvncserver ..  ".md5", "androidvncserver")
+      t1_set_variable("using-vnc", "true")
+   else
+      t1_set_variable("using-vnc", "false")
+   end
 
    debugging("sdk is %s\nbrand is %s\nmodel is %s\n", sdk_version, brand, model)
    sdk_version = tonumber(sdk_version)
@@ -1422,6 +1444,16 @@ end
 
 kill_android_vnc = function()
    adb_shell"busybox killall -INT androidvncserver"
+end
+
+file_exists = function(name)
+   local f=io.open(name,"r")
+   if f ~= nil then
+      io.close(f)
+      return true
+   else
+      return false
+   end
 end
 
 t1_post = function(text) -- use weixin

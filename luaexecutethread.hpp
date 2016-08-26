@@ -24,6 +24,13 @@ public:
     QString selectArgs(const QStringList&);
     void on_argSelected(const QString& arg);
     void load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
+    void setVariableLocked(const QString& name, const QString& val);
+    QString getVariableLocked(const QString& name, const QString& defaultVal = "");
+
+private:
+    QMutex mVariableMutex;
+    QHash<QString, QString> mVariableHash;
+
 signals:
     void gotSomeLog(const QString& key, const QString& val);
     void selectArgsSig(const QStringList&);

@@ -809,8 +809,8 @@ void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to
 
 void WrenchMainWindow::moveVncMainWinWhenMoving()
 {
-    QRect rect = this->frameGeometry();
-    vncMainWindow->move(rect.right(), rect.top());
+    QRect rectWithFrame = this->frameGeometry();
+    movePhoneScreenWindowXY(rectWithFrame.right(), rectWithFrame.top());
 }
 
 void WrenchMainWindow::moveVncMainWin()
@@ -824,54 +824,67 @@ void WrenchMainWindow::moveVncMainWin()
         xDelta  = rectWithFrame.right() - rectNoFrame.right();
         yDelta = rectNoFrame.top() - rectWithFrame.top();
     }
-    vncMainWindow->move(rectWithFrame.right() + xDelta, rectWithFrame.top() + yDelta);
+    movePhoneScreenWindowXY(rectWithFrame.right() + xDelta, rectWithFrame.top() + yDelta);
+}
+
+void WrenchMainWindow::movePhoneScreenWindowXY(int x, int y)
+{
+    if (vncMainWindow && vncMainWindow->isVisible())
+        vncMainWindow->move(x, y);
+
+    if (!mPhoneScreenDialog.isNull() && mPhoneScreenDialog->isVisible())
+        mPhoneScreenDialog->move(x, y);
 }
 
 volatile bool gPhoneScreenSyncOn;
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
-    static int x, y;
-    static AdbVncThread* vncThread;
-    if (checked) {
-        gPhoneScreenSyncOn = true;
-        if (vncThread == NULL) {
-            vncThread = new AdbVncThread();
-            vncThread->start();
+    QString usingVnc = mLuaThread->getVariableLocked("using-vnc");
+    if (usingVnc.isEmpty()) {
+        prompt_user("Have not decided whether you have vnc, using screencapture");
+    }
+    if (usingVnc == "true") {
+        if (!mPhoneScreenDialog.isNull() && mPhoneScreenDialog->isVisible()) {
+            mPhoneScreenDialog->hide();
         }
+        static AdbVncThread* vncThread;
+        if (checked) {
+            gPhoneScreenSyncOn = true;
+            if (vncThread == NULL) {
+                vncThread = new AdbVncThread();
+                vncThread->start();
+            }
 
-        if (vncMainWindow == NULL) {
-            vncMainWindow = new VncMainWindow(this);
-            vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
-            vncMainWindow->installEventFilter(vncMainWindow);
+            if (vncMainWindow == NULL) {
+                vncMainWindow = new VncMainWindow(this);
+                vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
+                vncMainWindow->installEventFilter(vncMainWindow);
+            }
+            vncMainWindow->show();
+            moveVncMainWin();
+
+            connect(vncThread, SIGNAL(adbVncUpdate(QString)), vncMainWindow, SLOT(onVncUpdate(QString)));
+
+        } else if (vncMainWindow) {
+            gPhoneScreenSyncOn = false;
+            mLuaThread->addScript(QStringList("kill_android_vnc"));
+            vncMainWindow->hide();
         }
-        vncMainWindow->show();
-        moveVncMainWin();
-
-        connect(vncThread, SIGNAL(adbVncUpdate(QString)), vncMainWindow, SLOT(onVncUpdate(QString)));
-
-    } else if (vncMainWindow) {
-        gPhoneScreenSyncOn = false;
-        mLuaThread->addScript(QStringList("kill_android_vnc"));
-        vncMainWindow->hide();
+        return;
     }
 
-    return;
     if (checked) {
         if (mPhoneScreenDialog.isNull()) {
             mPhoneScreenDialog = QSharedPointer<PhoneScreenDialog>(new PhoneScreenDialog(this));
             mPhoneScreenDialog->setModal(false);
             mPhoneScreenDialog->setFixedSize(this->size().height() * 1187 / 2457, this->size().height());
-            mPhoneScreenDialog->move(this->x() + this->size().width(), this->y());
             int winId = mPhoneScreenDialog->winId();
             mPhoneScreenDialog->installEventFilter(mPhoneScreenDialog.data());
             this->connect(mLuaThread.data(), SIGNAL(requestSyncScreen()), mPhoneScreenDialog.data(), SLOT(syncScreen()), Qt::QueuedConnection);
         }
         mPhoneScreenDialog->show();
-        mPhoneScreenDialog->move(this->x() + this->size().width() + 15, this->y() + 22);
+        moveVncMainWin();
     } else {
-        QPoint pos = mPhoneScreenDialog->pos();
-        x = pos.x();
-        y = pos.y();
         mPhoneScreenDialog->hide();
     }
 }
@@ -1002,7 +1015,8 @@ default_filter:
 
 void WrenchMainWindow::moveEvent(QMoveEvent* ev)
 {
-    if (vncMainWindow && vncMainWindow->isVisible()) {
+    if (vncMainWindow && vncMainWindow->isVisible() ||
+        !mPhoneScreenDialog.isNull() && mPhoneScreenDialog->isVisible()) {
         QTimer::singleShot(100, this, SLOT(moveVncMainWinWhenMoving()));
     }
 }

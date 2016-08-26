@@ -20,6 +20,8 @@
 #include <QShowEvent>
 #include "vncmainwindow.h"
 #include <QMoveEvent>
+#include <QMutex>
+#include <QHash>
 
 namespace Ui {
 class WrenchMainWindow;
@@ -44,6 +46,8 @@ public slots:
     void moveVncMainWin();
     void moveVncMainWinWhenMoving();
     void moveEvent(QMoveEvent*);
+private:
+    void movePhoneScreenWindowXY(int x, int y);
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
