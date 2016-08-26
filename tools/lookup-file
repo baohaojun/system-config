@@ -16,7 +16,6 @@ while true; do
     case "$1" in
         -e|--exact)
             exact=true
-            builtin cd -P .
             shift
             ;;
         -r|--readlink)
