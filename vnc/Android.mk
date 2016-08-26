@@ -56,7 +56,7 @@ LOCAL_C_INCLUDES += \
 		 external/libpng \
 		 external/jpeg \
                  external/zlib \
-                 $(LOCAL_PATH)/../openssl/include \
+                 external/openssl/include \
                  $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/libvncserver \
                  $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/common \
                  $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/rfb \
