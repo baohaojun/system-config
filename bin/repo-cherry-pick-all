@@ -191,7 +191,7 @@ if test -d .repo; then
         rm *.ok *.fail -f
     )
 else
-    prefix=$(lookup-file -e out/diff)/$(ap . | perl -npe 's!/!%!g')
+    prefix=$(lookup-file -e out/diff)/$(ap | perl -npe 's!/!%!g')
     diffs=$(lookup-file -e $prefix.log)
     rm $prefix.ok $prefix.fail -f
     if test ! -e "$diffs"; then
