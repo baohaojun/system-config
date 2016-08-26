@@ -70,6 +70,20 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function ap()
     {
+        local atop=${ANDROID_TOP}
+        if test -z "$atop"; then
+            if lookup-file -e .repo >/dev/null 2>&1; then
+                atop=$(readlink -f $(lookup-file .repo/..))/
+            else atop=$(
+                    cd ..
+                    echo $PWD/
+                     )
+            fi
+        fi
+        if test "${FILE:0:${#atop}}" = "$atop"; then
+            echo ${FILE:${#atop}}
+            return 0
+        fi
         if test "$ANDROID_TOP"; then
             relative-path "$FILE" $(readlink -f "$ANDROID_TOP")
         elif lookup-file -e .repo >/dev/null 2>&1; then

@@ -109,8 +109,7 @@ EOF
     cd $oldpwd
 
     cd "$(dirname $(lookup-file Android.mk))"
-    MY_ONE_SHOT_MAKEFILE=$(readlink -f $PWD/Android.mk)
-    export MY_ONE_SHOT_MAKEFILE=${MY_ONE_SHOT_MAKEFILE:1+${#top_dir}}
+    export MY_ONE_SHOT_MAKEFILE=$(ap)/Android.mk
     project=$(ap)
 
     cd $top_dir
