@@ -293,7 +293,6 @@ int main(int argc, char **argv)
       if (vncscr->clientHead == NULL)
       {
         idle=1;
-        fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
         standby = 1000;
         continue;
       }
