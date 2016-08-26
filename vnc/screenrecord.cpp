@@ -77,12 +77,12 @@ static uint32_t gBitRate = 4000000;     // 4Mbps
 static uint32_t gTimeLimitSec = kMaxTimeLimitSec;
 
 // Set by signal handler to stop recording.
-static volatile bool gStopRequested;
+volatile int gStopRequested;
 
 // Previous signal handler state, restored after first hit.
 static struct sigaction gOrigSigactionINT;
 static struct sigaction gOrigSigactionHUP;
-
+static struct sigaction gOrigSigactionPIPE;
 
 /*
  * Catch keyboard interrupt signals.  On receipt, the "stop requested"
@@ -91,12 +91,14 @@ static struct sigaction gOrigSigactionHUP;
  */
 static void signalCatcher(int signum)
 {
-    gStopRequested = true;
+    gStopRequested = 1;
     switch (signum) {
     case SIGINT:
     case SIGHUP:
+    case SIGPIPE:
         sigaction(SIGINT, &gOrigSigactionINT, NULL);
         sigaction(SIGHUP, &gOrigSigactionHUP, NULL);
+        sigaction(SIGHUP, &gOrigSigactionPIPE, NULL);
         break;
     default:
         abort();
@@ -124,6 +126,12 @@ static status_t configureSignals() {
     if (sigaction(SIGHUP, &act, &gOrigSigactionHUP) != 0) {
         status_t err = -errno;
         fprintf(stderr, "Unable to configure SIGHUP handler: %s\n",
+                strerror(errno));
+        return err;
+    }
+    if (sigaction(SIGPIPE, &act, &gOrigSigactionPIPE) != 0) {
+        status_t err = -errno;
+        fprintf(stderr, "Unable to configure SIGPIPE handler: %s\n",
                 strerror(errno));
         return err;
     }

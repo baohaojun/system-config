@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "rfb/rfb.h"
 #include "libvncserver/scale.h"
 #include "rfb/keysym.h"
+#include "screenrecord.h"
 
 #define CONCAT2(a,b) a##b
 #define CONCAT2E(a,b) CONCAT2(a,b)
@@ -279,7 +280,7 @@ int main(int argc, char **argv)
 
     initVncServer(argc, argv);
 
-    while (1) {
+    while (!gStopRequested) {
         usec=(vncscr->deferUpdateTime+standby)*1000;
         //clock_t start = clock();
         rfbProcessEvents(vncscr,usec);
@@ -292,7 +293,8 @@ int main(int argc, char **argv)
       if (vncscr->clientHead == NULL)
       {
         idle=1;
-        standby=50;
+        fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
+        standby = 1000;
         continue;
       }
 
@@ -300,4 +302,5 @@ int main(int argc, char **argv)
       //printf ( "%f\n", ( (double)clock() - start )*1000 / CLOCKS_PER_SEC );
     }
     close_app();
+    return 0;
 }

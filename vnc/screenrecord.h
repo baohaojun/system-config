@@ -20,4 +20,6 @@
 #define kVersionMajor 1
 #define kVersionMinor 2
 
+extern volatile int gStopRequested;
+
 #endif /*SCREENRECORD_SCREENRECORD_H*/

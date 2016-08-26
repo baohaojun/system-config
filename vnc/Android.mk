@@ -87,6 +87,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_CFLAGS += -Wno-multichar
 
-LOCAL_MODULE := androidvncserver
+LOCAL_MODULE := androidvncserver-$(TARGET_ARCH).sdk$(PLATFORM_SDK_VERSION)
+LOCAL_MODULE_PATH := $(LOCAL_PATH)/
 
 include $(BUILD_EXECUTABLE)
