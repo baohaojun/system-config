@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<skb_template
+  skb_bg="@drawable/skb_bg"
+  key_xmargin="0%p"
+  key_ymargin="0%p"
+  balloon_bg="@drawable/key_balloon_bg"
+  popup_bg="@drawable/miniskb_bg"
+  color="@color/label_color"
+  color_highlight="@color/label_color"
+  color_balloon="@color/balloon_color">
+  <!-- Normal key -->
+  <key_type
+    id="0"
+    bg="@drawable/normal_key_bg"
+    hlbg="@drawable/normal_key_hl_bg"
+    color_highlight="@color/label_color_hl0"/>
+
+  <!-- Function key -->
+  <key_type
+    id="1"
+    bg="@drawable/normal_key_bg"
+    hlbg="@drawable/normal_key_hl_bg"/>
+
+  <!-- Light key, light is off -->
+  <key_type
+    id="2"
+    bg="@drawable/light_key_bg"
+    hlbg="@drawable/light_key_hl_bg"/>
+
+  <!-- Light key, light is on -->
+  <key_type
+    id="3"
+    bg="@drawable/light_key_up_bg"
+    hlbg="@drawable/light_key_up_hl_bg"/>
+
+  <!-- key without background-->
+  <key_type
+    id="4"/>
+
+  <!-- Key with normal background but on-key high-light-->
+  <key_type
+    id="5"
+    bg="@drawable/normal_key_bg"
+    hlbg="@drawable/normal_key_hl_bg"
+    color_highlight="@color/label_color_hl0"/>
+
+  <!-- Default icons for enter key -->
+  <key_icon code="66" icon="@drawable/enter_icon"
+    icon_popup="@drawable/enter_popup_icon"/>
+
+  <!-- Default icons for space key -->
+  <key_icon code="62" icon="@drawable/space_icon"
+    icon_popup="@drawable/space_popup_icon"/>
+
+  <!-- Default icons for delete key -->
+  <key_icon code="67" icon="@drawable/delete_icon"
+    icon_popup="@drawable/delete_popup_icon"/>
+
+  <!-- Default key definition -->
+  <!-- Enter key for QWERTY-like keyboards.-->
+  <key id="1" start_pos_x="80%p" start_pos_y="75%p"
+    width="20%p" height="25%p" code="66" key_type="1">
+    <toggle_state state_id="@string/toggle_enter_go" label="去往" code="66"/>
+    <toggle_state state_id="@string/toggle_enter_search" code="66"
+      icon="@drawable/search_icon" icon_popup="@drawable/search_popup_icon"/>
+    <toggle_state state_id="@string/toggle_enter_send" label="发送" code="66"/>
+    <toggle_state state_id="@string/toggle_enter_next" label="下一个" code="66"/>
+    <toggle_state state_id="@string/toggle_enter_done" label="完成" code="66"/>
+  </key>
+
+  <!-- Enter key for phone keyboard.-->
+  <key id="2" start_pos_x="75%p" start_pos_y="75%p"
+    width="25%p" height="25%p" code="66" key_type="1" balloon="false">
+    <toggle_state state_id="@string/toggle_enter_go" label="去往" code="66"/>
+    <toggle_state state_id="@string/toggle_enter_search" code="66"
+      icon="@drawable/search_icon" icon_popup="@drawable/search_popup_icon"/>
+    <toggle_state state_id="@string/toggle_enter_send" label="发送" code="66"/>
+    <toggle_state state_id="@string/toggle_enter_next" label="下一个" code="66"/>
+    <toggle_state state_id="@string/toggle_enter_done" label="完成" code="66"/>
+  </key>
+
+  <!-- Delete key.-->
+  <key id="3" start_pos_x="85.715%p" start_pos_y="50%p"
+      width="14.286%p" height="25%p" code="67" key_type="1"
+      repeat="true"/>
+
+  <!-- Symbol-switching key (off-mode).-->
+  <key id="4" code="-3" start_pos_x="20%p" start_pos_y="75%p"
+      width="14.696%p" height="25%p" key_type="2" label="\?123"/>
+
+  <!-- Symbol-switching key (on-mode).-->
+  <key id="5" code="-3" start_pos_x="20%p" start_pos_y="75%p"
+      width="14.696%p" height="25%p" key_type="3" label="\?123"/>
+
+  <!-- Language-switching key. -->
+  <key id="6" start_pos_x="0%p" start_pos_y="75%p"
+      width="20%p" height="25%p" code="-2" label="中 文" key_type="1"
+      repeat="true">
+      <toggle_state state_id="@string/toggle_en_lower" label="英 文" code="-2"/>
+      <toggle_state state_id="@string/toggle_en_upper" label="英 文" code="-2"/>
+  </key>
+
+  <!-- Period key(English mode). -->
+  <key id="7" start_pos_x="65.304%p" start_pos_y="75%p"
+      width="14.696%p" height="25%p" label="." key_type="0"
+      icon="@drawable/period_icon" icon_popup="@drawable/period_popup_icon"/>
+
+</skb_template>
+
