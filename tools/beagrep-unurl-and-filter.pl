@@ -2,7 +2,7 @@
 
 $db_source_dir = $ENV{source_dir};
 if (-e "$ENV{beagrep_dir}/top-source-dir") {
-    chomp($db_source_dir = qx(cat $ENV{beagrep_dir}/top-source-dir));
+    chomp($db_source_dir = qx(cat $ENV{beagrep_dir}/../top-source-dir));
 }
 
 $db_copy = 0;
