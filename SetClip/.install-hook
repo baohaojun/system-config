@@ -1,0 +1,8 @@
+#!/bin/bash
+
+(
+    cp bin/SetClip-release.apk ~/src/github/T1Wrench/release/Setclip.apk
+    cd ~/src/github/T1Wrench/release/
+    md5sum Setclip.apk > Setclip.apk.md5
+    adb push Setclip.apk.md5 /sdcard/
+)
