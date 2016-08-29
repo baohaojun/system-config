@@ -1,6 +1,0 @@
-[submodule "external/global"]
-        path = external/global
-        url = https://github.com/baohaojun/ajoke-global
-[submodule "external/ctags-exuberant"]
-	path = external/ctags-exuberant
-	url = https://github.com/baohaojun/ctags-exuberant.git
