@@ -1,6 +1,0 @@
-[ADD] GnuTLS support (already working on libvncserver)
-[ADD] Map volume keys
-[ADD] Custom key mapping
-[ADD] Key/Touch injection though WindowManagerService/Binder mechanism (looking for a aidl->cpp translator)
-
-[CHANGE] Tcp socket to unix socket
