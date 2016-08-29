@@ -180,6 +180,10 @@ function mkbeagrepidx() {
     fi
     function do_build() {
 
+        if test -e $outDir/$subdir/top-source-dir; then
+            rm $outDir/$subdir/top-source-dir;
+        fi
+
         beagrep-build-index --recursive \
                             "${ADDITIONAL_OPTIONS[@]}" \
                             --enable-deletion \
@@ -188,7 +192,7 @@ function mkbeagrepidx() {
     }
 
     if do_build; then
-        echo $PWD > $outDir/$subdir/top-source-dir
+        echo $PWD > $outDir/$subdir/../top-source-dir
     fi | tee "$outDir"/$subdir-build-log
 
     if test "$SOURCECODETAGSMODE" != true; then
