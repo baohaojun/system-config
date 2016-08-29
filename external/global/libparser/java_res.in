@@ -1,0 +1,69 @@
+;; Process this file with reserved.pl to create gperf source.
+;
+; Copyright (c) 2003 Tama Communications Corporation
+;
+; This file is free software; as a special exception the author gives
+; unlimited permission to copy and/or distribute it, with or without
+; modifications, as long as this notice is preserved.
+;
+; This program is distributed in the hope that it will be useful, but
+; WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+; implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+;
+; java reserved word list.
+;
+abstract		word
+boolean			word
+break			word
+byte			word
+case			word
+catch			word
+char			word
+class			word
+const			word
+continue		word
+default			word
+do			word
+double			word
+else			word
+enum			word
+extends			word
+false			word
+final			word
+finally			word
+float			word
+for			word
+goto			word
+if			word
+implements		word
+import			word
+instanceof		word
+int			word
+interface		word
+long			word
+native			word
+new			word
+null			word
+package			word
+private			word
+protected		word
+public			word
+return			word
+short			word
+static			word
+strictfp		word
+super			word
+switch			word
+synchronized		word
+this			word
+throw			word
+throws			word
+union			word
+transient		word
+true			word
+try			word
+void			word
+volatile		word
+while			word
+widefp			word

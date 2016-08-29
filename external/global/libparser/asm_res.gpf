@@ -1,0 +1,66 @@
+%{
+#include "strmake.h"
+#define START_VARIABLE	1001
+#define START_WORD	2001
+#define START_SHARP	3001
+#define START_YACC	4001
+#define IS_RESERVED_WORD(a)	((a) >= START_WORD)
+#define IS_RESERVED_VARIABLE(a)	((a) >= START_VARIABLE && (a) < START_WORD)
+#define IS_RESERVED_SHARP(a)	((a) >= START_SHARP && (a) < START_YACC)
+#define IS_RESERVED_YACC(a)	((a) >= START_YACC)
+
+#define SHARP_SHARP	3001
+#define SHARP_ASSERT	3002
+#define SHARP_DEFINE	3003
+#define SHARP_ELIF	3004
+#define SHARP_ELSE	3005
+#define SHARP_ENDIF	3006
+#define SHARP_ERROR	3007
+#define SHARP_IDENT	3008
+#define SHARP_IF	3009
+#define SHARP_IFDEF	3010
+#define SHARP_IFNDEF	3011
+#define SHARP_IMPORT	3012
+#define SHARP_INCLUDE	3013
+#define SHARP_INCLUDE_NEXT	3014
+#define SHARP_LINE	3015
+#define SHARP_PRAGMA	3016
+#define SHARP_SCCS	3017
+#define SHARP_UNASSERT	3018
+#define SHARP_UNDEF	3019
+#define SHARP_WARNING	3020
+%}
+struct keyword { char *name; int token; }
+%%
+"##", SHARP_SHARP
+"#assert", SHARP_ASSERT
+"#define", SHARP_DEFINE
+"#elif", SHARP_ELIF
+"#else", SHARP_ELSE
+"#endif", SHARP_ENDIF
+"#error", SHARP_ERROR
+"#ident", SHARP_IDENT
+"#if", SHARP_IF
+"#ifdef", SHARP_IFDEF
+"#ifndef", SHARP_IFNDEF
+"#import", SHARP_IMPORT
+"#include", SHARP_INCLUDE
+"#include_next", SHARP_INCLUDE_NEXT
+"#line", SHARP_LINE
+"#pragma", SHARP_PRAGMA
+"#sccs", SHARP_SCCS
+"#unassert", SHARP_UNASSERT
+"#undef", SHARP_UNDEF
+"#warning", SHARP_WARNING
+%%
+int
+asm_reserved_sharp(const char *str, int len)
+{
+	struct keyword *keyword;
+
+	/* Delete blanks. Ex. ' # define ' => '#define' */
+	str = strtrim(str, TRIM_ALL, &len);
+
+	keyword = asm_lookup(str, len);
+	return (keyword && IS_RESERVED_SHARP(keyword->token)) ? keyword->token : 0;
+}

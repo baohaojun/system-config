@@ -1,0 +1,15 @@
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache
+config-h.in
+config.h
+config.log
+config.status
+configure
+gtags.conf
+stamp-h1
+global-*.tar.gz
+elc-stamp
+libtool
+libltdl

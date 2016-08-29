@@ -1,0 +1,81 @@
+___________________________________
+|      |  |  |     |  _  |     |  |
+|  |___|  |  |  |  |    _|  |  |  |    GNU GLOBAL source code tag system
+|  |   |  |  |  |  |     |     |  |
+|  ~~  |   ~~|     |  ~  |  |  |   ~~|          for all hackers.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Copyright (c) 2000, 2001, 2002, 2003, 2004, 2007 Tama Communications Corporation
+
+ This file is free software; as a special exception the author gives
+ unlimited permission to copy and/or distribute it, with or without
+ modifications, as long as this notice is preserved.
+
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+ implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+		----------------------------------
+
+GNU GLOBAL is a source code tag system that works the same way across diverse
+environments. It supports C, C++, Yacc, Java, PHP4 and assembly source code.
+
+* BOKINware
+
+	GNU GLOBAL is BOKINware. It means that it is free software based on
+	GNU GPL, and is commercial (for-profit) software based on BOKIN model.
+
+	BOKIN Model is a business model to obtain proceeds by widely collecting
+	donations while developing and distributing free software. This model is
+	constructed not to take away consumer's freedom of software, and is similar
+	to the model of FSF except that FSF is not commercial organization.
+
+	Your contribution is put on donors list in DONORS file, and distributed
+	all over the world with GNU GLOBAL itself.
+	Please see the files: DONORS, BOKIN_MODEL and BOKIN_MODEL_FAQ for more details.
+
+* Supported OS
+
+	GNU system - Debian, Fedora, Suse, etc.
+	BSD system - FreeBSD, NetBSD, OpenBSD, MacOSX, etc.
+	Besides, various POSIX compatible systems.
+
+	[Note]  Though GNU GLOBAL supports only UNIX(POSIX) environment,
+		some outsite projects develop DOS or Windows 32 version of it.
+		Please see:
+			http://www.gnu.org/software/global/download.html
+
+* How to install
+
+	Please see 'INSTALL'.
+
+* Documentation
+
+	Please see 'doc/global.texi'(texinfo format) to know how to use GLOBAL.
+	You can see it even on GLOBAL's web site:
+		http://www.gnu.org/software/global/globaldoc_toc.html
+		http://www.gnu.org/software/global/manual/
+
+	The descriptions about new facilities are added to 'NEWS'.  At least,
+	you should read '[INCOMPATIBLE CHANGES]' for each version.
+
+* License
+
+	You may redistribute copies of GNU GLOBAL under the terms of
+	the GNU General Public License.  For more information about
+	these matters, see the files named 'LICENSE' and 'COPYING'.
+
+* Latest information
+
+	You can see the latest information on GLOBAL's web site.
+
+	http://www.gnu.org/software/global/whatsnew.html
+
+* Mailing list
+
+	If you think you have found a bug or a suggestion for improvements
+	in GLOBAL or you need help about GLOBAL, then some mailing lists are
+	available. Please see GLOBAL's WWW.
+
+	http://www.gnu.org/software/global/maillist.html
+
+Enjoy!
