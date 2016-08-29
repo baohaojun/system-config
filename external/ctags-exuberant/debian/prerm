@@ -1,0 +1,13 @@
+#! /bin/sh
+
+set -e
+
+if [ "$1" = "remove" ] ; then
+	for i in ctags etags ; do
+		update-alternatives --remove $i /usr/bin/ctags-exuberant
+	done
+fi
+
+#DEBHELPER#
+
+exit 0

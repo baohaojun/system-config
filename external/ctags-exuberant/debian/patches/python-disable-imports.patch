@@ -1,0 +1,23 @@
+Description: python: Disable import parsing by default
+ Parsing imports mixes up imports with actual class definitions.  If you
+ need to re-enable this, use the --python-kinds=+i option.
+Bug: http://sourceforge.net/tracker/?func=detail&aid=2829739&group_id=6556&atid=106556
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/618979
+Author: Barry Warsaw <barry@canonical.com>
+Reviewed-by: Colin Watson <cjwatson@ubuntu.com>
+Forwarded: no
+Last-Update: 2010-08-17
+
+Index: b/python.c
+===================================================================
+--- a/python.c
++++ b/python.c
+@@ -56,7 +56,7 @@
+ 	{TRUE, 'f', "function", "functions"},
+ 	{TRUE, 'm', "member",   "class members"},
+     {TRUE, 'v', "variable", "variables"},
+-    {TRUE, 'i', "namespace", "imports"}
++    {FALSE, 'i', "namespace", "imports"}
+ };
+ 
+ static char const * const singletriple = "'''";

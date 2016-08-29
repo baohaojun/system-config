@@ -1,0 +1,28 @@
+Description: Use memmove on overlapping strings
+ strcpy is not guaranteed to work on overlapping strings, and this can lead
+ to broken paths appearing in tag files.  Use memmove instead.
+Author: Ben Spencer
+Origin: other, http://sourceforge.net/tracker/?func=detail&aid=3034816&group_id=6556&atid=306556
+Forwarded: yes
+Last-Update: 2011-02-17
+
+Index: b/routines.c
+===================================================================
+--- a/routines.c
++++ b/routines.c
+@@ -757,13 +757,13 @@
+ 				else if (cp [0] != PATH_SEPARATOR)
+ 					cp = slashp;
+ #endif
+-				strcpy (cp, slashp + 3);
++				memmove (cp, slashp + 3, strlen(slashp + 3) + 1);
+ 				slashp = cp;
+ 				continue;
+ 			}
+ 			else if (slashp [2] == PATH_SEPARATOR  ||  slashp [2] == '\0')
+ 			{
+-				strcpy (slashp, slashp + 2);
++				memmove (slashp, slashp + 2, strlen(slashp + 2) + 1);
+ 				continue;
+ 			}
+ 		}
