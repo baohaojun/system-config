@@ -1,0 +1,23 @@
+v1.1RC1
+- Changed libpng and libjpeg to more recent SIMD optimized.
+- Fixed bug on gralloc and flinger loading.
+- x86 and MIPS support added!
+
+v1.1RC0
+
+- ICS support
+- Changed to official libvncserver v0.9.9.
+- Decoupled native screen grabber from jni sources, you wont need to have AOSP anymore, just the precompiled libs.
+- Fixed misc random segfault
+- Added display rotation to 180, for zte
+
+v1.0a
+
+- Rotation now fully working (on demand with F4 key)
+- Speed improvements and bug fixes
+- Improved server state detection (using IPC)
+- changed to LibVNCServer from kanaka repository
+- New webserver vnc client (noVNC), uses javascript
+- Ability to make a reverse connection
+- Two new framebuffer access methods (gingerbread and adb)
+- New minimalistic interface
