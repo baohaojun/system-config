@@ -1410,7 +1410,7 @@ qq_find_group_friend = function(friend_name)
          break
       else
          log("Did not get into troopMember, try " .. i)
-         adb_event("key space key DEL sleep .5 adb-tap 326 320")
+         adb_event("key space sleep .5 key DEL sleep .5 adb-tap 326 320")
          if i == 5 then
             log("Giving up...")
             return
