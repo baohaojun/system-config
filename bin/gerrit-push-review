@@ -163,6 +163,16 @@ if is-tty-io && test $do_review = true && yes-or-no-p -y "在请别人review之�
     )
 fi
 
+if is-jenkins && test "$molCM"; then
+    atexit() {
+        if test "$?" != 0; then
+            cat ~/.cache/system-config/logs/gerrit-review.log.$$ | mail-cms -i "Gerrit-push-review failed in $PWD @ $(jenkins-info)"
+        fi
+    }
+
+    trap atexit 0
+fi
+
 (
     if [[ "$(git log --pretty=%ae -1 "$rev")" =~ cmbuild@ ]] && test "$SMARTCM_ALLOW_CMBUILD_AUTHOR" != true; then
         die "Must not push with author as cmbuild@"

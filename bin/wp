@@ -79,6 +79,8 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
                     echo $PWD/
                      )
             fi
+        else
+            atop=$(echo "$atop" perl -npe 's,//*,/,g')/
         fi
         if test "${FILE:0:${#atop}}" = "$atop"; then
             echo ${FILE:${#atop}}
