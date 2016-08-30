@@ -26,6 +26,10 @@ I wrote an Setclip.apk, which will also be open sourced when I find time. It con
 
 WrenchIme.apk will also be open sourced later. It's a very small change to the Google Pinyin Ime.
 
+*Update:* both Setclip.apk and WrenchIme has been open sourced, they are under the separate git subtrees: SetClip, WrenchIME and droidVncServer. The last one is for VNC server for syncing phone screen to the desktop.
+
+Both Input.jar and Am.jar are from AOSP, with userdebug build to make sure the .dex class files are not optimized away and thus dalvik loadable. They will be loaded by the SetClip.apk, when it is run as a separate dalvik process (besides being started as an Android activity/service).
+
 Here's the workflow of Wrench:
 
 1. Use app_process to start Setclip.apk in the background, for the functionality of Input.jar and Am.jar.
