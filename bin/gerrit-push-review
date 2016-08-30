@@ -132,6 +132,11 @@ if test $do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/dev/
 fi
 
 n_commits=$(git log $(repo-remote-branch)..HEAD --pretty=%H|wc -l)
+
+if test "$n_commits" = 0; then
+    echo 你的本地仓储没有改动需要提交到远程服务器
+    exit 0
+fi
 if test "$n_commits" != 1; then
    if ! yes-or-no-p -y "你要一次提交多个（$n_commits个）patch，确认？"; then
        die "请确认自己是否要提交多个patch"
