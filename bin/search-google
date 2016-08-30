@@ -15,7 +15,7 @@ if [[ $0 =~ baidu-baike ]]; then
     exec search-baidu "$@" site:baike.baidu.com
 fi
 
-fill=$(echo "$@"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
+fill=$(echo "$@"|perl -npe 's#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
 
 if [[ $host =~ wikipedia ]]; then
     domain=org/w/index.php?search=
@@ -30,6 +30,14 @@ for site in stackoverflow github; do
         exec search-google "$@" site:$site.com
     fi
 done
+
+if test "$host" = translate; then
+    url="http://translate.google.com/translate?hl=en&sl=auto&tl=en&u=$fill"
+fi
+
+if test "$host" = transtext; then
+    url="http://translate.google.com/#auto/en/$fill"
+fi
 
 if test $host = wiki.smartisan.cn; then
     domain="/doku.php?do=search&id="
