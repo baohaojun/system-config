@@ -1,11 +1,9 @@
 #!/bin/bash
 
-user=$USER
-
 remote=$1
 shift
 if [[ "$remote" =~ @ ]]; then
-   user=${remote%%@*}
+   user=${remote%%@*}@
    remote=${remote#*@}
 fi
 
@@ -13,5 +11,5 @@ remote_path=${remote#*:}
 remote=${remote%%:*}
 
 remote=$(ip-or-name $remote)
-2nd sshfs $user@$remote:$remote_path "$@"
+/usr/bin/sshfs $user$remote:$remote_path "$@"
 

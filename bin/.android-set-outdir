@@ -1,16 +1,7 @@
 #!/bin/bash
-if test -e .force-out-dir; then
-    export OUT_DIR_LONG=out
-    export OUT_DIR=out
-else
-    export OUT_DIR_LONG=.repo/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
-    mkdir -p $OUT_DIR_LONG/host $OUT_DIR_LONG/target
-    if false; then
-        export OUT_DIR=$( (readlink .repo/manifest.xml; echo -n $OUT_DIR_LONG)|md5sum|cut -b 1-3)
-        mkdir -p $OUT_DIR
-        relative-link -f $OUT_DIR_LONG/host $OUT_DIR_LONG/target $OUT_DIR
-    fi
-    rm -f out || rm -rf out || true
-    relative-link $OUT_DIR_LONG out || true
-    export OUT_DIR=out
-fi
+export OUT_DIR_LONG=.repo/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+mkdir -p $OUT_DIR_LONG/host $OUT_DIR_LONG/target
+rm -f out || rm -rf out || true
+relative-link $OUT_DIR_LONG out || true
+export OUT_DIR=out
+
