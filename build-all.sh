@@ -85,6 +85,12 @@ if git st -s | grep . -q; then
     die "Can't do release build when git not clean: see output above"
 fi
 
+atexit() {
+    cd ~/src/github/Wrench
+    git checkout -- .
+}
+trap atexit 0
+
 oldVersion=$(perl -ne 'print $1 if m!<string>Wrench\s*(V.*)</string>!' wrenchmainwindow.ui)
 perl -npe 's!<string>Wrench\s*V.*</string>!<string>Wrench $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
 
@@ -200,6 +206,6 @@ for x in $(
         fi || true&
     )
 done
-git checkout -- .
+
 
 echo all done
