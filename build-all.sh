@@ -200,5 +200,6 @@ for x in $(
         fi || true&
     )
 done
+git checkout -- .
 
 echo all done
