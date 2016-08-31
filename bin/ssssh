@@ -54,6 +54,9 @@ elif test "$host" = localhost; then
     myscr bash
 else
     if test ! -e ~/.config/system-config/is-realhome; then
+        if test "$host" = Smartisan; then
+            host='-D 9090 Smartisan'
+        fi
         myscr ssh -X -o RequestTTY=true $host 'export REMOTEUSER=bhj; umask 0002; exec bash'
     else
         myscr ssh-work $host
