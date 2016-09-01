@@ -1,5 +1,3 @@
-#include "wrenchmainwindow.h"
-
 #ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
@@ -29,6 +27,7 @@
 #include "wrench.h"
 
 #include "macros.h"
+#include "wrenchmainwindow.h"
 #include "vncmainwindow.h"
 #include "qvncviewersettings.h"
 
