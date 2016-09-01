@@ -1,8 +1,6 @@
 /**** start of bhj auto includes ****/
 /**** end of bhj auto includes ****/
 
-#include "wrenchmainwindow.h"
-#include "ui_wrenchmainwindow.h"
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
 #include "luaexecutethread.hpp"
@@ -47,6 +45,8 @@
 #include "adbvncthread.hpp"
 #include <QtCore/QRect>
 #include <QProcessEnvironment>
+#include "wrenchmainwindow.h"
+#include "ui_wrenchmainwindow.h"
 
 QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
