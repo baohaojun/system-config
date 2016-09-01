@@ -40,6 +40,9 @@ fi
 
 if is-jenkins; then
     set -x
+    if test "$1" = init; then
+        scm check-df
+    fi
     if test "$1" = init -a -d .repo/manifests/.git; then
         my-rfa "git clean -xfd; git reset --hard" || true
         echo "repo sync failed?" > .repo/grep-errors.txt

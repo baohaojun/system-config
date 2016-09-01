@@ -232,13 +232,18 @@ print $_ . "\n";
             shift
             set -- difftool -t meld "$@"
         fi
+        if test "$1" = push -a $# = 1 && lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
+            head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
+
+            if test -z "$head_branch"; then
+                command git push $(repo-remote) HEAD:$(repo-branch)
+                exit
+            fi
+        fi
+
         if test "$1" = pull -a $# = 1; then
             head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
-            merge_head=
-            if test "$head_branch"; then
-                merge_head=$(git config branch.$head_branch.merge | perl -npe 's!^refs/heads/!!' || true)
-            fi
-            if test -z "$head_branch" -o "$merge_head" && lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
+            if test -z "$head_branch" && lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
                 command git checkout -B $(repo-branch) $(repo-remote)/$(repo-branch)
             fi
         fi
