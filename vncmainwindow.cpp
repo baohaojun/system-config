@@ -65,7 +65,8 @@ void VncMainWindow::init()
 
 void VncMainWindow::initClientFromArguments()
 {
-    QStringList lastArgumentList = {"localhost", "1"};
+    QStringList lastArgumentList;
+    lastArgumentList << "127.0.0.1" << "1";
     if ( lastArgumentList.count() == 2 ) {
         QString hostName = lastArgumentList[0];
         int displayNumber = lastArgumentList[1].toInt();
