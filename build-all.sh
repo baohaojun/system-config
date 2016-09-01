@@ -202,7 +202,6 @@ for x in $(
                 mv ${bfile%.*}* old-versions || true
             )
             smb-push $file ~/smb/share.smartisan.cn/share/baohaojun/Wrench/${bfile%.*}-$shortVersion.${bfile##*.}
-            rsync $file rem:/var/www/html/baohaojun/Wrench/ -v
         fi || true&
     )
 done
