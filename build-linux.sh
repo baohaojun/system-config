@@ -46,7 +46,7 @@ done
 cd $(dirname $(readlink -f $0))
 
 if test $# = 1 && [[ "$1" =~ debug ]]; then
-    build_dir=~/tmp/build-t1-debug
+    build_dir=~/tmp/build-wrench-debug
 fi
 
 if type relative-link >/dev/null 2>&1; then

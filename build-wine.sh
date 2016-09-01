@@ -70,7 +70,7 @@ EOF
     command wine cmd.exe /c build.bat
 }
 
-build_dir=~/tmp/build-t1-windows
+build_dir=~/tmp/build-wrench-windows
 release_dir=~/src/github/Wrench-windows
 rsync * $build_dir -av --exclude release
 rsync release $build_dir -av -L

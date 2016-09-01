@@ -118,25 +118,25 @@ function is-platform-needed() {
 
 if is-platform-needed wine; then
     (
-        rm ~/tmp/build-t1-windows -rf
+        rm ~/tmp/build-wrench-windows -rf
         ./build-wine.sh
-        touch ~/tmp/build-t1-windows/build-ok
+        touch ~/tmp/build-wrench-windows/build-ok
     )&
 fi
 
 if is-platform-needed ubuntu; then
     (
-        rm ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/ -rf
+        rm ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-wrench/ -rf
         ssh trusty "export DOING_WRENCH_RELEASE=true; cd $PWD; ./build-linux.sh -r Wrench-ubuntu-14.04"
-        touch ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok
+        touch ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-wrench/build-ok
     )&
 fi
 
 if is-platform-needed linux; then
     (
-        rm ~/tmp/build-t1 -rf
-        ./build-linux.sh -b ~/tmp/build-t1
-        touch ~/tmp/build-t1/build-ok
+        rm ~/tmp/build-wrench -rf
+        ./build-linux.sh -b ~/tmp/build-wrench
+        touch ~/tmp/build-wrench/build-ok
     )&
 fi
 
@@ -144,28 +144,28 @@ if is-platform-needed mac; then
     (
 
         ssh bhj-mac rm $(up) -rf
-        rm ~/tmp/build-t1-mac -rf
-        mkdir ~/tmp/build-t1-mac -p
+        rm ~/tmp/build-wrench-mac -rf
+        mkdir ~/tmp/build-wrench-mac -p
         ./build-mac.sh
-        touch ~/tmp/build-t1-mac/build-ok
+        touch ~/tmp/build-wrench-mac/build-ok
     )&
 fi
 
 wait
 
-if is-platform-needed wine && test ! -e ~/tmp/build-t1-windows/build-ok; then
+if is-platform-needed wine && test ! -e ~/tmp/build-wrench-windows/build-ok; then
     die "Windows build failed"
 fi
 
-if is-platform-needed ubuntu && test ! -e ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-t1/build-ok; then
+if is-platform-needed ubuntu && test ! -e ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-wrench/build-ok; then
     die "ubuntu build failed"
 fi
 
-if is-platform-needed linux && test ! -e ~/tmp/build-t1/build-ok; then
+if is-platform-needed linux && test ! -e ~/tmp/build-wrench/build-ok; then
     die "Linux build failed"
 fi
 
-if is-platform-needed mac &&  test ! -e ~/tmp/build-t1-mac/build-ok; then
+if is-platform-needed mac &&  test ! -e ~/tmp/build-wrench-mac/build-ok; then
     die "Mac build failed"
 fi
 
