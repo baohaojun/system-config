@@ -15,7 +15,7 @@ if [[ $0 =~ baidu-baike ]]; then
     exec search-baidu "$@" site:baike.baidu.com
 fi
 
-fill=$(echo "$@"|perl -npe 's#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
+fill=$(echo "$@"|urlify)
 
 if [[ $host =~ wikipedia ]]; then
     domain=org/w/index.php?search=
@@ -76,7 +76,7 @@ fi
 if test $prog = search-gmap; then
     if test -e "$1"; then
         gps=$(exiftool "$1" | grep "GPS Coord" | head -n 1 | perl -npe 's/.*?://; s/ deg /°/g; s/\s+//g; $_ = substr($_, 0, rindex($_, ",")); s/[ESWN]//g');
-        fill=$(echo "$gps" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g')
+        fill=$(echo "$gps" | urlify)
         url="http://ditu.google.cn/maps?newwindow=1&safe=strict&q=$fill&um=1&ie=UTF-8&hl=zh-CN&sa=N&tab=wl"
     fi
 fi
@@ -125,7 +125,7 @@ if test "$prog" = search-jaccent; then
 fi
 
 if test "$prog" = search-jenkins; then
-    url="http://build1:8080/job/$fill/configure"
+    url="http://build1:8080/job/${fill%.xml}/configure"
 elif test "$prog" = search-jenkins-search; then
     url="http://build1:8080/search/?q=$fill"
 fi

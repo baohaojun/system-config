@@ -1,4 +1,6 @@
 #!/bin/bash
+export LC_ALL=C
+export LANG=C
 apt-get update
 apt-get dist-upgrade -y
 apt-get install -y ssh vim sudo bash-completion locales man git dput fakeroot lvm2
@@ -10,3 +12,4 @@ locale-gen en_US.UTF-8
 
 adduser bhj || true
 usermod -a -G sudo bhj
+find ~bhj -maxdepth 2 | xargs chown bhj\.
