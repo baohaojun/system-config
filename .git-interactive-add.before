@@ -1,3 +1,5 @@
 #!/bin/bash
-cd ~/system-config/cache/
+cd ~/system-config/cache/kanji-pinyin-lookup/
+for x in *; do test -s $x || echo $x; done|xargs rm
+cd ..
 git add .
