@@ -205,7 +205,7 @@ function update-partition() {
         my-adb push $file /data
     fi
 
-    my-adb "dd if=/data/$file of=\$(echo $adb_partition_prefix/$part) && rm /data/$file && sync && echo yes$$" | grep yes$$
+    my-adb "dd if=/data/$file of=\$(echo $adb_partition_prefix/$part) && rm /data/$file && sync && echo yes$$" | tee ~/tmp/$part.log | grep yes$$
 }
 
 if test $(basename $0) = android-rsync-phone-diff; then
@@ -248,7 +248,9 @@ function update-non-system-partitions() {
                 break
             fi
             echo doing $file to $part
-            update-partition $file $part </dev/null || { echo "$file -> $part failed"; exit 5; }
+            if ! update-partition $file $part </dev/null && ! yes-or-no-p "$file -> $part failed: $(cat ~/tmp/$part.log), continue?" </dev/tty; then
+                exit 5
+            fi
         done
 }
 

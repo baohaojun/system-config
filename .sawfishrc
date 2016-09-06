@@ -261,6 +261,7 @@
         ("F11" . '((Emacs "C-C-c" "M-j" "s")))
         ("F12" . '((Emacs "C-c" "M-j" "d")))
         ("S-F12" . '((Emacs "C-c" "M-j" "D")))
+        ("S-F11" . '((Emacs "C-c" "M-j" "D")))
         ("C-s" . '((Firefox "C-s")
                    (Iceweasel "C-s")
                    (Okular "F3")

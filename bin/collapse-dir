@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+if test "$#" = 0; then
+    set -- */
+fi
+
+for dir in "$@"; do
+    (
+        cd "$dir";
+        find . -type d -o -print0|xargs -0 mv-with-dir-struct ..
+    )
+done
+
+find "$@" -type d | sort -r |xargs -d '\n' -n 1 rmdir
