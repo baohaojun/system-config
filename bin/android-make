@@ -34,7 +34,10 @@ verbose=
 config=
 keep=-k
 make_dir=
-if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
+if grep -q 'LEGACY_USE_JAVA7' build/core/main.mk; then
+    PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH
+    echo using java 1.8
+elif grep -q 'required_version := "1.7.x"' build/core/main.mk; then
     PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
     echo using java 1.7
 else
@@ -156,7 +159,10 @@ exec 9> $OUT_DIR/.android-full-build.lock
         if test -e vendor/qcom/proprietary/mm-still/ipl/Android.mk; then
             perl -npe 's,^(\s+\Q$(CPU)\E)$,$1 \\,; s,^(\s+\Q-D__alignx\(x\)=__attribute__\(\(__aligned__\(x\)\)\)\E)$,$1 \\,' -i vendor/qcom/proprietary/mm-still/ipl/Android.mk
         fi
-        if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
+        if grep -q 'LEGACY_USE_JAVA7' build/core/main.mk; then
+            PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH
+            echo using java 1.8
+        elif grep -q 'required_version := "1.7.x"' build/core/main.mk; then
             PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
             echo using java 1.7
         else
