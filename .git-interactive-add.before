@@ -1,5 +1,10 @@
 #!/bin/bash
+set -e
 cd ~/system-config/cache/kanji-pinyin-lookup/
-for x in *; do test -s $x || echo $x; done|xargs rm
+for x in *; do
+    if test -e "$x" -a ! -s "$x"; then
+        rm "$x" -vf
+    fi
+done
 cd ..
 git add .
