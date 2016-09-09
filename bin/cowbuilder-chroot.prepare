@@ -3,7 +3,7 @@ export LC_ALL=C
 export LANG=C
 apt-get update
 apt-get dist-upgrade -y
-apt-get install -y ssh vim sudo bash-completion locales man git dput fakeroot lvm2
+apt-get install -y ssh vim sudo bash-completion locales man git dput fakeroot lvm2 less
 apt-get install -y software-properties-common || apt-get install python-software-properties
 apt-get install -y linux-image-generic || true
 apt-get install -y console-setup

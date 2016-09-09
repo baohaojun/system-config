@@ -11,18 +11,50 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  c:cow
+# generate-getopt  c:cow d:chroot-subdir=chroot
 ## end code-generator
 ## start generated code
+TEMP=$(getopt -o d:c:h \
+              --long chroot-subdir:,cow:,help \
+              -n $(basename -- $0) -- "$@")
+chroot_subdir=chroot
 cow=
-OPTIND=1
-while getopts 'c:' opt; do
-    case "$opt" in
-        c)    cow=$OPTARG;;
-        *)    echo Usage Error; exit 2;;
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--chroot-subdir)
+            chroot_subdir=$2
+            shift 2
+            ;;
+        -c|--cow)
+            cow=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--chroot-subdir=CHROOT_SUBDIR'
+            echo
+            printf %06s '-c, '
+            printf %-24s '--cow=COW'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
-shift $(($OPTIND - 1))
+
 
 ## end generated code
 
@@ -33,16 +65,17 @@ fi
 if test -d "$cow/home/bhj"; then
     chroot=$cow
 else
-    if test ! -d "$cow"/chroot; then
+    if test ! -e "$cow"/$chroot_subdir/.cow-done; then
         base="$cow"/bare/base.tgz
         if test ! -e "$base"; then
             die "base not found: $base"
         fi
-        mkdir -p "$cow"/chroot
-        sudo tar zxfv "$base" -C "$cow"/chroot
+        mkdir -p "$cow"/$chroot_subdir
+        sudo tar zxfv "$base" -C "$cow"/$chroot_subdir
+        sudo touch "$cow"/$chroot_subdir/.cow-done
     fi
 
-    chroot="$cow"/chroot
+    chroot="$cow"/$chroot_subdir
 fi
 cat /proc/self/mounts | grep "$chroot" |while read what where x; do
     sudo umount "$where"
@@ -86,4 +119,3 @@ done
 )
 
 sudo chroot "$chroot" "$@"
-
