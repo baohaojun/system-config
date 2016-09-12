@@ -1,5 +1,6 @@
 #include "filteringlistview.h"
 #include "wrench.h"
+#include "filteringmodel.h"
 
 FilteringListView::FilteringListView(QWidget *parent) :
     QListView(parent)
@@ -85,5 +86,18 @@ void FilteringListView::selectAllEntries()
 {
     for (int i = 0; i < model()->rowCount(); i++) {
         emit selectedCurrentEntryNoHistory(model()->index(i, 0));
+    }
+}
+
+void FilteringListView::getCurrentEntryForEdit()
+{
+    FilteringModel* myModel = (FilteringModel*) model();
+    QModelIndexList ml = selectedIndexes();
+    int selected = -1;
+    if (!ml.isEmpty()) {
+        selected = ml[0].row();
+    }
+    if (selected >= 0) {
+        emit sendCurrentEntryToEdit(myModel->getSelectedDisplayText(selected));
     }
 }

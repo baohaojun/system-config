@@ -10,7 +10,11 @@
    - State "DONE"       from "TODO"       [2016-08-23 Tue 10:09]
    :END:
 
-** TODO Should not spin the CPU when screen is not shown.
+** DONE Should not spin the CPU when screen is not shown.
+   CLOSED: [2016-09-09 Fri 15:58]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2016-09-09 Fri 15:58]
+   :END:
 
 ** DONE Should connect automatically when the phone screen button is clicked.
    CLOSED: [2016-08-23 Tue 10:14]

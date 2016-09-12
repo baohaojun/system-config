@@ -1,5 +1,6 @@
 #include "filteringedit.h"
 #include <QDebug>
+#include <QTimer>
 
 FilteringEdit::FilteringEdit(QWidget *parent) :
     QTextEdit(parent)
@@ -44,6 +45,11 @@ void FilteringEdit::keyPressEvent(QKeyEvent *e)
             emit selectedCurrentText(this->toPlainText());
             return;
         }
+
+        if (m == Qt::ShiftModifier | Qt::ControlModifier) {
+            emit getCurrentEntryForEdit();
+            return;
+        }
     }
 
     if (m == Qt::ControlModifier) {
@@ -58,4 +64,9 @@ void FilteringEdit::keyPressEvent(QKeyEvent *e)
     }
 
     QTextEdit::keyPressEvent(e);
+}
+
+void FilteringEdit::changeCurrentText(const QString&text)
+{
+    this->setText(text);
 }

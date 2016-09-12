@@ -13,9 +13,11 @@ signals:
     void selectedCurrentEntry(const QModelIndex&);
     void selectedCurrentText(const QString&);
     void selectedCurrentEntryNoHistory(const QModelIndex&);
+    void sendCurrentEntryToEdit(const QString&);
 
 public slots:
     void nextEntry();
+    void getCurrentEntryForEdit();
     void prevEntry();
     void firstEntry();
     void lastEntry();

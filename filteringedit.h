@@ -17,13 +17,13 @@ signals:
     void firstEntry();
     void lastEntry();
     void selectedCurrentEntryWithText(QString);
+    void getCurrentEntryForEdit();
     void selectedCurrentText(QString);
     void selectAllEntries();
 public slots:
-
+    void changeCurrentText(const QString&);
 private:
     void keyPressEvent(QKeyEvent *);
-
 };
 
 #endif // FILTERINGEDIT_H

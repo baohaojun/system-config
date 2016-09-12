@@ -36,6 +36,9 @@ QVariant FilteringModel::data(const QModelIndex &index, int role) const
 
     switch(role) {
     case Qt::DisplayRole:
+        if (row >= mSelectedItems.size()) {
+            return QVariant();
+        }
         return mSelectedItems[row].displayText;
         break;
     case Qt::DecorationRole:

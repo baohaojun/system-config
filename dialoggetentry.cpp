@@ -18,6 +18,8 @@ DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidg
     connect(ui->entryFilter, SIGNAL(nextPageOfEntries()), ui->filteringListView, SLOT(nextPageOfEntries()));
     connect(ui->entryFilter, SIGNAL(prevPageOfEntries()), ui->filteringListView, SLOT(prevPageOfEntries()));
     connect(ui->entryFilter, SIGNAL(selectedCurrentEntryWithText(QString)), ui->filteringListView, SLOT(selectedCurrentEntryWithText(QString)));
+    connect(ui->entryFilter, SIGNAL(getCurrentEntryForEdit()), ui->filteringListView, SLOT(getCurrentEntryForEdit()));
+    connect(ui->filteringListView, SIGNAL(sendCurrentEntryToEdit(QString)), ui->entryFilter, SLOT(changeCurrentText(QString)));
     connect(ui->entryFilter, SIGNAL(selectedCurrentText(QString)), this, SLOT(on_currentTextSelected(QString)));
     connect(ui->entryFilter, SIGNAL(selectAllEntries()), ui->filteringListView, SLOT(selectAllEntries()));
     connect(ui->filteringListView, SIGNAL(selectedCurrentEntry(QModelIndex)), this, SLOT(on_filteringListView_doubleClicked(QModelIndex)));

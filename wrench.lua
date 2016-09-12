@@ -4,7 +4,7 @@
 local M
 
 -- functions
-local adb_input_method_is_null
+local adb_input_method_is_null, close_ime
 local window_post_button_map = {}
 local mail_group_map = {}
 local phone_info_map = {}
@@ -1827,7 +1827,7 @@ local function picture_to_weixin_chat(pics, ...)
    end
 end
 
-local function close_ime()
+close_ime = function()
    local input_method, ime_height = adb_get_input_window_dump()
    if (ime_height ~= 0) then
       ime_height = 0
