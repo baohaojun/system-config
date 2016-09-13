@@ -13,6 +13,7 @@ sub unquote($) {
     if ($quoted_s =~ s/^CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE://) {
         $quoted_s =~ s/=(..)/pack("C", hex("0x$1"))/eg;
     }
+    $quoted_s =~ s/\r|\s*$//g;
     return $quoted_s;
 }
 
@@ -34,8 +35,12 @@ while (<>) {
     } elsif (m/^FN[;:](.*)/) {
         $name = unquote($1);
     } elsif (m/^TEL[:;](.*)/) {
-            $name_tels_map{$name} = {} unless $name_tels_map{$name};
-            $name_tels_map{$name}{unquote $1} = 1;
+        my $tel = unquote $1;
+        while ($tel =~ s/-(\d+)$/$1/g) {
+            ;
+        }
+        $name_tels_map{$name} = {} unless $name_tels_map{$name};
+        $name_tels_map{$name}{$tel} = 1;
     } elsif (m/^EMAIL[;:](.*)/) {
         $name_emails_map{$name} = {} unless $name_emails_map{$name};
         $name_emails_map{$name}{unquote $1} = 1;

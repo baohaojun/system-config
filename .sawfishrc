@@ -463,6 +463,7 @@
         ("r" . ((Firefox . ("C-x" "C-r")) (Iceweasel . ("C-x" "C-r"))))
         ("s" . ((Firefox . ("C-x" "C-s")) (Iceweasel . ("C-x" "C-s"))
                 (Gimp . ("C-M-s"))
+                (Gimp-2.8 . ("C-M-s"))
                 (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))
         ("d" . ((Firefox . ("C-x" "C-d")) (Iceweasel . ("C-x" "C-d"))))))

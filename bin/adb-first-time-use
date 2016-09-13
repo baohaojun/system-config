@@ -1,1 +1,60 @@
-../../src/github/private-config/bin/adb-first-time-use
+#!/bin/bash
+# my-adb -r echo x
+while true; do
+    case $(adb-top-activity) in
+        com.android.settings/com.android.settings.inputmethod.LocalePickerActivity)
+            adb-tap-mid-bot
+            ;;
+        com.smartisanos.cloudsync/com.smartisanos.accounts.AccountsActivity)
+            adb-tap-top-right
+            ;;
+        com.smartisanos.setupwizard/com.smartisanos.setupwizard.LicenseActivity)
+            adb-tap 105 1545
+            adb-tap-mid-bot
+            ;;
+        com.smartisanos.setupwizard/com.smartisanos.setupwizard.OneHandModeSettingsActivity)
+            adb-tap-mid-bot
+            ;;
+        com.android.settings/com.android.settings.wifi.WifiPickerActivity|\
+            com.smartisanos.cloudsync/com.smartisanos.accounts.AccountsManagerActivity|\
+            com.smartisanos.cloudsync/com.smartisanos.support.SupportActivity|\
+            com.smartisanos.setupwizard/com.smartisanos.setupwizard.PhoneDataTransferWizardActivity|\
+            com.android.settings/com.android.settings.FingerprintEnrollWizardActivity)
+            adb-tap-top-right
+            ;;
+        com.smartisanos.setupwizard/com.smartisanos.setupwizard.MobileNetworkSettingsActivity)
+            adb-tap-mid-bot
+            ;;
+        com.android.settings/com.android.settings.DateTimeSettingsActivity)
+            adb-tap-mid-bot
+            ;;
+        com.smartisanos.setupwizard/com.smartisanos.setupwizard.SetupWizardCompleteActivity)
+            adb-tap-mid-bot
+            ;;
+        com.smartisanos.setupwizard/com.smartisanos.setupwizard.ServiceActivity)
+            adb-tap-mid-bot
+            ;;
+        com.smartisanos.setupwizard/com.smartisanos.setupwizard.launcherguidance.LauncherGuidanceActivity)
+            adb-swipe 1000 500 200 500 .5
+            adb-tap-top-right
+            adb-tap-top-right
+            ;;
+        com.smartisanos.setupwizard/com.smartisanos.setupwizard.InputMethodChooserActivity)
+            adb-tap 785 544
+            adb-tap-mid-bot
+            ;;
+        com.smartisanos.launcher/com.smartisanos.launcher.Launcher)
+            break
+            ;;
+    esac
+done
+my-adb start-activity com.android.settings/com.android.settings.PackageInstallerSettingsActivity
+adb-tap 899 645
+sleep 1
+adb-tap 781 1156
+adb-tap 784 1250
+
+if yes-or-no-p "Fix screen timeout (requires adb root)?"; then
+    my-adb -r echo x
+    adb-fix-screen-off-timeout
+fi

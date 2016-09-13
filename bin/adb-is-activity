@@ -1,8 +1,10 @@
 #!/bin/bash
 activity=$(my-adb dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
-if test $(basename $0) = adb-top-activity && is-tty-io; then
+if test $(basename $0) = adb-top-activity; then
     echo $activity
-    echo $activity | putclip
+    if is-tty-io; then
+        echo $activity | putclip
+    fi
     exit
 fi
 if test "$activity" = "$1"; then
