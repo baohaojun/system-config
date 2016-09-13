@@ -178,25 +178,38 @@ if is-jenkins && test "$molCM"; then
     trap atexit 0
 fi
 
-(
-    if [[ "$(git log --pretty=%ae -1 "$rev")" =~ cmbuild@ ]] && test "$SMARTCM_ALLOW_CMBUILD_AUTHOR" != true; then
-        die "Must not push with author as cmbuild@"
+for try in $(seq 1 10); do
+    if ! (
+            if [[ "$(git log --pretty=%ae -1 "$rev")" =~ cmbuild@ ]] && test "$SMARTCM_ALLOW_CMBUILD_AUTHOR" != true; then
+                die "Must not push with author as cmbuild@"
+            fi
+            echo git push $REMOTE "$rev":$where/`repo-branch`
+            if ! git push --no-thin --receive-pack="$(
+                echo -n 'git receive-pack ';
+                for x in "${reviewers[@]}"; do
+                    echo -n "--reviewer=$x "
+                done)" $REMOTE "$rev":$where/`repo-branch` 2>&1; then
+                exit 1
+            fi
+            echo
+            echo '* git commit message:'
+            echo
+            git log -1 "$rev"
+        ) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee ~/.cache/system-config/logs/gerrit-review.log.$$; then
+        if grep -q 'internal error while processing changes\|(Synchronous hook timed out' ~/.cache/system-config/logs/gerrit-review.log.$$; then
+            echo There is an error, need retry git push...
+            sleep 5
+        elif grep -q '(no new changes' ~/.cache/system-config/logs/gerrit-review.log.$$; then
+            if yes-or-no-p -y "你的改动之前已经提交过gerrit review，是否继续（进行gerrit-do-review）？"; then
+                break
+            else
+                exit 1
+            fi
+        fi
+    else
+        break
     fi
-    echo git push $REMOTE "$rev":$where/`repo-branch`
-    git push --no-thin --receive-pack="$(
-            echo -n 'git receive-pack ';
-            for x in "${reviewers[@]}"; do
-                echo -n "--reviewer=$x "
-            done)" $REMOTE "$rev":$where/`repo-branch` 2>&1
-    echo
-    echo '* git commit message:'
-    echo
-    git log -1 "$rev"
-) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| if is-tty-io; then
-    tee /dev/tty ~/.cache/system-config/logs/gerrit-review.log.$$
-else
-    tee ~/.cache/system-config/logs/gerrit-review.log.$$
-fi
+done
 
 if ! is-jenkins; then
     set +x
