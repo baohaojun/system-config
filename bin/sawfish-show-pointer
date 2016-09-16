@@ -1,5 +1,4 @@
 #!/bin/bash
-# -*- mode: sawfish -*-
 me=$(readlink -f $0)
 if test ! -e "$me"; then
 me=$(readlink -f "$(which $0)")
@@ -9,7 +8,16 @@ exit 1
 fi
 fi
 b0=$(basename $0)
-cat $me | perl -ne 'print if m/<<<</..-1' |perl -ne 'print unless 1..1' |sawfish-client; exit
+if test "$b0" = sawfish-show-pointer; then
+    export MARKER=show-pointer
+elif test "$b0" = sawfish-get-pointer-color; then
+    export MARKER=get-pointer-color
+fi
+cat $me | perl -ne 'print if m/^; start '$MARKER'/ .. m/^; end '$MARKER'/' |perl -ne 'print unless 1..1' |sawfish-client;
+exit
+
+# {%sawfish%}
+; start show-pointer
 (let* ((pos (query-pointer))
        (x (car pos))
        (y (cdr pos))
@@ -19,3 +27,14 @@ cat $me | perl -ne 'print if m/<<<</..-1' |perl -ne 'print unless 1..1' |sawfish
     (system (format nil "(getclip; echo 'xdotool mousemove %d %d\nxdotool click 1\n')|putclip&" x y)))
   (read-event (format nil "%d x %d" (car (query-pointer)) (cdr (query-pointer))))
   )
+; end show-pointer
+{%/sawfish%}
+
+{%sawfish%}
+; start get-pointer-color
+(let* ((pos (query-pointer))
+       (x (car pos))
+       (y (cdr pos)))
+  (system (format nil "(getclip; xwd -root -silent | convert xwd:- -depth 8 -crop '1x1+%d+%d' txt:- | grep -om1 '#\\w\\+')|putclip&" x y)))
+; end get-pointer-color
+{%/sawfish%}

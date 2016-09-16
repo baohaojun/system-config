@@ -39,6 +39,6 @@ for dir in ~/system-config/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; d
         mkdir -p $ld
         touch $ld
         time=$(date +%H:%M)
-        ($x || mail-bhj cron-runner "$x failed@$time: errno $?" &) > $ld/$time 2>&1
+        ($x || mail-bhj cron-runner "$x failed@$time: errno $?" "$(ifconfig)" &) > $ld/$time 2>&1
     done
 done&
