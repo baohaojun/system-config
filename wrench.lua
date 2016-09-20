@@ -683,7 +683,7 @@ local function get_coffee(what)
       end
       log("Click for coffee input: %s %d", input_target, i)
 
-      adb_event"adb-tap 15 612"
+      adb_event"adb-tap 15 700"
       sleep(.1)
    end
    if what == "" then
@@ -693,8 +693,9 @@ local function get_coffee(what)
    adb_event"key scroll_lock sleep .5"
    if yes_or_no_p("确认发送秦师傅咖啡订单？") then
       adb_event"adb-tap 539 957"
+      system{'alarm', '10', 'coffee'}
    end
-   system{'alarm', '10', 'coffee'}
+
 end
 
 weixin_open_homepage = function()
