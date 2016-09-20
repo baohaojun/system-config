@@ -187,6 +187,7 @@ h)
    esac
 done
 
+shift \$((OPTIND - 1))
 EOF
 
 # the-ultimate-script ends here
