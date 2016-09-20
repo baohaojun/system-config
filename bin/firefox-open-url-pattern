@@ -5,6 +5,13 @@ function die() {
     exit -1
 }
 
+clip_save=$(getclip)
+function reset_clip() {
+    echo "$clip_save" | putclip
+}
+
+trap reset_clip 0
+
 exact=
 TEMP=$(getopt -o e --long exact -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
@@ -105,4 +112,4 @@ if test "$exact"; then
         exit 0;
     fi
 fi
-exec firefox $new_tab "$url"
+firefox $new_tab "$url"&

@@ -311,12 +311,6 @@ fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
-if can-sudo-and-ask-if-not-bhj "Do you want to make power button to hibernate?"; then
-    if ! grep -q HandlePowerKey=hibernate /etc/systemd/logind.conf >/dev/null 2>&1; then
-        echo HandlePowerKey=hibernate | sudo tee -a /etc/systemd/logind.conf
-    fi
-fi
-
 if ask-if-not-bhj "Do you want to use bhj's git-exclude file?"; then
     git config --global core.excludesfile '~/system-config/.git-exclude'
 fi
