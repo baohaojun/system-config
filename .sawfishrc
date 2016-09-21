@@ -306,7 +306,11 @@
         ("}" . '((Wine mm8-4)))
         ("(" . '((Wine mm8-5)))
         ("=" . '((Wine mm6-drop)))
+        ("j" . '((Wine mm6-c)))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
+
+(defun mm6-c ()
+  (system "xdotool-when-keyboard-clear key c&"))
 
 (defun mm6-drop ()
   (system "mm7 drop&"))
