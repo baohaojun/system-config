@@ -64,7 +64,7 @@ done
 
 
 default_command() {
-    git log -1000 $git_log_arguments $1..$2 | indent-clipboard -
+    git log -1000 --name-status $git_log_arguments $1..$2 | indent-clipboard -
 }
 
 if test -z "$execute_command"; then
