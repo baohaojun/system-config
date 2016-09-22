@@ -9,6 +9,11 @@ if test ! -e "$me"; then
     fi
 fi
 b0=$(basename $0)
+if test $# = 0; then
+    . ~/system-config/etc/force-system-config
+    . ~/system-config/.profile
+    . ~/system-config/.bashrc
+fi
 
 number=${b0#java}
 if test -e /usr/lib/jvm/java-$number-openjdk-amd64/bin; then
@@ -21,10 +26,6 @@ else
     die "Can't find the java binary for $number at /usr/lib/jvm/java-$number-openjdk-amd64/bin"
 fi
 if test $# = 0; then
-    . ~/system-config/etc/force-system-config
-    . ~/system-config/.profile
-    . ~/system-config/.bashrc
-
     start_recursive_shell $(basename $0)
 else
     "$@"
