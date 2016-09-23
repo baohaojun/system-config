@@ -55,7 +55,7 @@ unix {
         target.path = $$INSTALL_BIN_PATH
     }
     INSTALLS += target
-    LIBS += -lgcrypt
+    # LIBS += -lgcrypt
 }
 
 win32 {
