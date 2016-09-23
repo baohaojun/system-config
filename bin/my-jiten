@@ -1,0 +1,52 @@
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt w:word k:kana
+## end code-generator
+## start generated code
+TEMP=$(getopt -o w:k:h \
+              --long word:,kana:,help \
+              -n $(basename -- $0) -- "$@")
+word=
+kana=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -w|--word)
+            word=$2
+            shift 2
+            ;;
+        -k|--kana)
+            kana=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-k, '
+            printf %-24s '--kana=KANA'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--word=WORD'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+grep -P "$word.*\[.*$kana.*\]" /usr/share/gjiten/dics/* | perl -npe 's/.*?://'

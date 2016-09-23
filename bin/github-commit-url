@@ -1,4 +1,16 @@
 #!/bin/bash
 
-echo $(git-remote-url)/commit/$1
-echo $(git-remote-url)/commit/$1 | putclip
+function github-git-to-https () {
+    perl -npe 's,git\@github.com:,https://github.com/,'
+}
+
+if test "$#" = 0; then
+    set -- HEAD
+fi
+
+if test "$1" = HEAD; then
+    set -- $(git log -1 --pretty=%H HEAD)
+fi
+
+echo $(git-remote-url|github-git-to-https)/commit/$1
+echo $(git-remote-url|github-git-to-https)/commit/$1 | putclip
