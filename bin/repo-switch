@@ -55,7 +55,7 @@ while true; do
             ;;
         -p)
             print=$(
-                echo repo init -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
+                echo repo init --depth 1 -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
                      -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url) $(
                     ref=$(cd .repo/manifests.git; git config repo.reference || true)
                     if test "$ref"; then

@@ -176,8 +176,13 @@ exec 9> $OUT_DIR/.android-full-build.lock
             if test $# = 1 && test "$1" = msm-kernel -o "$1" = kernel; then
                 (
                     PRODUCT_OUTX=$(android-env get_build_var PRODUCT_OUT)
+                    if test ! -e "$PRODUCT_OUTX/boot.img"; then
+                        hint "你之前还没有编译过boot.img，现在先编一下，用的命令是android-make bootimage"
+                        android-make bootimage
+                        exit
+                    fi
                     cat <<EOF > $OUT_DIR/Android.mk
-bootimage-nodeps: ${PRODUCT_OUTX}/kernel ${PRODUCT_OUTX}/dt.img
+bootimage-nodeps: ${PRODUCT_OUTX}/kernel $(if test -e ${PRODUCT_OUTX}/dt.img; then echo ${PRODUCT_OUTX}/dt.img; fi)
 include build/target/board/Android.mk
 EOF
                     cd $OUT_DIR

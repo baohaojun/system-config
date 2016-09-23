@@ -15,17 +15,39 @@ if test ! -e "$me"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt e:execute-command
+# generate-getopt e:execute-command a:git-log-arguments
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o e: --long "execute-command:"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o a:e:h \
+              --long git-log-arguments:,execute-command:,help \
+              -n $(basename -- $0) -- "$@")
+git_log_arguments=
 execute_command=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
+        -a|--git-log-arguments)
+            git_log_arguments=$2
+            shift 2
+            ;;
         -e|--execute-command)
             execute_command=$2
             shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-e, '
+            printf %-24s '--execute-command=EXECUTE_COMMAND'
+            echo
+            printf %06s '-a, '
+            printf %-24s '--git-log-arguments=GIT_LOG_ARGUMENTS'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -37,15 +59,17 @@ while true; do
     esac
 done
 
+
+## end generated code
+
+
 default_command() {
-    git log -1000 $1..$2 | indent-clipboard -
+    git log -1000 --name-status $git_log_arguments $1..$2 | indent-clipboard -
 }
 
 if test -z "$execute_command"; then
     execute_command=default_command
 fi
-
-## end generated code
 
 if test "$(basename "$0")" = repo-good-bad-command; then
 

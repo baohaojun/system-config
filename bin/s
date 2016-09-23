@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if is-tty-io; then
+    s_how=tty
+elif is-in-emacs; then
+    s_how=emacs
+fi
+
 if echo $SHELLOPTS | grep -q xtrace; then
     exec > ~/tmp/$(basename $0).txt 2>&1
 fi
@@ -19,20 +25,43 @@ if test "$DESKTOP_SESSION" = sawfish; then
     elif test "$start_event" = '"F3"'; then
         start_event=$button3
     fi
-    if test "$start_event" = '"Super-Button1-Click"'; then
-        last_action=$(cat ~/.cache/system-config/logs/last-search | head -n 1)
-    fi
-    if test "$last_action" -a -x ~/system-config/bin/"$last_action"; then
-        $last_action "$@"
-        exit
+
+    if [[ $start_event =~ Super-Button.*Click ]]; then
+        s_how=sawfish
+        last_search=~/.cache/system-config/logs/last-search.$s_how
     fi
 
+    if test "$start_event" = '"Super-Button1-Click"'; then
+        last_action=$(if test -e "$last_search"; then cat $last_search; fi | head -n 1)
+        if test "$last_action" -a -x ~/system-config/bin/"$last_action"; then
+            $last_action "$@"
+            exit
+        fi
+    fi
+
+    if test "$start_event" = '"Super-Button1-C-Click"'; then
+        start_event=$button1
+    fi
 fi
+
+select_event=$(sawfish-client -e '(event-name (last-event))')
+
+sawfish_button_call=false
+
+for event in $button1 $button2 $button3; do
+    if test "$start_event" = "$event"; then
+        sawfish_button_call=true
+        s_how=sawfish
+        break
+    fi
+done
+
+last_search=~/.cache/system-config/logs/last-search.$s_how
 
 search_engines=$(
     (
-        if test -e ~/.cache/system-config/logs/last-search; then
-            cat ~/.cache/system-config/logs/last-search;
+        if test -e $last_search; then
+            cat $last_search;
         fi;
         cd ~/system-config/bin;
         for x in search-* gerrit-browser-review; do
@@ -48,25 +77,16 @@ engine2=$(echo "$search_engines" | perl -ne 'print if 2..2')
 engine3=$(echo "$search_engines" | perl -ne 'print if 3..3')
 engine4=$(echo "$search_engines" | perl -ne 'print if 4..4')
 
-select_event=$(sawfish-client -e '(event-name (last-event))')
 
-update_last_search=true
-
-for event in $button1 $button2 $button3; do
-    if test "$start_event" = "$event"; then
-        update_last_search=false
-        break
-    fi
-done
 
 function update-engine-order() {
     (
         for x in "$@"; do
             echo "$x"
         done
-        cat ~/.cache/system-config/logs/last-search
-    ) | uniq-even-non-ajacent > ~/.cache/system-config/logs/last-search.$$
-    mv ~/.cache/system-config/logs/last-search.$$ ~/.cache/system-config/logs/last-search
+        cat $last_search
+    ) | uniq-even-non-ajacent > $last_search.$$
+    mv $last_search.$$ $last_search
 }
 
 if test "$engineX" = "$engine1"; then
@@ -75,8 +95,10 @@ if test "$engineX" = "$engine1"; then
     elif test "$start_event" = "$button3"; then
         engineX=$engine3
     fi
-elif test "$update_last_search" = false; then # button call
-    if test "$start_event" = "$button2" -a "$engineX" != "$engine2"; then
+elif test "$sawfish_button_call" = true; then # button call
+    if test "$start_event" = "$button1" -a "$engineX" != "$engine1"; then
+        update-engine-order "$engineX"
+    elif test "$start_event" = "$button2" -a "$engineX" != "$engine2"; then
         update-engine-order "$engine1" $engineX "$engine3"
     elif test "$start_event" = "$button3" -a "$engineX" != "$engine3"; then
         if test "$engineX" = "$engine2"; then
@@ -87,11 +109,7 @@ elif test "$update_last_search" = false; then # button call
     fi
 fi
 
-if [[ "$engineX" =~ "n " ]]; then
-    engineX=$(cd ~/system-config/bin/; select-args $(echo search-${engineX#n }*))
-    update_last_search=false
-fi
-if test -x ~/system-config/bin/"$engineX" -a "$update_last_search" = true; then
+if test -x ~/system-config/bin/"$engineX" -a "$sawfish_button_call" = false; then
     update-engine-order "$engineX"
 fi&
 

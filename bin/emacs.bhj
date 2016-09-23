@@ -1,6 +1,9 @@
 #!/bin/bash
 . ~/.profile
 . ~/system-config/bin/set-ssh-agent
+if test -e ~/.bashrc-cust; then
+    . ~/.bashrc-cust
+fi
 
 if test -e ~/external/local/emacs25u/bin/emacs; then
     if test "$(lsb_release -cs)" = trusty; then
