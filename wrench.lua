@@ -693,7 +693,7 @@ local function get_coffee(what)
    adb_event"key scroll_lock sleep .5"
    if yes_or_no_p("确认发送秦师傅咖啡订单？") then
       adb_event"adb-tap 539 957"
-      system{'alarm', '10', 'coffee'}
+      system{'alarm', '10', 'Go get your coffee (take your coffee ticket!)'}
    end
 
 end
