@@ -15,6 +15,7 @@ local configDir = "."
 local last_uploaded_pics = {}
 local weixin_open_homepage
 local file_exists
+local social_need_confirm = false
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
@@ -551,7 +552,11 @@ local function weibo_text_share(window)
    if repost:match('and') then
       adb_event("sleep .1 adb-tap 57 1704")
    end
-   adb_event{'key', 'scroll_lock', 991, 166}
+   adb_event{'key', 'scroll_lock'}
+   if social_need_confirm and not yes_or_no_p("Confirm to share to weibo?") then
+      return
+   end
+   adb_event{991, 166}
 end
 
 local function t1_share_to_weibo(text)
@@ -666,16 +671,49 @@ end
 
 local function get_coffee(what)
    for i = 1, 5 do
+      if social_need_confirm and not yes_or_no_p("Will now open the Wechat App and goto it's home page") then
+         return
+      end
       weixin_open_homepage()
       log("Start to click for the favsearch " .. i)
-      adb_event"adb-tap 927 1830 sleep .2 adb-tap 337 772 sleep 1 adb-tap 833 145 sleep .2"
+      if social_need_confirm and not yes_or_no_p("Will now click my way to the Wechat bookmarks") then
+         return
+      end
+
+      if social_need_confirm and not yes_or_no_p("First, click the “My” page") then
+         return
+      end
+
+      adb_event"adb-tap 927 1830 sleep .2"
+
+      if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
+         return
+      end
+      adb_event" adb-tap 337 772 sleep 1 "
+
+      if social_need_confirm and not yes_or_no_p("Next, click the “Search” button for the “My Favorites”") then
+         return
+      end
+      adb_event"adb-tap 833 145 sleep .2"
       if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
          break
       end
       log("Need retry " .. i)
    end
    putclip"我正在使用咕咕机"
-   adb_event"key scroll_lock sleep .5 adb-tap 535 458 sleep 3 adb-tap 15 612"
+
+   if social_need_confirm and not yes_or_no_p("Will now find the 咕咕机 Wechat App") then
+      return
+   end
+   adb_event"key scroll_lock sleep .5 "
+   if social_need_confirm and not yes_or_no_p("Will now open the 咕咕机 Wechat App") then
+      return
+   end
+   adb_event"adb-tap 535 458"
+   if social_need_confirm and not yes_or_no_p("Will now wait for the input ready") then
+      return
+   end
+   adb_event"sleep 3 adb-tap 15 700"
    for i = 1, 50 do
       local input_target = wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI")
       if input_target:match"com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI" then
@@ -690,8 +728,16 @@ local function get_coffee(what)
       what = "秦师傅，给我来一杯拿铁，谢谢❤"
    end
    putclip(what)
+
+   if social_need_confirm and not yes_or_no_p("Will now input your order for coffee") then
+      return
+   end
    adb_event"key scroll_lock sleep .5"
-   if yes_or_no_p("确认发送秦师傅咖啡订单？") then
+   if yes_or_no_p("Confirm to order coffee from Shifu Qin？") then
+      if social_need_confirm then
+         yes_or_no_p("I will alarm you in 10 minutes for your coffee")
+         return
+      end
       adb_event"adb-tap 539 957"
       system{'alarm', '10', 'Go get your coffee (take your coffee ticket!)'}
    end
@@ -1468,6 +1514,13 @@ t1_post = function(text) -- use weixin
          t1_eval(func)
          return "executed string"
       end
+      if text:match("^#!lua") and text ~= "#!lua" then
+         text = text:sub(string.len("#!lua") + 1)
+         local func = loadstring(text)
+         t1_eval(func)
+         return "executed string"
+      end
+
       if window:match("com.tencent.mobileqq") then
          putclip(emoji_for_qq(text))
       elseif window:match("com.tencent.mm/") then
@@ -2452,6 +2505,18 @@ M.t1_find_qq_contact = t1_find_qq_contact
 M.t1_share_to_qq = t1_share_to_qq
 M.weixin_find_friend = weixin_find_friend
 M.qq_open_homepage = qq_open_homepage
+M.get_coffee = get_coffee
+
+local function be_quiet()
+   social_need_confirm = false
+end
+
+local function be_verbose()
+   social_need_confirm = true
+end
+
+M.be_verbose = be_verbose
+M.be_quiet = be_quiet
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then
