@@ -1,7 +1,3 @@
-#ifdef Q_OS_WIN32
-#include <windows.h>
-#endif
-
 #include <QApplication>
 #include <QPushButton>
 #include <QFrame>
@@ -22,6 +18,11 @@
 #include <QStandardPaths>
 #include <QtSingleApplication>
 #include <QFileOpenEvent>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 #include "fileopenfilter.h"
 #include <QProcess>
 #include "wrench.h"
