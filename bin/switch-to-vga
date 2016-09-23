@@ -1,15 +1,48 @@
 #!/bin/bash
 
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt r:res v:vga @:hdmi
+## end code-generator
 ## start generated code
-TEMP=$(getopt -o r: --long "res:"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o r:v:h \
+              --long hdmi:,res:,vga:,help \
+              -n $(basename -- $0) -- "$@")
+hdmi=
 res=
+vga=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
+        --hdmi)
+            hdmi=$2
+            shift 2
+            ;;
         -r|--res)
             res=$2
             shift 2
+            ;;
+        -v|--vga)
+            vga=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--hdmi=HDMI'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--res=RES'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--vga=VGA'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -21,6 +54,7 @@ while true; do
     esac
 done
 
+
 ## end generated code
 
 
@@ -30,8 +64,12 @@ if test -z "$lvds"; then
     lvds=$(echo "$xrandr_out" | grep -P '^eDP-?1' | pn 1)
 fi
 
-vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
-hdmi=$(echo "$xrandr_out" | grep '^HDMI' | pn 1)
+if test -z "$vga"; then
+    vga=$(echo "$xrandr_out" | grep '^VGA' | pn 1)
+fi
+if test -z "$hdmi"; then
+    hdmi=$(echo "$xrandr_out" | grep '^HDMI' | pn 1)
+fi
 if test -z "$hdmi"; then
     hdmi=$(echo "$xrandr_out" | grep '^DP-?1' -P | pn 1)
 fi
@@ -66,7 +104,8 @@ else # both display
         set +x
         newmode=$(cvt 1360 768 | perl -ne 's/"//g; print $'\'' if m/^Modeline /')
         xrandr --newmode $newmode
-        xrandr --addmode HDMI1 ${newmode%% *}
+        xrandr --addmode "$hdmi" ${newmode%% *}
+        xrandr --addmode "$vga" ${newmode%% *}
     )
 
     res=$(

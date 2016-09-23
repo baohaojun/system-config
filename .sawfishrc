@@ -767,6 +767,7 @@
 (bind-keys s-h-keymap "M-C-p" '(system "sawfish-show-pointer&"))
 (bind-keys s-h-keymap "M-C-c" '(system "sawfish-get-pointer-color&"))
 (bind-keys s-h-keymap "C-XF86Favorites" '(system "mm8 all&"))
+(bind-keys s-h-keymap "C-F1" '(system "mm8 all&"))
 (bind-keys s-h-keymap "XF86Favorites" '(system "mm8 bless-heroism&"))
 
 (defun get-window-xy-size (class)
