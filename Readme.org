@@ -1,6 +1,12 @@
 #+title: Wrench: control your Android phone from your Desktop
 
+[[https://www.youtube.com/watch?v=re_bECYY0rM]]
+
 * Install
+
+There are prebuilt versions for Windows, Mac and Linux (ubuntu 14.04). They are released at https://github.com/SmartisanTech/Wrench-releases/releases .
+
+** Compilation
 
 Under Linux, compile Wrench with the =build-linux.sh= script. You should be able to run this script directly.
 
