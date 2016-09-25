@@ -1,6 +1,6 @@
 #+title: Wrench: control your Android phone from your Desktop
 
-[[https://www.youtube.com/watch?v%3Dre_bECYY0rM][http://baohaojun.github.io/images/Wrench-2.png]]
+[[https://www.youtube.com/watch?v=re_bECYY0rM][http://baohaojun.github.io/images/Wrench-2.png]]
 
 * Install
 
