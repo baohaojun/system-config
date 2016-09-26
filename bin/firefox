@@ -145,9 +145,5 @@ if test "$is_firefox" = 0; then
 fi
 
 if test -x $the_firefox; then
-    if test "$(get-pid-env $the_firefox DISPLAY|perl -npe 's/\.0//')" != "DISPLAY=${DISPLAY%.0}"; then
-        debug "Won't start firefox $@ because it is running in another display"
-        exit -1
-    fi
     exec $the_firefox "$@" 2>&1
 fi
