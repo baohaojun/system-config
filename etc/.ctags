@@ -65,5 +65,5 @@
 
 --langdef=sh
 --langmap=sh:.sh.SH.bsh.bash.ksh.zsh
---regex-sh=/^[ \t]*(([[:alnum:]]|-)+)[ \t]*\([ \t]*\)/\1/f,function/
---regex-sh=/^[ \t]*function[ \t]+(([[:alnum:]]|-)+)[ \t]*\([ \t]*\)/\1/f,function/
+--regex-sh=/^[ \t]*(([[:alnum:]]|-|_)+)[ \t]*\([ \t]*\)/\1/f,function/
+--regex-sh=/^[ \t]*function[ \t]+(([[:alnum:]]|_|-)+)[ \t]*\([ \t]*\)/\1/f,function/
