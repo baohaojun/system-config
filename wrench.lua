@@ -1465,7 +1465,7 @@ qq_find_group_friend = function(friend_name)
          end
       end
    end
-   adb_event("sleep .5 adb-tap 864 1800")
+   adb_event("sleep " .. .5 * i .. " adb-tap 864 1800")
 end
 
 save_window_types = function()
