@@ -63,7 +63,7 @@ function git_svn() {
 function git()
 {
     if test "$#" = 1 -a "$1" = st -a "$WORKING_REV"; then
-        git log -p -1 "$WORKING_REV"
+        git log -w -p -1 "$WORKING_REV"
     fi
 
     local using_st=false

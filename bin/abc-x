@@ -134,7 +134,7 @@ abc-base-build() {
 
     product_branch=$(select-args </dev/tty -o -p "请选择你想使用的代码索引的产品、分支" ${!android_manifests[@]} ${!oem_manifests[@]})
     android_or_oem=$(
-        select-args </dev/tty -o -p "请选择你要索引安卓代码还是OEM代码" android oem
+        select-args </dev/tty -o -p "请选择你要搜索安卓代码还是OEM代码" android oem
                   )
     if test "$android_or_oem" = android; then
         manifest=${android_manifests[$product_branch]}
