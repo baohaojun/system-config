@@ -44,7 +44,6 @@ Android's builtin =input= command allows you to inject touch, keyboard, text eve
    - Trigger a special key (SCROLL_LOCK) with =adb shell input=
    - WrenchIme interpret the SCROLL_LOCK key to send the clipboard text to the current App, as if the text is an IME candidate and has been selected.
 
-
 2. =adb shell input= is very slow, because every time =input= is run, a =framework/input.jar= is loaded and a new java virtual machine is created by running =app_process=.
 
    To solve this problem, Wrench comes with a Setclip.apk, which whileas being an Android Apk, it also provides the functionality of =framework/input.jar= (i.e., it can also be loaded and run by =app_process=), but instead of loading every time, it loads once and then runs as a daemon.

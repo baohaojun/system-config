@@ -62,6 +62,8 @@ map['com.qq.reader/com.qq.reader.module.bookstore.qnative.activity.NativeBookSto
 map['com.qzone/com.qzonex.module.global.FeedActionPanelActivity'] = 'weixin-chat'
 map['com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity'] = 'weibo-share'
 map['com.reddit.frontpage/com.reddit.frontpage.redditauth_private.ui.AuthActivity'] = 'manual-post'
+map['com.reddit.frontpage/com.reddit.frontpage.SearchActivity'] = 'manual-post'
+map['com.reddit.frontpage/com.reddit.frontpage.SubmitActivity'] = 'manual-post'
 map['com.reddit.frontpage/com.reddit.frontpage.SubredditSearchActivity'] = 'manual-post'
 map['com.sdu.didi.psnger/com.didi.sdk.webview.WebActivity'] = 'manual-post'
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'weixin-chat'
