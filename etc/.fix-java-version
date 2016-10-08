@@ -1,0 +1,10 @@
+# -*- mode: sh -*-
+if grep -q 'LEGACY_USE_JAVA7' build/core/main.mk; then
+    PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH
+    echo using java 1.8
+elif grep -q 'required_version := "1.7.x"' build/core/main.mk; then
+    PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
+    echo using java 1.7
+else
+    echo using java 1.6
+fi

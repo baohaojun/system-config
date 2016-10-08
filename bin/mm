@@ -120,13 +120,7 @@ EOF
         if test -e $BHJ_OUT_DIR/.buildenv.sh; then
             . $BHJ_OUT_DIR/.buildenv.sh
         fi
-        if grep -q 'required_version := "1.7.x"' build/core/main.mk; then
-            PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
-            echo using java 1.7
-        else
-            echo using java 1.6
-        fi
-
+        . ~/system-config/etc/.fix-java-version
         if test "$(basename $0)" = mm; then
             ONE_SHOT_MAKEFILE=$MY_ONE_SHOT_MAKEFILE make -j $jobs $verbose $target "$@"
         elif test "$(basename $0)" = mma; then
