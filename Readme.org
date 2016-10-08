@@ -1,5 +1,7 @@
 #+title: Wrench: control your Android phone from your Desktop
 
+Here's a video of Wrench: playing monument valley (with phone screen mirrored), using Lua to script your phone, and ordering coffee (kinda).
+
 [[https://www.youtube.com/watch?v=re_bECYY0rM][http://baohaojun.github.io/images/Wrench-2.png]]
 
 * Install
@@ -18,35 +20,46 @@ You need to adapt the =./build-wine.sh= and =./build-mac.sh= scripts, there are 
 
 * How does it work
 
-Android has builtin =input= command, which allows you to fake touch, keyboard, text events and so on.
+Android has provided quite some debugging abilities through adb, for example, you can
 
-Starting from the =input= command, I made some improvements.
+1. Inject keyboard and touch events with =input=
+2. Start Activities and Services with =am start|startservice=
+3. Take a screen shot with =screencap=
+4. Record your screen with =screenrecord=
+5. Dump window infomation with =dumpsys window= (where you can also get infomation about the Input Method)
 
-You can use =adb shell input text <string>= to input a string, but the string is limited: it can't contain spaces or any other special characters, such as quote and double quote, or Chinese characters.
+Wrench just makes use of all the above, with a great deal of optimization.
 
-So I decided to use the android clipboard. When I want to input any string, I put the string into the android clipboard. Then I trigger a special key with =adb shell input=, which will cause my Wrench helper input method to send the desired string in the clipboard to the current App, like a IME candidate has been chosen.
+** Optimazations
 
-Then, there are some performance improvements. =adb shell input= is very slow, because every time it will load an Input.jar. =adb shell am= is used a lot, to start Activities or Services. It is also very slow, because every time it will load an Am.jar.
+*** =better and faster adb shell input=
 
-I wrote an Setclip.apk, which will also be open sourced when I find time. It contains the functionality of Input.jar and Am.jar, and it will reside in the background, so that do not need to load the .jar/.apk files everytime.
+Android's builtin =input= command allows you to inject touch, keyboard, text events, but there're some limitations.
 
-WrenchIme.apk will also be open sourced later. It's a very small change to the Google Pinyin Ime.
+1. You can use =adb shell input text <string>= to input a string, but the string is limited: it can't contain spaces or any other special characters, such as quote and double quote, or Chinese characters.
 
-*Update:* both Setclip.apk and WrenchIme has been open sourced, they are under the separate git subtrees: SetClip, WrenchIME and droidVncServer. The last one is for VNC server for syncing phone screen to the desktop.
+   I solved this problem by using the Android clipboard and my own Input Method WrenchIme adapted from Google Pinyin. When Wrench need to input any string, it:
 
-Both Input.jar and Am.jar are from AOSP, with userdebug build to make sure the .dex class files are not optimized away and thus dalvik loadable. They will be loaded by the SetClip.apk, when it is run as a separate dalvik process (besides being started as an Android activity/service).
+   - Put the string into the phone's clipboard.
+   - Trigger a special key (SCROLL_LOCK) with =adb shell input=
+   - WrenchIme interpret the SCROLL_LOCK key to send the clipboard text to the current App, as if the text is an IME candidate and has been selected.
 
-Here's the workflow of Wrench:
 
-1. Use app_process to start Setclip.apk in the background, for the functionality of Input.jar and Am.jar.
+2. =adb shell input= is very slow, because every time =input= is run, a =framework/input.jar= is loaded and a new java virtual machine is created by running =app_process=.
 
-   The background process will listen for commands on a UNIX domain socket. Input commands and Am commands are allowed. Only shell/root users are allowed to connect to the socket.
+   To solve this problem, Wrench comes with a Setclip.apk, which whileas being an Android Apk, it also provides the functionality of =framework/input.jar= (i.e., it can also be loaded and run by =app_process=), but instead of loading every time, it loads once and then runs as a daemon.
 
-2. Use =adb forward= to create a TCP socket on the Desktop which will delegate to Input/Am on the phone.
+*** faster =adb shell am=
 
-3. Write =am start Setclip.apk putclip <string>= (something like that) to the local TCP socket. The Am.jar functionality got executed on the phone. The Setclip.apk's service got started, which put the string in the android clipboard.
+For the same reason as =adb shell input=, =am= is also very slow because an =am.jar= is loaded with a new java virtual machine each time. Wrench improved it using the same trick as =input=, in fact, Setclip.apk will load =am.jar= in turn when it is daemonized.
 
-4. Write =input key scroll_lock= to the local TCP socket. The key is interpreted by WrenchIme.apk, and the clipboard string is sent to the current Apk.
+(Wrench's am.jar is from AOSP, with userdebug build to make sure the .dex java class files are not optimized away and thus dalvik loadable.)
+
+*** faster phone screen mirroring
+
+At first, Wrench used =screencap= to make a screenshot of the phone screen, and displayed on the PC. This is very slow.
+
+Now, with some phones (according to the Android version and CPU arch), Wrench can use the VNC protocol to mirror your phone screen, which is a lot smoother as you can see from the video. In doing this, Wrench used source code from 3 projects: it combined the AOSP [[https://android.googlesource.com/platform/frameworks/av/%2B/master/cmds/screenrecord/][screenrecord]] project and the [[https://github.com/oNaiPs/droidVncServer][droidVncServer]] project to run a VNC server on the phone; and used the [[https://sourceforge.net/projects/qvncviewer/][Qt VNC Viewer]] to talk to the phone's VNC server.
 
 * How to use Wrench
 
@@ -56,6 +69,18 @@ Please refer to [[https://www.youtube.com/watch?v%3Dv8QVFbYDnCQ][this youtube vi
 
 Bug reports, patches, ideas are welcome.
 
-If you like Wrench, you may also donate to me with alipay:
+Or, if you like Wrench, you may also donate some money to me with Paypal:
+
+#+BEGIN_HTML
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----MIIHNwYJKoZIhvcNAQcEoIIHKDCCByQCAQExggEwMIIBLAIBADCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwDQYJKoZIhvcNAQEBBQAEgYAgR85X0FGNM0n9qoEjKvclYQoo5G8fPzzjf5VGispInurvQaHCtekerhWMlqMIw+/6fQZFaIbhMyuDsa4eG3LiGh5R4nxuZFzfBTGb5Aq7YtuVIlzkd3y0JjGNi/ZYMMy6CnapXmAvQH1OxXnEiM/n8xEFqiV1kHjQq7OJYT0AizELMAkGBSsOAwIaBQAwgbQGCSqGSIb3DQEHATAUBggqhkiG9w0DBwQInKE0zqDMPRmAgZB+0x2WrWP+1dcJpODlJo8DGWWc8TZLmUo7xWS1pEz7KFGpJA94WX39mMc6o7RwUWrdNBhCKUwsGs+7ljMmryoHwk0iGB4mUZAIKeGNg653O0zpoi0ciHyFwQXXR9eTIHW93aByKJHC+bf+GGhjT+CH0mipGKFfY1PPAlXEOxqWY/WOEiVpxfNbaZfNvXrNUCCgggOHMIIDgzCCAuygAwIBAgIBADANBgkqhkiG9w0BAQUFADCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20wHhcNMDQwMjEzMTAxMzE1WhcNMzUwMjEzMTAxMzE1WjCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMFHTt38RMxLXJyO2SmS+Ndl72T7oKJ4u4uw+6awntALWh03PewmIJuzbALScsTS4sZoS1fKciBGoh11gIfHzylvkdNe/hJl66/RGqrj5rFb08sAABNTzDTiqqNpJeBsYs/c2aiGozptX2RlnBktH+SUNpAajW724Nv2Wvhif6sFAgMBAAGjge4wgeswHQYDVR0OBBYEFJaffLvGbxe9WT9S1wob7BDWZJRrMIG7BgNVHSMEgbMwgbCAFJaffLvGbxe9WT9S1wob7BDWZJRroYGUpIGRMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbYIBADAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4GBAIFfOlaagFrl71+jq6OKidbWFSE+Q4FqROvdgIONth+8kSK//Y/4ihuE4Ymvzn5ceE3S/iBSQQMjyvb+s2TWbQYDwcp129OPIbD9epdr4tJOUNiSojw7BHwYRiPh58S1xGlFgHFXwrEBb3dgNbMUa+u4qectsMAXpVHnD9wIyfmHMYIBmjCCAZYCAQEwgZQwgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tAgEAMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xNjA4MjkwOTMzMzFaMCMGCSqGSIb3DQEJBDEWBBT8n9rt/IfTQfjnFFr8EJIyEGG/iTANBgkqhkiG9w0BAQEFAASBgBoPNFb8ShRH+RyTmjqB4qcg2RWVyHOMO5PNeSZY9oRqZ+m/TjIQ6ssqaneuqbA9RKgcPoagnXzZt+54XQCvhokLFSESjsuNiGfgLYa7zODFQ66iQjWYSpNoBjsFDM6iIxF41xcqPVUva9mrFLbPKdUZt4bFU9JybjW42IA85iEX-----END PKCS7-----
+">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+#+END_HTML
+
+or with alipay:
 
 [[./bhj-alipay.png]]

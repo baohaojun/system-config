@@ -1452,7 +1452,7 @@ qq_find_group_friend = function(friend_name)
    wait_input_target(troopList)
    adb_event("key scroll_lock key space key DEL sleep .5 adb-tap 326 320")
    local troopMember = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberCardActivity"
-   for i = 1, 5 do
+   for i = 1, 10 do
       window = wait_top_activity_n(2, troopMember)
       if window == troopMember then
          break
