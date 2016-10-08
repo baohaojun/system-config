@@ -72,7 +72,7 @@ Here's the simple steps:
 2. Enable the phone's USB debugging.
 3. Connect the phone to Desktop with USB.
 
-(Wrench comes with it's own =adb= program, so you need to make sure you are not running a different version.)
+(Wrench is packaged with the AOSP =adb= program, so you need to make sure you are not running a different version of adb, as it may cause connection trouble.)
 
 * Contribute
 
