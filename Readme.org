@@ -65,6 +65,16 @@ Now, with some phones (according to the Android version and CPU arch), Wrench ca
 
 Please refer to [[https://www.youtube.com/watch?v%3Dv8QVFbYDnCQ][this youtube video]].
 
+There is also [[http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html][a blog]] explaining all the details, but it's in Chinese.
+
+Here's the simple steps:
+
+1. Start the Wrench program
+2. Enable the phone's USB debugging.
+3. Connect the phone to Desktop with USB.
+
+(Wrench comes with it's own =adb= program, so you need to make sure you are not running a different version.)
+
 * Contribute
 
 Bug reports, patches, ideas are welcome.
