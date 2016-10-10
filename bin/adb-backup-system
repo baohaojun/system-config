@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts d:dataDir
@@ -57,11 +58,13 @@ elif test $(basename $0) = adb-restore-data; then
      sudo rsync data root@phone:/android/ -avc "$@" --delete
 elif test $(basename $0) = adb-restore-data-no-sdcard; then
     cd $dataDir
+    generate-chcon.pl data/chcon.txt > data/chcon.sh
+    adb push data/chcon.sh /data
+    my-adb bash -x /data/chcon.sh
     adb-stop-all-services
     adb-fix-gms
-    generate-chcon.pl data/chcon.txt > data/chcon.sh
     sudo rsync data root@phone:/android/ -avc "$@" --delete --exclude='data/media/*' --exclude=data/debian
-    my-adb shell 'cd /; bash /data/chcon.sh'
+    my-adb bash -x /data/chcon.sh
 elif test $(basename $0) = adb-backup-su; then
     gapp_dir=~/src/github/private-config/bin/gapps-system
     lib_dir=lib

@@ -16,18 +16,26 @@ b0=$(basename $0)
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt vverbose j:jobs t:target
+# generate-getopt vverbose j:jobs t:target qquick
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o vj:t: --long "verbose,jobs:,target:"  -n $(basename -- $0) -- "$@")
-verbose=false
+TEMP=$(getopt -o qj:t:vh \
+              --long quick,jobs:,target:,verbose,help,no-quick,no-verbose \
+              -n $(basename -- $0) -- "$@")
+quick=false
 jobs=
 target=
+verbose=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -v|--verbose)
-            verbose=true
+
+        -q|--quick|--no-quick)
+            if test "$1" = --no-quick; then
+                quick=false
+            else
+                quick=true
+            fi
             shift
             ;;
         -j|--jobs)
@@ -38,6 +46,34 @@ while true; do
             target=$2
             shift 2
             ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=false
+            else
+                verbose=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-j, '
+            printf %-24s '--jobs=JOBS'
+            echo
+            printf %06s '-q, '
+            printf %-24s '--[no-]quick'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--target=TARGET'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo
+            exit
+            shift
+            ;;
         --)
             shift
             break
@@ -47,6 +83,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -103,9 +140,13 @@ EOF
         echo Set product to $TARGET_PRODUCT-$TARGET_BUILD_VARIANT at $PWD
         android-set-product $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
     fi
-    . build/envsetup.sh
-    set_stuff_for_environment
-    BHJ_OUT_DIR=${OUT%target/*}
+    if test "$quick" = false; then
+        . build/envsetup.sh
+        set_stuff_for_environment
+        BHJ_OUT_DIR=${OUT%target/*}
+    else
+        BHJ_OUT_DIR=$(lookup-file .repo/../)/out
+    fi
     cd $oldpwd
 
     cd "$(dirname $(lookup-file Android.mk))"

@@ -65,6 +65,7 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
     adduser --gecos '' --disabled-password media_rw --uid 1023 --gid 1023 || true
 
     usermod $USER -a -G android_inet,android_sdcard_rw,media_rw || true
+    usermod -g android_inet _apt || true
     cd
     umask 0022
     mkdir -p ~/.ssh

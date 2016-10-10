@@ -112,4 +112,5 @@ if test "$exact"; then
         exit 0;
     fi
 fi
+sawfish-browser-input ISO_Left_Tab ISO_Left_Tab ISO_Left_Tab&
 firefox $new_tab "$url"&
