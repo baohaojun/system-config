@@ -58,7 +58,7 @@ For the same reason as =adb shell input=, =am= is also very slow because an =am.
 
 At first, Wrench used =screencap= to make a screenshot of the phone screen, and displayed on the PC. This is very slow.
 
-Now, with some phones (according to the Android version and CPU arch), Wrench can use the VNC protocol to mirror your phone screen, which is a lot smoother as you can see from the video. In doing this, Wrench used source code from 3 projects: it combined the AOSP [[https://android.googlesource.com/platform/frameworks/av/%2B/master/cmds/screenrecord/][screenrecord]] project and the [[https://github.com/oNaiPs/droidVncServer][droidVncServer]] project to run a VNC server on the phone; and used the [[https://sourceforge.net/projects/qvncviewer/][Qt VNC Viewer]] to talk to the phone's VNC server.
+Now, with some phones (according to the Android SDK version and CPU arch), Wrench can use the VNC protocol to mirror your phone screen, which is a lot smoother as you can see from the video. In doing this, Wrench used source code from 3 projects: it combined the AOSP [[https://android.googlesource.com/platform/frameworks/av/%2B/master/cmds/screenrecord/][screenrecord]] project and the [[https://github.com/oNaiPs/droidVncServer][droidVncServer]] project to run a VNC server on the phone; and used the [[https://sourceforge.net/projects/qvncviewer/][Qt VNC Viewer]] to talk to the phone's VNC server.
 
 * How to use Wrench
 
@@ -73,6 +73,18 @@ Here's the simple steps:
 3. Connect the phone to Desktop with USB.
 
 (Wrench is packaged with the AOSP =adb= program, so you need to make sure you are not running a different version of adb, as it may cause connection trouble.)
+
+** How to compile droidVncServer
+
+If your phone's Android SDK version/CPU arch is not supported, you can compile it yourself.
+
+First you need get AOSP source code. SDK/NDK is not supported to compile droidVncServer because some system APIs are used which is not available in SDK/NDK.
+
+Next copy the =droidVncServer= directory into AOSP's =external/droidVncServer=, set up [[https://source.android.com/source/building.html][AOSP's build appropriately]], and run =mma= in =external/droidVncServer=.
+
+Note that the source code for =droidVncServer= may need some porting if your phone's SDK version is not 22 or 23. The changes may be small or big or even impossible depending on how different your phone's SDK version is.
+
+When build is finished, the binary is in =external/droidVncServer=, you need copy it back into your Wrench executable directory, with a rename (for e.g., =androidvncserver-arm64.sdk23= should be renamed to =androidvncserver-aarch64.sdk23=, where =aarch64= is the output from your phone's =adb shell uname -m= ), and generate a .md5 file for it (Please refer to =release/androidvncserver-aarch64.sdk23.md5=).
 
 * Contribute
 
