@@ -127,11 +127,12 @@ fi
 
 if test -z "$repodir"; then
     (set -x; repo init -p auto -u ${repo_init_url:-$(cat ~/.repoconfig/.repo_manifest_url)}\
-        -m ${repo_init_manifest:-default.xml}\
-        -b ${repo_init_branch:-$(cat ~/.repoconfig/.repo_branch)}\
-        --repo-url=${repo_url:-https://gerrit.googlesource.com/git-repo}\
-        $(if test "$repo_reference"; then echo "$repo_reference"; fi) \
-        "$@")
+                  --depth 1 \
+                  -m ${repo_init_manifest:-default.xml}\
+                  -b ${repo_init_branch:-$(cat ~/.repoconfig/.repo_branch)}\
+                  --repo-url=${repo_url:-https://gerrit.googlesource.com/git-repo}\
+                  $(if test "$repo_reference"; then echo "$repo_reference"; fi) \
+                  "$@")
 
     (
         (

@@ -60,12 +60,12 @@ export https_proxy=http://localhost:19999
     repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml
     branches=$(
         cd .repo/manifests
-        git branch -a|perl -npe 's,.*/,,'|grep -e '-dev'|grep -v -e '-.*-' | grep -v 'chromium-dev|droiddriver-dev|gradle-dev' -P
+        git branch -a|perl -ne 's,^\s+remotes/origin/,, or next; printf if m,^[^-]+-dev$|-mr[\d.]+-dev$,' | grep -v 'chromium-dev|droiddriver-dev|gradle-dev' -P
         echo master
             )
     git-get -u smartisan:qualcomm/platform/manifest.git -d ~/src/manifests -b sanfrancisco
     for branch in $branches; do
-        scm sync-android-to-gerrit -b $branch
+        scm sync-android-to-gerrit -b $branch || true
     done
     if ! is-tty-io; then
         (
