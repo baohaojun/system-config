@@ -76,6 +76,10 @@ Here's the simple steps:
 
 ** How to compile droidVncServer
 
+- Note :: If your phone is deeply customized, it might not work if you compile the droidVncServer in AOSP source code. I found this out on Smartisan (the company that I'm working at)'s U1 phone, where I compiled droidVncServer with aosp-lollipop-mr1-dev, which has the same SDK version as U1, but sadly the program crashes when run. I also compiled the AOSP screenrecord program with aosp-lollipop-mr1-dev, then run it on U1, and found that it can do .mp4 file recording, but also crashes when run for streaming (with =--output-format frames=).
+
+          In this case, the only way to make it work is to compile under the same source code where your phone's system image is compiled, which is unlikely unless you are a developper of this phone hardware company. Sorry.
+
 If your phone's Android SDK version/CPU arch is not supported, you can compile it yourself.
 
 First you need get AOSP source code. SDK/NDK is not supported to compile droidVncServer because some system APIs are used which is not available in SDK/NDK.
@@ -85,6 +89,8 @@ Next copy the =droidVncServer= directory into AOSP's =external/droidVncServer=, 
 Note that the source code for =droidVncServer= may need some porting if your phone's SDK version is not 22 or 23. The changes may be small or big or even impossible depending on how different your phone's SDK version is.
 
 When build is finished, the binary is in =external/droidVncServer=, you need copy it back into your Wrench executable directory, with a rename (for e.g., =androidvncserver-arm64.sdk23= should be renamed to =androidvncserver-aarch64.sdk23=, where =aarch64= is the output from your phone's =adb shell uname -m= ), and generate a .md5 file for it (Please refer to =release/androidvncserver-aarch64.sdk23.md5=).
+
+
 
 * Contribute
 
