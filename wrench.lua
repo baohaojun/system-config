@@ -1170,7 +1170,7 @@ local check_apk_installed = function(apk, md5)
    if md5_on_phone ~= md5_on_PC then
       log("Need to install on your phone Wrench helper App %s, please make sure your phone allows it.", apk)
       local install_output = adb_install(apk)
-      if install_output:match("\nSuccess") then
+      if install_output:match("\nSuccess") or install_output:match("^Success") then
          adb_push{md5, "/sdcard/" .. md5}
          local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
          md5_on_phone = md5_on_phone:gsub("\n", "")
