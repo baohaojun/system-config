@@ -1,9 +1,5 @@
 #!/bin/bash
 set -e
+. ~/system-config/etc/.fix-java-version
 
-main_mk=$(lookup-file -e build/core/main.mk)
-
-if grep -q 'required_version := "1.7.x"' $main_mk; then
-    PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
-fi
 "$@"

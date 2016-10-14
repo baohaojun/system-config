@@ -120,8 +120,8 @@ abc-base-build() {
             readlink -f ./.repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,; s,\.xml$,,; s,/,%,g'
         )
            )
-    for product_branch in ${!android_manifests[@]} ${!oem_manifests[@]}; do
-        for manifest in ${android_manifests[$product_branch]} ${oem_manifests[$product_branch]}; do
+    for product_branch in ${!android_manifests[@]} ${!oem_manifests[@]} ${!old_android_manifests[@]}; do
+        for manifest in ${android_manifests[$product_branch]} ${oem_manifests[$product_branch]} ${old_android_manifests[$product_branch]}; do
             base_from_manifest=$(
                 echo ${manifest} | perl -npe 's/.xml$//; s,/,%,g'
                               )
