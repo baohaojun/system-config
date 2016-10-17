@@ -4,7 +4,7 @@ shift
 for x in "$@"; do
     mkdir -p "$target_dir/$(dirname "$x")"
     if test $(basename $0) = mv-with-dir-struct; then
-        mv "$x" "$target_dir/$(dirname "$x")" -v
+        mv "$x" "$target_dir/$(dirname "$x")" -v -n
     else
         cp "$x" "$target_dir/$(dirname "$x")" -av
     fi

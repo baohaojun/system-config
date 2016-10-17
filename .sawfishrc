@@ -300,6 +300,7 @@
         ("F10" . '((Wine mm6-regeneration)))
         ("F11" . '((Emacs "C-C-c" "M-j" "s") (Wine mm6-drop)))
         ("F12" . '((Emacs "C-c" "M-j" "d") (Wine mm6-heal)))
+        ("ISO_Left_Tab" . '((Wine mm6-reverse-tab)))
         ("&" . '((Wine mm8-1)))
         ("[" . '((Wine mm8-2)))
         ("{" . '((Wine mm8-3)))
@@ -307,7 +308,11 @@
         ("(" . '((Wine mm8-5)))
         ("=" . '((Wine mm6-drop)))
         ("j" . '((Wine mm6-c)))
+        ("XF86Favorites" . '((Wine "F2")))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
+
+(defun mm6-reverse-tab ()
+  (system "xdotool-when-keyboard-clear key Tab Tab Tab&"))
 
 (defun mm6-c ()
   (system "xdotool-when-keyboard-clear key c&"))
@@ -761,7 +766,6 @@
 (bind-keys print-keymap "k" '(system "sawfish-get-screen-shot-whole&"))
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
-(bind-both-global&window-keymaps "XF86Favorites" '(system "do-work&"))
 (bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular'&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
@@ -771,7 +775,7 @@
 (bind-keys s-h-keymap "M-C-p" '(system "sawfish-show-pointer&"))
 (bind-keys s-h-keymap "M-C-c" '(system "sawfish-get-pointer-color&"))
 (bind-keys s-h-keymap "C-XF86Favorites" '(system "mm8 all&"))
-(bind-keys s-h-keymap "XF86Favorites" '(system "mm8 bless-heroism&"))
+(bind-keys s-h-keymap "XF86Favorites" '(system "mm8 cast bless&"))
 
 (defun get-window-xy-size (class)
   (let ((x 100000)
