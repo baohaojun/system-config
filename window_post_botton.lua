@@ -129,5 +129,6 @@ map['org.mozilla.firefox/org.mozilla.firefox.App'] = 'manual-post'
 map['org.mozilla.firefox/org.mozilla.gecko.fxa.activities.FxAccountCreateAccountActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.answer.AnswerActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.login.LoginActivity'] = 'manual-post'
+map['tv.danmaku.bili/tv.danmaku.bili.ui.video.VideoDetailsActivity'] = 'manual-post'
 map['新建播放列表'] = 'manual-post'
 return map
