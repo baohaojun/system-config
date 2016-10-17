@@ -1170,7 +1170,7 @@ local check_apk_installed = function(apk, md5)
    if md5_on_phone ~= md5_on_PC then
       log("Need to install on your phone Wrench helper App %s, please make sure your phone allows it.", apk)
       local install_output = adb_install(apk)
-      if install_output:match("\nSuccess") then
+      if install_output:match("\nSuccess") or install_output:match("^Success") then
          adb_push{md5, "/sdcard/" .. md5}
          local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
          md5_on_phone = md5_on_phone:gsub("\n", "")
@@ -1452,7 +1452,7 @@ qq_find_group_friend = function(friend_name)
    wait_input_target(troopList)
    adb_event("key scroll_lock key space key DEL sleep .5 adb-tap 326 320")
    local troopMember = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberCardActivity"
-   for i = 1, 5 do
+   for i = 1, 10 do
       window = wait_top_activity_n(2, troopMember)
       if window == troopMember then
          break
@@ -1465,7 +1465,7 @@ qq_find_group_friend = function(friend_name)
          end
       end
    end
-   adb_event("sleep .5 adb-tap 864 1800")
+   adb_event("sleep " .. .5 * i .. " adb-tap 864 1800")
 end
 
 save_window_types = function()
