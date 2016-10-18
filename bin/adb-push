@@ -56,7 +56,7 @@ if ($dest =~ m,^/data\b,) {
 sub push_one_file($$)
 {
     my ($file, $base) = @_;
-    my $true_dest = "$dest/$base";
+    my $true_dest = "$dest";
     if ($base eq "boot.img" and ($root_boot_image or $edit_boot_image)) {
         my $file_q = shell_quote($file);
         chomp($ENV{BOOT_IMAGE_PATH} = qx(readlink -f $file_q));
