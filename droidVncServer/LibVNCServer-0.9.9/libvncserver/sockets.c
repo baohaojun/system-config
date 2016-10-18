@@ -132,7 +132,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
 
     	FD_ZERO(&(rfbScreen->allFds));
     	FD_SET(rfbScreen->inetdSock, &(rfbScreen->allFds));
-    	rfbScreen->maxFd = rfbScreen->inetdSock;
+    	rfbScreen->maxFd = max((int)rfbScreen->inetdSock, rfbScreen->maxFd);
 	return;
     }
 
@@ -155,7 +155,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
 
         rfbLog("Autoprobing selected TCP port %d\n", rfbScreen->port);
         FD_SET(rfbScreen->listenSock, &(rfbScreen->allFds));
-        rfbScreen->maxFd = rfbScreen->listenSock;
+        rfbScreen->maxFd = max((int)rfbScreen->listenSock, rfbScreen->maxFd);
 
 #ifdef LIBVNCSERVER_IPv6
         rfbLog("Autoprobing TCP6 port \n");
@@ -186,7 +186,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
       rfbLog("Listening for VNC connections on TCP port %d\n", rfbScreen->port);  
   
       FD_SET(rfbScreen->listenSock, &(rfbScreen->allFds));
-      rfbScreen->maxFd = rfbScreen->listenSock;
+      rfbScreen->maxFd = max((int)rfbScreen->listenSock, rfbScreen->maxFd);
 
 #ifdef LIBVNCSERVER_IPv6
       if ((rfbScreen->listen6Sock = rfbListenOnTCP6Port(rfbScreen->ipv6port, rfbScreen->listen6Interface)) < 0) {
@@ -274,8 +274,8 @@ rfbCheckFds(rfbScreenInfoPtr rfbScreen,long usec)
 
     do {
 	memcpy((char *)&fds, (char *)&(rfbScreen->allFds), sizeof(fd_set));
-	tv.tv_sec = 0;
-	tv.tv_usec = usec;
+	tv.tv_sec = usec / 1000000;
+	tv.tv_usec = usec % 1000000;
 	nfds = select(rfbScreen->maxFd + 1, &fds, NULL, NULL /* &fds */, &tv);
 	if (nfds == 0) {
 	    /* timed out, check for async events */
@@ -294,8 +294,10 @@ rfbCheckFds(rfbScreenInfoPtr rfbScreen,long usec)
 #ifdef WIN32
 	    errno = WSAGetLastError();
 #endif
-	    if (errno != EINTR)
-		rfbLogPerror("rfbCheckFds: select");
+	    if (errno != EINTR) {
+                rfbLogPerror("rfbCheckFds: select");
+                fprintf(stderr, "%s:%d: maxFd is %d, usec is %d\n", __FILE__, __LINE__, rfbScreen->maxFd, usec);
+            }
 	    return -1;
 	}
 

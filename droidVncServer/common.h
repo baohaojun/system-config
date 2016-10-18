@@ -21,9 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #define COMMON_H
 
 #include <android/log.h>
-#include "screenFormat.h"
 #include <strings.h>
-#ifndef __cplusplus
 
 #include <dirent.h>
 #include <stdio.h>
@@ -44,29 +42,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <assert.h>
 #include <errno.h>
 
-#include "screenFormat.h"
-
-#define L(...) do{ __android_log_print(ANDROID_LOG_INFO,"VNCserver",__VA_ARGS__);printf(__VA_ARGS__); } while (0);
-#endif
+#define L(...) do{ __android_log_print(ANDROID_LOG_INFO,"VNCserver",__VA_ARGS__);fprintf(stderr, __VA_ARGS__); } while (0);
 
 typedef int (*init_fn_type)(void);
 typedef int (*close_fn_type)(void);
 typedef unsigned char * (*readfb_fn_type)(void);
-typedef screenFormat (*getscreenformat_fn_type)(void);
+
 
 void rotate(int);
 int getCurrentRotation();
 int isIdle();
-void setIdle(int i);
 void close_app();
-extern screenFormat screenformat;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "screenFormat.h"
     int initScreenRecord(void);
     int closeScreenRecord(void);
     unsigned char *readBufferFlinger(void);
+    extern screenFormat screenformat;
 #ifdef __cplusplus
 }
 #endif

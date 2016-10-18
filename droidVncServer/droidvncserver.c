@@ -66,11 +66,6 @@ inline int getCurrentRotation()
   return rotation;
 }
 
-void setIdle(int i)
-{
-  idle=i; 
-}
-
 rfbNewClientHookPtr clientHook(rfbClientPtr cl)
 {
   if (scaling!=100)
@@ -94,9 +89,9 @@ void initVncServer(int argc, char **argv)
   assert(cmpbuf != NULL);
 
   if (rotation==0 || rotation==180) 
-  vncscr = rfbGetScreen(&argc, argv, screenformat.width , screenformat.height, 0 /* not used */ , 3,  screenformat.bitsPerPixel/CHAR_BIT);
+    vncscr = rfbGetScreen(&argc, argv, screenformat.width , screenformat.height, 0 /* not used */ , 3,  screenformat.bitsPerPixel/CHAR_BIT);
   else
-  vncscr = rfbGetScreen(&argc, argv, screenformat.height, screenformat.width, 0 /* not used */ , 3,  screenformat.bitsPerPixel/CHAR_BIT);
+    vncscr = rfbGetScreen(&argc, argv, screenformat.height, screenformat.width, 0 /* not used */ , 3,  screenformat.bitsPerPixel/CHAR_BIT);
 
   assert(vncscr != NULL);
 
@@ -118,7 +113,7 @@ void initVncServer(int argc, char **argv)
   } 
 
   vncscr->httpDir = "webclients/";
-//  vncscr->httpEnableProxyConnect = TRUE;
+  //  vncscr->httpEnableProxyConnect = TRUE;
   vncscr->sslcertfile = "self.pem";
 
   vncscr->serverFormat.redShift = screenformat.redShift;
@@ -138,24 +133,24 @@ void initVncServer(int argc, char **argv)
 
   rfbInitServer(vncscr);
 
-    //assign update_screen depending on bpp
-    if (vncscr->serverFormat.bitsPerPixel == 32)
+  //assign update_screen depending on bpp
+  if (vncscr->serverFormat.bitsPerPixel == 32)
     update_screen=&CONCAT2E(update_screen_,32);
-    else if (vncscr->serverFormat.bitsPerPixel == 16)
+  else if (vncscr->serverFormat.bitsPerPixel == 16)
     update_screen=&CONCAT2E(update_screen_,16);
-    else if (vncscr->serverFormat.bitsPerPixel == 8)
+  else if (vncscr->serverFormat.bitsPerPixel == 8)
     update_screen=&CONCAT2E(update_screen_,8);
-    else {
-      L("Unsupported pixel depth: %d\n",
-        vncscr->serverFormat.bitsPerPixel);
+  else {
+    L("Unsupported pixel depth: %d\n",
+      vncscr->serverFormat.bitsPerPixel);
 
-      close_app();
-      exit(-1);
-    }
+    close_app();
+    exit(-1);
+  }
 
-    /* Mark as dirty since we haven't sent any updates at all yet. */
-    rfbMarkRectAsModified(vncscr, 0, 0, vncscr->width, vncscr->height);
-    }
+  /* Mark as dirty since we haven't sent any updates at all yet. */
+  rfbMarkRectAsModified(vncscr, 0, 0, vncscr->width, vncscr->height);
+}
 
 
 
@@ -284,17 +279,15 @@ int main(int argc, char **argv)
         usec=(vncscr->deferUpdateTime+standby)*1000;
         //clock_t start = clock();
         rfbProcessEvents(vncscr,usec);
-      
-      if (idle)
-        standby+=2;
-      else
-        standby= -vncscr->deferUpdateTime;
-      
+
       if (vncscr->clientHead == NULL)
       {
         idle=1;
         standby = 1000;
         continue;
+      } else {
+        idle = 0;
+        standby = 15;
       }
 
       update_screen(); 

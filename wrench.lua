@@ -1263,8 +1263,9 @@ t1_config = function(passedConfigDirPath)
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
-   arm_arch = adb_pipe("/data/data/com.android.shell/busybox uname -m")
+   arm_arch = adb_pipe("/data/data/com.android.shell/busybox uname -m 2>/dev/null || uname -m")
    androidvncserver = ("androidvncserver-%s.sdk%s"):format(arm_arch, sdk_version)
+   log("androidvncserver is %s", androidvncserver)
 
    if file_exists(androidvncserver) then
       check_file_push_and_renamed(androidvncserver, androidvncserver ..  ".md5", "androidvncserver")
@@ -1491,7 +1492,7 @@ save_phone_info = function()
 end
 
 kill_android_vnc = function()
-   adb_shell"busybox killall -INT androidvncserver"
+   adb_shell"killall -INT androidvncserver || busybox killall -INT androidvncserver"
 end
 
 file_exists = function(name)

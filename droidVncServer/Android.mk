@@ -85,7 +85,8 @@ LOCAL_C_INCLUDES += \
 	$(TOP)/frameworks/native/include/media/openmax \
 	external/jpeg
 
-LOCAL_CFLAGS += -Wno-multichar
+LOCAL_CFLAGS += -Wno-multichar \
+                -DPLATFORM_SDK_VERSION=$(PLATFORM_SDK_VERSION)
 
 LOCAL_MODULE := androidvncserver-$(TARGET_ARCH).sdk$(PLATFORM_SDK_VERSION)
 LOCAL_MODULE_PATH := $(LOCAL_PATH)/
