@@ -2466,6 +2466,8 @@ local function t1_spread_it()
 end
 
 M = {}
+M.log = log
+M.adb_get_input_window_dump = adb_get_input_window_dump
 M.putclip = putclip
 M.start_weibo_share = start_weibo_share
 M.t1_post = t1_post
