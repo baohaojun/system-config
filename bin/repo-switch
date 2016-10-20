@@ -55,7 +55,7 @@ while true; do
             ;;
         -p)
             print=$(
-                echo repo init --depth 1 -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
+                echo repo init $(cd .repo/manifests && if test "$(git config repo.depth)" = 1; then echo --depth 1; fi) -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
                      -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url) $(
                     ref=$(cd .repo/manifests.git; git config repo.reference || true)
                     if test "$ref"; then
@@ -126,20 +126,7 @@ if test -z "$repo_reference"; then
 fi
 
 if test -z "$repodir"; then
-    (set -x; repo init -p auto -u ${repo_init_url:-$(cat ~/.repoconfig/.repo_manifest_url)}\
-                  --depth 1 \
-                  -m ${repo_init_manifest:-default.xml}\
-                  -b ${repo_init_branch:-$(cat ~/.repoconfig/.repo_branch)}\
-                  --repo-url=${repo_url:-https://gerrit.googlesource.com/git-repo}\
-                  $(if test "$repo_reference"; then echo "$repo_reference"; fi) \
-                  "$@")
-
-    (
-        (
-            cd $(lookup-file .repo/)
-            touch manifest.xml
-        )
-    )
+    die "repo-switch can only be used in a repo inited directory (with a .repo in it)"
 fi
 
 repodir=$(lookup-file -e .repo)
@@ -274,7 +261,7 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
     (
         cd $(lookup-file -e .repo/..)
         repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name \
-             $(if test "$repo_reference"; then echo "$repo_reference"; fi) --depth 1
+             $(if test "$repo_reference"; then echo "$repo_reference"; fi) $(cd .repo/manifests && if test "$(git config repo.depth)" = 1; then echo --depth 1; fi)
     )
 
     (

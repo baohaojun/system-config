@@ -174,7 +174,8 @@ EOF
                 )
             elif test $# = 1 -a $1 = selinux; then
                 (
-                    cat <<'EOF' > $OUT_DIR/Android.mk
+                    mkdir .repo/tmp -p
+                    cat <<'EOF' > .repo/tmp/Android.mk
 LOCAL_PATH:= $(call my-dir)
 selinux_bhj: $(foreach se,seapp_contexts selinux_version sepolicy service_contexts,${PRODUCT_OUT}/root/${se}) sepolicy.recovery
 ifeq (${ONE_SHOT_MAKEFILE},${LOCAL_PATH}/Android.mk)
@@ -187,7 +188,7 @@ include external/sepolicy/Android.mk
 $(info CUSTOM_MODULES are ${CUSTOM_MODULES})
 endif
 EOF
-                    cd $OUT_DIR/
+                    cd .repo/tmp
                     $do_nice mm -j$jobs $verbose selinux_bhj
                 )
             elif test $# = 1 -a $1 = lk; then
