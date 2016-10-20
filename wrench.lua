@@ -1265,6 +1265,13 @@ t1_config = function(passedConfigDirPath)
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
    arm_arch = adb_pipe("/data/data/com.android.shell/busybox uname -m 2>/dev/null || uname -m")
    androidvncserver = ("androidvncserver-%s.sdk%s"):format(arm_arch, sdk_version)
+
+   codename = adb_pipe("getprop ro.product.codename"):gsub(" ", ".")
+   codenamed_vnc = ("%s.%s"):format(androidvncserver, codename)
+   if file_exists(codenamed_vnc) then
+      androidvncserver = codenamed_vnc
+   end
+
    log("androidvncserver is %s", androidvncserver)
 
    if file_exists(androidvncserver) then
