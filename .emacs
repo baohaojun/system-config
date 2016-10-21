@@ -355,6 +355,7 @@
   (tool-bar-mode 1)
   (scroll-bar-mode 1)
   (evil-mode 1)
+  (tabbar-mode 1)
   (setq-default initial-scratch-message
                 (concat initial-scratch-message
                         "请访问此网页查看Emacs作弊手册： http://baohaojun.github.io/emacs-cheat-sheet.html")))
