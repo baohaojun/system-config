@@ -176,7 +176,11 @@ status_t Overlay::setup_l() {
                 GL_TEXTURE_EXTERNAL_OES, true, false);
     mGlConsumer->setName(String8("virtual display"));
     mGlConsumer->setDefaultBufferSize(width, height);
+#if PLATFORM_SDK_VERSION >= 24
+    mProducer->setMaxDequeuedBufferCount(4);
+#else
     mGlConsumer->setDefaultMaxBufferCount(5);
+#endif
     mGlConsumer->setConsumerUsageBits(GRALLOC_USAGE_HW_TEXTURE);
 
     mGlConsumer->setFrameAvailableListener(this);

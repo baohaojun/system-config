@@ -46,6 +46,7 @@ status_t FrameOutput::createInputSurface(int width, int height,
 
     err = mEglWindow.createPbuffer(width, height);
     if (err != NO_ERROR) {
+        fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
         return err;
     }
     mEglWindow.makeCurrent();
@@ -57,6 +58,7 @@ status_t FrameOutput::createInputSurface(int width, int height,
     // Shader for rendering the external texture.
     err = mExtTexProgram.setup(Program::PROGRAM_EXTERNAL_TEXTURE);
     if (err != NO_ERROR) {
+        fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
         return err;
     }
 
@@ -64,6 +66,7 @@ status_t FrameOutput::createInputSurface(int width, int height,
     glGenTextures(1, &mExtTextureName);
     if (mExtTextureName == 0) {
         ALOGE("glGenTextures failed: %#x", glGetError());
+        fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, UNKNOWN_ERROR);
         return UNKNOWN_ERROR;
     }
 
@@ -74,7 +77,11 @@ status_t FrameOutput::createInputSurface(int width, int height,
                 GL_TEXTURE_EXTERNAL_OES, true, false);
     mGlConsumer->setName(String8("virtual display"));
     mGlConsumer->setDefaultBufferSize(width, height);
+#if PLATFORM_SDK_VERSION >= 24
+    producer->setMaxDequeuedBufferCount(4);
+#else
     mGlConsumer->setDefaultMaxBufferCount(5);
+#endif
     mGlConsumer->setConsumerUsageBits(GRALLOC_USAGE_HW_TEXTURE);
 
     mGlConsumer->setFrameAvailableListener(this);

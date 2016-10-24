@@ -363,6 +363,7 @@ static status_t recordScreen() {
     frameOutput = new FrameOutput();
     err = frameOutput->createInputSurface(gVideoWidth, gVideoHeight, &encoderInputSurface);
     if (err != NO_ERROR) {
+        fprintf(stderr, "%s:%d: got an error\n", __FILE__, __LINE__);
         return err;
     }
 
@@ -381,6 +382,7 @@ static status_t recordScreen() {
         overlay = new Overlay();
         err = overlay->start(encoderInputSurface, &bufferProducer);
         if (err != NO_ERROR) {
+            fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
             return err;
         }
         if (gVerbose) {
@@ -394,6 +396,7 @@ static status_t recordScreen() {
     // Configure virtual display.
     err = prepareVirtualDisplay(mainDpyInfo, bufferProducer, &dpy);
     if (err != NO_ERROR) {
+        fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
         return err;
     }
 
