@@ -66,6 +66,7 @@ map['com.reddit.frontpage/com.reddit.frontpage.redditauth_private.ui.AuthActivit
 map['com.reddit.frontpage/com.reddit.frontpage.SearchActivity'] = 'manual-post'
 map['com.reddit.frontpage/com.reddit.frontpage.SubmitActivity'] = 'manual-post'
 map['com.reddit.frontpage/com.reddit.frontpage.SubredditSearchActivity'] = 'manual-post'
+map['com.sdu.didi.psnger/com.didi.one.login.fullpage.FullPageLoginActivity'] = 'manual-post'
 map['com.sdu.didi.psnger/com.didi.sdk.webview.WebActivity'] = 'manual-post'
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'weixin-chat'
 map['com.skype.raider/com.microsoft.onlineid.internal.ui.WebFlowActivity'] = 'manual-post'

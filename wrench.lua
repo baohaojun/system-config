@@ -666,7 +666,7 @@ local function search_mail(what)
       log("Failed to get mail settings")
       return
    end
-   adb_event"key back sleep .5 adb-tap 218 343 sleep .2 key scroll_lock"
+   adb_event"key back sleep .5 adb-tap 218 323 sleep .2 key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 667 608"
 end
 
 local function get_coffee(what)
@@ -689,7 +689,7 @@ local function get_coffee(what)
       if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
          return
       end
-      adb_event" adb-tap 337 772 sleep 1 "
+      adb_event" adb-tap 337 722 sleep 1 "
 
       if social_need_confirm and not yes_or_no_p("Next, click the “Search” button for the “My Favorites”") then
          return
@@ -1419,7 +1419,7 @@ qq_find_friend = function(friend_name)
       qq_open_homepage()
       adb_event"sleep .3 adb-tap 391 288"
       local top_window = wait_input_target_n(15, qqChatActivity2, qqGroupSearch)
-      adb_event"key scroll_lock sleep .6"
+      adb_event"key scroll_lock sleep .8"
       if top_window and top_window:match(qqGroupSearch) then
          log"Fonud qqGroupSearch"
          adb_event"adb-tap 365 384"
@@ -1442,7 +1442,7 @@ qq_find_group_friend = function(friend_name)
       log("qq window is not chat: %s", window)
       return
    end
-   adb_event("adb-tap 974 167")
+   adb_event("adb-tap 994 167")
    local chatSetting = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatSettingForTroop"
    window = wait_top_activity(chatSetting)
    if window ~= chatSetting then
@@ -1456,9 +1456,11 @@ qq_find_group_friend = function(friend_name)
       log("did not get troopWindow: %s", window)
       return
    end
-   adb_event("sleep .5 adb-tap 243 305")
+   adb_event("sleep .5 adb-tap 243 300")
    wait_input_target(troopList)
-   adb_event("key scroll_lock key space key DEL sleep .5 adb-tap 326 320")
+
+   the_1st_member_click = "adb-tap 326 229"
+   adb_event("key scroll_lock key space key DEL sleep .5 " .. the_1st_member_click)
    local troopMember = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberCardActivity"
    for i = 1, 10 do
       window = wait_top_activity_n(2, troopMember)
@@ -1466,7 +1468,7 @@ qq_find_group_friend = function(friend_name)
          break
       else
          log("Did not get into troopMember, try " .. i)
-         adb_event("key space sleep .5 key DEL sleep .5 adb-tap 326 320")
+         adb_event("key space sleep .5 key DEL sleep .5 " .. the_1st_member_click)
          if i == 5 then
             log("Giving up...")
             return
