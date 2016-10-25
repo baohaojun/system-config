@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+use Encode;
+use strict;
+
+sub debug(@) {
+    #print STDERR "@_\n";
+}
+
+
+my $last_is_cjk = 0;
+my $cjk_re = qr(\p{Blk=CJKSymbols}|\p{CJK});
+while (<>) {
+    $_ = decode_utf8 $_;
+    chomp;
+    if (m/^($cjk_re|\w)/) {
+        print "\n" unless $last_is_cjk;
+    } else {
+        print "\n";
+    }
+
+    if (m/$cjk_re$|\p{Po}$/) {
+        $last_is_cjk = 1;
+    } else {
+        debug "$_: not cjk";
+        $last_is_cjk = 0;
+    }
+
+
+    print encode_utf8($_);
+    print " " if m/[a-z]$/i;
+}
