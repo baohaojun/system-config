@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if test -z "$ANDROID_SERIAL"; then
+    export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
+fi
+
+if test -z "$ANDROID_SERIAL"; then
+    die "好像你没有adb设备"
+fi
