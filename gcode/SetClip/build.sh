@@ -18,7 +18,7 @@ set -e
         fi
     done
 ) >/dev/null 2>&1 &
-mm-ant
+mm-ant "$@"
 
 my-adb 'rm -f /sdcard/setclip-apk.txt; am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getapk 1'
 sleep 1
