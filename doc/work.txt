@@ -2,7 +2,7 @@ insmod /data/proc_i2c.ko
 
 function ri2c() {
          x=$3
-         for y in `seq 1 ${4:-1}`; do 
+         for y in `seq 1 ${4:-1}`; do
              echo read adap $1 addr $2 reg $x byte 1 > /proc/i2c_rw
              ((x++));
          done
@@ -108,16 +108,16 @@ replace init.rc
 /mnt/mysql /var/lib/mysql none bind 0 0
 ssh -C2qN -D 8080 bhj@216.194.70.6
 
-1. 
+1.
     apt-get install mediawiki* ( very important are the extensions and math )
     enable the extensions by linking them from
-    /etc/mediawiki-extensions/extensions-available into 
+    /etc/mediawiki-extensions/extensions-available into
     /etc/mediawiki-extensions/extensions-enabled
     but, you need to disable the following 2 extensions:
 
     ./SemanticMediaWiki.php
     ./MetavidWiki.php:$smwgNamespaceIndex=100;
-    
+
     they seem to visit a table named smw or something.
 
     ln -s /var/lib/mediawiki /var/www
@@ -134,7 +134,7 @@ $wgUseTeX           = true;
 $wgTexvc            = "/usr/bin/texvc";
 
 $wgUseTidy = true;
-$wgTidyBin = '/usr/bin/tidy';   
+$wgTidyBin = '/usr/bin/tidy';
 $wgTidyConf = $IP.'/extensions/tidy/tidy.conf';
 
 $wgForeignFileRepos[] = array(
@@ -149,7 +149,7 @@ $wgForeignFileRepos[] = array(
 
 $wgUseFileCache = true; /* default: false */
 $wgFileCacheDirectory = "$IP/cache";
-$wgShowIPinHeader = false; 
+$wgShowIPinHeader = false;
 
 ## Shared memory settings
 $wgMessageCacheType = CACHE_ACCEL;
@@ -166,12 +166,12 @@ $wgCompressRevisions = true;
 $wgRevisionCacheExpiry = 3*24*3600;
 $wgParserCacheExpireTime = 14*24*3600;
 
-4. 
+4.
 
     sudo mkdir /var/lib/mediawiki/images/math
     sudo chown www-data\: /var/lib/mediawiki/images/math
 
-5. 
+5.
 
     svn co http://svn.wikimedia.org/svnroot/mediawiki/trunk/mwdumper mwdumper
     cd mwdumper
@@ -181,7 +181,7 @@ $wgParserCacheExpireTime = 14*24*3600;
 
     lftp -c "pget -n 15 http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"
 
-7. Install postgresql, tune the performance: 
+7. Install postgresql, tune the performance:
 
  a) work_mem = 64MB				# min 64kB
     maintenance_work_mem = 1280MB		# min 1MB
@@ -191,10 +191,10 @@ $wgParserCacheExpireTime = 14*24*3600;
  both a) and b) are very important! It can make the difference between taking whole days and only a few hours
 
 
-7. 
+7.
 
     java -server -jar mwdumper.jar --format=sql:1.5 /e/bhj/enwiki-latest-pages-articles.xml.bz2 |mysql --user=wikiuser --password=xxxx wikidb -f
-    java -server -jar mwdumper.jar --format=pgsql:1.5 
+    java -server -jar mwdumper.jar --format=pgsql:1.5
 
 ############# config ##################
 #
@@ -215,8 +215,8 @@ set _tilde 0
 deb-i386 http://archive.ubuntu.com/ubuntu/ lucid main restricted universe multiverse
 deb http://archive.ubuntu.com/ubuntu/ lucid main restricted universe multiverse
 
-deb-i386 http://ppa.launchpad.net/ubuntu-wine/ lucid main 
-deb http://ppa.launchpad.net/ubuntu-wine/ lucid main 
+deb-i386 http://ppa.launchpad.net/ubuntu-wine/ lucid main
+deb http://ppa.launchpad.net/ubuntu-wine/ lucid main
 
 deb-i386 http://ftp.us.debian.org/debian sid main contrib non-free
 deb-i386 http://ftp.us.debian.org/debian testing main contrib non-free
@@ -230,28 +230,28 @@ clean http://ppa.launchpad.net/ubuntu-wine
 for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
 
 (find-file
- (let ((file 
+ (let ((file
         (replace-regexp-in-string "android-byd" "rayzerlink-ventana" (ajoke--buffer-file-name (current-buffer)))))
    (if (file-exists-p (replace-regexp-in-string "harmony" "ventana" file))
        (replace-regexp-in-string "harmony" "ventana" file)
      (if (file-exists-p (replace-regexp-in-string "harmony" "template" file))
          (replace-regexp-in-string "harmony" "template" file)
        (setq file (replace-regexp-in-string "harmony" "ventana" file))
-       
+
        (if (file-exists-p (replace-regexp-in-string "e1162" "pm275" file))
            (replace-regexp-in-string "e1162" "pm275" file)
          (message "Error: can not find your file in ventana")
          file)))))
 
 (find-file
- (let ((file 
+ (let ((file
         (replace-regexp-in-string "rayzerlink-ventana" "android-byd" (ajoke--buffer-file-name (current-buffer)))))
    (if (file-exists-p (replace-regexp-in-string "harmony" "ventana" file))
        (replace-regexp-in-string "harmony" "ventana" file)
      (if (file-exists-p (replace-regexp-in-string "harmony" "template" file))
          (replace-regexp-in-string "harmony" "template" file)
        (setq file (replace-regexp-in-string "harmony" "ventana" file))
-       
+
        (if (file-exists-p (replace-regexp-in-string "e1162" "pm275" file))
            (replace-regexp-in-string "e1162" "pm275" file)
          (message "Error: can not find your file in ventana")
@@ -427,7 +427,7 @@ window:
     frameElement: null
     showModalDialog: function showModalDialog() { [native code] }
     localStorage: [object Storage]
-    
+
 document:
     location: http://www.newsmth.net/bbsdoc.php?board=Picture&ftype=6
     evaluate: function evaluate() { [native code] }
@@ -571,16 +571,16 @@ document:
     xmlStandalone: false
     xmlVersion: null
     strictErrorChecking: true
-    
+
 
 
 javascript:
-function dump_js_obj(obj) 
+function dump_js_obj(obj)
 {
     for (var x in obj)
     {
         document.write(String(x) + ": " + obj[x] + "<p/>\n");
-    }        
+    }
     document.close()
 } dump_js_obj(document)
 
@@ -593,7 +593,7 @@ End
 find  . -name "sha1sum.txt" -prune -o -type f -print0 |xargs -0 sha1sum >sha1sum.txt
 ps aux|grep git|pn 2|xargs bash -c 'for x in "$@"; do ls -l /proc/$x/fd; done' xx
 nvtest omxplayer --camera --preview 640 480
-#./mparser.py ~/wikipedia/enwiki-latest-pages-articles.xml.bz2 |tee ~/wikipedia/enwiki-latest-pages-articles.idx3|../offline.wikipedia/quickstartindex 
+#./mparser.py ~/wikipedia/enwiki-latest-pages-articles.xml.bz2 |tee ~/wikipedia/enwiki-latest-pages-articles.idx3|../offline.wikipedia/quickstartindex
 git@www.rayzertrack.com:ggl/pxa935/platform/manifest
 git@www.rayzertrack.com:nv/android/manifest
 bhj@localhost:/home/git/android/platform/manifest
@@ -608,7 +608,7 @@ setprop dhcp.eth0.dns2 192.168.0.1
 setprop dhcp.usb0.dns1 192.168.0.1
 setprop dhcp.usb0.dns2 192.168.0.1
 
-how to flash system using blob: 
+how to flash system using blob:
 
 arp
 setip
@@ -654,13 +654,13 @@ if ($l++ % $lines == 0 or not $file) {
     open($file, ">", $fn) or die "Error: open $fn failed";
 }
 print $file $_;
-' && mkbeagrepidx 
+' && mkbeagrepidx
 
 sudo htpasswd -b /etc/vsftpd/passwd user pass
 
 find . -type f |perl -ne '
 BEGIN {
-    open($file, "<", "sha1sum.txt") or die "Error open sha1sum.txt"; 
+    open($file, "<", "sha1sum.txt") or die "Error open sha1sum.txt";
     while (<$file>) {
       chomp;
       $exist{substr($_, 42)} = 1;
@@ -678,8 +678,8 @@ Partition 1 does not end on cylinder boundary.
 
 #如果是用ttf，则应该给出ttf文件的名字，否则应该给出fontconfig的名字。好像那些带空格的名字会有点问题。
 
-mplayer -font simsun 
-or 
+mplayer -font simsun
+or
 mplayer -font simsun.ttf
 
 debian console caps->ctrl:
@@ -748,7 +748,7 @@ openoffice: 输入一长串数字不想让它给写成1.2E5这种科学表达式
 ./wi2cb.sh 0x0 0x41 0xcc 3
 congfu -a getPageList|grep .bak|xargs -d '\n' bash -c 'for x in "$@"; do congfu -a removePage --title "$x"; done' xx
 
-adobe linux reader ssl error: 
+adobe linux reader ssl error:
 
 http://blogs.adobe.com/acroread/2009/04/24/ssl_error_on_linux_reader_reso/
 
@@ -763,7 +763,7 @@ imapsync --host1 imap.gmail.com --port1 993 --ssl1 --authmech1 LOGIN --user1 hjb
 
 gmail search options: after:2008/11/1 before:2010/11/2 (from gmail search help)
 
-gnus: some email is gone, but the header will still display, you just can't open it. Fixed by: 
+gnus: some email is gone, but the header will still display, you just can't open it. Fixed by:
 
     rm /home/bhj/News/agent/nnimap/localhost/Inbox
 
@@ -772,20 +772,20 @@ while true; do echo -n -e '|'; sleep .2; echo -n -e '\b/'; sleep .2; echo -n -e 
 sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (window-name w)) (delete-window-safely w)))  (window-order))'
 
 下面这个lisp表达式会导致emacs挂住，如果当前buffer里有特别长的行的话：
-(re-search-forward "C.*?O.*?M.*?P.*?R.*?E.*?P.*?L.*?Y.*?) )" nil t) 
+(re-search-forward "C.*?O.*?M.*?P.*?R.*?E.*?P.*?L.*?Y.*?) )" nil t)
 
 （例如：
-local options=(--help --action --file --debug --verbose --server --user --password password --login --service --loginFromStandardInput --project --toProject --name --description description --url --lead --after --issue --toIssue --parent --summary --priority priority --reporter --assignee --environment environment --components --affectsVersions --fixVersions --custom --field --date date --dateFormat --type --resolution --step --comment --filter --link --values --count --outputFormat --plugin plugin --version --role --group --defaultGroup --userId --userFullName userFullName --userEmail --userPassword --permissionScheme --notificationScheme notificationScheme --issueSecurityScheme --findReplace --autoVersion --autoComponent --autoGroup --asVersion --asComponent) 
+local options=(--help --action --file --debug --verbose --server --user --password password --login --service --loginFromStandardInput --project --toProject --name --description description --url --lead --after --issue --toIssue --parent --summary --priority priority --reporter --assignee --environment environment --components --affectsVersions --fixVersions --custom --field --date date --dateFormat --type --resolution --step --comment --filter --link --values --count --outputFormat --plugin plugin --version --role --group --defaultGroup --userId --userFullName userFullName --userEmail --userPassword --permissionScheme --notificationScheme notificationScheme --issueSecurityScheme --findReplace --autoVersion --autoComponent --autoGroup --asVersion --asComponent)
 ）
 
 sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (window-name w)) (delete-window-safely w)))  (window-order))'
-sawfish-client -e '(mapcar (lambda (w) (and (string-match "File-roller" (window-class w)) (delete-window-safely w)))  (window-order))'
+sawfish-client -e '(mapcar (lambda (w) (and (string-match "File-roller" (bhj-window-class w)) (delete-window-safely w)))  (window-order))'
 sawfish-client -e '(mapcar (lambda (w) (and (string-match "Terminal" (window-name w)) (x-kill-client w)))  (window-order))'
 
-bzr branch  lp:usb-creator  
+bzr branch  lp:usb-creator
 
 need get the version used by maverick (not sure, just watch out for the right version)
-search for: 
+search for:
             if os.path.exists(os.path.join(self.target, '.disk', 'info')):
                 with open(os.path.join(self.target, '.disk', 'info'),'r') as f:
                     contents = f.readline().split()
@@ -801,7 +801,7 @@ shift + space怎么改掉：
 
 rfa 'set -x; command git checkout -b gingerbread-tegra origin/`tbranch`'
 
-xmlstarlet sel -t -m //project -v @path -n default.xml 
+xmlstarlet sel -t -m //project -v @path -n default.xml
 
 怎么让Linux底下的acroread能打开nvidia加密的文档：
 
@@ -849,15 +849,15 @@ dpkg --get-selections |grep virtualbox|perl -npe 's/install$/hold/'
 insmod /system/lib/hw/wlan/bcm4329.ko "firmware_path=/system/lib/hw/wlan/fw_bcm4329.bin nvram_path=/system/lib/hw/wlan/nvram.txt iface_name=wlan"
 adb shell am start -a android.intent.action.MAIN -n com.letou.autotest/.app.LcdTest
 
-while true; do adb shell date -s 20090325.123456 ; adb shell date -s 20110325.123456 ; 
+while true; do adb shell date -s 20090325.123456 ; adb shell date -s 20110325.123456 ;
 busybox usleep 300000;
 TZ='GST-0' adb shell i2cdump -y -r 0xc6-0xca 4 0x34 b|tail -n 1|perl -ne '
 BEGIN {
     $re="([0-9a-f][0-9a-f]) " x 5;
-} 
+}
 if (m/^c0:\s*$re/) {
-    $sec = eval("0x$1$2$3$4$5")/1024; 
-    use POSIX; 
+    $sec = eval("0x$1$2$3$4$5")/1024;
+    use POSIX;
     print "i2c: " . ctime($sec + mktime(0, 0, 8, 1, 0, 109, 0, 0, 0));
 }'|tee 1.txt; (echo -n 'adb: '; adb shell date|sed -e 's/CST //')|tee 2.txt; for x in {1,2}.txt; do perl -npe 's/^.*?://' -i $x; done
 dos2unix *.txt
@@ -872,15 +872,15 @@ git difftool -x kc_diff tegra-10.9.7 ./arch/arm/configs/tegra_ventana_android_de
 samba smb.conf symlink:
 
        dns proxy = no
-    
+
     # What naming service and in what order should we use to resolve host names
     # to IP addresses
     ;   name resolve order = lmhosts host wins bcast
-        
+
     follow symlinks = yes
     wide links = yes
     unix extensions = no
-    
+
     #### Networking ####
 
 [Guest Share]
@@ -890,7 +890,7 @@ samba smb.conf symlink:
         read only = no
         guest ok = yes
 
-smbnetfs.conf: 必须加上workgroup的名字。    
+smbnetfs.conf: 必须加上workgroup的名字。
 	auth 192.168.88.9 WORKGROUP/bhj	password
 	auth r889 WORKGROUP/bhj	password
 
@@ -898,7 +898,7 @@ mirrorcyg.pl|mf-download.pl
 
 Tel. 010-64987605 ext. 849 会议室 863
 Tel. 010-64987605 ext. 863
-Tel. 010-64987605 ext. 862 
+Tel. 010-64987605 ext. 862
 find . -name "Kconfig"|perl -npe 's,^.,./kernel,'|mkgtags
 
 sudo ifconfig eth0:0 192.168.88.8; ssh r137 sudo ifconfig eth0:0 192.168.88.9
@@ -911,8 +911,8 @@ make: *** No rule to make target `out/target/product/imx51_aster7/system/bin/bus
 make: *** Waiting for unfinished jobs....
 ssh r889 gnome-terminal --hide-menubar -e myscr
 
-nvtest dfs_stress -total_sec 300 
-nvtest dfs_monitor 
+nvtest dfs_stress -total_sec 300
+nvtest dfs_monitor
 64.50.233.100 ftp.us.debian.org
 
 rfa . 'br=tegra-10.9.9; git fetch letou refs/tags/$br:refs/tags/$br >/dev/null 2>&1 || pwd'
@@ -921,7 +921,7 @@ echo 10 > /sys/class/gpio/export; echo 22 > /sys/class/gpio/export; x=`cat /proc
 
 (export PATH=/usr/local/jdk1.5/bin:$PATH; export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
 
-adb shell i2cdetect -r -y 0x0 
+adb shell i2cdetect -r -y 0x0
 
 modify sshd_config and /etc/motd for emacs tramp remote grep
 
@@ -956,13 +956,13 @@ dd if=/dev/zero of=/data/1.txt count=2000000; dd if=/dev/zero of=/data/2.txt cou
 make error: no rule to make
 
 (find-file
- (let ((file 
+ (let ((file
         (replace-regexp-in-string "/src/.*?/" "/src/theatre/" (ajoke--buffer-file-name (current-buffer)))))
         file))
-        
+
 
 wget -r -l1 -k --page-requisites -c http://www.suimeng.com/files/article/html/4/4704/index.html
-ifconfig eth0 |grep -P 'inet addr:.*?\s' -o 
+ifconfig eth0 |grep -P 'inet addr:.*?\s' -o
 while true; do adb wait-for-device && adb shell 'echo 1 > /sys/power/wake_lock' &&  adb shell ls /dev/tegra*; (trap echo shit SIGINT;  adb logcat -v time); adb shell; done
 tar czfv ~/Downloads/flashing-`today`.tgz . --exclude=*.tar --exclude=*.zip --exclude=symbols --exclude=*.txt --exclude=*.xml --exclude-vcs -H
 
@@ -970,8 +970,8 @@ tar czfv ~/Downloads/flashing-`today`.tgz . --exclude=*.tar --exclude=*.zip --ex
 rfa 'export TAG=tegra-10.9.7; git tag|grep -q -e "^"$TAG"\$" && (git diff --quiet $TAG || (mkdir -p ~/`today`/$REPO_PATH && git diff --binary tegra-10.9.7 > ~/`today`/$REPO_PATH/letou_patch))'
 
 1) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 100
-2) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
-3) sudo update-alternatives --set javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
+2) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc
+3) sudo update-alternatives --set javadoc /usr/local/jdk1.5.0_22/bin/javadoc
 
 echo 'C:\PROGRA~1\MICROS~4\VC98\LIB;C:\PROGRA~1\MICROS~4\VC98\MFC\LIB;'|perl -a -F\; -ne 'for(@F) {chomp; system("cygpath", "-alw", $_)}'|xargs.exe -d '\n' bash -c 'for x in "$@"; do ln -s "$(cygpath -au "$x")" z`printf %02d $y``basename "$x"`; ((y++)); done' xx
 
@@ -989,10 +989,10 @@ boost and stlport:
 
   c. compile stlport, cmd.exe; configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install
 
-  d. compile boost: 
+  d. compile boost:
 
     i. cd build/jam/src, compile, copy bjam.exe to /c/windows/system32
-    ii. bjam -sBOOST_ROOT=. -sTOOLS=msvc "-sBUILD=debug release static/dynamic" 
+    ii. bjam -sBOOST_ROOT=. -sTOOLS=msvc "-sBUILD=debug release static/dynamic"
 
 http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.1.cab
 http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.2.cab
@@ -1010,13 +1010,13 @@ http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/37
 http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat
 http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe
 
-cygwin path from dos to unix 
+cygwin path from dos to unix
 
-perl -a -F\; -ne 'use String::ShellQuote; 
+perl -a -F\; -ne 'use String::ShellQuote;
 for (@F) {
-    chomp; 
-    $_ = shell_quote($_); 
-    $_ = `cygpath -alw $_ 2>/dev/null`; 
+    chomp;
+    $_ = shell_quote($_);
+    $_ = `cygpath -alw $_ 2>/dev/null`;
     chomp;
     $_ = shell_quote($_);
     $_ = `cygpath -au $_ 2>/dev/null`;
@@ -1027,15 +1027,15 @@ for (@F) {
 
 cygwin path from unix to dos
 
-perl -a -F':' -ne 'use String::ShellQuote; 
+perl -a -F':' -ne 'use String::ShellQuote;
 for (@F) {
     chomp;
     if (not -d $_) {
         print STDERR "error: not dir: $_\n";
         next;
     }
-    $_ = shell_quote($_); 
-    $_ = `cygpath -asw $_ 2>/dev/null`; 
+    $_ = shell_quote($_);
+    $_ = `cygpath -asw $_ 2>/dev/null`;
     chomp;
     -d $_ and print $_ . ";";
 }'
@@ -1047,7 +1047,7 @@ mkdir -p ~/system-config/bin/Linux/ext/android-screen
 cd ~/system-config/bin/Linux/ext/android-screen
 lftp -c 'mirror http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/ . '
 for x in *.jar; do export CLASSPATH=`pwd`/$x:$CLASSPATH ; done
-echo $CLASSPATH 
+echo $CLASSPATH
 java net.srcz.android.screencast.Main
 )
 
@@ -1055,9 +1055,9 @@ http://download.microsoft.com/download/f/c/a/fca6767b-9ed9-45a6-b352-839afb2a267
 
 awk '
 BEGIN{
-    printf("%02x:%02x:%02x:%02x:%02x:%02x", 
-           int(rand() * 256), 
-           int(rand() * 256), 
+    printf("%02x:%02x:%02x:%02x:%02x:%02x",
+           int(rand() * 256),
+           int(rand() * 256),
            int(rand() * 256),
            int(rand() * 256),
            int(rand() * 256),
@@ -1067,7 +1067,7 @@ BEGIN{
 git log letou/master |grep factool -B 5|grep '^commit'|pn 2|reverse |xargs bash -c 'for x in "$@"; do git cherry-pick $x; done' xx
 ssh r889 bash -c "$(printf %q "set-host-hosts lab `host-hosts lab` > /tmp/hosts; sudo bash -c \"cat /tmp/hosts > /etc/hosts\"")"
 
-on winxp: 
+on winxp:
 cat >/c/ywb.txt <<EOF
 [RegionalSettings]
 InputLocale = 0804:e0350804
@@ -1075,11 +1075,11 @@ EOF
 
 Control intl.cpl,,/f:"C:\ywb.txt"
 
-on win7: 
+on win7:
 cat > /c/ywb.xml <<EOF
 <gs:GlobalizationServices xmlns:gs="urn:longhornGlobalizationUnattend">
   <gs:UserList>
-    <gs:User UserID="Current" CopySettingsToDefaultUserAcct="true" CopySettingsToSystemAcct="true" /> 
+    <gs:User UserID="Current" CopySettingsToDefaultUserAcct="true" CopySettingsToSystemAcct="true" />
   </gs:UserList>
   <gs:InputPreferences>
     <gs:InputLanguageID Action="add" ID="0804:{E429B25A-E5D3-4D1F-9BE3-0C608477E3A1}{EF63706D-31C4-490E-9DBB-BD150ADC454B}" />
@@ -1089,7 +1089,7 @@ EOF
 
 Control intl.cpl,,/f:"C:\ywb.xml"
 
-windows xp多个用户logon: 
+windows xp多个用户logon:
 Click Start, then “Run…”, type “regedit” (without quotes) and press ENTER;
 navigate in the Windows Registry Tree to reach this path:
 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\Licensing Core;
@@ -1101,7 +1101,7 @@ Click Start, then “Run…”, type “gpedit.msc” (without quotes) and press
 open Computer Configuration > Administrative Templates > Windows Components > Terminal Services;
 double click “Limit number of connections”, choose “Enabled” and set the maximum number of concurrent connections you want to allow (2 or more), then Restart Windows in normal mode.
 
-xrandr --output CRT1 --same-as LVDS --auto 
+xrandr --output CRT1 --same-as LVDS --auto
 xrandr --output LVDS --mode 1280x728
 
 bzr launchpad-login baohaojun
@@ -1158,7 +1158,7 @@ echo keycode 97 = Alt
 中文xp service pack 3
 http://www.microsoft.com/downloads/zh-cn/details.aspx?FamilyID=5b33b5a8-5e76-401f-be08-1e1555d4f3d4
 
-第一步：从语言的本源入手。打开注册表，找到hkey_local_machine\system\controlset001\control\nls\language，把“default”和“installlanguage”的的值“0804”改为“0409” （见图）。“0804”是简体中文的语言代号，“0409”是英文的语言代号。 
+第一步：从语言的本源入手。打开注册表，找到hkey_local_machine\system\controlset001\control\nls\language，把“default”和“installlanguage”的的值“0804”改为“0409” （见图）。“0804”是简体中文的语言代号，“0409”是英文的语言代号。
 
 mkdir /var/myca; cd /var/myca
 1) /usr/lib/ssl/misc/CA.sh -newca

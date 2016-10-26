@@ -7,5 +7,5 @@ if test "$1" = on; then
 fi
 
 if test "$USER" = bhj; then
-    command sudo ~/system-config/bin/sudo-setleds
+    command sudo ~/system-config/bin/sudo-setleds $toggle caps
 fi

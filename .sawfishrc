@@ -76,7 +76,7 @@
 (load-file "~/system-config/.sawfish/iswitch-window.jl")
 
 (defun bhj-global-cycle-class (window)
-  (let ((class (window-class window)))
+  (let ((class (bhj-window-class window)))
     (cond
      ((string-match im-class class 0 t)
       im-class)
@@ -88,7 +88,7 @@
       class))))
 
 (defun bhj-window-class (window)
-  (window-class window))
+  (or (window-class window) ""))
 
 (bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "F1"  '(system "EMACS=t s&"))
@@ -127,7 +127,7 @@
 (bind-keys s-h-keymap "Super-i" '(read-event (format nil "Window is %s;\n\n WM_CLASS is: %s;\n\n and Window class is: %s\n\n and Window name is %s\n\nPress any key to continue..."
                                                      (input-focus)
                                                      (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
-                                                     (window-class (input-focus))
+                                                     (bhj-window-class (input-focus))
                                                      (window-name (input-focus)))))
 (bind-keys s-h-keymap "i" '(system "indent-clipboard&"))
 (bind-keys s-h-keymap "I" '(system "deindent-clipboard&"))
@@ -197,7 +197,7 @@
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/system-config/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
 
-; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
+                                        ; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-both-global&window-keymaps "XF86Search" '(system "find-or-exec Search beagle-search&"))
 
 (bind-both-global&window-keymaps "C-S-XF86PowerOff"  '(system "lock-screen&"))
@@ -210,7 +210,7 @@
   (when (eq (car to) 'quote)
     (setq to (cadr to)))
   (let* ((fw (input-focus))
-         (class (window-class fw))
+         (class (bhj-window-class fw))
          (map-to (or
                   (cdr (or (assoc (intern class) to)
                            (assoc t to)))
@@ -421,18 +421,22 @@
   (unbind-both-global&window-keymaps "ESC"))
 
 (setq no-tap-drag-window-class-re "acroread")
+
+(defun do-focus-global-remap-hook (w focus-mode)
+  (do-focus-global-remap w focus-mode))
+
 (defun do-focus-global-remap (w focus-mode)
-  (let ((class (window-class w)))
+  (let ((class (bhj-window-class w)))
     (if (string-match emacs-style-window-class-re class 0 t)
         (undo-global-remap (intern class)) ; it will map emacs style windows if specified
       (do-global-remap (intern class)))
-    (if (string-match gnome-windows-re (window-class w) 0 t)
+    (if (string-match gnome-windows-re class 0 t)
         (setq bhj-is-gnome? t)
       (setq bhj-is-gnome? nil))
-    (if (string-match no-tap-drag-window-class-re (window-class w) 0 t)
+    (if (string-match no-tap-drag-window-class-re class 0 t)
         (system "synclient TapAndDragGesture=0&")
       (system "synclient TapAndDragGesture=1&"))))
-(add-hook 'focus-in-hook do-focus-global-remap)
+(add-hook 'focus-in-hook do-focus-global-remap-hook)
 
 ;; (setq focus-in-hook (cons (nth 2 focus-in-hook)
 ;;                         (cons (nth 4 focus-in-hook))))
@@ -515,7 +519,7 @@
   (if (or (and (eq (input-focus) window)
                bhj-is-gnome?)
           (and (not (eq (input-focus) window))
-               (string-match gnome-windows-re (window-class window) 0 t)))
+               (string-match gnome-windows-re (bhj-window-class window) 0 t)))
       (progn
         (system
          (format nil "xdotool_window=%d xdotool-when-keyboard-clear key %s&"
@@ -536,7 +540,7 @@
 (defun super-key-binding (key)
                                         ;(message (format nil "calling %s for %s" key (bhj-window-class (input-focus)) ))
   (let* ((fw (input-focus))
-         (class (window-class fw))
+         (class (bhj-window-class fw))
          (map-to (or (cdr (or (assoc (intern class) (assoc key super-key-window-remap))
                               (assoc t (assoc key super-key-window-remap))))
                      (concat "C-" key))))
@@ -553,10 +557,7 @@
 (defun bind-super-key (key)
   (bind-both-global&window-keymaps
    (concat "Super-" key)
-   `(super-key-binding ,key))
-  (bind-keys window-keymap
-             (concat "Super-" key)
-             `(super-key-binding ,key)))
+   `(super-key-binding ,key)))
 
 (mapc
  #'bind-super-key
@@ -667,6 +668,9 @@
 (bind-keys s-h-keymap "Super-+" '(system "terminal-font-change +&"))
 (bind-keys s-h-keymap "Super--" '(system "terminal-font-change -&"))
 
+(defun ime-toggle-hook (w focus-mode)
+  (ime-toggle w focus-mode))
+
 (defun ime-toggle (w focus-mode)
   (if (window-get w 'scroll-lock)
       (scroll-lock-on)
@@ -674,14 +678,14 @@
   (if (window-get w 'code-reading)
       (emacs-code-reading-on w)
     (emacs-code-reading-off w))
-  (if (string= (window-class w) "rdesktop")
+  (if (string= (bhj-window-class w) "rdesktop")
       (bind-both-global&window-keymaps "M-C-RET" '(system "toggle-rdesktop-keys&"))
     (system "toggle-rdesktop-keys off&"))
-  (if (string= (window-class w) "Emacs")
+  (if (string= (bhj-window-class w) "Emacs")
       (unbind-both-global&window-keymaps "Super-\\")
     (bind-both-global&window-keymaps "Super-\\"  '(system "xdotool-when-keyboard-clear key super+F12&"))))
 
-(add-hook 'focus-in-hook ime-toggle)
+(add-hook 'focus-in-hook ime-toggle-hook)
 
 (system "~/system-config/bin/sawfish-auto-start&")
 (setq esc-x-keymap (make-keymap))
@@ -794,12 +798,12 @@
                        (setq X wX))
                      (when (< Y wY)
                        (setq Y wY))))
-            (filter (lambda (w) (string-equal class (window-class w))) (managed-windows)))
+            (filter (lambda (w) (string-equal class (bhj-window-class w))) (managed-windows)))
     (format nil "-x %d -y %d --width %d --height %d" x y (- X x) (- Y y))))
 
 (bind-keys window-keymap "Super-q"
            (lambda ()
              (let ((window (input-focus)))
-               (unless (equal (window-class window) "Xfce4-panel")
+               (unless (equal (bhj-window-class window) "Xfce4-panel")
                  (delete-window-safely window)))))
 (bind-both-global&window-keymaps "Super-h" s-h-keymap)
