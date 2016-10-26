@@ -666,7 +666,22 @@ local function search_mail(what)
    end
    adb_event"key back sleep .5 adb-tap 218 323 sleep .2 key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 667 608"
 end
-
+local function search_and_start_app(what)
+   search_activity = "com.smartisanos.quicksearch/com.android.quicksearchbox.SearchActivity"
+   adb_start_activity(search_activity)
+   putclip_nowait(what)
+   for i = 1, 10 do
+      if wait_input_target_n(1, search_activity) ~= "" then
+         break
+      else
+         log("wait for search_activity: %d", i)
+         if i == 10 then
+            return
+         end
+      end
+   end
+   adb_event"adb-tap 999 127 key scroll_lock"
+end
 local function get_coffee(what)
    for i = 1, 5 do
       if social_need_confirm and not yes_or_no_p("Will now open the Wechat App and goto it's home page") then
@@ -2384,6 +2399,8 @@ t1_call = function(number)
          t1_find_dingding_contact(who)
       elseif where == "coffee" then
          get_coffee(who)
+      elseif where == "app" then
+         search_and_start_app(who)
       elseif where == "mail" then
          search_mail(who)
       else
@@ -2511,6 +2528,7 @@ M.t1_share_to_qq = t1_share_to_qq
 M.weixin_find_friend = weixin_find_friend
 M.qq_open_homepage = qq_open_homepage
 M.get_coffee = get_coffee
+M.search_and_start_app = search_and_start_app
 
 local function be_quiet()
    social_need_confirm = false
