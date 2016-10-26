@@ -1443,8 +1443,15 @@ qq_find_group_friend = function(friend_name)
       log("did not get troopWindow: %s", window)
       return
    end
-   adb_event("sleep .5 adb-tap 243 300")
-   wait_input_target(troopList)
+
+   for i = 1, 40 do
+         adb_event("sleep .1 adb-tap 243 300")
+         if wait_input_target_n(3, troopList) ~= "" then
+            break
+         else
+            log("wait for troopList input: %d", i)
+         end
+   end
 
    the_1st_member_click = "adb-tap 326 229"
    adb_event("key scroll_lock key space key DEL sleep .5 " .. the_1st_member_click)
