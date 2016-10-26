@@ -1,5 +1,14 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
+(setq org-emphasis-regexp-components
+      '(
+        "：，。、  \t('\"{" ;pre
+        "- ：，。、 \t.,:!?;'\")}\\" ;post
+        " \t\r\n,\"'" ;border *forbidden*
+        "." ;body-regexp
+        1 ; newline
+        ))
+
 (when (file-exists-p "~/.config/system-config/vim-is-evil")
   (setq warning-minimum-level :error))
 
