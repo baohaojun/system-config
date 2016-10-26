@@ -16,6 +16,7 @@ local last_uploaded_pics = {}
 local weixin_open_homepage
 local file_exists
 local social_need_confirm = false
+local right_button_x = 984
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local adb_push, adb_pull, adb_install
@@ -47,12 +48,10 @@ local where_is_dial_key
 local rows_mail_att_finder
 local UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
 local is_debugging = false
-local using_scroll_lock = true
 local using_adb_root
 local adb_unquoter
 local is_windows = false
 local debug_set_x = ""
-local ime_height_ref = 874
 local default_width, default_height = 1080, 1920
 local real_width, real_height = 1080, 1920
 local app_width, app_height = 1080,1920
@@ -383,6 +382,9 @@ end
 
 local function adb_event(events)
    if type(events) == 'string' then
+      if social_need_confirm then
+         log("adb_event %s", events)
+      end
       adb_event(split(" ", events))
       return
    end
@@ -514,10 +516,6 @@ yes_or_no_p = function(txt)
 end
 
 check_scroll_lock = function()
-   if using_scroll_lock then
-      return
-   end
-
    local input_method, ime_height, ime_connected, current_input_method
    local function using_wrench_ime()
       input_method, ime_height, ime_connected, current_input_method = adb_get_input_window_dump()
@@ -980,18 +978,12 @@ adb_get_input_window_dump = function()
    local ime_xy = last(string.gmatch(input_window_dump, "Requested w=%d+ h=%d+"))
    local ime_height = 0
    if input_method_active and ime_xy:match('Requested w=%d+ h=') then
-      ime_height = ime_xy:match('Requested w=%d+ h=(%d+)')
-      if tonumber((ime_height - (real_height - app_height)) * default_height / real_height ) >= 800 then -- new version of google pinyin ime?
-         if input_window_dump:match('package=com.google.android.inputmethod.pinyin') then
-            ime_height = (1920 - 1140) * real_height / default_height + (real_height - app_height)
-         elseif input_window_dump:match('package=com.wrench.inputmethod.pinyin') then
-            ime_height = (1920 - 1125) * real_height / default_height + (real_height - app_height)
-         elseif input_window_dump:match('package=com.google.android.inputmethod.latin') or
-            input_window_dump:match('package=com.android.inputmethod.latin') then
-            ime_height = 800 * real_height / default_height + (real_height - app_height)
-         end
-      end
+      ime_height = app_height * 0.105 * 4
    end
+   -- log("ime_height = %d; real_height = %d; default_height = %d; app_height = %d",
+   --     ime_height, real_height, default_height, app_height)
+
+   ime_height = ime_height * default_height / app_height
 
    local ime_connected = not dump_str:match("mServedInputConnection=null")
    return input_method_active, ime_height, ime_connected, current_input_method
@@ -1287,7 +1279,7 @@ t1_config = function(passedConfigDirPath)
        error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 16")
    end
    local dump = adb_pipe{'dumpsys', 'window'}
-   real_width = dump:match('init=(%d+x%d+)')
+   real_width = dump:match('cur=(%d+x%d+)')
    real_height = tonumber(real_width:match('x(%d+)'))
    real_width = tonumber(real_width:match('(%d+)x'))
 
@@ -1298,6 +1290,10 @@ t1_config = function(passedConfigDirPath)
    real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
    log("app_width_ratio is %f, app_height_ratio is %f ", app_width_ratio, app_height_ratio)
 
+   if app_width ~= default_width then
+      right_button_x = 1080 - 80 * default_width / app_width
+   end
+
    local id = adb_pipe("id")
    if id:match("uid=0") then
       using_adb_root = true
@@ -1305,16 +1301,7 @@ t1_config = function(passedConfigDirPath)
       using_adb_root = false
    end
 
-   local scroll = adb_pipe("getprop persist.smartisan.pastetool")
-   if scroll:match("1") then
-      debugging("pastetool is true")
-      using_scroll_lock = true
-   else
-      using_scroll_lock = false
-      check_apk_installed("WrenchIME.apk", "WrenchIME.apk.md5")
-      debugging("pastetool is false")
-   end
-
+   check_apk_installed("WrenchIME.apk", "WrenchIME.apk.md5")
 
    if passedConfigDirPath then
       configDir = passedConfigDirPath
@@ -1342,7 +1329,7 @@ t1_config = function(passedConfigDirPath)
    end
 
    phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
-   return ("brand is %s, paste is %s"):format(brand, using_scroll_lock)
+   return ("brand is %s"):format(brand)
 end
 
 get_a_note = function(text)
@@ -1587,7 +1574,7 @@ t1_post = function(text) -- use weixin
       t1_paste()
       return
    else
-      local add, post_button = '', '958 1820'
+      local add, post_button = '', right_button_x .. ' 1820'
       local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
       log("input_method is %s, ime_xy is %s", input_method, ime_height)
       -- debugging("ime_xy is %s", ime_xy)
@@ -1600,7 +1587,7 @@ t1_post = function(text) -- use weixin
       if input_method then
          if ime_height ~= 0 then
             add = ''
-            post_button = ('984 %d'):format(1920 - ime_height - 100)
+            post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - 80)
          end
       else
          if not ime_connected then
@@ -1612,7 +1599,7 @@ t1_post = function(text) -- use weixin
       end
 
       if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
-         post_button = '954 166'
+         post_button = right_button_x .. ' 166'
       end
 
       local window_type = window_post_button_map[window]
@@ -1644,7 +1631,7 @@ t1_post = function(text) -- use weixin
       if window_type == 'weixin-chat' then
          post_button = post_button -- empty
       elseif window_type == 'qq-chat' then
-         post_button = ('975 %d'):format(1920 - ime_height - 200)
+         post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - 200)
       elseif window_type == 'weixin-confirm' then
          if yes_or_no_p("Send button is above the input method, on the right end. Confirm?") then
             post_button = post_button
@@ -1652,10 +1639,10 @@ t1_post = function(text) -- use weixin
             post_button = ''
          end
       elseif window_type == 'weibo-share' then
-         post_button = '991 166'
+         post_button = right_button_x .. ' 166'
       elseif window_type == 'weibo-confirm' then
          if yes_or_no_p("Send button is top-right corner of phone's screen. Confirm?") then
-            post_button = '991 166'
+            post_button = right_button_x .. ' 166'
          else
             post_button = ''
          end
@@ -1664,7 +1651,6 @@ t1_post = function(text) -- use weixin
       end
 
       debugging("add is %s", add)
-
       adb_event(string.format("%s key scroll_lock %s", add, post_button))
    end
    return "text sent"
@@ -1823,7 +1809,7 @@ local function picture_to_weixin_chat(pics, ...)
    end
 
    local input_method, ime_height = close_ime()
-   local post_button = ('984 %d'):format(1920 - 50)
+   local post_button = ('%d %d'):format(right_button_x, 1920 - 50)
    local chatWindow = adb_top_window()
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
@@ -1903,7 +1889,7 @@ end
 
 local function click_to_album_wx_chat_style(event1, activity1, ...)
    local input_method, ime_height = close_ime()
-   local post_button = ('984 %d'):format(1920 - 50)
+   local post_button = ('%d %d'):format(right_button_x, 1920 - 50)
    local old_top_window = adb_top_window()
 
    adb_event(post_button .. " sleep .2 " .. event1)
@@ -2037,7 +2023,7 @@ local function picture_to_weibo_chat(pics, ...)
    end
 
    local input_method, ime_height = close_ime()
-   local post_button = ('984 %d'):format(1920 - ime_height - 50)
+   local post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - 50)
    for i = 1, #pics do
       local ext = last(pics[i]:gmatch("%.[^.]+"))
       local target = pics[i]
