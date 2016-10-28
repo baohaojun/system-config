@@ -47,6 +47,9 @@ sub is_keyword_or_defined($)
 sub type_it($$)
 {
     debug "type it: $_[0] $_[1]";
+    if ($_[1] eq "instanceof") {
+        return;
+    }
     $defs{$_[0]} = 1;
     $refs{$_[1]} = 1;
     $var_type_map{$_[0]} = {} unless exists $var_type_map{$_[0]};

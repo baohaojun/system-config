@@ -19,7 +19,7 @@ our @keywords = ("abstract", "assert", "boolean", "break", "byte",
               "private", "protected", "public", "return", "short",
               "static", "strictfp", "super", "switch", "synchronized",
               "this", "throw", "throws", "transient", "true", "try",
-              "void", "volatile", "while" );
+              "void", "volatile", "while", "Override" );
 
 our $keywords = join('|', @keywords);
 our $keywords_re = qr(\b(?:$keywords)\b);
