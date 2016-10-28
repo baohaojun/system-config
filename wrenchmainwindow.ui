@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
+    <width>618</width>
     <height>592</height>
    </rect>
   </property>
@@ -242,6 +242,20 @@
             <property name="icon">
              <iconset resource="Wrench.qrc">
               <normaloff>:/skin/default/resources/mms.png</normaloff>:/skin/default/resources/mms.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="tbLauncher">
+            <property name="toolTip">
+             <string>Launcher (start apps)</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Wrench.qrc">
+              <normaloff>:/skin/default/resources/MOBILE_PHONE.png</normaloff>:/skin/default/resources/MOBILE_PHONE.png</iconset>
             </property>
            </widget>
           </item>

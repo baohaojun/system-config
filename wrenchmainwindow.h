@@ -102,6 +102,8 @@ private slots:
 
     void on_tbPhoneScreen_toggled(bool checked);
 
+    void on_tbLauncher_clicked();
+
 private:
 
     bool anyShareChecked();

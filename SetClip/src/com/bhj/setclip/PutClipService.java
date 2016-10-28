@@ -1,11 +1,11 @@
 package com.bhj.setclip;
 
-import android.app.ActivityManager.RunningTaskInfo;
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.Notification;
 import android.app.Service;
-import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ClipData;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -16,22 +16,23 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts.Entity;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
-import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -183,18 +184,55 @@ public class PutClipService extends Service {
         return false;
     }
 
-    private void loadApps() {
+
+
+    private static Bitmap drawableToBitmap (Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+
+    private void loadApps() throws IOException {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         mApps = getPackageManager().queryIntentActivities(mainIntent, 0);
 
-        ResolveInfo info = mApps.get(0);
-        Drawable icon = info.activityInfo.loadDefaultIcon(getPackageManager());
-        Bitmap bm = Bitmap.createBitmap(icon.getIntrinsicWidth(), icon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bm);
-        icon.draw(canvas);
-        saveBitmapToFile(sdcard, "hello-world.png", bm, Bitmap.CompressFormat.PNG, 100);
+        File wrenchDir = new File(sdcard, "Wrench");
+        wrenchDir.mkdir();
+
+        FileWriter appListFile = new FileWriter(new File(wrenchDir, "apps.txt"));
+
+        for (int i = 0; i < mApps.size(); i++) {
+            ResolveInfo info = mApps.get(i);
+            appListFile.write(
+                String.format("%s=%s=%s\n",
+                              info.activityInfo.name,
+                              info.activityInfo.packageName,
+                              info.activityInfo.loadLabel(getPackageManager())));
+            Drawable icon = info.activityInfo.loadIcon(getPackageManager());
+            Bitmap bm = drawableToBitmap(icon);
+            saveBitmapToFile(wrenchDir, String.format("%s.png", info.activityInfo.name), bm, Bitmap.CompressFormat.PNG, 100);
+        }
+        appListFile.close();
+        new File(wrenchDir, "apps.txt").renameTo(new File(wrenchDir, "apps.info"));
     }
 
     @Override
@@ -230,7 +268,12 @@ public class PutClipService extends Service {
                 String mPhoneNumber = tMgr.getLine1Number();
                 writeFile(mPhoneNumber);
             } else if (intent.getIntExtra("listapps", 0) == 1) {
-                loadApps();
+                try {
+                    loadApps();
+                } catch (IOException e) {
+                    Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 273), e);
+                }
+
             } else if (intent.getIntExtra("listcontacts", 0) == 1) {
                 String data2 = intent.getStringExtra("data2");
                 String data3 = intent.getStringExtra("data3");

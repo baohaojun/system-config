@@ -1,7 +1,13 @@
 #!/bin/bash
 
+apk=SetClip-release.apk
+
+if test "$ANT_DEBUG_BUILD" = true; then
+    apk=SetClip-debug.apk
+fi
+
 (
-    cp bin/SetClip-release.apk ~/src/github/Wrench/release/Setclip.apk
+    cp bin/$apk ~/src/github/Wrench/release/Setclip.apk
     cd ~/src/github/Wrench/release/
     md5sum Setclip.apk > Setclip.apk.md5
     adb push Setclip.apk.md5 /sdcard/

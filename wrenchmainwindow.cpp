@@ -1020,3 +1020,8 @@ void WrenchMainWindow::moveEvent(QMoveEvent* ev)
         QTimer::singleShot(100, this, SLOT(moveVncMainWinWhenMoving()));
     }
 }
+
+void WrenchMainWindow::on_tbLauncher_clicked()
+{
+    mLuaThread->addScript(QStringList() << "launch_apps");
+}

@@ -12,6 +12,7 @@
     <qresource prefix="/skin/default">
       <file>resources/capture-screen.png</file>
       <file>resources/phone-screen.png</file>
+      <file>resources/MOBILE_PHONE.png</file>
       <file>resources/picture.png</file>
       <file>resources/emoji.png</file>
       <file>resources/com_sina_weibo_icon.png</file>
