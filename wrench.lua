@@ -777,7 +777,7 @@ weixin_open_homepage = function()
             sleep(.1)
             waiting_search = false
             return
-         elseif top_window ~= weixinLauncherActivity then
+         elseif top_window and top_window ~= weixinLauncherActivity then
             log("exit the current '%s' by back key %d", top_window, i)
             waiting_search = false
          end
@@ -1419,7 +1419,7 @@ qq_find_friend = function(friend_name)
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
       qq_open_homepage()
-      adb_event"sleep .3 adb-tap 391 288"
+      adb_event"sleep .3 adb-tap 324 254"
       local top_window = wait_input_target_n(15, qqChatActivity2, qqGroupSearch)
       adb_event"key scroll_lock sleep .8"
       if top_window and top_window:match(qqGroupSearch) then
