@@ -41,8 +41,10 @@ public slots:
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
     void onSelectArgs(const QStringList& args);
+    void onSelectApps();
     void startTask(const QString& task);
     void on_argSelected(const QString& arg);
+    void on_appSelected(const QString& app);
     void moveVncMainWin();
     void moveVncMainWinWhenMoving();
     void moveEvent(QMoveEvent*);
@@ -111,6 +113,7 @@ private:
     QMap<QString, QString> mMmsReceiverMap;
 
     DialogGetEntry* mSelectArgDialog;
+    DialogGetEntry* mSelectAppDialog;
     void createTrayIcon();
     void closeEvent(QCloseEvent *event);
     void showEvent(QShowEvent *event);

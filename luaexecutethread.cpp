@@ -94,6 +94,13 @@ static int l_selectArg(lua_State* L)
     return 1;
 }
 
+static int l_selectApps(lua_State* L)
+{
+    QString res = that->selectApps();
+    lua_pushstring(L, res.toUtf8().constData());
+    return 1;
+}
+
 static int l_qt_adb_pipe(lua_State* L)
 {
     int n = luaL_len(L, -1);
@@ -258,6 +265,9 @@ void LuaExecuteThread::run()
     lua_pushcfunction(L, l_selectArg);
     lua_setglobal(L, "select_args");
 
+    lua_pushcfunction(L, l_selectApps);
+    lua_setglobal(L, "select_apps");
+
     lua_pushcfunction(L, l_adb_push);
     lua_setglobal(L, "qt_adb_push");
 
@@ -381,12 +391,30 @@ QString LuaExecuteThread::selectArgs(const QStringList& args)
     return res;
 }
 
+QString LuaExecuteThread::selectApps()
+{
+    emit selectAppsSig();
+    mSelectAppsMutex.lock();
+    mSelectAppsWait.wait(&mSelectAppsMutex);
+    QString res = mSelectedApp;
+    mSelectAppsMutex.unlock();
+    return res;
+}
+
 void LuaExecuteThread::on_argSelected(const QString& arg)
 {
     mSelectArgsMutex.lock();
     mSelectedArg = arg;
     mSelectArgsMutex.unlock();
     mSelectArgsWait.wakeOne();
+}
+
+void LuaExecuteThread::on_appSelected(const QString& app)
+{
+    mSelectAppsMutex.lock();
+    mSelectedApp = app;
+    mSelectAppsMutex.unlock();
+    mSelectAppsWait.wakeOne();
 }
 
 void LuaExecuteThread::load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)

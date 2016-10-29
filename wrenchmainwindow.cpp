@@ -38,6 +38,7 @@
 #include "emojimodel.h"
 #include "contactmodel.h"
 #include "strlistmodel.h"
+#include "appsmodel.h"
 #include "phonescreendialog.h"
 #include <QStandardPaths>
 #include "wrench.h"
@@ -217,6 +218,21 @@ void WrenchMainWindow::onSelectArgs(const QStringList& args)
     dialog.disconnect();
 }
 
+void WrenchMainWindow::onSelectApps()
+{
+    AppsModel model;
+    QString prompt = "Select the app to launch";
+
+    DialogGetEntry dialog(&model, prompt, this);
+    connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_appSelected(QString)));
+    mSelectAppDialog = &dialog;
+    dialog.exec();
+    if (mSelectAppDialog != NULL) {
+        on_appSelected("");
+    }
+    dialog.disconnect();
+}
+
 bool WrenchMainWindow::anyShareChecked()
 {
     return  ui->tbWeibo->isChecked() ||
@@ -358,6 +374,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
         this->connect(mLuaThread.data(), SIGNAL(requestSyncScreen()), mPhoneScreenDialog.data(), SLOT(syncScreen()), Qt::QueuedConnection);
     }
     connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
+    connect(mLuaThread.data(), SIGNAL(selectAppsSig()), this, SLOT(onSelectApps()));
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
     if (! is_starting) {
@@ -706,6 +723,13 @@ void WrenchMainWindow::on_argSelected(const QString& arg)
     mSelectArgDialog->close();
     mSelectArgDialog = NULL;
     mLuaThread->on_argSelected(arg);
+}
+
+void WrenchMainWindow::on_appSelected(const QString& app)
+{
+    mSelectAppDialog->close();
+    mSelectAppDialog = NULL;
+    mLuaThread->on_appSelected(app);
 }
 
 void WrenchMainWindow::on_tbMailAddTo_clicked()

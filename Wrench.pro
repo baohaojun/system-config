@@ -79,6 +79,7 @@ SOURCES += main.cpp\
         filteringmodel.cpp \
         contactmodel.cpp \
         strlistmodel.cpp \
+        appsmodel.cpp \
         filteringedit.cpp \
         dialoggetentry.cpp \
         filteringlistview.cpp \
@@ -194,6 +195,7 @@ HEADERS  += wrenchmainwindow.h \
             filteringmodel.h \
             contactmodel.h \
             strlistmodel.h \
+            appsmodel.h \
             wrench.h \
             filteringedit.h \
             filteringlistview.h \

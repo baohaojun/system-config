@@ -1534,15 +1534,21 @@ launch_apps = function()
    apps_file = io.open("apps.info")
    local apps_txt = apps_file:read("*a")
    local apps = split("\n", apps_txt)
+   local app_table = {}
    for i = 1, #apps do
       line = apps[i]
       local s = split("=", line)
       local class_ = s[1]
       local package_ = s[2]
+      app_table[class_] = package_
       local label_ = s[3]
       if not file_exists(class_ .. ".png") then
          adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", class_ .. ".png"}
       end
+   end
+   app = select_apps()
+   if app ~= "" then
+      adb_start_activity(("%s/%s"):format(app_table[app], app))
    end
 end
 
