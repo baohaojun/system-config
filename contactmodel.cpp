@@ -190,12 +190,22 @@ void ContactModel::filterSelectedItems(const QStringList& split)
 
     foreach(const QString& history, mInputTextHistory) {
         int match = 1;
+        QStringList pinyinHistoryList = getPinyinSpelling(history);
+        pinyinHistoryList << history;
         foreach(const QString& stem, split) {
-            if (! history.contains(stem)) {
+            int matched_1 = 0;
+            foreach (const QString& p, pinyinHistoryList) {
+                if (p.contains(stem)) {
+                    matched_1 = 1;
+                    break;
+                }
+            }
+            if (! matched_1) {
                 match = 0;
                 break;
             }
         }
+
         if (match) {
             SelectedItem si(history, history);
             si.icon = mDefaultAvatar;
