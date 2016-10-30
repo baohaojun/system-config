@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[程序员怎样学习日语是最好的？]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html"/>
+    <updated>2016-49-30T22:10:54+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[二十年高考怪现象]]></title>
     <link href="http://baohaojun.github.io/blog/2016/06/07/0-My-University-Entrance-Exam.html"/>
     <updated>2016-06-07T10:28:22+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html"/>
     <updated>2015-11-18T14:09:02+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[优化了一下手机上看博客的效果]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html"/>
-    <updated>2015-11-04T13:20:01+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/11/04/0-blog-optimization-for-viewing-on-phone.html</id>
   </entry>
 </feed>

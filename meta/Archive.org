@@ -1,9 +1,14 @@
 #+title: Archive
  * 2016
+  - 2016-10
+   * 2016-10-30
+
+     [[../blog/2016/10/30/0-Learning-Japanese-as-a-Chinese-Programmer.org][程序员怎样学习日语是最好的？]]
+
   - 2016-06
    * 2016-06-07
 
-     [[../blog/2016/06/07/0-My-University-Entrance-Exam.org][二十年前高考怪现象]]
+     [[../blog/2016/06/07/0-My-University-Entrance-Exam.org][二十年高考怪现象]]
 
   - 2016-05
    * 2016-05-06
