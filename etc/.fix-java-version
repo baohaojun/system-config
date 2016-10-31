@@ -12,5 +12,6 @@ elif grep -q 'required_version := "1.7.x"' $main_mk; then
     PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
     echo using java 1.7
 else
+    PATH=~/external/bin/Linux/ext/jdk/bin:$PATH
     echo using java 1.6
 fi
