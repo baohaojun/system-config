@@ -1049,7 +1049,7 @@ adb_start_service_and_wait_file = function(service_cmd, file)
          [[
             rm %s;
             am startservice --user 0 -n %s&
-            for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+            for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 $(seq 1 40); do
                if test ! -e %s; then
                   sleep .1 || busybox sleep .1;
                else
