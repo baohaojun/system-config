@@ -35,6 +35,13 @@ else
             need_regenerate_el=true
         fi
     done
+
+    for p in "${extra_projects[@]}"; do
+        b=$(basename $p)
+        if test ! -e "$b/.git"; then
+            git clone $p
+        fi
+    done
     if ! test -d ~/.emacs.d/site-lisp; then
         relative-link emacs.d/site-lisp ~/.emacs.d/
     fi
