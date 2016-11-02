@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-file=$(readlink -f ~/.config/xfce4/terminal/terminalrc)
-size=$(perl -ne 'if (m/FontName=.* (\d+)$/) {print $1; last}' $file)
+file=$(readlink -f ~/.config/lxterminal/lxterminal.conf)
+size=$(perl -ne 'if (m/^fontname=.* (\d+)$/) {print $1; last}' $file)
 if test "$1" = +; then
     (( size += 2 )) || true
 elif test "$1" = -; then
@@ -10,5 +10,9 @@ else
     echo usage: $(basename $0) '+|-'
     exit
 fi
-perl -npe "s!(FontName=.* )(\d+)\$!\${1}$size!" $file > $file.$$
+perl -npe "s!(fontname=.* )(\d+)\$!\${1}$size!" $file > $file.$$
+bhj-notify terminal-font: $size
 mv $file.$$ $file
+sawfish-destroy-window 'Lxterminal'
+sleep .1
+konsole.bhj

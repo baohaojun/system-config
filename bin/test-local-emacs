@@ -3,4 +3,4 @@ set -e
 cd ~/external/
 rmdir local || true
 ln -s external-local local
-xfce4-terminal -e 'bash -c "emacs"; rm ~/external/local'
+lxterminal -e 'bash -c "emacs"; rm ~/external/local'
