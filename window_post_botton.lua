@@ -131,6 +131,7 @@ map['com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity'] = 'qq-c
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity'] = 'manual-post'
 map['com.tencent.qqmusic/com.tencent.qqmusic.activity.AppStarterActivity'] = 'manual-post'
 map['com.ting.mp3.android/com.baidu.music.ui.UIMain'] = 'manual-post'
+map['com.youku.phone/com.soku.searchsdk.activity.SearchActivity'] = 'manual-post'
 map['com.youku.phone/com.youku.ui.activity.DetailActivity'] = 'weixin-chat'
 map['com.zhihu.android/com.zhihu.android.app.ui.activity.MainActivity'] = 'manual-post'
 map['Keyguard'] = 'weixin-chat'
