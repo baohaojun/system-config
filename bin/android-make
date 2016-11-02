@@ -140,7 +140,13 @@ exec 9> $OUT_DIR/.android-full-build.lock
             touch .for-code-reading
         fi
         echo 'about to lock at '$(date)
-        flock 9
+        if ! flock -n 9; then
+            echo 你的当前安卓代码下已经有其他android-make进程在运行，不可以再次启动一个编译
+            echo "你可以用 fuser $OUT_DIR/.android-full-build.lock | xargs ps 命令查看相关进程情况"
+            echo "也可以用 fuser -k $OUT_DIR/.android-full-build.lock 命令杀死相关进程"
+            echo "接下来将等待 $OUT_DIR/.android-full-build.lock 文件锁被其他进程释放，你可以按下 Ctrl-C 以退出"
+            flock 9
+        fi
         echo 'lock success! at '$(date)
 
         result=''

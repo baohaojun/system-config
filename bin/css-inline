@@ -4,10 +4,22 @@ import sys
 import os
 import re
 
+firefox_css = open(os.path.expanduser("~/system-config/etc/firefox-html.css")).read()
 str = open(sys.argv[1]).read()
 
-str = str.replace(".footpara:nth-child(2) { display: inline; }", "")
-str = pynliner.fromString(str)
-sys.stdout.write(str.encode('utf-8'))
+str = str.replace(".footpara:nth-child(2) { display: inline; }", firefox_css)
+str = pynliner.fromString(str).encode('utf-8')
 
+in_pre = 0
+for line in str.split("\n"):
+    if "<pre" in line and "</pre" not in line and not in_pre:
+        in_pre = 1
 
+    if in_pre and "</pre" in line:
+        in_pre = 0
+
+    sys.stdout.write(line)
+    if in_pre:
+        sys.stdout.write("<br/>\n")
+    else:
+        sys.stdout.write("\n")

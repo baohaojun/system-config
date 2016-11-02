@@ -18,10 +18,15 @@
   '(setq rainbow-hexadecimal-colors-font-lock-keywords
          (append rainbow-hexadecimal-colors-font-lock-keywords
                  '(("#[0-9a-fA-F]\\{2\\}\\([0-9a-fA-F]\\{6\\}\\)<"
-                   (1 (rainbow-colorize-hexadecimal-without-sharp)))))))
+                    (1 (rainbow-colorize-hexadecimal-without-sharp)))))))
 
 (eval-after-load 'org
   '(progn
+     (defadvice org-make-link-regexps (after bhj/org-link-tweak activate)
+       (let ((types-re (regexp-opt org-link-types t)))
+         (setq org-plain-link-re (concat
+                                  "\\<" types-re ":"
+                                  (org-re "\\([^] \t\n()<>]+\\(?:([[:word:]0-9_]+)\\|\\([^[:punct:] \t\n]\\|/\\)\\)\\)")))))
      (org-defkey org-mode-map [?\e (shift return)] 'org-insert-todo-heading)
      (require 'org-jira)
      (require 'bhj-defines)
