@@ -554,13 +554,17 @@ local function weibo_text_share(window)
    if social_need_confirm and not yes_or_no_p("Confirm to share to weibo?") then
       return
    end
-   adb_event{991, 166}
+   if yes_or_no_p("Share to Weibo?") then
+      adb_event{991, 166}
+   end
 end
 
 local function t1_share_to_weibo(text)
    share_text_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", text)
    wait_input_target(weiboShareActivity)
-   t1_send_action()
+   if yes_or_no_p("Share to Weibo?") then
+      t1_send_action()
+   end
 end
 
 local function t1_share_to_qq(text)
