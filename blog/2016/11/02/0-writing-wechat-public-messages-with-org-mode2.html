@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>用 org-mode 写微信公众号</title>
+<!-- 2016-11-03 木 15:40 -->
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<meta content="Org-mode" name="generator"/>
+<meta content="Haojun Bao" name="author"/>
+
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title" style="margin: 1.3em 0 1em; padding: 0; font-weight: bold; font-size: 1.6em; border-bottom: 1px solid #ddd; text-align: center">用 org-mode 写微信公众号</h1>
+<div id="table-of-contents">
+<h2 style="margin: 1.3em 0 1em; padding: 0; font-weight: bold; font-size: 1.4em; border-bottom: 1px solid #eee">Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul style="margin: 1.2em 0; padding-left: 2em">
+<li style="margin: 0.5em 0"><a href="#sec-1">1. 文字格式的问题</a></li>
+<li style="margin: 0.5em 0"><a href="#sec-2">2. 图片的问题</a></li>
+<li style="margin: 0.5em 0"><a href="#sec-3">3. 中英文空格、断行的问题</a></li>
+<li style="margin: 0.5em 0"><a href="#sec-4">4. 总结</a></li>
+</ul>
+</div>
+</div>
+<p style="margin: 0 0 1.2em 0">
+有朋友发邮件问我，你是怎么调用微信后台接口的？——他也想用 org-mode 写微信公众号，以为我用 org-mode 写完之后，直接调用微信接口发布出去的。
+</p>
+<p style="margin: 0 0 1.2em 0">
+我并没有调微信接口，用的是最土的办法，先用 org-mode 写，输出成 HTML 格式，然后贴到微信提供的网页编辑界面里。
+</p>
+<p style="margin: 0 0 1.2em 0">
+这里面有几个技术问题要解决，感兴趣的朋友可以看看——
+</p>
+<div class="outline-2" id="outline-container-sec-1">
+<h2 id="sec-1" style="margin: 1.3em 0 1em; padding: 0; font-weight: bold; font-size: 1.4em; border-bottom: 1px solid #eee"><span class="section-number-2">1</span> 文字格式的问题</h2>
+<div class="outline-text-2" id="text-1">
+<p style="margin: 0 0 1.2em 0">
+微信公众号的网页编辑界面做的还可以，你从网页上复制一段内容，贴到微信公众号素材编辑窗口里之后，是能保存基本的格式的，比如原来是斜体的，贴进去还是斜体。
+</p>
+<p style="margin: 0 0 1.2em 0">
+但是，一开始的时候我碰到了些问题，就是我原有的章节标题文字，拷贝粘贴进去之后看上去与普通正文并无区别。什么意思呢，你看下面这张图，是我从维基百科（<a href="https://en.wikipedia.org/wiki/Rich_Text_Format">https://en.wikipedia.org/wiki/Rich_Text_Format</a>）上截的，注意其中的“History”，作为一个章节标题，它是用更大的字体显示的。
+</p>
+<div class="figure" style="padding: 1em">
+<p style="margin: 0 0 1.2em 0; text-align: center"><a href="../../../../images/rtf-from-wiki.png"><img alt="rtf-from-wiki.png" src="../../../../images/rtf-from-wiki.png"/></a>
+</p>
+</div>
+<p style="margin: 0 0 1.2em 0">
+但是当我把这段文字拷贝粘贴到微信公众号编辑窗口里之后，你可以看到“History”变成与普通正文相同的字体显示了。
+</p>
+<div class="figure" style="padding: 1em">
+<p style="margin: 0 0 1.2em 0; text-align: center"><a href="../../../../images/rtf-in-wechat.png"><img alt="rtf-in-wechat.png" src="../../../../images/rtf-in-wechat.png"/></a>
+</p>
+</div>
+<p style="margin: 0 0 1.2em 0">
+这时候我的心情是有点崩溃的，这什么破编辑器，完全不能用嘛。不过后来在网上查了一些其他代替的解决方案，比如有用 markdown-here 浏览器插件写公众号的，直接用 markdown 格式写，然后点一下插件按钮，把 markdown 文本转换成 HTML 的格式。我没有试过这种方案，但看完之后恢复了点信心，如果别人能搞定章节标题格式的问题，我没理由搞不定的嘛。更何况贴进去的那些链接文字显示是蓝色的，“citation needed”这段小文字贴进去以后也还是斜体，说明这个编辑器的确是支持格式化文本的拷贝粘贴的，所以我接下来研究一下章节标题的显示格式丢失问题吧。
+</p>
+<p style="margin: 0 0 1.2em 0">
+做了几个实验之后就弄明白了问题所在——微信公众号它没有内置的 css 样式！我拷贝进去的内容，章节用 HTML 的 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">&lt;h1&gt;</code>、<code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">&lt;h2&gt;</code> 等表示，在普通的浏览器上，是有默认内置的 css 的，会把这些章节文字用比较合理的方式显示出来（字体更大、更粗，行间距更大，等等）。
+</p>
+<p style="margin: 0 0 1.2em 0">
+所以解决的思路就很清楚了，把每一个 HTML 的 tag 都加上相应的 css 格式。这样做完全违反了“Separation of presentation and content”的设计原理（<a href="https://en.wikipedia.org/wiki/Separation_of_presentation_and_content">https://en.wikipedia.org/wiki/Separation_of_presentation_and_content</a>），但是，谁让微信公众号这么奇葩不自带默认 css 呢！
+</p>
+<p style="margin: 0 0 1.2em 0">
+在网上搜了一下“css inline”，找到一个用 php 实现的项目<a href="https://github.com/jjriv/emogrifier">https://github.com/jjriv/emogrifier</a>。稍微研究一下就放弃了，改用 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">apt-get search css inline</code> 搜了一下 Debian 的软件仓库，发现系统自带了一个 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">python-pynliner</code>。稍微封装了一下，写了一个 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">css-inline</code> 的脚本，放在 system-config 项目里，其中用到了一个默认的 css，来自于 Firefox 的 markdown-here 插件，位于 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">~/system-config/etc/markdown-here.css</code>。
+</p>
+<p style="margin: 0 0 1.2em 0">
+（写到这里，其实已经很明白了，微信公众号是非常违背互联网精神的。想插入一个链接都不行，你看我上面发的那些长长的链接，太丑了&#x2026; 所以以后我的每篇公众号都会与 github 上的博客同步发布，望关注的诸君需要时“点击原文”以便点击文中链接。）
+</p>
+<p style="margin: 0 0 1.2em 0">
+另外还有一个地方需要特殊处理，那就是微信公众号对 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">&lt;pre&gt;</code> 标签处理有问题，不会保留里面的换行，必须把换行替换成 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">&lt;br/&gt;</code> 才可以。这个我也在 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">css-inline</code> 里处理了。
+</p>
+<div class="org-src-container">
+<pre class="src src-sh" style="border: 1px solid #ccc; box-shadow: 3px 3px 3px #eee; padding: 8pt; font-family: Consolas, Inconsolata, Courier, monospace; font-size: 1em; line-height: 1.2em; margin: 1.2em 0; position: relative; overflow: visible; padding-top: 1.2em"><span style="color: #cd853f;">#</span><span style="color: #cd853f;">!/bin/</span><span style="color: #20b2aa; font-weight: bold;">bash</span><br/>
+<span style="color: #76ee00;">echo</span> hello<br/>
+</pre>
+</div>
+<p style="margin: 0 0 1.2em 0">
+上面这段代码，不特殊处理的话，在微信里显示是这样的：
+</p>
+<div class="figure" style="padding: 1em">
+<p style="margin: 0 0 1.2em 0; text-align: center"><a href="../../../../images/script-in-wechat.png"><img alt="script-in-wechat.png" src="../../../../images/script-in-wechat.png"/></a>
+</p>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-sec-2">
+<h2 id="sec-2" style="margin: 1.3em 0 1em; padding: 0; font-weight: bold; font-size: 1.4em; border-bottom: 1px solid #eee"><span class="section-number-2">2</span> 图片的问题</h2>
+<div class="outline-text-2" id="text-2">
+<p style="margin: 0 0 1.2em 0">
+写完 org-mode 并输出成 HTML 之后，直接用浏览器本地打开，拷贝、粘贴到微信公众号的话，会有一个问题。那就是你所有的本地图片，是不会自动插入到浏览器里的。
+</p>
+<p style="margin: 0 0 1.2em 0">
+解决的方法有两种：
+</p>
+<ol class="org-ol" style="margin: 1.2em 0; padding-left: 2em">
+<li style="margin: 0.5em 0">自己手动上传、插入每张图片
+</li>
+<li style="margin: 0.5em 0">把文章和图片先一起发布到 Github 的博客上，然后再打开相应网址，把图文一起拷贝、粘贴到微信公众号里。
+
+<p style="margin: 0.5em 0">
+这种情况下，因为图片来源于网络，微信公众号会自动把图片抓取回来，保存到它的图库里。
+</p>
+<p style="margin: 0.5em 0">
+但是很无奈的是，有时候抓图会失败。目前不知道原因，但有可能跟重复抓图有关系。同一张图片，第二次拷贝、粘贴到微信公众号里，就会提示有 N 张图片粘贴失败。但又不是每次都所有的图片都失败。所以可能是个 Bug。
+</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="outline-2" id="outline-container-sec-3">
+<h2 id="sec-3" style="margin: 1.3em 0 1em; padding: 0; font-weight: bold; font-size: 1.4em; border-bottom: 1px solid #eee"><span class="section-number-2">3</span> 中英文空格、断行的问题</h2>
+<div class="outline-text-2" id="text-3">
+<p style="margin: 0 0 1.2em 0">
+首先，在写 org-mode 的时候，我现在已经选择不断行了，否则生成 HTML 之后，如果原文在两个汉字中间有断行，展示出来的页面在这两个汉字之间就会有个空格。所以我写了个脚本，可以自动把以前写的有汉字间断行的文字重新拼接回去。这个脚本在 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">~/system-config/bin/wrap-cjk</code>。
+</p>
+<p style="margin: 0 0 1.2em 0">
+其次，就是汉字与英文混排时加不加空格的问题。我认为在现有的技术条件下，尤其是在 HTML 网页中显示，是应该加空格的。所以我写了个脚本，可以自动处理中英文之间的空格。这个脚本在 <code style="font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline">~/system-config/bin/space-cjk-en</code>。
+</p>
+<p style="margin: 0 0 1.2em 0">
+注意这些脚本都不是 100%可靠的，所以写完发布前需要自己认真校对几遍。比如前一篇公众号文章里“大V”就被脚本分割成了“大 V”，被我自己改回来了。
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-sec-4">
+<h2 id="sec-4" style="margin: 1.3em 0 1em; padding: 0; font-weight: bold; font-size: 1.4em; border-bottom: 1px solid #eee"><span class="section-number-2">4</span> 总结</h2>
+<div class="outline-text-2" id="text-4">
+<p style="margin: 0 0 1.2em 0">
+所以，我用 org-mode 写一篇微信号，需要以下步骤：
+</p>
+<ol class="org-ol" style="margin: 1.2em 0; padding-left: 2em">
+<li style="margin: 0.5em 0">写文章、校对 
+</li>
+<li style="margin: 0.5em 0">用 wrap-cjk、space-cjk-en 脚本处理 
+</li>
+<li style="margin: 0.5em 0">输出 HTML
+</li>
+<li style="margin: 0.5em 0">css-inline 脚本处理 
+</li>
+<li style="margin: 0.5em 0">上传 Github，浏览器打开、样对 
+</li>
+<li style="margin: 0.5em 0">拷贝、粘贴到微信公众号里 
+</li>
+<li style="margin: 0.5em 0">最后一次校对 
+</li>
+<li style="margin: 0.5em 0">发布
+</li>
+</ol>
+<p style="margin: 0 0 1.2em 0">
+我去，写公众号太累了。
+</p>
+</div>
+</div>
+</div>
+<div class="status" id="postamble">
+<p class="author" style="font-size: 90%; margin: 0.2em">Author: Haojun Bao</p>
+<p class="date" style="font-size: 90%; margin: 0.2em">Created: 2016-11-03 木 15:40</p>
+<p class="creator" style="font-size: 90%; margin: 0.2em"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.95.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation" style="font-size: 90%; margin: 0.2em"></p>
+</div>
+</body>
+</html>
+
