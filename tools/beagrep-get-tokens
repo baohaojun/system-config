@@ -19,7 +19,7 @@ if ($ENV{SOURCECODETAGSMODE} eq "true") {
 
 $tokens =~ s/\r|\n/ /g;
 #$tokens =~ s/\b/*/g;
-if (@tokens == 1 and $tokens[0] !~ m/\s|\*/) {
+if (@tokens == 1 and $tokens[0] !~ m/\s|\*/ and not $ENV{FIND_FILE_ONLY}) {
     $tokens = "\"$tokens\"";
 }
 print "$tokens\n";
