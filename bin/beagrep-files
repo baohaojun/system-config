@@ -10,9 +10,14 @@ LANG=en_US.UTF-8
 LC_ALL=en_US.UTF-8
 
 md5sum=$(
-    for x in "$@"; do
-        echo "$x"
-    done | md5sum | awk '{print $1}'
+    (
+        for x in "$@"; do
+            echo "$x"
+        done
+        if test "$FIND_FILE_ONLY"; then
+            echo " "
+        fi
+    ) | md5sum | awk '{print $1}'
       )
 md5dir=.cache/${md5sum:0:1}/${md5sum:1:1}
 md5file=$md5dir/${md5sum:2}
@@ -88,7 +93,7 @@ if test ${0##*/} = beagrep-glob-files; then
 fi
 
 if test "$FIND_FILE_ONLY"; then
-    tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
+    tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:\s*$)//g')
     mkdir -p ~/.cache/system-config/logs
     echo $tokens > ~/.cache/system-config/logs/$(basename $0).log
 fi
