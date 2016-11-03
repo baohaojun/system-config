@@ -1,12 +1,16 @@
 #!/usr/bin/python
 
 import glib, gtk
+import sys
 
 def test_clipboard():
     clipboard = gtk.Clipboard()
     targets = clipboard.wait_for_targets()
     # print "Targets available:", ", ".join(map(str, targets))
     for target in targets:
+        if sys.argv[0].find("getclip-formats") >= 0:
+            print target
+            continue
         if target == 'text/html':
             contents = clipboard.wait_for_contents(target)
             if contents:

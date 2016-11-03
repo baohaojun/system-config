@@ -34,10 +34,12 @@ while (<$gerrit_pipe>) {
     }
 }
 
+my $ignore_dir = "$ENV{HOME}/.config/system-config/ignored-gerrit-id";
 for $gerrit_url (sort keys %gerrit_map) {
     $gerrit_subject = $gerrit_map{$gerrit_url};
     $gerrit_id = $gerrit_id_map{$gerrit_url};
 
+    next if -e "$ignore_dir/$gerrit_id";
 
     print $gerrit_org <<EOF;
 * TODO $gerrit_subject

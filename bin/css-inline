@@ -4,10 +4,10 @@ import sys
 import os
 import re
 
-firefox_css = open(os.path.expanduser("~/system-config/etc/firefox-html.css")).read()
+markdown_css = open(os.path.expanduser("~/system-config/etc/markdown-here.css")).read()
 str = open(sys.argv[1]).read()
 
-str = str.replace(".footpara:nth-child(2) { display: inline; }", firefox_css)
+str = str.replace(".footpara:nth-child(2) { display: inline; }", markdown_css)
 str = pynliner.fromString(str).encode('utf-8')
 
 in_pre = 0

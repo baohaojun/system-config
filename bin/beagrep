@@ -148,6 +148,7 @@ if ($abc_base) {
     open($beagrep_files_pipe, "-|", "abc-x", "-b", "$abc_base", "abc-files", "$pat $additional_tokens");
 } else {
     open($beagrep_files_pipe, "-|", $beagrep_files_cmd);
+    debug "pipe cmd is: '$beagrep_files_cmd'"
 }
 
 
@@ -205,20 +206,23 @@ if ($list_beagrep) {
 }
 
 my @beagrep_files;
+my $grep;
 if (!$find_file_only) {
-    open(my $grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp");
-
-    while (<$beagrep_files_pipe>) {
-        chomp;
-        $_ = substr($_, $start) if ($short_format and not $abc_base);
-        push @beagrep_files, $_;
-        next unless m/$pathpat/i;
-        next if m/$pathdeny/i;
-        print $grep "$_\n";
-    }
-    close $grep; # perldoc -f close, search for wait, the "xargs grep"
-                 # subprocess is finished when this returns
+    open($grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp");
 }
+
+while (<$beagrep_files_pipe>) {
+    chomp;
+    $_ = substr($_, $start) if ($short_format and not $abc_base);
+    push @beagrep_files, $_;
+    next unless m/$pathpat/i;
+    next if m/$pathdeny/i;
+    print $grep "$_\n" unless $find_file_only;
+}
+
+close $grep unless $find_file_only;
+# perldoc -f close, search for wait, the "xargs grep"
+# subprocess is finished when this returns
 
 #see [[http://baohaojun.wordpress.com/2010/05/06/beagrep-grep-sh%E5%8A%9F%E8%83%BD%E5%8F%88%E5%8F%98%E5%BC%BA%E5%A4%A7%E4%BA%86/]] for why
 if ($find_file_only || 1) {
@@ -235,8 +239,8 @@ if ($find_file_only || 1) {
                 if $path_match_set{$_} and m,/$pat_implicit_path$,; # the `and' part is to make file name match totally
         }
     } else {
-        for (@beagrep_files) {
-            print "$_:$file_default_line: [01;31m****************![0m\n" if $path_match_set{$_};
+        for (sort keys %path_match_set) {
+            print "$_:$file_default_line: [01;31m****************![0m\n";
         }
     }
 }
