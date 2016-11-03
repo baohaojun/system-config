@@ -1,5 +1,10 @@
 #+title: Blogging
  * 2016
+  - 2016-11
+   * 2016-11-02
+
+     [[../../blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.org][用 org-mode 写微信公众号]]
+
   - 2016-06
    * 2016-06-07
 

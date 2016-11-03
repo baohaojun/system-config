@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[用 org-mode 写微信公众号]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.html"/>
+    <updated>2016-40-03T15:11:22+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[程序员学习日语经验分享]]></title>
     <link href="http://baohaojun.github.io/blog/2016/10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html"/>
     <updated>2016-10-30T22:50:09+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html"/>
     <updated>2015-12-25T14:49:05+08:00</updated>
     <id>http://baohaojun.github.io/blog/2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Qt QString indexOf不考虑大小写的坑]]></title>
-    <link href="http://baohaojun.github.io/blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html"/>
-    <updated>2015-11-18T14:09:02+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2015/11/18/0-Qt-QString-indexOf-CaseInsensitive-Trap.html</id>
   </entry>
 </feed>
