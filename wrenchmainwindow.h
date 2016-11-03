@@ -113,7 +113,6 @@ private:
     QMap<QString, QString> mMmsReceiverMap;
 
     DialogGetEntry* mSelectArgDialog;
-    DialogGetEntry* mSelectAppDialog;
     void createTrayIcon();
     void closeEvent(QCloseEvent *event);
     void showEvent(QShowEvent *event);

@@ -22,9 +22,8 @@ public:
     bool isQuit();
     void run();
     QString selectArgs(const QStringList&);
-    QString selectApps();
+    void selectApps();
     void on_argSelected(const QString& arg);
-    void on_appSelected(const QString& app);
     void load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
     void setVariableLocked(const QString& name, const QString& val);
     QString getVariableLocked(const QString& name, const QString& defaultVal = "");
@@ -43,15 +42,12 @@ signals:
 private:
     lua_State *L;
     QString mSelectedArg;
-    QString mSelectedApp;
     bool mQuit;
     QMutex mMutex;
     QList<QStringList> mActions;
     QWaitCondition mWait;
     QWaitCondition mSelectArgsWait;
     QMutex mSelectArgsMutex;
-    QWaitCondition mSelectAppsWait;
-    QMutex mSelectAppsMutex;
     QTcpSocket* t1Sock;
 };
 

@@ -225,11 +225,7 @@ void WrenchMainWindow::onSelectApps()
 
     DialogGetEntry dialog(&model, prompt, this);
     connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_appSelected(QString)));
-    mSelectAppDialog = &dialog;
     dialog.exec();
-    if (mSelectAppDialog != NULL) {
-        on_appSelected("");
-    }
     dialog.disconnect();
 }
 
@@ -727,9 +723,7 @@ void WrenchMainWindow::on_argSelected(const QString& arg)
 
 void WrenchMainWindow::on_appSelected(const QString& app)
 {
-    mSelectAppDialog->close();
-    mSelectAppDialog = NULL;
-    mLuaThread->on_appSelected(app);
+    mLuaThread->addScript(QStringList() << "on_app_selected" << app);
 }
 
 void WrenchMainWindow::on_tbMailAddTo_clicked()

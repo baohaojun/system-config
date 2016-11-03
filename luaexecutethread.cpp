@@ -96,9 +96,8 @@ static int l_selectArg(lua_State* L)
 
 static int l_selectApps(lua_State* L)
 {
-    QString res = that->selectApps();
-    lua_pushstring(L, res.toUtf8().constData());
-    return 1;
+    that->selectApps();
+    return 0;
 }
 
 static int l_qt_adb_pipe(lua_State* L)
@@ -391,14 +390,9 @@ QString LuaExecuteThread::selectArgs(const QStringList& args)
     return res;
 }
 
-QString LuaExecuteThread::selectApps()
+void LuaExecuteThread::selectApps()
 {
     emit selectAppsSig();
-    mSelectAppsMutex.lock();
-    mSelectAppsWait.wait(&mSelectAppsMutex);
-    QString res = mSelectedApp;
-    mSelectAppsMutex.unlock();
-    return res;
 }
 
 void LuaExecuteThread::on_argSelected(const QString& arg)
@@ -407,14 +401,6 @@ void LuaExecuteThread::on_argSelected(const QString& arg)
     mSelectedArg = arg;
     mSelectArgsMutex.unlock();
     mSelectArgsWait.wakeOne();
-}
-
-void LuaExecuteThread::on_appSelected(const QString& app)
-{
-    mSelectAppsMutex.lock();
-    mSelectedApp = app;
-    mSelectAppsMutex.unlock();
-    mSelectAppsWait.wakeOne();
 }
 
 void LuaExecuteThread::load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
