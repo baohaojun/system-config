@@ -86,6 +86,7 @@ map['com.smartisanos.notes/com.smartisanos.notes.share.weibo.ui.WeiboOAuthActivi
 map['com.smartisanos.quicksearch/com.android.quicksearchbox.SearchActivity'] = 'manual-post'
 map['com.smartisan.reader/com.smartisan.reader.activities.LoginCloudActivity_'] = 'manual-post'
 map['com.starbucks.cn/com.fs.starbucks.activity.LoginActivity'] = 'manual-post'
+map['com.taobao.taobao/com.ali.user.mobile.login.ui.UserLoginActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.search.searchdoor.SearchDoorActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.tao.purchase.activity.PurchaseActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.tao.rate.ui.commit.MainRateActivity'] = 'manual-post'
