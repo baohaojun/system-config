@@ -1,5 +1,8 @@
 #!/bin/bash
 # my-adb -r echo x
+
+. ~/src/github/smartcm/scm-helpers/.adb-get-screen-size
+
 while true; do
     case $(adb-top-activity) in
         com.android.settings/com.android.settings.inputmethod.LocalePickerActivity)
@@ -9,7 +12,14 @@ while true; do
             adb-tap-top-right
             ;;
         com.smartisanos.setupwizard/com.smartisanos.setupwizard.LicenseActivity)
-            adb-tap 105 1545
+            if test "$init" = 1440x2560; then
+                adb-tap 111 1619
+            else
+                adb-tap 105 1545
+            fi
+            adb-tap-mid-bot
+            ;;
+        com.android.settings/com.android.settings.LauncherChooseActivity)
             adb-tap-mid-bot
             ;;
         com.smartisanos.setupwizard/com.smartisanos.setupwizard.OneHandModeSettingsActivity)

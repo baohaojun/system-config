@@ -6,7 +6,7 @@ script=$(cat <<EOF
  (mapc
    (lambda (w)
      (when (or (string-match "$1" (window-name w))
-               (string-match "$1" (window-class w)))
+               (string-match "$1" (bhj-window-class w)))
        (throw 'TAG "yes")))
    (managed-windows)))
 EOF

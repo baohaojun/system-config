@@ -12,7 +12,7 @@ cat $me | perl -ne 'print if (m/cat .me/ .. 1)' | perl -ne 'print if 2 .. 1' | s
 
 (mapcar
  (lambda (w)
-   (when (string= "qpdfview" (window-class w))
+   (when (string= "qpdfview" (bhj-window-class w))
      (resize-window-to w 940 710))
    w)
  (managed-windows))

@@ -34,16 +34,7 @@ verbose=
 config=
 keep=-k
 make_dir=
-if grep -q 'LEGACY_USE_JAVA7' build/core/main.mk; then
-    PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH
-    echo using java 1.8
-elif grep -q 'required_version := "1.7.x"' build/core/main.mk; then
-    PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
-    echo using java 1.7
-else
-    echo using java 1.6
-
-fi
+. ~/system-config/etc/.fix-java-version
 TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
 
 eval set -- "$TEMP"
@@ -149,7 +140,13 @@ exec 9> $OUT_DIR/.android-full-build.lock
             touch .for-code-reading
         fi
         echo 'about to lock at '$(date)
-        flock 9
+        if ! flock -n 9; then
+            echo 你的当前安卓代码下已经有其他android-make进程在运行，不可以再次启动一个编译
+            echo "你可以用 fuser $OUT_DIR/.android-full-build.lock | xargs ps 命令查看相关进程情况"
+            echo "也可以用 fuser -k $OUT_DIR/.android-full-build.lock 命令杀死相关进程"
+            echo "接下来将等待 $OUT_DIR/.android-full-build.lock 文件锁被其他进程释放，你可以按下 Ctrl-C 以退出"
+            flock 9
+        fi
         echo 'lock success! at '$(date)
 
         result=''
@@ -159,16 +156,9 @@ exec 9> $OUT_DIR/.android-full-build.lock
         if test -e vendor/qcom/proprietary/mm-still/ipl/Android.mk; then
             perl -npe 's,^(\s+\Q$(CPU)\E)$,$1 \\,; s,^(\s+\Q-D__alignx\(x\)=__attribute__\(\(__aligned__\(x\)\)\)\E)$,$1 \\,' -i vendor/qcom/proprietary/mm-still/ipl/Android.mk
         fi
-        if grep -q 'LEGACY_USE_JAVA7' build/core/main.mk; then
-            PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH
-            echo using java 1.8
-        elif grep -q 'required_version := "1.7.x"' build/core/main.mk; then
-            PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
-            echo using java 1.7
-        else
-            echo using java 1.6
 
-        fi
+        # need do it again because android-set-product has changed PATH
+        . ~/system-config/etc/.fix-java-version
 
         echo make starts here
         export REALLY_DOING_BUILD=true
@@ -190,7 +180,8 @@ EOF
                 )
             elif test $# = 1 -a $1 = selinux; then
                 (
-                    cat <<'EOF' > $OUT_DIR/Android.mk
+                    mkdir .repo/tmp -p
+                    cat <<'EOF' > .repo/tmp/Android.mk
 LOCAL_PATH:= $(call my-dir)
 selinux_bhj: $(foreach se,seapp_contexts selinux_version sepolicy service_contexts,${PRODUCT_OUT}/root/${se}) sepolicy.recovery
 ifeq (${ONE_SHOT_MAKEFILE},${LOCAL_PATH}/Android.mk)
@@ -203,7 +194,7 @@ include external/sepolicy/Android.mk
 $(info CUSTOM_MODULES are ${CUSTOM_MODULES})
 endif
 EOF
-                    cd $OUT_DIR/
+                    cd .repo/tmp
                     $do_nice mm -j$jobs $verbose selinux_bhj
                 )
             elif test $# = 1 -a $1 = lk; then

@@ -600,7 +600,7 @@ class ime:
                 if key.isdigit():
                     self.cand_index = (int(key.name) + 9) % 10 + self.cand_index // 10 * 10;
                 commitstr = self.__cands[self.cand_index % ime.page_size]
-                commitstr = commitstr.split()[0]
+                commitstr = commitstr.split(" ")[0]
                 shell_command(["ime-commit-unicode", commitstr])
                 self.compstr = ''
                 self.__cands = []

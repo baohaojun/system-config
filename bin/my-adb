@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test "$1" = -s; then
+if test "$1" = -s -o "$1" = devices -o "$1" = devices\?; then
     export MULTIPLE_ADBDEVICES_OK=true
 fi
 
@@ -323,7 +323,7 @@ function adb() {
         if test "${1:0:1}" = :; then
             x=$1
             shift 1
-            exec the-true-adb logcat ${format:+-v $format} "$@" *:W $(echo -n ${x:1} | perl -npe 's/,|$/:v /g')
+            exec the-true-adb logcat ${format:+-v $format} *:W "$@" $(echo -n ${x:1} | perl -npe 's/,|$/:v /g')
         elif test "${1:0:2}" = s:; then
             x=$1
             shift 1
@@ -337,8 +337,8 @@ function adb() {
     if test "$1" = gdbserver; then
         shift
         gdbserver "$@"
-    elif test "$1" = push && test -d "$2" -a "$(basename -- "$2")" != "$(basename -- "$3")"; then
-        set -- push "$2" "$3"/"$(basename -- "$2")"
+    elif test "$1" = push && test -d "$2" -a "$(basename -- "$2")" = "$(basename -- "$3")"; then
+        set -- push "$2" "$(dirname "$3")"
         exec_the_adb "$@"
     elif test "$#" = 3 -o $# = 2 && test "$1" = shell -a "$2" = restart; then
         run_the_adb shell stop $3;

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+git_url=$(git-remote-url|perl -npe 's,git\@github.com:,https://github.com/,')
+
+echo "$git_url/commit/$1"
+if is-tty-io; then
+    echo "$git_url/commit/$1" | putclip
+fi

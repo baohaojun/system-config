@@ -27,3 +27,7 @@ smartcm_projects=(
     gapps-t1
     smartcm
 )
+
+extra_projects=(
+    https://github.com/SmartisanTech/Wrench
+)

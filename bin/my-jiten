@@ -2,14 +2,16 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt w:word k:kana
+# generate-getopt w:word k:kana @:char-kana @boundary=true
 ## end code-generator
 ## start generated code
 TEMP=$(getopt -o w:k:h \
-              --long word:,kana:,help \
+              --long word:,kana:,boundary,char-kana:,help,no-boundary \
               -n $(basename -- $0) -- "$@")
 word=
 kana=
+boundary=true
+char_kana=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -22,11 +24,29 @@ while true; do
             kana=$2
             shift 2
             ;;
+        --boundary|--no-boundary)
+            if test "$1" = --no-boundary; then
+                boundary=false
+            else
+                boundary=true
+            fi
+            shift
+            ;;
+        --char-kana)
+            char_kana=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
             echo
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]boundary'
+            echo
+            printf "%06s" " "
+            printf %-24s '--char-kana=CHAR_KANA'
+            echo
             printf %06s '-k, '
             printf %-24s '--kana=KANA'
             echo
@@ -48,5 +68,15 @@ done
 
 
 ## end generated code
+
+if test "$char_kana"; then
+    cat /usr/share/gjiten/dics/kanjidic |
+        if "$boundary" = true; then
+            grep "\b$char_kana\b"
+        else
+            grep "$char_kana"
+        fi | perl -npe 's/[0-9a-zA-Z].* Y/Y/' | sort -k 2
+    exit
+fi
 
 grep -P "$word.*\[.*$kana.*\]" /usr/share/gjiten/dics/* | perl -npe 's/.*?://'

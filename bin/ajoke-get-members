@@ -6,9 +6,12 @@ function die() {
     exit -1
 }
 
-for x in $0 "$@"; do
-    printf %q\ "$x"
-done >> ~/.cache/system-config/logs/$(basename $0).log
+(
+    for x in $0 "$@"; do
+        printf %q\ "$x"
+    done
+    echo
+) | cat >> ~/.cache/system-config/logs/$(basename $0).log
 
 type='\S+'
 proto=false

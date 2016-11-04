@@ -11,7 +11,8 @@ cmd=$(cat <<EOF
       (system (format nil "putclip '%s'&" (event-name event)))
       (read-event
           (format nil "binding %s for %s (raw %s)\n\nPress any key to dismiss.."
-                  (let ((global-keymap map)) (lookup-event-binding event))
+                  (let ((global-keymap map))
+                     (lookup-event-binding event))
                   (event-name event)
                   event)))
 EOF

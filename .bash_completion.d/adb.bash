@@ -319,31 +319,55 @@ _adb_util_list_files() {
     fi
 
     toks=( ${toks[@]-} $(
-        command adb-quote ${args[@]} shell sh -c "find 2> /dev/null ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 /system/bin/ls -dF 2>/dev/null" 2> /dev/null | tr -d '\r' | {
-            while read -r tmp; do
-                if echo $SHELLOPTS | grep -q xtrace; then
-                    echo tmp is \'$tmp\' 1>&2
-                fi
+               my_command="find 2> /dev/null ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 /system/bin/ls -dF 2>/dev/null"
+               ls_append=$(
+                   if my-adb ${args[@]} shell sh -c 'ls --help'|grep 'append /dir' -q; then
+                       echo true
+                   else
+                       echo false
+                   fi
+                        )
+               echo "$my_command" > ~/.cache/system-config/logs/comp.log
+               command adb-quote ${args[@]} shell sh -c "$my_command" 2> /dev/null |
+                   tr -d '\r' | {
 
-                filetype=${tmp%% *}
-                filename=${tmp:${#filetype}+1}
-                if test "${filename%/}" = "${file%/*}"; then
-                    continue
-                fi
-                if [[ ${filetype:${#filetype}-1:1} == d ]]; then
-                    printf '%s/\n' "$filename"
-                else
-                    printf '%s\n' "$filename"
-                fi
-            done
-        }
+                   while read -r tmp; do
+                       echo "tmp is $tmp" >> ~/.cache/system-config/logs/comp.log
+                       if echo $SHELLOPTS | grep -q xtrace; then
+                           echo tmp is \'$tmp\' 1>&2
+                       fi
+
+                       if test "$ls_append" = false; then
+                           filetype=${tmp%% *}
+                           filename=${tmp:${#filetype}+1}
+                           if test "${filename%/}" = "${file%/*}"; then
+                               continue
+                           fi
+                           if [[ ${filetype:${#filetype}-1:1} == d ]]; then
+                               printf '%s/\n' "$filename"
+                           else
+                               printf '%s\n' "$filename"
+                           fi
+                       else
+                           last_char=${tmp:${#tmp}-1}
+                           case "$last_char" in
+                               \*|@|\|)
+                                   echo ${tmp:0:${#tmp}-1}
+                                   ;;
+                               *)
+                                   echo ${tmp}
+                                   ;;
+                           esac
+                       fi
+                   done
+               }
     ))
 
     # Since we're probably doing file completion here, don't add a space after.
     if [[ $(type -t compopt) = "builtin" ]]; then
         compopt -o nospace
     fi
-    echo "toks are ${toks[@]}" > ~/.cache/system-config/logs/comp.log
+    echo "toks are ${toks[@]}" >> ~/.cache/system-config/logs/comp.log
     COMPREPLY=( ${COMPREPLY[@]:-} "${toks[@]}" )
 }
 

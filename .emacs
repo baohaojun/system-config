@@ -1,5 +1,14 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
+(setq org-emphasis-regexp-components
+      '(
+        "：，。、  \t('\"{" ;pre
+        "- ：，。、 \t.,:!?;'\")}\\" ;post
+        " \t\r\n,\"'" ;border *forbidden*
+        "." ;body-regexp
+        1 ; newline
+        ))
+
 (when (file-exists-p "~/.config/system-config/vim-is-evil")
   (setq warning-minimum-level :error))
 
@@ -355,6 +364,7 @@
   (tool-bar-mode 1)
   (scroll-bar-mode 1)
   (evil-mode 1)
+  (tabbar-mode 1)
   (setq-default initial-scratch-message
                 (concat initial-scratch-message
                         "请访问此网页查看Emacs作弊手册： http://baohaojun.github.io/emacs-cheat-sheet.html")))

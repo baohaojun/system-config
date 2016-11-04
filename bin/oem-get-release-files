@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+
+# 这个脚本需要在oem高通prebuilt release目录下运行，不是代码目录。
+# 所以上来就清理一下git，把无关的文件都删掉。
+# 如果没有高通oem prebuilt，只有oem代码，那么需要把高通的oem代码编译一遍，然后再把所有文件都加入到git中去。
+# 也有可能高通给的oem代码目录其实是oem prebuilt的一个超集，也就是说，不管oem代码release，还是oem prebuilt release，高通都是把编译完成的所有文件全放出来，但是在prebuilt的release里，把所有源代码文件删掉了而已。
 git reset --hard
 git clean -xfd
 

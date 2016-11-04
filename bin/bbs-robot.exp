@@ -121,7 +121,7 @@ expect -timeout 150 password {
 set timeout 5
 
 expect {
-    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点" {
+    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|按任何键继续|近期热点" {
         send "\r\n";
         exp_continue;
     }

@@ -1,1 +1,6 @@
-../../src/github/private-config/bin/cd-adb
+#!/bin/bash
+
+dir=$(select-output-line -o "get-vmlinux $* | perl -npe 's/:\n/: /'|grep smb:|reverse" | perl -npe 's/.*?smb:/smb:/')
+echo $dir
+echo $dir|putclip
+cd $dir

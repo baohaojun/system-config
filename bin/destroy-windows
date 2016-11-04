@@ -9,8 +9,7 @@ class=$1
 sawfish-client -e '
     (mapcar
       (lambda (w)
-        (when (string-equal (window-class w) "'$class'")
-          (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (window-class w)))
+        (when (string-equal (bhj-window-class w) "'$class'")
+          (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (bhj-window-class w)))
           (destroy-window w)))
-      (managed-windows))' 
-
+      (managed-windows))'

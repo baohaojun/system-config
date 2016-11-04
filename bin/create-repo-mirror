@@ -51,7 +51,7 @@ if test "$#" != 0; then
     exit
 fi
 
-sync-with-xml 'default.xml -b master'
+sync-with-xml aosp-master.xml
 sync-with-xml sfo-rom.xml
 if test -e ~/src/github/smartcm/scm-helpers/.mirror-xmls; then
     . ~/src/github/smartcm/scm-helpers/.mirror-xmls

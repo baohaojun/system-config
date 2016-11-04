@@ -117,7 +117,7 @@ exec tail -n +3 \$0
                   search --no-floppy --fs-uuid --set=root $boot_uuid
                 fi
                 echo    'Loading Linux $(basename $vmlinux) ...'
-                linux   $vmlinux root=$(if test "$root_uuid"; then echo UUID=$boot_uuid; else echo $root_dev; fi) ro init=/$cowname/chroot-cow
+                linux   $vmlinux root=$(if test "$root_uuid"; then echo UUID=$root_uuid; else echo $root_dev; fi) ro init=/$cowname/chroot-cow
                 echo    'Loading initial ramdisk ...'
                 initrd  $initrd
         }

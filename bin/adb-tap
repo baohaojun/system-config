@@ -1,20 +1,20 @@
 #!/bin/bash
 
-
-if test -z "$ANDROID_SERIAL"; then
-    ANDROID_SERIAL=$(my-adb getprop ro.serialno)
-fi
-
-if test ! -e ~/.config/system-config/adb-tap.$ANDROID_SERIAL; then
-    my-adb dumpsys window|perl -ne 's/^\s*//; print $1 if m/^(init=\d+x\d+) /' > ~/.config/system-config/adb-tap.$ANDROID_SERIAL.$$
-    mv ~/.config/system-config/adb-tap.$ANDROID_SERIAL.$$ ~/.config/system-config/adb-tap.$ANDROID_SERIAL
-fi
-
-. ~/.config/system-config/adb-tap.$ANDROID_SERIAL
+. ~/src/github/smartcm/scm-helpers/.adb-get-screen-size
+export width=1080
+export height=1920
 if test "$init" != 1080x1920; then
     export width=${init%x*}
     export height=${init#*x}
 fi
+
+function fix-width() {
+    echo $(( $1 * $width / 1080 ))
+}
+
+function fix-height() {
+    echo $(( $1 * $height / 1920 ))
+}
 
 while true; do
     cmd=$1
@@ -29,6 +29,27 @@ while true; do
         echo -n "input keyevent $2;"
     elif test $cmd = sleep; then
         echo -n "sleep $2;"
+    elif test $cmd = adb-long-press; then
+        shift
+        seconds=0.550
+        if test $# = 5; then
+            seconds=$5
+            set -- $1 $2 $3 $4
+        elif test $# = 3; then
+            seconds=$3
+            set -- $1 $2
+        fi
+
+        if test $# = 2; then
+            set -- $1 $2 $1 $2
+        fi
+
+        if test $# != 4; then
+            die "Error usage: adb-swipe should have 4 args at the end"
+        fi
+        ms=$(perl -e "print int($seconds * 1000)")
+        echo "input touchscreen swipe $(fix-width $1) $(fix-height $2) $(fix-width $3) $(fix-height $4) $ms;"
+        break
     elif test "$1"; then
         echo -n "input tap $1 $2;"
     fi

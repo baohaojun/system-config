@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+use Encode;
+use strict;
+
+my $thin_space = chr(0x2009);
+while (<>) {
+    $_ = decode_utf8 $_;
+
+    s/(\p{CJK})\s*([a-z0-9])/$1$thin_space$2/gi;
+    s/([a-z0-9])\s*(\p{CJK})/$1$thin_space$2/gi;
+    print encode_utf8($_);
+}

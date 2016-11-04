@@ -104,7 +104,7 @@ done
         rsync $x "$chroot"/$HOME/ -av >/dev/null 2>&1
     done&
     sudo cp ~/system-config/bin/cowbuilder-chroot.prepare "$chroot"/root/
-    sudo perl -npe "s/bhj/$USER/; s/adduser/adduser --uid $UIDX/" -i "$chroot"/root/cowbuilder-chroot.prepare
+    sudo perl -npe "s/\\bbhj\\b/$USER/g; s/adduser/adduser --uid $UIDX/" -i "$chroot"/root/cowbuilder-chroot.prepare
     sudo mount -o bind ~/src "$chroot"/$HOME/src
     sudo mount -o bind ~/system-config "$chroot"/$HOME/system-config
     sudo mount -o bind ~/external "$chroot"/$HOME/external

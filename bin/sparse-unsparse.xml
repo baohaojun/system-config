@@ -48,6 +48,10 @@ if test -z "$xml"; then
     xml=rawprogram_unsparse.xml
 fi
 
+if test ! -e "$xml"; then
+    xml=$(find . -name '*.xml' | xargs grep -l system_ |pn 1)
+fi
+
 if test -z "$out"; then
     out=~/tmp/${part}.img
 fi

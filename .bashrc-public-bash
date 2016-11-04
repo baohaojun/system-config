@@ -27,7 +27,25 @@ lcd()
 
     if [[ "$1" =~ ^\\\\|^//|^smb://|^file:///[0-9]+\.|/smb/ && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
-        builtin cd ~/smb/"$(ip-or-name "$1")"
+        set -- "$(ip-or-name "$1"|perl -npe 's,/+,/,g')"
+
+        smb_server=${1%%/*}
+        smb_share=$(echo ${1#*/}|perl -npe 's,/.*,,')
+        set -- "${1#*/*/}"
+
+        run_gvfs=/run/user/$UID/gvfs
+        if test ! -d "$run_gvfs" && test -d /var/"$run_gvfs"; then
+            run_gvfs=/var/"$run_gvfs"
+        fi
+
+        smb_mount=$(select-args -o -p "请选择要使用哪个共享路径？" "$run_gvfs/smb-share:"*"server=$smb_server,share=$smb_share"*)
+
+        if test ! -e "$smb_mount"; then
+            hint "你还没有打开过 smb://$smb_server/$smb_share"
+            return 1
+        fi
+
+        builtin cd "$smb_mount"/"$1"
         return 0
     fi
 
