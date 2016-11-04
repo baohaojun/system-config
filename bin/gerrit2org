@@ -43,7 +43,6 @@ for $gerrit_url (sort keys %gerrit_map) {
 
     print $gerrit_org <<EOF;
 * TODO $gerrit_subject
-
   :PROPERTIES:
   :FROM:     $gerrit_url
   :ID:       $gerrit_id
