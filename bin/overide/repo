@@ -80,6 +80,10 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
         (
             cd $(lookup-file -e .repo/..)
             rm * -rf
+            (
+                cd .repo
+                rm project-objects/ projects/ -rf
+            )
             mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
             ~/system-config/bin/repo "$@"
         )

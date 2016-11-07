@@ -1,6 +1,6 @@
 #!/bin/bash
 if ! which aptitude >/dev/null 2>&1; then
-    sudo apt-get install aptitude
+    sudo apt-get -y install aptitude
 fi
 export LANG=C
 export LC_ALL=C

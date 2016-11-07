@@ -3,7 +3,7 @@
 branch=$(wgit symbolic-ref --short HEAD)
 if test "$branch"; then
     remote=$(git config branch.$branch.remote)
-    rbranch=$(git config branch.$branch.merge|xargs basename)
+    rbranch=$(git config branch.$branch.merge|perl -npe 's,^refs/heads/,,')
     if test "$rbranch"; then
         echo $remote/$rbranch
         exit 0

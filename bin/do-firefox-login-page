@@ -10,6 +10,9 @@ if test "$host" = chipcode.qti.qualcomm.com; then
     sawfish-search-in-firefox username
 elif test "$host" = downloads.cdmatech.com; then
     sawfish-search-in-firefox "user id"
+elif test "$host" = login.arm.com; then
+    sawfish-search-in-firefox "Forgotten Password"
+    sawfish-browser-input ISO_Left_Tab ISO_Left_Tab ISO_Left_Tab
 else
     sawfish-search-in-firefox user
 fi
