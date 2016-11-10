@@ -1,0 +1,11 @@
+#!/bin/bash
+
+out=$(
+    echo export http_proxy=http://'${REMOTEIP}':19999
+    echo export https_proxy=\$http_proxy
+   )
+
+echo "$out"
+if is-tty-io; then
+    echo "$out" | putclip
+fi

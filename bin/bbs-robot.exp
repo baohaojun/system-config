@@ -125,6 +125,11 @@ expect {
         send "\r\n";
         exp_continue;
     }
+    "下面还有喔" {
+        puts "send space";
+        send " ";
+        exp_continue;
+    }
     "主选单" {
         if {! [string eq "" $board]} {
             send "s\r\n";

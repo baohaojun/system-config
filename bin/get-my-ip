@@ -6,7 +6,7 @@ else
     net=$1
 fi
 
-ip=$(ifconfig $net | perl -ne 'print $1 if m/(?:inet addr:|^\s*inet\s*)(\S+)/')
+ip=$(ifconfig $net | perl -ne 'print $1 if m/(?:inet addr:|^\s*inet\s+)(\S+)/')
 echo -n $ip
 if is-tty-io; then
     putclip "$ip"

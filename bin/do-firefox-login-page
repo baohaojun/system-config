@@ -5,6 +5,11 @@ echo $host
 
 user=$(get-authinfo -h $host -u \?)
 
+declare -A search_for_map
+declare -A n_stab_map
+search_for_map[i.smartisan.com]="登录"
+n_stab_map[i.smartisan.com]=3
+
 sleep .2
 if test "$host" = chipcode.qti.qualcomm.com; then
     sawfish-search-in-firefox username
@@ -13,6 +18,13 @@ elif test "$host" = downloads.cdmatech.com; then
 elif test "$host" = login.arm.com; then
     sawfish-search-in-firefox "Forgotten Password"
     sawfish-browser-input ISO_Left_Tab ISO_Left_Tab ISO_Left_Tab
+elif test "${search_for_map[$host]}"; then
+    sawfish-search-in-firefox "${search_for_map[$host]}"
+    if test "${n_stab_map[$host]}"; then
+        for n in $(seq 1 "${n_stab_map[$host]}"); do
+            sawfish-browser-input ISO_Left_Tab
+        done
+    fi
 else
     sawfish-search-in-firefox user
 fi

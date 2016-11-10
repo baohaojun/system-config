@@ -159,7 +159,7 @@ now, and thus need rebuild tags for this file."
 (defun ajoke--extract-line-number (nth-tag-line)
   "Extract line number for `ajoke--thing-at-tag'."
   (if ajoke--tagged-lines
-      (nth 0 (aref ajoke--tagged-lines (max 0 (1- nth-tag-line))))
+      (nth 0 (aref ajoke--tagged-lines (max 0 (min (1- nth-tag-line) (1- (seq-length ajoke--tagged-lines))))))
     (goto-line nth-tag-line)
     (let ((subs (split-string (ajoke--current-line))))
       (string-to-number
