@@ -126,8 +126,13 @@ expect {
         exp_continue;
     }
     "下面还有喔" {
-        puts "send space";
+        puts "send space\n";
         send " ";
+        exp_continue;
+    }
+    "请输入编号，回车忽略" {
+        puts "send number\n";
+        send "1\r\n";
         exp_continue;
     }
     "主选单" {

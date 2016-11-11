@@ -10,6 +10,10 @@
  '(ansi-color-names-vector
    ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
+ '(auto-save-file-name-transforms
+   (quote
+    (("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)
+     (".*" "~/.emacs.d/tmp" t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bbyac-max-chars 80)
  '(before-save-hook
