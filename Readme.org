@@ -90,7 +90,11 @@ Note that the source code for =droidVncServer= may need some porting if your pho
 
 When build is finished, the binary is in =external/droidVncServer=, you need copy it back into your Wrench executable directory, with a rename (for e.g., =androidvncserver-arm64.sdk23= should be renamed to =androidvncserver-aarch64.sdk23=, where =aarch64= is the output from your phone's =adb shell uname -m= ), and generate a .md5 file for it (Please refer to =release/androidvncserver-aarch64.sdk23.md5=).
 
+* Security Risks
 
+Wrench need to use adb to connect to your phone. So it has all the security risks that comes with leaving adb open on your phone.
+
+Wrench input text by putting it into the phone's clipboard, so if there are clipboard sniffers running, you may accidentally leak sensitive infomation.
 
 * Contribute
 
