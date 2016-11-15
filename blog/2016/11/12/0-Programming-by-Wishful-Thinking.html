@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>许愿和编程</title>
+<!-- 2016-11-15 Tue 23:56 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Bao Haojun" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">许愿和编程</h1>
+<p>
+会许愿的人，是有梦想的人。人如果没有梦想，和咸鱼有什么分别？😆
+</p>
+
+<p>
+圣经里记载的上帝，应该是最会许愿的“人”了——神说：“要有光”，就有了光。
+</p>
+
+<p>
+1991年，Linus说，我想要一个可以运行在386机器上的Unix系统，于是就有了Linux。
+</p>
+
+<p>
+2005年，Linus说，我想要一个可以支持Linux开发的版本管理系统，于是就有了Git。
+</p>
+
+<p>
+2012年，罗永浩说，我要做手机，于是就有了锤子科技和Smartisan系列手机。
+</p>
+
+<p>
+由此可见，许愿是一种非常强大的心灵力量，熟练掌握这一技能的话，基本上可以达到心想事成的效果。
+</p>
+
+<p>
+当然，以上举的例子，许的愿望都是非常大的。事实上，在编程的过程中，许愿是一个非常重要的方法。它让你可以高屋建瓴、大刀阔斧的进行抽象。它不仅是让你“先设定一个小目标，比如先赚他一个亿”，更重要的是，它让你“假设我现在已经有了一个亿”。
+</p>
+
+<p>
+没错，愿望都是非常抽象的，具体实现起来全都是细节，而魔鬼总是藏在细节中。所以如果一开始许错了愿望，那实现起来的困难就可想而知了。
+</p>
+
+<p>
+我是在阅读那本非常经典的“Structure and Interpretation of Computer Programs”的时候，第一次了解到“Programming by wishful thinking”这个概念。在讲到“有理数的运算”的时候（以下为该书相关部分的翻译）：
+</p>
+
+<blockquote>
+<p>
+我们想要可以对有理数进行运算。我们想要能够对他们进行加、减、乘、除四则运算，并可以判断两个有理数是否相等。
+</p>
+
+<p>
+让我们从一些假设开始。假设我们已经有办法从一个分子和一个分母创造出一个有理数。还假设拿到一个有理数之后，我们有办法抽出（或称为“选出”）它的分子和分母。让我们进一步假设这个构造函数和这个选择函数都已经是现成的了：
+</p>
+
+<ul class="org-ul">
+<li><code>(make-rat &lt;n&gt; &lt;d&gt;)</code> 返回一个有理数，它的分子是整数 <code>&lt;n&gt;</code>，它的分母是整数 <code>&lt;d&gt;</code>。
+</li>
+<li><code>(numer &lt;x&gt;)</code> 返回有理数 <code>&lt;x&gt;</code> 的分子。
+</li>
+<li><code>(denom &lt;x&gt;)</code> 返回有理数 <code>&lt;x&gt;</code> 的分母。
+</li>
+</ul>
+</blockquote>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Bao Haojun</p>
+<p class="date">Created: 2016-11-15 Tue 23:56</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.0.95.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"></p>
+</div>
+</body>
+</html>
