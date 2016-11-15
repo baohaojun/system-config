@@ -5,11 +5,8 @@ if test -e ~/.bashrc-cust; then
     . ~/.bashrc-cust
 fi
 
-if test -e ~/external/local/emacs25u/bin/emacs; then
-    if test "$(lsb_release -cs)" = trusty; then
-        export PATH=~/external/local/emacs25u/bin:$PATH
-    fi
-fi
+. ~/src/github/smartcm/.bashrc-cust
+
 
 EMACS=emacs
 
