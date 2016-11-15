@@ -1,3 +1,12 @@
+*Note*: @ahungry is the new maintainer of org-jira, as I myself have
+not used Jira the last couple of years, and he has shown me his love
+for org-jira with this pull request:
+https://github.com/baohaojun/org-jira/pull/52. Thanks @ahungry!
+
+The new project is here: https://github.com/ahungry/org-jira.
+
+Thanks to all org-jira users. ♥
+
 * org-jira mode
 
 Use [[http://www.atlassian.com/software/jira/overview/][Jira]] in Emacs org-mode.
