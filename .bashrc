@@ -120,4 +120,5 @@ do
     fi
 done
 export SYSTEM_CONFIG_INITED=true
+export STAY_OFF_MY_LAWN=true
 . ~/system-config/.bashrc-aliases
