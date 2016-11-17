@@ -1,5 +1,19 @@
 #!/bin/bash
 
+if test -z "$1" -o "$1" = s; then
+    sawfish-ask-for-input -p "move your mouse to point 1 and press return"
+    p1=$(sawfish-client -e '(format nil "%d x %d" (car (query-pointer)) (cdr (query-pointer)))'|tr -d \")
+    sawfish-ask-for-input -p "move your mouse to point 2 and press return"
+    p2=$(sawfish-client -e '(format nil "%d x %d" (car (query-pointer)) (cdr (query-pointer)))'|tr -d \")
+
+    x1=$(echo "$p1" | pn 1)
+    x2=$(echo "$p2" | pn 1)
+    y1=$(echo "$p1" | pn 3)
+    y2=$(echo "$p2" | pn 3)
+    echo "\"-x $x1 -y $y1 --width $((x2 - x1)) --height $((y2 - y1))\""
+    exit
+fi
+
 if test "$1" = root; then
     wxh=$(xrandr | grep '\*'|pn 1)
     echo "\"-x 0 -y 0 --width ${wxh%x*} --height ${wxh#*x}\""
