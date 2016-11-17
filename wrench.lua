@@ -34,6 +34,7 @@ local adb_get_last_pic, debugging
 local adb_weixin_lucky_money
 local adb_weixin_lucky_money_output
 local t1_find_weixin_contact, t1_find_qq_contact, t1_find_dingding_contact
+local find_weibo_friend
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
@@ -44,6 +45,8 @@ local check_scroll_lock, prompt_user, yes_or_no_p
 local smartisan_mail_compose = "com.android.email/com.android.mail.compose.ComposeActivity"
 
 -- variables
+local   weibo_home_activity = "com.sina.weibo/com.sina.weibo.MainTabActivity"
+local weibo_search_activity = "com.sina.weibo/com.sina.weibo.page.SearchResultActivity"
 local where_is_dial_key
 local rows_mail_att_finder
 local UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
@@ -1418,6 +1421,25 @@ t1_find_dingding_contact = function(friend_name)
    adb_event"adb-tap 276 354 sleep .8 adb-tap 140 1880"
 end
 
+find_weibo_friend = function(friend_name)
+   putclip_nowait(friend_name)
+   for i = 1, 20 do
+      adb_start_activity(weibo_home_activity)
+      adb_event("adb-tap 336 1866 sleep .1 adb-tap 139 1872 adb-tap 583 30 sleep .2 adb-tap 568 251")
+      ime = wait_input_target_n(5, weibo_search_activity)
+      if ime and not ime:match(weibo_search_activity) then
+         log("wait for weibo search at %d: %s", i, ime)
+         adb_event("key back")
+      else
+         break
+      end
+   end
+   adb_event"key scroll_lock key enter"
+   if yes_or_no_p("Is the first one who you are looking for?") then
+      adb_event"adb-tap 680 456"
+   end
+end
+
 qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
    log("qq find friend: %s", friend_name)
@@ -2456,6 +2478,8 @@ t1_call = function(number)
          search_and_start_app(who)
       elseif where == "mail" then
          search_mail(who)
+      elseif where == "wb" or where == "weibo" then
+         find_weibo_friend(who)
       else
          prompt_user("Don't know how to do it: " .. where)
       end
