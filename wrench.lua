@@ -908,7 +908,10 @@ local function weixin_text_share(window, text)
    if text then
       text = text:gsub("\n", "​\n")
    end
-   adb_event("adb-key scroll_lock sleep .2 adb-tap 961 171")
+   adb_event("adb-key scroll_lock sleep .2")
+   if yes_or_no_p("Share to wechat?") then
+      adb_event(" adb-tap 961 171")
+   end
 end
 
 local function t1_sms(window)
