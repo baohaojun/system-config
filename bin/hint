@@ -26,5 +26,5 @@ done
 
 ## end generated code
 
-read -p "$@.
+read -p "$*.
 请按‘回车’继续.. " || true

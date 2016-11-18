@@ -7,7 +7,6 @@ fi
 
 . ~/src/github/smartcm/.bashrc-cust
 
-
 EMACS=emacs
 
 if test "$USER" = bhj; then

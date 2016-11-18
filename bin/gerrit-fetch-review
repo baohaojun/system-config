@@ -3,17 +3,39 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:remote
+# generate-getopt r:remote h:GERRIT-HOST
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o r: --long "remote:"  -n $(basename -- $0) -- "$@")
+TEMP=$(getopt -o h:r:h \
+              --long GERRIT-HOST:,remote:,help \
+              -n $(basename -- $0) -- "$@")
+GERRIT_HOST=
 remote=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
+        -h|--GERRIT-HOST)
+            GERRIT_HOST=$2
+            shift 2
+            ;;
         -r|--remote)
             remote=$2
             shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-h, '
+            printf %-24s '--GERRIT-HOST=GERRIT_HOST'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--remote=REMOTE'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -26,6 +48,8 @@ while true; do
 done
 
 ## end generated code
+
+export GERRIT_HOST
 
 export REPO_REMOTE=$remote
 

@@ -1,7 +1,35 @@
 #!/bin/bash
 export OUT_DIR_LONG=.repo/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
-mkdir -p $OUT_DIR_LONG/host $OUT_DIR_LONG/target
+(
+    if test -d out -a ! -L out; then
+        hint -t 5 "
+
+你的 out 目录不是一个指向 $OUT_DIR_LONG 的软链接，这容易掉进陷阱（比如
+从 userdebug 换到 user 编译，忘记清理 out 目录的话无法保证编译的正确性）
+
+"
+        back_dir=$(
+            for x in $(seq 1 100); do
+                if test ! -e $OUT_DIR_LONG.$x; then
+                    echo $OUT_DIR_LONG.$x
+                    exit 0
+                fi
+            done
+                )
+        rm -rf $back_dir
+        hint -t 5 "
+
+将会帮你自动把 out 目录备份到 $back_dir，如果你确认该目录没问题，你可
+以自己手动将其 mv 到 $OUT_DIR_LONG
+
+"
+        mkdir -p $(dirname $back_dir)
+        mv out $back_dir
+    fi
+)
+
 rm -f out || rm -rf out || true
+mkdir -p $OUT_DIR_LONG/host $OUT_DIR_LONG/target
+
 relative-link $OUT_DIR_LONG out || true
 export OUT_DIR=out
-
