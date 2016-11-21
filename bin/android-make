@@ -14,7 +14,7 @@ top_dir=$(pwd)
 
 set -e
 
-if test -L out; then
+if test -L out -a ! -e out; then
     rm out -rf # in case it's a dangling symlink.
 fi
 if test "$hourly_build_debug" = true; then

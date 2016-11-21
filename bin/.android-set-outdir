@@ -1,7 +1,7 @@
 #!/bin/bash
 export OUT_DIR_LONG=.repo/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 (
-    if test -d out -a ! -L out; then
+    if test -d out -a -d out/target -a ! -L out; then
         hint -t 5 "
 
 你的 out 目录不是一个指向 $OUT_DIR_LONG 的软链接，这容易掉进陷阱（比如
