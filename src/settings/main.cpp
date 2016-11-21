@@ -20,6 +20,8 @@
 #include "libsnore/version.h"
 #include "settingswindow.h"
 
+#include "libsnore/snore_static_plugins.h"
+
 #include <QApplication>
 #include <QCommandLineParser>
 

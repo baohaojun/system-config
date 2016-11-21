@@ -3,20 +3,18 @@
 
 #include "libsnore/plugins/snorebackend.h"
 
-namespace Snore
-{
-}
-
 class QSystemTrayIcon;
 
-class TrayIconNotifer: public Snore::SnoreBackend
+namespace SnorePlugin {
+
+class Trayicon: public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json")
 public:
-    TrayIconNotifer();
-    ~TrayIconNotifer() = default;
+    Trayicon();
+    ~Trayicon() = default;
 
     bool canCloseNotification() const override;
     bool isReady() override;
@@ -38,5 +36,6 @@ private Q_SLOTS:
     void actionInvoked();
 
 };
+}
 
 #endif // TRAYICONNOTIFER_H

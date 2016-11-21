@@ -39,6 +39,6 @@ private:
     QLineEdit *m_password;
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(GrowlSettings)
+SNORE_DECLARE_SETTINGS_PLUGIN(Growl)
 
 #endif // GROWLSETTINGS_H

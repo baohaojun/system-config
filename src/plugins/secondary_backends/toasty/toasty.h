@@ -22,6 +22,8 @@
 
 #include <QNetworkAccessManager>
 
+namespace SnorePlugin {
+
 class Toasty : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
@@ -41,5 +43,7 @@ private:
     QNetworkAccessManager m_manager;
 
 };
+
+}
 
 #endif // TOASTY_H

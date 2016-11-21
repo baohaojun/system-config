@@ -23,15 +23,17 @@
 #include "growl.hpp"
 #include <string>
 
-class GrowlBackend: public Snore::SnoreBackend
+namespace SnorePlugin {
+
+class Growl: public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json")
 
 public:
-    GrowlBackend();
-    ~GrowlBackend();
+    Growl();
+    ~Growl();
     bool isReady() override;
 
 protected:
@@ -39,8 +41,8 @@ protected:
 
 private:
     //a static instance for the static callback methode
-    static GrowlBackend *s_instance;
-    QHash<QString, Growl *> m_applications;
+    static Growl *s_instance;
+    QHash<QString, ::Growl *> m_applications;
 
 public Q_SLOTS:
     void slotRegisterApplication(const Snore::Application &application) override;
@@ -49,4 +51,5 @@ public Q_SLOTS:
 
 };
 
+}
 #endif // GROWL_BACKEND_H

@@ -17,8 +17,11 @@ set(snoresettings_HDR
     ${CMAKE_CURRENT_BINARY_DIR}/snore_settings_exports.h
     )
 
-
-add_library( libsnoresettings SHARED ${snoresettings_SRCS})
+if (NOT SNORE_STATIC)
+    add_library( libsnoresettings SHARED ${snoresettings_SRCS})
+else()
+    add_library( libsnoresettings STATIC ${snoresettings_SRCS})
+endif()
 set_target_properties( libsnoresettings PROPERTIES
                                 OUTPUT_NAME "snoresettings${SNORE_SUFFIX}"
                                 VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}"

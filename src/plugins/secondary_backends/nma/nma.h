@@ -22,14 +22,17 @@
 
 #include <QNetworkAccessManager>
 
-class NotifyMyAndroid : public Snore::SnoreSecondaryBackend
+namespace SnorePlugin {
+
+
+class NMA : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreSecondaryBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "snore_plugin.json")
 public:
-    NotifyMyAndroid() = default;
-    ~NotifyMyAndroid() = default;
+    NMA() = default;
+    ~NMA() = default;
 
 protected:
     void setDefaultSettings() override;
@@ -42,4 +45,5 @@ private:
 
 };
 
+}
 #endif // NMA_H

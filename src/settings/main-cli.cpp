@@ -19,6 +19,8 @@
 #include "libsnore/snoreglobals.h"
 #include "libsnore/utils.h"
 
+#include "libsnore/snore_static_plugins.h"
+
 #include "settingsutils.h"
 
 #include <QGuiApplication>

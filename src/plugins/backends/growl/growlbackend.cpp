@@ -24,64 +24,63 @@
 
 #include <functional>
 
-using namespace Snore;
 
-GrowlBackend *GrowlBackend::s_instance = nullptr;
+SnorePlugin::Growl *SnorePlugin::Growl::s_instance = nullptr;
 
-GrowlBackend::GrowlBackend()
+SnorePlugin::Growl::Growl()
 {
     s_instance = this;
 
     auto func = [](growl_callback_data * data)->void {
         qCDebug(SNORE) << data->id << QString::fromUtf8(data->reason) << QString::fromUtf8(data->data);
-        Notification n = Snore::SnoreCore::instance().getActiveNotificationByID(data->id);
+        Snore::Notification n = Snore::SnoreCore::instance().getActiveNotificationByID(data->id);
         if (!n.isValid())
         {
             return;
         }
-        Notification::CloseReasons r = Notification::None;
+        Snore::Notification::CloseReasons r = Snore::Notification::None;
         std::string reason(data->reason);
         if (reason == "TIMEDOUT")
         {
-            r = Notification::TimedOut;
+            r = Snore::Notification::TimedOut;
         } else if (reason == "CLOSED")
         {
-            r = Notification::Dismissed;
+            r = Snore::Notification::Dismissed;
         } else if (reason == "CLICK")
         {
-            r = Notification::Activated;
+            r = Snore::Notification::Activated;
             s_instance->slotNotificationActionInvoked(n);
         }
         s_instance->closeNotification(n, r);
     };
-    Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data *)>(func));
+    ::Growl::init((GROWL_CALLBACK)static_cast<void(*)(growl_callback_data *)>(func));
 }
 
-GrowlBackend::~GrowlBackend()
+SnorePlugin::Growl::~Growl()
 {
-    Growl::shutdown();
+    ::Growl::shutdown();
 }
 
-bool GrowlBackend::isReady()
+bool SnorePlugin::Growl::isReady()
 {
-    bool running = Growl::isRunning(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData());
+    bool running = ::Growl::isRunning(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData());
     if (!running) {
         setErrorString(tr("%1 is not running.").arg(name()));
     }
     return running;
 }
 
-void GrowlBackend::slotRegisterApplication(const Application &application)
+void SnorePlugin::Growl::slotRegisterApplication(const Snore::Application &application)
 {
     qCDebug(SNORE) << application.name();
     std::vector<std::string> alerts;
     alerts.reserve(application.alerts().size());
-    foreach(const Alert & a, application.alerts()) {
+    foreach(const Snore::Alert & a, application.alerts()) {
         qCDebug(SNORE) << a.name();
         alerts.push_back(a.name().toUtf8().constData());
     }
 
-    Growl *growl = new Growl(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData(),
+    ::Growl *growl = new ::Growl(GROWL_TCP, settingsValue(QStringLiteral("Host")).toString().toUtf8().constData(),
                              settingsValue(QStringLiteral("Password")).toString().toUtf8().constData(),
                              application.name().toUtf8().constData());
     m_applications.insert(application.name(), growl);
@@ -89,18 +88,18 @@ void GrowlBackend::slotRegisterApplication(const Application &application)
 
 }
 
-void GrowlBackend::slotDeregisterApplication(const Application &application)
+void SnorePlugin::Growl::slotDeregisterApplication(const Snore::Application &application)
 {
-    Growl *growl = m_applications.take(application.name());
+    ::Growl *growl = m_applications.take(application.name());
     if (growl == nullptr) {
         return;
     }
     delete growl;
 }
 
-void GrowlBackend::slotNotify(Notification notification)
+void SnorePlugin::Growl::slotNotify(Snore::Notification notification)
 {
-    Growl *growl = m_applications.value(notification.application().name());
+    ::Growl *growl = m_applications.value(notification.application().name());
     QString alert = notification.alert().name();
     qCDebug(SNORE) << "Notify Growl:" << notification.application() << alert << notification.title();
 
@@ -115,7 +114,7 @@ void GrowlBackend::slotNotify(Notification notification)
     slotNotificationDisplayed(notification);
 }
 
-void GrowlBackend::setDefaultSettings()
+void SnorePlugin::Growl::setDefaultSettings()
 {
     SnoreBackend::setDefaultSettings();
     setDefaultSettingsValue(QStringLiteral("Host"), QLatin1String("localhost"));

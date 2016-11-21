@@ -32,14 +32,13 @@
 
 #define SNORENOTIFIER_MESSAGE_ID WM_USER + 238
 
-using namespace Snore;
 using namespace Snarl::V42;
 
-class SnarlBackend::SnarlWidget: public QWidget
+class SnarlWidget: public QWidget
 {
     //Q_OBJECT
 public:
-    SnarlWidget(SnarlBackend *snarl):
+    SnarlWidget(SnorePlugin::Snarl *snarl):
         m_snarl(snarl)
     {
         SNARL_GLOBAL_MESSAGE = SnarlInterface::Broadcast();
@@ -52,7 +51,7 @@ public:
             if (msg->message == SNARL_GLOBAL_MESSAGE) {
                 int action = msg->wParam;
                 if (action == SnarlEnums::SnarlLaunched) {
-                    for (const Application &a : SnoreCore::instance().aplications()) {
+                    for (const Snore::Application &a : Snore::SnoreCore::instance().aplications()) {
                         m_snarl->slotRegisterApplication(a);
                     }
                 }
@@ -61,30 +60,30 @@ public:
                 int action = msg->wParam & 0xffff;
                 int data = (msg->wParam & 0xffffffff) >> 16;
 
-                Notification notification;
+                Snore::Notification notification;
                 if (msg->lParam != 0) {
                     notification =  m_snarl->m_idMap.value(msg->lParam);
                 }
 
-                Notification::CloseReasons reason = Notification::None;
+                Snore::Notification::CloseReasons reason = Snore::Notification::None;
                 switch (action) {
                 case SnarlEnums::CallbackInvoked:
-                    reason = Notification::Activated;
+                    reason = Snore::Notification::Activated;
                     qCDebug(SNORE) << "Notification clicked";
                     break;
                 case SnarlEnums::NotifyAction:
-                    reason = Notification::Activated;
+                    reason = Snore::Notification::Activated;
                     qCDebug(SNORE) << "Notification action invoked";
                     if (notification.isValid()) {
                         m_snarl->slotNotificationActionInvoked(notification, notification.actions().value(data));
                     }
                     break;
                 case SnarlEnums::CallbackClosed:
-                    reason = Notification::Dismissed;
+                    reason = Snore::Notification::Dismissed;
                     qCDebug(SNORE) << "Notification dismissed";
                     break;
                 case SnarlEnums::CallbackTimedOut:
-                    reason = Notification::TimedOut;
+                    reason = Snore::Notification::TimedOut;
                     qCDebug(SNORE) << "Notification timed out";
                     break;
                 //away stuff
@@ -113,32 +112,32 @@ public:
 
 private:
     uint SNARL_GLOBAL_MESSAGE;
-    SnarlBackend *m_snarl;
+    SnorePlugin::Snarl *m_snarl;
 
 };
 
-SnarlBackend::SnarlBackend()
+SnorePlugin::Snarl::Snarl()
 {
 }
 
-SnarlBackend::~SnarlBackend()
+SnorePlugin::Snarl::~Snarl()
 {
     if (m_eventLoop) {
         delete m_eventLoop;
     }
 }
 
-bool SnarlBackend::canCloseNotification() const
+bool SnorePlugin::Snarl::canCloseNotification() const
 {
     return true;
 }
 
-bool SnarlBackend::canUpdateNotification() const
+bool SnorePlugin::Snarl::canUpdateNotification() const
 {
     return true;
 }
 
-bool SnarlBackend::isReady()
+bool SnorePlugin::Snarl::isReady()
 {
     if (!qobject_cast< QApplication * >(qApp)) {
         setErrorString(tr("This plugin only works with QApplication"));
@@ -146,7 +145,7 @@ bool SnarlBackend::isReady()
     }
 
     if (!m_eventLoop) {
-        m_eventLoop = new SnarlBackend::SnarlWidget(this);
+        m_eventLoop = new SnarlWidget(this);
     }
     bool running = SnarlInterface::IsSnarlRunning();
     if (!running) {
@@ -155,18 +154,16 @@ bool SnarlBackend::isReady()
     return running;
 }
 
-void SnarlBackend::setDefaultSettings()
+void SnorePlugin::Snarl::setDefaultSettings()
 {
 
     setDefaultSettingsValue(QLatin1String("Password"), QString());
     SnoreBackend::setDefaultSettings();
 }
 
-void SnarlBackend::slotRegisterApplication(const Application &application)
+void SnorePlugin::Snarl::slotRegisterApplication(const Snore::Application &application)
 {
-    if (!m_eventLoop) {
-        return;
-    }
+    Q_ASSERT(m_eventLoop);
 
     Q_ASSERT_X(!m_applications.contains(application.name()), Q_FUNC_INFO, "Application already registered");
 
@@ -182,14 +179,14 @@ void SnarlBackend::slotRegisterApplication(const Application &application)
                     (HWND)m_eventLoop->winId(), SNORENOTIFIER_MESSAGE_ID);
     qCDebug(SNORE) << result;
 
-    foreach(const Alert & alert, application.alerts()) {
+    foreach(const Snore::Alert & alert, application.alerts()) {
         snarlInterface->AddClass(alert.name().toUtf8().constData(),
                                  alert.name().toUtf8().constData(),
                                  0, 0, alert.icon().localUrl(QSize(128, 128)).toUtf8().constData());
     }
 }
 
-void SnarlBackend::slotDeregisterApplication(const Application &application)
+void SnorePlugin::Snarl::slotDeregisterApplication(const Snore::Application &application)
 {
     if (!m_applications.contains(application.name())) {
         qCDebug(SNORE) << "Unknown apllication: " << application.name();
@@ -201,7 +198,7 @@ void SnarlBackend::slotDeregisterApplication(const Application &application)
     delete snarlInterface;
 }
 
-void SnarlBackend::slotNotify(Notification notification)
+void SnorePlugin::Snarl::slotNotify(Snore::Notification notification)
 {
     if (!m_applications.contains(notification.application().name())) {
         qCDebug(SNORE) << "Unknown apllication: " << notification.application().name();
@@ -210,13 +207,13 @@ void SnarlBackend::slotNotify(Notification notification)
 
     SnarlInterface *snarlInterface = m_applications.value(notification.application().name());
 
-    Snarl::V42::SnarlEnums::MessagePriority priority = Snarl::V42::SnarlEnums::PriorityUndefined;
+    ::Snarl::V42::SnarlEnums::MessagePriority priority = ::Snarl::V42::SnarlEnums::PriorityUndefined;
     if (notification.priority() > 1) {
-        priority = Snarl::V42::SnarlEnums::PriorityHigh;
+        priority = ::Snarl::V42::SnarlEnums::PriorityHigh;
     } else if (notification.priority() < -1) {
-        priority = Snarl::V42::SnarlEnums::PriorityLow;
+        priority = ::Snarl::V42::SnarlEnums::PriorityLow;
     } else {
-        priority = static_cast<Snarl::V42::SnarlEnums::MessagePriority>(notification.priority());
+        priority = static_cast<::Snarl::V42::SnarlEnums::MessagePriority>(notification.priority());
     }
 
     ULONG32 id = 0;
@@ -228,10 +225,10 @@ void SnarlBackend::slotNotify(Notification notification)
                                     notification.text().toUtf8().constData(),
                                     notification.timeout(),
                                     nullptr,
-                                    Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
+                                    Snore::Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
                                     priority);
 
-        foreach(const Action & a, notification.actions()) {
+        foreach(const Snore::Action & a, notification.actions()) {
             snarlInterface->AddAction(id, a.name().toUtf8().constData(), (QLatin1Char('@') + QString::number(a.id())).toUtf8().constData());
         }
         m_idMap[id] = notification;
@@ -245,7 +242,7 @@ void SnarlBackend::slotNotify(Notification notification)
                                notification.text().toUtf8().constData(),
                                notification.timeout(),
                                nullptr,
-                               Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
+                               Snore::Utils::dataFromImage(notification.icon().pixmap(QSize(128, 128)).toImage()).toBase64().constData(),
                                priority);
     }
 
@@ -254,7 +251,7 @@ void SnarlBackend::slotNotify(Notification notification)
 
 }
 
-void SnarlBackend::slotCloseNotification(Notification notification)
+void SnorePlugin::Snarl::slotCloseNotification(Snore::Notification notification)
 {
     if (!m_applications.contains(notification.application().name())) {
         qCDebug(SNORE) << "Unknown apllication: " << notification.application().name();

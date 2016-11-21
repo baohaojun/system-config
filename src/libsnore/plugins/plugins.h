@@ -162,7 +162,7 @@ private:
     void setDefaultSettingsPlugin();
 
     bool m_enabled = false;
-    PluginContainer *m_container = nullptr;
+    QString m_name;
     QString m_error;
     Hint m_hints;
 

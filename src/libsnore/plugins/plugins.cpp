@@ -79,8 +79,7 @@ QString SnorePlugin::normaliseKey(const QString &key) const
 
 const QString &SnorePlugin::name() const
 {
-    Q_ASSERT_X(m_container, Q_FUNC_INFO, "Plugin container not set.");
-    return m_container->name();
+    return m_name;
 }
 
 const QString SnorePlugin::typeName() const

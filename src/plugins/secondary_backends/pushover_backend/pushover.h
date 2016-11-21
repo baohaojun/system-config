@@ -22,6 +22,8 @@
 
 #include <QNetworkAccessManager>
 
+namespace SnorePlugin {
+
 class Pushover : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
@@ -42,4 +44,5 @@ private:
 
 };
 
+}
 #endif // PUSHOVER_H

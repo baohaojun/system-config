@@ -40,6 +40,6 @@ private:
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(PushoverSettings)
+SNORE_DECLARE_SETTINGS_PLUGIN(Pushover)
 
 #endif // PUSHOVERSETTINGS_H

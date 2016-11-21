@@ -24,9 +24,9 @@
 #include <QHttpMultiPart>
 #include <QFile>
 
-using namespace Snore;
+namespace SnorePlugin {
 
-void Toasty::slotNotify(Notification notification)
+void Toasty::slotNotify(Snore::Notification notification)
 {
     QString key = settingsValue(QStringLiteral("DeviceID")).toString();
     if (key.isEmpty()) {
@@ -76,4 +76,6 @@ void Toasty::setDefaultSettings()
 {
     setDefaultSettingsValue(QStringLiteral("DeviceID"), QString());
     SnoreSecondaryBackend::setDefaultSettings();
+}
+
 }

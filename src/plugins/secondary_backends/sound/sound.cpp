@@ -20,7 +20,7 @@
 #include <QtMultimedia/QMediaPlayer>
 #include <QTimer>
 
-using namespace Snore;
+namespace SnorePlugin {
 
 Sound::Sound():
     m_player(new QMediaPlayer(this))
@@ -63,4 +63,6 @@ void Sound::slotNotificationDisplayed(Snore::Notification notification)
             timeout->deleteLater();
         });
     }
+}
+
 }

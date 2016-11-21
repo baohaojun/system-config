@@ -4,14 +4,16 @@
 #include "libsnore/plugins/snorebackend.h"
 #include <QProcess>
 
-class SnoreToast : public Snore::SnoreBackend
+namespace SnorePlugin {
+
+class WindowsToast : public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json")
 public:
-    SnoreToast() = default;
-    ~SnoreToast() = default;
+    WindowsToast() = default;
+    ~WindowsToast() = default;
 
     virtual bool canCloseNotification() const override;
 
@@ -27,5 +29,6 @@ private:
     QProcess *createProcess(Snore::Notification noti);
 
 };
+}
 
 #endif // TOASTER_H

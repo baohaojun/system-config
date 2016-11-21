@@ -24,16 +24,18 @@
 #include <QQmlProperty>
 
 using namespace Snore;
+using namespace SnorePlugin;
 
-NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
+NotifyWidget::NotifyWidget(int id, const ::SnorePlugin::Snore *parent) :
     m_id(id),
     m_parent(parent),
-    m_mem(QLatin1String("SnoreNotifyWidget_rev") + QString::number(SHARED_MEM_TYPE_REV()) + QLatin1String("_id") + QString::number(m_id)),
+    m_mem(QStringLiteral("SnoreNotifyWidget_rev%1_id%2").arg(SHARED_MEM_TYPE_REV(), m_id)),
     m_ready(true),
     m_fontFamily(qApp->font().family())
 {
 
 #ifdef Q_OS_WIN
+#if QT_VERSION < QT_VERSION_CHECK(5,7,0)// Qt 5.7+ is broken and can only display it in black and white.
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {
         m_fontFamily = QStringLiteral("Segoe UI Symbol");
         emit fontFamilyChanged();
@@ -43,6 +45,7 @@ NotifyWidget::NotifyWidget(int id, const SnoreNotifier *parent) :
         m_fontFamily = QStringLiteral("Segoe UI Emoji");
         emit fontFamilyChanged();
     }
+#endif
 #endif
 #endif
     QQmlApplicationEngine *engine = new QQmlApplicationEngine(this);
@@ -187,6 +190,9 @@ void NotifyWidget::syncSettings()
 
 QColor NotifyWidget::computeBackgrondColor(const QImage &img)
 {
+    if (img.isNull())
+        return Qt::black;
+
     int stepSize = img.depth() / 8;
     qulonglong r = 0;
     qulonglong g = 0;

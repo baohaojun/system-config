@@ -6,33 +6,31 @@
 #include <QSystemTrayIcon>
 #include <QApplication>
 
-using namespace Snore;
-
-TrayIconNotifer::TrayIconNotifer()
+SnorePlugin::Trayicon::Trayicon()
 {
-    connect(this, &TrayIconNotifer::enabledChanged, [this](bool) {
+    connect(this, &Trayicon::enabledChanged, [this](bool) {
         m_currentlyDisplaying = false;
     });
 }
 
-bool TrayIconNotifer::canCloseNotification() const
+bool SnorePlugin::Trayicon::canCloseNotification() const
 {
     return true;
 }
 
-void TrayIconNotifer::slotNotify(Notification notification)
+void SnorePlugin::Trayicon::slotNotify(Snore::Notification notification)
 {
     QSystemTrayIcon *icon = trayIcon(notification.application());
     if (icon) {
         m_notificationQue.append(notification);
         displayNotification(icon);
     } else {
-        closeNotification(notification, Notification::Closed);
+        closeNotification(notification, Snore::Notification::Closed);
         setErrorString(QLatin1String("No tray-icon hint provided for ") + notification.application().name());
     }
 }
 
-void TrayIconNotifer::slotCloseNotification(Notification n)
+void SnorePlugin::Trayicon::slotCloseNotification(Snore::Notification n)
 {
     QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon) {
@@ -42,23 +40,23 @@ void TrayIconNotifer::slotCloseNotification(Notification n)
     }
 }
 
-void TrayIconNotifer::slotRegisterApplication(const Application &application)
+void SnorePlugin::Trayicon::slotRegisterApplication(const Snore::Application &application)
 {
     QSystemTrayIcon *icon = trayIcon(application);
     if (icon) {
-        connect(icon, &QSystemTrayIcon::messageClicked, this, &TrayIconNotifer::actionInvoked);
+        connect(icon, &QSystemTrayIcon::messageClicked, this, &Trayicon::actionInvoked);
     }
 }
 
-void TrayIconNotifer::slotDeregisterApplication(const Application &application)
+void SnorePlugin::Trayicon::slotDeregisterApplication(const Snore::Application &application)
 {
     QSystemTrayIcon *icon = trayIcon(application);
     if (icon) {
-        disconnect(icon, &QSystemTrayIcon::messageClicked, this, &TrayIconNotifer::actionInvoked);
+        disconnect(icon, &QSystemTrayIcon::messageClicked, this, &Trayicon::actionInvoked);
     }
 }
 
-QSystemTrayIcon *TrayIconNotifer::trayIcon(const Application &app)
+QSystemTrayIcon *SnorePlugin::Trayicon::trayIcon(const Snore::Application &app)
 {
     if (app.constHints().contains("tray-icon")) {
         return app.constHints().value("tray-icon").value<QPointer<QSystemTrayIcon>>();
@@ -66,7 +64,7 @@ QSystemTrayIcon *TrayIconNotifer::trayIcon(const Application &app)
     return nullptr;
 }
 
-void TrayIconNotifer::displayNotification(QSystemTrayIcon *icon)
+void SnorePlugin::Trayicon::displayNotification(QSystemTrayIcon *icon)
 {
     Q_ASSERT(icon);
     if (m_currentlyDisplaying) {
@@ -77,26 +75,26 @@ void TrayIconNotifer::displayNotification(QSystemTrayIcon *icon)
         return;
     }
     m_currentlyDisplaying = true;
-    Notification notification =  m_notificationQue.takeFirst();
+    Snore::Notification notification =  m_notificationQue.takeFirst();
     m_displayed = notification;
     icon->showMessage(notification.title(), notification.text(), QSystemTrayIcon::NoIcon, notification.timeout() * 1000);
     slotNotificationDisplayed(notification);
 }
 
-void TrayIconNotifer::actionInvoked()
+void SnorePlugin::Trayicon::actionInvoked()
 {
-    Notification n = m_displayed;
+    Snore::Notification n = m_displayed;
     QSystemTrayIcon *icon = trayIcon(n.application());
     if (icon && n.isValid()) {
         slotNotificationActionInvoked(n);
-        closeNotification(n, Notification::Activated);
+        closeNotification(n, Snore::Notification::Activated);
         m_currentlyDisplaying = false;
         displayNotification(icon);
     }
 
 }
 
-bool TrayIconNotifer::isReady()
+bool SnorePlugin::Trayicon::isReady()
 {
     if (!qobject_cast< QApplication * >(qApp)) {
         setErrorString(tr("This plugin only works with QApplication"));

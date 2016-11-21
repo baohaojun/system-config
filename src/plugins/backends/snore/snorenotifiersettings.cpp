@@ -20,9 +20,7 @@
 
 #include <QComboBox>
 
-using namespace Snore;
-
-SnoreNotifierSettings::SnoreNotifierSettings(SnorePlugin *snore, QWidget *parent) :
+SnoreSettings::SnoreSettings(Snore::SnorePlugin *snore, QWidget *parent) :
     PluginSettingsWidget(snore, parent),
     m_comboBox(new QComboBox)
 {
@@ -33,17 +31,16 @@ SnoreNotifierSettings::SnoreNotifierSettings(SnorePlugin *snore, QWidget *parent
     addRow(tr("Position:"), m_comboBox);
 }
 
-SnoreNotifierSettings::~SnoreNotifierSettings()
+SnoreSettings::~SnoreSettings()
 {
 }
 
-void SnoreNotifierSettings::load()
+void SnoreSettings::load()
 {
     m_comboBox->setCurrentIndex(settingsValue(QStringLiteral("Position")).toInt());
 }
 
-void SnoreNotifierSettings::save()
+void SnoreSettings::save()
 {
     setSettingsValue(QStringLiteral("Position"), m_comboBox->currentIndex());
 }
-

@@ -23,12 +23,12 @@
 
 class QLineEdit;
 
-class NotifyMyAndroidSettings : public Snore::PluginSettingsWidget
+class NMASettings : public Snore::PluginSettingsWidget
 {
     Q_OBJECT
 public:
-    explicit NotifyMyAndroidSettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
-    ~NotifyMyAndroidSettings();
+    explicit NMASettings(Snore::SnorePlugin *plugin, QWidget *parent = 0);
+    ~NMASettings();
 
     void load() override;
     void save() override;
@@ -38,6 +38,6 @@ private:
 
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(NotifyMyAndroidSettings)
+SNORE_DECLARE_SETTINGS_PLUGIN(NMA)
 
 #endif // NOTIFYMYANDROID_HH

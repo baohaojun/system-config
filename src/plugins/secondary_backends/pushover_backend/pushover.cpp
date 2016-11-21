@@ -24,9 +24,9 @@
 #include <QNetworkRequest>
 #include <QHttpMultiPart>
 
-using namespace Snore;
+namespace SnorePlugin {
 
-void Pushover::slotNotify(Notification notification)
+void Pushover::slotNotify(Snore::Notification notification)
 {
     if (notification.data()->sourceAndTargetAreSimilar(this)) {
         return;
@@ -47,7 +47,7 @@ void Pushover::slotNotify(Notification notification)
 
     QString textString;
     if (notification.constHints().value("use-markup").toBool()) {
-        textString = notification.text(Utils::Href | Utils::Bold | Utils::Underline | Utils::Font | Utils::Italic);
+        textString = notification.text(Snore::Utils::Href | Snore::Utils::Bold | Snore::Utils::Underline | Snore::Utils::Font | Snore::Utils::Italic);
 
         QHttpPart html;
         html.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"html\"")));
@@ -68,7 +68,7 @@ void Pushover::slotNotify(Notification notification)
     priority.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"priority\"")));
     priority.setBody(QString::number(notification.priority()).toUtf8().constData());
     mp->append(priority);
-    if (notification.priority() == Notification::Emergency) {
+    if (notification.priority() == Snore::Notification::Emergency) {
 
         QHttpPart retry;
         retry.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"retry\"")));
@@ -86,14 +86,14 @@ void Pushover::slotNotify(Notification notification)
     if (notification.hints().value("silent").toBool()) {
         sound.setBody("none");
     } else {
-        sound.setBody(settingsValue(QStringLiteral("Sound"), LocalSetting).toString().toUtf8().constData());
+        sound.setBody(settingsValue(QStringLiteral("Sound"), Snore::LocalSetting).toString().toUtf8().constData());
     }
     mp->append(sound);
 
-    if (!settingsValue(QStringLiteral("Devices"), LocalSetting).toString().isEmpty()) {
+    if (!settingsValue(QStringLiteral("Devices"), Snore::LocalSetting).toString().isEmpty()) {
         QHttpPart devices;
         devices.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(QLatin1String("form-data; name=\"device\"")));
-        devices.setBody(settingsValue(QStringLiteral("Devices"), LocalSetting).toString().toUtf8().constData());
+        devices.setBody(settingsValue(QStringLiteral("Devices"), Snore::LocalSetting).toString().toUtf8().constData());
         mp->append(devices);
     }
 
@@ -122,7 +122,9 @@ void Pushover::slotNotify(Notification notification)
 void Pushover::setDefaultSettings()
 {
     setDefaultSettingsValue(QStringLiteral("UserKey"), QString());
-    setDefaultSettingsValue(QStringLiteral("Sound"), QLatin1String("pushover"), LocalSetting);
-    setDefaultSettingsValue(QStringLiteral("Devices"), QString(), LocalSetting);
+    setDefaultSettingsValue(QStringLiteral("Sound"), QLatin1String("pushover"), Snore::LocalSetting);
+    setDefaultSettingsValue(QStringLiteral("Devices"), QString(), Snore::LocalSetting);
     SnoreSecondaryBackend::setDefaultSettings();
+}
+
 }

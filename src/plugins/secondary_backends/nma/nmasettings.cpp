@@ -22,7 +22,7 @@
 #include <QLabel>
 #include <QLineEdit>
 
-NotifyMyAndroidSettings::NotifyMyAndroidSettings(Snore::SnorePlugin *plugin, QWidget *parent) :
+NMASettings::NMASettings(Snore::SnorePlugin *plugin, QWidget *parent) :
     Snore::PluginSettingsWidget(plugin, parent),
     m_lineEdit(new QLineEdit)
 {
@@ -30,16 +30,16 @@ NotifyMyAndroidSettings::NotifyMyAndroidSettings(Snore::SnorePlugin *plugin, QWi
     addRow(QString(), new QLabel(tr("If you don't have an account yet please register at <a href=\"http://notifymyandroid.com/\">Notifymyandroid.com</a>."), this));
 }
 
-NotifyMyAndroidSettings::~NotifyMyAndroidSettings()
+NMASettings::~NMASettings()
 {
 }
 
-void NotifyMyAndroidSettings::load()
+void NMASettings::load()
 {
     m_lineEdit->setText(settingsValue(QStringLiteral("ApiKey")).toString());
 }
 
-void NotifyMyAndroidSettings::save()
+void NMASettings::save()
 {
     setSettingsValue(QStringLiteral("ApiKey"), m_lineEdit->text());
 }

@@ -23,9 +23,7 @@
 #include <QSpinBox>
 #include <QPushButton>
 
-using namespace Snore;
-
-SoundSettings::SoundSettings(SnorePlugin *snorePlugin, QWidget *parent) :
+SoundSettings::SoundSettings(Snore::SnorePlugin *snorePlugin, QWidget *parent) :
     PluginSettingsWidget(snorePlugin, parent),
     m_lineEditFileName(new QLineEdit),
     m_spinBoxVolume(new QSpinBox)

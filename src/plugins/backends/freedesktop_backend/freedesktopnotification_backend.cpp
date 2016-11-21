@@ -8,9 +8,7 @@
 
 #include "fredesktopnotification.h"
 
-using namespace Snore;
-
-FreedesktopBackend::FreedesktopBackend()
+SnorePlugin::Freedesktop::Freedesktop()
 {
     m_interface = new org::freedesktop::Notifications(QStringLiteral("org.freedesktop.Notifications"),
             QStringLiteral("/org/freedesktop/Notifications"),
@@ -21,29 +19,29 @@ FreedesktopBackend::FreedesktopBackend()
         m_supportsRichtext = reply.value().contains(QStringLiteral("body-markup"));
         watcher->deleteLater();
     });
-    connect(this, &FreedesktopBackend::enabledChanged, [this](bool enabled) {
+    connect(this, &Freedesktop::enabledChanged, [this](bool enabled) {
         if (enabled) {
-            connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
-            connect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
+            connect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &Freedesktop::slotActionInvoked);
+            connect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &Freedesktop::slotNotificationClosed);
         } else {
-            disconnect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &FreedesktopBackend::slotActionInvoked);
-            disconnect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &FreedesktopBackend::slotNotificationClosed);
+            disconnect(m_interface, &org::freedesktop::Notifications::ActionInvoked, this, &Freedesktop::slotActionInvoked);
+            disconnect(m_interface, &org::freedesktop::Notifications::NotificationClosed, this , &Freedesktop::slotNotificationClosed);
 
         }
     });
 }
 
-bool FreedesktopBackend::canCloseNotification() const
+bool SnorePlugin::Freedesktop::canCloseNotification() const
 {
     return true;
 }
 
-bool FreedesktopBackend::canUpdateNotification() const
+bool SnorePlugin::Freedesktop::canUpdateNotification() const
 {
     return true;
 }
 
-void  FreedesktopBackend::slotNotify(Notification noti)
+void  SnorePlugin::Freedesktop::slotNotify(Snore::Notification noti)
 {
     if (noti.data()->sourceAndTargetAreSimilar(this)) {
         return;
@@ -78,8 +76,8 @@ void  FreedesktopBackend::slotNotify(Notification noti)
         m_dbusIdMap.take(updateId);
     }
 
-    QString title = noti.application().name() + QLatin1String(" - ") + noti.title(m_supportsRichtext ? Utils::AllMarkup : Utils::NoMarkup);
-    QString body(noti.text(m_supportsRichtext ? Utils::AllMarkup : Utils::NoMarkup));
+    QString title = noti.application().name() + QLatin1String(" - ") + noti.title(m_supportsRichtext ? Snore::Utils::AllMarkup : Snore::Utils::NoMarkup);
+    QString body(noti.text(m_supportsRichtext ? Snore::Utils::AllMarkup : Snore::Utils::NoMarkup));
     //TODO: add app icon hint?
     QDBusPendingReply<uint>  id = m_interface->Notify(noti.application().name(), updateId, QString(), title,
                                   body, actions, hints, noti.isSticky() ? -1 : noti.timeout() * 1000);
@@ -92,24 +90,24 @@ void  FreedesktopBackend::slotNotify(Notification noti)
     qCDebug(SNORE) << noti.id() << "|" << id.value();
 }
 
-void FreedesktopBackend::slotActionInvoked(const uint id, const QString &actionID)
+void SnorePlugin::Freedesktop::slotActionInvoked(const uint id, const QString &actionID)
 {
     qCDebug(SNORE) << id << m_dbusIdMap[id];
-    Notification noti = m_dbusIdMap[id];
+    Snore::Notification noti = m_dbusIdMap[id];
     if (!noti.isValid()) {
         return;
     }
     slotNotificationActionInvoked(noti, noti.actions().value(actionID.toInt()));;
 }
 
-void FreedesktopBackend::slotCloseNotification(Notification notification)
+void SnorePlugin::Freedesktop::slotCloseNotification(Snore::Notification notification)
 {
     uint id = notification.hints().privateValue(this, "id").toUInt();
     qCDebug(SNORE) << notification.id() << id;
     m_interface->CloseNotification(id);
 }
 
-void FreedesktopBackend::slotNotificationClosed(const uint id, const uint reason)
+void SnorePlugin::Freedesktop::slotNotificationClosed(const uint id, const uint reason)
 {
     /*
      *
@@ -123,26 +121,26 @@ void FreedesktopBackend::slotNotificationClosed(const uint id, const uint reason
      *
      *  4 - Undefined/reserved reasons.
     */
-    Notification::CloseReasons closeReason;
+    Snore::Notification::CloseReasons closeReason;
     switch (reason) {
     case (1):
-        closeReason = Notification::TimedOut;
+        closeReason = Snore::Notification::TimedOut;
         break;
     case (2):
-        closeReason = Notification::Dismissed;
+        closeReason = Snore::Notification::Dismissed;
         break;
     case (3):
-        closeReason = Notification::Closed;
+        closeReason = Snore::Notification::Closed;
         break;
     default:
-        closeReason = Notification::None;
+        closeReason = Snore::Notification::None;
     }
 
     qCDebug(SNORE) << id << "|" << closeReason << reason;
     if (id == 0) {
         return;
     }
-    Notification noti =  m_dbusIdMap.take(id);
+    Snore::Notification noti =  m_dbusIdMap.take(id);
     if (noti.isValid()) {
         closeNotification(noti, closeReason);
     }

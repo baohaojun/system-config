@@ -38,6 +38,6 @@ private:
     QLineEdit *m_password;
 };
 
-SNORE_DECLARE_SETTINGS_PLUGIN(SnarlSettings)
+SNORE_DECLARE_SETTINGS_PLUGIN(Snarl)
 
 #endif // SNARLSETTINGS_H

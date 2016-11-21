@@ -21,14 +21,18 @@
 #include "libsnore/plugins/snorebackend.h"
 #include "SnarlInterface.h"
 
-class SnarlBackend: public Snore::SnoreBackend
+class SnarlWidget;
+
+namespace SnorePlugin {
+
+class Snarl : public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
     Q_PLUGIN_METADATA(IID "org.Snore.NotificationBackend/1.0" FILE "snore_plugin.json")
 public:
-    SnarlBackend();
-    ~SnarlBackend();
+    Snarl();
+    ~Snarl();
 
     virtual bool canCloseNotification() const override;
     virtual bool canUpdateNotification() const override;
@@ -39,9 +43,9 @@ protected:
     void setDefaultSettings() override;
 
 private:
-    class SnarlWidget;
-    SnarlBackend::SnarlWidget *m_eventLoop = nullptr;
-    QHash<QString, Snarl::V42::SnarlInterface *> m_applications;
+    friend class SnarlWidget;
+    SnarlWidget *m_eventLoop = nullptr;
+    QHash<QString, ::Snarl::V42::SnarlInterface *> m_applications;
 
 public Q_SLOTS:
     void slotRegisterApplication(const Snore::Application &application) override;
@@ -53,5 +57,6 @@ private:
     QHash<LONG32, Snore::Notification> m_idMap;
 
 };
+}
 
 #endif // SNARL_BACKEND_H

@@ -22,9 +22,9 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
-using namespace Snore;
+namespace SnorePlugin {
 
-void NotifyMyAndroid::slotNotify(Notification notification)
+void NMA::slotNotify(Snore::Notification notification)
 {
     QString key = settingsValue(QStringLiteral("ApiKey")).toString();
     if (key.isEmpty()) {
@@ -41,8 +41,8 @@ void NotifyMyAndroid::slotNotify(Notification notification)
                    + QLatin1String("&description=");
 
     if (notification.constHints().value("supports-markup").toBool()) {
-        data += notification.text(Utils::Href | Utils::Bold | Utils::Break |
-                                  Utils::Underline | Utils::Font | Utils::Italic)
+        data += notification.text(Snore::Utils::Href | Snore::Utils::Bold | Snore::Utils::Break |
+                                  Snore::Utils::Underline | Snore::Utils::Font | Snore::Utils::Italic)
                 + QLatin1String("&content-type=text/html");
     } else {
         data += notification.text();
@@ -58,8 +58,10 @@ void NotifyMyAndroid::slotNotify(Notification notification)
 
 }
 
-void NotifyMyAndroid::setDefaultSettings()
+void NMA::setDefaultSettings()
 {
     setDefaultSettingsValue(QStringLiteral("ApiKey"), QString());
     SnoreSecondaryBackend::setDefaultSettings();
+}
+
 }

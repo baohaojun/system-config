@@ -20,6 +20,8 @@
 #include <libsnore/notification/notification.h>
 #include <libsnore/version.h>
 #include <libsnore/utils.h>
+#include <libsnore/snore_static_plugins.h>
+
 
 #include <QGuiApplication>
 #include <QCommandLineParser>
@@ -116,7 +118,7 @@ int main(int argc, char *argv[])
     if (parser.isSet(title) && parser.isSet(message)) {
         SnoreCore &core = SnoreCore::instance();
 
-        core.loadPlugins(SnorePlugin::Backend | SnorePlugin::SecondaryBackend);
+        core.loadPlugins(Snore::SnorePlugin::Backend | Snore::SnorePlugin::SecondaryBackend);
 
         Icon icon = Icon::defaultIcon();
         if (parser.isSet(iconPath)) {

@@ -24,7 +24,9 @@
 
 #include <QtQuick/QtQuick>
 
-class SnoreNotifier;
+namespace SnorePlugin {
+class Snore;
+}
 
 typedef struct {
     bool free;
@@ -54,7 +56,7 @@ class NotifyWidget : public QObject
     Q_PROPERTY(QString fontFamily MEMBER m_fontFamily NOTIFY fontFamilyChanged)
 
 public:
-    explicit NotifyWidget(int id, const SnoreNotifier *parent);
+    explicit NotifyWidget(int id, const SnorePlugin::Snore *parent);
     ~NotifyWidget();
 
     void display(const Snore::Notification &notification);
@@ -91,7 +93,7 @@ private:
 
     Snore::Notification m_notification;
     int m_id;
-    const SnoreNotifier *m_parent;
+    const SnorePlugin::Snore *m_parent;
     QSharedMemory m_mem;
     bool m_ready;
 

@@ -35,10 +35,10 @@ class PluginContainer
 public:
     static const QHash<QString, PluginContainer *> pluginCache(SnorePlugin::PluginTypes type);
 
+    PluginContainer(const QString &pluginName, SnorePlugin::PluginTypes type, SnorePlugin *plugin);
     PluginContainer(const QString &fileName, const QString &pluginName, SnorePlugin::PluginTypes type);
     ~PluginContainer();
     SnorePlugin *load();
-    void unload();
     const QString &file();
     const QString &name();
     SnorePlugin::PluginTypes type();

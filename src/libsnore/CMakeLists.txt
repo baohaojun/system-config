@@ -6,8 +6,8 @@ if(NOT SNORE_REVISION)
     set(SNORE_REVISION "")
 endif()
 
-
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version.h")
+
 
 ecm_create_qm_loader(SnoreNotify_QM_LOADER snorenotify${SNORE_SUFFIX}_qt)
 
@@ -41,10 +41,14 @@ list(APPEND SnoreNotify_HDR
         utils.h
         ${CMAKE_CURRENT_BINARY_DIR}/snore_exports.h
         ${CMAKE_CURRENT_BINARY_DIR}/version.h
+        ${CMAKE_CURRENT_BINARY_DIR}/snore_static_plugins.h
         )
 
-
-add_library( libsnore SHARED ${SnoreNotify_SRCS} ${SnoreNotify_QM_LOADER})
+if (NOT SNORE_STATIC)
+    add_library( libsnore SHARED ${SnoreNotify_SRCS} ${SnoreNotify_QM_LOADER})
+else()
+    add_library( libsnore STATIC ${SnoreNotify_SRCS} ${SnoreNotify_QM_LOADER})
+endif()
 set_target_properties( libsnore PROPERTIES
                                 OUTPUT_NAME "snore${SNORE_SUFFIX}"
                                 VERSION "${SNORE_VERSION_MAJOR}.${SNORE_VERSION_MINOR}.${SNORE_VERSION_PATCH}"

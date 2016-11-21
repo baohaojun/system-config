@@ -12,9 +12,7 @@
 
 #include <windows.h>
 
-using namespace Snore;
-
-bool SnoreToast::isReady()
+bool SnorePlugin::WindowsToast::isReady()
 {
     if (errorString().isEmpty() && QSysInfo::windowsVersion() < QSysInfo::WV_WINDOWS8) {
         setErrorString(tr("%1 needs at least Windows 8 to run.").arg(name()));
@@ -23,12 +21,12 @@ bool SnoreToast::isReady()
     return true;
 }
 
-bool SnoreToast::canCloseNotification() const
+bool SnorePlugin::WindowsToast::canCloseNotification() const
 {
     return true;
 }
 
-void SnoreToast::slotNotify(Notification notification)
+void SnorePlugin::WindowsToast::slotNotify(Snore::Notification notification)
 {
     QProcess *p = createProcess(notification);
 
@@ -51,21 +49,21 @@ void SnoreToast::slotNotify(Notification notification)
     qCDebug(SNORE) << "SnoreToast" << arguements;
 
     connect(p, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), [this, notification](int code) {
-        Notification::CloseReasons reason = Notification::None;
+        Snore::Notification::CloseReasons reason = Snore::Notification::None;
 
         switch (code) {
         case 0:
-            reason = Notification::Activated;
+            reason = Snore::Notification::Activated;
             slotNotificationActionInvoked(notification);
             break;
         case 1:
             //hidden;
             break;
         case 2:
-            reason = Notification::Dismissed;
+            reason = Snore::Notification::Dismissed;
             break;
         case 3:
-            reason = Notification::TimedOut;
+            reason = Snore::Notification::TimedOut;
             break;
         case -1:
             //failed
@@ -78,11 +76,11 @@ void SnoreToast::slotNotify(Notification notification)
     p->start(QLatin1String("SnoreToast"), arguements);
 }
 
-void SnoreToast::slotRegisterApplication(const Application &application)
+void SnorePlugin::WindowsToast::slotRegisterApplication(const Snore::Application &application)
 {
     if (!application.constHints().contains("windows-app-id")) {
         qCInfo(SNORE) << "No windows-app-id found in hints. Installing default shortcut with appID.";
-        QProcess *p = createProcess(Notification());
+        QProcess *p = createProcess(Snore::Notification());
         QStringList arguements;
         arguements << QLatin1String("-install")
                    << QLatin1String("SnoreNotify\\") + qApp->applicationName()
@@ -93,7 +91,7 @@ void SnoreToast::slotRegisterApplication(const Application &application)
     }
 }
 
-void SnoreToast::slotCloseNotification(Notification notification)
+void SnorePlugin::WindowsToast::slotCloseNotification(Snore::Notification notification)
 {
     QProcess *p = createProcess(notification);
 
@@ -104,7 +102,7 @@ void SnoreToast::slotCloseNotification(Notification notification)
     p->start(QLatin1String("SnoreToast"), arguements);
 }
 
-QString SnoreToast::appId(const Application &application)
+QString SnorePlugin::WindowsToast::appId(const Snore::Application &application)
 {
     QString appID = application.constHints().value("windows-app-id").toString();
     if (appID.isEmpty()) {
@@ -113,7 +111,7 @@ QString SnoreToast::appId(const Application &application)
     return appID;
 }
 
-QProcess *SnoreToast::createProcess(Notification noti)
+QProcess *SnorePlugin::WindowsToast::createProcess(Snore::Notification noti)
 {
     QProcess *p = new QProcess(this);
     p->setReadChannelMode(QProcess::MergedChannels);
@@ -127,7 +125,7 @@ QProcess *SnoreToast::createProcess(Notification noti)
         setErrorString(name() + p->errorString());
         qCDebug(SNORE) << p->readAll();
         if (noti.isValid()) {
-            closeNotification(noti, Notification::None);
+            closeNotification(noti, Snore::Notification::None);
         }
         p->deleteLater();
     });

@@ -2,7 +2,7 @@ include(libsnore/SnoreAddPlugin.cmake)
 
 add_subdirectory(libsnore)
 
-if(Qt5Widgets_FOUND)
+if(Qt5Widgets_FOUND AND NOT SNORE_STATIC)
     ecm_optional_add_subdirectory(daemon)
     add_feature_info(BUILD_daemon BUILD_daemon "Build and install the snorenotify daemon which receives and redirects notifications.")
 endif()

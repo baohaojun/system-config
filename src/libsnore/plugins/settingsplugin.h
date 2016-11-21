@@ -38,7 +38,7 @@ public:
     PluginTypes type() const override
     {
         return SnorePlugin::Settings;
-    };
+    }
 
     virtual PluginSettingsWidget *settingsWidget(SnorePlugin *parent) = 0;
 
@@ -49,15 +49,17 @@ public:
 Q_DECLARE_INTERFACE(Snore::SettingsPlugin,
                     "org.Snore.SettingsPlugin/1.0")
 
-#define SNORE_DECLARE_SETTINGS_PLUGIN(NAME)\
-    class NAMESettings : public Snore::SettingsPlugin{\
+#define SNORE_DECLARE_SETTINGS_PLUGIN( NAME )\
+namespace SnorePlugin {\
+    class NAME ##SettingsPlugin : public Snore::SettingsPlugin {\
         Q_OBJECT\
         Q_INTERFACES(Snore::SettingsPlugin)\
         Q_PLUGIN_METADATA(IID "org.Snore.SettingsPlugin/1.0" FILE "snore_settings_plugin.json")\
     public:\
         Snore::PluginSettingsWidget *settingsWidget(Snore::SnorePlugin *parent) override{\
-            return new NAME(parent);\
+            return new NAME ##Settings(parent);\
         }\
-    };
+    };\
+}
 
 #endif // SETTINGSPLUGIN_H

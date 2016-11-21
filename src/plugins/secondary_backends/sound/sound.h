@@ -22,6 +22,8 @@
 
 class QMediaPlayer;
 
+namespace SnorePlugin {
+
 class Sound : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
@@ -41,4 +43,5 @@ private:
     QMediaPlayer *m_player;
 };
 
+}
 #endif // SOUND_H
