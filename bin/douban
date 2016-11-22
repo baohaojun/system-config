@@ -262,13 +262,17 @@ case "$1" in
         killall mplayer
         ;;
     jump-forth)
+
+        touch ~/.cache/system-config/logs/douban.forth
         ps-killall -USR1 mplayer.expect
         ;;
     jump-back)
-        ps-killall -USR2 mplayer.expect
+        touch ~/.cache/system-config/logs/douban.back
+        ps-killall -USR1 mplayer.expect
         ;;
     prev)
-        true
+        touch ~/.cache/system-config/logs/douban-prev
+        douban next
         ;;
     loop)
         touch ~/.cache/system-config/logs/douban-should-loop
@@ -288,13 +292,8 @@ case "$1" in
         true
         ;;
     pause)
-        if test -e ~/Music/paused; then
-            killall -CONT mplayer
-            rm ~/Music/paused -f
-        else
-            killall -STOP mplayer
-            touch ~/Music/paused
-        fi
+        touch ~/.cache/system-config/logs/douban.pause
+        ps-killall -USR1 mplayer.expect
         ;;
     show)
         (

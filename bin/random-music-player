@@ -85,9 +85,16 @@ while (1) {
             if (-s $should_loop_same_author) {
                 chomp($author = qx(cat $should_loop_same_author));
             }
-            for (sort keys %{$songs_author_map{$author}}) {
+            my @songs = sort keys %{$songs_author_map{$author}};
+            for ($i = 0; $i < @songs; $i++) {
                 last unless -e $should_loop_same_author;
-                play_1_song $_;
+                if (-e "$ENV{HOME}/.cache/system-config/logs/douban-prev") {
+                    $i = $i - 2;
+                    unlink "$ENV{HOME}/.cache/system-config/logs/douban-prev";
+                }
+                $i = 0 if $i < 0;
+
+                play_1_song $songs[$i]
             }
         }
     }
