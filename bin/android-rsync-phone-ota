@@ -371,8 +371,14 @@ sudo bash -c "
     fi
 )|tee ../system.chcon
 my-adb push ../system.chcon /data/
-sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded ||
-    sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+
+if test "$hack" = false; then
+    sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before ||
+        sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before
+else
+    sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded ||
+        sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+fi
 
 my-adb 'cd /system; bash -x /data/system.chcon; sync'
 my-adb romount
