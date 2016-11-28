@@ -4,6 +4,7 @@ cat <<EOF
 
 (let ((my-loaded-themes custom-enabled-themes)
       (interprogram-cut-function nil))
+  (advice-remove 'org-html--build-pre/postamble 'ad-Advice-org-html--build-pre/postamble)
   (global-font-lock-mode)
   (when custom-enabled-themes
       (dolist (theme custom-enabled-themes)

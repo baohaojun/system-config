@@ -6,20 +6,22 @@ if test $# = 0; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt p:part o:out x:xml
+    # generate-getopt ?'把高通system_NNN.img等稀疏文件拼成system.img文件，一个可以mount的ext4文件系统' \
+        #p:part?'指定对应哪个分区的稀疏文件，可选system、userdata、cache、persist等' \
+        #o:out?'最终输出文件路径' \
+        #x:xml?'使用哪个unsparse.xml文件中的文件块区域信息。不指定的话会自动查找当前目录下所有相关.xml文件'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o p:o:x: --long "part:,out:,xml:"  -n $(basename $0) -- "$@")
-part=
+TEMP=$(getopt -o o:x:p:h \
+              --long out:,xml:,part:,help \
+              -n $(basename -- $0) -- "$@")
 out=
 xml=
+part=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -p|--part)
-            part=$2
-            shift 2
-            ;;
+
         -o|--out)
             out=$2
             shift 2
@@ -27,6 +29,27 @@ while true; do
         -x|--xml)
             xml=$2
             shift 2
+            ;;
+        -p|--part)
+            part=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo 把高通system_NNN.img等稀疏文件拼成system.img文件，一个可以mount的ext4文件系统
+            echo
+            echo Options and arguments:
+            printf %06s '-o, '
+            printf %-24s '--out=OUT'
+            echo '最终输出文件路径'
+            printf %06s '-p, '
+            printf %-24s '--part=PART'
+            echo '指定对应哪个分区的稀疏文件，可选system、userdata、cache、persist等'
+            printf %06s '-x, '
+            printf %-24s '--xml=XML'
+            echo '使用哪个unsparse.xml文件中的文件块区域信息。不指定的话会自动查找当前目录下所有相关.xml文件'
+            exit
+            shift
             ;;
         --)
             shift
@@ -37,6 +60,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -64,7 +88,7 @@ function die() {
 if test ! "$part"; then
     die "part not set, should use -p to set system/userdata/cache etc"
 fi
-if test -d sparse_images -a ! -e userdata_1.img; then
+if test -d sparse_images -a ! -e "$(echo system_1.*)"; then
     cd sparse_images
 fi
 bs=$(xmlstarlet sel -B -t -m //program -v @SECTOR_SIZE_IN_BYTES -n $xml|sort -u)

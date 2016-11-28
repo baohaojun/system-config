@@ -6,8 +6,8 @@ if (
     if test $version -lt 655; then
         exit 1
     fi
-    offlineimap
-    exec tsocks offlineimap
+    offlineimap -a Smartisan,SmartCM || true
+    exec tsocks offlineimap -a Gmail
 ); then
     fail=false
 else

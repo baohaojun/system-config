@@ -11,6 +11,7 @@ if test -e .github-page; then
     site=$(cat .github-page)
 fi
 x=$site/${1/%.org/.html}
+x=$(echo "$x" | perl -npe 's,/blog/\.\./blog/,/blog/,')
 
 echo "$x"
 if is-tty-io; then

@@ -77,8 +77,7 @@ if test "$#" != 0; then
             blog=$(f "$@" .org)
             link=$blog
             if test $a1 = P; then
-                link=http://baohaojun.github.io/${blog#./}
-                link=${link%.org}.html
+                link=$(github-pagep $link)
             fi
             putclip "[[$link][$(grep -i -e '#.title:' "${blog/%.html/.org}"|perl -npe 's/#.title:\s*//i')]]"
             ;;

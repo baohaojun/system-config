@@ -30,7 +30,7 @@ if [ -d /data/debian/sys ] && [ ! -d /data/debian/sys/class ] ; then
     mount -o bind /sys /data/debian/sys
 fi
 
-if [ -d /data/debian/sys/kernel/debug ] && [ ! -d /data/debian/sys/kernel/debug/tracing ] ; then
+if test -d /sys/kernel/debug/tracing -a -d /data/debian/sys/kernel/debug -a ! -d /data/debian/sys/kernel/debug/tracing; then
     mount -o bind /sys/kernel/debug/ /data/debian/sys/kernel/debug
 fi
 
