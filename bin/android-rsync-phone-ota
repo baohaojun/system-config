@@ -373,11 +373,15 @@ sudo bash -c "
 my-adb push ../system.chcon /data/
 
 if test "$hack" = false; then
-    sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before ||
-        sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before
+    sudo rsync --inplace -c -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before ||
+        sudo rsync -c -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before ||
+        (
+            sudo rsync -c -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded || true
+            sudo rsync --inplace -c -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before
+        )
 else
-    sudo rsync --inplace -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded ||
-        sudo rsync -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
+    sudo rsync --inplace -c -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded ||
+        sudo rsync -c -e "ssh -F $HOME/.ssh/config -l root" . root@phone:/system -av --delete-before --exclude media/app --delete-excluded
 fi
 
 my-adb 'cd /system; bash -x /data/system.chcon; sync'
