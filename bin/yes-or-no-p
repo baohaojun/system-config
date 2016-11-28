@@ -2,26 +2,54 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt yyes t:timeout ndefault_no
+# generate-getopt yyes t:timeout=\$TMOUT ndefault_no
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o yt:n --long "yes,timeout:,default_no"  -n $(basename $0) -- "$@")
-yes=false
-timeout=
+TEMP=$(getopt -o nt:yh \
+              --long default_no,timeout:,yes,help,no-default_no,no-yes \
+              -n $(basename -- $0) -- "$@")
 default_no=false
+timeout=$TMOUT
+yes=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -y|--yes)
-            yes=true
+
+        -n|--default_no|--no-default_no)
+            if test "$1" = --no-default_no; then
+                default_no=false
+            else
+                default_no=true
+            fi
             shift
             ;;
         -t|--timeout)
             timeout=$2
             shift 2
             ;;
-        -n|--default_no)
-            default_no=true
+        -y|--yes|--no-yes)
+            if test "$1" = --no-yes; then
+                yes=false
+            else
+                yes=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--[no-]default_no'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--timeout=TIMEOUT'
+            echo
+            printf %06s '-y, '
+            printf %-24s '--[no-]yes'
+            echo
+            exit
             shift
             ;;
         --)
@@ -33,6 +61,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
