@@ -26,7 +26,7 @@ done
 export ARGS=$@
 MORE_OPTS_VARS=
 if test "$opts"; then
-    export MORE_OPTS_VARS=$(echo "$opts" | perl -npe 's/(^|,(?!$))/$1\$VAR_/g')
+    export MORE_OPTS_VARS=$(echo "$opts" | perl -npe 's/(^|,(?!$))/$1\$VAR_/g; s,\%,,g')
 fi
 ps -eo pid,ppid,etime,${opts}command | perl -ne '
 BEGIN{

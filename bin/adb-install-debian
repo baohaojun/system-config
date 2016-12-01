@@ -17,6 +17,7 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
         sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch armel --foreign testing ~/external/debian.$$
         mv ~/external/debian.$$ ~/external/debian
         sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/external/debian/debootstrap/functions
+        sudo perl -npe 's,1/test-dev-null,1/dev/test-dev-null,g' -i ~/external/debian/debootstrap/functions
         sudo touch ~/external/debian/dev/.dev-not-mounted
     fi
 
@@ -94,14 +95,14 @@ EOF
         cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
     fi
 
-    my-adb push ~/.ssh/authorized_keys /data/debian/root/.ssh/
+    my-adb push ~/.ssh/authorized_keys /data/debian/root/.ssh/authorized_keys
     my-adb chmod 600 /data/debian/root/.ssh/authorized_keys
 
-    my-adb push ~/.ssh/authorized_keys /data/debian/home/$USER/.ssh/
+    my-adb push ~/.ssh/authorized_keys /data/debian/home/$USER/.ssh/authorized_keys
     my-adb busybox chown -R 1000.1000 /data/debian/home/$USER/.ssh/
     my-adb chmod 600 /data/debian/home/$USER/.ssh/authorized_keys
 
-    my-adb push ~/.ssh/authorized_keys /data/debian/home/media_rw/.ssh/
+    my-adb push ~/.ssh/authorized_keys /data/debian/home/media_rw/.ssh/authorized_keys
     my-adb busybox chown -R 1023.1023 /data/debian/home/media_rw/.ssh/
     my-adb chmod 600 /data/debian/home/media_rw/.ssh/authorized_keys
 
