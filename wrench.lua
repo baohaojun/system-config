@@ -709,18 +709,25 @@ local function get_coffee(what)
       if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
          return
       end
-      adb_event" adb-tap 337 722"
+      adb_event"adb-tap 337 722"
 
-      for f_i = 1, 5 do
-         if not wait_top_activity_n(4, "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavoriteIndexUI") then
-            if f_i == 19 then
+      for f_i = 1, 10 do
+         local FavoriteIndexUI = "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavoriteIndexUI"
+         local top_window = wait_top_activity_n(2, FavoriteIndexUI)
+         if top_window ~= FavoriteIndexUI then
+            log("Still not FavoriteIndexUI at %d", f_i)
+            if f_i == 10 then
                goto open_fav_search_again
             end
-            if f_i == 1 and adb_top_window() == weixinLauncherActivity then
+            if top_window == weixinLauncherActivity then
                log("Need click for fav again")
-               adb_event" adb-tap 337 722"
+               adb_event"adb-tap 337 722"
+            elseif top_window and top_window ~= "" then
+               log("Failed to get FavoriteIndexUI, and not in weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
+               goto open_fav_search_again
             end
          else
+            log("Got FavoriteIndexUI at %d", f_i)
             break
          end
       end
@@ -728,19 +735,30 @@ local function get_coffee(what)
       if social_need_confirm and not yes_or_no_p("Next, click the “Search” button for the “My Favorites”") then
          return
       end
-      adb_event"adb-tap 833 145 sleep .2"
-      if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
+      adb_event"adb-tap 833 145"
+
+      for fs_i = 1, 10 do
+         if wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI") ~= "" then
+            log("Got FavSearchUI when fs_i is %d", fs_i)
+            break
+         else
+            log("Still waiting for FavSearchUI at %d", fs_i)
+            adb_event"adb-tap 833 145"
+         end
+      end
+      if fs_i ~= 10 then
          break
       end
       :: open_fav_search_again ::
       log("Need retry " .. i)
+      return
    end
    putclip"我正在使用咕咕机"
 
    if social_need_confirm and not yes_or_no_p("Will now find the 咕咕机 Wechat App") then
       return
    end
-   adb_event"key scroll_lock sleep .5 "
+   adb_event"key scroll_lock sleep .1 key enter sleep .5 "
    if social_need_confirm and not yes_or_no_p("Will now open the 咕咕机 Wechat App") then
       return
    end
@@ -748,11 +766,12 @@ local function get_coffee(what)
    if social_need_confirm and not yes_or_no_p("Will now wait for the input ready") then
       return
    end
+
    for i = 1, 80 do
       local input_target = wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI")
       if input_target:match"com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI" then
          break
-      elseif input_target:match"com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
+      elseif input_target:match"com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI" then
          adb_event"adb-tap 535 458"
       elseif i == 3 and adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
          adb_event"adb-tap 535 458"
@@ -2072,7 +2091,7 @@ local function picture_to_dingding_chat(pics, ...)
    if yes_or_no_p"Confirm to send these pictures to dingding" then
       adb_event"adb-tap 888 128 sleep .2"
    end
-   if not wait_top_activity_n(2, old_top_window) then
+   if wait_top_activity_n(2, old_top_window) ~= old_top_window then
       log"Can't get old dd chat window"
    end
 end
