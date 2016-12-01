@@ -704,12 +704,26 @@ local function get_coffee(what)
          return
       end
 
-      adb_event"adb-tap 927 1830 sleep .2"
+      adb_event"adb-tap 927 1830 sleep .3"
 
       if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
          return
       end
-      adb_event" adb-tap 337 722 sleep 1 "
+      adb_event" adb-tap 337 722"
+
+      for f_i = 1, 5 do
+         if not wait_top_activity_n(4, "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavoriteIndexUI") then
+            if f_i == 19 then
+               goto open_fav_search_again
+            end
+            if f_i == 1 and adb_top_window() == weixinLauncherActivity then
+               log("Need click for fav again")
+               adb_event" adb-tap 337 722"
+            end
+         else
+            break
+         end
+      end
 
       if social_need_confirm and not yes_or_no_p("Next, click the “Search” button for the “My Favorites”") then
          return
@@ -718,6 +732,7 @@ local function get_coffee(what)
       if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
          break
       end
+      :: open_fav_search_again ::
       log("Need retry " .. i)
    end
    putclip"我正在使用咕咕机"
@@ -733,11 +748,14 @@ local function get_coffee(what)
    if social_need_confirm and not yes_or_no_p("Will now wait for the input ready") then
       return
    end
-   adb_event"sleep 3 adb-tap 15 700"
-   for i = 1, 50 do
+   for i = 1, 80 do
       local input_target = wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI")
       if input_target:match"com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI" then
          break
+      elseif input_target:match"com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
+         adb_event"adb-tap 535 458"
+      elseif i == 3 and adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
+         adb_event"adb-tap 535 458"
       end
       log("Click for coffee input: %s %d", input_target, i)
 
