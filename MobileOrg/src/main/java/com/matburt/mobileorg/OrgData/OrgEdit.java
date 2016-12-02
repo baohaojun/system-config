@@ -5,7 +5,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
+import android.util.Log;
 import com.matburt.mobileorg.OrgData.OrgContract.Edits;
+import java.util.ArrayList;
 
 public class OrgEdit {
 
@@ -130,7 +132,24 @@ public class OrgEdit {
 				&& nodeId.equals(edit.nodeId);
 	}
 
-	public static String editsToString(ContentResolver resolver) {		
+        public static ArrayList<String> changedFiles(ContentResolver resolver) {
+                ArrayList<String> res = new ArrayList<String>();
+                Cursor cursor = resolver.query(
+                        Edits.CONTENT_URI,
+                        new String[] {
+                                "Distinct TITLE"
+                        }, null, null, null);
+                cursor.moveToFirst();
+                while (cursor.isAfterLast() == false) {
+                        res.add(cursor.getString(cursor.getColumnIndexOrThrow(Edits.TITLE)));                        
+                        cursor.moveToNext();
+                }
+                cursor.close();
+                return res;
+
+        }
+
+	public static String editsToString(ContentResolver resolver) {
 		Cursor cursor = resolver.query(Edits.CONTENT_URI,
 				Edits.DEFAULT_COLUMNS, null, null, null);
 		cursor.moveToFirst();

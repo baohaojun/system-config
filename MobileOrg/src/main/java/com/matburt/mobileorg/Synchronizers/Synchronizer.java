@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import java.io.File;
+import java.util.HashSet;
 import javax.net.ssl.SSLHandshakeException;
 
 /**
@@ -80,8 +81,12 @@ public class Synchronizer {
 		try {
 			announceStartSync();
 			ArrayList<String> changedFiles = pull(parser);
-			pushCaptures();
+			changedFiles.addAll(pushCaptures());
 			announceSyncDone();
+                        HashSet<String> set = new HashSet<String>();
+                        set.addAll(changedFiles);
+                        changedFiles.clear();
+                        changedFiles.addAll(set);
 			return changedFiles;
 		} catch (Exception e) {
 			showErrorNotification(e);
@@ -96,7 +101,7 @@ public class Synchronizer {
 	 * file combine their content. This combined version is transfered to the
 	 * remote.
 	 */
-	public void pushCaptures() throws IOException,
+	public ArrayList<String> pushCaptures() throws IOException,
 			CertificateException, SSLHandshakeException {
 		final String filename = CAPTURE_FILE;
 		
@@ -108,7 +113,8 @@ public class Synchronizer {
 			OrgFile file = new OrgFile(filename, resolver);
 			localContents += file.toString(resolver);
 		} catch (OrgFileNotFoundException e) {}
-		
+
+                ArrayList<String> res = OrgEdit.changedFiles(resolver);
 		localContents += OrgEdit.editsToString(resolver);
 
 		if (localContents.equals("")) {
@@ -116,7 +122,7 @@ public class Synchronizer {
                     if (backFile.exists()) {
                         backFile.delete();
                     }
-                    return;
+                    return res;
                 }
 		String remoteContent = FileUtils.read(syncher.getRemoteFile(filename));
 
@@ -127,10 +133,14 @@ public class Synchronizer {
 		
 		try {
 			new OrgFile(filename, resolver).removeFile(resolver);
-		} catch (OrgFileNotFoundException e) {}
+		} catch (OrgFileNotFoundException e) {
+                    Log.e("bhj", String.format("%s:%d: ", "Synchronizer.java", 132), e);
+                }
 
 		resolver.delete(Edits.CONTENT_URI, null, null);
 		resolver.delete(Files.buildFilenameUri(filename), null, null);
+
+                return res;                
 	}
 
 	/**
@@ -142,7 +152,7 @@ public class Synchronizer {
 	public ArrayList<String> pull(OrgFileParser parser) throws SSLHandshakeException, CertificateException, IOException {
 		HashMap<String,String> remoteChecksums = getAndParseChecksumFile();
 		ArrayList<String> changedFiles = getFilesThatChangedRemotely(remoteChecksums);
-		
+
 		if(changedFiles.size() == 0)
 			return changedFiles;
 		
