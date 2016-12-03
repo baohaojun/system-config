@@ -13,6 +13,13 @@ set -e
     done
 ) >/dev/null 2>&1 &
 
+if ! lookup-file -e build_xml >/dev/null 2>&1 && lookup-file -e gradlew; then
+    cd $(dirname $(lookup-file -e gradlew))
+    . ~/system-config/.bashrc
+    ./gradlew installRelease
+    exit
+fi
+
 TEMP=$(getopt -o rt:c: --long tag:command: -n $(basename $0) -- "$@")
 tag='*:s bhj:v'
 command=

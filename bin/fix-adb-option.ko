@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /lib/modules/
+find . -name 'usbserial.ko' | while read x; do
+    echo working with $x
+    sudo mv $x $x.bak
+done
+
+sudo rmmod option usb_wwan usbserial

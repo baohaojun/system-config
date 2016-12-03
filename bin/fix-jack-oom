@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+mkdir -p ~/.jack-server/
+
+cd ~/.jack-server/
+touch config.properties
+max_service=$(
+    perl -ne 'print $1 if m/^\s*jack.server.max-service=(\d+)\s*$/' config.properties
+           )
+
+if test -z "$max_service"; then
+    max_service=4
+fi
+
+if test "$max_service" -gt 1; then
+    max_service=$((max_service - 1))
+fi
+
+if grep 'jack.server.max-service=\d+' -P -q config.properties; then
+    perl -npe "s,jack.server.max-service=(\d+),jack.server.max-service=$max_service," -i config.properties
+else
+    echo jack.server.max-service=$max_service >> config.properties
+fi
+
+hint "jack默认用4个线程并行编译，你现在的线程数已调整至$max_service（可自行打开 ~/.jack-server/config.properties 编辑）"
+hint "http://stackoverflow.com/questions/35579646/android-source-code-compile-error-try-increasing-heap-size-with-java-option"
+if test -e out/host/linux-x86/bin/jack-admin; then
+    ./out/host/linux-x86/bin/jack-admin kill-server
+else
+    hint "你需要自己到编译过的安卓代码目录下运行 ./out/host/linux-x86/bin/jack-admin kill-server"
+    if yes-or-no-p -y "强行中止当前的Jack服务，以使新的配置生效？"; then
+        ps-killall com.android.jack.launcher.ServerLauncher
+    fi
+fi

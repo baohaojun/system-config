@@ -248,7 +248,7 @@ abc-grep() {
 
         echo "make: Entering directory \`$PWD'"
         if test "$remote" = true; then
-            echo "$entry" | ssh $abc_host abc abc-beagrep -b "$(abc-base-build)"
+            echo "$entry" | ssh $abc_host abc abc-beagrep -b "$(abc-base-build)" | grep -v '^Using short format'
             exit
         fi
 
