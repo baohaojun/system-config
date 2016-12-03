@@ -773,7 +773,7 @@ local function get_coffee(what)
          break
       elseif input_target:match"com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI" then
          adb_event"adb-tap 535 458"
-      elseif i == 3 and adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
+      elseif i < 5 and adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
          adb_event"adb-tap 535 458"
       end
       log("Click for coffee input: %s %d", input_target, i)
@@ -844,19 +844,22 @@ local function dingding_open_homepage()
    for i = 1, 20 do
       sleep(.1)
       local window = adb_top_window()
-      if window ~= dingding_splash and window ~= dingding_home then
+      if window then
+         log("dd: window is %s at %d", window, i)
+      end
+      if window and window ~= dingding_splash and window ~= dingding_home then
          if window == "com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpWithPwdActivity" then
             log("You need to sign in dingding")
             break
          end
-         log("window is %s at %d", window, i)
+         log("dd: window is %s at %d", window, i)
          adb_event"key back sleep .1"
          sleep(.1)
          adb_am("am start -n " .. dingding_splash)
          wait_top_activity_match("com.alibaba.android.rimet/")
       elseif window == dingding_splash then
          adb_event"adb-tap 863 222"
-      else
+      elseif window == dingding_home then
          break
       end
 
@@ -1453,12 +1456,12 @@ end
 
 t1_find_dingding_contact = function(friend_name)
    dingding_open_homepage()
-   adb_event"adb-tap 831 129"
+   adb_event"adb-tap 770 105"
    putclip(friend_name)
-   wait_input_target("com.alibaba.android.rimet/com.alibaba.android.user.search.activity.GlobalSearchInputActivity")
-   adb_event"sleep .2 key scroll_lock sleep .8"
+   wait_input_target("com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchInputActivity")
+   adb_event"sleep .2 key scroll_lock key enter sleep .8"
 
-   adb_event"adb-tap 276 354 sleep .8 adb-tap 140 1880"
+   adb_event"adb-tap 276 354 sleep .8 adb-tap 154 663"
 end
 
 find_weibo_friend = function(friend_name)
