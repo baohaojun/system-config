@@ -134,7 +134,7 @@ abc-base-build() {
 
     if test "$my_base"; then
         echo "在system-config的smartcm配置里找不到你的repo xml配置：$my_base，可能需要升级system-config" >/dev/stderr
-        if yes-or-no-p </dev/tty "继续使用$my_base搜索？"; then
+        if is-in-emacs || yes-or-no-p -y </dev/tty "继续使用$my_base搜索？"; then
             echo "$my_base"
             return
         fi

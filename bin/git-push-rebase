@@ -22,18 +22,43 @@ export -f die
 # generate-getopt nno-submodule aadd_it
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o na --long "no-submodule,add_it"  -n $(basename $0) -- "$@")
-no_submodule=false
+TEMP=$(getopt -o anh \
+              --long add_it,no-submodule,help,no-add_it,no-no-submodule \
+              -n $(basename -- $0) -- "$@")
 add_it=false
+no_submodule=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -n|--no-submodule)
-            no_submodule=true
+
+        -a|--add_it|--no-add_it)
+            if test "$1" = --no-add_it; then
+                add_it=false
+            else
+                add_it=true
+            fi
             shift
             ;;
-        -a|--add_it)
-            add_it=true
+        -n|--no-submodule|--no-no-submodule)
+            if test "$1" = --no-no-submodule; then
+                no_submodule=false
+            else
+                no_submodule=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--[no-]add_it'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--[no-]no-submodule'
+            echo
+            exit
             shift
             ;;
         --)
@@ -45,6 +70,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
