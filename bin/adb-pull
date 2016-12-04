@@ -1,11 +1,19 @@
 #!/usr/bin/env perl
 use String::ShellQuote;
+if (@ARGV == 1) {
+    @ARGV = (@ARGV, ".");
+}
 $dest = pop( @ARGV);
 
 for (@ARGV) {
     my $x = $_;
     $x =~ s!/*$!!;
-    $x =~ s!.*/!!;
-    system("adb",  "pull", "$_", "$dest/$x");
+    $x =~ s!.*/!!; # get the basename
+    $dest =~ s!/*$!!;
+    (my $dest_basename = $dest) =~ s!.*/!!;
+    if ($x eq $dest_basename) {
+        $dest =~ s!(.*)/.*!$1!;
+    }
+    system("adb",  "pull", "$_", "$dest");
 }
 
