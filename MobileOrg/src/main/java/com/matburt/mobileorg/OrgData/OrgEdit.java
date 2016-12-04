@@ -145,6 +145,22 @@ public class OrgEdit {
                         cursor.moveToNext();
                 }
                 cursor.close();
+
+                cursor = resolver.query(
+                        Edits.CONTENT_URI,
+                        new String[] {
+                                "Distinct DATA_ID"
+                        }, null, null, null);
+                cursor.moveToFirst();
+                while (cursor.isAfterLast() == false) {
+                        String data_id = cursor.getString(cursor.getColumnIndexOrThrow(Edits.DATA_ID));
+                        String[] fields = data_id.split(":");
+                        if (fields.length >= 2 && fields[0].equals("olp")) {
+                                res.add(fields[1]);
+                        }
+                        cursor.moveToNext();
+                }
+                cursor.close();
                 return res;
 
         }

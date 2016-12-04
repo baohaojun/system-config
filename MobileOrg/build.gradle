@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
+        maven { url 'http://maven.aliyun.com/mvn/repository/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.7.+'
@@ -9,7 +9,7 @@ buildscript {
 apply plugin: 'android'
 
 repositories {
-    mavenCentral()
+    maven { url 'http://maven.aliyun.com/mvn/repository/' }
 }
 
 dependencies {
