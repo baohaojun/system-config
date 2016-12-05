@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+ulimit -m 4194304
 
 while true; do
     (
