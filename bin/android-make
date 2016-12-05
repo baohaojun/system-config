@@ -194,6 +194,10 @@ include external/sepolicy/Android.mk
 $(info CUSTOM_MODULES are ${CUSTOM_MODULES})
 endif
 EOF
+                    . ~/src/github/smartcm/scm-helpers/.sepolicy_dir
+                    if test "$sepolicy_dir" = system/sepolicy; then
+                        perl -npe 's,external/sepolicy,system/sepolicy,g' -i .repo/tmp/Android.mk
+                    fi
                     cd .repo/tmp
                     $do_nice mm -j$jobs $verbose selinux_bhj
                 )
