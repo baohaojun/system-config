@@ -1424,7 +1424,7 @@ criteria can be provided via the optional match-string argument "
   (ajoke--push-marker-ring)
   (let ((mail (org-entry-get (point) "FROM")))
     (setq mail (shell-quote-argument mail))
-    (shell-command-to-string (format "maildir-view %s >/dev/null 2>&1&" mail))))
+    (shell-command-to-string (format "of %s >/dev/null 2>&1&" mail))))
 
 (defun bhj-todo-copy-id ()
   (interactive)

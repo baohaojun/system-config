@@ -12,8 +12,12 @@ b0=$(basename $0)
 
 if test ! -e "$1"; then
     echo "$1" > ~/tmp/x.eml
-    bhj-notify $b0 "$1 not exist"
-    die "Error: Usage $(basename $0) MAILDIR-EMAIL-FILE"
+    cd $(dirname $(dirname "$1"))
+    set -- "$(find */ -name '*'"$(echo "$1"|tr , \\n|grep ^U=)"'*')"
+    if test ! -e "$1"; then
+        bhj-notify $b0 "$(cat ~/tmp/x.eml) not exist"
+        exit 1
+    fi
 fi
 
 cp "$1" ~/tmp/x.eml

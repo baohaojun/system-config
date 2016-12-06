@@ -45,8 +45,8 @@ fi
 
 if test "${1##*.}" = chm; then
     $setsid ffchm "$@"
-elif readlink -f "$1" | grep -P '/Maildir/.*/cur/'; then
-    exec maildir-icedove-view "$(readlink -f "$1")"
+elif readlink -m "$1" | grep -P '/Maildir/.*/cur/'; then
+    exec maildir-icedove-view "$(readlink -m "$1")"
     find-or-exec emacs
     $setsid emacsclient -e "(org-open-link-from-string \"$(maildir-get-id "$(readlink -f "$1")")\")"&
 else
