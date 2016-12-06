@@ -13,10 +13,10 @@ else
     export https_proxy=http://localhost:$port
 
     if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
-        ps-killall tinyproxy.conf
+        ps-killall tinyproxy.conf || true
         tsocks tinyproxy -c ~/system-config/etc/tinyproxy.conf
         sleep 1
-    fi
+    fi || true
 fi
 if test "$#" != 0; then
    "$@"

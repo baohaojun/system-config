@@ -2,7 +2,7 @@
 set -ex
 
 if ! is-tty-io && test -z "$http_proxy"; then
-    start-http-proxy $0
+    bash -x start-http-proxy $0
     exit
 fi
 
