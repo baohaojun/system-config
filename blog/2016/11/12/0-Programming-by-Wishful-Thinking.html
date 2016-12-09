@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>许愿和编程</title>
-<!-- 2016-12-06 Tue 01:33 -->
+<!-- 2016-12-09 Fri 22:05 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
@@ -148,6 +148,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-2-1">2.1. 比Code Complete里的PPP更自然的编程方法</a></li>
 </ul>
 </li>
+<li><a href="#sec-3">3. 许愿和GTD</a></li>
 </ul>
 </div>
 </div>
@@ -193,6 +194,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-2-1">2.1. 比Code Complete里的PPP更自然的编程方法</a></li>
 </ul>
 </li>
+<li><a href="#sec-3">3. 许愿和GTD</a></li>
 </ul>
 </div>
 </div>
@@ -243,21 +245,21 @@ for the JavaScript code in this tag.
 
 <div class="org-src-container">
 
-<pre class="src src-scheme">(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">add-rat</span> x y)
+<pre class="src src-scheme">(<span style="color: #0000cd;">define</span> (<span style="color: #ff0000;">add-rat</span> x y)
   (make-rat (+ (* (numer x) (denom y))
                (* (numer y) (denom x)))
             (* (denom x) (denom y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">sub-rat</span> x y)
+(<span style="color: #0000cd;">define</span> (<span style="color: #ff0000;">sub-rat</span> x y)
   (make-rat (- (* (numer x) (denom y))
                (* (numer y) (denom x)))
             (* (denom x) (denom y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">mul-rat</span> x y)
+(<span style="color: #0000cd;">define</span> (<span style="color: #ff0000;">mul-rat</span> x y)
   (make-rat (* (numer x) (numer y))
             (* (denom x) (denom y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">div-rat</span> x y)
+(<span style="color: #0000cd;">define</span> (<span style="color: #ff0000;">div-rat</span> x y)
   (make-rat (* (numer x) (denom y))
             (* (denom x) (numer y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">equal-rat?</span> x y)
+(<span style="color: #0000cd;">define</span> (<span style="color: #ff0000;">equal-rat?</span> x y)
   (= (* (numer x) (denom y))
      (* (numer y) (denom x))))
 </pre>
@@ -356,7 +358,7 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-如果是用Org mode的文学编程的话呢？你可以把你的思路和你的实现写在一起！像流水线一样写下来，在两种思考模式之间任意的切换。在最后的最后，你通过文学编程的Web（CWeb、NoWeb）工具，把所有的函数整合在一起。
+如果是用Org mode的文学编程的话呢？你可以把你的思路和你的实现写在一起！像流水线一样写下来，在两种思考模式之间任意的切换。在最后的最后，你通过文学编程的Web（CWeb、NoWeb）工具，把所有的函数整合在一起（就像编一张网一样，我觉得这个可能是Web这个名字的由来）。
 </p>
 
 <p>
@@ -365,12 +367,16 @@ for the JavaScript code in this tag.
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #0000ff; font-weight: bold;">* &#25105;&#20170;&#22825;&#35201;&#20889;&#20010;&#20160;&#20040;&#20160;&#20040;&#31243;&#24207;</span>
+<pre class="src src-org"><span style="color: #ff0000;">* &#25105;&#20170;&#22825;&#35201;&#20889;&#20010;&#20160;&#20040;&#20160;&#20040;&#31243;&#24207;</span>
 
-<span style="color: #a0522d; font-weight: bold;">** &#36825;&#38656;&#35201;&#23376;&#31243;&#24207;A&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
+<span style="color: #a0522d;">** &#36825;&#38656;&#35201;&#23376;&#31243;&#24207;A&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
+
+   &#65288;&#27880;&#24847;&#65292;&#25105;&#20915;&#23450;&#20808;&#20889;&#23376;&#31243;&#24207;A&#65292;&#21487;&#33021;&#26159;&#22240;&#20026;&#25105;&#35273;&#24471;&#23376;&#31243;&#24207;A&#26368;&#37325;&#35201;&#65292;&#20063;&#21487;&#33021;&#26159;&#22240;&#20026;&#25105;&#35273;&#24471;&#20808;&#20889;&#23427;&#26368;&#33258;&#28982;&#65292;&#20063;&#21487;&#33021;&#26159;&#22240;&#20026;&#25105;&#35273;&#24471;&#23427;&#26368;&#26377;&#36259;&#12290;&#25105;&#39640;&#20852;&#65281;&#39640;&#20852;&#26159;&#31532;&#19968;&#29983;&#20135;&#21147;&#65289;&#12290;
+
+&#65288;&#22914;&#26524;&#26159;&#30452;&#25509;&#20889;C&#35821;&#35328;&#30340;&#35805;&#65292;&#36825;&#37324;&#25105;&#21487;&#33021;&#23601;&#35201;&#20808;&#20889;&#19968;&#22534; <span style="color: #7f7f7f;">=#include=</span> &#20043;&#31867;&#30340;&#35821;&#21477;&#20102;&#65292;&#25105;&#19981;&#21916;&#27426;&#36825;&#26679;&#65289;&#12290;
 
 <span style="color: #b22222;">#+BEGIN_SRC c</span>
-<span style="color: #a020f0;">static</span> <span style="color: #228b22;">int</span> <span style="color: #0000ff;">function_a</span>()
+<span style="color: #0000cd;">static</span> <span style="color: #228b22;">int</span> <span style="color: #ff0000;">function_a</span>()
 {
     <span style="color: #b22222;">//</span><span style="color: #b22222;">...</span>
     function_b();
@@ -378,16 +384,16 @@ for the JavaScript code in this tag.
 
 <span style="color: #b22222;">#+END_SRC</span>
 
-<span style="color: #a0522d; font-weight: bold;">** &#35201;&#23454;&#29616;function_a&#65292;&#25105;&#22909;&#20687;&#36824;&#38656;&#35201;&#19968;&#20010;&#23376;&#31243;&#24207;B&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
+<span style="color: #a0522d;">** &#35201;&#23454;&#29616;function_a&#65292;&#25105;&#22909;&#20687;&#36824;&#38656;&#35201;&#19968;&#20010;&#23376;&#31243;&#24207;B&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
 
 <span style="color: #b22222;">#+BEGIN_SRC c</span>
-<span style="color: #a020f0;">static</span> <span style="color: #228b22;">int</span> <span style="color: #0000ff;">function_b</span>()
+<span style="color: #0000cd;">static</span> <span style="color: #228b22;">int</span> <span style="color: #ff0000;">function_b</span>()
 {
     <span style="color: #b22222;">//</span><span style="color: #b22222;">...</span>
 }
 <span style="color: #b22222;">#+END_SRC</span>
 
-<span style="color: #0000ff; font-weight: bold;">* &#26368;&#21518;&#30340;&#26368;&#21518;</span>
+<span style="color: #ff0000;">* &#26368;&#21518;&#30340;&#26368;&#21518;</span>
 
 <span style="color: #b22222;">#+BEGIN_SRC c</span>
 
@@ -400,7 +406,7 @@ for the JavaScript code in this tag.
 &#22522;&#26412;&#19978;&#23601;&#26159;&#36825;&#26679;&#12290;&#26368;&#21518;&#25105;&#30340; <span style="color: #7f7f7f;">=main=</span> &#20989;&#25968;&#23601;&#26159;&#31616;&#21333;&#30340;&#35843;&#29992;&#19968;&#19979; <span style="color: #7f7f7f;">=function_a=</span>&#65306;
 
 <span style="color: #b22222;">#+BEGIN_SRC c</span>
-<span style="color: #228b22;">int</span> <span style="color: #0000ff;">main</span>()
+<span style="color: #228b22;">int</span> <span style="color: #ff0000;">main</span>()
 {
     function_a();
 }
@@ -412,15 +418,36 @@ EOF.
 </div>
 
 <p>
-你会发现最后我在用 <code>&lt;&lt;&gt;&gt;</code> 进行引用的时候，我把 <code>function_b</code> 排在了 <code>function_a</code> 前面，最后生成的代码，自然而然的就满足了 C 语言对函数定义必须出现在其被调用的位置之前的要求。
+你会发现最后我在用 NoWeb 的 <code>&lt;&lt;&gt;&gt;</code> 表示符号进行引用的时候，我把 <code>function_b</code> 排在了 <code>function_a</code> 前面，最后生成的代码，自然而然的就满足了 C 语言对函数定义必须出现在其被调用的位置之前的要求。
+</p>
+
+<p>
+毫无疑问，用文学编程你会变得更啰嗦，但是，它会使你的表达变得更自然，让你更容易沉浸在来回使用自然语言+编程语言解决你的问题的心流（Flow）里。难怪Knuth老爷子这么热衷于Literate Programming。因为它允许程序员用从心理学上讲正确的顺序（psychologically correct order）去探索一个编程问题。根本不需要纠结是应该自顶向下，还是自下而上，还是两者结合。
+</p>
+
+<p>
+（说实话，其实我对Literate Programming完全是一知半解。只是有按照自己的理解，用过这种技巧从头实现了锤子科技的CM系统。）
 </p>
 </div>
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 许愿和GTD</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+GTD是Get Things Done的意思。一种非常有效的提升自己的执行力的方法，很简单，就是列一个待办事项清单，然后一项一项的干掉，每干掉一件，就划掉一项。
+</p>
+
+<p>
+我在《Coders at Work》这本书里看到jwz接受采访被问到自己的编程方法时，他就是这么回答的“我就列一个单子，然后一项项的划掉”。
+</p>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2016-12-06 Tue 01:33</p>
+<p class="date">Created: 2016-12-09 Fri 22:05</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.90.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"></p>
 </div>
