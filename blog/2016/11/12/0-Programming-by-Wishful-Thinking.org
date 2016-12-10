@@ -1,4 +1,4 @@
-#+title:  编程和许愿
+#+title: 编程和许愿
 #+OPTIONS: tex:imagemagick
 # bhj-tags: blog
 
