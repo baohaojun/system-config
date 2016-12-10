@@ -18,6 +18,12 @@
     <id>http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html</id>
   </entry>
   <entry>
+    <title type="html"><![CDATA[编程和许愿]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html"/>
+    <updated>2016-11-13T23:23:30+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[用 org-mode 写微信公众号]]></title>
     <link href="http://baohaojun.github.io/blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.html"/>
     <updated>2016-11-03T15:40:33+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/01/20/0-my-brother-is-my-hero.html"/>
     <updated>2016-01-21T13:26:44+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/01/20/0-my-brother-is-my-hero.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Cannot connect to adb under linux because of option module]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html"/>
-    <updated>2016-01-15T16:31:27+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html</id>
   </entry>
 </feed>
