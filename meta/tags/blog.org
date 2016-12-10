@@ -1,6 +1,15 @@
 #+title: Blogging
  * 2016
+  - 2016-12
+   * 2016-12-10
+
+     [[../../blog/2016/12/10/0-Please-support-me-if-you-like-my-work.org][Please support me if you like my work]]
+
   - 2016-11
+   * 2016-11-12
+
+     [[../../blog/2016/11/12/0-Programming-by-Wishful-Thinking.org][许愿和编程]]
+
    * 2016-11-02
 
      [[../../blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.org][用 org-mode 写微信公众号]]
