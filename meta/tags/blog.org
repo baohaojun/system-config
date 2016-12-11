@@ -1,14 +1,20 @@
 #+title: Blogging
  * 2016
   - 2016-12
+   * 2016-12-11
+
+     [[../../blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.org][偶像重出江湖了]]
+
    * 2016-12-10
+
+     [[../../blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.org][各种编程语言之间的对比学习]]
 
      [[../../blog/2016/12/10/0-Please-support-me-if-you-like-my-work.org][Please support me if you like my work]]
 
   - 2016-11
    * 2016-11-12
 
-     [[../../blog/2016/11/12/0-Programming-by-Wishful-Thinking.org][许愿和编程]]
+     [[../../blog/2016/11/12/0-Programming-by-Wishful-Thinking.org][编程和许愿]]
 
    * 2016-11-02
 
