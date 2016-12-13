@@ -1,0 +1,19 @@
+#+title: Please support me if you like my work
+# bhj-tags: blog
+If you like my free sortware work on https://github.com/baohaojun/, or if you like my blogs at http://baohaojun.github.io/, please consider supporting me:
+
+* With a paypal account:
+
+#+BEGIN_HTML
+<a href='https://pledgie.com/campaigns/33066'><img alt='Click here to lend your support to: Well done, Mr. Bao Haojun. and
+make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33066.png?skin_name=chrome' border='0' ></a>
+#+END_HTML
+
+* 支付宝（AliPay）
+
+[[../../../../images/bhj-alipay.png][file:../../../../images/bhj-alipay.png]]
+
+* 微信支付（WeChat Pay）
+
+[[../../../../images/bhj-wechat-pay.png][file:../../../../images/bhj-wechat-pay.png]]
+

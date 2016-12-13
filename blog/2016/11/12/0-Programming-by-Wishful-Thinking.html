@@ -3,91 +3,42 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>许愿和编程</title>
-<!-- 2016-12-06 Tue 01:33 -->
+<title>编程和许愿</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
+ <link rel="stylesheet" href="/css/adwaita.css" type="text/css" />
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -136,21 +87,22 @@ for the JavaScript code in this tag.
 </script>
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
+
+  <h1 id="blog-title">
+
+    <a href="http://baohaojun.github.io/blog/2011/12/23/index.html">包昊军的博客</a>
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
+
+</div>
+</div>
+<div id='bhj_article'>
+  <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">许愿和编程</h1>
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1. 许愿初体验</a></li>
-<li><a href="#sec-2">2. 自然而然的许愿</a>
-<ul>
-<li><a href="#sec-2-1">2.1. 比Code Complete里的PPP更自然的编程方法</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+<h1 class="title">编程和许愿</h1>
 <p>
 会许愿的人，是有梦想的人。人如果没有梦想，和咸鱼有什么分别？😆
 </p>
@@ -160,15 +112,15 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-1991年，Linus说，我想要一个可以运行在386机器上的Unix系统，于是就有了Linux。
+1991 年，Linus 说，我想要一个可以运行在 386 机器上的 Unix 系统，于是就有了 Linux。
 </p>
 
 <p>
-2005年，Linus说，我想要一个可以支持Linux开发的版本管理系统，于是就有了Git。
+2005 年，Linus 说，我想要一个可以支持 Linux Kernel 开发的版本管理系统，于是就有了 Git。
 </p>
 
 <p>
-2012年，罗永浩说，我要做手机，于是就有了锤子科技和Smartisan系列手机。
+2012 年，罗永浩说，我要做手机，于是就有了锤子科技和 Smartisan 系列手机。
 </p>
 
 <p>
@@ -176,11 +128,11 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-当然，以上举的例子，许的愿望都是非常大的。事实上，在编程的过程中，许愿是一个非常重要的方法。它让你可以高屋建瓴、大刀阔斧的进行抽象。它不仅是让你“先设定一个小目标，比如先赚他一个亿”，更重要的是，它让你“假设我现在已经有了一个亿”。
+当然，以上举的例子，许的愿望都是非常大的。事实上，在编程的过程中，许愿是一个非常重要的方法。它让你可以高屋建瓴、大刀阔斧的进行抽象。它不仅是让你“先设定一个小目标，比如先赚它一个亿”，更重要的是，它让你“假设我现在已经有了一个亿”。
 </p>
 
 <p>
-没错，愿望都是非常抽象的，具体实现起来全都是细节，而魔鬼总是藏在细节中。所以如果一开始许错了愿望，那实现起来的困难就可想而知了。接下来给大家从几个角度给大家分享一下我对编程和许愿的看法：
+没错，愿望都是非常抽象的，具体实现起来全都是细节，而魔鬼总是藏在细节中。所以如果一开始许错了愿望（比如先赚它一个亿），那实现起来的困难就可想而知了。接下来从几个角度跟大家分享一下我对编程和许愿的看法：
 </p>
 
 <div id="table-of-contents">
@@ -190,9 +142,10 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1">1. 许愿初体验</a></li>
 <li><a href="#sec-2">2. 自然而然的许愿</a>
 <ul>
-<li><a href="#sec-2-1">2.1. 比Code Complete里的PPP更自然的编程方法</a></li>
+<li><a href="#sec-2-1">2.1. 比 Code Complete 里的 PPP 更自然的编程方法</a></li>
 </ul>
 </li>
+<li><a href="#sec-3">3. 许愿和 GTD</a></li>
 </ul>
 </div>
 </div>
@@ -243,21 +196,21 @@ for the JavaScript code in this tag.
 
 <div class="org-src-container">
 
-<pre class="src src-scheme">(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">add-rat</span> x y)
+<pre class="src src-scheme">(<span class="org-keyword">define</span> (<span class="org-function-name">add-rat</span> x y)
   (make-rat (+ (* (numer x) (denom y))
                (* (numer y) (denom x)))
             (* (denom x) (denom y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">sub-rat</span> x y)
+(<span class="org-keyword">define</span> (<span class="org-function-name">sub-rat</span> x y)
   (make-rat (- (* (numer x) (denom y))
                (* (numer y) (denom x)))
             (* (denom x) (denom y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">mul-rat</span> x y)
+(<span class="org-keyword">define</span> (<span class="org-function-name">mul-rat</span> x y)
   (make-rat (* (numer x) (numer y))
             (* (denom x) (denom y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">div-rat</span> x y)
+(<span class="org-keyword">define</span> (<span class="org-function-name">div-rat</span> x y)
   (make-rat (* (numer x) (denom y))
             (* (denom x) (numer y))))
-(<span style="color: #a020f0;">define</span> (<span style="color: #0000ff;">equal-rat?</span> x y)
+(<span class="org-keyword">define</span> (<span class="org-function-name">equal-rat?</span> x y)
   (= (* (numer x) (denom y))
      (* (numer y) (denom x))))
 </pre>
@@ -274,11 +227,11 @@ for the JavaScript code in this tag.
 <h2 id="sec-2"><span class="section-number-2">2</span> 自然而然的许愿</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-注意上面引用自sicp的文字，是非常自然的，逻辑是非常清晰的。它从我们现有的简单知识出发（1. 有理数可表示为两个整数的比值；2. 我们知道整数的加减乘除规则），直接跳过了有理数的构造函数（=make-rat=）和取分子（=numer=）、取分母（=denom=）函数的定义，直接许了个愿假设我们已经有了这样的函数定义（其实并没有定义，只是有了这么些个函数的名字而已），那么通过这些函数的名字，再加上整数的运算规则，它开始定义有理数的加减乘除运算了！
+注意上面引用自 sicp 的文字，是非常自然的，逻辑是非常清晰的。它从我们现有的简单知识出发（1. 有理数可表示为两个整数的比值；2. 我们知道整数的加减乘除规则），直接跳过了有理数的构造函数（<code>make-rat</code>）和取分子（<code>numer</code>）、取分母（<code>denom</code>）函数的定义，直接许了个愿假设我们已经有了这样的函数定义（其实并没有定义，只是有了这么些个函数的名字而已），那么通过这些函数的名字，再加上整数的运算规则，它开始定义有理数的加减乘除运算了！
 </p>
 
 <p>
-通过这些运算函数的定义，再回过头去看构造函数、取分子、取分母函数应该怎么定义，或者说，应该定义成什么样儿才能/就能满足我们的需要，就非常直观了。甚至，如果你是一个TDD（Test Driven Development：测试驱动开发）的信徒的话，通过运算函数的定义，你已经写好了 <code>make-rat</code>、<code>numer</code>、<code>denom</code> 等函数的测试用例！
+通过这些运算函数的定义，再回过头去看构造函数、取分子、取分母函数应该怎么定义，或者说，应该定义成什么样儿才能/就能满足我们的需要，就非常直观了。甚至，如果你是一个 TDD（Test Driven Development：测试驱动开发）的信徒的话，通过运算函数的定义，你已经写好了 <code>make-rat</code>、<code>numer</code>、<code>denom</code> 等函数的测试用例！
 </p>
 
 <p>
@@ -286,7 +239,7 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-类似的让开发过程变得更顺的方法，我还在Code Complete这本书里见到过。在那本书里，有一个关于写程序的方法论的建议，那就是先写伪代码（PPP，Pseudocode Programming Process：伪代码编程流）。通过用英语等人类语言把一个问题、类、函数等描述清楚，然后再用程序语言将其实现，是一种非常好的抽象的方法。先用伪代码（接近英语等人类语言）在一个比较高的level上进行抽象的思考，把解决问题的思路整理清楚；然后用程序语言在更具体的level上把所有细节全部实现。具体的操作起来的时候可能需要循环迭代几次。你也可以理解为先用伪代码许愿，然后再用代码实现。
+类似的让开发过程变得更顺的方法，我还在 Code Complete 这本书里见到过。在那本书里，有一个关于写程序的方法论的建议，那就是先写伪代码（PPP，Pseudocode Programming Process：伪代码编程流）。通过用英语等人类语言把一个问题、类、函数等描述清楚，然后再用程序语言将其实现，是一种非常好的抽象的方法。先用伪代码（接近英语等人类语言）在一个比较高的 level 上进行抽象的思考，把解决问题的思路整理清楚；然后用程序语言在更具体的 level 上把所有细节全部实现。具体的操作起来的时候可能需要循环迭代几次。你也可以理解为先用伪代码许愿，然后再用代码实现。
 </p>
 
 <p>
@@ -299,14 +252,14 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 比Code Complete里的PPP更自然的编程方法</h3>
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 比 Code Complete 里的 PPP 更自然的编程方法</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
-我认为只有一种方法比PPP更自然了，那就是Donald Knuth提出来的Literate Programming（文学编程）。更确切的说，我指的是在Emacs的Org mode下进行的“文学编程”。
+我认为只有一种方法比 PPP 更自然了，那就是 Donald Knuth 提出来的 Literate Programming（文学编程）。更确切的说，我指的是在 Emacs 的 Org mode 下进行的“文学编程”。
 </p>
 
 <p>
-注意很多人可能会觉得 Donald Knuth 提出来的文学编程太学究了，因此完全不实用。的确是这样，现实中你可能很少会碰到使用“文学编程”方法的人。但不能否认的是，Literate Programming的影响是非常深远的，目前主流的编程语言都自带文档系统，比如Java有Javadoc、C++/C等有事实标准的Doxygen、Python有pydoc等等等等，都是受Literate Programming把代码和文档放在一起的思路启发和影响的。
+注意很多人可能会觉得 Donald Knuth 提出来的文学编程太学究了，因此完全不实用。的确是这样，现实中你可能很少会碰到使用“文学编程”方法的人。但不能否认的是，Literate Programming 的影响是非常深远的，目前主流的编程语言都自带文档系统，比如 Java 有 Javadoc、C++/C 等有事实标准的 Doxygen、Python 有 pydoc 等等等等，都是受 Literate Programming 把代码和文档放在一起的思路启发和影响的。
 </p>
 
 <p>
@@ -314,7 +267,7 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-比如C语言，如果你写C语言程序，无论如何你逃不开的一些事情包括：
+比如 C 语言，如果你写 C 语言程序，无论如何你逃不开的一些事情包括：
 </p>
 
 <ul class="org-ul">
@@ -323,106 +276,265 @@ for the JavaScript code in this tag.
 <li>在头文件包含指令之后，你要写出所有全局变量的定义、所有内部（static）函数的声明。
 
 <p>
-如果你不写static函数的声明也可以，但你一定的确保这个函数的定义出现在所有调用它的函数定义之前。
+如果你不写 static 函数的声明也可以，但你一定的确保这个函数的定义出现在所有调用它的函数定义之前。
 </p>
 </li>
 </ul>
 
 <p>
-等等。而如果是Java的话，你需要写一大堆的import语句（虽然现代的IDE都已经可以自动处理import了）。
+等等。而如果是 Java 的话，你需要写一大堆的 import 语句（虽然现代的 IDE 都已经可以自动处理 import 了）。
 </p>
 
 <p>
-这些杂事儿，你可以认为它们是计算机编程语言的不可避免之痛。但它们带来的一个问题就是，你无法很好的抽象了。到目前为止，计算机是无法抽象的思考问题的。只有人才能抽象的思考。而C语言等所有计算机编程语言，都是写出来让计算机去编译、执行的，用编程语言去抽象思考，是不方便的。人要抽象思考的时候，最好的方法还是用像英语、汉语这样的自然语言。
+这些杂事儿，你可以认为它们是计算机编程语言的不可避免之痛。但它们带来的一个问题就是，你无法很好的抽象了。到目前为止，计算机是无法抽象的思考问题的。只有人才能抽象的思考。而 C 语言等所有计算机编程语言，都是写出来让计算机去编译、执行的，用编程语言去抽象思考，是不方便的。人要抽象思考的时候，最好的方法还是用像英语、汉语这样的自然语言。
 </p>
 
 <p>
-所以编程在很大程度上是把抽象的自然语言思考翻译成具体的编程语言实现的过程。注意除了一些非常简单的情况之外，这个翻译的过程很少有一气呵成的，而是抽象与具体存在交替进行的一个过程。Org mode文学编程能把这种交替带来的思路中断的负面影响，帮你降到最低。
+所以编程在很大程度上是把抽象的自然语言思考翻译成具体的编程语言实现的过程。注意除了一些非常简单的情况之外，这个翻译的过程很少有一气呵成的，而是抽象与具体存在交替进行的一个过程。Org mode 文学编程能把这种交替带来的思路中断的负面影响，帮你降到最低。
 </p>
 
 <p>
-以static函数为例，在传统C语言编程里，你抽象的思考中意识到你需要一个 <code>function_a</code>，你在实现它的时候，需要中断自己的思路去记得做两件事儿：
+以 static 函数为例，在传统 C 语言编程里，你抽象的思考中意识到你需要一个 <code>function_a</code>，你在实现它的时候，需要中断自己的思路去记得做两件事儿：
 </p>
 
 <ol class="org-ol">
-<li>把输入光标移到内部函数声明的位置，写下 <code>function_a</code> 的声明
+<li>把输入光标移到内部函数声明的位置，写下 <code>function_a</code> 的声明 
 </li>
+
 <li>把输入光标移回到原来的位置
 </li>
 </ol>
 
 <p>
-取决于你的编辑器和你的编程习惯，这两个操作难易程度、对你思路中断的负面影响，会有很大的波动幅度。另外还跟你的C程序长度有关系。在一个1万行的程序文件里跳来跳去找正确的编辑位置，对思路的打断肯定比一个只有100行的程序要更厉害一些。
+取决于你的编辑器和你的编程习惯，这两个操作难易程度、对你思路中断的负面影响，会有很大的波动幅度。另外还跟你的 C 程序长度有关系。在一个 1 万行的程序文件里跳来跳去找正确的编辑位置，对思路的打断肯定比一个只有 100 行的程序要更厉害一些。
 </p>
 
 <p>
-如果是用Org mode的文学编程的话呢？你可以把你的思路和你的实现写在一起！像流水线一样写下来，在两种思考模式之间任意的切换。在最后的最后，你通过文学编程的Web（CWeb、NoWeb）工具，把所有的函数整合在一起。
+如果是用 Org mode 的文学编程的话呢？你可以把你的思路和你的实现写在一起！像流水线一样写下来，在两种思考模式之间任意的切换。在最后的最后，你通过文学编程的 Web（CWeb、NoWeb）工具，把所有的函数整合在一起（就像编一张网一样，我觉得这个可能是 Web 这个名字的由来）。
 </p>
 
 <p>
-举个例子，通过Org mode文学编程，我可以这样写程序：
+举个例子，通过 Org mode 文学编程，我可以这样写程序：
 </p>
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #0000ff; font-weight: bold;">* &#25105;&#20170;&#22825;&#35201;&#20889;&#20010;&#20160;&#20040;&#20160;&#20040;&#31243;&#24207;</span>
+<pre class="src src-org"><span class="org-org-level-1">* &#25105;&#20170;&#22825;&#35201;&#20889;&#20010;&#20160;&#20040;&#20160;&#20040;&#31243;&#24207;</span>
 
-<span style="color: #a0522d; font-weight: bold;">** &#36825;&#38656;&#35201;&#23376;&#31243;&#24207;A&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
+<span class="org-org-level-2">** &#36825;&#38656;&#35201;&#23376;&#31243;&#24207;&#8201;A&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
 
-<span style="color: #b22222;">#+BEGIN_SRC c</span>
-<span style="color: #a020f0;">static</span> <span style="color: #228b22;">int</span> <span style="color: #0000ff;">function_a</span>()
+&#65288;&#27880;&#24847;&#65292;&#25105;&#20915;&#23450;&#20808;&#20889;&#23376;&#31243;&#24207;&#8201;A&#65292;&#21487;&#33021;&#26159;&#22240;&#20026;&#25105;&#35273;&#24471;&#23376;&#31243;&#24207;&#8201;A&#8201;&#26368;&#37325;&#35201;&#65292;&#20063;&#21487;&#33021;&#26159;
+&#22240;&#20026;&#25105;&#35273;&#24471;&#20808;&#20889;&#23427;&#26368;&#33258;&#28982;&#65292;&#20063;&#21487;&#33021;&#26159;&#22240;&#20026;&#25105;&#35273;&#24471;&#23427;&#26368;&#26377;&#36259;&#12290;&#25105;&#39640;&#20852;&#65281;&#39640;&#20852;&#26159;&#31532;&#19968;
+&#29983;&#20135;&#21147;&#65289;&#12290;
+
+&#65288;&#22914;&#26524;&#26159;&#30452;&#25509;&#20889;&#8201;C&#8201;&#35821;&#35328;&#30340;&#35805;&#65292;&#36825;&#37324;&#25105;&#21487;&#33021;&#23601;&#35201;&#20808;&#20889;&#19968;&#22534; <span class="org-org-verbatim">=#include=</span> &#20043;&#31867;&#30340;
+&#35821;&#21477;&#20102;&#65292;&#25105;&#19981;&#21916;&#27426;&#36825;&#26679;&#65289;&#12290;
+
+<span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
+<span class="org-keyword"><span class="org-org-block-background">static</span></span><span class="org-org-block-background"> </span><span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">function_a</span></span><span class="org-org-block-background">()
 {
-    <span style="color: #b22222;">//</span><span style="color: #b22222;">...</span>
+    </span><span class="org-comment-delimiter"><span class="org-org-block-background">//</span></span><span class="org-comment"><span class="org-org-block-background">...</span></span><span class="org-org-block-background">
     function_b();
 }
 
-<span style="color: #b22222;">#+END_SRC</span>
+</span><span class="org-org-block-end-line">#+END_SRC</span>
 
-<span style="color: #a0522d; font-weight: bold;">** &#35201;&#23454;&#29616;function_a&#65292;&#25105;&#22909;&#20687;&#36824;&#38656;&#35201;&#19968;&#20010;&#23376;&#31243;&#24207;B&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
+<span class="org-org-level-2">** &#35201;&#23454;&#29616;&#8201;function_a&#65292;&#25105;&#22909;&#20687;&#36824;&#38656;&#35201;&#19968;&#20010;&#23376;&#31243;&#24207;&#8201;B&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
 
-<span style="color: #b22222;">#+BEGIN_SRC c</span>
-<span style="color: #a020f0;">static</span> <span style="color: #228b22;">int</span> <span style="color: #0000ff;">function_b</span>()
+<span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
+<span class="org-keyword"><span class="org-org-block-background">static</span></span><span class="org-org-block-background"> </span><span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">function_b</span></span><span class="org-org-block-background">()
 {
-    <span style="color: #b22222;">//</span><span style="color: #b22222;">...</span>
+    </span><span class="org-comment-delimiter"><span class="org-org-block-background">//</span></span><span class="org-comment"><span class="org-org-block-background">...</span></span><span class="org-org-block-background">
 }
-<span style="color: #b22222;">#+END_SRC</span>
+</span><span class="org-org-block-end-line">#+END_SRC</span>
 
-<span style="color: #0000ff; font-weight: bold;">* &#26368;&#21518;&#30340;&#26368;&#21518;</span>
+<span class="org-org-level-1">* &#26368;&#21518;&#30340;&#26368;&#21518;</span>
 
-<span style="color: #b22222;">#+BEGIN_SRC c</span>
-
+<span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
+<span class="org-org-block-background">
 &lt;&lt;function_b&gt;&gt;
 &lt;&lt;function_a&gt;&gt;
 &lt;&lt;main&gt;&gt;
 
-<span style="color: #b22222;">#+END_SRC</span>
+</span><span class="org-org-block-end-line">#+END_SRC</span>
 
-&#22522;&#26412;&#19978;&#23601;&#26159;&#36825;&#26679;&#12290;&#26368;&#21518;&#25105;&#30340; <span style="color: #7f7f7f;">=main=</span> &#20989;&#25968;&#23601;&#26159;&#31616;&#21333;&#30340;&#35843;&#29992;&#19968;&#19979; <span style="color: #7f7f7f;">=function_a=</span>&#65306;
+&#22522;&#26412;&#19978;&#23601;&#26159;&#36825;&#26679;&#12290;&#26368;&#21518;&#25105;&#30340; <span class="org-org-verbatim">=main=</span> &#20989;&#25968;&#23601;&#26159;&#31616;&#21333;&#30340;&#35843;&#29992;&#19968;&#19979; <span class="org-org-verbatim">=function_a=</span>&#65306;
 
-<span style="color: #b22222;">#+BEGIN_SRC c</span>
-<span style="color: #228b22;">int</span> <span style="color: #0000ff;">main</span>()
+<span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
+<span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">main</span></span><span class="org-org-block-background">()
 {
     function_a();
 }
 
-<span style="color: #b22222;">#+END_SRC</span>
+</span><span class="org-org-block-end-line">#+END_SRC</span>
 
 EOF.
 </pre>
 </div>
 
 <p>
-你会发现最后我在用 <code>&lt;&lt;&gt;&gt;</code> 进行引用的时候，我把 <code>function_b</code> 排在了 <code>function_a</code> 前面，最后生成的代码，自然而然的就满足了 C 语言对函数定义必须出现在其被调用的位置之前的要求。
+你会发现最后我在用 NoWeb 的 <code>&lt;&lt;&gt;&gt;</code> 表示符号进行引用的时候，我把 <code>function_b</code> 排在了 <code>function_a</code> 前面，最后生成的代码，自然而然的就满足了 C 语言对函数定义必须出现在其被调用的位置之前的要求。
+</p>
+
+<p>
+毫无疑问，用文学编程你会变得更啰嗦，但是，它会使你的表达变得更自然，让你更容易沉浸在来回使用自然语言+编程语言解决你的问题的心流（Flow）里。难怪 Knuth 老爷子这么热衷于 Literate Programming。因为它允许程序员用从心理学上讲正确的顺序（psychologically correct order）去探索一个编程问题。根本不需要纠结是应该自顶向下，还是自下而上，还是两者结合。
+</p>
+
+<p>
+（说实话，其实我对 Literate Programming 完全是一知半解。只是有按照自己的理解，用过这种技巧从头实现了锤子科技的 CM 系统。）
 </p>
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 许愿和 GTD</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+GTD 是 Get Things Done 的意思。一种非常有效的提升自己的执行力的方法，很简单，就是列一个待办事项清单，然后一项一项的干掉，每干掉一件，就划掉一项。
+</p>
+
+<p>
+我在《Coders at Work》这本书里看到 jwz 接受采访被问到自己的编程方法时，他就是这么回答的“我就列一个单子，然后一项项的划掉”。事实上我刚刚又打开了那本电子书看了看，jwz 多次提到了 list、todo-list，都是 GTD 里最重要的术语。
+</p>
+
+<p>
+在我看来，GTD 和许愿其实就是一回事儿。许愿，就是许一个愿望然后去实现它。GTD，就是要记一下自己要做哪些事儿，然后把它们都做掉。
+</p>
+
+<p>
+所以我就接着讲一些 GTD 相关的领悟了。
+</p>
+
+<p>
+GTD 的第一步，就是把要办的事情记下来。要不然的话，脑子里装不下太多东西，有很多事情就会忘记。并且因为发现自己忘了什么好像还蛮重要的事情，会让自己进入非常不良的状态，压力山大，撕扯自己的头发。许愿也是这样，许过的愿又忘记了的话，相当于没有愿望，没有愿望就是没有梦想——那和咸鱼还有什么分别？
+</p>
+
+<p>
+记下来的另一个原因，是为了可以整理头绪。如果把所有东西都装在脑子里，千头万绪，根本不知道从哪里干起。一旦全列出来之后呢，头绪一点儿也没变少，但因为它们不再占用你的大脑（也就是你的 CPU），你甚至可以随便挑一个头开始干起来，不至于“天狗吃月亮，不知从哪儿下嘴”。没错，拖延症都一不小心被治好了。
+</p>
+
+<p>
+GTD 的第二步、第三步，不好意思，我也还没练好，没有太多经验可以分享。书上说主要就是要分优先级、要清理 todo list，有些事情列出来了但发现办不到的要放弃，每周、每月都要 review，等等等等。我现在基本只做到了自己列过的单子，没什么特殊情况的话，一般都会实现掉（向老罗学习：吹过的牛逼要实现）；当然，该放弃的时候，也会毫不犹豫的放弃掉（再次向老罗学习：不要怕打脸）。
+</p>
+
+<p>
+最后，还是要推荐 Emacs 的 Org Mode，非常完美的支持 GTD！我在用 Literate Programming，同时用 GTD，噢噢噢（有了快感就要叫出来）！在安卓手机上还有 MobileOrg，我可以随时随地把自己的想法记下来，然后回到 Emacs 下去实现它。我收到的邮件，如果我后续想再处理的话，我会点一下“Flag”标签，这样的邮件会自动进入我的 GTD 列表里。有人在公司的 Bug 系统里给我提单子的时候，这个单子也会自动进入到我的 GTD 里。同事在公司的 Gerrit 上给我提 Code Review，最后也会自动进入我的 GTD 列表里！我一天到晚什么也不干，就只要盯牢我的 GTD 列表就好了！跟炒股的大妈们一样，只要盯着大盘的行情就好了&#x2026;
+</p>
+
+<p>
+最后在这里给大家拜个早年，新年快到了，你会许个什么样的愿望呢？不管是什么样的愿望，祝你能实现它！比如“先赚他一个亿”！然后给我一点好不啦。
+</p>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../02/0-writing-wechat-public-messages-with-org-mode.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        用 org-mode 写微信公众号 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../../12/10/0-Please-support-me-if-you-like-my-work.html"> <!-- next-url -->
+        Please support me if you like my work <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
+</div>
+</div>
+<!-- {%html-mode%} -->
+
+<div id="disqus_container">
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
+    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
+    var disqus_url = 'http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+  <div id="disqus_thread"></div>
+</div>
+
+</div> <!-- bhj_leftpane -->
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+<h2 class="sidebar-title">Like my blog?</h2>
+      <a href='https://pledgie.com/campaigns/33066'><img alt='Click here to lend your support to: Well done, Mr. Bao Haojun. and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33066.png?skin_name=chrome' border='0' ></a>
+
+  <!-- End #profile -->
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+    <h2>Tags</h2>
+    <ul>
+                <li><a href="../../../../meta/tags/blog.html" title="Blogging">blog</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='../02/0-writing-wechat-public-messages-with-org-mode.html'> 用 org-mode 写微信公众号 </a></li>
+<li><a href='../../10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html'> 程序员学习日语经验分享 </a></li>
+<li><a href='../../06/07/0-My-University-Entrance-Exam.html'> 二十年高考怪现象 </a></li>
+<li><a href='../../05/06/0-A-Chinese-programmer-learning-Japanese.html'> 最近读完了日文版的“海边的卡夫卡” </a></li>
+<li><a href='../../04/13/0-system-config-how-does-it-work-and-how-to-use-it.html'> system-config原理与使用的简要说明 </a></li>
+<li><a href='../../03/02/0-steve-yegges-ten-predictions.html'> 偶像的十大预言 </a></li>
+<li><a href='../../02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html'> kmail --view can't display some maildir files corr... </a></li>
+<li><a href='../../01/20/0-my-brother-is-my-hero.html'> 那些年，我们一起追过的偶像 </a></li>
+<li><a href='../../01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html'> Cannot connect to adb under linux because of optio... </a></li>
+<li><a href='../../../2015/12/24/0-big-companys-and-small-companys-and-free-software-communities-source-code-management.html'> 大公司、小公司、自由开源软件社区的代码管理 </a></li>
+    </ul>
+
+    <h2 class="sidebar-title">Archive</h2>
+      <ul id="archives">
+        <li><a href="/meta/Archive.html"> The complete archive </a></li>
+      </ul>
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
 <div id="postamble" class="status">
-<p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2016-12-06 Tue 01:33</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.90.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
-<p class="validation"></p>
+<!-- {%html-mode%} -->
+
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>

@@ -1,0 +1,9 @@
+#+title: 各种编程语言之间的对比学习
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: blog
+* 数学
+
+各种编程语言的数学应该基本都是一样的，整数、浮点数、加减乘除余，不需要太专门的学习。唯一可能有些语言有一些专门的函数库，比如sin、cos等三角函数。
+
+* 字符串
