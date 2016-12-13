@@ -4,90 +4,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>偶像重出江湖了</title>
-<!-- 2016-12-11 Sun 15:35 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
+ <link rel="stylesheet" href="/css/dichromacy.css" type="text/css" />
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -136,6 +87,20 @@ for the JavaScript code in this tag.
 </script>
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
+
+  <h1 id="blog-title">
+
+    <a href="http://baohaojun.github.io/blog/2011/12/23/index.html">包昊军的博客</a>
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
+
+</div>
+</div>
+<div id='bhj_article'>
+  <div id='bhj_leftpane'>
 <div id="content">
 <h1 class="title">偶像重出江湖了</h1>
 <p>
@@ -165,12 +130,114 @@ Steve Yegge 在博客中说，通过开发这款游戏，他学到的比任何
 <p>
 祝福偶像。
 </p>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="../10/1-Learning-Programming-Languages-by-Comparing.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        各种编程语言之间的对比学习 <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html"> <!-- next-url -->
+        江湖救急：Emacs org mode 下怎么排版中文 pdf 文档 <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
 </div>
+<!-- {%html-mode%} -->
+
+<div id="disqus_container">
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
+    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
+    var disqus_url = 'http://baohaojun.github.io/blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+  <div id="disqus_thread"></div>
+</div>
+
+</div> <!-- bhj_leftpane -->
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+<h2 class="sidebar-title">Like my blog?</h2>
+      <a href='https://pledgie.com/campaigns/33066'><img alt='Click here to lend your support to: Well done, Mr. Bao Haojun. and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33066.png?skin_name=chrome' border='0' ></a>
+
+  <!-- End #profile -->
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+    <h2>Tags</h2>
+    <ul>
+                <li><a href="../../../../meta/tags/blog.html" title="Blogging">blog</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='../10/1-Learning-Programming-Languages-by-Comparing.html'> 各种编程语言之间的对比学习 </a></li>
+<li><a href='../10/0-Please-support-me-if-you-like-my-work.html'> Please support me if you like my work </a></li>
+<li><a href='../../11/12/0-Programming-by-Wishful-Thinking.html'> 编程和许愿 </a></li>
+<li><a href='../../11/02/0-writing-wechat-public-messages-with-org-mode.html'> 用 org-mode 写微信公众号 </a></li>
+<li><a href='../../10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html'> 程序员学习日语经验分享 </a></li>
+<li><a href='../../06/07/0-My-University-Entrance-Exam.html'> 二十年高考怪现象 </a></li>
+<li><a href='../../05/06/0-A-Chinese-programmer-learning-Japanese.html'> 最近读完了日文版的“海边的卡夫卡” </a></li>
+<li><a href='../../04/13/0-system-config-how-does-it-work-and-how-to-use-it.html'> system-config原理与使用的简要说明 </a></li>
+<li><a href='../../03/02/0-steve-yegges-ten-predictions.html'> 偶像的十大预言 </a></li>
+<li><a href='../../02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html'> kmail --view can't display some maildir files corr... </a></li>
+    </ul>
+
+    <h2 class="sidebar-title">Archive</h2>
+      <ul id="archives">
+        <li><a href="/meta/Archive.html"> The complete archive </a></li>
+      </ul>
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
 <div id="postamble" class="status">
-<p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2016-12-11 Sun 15:35</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.90.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
-<p class="validation"></p>
+<!-- {%html-mode%} -->
+
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>
