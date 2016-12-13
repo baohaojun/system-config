@@ -1,6 +1,7 @@
-#+title: 江湖救急：Emacs org-mode 下怎么用 Latex 输出中文
-#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+#+title: 江湖救急：Emacs org mode 下怎么排版中文 pdf 文档
 # bhj-tags: blog
+
+水木 Emacs 版有网友问 Emacs Org mode 下怎么排版输出中文 pdf 文档，因此写作此文。
 
 大概是受了王垠老师的影响，一直觉得用 Latex 进行排版是最有逼格的，所以在学习 Linux 的过程中，前期花了很多时间在 Latex 相关的技能上。
 
@@ -15,7 +16,8 @@ System-config 目前只支持 Debian 系的系统（包括 Ubuntu）。�
 texlive-full 装完以后，应该能支持比较基本的中文文档的排版，但其字体用的是 =gbsn=，有点不够好看。可以通过我的这个文件 =~/system-config/doc/7-habits.tex= 验证一下是不是可以生成中文 pdf 文档，具体运行的命令是：
 
 #+BEGIN_SRC sh
-cd ~/system-config/doc/pdflatex 7-habits.tex
+cd ~/system-config/doc/;
+pdflatex 7-habits.tex
 #+END_SRC
 
 如果能够正常退出，并且正确生成中文版的“高效文本编辑的七个习惯”的话，texlive 中文支持就是 OK 的了。
@@ -47,7 +49,8 @@ cd ~/system-config/doc/pdflatex 7-habits.tex
 为了验证一下你的新字体是不是可以用了，可以在 system-config 环境下使用以下命令：
 
 #+BEGIN_SRC sh
-cd ~/system-config/doc/pdflatex programming.tex
+  cd ~/system-config/doc/
+  pdflatex programming.tex
 #+END_SRC
 
 注意 programming.tex 里写的文字是我很久以前写的，那时候的我可能是个傻逼，所以请你不要太当真😄。
@@ -58,11 +61,11 @@ cd ~/system-config/doc/pdflatex programming.tex
 
 具体的技术细节我就不多说了，我最后封装了一个脚本，叫 org2pdf，既能输出普通的 pdf 文档（A4 纸的），也能输出使用 beaver 排版格式的 ppt 风格的文档。
 
-这里要注意的是，从.org 文件生成.tex 文件之后，如果是中文文档的话，有些 Latex 命令参数、写法有点儿问题，我都是用 org2pdf 里的 perl 脚本处理过的，你可以通过这种方法了解一下我都改了些啥：
+这里要注意的是，从 .org 文件生成 .tex 文件之后，如果是中文文档的话，有些 Latex 命令参数、写法有点儿问题，我都是用 org2pdf 里的 perl 脚本处理过的，你可以通过这种方法了解一下我都改了些啥：
 
 1. 从 X.org 文档在 Emacs 里直接生成 X.tex 文档（比如按一下 =C-c C-e l L= ——普通 Latex，或 =C-c C-e l B= ——Beaver Latex）
 
-   把这个 X.tex 文档重命令一下，比如改成 X1.tex
+   把这个 X.tex 文档重命名一下，比如改成 X1.tex。
 
 2. 运行 org2pdf X.org ，中间又会得到一个 X.tex，这个是被我用 perl 脚本处理过的
 
@@ -100,4 +103,4 @@ http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-wo
 
 当然，如果完全没有碰到问题，我给的几个验证的命令全都一次跑通过的话，运气这么好，你应该去买彩票，然后中了奖的话记得再来请我喝咖啡。
 
-😁
+Good luck and enjoy!😁

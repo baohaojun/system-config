@@ -12,13 +12,31 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
-    <title type="html"><![CDATA[江湖救急：Emacs org-mode 下怎么用 Latex 输出中文]]></title>
+    <title type="html"><![CDATA[江湖救急：Emacs org mode 下怎么排版中文 pdf 文档]]></title>
     <link href="http://baohaojun.github.io/blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html"/>
-    <updated>2016-30-13T14:12:48+08:00</updated>
+    <updated>2016-12-13T14:31:07+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html</id>
   </entry>
   <entry>
-    <title type="html"><![CDATA[许愿和编程]]></title>
+    <title type="html"><![CDATA[偶像重出江湖了]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html"/>
+    <updated>2016-12-11T15:26:49+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html</id>
+  </entry>
+  <entry>
+    <title type="html"><![CDATA[各种编程语言之间的对比学习]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html"/>
+    <updated>2016-12-11T15:26:49+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html</id>
+  </entry>
+  <entry>
+    <title type="html"><![CDATA[Please support me if you like my work]]></title>
+    <link href="http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html"/>
+    <updated>2016-12-10T16:16:14+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html</id>
+  </entry>
+  <entry>
+    <title type="html"><![CDATA[编程和许愿]]></title>
     <link href="http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html"/>
     <updated>2016-11-13T23:23:30+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html</id>
@@ -52,23 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html"/>
     <updated>2016-04-15T09:46:55+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[偶像的十大预言]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/03/02/0-steve-yegges-ten-predictions.html"/>
-    <updated>2016-03-02T20:46:06+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/03/02/0-steve-yegges-ten-predictions.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[kmail --view can't display some maildir files correctly]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html"/>
-    <updated>2016-02-17T11:16:00+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[那些年，我们一起追过的偶像]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/01/20/0-my-brother-is-my-hero.html"/>
-    <updated>2016-01-21T13:26:44+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/01/20/0-my-brother-is-my-hero.html</id>
   </entry>
 </feed>

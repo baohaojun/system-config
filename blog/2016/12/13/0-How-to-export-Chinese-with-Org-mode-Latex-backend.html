@@ -3,12 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>江湖救急：Emacs org-mode 下怎么用 Latex 输出中文</title>
+<title>江湖救急：Emacs org mode 下怎么排版中文 pdf 文档</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/dichromacy.css" type="text/css" />
+ <link rel="stylesheet" href="/css/deep-blue.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -102,8 +102,11 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">江湖救急：Emacs org-mode 下怎么用 Latex 输出中文</h1>
-<p style="color: red;"> <b>Not finished yet.</b> </p>
+<h1 class="title">江湖救急：Emacs org mode 下怎么排版中文 pdf 文档</h1>
+<p>
+水木 Emacs 版有网友问 Emacs Org mode 下怎么排版输出中文 pdf 文档，因此写作此文。
+</p>
+
 <p>
 大概是受了王垠老师的影响，一直觉得用 Latex 进行排版是最有逼格的，所以在学习 Linux 的过程中，前期花了很多时间在 Latex 相关的技能上。
 </p>
@@ -142,7 +145,8 @@ texlive-full 装完以后，应该能支持比较基本的中文文档的排�
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span class="org-builtin">cd</span> ~/system-config/doc/pdflatex 7-habits.tex
+<pre class="src src-sh"><span class="org-builtin">cd</span> ~/system-config/doc/;
+pdflatex 7-habits.tex
 </pre>
 </div>
 
@@ -200,7 +204,8 @@ texfontforge.sh simsun
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span class="org-builtin">cd</span> ~/system-config/doc/pdflatex programming.tex
+<pre class="src src-sh"><span class="org-builtin">cd</span> ~/system-config/doc/
+pdflatex programming.tex
 </pre>
 </div>
 
@@ -222,14 +227,14 @@ texfontforge.sh simsun
 </p>
 
 <p>
-这里要注意的是，从.org 文件生成.tex 文件之后，如果是中文文档的话，有些 Latex 命令参数、写法有点儿问题，我都是用 org2pdf 里的 perl 脚本处理过的，你可以通过这种方法了解一下我都改了些啥：
+这里要注意的是，从 .org 文件生成 .tex 文件之后，如果是中文文档的话，有些 Latex 命令参数、写法有点儿问题，我都是用 org2pdf 里的 perl 脚本处理过的，你可以通过这种方法了解一下我都改了些啥：
 </p>
 
 <ol class="org-ol">
 <li>从 X.org 文档在 Emacs 里直接生成 X.tex 文档（比如按一下 <code>C-c C-e l L</code> ——普通 Latex，或 <code>C-c C-e l B</code> ——Beaver Latex）
 
 <p>
-把这个 X.tex 文档重命令一下，比如改成 X1.tex
+把这个 X.tex 文档重命名一下，比如改成 X1.tex。
 </p>
 </li>
 
@@ -302,14 +307,14 @@ system-config 的安装、配置见项目的 readme，不知道有没有新�
 </p>
 
 <p>
-😁
+Good luck and enjoy!😁
 </p>
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
-      <a href="../../11/12/0-Programming-by-Wishful-Thinking.html"> <!-- prev-url -->
+      <a href="../11/0-Steve-Yegge-started-blogging-again-after-4-years.html"> <!-- prev-url -->
         <i class="icon-chevron-left">《</i>
-        许愿和编程 <!-- prev-title -->
+        偶像重出江湖了 <!-- prev-title -->
       </a>
     </li>
     <li class="next_post" style="text-align: right;">
@@ -355,14 +360,7 @@ system-config 的安装、配置见项目的 readme，不知道有没有新�
 <p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
 
 <h2 class="sidebar-title">Like my blog?</h2>
-
-      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
-">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
+      <a href='https://pledgie.com/campaigns/33066'><img alt='Click here to lend your support to: Well done, Mr. Bao Haojun. and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33066.png?skin_name=chrome' border='0' ></a>
 
   <!-- End #profile -->
 
@@ -390,16 +388,16 @@ system-config 的安装、配置见项目的 readme，不知道有没有新�
 
   <h2 class="sidebar-title">Previous Posts</h2>
     <ul id="recently">
-        <li><a href='../../11/12/0-Programming-by-Wishful-Thinking.html'> 许愿和编程 </a></li>
+        <li><a href='../11/0-Steve-Yegge-started-blogging-again-after-4-years.html'> 偶像重出江湖了 </a></li>
+<li><a href='../10/1-Learning-Programming-Languages-by-Comparing.html'> 各种编程语言之间的对比学习 </a></li>
+<li><a href='../10/0-Please-support-me-if-you-like-my-work.html'> Please support me if you like my work </a></li>
+<li><a href='../../11/12/0-Programming-by-Wishful-Thinking.html'> 编程和许愿 </a></li>
 <li><a href='../../11/02/0-writing-wechat-public-messages-with-org-mode.html'> 用 org-mode 写微信公众号 </a></li>
 <li><a href='../../10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html'> 程序员学习日语经验分享 </a></li>
 <li><a href='../../06/07/0-My-University-Entrance-Exam.html'> 二十年高考怪现象 </a></li>
 <li><a href='../../05/06/0-A-Chinese-programmer-learning-Japanese.html'> 最近读完了日文版的“海边的卡夫卡” </a></li>
 <li><a href='../../04/13/0-system-config-how-does-it-work-and-how-to-use-it.html'> system-config原理与使用的简要说明 </a></li>
 <li><a href='../../03/02/0-steve-yegges-ten-predictions.html'> 偶像的十大预言 </a></li>
-<li><a href='../../02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html'> kmail --view can't display some maildir files corr... </a></li>
-<li><a href='../../01/20/0-my-brother-is-my-hero.html'> 那些年，我们一起追过的偶像 </a></li>
-<li><a href='../../01/14/0-Cannot-connect-to-adb-under-linux-because-of-option-module.html'> Cannot connect to adb under linux because of optio... </a></li>
     </ul>
 
     <h2 class="sidebar-title">Archive</h2>
