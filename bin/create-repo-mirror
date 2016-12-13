@@ -56,14 +56,4 @@ sync-with-xml sfo-rom.xml
 if test -e ~/src/github/smartcm/scm-helpers/.mirror-xmls; then
     . ~/src/github/smartcm/scm-helpers/.mirror-xmls
 fi
-(
-    cd kernel/msm.git
-    git remote add msm310 smartisan:qualcomm/kernel/msm-3.10 || true
-    git fetch msm310
-)
 
-(
-    cd kernel/msm-3.10.git
-    git remote add msm smartisan:qualcomm/kernel/msm || true
-    git fetch msm
-)

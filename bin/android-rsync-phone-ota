@@ -1,8 +1,21 @@
 #!/bin/bash
 
 set -e
-echo 此脚本会使用到sudo权限，可能需要输入sudo密码
-sudo echo ok
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+if test "$BEING_TIMED" != true; then
+    echo 此脚本会使用到sudo权限，可能需要输入sudo密码
+    sudo echo ok, 可以获得sudo权限
+fi
 
 if test "$(pretty 20|pn 3)" != 0x14; then
     read -p "You need to install libmarpa-r2-perl.
@@ -35,19 +48,20 @@ if test ! "$ANDROID_SERIAL"; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt  @do-system=true Gno-gapps @system-only ddebug x:skip-partitions @hack=true @:system-image
+# generate-getopt  @do-system=true Gno-gapps @system-only ddebug x:skip-partitions @hack=true @:system-image vverbose
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o Gdx:h \
-              --long hack,no-gapps,system-only,system-image:,do-system,debug,skip-partitions:,help,no-hack,no-no-gapps,no-system-only,no-do-system,no-debug \
+TEMP=$(getopt -o Gx:vdh \
+              --long hack,no-gapps,system-image:,do-system,skip-partitions:,verbose,system-only,debug,help,no-hack,no-no-gapps,no-do-system,no-verbose,no-system-only,no-debug \
               -n $(basename -- $0) -- "$@")
 hack=true
 no_gapps=false
-system_only=false
 system_image=
 do_system=true
-debug=false
 skip_partitions=
+verbose=false
+system_only=false
+debug=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -68,14 +82,6 @@ while true; do
             fi
             shift
             ;;
-        --system-only|--no-system-only)
-            if test "$1" = --no-system-only; then
-                system_only=false
-            else
-                system_only=true
-            fi
-            shift
-            ;;
         --system-image)
             system_image=$2
             shift 2
@@ -88,6 +94,26 @@ while true; do
             fi
             shift
             ;;
+        -x|--skip-partitions)
+            skip_partitions=$2
+            shift 2
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=false
+            else
+                verbose=true
+            fi
+            shift
+            ;;
+        --system-only|--no-system-only)
+            if test "$1" = --no-system-only; then
+                system_only=false
+            else
+                system_only=true
+            fi
+            shift
+            ;;
         -d|--debug|--no-debug)
             if test "$1" = --no-debug; then
                 debug=false
@@ -95,10 +121,6 @@ while true; do
                 debug=true
             fi
             shift
-            ;;
-        -x|--skip-partitions)
-            skip_partitions=$2
-            shift 2
             ;;
         -h|--help)
             set +x
@@ -125,6 +147,9 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--[no-]system-only'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
             echo
             exit
             shift
@@ -163,7 +188,7 @@ if test ! -e "$xml"; then
     fi
 fi
 
-my-adb -r id | grep 'uid=0\b'
+(my-adb -r id | grep 'uid=0\b') >/dev/null 2>&1
 
 if test $do_system = true; then
     if ! my-adb 'which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
@@ -171,20 +196,25 @@ if test $do_system = true; then
     elif ! my-adb 'test -d /data/debian/ && which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
         die "Debian or bash not found on this phone, can't use rsync"
     fi
-    ssh-to-phone echo hello$$ | grep hello$$
+    if test "$b0" = android-rsync-phone-ota; then
+        ssh-to-phone echo hello$$ | grep hello$$
+    fi
 fi
 
-my-adb mount -t ext4 /dev/block/bootdevice/by-name/userdata /data
-my-adb mount -t ext4 /dev/block/bootdevice/by-name/system /system
-
+(
+    my-adb mount -t ext4 /dev/block/bootdevice/by-name/userdata /data
+    my-adb mount -t ext4 /dev/block/bootdevice/by-name/system /system
+) >/dev/null 2>&1
 adb_partition_prefix=$(my-adb "for y in /dev/block/platform/*/by-name /dev/block/platform/*/*/by-name; do if test -d \$y; then echo \$y; exit; fi; done")
 # this is for debugging
 function update-partition() {
     size=$(stat -c %s $file)
     echo $file $size
-    my-adb "dd if=\$(echo $adb_partition_prefix/$part) of=/data/$file.x"
+    my-adb "dd if=\$(echo $adb_partition_prefix/$part) of=/data/$file.x bs=$size count=1"
     my-adb pull /data/$file.x ~/tmp
-    bindiff.py ~/tmp/$file.x $file
+    if ! diff ~/tmp/$file.x $file >/dev/null 2>&1; then
+        echo "$file is different from partition $part"
+    fi
 }
 
 function update-partition() {
@@ -214,10 +244,11 @@ if test $(basename $0) = android-rsync-phone-diff; then
         size=$(stat -c %s $file)
         remote_md5sum=$(my-adb "dd if=\$(echo $adb_partition_prefix/$part) bs=$size count=1 2>/dev/null | md5sum" | pn 1)
         if test "$md5sum" != $remote_md5sum; then
-            if test "$part" = boot && yes-or-no-p </dev/tty "continue for boot.img?"; then
-                return 0
-            fi
-            die "Not the same md5 for $file on $part: $remote_md5sum"
+            echo "Failed: $part 分区与 $file 文件的md5值不相同"
+            return 1
+        else
+            echo "Passed: $part 分区与 $file 文件的md5值相同"
+            return 0
         fi
     }
 fi
@@ -228,7 +259,16 @@ function update-non-system-partitions() {
     else
         xmlstarlet 2>&1 sel -t -m //program -v \@filename -o ' ' -v @label -n $xml
     fi | sort -u|
-        while read f p; do if test -e $f; then echo "working with $f -> $p" 1>&2; echo $f $p; else echo "$f not exist" 1>&2; fi; done|
+        while read f p; do
+            if test -e $f; then
+                if test "$verbose" = true; then
+                    echo "working with $f -> $p" 1>&2;
+                fi;
+                echo $f $p;
+            elif test "$p"; then
+                echo "$f not exist for $p" 1>&2;
+            fi;
+        done |
         grep -v 'GPT|_\d+| .* ' -P| perl -npe 'END{print "done done\n"}'|
         while read file part; do
             if test -z "$part"; then
@@ -240,14 +280,20 @@ function update-non-system-partitions() {
             # cmnlibbak devcfg devcfgbak keymaster keymasterbak modem
             # rpm rpmbak tz tzbak xbl xblbak
 
-            if test -z "$(arg1-arg2 "$part" PrimaryGPT BackupGPT udisk modemst1 modemst2 persist fsg factory sec security $skip_partitions)"; then
-                echo "Setup to skip $part"
+            all_skip_partitions="PrimaryGPT BackupGPT udisk modemst1 modemst2 persist fsg factory sec security $skip_partitions"
+            if test "$b0" = android-rsync-phone-diff; then
+                all_skip_partitions="PrimaryGPT BackupGPT"
+            fi
+            if test -z "$(arg1-arg2 "$part" $all_skip_partitions)"; then
+                if test "$verbose" = true; then
+                    echo "Setup to skip $part"
+                fi
                 continue
             fi
             if test $part = done; then
                 break
             fi
-            echo doing $file to $part
+            if test "$verbose" = true; then echo doing $file to $part; fi
             if ! update-partition $file $part </dev/null && ! yes-or-no-p "$file -> $part failed: $(cat ~/tmp/$part.log), continue?" </dev/tty; then
                 exit 5
             fi
@@ -278,7 +324,7 @@ else
     fi
 fi
 
-echo "non system partitions done, wait for system.img unsparse..."
+echo "非 system 分区已全部处理完毕，正在等待system分区稀疏文件完成拼接..."
 wait
 
 mv ~/tmp/system-$tmpPostfix.img.2 ~/tmp/system-$tmpPostfix.img
@@ -288,11 +334,31 @@ sudo umount system >/dev/null 2>&1 || true
 sudo umount SYSTEM >/dev/null 2>&1 || true
 sudo mount -o loop ../system-$tmpPostfix.img system
 
+function atexit() {
+    if test $debug = true; then
+        echo you should check the files at ~/tmp/system-$tmpPostfix
+        exit
+    fi
+    hint "你的 ${b0} 脚本已运行结束，即请退出。system分区临时文件系统mount在 ~/tmp/system-$tmpPostfix，此处回车后将被自动清理。"
+    cd ~/tmp
+    sudo umount ~/tmp/system-$tmpPostfix/system
+    sudo rm -rf ~/tmp/system-$tmpPostfix.img ~/tmp/system-$tmpPostfix
+}
+
+
 if test $(basename $0) = android-rsync-phone-diff; then
     sudo find system -type f | xargs sudo md5sum | sort > local.txt
-    my-adb 'cd /; find system -type f | xargs md5sum | sort > data/adb.txt'
-    adb pull /data/adb.txt
-    diff adb.txt local.txt || true
+    (
+        my-adb 'cd /; find system -type f | xargs md5sum | sort > data/adb.txt'
+        adb pull /data/adb.txt
+    ) >/dev/null 2>&1
+    if ! diff adb.txt local.txt >/dev/null 2>&1; then
+        hint "Failed: 手机上的system分区文件md5sum与system.img里的文件md5sum对比有差异，回车显示 diff adb.txt local.txt"
+        diff adb.txt local.txt || true
+    else
+        hint "Passed: 手机上的system分区文件md5sum与system.img里的文件md5sum对比全部一致"
+    fi
+    atexit
     exit
 fi
 
@@ -386,14 +452,5 @@ fi
 
 my-adb 'cd /system; bash -x /data/system.chcon; sync'
 my-adb romount
-if test $debug = true; then
-    echo you should check the files at ~/tmp/system-$tmpPostfix
-    exit
-fi
-cd ..
-sudo umount system
-cd ..
-sudo rm -rf ~/tmp/system-$tmpPostfix.img ~/tmp/system-$tmpPostfix
-set -x
-wait
-echo ok
+
+atexit
