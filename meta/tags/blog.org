@@ -1,6 +1,15 @@
 #+title: Blogging
  * 2016
+  - 2016-12
+   * 2016-12-13
+
+     [[../../blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.org][江湖救急：Emacs org-mode 下怎么用 Latex 输出中文]]
+
   - 2016-11
+   * 2016-11-12
+
+     [[../../blog/2016/11/12/0-Programming-by-Wishful-Thinking.org][许愿和编程]]
+
    * 2016-11-02
 
      [[../../blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.org][用 org-mode 写微信公众号]]

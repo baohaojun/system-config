@@ -116,7 +116,7 @@ sub fix_link($)
         }
         $file = shell_quote($file);
         chomp ($file = qx(relative-path $file $working_file_sq));
-        if ($file !~ m!/!) {
+        if ($file !~ m!^/!) {
             $file = "./$file";
         }
         debug "file is $file";

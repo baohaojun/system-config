@@ -1,0 +1,103 @@
+#+title: 江湖救急：Emacs org-mode 下怎么用 Latex 输出中文
+#+Html: <p style="color: red;"> <b>Not finished yet.</b> </p>
+# bhj-tags: blog
+
+大概是受了王垠老师的影响，一直觉得用 Latex 进行排版是最有逼格的，所以在学习 Linux 的过程中，前期花了很多时间在 Latex 相关的技能上。
+
+我把自己以前所有折腾过的脚本都用 git 管理起来了，大部分放在 system-config 这个开源项目里，[[https://github.com/baohaojun/system-config]]，这个项目简直就是开源世界里的全家桶，基本上我个人所有的需求都能满足了，以前随便跳个槽、装个机，非常 easy 的就能重建自己的开发环境，简直跟 Apple Mac 系统上的时光机有得一拼（当然，主要是 git 的功劳，还有比 git 更牛逼的时光机吗？！）。
+
+#+TOC: headlines 2 local
+
+* Debian 系的 texlive-full 安装包
+
+System-config 目前只支持 Debian 系的系统（包括 Ubuntu）。这类系统下，有个 texlive-full 的元（meta）deb 包，是个 tex 相关的全家桶，一装这个包的话，几百个 texlive 相关的 deb 包（大小可能有两个 G）就全都装上了。
+
+texlive-full 装完以后，应该能支持比较基本的中文文档的排版，但其字体用的是 =gbsn=，有点不够好看。可以通过我的这个文件 =~/system-config/doc/7-habits.tex= 验证一下是不是可以生成中文 pdf 文档，具体运行的命令是：
+
+#+BEGIN_SRC sh
+cd ~/system-config/doc/pdflatex 7-habits.tex
+#+END_SRC
+
+如果能够正常退出，并且正确生成中文版的“高效文本编辑的七个习惯”的话，texlive 中文支持就是 OK 的了。
+
+* 更好看的中文字体
+
+在 Latex 里使用中文字体，曾经是个技术活，还要自己编译 gbkfonts 等等之类的（谷歌搜索 gbkfonts，还能搜到跟王垠老师相关的贴子）。但是后来，其实用现成的开源工具 fontforge，直接就能搞定了。
+
+我稍微封装了一下，写了一个 texfontforge.sh 的脚本，在 system-config 环境下直接运行即可。
+
+运行方法是：
+
+1. 下载或拷贝微软的 simsun 字体到你的 =~/.fonts= 目录下，ttf 或 ttc 扩展名的都可以，我的脚本会自适应的。
+
+2. 下载或拷贝微软的 simhei 字体到你的 =~/.fonts= 目录下 
+
+3. 运行下面的命令：
+
+   #+BEGIN_SRC sh
+       cd ~/.fonts
+       texfontforge.sh simhei
+       texfontforge.sh simsun
+   #+END_SRC
+
+以上的命令全部运行成功之后，就可以输出中文版本、但字体更漂亮一点的中文 pdf 文档（也是以前看王垠老师的博客之后遗留下来的观念，必须可以用 simsun、simhei 字体😄）。
+
+注意，如果自己想用别的字体，比如 yahei 之类的，也是可以的。另外注意文件名、texfontforge.sh 后跟的参数、以及以后写在中文.tex 文档 =\begin{CJK*}{编码名}{字体名}= 语句里的字体名字，它们是一一对应的，这个也是我的脚本里的一个约定，可以让事情变得简单一点。
+
+为了验证一下你的新字体是不是可以用了，可以在 system-config 环境下使用以下命令：
+
+#+BEGIN_SRC sh
+cd ~/system-config/doc/pdflatex programming.tex
+#+END_SRC
+
+注意 programming.tex 里写的文字是我很久以前写的，那时候的我可能是个傻逼，所以请你不要太当真😄。
+
+* Org mode 下输出中文 latex、pdf
+
+最后，讲一下怎么在 Org mode 下输出中文 latex、pdf。
+
+具体的技术细节我就不多说了，我最后封装了一个脚本，叫 org2pdf，既能输出普通的 pdf 文档（A4 纸的），也能输出使用 beaver 排版格式的 ppt 风格的文档。
+
+这里要注意的是，从.org 文件生成.tex 文件之后，如果是中文文档的话，有些 Latex 命令参数、写法有点儿问题，我都是用 org2pdf 里的 perl 脚本处理过的，你可以通过这种方法了解一下我都改了些啥：
+
+1. 从 X.org 文档在 Emacs 里直接生成 X.tex 文档（比如按一下 =C-c C-e l L= ——普通 Latex，或 =C-c C-e l B= ——Beaver Latex）
+
+   把这个 X.tex 文档重命令一下，比如改成 X1.tex
+
+2. 运行 org2pdf X.org ，中间又会得到一个 X.tex，这个是被我用 perl 脚本处理过的
+
+3. 运行 =diff X.tex X1.tex=，察看两个文档之间的区别
+
+** 普通 org->pdf 验证
+
+#+BEGIN_SRC sh
+  cd ~/system-config/doc/resume
+  org2pdf resume-cn.org
+#+END_SRC
+
+上面的命令会生成我的中文简历。
+
+** org->ppt.pdf 验证
+
+#+BEGIN_SRC sh
+  cd ~/system-config/doc/presentations
+  org2pdf system-config.org
+#+END_SRC
+
+上面的命令会生成我对 system-config 的介绍视频里使用的 ppt，pdf 文件我也已经放在 git 里管理了，可以直接打开了看。也可以上 bilibili 看我的“十年 Linux 使用经验分享”的视频：http://www.bilibili.com/video/av3376647/。
+
+* 可能遇到的问题
+
+system-config 的安装、配置见项目的 readme，不知道有没有新的 Bug（毕竟我不会天天从头重配 system-config 作测试，一直在滚动开发中，有可能会引入安装 Bug，如果有发现 Bug 的话欢迎给我提 github issue）。System-config 对 Emacs 版本应该至少要 24，我自己用的是最新的 25.1。
+
+另外，关于 Latex 的使用，其实我自己用的已经不是特别多了，总体来说，感觉我们算是赶上好时候了，配置起来没有 10 几年前那么变态，顺利的话没什么问题就都搞定了。但是，也还是不排除有时候会碰到一些问题，看那出错的 Log 会觉得非常痛苦，完全不知道该怎么解决（一般来说必须翻墙用 google 搜）...
+
+所以，折腾 Latex 有麻烦的时候，如果是简单的问题，建议自己想办法解决一下。
+
+如果是复杂的问题，觉得必须找我支持一下的话，建议先请我喝杯咖啡啊😄。具体方法参考这篇博客：
+
+http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html
+
+当然，如果完全没有碰到问题，我给的几个验证的命令全都一次跑通过的话，运气这么好，你应该去买彩票，然后中了奖的话记得再来请我喝咖啡。
+
+😁
