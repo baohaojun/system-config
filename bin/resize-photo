@@ -1,26 +1,48 @@
 #!/bin/bash
 
-if test -e ~/.config/system-config/debugging; then
-    set -x
-fi
-TEMP=$(getopt -o w:h:o: --long width:height:output: -n $(basename $0) -- "$@")
-width=128
-height=128
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt o:output w:width h:height
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h:w:o:h \
+              --long height:,width:,output:,help \
+              -n $(basename -- $0) -- "$@")
+height=
+width=
 output=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -w|--width)
-            width=$2
-            shift 2
-            ;;
+
         -h|--height)
             height=$2
+            shift 2
+            ;;
+        -w|--width)
+            width=$2
             shift 2
             ;;
         -o|--output)
             output=$2
             shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-h, '
+            printf %-24s '--height=HEIGHT'
+            echo
+            printf %06s '-o, '
+            printf %-24s '--output=OUTPUT'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--width=WIDTH'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -31,11 +53,20 @@ while true; do
             ;;
     esac
 done
-shift 2
+
+
+## end generated code
 
 for x in "$@"; do
     o_width=$(img-width "$x")
     o_height=$(img-height "$x")
+    if test -z "$height" -a -z "$width"; then
+        height=128
+        width=128
+    elif test -z "$height"; then
+        height=$(( o_height * width / o_width ))
+    fi
+
     if (( o_width > width || o_height > height)); then
         percent=$(perl -e "\$percent = $width * 100 / $o_width;
                            if (\$percent * $o_height / 100 > $height) {

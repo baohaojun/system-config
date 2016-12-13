@@ -20,6 +20,6 @@ for line in str.split("\n"):
 
     sys.stdout.write(line)
     if in_pre:
-        sys.stdout.write("<br/>\n")
+        sys.stdout.write("<br/>")
     else:
         sys.stdout.write("\n")

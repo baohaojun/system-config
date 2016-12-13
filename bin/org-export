@@ -157,7 +157,11 @@ for x in "$@"; do
     tf=/tmp/org-export-$(basename $x).$$
     perl -npe 's,\bfile:////([^/]),file://///$1,g' -i $tf.html
     x=${x%.org}
-    cp $tf.html "$x".html
+
+    export ORG_TEMPFILE_BASENAME=$(basename "$tf")
+    export ORG_ORIGFILE_BASENAME=$(basename "$x")
+
+    perl -npe 's|\Q$ENV{ORG_TEMPFILE_BASENAME}\E|$ENV{ORG_ORIGFILE_BASENAME}|g' $tf.html > "$x".html
     if test $# = 1 -a "$RUN_IN_PARALLEL" != true; then
         of "$x".html
     fi

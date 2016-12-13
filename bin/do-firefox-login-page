@@ -8,6 +8,7 @@ user=$(get-authinfo -h $host -u \?)
 declare -A search_for_map
 declare -A n_stab_map
 search_for_map[i.smartisan.com]="登录"
+search_for_map[mp.weixin.qq.com]="登录"
 n_stab_map[i.smartisan.com]=3
 
 sleep .2

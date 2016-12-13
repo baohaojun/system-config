@@ -2,8 +2,8 @@
 
 (setq org-emphasis-regexp-components
       '(
-        "：，。、  \t('\"{" ;pre
-        "- ：，。、 \t.,:!?;'\")}\\" ;post
+        "：，。、  \t('\"{（" ;pre
+        "- ：，。、 \t.,:!?;'\")}）\\" ;post
         " \t\r\n," ;border *forbidden*
         "." ;body-regexp
         1 ; newline
