@@ -84,7 +84,7 @@ if (SNORE_STATIC_QT)
         link_libraries(
           "${_qt5Core_install_prefix}/lib/qtharfbuzzng${d}.${SUFFIX}"
           "${_qt5Core_install_prefix}/lib/qtpcre${d}.${SUFFIX}"
-          "${_qt5Core_install_prefix}/lib/qtpng${d}.${SUFFIX}"
+          #"${_qt5Core_install_prefix}/lib/qtpng${d}.${SUFFIX}"
           "${_qt5Core_install_prefix}/lib/qtfreetype${d}.${SUFFIX}"
           "${_qt5Core_install_prefix}/lib/Qt5PlatformSupport${d}.${SUFFIX}"
           "${_qt5Core_install_prefix}/plugins/platforms/qwindows${d}.${SUFFIX}"

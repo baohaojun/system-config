@@ -26,6 +26,12 @@ function(generate_snore_plugin_header)
         set(SNORE_RESOURCE_LOADING "${SNORE_RESOURCE_LOADING}\n             Q_INIT_RESOURCE(${RESOURCE});")
     endforeach()
     configure_file("${PROJECT_SOURCE_DIR}/src/libsnore/snore_static_plugins.h.in" "${PROJECT_BINARY_DIR}/src/libsnore/snore_static_plugins.h")
+
+    add_library(libsnore_static_plugins STATIC)
+    target_link_libraries(libsnore_static_plugins LINK_PUBLIC ${SNORE_PLUGINS})
+    add_library(Snore::StaticPlugins ALIAS libsnore_static_plugins)
+
+
 endfunction()
 
 function(add_snore_plugin SNORE_NAME)

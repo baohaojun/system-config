@@ -2,13 +2,13 @@ ecm_add_app_icon(SNORENOTIFY_SETTINGS_DEPS ICONS ${PROJECT_SOURCE_DIR}/data/128-
 
 add_executable( snoresettings-cli main-cli.cpp settingsutils.cpp ${SNORENOTIFY_SETTINGS_DEPS})
 ecm_mark_nongui_executable(snoresettings-cli)
-target_link_libraries( snoresettings-cli Snore::Libsnore ${SNORE_PLUGINS})
+target_link_libraries( snoresettings-cli Snore::Libsnore Snore::StaticPlugins)
 install(TARGETS snoresettings-cli ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 if(Qt5Widgets_FOUND)
     qt5_wrap_ui(UI settingswindow.ui)
     add_executable( snoresettings main.cpp settingswindow.cpp settingsutils.cpp ${UI} ${SNORENOTIFY_SETTINGS_DEPS})
-    target_link_libraries( snoresettings Snore::Libsnore Snore::LibsnoreSettings ${SNORE_PLUGINS})
+    target_link_libraries( snoresettings Snore::Libsnore Snore::LibsnoreSettings Snore::StaticPlugins)
     install(TARGETS snoresettings ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
     if(UNIX)
