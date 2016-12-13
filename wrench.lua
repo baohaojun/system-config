@@ -836,6 +836,12 @@ weixin_open_homepage = function()
    end
 end
 
+
+local open_weixin_scan = function()
+   weixin_open_homepage()
+   adb_event"adb-tap 986 117 sleep .5 adb-tap 717 477"
+end
+
 local function dingding_open_homepage()
    local dingding_splash = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.SplashActivity"
    local dingding_home = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.activity.HomeActivity"
@@ -2606,6 +2612,7 @@ end
 
 M = {}
 M.log = log
+M.open_weixin_scan = open_weixin_scan
 M.adb_get_input_window_dump = adb_get_input_window_dump
 M.putclip = putclip
 M.start_weibo_share = start_weibo_share
