@@ -120,6 +120,7 @@ map['com.tencent.mm/com.tencent.mm.ui.account.mobile.MobileInputUI'] = 'manual-p
 map['com.tencent.mm/com.tencent.mm.ui.account.RegByMobileSetPwdUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.AtSomeoneUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'weixin-chat'
+map['com.tencent.mm/com.tencent.mm.ui.chatting.gallery.ImageGalleryUI'] = 'weixin-chat'
 map['com.tencent.mm/com.tencent.mm.ui.contact.ContactRemarkInfoModUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.contact.ModRemarkNameUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.contact.SelectContactUI'] = 'manual-post'
