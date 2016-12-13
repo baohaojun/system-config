@@ -4,6 +4,8 @@ Here's a video of Wrench: playing monument valley (with phone screen mirrored), 
 
 [[https://www.youtube.com/watch?v=re_bECYY0rM][http://baohaojun.github.io/images/Wrench-2.png]]
 
+Here's another [[https://www.youtube.com/watch?v%3Dv8QVFbYDnCQ][youtube video]] which introduced Wrench's most useful functions: chatting with IM and Social Media Apps, finding contacts in IM and Social Media Apps, writing emails, and so on (inputing text is best done with the PC, then sent with the phone).
+
 * Install
 
 There are prebuilt versions for Windows, Mac and Linux (ubuntu 14.04). They are released at https://github.com/SmartisanTech/Wrench-releases/releases .
