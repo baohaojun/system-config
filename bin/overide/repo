@@ -78,6 +78,13 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     elif is-jenkins && test "$REDO_REPO_SYNC" != true; then
         export REDO_REPO_SYNC=true
         (
+            (
+                cd $(lookup-file -e .repo/manifests)
+                if test "$(git config repo.mirror)" = true; then
+                    mail-cms "Jenkins mirror repo sync failed for $JOB_NAME"
+                    exit 1
+                fi
+            )
             cd $(lookup-file -e .repo/..)
             rm * -rf
             (

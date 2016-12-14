@@ -51,6 +51,7 @@ fi
 
 if test $can_sudo = true -a $USER = bhj; then
     if dpkg-query -l pulseaudio 2>&1 | grep -q ^ii; then
+        bhj-notify Hello "You need to remove pulseaudio"&
         sudo apt-get remove -y pulseaudio pulseaudio-module-x11 pulseaudio-utils || true
     fi
     mkdir -p ~/.ssh/
