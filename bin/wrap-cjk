@@ -9,6 +9,7 @@ sub debug(@) {
 
 
 my $last_is_cjk = 0;
+my $is_first_line = 1;
 my $cjk_re = qr(\p{Blk=CJKSymbols}|\p{CJK});
 while (<>) {
     $_ = decode_utf8 $_;
@@ -16,8 +17,10 @@ while (<>) {
     if (m/^($cjk_re|\w)/) {
         print "\n" unless $last_is_cjk;
     } else {
-        print "\n";
+        print "\n" unless $is_first_line;
     }
+
+    $is_first_line = 0;
 
     if (m/$cjk_re$|\p{Po}$/) {
         $last_is_cjk = 1;
@@ -30,3 +33,5 @@ while (<>) {
     print encode_utf8($_);
     print " " if m/[a-z]$/i;
 }
+
+print "\n";
