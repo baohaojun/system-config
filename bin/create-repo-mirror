@@ -57,3 +57,7 @@ if test -e ~/src/github/smartcm/scm-helpers/.mirror-xmls; then
     . ~/src/github/smartcm/scm-helpers/.mirror-xmls
 fi
 
+if is-jenkins; then
+    du -hs | tee .repo/du.txt
+fi
+

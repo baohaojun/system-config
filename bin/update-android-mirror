@@ -59,9 +59,11 @@ export https_proxy=http://localhost:19999
 
     repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml
     branches=$(
-        cd .repo/manifests
-        git branch -a|perl -ne 's,^\s+remotes/origin/,, or next; printf if m,^[^-]+-dev$|-mr[\d.]+-dev$,' | grep -v 'chromium-dev|droiddriver-dev|gradle-dev' -P
-        echo master
+        (
+            cd .repo/manifests
+            git branch -a|perl -ne 's,^\s+remotes/origin/,, or next; printf if m,^[^-]+-dev$|-mr[\d.]+-dev$,' | grep -v 'chromium-dev|droiddriver-dev|gradle-dev' -P
+            echo master
+        ) | tee .repo/branches.txt
             )
     git-get -u smartisan:qualcomm/platform/manifest.git -d ~/src/manifests -b sanfrancisco
     for branch in $branches; do

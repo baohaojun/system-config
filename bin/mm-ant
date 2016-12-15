@@ -98,7 +98,7 @@ function do_install() {
 }
 
 if test "$1" = release; then
-    ant-expect-keystore release >/dev/null 2>&1
+    ant-expect-keystore release
     if test "$2" = build-only; then
         exit
     fi

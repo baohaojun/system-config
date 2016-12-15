@@ -188,7 +188,7 @@
    ("C-."              "hello world no such thing" "firefox push")
    ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox")
    ("Super-t"          (lambda (w) (and
-                               (string-match "konsole|lxterminal" (bhj-window-class w) 0 t)
+                               (string-match "konsole|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
                                (not (string= "emacs" (window-name w))))) "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
@@ -237,15 +237,15 @@
     (when (eq keymap global-keymap)
       (unbind-keys window-keymap key))))
 
-(setq emacs-style-window-class-re "rdesktop|wrench|emacs|lxterminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|wine")
+(setq emacs-style-window-class-re "rdesktop|wrench|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|wine")
 (defvar global-emacs-remap-alist nil
   "Window specific remap list")
 
 (setq global-emacs-remap-alist
       '(("C-a" . '((t "Home")))
-        ("C-z" . '((Lxterminal "C-z" "z")))
-        ("Super-z" . '((Lxterminal "C-z" "z") (t "C-z")))
-        ("Super-SPC" . '((Lxterminal "C-z") (t "next")))
+        ("C-z" . '((Lxterminal "C-z" "z") (Xfce4-terminal "C-z" "z")))
+        ("Super-z" . '((Lxterminal "C-z" "z") (Xfce4-terminal "C-z" "z") (t "C-z")))
+        ("Super-SPC" . '((Lxterminal "C-z") (Xfce4-terminal "C-z") (t "next")))
         ("C-g" . '((Firefox "C-g") (Iceweasel "C-g") (t "ESC")))
         ("Next" . '((Firefox "C-v") (Iceweasel "C-v") (qpdfview "SPC")))
         ("Prior" . '((Firefox "ESC" "v") (Iceweasel "ESC" "v") (qpdfview "BS")))
@@ -268,9 +268,9 @@
         ("C-v" . '((qpdfview "SPC") (t "Next")))
         ("SPC" . '((Fbreader "Next")))
         ("BS" . '((Fbreader "Prior")))
-        ("C-." . '((Lxterminal "ESC" ".")))
-        ("C-," . '((Lxterminal "ESC" ",")))
-        ("C-?" . '((Lxterminal "ESC" "?")))
+        ("C-." . '((Lxterminal "ESC" ".") (Xfce4-terminal "ESC" ".")))
+        ("C-," . '((Lxterminal "ESC" ",") (Xfce4-terminal "ESC" ",")))
+        ("C-?" . '((Lxterminal "ESC" "?") (Xfce4-terminal "ESC" "?")))
         ("M-v" . '((qpdfview "BS") (t "Prior")))
         ("M-<" . '((qpdfview "Home")
                    (t "C-Home")))
@@ -467,6 +467,7 @@
 (setq super-key-window-remap
       '(("v" . ((Dia . "C-v")
                 (Lxterminal . "C-S-v")
+                (Xfce4-terminal . "C-S-v")
                 (QtCreator . ("M-e" "p"))
                 (t . "S-Insert")))
         ("n" . ((Firefox . "Down") (Iceweasel . "Down")))
@@ -476,6 +477,7 @@
                 (Konsole . "C-S-c")
                 (QtCreator . ("M-e" "c"))
                 (Lxterminal . "C-S-c")
+                (Xfce4-terminal . "C-S-c")
                 (Gnome-terminal . "C-S-c")
                 (t . "C-c")))
         ("w" . ((Firefox . ("C-x" "C-w")) (Iceweasel . ("C-x" "C-w"))))

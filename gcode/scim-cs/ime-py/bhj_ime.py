@@ -8,6 +8,8 @@ import threading, special_keys, pickle
 from OrderedSet import OrderedSet
 import subprocess
 
+dynamic_freq = False
+
 def debug(*args):
     print(*args)
     sys.stdout.flush()
@@ -100,19 +102,20 @@ class ime_quail:
         self.__save_path = os.path.expanduser("~/.sdim/cands")
         os.system("mkdir -p ~/.sdim/cands")
 
-        for t in os.walk(self.__save_path):
-            for x in t[2]:
-                f = os.path.join(t[0], x)
-                try:
-                    comp = os.path.basename(f)
-                    cands = pickle.load(open(f, "rb"))
-                    if comp not in self.rules:
-                        _g_ime_trans.build_trans(comp)
-                    self.rules[comp] = cands
-                except:
-                    exc_info = sys.exc_info()
-                    traceback.print_stack()
-                    sys.stderr.flush()
+        if dynamic_freq:
+            for t in os.walk(self.__save_path):
+                for x in t[2]:
+                    f = os.path.join(t[0], x)
+                    try:
+                        comp = os.path.basename(f)
+                        cands = pickle.load(open(f, "rb"))
+                        if comp not in self.rules:
+                            _g_ime_trans.build_trans(comp)
+                            self.rules[comp] = cands
+                    except:
+                        exc_info = sys.exc_info()
+                        traceback.print_stack()
+                        sys.stderr.flush()
 
 
     def has_quail(self, comp):
@@ -143,6 +146,8 @@ class ime_quail:
                 self.__save_comp(comp)
 
     def adjust_history(self, comp, history):
+        if not dynamic_freq:
+            return
         with autolock(self.lock):
             cands = OrderedSet()
             for h in history:
