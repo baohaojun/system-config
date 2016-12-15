@@ -78,6 +78,14 @@ namespace Beagrep.Util {
 			return (stat.st_mode & Mono.Unix.Native.FilePermissions.S_IFLNK) == Mono.Unix.Native.FilePermissions.S_IFLNK;
 		}
 
+		static public string Readlink (string path) {
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			int n = Mono.Unix.Native.Syscall.readlink(path, sb);
+			if (n >= 0) {
+				return sb.ToString(0, n);
+			}
+			return "";
+		}
 
 		static public bool IsSpecialFile (string path)
 		{

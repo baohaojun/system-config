@@ -61,9 +61,7 @@ namespace Beagrep.Daemon.FileSystemQueryable {
 				FileInfo f = files.Current as FileInfo;
 				Indexable indexable = null;
 				try { 
-					if (f.Exists
-					    && ! FileSystem.IsSpecialFile (f.FullName)
-					    && this.directory.IsAttached)
+					if (f.Exists && this.directory.IsAttached)
 						indexable = queryable.GetCrawlingFileIndexable (directory, f.Name);
 				} catch (Exception ex) {
 					Logger.Log.Debug (ex, "Caught exception calling GetCrawlingFileIndexable on '{0}'", f.FullName);

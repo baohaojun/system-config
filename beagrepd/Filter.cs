@@ -748,12 +748,15 @@ namespace Beagrep.Daemon {
 
 		public bool Open (string path)
 		{
-			if (File.Exists (path))
-				return Open (new FileInfo (path));
-			else if (Directory.Exists (path))
-				 return Open (new DirectoryInfo (path));
-			else 
+			if (FileSystem.IsSpecialFile(path)) {
 				return false;
+			} else if (File.Exists (path)) {
+				return Open (new FileInfo (path));
+			} else if (Directory.Exists (path)) {
+				return Open (new DirectoryInfo (path));
+			} else {
+				return false;
+			}
 		}
 
 		public FileInfo FileInfo {

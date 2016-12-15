@@ -259,6 +259,8 @@ namespace Beagrep.Daemon {
 					if (Directory.Exists (path)) {
 						indexable.MimeType = "inode/directory";
 						indexable.NoContent = true;
+					} else if (FileSystem.IsSpecialFile(path)) {
+						indexable.MimeType = "application/x-special";
 					} else if (File.Exists (path)) {
 						indexable.MimeType = XdgMime.GetMimeType (path);
 					} else {

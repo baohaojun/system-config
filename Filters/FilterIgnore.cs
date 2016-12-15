@@ -61,6 +61,7 @@ namespace Beagrep.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-object"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sharedlib"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-java")); // .class files
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-special")); // .class files
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/x-eps"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ole-storage")); // .db files
 //			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-patch")); // patch files

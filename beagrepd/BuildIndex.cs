@@ -462,8 +462,7 @@ namespace Beagrep.Daemon
                                                                 pending_directories.Enqueue (subdir);
 
                                         foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
-                                                if (!Ignore (file)
-                                                    && !FileSystem.IsSpecialFile (file.FullName)) {
+                                                if (!Ignore (file)) {
                                                         AddToRequest (FileToIndexable (file));
                                                         count_files ++;
                                                 }
@@ -655,8 +654,10 @@ namespace Beagrep.Daemon
 
                 static Indexable FileToIndexable (FileInfo file)
                 {
-                        if (!file.Exists)
+                        if (!file.Exists) {
+				Log.Warn("File not exist: {0}", file.FullName);
                                 return null;
+			}
 
                         if (fa_store.IsUpToDateAndFiltered (PathInIndex (file.FullName),
                                                             FileSystem.GetLastWriteTimeUtc (file.FullName)))
@@ -670,6 +671,12 @@ namespace Beagrep.Daemon
                         indexable.FlushBufferCache = true;
                         indexable.AddProperty (Property.NewUnsearched ("fixme:filesize", file.Length));
                         FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
+			if (FileSystem.IsSymLink(file.FullName)) {
+				FSQ.AddStandardPropertiesToIndexable
+					(indexable, FileSystem.Readlink(file.FullName), Guid.Empty, false);
+				Log.Warn("{0} -> {1}", file.FullName, FileSystem.Readlink(file.FullName));
+
+			}
 
                         // Store directory name in the index
                         string dirname = file.DirectoryName;
@@ -954,10 +961,6 @@ namespace Beagrep.Daemon
                 {
                         // if (file.Name.StartsWith ("."))
                         //      return true;
-
-                        if (FileSystem.IsSpecialFile (file.FullName))
-                                return true;
-
                         if (allowed_regex != null)
                                 return ! allowed_regex.IsMatch (file.Name);
 
