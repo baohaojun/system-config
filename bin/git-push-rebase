@@ -130,11 +130,6 @@ else
     git add .
 fi
 
-if test -e .before-push-hook; then
-    bash .before-push-hook
-    git-interactive-add || true
-fi
-
 if output=$(
         if test "$no_submodule" = true; then
             exit 1 # not 0!

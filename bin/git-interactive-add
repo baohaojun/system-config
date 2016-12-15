@@ -151,5 +151,12 @@ for x in "$@" $(
     done
 done
 
+if test -e .before-push-hook -a "$before_push_hook" != done; then
+    bash .before-push-hook
+    if ! git-is-clean; then
+        before_push_hook=done git-interactive-add
+    fi
+fi
+
 . .gitx
 git submodule foreach $0
