@@ -152,6 +152,7 @@ map['com.zhihu.android/com.zhihu.android.app.ui.activity.MainActivity'] = 'manua
 map['Keyguard'] = 'weixin-chat'
 map['org.mozilla.firefox/org.mozilla.firefox.App'] = 'manual-post'
 map['org.mozilla.firefox/org.mozilla.gecko.fxa.activities.FxAccountCreateAccountActivity'] = 'manual-post'
+map['org.openintents.filemanager/org.openintents.filemanager.FileManagerActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.answer.AnswerActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.login.LoginActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.video.VideoDetailsActivity'] = 'manual-post'

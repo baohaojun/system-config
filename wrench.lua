@@ -19,6 +19,7 @@ local social_need_confirm = false
 local right_button_x = 984
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
+local reset_input_method, adb_shell
 local adb_push, adb_pull, adb_install
 local shell_quote, putclip, t1_post, push_text, t1_post2, kill_android_vnc
 local adb_start_activity, launch_apps, on_app_selected
@@ -142,6 +143,38 @@ function spairs(t, order)
             return keys[i], t[keys[i]]
         end
     end
+end
+
+reset_input_method = function()
+   if phone_info_map['user_input_method'] then
+      input_method_id = phone_info_map['user_input_method']
+      local command = (
+         [[
+cd /data/data/com.android.shell
+touch not-started.$$
+setsid nohup sh -c 'exec 2>&1
+set -x
+rm 'not-started.$$'
+if test "$(cat /sdcard/Wrench/usb_online)" = watching-ime; then
+    exit
+fi
+echo watching-ime > /sdcard/Wrench/usb_online
+ime set com.wrench.inputmethod.pinyin/.PinyinIME
+while test -e /sdcard/Wrench/usb_online; do
+    sleep 5
+done
+ime enable %s
+ime set %s
+'& for i in 1 2 3 4 5; do
+   if test -e not-started.$$; then
+      sleep 1
+   else
+       exit
+   fi
+done
+]]):format(input_method_id, input_method_id)
+      adb_shell(command)
+   end
 end
 
 if package.config:sub(1, 1) == '/' then
@@ -319,7 +352,7 @@ local function adb_do(func, cmds)
 end
 
 local adb_pipe
-local function adb_shell(cmds)
+adb_shell = function (cmds)
    if qt_adb_pipe then
       return adb_pipe(cmds)
    end
@@ -526,6 +559,41 @@ check_scroll_lock = function()
    end
 
    while not using_wrench_ime() do
+      local input_methods = adb_pipe"ime list -s"
+      local input_method_id
+      input_methods = split("\n", input_methods)
+      for i = 1, #input_methods do
+         log("checking inputh method %s", input_methods[i])
+         if input_methods[i]:match(current_input_method .. "/") then
+            input_method_id = input_methods[i]
+            break
+         end
+      end
+
+      log("input_method_id is %s", input_method_id )
+
+      if input_method_id and input_method_id ~= phone_info_map['user_input_method'] then
+         local old_input_method = "空(没有设置过)"
+         if phone_info_map['user_input_method'] then
+            old_input_method = phone_info_map['user_input_method']
+         end
+         if yes_or_no_p((
+               "不使用小扳手的时候，你想把你默认的输入法自动改成当前正在使用的 %s 吗？（你原来默认的输入法是 %s）"
+                        ):format(
+               input_method_id,
+               old_input_method
+         )) then
+
+            phone_info_map['user_input_method'] = input_method_id
+            save_phone_info()
+         end
+      end
+      reset_input_method()
+
+      adb_shell"ime enable com.wrench.inputmethod.pinyin/.PinyinIME; ime set com.wrench.inputmethod.pinyin/.PinyinIME; sleep 1;"
+      if using_wrench_ime() then
+         break
+      end
       local prompt_str = ("Your phone's current input method：%s does not work with Wrench, must use “小扳手输入法”, please make sure you have installed it (it comes with Wrench source code), and set it as the current input method."):format(current_input_method)
       if select_args then
          if select_args{prompt_str} == "" then
@@ -1265,6 +1333,7 @@ t1_config = function(passedConfigDirPath)
       end
    end
 
+   adb_shell"mkdir -p /sdcard/Wrench"
    local uname = adb_pipe(UNAME_CMD)
    if not uname:match("Linux") then
       local home = os.getenv("HOME")
@@ -1400,6 +1469,7 @@ t1_config = function(passedConfigDirPath)
    end
 
    phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
+   reset_input_method()
    return ("brand is %s"):format(brand)
 end
 
@@ -1498,9 +1568,12 @@ qq_find_friend = function(friend_name)
       local top_window = wait_input_target_n(15, qqChatActivity2, qqGroupSearch)
       adb_event"key scroll_lock sleep .8"
       if top_window and top_window:match(qqGroupSearch) then
-         log"Fonud qqGroupSearch"
-         adb_event"adb-tap 365 384"
-         break
+         log"Found qqGroupSearch"
+         adb_event"adb-tap 365 384 sleep .3"
+         if adb_top_window() ~= qqGroupSearch then
+            log("Found the qq friend %s", friend_name)
+            break
+         end
       else
          log("Got stuck in qqChatActivity2, ime stuck?: %s at %d", top_window, i)
          if i == 5 then
