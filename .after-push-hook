@@ -31,7 +31,7 @@ if test -d ~/src/system-config/; then
     (
         for x in ~/src/github/*/.after-push-hook; do
             cd "$(dirname "$x")"
-            bash "$x"&
+            en_US bash "$x"&
         done
     ) >/dev/null 2>&1
     cd ~/system-config
