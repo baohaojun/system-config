@@ -217,6 +217,7 @@ while (<$beagrep_files_pipe>) {
     push @beagrep_files, $_;
     next unless m/$pathpat/i;
     next if m/$pathdeny/i;
+    next unless -f $_;
     print $grep "$_\n" unless $find_file_only;
 }
 
@@ -230,6 +231,11 @@ if ($find_file_only || 1) {
     debug "pat_implicit_path is $pat_implicit_path, pathpat is $pathpat";
     for (@beagrep_files) {
         $path_match_set{$_} = 1 if m/$pat_implicit_path/i and m/$pathpat/i;
+        if (not $path_match_set{$_} and -l $_) {
+            my $t = readlink($_);
+            $path_match_set{$_} = 2 if $t =~ m/$pat_implicit_path/i and $t =~ m/$pathpat/i;
+        }
+
     }
     if ($find_file_only && keys %path_match_set > 1 && $file_tag) {
         my $files = qx(grep-gtags -e $file_tag|perl -ne "if (m/:[0-9]+:/) {s/:[0-9]+:.*//; print}"|sort -u);
@@ -240,7 +246,8 @@ if ($find_file_only || 1) {
         }
     } else {
         for (sort keys %path_match_set) {
-            print "$_:$file_default_line: [01;31m****************![0m\n";
+            my $line = $file_default_line + $path_match_set{$_} - 1;
+            print "$_:$line: [01;31m****************![0m\n";
         }
     }
 }
