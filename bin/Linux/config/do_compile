@@ -8,21 +8,23 @@ function die() {
 
 function compile_beagrep() {
     cd ~/system-config/gcode/beagrep
-    git clean -xfd
+    if test "$do_clean" = true; then
+        git clean -xfd
 
-    if test -e /usr/lib/pkgconfig/gmime-sharp-2.6.pc/gmime-sharp-2.6.pc; then
-        (
-            cd /usr/lib/pkgconfig/
-            sudo mv gmime-sharp-2.6.pc/gmime-sharp-2.6.pc gmime-sharp-2.6.pc.2
-            sudo rmdir gmime-sharp-2.6.pc
-            sudo mv gmime-sharp-2.6.pc.2 gmime-sharp-2.6.pc
-        )
-    fi
-    autoreconf -i
-    if test -e /opt/local/bin/bash; then
-        ./configure --prefix=/opt/local
-    else
-        ./configure
+        if test -e /usr/lib/pkgconfig/gmime-sharp-2.6.pc/gmime-sharp-2.6.pc; then
+            (
+                cd /usr/lib/pkgconfig/
+                sudo mv gmime-sharp-2.6.pc/gmime-sharp-2.6.pc gmime-sharp-2.6.pc.2
+                sudo rmdir gmime-sharp-2.6.pc
+                sudo mv gmime-sharp-2.6.pc.2 gmime-sharp-2.6.pc
+            )
+        fi
+        autoreconf -i
+        if test -e /opt/local/bin/bash; then
+            ./configure --prefix=/opt/local
+        else
+            ./configure
+        fi
     fi
     make
     sudo make install
@@ -138,6 +140,52 @@ function do_compile() {
 if echo $SHELLOPTS | grep -q xtrace; then
     export DEBUG_COMPILE=true
 fi
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt cdo-clean=true
+## end code-generator
+## start generated code
+TEMP=$(getopt -o ch \
+              --long do-clean,help,no-do-clean \
+              -n $(basename -- $0) -- "$@")
+do_clean=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -c|--do-clean|--no-do-clean)
+            if test "$1" = --no-do-clean; then
+                do_clean=false
+            else
+                do_clean=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--[no-]do-clean'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 
 if test "$DEBUG_COMPILE" = true; then
     export CFLAGS='-g -O0 -DDEBUG'
