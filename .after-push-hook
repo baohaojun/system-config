@@ -52,7 +52,7 @@ if test -d ~/src/system-config/; then
 
     cd ~/src/system-config/
     rm -f .gitmodules
-    if git-any-changes; then
+    if git-any-changes >/dev/null 2>&1; then
         git add .
         git commit -m "auto commit from system-config:$(cd ~/system-config; git log --pretty=%H -1)"
     fi
