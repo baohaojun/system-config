@@ -12,15 +12,23 @@ function amixer() {
     fi
 }
 
+function tune-100() {
+    amixer -q sset 'Headphone',0 unmute
+    amixer -q sset 'Headphone+LO',0 100%
+    amixer -q sset PCM,0 100%
+    amixer -q sset 'Speaker',0 unmute
+}
+
 if test "$(basename $0)" = sound-off; then
     amixer -q sset Master,0 mute
     exit
 elif test "$(basename $0)" = sound-on; then
     amixer -q sset Master,0 unmute
-    amixer -q sset 'Headphone',0 unmute
-    amixer -q sset 'Speaker',0 unmute
+    tune-100
     exit
 fi
+
+
 
 sound-on
 if test "$#" = 1; then
@@ -39,14 +47,10 @@ while true; do
     key=$(sawfish-client -e '(event-name (read-event "'"$volume"'"))')
     if test "$key" = '"+"' -o "$key" = '"KP_Add"' -o "$key" = '"XF86AudioRaiseVolume"'; then
         amixer -q sset Master,0 1%+
-        amixer -q sset PCM,0 100%
-        amixer -q sset Headphone,0 100%
-        amixer -q sset Speaker,0 100%
+        tune-100
     elif test "$key" = '"-"' -o "$key" = '"KP_Subtract"' -o "$key" = '"XF86AudioLowerVolume"'; then
         amixer -q sset Master,0 1%-
-        amixer -q sset PCM,0 100%
-        amixer -q sset Headphone,0 100%
-        amixer -q sset Speaker,0 100%
+        tune-100
     else
         vol=$(amixer | grep 'Playback.*%' | perl -ne 's/.*\[(\d+%)\].*/$1/; print; last');
         echo $vol > ~/.cache/system-config/logs/audion-volume.%

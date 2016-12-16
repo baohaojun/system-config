@@ -7,8 +7,8 @@
 set host "newsmth.net"
 set dport "22"
 set user "flonk"
-set mode "-1"
-set board ""
+set mode ""
+set board "Emacs"
 set password ""
 set loc "gbk-exec"
 
@@ -100,19 +100,21 @@ proc strcat args {
 }
 
 
-if [string eq "" $password] {
-    set password [qx "get-authinfo $host $user"]
-}
 
 if [string eq "" $mode] {
-    spawn $loc ssh1 $user@$host
+    spawn $loc ssh $user@$host
 } else {
     spawn $loc ssh1 $mode $user@$host
 }
 
 expect -timeout 150 password {
+    if [string eq "" $password] {
+        set password [qx "get-authinfo $host $user"]
+    }
     puts "send password\n";
     send "$password\n"
+} "欢迎您使用ssh方式访问。" {
+    ;
 } timeout {
     puts "timed out\n";
     exp_continue;
@@ -155,97 +157,93 @@ expect {
     }
 }
 
-if [string eq "" $mode] {
-    puts [wait]
-} else {
-    interact {
-        -reset $CTRLZ {exec kill -STOP [pid]}
-        $CTRLP {send $UP}
-        $CTRLN {send $DOWN}
-        $CTRLF {send $RIGHT}
-        $CTRLB {send $LEFT}
-        $CTRLV {send $NEXT}
-        $ESCv  {send $PREV}
+interact {
+    -reset $CTRLZ {exec kill -STOP [pid]}
+    $CTRLP {send $UP}
+    $CTRLN {send $DOWN}
+    $CTRLF {send $RIGHT}
+    $CTRLB {send $LEFT}
+    $CTRLV {send $NEXT}
+    $ESCv  {send $PREV}
 
-        $CTRLS {send /}
-        $CTRLR {send ?}
+    $CTRLS {send /}
+    $CTRLR {send ?}
 
-        $ESClt {send $HOME}
-        $ESCgt {send $END}
+    $ESClt {send $HOME}
+    $ESCgt {send $END}
 
-        $CTRLO {send $CTRLM$UP$CTRLE}
-        $CTRLY {send [qx getclip]}
-        # $CTRLT {send_all {a b c d e}}
+    $CTRLO {send $CTRLM$UP$CTRLE}
+    $CTRLY {send [qx getclip]}
+    # $CTRLT {send_all {a b c d e}}
 
-        # thread mode when in original list
-        [strcat $CTRLC t] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM q p
-        }
+    # thread mode when in original list
+    [strcat $CTRLC t] {
+        same_thread r q $CTRLM & $CTRLG 4 $CTRLM q p
+    }
 
-        # next thread when in normal list
-        [strcat $CTRLC n] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q p
-        }
-        # F4
-        [strcat $ESC O S] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q p
-        }
+    # next thread when in normal list
+    [strcat $CTRLC n] {
+        same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q p
+    }
+    # F4
+    [strcat $ESC O S] {
+        same_thread r q $CTRLM & $CTRLG 4 $CTRLM $DOWN q p
+    }
 
-        # prev thread when in normal list
-        [strcat $CTRLC p] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
-        }
+    # prev thread when in normal list
+    [strcat $CTRLC p] {
+        same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
+    }
 
-        #view my replies
-        [strcat $CTRLC $CTRLM] {
-            send_all $LEFT $LEFT $LEFT "m\r\nl\r\n"
-        }
+    #view my replies
+    [strcat $CTRLC $CTRLM] {
+        send_all $LEFT $LEFT $LEFT "m\r\nl\r\n"
+    }
 
-        # F3
-        [strcat $ESC O R] {
-            same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
-        }
+    # F3
+    [strcat $ESC O R] {
+        same_thread r q $CTRLM & $CTRLG 4 $CTRLM $UP q p
+    }
 
-        # start code-generator "^\\s *#"
-        # perl -e 'for $x ("A".."Z") { print "\$CTRLX\$CTRL$x {send \$CTRL$x}\n"}'
-        # end code-generator
-        # start generated code
-        $CTRLX$CTRLA {send $CTRLA}
-        $CTRLX$CTRLB {send $CTRLB}
-        $CTRLX$CTRLC {send $CTRLC}
-        $CTRLX$CTRLD {send $CTRLD}
-        $CTRLX$CTRLE {send $CTRLE}
-        $CTRLX$CTRLF {send $CTRLF}
-        $CTRLX$CTRLG {send $CTRLG}
-        $CTRLX$CTRLH {send $CTRLH}
-        $CTRLX$CTRLI {send $CTRLI}
-        $CTRLX$CTRLJ {send $CTRLJ}
-        $CTRLX$CTRLK {send $CTRLK}
-        $CTRLX$CTRLL {send $CTRLL}
-        $CTRLX$CTRLM {send $CTRLM}
-        $CTRLX$CTRLN {send $CTRLN}
-        $CTRLX$CTRLO {send $CTRLO}
-        $CTRLX$CTRLP {send $CTRLP}
-        $CTRLX$CTRLQ {send $CTRLQ}
-        $CTRLX$CTRLR {send $CTRLR}
-        $CTRLX$CTRLS {send $CTRLS}
-        $CTRLX$CTRLT {send $CTRLT}
-        $CTRLX$CTRLU {send $CTRLU}
-        $CTRLX$CTRLV {send $CTRLV}
-        $CTRLX$CTRLW {send $CTRLW}
-        $CTRLX$CTRLX {send $CTRLX}
-        $CTRLX$CTRLY {send $CTRLY}
-        $CTRLX$CTRLZ {send $CTRLZ}
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { print "\$CTRLX\$CTRL$x {send \$CTRL$x}\n"}'
+    # end code-generator
+    # start generated code
+    $CTRLX$CTRLA {send $CTRLA}
+    $CTRLX$CTRLB {send $CTRLB}
+    $CTRLX$CTRLC {send $CTRLC}
+    $CTRLX$CTRLD {send $CTRLD}
+    $CTRLX$CTRLE {send $CTRLE}
+    $CTRLX$CTRLF {send $CTRLF}
+    $CTRLX$CTRLG {send $CTRLG}
+    $CTRLX$CTRLH {send $CTRLH}
+    $CTRLX$CTRLI {send $CTRLI}
+    $CTRLX$CTRLJ {send $CTRLJ}
+    $CTRLX$CTRLK {send $CTRLK}
+    $CTRLX$CTRLL {send $CTRLL}
+    $CTRLX$CTRLM {send $CTRLM}
+    $CTRLX$CTRLN {send $CTRLN}
+    $CTRLX$CTRLO {send $CTRLO}
+    $CTRLX$CTRLP {send $CTRLP}
+    $CTRLX$CTRLQ {send $CTRLQ}
+    $CTRLX$CTRLR {send $CTRLR}
+    $CTRLX$CTRLS {send $CTRLS}
+    $CTRLX$CTRLT {send $CTRLT}
+    $CTRLX$CTRLU {send $CTRLU}
+    $CTRLX$CTRLV {send $CTRLV}
+    $CTRLX$CTRLW {send $CTRLW}
+    $CTRLX$CTRLX {send $CTRLX}
+    $CTRLX$CTRLY {send $CTRLY}
+    $CTRLX$CTRLZ {send $CTRLZ}
 
-        # end generated code
-        $CTRLX$ESC   {send $ESC}
-        timeout 180 {
-            send \000;
-            send "\r\n\r\n";
-            expect {
-                -timeout 1 "您有回复提醒" {
-                    exec bhj-notify bbs 您有回复提醒 &
-                }
+    # end generated code
+    $CTRLX$ESC   {send $ESC}
+    timeout 180 {
+        send \000;
+        send "\r\n\r\n";
+        expect {
+            -timeout 1 "您有回复提醒" {
+                exec bhj-notify bbs 您有回复提醒 &
             }
         }
     }
