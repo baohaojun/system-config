@@ -3,11 +3,59 @@
 set -e
 . ~/system-config/bin/.gitx
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt fFETCH_ONLY=\$"(if is-cron; then echo true; fi)"
+## end code-generator
+## start generated code
+TEMP=$(getopt -o fh \
+              --long FETCH_ONLY,help,no-FETCH_ONLY \
+              -n $(basename -- $0) -- "$@")
+FETCH_ONLY=$(if is-cron; then echo true; fi)
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--FETCH_ONLY|--no-FETCH_ONLY)
+            if test "$1" = --no-FETCH_ONLY; then
+                FETCH_ONLY=false
+            else
+                FETCH_ONLY=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--[no-]FETCH_ONLY'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+export FETCH_ONLY
+
+
 test $PWD = ~ && cd ~/system-config/
 if test $PWD = ~/system-config -a -d ~/src/github/private-config/.git; then
     (
         cd ~/src/github/private-config
-        git fetch $(repo-remote)
+        if test "$FETCH_ONLY"; then
+            git fetch $(repo-remote)
+        fi
     ) >/dev/null 2>&1
 fi
 cd "$(dirname "$(lookup-file .git)")"
@@ -19,22 +67,26 @@ else
     git pull
     exit
 fi
-if ! git fetch $origin >/dev/null 2>&1; then
+
+if test "$FETCH_ONLY" = false && ! git fetch $origin >/dev/null 2>&1; then
     die "failed to fetch $origin: $PWD"
 fi
-for x in remotes/$(git-remote-branch); do
-    remote=$(echo $x|awk -F/ '{print $2}')
-    branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
-    if git-is-ancestor $x HEAD; then
-        echo no need to merge $branch, it is already '*contained*' in HEAD
-        continue;
-    elif test "$FETCH_ONLY" != true; then
-        git merge $x >/dev/null 2>&1 || {
-            echo $remote/$branch merge failed
-            exit -1
-        }
-    fi
-done
+
+if test "$FETCH_ONLY" != true; then
+    for x in remotes/$(git-remote-branch); do
+        remote=$(echo $x|awk -F/ '{print $2}')
+        branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
+        if git-is-ancestor $x HEAD; then
+            echo no need to merge $branch, it is already '*contained*' in HEAD
+            continue;
+        else
+            git merge $x >/dev/null 2>&1 || {
+                echo $remote/$branch merge failed
+                exit -1
+            }
+        fi
+    done
+fi
 
 (
     git submodule init
@@ -42,6 +94,7 @@ done
 ) >/dev/null 2>&1
 
 if test "$FETCH_ONLY" = true; then
+    git fetch $origin >/dev/null 2>&1;
     git submodule foreach 'bash -c "git-pull-mac"'
     exit 0
 fi

@@ -321,7 +321,6 @@ if git-is-ancestor HEAD $origin/$branch; then
     exit
 fi
 
-git fetch $origin -v
 if [[ "$(repo-remote-url $origin)" =~ github.com.baohaojun ]]; then
     git rebase $origin/$branch
 fi
