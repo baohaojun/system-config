@@ -322,7 +322,7 @@ if git-is-ancestor HEAD $origin/$branch; then
 fi
 
 if [[ "$(repo-remote-url $origin)" =~ github.com.baohaojun ]]; then
-    git rebase $origin/$branch
+    git merge $origin/$branch
 fi
 git push $origin HEAD:refs/heads/$branch || {
     bhj-notify git-push-rebase "you need to merge it in $PWD" >/dev/null 2>&1
