@@ -3,24 +3,29 @@
 set -e
 . ~/system-config/bin/.gitx
 
+function is-fetch-only() {
+    if is-cron || test "$FETCH_ONLY" = true; then
+        echo true;
+    fi
+}
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt fFETCH_ONLY=\$"(if is-cron; then echo true; fi)"
+# generate-getopt ffetch-only=\$"(is-fetch-only)"
 ## end code-generator
 ## start generated code
 TEMP=$(getopt -o fh \
-              --long FETCH_ONLY,help,no-FETCH_ONLY \
+              --long fetch-only,help,no-fetch-only \
               -n $(basename -- $0) -- "$@")
-FETCH_ONLY=$(if is-cron; then echo true; fi)
+fetch_only=$(is-fetch-only)
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -f|--FETCH_ONLY|--no-FETCH_ONLY)
-            if test "$1" = --no-FETCH_ONLY; then
-                FETCH_ONLY=false
+        -f|--fetch-only|--no-fetch-only)
+            if test "$1" = --no-fetch-only; then
+                fetch_only=false
             else
-                FETCH_ONLY=true
+                fetch_only=true
             fi
             shift
             ;;
@@ -30,7 +35,7 @@ while true; do
             echo
             echo Options and arguments:
             printf %06s '-f, '
-            printf %-24s '--[no-]FETCH_ONLY'
+            printf %-24s '--[no-]fetch-only'
             echo
             exit
             shift
@@ -45,8 +50,9 @@ while true; do
     esac
 done
 
+
 ## end generated code
-export FETCH_ONLY
+export FETCH_ONLY=$fetch_only
 
 
 test $PWD = ~ && cd ~/system-config/
