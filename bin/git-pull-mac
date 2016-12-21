@@ -109,9 +109,7 @@ git submodule foreach 'bash -c "
     function do-git-pull-mac-twice() {
         git-pull-mac ||
             (
-                export http_proxy=http://localhost:8087
-                export https_proxy=http://localhost:8087
-                git-pull-mac
+                ALL_PROXY=socks5://127.0.0.1:3080 git-pull-mac
             )
     }
 

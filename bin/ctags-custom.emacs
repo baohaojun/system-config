@@ -1,7 +1,15 @@
 #!/bin/bash
+# DEFUN ("recursive-edit", Frecursive_edit, Srecursive_edit, 0, 0, "",
+
 for x in "$@"; do
     if test -e "$x"; then
-        grep -Hn '^DEFUN\b' -P "$x" | perl -ne 'if (s/(.*?):(\d+):(DEFUN\s+\("(.*?)".*)/$4 function $2 $1 $3/g) {print}' | tee ~/.cache/system-config/logs/$(basename $0).log
+        grep -Hn '^DEFUN\b' -P "$x" |
+            perl -ne '
+                 chomp;
+                 if (m/(.*?):(\d+):(DEFUN\s*\("(.*?)", (.*?),.*)/) {
+                     print "$4 function $2 $1 $3\n";
+                     print "$5 function $2 $1 $3\n";
+                 }' | tee ~/.cache/system-config/logs/$(basename $0).log
     fi
 done
 

@@ -4,9 +4,7 @@ set -ex
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent
 
-export http_proxy=http://localhost:19999
-export https_proxy=http://localhost:19999
-
+export ALL_PROXY=socks5://127.0.0.1:3080
 (
     if test ! -d ~/src/android-mirror.google/; then
         if test ! -d ~/src/android-mirror; then
