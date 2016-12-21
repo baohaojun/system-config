@@ -152,8 +152,7 @@ reset_input_method = function()
          [[
 cd /data/data/com.android.shell
 touch not-started.$$
-setsid nohup sh -c 'exec 2>&1
-set -x
+setsid nohup sh -c 'set -x
 rm 'not-started.$$'
 if test "$(cat /sdcard/Wrench/usb_online)" = watching-ime; then
     exit
@@ -165,14 +164,16 @@ while test -e /sdcard/Wrench/usb_online; do
 done
 ime enable %s
 ime set %s
-'& for i in 1 2 3 4 5; do
+'>nohup.ime 2>&1 & for i in 1 2 3 4 5 $(seq 1 20); do
    if test -e not-started.$$; then
-      sleep 1
+      sleep .1 || sleep 1
    else
+       echo started at i = $i, pid = $$ > nohup.start
        exit
    fi
 done
 ]]):format(input_method_id, input_method_id)
+      log("\n%s\n", command)
       adb_shell(command)
    end
 end
