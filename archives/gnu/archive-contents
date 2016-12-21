@@ -80,7 +80,7 @@
 	 ((:keywords "async")
 	  (:url . "http://elpa.gnu.org/packages/async.html"))])
  (auctex .
-	 [(11 89 6)
+	 [(11 89 7)
 	  nil "Integrated environment for *TeX*" tar
 	  ((:url . "http://www.gnu.org/software/auctex/"))])
  (aumix-mode .
@@ -151,7 +151,7 @@
 		      ((:url . "https://github.com/cpitclaudel/compact-docstrings")
 		       (:keywords "convenience" "faces" "lisp" "maint" "c"))])
  (company .
-	  [(0 9 0)
+	  [(0 9 2)
 	   ((emacs
 	     (24 1))
 	    (cl-lib
@@ -291,7 +291,7 @@
 	     ((:url . "http://elpa.gnu.org/packages/ediprolog.html")
 	      (:keywords "languages" "processes"))])
  (el-search .
-	    [(1 0 1)
+	    [(1 2 1)
 	     ((emacs
 	       (25))
 	      (stream
@@ -342,9 +342,9 @@
 	       ((:keywords "calendar")
 		(:url . "http://elpa.gnu.org/packages/excorporate.html"))])
  (exwm .
-       [(0 11)
+       [(0 12)
 	((xelb
-	  (0 11)))
+	  (0 12)))
 	"Emacs X Window Manager" tar
 	((:keywords "unix")
 	 (:url . "https://github.com/ch11ng/exwm"))])
@@ -472,6 +472,13 @@
 	    "Improved JavaScript editing mode" tar
 	    ((:keywords "languages" "javascript")
 	     (:url . "https://github.com/mooz/js2-mode/"))])
+ (json-mode .
+	    [(0 1)
+	     ((emacs
+	       (25 1)))
+	     "Major mode for editing JSON files" single
+	     ((:url . "http://elpa.gnu.org/packages/json-mode.html")
+	      (:keywords "data"))])
  (jumpc .
 	[(3 0)
 	 nil "jump to previous insertion points" single
@@ -638,7 +645,7 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(20161031)
+      [(20161214)
        nil "Outline-based notes management and organizer" tar nil])
  (osc .
       [(0 1)
@@ -803,7 +810,7 @@
 	   ((:url . "https://github.com/Malabarba/speed-of-thought-lisp")
 	    (:keywords "convenience" "lisp"))])
  (spinner .
-	  [(1 7 1)
+	  [(1 7 3)
 	   nil "Add spinners and progress-bars to the mode-line for ongoing operations" single
 	   ((:url . "https://github.com/Malabarba/spinner.el")
 	    (:keywords "processes" "mode-line"))])
@@ -903,11 +910,13 @@
 		 ((:url . "http://elpa.gnu.org/packages/url-http-ntlm.html")
 		  (:keywords "comm" "data" "processes" "hypermedia"))])
  (validate .
-	   [(1 0 0)
+	   [(1 0 2)
 	    ((emacs
 	      (24 1))
 	     (cl-lib
-	      (0 5)))
+	      (0 5))
+	     (seq
+	      (2 16)))
 	    "Schema validation for Emacs-lisp" single
 	    ((:url . "http://elpa.gnu.org/packages/validate.html")
 	     (:keywords "lisp"))])
@@ -970,7 +979,7 @@
 	 ((:url . "http://elpa.gnu.org/packages/xclip.html")
 	  (:keywords "convenience" "tools"))])
  (xelb .
-       [(0 11)
+       [(0 12)
 	((emacs
 	  (24 4))
 	 (cl-generic
