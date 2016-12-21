@@ -107,7 +107,7 @@ elif re.search("wubi86_detect_multi.py", sys.argv[0]):
     hanzis.sort()
 
     for hanzi in g_hanzi_code_map.keys():
-        if len(g_hanzi_code_map[hanzi]) > 1 and hanzi in g_freq_map and g_freq_map[hanzi] > 100:
+        if len(g_hanzi_code_map[hanzi]) > 1 and hanzi in g_freq_map and g_freq_map[hanzi] >= 1:
             sys.stdout.write(hanzi + " " + ' '.join(g_hanzi_code_map[hanzi]) + "\n")
 
 elif re.search("wubi86_delete_code.py", sys.argv[0]):
