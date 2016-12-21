@@ -4,11 +4,4 @@ test $# = 0 && set -- "$(getclip)"
 
 set -- "$(echo "$@" | perl -npe 's/ /-/g')"
 
-url=$(
-    echo -n http://shooter.cn/search/
-    echo -n "$@" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g'
-)
-echo "$url"|tee /dev/tty|putclip
-firefox "$url"&
-
-
+exec search-google "$@" subtitle
