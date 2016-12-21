@@ -41,17 +41,27 @@ def sort_freq(a, b):
     else:
         return 1
 
-print sys.argv[0]
-if re.search("wubi86_change_order.py", sys.argv[0]):
-    keys = list(wubi86.g_quail_map.keys())
-    keys.sort()
-
-    sys.stdout.write("""
-#!/bin/env python
+def print_head():
+    sys.stdout.write("""#!/bin/env python
 # -*- coding: utf-8 -*-
 
 g_quail_map = {
 """)
+
+def print_code_words(code, words):
+    if re.search('"', code):
+        code = repr(code)
+    else:
+        code = '"%s"' % code
+
+    sys.stdout.write(code + ' : ' + format_tuple(words))
+
+
+if re.search("wubi86_change_order.py", sys.argv[0]):
+    keys = list(wubi86.g_quail_map.keys())
+    keys.sort()
+
+    print_head()
     for code in keys:
         words = wubi86.g_quail_map[code]
         need_fix = False
@@ -59,12 +69,13 @@ g_quail_map = {
             if need_fix:
                 break
             current_char = words[current]
-            if not current_char in g_freq_map:
-                break
 
             for next in range(current, len(words)):
                 next_char = words[next]
-                if not next_char in g_freq_map:
+                if next_char in g_freq_map and not current_char in g_freq_map:
+                    need_fix = True
+                    break
+                if next_char not in g_freq_map or current_char not in g_freq_map:
                     continue
                 if g_freq_map[current_char] < g_freq_map[next_char]:
                     need_fix = True
@@ -76,11 +87,10 @@ g_quail_map = {
             words.reverse()
             words = tuple(words)
 
-        sys.stdout.write('"%s" : ' % code + format_tuple(words))
+        print_code_words(code, words)
 
     sys.stdout.write("}\n")
 elif re.search("wubi86_detect_multi.py", sys.argv[0]):
-    print "hello world"
     g_hanzi_code_map = {}
 
     for code in wubi86.g_quail_map.keys():
@@ -98,7 +108,20 @@ elif re.search("wubi86_detect_multi.py", sys.argv[0]):
 
     for hanzi in g_hanzi_code_map.keys():
         if len(g_hanzi_code_map[hanzi]) > 1 and hanzi in g_freq_map and g_freq_map[hanzi] > 100:
-            sys.stdout.write(hanzi + ": " + ', '.join(g_hanzi_code_map[hanzi]) + "\n")
+            sys.stdout.write(hanzi + " " + ' '.join(g_hanzi_code_map[hanzi]) + "\n")
 
 elif re.search("wubi86_delete_code.py", sys.argv[0]):
-    pass
+    keys = list(wubi86.g_quail_map.keys())
+    keys.sort()
+
+    print_head()
+
+    for code in keys:
+        if code == sys.argv[1]:
+            words = wubi86.g_quail_map[code]
+            words = [x for x in words if x != sys.argv[2]]
+            words = tuple(words)
+            wubi86.g_quail_map[code] = words
+        print_code_words(code, wubi86.g_quail_map[code])
+
+    sys.stdout.write("}\n")

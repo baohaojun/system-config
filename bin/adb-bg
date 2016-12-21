@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if test $# = 1 && [[ "$1" =~ ' ' ]]; then
+    set -- sh -c "$1"
+fi
+
+command=$(
+cat <<EOF
+cd /data/data/com.android.shell
+touch not-started.\$\$
+setsid nohup sh -c 'set -x
+rm 'not-started.\$\$'
+$(for x in "$@"; do printf "%q " "$x"; done)
+' >>nohup.bg 2>&1 & for i in \$(seq 1 50); do
+   if test -e not-started.$$; then
+      sleep .1
+   else
+       echo started at i = \$i, pid = \$\$ >> nohup.start
+       exit
+   fi
+done
+
+EOF
+)
+
+my-adb "$command"

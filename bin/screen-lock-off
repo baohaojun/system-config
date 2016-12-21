@@ -8,5 +8,6 @@ if test $(basename $0) = screen-lock-off; then
     sleep 1
     xdotool mousemove 1024 10
 else
+    my-adb key power
     true
 fi

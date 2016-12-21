@@ -215,7 +215,8 @@
 
 (add-hook 'python-mode-hook
           (lambda ()
-            (setq imenu-create-index-function #'ajoke--create-index-function))
+            (setq imenu-create-index-function #'ajoke--create-index-function)
+            (setq ac-sources '(ac-source-jedi-direct)))
           t)
 
 (add-hook 'csharp-mode-hook

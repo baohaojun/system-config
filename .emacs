@@ -377,3 +377,6 @@
 
 (when (file-exists-p "~/.emacs.cust")
   (load "~/.emacs.cust"))
+
+(when (file-exists-p "~/src/github/private-config/.emacs")
+  (load "~/src/github/private-config/.emacs"))

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+relative-link ~/system-config/bin/ctags-custom.emacs ~/src/emacs/ctags-custom || true
