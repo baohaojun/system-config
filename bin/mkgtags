@@ -67,6 +67,10 @@ else
     outDir=~/.cache/system-config/for-code-reading/"`pwd`"
 fi
 
+if test -e "$outDir"/.before-for-code-reading; then
+    bash "$outDir"/.before-for-code-reading
+fi
+
 function mkcscope_files() {
     # When in Emacs, we want to be able to use "echo $FILE | mkgtags
     # -u" to check if $FILE is updated or not, and in that case, we
