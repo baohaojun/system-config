@@ -31,7 +31,7 @@ function check_arg()
 function Usage()
 {
     echo "Usage: $prog_name [recipient]... OPTIONS"
-    echo 
+    echo
     echo "Main Options:"
     echo "    -h:                 this little help"
     echo "    -c cc_recipient:    cc to somebody"
@@ -44,7 +44,7 @@ function Usage()
     exit
 }
 
-while true; do 
+while true; do
     case "$1" in
         [^-]*)
             to[$n_to]="$1"
@@ -78,9 +78,9 @@ while true; do
         -a)
             check_arg "$2"
             if [[ -z "$attachment" ]]; then
-                attachment=file:///`cygpath -alw "$2"`
+                attachment="$(filep "$2")"
             else #the " char will never occur in windows filename
-                attachment="$attachment"'"'file:///`cygpath -alw "$2"`
+                attachment="$attachment"'"'"$(filep "$2")"
             fi
             shift
             shift
@@ -124,10 +124,10 @@ echo "body is $body"
 fi
 
 
-function build_mailto_recipients() 
+function build_mailto_recipients()
 {
     cd ~/.mail.addr
-    
+
     echo -n "'"
     local IFS=$'\n'
     local recipients=$(
@@ -135,8 +135,8 @@ function build_mailto_recipients()
         do
             if [[ -f "$x" ]]
             then
-                cat "$x" 
-            else 
+                cat "$x"
+            else
                 if [[ -d "$x" ]]
                 then
                     cat "$x"/*
@@ -149,12 +149,12 @@ function build_mailto_recipients()
     echo -n "$recipients"|tr -d '\n'|perl -npe 'chomp; s/^\s*//; s/>\s*/>,/g; s#,$##'
     echo -n "'"
 }
-  
+
 function build_mailto_attachments()
 {
     echo -n "'"
     echo "$1"|
-    perl -npe 'chomp; s#\\#/#g; s#([^\-0-9a-zA-Z/.:"])#sprintf("%%%02x", ord($1))#seg; s#"#,#g'
+        perl -npe 'chomp; s#\\#/#g; s#([^\-0-9a-zA-Z/.:"])#sprintf("%%%02x", ord($1))#seg; s#"#,#g'
     echo -n "'"
 
 }
@@ -172,7 +172,7 @@ function set_need_comma() {
 function compose_body() {
     local mfile=`mktemp`
     gnuclient.exe "`cygpath -alw $mfile`" >/dev/null 2>&1
-    #the `,' and `"' characters is special, replace them with the %xx notation 
+    #the `,' and `"' characters is special, replace them with the %xx notation
     cat $mfile|sed -e 's/,/%2c/g; s/"/%22/g'
     rm $mfile
 }
@@ -207,13 +207,13 @@ function build_command_line()
         echo -n attachment=$( build_mailto_attachments "$attachment" )
         set_need_comma
     fi
-    
+
     if ! [[ -z "$subject" ]]; then
         output_comma
         echo -n subject="$subject"
         set_need_comma
     fi
-    
+
     if [[ $edit == true ]]; then
         output_comma
         echo -n body=
@@ -231,5 +231,3 @@ if [[ $test == false ]]; then
 else
     echo "$command_line"
 fi
-
-

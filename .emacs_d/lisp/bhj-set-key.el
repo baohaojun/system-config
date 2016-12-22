@@ -4,7 +4,15 @@
 (global-set-key (kbd "C-c y v") 'yas-visit-snippet-file)
 
 (defun bhj-insert-file-basename () (interactive) (insert (bhj-file-basename)))
-(defun bhj-insert-date () (interactive) (insert (shell-command-to-string "today")))
+
+(defun bhj-insert-date (arg)
+  (interactive "p")
+  (insert
+   (shell-command-to-string
+    (if (not arg)
+        "today"
+      (concat "today " (shell-quote-argument (completing-read "What arg to today? " nil)))))))
+
 (defun bhj-insert-file-basename-sans-extension () (interactive) (insert (file-name-sans-extension (bhj-file-basename))))
 (defun bhj-insert-line-number () (interactive) (insert (format "%d" (line-number-at-pos))))
 (global-set-key (kbd "C-c i f") 'bhj-insert-file-basename)

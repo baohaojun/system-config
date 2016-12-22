@@ -11,11 +11,18 @@ sleep 2
 adb-tap 372 1114
 sleep 1
 adb-tap 771 1168
-sleep 5
+sleep 1
 
-while true; do my-adb -r 'fuser /sdcard/smartisan/contact/00001.vcf && echo yes' | grep yes || break; sleep 1; done
+while true; do
+    if my-adb dumpsys notification | grep android.progress=Integer |grep -v '\b0\b'; then
+        sleep 1
+    else
+        break
+    fi
+done
 
 cd ~/.android
 my-adb pull /sdcard/smartisan/contact/00001.vcf contacts.vcf.$$
-cat contacts.vcf.$$ > contacts.vcf
+vcf-merge ~/.android/contacts.vcf ~/.android/contacts.vcf.$$ > contacts.vcf.2
+mv ~/.android/contacts.vcf.2 ~/.android/contacts.vcf
 rm contacts.vcf.$$
