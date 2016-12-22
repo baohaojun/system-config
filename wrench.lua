@@ -173,7 +173,6 @@ ime set %s
    fi
 done
 ]]):format(input_method_id, input_method_id)
-      log("\n%s\n", command)
       adb_shell(command)
    end
 end
@@ -908,7 +907,10 @@ end
 
 local open_weixin_scan = function()
    weixin_open_homepage()
-   adb_event"adb-tap 56 154 sleep .1 adb-tap 1002 115 sleep .5 adb-tap 717 477"
+   adb_event"sleep .1 adb-tap 56 154 sleep .5 adb-tap 1002 115 sleep .5 adb-tap 717 477"
+   if true then
+      return
+   end
    wx_login_page = "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI"
    for i = 1, 60 do
       w = adb_top_window()
@@ -2356,6 +2358,13 @@ expand_mail_groups = function(contacts)
 end
 
 t1_adb_mail = function(subject, to, cc, bcc, attachments)
+   if subject ~= "" and file_exists(os.getenv("HOME") .. "/src/github/private-config/bin/wrench-thunderbird") then
+      if yes_or_no_p("Do you want to use thunderbird?") then
+         system{"wrench-thunderbird", subject, to, cc, bcc, attachments}
+         return
+      end
+   end
+
    to = expand_mail_groups(to)
    if to ~= "" and subject == "" and cc == "" and bcc == "" and attachments == "" then
          while adb_top_window() == "com.android.contacts/com.android.contacts.activities.ContactSelectionActivity" do
@@ -2397,7 +2406,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
                return
             end
          else
-            adb_event"adb-tap 993 883 sleep .5"
+            adb_event"adb-tap 1050 810 sleep .5"
          end
 
          if not rows_mail_att_finder or rows_mail_att_finder:match"^Manual Click" then
