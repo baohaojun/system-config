@@ -209,12 +209,31 @@ for try in $(seq 1 10); do
         if grep -q 'internal error while processing changes\|(Synchronous hook timed out' ~/.cache/system-config/logs/gerrit-review.log.$$; then
             echo There is an error, need retry git push...
             sleep 5
-        elif grep -q '(no new changes' ~/.cache/system-config/logs/gerrit-review.log.$$; then
-            if yes-or-no-p -y "你的改动之前已经提交过gerrit review，是否继续（进行gerrit-do-review）？"; then
-                break
+        elif grep -q 'No changes between prior commit' ~/.cache/system-config/logs/gerrit-review.log.$$; then
+            # No changes between prior commit fca78b8 and new commit 525a96a
+            prior_commit=$(cat ~/.cache/system-config/logs/gerrit-review.log.$$ | grep -o 'No changes between prior commit \S+' -P | pn 6)
+            current_commit=$(cat ~/.cache/system-config/logs/gerrit-review.log.$$ | grep -o 'No changes between prior commit.*' -P | pn 10)
+
+            if yes-or-no-p -y "你的某个改动($current_commit)之前已经提交过gerrit review($prior_commit)，需要先rebase到那个改动上去，自动执行？"; then
+                review_ref=$(git ls-remote $(repo-remote) | grep ^$prior_commit | pn 2 | head -n 1)
+                git fetch $(repo-remote) "$review_ref"
+                if test "$(git log -1 --pretty=%h FETCH_HEAD)" != $prior_commit; then
+                    die "不知道如何获取 $prior_commit"
+                fi
+                git rebase $prior_commit
+                continue
             else
                 exit 1
             fi
+        elif grep -q '(no new changes)' ~/.cache/system-config/logs/gerrit-review.log.$$; then
+            if yes-or-no-p -y "你的改动之前已经提交过gerrit review，是否继续（进行gerrit-do-review）？"; then
+                break
+            fi
+        elif grep -q '(change .* closed)' ~/.cache/system-config/logs/gerrit-review.log.$$; then
+            change_url=$(grep -o '(change .* closed)' ~/.cache/system-config/logs/gerrit-review.log.$$ | pn 2)
+            die "你想提交的某个改动好像已经被close掉了（比如被abandon掉了），请在此页面将其重新打开然后重试： $change_url"
+        else
+            die gerrit-push-review 发生未知错误，请联系CM
         fi
     else
         break
