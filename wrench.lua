@@ -4,6 +4,8 @@
 local M
 
 -- functions
+
+local search_sms, string_strip
 local adb_input_method_is_null, close_ime
 local window_post_button_map = {}
 local mail_group_map = {}
@@ -702,7 +704,9 @@ wait_input_target_n = function(n_loop, ...)
                if adb_window_dump[x]:match("mInputMethodTarget.*"..activity) then
                   local input_method, ime_height, ime_connected = adb_get_input_window_dump()
                   if ime_connected then
-                     return adb_window_dump[x]
+                     local fields = split(" ", adb_window_dump[x])
+                     local last = fields[#fields]:gsub("}", "")
+                     return last
                   end
                end
             end
@@ -923,6 +927,28 @@ local open_weixin_scan = function()
          break
       end
    end
+end
+
+string_split = function(s)
+   s = s:gsub("^%s+", "")
+   s = s:gsub("%s+$", "")
+   return s
+end
+
+search_sms = function(what)
+   putclip_nowait(what)
+   sms_activity = "com.android.mms/com.android.mms.ui.ConversationList"
+   for i = 1, 5 do
+      adb_start_activity(sms_activity)
+      adb_event"sleep .5 adb-tap 516 284 sleep .5"
+      local input = wait_input_target_n(5, sms_activity)
+      if input == sms_activity then
+         break
+      end
+      log("search_sms: wait input: %s", input)
+      adb_event"key back"
+   end
+   adb_event"key scroll_lock key enter"
 end
 
 local function dingding_open_homepage()
@@ -2608,6 +2634,7 @@ end
 
 t1_call = function(number)
    if number:match("@@") then
+      number = string_split(number)
       local names = split("@@", number)
       local who, where = names[1] or "", names[2] or ""
       if where == "qq" then
@@ -2624,6 +2651,8 @@ t1_call = function(number)
          search_mail(who)
       elseif where == "wb" or where == "weibo" then
          find_weibo_friend(who)
+      elseif where == "sms" then
+         search_sms(who)
       else
          prompt_user("Don't know how to do it: " .. where)
       end
