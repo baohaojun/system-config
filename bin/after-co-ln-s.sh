@@ -397,23 +397,28 @@ mkdir -p ~/.cache # just in case the following command will create
 (
     set +e
     (
-        cd ~/src/github/mobileorg-android/
-        git remote add up https://github.com/matburt/mobileorg-android
+        cd ~/src/github/mobileorg-android/ &&
+            git remote add up https://github.com/matburt/mobileorg-android
     )
 
     (
-        cd ~/src/github/emacs.d
-        git remote add up https://github.com/purcell/emacs.d
+        cd ~/src/github/emacs.d &&
+            git remote add up https://github.com/purcell/emacs.d
     )
 
     (
-        cd ~/src/github/autoproxy
-        git remote add up https://github.com/agunchan/autoproxy
+        cd ~/src/github/autoproxy &&
+            git remote add up https://github.com/agunchan/autoproxy
     )
 
     (
-        cd ~/src/github/shadowsocks-android
-        git remote add up https://github.com/shadowsocks/shadowsocks-android
+        cd ~/src/github/shadowsocks-android &&
+            git remote add up https://github.com/shadowsocks/shadowsocks-android
+    )
+
+    (
+        cd ~/src/github/adb-sync/ &&
+            git remote add up https://github.com/google/adb-sync
     )
 ) >/dev/null 2>&1 || true
 
