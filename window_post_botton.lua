@@ -68,6 +68,7 @@ map['com.Qunar/com.mqunar.atom.browser.activity.HyWebActivity01'] = 'manual-post
 map['com.Qunar/com.mqunar.atom.browser.activity.HyWebActivity02'] = 'manual-post'
 map['com.Qunar/com.mqunar.atom.flight.activity.inland.FlightOrderFillActivity'] = 'manual-post'
 map['com.Qunar/com.mqunar.atom.flight.activity.inland.FlightPassengerAddActivity'] = 'manual-post'
+map['com.quora.android/com.quora.android.LookupActivity'] = 'manual-post'
 map['com.qzone/com.qzonex.module.global.FeedActionPanelActivity'] = 'weixin-chat'
 map['com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity'] = 'weibo-share'
 map['com.reddit.frontpage/com.reddit.frontpage.FrontpageListingActivity'] = 'manual-post'
