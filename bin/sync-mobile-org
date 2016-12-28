@@ -4,28 +4,10 @@ set -e
 
 
 function sync-phone-files() {
-    rsync=false
-    ssh-to-phone echo || true
-    if my-adb id | grep 'uid=0(root)' -q && ssh phone echo hello | grep hello; then
-        rsync=true
-    fi
-
     if test "$1" = ""; then
-        if test $rsync = true; then
-            rsync -av media_rw@phone:/data/media/0/MobileOrg .. --delete --exclude .git
-        else
-            for x in $(my-adb ls /sdcard/MobileOrg/); do
-                my-adb pull /sdcard/MobileOrg/$(basename $x) .
-            done
-        fi
+        adb-sync --reverse /sdcard/MobileOrg ..
     elif test "$1" = "-r"; then
-        if test $rsync = true; then
-            rsync -av * media_rw@phone:/data/media/0/MobileOrg/ --exclude .git --delete || true
-        else
-            for x in *; do
-                my-adb push $x /sdcard/MobileOrg/$x
-            done
-        fi
+        adb-sync . /sdcard/MobileOrg/ --exclude .git --delete
     else
         die "can't do sync-phone-files $@"
     fi
