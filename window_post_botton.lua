@@ -9,6 +9,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.user.profile.activities.EditP
 map['com.alibaba.android.rimet/com.alibaba.android.user.search.activity.GlobalSearchInputActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'manual-post'
+map['com.amazon.kindle/com.amazon.kcp.store.LegacyStoreActivity'] = 'manual-post'
 map['com.amazon.mShop.android.shopping/com.amazon.identity.auth.device.AuthPortalUIActivity'] = 'manual-post'
 map['com.android.browser/com.android.browser.BrowserActivity'] = 'manual-post'
 map['com.android.browser/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'manual-post'
