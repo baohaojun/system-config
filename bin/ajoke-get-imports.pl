@@ -4,7 +4,7 @@ use strict;
 use String::ShellQuote;
 use Getopt::Long;
 
-use BhjJava;
+use BhjJava; # will chdir to beagrep src
 sub debug(@) {
     print $debug "@_\n";
 }

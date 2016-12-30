@@ -9,7 +9,7 @@ use Getopt::Long;
 use Set::Scalar;
 use DelayedQx;
 my $idset = Set::Scalar->new;
-use BhjJava;
+use BhjJava; # will chdir to beagrep src
 sub debug(@) {
     print $debug "@_\n";
 }
