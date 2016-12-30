@@ -1,3 +1,11 @@
+- NOTE :: ajoke as a separate project may not work anymore. It's part
+          of my [[https://github.com/baohaojun/system-config][system-config]] project, you may want to check that
+          project instead.
+
+          I tried to make it a self-contained project, but seems it's
+          too much hassle. Especially after I started replacing GNU
+          Global with beagrep (beatags, to be more precise).
+
 * What is ajoke
 
  * Abducting Java Onto Emacs, K is silent.
@@ -5,8 +13,8 @@
  * A Joke Of Kidding Eclipse.
 
 Ajoke is a tool for doing Java programming on Emacs. It is inspired by
-Emacs-Eclim, but does not depend on Eclipse. Instead, it uses GNU
-Global and ctags-exuberant extensively, with a bunch of Perl scripts.
+Emacs-Eclim, but does not depend on Eclipse. Instead, it uses [[https://github.com/baohaojun/beagrep/][beagrep]]
+ and ctags-exuberant extensively, with a bunch of Perl scripts.
 
 For a demo, you can watch the video I made at [[http://www.youtube.com/watch?v=K4bYiQik6lE][Youtube]] (also on [[http://v.youku.com/v_show/id_XNTg5MzcxNTQ0.html][youku]]
 for my countrymen behind Great Free Wall, but the quality is bad
