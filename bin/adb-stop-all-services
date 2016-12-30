@@ -6,4 +6,5 @@ if test -z "$ANDROID_SERIAL"; then
     die "it's too dangerous without setting ANDROID_SERIAL"
 fi
 my-adb -r echo x
+my-adb stop
 for x in $(my-adb getprop |grep running|pn 1|perl -npe 's/.*\.//;s,\].*,,'|grep -v adbd); do my-adb stop $x; done
