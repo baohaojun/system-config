@@ -4,90 +4,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>各种编程语言之间的对比学习</title>
-<!-- 2016-12-28 Wed 22:07 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
+<link rel="stylesheet" href="/css/default.css" type="text/css" />
+ <link rel="stylesheet" href="/css/dichromacy.css" type="text/css" />
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -136,40 +87,22 @@ for the JavaScript code in this tag.
 </script>
 </head>
 <body>
+<div id="preamble" class="status">
+<div id="header">
+
+  <h1 id="blog-title">
+
+    <a href="http://baohaojun.github.io/blog/2011/12/23/index.html">包昊军的博客</a>
+
+  </h1>
+  <p id="description">What you don't know, won't hurt you.</p>
+
+</div>
+</div>
+<div id='bhj_article'>
+  <div id='bhj_leftpane'>
 <div id="content">
 <h1 class="title">各种编程语言之间的对比学习</h1>
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1. <span class="todo TODO">TODO</span> 写完这篇博客</a></li>
-<li><a href="#sec-2">2. 数据结构</a>
-<ul>
-<li><a href="#sec-2-1">2.1. 数值</a></li>
-<li><a href="#sec-2-2">2.2. 字符串</a>
-<ul>
-<li><a href="#sec-2-2-1">2.2.1. 各种字符串相关的函数</a></li>
-<li><a href="#sec-2-2-2">2.2.2. 正则表达式</a></li>
-</ul>
-</li>
-<li><a href="#sec-2-3">2.3. 数组</a></li>
-<li><a href="#sec-2-4">2.4. 关联数组</a>
-<ul>
-<li><a href="#sec-2-4-1">2.4.1. 关联数组的构造、输入</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-<p style="color: red;"> <b>Not finished yet.</b> </p>
-<p style="color: red;"> <b>Not finished yet.</b> </p>
-
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><a id="ID-921c433e-f798-4376-9d72-b4e14f2c844f" name="ID-921c433e-f798-4376-9d72-b4e14f2c844f"></a><span class="section-number-2">1</span> <span class="todo TODO">TODO</span> 写完这篇博客</h2>
-<div class="outline-text-2" id="text-1">
-
 <p>
 断断续续的，我已经学过、用过很多门编程语言了，觉得这个过程非常有意思。然后最近心里一直有了个想法，各种语言放在一起对比一下，会不会更有意思呢？
 </p>
@@ -179,17 +112,17 @@ for the JavaScript code in this tag.
 </p>
 
 <ol class="org-ol">
-<li>文本编辑器。比如Vim或Emacs（我个人使用Emacs）。
+<li>文本编辑器。比如 Vim 或 Emacs（我个人使用 Emacs）。
 
 <p>
 一般的源代码阅读、编写，都可以通过编辑器来进行，并且可以通过安装一些辅助程序也就是通常所说的插件，达到更好的效果。
 </p>
 </li>
 
-<li>grep、find等简单文本、文件搜索工具
+<li>grep、find 等简单文本、文件搜索工具
 
 <p>
-比如搜索某个函数在哪里被定义、使用等，如果程序不是特别大的话，可以通过grep来满足这些需求
+比如搜索某个函数在哪里被定义、使用等，如果程序不是特别大的话，可以通过 grep 来满足这些需求
 </p>
 </li>
 
@@ -202,15 +135,15 @@ for the JavaScript code in this tag.
 </ol>
 
 <p>
-注意这里并没有提到集成开发环境，比如Eclipse、IntelliJ IDEA等工具，主要原因是这些工具往往只对某种或某几种语言支持的更加完善，局限性比较大，并且不够有趣。
+等等等等。注意这里并没有提到集成开发环境，比如 Eclipse、IntelliJ IDEA 等工具，主要原因是这些工具往往只对某种或某几种语言支持的更加完善，局限性比较大，并且不够有趣。
 </p>
 
 <p>
-而上面提到的这些通用的工具，正因为其通用性，所以你用A语言编程掌握了的技巧，可以方便的转嫁到B语言编程上。
+而上面提到的这些通用的工具，正因为其通用性，所以你用 A 语言编程掌握了的技巧，可以方便的转嫁到 B 语言编程上。
 </p>
 
 <p>
-接下来从各种编程语言的以下几个方面对它们做一些对比。
+所以接下来从各种编程语言的以下几个方面对它们做一些对比。
 </p>
 
 <ol class="org-ol">
@@ -235,32 +168,30 @@ for the JavaScript code in this tag.
 </p>
 </li>
 
-<li>时尚
+<li>工具
 
 <p>
-一些比较显著的流行时尚，比如“functional programming”，“面向对象”等等。
+讲一下 beagrep 等工具与编辑器等结合使用。各种自动补齐。
 </p>
 </li>
 </ol>
-</div>
-</div>
 
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> 数据结构</h2>
-<div class="outline-text-2" id="text-2">
-</div><div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 数值</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 数据结构</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 数值</h3>
+<div class="outline-text-3" id="text-1-1">
 <p>
-各种编程语言的数值类型的数据结构应该基本都是一样的，整数、浮点数、加减乘除求余数，不需要太专门的学习。此外可能有的语言有一些专门的函数库，比如sin、cos等三角函数。
+各种编程语言的数值类型的数据结构应该基本都是一样的，整数、浮点数、加减乘除求余数，不需要太专门的学习，因为从小到大一直在学。此外可能有的语言有一些专门的函数库，比如 sin、cos 等三角函数。
 </p>
 
 <p>
-这里面还包括各种数值类型，比如整型、short、byte、char、signed、unsigned、long long、float、double等等等等，以及它们各自的记法。各种进制，二、八、十、十六进制等。
+这里面还包括各种数值类型，比如整型、short、byte、char、signed、unsigned、long long、float、double 等等等等，以及它们各自的记法。各种进制，二、八、十、十六进制等。
 </p>
 
 <p>
-数值之间的转换，比如从float强制转换为int。在有些脚本语言里，甚至可以从字符串直接转换为int。比如在Perl里，<code>int("5") == 5~；甚至 ~"5" + 6 == 11</code>。这种现象在编程语言里有个术语，叫类型检查，比如Java这种语言，类型检查非常的强，上面 <code>"5" + 6</code> 这种写法是绝对禁止的；而Perl则属于没有类型检查的，或者说，它的类型检查比较弱。
+数值之间的转换，比如从 float 强制转换为 int。在有些脚本语言里，甚至可以从字符串直接转换为 int。比如在 Perl 里，<code>int("5") == 5</code>；甚至 <code>"5" + 6 == 11</code>。这种现象在编程语言里有个术语，叫类型检查，比如 Java 这种语言，类型检查非常的强，上面 <code>"5" + 6</code> 这种写法是绝对禁止的；而 Perl 则属于没有类型检查的，或者说，它的类型检查比较弱。
 </p>
 
 <p>
@@ -268,93 +199,97 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-像Perl允许写 <code>"5" + 6</code>，甚至也允许写 <code>"x" + 6</code>，其结果为6，因为 <code>"x"</code> 的数值被认为等于0。有些脚本语言则会禁止写类似于 <code>"x" + 6</code> 这种语句，比如 Bash 等。
+像 Perl 允许写 <code>"5" + 6</code>，甚至也允许写 <code>"x" + 6</code>，其结果为 6，因为 <code>"x"</code> 的数值被认为等于 0。有些脚本语言则会禁止写类似于 <code>"x" + 6</code> 这种语句，比如 Bash 等。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 字符串</h3>
-<div class="outline-text-3" id="text-2-2">
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 字符串</h3>
+<div class="outline-text-3" id="text-1-2">
 <p>
 在所有的语言里都一定会有字符串。所以熟练掌握对字符串的处理函数、命令、工具，对编程的帮助是非常巨大的。因为所有编程语言最后写出来的源代码，其本质都只是一个可能特别特别长的字符串。
 </p>
+</div>
 
-<ol class="org-ol">
-<li>编码
-</li>
-</ol>
-
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 编码</h4>
+<div class="outline-text-4" id="text-1-2-1">
 <p>
 字符串都需要编码。这一点对于我等非英语母语的中国人来讲，问题更突出一些。
 </p>
 
 <ol class="org-ol">
-<li>单字节编码。一个字符只占一个字节，可想而知，只能表达128（或256，区别不大）个字母。一般的ASCII编码就是单字节编码。
+<li>单字节编码。一个字符只占一个字节——byte，可想而知，只能表达 128（或 256，区别不大）个字母。一般的 ASCII 编码就是单字节编码。
 </li>
 
-<li>多字节编码。有很多种编码方式，比如gbk，比如utf-8。
+<li>多字节编码。有很多种编码方式，比如 gbk，比如 utf-8。
 
 <p>
-这种编码有很多是不定长的，其中像gbk编码的规则相对简单，前面128个字与ASCII码相同，后面的则全部是两个字节表示一个字（一般是中文汉字，也有日文假名、汉字等）。
+这种编码有很多是不定长的，其中像 gbk 编码的规则相对简单，前面 128 个字与 ASCII 码相同，后面的则全部是两个字节表示一个字（一般是中文汉字，也有日文假名、汉字等）。
 </p>
 
 <p>
-而utf-8编码就更复杂了。一个字编出来的码可以是1个字节，也可能是2个字节，3个字节。等等等等。
+而 utf-8 编码就更复杂了。一个字编出来的码可以是 1 个字节，也可能是 2 个字节，3 个字节。等等等等。
+</p>
+
+<p>
+在这里我个人遇到一个特别严重的坑，那就是错误的把字符 character 和字节 byte 给等同了起来，因为一开始学习的就是 C 语言，坑爹的是 C 里面内置了一个 char 类型，就是 8 个 bit。所以后来很长时间无法理解多字节编码是怎么回事儿。
 </p>
 </li>
 
 <li>统一编码
 
 <p>
-后来国际标准组织制定出了Unicode统一编码标准。这里所有的字都用双字节或者4字节来表示了。如果想表示一个字符串的话，不能用C语言里的char[]字节数组了，而必须改成用short[]甚至int[]数组（会用typedef定义一个wchar_t的类型）。
+后来国际标准组织制定出了 Unicode 统一编码标准。这里所有的字都用双字节或者 4 字节来表示了。如果想表示一个字符串的话，不能用 C 语言里的 char[]字节数组了，而必须改成用 short[]甚至 int[]数组（会用 typedef 定义一个 wchar_t 的类型）。
 </p>
 </li>
 </ol>
 
 <p>
-Java比较背，在Unicode还没有成熟的时候，决定了用两个字节表示一个Unicode字，结果后来发现两个字节（16bit）是不够用的，必须用4个字节，所以后来又作了一些扩充，这个就非常复杂了。
+Java 比较背，在 Unicode 还没有成熟的时候，决定了用两个字节表示一个 Unicode 字，结果后来发现两个字节（16bit）是不够用的，必须用 4 个字节，所以后来又作了一些扩充，这个就非常复杂了。
 </p>
 </div>
+</div>
 
-<div id="outline-container-sec-2-2-1" class="outline-4">
-<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 各种字符串相关的函数</h4>
-<div class="outline-text-4" id="text-2-2-1">
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> 各种字符串相关的函数</h4>
+<div class="outline-text-4" id="text-1-2-2">
 <ul class="org-ul">
 <li>求字符串长度
 
 <p>
-比如strlen。注意只有在ASCII编码的情况下，strlen返回来的值，真正代表了里面有多少个字码，否则只是代表这个字符串占用了多少个字节。
+比如 strlen。注意只有在 ASCII 编码的情况下，strlen 返回来的值，真正代表了里面有多少个字码，否则只是代表这个字符串占用了多少个字节。
 </p>
 
 <p>
-如果是多字节编码，想知道里面有多少个字码，建议先将其转换成wcs（wide char string，宽字符串），然后再用wcslen函数。
+如果是多字节编码，想知道里面有多少个字码，建议先将其转换成 wcs（wide char string，宽字符串），然后再用 wcslen 函数。
 </p>
 
 <p>
-比如这个字码：“你”，用utf-8编码表示的话，应该有3个字节。但用wcs表示的话，它占用2个或4个字节，但wcslen返回为1（因为只有一个字码“你”）。
+比如这个字码：“你”，用 utf-8 编码表示的话，应该有 3 个字节。但用 wcs 表示的话，它占用 2 个或 4 个字节，但 wcslen 返回为 1（因为只有一个字码“你”）。
 </p>
 </li>
 
-<li>字符串拼接，strcat等等
+<li>字符串拼接，strcat 等等
 
 <p>
-有些语言必须用专门的函数来表示字符串拼接，比如C语言里的strcat。但有些语言里，字符串拥有自己专门的运算符，比如在Python里，字符串通过加法符号“+”来进行拼接。
+有些语言必须用专门的函数来表示字符串拼接，比如 C 语言里的 strcat。但有些语言里，字符串拥有自己专门的运算符，比如在 Python 里，字符串通过加法符号“+”来进行拼接。
 </p>
 
 <p>
-Perl语言比较“特殊”，其设计者认为，“+”运算必须是拥有交换性的，<code>a + b = b + a</code>，而字符串的拼接不满足此规则。所以Perl里用 <code>.</code> 来表示字符串拼接。Lua语言里则使用两个点：<code>"a" .. "b" = "ab"</code>。这个区别非常有意思，不小心的话会搞混掉。但稍微熟练一点就不会了，尤其在你短期内大量使用某一语言的情况下。
+Perl 语言比较“特殊”，其设计者认为，“+”运算必须是拥有交换性的，<code>a + b = b + a</code>，而字符串的拼接不满足此规则。所以 Perl 里用 <code>.</code> 来表示字符串拼接。Lua 语言里则使用两个点：<code>"a" .. "b" = "ab"</code>。这个区别非常有意思，不小心的话会搞混掉。但稍微熟练一点就不会了，尤其在你短期内大量使用某一语言的情况下。
 </p>
 
 <ul class="org-ul">
 <li>字符串的乘法
 
 <p>
-Perl是比较变态的，除了“加法”外，它还对字符串提供了“乘法”操作符，使用的运算符是 <code>x</code> （字母x），使用的方法如下： <code>'hello world' x 2</code>，得到的结果是 <code>'hello worldhello world'</code>。个人感觉这种内置的运算符并不是非常有用，使用的场景不多，如果是一个设计得非常好的语言，不应该提供太多这种花哨但不实用的功能，因为这种功能太多了，是会分散使用者的注意力的。所谓乱花渐欲迷人眼&#x2026; 这个功能最大的使用场景可能是在字符串的格式化的时候，比如在以前的终端界面下，要出报表，主要是英文为主，中间要使用大量的空格来保持对齐等等。
+Perl 是比较变态的，除了“加法”外，它还对字符串提供了“乘法”操作符，使用的运算符是 <code>x</code> （字母 x），使用的方法如下： <code>'hello world' x 2</code>，得到的结果是 <code>'hello worldhello world'</code>。个人感觉这种内置的运算符并不是非常有用，使用的场景不多，如果是一个设计得非常好的语言，不应该提供太多这种花哨但不实用的功能，因为这种功能太多了，是会分散使用者的注意力的。所谓乱花渐欲迷人眼&#x2026; 这个功能最大的使用场景可能是在字符串的格式化的时候，比如在以前的终端界面下，要出报表，主要是英文为主，中间要使用大量的空格来保持对齐等等。
 </p>
 
 <p>
-在其他语言里，Emacs Lisp有个make-string函数，但它只用把一个字符c乘以一个整数N，最后相当于把这个字符c重复了N遍。
+在其他语言里，Emacs Lisp 有个 make-string 函数，但它只用把一个字符 c 乘以一个整数 N，最后相当于把这个字符 c 重复了 N 遍。
 </p>
 </li>
 </ul>
@@ -363,31 +298,31 @@ Perl是比较变态的，除了“加法”外，它还对字符串提供了“�
 <li>字符串的格式化
 
 <p>
-最早学习的是C语言的话，大家最早学会的函数应该是printf，它支持把字符串格式化后，然后输出到stdout标准输出设备上。
+最早学习的是 C 语言的话，大家最早学会的函数应该是 printf，它支持把字符串格式化后，然后输出到 stdout 标准输出设备上。
 </p>
 
 <p>
-这里最有用的功能可能还是一些对齐相关的，比如 <code>printf("%08d", n)</code>，如果n不足8位数字的话，前面补0，以保证最后的长度是8。又比如 <code>%08s</code>，用于格式化字符串的话，前面会补空格以保证最后长度为8（这个用于对齐是非常棒的，但同样，可能是以前的字符终端界面的遗产）。
+这里最有用的功能可能还是一些对齐相关的，比如 <code>printf("%08d", n)</code>，如果 n 不足 8 位数字的话，前面补 0，以保证最后的长度是 8。又比如 <code>%08s</code>，用于格式化字符串的话，前面会补空格以保证最后长度为 8（这个用于对齐是非常棒的，但同样，可能是以前的字符终端界面的遗产）。
 </p>
 
 <p>
-注意，我个人在学习各种语言的过程中，会非常纠结于其他语言里是不是也有类似于C语言里的 <code>printf</code> 函数，如果没有的话，就会觉得有点失落，其实这是没有道理的。其他语言说不定有更好的，也说不定 <code>printf</code> 本身其实并没有那么好，只不过是我个人有点恋旧罢了。嗯，以后还要克服一下这种失落感，要不然跟不上时代了呢。比如上面的对齐，也就是在全英文、终端环境下还有点儿用吧，你想在网页、Word文档里对齐，那还得用别的手段。尤其是要写更严肃的学术文章，最好的排版工具，还得是Latex呢。而且，很多情况下，一定要提醒自己，格式、排版并没有那么重要，内容本身才是最重要的。
+注意，我个人在学习各种语言的过程中，会非常纠结于其他语言里是不是也有类似于 C 语言里的 <code>printf</code> 函数，如果没有的话，就会觉得有点失落，其实这是没有道理的。其他语言说不定有更好的，也说不定 <code>printf</code> 本身其实并没有那么好，只不过是我个人有点恋旧罢了。嗯，以后还要克服一下这种失落感，要不然跟不上时代了呢。比如上面的对齐，也就是在全英文、终端环境下还有点儿用吧，你想在网页、Word 文档里对齐，那还得用别的手段。尤其是要写更严肃的学术文章，最好的排版工具，还得是 Latex 呢。而且，很多情况下，一定要提醒自己，格式、排版并没有那么重要，内容本身才是最重要的。
 </p>
 </li>
 
 <li>其他
 
 <p>
-跟字符串相关的函数还有很多，比如查找一个字符在字符串中出现的位置、比较两个字符串是否相等。这类函数建议在一种语言里全部掌握，之后不管到哪种语言里，都可以找一找类似的函数，基本上额外的学习成本是可以降到0的。
+跟字符串相关的函数还有很多，比如查找一个字符在字符串中出现的位置、比较两个字符串是否相等。这类函数建议在一种语言里基本全部掌握，之后不管到哪种语言里，都可以找一找类似的函数，基本上额外的学习成本是可以降到 0 的。
 </p>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-sec-2-2-2" class="outline-4">
-<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 正则表达式</h4>
-<div class="outline-text-4" id="text-2-2-2">
+<div id="outline-container-sec-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> 正则表达式</h4>
+<div class="outline-text-4" id="text-1-2-3">
 <p>
 说到字符串，一定要说一下正则表达式。
 </p>
@@ -395,15 +330,34 @@ Perl是比较变态的，除了“加法”外，它还对字符串提供了“�
 <p>
 各种语言里都有正则表达式，在一种语言里学会之后，到其他所有语言里都可以融会贯通。唯一一点，就是注意一些细节上的差别，不要想当然，生搬硬套，不确定的时候就仔细阅读文档或者做些小实验，别碰一鼻子灰再回来看文档，这样挫败感比较大。
 </p>
+
+<p>
+比如 Perl 里正则表达式主要有 3 种常见的用途：
+</p>
+
+<ol class="org-ol">
+<li>匹配： <code>m/x/</code>
+</li>
+
+<li>替换： <code>s/x/y/</code>
+</li>
+
+<li>抽取： <code>m/(x.*y)/</code> 然后使用 <code>$1</code> 变量
+</li>
+</ol>
+
+<p>
+在第一条匹配上，Perl 就跟其他语言比如 Python、Java 有很大的区别，在 Perl 下，<code>$str =~ m/x/</code> 只要 <code>x</code> 在 <code>$str</code> 里出现，不论它出现在什么位置，匹配都是成功的。但 Python 里的 <code>re.match("x", str)</code>，要求 <code>x</code> 必须出现在 <code>str</code> 的开始位置才能匹配成功。在 Perl 里只要加一个 <code>^</code> anchor 就能解决的问题，为什么 Python 里要提供一个单独的函数呢？注意，加了这个函数之后，如果我不想匹配开始位置，而是匹配任意位置的话，我有两个选择，一是用 <code>re.match(".*x", str)</code>，二是用 <code>re.search("x", str)</code>——这是多么的容易让人记混啊！这个问题我是有点想不通的。想不通的问题，就不想了，无奈，但默默的接受。这可能是个兼容性的问题。毕竟工作了这么多年，我也写过很多没用的函数，这样的函数写出来如果都是自己用的还好，但一旦给别人用上之后，想删都删不掉的。因为删掉可能就意味着用户的流失&#x2026; 这个问题，我觉得 Linux Kernel 解决的就比较好，严格的划分了内核空间和用户空间的界限，用户空间的兼容性是至高无上的，内核内部则经常出现旧的接口被改良、甚至被淘汰的事情。
+</p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> 数组</h3>
-<div class="outline-text-3" id="text-2-3">
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 数组</h3>
+<div class="outline-text-3" id="text-1-3">
 <p>
-讲完字符串后，马上就讲数组是比较合适的。因为字符串其实就是一种数组，只不过是比较特别的数组，尤其考虑到多字节编码的情况下，从这样的字符串数组里取一个元素出来，可能不是很有意义（除了与编码本身相关的问题可能有点意义，比如“你”这个字用utf-8编码后，第二个字节是什么？）。
+讲完字符串后，马上就讲数组是比较合适的。因为字符串其实就是一种数组，只不过是比较特别的数组，尤其考虑到多字节编码的情况下，从这样的字符串数组里取一个元素出来，可能不是很有意义（除了与编码本身相关的问题可能有点意义，比如“你”这个字用 utf-8 编码后，第二个字节是什么？）。
 </p>
 
 <p>
@@ -421,28 +375,28 @@ Perl是比较变态的，除了“加法”外，它还对字符串提供了“�
 <li>Perl
 
 <p>
-在Perl下，有个函数叫 <code>length</code>，它可以告诉你一个字符串的长度。注意多字节编码和统一编码（Unicode）下，字符串的长度是不一样的，下图中“你”字在utf-8编码时长度为3，统一编码后长度为1。
+在 Perl 下，有个函数叫 <code>length</code>，它可以告诉你一个字符串的长度。注意多字节编码和统一编码（Unicode）下，字符串的长度是不一样的，下图中“你”字在 utf-8 编码时长度为 3，统一编码后长度为 1。
 </p>
 
 
 <div class="figure">
-<p><img src="file:///home/bhj/shots/2016-12-23-12.25.38.png" alt="2016-12-23-12.25.38.png" />
+<p><a href="./../../../../images/perl-print-length-you.png"><img src="./../../../../images/perl-print-length-you.png" alt="perl-print-length-you.png" /></a>
 </p>
 </div>
 
 <p>
-注意 <code>length</code> 只是给字符串用的。如果要知道一个数组的长度，Perl下使用的方法是 <code>scalar @array</code>。
+注意 <code>length</code> 只是给字符串用的。如果要知道一个数组的长度，Perl 下使用的方法是 <code>scalar @array</code>。
 </p>
 </li>
 
 <li>Java
 
 <p>
-Java下知道一个字符串的长度，用的函数是String类自己的成员函数 <code>length()</code>。
+Java 下知道一个字符串的长度，用的函数是 String 类自己的成员函数 <code>length()</code>。
 </p>
 
 <p>
-Java下想知道一个数组Array的长度，用的是Array类的成员变量，<code>length</code>。
+Java 下想知道一个数组 Array 的长度，用的是 Array 类的成员变量，<code>length</code>。
 </p>
 
 <p>
@@ -453,80 +407,87 @@ Java下想知道一个数组Array的长度，用的是Array类的成员变量，
 <li>Python
 
 <p>
-Python下不管是什么数组类型，取长度用的都是同一个函数，len。String、Tuple、List都是用这个函数取长度。这是一个全局函数（虽然这种现代的语言对于什么是全局函数是很狡滑的，比如Python的全局函数，其实都是定义在 <code>__builtins__</code> 模块底下的函数）。
+Python 下不管是什么数组类型，取长度用的都是同一个函数，len。String、Tuple、List 都是用这个函数取长度。这是一个全局函数（虽然这种现代的语言对于什么是全局函数是很狡滑的，比如 Python 的全局函数，其实都是定义在 <code>__builtins__</code> 模块底下的函数）。
 </p>
 </li>
 
 <li>Ruby
 
 <p>
-Ruby下一切都是对象，所有数组类型都有一个自己的 <code>length()</code> 成员函数。
+Ruby 下一切都是对象，所以每个数组类型也都对应着一个类，这个类有一个名为 <code>length()</code> 的成员函数。
 </p>
 </li>
 
 <li>Lua
 
 <p>
-Lua下面没有传统意义上的数组，只有一种叫做Table的数据类型。取长度的话在前面加一个 <code>#</code> 就可以了。比如 <code>#{1, 3, 5, 7, 9} == 5</code>。
+Lua 下面没有传统意义上的数组，只有一种叫做 Table 的数据类型，既可以当普通数组用，又可以当关联数组用。当普通数组用时取长度的话在前面加一个 <code>#</code> 就可以了。比如 <code>#{1, 3, 5, 7, 9} == 5</code>。
 </p>
 
 <p>
-注意 Lua 的这种设计，非常有意思，它给了你你想要的，同时也给了你一些你不需要的。比如普通意义上的以0，1，&#x2026;为下标的数组，Lua通过Table机制，显然也可以提供。但如果你的某个Table只有下标为1和下标为10的两个元素的话，这算一个普通数组还是关联数组呢？它的长度应该是10还是2呢？我的建议是不要考虑这种问题，没有太大的现实意义，现实中碰到的机会不大，就像上面提到的多字节编码字符串里面随便取一个字节出来一样，实际意义并不大。
+注意 Lua 的这种设计，非常有意思，它给了你你想要的，同时也给了你一些你不需要的。比如以 0，1，&#x2026;为下标的普通数组，Lua 通过 Table 机制，显然就可以提供。但如果你的某个 Table 只有下标为 1 和下标为 10 的两个元素的话，这算一个普通数组还是关联数组呢？它的长度应该是 10 还是 2 呢？我的建议是不要考虑这种问题，没有太大的现实意义，现实中碰到的机会不大，就像上面提到的多字节编码字符串里面随便取一个字节出来一样，实际意义并不大。
 </p>
 </li>
 
 <li>Lisp
 
 <p>
-Lisp有很多种方言。在我最熟悉的Emacs Lisp里， 所有vector类型的数据，可以用Elisp自带的 <code>length</code> 函数来求其长度。
+Lisp 有很多种方言。在我最熟悉的 Emacs Lisp 里， 所有 Vector 类型的数据，可以用 Elisp 自带的 <code>length</code> 函数来求其长度。
 </p>
 </li>
 
 <li>Bash
 
 <p>
-在Bash下，求数组长度的写法是 <code>${#array[@]}</code>
+在 Bash 下，求数组长度的写法是 <code>${#array[@]}</code>
 </p>
 </li>
 </ul>
+</li>
+
+<li>slice 操作
+
+<p>
+Slice 中文意思是切片，从一个数组里切出一个或几个小片断来。
+</p>
 </li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-sec-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> 关联数组</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 关联数组</h3>
+<div class="outline-text-3" id="text-1-4">
 <p>
-关联数组有很多名字，比如叫Map（映射），Hash（哈希），甚至还有叫HashMap的&#x2026; 一定程度上说明这种数据类型的实现基本上都以用Hash（哈希）算法实现居多。
+关联数组有很多名字，比如叫 Map（映射），Hash（哈希），甚至还有叫 HashMap 的&#x2026; 一定程度上说明这种数据类型的实现基本上都以用 Hash（哈希）算法实现居多。
 </p>
 </div>
 
-<div id="outline-container-sec-2-4-1" class="outline-4">
-<h4 id="sec-2-4-1"><span class="section-number-4">2.4.1</span> 关联数组的构造、输入</h4>
-<div class="outline-text-4" id="text-2-4-1">
-</div><ol class="org-ol"><li><a id="sec-2-4-1-1" name="sec-2-4-1-1"></a>无内置关联数组<br  /><div class="outline-text-5" id="text-2-4-1-1">
+<div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 关联数组的构造、输入</h4>
+<div class="outline-text-4" id="text-1-4-1">
+</div><ol class="org-ol"><li><a id="sec-1-4-1-1" name="sec-1-4-1-1"></a>无内置关联数组<br  /><div class="outline-text-5" id="text-1-4-1-1">
 <p>
 C、C++等语言，并没有语言本身内置的关联数组，而是通过标准库来提供的。所以这种语言里想初始化一堆关联数据的话，是需要稍微更啰嗦一点的。
 </p>
 
 <p>
-还好C++语言本身有个运算符重载的机制，所以使用起来的话，假设m是一个map变量，可以直接用 <code>m['hello']</code> 的写法。
+还好 C++语言本身有个运算符重载的机制，所以使用起来的话，假设 m 是一个 map 变量，可以直接用 <code>m['hello']</code> 的写法。
 </p>
 
 <ul class="org-ul">
 <li>Java
 
 <p>
-在Java里用HashMap或其他类似的数据结构都要通过成员函数来进行：
+在 Java 里用 HashMap 或其他类似的数据结构都要通过成员函数来进行：
 </p>
 
 <div class="org-src-container">
 
-<pre class="src src-java"><span style="color: #00688b;">HashMap</span>&lt;<span style="color: #00688b;">String</span>, <span style="color: #00688b;">Integer</span>&gt; <span style="color: #2e8b57;">x</span> = <span style="color: #1c86ee;">new</span> <span style="color: #00688b;">HashMap</span>&lt;<span style="color: #00688b;">String</span>, <span style="color: #00688b;">Integer</span>&gt;();
-x.put(<span style="color: #8b7355;">"hello"</span>, 1);
-x.put(<span style="color: #8b7355;">"world"</span>, 2);
-System.out.printf(<span style="color: #8b7355;">"%d</span><span style="color: #8b7355; font-weight: bold;">\</span><span style="color: #8b7355; font-weight: bold;">n</span><span style="color: #8b7355;">"</span>, x.get(<span style="color: #8b7355;">"hello"</span>));
+<pre class="src src-java"><span class="org-type">HashMap</span>&lt;<span class="org-type">String</span>, <span class="org-type">Integer</span>&gt; <span class="org-variable-name">x</span> = <span class="org-keyword">new</span> <span class="org-type">HashMap</span>&lt;<span class="org-type">String</span>, <span class="org-type">Integer</span>&gt;();
+x.put(<span class="org-string">"hello"</span>, 1);
+x.put(<span class="org-string">"world"</span>, 2);
+System.out.printf(<span class="org-string">"%d</span><span class="org-string"><span class="org-hes-escape-backslash">\</span></span><span class="org-string"><span class="org-hes-escape-backslash"><span class="org-hes-escape-sequence">n</span></span></span><span class="org-string">"</span>, x.get(<span class="org-string">"hello"</span>));
 </pre>
 </div>
 
@@ -538,18 +499,18 @@ System.out.printf(<span style="color: #8b7355;">"%d</span><span style="color: #8
 </div>
 </li>
 
-<li><a id="sec-2-4-1-2" name="sec-2-4-1-2"></a>有内置关联数据<br  /><div class="outline-text-5" id="text-2-4-1-2">
+<li><a id="sec-1-4-1-2" name="sec-1-4-1-2"></a>有内置关联数据<br  /><div class="outline-text-5" id="text-1-4-1-2">
 <ul class="org-ul">
 <li>Bash
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #cd6600;">declare</span> -A assocArray
-<span style="color: #2e8b57;">assocArray</span>=(
+<pre class="src src-sh"><span class="org-builtin">declare</span> -A assocArray
+<span class="org-variable-name">assocArray</span>=(
     [hello]=1
     [world]=2
 )
-<span style="color: #cd6600;">echo</span> ${<span style="color: #2e8b57;">assocArray</span>[hello]}
+<span class="org-builtin">echo</span> ${<span class="org-variable-name">assocArray</span>[hello]}
 </pre>
 </div>
 </li>
@@ -557,56 +518,272 @@ System.out.printf(<span style="color: #8b7355;">"%d</span><span style="color: #8
 <li>Lua
 
 <p>
-Lua 里面的关联数据和普通的数组内部都用同一种数据结构来表示，就是Table，只不过前者用任意的数据作为下标，后者用整数作为下标。
+Lua 里面的关联数据和普通的数组内部都用同一种数据结构来表示，就是 Table，只不过前者用任意的数据作为下标，后者用整数作为下标（事实上，Lua 的整数下标是从 1 开始的，与绝大多数语言从 0 开始不一样，你会因为这个而拒绝使用 Lua 语言吗？）。
 </p>
 
 <div class="org-src-container">
 
 <pre class="src src-lua">x = {
-   [<span style="color: #8b7355;">'hello'</span>] = 1,
-   [<span style="color: #8b7355;">'world'</span>] = 2,
+   [<span class="org-string">'hello'</span>] = 1,
+   [<span class="org-string">'world'</span>] = 2,
 }
 
-<span style="color: #cd6600;">print</span>(x[<span style="color: #8b7355;">'hello'</span>])
+<span class="org-builtin">print</span>(x[<span class="org-string">'hello'</span>])
 </pre>
 </div>
 
 <p>
-注意上面的写法跟Bash是有点相似之处的，除了一个用圆括号并且等号前后不能加空格，一个用花括号并且空格可以随便加。
+注意上面的写法跟 Bash 是有点相似之处的，除了一个用圆括号并且等号前后不能加空格，一个用花括号并且空格可以随便加。
 </p>
 </li>
 
 <li>Perl
 
 <p>
-Perl下的数据结构很有意思，普通数据前面加一个 <code>@</code>（助记法：这个符号里面包着个 <code>a</code> 字，象征着array），关联数据前面加一个 <code>%</code>（助记法：这个符号里面有两个互相“关联”的小圈圈）。普通数组用 <code>[]</code> 引用，关联数组用 <code>{}</code> 引用（不然的话就不能区分是普通数组还是关联数组了，Perl里 <code>$@%</code> 是变量名不可分割的一部分，一个程序里既可以存在 <code>$x</code>，也可以存在 <code>@x</code> 等等）：
+Perl 下的数据结构很有意思，普通数据前面加一个 <code>@</code>（助记法：这个符号里面包着个 <code>a</code> 字，象征着 array），关联数据前面加一个 <code>%</code>（助记法：这个符号里面有两个互相“关联”的小圈圈）。普通数组用 <code>[]</code> 引用，关联数组用 <code>{}</code> 引用（不然的话就不能区分是普通数组还是关联数组了，Perl 里 <code>$@%</code> 是变量名不可分割的一部分，一个程序里既可以存在 <code>$x</code>，也可以存在 <code>@x</code> 等等）：
 </p>
 
 <div class="org-src-container">
 
 <pre class="src src-sh">%x = (hello =&gt; 1, world =&gt; 2);
 @x = (1, 2);
-print $<span style="color: #2e8b57;">x</span>{hello};
-print $<span style="color: #2e8b57;">x</span>[1];
+print $<span class="org-variable-name">x</span>{hello};
+print $<span class="org-variable-name">x</span>[1];
 </pre>
 </div>
 
 <p>
-另外注意这里 <code>hello</code> 和 <code>world</code> 因为是一个 <i>identifier</i>，所以不需要加引号。加上引号的效果和不加是完全一样的。Perl里有很多这种耍小聪明的地方，一开始的时候我还蛮喜欢的，现在其实也还蛮喜欢的，但就好像见到一个总在使劲讨好别人的家伙一样，隐隐会觉得这个样子是有点儿问题的。好像能给你省点儿事儿，但多了之后谁又能全都记得住呢？规则简单一点，让用户啰嗦一点，理解起来也简单一点；规则复杂一点，用户可以各种省事儿，但理解起来也更费劲了。
+另外注意这里 <code>hello</code> 和 <code>world</code> 因为是一个 <i>identifier</i>，所以不需要加引号。加上引号的效果和不加是完全一样的。Perl 里有很多这种耍小聪明的地方，一开始的时候我还蛮喜欢的，现在其实也还蛮喜欢的，但就好像见到一个总在使劲讨好别人的家伙一样，隐隐会觉得这个样子是有点儿问题的。好像能给你省点儿事儿，但多了之后谁又能全都记得住呢？规则简单一点，让用户啰嗦一点，理解起来也简单一点；规则复杂一点，用户可以各种省事儿，但理解起来也更费劲了。这些语法糖啊，就像真的糖果一样，我很喜欢吃，但吃多了真的可能是对身体有害的呢。
 </p>
 </li>
 </ul>
+
+<p>
+好了，说到这里也就差不多了，世界上的语言那么多，每种语言的特性也那么多，用穷举的方法把所有东西都列完是不现实的，就像所有自然数，数是数不完的。但我们可以把里面有点共性的东西抽出来，那就简单多了。比如无穷无尽的自然数，只要 5 条皮亚诺公理就可以概括了。
+</p>
+
+<p>
+Lisp 语言学习的一本非常经典的小册子，“little schemer”，里面甚至可以没有整数数据类型，因为所有整数都可以用数组（其实是链表）来表示：整数 0 就是一个长度为 0 的 list，整数 1 就是一个长度为 1 的 list&#x2026;整数 N 就是长度为 N 的 list，整数加法就是 list 的拼接&#x2026;这种思路让我叹为观止。
+</p>
+
+<p>
+很多语言还允许你自己定义数据类型，比如 C 里面可以用 struct，C++里可以用 struct、class，等等等等。我认为它们其实就是自带成员函数的关联数组而已嘛。C 里面 <code>x.y</code>（一个带 y 成员变量的名为 x 的结构变量对 y 的引用） 和 Python 里面 x['y']有很大的区别吗？C++的类之间继承的实现，一般是有一个隐藏的 vtable（virtual method table）结构成员变量（注意，结构，我们已经说过就是关联数组，至于是不是隐藏的，其实没那么重要），最后还是七拐八拐的拐到一个函数上面，这跟 Python 里类的继承也是差不多的。
+</p>
 </div>
 </li></ol>
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 语法</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+语法其实没太多好说的，所有的语言都有一些类似的基本构造，比如条件语句，循环语句，等等等等。
+</p>
+
+<p>
+如果对新学的一门语言里的语法记得不是很清楚的话，建议赶紧查文档。
+</p>
 </div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 文档</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+提到文档的话，我想说一个标准，一个文档系统越 <b>容易</b> 查询，我们就认为这个系统越好用。毕竟现在已经不是 Linus 开始搞 Linux 的时代了，那时人们编程，文档可能就是厚厚的一本“386 汇编手册”。
+</p>
+
+<p>
+参考这个标准，我以前用 Visual Studio 的时候，觉得 MSDN 这个文档系统真是了不起，哪个函数不明白，按一下 F1，直接就从 Visual Studio 跳转到 MSDN 的窗口里，并打开相关函数的帮助页面。
+</p>
+
+<p>
+也可能当时觉得真心牛逼的最大原因，是从不知道有 MSDN 帮助，到突然发现有个 MSDN 帮助系统，所带来的巨大的冲击。
+</p>
+
+<p>
+从那以后使用任何工具，都是文档先行，碰到问题，甚至碰到问题之前，第一时间就问一下自己，万一那什么的话，我该去哪里查文档？这个系统有没有一个大而全的文档帮助中心？毕竟，文档如果分散得这儿一块、那儿一块，对用户的价值就大打折扣了。
+</p>
+
+<p>
+后来我发现 Emacs 也非常了不起，自带文档帮助系统。系统里所有的 Man 手册，所有 Info 手册，都可以在 Emacs 里打开看。尤其是 Emacs 还可以自己扩展，定义一些快捷键，方便的跳转。
+</p>
+
+<p>
+没错，光有一个大而全的文档系统还是不够的，最好还必须有个像 MSDN 那样的一键跳转的功能，甚至要比它更方便。如果没有这个功能的话，我就会想办法在 Emacs 里自己扩展一下，在此之前心里都像有个毛毛虫一样的痒痒。毕竟，人生苦短，能 2 步走完的路，就不要走 9 步。
+</p>
+
+<p>
+比如 Qt 的帮助文档，一般都用 Firefox 来看，那我在 Emacs 里会定义一个快捷键，按下去就自动把当前的关键字抽出来，然后自动用 Firefox 打开相关的 Qt 帮助页面。
+</p>
+
+<p>
+另一个需要注意的问题是，代码其实也是一种文档，所以很多时候阅读文档、搜索文档觉得费劲的时候，我可能直接就阅读代码、搜索代码了。比如，我想知道 Javascript 底下的字符串，都有哪些相关的函数？这个问题我可能通过 Google 也能很快找到答案。但如果通过代码的话，我会下载 Firefox 的源代码，稍加研究后发现字符串相关的定义是在 <code>js/src/jsstr.cpp</code> 这个文件里，然后我就可以用我掌握的各种 Emacs 编辑技巧从这个文件里提取我需要的信息了。这一点 Firefox 里阅读 Google 出来的文档是无法做到的，打个比方说，我用 Firefox 的话，很多信息作者写的是什么样，我看到的就是什么样，如果作者给了一个数据表格，但没有给一个柱状图的话，我就无能为力了；但如果我是在 Emacs 里，画一个柱状图、饼图可能易如反掌，只有一个快捷键的距离，然后信息就变得更直观，一目了然了。这个区别是由 Emacs 是一个可扩展的编辑器决定的。就像在阅读纸质书的时候，你无法快速的进行全文搜索；在 Firefox 里，你无法快速的对信息进行编辑、排列、组合，换一种更好的方式呈现。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> 工具</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 编辑器</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+学习多种语言，一个很重要的工具是编辑器。推荐 Emacs。强烈建议阅读一下 Vim 作者写的那篇文章（Google “高效 编辑器 七个习惯”，我也有翻译过，所以搜出来第二条就是我的博客）。
+</p>
+
+<p>
+Emacs 下有一些通用的插件，比如缩写，文本补齐（yasnippet、我自己写的 bbyac）。等等等等。
+</p>
+
+<p>
+另外还有一些特定语言定制的插件，比如 C/C++、Python 等都有智能的上下文补齐。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 搜索工具</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+然后是搜索，Google 搜索，本地搜索。除了纯文本搜索之外，因为代码都是有层次结构的，所以 tags 搜索也是非常重要的（主要指搜索类、函数、变量的声明、定义、引用的位置）。
+</p>
+
+<p>
+本地搜索推荐我写的 beagrep、beatags 系列。也可以使用 opengrok。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 自己</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+当然，最重要的工具，还是自己的脑子，仔细想好自己想解决什么问题，该学习的时候学习，然后该放下的时候放下，全力解决最重要的那个问题。
+</p>
+
+<p>
+学多种语言，除了好玩之外，主要还是希望能开阔眼界、思路，最终要能更好的解决问题。像上面我写的这样，过于纠结一些茴香豆的“茴”字有几种写法之类的问题的话，就不好了。
+</p>
+
+<p>
+通过多种语言之间的对比，可能可以刺激到大脑皮层的不同部位，最后 <del>达到高潮的时候，来得更强烈一些呢</del> 记得更牢一些、理解得更深刻一些呢。
+</p>
+<nav>
+  <ul id="prev_next_posts">
+    <li class="prev_post">
+      <a href="0-Please-support-me-if-you-like-my-work.html"> <!-- prev-url -->
+        <i class="icon-chevron-left">《</i>
+        Please support me if you like my work <!-- prev-title -->
+      </a>
+    </li>
+    <li class="next_post" style="text-align: right;">
+      <a href="../11/0-Steve-Yegge-started-blogging-again-after-4-years.html"> <!-- next-url -->
+        偶像重出江湖了 <!-- next-title -->
+        <i class="icon-chevron-right">》</i>
+      </a>
+    </li>
+  </ul>
+</nav>
+</div>
+</div>
+</div>
+</div>
+<!-- {%html-mode%} -->
+
+<div id="disqus_container">
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
+    var disqus_shortname = 'baohaojun'; // Required - Replace example with your forum shortname
+    var disqus_url = 'http://baohaojun.github.io/blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+  <div id="disqus_thread"></div>
+</div>
+
+</div> <!-- bhj_leftpane -->
+<div id="sidebar"><div id="sidebar2">
+
+
+  <!-- Begin #profile-container -->
+
+   <div id="profile-container"><h2 class="sidebar-title">About Me</h2>
+<dl class="profile-datablock"><dt class="profile-img"><a href="/images/bhj.png""><img src="/images/bhj-thumb.png" alt="My Photo" height="58" width="80"></a></dt>
+<dd class="profile-data"><strong>Name:</strong> <a rel="author" href="https://www.github.com/baohaojun"> Bao Haojun </a></dd>
+<dd class="profile-data"><strong>Location:</strong>  Beijing, China </dd></dl>
+
+<p class="profile-link"><a rel="author" href="/blog/2011/12/23/index.html">View my complete profile</a></p></div>
+
+<h2 class="sidebar-title">Like my blog?</h2>
+      <a href='https://pledgie.com/campaigns/33066'><img alt='Click here to lend your support to: Well done, Mr. Bao Haojun. and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33066.png?skin_name=chrome' border='0' ></a>
+
+  <!-- End #profile -->
+
+  <h2 class="sidebar-title">Feeds</h2>
+    <ul>
+        <li><a href="/atom.xml">Atom</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Projects</h2>
+    <dl>
+        <dt><a href="/blog/2011/12/23/beagrep.html"> Beagrep </a></dt>
+        <dd> Grep 2G source code in 0.23 second </dd>
+
+        <dt><a href="/blog/2013/04/13/skeleton-complete.html"> Skeletom-complete.el </a></dt>
+        <dd> Type a bare skeleton, complete to a symbol/partial line/sexp/paragraph </dd>
+
+        <dt><a href="/blog/2011/12/28/org-jira.html"> Org-jira.el </a></dt>
+        <dd> Use JIRA with org-mode </dd>
+    </dl>
+
+    <h2>Tags</h2>
+    <ul>
+                <li><a href="../../../../meta/tags/blog.html" title="Blogging">blog</a></li>
+    </ul>
+
+  <h2 class="sidebar-title">Previous Posts</h2>
+    <ul id="recently">
+        <li><a href='0-Please-support-me-if-you-like-my-work.html'> Please support me if you like my work </a></li>
+<li><a href='../../11/12/0-Programming-by-Wishful-Thinking.html'> 编程和许愿 </a></li>
+<li><a href='../../11/02/0-writing-wechat-public-messages-with-org-mode.html'> 用 org-mode 写微信公众号 </a></li>
+<li><a href='../../10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html'> 程序员学习日语经验分享 </a></li>
+<li><a href='../../06/07/0-My-University-Entrance-Exam.html'> 二十年高考怪现象 </a></li>
+<li><a href='../../05/06/0-A-Chinese-programmer-learning-Japanese.html'> 最近读完了日文版的“海边的卡夫卡” </a></li>
+<li><a href='../../04/13/0-system-config-how-does-it-work-and-how-to-use-it.html'> system-config原理与使用的简要说明 </a></li>
+<li><a href='../../03/02/0-steve-yegges-ten-predictions.html'> 偶像的十大预言 </a></li>
+<li><a href='../../02/17/0-kmail---view-cant-display-some-maildir-files-correctly.html'> kmail --view can't display some maildir files corr... </a></li>
+<li><a href='../../01/20/0-my-brother-is-my-hero.html'> 那些年，我们一起追过的偶像 </a></li>
+    </ul>
+
+    <h2 class="sidebar-title">Archive</h2>
+      <ul id="archives">
+        <li><a href="/meta/Archive.html"> The complete archive </a></li>
+      </ul>
+
+  <!--
+  <p>This is a paragraph of text that could go in the sidebar.</p>
+  -->
+
+
+
+</div></div>
+<!-- End #sidebar -->
+</div> <!-- End #bhj_article -->
+<!-- {%/html-mode%} -->
 <div id="postamble" class="status">
-<p class="author">Author: Bao Haojun</p>
-<p class="date">Created: 2016-12-28 Wed 22:07</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.90.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
-<p class="validation"></p>
+<!-- {%html-mode%} -->
+
+<!-- {%/html-mode%} -->
 </div>
 </body>
 </html>
