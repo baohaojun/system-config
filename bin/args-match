@@ -1,0 +1,5 @@
+#!/bin/bash
+
+to_match=$1
+shift
+test "$(arg1-arg2 -- "$to_match" "$@")" = ""

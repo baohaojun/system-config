@@ -1,7 +1,1 @@
-#!/usr/bin/env perl
-
-while (<>) {
-    chomp;
-    print "\n" unless $. == 1;
-    print;
-}
+../../src/github/ajoke/bin/rm-last-nl
