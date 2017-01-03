@@ -27,9 +27,16 @@ sub print_it($)
 
 my $td = "/tmp/gtagsAntlrJavaParser.$$";
 
-while (<>) {
-    chdir $pwd or die "can not chdir to $pwd";
-    chomp(my $jar = $_);
+sub get_ext($)
+{
+    my $x = shift;
+    $x =~ s/.*\.//;
+    return $x;
+}
+
+sub handle_jar($)
+{
+    my $jar = shift;
     my $file_name = $jar;
     chomp($jar = qx(readlink -f $jar));
     system("rm -rf $td; mkdir -p $td");
@@ -51,9 +58,11 @@ while (<>) {
 
         if (m/(class|interface)\s+($qualified_re)/) {
             $class_name = $2;
+            my $type = $1;
             $class_name =~ s/\$(\d)/.Anon$1/g;
             $class_name =~ s/\$/./g;
-            print_it "$class_name $1 $line_number $file_name $_\n";
+            s/\$/./g;
+            print_it "$class_name $type $line_number $file_name $_\n";
         } elsif (m/($qualified_re)\s*\(/) {
             my $method_name = "$class_name.$1";
             if ($1 eq $class_name) {
@@ -66,6 +75,56 @@ while (<>) {
             print_it "$field_name field $line_number $file_name $_\n";
         } else {
         }
+    }
+
+}
+
+sub handle_dll($)
+{
+    my $jar = shift; # actually it is a .dll file or a .exe file
+    my $file_name = $jar;
+    chomp($jar = qx(readlink -f $jar));
+
+    open(my $javap_pipe, "-|", "monodis --method $jar") or
+        open (my $javap_pipe, "-|", "true") or
+        die "Can not open find pipe";
+
+    my $class_name;
+    my $n = 0;
+    while (<$javap_pipe>) {
+        chomp;
+        if (/^##########\s+(.*)/) {
+            debug "working on $1" if $n++ % 10 == 0;
+            $class_name = $1;
+            print_it "$class_name class $line_number $file_name $_\n";
+            $line_number++;
+            next;
+        }
+        $line_number++;
+
+        if (m/($qualified_re)\s*\(/) {
+            my $method_name = "$class_name.$1";
+            if ($1 eq $class_name) {
+                $method_name = $1;
+                $method_name =~ s/(.*)\.(.*)/$1.$2.$2/g;
+            }
+            print_it "$method_name method $line_number $file_name $_\n";
+        } elsif (m/($qualified_re)\s*;/) {
+            my $field_name = "$class_name.$1";
+            print_it "$field_name field $line_number $file_name $_\n";
+        } else {
+        }
+    }
+
+}
+
+while (<>) {
+    chdir $pwd or die "can not chdir to $pwd";
+    chomp(my $jar = $_);
+    if (lc(get_ext $jar) ne "jar") {
+        handle_dll($jar);
+    } else {
+        handle_jar($jar);
     }
     $| = 1;
     print "###terminator###" . "\n";

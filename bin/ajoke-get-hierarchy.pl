@@ -87,7 +87,7 @@ sub get_def_line_from_flatten_cache() {
 if ($flatten_cache) {
     $def_line = get_def_line_from_flatten_cache();
 } else {
-    $def_line = qx(grep-gtags -e '$class' -t 'class|interface' -s |
+    $def_line = qx(grep-gtags -e '$q_class' -t 'class|interface' -s |
     perl -ne 'if (m/(?:class|interface) $q_class(?!\\\$)/) {
                   s/.*?> ://;
                   s/,/ /g;

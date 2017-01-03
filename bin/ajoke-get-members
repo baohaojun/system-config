@@ -47,7 +47,7 @@ for class in "$@"; do
 
         file=$(java-find-def.pl -e $qclass)
         if [[ $file =~ \.jar$ ]]; then
-            java-query-qmethod $qclass.[^-]*
+            java-query-qmethod "$qclass..*"
             continue
         fi
 

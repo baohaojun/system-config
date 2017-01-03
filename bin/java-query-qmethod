@@ -8,6 +8,10 @@ GetOptions(
     "p!" => \$package_show,
     );
 
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
 sub do_it($)
 {
     my $q_class = my $q_method = $_[0];
@@ -16,7 +20,8 @@ sub do_it($)
     chomp(my $file = qx(java-find-def.pl -e $q_class));
     if ($file =~ m/\.jar$/i) {
         $q_method =~ s/\./-/g;
-        return system("global -x '^$q_method\$' | perl -npe 's/.*?:\\s+//'");
+        debug "grep-gtags -s -e '^$q_method\$' | perl -npe 's/.*?:\\d+:\\s+//'";
+        return system("grep-gtags -s -e '^$q_method\$' | perl -npe 's/.*?:\d+:\\s+//'");
     }
     chomp(my $tags_cache = qx(java-tags-cache $file));
 
