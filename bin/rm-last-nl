@@ -1,7 +1,0 @@
-#!/usr/bin/env perl
-
-while (<>) {
-    chomp;
-    print "\n" unless $. == 1;
-    print;
-}
