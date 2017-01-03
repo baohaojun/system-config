@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+
+use String::ShellQuote;
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+sub handle_1_trace($) {
+    for (@_) {
+        chomp;
+        if (m/\(.+:\d+\)$/) {
+            $dot = rindex($_, '(');
+            $dot = rindex($_, '.', $dot);
+            $pat = substr($_, $dot + 1);
+            chop($pat); #get rid of the last ')'
+            $pat = shell_quote($pat);
+            $save = $_;
+            my $cmd = "beagrep -f -e $pat|perl -ne 'print if m/:[0-9]+:/'";
+            debug "cmd is $cmd";
+            for (split "\n", qx($cmd)) {
+                chomp;
+                s/(:[0-9]+:).*/$1 /;
+                print "$_\n\t$save\n";
+            }
+        }
+    }
+}
+
+if (@ARGV) {
+    for (@ARGV) {
+        handle_1_trace($_);
+    }
+} else {
+    while(<>) {
+        handle_1_trace($_);
+    }
+}

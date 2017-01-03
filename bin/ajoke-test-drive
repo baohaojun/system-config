@@ -1,0 +1,213 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if ! which apt-get; then
+    die "Error: this ajoke test drive script can run on debian alike systems currently"
+fi
+
+me=$(readlink -f $0)
+ajoke_bindir=$(dirname $me)
+AJOKE_DIR=$(dirname $ajoke_bindir)
+export AJOKE_DIR # this env is used by other scripts (java-add-fallback), so export it
+
+if test ! -e $AJOKE_DIR/etc/perl/BhjJava.pm; then
+    die "$AJOKE_DIR/etc/perl/BhjJava.pm not found,
+incorrect git clone? Please run:
+    git clone --recursive http://github.com/baohaojun/ajoke"
+fi
+
+perl5d=$HOME/perl5
+
+export PATH=$ajoke_bindir:$PATH
+export PERL_LOCAL_LIB_ROOT="$perl5d";
+export PERL_MB_OPT="--install_base $perl5d";
+export PERL_MM_OPT="INSTALL_BASE=$perl5d";
+export PERL5LIB="$perl5d/lib/perl5/x86_64-linux-gnu-thread-multi:$perl5d/lib/perl5:$AJOKE_DIR/etc/perl:$PERL5LIB";
+export PATH="$perl5d/bin:$PATH";
+
+function prompt () {
+    echo
+    builtin read -e -p "$@"
+}
+
+function test-drive() {
+    # the cpan librarys?
+
+    if ! perl -e 'use String::Approx'; then
+        cpan String::Approx
+    fi
+
+    if ! perl -e 'use String::ShellQuote'; then
+        cpan String::ShellQuote
+    fi
+
+    if ! perl -e 'use Text::Glob'; then
+        cpan Text::Glob
+    fi
+
+    if ! global --version | grep -q -i 'Patched for ajoke'; then
+        if yes-or-no-p -y "You have not built ajoke's version of GNU gtags,
+build it now (will need sudo for installing)?"; then
+            (
+                sudo apt-get build-dep global
+
+                sudo apt-get install sudo bash-completion autoconf automake \
+                    bison exuberant-ctags flex \
+                    gperf libltdl-dev libtool netbase \
+                    openjdk-6-jdk strace tasksel git python python3 \
+                    libstring-approx-perl libstring-shellquote-perl \
+                    libtext-glob-perl liburi-encode-perl || {
+                    echo "Installation of dependencies for building GNU Global failed";
+                    yes-or-no-p "Ignore the error and continue to build? " or die "Will now exit";
+                }
+
+                cd $AJOKE_DIR
+                cd ./external/global
+                sh ./reconf.sh
+                ./configure
+                make -j8
+                sudo make install
+            )
+        else
+            die "ajoke's gtags not built"
+        fi
+    fi
+
+    if ! ctags-exuberant --version >/dev/null 2>&1 ; then
+        if yes-or-no-p -y "You need to install ctags-exuberant, run apt-get now?"; then
+            sudo apt-get install exuberant-ctags
+        else
+            die "Can't use ctags-exuberant"
+        fi
+    fi
+
+    global_path=$(which global)
+
+    if test -z "$global_path"; then
+        die "global still not found after build";
+    fi
+
+    global_prefix=$(dirname $(dirname $global_path))
+    gtags_conf_in=$AJOKE_DIR/external/global/gtags.conf.in
+
+    perl -npe "s,\@prefix\@,$global_prefix,g" $gtags_conf_in > ~/.globalrc
+    ln -sf $AJOKE_DIR/etc/.ctags ~/
+
+    javac_path=$(readlink -f $(which javac))
+    if test -z "$javac_path"; then
+        die "javac not found, please install: sudo apt-get install openjdk-6-jdk"
+    fi
+    java_dir=$(dirname $(dirname $javac_path))
+    if test ! -e $java_dir/jre/lib/rt.jar; then
+        die "jre rt.jar not found"
+    fi
+
+    if test -e ~/.cache/system-config/for-code-reading/$java_dir/.beatags; then
+        echo "Good, you have done mkgtags for java"
+        for rc in $AJOKE_DIR/etc/bash.d/*; do
+            if test -f $rc; then
+                . $rc
+            fi
+        done
+        prompt "Here you can see where java.lang.String is defined (press ENTER to continue):"
+
+        (
+            cd $java_dir/
+            global -x java.lang.String
+            prompt "Here you can see all the members of java.lang.String (press ENTER to continue):"
+            global -x '^java-lang-String-[^-]*$'
+        )
+
+        prompt "Press ENTER to continue:"
+
+        echo "Please remember 2 things when you use ajoke with your own java project:"
+        echo
+        echo "1. mkgtags"
+        echo "2. java-add-fallback $java_dir"
+        echo
+        echo "Or you can try java-add-fallback Your-Android-Dir after you mkgtags your android source tree."
+
+
+        echo
+        if yes-or-no-p -y "Do you want have a test drive in Emacs?"; then
+            (
+                set -e
+                dir=~/.cache/system-config/test-ajoke
+                mkdir -p $dir
+                cd $dir
+                cat <<EOF > Test.java
+//{%java%}
+package ajoke;
+class Test extends Writer implements PrintStream {
+                        //^^^^^^^^^^^^^^^^^^^^^^ this is bullshit, but hey, it's only an example
+    Test() {
+
+    }
+
+    void Append() {
+    }
+
+    String s;
+    s.
+
+    Test.
+    // At the end of the previous line, press "M-g j r" and you should
+    // see "ajoke.Test." displayed in minibuf.  Press "M-g j i", you
+    // should see "import java.io.Writer" added at the beginning.
+    // After that, press "M-g j h", and you should see the inheritance
+    // hierarchy for ajoke.Test (java.io.Writer and it's own super
+    // types won't appear until you finished "M-g j i").  Press "M-g j
+    // m" at the end of "Test." (the last source code line), and you
+    // will be prompted with all the methods of class Test (including
+    // those inherited).  You can see the list by pressing Tab,
+    // because in this test drive, you have no Helm or Anything.el to
+    // help you do the picking.  Press "M-g j o", and you will be
+    // prompted with a list of methods that you can "overide". Again,
+    // press Tab to see the list.
+}
+
+//{%/java%}
+EOF
+
+                echo 'Now, when emacs starts, try ajoke out by pressing "M-g j i" or
+"M-g j m" or "M-g j h" in it. Please read the comments in the source buffer.'
+
+                mkgtags
+                java-add-fallback $java_dir/ >/dev/null 2>&1 || true
+
+                prompt 'Press ENTER to continue: '
+            if test -e ~/system-config/gcode/crossdict/src/com/baohaojun/crossdict/CrossDictActivity.java; then
+                # if this file exists, it's my own environment, so I can use some more weird commands
+                (
+                    ew ~/system-config/gcode/crossdict/src/com/baohaojun/crossdict/CrossDictActivity.java
+                    find-or-exec konsole
+                    prompt "Press any key to start ajoke demo with jdk (.jar files) fallback:"
+                    ew Test.java
+                )
+            else
+                emacs -q -nw -l $AJOKE_DIR/etc/elisp/ajoke.el Test.java
+            fi
+            )
+        fi
+    else
+        (
+            cd $java_dir
+            mkgtags
+            if yes-or-no-p -y "Restart ajoke-test-drive after building jdk tags?"; then
+                ajoke-test-drive
+            fi
+        )
+    fi
+}
+
+if test $# != 0; then
+    "$@"
+else
+    test-drive
+fi

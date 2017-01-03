@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+
+# Given File, print java.io.File
+
+use strict;
+die "Error: Usage $0 class" unless @ARGV;
+open(my $debug, ">", glob("~/.cache/system-config/logs/ajoke-get-qclass.log"))
+    or die "Can not open debug log file ~/.cache/system-config/logs/ajoke-get-qclass.log";
+sub debug(@) {
+    print $debug "@_\n";
+}
+
+debug "$0 @ARGV";
+
+use Getopt::Long;
+my $type = "class|interface";
+GetOptions(
+    "t=s" => \$type,
+    );
+
+$type = qr($type);
+
+my %files_package;
+for (@ARGV) {
+    my $qclass = my $class = $_;
+    if ($class =~ m/\./) {
+        $class =~ s/.*\.//;
+    }
+
+    my $output;
+
+    if ($ENV{GTAGS_START_FILE}) {
+        my $file = $ENV{GTAGS_START_FILE};
+        debug "beatags -e $class -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file";
+        $output = qx(beatags -e $class -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file);
+        debug "output is $output from $file";
+    } else {
+        $output = qx(beatags -e $class -p "\.java|\.aidl|\.jar|\.cs|\.dll");
+        debug "output is $output from gtags";
+    }
+
+    while ($output =~ m/^(\S+)\s+(\S+)\s+(\d+)\s+(\S+)/mg) {
+        my ($tag, $type_p, $file) = ($1, $2, $4);
+        if ($type_p !~ m/$type/) {
+            next;
+        }
+        if ($tag eq $qclass and $qclass =~ /\./) {
+            print $tag;
+            debug "already a qclass: $tag";
+            exit;
+        }
+        our %tag_printed;
+        unless ($tag_printed{$tag}){
+            print "$tag\n" if "$tag" =~ m/$qclass/;
+            $tag_printed{$tag} = 1;
+        }
+
+    }
+}

@@ -1,0 +1,76 @@
+#!/bin/bash
+mkdir -p ~/.cache/system-config/logs
+if test "$#" = 1; then
+    set -- "$1" .
+fi
+function calc_relative() {
+    local source=$(formal-path "$1")
+    local target=$(formal-path "$2")
+    if test -d "$target"; then
+        target=$target/
+    else
+        target=${target%/*}/
+    fi
+    if test "$source" = "$target"; then
+        echo .
+        exit 0
+    fi
+    if echo $SHELLOPTS | grep -q xtrace; then
+        true
+    else
+        exec 2>~/.cache/system-config/logs/relative-path.log
+    fi
+
+    perl -e '
+use strict;
+my ($s, $t)  = @ARGV;
+my @s = split("", $s);
+my @t = split("", $t);
+
+my $n = 0;
+my $last_slash = 0;
+while (@s and @t) {
+    if ($s[0] eq $t[0]) {
+        $n ++;
+        $last_slash = $n if $s[0] eq "/";
+        shift @s;
+        shift @t;
+    } else {
+        last;
+    }
+}
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+debug "last_slash is $last_slash";
+
+if ($last_slash == 1) { #we should use abspath as they have no common components
+    print $s;
+    exit 0;
+}
+my $relative_s = substr($s, $last_slash);
+my $relative_t = substr($t, $last_slash);
+
+my $remaining_t = $relative_t;
+$remaining_t = grep(m:/:, split("", $remaining_t));
+
+(my $top_target_dir = $relative_t) =~ s!/.*!!;
+(my $top_source_dir = $relative_s) =~ s!/.*!!;
+
+if ($top_target_dir eq $top_source_dir) {
+    $remaining_t -= 1;
+    $relative_s =~ s!.*?(/|$)!!;
+} else {
+  debug "relative_t is $relative_t, relative_s is $relative_s";
+}
+
+$relative_s = "../" x $remaining_t . $relative_s;
+print ($relative_s or "./");
+' "$source" "$target"
+}
+
+if test "$(basename "$BASH_SOURCE")" = "$(basename "$0")"; then
+   calc_relative "$1" "$2"
+fi

@@ -1,0 +1,76 @@
+#!/usr/bin/perl
+
+use strict;
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+my $id_re = qr(\b[a-zA-Z_\$][a-zA-Z0-9_\$]*\b);
+my $qualified_re = qr($id_re(?:(?:\.)$id_re)*\b);
+
+use IO::Handle;
+STDOUT->autoflush(1);
+
+my $line_number = 0;
+my $pwd = $ENV{PWD};
+
+sub print_it($)
+{
+    my ($line) = @_;
+    $line =~ m/^(\S+)(.*)/;
+    my ($tag, $rem) = ($1, $2);
+    $tag =~ s/\./-/g;
+    print $line;
+    print "$tag$rem\n";
+}
+
+my $td = "/tmp/gtagsAntlrJavaParser.$$";
+
+while (<>) {
+    chdir $pwd or die "can not chdir to $pwd";
+    chomp(my $jar = $_);
+    my $file_name = $jar;
+    chomp($jar = qx(readlink -f $jar));
+    system("rm -rf $td; mkdir -p $td");
+    chdir $td or die "can not chdir $td";
+    system("jar xf $jar");
+
+    open(my $javap_pipe, "-|", "find . -name '*.class' | perl -npe 's/\\.class\$//' | xargs -d \\\\n javap") or
+        die "Can not open find pipe";
+
+    my $class_name;
+    my $n = 0;
+    while (<$javap_pipe>) {
+        chomp;
+        if (/^Compiled from\s*(.*)/) {
+            debug "working on $1" if $n++ % 10 == 0;
+            next;
+        }
+        $line_number++;
+
+        if (m/(class|interface)\s+($qualified_re)/) {
+            $class_name = $2;
+            $class_name =~ s/\$(\d)/.Anon$1/g;
+            $class_name =~ s/\$/./g;
+            print_it "$class_name $1 $line_number $file_name $_\n";
+        } elsif (m/($qualified_re)\s*\(/) {
+            my $method_name = "$class_name.$1";
+            if ($1 eq $class_name) {
+                $method_name = $1;
+                $method_name =~ s/(.*)\.(.*)/$1.$2.$2/g;
+            }
+            print_it "$method_name method $line_number $file_name $_\n";
+        } elsif (m/($qualified_re)\s*;/) {
+            my $field_name = "$class_name.$1";
+            print_it "$field_name field $line_number $file_name $_\n";
+        } else {
+        }
+    }
+    $| = 1;
+    print "###terminator###" . "\n";
+    $| = 0;
+}
+
+system("rm -rf $td");
+# java -cp ~/system-config/bin/Linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser

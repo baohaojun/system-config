@@ -1,0 +1,6 @@
+#!/bin/bash
+tmpf=/tmp/$(basename $0).$$
+cat > $tmpf
+
+ctags-ajoke "$@" $tmpf
+rm $tmpf

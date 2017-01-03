@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) parent_class"
+fi
+file=$(java-find-def.pl -e $1)
+
+tags=$(java-tags-cache $file);
+perl -ne 'print "$1\n" if m/^(\S+)\s+(?:class|interface)/' $tags;

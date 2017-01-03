@@ -1,0 +1,62 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+(
+    for x in $0 "$@"; do
+        printf %q\ "$x"
+    done
+    echo
+) | cat >> ~/.cache/system-config/logs/$(basename $0).log
+
+type='\S+'
+proto=false
+TEMP=$(getopt -o pt: --long prototype,type: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -p|--prototype)
+            proto=true
+            shift
+            ;;
+        -t|--type)
+            type=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+for class in "$@"; do
+    export GTAGS_START_FILE=
+    qclasses=$(ajoke-get-qclass $class)
+    echo qclasses is $qclasses >> ~/.cache/system-config/logs/$(basename $0).log
+
+    for qclass in $qclasses; do
+
+        file=$(java-find-def.pl -e $qclass)
+        if [[ $file =~ \.jar$ ]]; then
+            java-query-qmethod $qclass.[^-]*
+            continue
+        fi
+
+        tag_cache=$(java-tags-cache $file)
+        echo tag_cache is $tag_cache >> ~/.cache/system-config/logs/$(basename $0).log
+        if test $proto = true; then
+            perl -ne "print \"\$1\n\" if m/^$qclass\.\S+\s+$type\s+\d+\s+\S+\s+(.*)/" $tag_cache /dev/null
+        else
+            perl -ne "print \"\$1\n\" if m/^$qclass\.(\S+)\s+$type\s+/" $tag_cache /dev/null
+        fi
+    done
+done | sort -u
