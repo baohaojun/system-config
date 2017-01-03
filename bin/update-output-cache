@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cache=$1
+shift
+"$@" > "$cache".$$
+mv "$cache".$$ "$cache"

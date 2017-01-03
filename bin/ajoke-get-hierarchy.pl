@@ -1,6 +1,9 @@
 #!/usr/bin/perl
 use strict;
 use Getopt::Long;
+use Digest::MD5 qw(md5_hex);
+use File::Path qw(make_path);
+use Cwd;
 
 use BhjJava; # will chdir to beagrep src
 sub debug(@) {
@@ -8,6 +11,22 @@ sub debug(@) {
 }
 
 $ENV{GTAGS_START_FILE} = "";
+
+if ($ENV{AJOKE_NO_CACHE} ne 'true') {
+    my $md5sum = md5_hex(join("\n", @ARGV, cwd()));
+    $md5sum =~ m/^(..)(.*)/;
+    my ($md_dir, $md_file) = ($1, $2);
+    my $cache_dir = "$ENV{HOME}/.cache/system-config/ajoke-get-hierarchy.pl.cache/$md_dir";
+    make_path $cache_dir;
+    $ENV{AJOKE_NO_CACHE} = 'true';
+    if (-e "$cache_dir/$md_file") {
+        system("cat", "$cache_dir/$md_file");
+    } else {
+        system($0, @ARGV);
+    }
+    system("daemon", "-i", "-D", cwd(), "--", "update-output-cache", "$cache_dir/$md_file", "$0", @ARGV);
+    exit;
+}
 
 my $should_recurse = 1;
 if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
