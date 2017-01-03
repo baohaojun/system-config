@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -e
+
+special_tag=$1
+program=$2
+
+if ! [[ $special_tag =~ ^[-a-z]+$ ]]; then
+    die "tag '$special_tag' is dangerous"
+fi
+
+if ! [[ $program =~ ^[-a-z]+$ ]]; then
+    die "program '$program' is dangerous"
+fi
+
+
+sawfish_find_tagged_window_command=$(
+    cat <<EOF
+; {%sawfish%}
+(catch 'found
+  (mapc
+   (lambda (w)
+     (when (eq (window-get w 'special) '$special_tag)
+       (bhj-activate-window w)
+       (throw 'found '$special_tag)))
+   (managed-windows)))
+; {%/sawfish%}
+EOF
+                                  )
+
+if test "$(sawfish-client -e "$sawfish_find_tagged_window_command")" = $special_tag; then
+    exit 0
+else
+    $program&
+    if EMACS=t yes-or-no-p -y "Is the top window special for $special_tag"; then
+        sawfish_apply_tag_command=$(
+            cat <<EOF
+; {%sawfish%}
+(window-put (input-focus) 'special '$special_tag)
+; {%/sawfish%}
+EOF
+                                 )
+        sawfish-client -e "$sawfish_apply_tag_command"
+    fi
+fi
+
+# Local Variables: #
+# eval: (mmm-mode 1) #
+# End: #

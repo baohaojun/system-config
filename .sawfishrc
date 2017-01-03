@@ -136,11 +136,7 @@
 (defun bhj-activate-window (window)
   (if (window-iconified-p window)
       (uniconify-window window))
-  (activate-window window)
-  (let* ((focus window)
-         (width (car (window-dimensions focus)))
-         (height (cdr (window-dimensions focus))))
-    (warp-cursor-to-window (input-focus) (quotient width 2) (quotient height 2))))
+  (activate-window window))
 
 (defun window-exists-p (wclass)
   (if (eq 'wFound
@@ -164,7 +160,7 @@
                                   (wclass-or-lambda window)))
                       (bhj-activate-window window)
                       (throw 'wFound 'wFound)))
-                  (stacking-order)))
+                  (remove-if (lambda (w) (window-get w 'special)) (stacking-order))))
           'wFound)
       (when  (and (current-event)
                   (string-equal (event-name (current-event)) "Super-n"))
@@ -186,7 +182,7 @@
    ("v"                "adjust-volume" "adjust-volume")
    ("C-,"              "hello world no such thing" "firefox pop")
    ("C-."              "hello world no such thing" "firefox push")
-   ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox")
+   ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox --new-window")
    ("Super-t"          (lambda (w) (and
                                (string-match "konsole|gnome-terminal|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
                                (not (string= "emacs" (window-name w))))) "konsole.bhj")
@@ -599,7 +595,8 @@
     (let ((class (bhj-global-cycle-class w)))
       (delete-if-not window-in-cycle-p
                      (filter-windows
-                      (lambda (x) (equal (bhj-global-cycle-class x) class))
+                      (lambda (x)
+                        (equal (bhj-global-cycle-class x) class))
                       (window-order)))))
   #:spec "%W")
 

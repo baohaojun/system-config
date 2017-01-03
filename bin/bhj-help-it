@@ -2,7 +2,7 @@
 
 if test "$EMACS" = t; then
     unset EMACS
-    find-or-exec firefox >/dev/null 2>&1 </dev/null &
+    sawfish-start-special help firefox >/dev/null 2>&1 </dev/null &
     (cat | $0 "$@" > ~/.cache/system-config/logs/$(basename $0).log 2>&1) &
     exit 0
 fi

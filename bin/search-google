@@ -140,6 +140,7 @@ fi
 if test "$pat"; then
     firefox-open-url-pattern "$pat" "$url"
 else
+    find-or-exec firefox firefox
     firefox "$url"
 fi&
 if test "$EMACS" = t; then

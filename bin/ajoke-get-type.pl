@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use String::ShellQuote;
 use strict;
-use BhjJava;
+use BhjJava; # will chdir to beagrep src
 
 my $resolve = shift @ARGV;
 my $stem = $resolve;

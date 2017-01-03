@@ -35,6 +35,8 @@ if test $# != 2; then
     die "Error: Usage $(basename $0) pattern url"
 fi
 
+sawfish-start-special help firefox
+
 pattern=$1
 url=$2
 
@@ -77,12 +79,6 @@ fi
 
 current_url=$(get-firefox-tab-url)
 
-if current_url_matches "$exact" "$current_url" "$pattern"; then
-    echo nothing to do
-else
-    firefox push "$current_url"
-fi
-
 in_firefox=false
 if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox'; then
     in_firefox=true
@@ -97,17 +93,15 @@ else
     this_url=$(get-firefox-tab-url)
     if current_url_matches "$exact" "$this_url" "$pattern"; then
         new_tab=-current-tab
-    elif ! firefox-search-for-tab --tabs 1 $exact "$pattern" &&
-         (
-             find-or-exec firefox || true;
-             # EMACS=t yes-or-no-p -y "Open in tab $WHICH_TAB: $this_url?"
-         ); then
+
+    # try to open it in the current tab first, if already match the
+    # pattern
+    elif ! firefox-search-for-tab --tabs 1 $exact "$pattern"; then
         new_tab=-current-tab
     fi
 fi
 
 if test "$exact"; then
-    find-or-exec firefox
     if test "$new_tab" = "-current-tab"; then
         exit 0;
     fi
