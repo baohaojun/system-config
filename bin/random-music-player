@@ -54,6 +54,9 @@ my $no_disturb = glob("~/.do-not-disturb");
 
 sub play_1_song($) {
     for (@_) {
+        if (-l "$ENV{HOME}/Music/play-this.mp3") {
+            chomp ($_ = qx(readlink -f "$ENV{HOME}/Music/play-this.mp3"));
+        }
         open(my $song_info, ">", $info_file);
         print $song_info "$_\n";
         close $song_info;

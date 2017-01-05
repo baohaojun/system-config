@@ -117,7 +117,7 @@ fi
 
 test -z "${body[0]}" && body=("=")
 
-the_mailx=/usr/bin/mailx
+the_mailx=/usr/bin/heirloom-mailx
 if test -e /opt/local/bin/mailx; then
     the_mailx=/opt/local/bin/mailx;
 fi

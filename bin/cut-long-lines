@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+
+use Encode;
+
+while (<>) {
+    $_ = decode_utf8 $_;
+    if (length $_ > 200) {
+        $_ = substr($_, 0, 200) . " ...\n";
+    }
+    $_ = encode_utf8 $_;
+    print $_;
+}
