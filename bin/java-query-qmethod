@@ -16,12 +16,14 @@ sub do_it($)
 {
     my $q_class = my $q_method = $_[0];
     $q_class =~ s/(.*)\..*/$1/;
+    $q_class =~ s/\.$//;
 
     chomp(my $file = qx(java-find-def.pl -e $q_class));
     if ($file =~ m/\.jar$/i) {
         $q_method =~ s/\./-/g;
-        debug "grep-gtags -s -e '^$q_method\$' | perl -npe 's/.*?:\\d+:\\s+//'";
-        return system("grep-gtags -s -e '^$q_method\$' | perl -npe 's/.*?:\d+:\\s+//'");
+        $q_method =~ s/-\*$/.*/;
+        # debug "grep-gtags -s -e '$q_method' | perl -npe 's/.*?:\\d+:\\s+//'";
+        return system("grep-gtags -s -e '$q_method' | perl -npe 's/.*?:\\d+:\\s+//' | uniq-even-non-ajacent");
     }
     chomp(my $tags_cache = qx(java-tags-cache $file));
 

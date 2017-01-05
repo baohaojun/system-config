@@ -23,10 +23,6 @@ $type = qr($type);
 my %files_package;
 for (@ARGV) {
     my $qclass = my $class = $_;
-    if ($class =~ m/\./) {
-        $class =~ s/.*\.//;
-    }
-
     my $output;
 
     if ($ENV{GTAGS_START_FILE}) {
