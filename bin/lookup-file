@@ -1,0 +1,173 @@
+#!/bin/bash
+
+exact=false
+select=false
+readlink=false
+function echo() {
+    builtin echo -n "$@"
+}
+
+function readlink() {
+    command readlink "$@" | tr -d '\n'
+}
+TEMP=$(getopt -o ers --long exact,readlink,select -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--exact)
+            exact=true
+            shift
+            ;;
+        -r|--readlink)
+            readlink=true
+            shift
+            ;;
+        -s|--select)
+            select=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+file=$1
+x=0
+
+function find() {
+    command find 2>/dev/null "$@"|xargs ls -td|grep -v '^\.$' -P
+}
+
+# builtin cd -P . >/dev/null 2>&1
+
+wildcard=false
+test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
+if echo "$file" | grep -q -e '\*'; then
+    wildcard=true
+fi
+
+(
+    while true; do
+
+        if [[ "$PWD" =~ ^$HOME/smb/[^/]+$ || "$PWD" =~ ^//[^/]+$ ]]; then
+            if test "$(dirname -- "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
+                break;
+            else
+                cd ~
+                continue
+            fi
+        fi
+
+        test -e "$file" && break
+
+        if test $wildcard = true -a $select = true; then
+
+            match=0
+            for x in $file; do
+                if test -e $x; then
+                    match=1
+                    break
+                fi
+            done
+
+            if test $match = 1; then
+                if test $readlink = true; then
+                    select-output-line bash -c "for x in $file; do readlink -f \$x; done"
+                else
+                    select-output-line bash -c "for x in $file; do echo \"$PWD\"/\$x; done"
+                fi
+                exit
+            fi
+        fi
+
+        if test $wildcard = true && test -e $file; then
+            if test $readlink = true; then
+                readlink -f $file
+            else
+                echo "$PWD"/$file
+            fi
+            exit 0
+        fi
+
+        if test "$PWD" = /; then
+            exit -1
+        fi
+        builtin cd ..
+    done
+
+    if test "$PWD" = / -a -L "$file"; then
+        exit 1
+    fi
+
+    if test "${file:0:1}" = /; then
+        if test -e "$file" -a $readlink = true; then
+            readlink -f "$file"
+        else
+            echo "$file"
+        fi
+    else
+        if test -e "$PWD"/"$file"; then
+            if test $readlink = true; then
+                readlink -f "$file"
+            else
+                echo "$PWD"/"$file"
+            fi
+        else
+            echo "$file"
+        fi
+    fi
+) || {
+    if test "$exact" = true; then
+        if test $readlink = true; then
+            readlink -f "$(which "$1")"
+        else
+            which "$1"
+        fi 2>/dev/null
+        exit
+    else
+        false
+    fi
+} || (
+    dir=`dirname -- "$file"`
+    base=`basename -- "$file"`
+
+    while true; do
+        if test "$PWD" = /; then
+            typef='-type f'
+        else
+            typef=
+        fi
+        if find "$dir" -maxdepth 1 -iname "*$base*" $typef|grep -q .; then
+            find "$PWD"/"$dir" -maxdepth 1 -iname "*$base*" $typef
+            exit 0
+        fi
+
+        if test "$PWD" = /; then
+            exit -1
+        fi
+
+        if [[ "$PWD" =~ ^$HOME/smb/[^/]+$ || "$PWD" =~ ^//[^/]+$ ]]; then
+            if test "$(dirname -- "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
+                break;
+            else
+                cd ~
+                continue
+            fi
+        fi
+        builtin cd ..
+    done
+) || (
+    which "$file" 2>/dev/null
+) || (
+    if [[ "$file" =~ :// ]]; then
+        echo "$file"
+    elif test "$LOOKUP_NON_EXIST_FILES" != false; then
+        readlink -m "$file"
+    fi
+    exit -1
+)
