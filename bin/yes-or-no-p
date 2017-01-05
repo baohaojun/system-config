@@ -1,1 +1,102 @@
-../../src/github/ajoke/bin/yes-or-no-p
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt yyes t:timeout=\$TMOUT ndefault_no
+## end code-generator
+## start generated code
+TEMP=$(getopt -o nt:yh \
+              --long default_no,timeout:,yes,help,no-default_no,no-yes \
+              -n $(basename -- $0) -- "$@")
+default_no=false
+timeout=$TMOUT
+yes=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -n|--default_no|--no-default_no)
+            if test "$1" = --no-default_no; then
+                default_no=false
+            else
+                default_no=true
+            fi
+            shift
+            ;;
+        -t|--timeout)
+            timeout=$2
+            shift 2
+            ;;
+        -y|--yes|--no-yes)
+            if test "$1" = --no-yes; then
+                yes=false
+            else
+                yes=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--[no-]default_no'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--timeout=TIMEOUT'
+            echo
+            printf %06s '-y, '
+            printf %-24s '--[no-]yes'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$default_no" = true; then
+    yes=false
+fi
+
+default=no
+prompt=(yes/No)
+if test "$yes" = true ; then
+    default=yes;
+    prompt=(Yes/no)
+fi
+
+user_prompt=$(echo -n "$@")
+if [[ "${user_prompt:0-1}" =~ '\?$|？$' ]]; then
+    user_prompt=${user_prompt}\?
+fi
+
+if test "$EMACS"; then
+    REPLY=$(ask-for-input-with-sawfish -p "$user_prompt $prompt:")
+elif ! tty >/dev/null 2>&1; then
+    REPLY=
+elif (echo -n >/dev/tty) >/dev/null 2>&1; then
+        if test "$timeout"; then
+            timeout="-t $timeout"
+        fi
+        read $timeout -e -p "$user_prompt $prompt: " >/dev/tty 2>&1
+fi
+
+if test -z "$REPLY" -a $default = yes; then
+    exit 0
+fi
+
+if echo $REPLY|grep '^yes$' -iq; then
+    exit 0
+fi
+exit -1
