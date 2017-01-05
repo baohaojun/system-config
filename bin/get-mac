@@ -1,21 +1,23 @@
 #!/bin/bash
 
+if test "$(get-about-me mac)" != unknown; then
+    get-about-me mac
+    exit
+fi
+
 case $(uname) in
-    Darwin)
+    Darwin|Linux)
         ifconfig | grep -B 1 -P -e '^\s+ether\s+'|perl -ne '
             if (m/^p2p\d+:/) {
                 $p2p = 1;
             } elsif (m/^\w+:/) {
                 $p2p = 0;
-            } elsif (m/^\s+ether\s+([a-f0-9:]+)/i) {
+            } elsif (m/^\s+ether\s+([a-f0-9:]{17}\b)/i) {
                 unless ($p2p) {
                     print $1;
-                    exit
+                    exit 0
                 }
             } '
-        ;;
-    Linux)
-        ifconfig|grep HWaddr|grep -v usb
         ;;
     CYGWIN*)
         ifconfig /all | tr -d '\r' | perl -ne 'if (m/eth\d+:\s*$/)
@@ -29,4 +31,4 @@ case $(uname) in
             }'
         ;;
 esac |head -n 1|
-perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g; $_ = lc $_'
+perl -npe 's/:/-/g; s/\s//g; $_ = lc $_'

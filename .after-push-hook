@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if test -e ~/src/github/private-config/.system-config-private-after-push-hook; then
+    ~/src/github/private-config/.system-config-private-after-push-hook
+fi || true
+
 function push-all-projects() {
     (
 
