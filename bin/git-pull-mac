@@ -3,29 +3,32 @@
 set -e
 . ~/system-config/bin/.gitx
 
-function is-fetch-only() {
-    if is-cron || test "$FETCH_ONLY" = true; then
-        echo true;
-    fi
-}
-
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ffetch-only=\$"(is-fetch-only)"
+# generate-getopt @fetch-only @fetch-first
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o fh \
-              --long fetch-only,help,no-fetch-only \
+TEMP=$(getopt -o h \
+              --long fetch-only,fetch-first,help,no-fetch-only,no-fetch-first \
               -n $(basename -- $0) -- "$@")
-fetch_only=$(is-fetch-only)
+fetch_only=false
+fetch_first=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -f|--fetch-only|--no-fetch-only)
+        --fetch-only|--no-fetch-only)
             if test "$1" = --no-fetch-only; then
                 fetch_only=false
             else
                 fetch_only=true
+            fi
+            shift
+            ;;
+        --fetch-first|--no-fetch-first)
+            if test "$1" = --no-fetch-first; then
+                fetch_first=false
+            else
+                fetch_first=true
             fi
             shift
             ;;
@@ -34,7 +37,10 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf "%06s" " "
+            printf %-24s '--[no-]fetch-first'
+            echo
+            printf "%06s" " "
             printf %-24s '--[no-]fetch-only'
             echo
             exit
@@ -52,14 +58,17 @@ done
 
 
 ## end generated code
-export FETCH_ONLY=$fetch_only
-
+if test "$fetch_only" = true -o "$fetch_first" = true; then
+    do_fetch=true
+else
+    do_fetch=false
+fi
 
 test $PWD = ~ && cd ~/system-config/
 if test $PWD = ~/system-config -a -d ~/src/github/private-config/.git; then
     (
         cd ~/src/github/private-config
-        if test "$FETCH_ONLY"; then
+        if test "$do_fetch" = true; then
             git fetch $(repo-remote)
         fi
     ) >/dev/null 2>&1
@@ -74,11 +83,11 @@ else
     exit
 fi
 
-if test "$FETCH_ONLY" = false && ! git fetch $origin >/dev/null 2>&1; then
+if test "$do_fetch" = true && ! git fetch $origin >/dev/null 2>&1; then
     die "failed to fetch $origin: $PWD"
 fi
 
-if test "$FETCH_ONLY" != true; then
+if test "$fetch_only" != true; then
     for x in remotes/$(git-remote-branch); do
         remote=$(echo $x|awk -F/ '{print $2}')
         branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
@@ -99,9 +108,9 @@ fi
     git submodule update
 ) >/dev/null 2>&1
 
-if test "$FETCH_ONLY" = true; then
+if test "$fetch_only" = true; then
     git fetch $origin >/dev/null 2>&1;
-    git submodule foreach 'bash -c "git-pull-mac"'
+    git submodule foreach 'bash -c "git-pull-mac --fetch-only"'
     exit 0
 fi
 
