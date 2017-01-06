@@ -75,7 +75,7 @@ if test $PWD = ~/system-config -a -d ~/src/github/private-config/.git; then
 fi
 cd "$(dirname "$(lookup-file .git)")"
 origin=$(repo-remote)
-if git config remote.$origin.url; then
+if git config remote.$origin.url | grep 'git://github.com'; then
     git config remote.$origin.url $(git config remote.$origin.url | perl -npe 's,^git://github.com,https://github.com,')
 else
     # for git svn

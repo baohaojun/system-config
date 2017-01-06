@@ -18,7 +18,7 @@
  '(bbyac-max-chars 80)
  '(before-save-hook
    (quote
-    (ac-clang-reparse-buffer confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
+    (ac-clang-reparse-buffer confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode sc--mark-need-merge)))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(compilation-message-face (quote default))

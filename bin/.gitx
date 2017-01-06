@@ -112,18 +112,21 @@ function git()
                     if test -d $x -a -e $x/.git; then
                         (
                             builtin cd $x
+                            if test ! -e .git/sc-not-merged; then
+                                exit 0
+                            fi
 
-                            y=$(git status -s)
+                            y=$(command git status -s)
                             if test "$y"; then
                                 echo $x not clean 1>&2
-                                git status -s
+                                command git status -s
                                 echo ---------------- 1>&2
                                 exit 0
                             fi
-                            y=$(git diff --name-status $(git-remote-branch))
+                            y=$(command git diff --name-status $(git-remote-branch))
                             if test "$y"; then
                                 echo $x not clean with $(git-remote-branch) 1>&2
-                                git diff --name-status $(git-remote-branch)
+                                command git diff --name-status $(git-remote-branch)
                                 echo ---------------- 1>&2
                             fi
                         )

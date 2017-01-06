@@ -2,6 +2,16 @@
 cd ~/system-config/
 
 if system-config-should-fetch; then
-    nice git-pull-mac --fetch-only
-    system-config-fetch-done
+    if nice git-pull-mac --fetch-only; then
+        system-config-fetch-done || true
+    fi
 fi
+
+for x in ~/system-config/ ~/src/github/*/; do
+    (
+        if test -d "$x"/.git; then
+            cd "$x"
+            system-config-git-merged || true
+        fi
+    )
+done

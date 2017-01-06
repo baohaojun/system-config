@@ -19,14 +19,15 @@ export -f die
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt nno-submodule aadd_it
+# generate-getopt nno-submodule aadd_it fforce-even-if-merged=\${force_even_if_merged:-false}
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o anh \
-              --long add_it,no-submodule,help,no-add_it,no-no-submodule \
+TEMP=$(getopt -o anfh \
+              --long add_it,no-submodule,force-even-if-merged,help,no-add_it,no-no-submodule,no-force-even-if-merged \
               -n $(basename -- $0) -- "$@")
 add_it=false
 no_submodule=false
+force_even_if_merged=${force_even_if_merged:-false}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -47,6 +48,14 @@ while true; do
             fi
             shift
             ;;
+        -f|--force-even-if-merged|--no-force-even-if-merged)
+            if test "$1" = --no-force-even-if-merged; then
+                force_even_if_merged=false
+            else
+                force_even_if_merged=true
+            fi
+            shift
+            ;;
         -h|--help)
             set +x
             echo
@@ -54,6 +63,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-a, '
             printf %-24s '--[no-]add_it'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--[no-]force-even-if-merged'
             echo
             printf %06s '-n, '
             printf %-24s '--[no-]no-submodule'
@@ -73,6 +85,8 @@ done
 
 
 ## end generated code
+
+export force_even_if_merged
 
 if test "$add_it" = true; then
     export GIT_NON_INTERACTIVE_ADD=true
@@ -109,6 +123,12 @@ fi
 
 test "$(pwd)" = $HOME && cd ~/system-config
 cd "$(dirname "$(lookup-file -e .git)")"
+
+if test "$force_even_if_merged" = false &&
+        test ! -e .git/sc-not-merged &&
+        ! git submodule foreach 'if test -e .git/sc-not-merged; then echo yes.hello.world; fi' | grep yes.hello.world -q; then
+    exit
+fi
 
 if test -e .git-push-rebase-hooks; then
     bash .git-push-rebase-hooks
@@ -330,6 +350,10 @@ git push $origin HEAD:refs/heads/$branch || {
 }
 if test -e .after-push-hook; then
     bash .after-push-hook
+fi
+
+if test -e ~/src/github/private-config/bin/system-config-git-merged; then
+    system-config-git-merged
 fi
 
 if test $(pwd) = ~/system-config; then
