@@ -122,6 +122,9 @@ function check_git_dir() {
     if test "$PWD" = ~/today/MobileOrg; then
         git add .
     else
+        if ! grep . from-mobile.org >/dev/null 2>&1; then
+            echo -n from-mobile.org
+        fi
         git-interactive-add
     fi
     if ! yes-or-no-p -t 5 -y "Continue for $2 @$PWD"; then
@@ -131,6 +134,15 @@ function check_git_dir() {
 
 check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
 emacsclient -e '(org-mobile-push)'
+(
+    cd ~/today/MobileOrg
+    for x in *.org; do
+        if test -e "$x" -a ! -e ~/src/github/projects/"$x"; then
+            echo "$x" >> .git/no-such.org
+            rm "$x"
+        fi
+    done
+)
 
 if (cd ~/system-config/doc/projects && git diff HEAD . | grep -v -e '^\+\s+:(properties|id|end):' -i -P | grep '^(-|\+) ' -P ); then
     check_git_dir ~/system-config/doc/projects "Add all changes after org-mobile-push?"

@@ -194,7 +194,9 @@ if test $do_system = true; then
     if ! my-adb 'which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
         adb-fix-busybox
     elif ! my-adb 'test -d /data/debian/ && which bash && echo -n hello && echo '$$ | grep hello$$ -q; then
-        die "Debian or bash not found on this phone, can't use rsync"
+        if test "$b0" = android-rsync-phone-ota; then
+            die "Debian or bash not found on this phone, can't use rsync"
+        fi
     fi
     if test "$b0" = android-rsync-phone-ota; then
         ssh-to-phone echo hello$$ | grep hello$$
