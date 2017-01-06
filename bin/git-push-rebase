@@ -356,7 +356,6 @@ if test -e ~/src/github/private-config/bin/system-config-git-merged; then
 fi
 
 if test $(pwd) = ~/system-config; then
-    CHECKING_SUBMODULE= git-notify-push
     (
         cd ~/src/github/private-config/bin
         git pull
