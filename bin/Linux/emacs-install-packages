@@ -17,6 +17,16 @@ fi || true
 
 need_regenerate_el=false
 
+git_server_prefix=${http://github.com/}
+github_branch=master
+if test "$SYSTEM_CONFIG_LOCAL_GIT_PREFIX"; then
+    git_server_prefix=${SYSTEM_CONFIG_LOCAL_GIT_PREFIX}
+fi
+
+if test "$SYSTEM_CONFIG_LOCAL_BRANCH"; then
+    github_branch=${$SYSTEM_CONFIG_LOCAL_BRANCH}
+fi
+
 if test -d ~/system-config/src/github/twittering-mode; then
     mkdir -p ~/src/github
     for x in ~/system-config/src/github/*; do
@@ -31,7 +41,7 @@ else
 
     for x in "${github_projects[@]}"; do
         if test ! -e "$x/.git"; then
-            git clone http://github.com/baohaojun/$x
+            git clone ${git_server_prefix}baohaojun/$x -b ${github_branch}
             need_regenerate_el=true
         fi
     done
