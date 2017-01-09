@@ -1,22 +1,24 @@
 System-config is my customizations of Posix systems (Linux/Cygwin/Mac
-OS X). It aims to reproduce my complete working environment with a
-single command.
+OS X, but mainly Debian Linux or Ubuntu). It aims to reproduce my
+complete working environment with a single command. I made an
+introductory video about it on youtube (It's in Chinese, with English
+subtitles).
 
-It will download and install the debian programs that I need, compile
-the projects that I wrote myself, and properly configure the dot files
-(=.bashrc=, =.emacs=, and so on).
+[[https://www.youtube.com/watch?v%3Dqp2b3-Guej0][http://baohaojun.github.io/images/system-config-youtube.png]]
 
-Among my open source projects that system-config will download and
-compile, there's a very useful project named [[https://github.com/baohaojun/beagrep][beagrep]]. It combines a
-search engine with grep. It is very useful for reading source code. In
-fact I use it to read system-config's own source code (code reading is
-like solving puzzles, solving puzzles is about looking for answers, and
-what's best for looking for answers? Search Engines. Beagrep is a local
+During set-up, system-config will download, install, compile many open
+source projects that I use frequently.
+
+One of these projects is [[https://github.com/baohaojun/beagrep][beagrep]]. It combines a search engine with
+grep. It is very useful for reading source code. In fact I use it to
+read system-config's own source code (code reading is like solving
+puzzles, solving puzzles is about looking for answers, and what's best
+for looking for answers? Search Engines. Google. Beagrep is a local
 search engine best tuned for software projects).
 
-* How to use it
+* How to install
 
-Under debian linux or other debian derived systems such as ubuntu, it's simple to set up system-config:
+Under Debian Linux or Ubuntu, it's simple to set up system-config:
 
 #+BEGIN_SRC sh
   git clone https://github.com/baohaojun/system-config/ ~/system-config &&
@@ -27,12 +29,43 @@ You probably need to fix some bugs when running =after-check-out.sh=. And then, 
 
 On non debian systems, it's not automated yet -- patches are welcome.
 
+* How to use
+
+You should be able to use system-config just like using any Linux distribution.
+
+But if you want more power, you can watch the youtube video and try to copy whatever that you like.
+
+(If you are in China, note that the video is also uploaded to [[http://www.bilibili.com/video/av3376647/][bilibili]].)
+
+* How does it work?
+
+Please refer to my [[http://baohaojun.github.io/][github blog]], there are quite some articles about system-config. Most are in Chinese though, sorry😅.
+
+Especially this article: [[http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html][How does it work and how to use it]].
+
 * Disclaimer
 
 System-config started out as a very personal project. If you decided to use it, please do so at your own risk, there is absolutely no warranty of any kind😅.
 
 If you have your own customization, it would be a good idea that you back them up before you try system-config. It's a good idea that you too put your own customization into a git repo, if you have not done so already.
 
-* Sub projects
+* Contribute
 
-System-config comes with some sub projects. They will be git cloned into =~/src/github/=, such as [[http://github.com/baohaojun/emacs.d][~/src/github/emacs.d]].
+Bug reports, patches, ideas are welcome.
+
+Or, if you like it, you may also donate some money.
+
+** With a paypal account:
+
+#+BEGIN_HTML
+<a href='https://pledgie.com/campaigns/33066'><img alt='Click here to lend your support to: Well done, Mr. Bao Haojun. and
+make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33066.png?skin_name=chrome' border='0' ></a>
+#+END_HTML
+
+** 支付宝（AliPay）
+
+[[http://baohaojun.github.io/images/bhj-alipay.png]]
+
+** 微信支付（WeChat Pay）
+
+[[http://baohaojun.github.io/images/bhj-wechat-pay.png]]
