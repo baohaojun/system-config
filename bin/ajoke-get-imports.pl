@@ -225,15 +225,15 @@ sub find_import_for($)
         return 0 if exists $import_quoted_map{$def};
         $import_quoted_map{$def} = 1;
     }
-    debug "beatags -e $def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'";
-    open(my $pipe, "-|", "beatags -e $def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'")
+    debug "beatags -e unquoted.$def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'";
+    my $beatags_command = "beatags -e unquoted.$def -t 'class|interface|enum(?!-constant)' -p '\\.java|\\.aidl|\\.jar'";
+    open(my $pipe, "-|", $beatags_command)
         or die "can not open beatags";
 
     my @imports;
     while (<$pipe>) {
-        m/^(.*?)\s+\S+\s+\d+\s+(\S+)/ or next;
-
-        my ($tag, $file) = ($1, $2);
+        m/^(.*?)\s+\S+\s+\d+\s+(\S+)\s+quoted\.(\S+)/ or next;
+        my ($tag, $file) = ($3, $2);
         push @imports, "$tag";
     }
 

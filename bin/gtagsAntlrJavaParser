@@ -63,6 +63,8 @@ sub handle_jar($)
             $class_name =~ s/\$/./g;
             s/\$/./g;
             print_it "$class_name $type $line_number $file_name $_\n";
+            (my $class_basename = $class_name) =~ s/.*\.//;
+            print_it "unquoted.$class_basename $type $line_number $file_name quoted.$class_name\n";
         } elsif (m/($qualified_re)\s*\(/) {
             my $method_name = "$class_name.$1";
             if ($1 eq $class_name) {

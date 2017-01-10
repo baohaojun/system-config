@@ -25,6 +25,10 @@ for (@ARGV) {
     my $qclass = my $class = $_;
     my $output;
 
+    if ($class =~ /\./) {
+        $class =~ s/.*\./unquoted./;
+    }
+
     if ($ENV{GTAGS_START_FILE}) {
         my $file = $ENV{GTAGS_START_FILE};
         debug "beatags -e $class -p '\.java|\.aidl|\.jar|\.cs|\.dll' -f $file";
@@ -35,8 +39,8 @@ for (@ARGV) {
         debug "output is $output from gtags";
     }
 
-    while ($output =~ m/^(\S+)\s+(\S+)\s+(\d+)\s+(\S+)/mg) {
-        my ($tag, $type_p, $file) = ($1, $2, $4);
+    while ($output =~ m/^(\S+)\s+(\S+)\s+(\d+)\s+(\S+)\s+quoted\.(\S+)/mg) {
+        my ($tag, $type_p, $file) = ($5, $2, $4);
         if ($type_p !~ m/$type/) {
             next;
         }

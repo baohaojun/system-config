@@ -68,7 +68,6 @@ if (not grep {$_ eq "--filter"} @ARGV) {
                 if (($tag ne $old_tag or $line_num != $old_line_num) and $old_tag !~ m/\./) {
                     print "$package$last_line" if $last_line and $old_type ne 'package';
                 }
-                print "$package$_" if $tag =~ m/\./;
             }
             $last_line = $_;
             ($old_tag, $old_type, $old_line_num, $old_file) = ($tag, $type, $line_num, $file);
@@ -209,6 +208,8 @@ while (<STDIN>) {
                         print_with_caching($cache, $last_out) if $package;
                     }
                 }
+                print_with_caching($cache, "unquoted.$tag_no_dot $type $line_num $file quoted.$package.$tag\n") if $type =~ m/^(class|interface)$/;
+
                 if ($_ eq $terminator) {
                     print;
                     close_cache_and_rename($cache, "$cache_f.tag.$$", "$cache_f.tag");
