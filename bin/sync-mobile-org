@@ -137,8 +137,11 @@ emacsclient -e '(org-mobile-push)'
 (
     cd ~/today/MobileOrg
     for x in *.org; do
-        if test -e "$x" -a ! -e ~/src/github/projects/"$x"; then
-            echo "$x" >> .git/no-such.org
+        if test "$x" = index.org; then
+            continue
+        fi
+        if ! grep -q -P -e '\[\[file:\Q'"$x"'\E\]' index.org; then
+            echo "$x" not exist anymore | tee -a .git/no-such.org
             rm "$x"
         fi
     done
@@ -151,7 +154,9 @@ else
 fi
 
 cd ~/today/MobileOrg
-git add agendas.org checksums.dat
+git add .
+git commit -m "$(now)" || true
+
 check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
 
 sync-phone-files -r
