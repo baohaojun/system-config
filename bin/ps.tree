@@ -35,35 +35,52 @@ unless ($start_p =~ m/^\d+$/) {
     close $pipe;
 }
 
+my %print_children_map;
+
+sub add_parent_child($$) {
+    my ($parent, $child) = @_;
+    $print_children_map{$parent} = {} unless $print_children_map{$parent};
+    $print_children_map{$parent}{$child} = 1;
+}
+
 for $start_p (@start_p) {
     # find till the root (usually the init process)
+    next if $start_p == $$;
 
     my @parents = ();
+    my $saved_pid = $start_p;
 
     while ($start_p) {
         push @parents, $start_p;
+        my $parent = $ppid_map{$start_p};
+        last unless $parent;
+        add_parent_child($parent, $start_p);
         $start_p = $ppid_map{$start_p};
     }
 
-    my $indent = "";
-    while (@parents) {
-        $start_p = pop @parents;
-        printf "$indent %d %d %s\n", $start_p, $ppid_map{$start_p}, $command_map{$start_p};
-        $indent .= "  ";
-    }
+    $start_p = $saved_pid;
 
-    sub print_childrens($$) {
-        my ($proc, $indent_save) = @_;
+    sub add_childrens($) {
+        my ($parent) = @_;
         for (keys %ppid_map) {
-            my $indent = $indent_save;
-            if ($ppid_map{$_} == $proc) {
-                my $start_p = $_;
-                printf "$indent %d %d %s\n", $start_p, $ppid_map{$start_p}, $command_map{$start_p};
-                $indent .= "  ";
-                print_childrens($start_p, $indent);
+            if ($ppid_map{$_} == $parent) {
+                my $child = $_;
+                add_parent_child($parent, $child);
+                add_childrens($child);
             }
         }
     }
 
-    print_childrens($start_p, $indent);
+    add_childrens($start_p);
 }
+
+sub print_branch($$) {
+    my ($pid, $indent) = @_;
+    printf "$indent %d %d %s\n", $pid, $ppid_map{$start_p}, $command_map{$pid};
+
+    for (keys %{$print_children_map{$pid}}) {
+        print_branch($_, $indent . "  ");
+    }
+}
+
+print_branch(1, "");

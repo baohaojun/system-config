@@ -29,6 +29,10 @@ if test $# -lt 2; then
     die "Usage: bhj-help-it major-mode word..."
 fi
 
+exec 2> ~/tmp/bhj-help-it.log
+set -x
+echo "$@"
+
 case $1 in
     php-mode)
         cd /usr/share/doc/php-doc/html;
