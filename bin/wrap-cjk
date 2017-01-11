@@ -4,18 +4,19 @@ use Encode;
 use strict;
 
 sub debug(@) {
-    #print STDERR "@_\n";
+    # print STDERR "@_\n";
 }
 
 
 my $last_is_cjk = 0;
 my $is_first_line = 1;
 my $cjk_re = qr(\p{Blk=CJKSymbols}|\p{CJK});
+my $last_line_has_newline;
 while (<>) {
     $_ = decode_utf8 $_;
-    chomp;
+    $last_line_has_newline = chomp;
     if (m/^($cjk_re|\w)/) {
-        print "\n" unless $last_is_cjk;
+        print "\n" unless ($last_is_cjk or $is_first_line);
     } else {
         print "\n" unless $is_first_line;
     }
@@ -34,4 +35,4 @@ while (<>) {
     print " " if m/[a-z]$/i;
 }
 
-print "\n";
+print "\n" if $last_line_has_newline;
