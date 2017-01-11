@@ -330,7 +330,7 @@ sub do_cscope($$$) {
         if ($line == 1 and $line_info) {
             $line = $line_info;
         }
-        print "$use_full_path$file:$line: $str\n";
+        print "$use_full_path$file:$line: $str\n" unless $str =~ m/^quoted\./;
         $got_results = 1;
     }
 
