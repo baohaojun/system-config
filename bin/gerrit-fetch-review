@@ -1,20 +1,29 @@
 #!/bin/bash
 set -e
 
-
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:remote h:GERRIT-HOST
+# generate-getopt r:remote h:GERRIT-HOST aauto ccheckout
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h:r:h \
-              --long GERRIT-HOST:,remote:,help \
+TEMP=$(getopt -o ah:r:ch \
+              --long auto,GERRIT-HOST:,remote:,checkout,help,no-auto,no-checkout \
               -n $(basename -- $0) -- "$@")
+auto=false
 GERRIT_HOST=
 remote=
+checkout=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -a|--auto|--no-auto)
+            if test "$1" = --no-auto; then
+                auto=false
+            else
+                auto=true
+            fi
+            shift
+            ;;
         -h|--GERRIT-HOST)
             GERRIT_HOST=$2
             shift 2
@@ -23,11 +32,25 @@ while true; do
             remote=$2
             shift 2
             ;;
+        -c|--checkout|--no-checkout)
+            if test "$1" = --no-checkout; then
+                checkout=false
+            else
+                checkout=true
+            fi
+            shift
+            ;;
         -h|--help)
             set +x
             echo
             echo
             echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--[no-]auto'
+            echo
+            printf %06s '-c, '
+            printf %-24s '--[no-]checkout'
+            echo
             printf %06s '-h, '
             printf %-24s '--GERRIT-HOST=GERRIT_HOST'
             echo
@@ -46,6 +69,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -81,6 +105,10 @@ if test -n "$git_dir"; then
 fi
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
 git fetch $(repo-remote-url $remote) $ref
-if test $(basename $0) = gerrit-checkout-review; then
+if test "$checkout" = true; then
     git checkout FETCH_HEAD
+fi
+
+if test "$auto" = true; then
+    start_recursive_shell gerrit
 fi
