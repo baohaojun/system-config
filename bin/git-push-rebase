@@ -343,7 +343,17 @@ fi
 if [[ "$(repo-remote-url $origin)" =~ github.com.baohaojun ]]; then
     git merge $origin/$branch
 fi
-git push $origin HEAD:refs/heads/$branch || {
+(
+    for try in $(seq 1 3); do
+        if timeout 30 git push $origin HEAD:refs/heads/$branch; then
+            exit 0
+        fi
+        echo try $try failed in $PWD
+        sleep 10
+    done
+    git push $origin HEAD:refs/heads/$branch ||
+        tsocks git push $origin HEAD:refs/heads/$branch;
+) || {
     bhj-notify git-push-rebase "you need to merge it in $PWD" >/dev/null 2>&1
     die "you need to merge it!"
 }

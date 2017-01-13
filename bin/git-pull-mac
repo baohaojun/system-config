@@ -80,9 +80,19 @@ fi
 
 if test "$do_fetch" = true; then
     echo fetching $PWD
-    tsocks git fetch $origin ||
-        command git fetch $origin ||
-        kill $$ &
+    (
+        set -x
+        for x in $(seq 1 3); do
+            if timeout 30 git fetch $origin; then
+                exit
+            fi
+            echo failed $PWD at $x
+            sleep 10
+        done
+        git fetch $origin ||
+            tsocks git fetch $origin ||
+            kill $$
+    )&
     if test "$fetch_only" != true; then
         wait
     else
@@ -112,16 +122,17 @@ fi
 ) >/dev/null 2>&1
 
 if test "$fetch_only" = true; then
-    git submodule foreach --quiet "pwd" | xargs -P 5 -n 1 bash -c '
+    if test "$gpm_recurse" = true; then
+        wait
+    fi
+    git submodule foreach --quiet "pwd" | xargs -P 3 -n 1 bash -c '
+    export gpm_recurse=true
     if test -z "$1"; then
         exit
     fi
     cd $1
     echo recurse: $1
-    tsocks git-pull-mac --fetch-only ||
-           git-pull-mac --fetch-only ||
-           exit -1
-
+    git-pull-mac --fetch-only || exit -1
 ' true
     wait
     exit 0
