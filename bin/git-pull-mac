@@ -65,14 +65,7 @@ else
 fi
 
 test $PWD = ~ && cd ~/system-config/
-if test $PWD = ~/system-config -a -d ~/src/github/private-config/.git; then
-    (
-        cd ~/src/github/private-config
-        if test "$do_fetch" = true; then
-            git fetch $(repo-remote)
-        fi
-    ) >/dev/null 2>&1
-fi
+
 cd "$(dirname "$(lookup-file .git)")"
 origin=$(repo-remote)
 if git config remote.$origin.url | grep -q .; then
@@ -85,8 +78,16 @@ else
     exit
 fi
 
-if test "$do_fetch" = true && ! git fetch $origin >/dev/null 2>&1; then
-    die "failed to fetch $origin: $PWD"
+if test "$do_fetch" = true; then
+    echo fetching $PWD
+    tsocks git fetch $origin ||
+        command git fetch $origin ||
+        kill $$ &
+    if test "$fetch_only" != true; then
+        wait
+    else
+        sleep 1
+    fi
 fi
 
 if test "$fetch_only" != true; then
@@ -111,8 +112,18 @@ fi
 ) >/dev/null 2>&1
 
 if test "$fetch_only" = true; then
-    git fetch $origin >/dev/null 2>&1;
-    git submodule foreach 'bash -c "git-pull-mac --fetch-only"'
+    git submodule foreach --quiet "pwd" | xargs -P 5 -n 1 bash -c '
+    if test -z "$1"; then
+        exit
+    fi
+    cd $1
+    echo recurse: $1
+    tsocks git-pull-mac --fetch-only ||
+           git-pull-mac --fetch-only ||
+           exit -1
+
+' true
+    wait
     exit 0
 fi
 

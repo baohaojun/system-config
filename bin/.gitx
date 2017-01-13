@@ -140,7 +140,11 @@ function git()
                         (
                             builtin cd $x
                             shift 2
-                            echo Entering \'$x\'
+                            if test "$1" = --quiet; then
+                                shift 1
+                            else
+                                echo Entering \'$x\'
+                            fi
                             if test $# = 1; then
                                 bash -c "$1"
                             else

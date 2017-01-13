@@ -1,7 +1,57 @@
 #!/bin/bash
 cd ~/system-config/
 
-if system-config-should-fetch; then
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt fforce
+## end code-generator
+## start generated code
+TEMP=$(getopt -o fh \
+              --long force,help,no-force \
+              -n $(basename -- $0) -- "$@")
+force=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--force|--no-force)
+            if test "$1" = --no-force; then
+                force=false
+            else
+                force=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--[no-]force'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+if test "$force" = true || system-config-should-fetch; then
+    (
+        cd ~/src/github/private-config
+        tsocks git fetch $(repo-remote) || git fetch $(repo-remote)
+    )
     if nice git-pull-mac --fetch-only; then
         system-config-fetch-done || true
     fi
