@@ -28,8 +28,14 @@ if test "$hourly_build_debug" = true; then
 fi
 
 test -d .repo -a -e build/envsetup.sh
-jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
-jobs=$((jobs * 2))
+
+if test "$ANDROID_MAKE_JOBS"; then
+    jobs=$ANDROID_MAKE_JOBS
+else
+    jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
+    jobs=$((jobs * 3 / 2))
+fi
+
 verbose=
 config=
 keep=-k

@@ -7,6 +7,7 @@ function sync-phone-files() {
     if test "$1" = ""; then
         adb-sync --reverse /sdcard/MobileOrg ..
     elif test "$1" = "-r"; then
+        touch mobileorg.org
         adb-sync . /sdcard/MobileOrg/ --exclude .git --delete
     else
         die "can't do sync-phone-files $@"
@@ -102,11 +103,14 @@ if test -e mobileorg.org; then
     fi
     # undup-mobile-org-sync mobileorg.org > mobileorg.org2
     # mv mobileorg.org2 mobileorg.org
-
 fi
 
 find-or-exec emacs emacs.bhj
 emacsclient -e '(progn (find-file "~/src/github/projects/Career.org") (org-mobile-pull))'
+
+if test -d images; then
+    rsync ./images -av ~/src/github/projects -av
+fi
 
 emacsclient -e '(save-some-buffers)'
 todo-from-sticky-mail
@@ -122,9 +126,6 @@ function check_git_dir() {
     if test "$PWD" = ~/today/MobileOrg; then
         git add .
     else
-        if ! grep . from-mobile.org >/dev/null 2>&1; then
-            echo -n from-mobile.org
-        fi
         git-interactive-add
     fi
     if ! yes-or-no-p -t 5 -y "Continue for $2 @$PWD"; then
@@ -132,12 +133,17 @@ function check_git_dir() {
     fi
 }
 
+if grep . -q ~/src/github/projects/from-mobile.org; then
+    cat ~/src/github/projects/from-mobile.org >> ~/src/github/projects/Captures.org
+    rm ~/src/github/projects/from-mobile.org -f
+fi
+
 check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
-emacsclient -e '(org-mobile-push)'
+emacsclient -e '(progn (find-file "~/src/github/projects/Captures.org") (org-mobile-push))'
 (
     cd ~/today/MobileOrg
     for x in *.org; do
-        if test "$x" = index.org; then
+        if test "$x" = index.org -o "$x" = mobile.org; then
             continue
         fi
         if ! grep -q -P -e '\[\[file:\Q'"$x"'\E\]' index.org; then

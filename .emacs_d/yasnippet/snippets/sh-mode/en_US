@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: en_US
+# key: en_US
+# --
+export LANG=${1:en_US}.UTF-8
+export LC_ALL=$1.UTF-8
+export LANGUAGE=$1:en

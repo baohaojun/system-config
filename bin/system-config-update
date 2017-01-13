@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LANGUAGE=en_US:en
+
 set -e
 
 if ! is-jenkins; then
@@ -18,15 +22,38 @@ if ! is-jenkins; then
     cd ~/system-config/
 
     if git status -s | grep . -q; then
-        die "Your ~/system-config/ seems to be not clean, please commit first: $(echo; echo; git status) "
+
+        hint "
+
+你的 $HOME/system-config 目录有修改，可能会导致升级失败。接下来会同步
+system-config git 代码，如果发生冲突，请查看一下是否由你的改动导致。以
+下是有改动的文件列表：$(echo; echo; git diff --name-status HEAD)
+
+"
+
+        hint "或者按 Ctrl-C 直接退出此次升级，先查看、解决你的改动是否需要提交、备份"
+
     fi
 
-    git pull --rebase
+    if ! git pull > ~/tmp/git-pull.log 2>&1; then
+        FAILED=true
+        if grep -q 'You are not currently on a branch' ~/tmp/git-pull.log; then
+           if git pull origin master; then
+               FAILED=false
+           fi
+        else
+            cat ~/tmp/git-pull.log 1>&2
+        fi
+        if test "$FAILED" = true; then
+            die "你的system-config代码使用git pull命令同步失败"
+        fi
+    fi
 else # jenkins
     set -x
     cd ~/system-config/
     git reset --hard
     git clean -xfd
+    git pull --rebase
     git-get -u smartisan:tools/released-manifests -d ~/src/released-manifests
 fi
 
@@ -107,7 +134,6 @@ function update-git() {
 }
 
 git_projects=(
-    ~/system-config
     $(
         if test ! -d ~/system-config/src/github; then
             . ~/system-config/etc/github-projects
