@@ -28,10 +28,19 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.matburt.mobileorg.R;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import com.matburt.mobileorg.OrgData.OrgFile;
 import com.matburt.mobileorg.OrgData.OrgNode;
+import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.Synchronizers.Synchronizer;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class OrgUtils {
 	
@@ -62,8 +71,78 @@ public class OrgUtils {
 		}
 		spinner.setSelection(pos, true);
 	}
-	
-	public static OrgNode getCaptureIntentContents(Intent intent) {
+
+    private static OrgNode getCaptureIntentImageContents(ContentResolver resolver, Intent intent) {
+        String action = intent.getAction();
+        OrgNode node = new OrgNode();
+        if (! Intent.ACTION_SEND.equals(action)) {
+            return node;
+        }
+
+        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+
+        String[] projection = {MediaStore.MediaColumns.DATA};
+        String sourceFilename = null;
+
+        Cursor metaCursor = resolver.query(imageUri, projection, null, null, null);
+        if (metaCursor != null) {
+            try {
+                if (metaCursor.moveToFirst()) {
+                    sourceFilename = metaCursor.getString(0);
+                }
+            } catch (Exception e) {
+                Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 94), e);
+            } finally {
+                metaCursor.close();
+            }
+        }
+
+        if (sourceFilename == null) {
+            node.setPayload("[[invalid image file]]");
+            return node;
+        }
+        
+        File sdcard = Environment.getExternalStorageDirectory();
+        File MobileOrgDir = new File(sdcard, "MobileOrg");
+        File MobileOrgImgDir = new File(MobileOrgDir, "images");
+
+        File sourceFile = new File(sourceFilename);
+        File imgFile = new File(MobileOrgImgDir, sourceFile.getName());
+
+        MobileOrgImgDir.mkdirs();
+
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+
+        try {
+            bis = new BufferedInputStream(resolver.openInputStream(imageUri));
+            bos = new BufferedOutputStream(new FileOutputStream(imgFile, false));
+            byte[] buf = new byte[1024];
+            bis.read(buf);
+            do {
+                bos.write(buf);
+            } while(bis.read(buf) != -1);
+        } catch (IOException e) {
+            Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 103), e);
+        } finally {
+            try {
+                if (bis != null) bis.close();
+                if (bos != null) bos.close();
+            } catch (IOException e) {
+                Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 109), e);
+            }
+        }
+
+        node.setPayload("[[./images/" + sourceFile.getName() + "]]");
+        return node;
+    }
+
+	public static OrgNode getCaptureIntentContents(ContentResolver resolver, Intent intent) {
+        String type = intent.getType();
+        if (type != null && type.startsWith("image/")) {
+            return getCaptureIntentImageContents(resolver, intent);
+        }
+        
 		String subject = intent
 				.getStringExtra("android.intent.extra.SUBJECT");
 		String text = intent.getStringExtra("android.intent.extra.TEXT");

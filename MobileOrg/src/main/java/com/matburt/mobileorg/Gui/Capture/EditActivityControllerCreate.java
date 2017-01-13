@@ -2,22 +2,22 @@ package com.matburt.mobileorg.Gui.Capture;
 
 import android.content.Intent;
 
+import android.content.ContentResolver;
 import com.matburt.mobileorg.OrgData.OrgNode;
 import com.matburt.mobileorg.util.OrgUtils;
 
 
 public class EditActivityControllerCreate extends EditActivityController {
-	
 	public EditActivityControllerCreate(String defaultTodo) {
 		this.node = new OrgNode();
 		this.node.todo = defaultTodo;
 		this.node.addAutomaticTimestamp();
 	}
-	
-	public EditActivityControllerCreate(Intent intent, String defaultTodo) {
-		this.node = OrgUtils.getCaptureIntentContents(intent);
-		this.node.todo = defaultTodo;
-		this.node.addAutomaticTimestamp();
+    public EditActivityControllerCreate(ContentResolver resolver, Intent intent, String defaultTodo) {
+        this.resolver = resolver;
+        this.node = OrgUtils.getCaptureIntentContents(resolver, intent);
+        this.node.todo = defaultTodo;
+        this.node.addAutomaticTimestamp();
 	}
 	
 	@Override

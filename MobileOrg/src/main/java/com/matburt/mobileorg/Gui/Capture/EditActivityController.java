@@ -48,7 +48,7 @@ public abstract class EditActivityController {
 			long node_id, String olpLocation, Intent intent,
 			ContentResolver resolver, String defaultTodo) {
 		if (editMode == null) {
-			return new EditActivityControllerCreate(intent, defaultTodo);
+			return new EditActivityControllerCreate(resolver, intent, defaultTodo);
 		} else if (editMode.equals(ACTIONMODE_CREATE)) {
 			return new EditActivityControllerCreate(defaultTodo);
 		} else if (editMode.equals(ACTIONMODE_EDIT)) {
