@@ -70,8 +70,11 @@ while true; do
     esac
 done
 
-
 ## end generated code
+
+if test -e ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks; then
+    . ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks
+fi
 
 export GERRIT_HOST
 

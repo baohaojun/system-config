@@ -257,6 +257,6 @@ echo push ok.
 
 mv ~/.cache/system-config/logs/gerrit-review.log.$$ ~/.cache/system-config/logs/gerrit-review.log
 
-if yes-or-no-p $do_commit "Do review now?"; then
-    gerrit-do-review
+if test -e ~/src/github/private-config/etc/after-gerrit-push-review; then
+    . ~/src/github/private-config/etc/after-gerrit-push-review
 fi
