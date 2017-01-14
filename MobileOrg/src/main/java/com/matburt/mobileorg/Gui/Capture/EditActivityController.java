@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import android.util.Log;
 import com.matburt.mobileorg.OrgData.OrgFile;
 import com.matburt.mobileorg.OrgData.OrgNode;
 import com.matburt.mobileorg.OrgData.OrgNodePayload;
@@ -48,13 +49,13 @@ public abstract class EditActivityController {
 			long node_id, String olpLocation, Intent intent,
 			ContentResolver resolver, String defaultTodo) {
 		if (editMode == null) {
-			return new EditActivityControllerCreate(resolver, intent, defaultTodo);
+                return new EditActivityControllerAddChild(-1, resolver, intent, defaultTodo);
 		} else if (editMode.equals(ACTIONMODE_CREATE)) {
 			return new EditActivityControllerCreate(defaultTodo);
 		} else if (editMode.equals(ACTIONMODE_EDIT)) {
 			return new EditActivityControllerEdit(node_id, resolver);
 		} else if (editMode.equals(ACTIONMODE_ADDCHILD)) {
-			return new EditActivityControllerAddChild(node_id, resolver, defaultTodo);
+                return new EditActivityControllerAddChild(node_id, resolver, null, defaultTodo);
 		} else {
 			throw new IllegalArgumentException("unknown editMode : " + editMode);
 		}

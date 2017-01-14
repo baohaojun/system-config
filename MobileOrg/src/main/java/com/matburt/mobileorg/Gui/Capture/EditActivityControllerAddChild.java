@@ -5,18 +5,27 @@ import java.util.ArrayList;
 import android.content.ContentResolver;
 import android.util.Log;
 
+import android.content.Intent;
 import com.matburt.mobileorg.OrgData.OrgEdit;
 import com.matburt.mobileorg.OrgData.OrgNode;
 import com.matburt.mobileorg.OrgData.OrgProviderUtils;
 import com.matburt.mobileorg.util.OrgNodeNotFoundException;
+import com.matburt.mobileorg.util.OrgUtils;
 
 public class EditActivityControllerAddChild extends EditActivityController {
 	
 	private String nodeOlpPath;
 
-	public EditActivityControllerAddChild(long node_id, ContentResolver resolver, String defaultTodo) {
-		this.node = new OrgNode();			
+        public EditActivityControllerAddChild(long node_id, ContentResolver resolver, Intent intent, String defaultTodo) {
+
 		this.resolver = resolver;
+
+        if (intent != null) {
+                this.node = OrgUtils.getCaptureIntentContents(resolver, intent);
+                this.node.todo = defaultTodo;
+        } else {
+                this.node = new OrgNode();
+        }
 		
 		this.node.todo = null;
 		setupTodoAndParentId(node_id);

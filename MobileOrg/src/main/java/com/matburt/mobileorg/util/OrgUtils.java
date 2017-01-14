@@ -84,24 +84,30 @@ public class OrgUtils {
         String[] projection = {MediaStore.MediaColumns.DATA};
         String sourceFilename = null;
 
-        Cursor metaCursor = resolver.query(imageUri, projection, null, null, null);
-        if (metaCursor != null) {
-            try {
-                if (metaCursor.moveToFirst()) {
-                    sourceFilename = metaCursor.getString(0);
+        Log.e("bhj", String.format("%s:%d: imageUri is %s", "OrgUtils.java", 88, imageUri.toString()));
+
+        if ("file".equals(imageUri.getScheme())) {
+            sourceFilename = imageUri.getPath();
+        } else {
+            Cursor metaCursor = resolver.query(imageUri, projection, null, null, null);
+            if (metaCursor != null) {
+                try {
+                    if (metaCursor.moveToFirst()) {
+                        sourceFilename = metaCursor.getString(0);
+                    }
+                } catch (Exception e) {
+                    Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 94), e);
+                } finally {
+                    metaCursor.close();
                 }
-            } catch (Exception e) {
-                Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 94), e);
-            } finally {
-                metaCursor.close();
             }
         }
 
         if (sourceFilename == null) {
             node.setPayload("[[invalid image file]]");
-            return node;
+              return node;
         }
-        
+
         File sdcard = Environment.getExternalStorageDirectory();
         File MobileOrgDir = new File(sdcard, "MobileOrg");
         File MobileOrgImgDir = new File(MobileOrgDir, "images");

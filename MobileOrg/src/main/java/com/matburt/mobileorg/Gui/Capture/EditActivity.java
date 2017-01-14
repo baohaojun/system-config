@@ -8,15 +8,18 @@ import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.OrgData.OrgNode;
+import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.Services.SyncService;
 import com.matburt.mobileorg.util.OrgUtils;
 import com.matburt.mobileorg.util.PreferenceUtils;
 
-public class EditActivity extends SherlockFragmentActivity implements EditHost,
-		PayloadFragment.OnPayloadModifiedListener,
-		DatesFragment.OnDatesModifiedListener {
+public class EditActivity
+extends SherlockFragmentActivity
+implements EditHost,
+           PayloadFragment.OnPayloadModifiedListener,
+           ImagesFragment.OnImagesModifiedListener,
+           DatesFragment.OnDatesModifiedListener {
 
 	private EditActivityController controller;
 	
@@ -157,7 +160,12 @@ public class EditActivity extends SherlockFragmentActivity implements EditHost,
 				.findFragmentByTag("datesFragment");
 		datesFragment.setupDates();
 	}
-
+    
+    @Override
+    public void onImagesModified() {
+        
+    }
+    
 	@Override
 	public void onPayloadStartedEdit() {
 		DatesFragment datesFragment = (DatesFragment) getSupportFragmentManager()
