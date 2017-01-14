@@ -90,7 +90,7 @@ while (<>) {
     }
     if (m/^package ($qualified_re);/) { #package
         $package = $1;
-    } elsif (m/^import (?:static )?($qualified_re);/) { #import
+    } elsif (m/^(?:\/\/ajoke-)import (?:static )?($qualified_re);/) { #import
         import_it($1);
     } elsif (m/^import (?:static )?($qualified_re)(?:\.\*);/) { #import
         $wild_import_qualifieds{$1} = 1;
