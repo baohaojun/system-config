@@ -351,8 +351,7 @@ fi
         echo try $try failed in $PWD
         sleep 10
     done
-    git push $origin HEAD:refs/heads/$branch ||
-        tsocks git push $origin HEAD:refs/heads/$branch;
+    tsocks1 git push $origin HEAD:refs/heads/$branch;
 ) || {
     bhj-notify git-push-rebase "you need to merge it in $PWD" >/dev/null 2>&1
     die "you need to merge it!"

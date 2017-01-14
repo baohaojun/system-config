@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+exec 9> ~/.cache/system-config/logs/tsocks1.lock
+flock 9
+tsocks "$@"

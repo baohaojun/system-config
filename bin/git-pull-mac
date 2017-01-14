@@ -89,8 +89,7 @@ if test "$do_fetch" = true; then
             echo failed $PWD at $x
             sleep 10
         done
-        git fetch $origin ||
-            tsocks git fetch $origin ||
+        tsocks1 git fetch $origin ||
             kill $$
     )&
     if test "$fetch_only" != true; then

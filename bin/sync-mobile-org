@@ -8,6 +8,7 @@ function sync-phone-files() {
         adb-sync --reverse /sdcard/MobileOrg ..
     elif test "$1" = "-r"; then
         touch mobileorg.org
+        adb push checksums.dat /sdcard/MobileOrg/ &
         adb-sync . /sdcard/MobileOrg/ --exclude .git --delete
     else
         die "can't do sync-phone-files $@"

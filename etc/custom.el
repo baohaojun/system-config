@@ -19,6 +19,7 @@
  '(before-save-hook
    (quote
     (ac-clang-reparse-buffer confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode sc--mark-need-merge)))
+ '(c-basic-offset (quote set-from-style))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(compilation-message-face (quote default))
@@ -161,7 +162,8 @@
  '(require-final-newline t)
  '(safe-local-variable-values
    (quote
-    ((org-html-table-default-attributes :border "2" :rules "all" :frame "border")
+    ((create-lockfiles)
+     (org-html-table-default-attributes :border "2" :rules "all" :frame "border")
      (org-html-table-default-attributes quote
                                         (:border "2" :rules "all" :frame "border"))
      (ac-clang-cflags "-DQT_BOOTSTRAPPED" "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent" "-I/home/bhj/src/github/Wrench/qt-solutions/qtsingleapplication/src/" "-I/usr/include/x86_64-linux-gnu/qt5/QtCore" "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus" "-I/usr/include/x86_64-linux-gnu/qt5/QtGui" "-I/usr/include/x86_64-linux-gnu/qt5/QtNetwork" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions" "-I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtSql" "-I/usr/include/x86_64-linux-gnu/qt5/QtTest" "-I/usr/include/x86_64-linux-gnu/qt5/QtWidgets" "-I/usr/include/x86_64-linux-gnu/qt5/QtXml" "-I/usr/include/x86_64-linux-gnu/qt5" "-I/usr/include/c++/4.9" "-I/usr/include/c++/5" "-I/usr/include/x86_64-linux-gnu/c++/5/x32" "-I/usr/include/x86_64-linux-gnu/c++/4.9" "-I/usr/include/c++/4.9/backward" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include" "-I/usr/local/include" "-I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include" "-I/usr/include/linux" "-I/usr/include/lua5.2" "-I/home/bhj/tmp/build-wrench" "-I/usr/include/c++/5/utility" "-I.")
