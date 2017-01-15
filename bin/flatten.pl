@@ -80,9 +80,16 @@ for my $arg (@ARGV) {
                 read $file, $unget, 1 or last;
                 if ($unget eq '/') {
                     undef $unget;
+                    my @maybe_ajoke_line;
+                    @maybe_ajoke_line = "/" if not @line;
                     do {
+                        push @maybe_ajoke_line, $c;
                         if ($c eq "\n") {
+                            # debug 'maybe_ajoke_line: ', @maybe_ajoke_line;
                             push @line, " " if @line;
+                            if (not @line and join("", @maybe_ajoke_line) =~ m,^//ajoke,) {
+                                print_line @maybe_ajoke_line;
+                            }
                             next read_loop;
                         }
                     } while (read $file, $c, 1);
