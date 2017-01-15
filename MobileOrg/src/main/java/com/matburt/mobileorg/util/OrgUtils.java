@@ -72,6 +72,7 @@ public class OrgUtils {
 		spinner.setSelection(pos, true);
 	}
 
+    private static File sdcard = Environment.getExternalStorageDirectory();
     private static OrgNode getCaptureIntentImageContents(ContentResolver resolver, Intent intent) {
         String action = intent.getAction();
         OrgNode node = new OrgNode();
@@ -94,6 +95,7 @@ public class OrgUtils {
                 try {
                     if (metaCursor.moveToFirst()) {
                         sourceFilename = metaCursor.getString(0);
+                        Log.e("bhj", String.format("%s:%d: shared image is %s", "OrgUtils.java", 97, sourceFilename));
                     }
                 } catch (Exception e) {
                     Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 94), e);
@@ -108,7 +110,7 @@ public class OrgUtils {
               return node;
         }
 
-        File sdcard = Environment.getExternalStorageDirectory();
+
         File MobileOrgDir = new File(sdcard, "MobileOrg");
         File MobileOrgImgDir = new File(MobileOrgDir, "images");
 
@@ -138,7 +140,6 @@ public class OrgUtils {
                 Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 109), e);
             }
         }
-
         node.setPayload("[[./images/" + sourceFile.getName() + "]]");
         return node;
     }

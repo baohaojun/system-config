@@ -4,5 +4,5 @@
     <item
         android:id="@+id/menu_nodeedit_addimage"
         android:icon="@drawable/ic_menu_image"
-        android:title="@string/menu_addscheduled"/>
+        android:title="@string/menu_addimage"/>
 </menu>

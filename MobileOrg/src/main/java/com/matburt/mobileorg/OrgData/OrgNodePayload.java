@@ -112,6 +112,19 @@ public class OrgNodePayload {
 		stripProperties();
 		stripFileProperties();
 	}
+
+    public ArrayList<String> getImages() {
+        ArrayList<String> res = new ArrayList<String>();
+        String payload = getCleanedPayload();
+
+        Pattern imagePat = Pattern.compile("\\[\\[(\\./images/.*?)\\]\\]");
+        Matcher imageMatch = imagePat.matcher(payload);
+        while (imageMatch.find()) {
+            String img = imageMatch.group(1);
+            res.add(img);
+        }
+        return res;
+    }
 	
 	public String getScheduled() {
 		if(this.scheduled == null)
