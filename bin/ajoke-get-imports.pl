@@ -47,7 +47,7 @@ sub is_keyword_or_defined($)
 sub type_it($$)
 {
     debug "type it: $_[0] $_[1]";
-    if ($_[1] eq "instanceof") {
+    if ($_[1] eq "instanceof" or $_[1] eq "return") {
         return;
     }
     $defs{$_[0]} = 1;
