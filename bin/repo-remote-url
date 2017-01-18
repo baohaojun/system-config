@@ -5,10 +5,10 @@ if test $(basename $0) = repo-remote-path; then
     exit
 fi
 
-if test "$GERRIT_HOST"; then
-    git remote -v |pn 2 | grep -e "$GERRIT_HOST" |uniq-even-non-ajacent | head -n 1
-elif test $# = 1; then
+if test $# = 1; then
     git-remote-url "$@"
+elif test "$GERRIT_HOST"; then
+    git remote -v |pn 2 | grep -e "$GERRIT_HOST" |uniq-even-non-ajacent | head -n 1
 else
     git-remote-url $(repo-remote 2>/dev/null)
 fi

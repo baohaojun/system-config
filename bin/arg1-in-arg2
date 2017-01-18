@@ -1,0 +1,4 @@
+#!/bin/bash
+arg1=$1
+shift
+test -z "$(arg1-arg2 "$arg1" "$@")"

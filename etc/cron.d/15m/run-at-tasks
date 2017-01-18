@@ -22,9 +22,9 @@ for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
             echo
             echo '****************************************************************'
             echo "running $x at $(date)"
-            bash $x ||
+            bash -x $x ||
                 mail-bhj "run-at-tasks $(basename $x) failed"
-        )>> $logdir/$(basename $x) 2>&1
+        )> $logdir/$(basename $x).$(today) 2>&1
     fi
 done
 exit 0

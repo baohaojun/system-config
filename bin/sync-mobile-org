@@ -144,7 +144,7 @@ emacsclient -e '(progn (find-file "~/src/github/projects/Captures.org") (org-mob
 (
     cd ~/today/MobileOrg
     for x in *.org; do
-        if test "$x" = index.org -o "$x" = mobile.org; then
+        if test "$x" = index.org -o "$x" = mobileorg.org; then
             continue
         fi
         if ! grep -q -P -e '\[\[file:\Q'"$x"'\E\]' index.org; then

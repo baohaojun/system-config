@@ -107,8 +107,8 @@ if test -n "$git_dir"; then
     cd $git_dir || die "$git_dir: cd failed"
 fi
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
-git fetch $(repo-remote-url $remote) $ref
-if test "$checkout" = true; then
+git fetch $(repo-remote-url $(repo-remote)) $ref
+if test "$checkout" = true || is-jenkins; then
     git checkout FETCH_HEAD
 fi
 

@@ -71,6 +71,8 @@ else
         cd $dir
         git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
         git fetch -v origin
+        git reset --hard || true
+        git clean -xfd || true
         git checkout -B $branch origin/$branch
     )
 fi
