@@ -180,6 +180,23 @@ public class OrgNodePayload {
 		
 		return result;
 	}
+
+    public void insertImage(String imageFileName) {
+        String toInsert = "\n[[./images/" + imageFileName + "]]\n";
+        int lastOpenSquare = payload.lastIndexOf("[");
+        int lastDoubleOpenSquare = payload.lastIndexOf("[[");
+        
+        if (lastOpenSquare < 0) {
+            payload.append(toInsert);
+        } else {
+            int insertAt = lastOpenSquare;
+            if (lastDoubleOpenSquare >= 0 && lastDoubleOpenSquare + 1 == lastOpenSquare) {
+                insertAt = lastDoubleOpenSquare;
+            }
+
+            payload.insert(insertAt, toInsert);
+        }
+    }
 	
 	public void insertOrReplaceDate(OrgNodeTimeDate.TYPE type, String date) {
 		Matcher matcher = getTimestampMatcher(type).matcher(payload);

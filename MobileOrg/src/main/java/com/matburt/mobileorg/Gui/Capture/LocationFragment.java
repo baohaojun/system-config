@@ -12,12 +12,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import android.os.Environment;
+import android.util.Log;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.OrgData.OrgFile;
 import com.matburt.mobileorg.OrgData.OrgNode;
 import com.matburt.mobileorg.OrgData.OrgProviderUtils;
+import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.util.OrgNodeNotFoundException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class LocationFragment extends SherlockFragment {
 	private final String NODE_ID = "nodeId";
@@ -53,11 +59,30 @@ public class LocationFragment extends SherlockFragment {
 
 		setModifiable(host.getController().isNodeRefilable());
 	}
-	
+
+        private static File sdcard = Environment.getExternalStorageDirectory();
+
+    @Override
+    public void onStop () {
+        super.onStop();
+        onSaveInstanceState(null);
+    }
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putLong(NODE_ID, getLocationSelection().id);
+        OrgNode locationNode = getLocationSelection();
+        if (outState != null) {
+            super.onSaveInstanceState(outState);
+            outState.putLong(NODE_ID, locationNode.id);
+        }
+
+        File saveIdFile = new File(sdcard, "/MobileOrg/.saved.id");
+        try {
+                FileWriter fo = new FileWriter(saveIdFile);
+                fo.write(String.format("%d", locationNode.id));
+                fo.close();
+        } catch (IOException e) {
+                Log.e("bhj", String.format("%s:%d: ", "LocationFragment.java", 76), e);
+        }
 	}
 
 	public void restoreFromBundle(Bundle savedInstanceState) {
@@ -96,7 +121,9 @@ public class LocationFragment extends SherlockFragment {
 			OrgNode spinnerNode = null;
 			try {
 				spinnerNode = currentNode.getParent(resolver);
-			} catch (OrgNodeNotFoundException e) {}
+			} catch (OrgNodeNotFoundException e) {
+                //Log.e("bhj", String.format("%s:%d: ", "LocationFragment.java", 125), e);
+            }
 			String selection = currentNode.name;
 			
 			if (spinnerNode != null) {

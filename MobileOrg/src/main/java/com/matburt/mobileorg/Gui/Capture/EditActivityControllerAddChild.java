@@ -6,28 +6,57 @@ import android.content.ContentResolver;
 import android.util.Log;
 
 import android.content.Intent;
+import android.os.Environment;
 import com.matburt.mobileorg.OrgData.OrgEdit;
 import com.matburt.mobileorg.OrgData.OrgNode;
 import com.matburt.mobileorg.OrgData.OrgProviderUtils;
 import com.matburt.mobileorg.util.OrgNodeNotFoundException;
 import com.matburt.mobileorg.util.OrgUtils;
+import java.io.File;
+import java.io.FileReader;
 
 public class EditActivityControllerAddChild extends EditActivityController {
-	
+
 	private String nodeOlpPath;
 
-        public EditActivityControllerAddChild(long node_id, ContentResolver resolver, Intent intent, String defaultTodo) {
+    private static File sdcard = Environment.getExternalStorageDirectory();
+
+    public EditActivityControllerAddChild(long node_id, ContentResolver resolver, Intent intent, String defaultTodo) {
 
 		this.resolver = resolver;
 
         if (intent != null) {
-                this.node = OrgUtils.getCaptureIntentContents(resolver, intent);
-                this.node.todo = defaultTodo;
+            this.node = OrgUtils.getCaptureIntentContents(resolver, intent);
+            this.node.todo = defaultTodo;
         } else {
-                this.node = new OrgNode();
+            this.node = new OrgNode();
         }
 		
 		this.node.todo = null;
+        if (node_id < 0) {
+            File saveIdFile = new File(sdcard, "/MobileOrg/.saved.id");
+            FileReader fr = null;
+            try {
+                fr = new FileReader(saveIdFile);
+                char[] buf = new char[20];
+                int n = fr.read(buf);
+                String s = new String(buf, 0, n);
+                Log.e("bhj", String.format("%s:%d: s is %s", "EditActivityControllerAddChild.java", 44, s));
+                node_id = Integer.valueOf(s);
+                Log.e("bhj", String.format("%s:%d: new node_id is %d", "EditActivityControllerAddChild.java", 45, node_id));
+            } catch (Exception e) {
+                Log.e("bhj", String.format("%s:%d: ", "EditActivityControllerAddChild.java", 45), e);
+            } finally {
+                if (fr != null) {
+                    try {
+                        fr.close();
+                    } catch (Exception e) {
+                        Log.e("bhj", String.format("%s:%d: ", "EditActivityControllerAddChild.java", 52), e);
+                    }
+
+                }
+            }
+        }
 		setupTodoAndParentId(node_id);
 		
 		if (this.node.todo == null)
@@ -54,7 +83,7 @@ public class EditActivityControllerAddChild extends EditActivityController {
 		}
 		else
 			this.node.parentId = OrgProviderUtils
-					.getOrCreateCaptureFile(resolver).nodeId;
+                .getOrCreateCaptureFile(resolver).nodeId;
 	}
 	
 	private String getTodo(OrgNode parent) {

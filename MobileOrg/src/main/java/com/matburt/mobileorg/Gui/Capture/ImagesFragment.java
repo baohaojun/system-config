@@ -10,9 +10,11 @@ import android.widget.TableLayout;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -32,6 +34,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.matburt.mobileorg.Gui.Capture.DateTableRow.DateTableRowListener;
 import com.matburt.mobileorg.OrgData.OrgNodePayload;
 import com.matburt.mobileorg.R;
+import com.matburt.mobileorg.util.OrgUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,13 +63,12 @@ public class ImagesFragment extends SherlockFragment {
         }
 	}
 
-    private final static int imageGridCols = 2;
+    private final static int imageGridCols = 4;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-        Log.e("bhj", String.format("%s:%d: ", "ImagesFragment.java", 55));
 		setHasOptionsMenu(true);
 		this.imagesView = new MyGridView(getActivity());
         mPhotoAdapter = new PhotoAdapter(mContext);
@@ -126,13 +128,33 @@ public class ImagesFragment extends SherlockFragment {
 		super.onPrepareOptionsMenu(menu);
 	}
 
+    private static final int PICK_IMAGE = 1;
+    
+    @Override
+    public void onActivityResult(int reqCode, int resCode, Intent intent) {
+        if (reqCode == PICK_IMAGE) {
+            String fileName = OrgUtils.copyImageToMobileOrg(mContext.getContentResolver(), intent);
+            if (fileName == null) {
+                return;
+            }
+
+            payload.insertImage(fileName);
+            mPhotoAdapter.addPhotos("./images/" + fileName);
+        }
+    }
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_nodeedit_addimage:
-            Log.e("bhj", String.format("%s:%d: ", "ImagesFragment.java", 200));
-			return true;
+
+            {    
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+            }
+            return true;
 
 		default:
 			return super.onOptionsItemSelected(item);
@@ -148,7 +170,6 @@ public class ImagesFragment extends SherlockFragment {
             null);
         if (ca != null && ca.moveToFirst()) {
             int id = ca.getInt(ca.getColumnIndex(MediaStore.MediaColumns._ID));
-            Log.e("bhj", String.format("%s:%d: id is %d for %s", "ImagesFragment.java", 147, id, path));
             ca.close();
             return MediaStore.Images.Thumbnails.getThumbnail(cr, id, MediaStore.Images.Thumbnails.MINI_KIND, null );
         }
@@ -164,14 +185,9 @@ public class ImagesFragment extends SherlockFragment {
         
         public PhotoAdapter(Context c) {
             mContext = c;
-            addPhotos("images/Screenshot_2017-01-14-19-28-35-102.png");
-            addPhotos("images/Screenshot_2017-01-14-19-28-35-102.png");
-            addPhotos("images/Screenshot_2017-01-14-19-28-35-102.png");
-            addPhotos("images/Screenshot_2017-01-14-19-28-35-102.png");
         }
 
         public int getCount() {
-            Log.e("bhj", String.format("%s:%d: count is %d", "ImagesFragment.java", 143, mPhotos.size()));
             return mPhotos.size();
         }
 
@@ -187,7 +203,6 @@ public class ImagesFragment extends SherlockFragment {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             // Make an ImageView to show a photo
-            Log.e("bhj", String.format("%s:%d: ", "ImagesFragment.java", 142));
 
             ImageView i;
             if (convertView == null) {
@@ -205,12 +220,10 @@ public class ImagesFragment extends SherlockFragment {
             }
 
             File imgFile = new File(sdcard.getAbsolutePath() + "/MobileOrg/" + mPhotos.get(position));
-            Log.e("bhj", String.format("%s:%d: imgFile: %s", "ImagesFragment.java", 205, imgFile.getAbsolutePath()));
 
-            
             Bitmap bitmap = null;
             try {
-                bitmap = getThumbnail(mContext.getContentResolver(), imgFile.getAbsolutePath());
+                bitmap = getThumbnail(mContext.getContentResolver(), imgFile.getCanonicalPath());
             } catch (Exception e) {
                 Log.e("bhj", String.format("%s:%d: ", "ImagesFragment.java", 209), e);
             }
@@ -219,16 +232,22 @@ public class ImagesFragment extends SherlockFragment {
             }
 
             if (bitmap == null) {
-                Log.e("bhj", String.format("%s:%d: ", "ImagesFragment.java", 195));
+                try {
+                    mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(imgFile.getCanonicalPath()))));
+                } catch (Exception e) {
+                    Log.e("bhj", String.format("%s:%d: ", "ImagesFragment.java", 239), e);
+                }
+
                 bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                if (bitmap != null)
+                    bitmap = ThumbnailUtils.extractThumbnail(bitmap, 512, 384);
             }
-            
 
             if (bitmap != null) {
                 i.setImageBitmap(bitmap);
                 imageBitmapsMap.put(mPhotos.get(position), bitmap);
             }
-            
+
             // Give it a nice background
             return i;
         }

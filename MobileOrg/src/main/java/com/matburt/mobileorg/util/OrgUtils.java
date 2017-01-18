@@ -72,15 +72,19 @@ public class OrgUtils {
 		spinner.setSelection(pos, true);
 	}
 
-    private static File sdcard = Environment.getExternalStorageDirectory();
-    private static OrgNode getCaptureIntentImageContents(ContentResolver resolver, Intent intent) {
-        String action = intent.getAction();
-        OrgNode node = new OrgNode();
-        if (! Intent.ACTION_SEND.equals(action)) {
-            return node;
-        }
+    private static ArrayList<File> copiedImages = new ArrayList<File>();
 
+    private static File sdcard = Environment.getExternalStorageDirectory();
+
+    public static String copyImageToMobileOrg(ContentResolver resolver, Intent intent) {
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (imageUri == null) {
+            imageUri = intent.getData();
+            if (imageUri == null) {
+                Log.e("bhj", String.format("%s:%d: got null intent for image", "OrgUtils.java", 84));
+                return null;
+            }
+        }
 
         String[] projection = {MediaStore.MediaColumns.DATA};
         String sourceFilename = null;
@@ -106,8 +110,7 @@ public class OrgUtils {
         }
 
         if (sourceFilename == null) {
-            node.setPayload("[[invalid image file]]");
-              return node;
+            return null;
         }
 
 
@@ -115,32 +118,56 @@ public class OrgUtils {
         File MobileOrgImgDir = new File(MobileOrgDir, "images");
 
         File sourceFile = new File(sourceFilename);
-        File imgFile = new File(MobileOrgImgDir, sourceFile.getName());
 
-        MobileOrgImgDir.mkdirs();
+        if (sourceFilename.startsWith(sdcard.getAbsolutePath() + "/MobileOrg/images/")) {
+            Log.e("bhj", String.format("%s:%d: got a file that is already in MobileOrg", "OrgUtils.java", 122));
+        } else {
+            File copiedImageFile = new File(MobileOrgImgDir, sourceFile.getName());
 
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
+            MobileOrgImgDir.mkdirs();
 
-        try {
-            bis = new BufferedInputStream(resolver.openInputStream(imageUri));
-            bos = new BufferedOutputStream(new FileOutputStream(imgFile, false));
-            byte[] buf = new byte[1024];
-            bis.read(buf);
-            do {
-                bos.write(buf);
-            } while(bis.read(buf) != -1);
-        } catch (IOException e) {
-            Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 103), e);
-        } finally {
+            BufferedInputStream bis = null;
+            BufferedOutputStream bos = null;
+
             try {
-                if (bis != null) bis.close();
-                if (bos != null) bos.close();
+                bis = new BufferedInputStream(resolver.openInputStream(imageUri));
+                bos = new BufferedOutputStream(new FileOutputStream(copiedImageFile, false));
+                byte[] buf = new byte[1024];
+                bis.read(buf);
+                do {
+                    bos.write(buf);
+                } while(bis.read(buf) != -1);
             } catch (IOException e) {
-                Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 109), e);
+                Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 103), e);
+            } finally {
+                try {
+                    if (bis != null) bis.close();
+                    if (bos != null) bos.close();
+                } catch (IOException e) {
+                    Log.e("bhj", String.format("%s:%d: ", "OrgUtils.java", 109), e);
+                }
+            }
+            synchronized(OrgUtils.class) {
+                copiedImages.add(copiedImageFile);
             }
         }
-        node.setPayload("[[./images/" + sourceFile.getName() + "]]");
+        return sourceFile.getName();
+    }
+    
+    private static OrgNode getCaptureIntentImageContents(ContentResolver resolver, Intent intent) {
+        String action = intent.getAction();
+        OrgNode node = new OrgNode();
+        if (! Intent.ACTION_SEND.equals(action)) {
+            return node;
+        }
+
+        String fileName = copyImageToMobileOrg(resolver, intent);
+        if (fileName == null) {
+            node.setPayload("[[invalid image file]]");
+        } else {
+            node.setPayload("[[./images/" + fileName + "]]");
+        }
+
         return node;
     }
 
@@ -186,6 +213,14 @@ public class OrgUtils {
 		Intent intent = new Intent(Synchronizer.SYNC_UPDATE);
 		intent.putExtra(Synchronizer.SYNC_DONE, true);
 		context.sendBroadcast(intent);
+        ArrayList<File> copiedImages2 = new ArrayList<File>();
+        synchronized (OrgUtils.class) {
+            copiedImages2.addAll(copiedImages);
+            copiedImages.clear();
+        }
+        for (File img : copiedImages2) {
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(img)));
+        }
 	}
 	
 	public static void announceSyncStart(Context context) {
@@ -320,7 +355,6 @@ public class OrgUtils {
 		else
 			return false;
 	}
-	
 	
 	public static boolean isNetworkOnline(Context context) {
 		SharedPreferences prefs = PreferenceManager
