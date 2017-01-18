@@ -45,6 +45,7 @@ map['com.eg.android.AlipayGphone/com.alipay.mobile.security.login.ui.AlipayUserL
 map['com.eg.android.AlipayGphone/com.alipay.mobile.transferapp.ui.TFToAccountConfirmActivity_'] = 'manual-post'
 map['com.eg.android.AlipayGphone/com.alipay.mobile.transferapp.ui.TFToAccountInputActivity_'] = 'manual-post'
 map['com.eico.weico/com.eico.weico.activity.compose.CommentComposeActivity'] = 'weibo-share'
+map['com.eico.weico/com.eico.weico.activity.compose.MsgComposeActivity'] = 'weixin-chat'
 map['com.eico.weico/com.eico.weico.activity.detail.StatusDetailForFourActivity'] = 'weixin-confirm'
 map['com.facebook.katana/com.facebook.katana.dbl.activity.FacebookLoginActivity'] = 'manual-post'
 map['com.github.mobile/com.github.mobile.accounts.LoginActivity'] = 'manual-post'
