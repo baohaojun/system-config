@@ -2,20 +2,28 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:remote h:GERRIT-HOST aauto ccheckout
+# generate-getopt r:remote h:GERRIT-HOST aauto ccherry-pick
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o ah:r:ch \
-              --long auto,GERRIT-HOST:,remote:,checkout,help,no-auto,no-checkout \
+TEMP=$(getopt -o cah:r:h \
+              --long cherry-pick,auto,GERRIT-HOST:,remote:,help,no-cherry-pick,no-auto \
               -n $(basename -- $0) -- "$@")
+cherry_pick=false
 auto=false
 GERRIT_HOST=
 remote=
-checkout=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -c|--cherry-pick|--no-cherry-pick)
+            if test "$1" = --no-cherry-pick; then
+                cherry_pick=false
+            else
+                cherry_pick=true
+            fi
+            shift
+            ;;
         -a|--auto|--no-auto)
             if test "$1" = --no-auto; then
                 auto=false
@@ -32,14 +40,6 @@ while true; do
             remote=$2
             shift 2
             ;;
-        -c|--checkout|--no-checkout)
-            if test "$1" = --no-checkout; then
-                checkout=false
-            else
-                checkout=true
-            fi
-            shift
-            ;;
         -h|--help)
             set +x
             echo
@@ -49,7 +49,7 @@ while true; do
             printf %-24s '--[no-]auto'
             echo
             printf %06s '-c, '
-            printf %-24s '--[no-]checkout'
+            printf %-24s '--[no-]cherry-pick'
             echo
             printf %06s '-h, '
             printf %-24s '--GERRIT-HOST=GERRIT_HOST'
@@ -69,6 +69,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -108,8 +109,8 @@ if test -n "$git_dir"; then
 fi
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
 git fetch $(repo-remote-url $(repo-remote)) $ref
-if test "$checkout" = true || is-jenkins; then
-    git checkout FETCH_HEAD
+if test "$cherry_pick" = true || is-jenkins; then
+    git cherry-pick FETCH_HEAD
 fi
 
 if test "$auto" = true; then

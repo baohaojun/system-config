@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cat <<EOF
+system-config 里的 yes-or-no-p 是灵感来自于 emacs 的一个同名命令。
+
+你可以认为它其实就是一个确认对话框。通过输入 yes 或 no 来选择你的回答。输入不匹分大小写。
+
+有点不一样的是，system-config 里的 yes-or-no-p 有默认答案，通过不一样的大小写提示来区分。
+
+比如提示 Yes/no 的时候，直接回车效果跟输入 yes 再回车是一样的。
+
+提示 yes/No 的时候，则默认的回答是 no。
+
+EOF
+
+hint
+
+if yes-or-no-p -y 请直接回车选择Yes; then
+    hint "你选对了！你刚才有输入 Yes 吗？有输入的话就说明你还没有掌握上面说的捷径哦"
+fi
