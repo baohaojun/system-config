@@ -18,6 +18,7 @@ command-not-found
 curl
 daemon
 expect
+file
 flex
 genisoimage
 gitk
