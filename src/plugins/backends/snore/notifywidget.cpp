@@ -35,18 +35,18 @@ NotifyWidget::NotifyWidget(int id, const ::SnorePlugin::Snore *parent) :
 {
 
 #ifdef Q_OS_WIN
-#if QT_VERSION < QT_VERSION_CHECK(5,7,0)// Qt 5.7+ is broken and can only display it in black and white.
+//#if QT_VERSION < QT_VERSION_CHECK(5,7,0)// Qt 5.7+ is broken and can only display it in black and white.
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {
         m_fontFamily = QStringLiteral("Segoe UI Symbol");
         emit fontFamilyChanged();
     }
-#if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
-    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS10) {
-        m_fontFamily = QStringLiteral("Segoe UI Emoji");
-        emit fontFamilyChanged();
-    }
-#endif
-#endif
+//#if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
+//    if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS10) {
+//        m_fontFamily = QStringLiteral("Segoe UI Emoji");
+//        emit fontFamilyChanged();
+//    }
+//#endif
+//#endif
 #endif
     QQmlApplicationEngine *engine = new QQmlApplicationEngine(this);
     engine->rootContext()->setContextProperty(QStringLiteral("notifyWidget"), this);
