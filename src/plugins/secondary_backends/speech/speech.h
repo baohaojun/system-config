@@ -1,17 +1,23 @@
 #ifndef SPEECH_H
 #define SPEECH_H
 
-#include <QObject>
+#include <plugins/snoresecondarybackend.h>
 
-class Speech : public QObject
+class QTextToSpeech;
+
+class Speech : public Snore::SnoreSecondaryBackend
 {
     Q_OBJECT
+    Q_INTERFACES(Snore::SnoreSecondaryBackend)
+    Q_PLUGIN_METADATA(IID "org.Snore.SecondaryNotificationBackend/1.0" FILE "snore_plugin.json")
 public:
-    explicit Speech(QObject *parent = 0);
+    explicit Speech();
+    ~Speech() = default;
 
-signals:
-
-public slots:
+public Q_SLOTS:
+    void slotNotificationDisplayed(Snore::Notification notification) override;
+private:
+    QTextToSpeech *m_speech;
 };
 
 #endif // SPEECH_H

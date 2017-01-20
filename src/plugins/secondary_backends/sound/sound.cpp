@@ -28,7 +28,7 @@ Sound::Sound():
 //    connect(m_player,QMediaPlayer::positionChanged,[](qint64 pos){
 //        qCDebug(SNORE) << "Player: " << pos;
 //    });
-    connect(m_player, &QMediaPlayer::stateChanged, [](QMediaPlayer::State state) {
+    connect(m_player, &QMediaPlayer::stateChanged, this, [](QMediaPlayer::State state) {
         qCDebug(SNORE) << "Player: " << state;
     });
 }
