@@ -40,7 +40,14 @@ public:
     }
 
 public Q_SLOTS:
+    /**
+     * Invoked when a notification is created
+     */
     virtual void slotNotify(Snore::Notification notification);
+
+    /**
+     * Invoked when a notification is displayed by the main backend
+     */
     virtual void slotNotificationDisplayed(Snore::Notification notification);
 
 };
