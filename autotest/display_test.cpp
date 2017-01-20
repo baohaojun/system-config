@@ -17,7 +17,7 @@ public:
     {
         SnoreCore &instance = SnoreCore::instance();
         instance.loadPlugins(SnorePlugin::Backend);
-        instance.setSettingsValue(QStringLiteral("Timeout"), 5, LocalSetting);
+        instance.setSettingsValue(QStringLiteral("Timeout"), 10, LocalSetting);
         SnoreCore::instance().registerApplication(app);
     }
 
@@ -28,25 +28,30 @@ private Q_SLOTS:
     void displayTestPlain();
 
 private:
-    void testString(const QString &message)
+    void testString(const QStringList &messages)
     {
-        qDebug() << Utils::normalizeMarkup(message, Utils::NoMarkup);
         SnoreCore &snore = SnoreCore::instance();
+#if 0
+        qDebug() << snore.pluginNames(SnorePlugin::Backend);
+        QStringList backends({QStringLiteral("Snore")});
+#else
         QStringList backends = snore.pluginNames(SnorePlugin::Backend);
-        auto notify = [&backends, &snore, &message, this](Notification n) {
+#endif
+        auto notify = [&backends, &snore, &messages, this](Notification n) {
             qDebug() << n << "closed";
             qDebug() << backends.size();
             if (backends.empty()) {
                 return;
             }
             QString old = snore.primaryNotificationBackend();
-            while (snore.primaryNotificationBackend() == old) {
+            while (!backends.empty() && snore.primaryNotificationBackend() == old) {
                 QString p = backends.takeLast();
                 snore.setSettingsValue(QStringLiteral("PrimaryBackend"), p, LocalSetting);
                 SnoreCorePrivate::instance()->syncSettings();
                 if (snore.primaryNotificationBackend() == p) {
-                    qDebug() << p;
-                    snore.broadcastNotification(Notification(app, app.defaultAlert(), QStringLiteral("Title"), message, app.icon()));
+                    for (const auto &message : messages) {
+                        snore.broadcastNotification(Notification(app, app.defaultAlert(), QStringLiteral("Title"), message, app.icon()));
+                    }
                 }
             }
         };
@@ -55,7 +60,7 @@ private:
         while (!backends.empty()) {
             QTest::qWait(100);
         }
-        QTest::qWait(100);
+        QTest::qWait(10000);
         disconnect(con);
     }
 };
@@ -63,13 +68,15 @@ private:
 void DisplayTest::displayTest()
 {
     app.hints().setValue("use-markup", true);
-    testString(QStringLiteral("<b>Test&#937;</b>&#x1f4a9;&#x1f600;"));
-}
+    testString({QStringLiteral("<b>Test&#937;</b>&#x1f4a9;&#x1f600;"),
+                QString::fromUtf8("😀<b>💩Test&#937;</b>&#x1f4a9;&#x1f600;")});
+ }
 
 void DisplayTest::displayTestPlain()
 {
     app.hints().setValue("use-markup", false);
-    testString(QString::fromWCharArray(L"Test\u03A9\U0001F4A9\U0001F600"));
+    testString({QString::fromWCharArray(L"Test\u03A9\U0001F4A9\U0001F600"),
+               QString::fromUtf8("TestΩ💩😀")});
 }
 
 QTEST_MAIN(DisplayTest)
