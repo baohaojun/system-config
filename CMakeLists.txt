@@ -27,6 +27,8 @@ include(ECMPackageConfigHelpers)
 include(ECMPoQmTools)
 include(ECMSetupVersion)
 
+include(QtStatic)
+
 
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 7)
@@ -61,48 +63,6 @@ set(SNORE_PLUGIN_INSTALL_PATH LIBRARY DESTINATION ${LIBSNORE_PLUGIN_PATH})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
-
-
-if (SNORE_STATIC_QT)
-    if (WIN32)
-        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-          set(d "d")
-        else()
-          set(d "")
-        endif()
-
-        if(MSVC)
-            set(SUFFIX "lib")
-            foreach(_bt DEBUG RELEASE RELWITHDEBINFO)
-                string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_${_bt} ${CMAKE_CXX_FLAGS_${_bt}})
-            endforeach(_bt DEBUG RELEASE RELWITHDEBINFO)
-        else()
-            set(SUFFIX "a")
-        endif()
-
-
-        link_libraries(
-          "${_qt5Core_install_prefix}/lib/qtharfbuzzng${d}.${SUFFIX}"
-          "${_qt5Core_install_prefix}/lib/qtpcre${d}.${SUFFIX}"
-          #"${_qt5Core_install_prefix}/lib/qtpng${d}.${SUFFIX}"
-          "${_qt5Core_install_prefix}/lib/qtfreetype${d}.${SUFFIX}"
-          "${_qt5Core_install_prefix}/lib/Qt5PlatformSupport${d}.${SUFFIX}"
-          "${_qt5Core_install_prefix}/plugins/platforms/qwindows${d}.${SUFFIX}"
-          "Ws2_32"
-          "Imm32"
-          "Winmm"
-          "Iphlpapi"
-          "opengl32"
-        )
-        if (Qt5Quick_FOUND)
-            link_libraries(
-                "${_qt5Core_install_prefix}/qml/QtQuick.2/qtquick2plugin${d}.${SUFFIX}"
-                "${_qt5Core_install_prefix}/qml/QtQuick/Window.2/windowplugin${d}.${SUFFIX}"
-                )
-        endif()
-    endif()
-endif()
-
 
 add_subdirectory(data)
 add_subdirectory(src)
