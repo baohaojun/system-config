@@ -29,7 +29,7 @@ using namespace SnorePlugin;
 NotifyWidget::NotifyWidget(int id, const ::SnorePlugin::Snore *parent) :
     m_id(id),
     m_parent(parent),
-    m_mem(QStringLiteral("SnoreNotifyWidget_rev%1_id%2").arg(SHARED_MEM_TYPE_REV(), m_id)),
+    m_mem(QStringLiteral("SnoreNotifyWidget_rev%1_id%2").arg(QString::number(SHARED_MEM_TYPE_REV()), QString::number(m_id))),
     m_ready(true),
     m_fontFamily(qApp->font().family())
 {
