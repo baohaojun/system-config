@@ -8,7 +8,7 @@ Speech::Speech()
     connect(m_speech, &QTextToSpeech::stateChanged, this, [this](QTextToSpeech::State state){
         qCDebug(SNORE) << state;
         if (state == QTextToSpeech::BackendError) {
-            setErrorString(tr("Sytem Backend Error"));
+            setErrorString(tr("System Backend Error"));
         }
     });
 }
