@@ -864,11 +864,11 @@ local function get_coffee(what)
    adb_event"key scroll_lock sleep .5"
    if yes_or_no_p("Confirm to order coffee from Shifu Qin？") then
       if social_need_confirm then
-         yes_or_no_p("I will alarm you in 10 minutes for your coffee")
+         yes_or_no_p("I will alarm you in 3 minutes for your coffee")
          return
       end
       adb_event"adb-tap 539 957"
-      system{'alarm', '10', 'Go get your coffee (take your coffee ticket!)'}
+      system{'alarm', '3', 'Go get your coffee (take your coffee ticket!)'}
    end
 
 end
