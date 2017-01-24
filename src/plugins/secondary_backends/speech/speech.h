@@ -16,6 +16,9 @@ public:
 
 public Q_SLOTS:
     void slotNotificationDisplayed(Snore::Notification notification) override;
+
+    void slotNotificationClosed(Snore::Notification notificatiom);
+
 private:
     QTextToSpeech *m_speech;
 };
