@@ -2,6 +2,10 @@
 
 use strict;
 
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
 if (system("timeout 1 ping -c 1 172.16.0.9") != 0) {
     exit 0;
 }
@@ -52,7 +56,20 @@ EOF
 
 }
 close $gerrit_org;
-rename(glob("~/src/github/projects/gerrit.org.$$"), glob("~/src/github/projects/gerrit.org"));
-if (-s glob("~/src/github/projects/gerrit.org")) {
-    system("bhj-notify gerrit \"You've have got gerrit review requests\"");
+
+# if (system("diff ~/src/github/projects/mantis.org.$$ ~/src/github/projects/mantis.org -q") != 0) {
+#     rename(glob("~/src/github/projects/mantis.org.$$"), glob("~/src/github/projects/mantis.org"));
+# } else {
+#     debug "No update to mantis.org";
+#     unlink("$ENV{HOME}/src/github/projects/mantis.org.$$");
+# }
+
+if (system("diff ~/src/github/projects/gerrit.org.$$ ~/src/github/projects/gerrit.org -q") != 0) {
+    rename("$ENV{HOME}/src/github/projects/gerrit.org.$$", "$ENV{HOME}/src/github/projects/gerrit.org");
+    if (-s "$ENV{HOME}/src/github/projects/gerrit.org") {
+        system("bhj-notify gerrit \"You've have got gerrit review requests\"");
+    }
+} else {
+    debug "No update to gerrit";
+    unlink "$ENV{HOME}/src/github/projects/gerrit.org.$$";
 }

@@ -2,16 +2,17 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:remote h:GERRIT-HOST aauto ccherry-pick
+# generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o cah:r:h \
-              --long cherry-pick,auto,GERRIT-HOST:,remote:,help,no-cherry-pick,no-auto \
+TEMP=$(getopt -o caH:p:r:h \
+              --long cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,help,no-cherry-pick,no-auto \
               -n $(basename -- $0) -- "$@")
 cherry_pick=false
 auto=false
 GERRIT_HOST=
-remote=
+patch_set=
+REPO_REMOTE=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -32,12 +33,16 @@ while true; do
             fi
             shift
             ;;
-        -h|--GERRIT-HOST)
+        -H|--GERRIT-HOST)
             GERRIT_HOST=$2
             shift 2
             ;;
-        -r|--remote)
-            remote=$2
+        -p|--patch-set)
+            patch_set=$2
+            shift 2
+            ;;
+        -r|--REPO-REMOTE)
+            REPO_REMOTE=$2
             shift 2
             ;;
         -h|--help)
@@ -51,11 +56,14 @@ while true; do
             printf %06s '-c, '
             printf %-24s '--[no-]cherry-pick'
             echo
-            printf %06s '-h, '
+            printf %06s '-H, '
             printf %-24s '--GERRIT-HOST=GERRIT_HOST'
             echo
+            printf %06s '-p, '
+            printf %-24s '--patch-set=PATCH_SET'
+            echo
             printf %06s '-r, '
-            printf %-24s '--remote=REMOTE'
+            printf %-24s '--REPO-REMOTE=REPO_REMOTE'
             echo
             exit
             shift
@@ -78,8 +86,7 @@ if test -e ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks; then
 fi
 
 export GERRIT_HOST
-
-export REPO_REMOTE=$remote
+export REPO_REMOTE
 
 tmpf=/tmp/$(basename $0).$$
 if test $# = 1 -a "${1:0:4}" = http; then
@@ -101,14 +108,22 @@ function die() {
 
 export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
 
-git_dir=$(my-rfa 'if [[ $PROJECT =~ $(repo-project)$ ]]; then pwd; fi')
+git_dir=$(my-rfa 'if test "$(repo-abs-path)" = $PROJECT; then pwd; fi')
 
 if test -n "$git_dir"; then
     cd $(lookup-file .repo/..) || die repo not found.
     cd $git_dir || die "$git_dir: cd failed"
 fi
+
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
-git fetch $(repo-remote-url $(repo-remote)) $ref
+if test "$patch_set"; then
+    ref=$(dirname $ref)/$patch_set
+fi
+(
+    set -x
+    git fetch $(repo-remote-url $(repo-remote)) $ref
+)
+
 if test "$cherry_pick" = true || is-jenkins; then
     git cherry-pick FETCH_HEAD
 fi

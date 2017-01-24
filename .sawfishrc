@@ -274,7 +274,7 @@
         ("M->" . '((qpdfview "End")
                    (t "C-End")))
         ("C-r" . '((Firefox "C-r") (Iceweasel "C-r") (Okular "S-F3") (t "C-S-g")))
-        ("C-k" . '((t "S-End" "Del")))
+        ("C-k" . '((t "S-End" "DEL")))
         ("M-BS" . '((t "C-BS")))
         ("C-p" . '((t "Up")))
         ("C-n" . '((t "Down")))
@@ -488,8 +488,9 @@
         ("d" . ((Firefox . ("C-x" "C-d")) (Iceweasel . ("C-x" "C-d"))))))
 
 
-(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Gucharmap")
+(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Gucharmap|^libre.*")
 
+                                        ; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)
   (let* ((keys-break-down (string-split "-" event))
          (modifiers (reverse (cdr (reverse keys-break-down))))
@@ -509,6 +510,8 @@
     (cond
      ((string= main-key "RET")
       (setq main-key "Return"))
+     ((string= main-key "DEL")
+      (setq main-key "Delete"))
      ((string= main-key "ESC")
       (setq main-key "Escape")))
     (setq result (concat result main-key))))
