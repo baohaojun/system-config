@@ -275,6 +275,12 @@ case "$1" in
         douban next
         ;;
     loop)
+        if test "$2"; then
+            relative-link "$(readlink -f "$2")" ~/Music/play-this.mp3 -f
+            ps-killall mplayer.really.quiet
+            douban show
+            exit
+        fi
         touch ~/.cache/system-config/logs/douban-should-loop
         douban info
         ;;
