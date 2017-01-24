@@ -1505,10 +1505,10 @@ to the value of `temporary-file-directory'."
   (interactive)
   (save-excursion
     (save-restriction
-      (while (org-up-heading-safe))
+      (org-back-to-heading)
       (org-narrow-to-subtree)
       (goto-char (point-min))
-      (replace-regexp "^\\* \\(TODO\\|DONE\\|SOMEDAY\\)" "* DONE")
+      (replace-regexp "^\\(\\*+\\) \\(TODO\\|DONE\\|SOMEDAY\\)" "\\1 DONE")
       (shell-command-on-region (point-min) (point-max) "jwords-done")
       (show-all)))
   (outline-next-visible-heading 1))
@@ -1524,10 +1524,10 @@ to the value of `temporary-file-directory'."
   (interactive)
   (save-excursion
     (save-restriction
-      (while (org-up-heading-safe))
+      (org-back-to-heading)
       (org-narrow-to-subtree)
       (goto-char (point-min))
-      (replace-regexp "^\\* \\(TODO\\|DONE\\|SOMEDAY\\)" "* SOMEDAY")
+      (replace-regexp "^\\(\\*+\\) \\(TODO\\|DONE\\|SOMEDAY\\)" "\\1 SOMEDAY")
       (shell-command-on-region (point-min) (point-max) "jwords-someday")
       (show-all)))
   (outline-next-visible-heading 1))
