@@ -29,6 +29,7 @@ map['com.android.settings/com.android.settings.wifi.WifiSetupActivity'] = 'manua
 map['com.android.vending/com.google.android.finsky.activities.MainActivity'] = 'manual-post'
 map['com.android.vending/com.google.android.finsky.activities.RateReviewActivity'] = 'manual-post'
 map['com.autonavi.minimap/com.autonavi.map.activity.NewMapActivity'] = 'manual-post'
+map['com.baidu.netdisk/com.baidu.netdisk.ui.account.LoginRegisterActivity'] = 'manual-post'
 map['com.baidu.tieba_mini/com.baidu.tieba.imMessageCenter.im.chat.PersonalChatActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.mention.SingleMentionActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.pb.pb.main.PbActivity'] = 'weixin-chat'
