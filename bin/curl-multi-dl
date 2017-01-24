@@ -2,21 +2,58 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt s:size ccontinue-transfer
+# generate-getopt s:size ccontinue-transfer o:output n:number-of-threads=10
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o s:c --long "size:,continue-transfer"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o n:s:co:h \
+              --long number-of-threads:,size:,continue-transfer,output:,help,no-continue-transfer \
+              -n $(basename -- $0) -- "$@")
+number_of_threads=10
 size=
 continue_transfer=false
+output=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
+        -n|--number-of-threads)
+            number_of_threads=$2
+            shift 2
+            ;;
         -s|--size)
             size=$2
             shift 2
             ;;
-        -c|--continue-transfer)
-            continue_transfer=true
+        -c|--continue-transfer|--no-continue-transfer)
+            if test "$1" = --no-continue-transfer; then
+                continue_transfer=false
+            else
+                continue_transfer=true
+            fi
+            shift
+            ;;
+        -o|--output)
+            output=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--[no-]continue-transfer'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--number-of-threads=NUMBER_OF_THREADS'
+            echo
+            printf %06s '-o, '
+            printf %-24s '--output=OUTPUT'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--size=SIZE'
+            echo
+            exit
             shift
             ;;
         --)
@@ -29,32 +66,37 @@ while true; do
     esac
 done
 
+
 ## end generated code
+
+if test -z "$output"; then
+    output=$(basename "$1")
+fi
 
 if test ! "$size"; then
     size=$(curl -L -I "$1" 2>&1 | grep Content-Length: | pn 2 |tr -d '\r')
     whole_size=$size
-    size=$(( (size + 10) / 10 ))
+    size=$(( (size + number_of_threads) / number_of_threads ))
 fi
 
 size=$(pretty $size | pn 2)
 
 (
-    for x in $(seq 1 10); do
+    for x in $(seq 1 $number_of_threads); do
         s=$((size * (x - 1)))
         e=$((size * x - 1))
         if test $((e + 1)) -gt $whole_size; then
             e=$((whole_size - 1))
         fi
         if test "$continue_transfer" = true; then
-            touch $(basename $1).$x
+            touch ${output}.$x
             final_size=$(( e + 1 - s ))
-            current_size=$(stat -c %s $(basename $1).$x)
+            current_size=$(stat -c %s ${output}.$x)
             if test "$final_size" != "$current_size"; then
-                curl $1 -L -r $((s + current_size))-$e -o - >> $(basename $1).$x&
+                curl "$1" -L -r $((s + current_size))-$e -o - >> ${output}.$x&
             fi
         else
-            curl $1 -L -r $s-$e -o $(basename $1).$x&
+            curl "$1" -L -r $s-$e -o ${output}.$x&
         fi
     done
 ) 9>~/.cache/system-config/logs/$(basename $0).lock.$$
@@ -68,10 +110,10 @@ size=$(pretty $size | pn 2)
             break
         fi
     done
-    for x in $(seq 1 10); do
-        cat $(basename $1).$x
-        rm $(basename $1).$x >/dev/null 2>&1
-    done > $(basename $1)
+    for x in $(seq 1 $number_of_threads); do
+        cat ${output}.$x
+        rm ${output}.$x >/dev/null 2>&1
+    done > ${output}
 )
 
 rm ~/.cache/system-config/logs/$(basename $0).lock.$$
