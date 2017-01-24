@@ -1620,7 +1620,7 @@ qq_find_friend = function(friend_name)
          if i == 5 then
             error("Can't get to qqGroupSearch in the end")
          end
-         adb_event"adb-tap 303 291"
+         adb_event"key back adb-tap 303 291"
       end
    end
 end
