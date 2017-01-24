@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+for f in "$@"; do
+    of=$f
+    f=$(readlink -f "$f")
+    f=$(relative-path "$f" ~)
+    if [[ $f =~ ^system-config/ ]]; then
+        echo $of already in system-config
+        continue
+    fi
+    mkdir -p ~/system-config/etc/subdir-symlinks/$(dirname $f)
+    cp $of ~/system-config/etc/subdir-symlinks/$(dirname $f)
+    relative-link ~/system-config/etc/subdir-symlinks/$f $of -f
+done

@@ -134,17 +134,16 @@ function git()
                 done
             fi
 
-            if test "$1" = submodule -a "$2" = foreach; then
+            if test "$1" = submodule -a "$2" = foreach ||
+               test "$1" = submodule -a "$2" = --quiet -a "$3" = foreach; then
                 for x in ~/src/github/*; do
                     if test -d $x -a -d $x/.git; then
                         (
                             builtin cd $x
-                            shift 2
-                            if test "$1" = --quiet; then
-                                shift 1
-                            else
-                                echo Entering \'$x\'
-                            fi
+                            while test "$1" != foreach; do
+                                shift
+                            done
+                            shift # foreach
                             if test $# = 1; then
                                 bash -c "$1"
                             else
@@ -153,9 +152,17 @@ function git()
                         )
                     fi
                 done
-                if test "$#" = 3 && [[ "$3" =~ ' ' ]]; then
-                    set -- "$1" "$2" bash -c "$3"
+                # still need to do the submodules of system-config
+                # although we have no submodules really
+
+                while test "$1" != foreach; do
+                    shift
+                done
+                shift # foreach
+                if test "$#" = 1 && [[ "$1" =~ ' ' ]]; then
+                    set -- bash -c "$1"
                 fi
+                set -- submodule --quiet foreach "$@"
             fi
         fi
 

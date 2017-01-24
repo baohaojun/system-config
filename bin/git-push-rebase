@@ -126,7 +126,7 @@ cd "$(dirname "$(lookup-file -e .git)")"
 
 if test "$force_even_if_merged" = false &&
         test ! -e .git/sc-not-merged &&
-        ! git submodule --quiet foreach 'if test -e .git/sc-not-merged; then echo yes.hello.world; fi' | grep yes.hello.world -q; then
+        ! git submodule foreach 'if test -e .git/sc-not-merged; then echo yes.hello.world; fi' | grep yes.hello.world -q; then
     exit
 fi
 
@@ -167,7 +167,7 @@ else
 fi
 EOF
            )
-        git submodule --quiet foreach bash -c "$cmd" |
+        git submodule foreach bash -c "$cmd" |
         tee /dev/stderr |
         grep "^hello.*failed$"
     )
