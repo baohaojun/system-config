@@ -1,3 +1,4 @@
+package com.Wrench;
 import android.hardware.input.InputManager;
 import android.os.SystemClock;
 import android.util.Log;
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 
 public class Input {
-    private native boolean checkPerm(FileDescriptor fd);
+    public static native boolean checkPerm(FileDescriptor fd);
     private native static int getUid();
     private static String optCacheDirName;
     static {
