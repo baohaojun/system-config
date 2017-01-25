@@ -108,7 +108,19 @@ function die() {
 
 export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
 
-git_dir=$(my-rfa 'if test "$(repo-abs-path)" = $PROJECT; then pwd; fi')
+if ! lookup-file -e .repo >/dev/null 2>&1 &&
+       ! lookup-file -e .git >/dev/null 2>&1 &&
+   test "$REPO_REMOTE"; then
+    git-get -u GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
+    git_dir=~/src/$(basename $PROJECT)
+else
+    git_dir=$(my-rfa 'if test "$(repo-abs-path)" = $PROJECT; then pwd; fi')
+fi
+
+if test -z "$git_dir"; then
+    git-get -u GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
+    git_dir=~/src/$(basename $PROJECT)
+fi
 
 if test -n "$git_dir"; then
     cd $(lookup-file .repo/..) || die repo not found.
@@ -117,11 +129,18 @@ fi
 
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
 if test "$patch_set"; then
-    ref=$(dirname $ref)/$patch_set
+    if test "$patch_set" = '*'; then
+        cat <<EOF | putclip
+bash -c 'git diff $(dirname $ref)/\$1 $(dirname $ref)/\$2' true
+EOF
+        ref=$(dirname $ref)/*:$(dirname $ref)/*
+    else
+        ref=$(dirname $ref)/$patch_set
+    fi
 fi
 (
     set -x
-    git fetch $(repo-remote-url $(repo-remote)) $ref
+    git fetch $(repo-remote-url $(repo-remote)) -v $ref
 )
 
 if test "$cherry_pick" = true || is-jenkins; then
