@@ -24,7 +24,7 @@ if ($ENV{AJOKE_NO_CACHE} ne 'true') {
     } else {
         system($0, @ARGV);
     }
-    system("daemon", "-i", "-D", cwd(), "--", "update-output-cache", "$cache_dir/$md_file", "$0", @ARGV);
+    system("daemon", "-i", "-D", cwd(), "--", "update-output-cache", "--compare-mtime", "beagrep", "--", "$cache_dir/$md_file", "$0", @ARGV);
     exit;
 }
 
