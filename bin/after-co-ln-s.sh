@@ -3,7 +3,7 @@ set -e
 touch ~/.authinfo ~/.netrc
 chmod og-rwx ~/.authinfo ~/.netrc
 
-export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH
+export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH:/bin:/usr/bin
 
 if test ! -d ~/system-config/.git && test -d ~/system-config/; then
     if yes-or-no-p "system-config not a git repo, git init?"; then

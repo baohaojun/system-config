@@ -63,7 +63,9 @@ if test -d ~/src/system-config/; then
     if ! git push -f; then
         bhj-notify $PWD "push to s failed"
     fi
-    git push github HEAD:system-config >/dev/null 2>&1&
+    if ! git push -f github HEAD:system-config >/dev/null 2>&1; then
+        bhj-notify system-config "Failed to push system-config to github"
+    fi&
     if test -d ~/external/local/.git/; then
         (
             cd ~/external/local
