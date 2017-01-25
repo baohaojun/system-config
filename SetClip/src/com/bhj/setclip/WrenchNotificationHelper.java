@@ -10,22 +10,22 @@ import android.net.LocalSocket;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.service.notification.NotificationListenerService.*;
 import android.service.notification.NotificationListenerService;
+import android.service.notification.NotificationListenerService.*;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 import com.Wrench.Input;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 public class WrenchNotificationHelper extends NotificationListenerService {
     private LocalSocket notificationSocket;
     private BufferedReader reader = null;
-    private BufferedWriter writer = null;
+    private static volatile BufferedWriter writer = null;
     private Handler mHandler;
     private static final int gotCommandFromWrench = 1;
     private static final int gotNewNotification = 2;
@@ -36,22 +36,30 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
                     case gotCommandFromWrench:
-                    case gotNewNotification:
-                        Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 36));
+                        Log.e("bhj", String.format("%s:%d: gotCommandFromWrench", "WrenchNotificationHelper.java", 39));
                         if (writer != null) {
-                            StatusBarNotification[] notifications = getActiveNotifications();
+                            Log.e("bhj", String.format("%s:%d: writer not null", "WrenchNotificationHelper.java", 41));
+                        }
+                        break;
+                    case gotNewNotification:
+                        Log.e("bhj", String.format("%s:%d: gotNewNotification", "WrenchNotificationHelper.java", 36));
+                        BufferedWriter lockedWriter = null;
+                        lockedWriter = writer;
+                        if (lockedWriter != null) {
+                            Bundle extra = msg.getData();
                             try {
-                                for (StatusBarNotification sn : notifications) {
-                                    Notification n = sn.getNotification();
-                                    Bundle extra = n.extras;
-                                    CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
-                                    CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
-                                    writer.write("got a notification: title: " + title + ", text: " + text + "\n");
-                                }
-                                writer.flush();
+                                CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
+                                CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
+                                String key = extra.getString("key");
+                                String pkg = extra.getString("pkg");
+
+                                lockedWriter.write(String.format("Got notification: key(%s), pkg(%s), %s(%s)\n", key, pkg, title, text));
+                                lockedWriter.flush();
                             } catch (IOException e) {
                                 Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 52), e);
                             }
+                        } else {
+                            Log.e("bhj", String.format("%s:%d: Writer is null in gotNewNotification", "WrenchNotificationHelper.java", 57));
                         }
                         break;
                     default:
@@ -69,13 +77,16 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn)  {
         Notification n = sbn.getNotification();
-        Bundle extra = n.extras;
+        Bundle extra = new Bundle(n.extras);
+        extra.putString("key", sbn.getKey());
+        extra.putString("pkg", sbn.getPackageName());
         CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
         CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
         Log.e("bhj", String.format("%s:%d: new notificaton: %s (%s) ", "WrenchNotificationHelper.java", 34, title, text));
 
         Message msg = new Message();
         msg.what = gotNewNotification;
+        msg.setData(extra);
         mHandler.sendMessage(msg);
     }
 
@@ -109,6 +120,9 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                 new BufferedReader(new InputStreamReader(notificationSocket.getInputStream()));
                             writer =
                                 new BufferedWriter(new OutputStreamWriter(notificationSocket.getOutputStream()));
+                            if (writer == null) {
+                                Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 125));
+                            }
                             String line;
                             while ((line = reader.readLine()) != null) {
                                 // writer.write("got a line: " + line + "\n");
