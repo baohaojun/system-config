@@ -21,6 +21,8 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class WrenchNotificationHelper extends NotificationListenerService {
     private LocalSocket notificationSocket;
@@ -53,8 +55,21 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                 String key = extra.getString("key");
                                 String pkg = extra.getString("pkg");
 
-                                lockedWriter.write(String.format("Got notification: key(%s), pkg(%s), %s(%s)\n", key, pkg, title, text));
+                                JSONObject jo = new JSONObject();
+
+                                try {
+                                    jo.put("key", key);
+                                    jo.put("pkg", pkg);
+                                    jo.put("title", title.toString());
+                                    jo.put("text", text.toString());
+                                } catch (JSONException e) {
+                                    Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 65), e);
+                                }
+                                String joString = jo.toString();
+                                joString = joString.replaceAll("\n", " ");
+                                lockedWriter.write(joString + "\n");
                                 lockedWriter.flush();
+
                             } catch (IOException e) {
                                 Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 52), e);
                             }
