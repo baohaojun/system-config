@@ -31,6 +31,7 @@
 #include "wrenchmainwindow.h"
 #include "vncmainwindow.h"
 #include "qvncviewersettings.h"
+#include "adbnotificationthread.hpp"
 
 using namespace std;
 
@@ -130,6 +131,12 @@ int main(int argc, char *argv[])
     w.connect(&adbState, SIGNAL(adbStateUpdate(QString)), &w, SLOT(adbStateUpdated(QString)));
     w.connect(&adbState, SIGNAL(adbStateInfo(QString, QString)), &w, SLOT(onInfoUpdate(QString, QString)), Qt::BlockingQueuedConnection);
     adbState.start();
+
+    AdbNotificationThread adbNotification;
+    adbNotification.moveToThread(&adbNotification);
+    adbNotification.start();
+    w.connect(&adbNotification, SIGNAL(adbNotificationArrived(QString, QString, QString, QString)), &w, SLOT(onAdbNotificationArrived(QString, QString, QString, QString)));
+    w.connect(&w, SIGNAL(adbNotificationClicked(QString)), &adbNotification, SLOT(onAdbNotificationClicked(QString)));
 
     QDir::addSearchPath("skin", ":/skin/default/resources");
     QDir::addSearchPath("config", ":config");

@@ -68,6 +68,7 @@ SOURCES += main.cpp\
 	wrenchmainwindow.cpp \
         adbstatethread.cpp \
         adbvncthread.cpp \
+        adbnotificationthread.cpp \
         adbphonescreenthread.cpp \
         bhj_help.cpp \
         luaexecutethread.cpp \
@@ -184,6 +185,7 @@ HEADERS  += wrenchmainwindow.h \
             adbclient.h \
             adbstatethread.hpp \
             adbvncthread.hpp \
+            adbnotificationthread.hpp \
             adbphonescreenthread.hpp \
             luaexecutethread.hpp \
             qcellphonetextedit.h \

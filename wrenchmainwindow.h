@@ -53,6 +53,7 @@ private:
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
+    void onAdbNotificationArrived(const QString& , const QString& , const QString& , const QString&);
     void onLoadMailHeads(const QString& , const QString& , const QString& , const QString& , const QString&);
     void on_sendItPushButton_clicked();
 
@@ -143,6 +144,7 @@ private:
 
 signals:
     void activateWindow();
+    void adbNotificationClicked(const QString& key);
 };
 
 #endif // WRENCHMAINWINDOW_H

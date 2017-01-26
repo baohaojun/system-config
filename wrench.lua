@@ -5,7 +5,7 @@ local M
 
 -- functions
 
-local search_sms, string_strip
+local search_sms, string_strip, handle_notification
 local adb_input_method_is_null, close_ime
 local window_post_button_map = {}
 local mail_group_map = {}
@@ -2791,8 +2791,13 @@ local function be_verbose()
    social_need_confirm = true
 end
 
+handle_notification = function(key, pkg, title, text)
+   log("Got a notification: %s", text)
+end
+
 M.be_verbose = be_verbose
 M.be_quiet = be_quiet
+M.handle_notification = handle_notification
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then

@@ -80,6 +80,13 @@ WrenchMainWindow::~WrenchMainWindow()
     delete ui;
 }
 
+void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text)
+{
+    if (!mLuaThread.isNull()) {
+        mLuaThread->addScript(QStringList() << "handle_notification" << key << pkg << title << text);
+    }
+}
+
 void WrenchMainWindow::adbStateUpdated(const QString& state)
 {
     if (state.toLower() == "online" && ui->adbStateLabel->text().toLower() != "online") {

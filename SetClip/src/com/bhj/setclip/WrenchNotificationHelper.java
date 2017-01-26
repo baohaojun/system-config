@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.PendingIntent.CanceledException;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
+import android.net.LocalSocketAddress;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,9 +28,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class WrenchNotificationHelper extends NotificationListenerService {
-    private LocalSocket notificationSocket;
-    private BufferedReader reader = null;
+    private static volatile BufferedReader reader = null;
     private static volatile BufferedWriter writer = null;
+    private static volatile WrenchNotificationHelper activeHelper = null;
+    private static volatile int threadHashCode = 0;
     private Handler mHandler;
     private static final int gotCommandFromWrench = 1;
     private static final int gotNewNotification = 2;
@@ -38,9 +42,49 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
                     case gotCommandFromWrench:
-                        Log.e("bhj", String.format("%s:%d: gotCommandFromWrench", "WrenchNotificationHelper.java", 39));
-                        if (writer != null) {
-                            Log.e("bhj", String.format("%s:%d: writer not null", "WrenchNotificationHelper.java", 41));
+                        {
+                            Bundle extra = msg.getData();
+                            String line = extra.getString("line");
+                            Log.e("bhj", String.format("%s:%d: line is %s", "WrenchNotificationHelper.java", 46, line));
+                            if (line.matches("^click .*")) {
+                                String key = line.replaceAll("click ", "");
+                                key = key.replaceAll("\n", "");
+                                StatusBarNotification[] notifications = getActiveNotifications();
+                                Log.e("bhj", String.format("%s:%d: notifications: %d, key %s", "WrenchNotificationHelper.java", 51, notifications.length, key));
+                                for (StatusBarNotification sbn : notifications) {
+                                    if (! sbn.getKey().equals(key)) {
+                                        Log.e("bhj", String.format("%s:%d: sbn key: %s", "WrenchNotificationHelper.java", 54, sbn.getKey()));
+                                        continue;
+                                    }
+                                    Notification n = sbn.getNotification();
+                                    PendingIntent i = n.contentIntent;
+                                    if (i != null) {
+                                        try {
+                                            i.send();
+                                            break;
+                                        } catch (CanceledException e) {
+                                            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 64), e);
+                                        }
+
+                                    } else {
+                                        if (n.actions == null) {
+                                            Log.e("bhj", String.format("%s:%d: has no action ", "WrenchNotificationHelper.java", 53));
+                                            continue;
+                                        }
+                                        for (Notification.Action action : n.actions) {
+                                            PendingIntent i2 = action.actionIntent;
+                                            if (i2 != null) {
+                                                try {
+                                                    i2.send();
+                                                } catch (CanceledException e) {
+                                                    Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 57), e);
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         break;
                     case gotNewNotification:
@@ -82,48 +126,58 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                     }
                 }
             };
-    }
 
-    @Override
-    public void onNotificationRemoved(StatusBarNotification sbn)  {
-        Log.e("bhj", String.format("%s:%d: onNotificationRemoved()", "WrenchNotificationHelper.java", 22));
-    }
-
-    @Override
-    public void onNotificationPosted(StatusBarNotification sbn)  {
-        Notification n = sbn.getNotification();
-        Bundle extra = new Bundle(n.extras);
-        extra.putString("key", sbn.getKey());
-        extra.putString("pkg", sbn.getPackageName());
-        CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
-        CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
-        Log.e("bhj", String.format("%s:%d: new notificaton: %s (%s) ", "WrenchNotificationHelper.java", 34, title, text));
-
-        Message msg = new Message();
-        msg.what = gotNewNotification;
-        msg.setData(extra);
-        mHandler.sendMessage(msg);
-    }
-
-    @Override
-    public void onListenerConnected()
-    {
-        super.onListenerConnected();
-        Log.e("bhj", String.format("%s:%d: onListenerConnected()", "WrenchNotificationHelper.java", 48));
         new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.e("bhj", String.format("%s:%d: new thread at %d", "WrenchNotificationHelper.java", 148, this.hashCode()));
                     LocalServerSocket t1WrenchServer;
+
+                    int myHashCode = this.hashCode();
+                    Log.e("bhj", String.format("%s:%d: myHashCode is %d, threadHashCode = %d", "WrenchNotificationHelper.java", 199, myHashCode, threadHashCode));
+                    threadHashCode = myHashCode;
+
                     try {
                         t1WrenchServer = new LocalServerSocket("WrenchNotifications");
 
-                    } catch(Exception e) {
-                        Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 34), e);
-                        return;
+                    } catch(IOException e) {
+                        try {
+                            LocalSocket closeSocket = new LocalSocket();
+                            Log.e("bhj", String.format("%s:%d: before connect", "WrenchNotificationHelper.java", 156));
+                            closeSocket.connect(new LocalSocketAddress("WrenchNotifications"));
+                            Log.e("bhj", String.format("%s:%d: after connect", "WrenchNotificationHelper.java", 158));
+
+                            BufferedReader reader =
+                                new BufferedReader(new InputStreamReader(closeSocket.getInputStream()));
+                            BufferedWriter writer =
+                                new BufferedWriter(new OutputStreamWriter(closeSocket.getOutputStream()));
+
+                            try {
+                                reader.readLine();
+
+                                writer.write("close yourself\n");
+                                writer.flush();
+                                Log.e("bhj", String.format("%s:%d: after write", "WrenchNotificationHelper.java", 166));
+                                reader.readLine();
+                            } catch (IOException e3) {
+                                Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 173), e3);
+                            } finally {
+                                reader.close();
+                                writer.close();
+                                closeSocket.close();
+                            }
+
+                            t1WrenchServer = new LocalServerSocket("WrenchNotifications");
+                        } catch (IOException e2) {
+                            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 169), e2);
+                            return;
+                        }
                     }
 
+
+
                     while (true) {
-                        notificationSocket = null;
+                        LocalSocket notificationSocket = null;
                         try {
                             notificationSocket = t1WrenchServer.accept();
                             if (!Input.checkPerm(notificationSocket.getFileDescriptor())) {
@@ -131,16 +185,35 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                 notificationSocket.close();
                                 continue;
                             }
-                            reader =
+                            BufferedReader locReader = reader =
                                 new BufferedReader(new InputStreamReader(notificationSocket.getInputStream()));
-                            writer =
+                            BufferedWriter locWriter = writer =
                                 new BufferedWriter(new OutputStreamWriter(notificationSocket.getOutputStream()));
-                            if (writer == null) {
-                                Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 125));
-                            }
+                            locWriter.write("notification ready\n");
+                            locWriter.flush();
                             String line;
-                            while ((line = reader.readLine()) != null) {
+                            while ((line = locReader.readLine()) != null) {
                                 // writer.write("got a line: " + line + "\n");
+                                Log.e("bhj", String.format("%s:%d: got line: %s", "WrenchNotificationHelper.java", 200, line));
+                                if (line.equals("close yourself")) {
+                                    Log.e("bhj", String.format("%s:%d: got close", "WrenchNotificationHelper.java", 194));
+                                    t1WrenchServer.close();
+
+                                    BufferedReader r = locReader;
+                                    BufferedWriter w = locWriter;
+                                    LocalSocket s = notificationSocket;
+                                    notificationSocket = null;
+                                    r.close();
+                                    w.close();
+                                    s.close();
+                                    return;
+                                }
+
+                                if (myHashCode != threadHashCode) {
+                                    Log.e("bhj", String.format("%s:%d: thread changed", "WrenchNotificationHelper.java", 194));
+                                    break;
+                                }
+
 
                                 // StatusBarNotification[] notifications = getActiveNotifications();
                                 // for (StatusBarNotification sn : notifications) {
@@ -148,18 +221,21 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                 //     Bundle extra = n.extras;
                                 //     CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
                                 //     CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
-                                //     writer.write("got a notification: title: " + title + ", text: " + text + "\n");
+                                //     locWriter.write("got a notification: key: " + sn.getKey() + ", title: " + title + ", text: " + text + "\n");
                                 // }
-                                // writer.flush();
+                                // locWriter.flush();
 
                                 Message msg = new Message();
                                 msg.what = gotCommandFromWrench;
+                                Bundle payload = new Bundle();
+                                payload.putString("line", line);
+                                msg.setData(payload);
                                 mHandler.sendMessage(msg);
                             }
-                            reader.close();
-                            reader = null;
-                            writer.close();
-                            writer = null;
+                            locReader.close();
+                            locReader = null;
+                            locWriter.close();
+                            locWriter = null;
                             notificationSocket.close();
                             notificationSocket = null;
                         } catch(Exception e) {
@@ -192,6 +268,33 @@ public class WrenchNotificationHelper extends NotificationListenerService {
 
                 }
             }).start();
+    }
 
+    @Override
+    public void onNotificationRemoved(StatusBarNotification sbn)  {
+        Log.e("bhj", String.format("%s:%d: onNotificationRemoved()", "WrenchNotificationHelper.java", 22));
+    }
+
+    @Override
+    public void onNotificationPosted(StatusBarNotification sbn)  {
+        Notification n = sbn.getNotification();
+        Bundle extra = new Bundle(n.extras);
+        extra.putString("key", sbn.getKey());
+        extra.putString("pkg", sbn.getPackageName());
+        CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
+        CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
+        Log.e("bhj", String.format("%s:%d: new notificaton: %s (%s) ", "WrenchNotificationHelper.java", 34, title, text));
+
+        Message msg = new Message();
+        msg.what = gotNewNotification;
+        msg.setData(extra);
+        mHandler.sendMessage(msg);
+    }
+
+    @Override
+    public void onListenerConnected()
+    {
+        super.onListenerConnected();
+        Log.e("bhj", String.format("%s:%d: onListenerConnected(%d)", "WrenchNotificationHelper.java", 48, this.hashCode()));
     }
 }

@@ -40,7 +40,7 @@ checkPerm(JNIEnv *env, jobject thiz, jobject fileDescriptor) {
         return false;
     }
 
-    if (cr.uid == 0 || cr.uid == 2000) {
+    if (cr.uid == 0 || cr.uid == 2000 || cr.uid == getuid()) {
         return true;
     }
 
