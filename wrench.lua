@@ -2793,14 +2793,14 @@ end
 
 local function clickForWeixinMoney()
    log("Click for weixin money")
-   for i = 1, 3 do
-      adb_event"sleep .1 adb-tap 406 1660 sleep .1"
+   for i = 1, 20 do
+      adb_event"sleep .1 adb-tap 406 1660 adb-tap 327 1395 sleep .1"
       if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
          break
       end
    end
 
-   for i = 1, 3 do
+   for i = 1, 20 do
       adb_event"adb-tap 528 1197 sleep .1"
       if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
          break
