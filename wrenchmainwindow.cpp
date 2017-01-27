@@ -378,6 +378,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     }
     connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
     connect(mLuaThread.data(), SIGNAL(selectAppsSig()), this, SLOT(onSelectApps()));
+    connect(mLuaThread.data(), SIGNAL(sigClickNotification(QString)), this, SIGNAL(adbNotificationClicked(QString)));
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
     if (! is_starting) {
@@ -877,6 +878,7 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             gPhoneScreenSyncOn = true;
             if (vncThread == NULL) {
                 vncThread = new AdbVncThread();
+                vncThread->moveToThread(vncThread);
                 vncThread->start();
             }
 

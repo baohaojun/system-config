@@ -35,6 +35,87 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     private Handler mHandler;
     private static final int gotCommandFromWrench = 1;
     private static final int gotNewNotification = 2;
+
+    private void listStatusBarNotifications() {
+        StatusBarNotification[] notifications = getActiveNotifications();
+        try {
+            for (StatusBarNotification sbn : notifications) {
+                Bundle extra = makeBundleFromSbn(sbn);
+                String joString = joStringFromBundle(extra);
+                writer.write(joString + "\n");
+            }
+            writer.flush();
+        } catch (IOException e) {
+            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 49), e);
+        }
+    }
+
+    private Bundle makeBundleFromSbn(StatusBarNotification sbn) {
+        Notification n = sbn.getNotification();
+        Bundle extra = new Bundle(n.extras);
+
+        extra.putString("key", sbn.getKey());
+        extra.putString("pkg", sbn.getPackageName());
+
+        return extra;
+    }
+
+    private String joStringFromBundle(Bundle extra) {
+        CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
+        CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
+        String key = extra.getString("key");
+        String pkg = extra.getString("pkg");
+
+        JSONObject jo = new JSONObject();
+
+        try {
+            jo.put("key", key);
+            jo.put("pkg", pkg);
+            jo.put("title", title.toString());
+            jo.put("text", text.toString());
+        } catch (JSONException e) {
+            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 65), e);
+        }
+        return jo.toString();
+    }
+
+
+    private void clickNotification(String line) {
+        String key = line.replaceAll("click ", "");
+        key = key.replaceAll("\n", "");
+        StatusBarNotification[] notifications = getActiveNotifications(new String[] {key});
+        Log.e("bhj", String.format("%s:%d: notifications: %d, key %s", "WrenchNotificationHelper.java", 51, notifications.length, key));
+        for (StatusBarNotification sbn : notifications) {
+            Notification n = sbn.getNotification();
+            PendingIntent i = n.contentIntent;
+            if (i != null) {
+                try {
+                    i.send();
+                    break;
+                } catch (CanceledException e) {
+                    Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 64), e);
+                }
+
+            } else {
+                if (n.actions == null) {
+                    Log.e("bhj", String.format("%s:%d: has no action ", "WrenchNotificationHelper.java", 53));
+                    continue;
+                }
+                for (Notification.Action action : n.actions) {
+                    PendingIntent i2 = action.actionIntent;
+                    if (i2 != null) {
+                        try {
+                            i2.send();
+                        } catch (CanceledException e) {
+                            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 57), e);
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void onCreate()  {
         super.onCreate();
@@ -47,43 +128,9 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                             String line = extra.getString("line");
                             Log.e("bhj", String.format("%s:%d: line is %s", "WrenchNotificationHelper.java", 46, line));
                             if (line.matches("^click .*")) {
-                                String key = line.replaceAll("click ", "");
-                                key = key.replaceAll("\n", "");
-                                StatusBarNotification[] notifications = getActiveNotifications();
-                                Log.e("bhj", String.format("%s:%d: notifications: %d, key %s", "WrenchNotificationHelper.java", 51, notifications.length, key));
-                                for (StatusBarNotification sbn : notifications) {
-                                    if (! sbn.getKey().equals(key)) {
-                                        Log.e("bhj", String.format("%s:%d: sbn key: %s", "WrenchNotificationHelper.java", 54, sbn.getKey()));
-                                        continue;
-                                    }
-                                    Notification n = sbn.getNotification();
-                                    PendingIntent i = n.contentIntent;
-                                    if (i != null) {
-                                        try {
-                                            i.send();
-                                            break;
-                                        } catch (CanceledException e) {
-                                            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 64), e);
-                                        }
-
-                                    } else {
-                                        if (n.actions == null) {
-                                            Log.e("bhj", String.format("%s:%d: has no action ", "WrenchNotificationHelper.java", 53));
-                                            continue;
-                                        }
-                                        for (Notification.Action action : n.actions) {
-                                            PendingIntent i2 = action.actionIntent;
-                                            if (i2 != null) {
-                                                try {
-                                                    i2.send();
-                                                } catch (CanceledException e) {
-                                                    Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 57), e);
-                                                }
-
-                                            }
-                                        }
-                                    }
-                                }
+                                clickNotification(line);
+                            } else if (line.matches("^list")) {
+                                listStatusBarNotifications();
                             }
                         }
                         break;
@@ -94,22 +141,8 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                         if (lockedWriter != null) {
                             Bundle extra = msg.getData();
                             try {
-                                CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
-                                CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
-                                String key = extra.getString("key");
-                                String pkg = extra.getString("pkg");
 
-                                JSONObject jo = new JSONObject();
-
-                                try {
-                                    jo.put("key", key);
-                                    jo.put("pkg", pkg);
-                                    jo.put("title", title.toString());
-                                    jo.put("text", text.toString());
-                                } catch (JSONException e) {
-                                    Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 65), e);
-                                }
-                                String joString = jo.toString();
+                                String joString = joStringFromBundle(extra);
                                 joString = joString.replaceAll("\n", " ");
                                 lockedWriter.write(joString + "\n");
                                 lockedWriter.flush();
@@ -277,14 +310,13 @@ public class WrenchNotificationHelper extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn)  {
-        Notification n = sbn.getNotification();
-        Bundle extra = new Bundle(n.extras);
-        extra.putString("key", sbn.getKey());
-        extra.putString("pkg", sbn.getPackageName());
-        CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
-        CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
-        Log.e("bhj", String.format("%s:%d: new notificaton: %s (%s) ", "WrenchNotificationHelper.java", 34, title, text));
+        String pkg = sbn.getPackageName();
+        if ("android".equals(pkg) ||
+            "com.android.systemui".equals(pkg)) {
+            return;
+        }
 
+        Bundle extra = makeBundleFromSbn(sbn);
         Message msg = new Message();
         msg.what = gotNewNotification;
         msg.setData(extra);

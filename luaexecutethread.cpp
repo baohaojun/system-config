@@ -94,6 +94,19 @@ static int l_selectArg(lua_State* L)
     return 1;
 }
 
+static int l_clickNotification(lua_State* L)
+{
+    int n = luaL_len(L, -1);
+    QStringList args;
+    for (int i = 1; i <= n; i++) {
+        lua_rawgeti(L, -1, i);
+        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
+        lua_settop(L, -2);
+    }
+    that->clickNotification(args);
+    return 0;
+}
+
 static int l_selectApps(lua_State* L)
 {
     that->selectApps();
@@ -264,6 +277,9 @@ void LuaExecuteThread::run()
     lua_pushcfunction(L, l_selectArg);
     lua_setglobal(L, "select_args");
 
+    lua_pushcfunction(L, l_clickNotification);
+    lua_setglobal(L, "clickNotification");
+
     lua_pushcfunction(L, l_selectApps);
     lua_setglobal(L, "select_apps");
 
@@ -388,6 +404,13 @@ QString LuaExecuteThread::selectArgs(const QStringList& args)
     QString res = mSelectedArg;
     mSelectArgsMutex.unlock();
     return res;
+}
+
+void LuaExecuteThread::clickNotification(const QStringList& args)
+{
+    foreach (const QString& s, args) {
+        emit sigClickNotification(s);
+    }
 }
 
 void LuaExecuteThread::selectApps()

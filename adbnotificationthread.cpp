@@ -111,5 +111,7 @@ void AdbNotificationThread::run()
 
 void AdbNotificationThread::onAdbNotificationClicked(const QString& key)
 {
-
+    QString toWrite = "click " + key + "\n";
+    notificationSocket->write(toWrite.toUtf8());
+    notificationSocket->flush();
 }

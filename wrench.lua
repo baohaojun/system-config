@@ -1304,7 +1304,7 @@ local check_file_push_and_renamed = function(file, md5, rename_to)
       rename_to = file:gsub(".*/", "")
    end
 
-   local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
+   local md5_on_phone = adb_pipe(("if test -e /data/data/com.android.shell/%s; then cat /sdcard/%s; fi"):format(rename_to, md5))
    md5_on_phone = md5_on_phone:gsub("\n", "")
    local md5file = io.open(md5)
    local md5_on_PC = md5file:read("*a")
@@ -2791,8 +2791,30 @@ local function be_verbose()
    social_need_confirm = true
 end
 
+local function clickForWeixinMoney()
+   log("Click for weixin money")
+   for i = 1, 3 do
+      adb_event"sleep .1 adb-tap 406 1660 sleep .1"
+      if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
+         break
+      end
+   end
+
+   for i = 1, 3 do
+      adb_event"adb-tap 528 1197 sleep .1"
+      if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
+         break
+      end
+   end
+   adb_event"adb-key back adb-key back adb-key home"
+end
+
 handle_notification = function(key, pkg, title, text)
-   log("Got a notification: %s", text)
+   log("got %s(%s): %s(%s)", key, pkg, title, text)
+   if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
+      clickNotification{key}
+      clickForWeixinMoney()
+   end
 end
 
 M.be_verbose = be_verbose
