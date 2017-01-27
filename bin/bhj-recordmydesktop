@@ -32,3 +32,4 @@ if test -z "$window_class"; then
 fi
 
 recordmydesktop "$@" --on-the-fly-encoding $(sawfish-get-window-xy "$window_class" | tr -d \") -o $dir/out-$(now).ogv
+get-newest-file ~/tmp/$(basename $0) | putclip
