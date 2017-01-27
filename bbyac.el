@@ -433,13 +433,18 @@ characters before the point."
   (interactive)
   (bbyac--general-expand #'bbyac--symbol-bbyac-extracter))
 
-(defun bbyac-expand-partial-lines ()
+(defun bbyac-expand-substring ()
   "Expand the bit into a partial line match.
 
 This means expand to string from the beginning to the end of the
 matched region."
   (interactive)
   (bbyac--general-expand #'bbyac--line-bbyac-extracter))
+
+(defun bbyac-expand-partial-lines ()
+  "Obsolete. Use bbyac-expand-substring."
+  (interactive)
+  (call-interactively bbyac-expand-substring))
 
 (defun bbyac-expand-lines ()
   "Expand the bit into a full line match.
@@ -448,7 +453,7 @@ This means expand to string from the beginning to the end of the
 line where the match occured."
   (interactive)
   (bbyac--general-expand #'bbyac--line-bbyac-extracter
-                            #'bbyac--line-extracting-matcher))
+                         #'bbyac--line-extracting-matcher))
 
 (defun bbyac-expand-sexp ()
   "Expand the bit into an S-expression.
@@ -551,8 +556,8 @@ This func is copied and modified from `ecomplete-display-matches'."
   "Bbyac mode map.")
 (define-key bbyac-mode-map (kbd "M-g <return>") 'bbyac-expand-symbols)
 (define-key bbyac-mode-map (kbd "M-g <RET>") 'bbyac-expand-symbols)
-(define-key bbyac-mode-map (kbd "M-s <return>") 'bbyac-expand-partial-lines)
-(define-key bbyac-mode-map (kbd "M-s <RET>") 'bbyac-expand-partial-lines)
+(define-key bbyac-mode-map (kbd "M-s <return>") 'bbyac-expand-substring)
+(define-key bbyac-mode-map (kbd "M-s <RET>") 'bbyac-expand-substring)
 (define-key bbyac-mode-map (kbd "M-g x") 'bbyac-expand-partial-lines)
 (define-key bbyac-mode-map (kbd "M-s l") 'bbyac-expand-lines)
 (define-key bbyac-mode-map (kbd "M-s s") 'bbyac-expand-sexp)
