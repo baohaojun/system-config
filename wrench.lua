@@ -2793,27 +2793,74 @@ end
 
 local function clickForWeixinMoney()
    log("Click for weixin money")
+
    for i = 1, 20 do
-      adb_event"sleep .1 adb-tap 406 1660 adb-tap 327 1395 sleep .1"
+      top_window = adb_top_window()
+      if top_window and not top_window:match("^com.tencent.mm/") then
+         sleep(.1)
+      else
+         break
+      end
+   end
+
+   for i = 1, 20 do
+      adb_event"adb-tap 406 1660"
+      if i > 2 then
+         adb_event"adb-tap 327 1395"
+      end
+      adb_event "sleep .1"
       if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
          break
       end
    end
 
    for i = 1, 20 do
-      adb_event"adb-tap 528 1197 sleep .1"
-      if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
+      adb_event"adb-tap 528 1197 adb-tap 507 1382 sleep .1"
+      top_window = adb_top_window()
+      if top_window == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
+         break
+      elseif top_window ~= "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
          break
       end
    end
-   adb_event"adb-key back adb-key back adb-key home"
+   adb_event"adb-key back adb-key back sleep .5 adb-key home"
+end
+
+clickForQqMoney = function()
+   log("Click for QQ money")
+   for i = 1, 20 do
+      top_window = adb_top_window()
+      if top_window and not top_window:match("^com.tencent.mobileqq/") then
+         sleep(.1)
+      else
+         break
+      end
+   end
+   -- adb-tap 306 1398 adb-tap 179 1587 adb-tap 951 1762
+   for i = 1, 20 do
+      adb_event"adb-tap 306 1398 adb-tap 179 1587 adb-tap 951 1762"
+      adb_event "sleep .1"
+      if adb_top_window() == "com.tencent.mobileqq/cooperation.qwallet.plugin.QWalletPluginProxyActivity" then
+         break
+      end
+   end
+   adb_event"sleep .3 adb-key back adb-key back adb-key home"
 end
 
 handle_notification = function(key, pkg, title, text)
+   ignored_pkgs = {"com.github.shadowsocks", "com.android.systemui"}
+   for p = 1, #ignored_pkgs do
+      if pkg == ignored_pkgs[p] then
+         return
+      end
+   end
    log("got %s(%s): %s(%s)", key, pkg, title, text)
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
       clickForWeixinMoney()
+   elseif pkg == "com.tencent.mobileqq" and text:match("%[QQ红包%]") then
+      clickNotification{key}
+      clickForQqMoney()
    end
 end
 

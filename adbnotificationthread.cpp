@@ -31,7 +31,6 @@ void AdbNotificationThread::timeOut()
 
 void AdbNotificationThread::onDisconnected()
 {
-    qDebug() << __FUNCTION__ << ":" << __LINE__;
     if (!mConnectTimer) {
         mConnectTimer = new QTimer();
         mConnectTimer->setSingleShot(true);
@@ -55,12 +54,6 @@ void AdbNotificationThread::onDisconnected()
 
     notificationSocket->connectToHost("127.0.0.1", 58888, QIODevice::ReadWrite);
     if (!notificationSocket->waitForConnected()) {
-        qDebug() << "can't connect notification";
-        mConnectTimer->start(1000);
-        return;
-    }
-    if (!_writex(*notificationSocket, "ping\n", 5)) {
-        qDebug() << "Can't write notification";
         mConnectTimer->start(1000);
         return;
     }
@@ -100,6 +93,10 @@ void AdbNotificationThread::onNewNotification()
 
     emit adbNotificationArrived(key, pkg, title, text);
     qDebug() << key << "(" << pkg << "): " << title << "(" << text << ")";
+    if (notificationSocket->bytesAvailable() > 0) {
+        qDebug() << "Still more notifications readable";
+        onNewNotification();
+    }
 }
 
 void AdbNotificationThread::run()
