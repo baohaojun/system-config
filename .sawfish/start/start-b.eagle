@@ -1,7 +1,9 @@
 #!/bin/bash
 
 set -x
-ulimit -v 8388608
+
+memory=$(free | grep ^Mem: | pn 2)
+ulimit -v $((memory / 2))
 
 while true; do
     (
