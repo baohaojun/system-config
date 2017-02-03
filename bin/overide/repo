@@ -84,7 +84,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
             (
                 cd $(lookup-file -e .repo/manifests)
                 if test "$(git config repo.mirror)" = true; then
-                    mail-cms "Jenkins mirror repo sync failed for $JOB_NAME"
+                    mail-cms "Jenkins mirror repo sync failed for $(jenkins-info)"
                     exit 1
                 fi
             )
