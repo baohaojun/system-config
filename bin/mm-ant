@@ -81,15 +81,21 @@ if test $# = 0 || test $# = 1 -a "$1" = build-only; then
 fi
 
 function do_install() {
-    if test -e .install-hook; then
-        echo doing install hook
-        . .install-hook
+    if test -e .before-install-hook; then
+        echo doing before install hook
+        . .before-install-hook
     fi
+
     install_type=${1:-installd}
     ant "$install_type" 2>&1 | tee ~/.cache/system-config/logs/ant-install.log
     if grep '\Q[exec] Failure\E' -P ~/.cache/system-config/logs/ant-install.log; then
         my-adb uninstall $(ant-get-package)
         ant "$install_type" 2>&1 | tee ~/.cache/system-config/logs/ant-install.log
+    fi
+
+    if test -e .after-install-hook; then
+        echo doing after install hook
+        . .after-install-hook
     fi
 
     if test $run = true; then
