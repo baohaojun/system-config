@@ -17,15 +17,18 @@ set -e
 file=$1
 cache=$HOME/.cache/code-reading-flatten$PWD/$file
 def=$HOME/.cache/code-reading-defs$PWD/$file
-if test ! -e $cache -o $cache -ot $file -o ! -e $def -o $def -ot $file; then
+if test "$file" = - || test ! -e $cache -o $cache -ot $file -o ! -e $def -o $def -ot $file; then
     mkdir -p $(dirname $cache) $(dirname $def)
     cat $file | tr -d '\r' | flatten.pl > $cache.bak.$$
     mv $cache.bak.$$ $cache
-    (
-        cd $HOME/.cache/code-reading-flatten$PWD
-        ctags-ajoke --extra=+q --langmap=$(lang-map-for-ctags) -xu $file
-    ) > $def.bak.$$
-    mv $def.bak.$$ $def
+    if test "$file" != -; then
+        (
+
+            cd $HOME/.cache/code-reading-flatten$PWD
+            ctags-ajoke --extra=+q --langmap=$(lang-map-for-ctags) -xu $file
+        ) > $def.bak.$$
+        mv $def.bak.$$ $def
+    fi
 fi
 
 if test $(basename $0) = java-flatten-cache; then
