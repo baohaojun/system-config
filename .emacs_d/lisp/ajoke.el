@@ -447,10 +447,23 @@ referencing."
              (ajoke--current-regexp "[.a-z0-9]+"))))
   (let ((res
          (shell-command-to-string (format "ajoke-get-imports.pl %s -r %s"
-                         (shell-quote-argument (ajoke--buffer-file-name-local))
-                         (shell-quote-argument id)))))
+                                          (shell-quote-argument (ajoke--buffer-file-name-local))
+                                          (shell-quote-argument id)))))
     (message "%s" res)
     res))
+
+(defun shell-command-on-region-to-string (command &optional start end )
+  "Execute string COMMAND in inferior shell with region from START to END as input."
+  (let ((my-start (or start (point-min)))
+        (my-end (or end (point-max)))
+        (my-buffer (current-buffer))
+        my-temp-buffer)
+    (with-temp-buffer
+      (setq my-temp-buffer (current-buffer))
+      (switch-to-buffer my-buffer)
+      (shell-command-on-region my-start my-end command my-temp-buffer)
+      (switch-to-buffer my-temp-buffer)
+      (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;;;###autoload
 (defun ajoke-complete-method (id)
@@ -472,18 +485,17 @@ methods."
                           (if (string-match "\\." resolve)
                               resolve
                             (ajoke--pick-one
-                             "Import which? "
+                             "Complete which class's methods/fields? "
                              (split-string
                               (shell-command-to-string (format "GTAGS_START_FILE= ajoke-get-qclass %s"
                                                                (shell-quote-argument resolve))) "\n")))))
                     (format "%s." has-a-dot-resolve))
                 (let ((resolve-line
                        (ajoke--pick-one
-                        "Import which? "
+                        "Complete which class's methods/fields? "
                         (split-string
-                         (shell-command-to-string (format "ajoke-get-imports.pl %s -r %s"
-                                                          (shell-quote-argument (ajoke--buffer-file-name-local))
-                                                          (shell-quote-argument id))) "\n")
+                         (shell-command-on-region-to-string (format "ajoke-get-imports.pl -r %s -"
+                                                                    (shell-quote-argument id))) "\n")
                         nil
                         t)))
                   (car (split-string resolve-line "\\s +")))))
