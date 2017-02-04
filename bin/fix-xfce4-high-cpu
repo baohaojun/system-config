@@ -1,0 +1,4 @@
+#!/bin/bash
+ps-killall xfce4
+ps-killall xfsettingsd
+ps-killall xfdesktop

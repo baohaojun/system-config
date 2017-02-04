@@ -347,6 +347,7 @@ if test $# = 0; then
 elif test "$1" = mm; then
     abc "$@"
 elif test "$1" = sync-qc-oems; then
+    abc_host='jenkins@build1 -p 21604'
     ssh $abc_host abc "$@"
 elif test "$1" = sync-simt-repos; then
     ssh -t $abc_host abc "$@"

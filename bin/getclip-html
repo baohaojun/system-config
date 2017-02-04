@@ -11,10 +11,15 @@ def test_clipboard():
         if sys.argv[0].find("getclip-formats") >= 0:
             print target
             continue
-        if target == 'text/html':
+
+        if target == 'text/html' and sys.argv[0].find("getclip-html") >= 0:
             contents = clipboard.wait_for_contents(target)
             if contents:
-                print contents.data
+                sys.stdout.write(contents.data)
+        elif target == "image/png" and sys.argv[0].find("getclip-png") >= 0:
+            contents = clipboard.wait_for_contents(target)
+            if contents:
+                sys.stdout.write(contents.data)
 
 def main():
     mainloop = glib.MainLoop()

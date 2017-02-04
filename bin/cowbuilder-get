@@ -64,24 +64,20 @@ for system_arch in $system_archs; do
     mkdir $basepath -p
     components='main contrib non-free'
     gpgpath=/usr/share/keyrings/debian-archive-keyring.gpg
-    extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
+
     if echo $system|grep ubuntu; then
         components='main universe multiverse'
-        gpgpath=~/external/ubuntu-keyring/usr/share/keyrings/ubuntu-archive-keyring.gpg
-        extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
-        if test ! -e $gpgpath; then
-            (
-                cd /tmp
-                deb=$(wget http://mirrors.aliyun.com/ubuntu/pool/main/u/ubuntu-keyring/ -O - |
-                    grep -P -e 'href=".*?"' -o |
-                    tail -n 1 |
-                    perl -npe 's!.*"(.*)".*!http://mirrors.aliyun.com/ubuntu/pool/main/u/ubuntu-keyring/$1!')
-                wget -N $deb
-                dpkg -x $(basename $deb) ~/external/ubuntu-keyring
-            )
+        gpgpath=/usr/share/keyrings/ubuntu-archive-keyring.gpg
+        if test ! -e "$gpgpath"; then
+            sudo apt-get install ubuntu-archive-keyring
+        fi
+    elif test "$(lsb_release -i -s)" = Ubuntu; then
+        if test ! -e "$gpgpath"; then
+            sudo apt-get install debian-archive-keyring
         fi
     fi
 
+    extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
     sysname=${system%-*} #debian/ubuntu
     dist=${system#*-} #lucid/testing
 

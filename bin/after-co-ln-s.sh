@@ -323,12 +323,12 @@ if ask-if-not-bhj "Do you want to switch the ctrl/alt, esc/caps_lock keys?"; the
     fi
 fi
 
-if test -L /etc/rc.local || can-sudo-and-yes-or-no-p "Replace /etc/rc.local with system-config's version?"; then
-    if test -e /etc/rc.local && ! test -L /etc/rc.local; then
-        sudo cp /etc/rc.local /etc/rc.local.bak
+if ! diff >/dev/null 2>&1 -q ~/system-config/etc/rc.local /etc/rc.local; then
+    if grep -q '# from system-config' /etc/rc.local >/dev/null 2>&1; then
+        bhj-notify 'rc.local' 'You need to update /etc/rc.local':"$(diff /etc/rc.local ~/system-config/etc/rc.local)"
     fi
-    if test "$(readlink -f /etc/rc.local)" != ~/system-config/etc/rc.local; then
-        sudo ln -sf ~/system-config/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
+    if can-sudo-and-yes-or-no-p "Replace /etc/rc.local with system-config's version? (please check it first!)"; then
+        sudo cp ~/system-config/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
     fi
 fi
 mkdir -p ~/system-config/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/

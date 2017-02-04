@@ -12,20 +12,20 @@ atexit() {
 trap atexit 0
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt d:dir u:url b:branch
+# generate-getopt d:dir u:url b:branch r:reference
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o d:u:b: --long "dir:,url:,branch:"  -n $(basename -- $0) -- "$@")
-dir=
+TEMP=$(getopt -o u:b:r:d:h \
+              --long url:,branch:,reference:,dir:,help \
+              -n $(basename -- $0) -- "$@")
 url=
 branch=
+reference=
+dir=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -d|--dir)
-            dir=$2
-            shift 2
-            ;;
+
         -u|--url)
             url=$2
             shift 2
@@ -33,6 +33,34 @@ while true; do
         -b|--branch)
             branch=$2
             shift 2
+            ;;
+        -r|--reference)
+            reference=$2
+            shift 2
+            ;;
+        -d|--dir)
+            dir=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--branch=BRANCH'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--dir=DIR'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--reference=REFERENCE'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--url=URL'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -43,6 +71,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -58,7 +87,7 @@ if test ! -d $dir/.git; then
     mkdir -p $dir
     (
         cd $dir
-        if ! git clone --single-branch -b $branch $url .; then
+        if ! git clone --single-branch -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
             git init .
             git commit -m 'init commit' --allow-empty --author 'qualcomm <someone@qualcomm.com>'
             git push $url HEAD:refs/heads/$branch
