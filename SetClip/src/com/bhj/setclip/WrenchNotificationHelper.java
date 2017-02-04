@@ -5,24 +5,24 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
+import android.app.PendingIntent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationListenerService.*;
+import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 import com.Wrench.Input;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,6 +90,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
             PendingIntent i = n.contentIntent;
             if (i != null) {
                 try {
+                    Log.e("bhj", String.format("%s:%d: can send intent", "WrenchNotificationHelper.java", 93));
                     i.send();
                     break;
                 } catch (CanceledException e) {
