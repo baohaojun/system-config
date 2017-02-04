@@ -65,6 +65,8 @@ void AdbNotificationThread::onDisconnected()
     }
 
     if (QString(notificationSocket->readLine()).contains("notification ready")) {
+        notificationSocket->write("hello\n");
+        notificationSocket->flush();
         connect(notificationSocket, SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()));
         connect(notificationSocket, SIGNAL(readyRead()), this, SLOT(onNewNotification()));
     } else {

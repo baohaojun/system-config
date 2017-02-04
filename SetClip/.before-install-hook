@@ -12,3 +12,4 @@ fi
     md5sum Setclip.apk > Setclip.apk.md5
     adb push Setclip.apk.md5 /sdcard/
 )
+
