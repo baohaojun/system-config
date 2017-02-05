@@ -16,4 +16,4 @@ fi
     done
 ) >/dev/null 2>&1 &
 
-the-true-adb install "$@"
+the-true-adb install -r "$@"

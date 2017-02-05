@@ -1,0 +1,96 @@
+#!/bin/bash
+
+debug-args "$@" > ~/tmp/n.txt 2>&1
+
+set -x
+exec >> ~/tmp/n.txt 2>&1
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt i:icon h:headline c:content s:shell @:info @:pkg
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h:i:s:c:h \
+              --long pkg:,headline:,icon:,shell:,content:,info:,help \
+              -n $(basename -- $0) -- "$@")
+pkg=
+headline=
+icon=
+shell=
+content=
+info=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --pkg)
+            pkg=$2
+            shift 2
+            ;;
+        -h|--headline)
+            headline=$2
+            shift 2
+            ;;
+        -i|--icon)
+            icon=$2
+            shift 2
+            ;;
+        -s|--shell)
+            shell=$2
+            shift 2
+            ;;
+        -c|--content)
+            content=$2
+            shift 2
+            ;;
+        --info)
+            info=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--content=CONTENT'
+            echo
+            printf %06s '-h, '
+            printf %-24s '--headline=HEADLINE'
+            echo
+            printf %06s '-i, '
+            printf %-24s '--icon=ICON'
+            echo
+            printf "%06s" " "
+            printf %-24s '--info=INFO'
+            echo
+            printf "%06s" " "
+            printf %-24s '--pkg=PKG'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--shell=SHELL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+if test -z "$icon"; then
+    icon=$(echo $PWD/"$pkg".*.png)
+    if test ! -e "$icon"; then
+        icon=
+    fi
+fi
+
+exec bhj-notify -i "$icon" -h "$headline" -c "$content"

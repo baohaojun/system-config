@@ -1,14 +1,65 @@
 #!/bin/bash
-
+set -e
 # debug-args $(basename "$0") "$@" > ~/.cache/system-config/logs/$(basename $0).log 2>&1
-TEMP=$(getopt -o i: --long icon: -n $(basename $0) -- "$@")
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt i:icon h:headline c:content s:shell @:info
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h:i:s:c:h \
+              --long headline:,icon:,shell:,content:,info:,help \
+              -n $(basename -- $0) -- "$@")
+headline=
 icon=
+shell=
+content=
+info=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
+        -h|--headline)
+            headline=$2
+            shift 2
+            ;;
         -i|--icon)
             icon=$2
             shift 2
+            ;;
+        -s|--shell)
+            shell=$2
+            shift 2
+            ;;
+        -c|--content)
+            content=$2
+            shift 2
+            ;;
+        --info)
+            info=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--content=CONTENT'
+            echo
+            printf %06s '-h, '
+            printf %-24s '--headline=HEADLINE'
+            echo
+            printf %06s '-i, '
+            printf %-24s '--icon=ICON'
+            echo
+            printf "%06s" " "
+            printf %-24s '--info=INFO'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--shell=SHELL'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -20,18 +71,21 @@ while true; do
     esac
 done
 
-function die() {
-    echo Error: "$@"
-    exit -1
-}
 
-if test "$#" != 1 -a $# != 2; then
-    die "Usage: $(basename $0) [-i icon] headline [content]"
+## end generated code
+
+if test -z "$headline"; then
+    if test "$#" != 1 -a $# != 2; then
+        die "Usage: $(basename $0) [-i icon] headline [content]"
+    fi
+    headline=$1
+    content=$2
 fi
 
+exec >/dev/null 2>&1
 tmp_head=/tmp/$(basename $0).$$.head
 
-echo -n "$1" > $tmp_head
+echo -n "$headline" > $tmp_head
 
 read_head=$(cat <<EOF
 (progn
@@ -45,7 +99,7 @@ read_head=$(cat <<EOF
 EOF
 )
 
-if test $# = 1; then
+if test -z "$content"; then
     sawfish-client -e "(bhj-draw-notification t nil $read_head)"
     rm $tmp_head
     exit
@@ -53,7 +107,7 @@ fi
 
 tmp_content=/tmp/$(basename $0).$$.content
 
-echo -n "$2" > $tmp_content
+echo -n "$content" > $tmp_content
 
 read_content=$(cat <<EOF
 (progn
@@ -105,9 +159,9 @@ fi
 
     (
         set -e
-        sleep 5 > $md5file
+        sleep 10 > $md5file
         rm $md5file
-        draw-notification-with-sawfish "$1"
+        draw-notification-with-sawfish --headline "$headline"
         sawfish-client -e "(unbind-keys global-keymap \"Button1-Click\")
                            (bind-keys window-keymap \"Button1-Click\" 'raise-and-pass-through-click))"
 
