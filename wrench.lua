@@ -19,6 +19,7 @@ local weixin_open_homepage
 local file_exists
 local social_need_confirm = false
 local right_button_x = 984
+local my_select_args
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local reset_input_method, adb_shell
@@ -2854,7 +2855,7 @@ handle_notification = function(key, pkg, title, text)
          return
       end
    end
-   log("got %s(%s): %s(%s)", key, pkg, title, text)
+   -- log("got %s(%s): %s(%s)", key, pkg, title, text)
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
       clickForWeixinMoney()
@@ -2862,11 +2863,18 @@ handle_notification = function(key, pkg, title, text)
       clickNotification{key}
       clickForQqMoney()
    end
+   system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}
 end
+
+my_select_args =  function(...)
+   select_args{...}
+end
+
 
 M.be_verbose = be_verbose
 M.be_quiet = be_quiet
 M.handle_notification = handle_notification
+M.my_select_args = my_select_args
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then
