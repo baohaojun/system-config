@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 WrenchExt::WrenchExt() :
-    L(NULL)
+    L(NULL), mUseQtPop(true)
 {
 
 }
@@ -32,9 +32,16 @@ void WrenchExt::reloadLuaScript()
 {
     reloadLuaScriptInternally();
     QString pop = callLuaFunc("should_use_internal_pop", QStringList());
-    if (pop == "1") {
-        qDebug() << "should use internal pop";
+    if (pop == "0") {
+        mUseQtPop = false;
+    } else {
+        mUseQtPop = true;
     }
+}
+
+bool WrenchExt::shouldUseInternalPop()
+{
+    return mUseQtPop;
 }
 
 bool WrenchExt::isUsefulNotification(const QString &key, const QString &pkg, const QString &title, const QString &text)

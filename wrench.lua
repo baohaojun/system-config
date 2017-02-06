@@ -4,7 +4,7 @@
 local M
 
 -- functions
-
+local WrenchExt = {}
 local search_sms, string_strip, handle_notification
 local adb_input_method_is_null, close_ime
 local window_post_button_map = {}
@@ -49,7 +49,7 @@ local check_scroll_lock, prompt_user, yes_or_no_p
 local smartisan_mail_compose = "com.android.email/com.android.mail.compose.ComposeActivity"
 
 -- variables
-local   weibo_home_activity = "com.sina.weibo/com.sina.weibo.MainTabActivity"
+local weibo_home_activity = "com.sina.weibo/com.sina.weibo.MainTabActivity"
 local weibo_search_activity = "com.sina.weibo/com.sina.weibo.page.SearchResultActivity"
 local where_is_dial_key
 local rows_mail_att_finder
@@ -1762,6 +1762,12 @@ on_app_selected = function(app)
    end
 end
 
+local dofile_res = nil
+dofile_res, WrenchExt = pcall(dofile, "wrench-ext.lua")
+if not dofile_res then
+   WrenchExt = {}
+end
+
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
@@ -2863,6 +2869,7 @@ handle_notification = function(key, pkg, title, text)
       clickNotification{key}
       clickForQqMoney()
    end
+
    system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}
 end
 

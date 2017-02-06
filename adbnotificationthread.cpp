@@ -69,6 +69,7 @@ void AdbNotificationThread::onDisconnected()
         notificationSocket->flush();
         connect(notificationSocket, SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()));
         connect(notificationSocket, SIGNAL(readyRead()), this, SLOT(onNewNotification()));
+        notificationSocket->write("list\n");
     } else {
         qDebug() << "Can't read from notification";
         mConnectTimer->start(1000);

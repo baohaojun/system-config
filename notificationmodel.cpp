@@ -54,7 +54,7 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
         }
 
         if (match) {
-            SelectedItem si(key, sNotifications[key].title + "\n" + sNotifications[key].text);
+            SelectedItem si(sNotifications[key].key, sNotifications[key].title + "\n" + sNotifications[key].text);
             si.icon = mAppIconMap[sNotifications[key].pkg];
             if (!mSelectedItemsRevMap.contains(si.displayText)) {
                 mSelectedItems << si;

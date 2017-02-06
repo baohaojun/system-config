@@ -19,6 +19,7 @@ public:
 
 private:
     lua_State *L;
+    bool mUseQtPop;
 
     QString callLuaFunc(const QString& func, const QStringList& args);
     QString mErrorString;

@@ -83,13 +83,19 @@ WrenchMainWindow::~WrenchMainWindow()
 
 void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text)
 {
-    if (!mLuaThread.isNull()) {
-        mLuaThread->addScript(QStringList() << "handle_notification" << key << pkg << title << text);
-    }
+
     if (mWrenchExt.isUsefulNotification(key, pkg, title, text)) {
-        qDebug() << "is useful: " << title << text;
+        if (!mLuaThread.isNull()) {
+            mLuaThread->addScript(QStringList() << "handle_notification" << key << pkg << title << text);
+        }
+        NotificationModel::insertNotification(key, pkg, title, text);
+
+        if (mWrenchExt.shouldUseInternalPop()) {
+            trayIcon->showMessage(title, text);
+        }
     }
-    NotificationModel::insertNotification(key, pkg, title, text);
+
+
 }
 
 void WrenchMainWindow::adbStateUpdated(const QString& state)
@@ -247,7 +253,7 @@ void WrenchMainWindow::onShowNotifications()
     QString prompt = "Select whose notifications to show";
 
     DialogGetEntry dialog(&model, prompt, this);
-    //connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_appSelected(QString)));
+    connect(&dialog, SIGNAL(entrySelected(QString)), this, SIGNAL(adbNotificationClicked(QString)));
     dialog.exec();
     dialog.disconnect();
 }
