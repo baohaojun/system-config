@@ -304,7 +304,6 @@
         ("(" . '((Wine mm8-5)))
         ("=" . '((Wine mm6-drop)))
         ("j" . '((Wine mm6-c)))
-        ("XF86Favorites" . '((Wine "F2")))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Iceweasel "Meta-*")))))
 
 (defun mm6-reverse-tab ()
@@ -782,7 +781,7 @@
 (bind-keys s-h-keymap "M-C-p" '(system "sawfish-show-pointer&"))
 (bind-keys s-h-keymap "M-C-c" '(system "sawfish-get-pointer-color&"))
 (bind-keys s-h-keymap "C-XF86Favorites" '(system "mm8 all&"))
-(bind-keys s-h-keymap "XF86Favorites" '(system "mm8 cast bless&"))
+(bind-both-global&window-keymaps "XF86Favorites" '(system "wrench-show-notifications.sh&"))
 
 (defun get-window-xy-size (class)
   (let ((x 100000)

@@ -87,7 +87,7 @@ done
 
 
 if test -z "$icon"; then
-    icon=$(echo $PWD/"$pkg".*.png)
+    icon=$(echo $PWD/"$pkg".*.png|pn 1)
     if test ! -e "$icon"; then
         icon=
     fi
