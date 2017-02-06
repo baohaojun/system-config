@@ -1835,7 +1835,7 @@ t1_post = function(text) -- use weixin
       t1_paste()
       return
    else
-      local add, post_button = '', right_button_x .. ' 1820'
+      local add, post_button = '', right_button_x .. ' 1850'
       local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
       log("input_method is %s, ime_xy is %s", input_method, ime_height)
       -- debugging("ime_xy is %s", ime_xy)
@@ -2870,11 +2870,15 @@ my_select_args =  function(...)
    select_args{...}
 end
 
+my_show_notifications = function()
+   show_notifications()
+end
 
 M.be_verbose = be_verbose
 M.be_quiet = be_quiet
 M.handle_notification = handle_notification
 M.my_select_args = my_select_args
+M.my_show_notifications = my_show_notifications
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then

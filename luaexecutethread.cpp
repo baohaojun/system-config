@@ -113,6 +113,12 @@ static int l_selectApps(lua_State* L)
     return 0;
 }
 
+static int l_showNotifications(lua_State* L)
+{
+    that->showNotifications();
+    return 0;
+}
+
 static int l_qt_adb_pipe(lua_State* L)
 {
     int n = luaL_len(L, -1);
@@ -283,6 +289,9 @@ void LuaExecuteThread::run()
     lua_pushcfunction(L, l_selectApps);
     lua_setglobal(L, "select_apps");
 
+    lua_pushcfunction(L, l_showNotifications);
+    lua_setglobal(L, "show_notifications");
+
     lua_pushcfunction(L, l_adb_push);
     lua_setglobal(L, "qt_adb_push");
 
@@ -416,6 +425,11 @@ void LuaExecuteThread::clickNotification(const QStringList& args)
 void LuaExecuteThread::selectApps()
 {
     emit selectAppsSig();
+}
+
+void LuaExecuteThread::showNotifications()
+{
+    emit showNotificationsSig();
 }
 
 void LuaExecuteThread::on_argSelected(const QString& arg)

@@ -24,6 +24,7 @@ public:
     QString selectArgs(const QStringList&);
     void clickNotification(const QStringList&);
     void selectApps();
+    void showNotifications();
     void on_argSelected(const QString& arg);
     void load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
     void setVariableLocked(const QString& name, const QString& val);
@@ -36,6 +37,7 @@ private:
 signals:
     void gotSomeLog(const QString& key, const QString& val);
     void selectArgsSig(const QStringList&);
+    void showNotificationsSig();
     void selectAppsSig();
     void sigClickNotification(const QString& key);
     void load_mail_heads_sig(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);

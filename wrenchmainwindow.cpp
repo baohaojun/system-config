@@ -48,6 +48,7 @@
 #include <QProcessEnvironment>
 #include "wrenchmainwindow.h"
 #include "ui_wrenchmainwindow.h"
+#include "notificationmodel.h"
 
 QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
@@ -85,6 +86,10 @@ void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QStrin
     if (!mLuaThread.isNull()) {
         mLuaThread->addScript(QStringList() << "handle_notification" << key << pkg << title << text);
     }
+    if (mWrenchExt.isUsefulNotification(key, pkg, title, text)) {
+        qDebug() << "is useful: " << title << text;
+    }
+    NotificationModel::insertNotification(key, pkg, title, text);
 }
 
 void WrenchMainWindow::adbStateUpdated(const QString& state)
@@ -236,6 +241,17 @@ void WrenchMainWindow::onSelectApps()
     dialog.disconnect();
 }
 
+void WrenchMainWindow::onShowNotifications()
+{
+    NotificationModel model;
+    QString prompt = "Select whose notifications to show";
+
+    DialogGetEntry dialog(&model, prompt, this);
+    //connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_appSelected(QString)));
+    dialog.exec();
+    dialog.disconnect();
+}
+
 bool WrenchMainWindow::anyShareChecked()
 {
     return  ui->tbWeibo->isChecked() ||
@@ -345,6 +361,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     if (mLuaThread.isNull()) {
         is_starting = true;
     }
+    mWrenchExt.reloadLuaScript();
     QProcess::startDetached("./the-true-adb", QStringList("start-server"));
     if (!mLuaThread.isNull()) {
         if (mLuaThread->isRunning()) {
@@ -378,6 +395,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     }
     connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
     connect(mLuaThread.data(), SIGNAL(selectAppsSig()), this, SLOT(onSelectApps()));
+    connect(mLuaThread.data(), SIGNAL(showNotificationsSig()), this, SLOT(onShowNotifications()));
     connect(mLuaThread.data(), SIGNAL(sigClickNotification(QString)), this, SIGNAL(adbNotificationClicked(QString)));
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
@@ -639,8 +657,13 @@ void WrenchMainWindow::createTrayIcon()
     quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quitMyself()));
 
+    showNotificationAction = new QAction(tr("&Show notifications"), this);
+    connect(showNotificationAction, SIGNAL(triggered()), this, SLOT(onShowNotifications()));
+
     trayIconMenu = new QMenu(this);
     trayIconMenu->addAction(quitAction);
+    trayIconMenu->addAction(showNotificationAction);
+
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);

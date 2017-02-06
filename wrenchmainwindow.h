@@ -6,6 +6,7 @@
 #include <QtWidgets/QRadioButton>
 #include "luaexecutethread.hpp"
 //#include "screencapture.h"
+#include "wrenchext.h"
 #include <QtCore/QSettings>
 #include "dialoggetentry.h"
 #include <QMenu>
@@ -42,6 +43,7 @@ public slots:
     void onInfoUpdate(const QString& key, const QString& val);
     void onSelectArgs(const QStringList& args);
     void onSelectApps();
+    void onShowNotifications();
     void startTask(const QString& task);
     void on_argSelected(const QString& arg);
     void on_appSelected(const QString& app);
@@ -109,6 +111,8 @@ private slots:
 
 private:
 
+    WrenchExt mWrenchExt;
+
     bool anyShareChecked();
 
     QMap<QString, QString> mMmsReceiverMap;
@@ -119,6 +123,7 @@ private:
     void showEvent(QShowEvent *event);
 
     QAction* quitAction;
+    QAction* showNotificationAction;
     QSystemTrayIcon* trayIcon;
     QMenu* trayIconMenu;
     bool mQuit;

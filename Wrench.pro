@@ -81,6 +81,8 @@ SOURCES += main.cpp\
         contactmodel.cpp \
         strlistmodel.cpp \
         appsmodel.cpp \
+        wrenchext.cpp \
+        notificationmodel.cpp \
         filteringedit.cpp \
         dialoggetentry.cpp \
         filteringlistview.cpp \
@@ -198,6 +200,8 @@ HEADERS  += wrenchmainwindow.h \
             contactmodel.h \
             strlistmodel.h \
             appsmodel.h \
+            wrenchext.h \
+            notificationmodel.h \
             wrench.h \
             filteringedit.h \
             filteringlistview.h \
