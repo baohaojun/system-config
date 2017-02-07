@@ -6,6 +6,8 @@
 
 小扳手就相当于是手机上的按键小精灵，你可以在PC上输入，然后通过手机发送！怎么样，是不是挂开得有点大了？想想你的朋友们都在手机上一个字一个字的打完再发朋友圈，你可以在PC键盘上运指如飞，打出一篇又一篇的美文，打得你的朋友们满地找牙，不亦乐乎！😄
 
+(*2017-02-07 更新* 关于上面这段话，如果你脑子像我一样，基本上是不可能打出什么“美文”来的，没错，美文的关键不在于在PC键盘上“运指如飞”，而在于脑子和训练...)
+
 您可以看一下 [[http://weibo.com/1611427581/BySpXjTic][这条微博]] 里边的这个视频，小扳手在不停地帮我约陌陌呢！😻从视频里您应该可以看到，正常的人类控制手机是不可能做到这么精准的。😅 另外可以看一下小扳手 [[http://v.youku.com/v_show/id_XMTMzOTY5NTQyNA][最新的介绍视频]] 。
 
 告诉你一个秘密！在微信朋友圈里发文章，是不是大家发出来的文章都像浆糊一样糊在一块儿，根本没有分段的概念？你可以在输入的时候空一行——这看上去就是分了段了——但是没用的，微信会自动把你的空行给“吃”掉，发出来的东西还是糊在一起的。但是如果用小扳手，你就可以发出分段的文章！😸
@@ -29,13 +31,13 @@
 
    收到一条短信之后，在Smartisan T1手机上，您可以直接操作小扳手进行回复，非常简单：输入想要回复的内容，然后发送。这个是特别针对Smartisan T1手机做过适配的，精确的知道系统收到短信的界面应该怎么用“按键小精灵”进行操作（其他厂商的手机应该是不能用的）。
 
-   [[../../../../images/wrench-reply-sms.png][file:../../../../images/wrench-reply-sms.png]]
+   [[./../../../../images/wrench-reply-sms.png][file:../../../../images/wrench-reply-sms.png]]
 
 3. 回复邮件
 
    这个也是针结Smartisan T1手机做过优化的。当您在用T1的邮件程序阅读一封邮件时，您可以直接操作小扳手回复邮件。默认它会群回，也就是点下图正中间的那个按钮，但如果您已经自己点了单独回复，那小扳手也可以很智能的识别出来哦。同样，这个功能应该也不支持其他厂商的手机，因为大家的界面不一样🃏。
 
-   [[../../../../images/wrench-reply-email.png][file:../../../../images/wrench-reply-email.png]]
+   [[./../../../../images/wrench-reply-email.png][file:../../../../images/wrench-reply-email.png]]
 
 4. 微博分享
 
@@ -72,7 +74,7 @@
 
 这几个地址不管小扳手怎么升级，始终都会是最新的版本供大家下载。
 
-但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：各个平台的最校版本链接都在 [[../../../2015/09/19/0-Wrench-changelog-and-download-location.org][这个中转博客里]] 。
+但是，如果您觉得从github下载太慢的话，可以用百度网盘下载：各个平台的最校版本链接都在 [[./../../../2015/09/19/0-Wrench-changelog-and-download-location.org][这个中转博客里]] 。
 
 ** 安装
 
@@ -82,7 +84,7 @@
 
 - Windows :: 解压之后双击T1Wrench.exe开始运行
 - Mac :: 解压之后双击T1Wrench.app开始运行
-- Linux :: 解压之后运行./T1Wrench。请参考 [[../../../2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.org][怎么在Linux下使用小扳手]] 。
+- Linux :: 解压之后运行./T1Wrench。请参考 [[./../../../2015/10/22/0-How-to-run-Wrench-under-Linux-including-Ubuntu-12.04.org][怎么在Linux下使用小扳手]] 。
 
 ** 连接手机
 
@@ -90,7 +92,7 @@
 
 小扳手启动之后，如果没有连上安卓手机，默认右下角的图标是红色的，意思是没有连接。下面以Windows 7系统为例，详细介绍一下怎么让红灯变成绿灯。
 
-[[../../../../images/wrench-not-connected.png][file:../../../../images/wrench-not-connected.png]]
+[[./../../../../images/wrench-not-connected.png][file:../../../../images/wrench-not-connected.png]]
 
 0. 确保手机已经开启USB调试
 
@@ -98,13 +100,13 @@
 
       在手机的 “设置” 应用中，滑动到最下方，有一个 “关于本机” ，点进去之后，再滑动到最下方，有一个 “Smartisan OS 版本” ，连续不停地点按它，就能打开开发者模式，如图：
 
-      [[../../../../images/dev-mode.png][file:../../../../images/dev-mode.png]]
+      [[./../../../../images/dev-mode.png][file:../../../../images/dev-mode.png]]
 
     - 打开 USB 调试
 
       回到上一级设置，进入 “关于本机” 上方的 “高级设置” ，这时您应该可以看到有一个 “开发者选项” （本来是没有的，上一步刚打开才有的）。点这个 “高级设置” 进入之后，打开 “USB 调试”，选 “确定”（见图）：
 
-      [[../../../../images/confirm-allow-adb.png][file:../../../../images/confirm-allow-adb.png]]
+      [[./../../../../images/confirm-allow-adb.png][file:../../../../images/confirm-allow-adb.png]]
 
 1. 通过USB线连接PC和手机
 
@@ -112,48 +114,48 @@
 
    如果您的手机以前没有安装过安卓USB调试驱动的话，这时候打开设备管理器，您会发现有一个打了未知的Android设备，见图：
 
-   [[../../../../images/android-eclamation-mark.png][file:../../../../images/android-eclamation-mark.png]]
+   [[./../../../../images/android-eclamation-mark.png][file:../../../../images/android-eclamation-mark.png]]
 
    这时候您可以从小扳手的解压目录下安装Smartisan T1的USB调试驱动，下面用几张图详细的描述如何操作：
 
    点击右键：
 
-   [[../../../../images/right-key-adb.png][file:../../../../images/right-key-adb.png]]
+   [[./../../../../images/right-key-adb.png][file:../../../../images/right-key-adb.png]]
 
    点击属性：
 
-   [[../../../../images/update-new-driver.png][file:../../../../images/update-new-driver.png]]
+   [[./../../../../images/update-new-driver.png][file:../../../../images/update-new-driver.png]]
 
    点击更新驱动程序：
 
-   [[../../../../images/browse-computer-adb-driver.png][file:../../../../images/browse-computer-adb-driver.png]]
+   [[./../../../../images/browse-computer-adb-driver.png][file:../../../../images/browse-computer-adb-driver.png]]
 
    点击浏览计算机以查找驱动程序软件：
 
-   [[../../../../images/where-adb-driver.png][file:../../../../images/where-adb-driver.png]]
+   [[./../../../../images/where-adb-driver.png][file:../../../../images/where-adb-driver.png]]
 
    输入您的T1Wrench解压的位置，并选中 “包括子文件夹” （如上图，我的T1Wrench放在了D:盘下面），点击下一步：
 
-   [[../../../../images/always-install-adb.png][file:../../../../images/always-install-adb.png]]
+   [[./../../../../images/always-install-adb.png][file:../../../../images/always-install-adb.png]]
 
    选择 “始终安装此驱动程序软件” ：
 
-   [[../../../../images/installing-adb-driver.png][file:../../../../images/installing-adb-driver.png]]
+   [[./../../../../images/installing-adb-driver.png][file:../../../../images/installing-adb-driver.png]]
 
    安装完毕后出现一个SUMSANG Android Phone（瀑布汗，这个不知道为什么会这样啊，好像跟这台PC上第一次安装USB调试驱动是一台三星手机有关，以后你再插随便什么手机都是SUMSANG的了💦）：
 
-   [[../../../../images/adb-driver-installed.png][file:../../../../images/adb-driver-installed.png]]
+   [[./../../../../images/adb-driver-installed.png][file:../../../../images/adb-driver-installed.png]]
 
 3. 配置Smartisan T1手机的USB调试
 
    由于我们公司起步较晚，在我们用USB调试的时候，需要一个额外的步骤，PC才能连上手机的USB调试，否则小扳手认不出T1手机。现在我把这个步骤给打包到小扳手里了，具体技术细节就不说了，我们看一下怎么用小扳手操作吧：
 
    点一下图中标识的小扳手上的 “设置” 按钮 （跟T1手机上的设置按钮图标是一样的😆），弹出的提示框请点确认：
-   [[../../../../images/ask-if-config.png][file:../../../../images/ask-if-config.png]]
+   [[./../../../../images/ask-if-config.png][file:../../../../images/ask-if-config.png]]
 
    然后应该会出现一个这样的提示框，没有关系，点确定就好了：
 
-   [[../../../../images/done-config.png][file:../../../../images/done-config.png]]
+   [[./../../../../images/done-config.png][file:../../../../images/done-config.png]]
 
    小扳手的这个提示框应该只会出现一次，以后再也不会出现了。如果没有出现，那么可能你的这个步骤已经之前配过了，不用担心🃏。
 
@@ -161,7 +163,7 @@
 
    完成了上面的配置之后，T1手机上应该会出现这样的一个对话框，这是因为小扳手现在能认出T1手机了，所以就会尝试连接手机，但手机上必须同意小扳手的连接才可以：
 
-   [[../../../../images/allow-adb-on-phone.png][file:../../../../images/allow-adb-on-phone.png]]
+   [[./../../../../images/allow-adb-on-phone.png][file:../../../../images/allow-adb-on-phone.png]]
 
    勾选 “永远允许这台电脑” 并点击确定，小扳手的图标应该就会变绿了！㊗贺！
 
@@ -169,21 +171,21 @@
 
    慢着！高兴得有点早了😂。小扳手要正确运行，它会往您的手机里安装一个小应用（就像豌豆荚、91手机助手等软件一样，只不过小扳手的应用比起来要小得多）。因为Smartisan T1手机的安全设置的关系，这个应用安装一般都是会失败的，所以它会弹出一个这样的框来：
 
-   [[../../../../images/setclip-install-error.png][file:../../../../images/setclip-install-error.png]]
+   [[./../../../../images/setclip-install-error.png][file:../../../../images/setclip-install-error.png]]
 
    这时候您需要做如下操作：
 
    点开 设置 ，选 “锁屏和安全” （如图）
 
-   [[../../../../images/adb-sec.png][file:../../../../images/adb-sec.png]]
+   [[./../../../../images/adb-sec.png][file:../../../../images/adb-sec.png]]
 
    选 “应用程序安装来源管理” （如图）
 
-   [[../../../../images/apk-source-sec.png][file:../../../../images/apk-source-sec.png]]
+   [[./../../../../images/apk-source-sec.png][file:../../../../images/apk-source-sec.png]]
 
    勾选上 “未知来源” ，选 “确定” （不用担心，我们之后再关掉这个不安全的选项）
 
-   [[../../../../images/adb-source-confirm.png][file:../../../../images/adb-source-confirm.png]]
+   [[./../../../../images/adb-source-confirm.png][file:../../../../images/adb-source-confirm.png]]
 
    重新插拔一下手机USB线，这回小扳手的绿灯亮起的时候应该就不会再弹出那个出错的框的（如果还弹的话，请您到 [[http://bbs.smartisan.cn/forum-100-1.html][锤子科技bbs论坛]] 上发个贴子@一下我反馈这个问题，如果我没有时间，说不定也会有热心的朋友帮您解决。反馈问题时最好有截屏，手机上的和PC上的，这样才方便大家帮你）。
 
@@ -212,7 +214,7 @@
 
   从小扳手 3.1.0 版开始，只要是安卓手机，都支持小扳手，但前提是必须在使用小扳手时使用小扳手自带的输入法（没错，就叫小扳手输入法）。
 
-  另外，有两家的手机 （meizu 和 LG 的），它们的系统有点特殊，小扳手在这两家的系统上只能输入文字，但不能发送。详情见 [[../../../2015/09/19/0-Wrench-changelog-and-download-location.org][修改记录]] 页面上关于 3.1.0 版的说明。
+  另外，有两家的手机 （meizu 和 LG 的），它们的系统有点特殊，小扳手在这两家的系统上只能输入文字，但不能发送。详情见 [[./../../../2015/09/19/0-Wrench-changelog-and-download-location.org][修改记录]] 页面上关于 3.1.0 版的说明。
 
 - 我的PC系统是Windows 8，驱动装不上？
 
@@ -274,25 +276,66 @@
 
   您可以从“设置”、“联系人”、
 
-  [[../../../../images/setting-export-contact.png][file:../../../../images/setting-export-contact.png]]
+  [[./../../../../images/setting-export-contact.png][file:../../../../images/setting-export-contact.png]]
 
   “导入/导出”
 
-  [[../../../../images/imp-exp-setting-export-contact.png][file:../../../../images/imp-exp-setting-export-contact.png]]
+  [[./../../../../images/imp-exp-setting-export-contact.png][file:../../../../images/imp-exp-setting-export-contact.png]]
 
   “导出联系人”
 
-  [[../../../../images/export-contact.png][file:../../../../images/export-contact.png]]
+  [[./../../../../images/export-contact.png][file:../../../../images/export-contact.png]]
 
   一路点下去把联系人导出到 =/sdcard/smartisan/contact/0000X.vcf= 文件：
 
-  [[../../../../images/confirm-export-contact.png][file:../../../../images/confirm-export-contact.png]]
+  [[./../../../../images/confirm-export-contact.png][file:../../../../images/confirm-export-contact.png]]
 
   然后把手机连上你的PC之后，在便携式设备里可以看到这个文件，把它拷贝到你的小扳手解压目录下，重命名为 =contacts.vcf= *并且重启小扳手* 就可以了。注意，最新版本的小扳手重启必须从系统托盘里退出再重启，直接关闭小扳手窗口然后重新双击小扳手程序图标，弹出来的还是原来的小扳手窗口，并没有重启过😅。
 
-  [[../../../../images/exported.vcf-on-pc.png][file:../../../../images/exported.vcf-on-pc.png]]
+  [[./../../../../images/exported.vcf-on-pc.png][file:../../../../images/exported.vcf-on-pc.png]]
 
 * 版本变更记录
+
+** <<notifications>> V3.1.3 小扳手接收手机通知、抢红包
+
+居然还有同学想要用小扳手，🙏。
+
+最新版本的小扳手（3.1.3），已经支持接收手机端的通知，但前提是要在手机设置里打开小扳手辅助应用接收通知的权限。
+
+在锤子科技的手机上，打开该权限的方法是运行（不知道怎样从手机屏幕上找到相应的入口）：
+
+#+BEGIN_SRC sh
+adb shell am start -n com.android.settings/com.android.settings.NotificationAccessSettingsActivity
+#+END_SRC
+
+然后，点击开关并确认，如图：
+
+[[./../../../../images/wrench-allow-notification.png][file:./../../../../images/wrench-allow-notification.png]]
+
+如果是其他品牌的手机，或最新版本的安卓系统（7.0），有可能上述命令是找不到的，请用Google自行搜索，比如 [[http://www.enhancedsmscallerid.com/home/faq/how-do-i-enable-notifications-for-other-apps][这个页面]]。
+
+- *Bug注意*：有时候这个开关打开之后，小扳手能收到通知，但点击不管用。这时候需要：
+
+  1. 进入此设置页面
+
+  2. 断开手机USB线
+
+  3. 重新关闭、打开一遍该开关。
+
+  有可能要多试几次。
+
+然后，可以试着用别的手机微信（或自己用锤子手机的应用双开功能再开一个微信账号）给自己发一个红包，如果能抢到的话，就说明相关通知功能都是OK的。
+
+在系统的通知栏小扳手的图标上，可以右键点击，有一个查看所有通知的选项，如图：
+
+[[./../../../../images/wrench-tray-popup-menu.png][file:./../../../../images/wrench-tray-popup-menu.png]]
+
+点击后，弹出这样的一个对话框，最新收到的消息在最下面，如果双击这条消息的话，一般可以在手机上打开相应的App并跳转到相关的页面（抢红包功能就是基于此实现的，自动点击红包通知）。
+
+[[./../../../../images/wrench-show-notifications.png][file:./../../../../images/wrench-show-notifications.png]]
+
+具体的实现，请参考相关源代码（在wrench.lua中，请顺藤摸瓜）。
+
 
 ** V2.3.0 <<V2.3.0>>
 
@@ -304,7 +347,7 @@
 
 使用方法是点击那个 “电话” 按钮，然后在弹出来的对话框里输入电话号码，或输入文字以选择匹配的联系人。注意如果你的联系人里有“包昊军”的话，在我厂的手机上你可以用bhj来匹配到我，但在小扳手上是不行的，但你可以试试 =b h j= 。
 
-[[../../../../images/phone-call-howto.png][file:../../../../images/phone-call-howto.png]]
+[[./../../../../images/phone-call-howto.png][file:../../../../images/phone-call-howto.png]]
 
 电话按钮的快捷键是 “Alt-&” 或 “Alt-7”，因为 =&= 的意思是“和”，你和你的意中人💓。都说了，早点用上小扳手，早点追到女朋友💕。
 
@@ -316,7 +359,7 @@
 
 注意目前您必须在 “设置”、“强迫症选项”、“拨号面板设置” 里选对称的拨号面板，否则不会拨打电话，只会在您输入的号码后面加一个零。以后我再考虑怎么更人性化一点。
 
-[[../../../../images/call-mode-centered.png][file:../../../../images/call-mode-centered.png]]
+[[./../../../../images/call-mode-centered.png][file:../../../../images/call-mode-centered.png]]
 
 另外还有一些小细节（其中第三条特别重要，您需要按照 http://t.cn/RZMYoSW 这里的说明确保安装成功）：
 
