@@ -2897,6 +2897,7 @@ M.be_quiet = be_quiet
 M.handle_notification = handle_notification
 M.my_select_args = my_select_args
 M.my_show_notifications = my_show_notifications
+M.yes_or_no_p = yes_or_no_p
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then
