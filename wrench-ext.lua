@@ -24,9 +24,23 @@ if file_exists(private_ext_file) then
 end
 
 is_useful_notification = function(key, pkg, title, text)
-   if private_config.is_useful_notification then
-      return private_config.is_useful_notification(key, pkg, title, text)
+   if private_config.is_useful_notification and
+   private_config.is_useful_notification(key, pkg, title, text) == 0 then
+      return 0
    end
+
+   if title == "no title" or text == "no text" then
+      return 0
+   end
+
+   if pkg == "com.github.shadowsocks" and title == "Default" then
+      return 0
+   end
+
+   if pkg == "android" or pkg == "com.bhj.setclip" or pkg == "com.android.systemui" then
+      return 0
+   end
+
    return 1;
 end
 

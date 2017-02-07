@@ -80,14 +80,15 @@ for x in . download; do
         qtchooser -qt=5 -run-tool=qmake && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
     )
 done
-relative-link -f $(for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P) .
+
+for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
 
 if test $# = 1 -a "$1" = debug; then
     perl -npe 'print "CONFIG += debug\n" if 1..1' -i *.pro
 fi
 
-relative-link -f $oldpwd/release/* .
-relative-link -f $oldpwd/linux/binaries/* .
+echo $oldpwd/* $oldpwd/linux/binaries/* | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
+
 ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
     if test "$DOING_WRENCH_RELEASE"; then

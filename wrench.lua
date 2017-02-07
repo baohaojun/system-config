@@ -1641,7 +1641,7 @@ qq_find_group_friend = function(friend_name)
       log("did not get chatSetting: %s", window)
       return
    end
-   adb_event("sleep 1 adb-tap 330 1482")
+   adb_event("sleep 1 adb-tap 667 1326")
    local troopList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity"
    window = wait_top_activity(troopList)
    if window ~= troopList then
@@ -1812,6 +1812,10 @@ t1_post = function(text) -- use weixin
       else
          adb_event("sleep 1")
       end
+      t1_post()
+      return
+   elseif window == "com.tencent.mm/com.tencent.mm.ui.chatting.gallery.ImageGalleryUI" then
+      adb_event"key back sleep .2"
       t1_post()
       return
    elseif window == "com.google.android.gm/com.google.android.gm.ComposeActivityGmail" then
@@ -2854,6 +2858,11 @@ clickForQqMoney = function()
    adb_event"sleep .3 adb-key back adb-key back adb-key home"
 end
 
+local should_use_internal_pop = true
+if WrenchExt.should_use_internal_pop and WrenchExt.should_use_internal_pop() ~= 1 then
+   should_use_internal_pop = false
+end
+
 handle_notification = function(key, pkg, title, text)
    ignored_pkgs = {"com.github.shadowsocks", "com.android.systemui"}
    for p = 1, #ignored_pkgs do
@@ -2870,7 +2879,9 @@ handle_notification = function(key, pkg, title, text)
       clickForQqMoney()
    end
 
-   system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}
+   if not should_use_internal_pop then
+      system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}
+   end
 end
 
 my_select_args =  function(...)

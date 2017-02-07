@@ -674,7 +674,7 @@ void WrenchMainWindow::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
 
-    QIcon icon("emojis/iphone-emoji/WRENCH.png");
+    QIcon icon("android-wrench.png");
     trayIcon->setIcon(icon);
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
