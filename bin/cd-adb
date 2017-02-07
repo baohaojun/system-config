@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$http_proxy" -o "$ALL_PROXY"; then
+    hint 你的Proxy环境变量有问题
+    return
+fi
+
 dir=$(select-output-line -o "get-vmlinux $* | perl -npe 's/:\n/: /'|grep smb:|reverse" | perl -npe 's/.*?smb:/smb:/')
 echo $dir
 echo $dir|putclip

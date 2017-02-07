@@ -1,15 +1,21 @@
 #!/bin/bash
 
+export SAWFISH_BROWSER_INPUT_SLEEP=.0
 putclip "shit"
 
 for x in $(seq 1 5); do
     sawfish-browser-input C-l C-c $(if test $(basename $(readlink -f $(which the-firefox))) = firefox; then echo TAB TAB; fi 2>/dev/null)
+    sleep .1
     out=$(
         getclip |grep . ||
         xclip -o
     )
 
     if test "$out" = shit; then
+        if test $x = 1; then
+            sawfish-browser-input C-l END SPC; xdotool-when-keyboard-clear key Home
+            continue
+        fi
         echo out not ready >> ~/.cache/system-config/logs/$(basename $0).log
         for y in $(seq 1 5); do
             sleep .03
@@ -28,5 +34,3 @@ for x in $(seq 1 5); do
         exit 0
     fi
 done
-
-sawfish-browser-input C-l C-e SPC # so that the url bar is not empty

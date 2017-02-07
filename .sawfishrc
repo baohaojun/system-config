@@ -26,12 +26,34 @@
 (setq warp-to-window-offset 50
       warp-to-window-enabled t)
 
-(setq s-h-keymap (make-keymap)
-      print-keymap (make-keymap)
-      c-x-esc-keymap (make-keymap)
-      c-x-map (make-keymap)
-      esc-map (make-keymap)
-      esc-g-map (make-keymap))
+(setq
+ s-h-keymap (make-keymap)
+ print-keymap (make-keymap)
+ c-x-esc-keymap (make-keymap)
+ c-x-map (make-keymap)
+ esc-map (make-keymap)
+ esc-x-keymap (make-keymap)
+ esc-g-map (make-keymap))
+
+;; start code-generator "^\\s *;*\\s *"
+;; for x in $(grep 'make'-keymap ~/.sawfishrc|pn 1); do
+;; cat <<EOF
+;; (bind-keys $x "Super-h" '(system "sawfish-help-key $x&"))
+;; EOF
+;; done
+;; end code-generator
+;; start generated code
+(bind-keys s-h-keymap "Super-h" '(system "sawfish-help-key s-h-keymap&"))
+(bind-keys print-keymap "Super-h" '(system "sawfish-help-key print-keymap&"))
+(bind-keys c-x-esc-keymap "Super-h" '(system "sawfish-help-key c-x-esc-keymap&"))
+(bind-keys c-x-map "Super-h" '(system "sawfish-help-key c-x-map&"))
+(bind-keys esc-map "Super-h" '(system "sawfish-help-key esc-map&"))
+(bind-keys esc-x-keymap "Super-h" '(system "sawfish-help-key esc-x-keymap&"))
+(bind-keys esc-g-map "Super-h" '(system "sawfish-help-key esc-g-map&"))
+
+;; end generated code
+
+(bind-keys s-h-keymap "q" '(synthesize-event-gnome? (read-event "Press the key you wanna send") (input-focus)))
 
 (defun do-esc-map ()
   (let* ((event (read-event "ESC"))
@@ -438,7 +460,6 @@
 
 ;; to clear it: (setq visibility-notify-hook nil)
 
-(bind-keys s-h-keymap "Super-h"  '(synthesize-event "Super-h" (input-focus)))
 (bind-keys s-h-keymap "Super-s" 'iswitch-window)
 (bind-keys s-h-keymap "Super-f" '(maximize-window-fullscreen-toggle (input-focus)))
 
@@ -690,7 +711,6 @@
 (add-hook 'focus-in-hook ime-toggle-hook)
 
 (system "~/system-config/bin/sawfish-auto-start&")
-(setq esc-x-keymap (make-keymap))
 (bind-keys esc-map "x" esc-x-keymap)
 
 (mapc (lambda (start-and-end)

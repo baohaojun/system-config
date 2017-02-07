@@ -2,13 +2,14 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt o:output w:width h:height
+# generate-getopt o:output w:width h:height s:size
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h:w:o:h \
-              --long height:,width:,output:,help \
+TEMP=$(getopt -o h:s:w:o:h \
+              --long height:,size:,width:,output:,help \
               -n $(basename -- $0) -- "$@")
 height=
+size=
 width=
 output=
 eval set -- "$TEMP"
@@ -17,6 +18,10 @@ while true; do
 
         -h|--height)
             height=$2
+            shift 2
+            ;;
+        -s|--size)
+            size=$2
             shift 2
             ;;
         -w|--width)
@@ -38,6 +43,9 @@ while true; do
             printf %06s '-o, '
             printf %-24s '--output=OUTPUT'
             echo
+            printf %06s '-s, '
+            printf %-24s '--size=SIZE'
+            echo
             printf %06s '-w, '
             printf %-24s '--width=WIDTH'
             echo
@@ -57,6 +65,19 @@ done
 
 ## end generated code
 
+if test -z "$height" -a -z "$width" -a "$size"; then
+    width=${size%x*}
+    height=${size#*x}
+fi
+
+if test -z "$width"; then
+    width=$height
+fi
+
+if test -z "$height"; then
+    height=$width
+fi
+
 for x in "$@"; do
     o_width=$(img-width "$x")
     o_height=$(img-height "$x")
@@ -67,19 +88,17 @@ for x in "$@"; do
         height=$(( o_height * width / o_width ))
     fi
 
-    if (( o_width > width || o_height > height)); then
-        percent=$(perl -e "\$percent = $width * 100 / $o_width;
+    percent=$(perl -e "\$percent = $width * 100 / $o_width;
                            if (\$percent * $o_height / 100 > $height) {
                                \$percent = $height * 100 / $o_height;
                            }
                            print \$percent;"
                )
-        if test "$output"; then
-            x_output=$output
-        else
-            x_output=${x%.*}-resize.${x##*.}
-        fi
-        convert -resize $percent% "$x" "$x_output.$$"
-        mv "$x_output".$$ "$x_output"
-    fi;
+    if test "$output"; then
+        x_output=$output
+    else
+        x_output=${x%.*}-resize.${x##*.}
+    fi
+    convert -resize $percent% "$x" "$x_output.$$"
+    mv "$x_output".$$ "$x_output"
 done

@@ -5,16 +5,39 @@ else
     map=${1:-global-keymap}
 fi
 
+
 cmd=$(cat <<EOF
-    (let ((event (read-event "Press the key you want help..."))
-          (map $map))
-      (system (format nil "putclip '%s'&" (event-name event)))
-      (read-event
-          (format nil "binding %s for %s (raw %s)\n\nPress any key to dismiss.."
-                  (let ((override-keymap map))
-                     (lookup-event-binding event))
-                  (event-name event)
-                  event)))
+; {%sawfish%}
+(progn
+  (defun help-key (pressed-keys map)
+    ; (message (format nil "pressed-keys is %s, map is %s" pressed-keys map))
+    (let* ((override-keymap nil)
+           (event (read-event (format nil "Press the key you want help in $map")))
+           (name (event-name event))
+           (pressed-keys
+            (format nil "%s%s%s"
+                    pressed-keys
+                    (if (string= "" pressed-keys)
+                        ""
+                      " ")
+                    name))
+           (override-keymap map)
+           (binding (lookup-event-binding event))
+           (keymap-binding))
+      (when (not binding)
+        (setq keymap-binding (car (rassoc event map))))
+      (if (and (not binding) (listp keymap-binding) (eq (car keymap-binding) 'keymap))
+          (progn
+            (system "bhj-notify help-key 'it is a keymap'&"))
+        (system (format nil "putclip '%s'&" name))
+        (read-event
+         (format nil "binding %s for %s (raw %s) \n\nPress any key to dismiss.."
+                 (let ((override-keymap map))
+                   (or binding keymap-binding))
+                 pressed-keys
+                 event)))))
+  (help-key "" $map))
+; {%/sawfish%}
 EOF
    )
 

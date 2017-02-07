@@ -10,31 +10,70 @@ function die() {
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ffull sselected ccurrent ddelay
+# generate-getopt ffull sselected ddelay wcurrent
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o fscd --long "full,selected,current,delay"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o fsdwh \
+              --long full,selected,delay,current,help,no-full,no-selected,no-delay,no-current \
+              -n $(basename -- $0) -- "$@")
 full=false
 selected=false
-current=false
 delay=false
+current=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -f|--full)
-            full=true
+
+        -f|--full|--no-full)
+            if test "$1" = --no-full; then
+                full=false
+            else
+                full=true
+            fi
             shift
             ;;
-        -s|--selected)
-            selected=true
+        -s|--selected|--no-selected)
+            if test "$1" = --no-selected; then
+                selected=false
+            else
+                selected=true
+            fi
             shift
             ;;
-        -c|--current)
-            current=true
+        -d|--delay|--no-delay)
+            if test "$1" = --no-delay; then
+                delay=false
+            else
+                delay=true
+            fi
             shift
             ;;
-        -d|--delay)
-            delay=true
+        -w|--current|--no-current)
+            if test "$1" = --no-current; then
+                current=false
+            else
+                current=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-w, '
+            printf %-24s '--[no-]current'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--[no-]delay'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--[no-]full'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]selected'
+            echo
+            exit
             shift
             ;;
         --)
@@ -46,6 +85,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -71,7 +111,9 @@ fi
 
 if test "$delay" = true; then
     select=-m
+    bhj-notify screenshot 'Move your mouse to the left edge of the screen after you are ready'
     sawfish-wait-for-start
+    bhj-notify screenshot 'Now capture screen and edit for the pop-up'
 fi
 
 while true; do

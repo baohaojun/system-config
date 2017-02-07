@@ -2,5 +2,5 @@
 
 for x in "$@"; do
     sawfish-send-window-event '(- |^)(Mozilla Firefox|Chromium|Iceweasel)\$' "$x"
-    sleep .2
+    sleep ${SAWFISH_BROWSER_INPUT_SLEEP:-.2}
 done
