@@ -67,7 +67,7 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
 
 QString NotificationModel::getHistoryName()
 {
-    return "notification-history";
+    return "";
 }
 
 QMap<QString, NotificationModel::Notification> NotificationModel::sNotifications;

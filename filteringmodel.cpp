@@ -19,6 +19,9 @@ FilteringModel::FilteringModel(QObject *parent) :
     mFilter("hello world")
 {
     mMaxHistEntries = mSettings.value("max-history-entries", QVariant(20)).toInt();
+    if (getHistoryName() == "") {
+        mMaxHistEntries = 0;
+    }
     L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
 }
@@ -155,9 +158,8 @@ void FilteringModel::initHistory()
 
 QString FilteringModel::getNthHistoryVarName(int n)
 {
+    if (mMaxHistEntries == 0) {
+        return "";
+    }
     return getHistoryName() + QString().sprintf("-%d", n % mMaxHistEntries);
-}
-QString FilteringModel::getHistoryHeadName()
-{
-    return getHistoryName() + "-head";
 }

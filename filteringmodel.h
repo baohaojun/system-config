@@ -24,12 +24,13 @@ class FilteringModel : public QAbstractListModel
     QList<SelectedItem> mSelectedItems;
     lua_State *L;
     virtual void filterSelectedItems(const QStringList&) = 0;
-    virtual QString getHistoryName() = 0;
+    virtual QString getHistoryName() {
+        return "";
+    }
     QMap<QString, SelectedItem> mSelectedItemsRevMap;
     QSettings mSettings;
     virtual void initHistory();
     virtual QString getNthHistoryVarName(int n);
-    virtual QString getHistoryHeadName();
     int mMaxHistEntries;
 
  private:
