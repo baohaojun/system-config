@@ -11,20 +11,26 @@ fi
 b0=$(basename $0)
 exec 9> ~/.cache/system-config/logs/$b0.lock
 
-flock 9
+flock -n 9 || exit 0
 
 if (
     set -e
     version=$(offlineimap --version | perl -npe 's/\.//g')
-    if test $version -lt 655; then
+    if version-lower-than $version 6.5.5; then
         exit 1
     fi
-    offlineimap -a Smartisan,SmartCM || true
-    exec tsocks offlineimap -a Gmail
+    (
+        offlineimap -a Smartisan,SmartCM || true
+        tsocks offlineimap -a Gmail
+    ) > ~/.cache/system-config/logs/$b0.log 2>&1
 ); then
     fail=false
 else
     fail=true
+fi
+
+if grep 'WARNING:OfflineImap:UID validity problem for folder' -q ~/.cache/system-config/logs/$b0.log; then
+    mail-bhj "Offlineimap got UID validity problems, please check"
 fi
 
 if test $fail = true; then

@@ -1,17 +1,47 @@
 #!/bin/bash
 set -e
 
-x=$(find ~/.offlineimap/*/* ~/Maildir -maxdepth 1 -name "*$1*" |
-           if test "$#" = 2; then
-               grep -P -e "$2\b" -i
-           else
-               cat
-           fi |
-           grep -v 'Maildir/\..*\.index|Repository-Local-' -P
+declare -A account_to_maildir
+account_to_maildir[Smartisan]=smt
+account_to_maildir[SmartCM]=smtcm
+account_to_maildir[Gmail]=gmail
 
- )
+declare -A repo_to_account
+repo_to_account[Smt]=Smartisan
+repo_to_account[SmtCm]=SmartCM
+repo_to_account[Gmail]=Gmail
 
-if yes-or-no-p -n "$x
-Remove the above folders? "; then
-    rm -rf $x
+if grep '^WARNING:OfflineImap:UID validity problem for folder' "$1" -q; then
+    grep '^WARNING:OfflineImap:UID validity problem for folder' "$1" |
+        perl -ne 'print if s/WARNING:OfflineImap:UID validity problem for folder (.*?) \(repo Remote-(.*?)\).*/$1 $2/' |
+        sort -u |
+        while read mailbox repo; do
+            account=${repo_to_account[$repo]}
+            maildir=~/Maildir/${account_to_maildir[$account]}.$mailbox
+            if test ! -d $maildir; then
+                echo "$maildir not exist"
+                # continue
+            fi
+            cmd=$(cat <<EOF
+
+rm $maildir -rf
+rm ~/.offlineimap/Account-$account/LocalStatus-sqlite/$(basename $maildir) -f
+rm ~/.offlineimap/Repository-Remote-$repo/FolderValidity/$mailbox -rf
+
+EOF
+            )
+            echo '****************'
+            echo "$cmd"
+            echo
+            echo '****************'
+            for path in $(echo "$cmd" | pn 2); do
+                if test ! -e "$path"; then
+                    hint "$path not exist, press C-c to exit" </dev/tty
+                fi
+            done
+            if yes-or-no-p "Run the above commands?" </dev/tty; then
+
+                bash -c "$cmd" </dev/null
+            fi
+        done
 fi
