@@ -13,12 +13,12 @@ if [[ "$(tty)" =~ /dev/tty ]]; then
     exit
 fi
 
-if test $# != 0; then
-    exec my-adb am "$@"
-fi
 (
     flock 9
-    if setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
+    if test "$1" = am; then
+        setxkbmap -layout us -variant dvp
+        re-xmodmap 2>&1|tee
+    elif test "$1" = ma || setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
         setxkbmap -layout us
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
         do-unnatural-scrolling
