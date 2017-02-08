@@ -1066,6 +1066,25 @@ local emojis = {
    {'[献吻]', '[献吻] XianWen [ShowLove] weixin-qq', 'emojis/qq-emojis/smiley_102.png'},
    {'[左太极]', '[左太极] ZuoTaiJi [TaiChi L] weixin-qq', 'emojis/qq-emojis/smiley_103.png'},
    {'[右太极]', '[右太极] YouTaiJi [TaiChi R] weixin-qq', 'emojis/qq-emojis/smiley_104.png'},
+   {'[笑哭]', '[笑哭] XiaoKu weixin-qq(only)', 'emojis/new-emojis/QQ-XIAOKU.PNG'},
+   {'[doge]', '[doge] DOGE weixin-qq(only)', 'emojis/new-emojis/QQ-DOGE.PNG'},
+   {'[泪奔]', '[泪奔] LeiBen weixin-qq(only)', 'emojis/new-emojis/QQ-LEIBEN.PNG'},
+   {'[无奈]', '[无奈] WuNai weixin-qq(only)', 'emojis/new-emojis/QQ-WUNAI.PNG'},
+   {'[托腮]', '[托腮] TuoSai weixin-qq(only)', 'emojis/new-emojis/QQ-TUOSAI.PNG'},
+   {'[卖萌]', '[卖萌] MaiMeng weixin-qq(only)', 'emojis/new-emojis/QQ-MAIMENG.PNG'},
+   {'[斜眼笑]', '[斜眼笑] XieYanXiao weixin-qq(only)', 'emojis/new-emojis/QQ-XIEYANXIAO.PNG'},
+   {'[喷血]', '[喷血] PenXue weixin-qq(only)', 'emojis/new-emojis/QQ-PENXUE.PNG'},
+   {'[惊喜]', '[惊喜] JingXi weixin-qq(only)', 'emojis/new-emojis/QQ-JINGXI.PNG'},
+   {'[骚扰]', '[骚扰] SaoRao weixin-qq(only)', 'emojis/new-emojis/QQ-SAORAO.PNG'},
+   {'[小纠结]', '[小纠结] XiaoJiuJie weixin-qq(only)', 'emojis/new-emojis/QQ-XIAOJIUJIE.PNG'},
+   {'[我最美]', '[我最美] WoZuiMei weixin-qq(only)', 'emojis/new-emojis/QQ-WOZUIMEI.PNG'},
+
+   {"[嘿哈]", '[嘿哈] HeiHa weixin(only)-qq', 'emojis/new-emojis/wx-HeiHa.PNG'},
+   {"[奸笑]", '[奸笑] JianXiao weixin(only)-qq', 'emojis/new-emojis/wx-JianXiao.PNG'},
+   {"[捂脸]", '[捂脸] WuLian weixin(only)-qq', 'emojis/new-emojis/wx-WuLian.PNG'},
+   {"[机智]", '[机智] JiZhi weixin(only)-qq', 'emojis/new-emojis/wx-JiZhi.PNG'},
+   {"[皱眉]", '[皱眉] ZhouMei weixin(only)-qq', 'emojis/new-emojis/wx-ZhouMei.PNG'},
+   {"[耶]", '[耶] Ye weixin(only)-qq', 'emojis/new-emojis/wx-Ye.PNG'},
 }
 
 return emojis;
