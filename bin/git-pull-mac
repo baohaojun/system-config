@@ -88,8 +88,11 @@ if test "$do_fetch" = true; then
             echo failed $PWD at $x
             sleep 10
         done
-        tsocks1 git fetch $origin ||
+        tsocks1 git fetch $origin || {
+            touch .git/sc-not-merged
             kill $$
+        }
+
     )&
     if test "$fetch_only" != true; then
         wait
