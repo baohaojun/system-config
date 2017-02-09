@@ -19,9 +19,6 @@ FilteringModel::FilteringModel(QObject *parent) :
     mFilter("hello world")
 {
     mMaxHistEntries = mSettings.value("max-history-entries", QVariant(20)).toInt();
-    if (getHistoryName() == "") {
-        mMaxHistEntries = 0;
-    }
     L = luaL_newstate();             /* opens Lua */
     luaL_openlibs(L);        /* opens the standard libraries */
 }
@@ -136,12 +133,11 @@ void FilteringModel::updateHistory(int i)
 
 void FilteringModel::updateHistory(QString key)
 {
+
     if (key.isEmpty()) {
         return;
     }
-    while (mHistoryList.removeOne(key)) {
-        ;
-    }
+    mHistoryList.removeAll(key);
     mHistoryList.push_back(key);
     while (mHistoryList.size() > mMaxHistEntries) {
         mHistoryList.pop_front();
@@ -150,8 +146,14 @@ void FilteringModel::updateHistory(QString key)
 
 void FilteringModel::initHistory()
 {
-    for (int j = 0; j < mMaxHistEntries; j++) {
-        updateHistory(mSettings.value(getNthHistoryVarName(j), QVariant("")).toString());
+    QString historyName = getHistoryName();
+    if (historyName == "") {
+        mMaxHistEntries = 0;
+    } else {
+        for (int j = 0; j < mMaxHistEntries; j++) {
+            QString historyEntry = mSettings.value(getNthHistoryVarName(j), QVariant("")).toString();
+            updateHistory(historyEntry);
+        }
     }
     setFilter("");
 }

@@ -24,9 +24,7 @@ class FilteringModel : public QAbstractListModel
     QList<SelectedItem> mSelectedItems;
     lua_State *L;
     virtual void filterSelectedItems(const QStringList&) = 0;
-    virtual QString getHistoryName() {
-        return "";
-    }
+    virtual QString getHistoryName() = 0;
     QMap<QString, SelectedItem> mSelectedItemsRevMap;
     QSettings mSettings;
     virtual void initHistory();
