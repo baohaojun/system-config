@@ -7,7 +7,7 @@ if test $(uname) = Linux; then
     rsync release bhj-mac:$(up .) -av -L --exclude=*/adb_usb_driver_smartisan
     remote-cmd bhj-mac bash -c "
         export DOING_WRENCH_RELEASE=$DOING_WRENCH_RELEASE;
-        export ReleaseVersion=$ReleaseVersion;
+        export ReleaseVersion='$ReleaseVersion';
         set -x;
         cd $(up .);
         ./build-mac.sh"
