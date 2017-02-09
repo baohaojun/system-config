@@ -5,11 +5,6 @@ if test "$DEBUG" = true; then
     set -x
 fi
 
-if echo $SHELLOPTS | grep xtrace; then
-    export SHELLOPTS
-fi
-
-
 function die() {
     echo Error: "$@"
     exit -1
@@ -100,16 +95,37 @@ if test "$GIT_NON_INTERACTIVE_ADD" = true; then
         )
     }
     export -f git-interactive-add
+else
+    function git-interactive-add() {
+        (
+            unset -f git git_svn
+            command git-interactive-add
+        )
+    }
+    export -f git-interactive-add
 fi
 
-. ~/system-config/bin/.gitx
+if test "$SC_GITX_DONE" != true; then
+    . ~/system-config/bin/.gitx
+    export -f git
+    export -f git_svn
+    export SC_GITX_DONE=true
+fi
 
 (
     flock 9
     d2u ~/.netrc
 ) 9< ~/system-config/bin/.gitx
 
-if lookup-file -e .repo/manifest.xml; then
+if test "$SC_NOT_REPO" != true; then
+    if lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
+        export SC_NOT_REPO=false
+    else
+        export SC_NOT_REPO=true
+    fi
+fi
+
+if test "$SC_NOT_REPO" = false; then
     git-interactive-add
     git commit -s
     if yes-or-no-p -y "push for review?"; then

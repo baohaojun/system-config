@@ -1,0 +1,7 @@
+#!/usr/bin/perl
+
+use Encode;
+while (<>) {
+    s/\\(x[0-9a-f]+)/encode_utf8 chr(hex("0$1"))/egi;
+    print;
+}
