@@ -135,13 +135,19 @@ if test -e .git-push-rebase-hooks; then
 fi
 
 if test ! "$(wgit symbolic-ref --short HEAD)"; then
-    if git-is-ancestor master HEAD; then
-        command git checkout -B master
-    elif git-is-ancestor HEAD master; then
-        command git checkout master
-    else
-        die HEAD not setup correctly, please check $PWD
-    fi
+    (
+        if test ! -e .git/sc-not-merged; then
+            exit 0
+        fi
+
+        if git-is-ancestor master HEAD; then
+            command git checkout -B master
+        elif git-is-ancestor HEAD master; then
+            command git checkout master
+        else
+            die HEAD not setup correctly, please check $PWD
+        fi
+   )
 fi
 
 if test "$ADD_DONE" != true; then
