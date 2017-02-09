@@ -1003,7 +1003,17 @@ local function qq_open_homepage()
          adb_event"key back sleep .1"
       end
       if not done_back and adb_top_window() == qqChatActivity2 then
-         adb_event"adb-tap 181 1863 sleep .5"
+         adb_event"adb-tap 186 1809 sleep .5"
+         -- must be in such a place, that it make sure to get into
+         -- first pane of qq main window, or activate the input method
+
+         ime_active, height, ime_connected = adb_get_input_window_dump()
+
+         if ime_active then
+            adb_event"key back sleep .1 key back sleep .2"
+            break
+            break
+         end
          local top_window = adb_top_window()
          if not top_window or top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQSettingSettingActivity" then
             log("got into setting!")
@@ -1014,7 +1024,7 @@ local function qq_open_homepage()
       end
 
       adb_event"key back sleep .1"
-      adb_am("am start -n " .. qqChatActivity2)
+      adb_start_activity(qqChatActivity2)
    end
 end
 
@@ -1610,7 +1620,7 @@ qq_find_friend = function(friend_name)
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
       qq_open_homepage()
-      adb_event"sleep .3 adb-tap 324 254"
+      adb_event"sleep .3 adb-tap 324 254" -- click for group search
       local top_window = wait_input_target_n(15, qqChatActivity2, qqGroupSearch)
       adb_event"key scroll_lock sleep .8"
       if top_window and top_window:match(qqGroupSearch) then
@@ -1654,7 +1664,7 @@ qq_find_group_friend = function(friend_name)
    end
 
    for i = 1, 40 do
-         adb_event("sleep .1 adb-tap 243 300")
+         adb_event("sleep .1 adb-tap 663 252")
          if wait_input_target_n(3, troopList) ~= "" then
             break
          else
