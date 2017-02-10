@@ -138,7 +138,7 @@ if is-platform-needed ubuntu; then
     )&
 fi
 
-if is-platform-needed linux; then
+if is-platform-needed debian; then
     (
         rm ~/tmp/build-wrench -rf
         ./build-linux.sh -b ~/tmp/build-wrench
@@ -167,7 +167,7 @@ if is-platform-needed ubuntu && test ! -e ~/external/cowbuilder/ubuntu-trusty-am
     die "ubuntu build failed"
 fi
 
-if is-platform-needed linux && test ! -e ~/tmp/build-wrench/build-ok; then
+if is-platform-needed debian && test ! -e ~/tmp/build-wrench/build-ok; then
     die "Linux build failed"
 fi
 
@@ -176,7 +176,7 @@ if is-platform-needed mac &&  test ! -e ~/tmp/build-wrench-mac/build-ok; then
 fi
 
 for x in $(
-              is-platform-needed linux && echo ~/src/github/Wrench-debian;
+              is-platform-needed debian && echo ~/src/github/Wrench-debian;
               is-platform-needed mac && echo ~/src/github/Wrench-macos/Wrench.app/Contents/MacOS/;
               is-platform-needed wine && echo ~/src/github/Wrench-windows;
               is-platform-needed ubuntu && echo ~/src/github/Wrench-ubuntu-14.04;
