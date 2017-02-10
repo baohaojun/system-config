@@ -14,7 +14,11 @@ local file_exists = function(name)
    end
 end
 
-private_ext_file = os.getenv("HOME") .. "/src/github/private-config/etc/wrench-ext.lua"
+if os.getenv("HOME") then
+   private_ext_file = os.getenv("HOME") .. "/src/github/private-config/etc/wrench-ext.lua"
+else
+   private_ext_file = ""
+end
 
 if file_exists(private_ext_file) then
    dofile_res, private_config = pcall(dofile, private_ext_file)

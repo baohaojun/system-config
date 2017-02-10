@@ -19,6 +19,8 @@ void WrenchExt::reloadLuaScriptInternally()
 
     int error = luaL_loadstring(L, "wrench = require('wrench-ext')") || lua_pcall(L, 0, 0, 0);
     if (error) {
+        mErrorString = QString::asprintf("Can't load wrench: %s", lua_tolstring(L, -1, NULL));
+        fprintf(stderr, "%s:%d: %s \n", __FILE__, __LINE__, qPrintable(mErrorString));
         qDebug() << "WrenchExt init error: " << QString().sprintf("Can't load wrench: %s", lua_tolstring(L, -1, NULL));
         lua_close(L);
         L = NULL;

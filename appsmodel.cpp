@@ -24,6 +24,7 @@ AppsModel::AppsModel(QObject *parent) :
         QFile appsFile("apps.info");
         if (appsFile.open(QFile::ReadOnly | QFile::Text)) {
             QTextStream in(&appsFile);
+            in.setCodec("UTF-8");
             QString lines = in.readAll();
             foreach (const QString& line, lines.split("\n")) {
                 QStringList info = line.split("=");
