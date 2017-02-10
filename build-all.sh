@@ -190,7 +190,7 @@ for x in $(
         lookup-file -e .git
         cd $(dirname $(lookup-file -e .git))
         git add .
-        git commit -m "Release for $ReleaseVersion"
+        git commit -m "Release for $ReleaseVersion ($T1_GIT_HASH)"
         touch .git/sc-not-merged
         git push&
         dir=$(basename $PWD)
