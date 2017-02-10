@@ -188,6 +188,10 @@ for x in $(
         ./update-md5s.sh
         lookup-file -e .git
         cd $(dirname $(lookup-file -e .git))
+        git add .
+        git commit -m "Release for $ReleaseVersion"
+        touch .git/sc-not-merged
+        git push&
         dir=$(basename $PWD)
         cd ..
 
