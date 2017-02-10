@@ -334,8 +334,11 @@ adb shell am start -n com.android.settings/com.android.settings.NotificationAcce
 
 [[./../../../../images/wrench-show-notifications.png][file:./../../../../images/wrench-show-notifications.png]]
 
-具体的实现，请参考相关源代码（在wrench.lua中，请顺藤摸瓜）。
+注意上图中所有的消息都显示了相关的App的图标，前提是你已经点击过小扳手的“Launcher”按钮，通过它启动过应用了，见下图：
 
+[[./../../../../images/wrench-launcher-button.png][file:./../../../../images/wrench-launcher-button.png]]
+
+具体的实现，请参考相关源代码（在wrench.lua中，请顺藤摸瓜）。
 
 ** V2.3.0 <<V2.3.0>>
 
