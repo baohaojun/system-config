@@ -76,8 +76,6 @@ if test ! "$shortVersion"; then
     die "No shortVersion defined"
 fi
 
-export T1_GIT_HASH=$(git log --pretty=%h -1)
-
 . .gitx
 
 if git st -s | grep . -q; then
@@ -91,15 +89,22 @@ atexit() {
 }
 trap atexit 0
 
-oldVersion=$(perl -ne 'print $1 if m!<string>Wrench\s*(V.*)</string>!' wrenchmainwindow.ui)
-perl -npe 's!<string>Wrench\s*V.*</string>!<string>Wrench $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
+export T1_GIT_HASH=$(git log --pretty=%h -1 HEAD)
+if git log --pretty=%s -1 | grep -P 'Release for \Q'"$ReleaseVersion"'\E' -q; then
+    true
+else
+    oldVersion=$(perl -ne 'print $1 if m!<string>Wrench\s*(V.*)</string>!' wrenchmainwindow.ui)
+    perl -npe 's!<string>Wrench\s*V.*</string>!<string>Wrench $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
 
-if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
-    if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
-            yes-or-no-p -n "Use the same version $shortVersion = $oldVersion?"; then
-        true
-    else
-        die "old version $oldVersion >= new version $shortVersion"
+    git commit -m "Release for $ReleaseVersion" -a
+
+    if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
+        if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
+                yes-or-no-p -n "Use the same version $shortVersion = $oldVersion?"; then
+            true
+        else
+            die "old version $oldVersion >= new version $shortVersion"
+        fi
     fi
 fi
 
