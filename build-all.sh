@@ -112,7 +112,7 @@ fi
 if is-tty-io; then
     src_version=$(cd ~/src/github/Wrench-debian; cat .src-version.txt)
     git log $src_version..HEAD || true
-    yes-or-no-p -y "Continue '$oldVersion' -> '$shortVersion'?"
+    yes-or-no-p -y "Continue from old version '$oldVersion' -> new version '$shortVersion ($T1_GIT_HASH)'?"
 fi
 
 git clean -xfd
