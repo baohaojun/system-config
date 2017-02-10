@@ -91,12 +91,13 @@ trap atexit 0
 
 export T1_GIT_HASH=$(git log --pretty=%h -1 HEAD)
 if git log --pretty=%s -1 | grep -P 'Release for \Q'"$ReleaseVersion"'\E' -q; then
+    echo "Already released"
     true
 else
     oldVersion=$(perl -ne 'print $1 if m!<string>Wrench\s*(V.*)</string>!' wrenchmainwindow.ui)
     perl -npe 's!<string>Wrench\s*V.*</string>!<string>Wrench $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
 
-    git commit -m "Release for $ReleaseVersion" -a
+    git commit -m "Release for $ReleaseVersion $T1_GIT_HASH" -a
 
     if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
         if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
