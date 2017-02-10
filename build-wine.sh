@@ -81,12 +81,12 @@ if ! which i686-w64-mingw32-nm; then
 fi
 (
     cd lua
-    PATH=~/system-config/bin/mingw:$PATH make mingw
+    PATH=~/system-config/bin/mingw:$PATH make -j8 mingw
 )
 
 (
     cd luamd5
-    PATH=~/system-config/bin/mingw/:$PATH make PLATFORM=mingw
+    PATH=~/system-config/bin/mingw/:$PATH make -j8 PLATFORM=mingw
 )
 
 for x in . download; do

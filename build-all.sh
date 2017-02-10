@@ -186,7 +186,7 @@ for x in $(
         if test -e last-pic-notes.png; then
             rm -f last-pic-notes.png
         fi
-        ./update-md5s.sh
+        # ./update-md5s.sh
         lookup-file -e .git
         cd $(dirname $(lookup-file -e .git))
         git add .
