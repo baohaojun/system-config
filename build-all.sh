@@ -101,7 +101,7 @@ else
 
     if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
         if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
-                yes-or-no-p -n "Use the same version $shortVersion = $oldVersion?"; then
+                yes-or-no-p -n "Use the same version $shortVersion ($T1_GIT_HASH) = $oldVersion?"; then
             true
         else
             die "old version $oldVersion >= new version $shortVersion"
