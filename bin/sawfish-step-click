@@ -1,0 +1,96 @@
+#!/bin/bash
+
+set -- --xstep 12 --ystep 4 --start-pos "336 678" --end-pos "673 774"
+set -- --xstep 12 --ystep 3 --start-pos "330 805" --end-pos "670 872"
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @:xstep @:ystep @:start-pos @:end-pos
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long xstep:,ystep:,end-pos:,start-pos:,help \
+              -n $(basename -- $0) -- "$@")
+xstep=
+ystep=
+end_pos=
+start_pos=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --xstep)
+            xstep=$2
+            shift 2
+            ;;
+        --ystep)
+            ystep=$2
+            shift 2
+            ;;
+        --end-pos)
+            end_pos=$2
+            shift 2
+            ;;
+        --start-pos)
+            start_pos=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--end-pos=END_POS'
+            echo
+            printf "%06s" " "
+            printf %-24s '--start-pos=START_POS'
+            echo
+            printf "%06s" " "
+            printf %-24s '--xstep=XSTEP'
+            echo
+            printf "%06s" " "
+            printf %-24s '--ystep=YSTEP'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if [[ $start_pos =~ " " ]]; then
+    x1=${start_pos% *}
+    y1=${start_pos#* }
+else
+    x1=${start_pos%x*}
+    y1=${start_pos#*x}
+fi
+
+if [[ $end_pos =~ " " ]]; then
+    x2=${end_pos% *}
+    y2=${end_pos#* }
+else
+    x2=${end_pos%x*}
+    y2=${end_pos#*x}
+fi
+
+for ys in $(seq 1 $ystep); do
+    for xs in $(seq 1 $xstep); do
+        xpos=$(( x1 + (x2 - x1) / (xstep - 1) * (xs - 1)))
+        ypos=$(( y1 + (y2 - y1) / (ystep - 1) * (ys - 1)))
+        xdotool mousemove $xpos $ypos
+        sleep .1
+        xdotool click 1
+    done
+done
+
