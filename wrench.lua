@@ -20,7 +20,6 @@ local file_exists
 local social_need_confirm = false
 local right_button_x = 984
 local my_select_args
-local rev_qq_emoji_table
 
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local reset_input_method, adb_shell
@@ -68,9 +67,9 @@ local real_width_ratio, real_height_ratio = real_width / default_width, real_hei
 local using_oppo_os = false
 local brand = "smartisan"
 local model = "T1"
-local qq_emojis, weixin_emojis
+local qq_emojis_remap, weixin_emojis_remap
 local sdk_version = 19
-local emojis, emojis_map
+local emojis, img_to_emoji_map, emoji_to_img_map
 local the_true_adb = "./the-true-adb"
 local t1_send_action
 local weixinAlbumPreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
@@ -99,25 +98,12 @@ local weiboPicFilterActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PicFilt
 local weiboChatActivity = "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"
 local notePicPreview = "com.smartisanos.notes/com.smartisanos.notes.Convert2PicturePreviewActivity"
 
-local qq_emoji_table = {
-   "微笑", "撇嘴", "色", "发呆", "得意", "流泪", "害羞", "闭嘴",    "睡", "大哭",
-   "尴尬", "发怒", "调皮", "呲牙", "惊讶", "难过",    "酷", "冷汗", "抓狂", "吐",
-   "偷笑", "可爱", "白眼", "傲慢",    "饥饿", "困", "惊恐", "流汗", "憨笑", "大兵",
-   "奋斗", "咒骂",    "疑问", "嘘", "晕", "折磨", "衰", "骷髅", "敲打", "再见",
-   "擦汗", "抠鼻", "鼓掌", "糗大了", "坏笑", "左哼哼", "右哼哼", "哈欠",    "鄙视", "委屈",
-   "快哭了", "阴险", "亲亲", "吓", "可怜", "菜刀",    "西瓜", "啤酒", "篮球", "乒乓",
-   "咖啡", "饭", "猪头", "玫瑰",    "凋谢", "示爱", "爱心", "心碎", "蛋糕", "闪电",
-   "炸弹", "刀",    "足球", "瓢虫", "便便", "月亮", "太阳", "礼物", "拥抱", "强",
-   "弱", "握手", "胜利", "抱拳", "勾引", "拳头", "差劲", "爱你",    "NO", "OK",
-   "爱情", "飞吻", "跳跳", "发抖", "怄火", "转圈",    "磕头", "回头", "跳绳", "挥手",
-   "激动", "街舞", "献吻", "左太极",    "右太极",    "笑哭", "doge", "泪奔", "无奈", "托腮",
-   "卖萌", "斜眼笑", "喷血", "惊喜", "骚扰", "小纠结", "我最美",    "嘿哈", "奸笑", "捂脸",
-   "机智", "皱眉", "耶",
-}
-
-rev_qq_emoji_table = {}
-for i in ipairs(qq_emoji_table) do
-   rev_qq_emoji_table[qq_emoji_table[i]] = i;
+emojis = require"emojis"
+img_to_emoji_map = {}
+emoji_to_img_map = {}
+for k, v in ipairs(emojis) do
+   img_to_emoji_map[v[3]] = v[1]
+   emoji_to_img_map[v[1]] = v[3]
 end
 
 adb_unquoter = ""
@@ -203,7 +189,7 @@ end
 
 
 emoji_for_qq = function(text)
-   return emoji_for_qq_or_weixin(text, qq_emojis)
+   return emoji_for_qq_or_weixin(text, qq_emojis_remap)
 end
 
 emoji_for_qq_or_weixin = function(text, which_emojis)
@@ -212,17 +198,14 @@ emoji_for_qq_or_weixin = function(text, which_emojis)
    repeat
       local fs, fe = text:find("%[.-%]", s)
       if fs then
-         local emoji = text:sub(fs + 1, fe - 1)
+         local emoji = text:sub(fs, fe)
          log("emoji is %s", emoji)
-         if rev_qq_emoji_table[emoji] then
-            log("qq_emoji_table is %d", rev_qq_emoji_table[emoji])
+         if emoji_to_img_map[emoji] then
             replace = replace .. text:sub(s, fs - 1)
-            if which_emojis == qq_emojis then
-               local idx = rev_qq_emoji_table[emoji]
-               log("which emois is %s", which_emojis[idx])
-               replace = replace .. which_emojis[idx]
+            if which_emojis[emoji] then
+               replace = replace .. which_emojis[emoji]
             else
-               replace = replace .. "/" .. emoji
+               replace = replace .. emoji
             end
             s = fe + 1
          else
@@ -238,7 +221,7 @@ emoji_for_qq_or_weixin = function(text, which_emojis)
 end
 
 emoji_for_weixin = function(text)
-   return emoji_for_qq_or_weixin(text, weixin_emojis)
+   return emoji_for_qq_or_weixin(text, weixin_emojis_remap)
 end
 
 local function system(cmds)
@@ -304,16 +287,9 @@ local function replace_img_with_emoji(text, html)
    end
    local n = 2
    local res = texts[1]
-   for emoji in html:gmatch('img src="(.-)"') do
-      debugging("emoji is %s", emoji)
-      if not emojis then
-         emojis = require"emojis"
-         emojis_map = {}
-         for k, v in ipairs(emojis) do
-            emojis_map[v[3]] = v[1]
-         end
-      end
-      emoji = emojis_map[emoji] or "[unknown emoji]"
+   for img in html:gmatch('img src="(.-)"') do
+      debugging("img is %s", img)
+      local emoji = img_to_emoji_map[img] or "[unknown emoji]"
       res = res .. emoji
       if texts[n] then
          res = res .. texts[n]
@@ -2947,36 +2923,38 @@ local function do_it()
    end
 end
 
-weixin_emojis = {
-   "/::)", "/::~", "/::B", "/::|", "/:8-)", "/::<", "/::$", "/::X", "/::Z", "/::'(",
-   "/::-|", "/::@", "/::P", "/::D", "/::O", "/::(", "/::+", "/:--b", "/::Q", "/::T",
-   "/:,@P", "/:,@-D", "/::d", "/:,@o", "/::g", "/:|-)", "/::!", "/::L", "/::>", "/::,@",
-   "/:,@f", "/::-S", "/:?", "/:,@x", "/:,@@", "/::8", "/:,@!", "/:!!!", "/:xx", "/:bye",
-   "/:wipe", "/:dig", "/:handclap", "/:&-(", "/:B-)", "/:<@", "/:@>", "/::-O", "/:>-|", "/:P-(",
-   "/::'|", "/:X-)", "/::*", "/:@x", "/:8*", "/:pd", "/:<W>", "/:beer", "/:basketb", "/:oo",
-   "/:coffee", "/:eat", "/:pig", "/:rose", "/:fade", "/:showlove", "/:heart", "/:break", "/:cake", "/:li",
-   "/:bome", "/:kn", "/:footb", "/:ladybug", "/:shit", "/:moon", "/:sun", "/:gift", "/:hug", "/:strong",
-   "/:weak", "/:share", "/:v", "/:@)", "/:jj", "/:@@", "/:bad", "/:lvu", "/:no", "/:ok",
-   "/:love", "/:<L>", "/:jump", "/:shake", "/:<O>", "/:circle", "/:kotow", "/:turn", "/:skip", "/:oY",
-   "/:#-0", "/:hiphot", "/:kiss", "/:<&", "/:&>",
-   "[笑哭]", "[doge]", "[泪奔]", "[无奈]", "[托腮]", "[卖萌]", "[斜眼笑]", "[喷血]", "[惊喜]", "[骚扰]", "[小纠结]", "[我最美]",
-   "[嘿哈]", "[奸笑]", "[捂脸]", "[机智]", "[皱眉]", "[耶]",
+weixin_emojis_remap = {
+   ["[可爱]"] = '[Joyful]', ["[大兵]"] = "[Commando]", ["[折磨]"] = "[Tormented]", ["[示爱]"] = "[Lips]", ["[挥手]"] = "[Surrender]",
+   ["[街舞]"] = "[Meditate]",
+
 }
 
-qq_emojis = {
-   [[]], [[(]], [[]], [[+]], [[]], [[	]], [[]], [[j]], [[#]], [[ú]],
-   [[]], [[]], [[]], [[ ]], [[!]], [[ ]], [[]], [[]], [[]] .. "\r", [[]],
-   [[]], [[]], [[]], [[]], [[Q]], [[R]], [[]] .. "\x1a", [[]], [[%]], [[2]],
-   [[*]], [[S]], [["]], [[]], [[1]], [[T]], [[']], [[N]], [[]], [[]],
-   [[]], [[U]], [[V]], [[W]], [[.]], [[X]], [[]] .. "\x2c", [[Y]], [[0]], [[]],
-   [[Z]], [[)]], [[$]], [[[]], [[3]], [[]], [[<]], [[=]], [[\]], [=[]]=],
-   [[B]], [[:]], [[]], [[]], [[9]], [[]], [[]], [[J]], [[;]], [[P]],
-   [[]], [[F]], [[M]], [[>]], [[]], [[D]], [[K]], [[L]], [[-]], [[4]],
-   [[5]], [[6]], [[7]], [[8]], [[?]], [[I]], [[H]], [[A]], [[^]], [[@]],
-   [[&]], [[/]], [[_]], [[G]], [[`]], [[a]], [[b]], [[c]], [[d]], [[O]],
-   [[e]], [[f]], [[g]], [[h]], [[i]], [[®]], [[«]], [[¥]], [[¦]], [[¡]],
-   [[§]], [[ª]], [[©]], [[¬]], [[­]], [[¨]], [[¯]], "[嘿哈]", "[奸笑]", "[捂脸]",
-   "[机智]", "[皱眉]", "[耶]",
+
+qq_emojis_remap = {
+   ["[微笑]"] = [[]], ["[撇嘴]"] = [[(]], ["[色]"] = [[]], ["[发呆]"] = [[+]], ["[得意]"] = [[]],
+   ["[流泪]"] = [[	]], ["[害羞]"] = [[]], ["[闭嘴]"] = [[j]], ["[睡]"] = [[#]], ["[大哭]"] = [[ú]],
+   ["[尴尬]"] = [[]], ["[发怒]"] = [[]], ["[调皮]"] = [[]], ["[呲牙]"] = [[ ]], ["[惊讶]"] = [[!]],
+   ["[难过]"] = [[ ]], ["[酷]"] = [[]], ["[冷汗]"] = [[]], ["[抓狂]"] = [[]] .. "\r", ["[吐]"] = [[]],
+   ["[偷笑]"] = [[]], ["[可爱]"] = [[]], ["[白眼]"] = [[]], ["[傲慢]"] = [[]], ["[饥饿]"] = [[Q]],
+   ["[困]"] = [[R]], ["[惊恐]"] = [[]] .. "\x1a", ["[流汗]"] = [[]], ["[憨笑]"] = [[%]], ["[大兵]"] = [[2]],
+   ["[奋斗]"] = [[*]], ["[咒骂]"] = [[S]], ["[疑问]"] = [["]], ["[嘘]"] = [[]], ["[晕]"] = [[1]],
+   ["[折磨]"] = [[T]], ["[衰]"] = [[']], ["[骷髅]"] = [[N]], ["[敲打]"] = [[]], ["[再见]"] = [[]],
+   ["[擦汗]"] = [[]], ["[抠鼻]"] = [[U]], ["[鼓掌]"] = [[V]], ["[糗大了]"] = [[W]], ["[坏笑]"] = [[.]],
+   ["[左哼哼]"] = [[X]], ["[右哼哼]"] = [[]] .. "\x2c", ["[哈欠]"] = [[Y]], ["[鄙视]"] = [[0]], ["[委屈]"] = [[]],
+   ["[快哭了]"] = [[Z]], ["[阴险]"] = [[)]], ["[亲亲]"] = [[$]], ["[吓]"] = [[[]], ["[可怜]"] = [[3]],
+   ["[菜刀]"] = [[]], ["[西瓜]"] = [[<]], ["[啤酒]"] = [[=]], ["[篮球]"] = [[\]], ["[乒乓]"] = [=[]]=],
+   ["[咖啡]"] = [[B]], ["[饭]"] = [[:]], ["[猪头]"] = [[]], ["[玫瑰]"] = [[]], ["[凋谢]"] = [[9]],
+   ["[示爱]"] = [[]], ["[爱心]"] = [[]], ["[心碎]"] = [[J]], ["[蛋糕]"] = [[;]], ["[闪电]"] = [[P]],
+   ["[炸弹]"] = [[]], ["[刀]"] = [[F]], ["[足球]"] = [[M]], ["[瓢虫]"] = [[>]], ["[便便]"] = [[]],
+   ["[月亮]"] = [[D]], ["[太阳]"] = [[K]], ["[礼物]"] = [[L]], ["[拥抱]"] = [[-]], ["[强]"] = [[4]],
+   ["[弱]"] = [[5]], ["[握手]"] = [[6]], ["[胜利]"] = [[7]], ["[抱拳]"] = [[8]], ["[勾引]"] = [[?]],
+   ["[拳头]"] = [[I]], ["[差劲]"] = [[H]], ["[爱你]"] = [[A]], ["[NO]"] = [[^]], ["[OK]"] = [[@]],
+   ["[爱情]"] = [[&]], ["[飞吻]"] = [[/]], ["[跳跳]"] = [[_]], ["[发抖]"] = [[G]], ["[怄火]"] = [[`]],
+   ["[转圈]"] = [[a]], ["[磕头]"] = [[b]], ["[回头]"] = [[c]], ["[跳绳]"] = [[d]], ["[挥手]"] = [[O]],
+   ["[激动]"] = [[e]], ["[街舞]"] = [[f]], ["[献吻]"] = [[g]], ["[左太极]"] = [[h]], ["[右太极]"] = [[i]],
+   ["[笑哭]"] = [[®]], ["[doge]"] = [[«]], ["[泪奔]"] = [[¥]], ["[无奈]"] = [[¦]], ["[托腮]"] = [[¡]],
+   ["[卖萌]"] = [[§]], ["[斜眼笑]"] = [[ª]], ["[喷血]"] = [[©]], ["[惊喜]"] = [[¬]], ["[骚扰]"] = [[­]],
+   ["[小纠结]"] = [[¨]], ["[我最美]"] = [[¯]],
 }
 
 return do_it()
