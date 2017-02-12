@@ -33,7 +33,7 @@ local adb_start_weixin_share, adb_is_window
 local adb_focused_window
 local t1_config, check_phone
 local weixin_find_friend, qq_find_friend, qq_find_group_friend
-local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_for_qq_or_weixin
+local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_rewrite, emoji_for_weibo
 local adb_get_last_pic, debugging
 local adb_weixin_lucky_money
 local adb_weixin_lucky_money_output
@@ -67,7 +67,7 @@ local real_width_ratio, real_height_ratio = real_width / default_width, real_hei
 local using_oppo_os = false
 local brand = "smartisan"
 local model = "T1"
-local qq_emojis_remap, weixin_emojis_remap
+local qq_emojis_remap, weixin_emojis_remap, weibo_emojis_remap
 local sdk_version = 19
 local emojis, img_to_emoji_map, emoji_to_img_map
 local the_true_adb = "./the-true-adb"
@@ -189,10 +189,10 @@ end
 
 
 emoji_for_qq = function(text)
-   return emoji_for_qq_or_weixin(text, qq_emojis_remap)
+   return emoji_rewrite(text, qq_emojis_remap)
 end
 
-emoji_for_qq_or_weixin = function(text, which_emojis)
+emoji_rewrite = function(text, which_emojis)
    local s = 1
    local replace = ""
    repeat
@@ -221,7 +221,11 @@ emoji_for_qq_or_weixin = function(text, which_emojis)
 end
 
 emoji_for_weixin = function(text)
-   return emoji_for_qq_or_weixin(text, weixin_emojis_remap)
+   return emoji_rewrite(text, weixin_emojis_remap)
+end
+
+emoji_for_weibo = function(text)
+   return emoji_rewrite(text, weibo_emojis_remap)
 end
 
 local function system(cmds)
@@ -1779,6 +1783,8 @@ t1_post = function(text) -- use weixin
          putclip(emoji_for_qq(text))
       elseif window:match("com.tencent.mm/") then
          putclip(emoji_for_weixin(text))
+      elseif window:match("com.sina.weibo/") then
+         putclip(emoji_for_weibo(text))
       else
          putclip(text)
       end
@@ -2925,10 +2931,18 @@ end
 
 weixin_emojis_remap = {
    ["[可爱]"] = '[Joyful]', ["[大兵]"] = "[Commando]", ["[折磨]"] = "[Tormented]", ["[示爱]"] = "[Lips]", ["[挥手]"] = "[Surrender]",
-   ["[街舞]"] = "[Meditate]",
+   ["[街舞]"] = "[Meditate]", ['[笑哭]'] = '😂',
 
 }
 
+weibo_emojis_remap = {
+   ["[加油]"] = '💪', ['[勾引]'] = '[来]', ['[OK]'] = '[ok]', ['[强]'] = '[good]', ['[爱你]'] = '[haha]',
+   ['[飞吻]'] = '[爱你]', ['[抱拳]'] = '[作揖]', ['[心碎]'] = '[伤心]', ['[爱心]'] = '[心]', ['[发呆]'] = '[傻眼]',
+   ['[玫瑰]'] = '[鲜花]', ['[拥抱]'] = '[抱抱]', ['[呲牙]'] = '[嘻嘻]', ['[憨笑]'] = '[哈哈]', ['[笑哭]'] = '[笑cry]',
+   ['[调皮]'] = '[挤眼]', ['[流泪]'] = '[泪]', ['[快哭了]'] = '[悲伤]', ['[抠鼻]'] = '[挖鼻]', ['[发怒]'] = '[怒]',
+   ['[咒骂]'] = '[怒骂]', ['[流汗]'] = '[汗]', ['[惊恐]'] = '[吃惊]', ['[睡觉]'] = '[睡]', ['[糗大了]'] = '[打脸]',
+   ['[难过]'] = '[失望]', ['[再见]'] = '[拜拜]', ['[胜利]'] = '[耶]', ['[无奈]'] = '[摊手]',
+}
 
 qq_emojis_remap = {
    ["[微笑]"] = [[]], ["[撇嘴]"] = [[(]], ["[色]"] = [[]], ["[发呆]"] = [[+]], ["[得意]"] = [[]],
