@@ -1,17 +1,28 @@
 #!/bin/bash
 
-set -- --xstep 12 --ystep 4 --start-pos "336 678" --end-pos "673 774"
-set -- --xstep 12 --ystep 3 --start-pos "330 805" --end-pos "670 872"
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+set -- --xstep 7 --ystep 3 --start-pos "91 1445" --end-pos "993 1688" --skip-last
+
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @:xstep @:ystep @:start-pos @:end-pos
+# generate-getopt @:xstep @:ystep @:start-pos @:end-pos @skip-last
 ## end code-generator
 ## start generated code
 TEMP=$(getopt -o h \
-              --long xstep:,ystep:,end-pos:,start-pos:,help \
+              --long xstep:,skip-last,ystep:,end-pos:,start-pos:,help,no-skip-last \
               -n $(basename -- $0) -- "$@")
 xstep=
+skip_last=false
 ystep=
 end_pos=
 start_pos=
@@ -22,6 +33,14 @@ while true; do
         --xstep)
             xstep=$2
             shift 2
+            ;;
+        --skip-last|--no-skip-last)
+            if test "$1" = --no-skip-last; then
+                skip_last=false
+            else
+                skip_last=true
+            fi
+            shift
             ;;
         --ystep)
             ystep=$2
@@ -42,6 +61,9 @@ while true; do
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--end-pos=END_POS'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]skip-last'
             echo
             printf "%06s" " "
             printf %-24s '--start-pos=START_POS'
@@ -88,9 +110,17 @@ for ys in $(seq 1 $ystep); do
     for xs in $(seq 1 $xstep); do
         xpos=$(( x1 + (x2 - x1) / (xstep - 1) * (xs - 1)))
         ypos=$(( y1 + (y2 - y1) / (ystep - 1) * (ys - 1)))
-        xdotool mousemove $xpos $ypos
-        sleep .1
-        xdotool click 1
+
+        if test "$b0" = adb-step-click; then
+            if test "$xs" = $xstep -a "$ys" = $ystep -a $skip_last = true; then
+                true
+            else
+                adb-tap "$xpos" "$ypos"
+            fi
+        else
+            xdotool mousemove $xpos $ypos
+            sleep .1
+            xdotool click 1
+        fi
     done
 done
-
