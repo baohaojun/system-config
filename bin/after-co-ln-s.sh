@@ -305,7 +305,8 @@ elif test ! -e ~/system-config/.gitconfig.$USER &&
     fi
     git config --global user.email "${email:-nobody@example.com}"
     ln -sf ~/.gitconfig ~/.gitconfig.$USER
-    if test "$(compare-version "$(git version | pn 3)" 2)" = '<'; then
+
+    if test "$(compare-version "$(git version | awk '{print $3}')" 2)" = '<'; then
         git config --unset --global push.default
     fi
 fi

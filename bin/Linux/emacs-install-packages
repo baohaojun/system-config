@@ -17,7 +17,7 @@ fi || true
 
 need_regenerate_el=false
 
-git_server_prefix=${http://github.com/}
+git_server_prefix=http://github.com/
 github_branch=master
 if test "$SYSTEM_CONFIG_LOCAL_GIT_PREFIX"; then
     git_server_prefix=${SYSTEM_CONFIG_LOCAL_GIT_PREFIX}
