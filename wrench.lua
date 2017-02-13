@@ -1814,6 +1814,10 @@ t1_post = function(text) -- use weixin
       adb_event"key back sleep .2"
       t1_post()
       return
+   elseif window == "StatusBar" then
+      adb_event"key back sleep .2"
+      t1_post()
+      return
    elseif window == "com.google.android.gm/com.google.android.gm.ComposeActivityGmail" then
       adb_event("key scroll_lock adb-tap 870 173")
       return
