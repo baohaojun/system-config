@@ -22,14 +22,33 @@ if ! is-tty-io; then
     die "Can't do it in non tty env"
 fi
 
-TEMP=$(getopt -o r: --long revision: -n $(basename $0) -- "$@")
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt r:revision
+## end code-generator
+## start generated code
+TEMP=$(getopt -o r:h \
+              --long revision:,help \
+              -n $(basename -- $0) -- "$@")
 revision=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
         -r|--revision)
             revision=$2
             shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-r, '
+            printf %-24s '--revision=REVISION'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -40,6 +59,9 @@ while true; do
             ;;
     esac
 done
+
+
+## end generated code
 
 if test -e .git-interactive-add.before; then
     bash .git-interactive-add.before

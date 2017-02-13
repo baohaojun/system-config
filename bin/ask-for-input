@@ -1,28 +1,121 @@
 #!/bin/bash
 
+set -e
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  ssecret p:prompt
+# generate-getopt ssecret p:prompt @history a:args
 ## end code-generator
 ## start generated code
+TEMP=$(getopt -o a:sp:h \
+              --long history,args:,secret,prompt:,help,no-history,no-secret \
+              -n $(basename -- $0) -- "$@")
+history=false
+args=
 secret=false
 prompt=
-OPTIND=1
-while getopts 'sp:' opt; do
-    case "$opt" in
-        s)    secret=true;;
-        p)    prompt=$OPTARG;;
-        *)    echo Usage Error; exit 2;;
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --history|--no-history)
+            if test "$1" = --no-history; then
+                history=false
+            else
+                history=true
+            fi
+            shift
+            ;;
+        -a|--args)
+            args=$2
+            shift 2
+            ;;
+        -s|--secret|--no-secret)
+            if test "$1" = --no-secret; then
+                secret=false
+            else
+                secret=true
+            fi
+            shift
+            ;;
+        -p|--prompt)
+            prompt=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--args=ARGS'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]history'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--prompt=PROMPT'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]secret'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
     esac
 done
-shift $(($OPTIND - 1))
+
 
 ## end generated code
+
+if test "$history" = true -a "$secret" = true; then
+    die "不能在secret状态下使用历史机制"
+fi
 
 if test $secret = true; then
     secret=-s
 else
     secret=
 fi
+
+
+
+if test "$history" = true; then
+    md5=$(echo $args $prompt | md5sum | pn 1)
+    md5_head=${md5:0:2}
+    md5_tail=${md5:2}
+    history_file=~/.cache/system-config/ask-for-input.history/$md5_head/$md5_tail
+
+    IFS=$'\n'
+    set -- $(
+        if test ! -e $history_file; then
+            mkdir -p $(dirname $history_file)
+            touch $history_file
+            echo "$prompt: $args" > $history_file.info
+        fi
+        cat $history_file | reverse
+
+        (
+            IFS=$'\n\t '
+            for a in $args; do
+                echo $a
+            done
+
+        )
+
+        echo "或者输入你想要的信息，然后在最后加!（英文感叹号）强制输入"
+        )
+    ans=$(select-args -p "$prompt" "$@")
+    echo $ans | tee -a $history_file
+    exit
+fi
+
 if is-tty-io; then
     read $secret -p "${prompt:-Password: }" pass;
     echo $pass

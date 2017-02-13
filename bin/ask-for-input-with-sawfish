@@ -84,7 +84,13 @@ if test "$DESKTOP_SESSION" != sawfish; then
             find-or-exec -e zenity && exit
         done
     )&
-    zenity --entry --text="$text" --title="$title"
+
+    if test "$secret" = true; then
+        ztype=--password
+    else
+        ztype=--entry
+    fi
+    zenity $ztype --text="$text" --title="$title"
     exit
 fi
 

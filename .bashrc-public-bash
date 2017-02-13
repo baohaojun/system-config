@@ -31,7 +31,11 @@ lcd()
 
         smb_server=${1%%/*}
         smb_share=$(echo ${1#*/}|perl -npe 's,/.*,,')
-        set -- "${1#*/*/}"
+        if [[ $1 =~ /.*/ ]]; then
+            set -- "${1#*/*/}"
+        else
+            set --
+        fi
 
         run_gvfs=/run/user/$UID/gvfs
         if test ! -d "$run_gvfs" && test -d /var/"$run_gvfs"; then
@@ -41,8 +45,19 @@ lcd()
         smb_mount=$(select-args -o -p "请选择要使用哪个共享路径？" "$run_gvfs/smb-share:"*"server=$smb_server,share=$smb_share"*)
 
         if test ! -e "$smb_mount"; then
-            hint "你还没有打开过 smb://$smb_server/$smb_share"
-            return 1
+            smb_mount="/mnt/.smb/smb-share:server=$smb_server,share=$smb_share"
+            if test ! -d $smb_mount || ! get-mount-1 "$smb_mount" | grep ^// -q; then
+                hint "你还没有打开过 smb://$smb_server/$smb_share"
+                if test -e ~/src/github/smartcm/scm-helpers/.smb_mount &&
+                        . ~/src/github/smartcm/scm-helpers/.smb_mount $smb_server $smb_share
+                then
+                    true
+                else
+                    return 1
+                fi
+            else
+                true
+            fi
         fi
 
         builtin cd "$smb_mount"/"$1"
