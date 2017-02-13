@@ -50,7 +50,15 @@ else
                 echo $PATH | tr ':' '\n'
             ) | tr '\n' ':'
                )
-        export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent|rm-last-nl|tr '\n' ':')
+        export PATH=$(
+            echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|
+                if test "$USER" = bhj ||
+                        (which uniq-even-non-ajacent && which rm-last-nl) >/dev/null 2>&1;
+                then
+                    uniq-even-non-ajacent|rm-last-nl
+                else
+                    cat
+                fi | tr '\n' ':')
         if test "$PATH"; then
             printf 'export PATH=%q\n' "$PATH" > ~/.config/system-config/.bashrc-path.$$
             mv ~/.config/system-config/.bashrc-path.$$ ~/.config/system-config/.bashrc-path
