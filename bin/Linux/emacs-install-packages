@@ -41,7 +41,7 @@ else
 
     for x in "${github_projects[@]}"; do
         if test ! -e "$x/.git"; then
-            git clone ${git_server_prefix}baohaojun/$x -b ${github_branch}
+            git clone ${git_server_prefix}baohaojun/$x -b ${github_branch} $(if test "$SYSTEM_CONFIG_LOCAL_REF"; then echo --reference "$SYSTEM_CONFIG_LOCAL_REF"/$x )
             need_regenerate_el=true
         fi
     done
