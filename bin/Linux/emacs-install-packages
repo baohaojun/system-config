@@ -47,9 +47,9 @@ else
     done
 
     for p in "${extra_projects[@]}"; do
-        b=$(basename $p)
-        if test ! -e "$b/.git"; then
-            git clone $p
+        x=$(basename $p)
+        if test ! -e "$x/.git"; then
+            git clone $p $(if test "$SYSTEM_CONFIG_LOCAL_REF"; then echo --reference "$SYSTEM_CONFIG_LOCAL_REF"/$x; fi)
         fi
     done
     if ! test -d ~/.emacs.d/site-lisp; then
