@@ -131,7 +131,7 @@ void AdbStateThread::onDisconnected()
         AdbClient::doAdbForward("host-serial:" + adb_serial + ":forward:tcp:28888;localabstract:T1Wrench");
     }
 
-    pingSocket->connectToHost("127.0.0.1", 28888, QIODevice::ReadWrite);
+    pingSocket->connectToHost("127.0.0.1", 28888 + QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0").toInt(), QIODevice::ReadWrite);
     if (!pingSocket->waitForConnected()) {
         qDebug() << "can't connect ping";
         mConnectTimer->start(1000);

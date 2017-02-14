@@ -52,7 +52,9 @@ void AdbNotificationThread::onDisconnected()
         AdbClient::doAdbForward("host-serial:" + adb_serial + ":forward:tcp:58888;localabstract:WrenchNotifications");
     }
 
-    notificationSocket->connectToHost("127.0.0.1", 58888, QIODevice::ReadWrite);
+
+
+    notificationSocket->connectToHost("127.0.0.1", 58888 + QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0").toInt(), QIODevice::ReadWrite);
     if (!notificationSocket->waitForConnected()) {
         mConnectTimer->start(1000);
         return;

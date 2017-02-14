@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QProcessEnvironment>
 #include <QString>
+#include <QRegExp>
 
 AdbClient::AdbClient()
 {
@@ -525,7 +526,18 @@ int AdbClient::doAdbKill()
 int AdbClient::doAdbForward(const QString& forwardSpec)
 {
     AdbClient *adb = new AdbClient();
-    adb->adb_connect(forwardSpec.toUtf8().constData());
+    QString instanceString = QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0");
+
+    QString forwardSpecVar = forwardSpec;
+    if (instanceString != "0") {
+        QRegExp re("(.*forward:tcp:)(\\d+)(;.*)");
+        if (re.exactMatch(forwardSpec)) {
+            QString port = re.cap(2);
+            forwardSpecVar = re.cap(1) + QString::asprintf("%d", port.toInt() + instanceString.toInt()) + re.cap(3);
+            qDebug() << "forwardSpecVar is " << forwardSpecVar;
+        }
+    }
+    adb->adb_connect(forwardSpecVar.toUtf8().constData());
     delete adb;
     return 0;
 }
