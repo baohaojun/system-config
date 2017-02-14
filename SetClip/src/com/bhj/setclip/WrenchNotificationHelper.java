@@ -5,24 +5,24 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
+import android.app.PendingIntent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationListenerService.*;
+import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 import com.Wrench.Input;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Set;
@@ -123,6 +123,10 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         Notification n = sbn.getNotification();
         Bundle extra = new Bundle(n.extras);
 
+        if (n.tickerText != null) {
+            extra.putString("tickerText", n.tickerText.toString());
+        }
+        
         extra.putString("key", sbn.getKey());
         extra.putString("pkg", sbn.getPackageName());
 
@@ -130,18 +134,22 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     }
 
     private String joStringFromBundle(Bundle extra) {
-        CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
-        CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
+        String title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title").toString();
+        String text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text").toString();
         String key = extra.getString("key");
         String pkg = extra.getString("pkg");
+
+        if (pkg.equals("com.tencent.mobileqq") && text.matches("有.*个联系人给你发过来.*条新消息")) {
+            text = extra.getString("tickerText", "no text");
+        }
 
         JSONObject jo = new JSONObject();
 
         try {
             jo.put("key", key);
             jo.put("pkg", pkg);
-            jo.put("title", title.toString());
-            jo.put("text", text.toString());
+            jo.put("title", title);
+            jo.put("text", text);
         } catch (JSONException e) {
             Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 65), e);
         }
@@ -210,7 +218,6 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                         }
                         break;
                     case gotNewNotification:
-                        Log.e("bhj", String.format("%s:%d: gotNewNotification", "WrenchNotificationHelper.java", 36));
                         for (LocalSocket sock : allSockets ()) {
                             try {
                                 BufferedWriter lockedWriter = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
@@ -352,17 +359,6 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                                 while ((line = locReader.readLine()) != null) {
                                                     // writer.write("got a line: " + line + "\n");
                                                     Log.e("bhj", String.format("%s:%d: got line: %s", "WrenchNotificationHelper.java", 200, line));
-
-                                                    // StatusBarNotification[] notifications = getActiveNotifications();
-                                                    // for (StatusBarNotification sn : notifications) {
-                                                    //     Notification n = sn.getNotification();
-                                                    //     Bundle extra = n.extras;
-                                                    //     CharSequence title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title");
-                                                    //     CharSequence text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text");
-                                                    //     locWriter.write("got a notification: key: " + sn.getKey() + ", title: " + title + ", text: " + text + "\n");
-                                                    // }
-                                                    // locWriter.flush();
-
                                                     Message msg = new Message();
                                                     msg.what = gotCommandFromWrench;
                                                     Bundle payload = new Bundle();
@@ -370,7 +366,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                                     payload.putInt("sock", getSocketInt (sockParam));
                                                     msg.setData(payload);
                                                     mHandler.sendMessage(msg);
-                                                }                                            
+                                                }
                                             } catch (IOException eWhile) {
                                                 Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 352), eWhile);
                                             } finally {
