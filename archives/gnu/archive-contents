@@ -80,7 +80,7 @@
 	 ((:keywords "async")
 	  (:url . "http://elpa.gnu.org/packages/async.html"))])
  (auctex .
-	 [(11 89 7)
+	 [(11 90 0)
 	  nil "Integrated environment for *TeX*" tar
 	  ((:url . "http://www.gnu.org/software/auctex/"))])
  (aumix-mode .
@@ -136,10 +136,15 @@
 	      ((:url . "http://elpa.gnu.org/packages/cl-generic.html")
 	       (:keywords))])
  (cl-lib .
-	 [(0 5)
+	 [(0 6 1)
 	  nil "Properly prefixed CL functions and macros" single
 	  ((:url . "http://elpa.gnu.org/packages/cl-lib.html")
 	   (:keywords))])
+ (cobol-mode .
+	     [(1 0 0)
+	      nil "Mode for editing COBOL code" single
+	      ((:url . "http://elpa.gnu.org/packages/cobol-mode.html")
+	       (:keywords "languages"))])
  (coffee-mode .
 	      [(0 4 1 1)
 	       nil "Major mode for CoffeeScript files" single
@@ -178,7 +183,7 @@
 		      ((:keywords "abbrev" "convenience" "matching")
 		       (:url . "https://github.com/company-mode/company-statistics"))])
  (context-coloring .
-		   [(8 0 1)
+		   [(8 1 0)
 		    ((emacs
 		      (24 3)))
 		    "Highlight by scope" tar
@@ -291,7 +296,7 @@
 	     ((:url . "http://elpa.gnu.org/packages/ediprolog.html")
 	      (:keywords "languages" "processes"))])
  (el-search .
-	    [(1 2 1)
+	    [(1 2 3)
 	     ((emacs
 	       (25))
 	      (stream
@@ -342,7 +347,7 @@
 	       ((:keywords "calendar")
 		(:url . "http://elpa.gnu.org/packages/excorporate.html"))])
  (exwm .
-       [(0 12)
+       [(0 13)
 	((xelb
 	  (0 12)))
 	"Emacs X Window Manager" tar
@@ -393,7 +398,7 @@
 	 ((:keywords "mail" "org" "gnus" "bbdb" "todo" "task")
 	  (:url . "https://github.com/girzel/gnorb"))])
  (gnugo .
-	[(3 0 0)
+	[(3 0 2)
 	 ((ascii-art-to-unicode
 	   (1 5))
 	  (xpm
@@ -464,7 +469,7 @@
 	       ((:url . "http://elpa.gnu.org/packages/jgraph-mode.html")
 		(:keywords "tex" "wp"))])
  (js2-mode .
-	   [(20160623)
+	   [(20170116)
 	    ((emacs
 	      (24 1))
 	     (cl-lib
@@ -490,7 +495,7 @@
 	    ((:url . "http://elpa.gnu.org/packages/landmark.html")
 	     (:keywords "games" "neural network" "adaptive search" "chemotaxis"))])
  (let-alist .
-	    [(1 0 4)
+	    [(1 0 5)
 	     ((emacs
 	       (24 1)))
 	     "Easily let-bind values of an assoc-list by their names" single
@@ -521,7 +526,7 @@
 	       ((:url . "http://github.com/rocky/emacs-loc-changes")
 		(:keywords))])
  (loccur .
-	 [(1 2 2)
+	 [(1 2 3)
 	  ((cl-lib
 	    (0)))
 	  "Perform an occur-like folding in current buffer" single
@@ -645,7 +650,7 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(20161214)
+      [(20170210)
        nil "Outline-based notes management and organizer" tar nil])
  (osc .
       [(0 1)
@@ -683,6 +688,11 @@
 	 nil "Texas hold 'em poker" single
 	 ((:url . "http://elpa.gnu.org/packages/poker.html")
 	  (:keywords "games"))])
+ (psgml .
+	[(1 3 4)
+	 nil "SGML-editing mode with parsing support" tar
+	 ((:keywords "languages")
+	  (:url . "http://elpa.gnu.org/packages/psgml.html"))])
  (python .
 	 [(0 25 2)
 	  ((emacs
@@ -1000,7 +1010,7 @@
 	     ((:keywords "convenience" "emulation")
 	      (:url . "http://github.com/joaotavora/yasnippet"))])
  (ztree .
-	[(1 0 4)
+	[(1 0 5)
 	 ((cl-lib
 	   (0)))
 	 "Text mode directory tree" tar
