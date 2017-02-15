@@ -56,6 +56,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
     (dolist (charset '(kana han cjk-misc bopomofo))
       (set-fontset-font t charset zh-font)))
+  (when (and (boundp 'global-emojify-mode)
+             global-emojify-mode)
+    (global-emojify-mode 1))
   (shell-command-to-string "sawfish-client -e '(maximize-window (input-focus))'&"))
 
 
@@ -103,13 +106,13 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (set-face-attribute 'default nil :font (font-spec))
 
-; {%org-mode%}
-; here are 20 hanzi and 40 english chars, see if they are the same width
-; 你你你你你你你你你你你你你你你你你你你你
-; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-; /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/
-; {%/org-mode%}
+                                        ; {%org-mode%}
+                                        ; here are 20 hanzi and 40 english chars, see if they are the same width
+                                        ; 你你你你你你你你你你你你你你你你你你你你
+                                        ; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                        ; /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/
+                                        ; {%/org-mode%}
 
-; Local Variables:
-; eval: (mmm-mode 1)
-; End:
+                                        ; Local Variables:
+                                        ; eval: (mmm-mode 1)
+                                        ; End:
