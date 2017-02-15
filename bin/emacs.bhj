@@ -10,6 +10,9 @@ fi
 EMACS=emacs
 
 if test "$USER" = bhj; then
+    export SAVED_GTK_IM_MODULE=$GTK_IM_MODULE
+    export SAVED_XMODIFIERS=$XMODIFIERS
+    export SAVED_XIM=$XIM
     unset GTK_IM_MODULE XMODIFIERS XIM
 fi
 

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if test -z "$GTK_IM_MODULE" -a "$SAVED_GTK_IM_MODULE"; then
+    export GTK_IM_MODULE=$SAVED_GTK_IM_MODULE
+    export XMODIFIERS=$SAVED_XMODIFIERS
+    export XIM=$SAVED_XIM
+fi
+
 if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 else
