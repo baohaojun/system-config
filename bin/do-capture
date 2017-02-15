@@ -27,7 +27,7 @@ elif test "$file" = agenda; then
     )
     emacs.client -d -e '(progn
         (org-agenda-remove-restriction-lock)
-        (org-todo-list))'
+        (org-agenda nil "d"))'
 elif test "$file" = daily; then
     do-daily
 elif [[ "$file" =~ " " ]]; then
@@ -42,7 +42,7 @@ elif [[ "$file" =~ " " ]]; then
                            (find-file \"$file\")
                            (org-agenda-remove-restriction-lock)
                            (org-agenda-set-restriction-lock 'file)
-                           (org-todo-list))"
+                           (org-agenda nil \"d\"))"
     )
 
 fi
