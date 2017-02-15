@@ -1030,7 +1030,7 @@ adb_start_weixin_share = function(text_or_image)
    weixin_open_homepage()
    adb_event("adb-tap 654 1850 sleep .5 adb-tap 332 358")
    if wait_top_activity("com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI") == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI" then
-      adb_event("sleep .2 " .. click .. " 961 160")
+      adb_event("sleep .2 " .. click .. " 1016 131")
    else
       log("Can't switch to the Friend Zone page.")
    end
@@ -1060,7 +1060,7 @@ local function weixin_text_share(window, text)
    end
    adb_event("adb-key scroll_lock sleep .2")
    if yes_or_no_p("Share to wechat?") then
-      adb_event(" adb-tap 961 171")
+      adb_event(" adb-tap 1016 131")
    end
 end
 
