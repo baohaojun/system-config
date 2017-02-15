@@ -55,6 +55,11 @@ else
     if ! test -d ~/.emacs.d/site-lisp; then
         relative-link emacs.d/site-lisp ~/.emacs.d/
     fi
+
+    if ! test -d ~/.emacs.d/emojis/emojione-v2.2.6-22; then
+        mkdir -p ~/.emacs.d/emojis
+        relative-link ~/src/github/Wrench/release/emojis/emojione-v2.2.6-22 ~/.emacs.d/emojis -f
+    fi
 fi
 
 if test "$need_regenerate_el" = true; then
