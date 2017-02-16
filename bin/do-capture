@@ -28,6 +28,9 @@ elif test "$file" = agenda; then
     emacs.client -d -e '(progn
         (org-agenda-remove-restriction-lock)
         (org-agenda nil "d"))'
+    emacsclient -e '(progn
+    (org-agenda nil "d")
+    (org-agenda-redo t))'
 elif test "$file" = daily; then
     do-daily
 elif [[ "$file" =~ " " ]]; then
