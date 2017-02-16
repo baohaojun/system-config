@@ -14,7 +14,7 @@
     (let* ((val (caar emojis-string-list))
            (key (concat " " val " " (caddar emojis-string-list)))
            (png (cadar emojis-string-list))
-           (emoji-image-size (floor (* bhj-english-font-size 1.8))))
+           (emoji-image-size (floor (* bhj-english-font-size 2.5))))
       (unless (string= png "")
         (setq png (create-image png
                                 (when (fboundp 'imagemagick-types)

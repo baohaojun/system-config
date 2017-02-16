@@ -1,6 +1,6 @@
 #!/bin/bash
 function wrap() {
-    cat | emacs -nw --batch -Q --insert <(cat) --eval '
+    cat | emacs -nw --batch -Q --insert /dev/stdin --eval '
   ; {%emacs-lisp%}
 (progn
   (fill-region (point-min) (point-max))

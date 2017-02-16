@@ -2,6 +2,11 @@
 
 for x in "$@"; do
     echo -n "'${x//\'/\'\\\'\'}' "
+
+    if test -L "$x"; then
+        echo -n \  -\> $(readlink -f "$x")\ \
+
+    fi
 done
 
 echo in $PWD

@@ -139,6 +139,7 @@
 (bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-both-global&window-keymaps "XF86Launch5" '(system "EMACS=t do-capture&"))
 (bind-both-global&window-keymaps "XF86Launch6" '(system "find-or-exec 'Wrench V%Wrench' Wrench.sh&"))
+(bind-keys s-h-keymap "XF86Launch6" '(system "Wrench.sh&"))
 (bind-both-global&window-keymaps "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
 (bind-both-global&window-keymaps "XF86Launch8" '(system "custom-command&"))
 (bind-both-global&window-keymaps "XF86Launch9" '(system "EMACS=t ssssh&"))
