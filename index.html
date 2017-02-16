@@ -3,12 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>刚刚学到一招：简便Emacs折行</title>
+<title>刚刚学到一招：简便 Emacs 折行</title>
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/deep-blue.css" type="text/css" />
+ <link rel="stylesheet" href="/css/tango.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -102,17 +102,17 @@ for the JavaScript code in this tag.
 <div id='bhj_article'>
   <div id='bhj_leftpane'>
 <div id="content">
-<h1 class="title">刚刚学到一招：简便Emacs折行</h1>
+<h1 class="title">刚刚学到一招：简便 Emacs 折行</h1>
 <p>
 有一行长长的文字，显示出来整个屏幕都戳出去看不到头尾了，于是想着怎么给它折一下行。
 </p>
 
 <p>
-上Google搜了一下，找到一个命令，叫fold，很简单好用，马上试了一下，呃，不行😖，对中文支持有问题，折出乱码来了&#x2026;
+上 Google 搜了一下，找到一个命令，叫 fold，很简单好用，马上试了一下，呃，不行😖，对中文支持有问题，折出乱码来了&#x2026;
 </p>
 
 <p>
-于是联想了一下，这个文字处理工作编辑器最在行了，我最常用的Emacs下就自带一个折行的快捷键。于是开始思考怎么方便的用Emacs实现这个简单的功能。
+于是联想了一下，这个文字处理工作编辑器最在行了，我最常用的 Emacs 下就自带一个折行的快捷键。于是开始思考怎么方便的用 Emacs 实现这个简单的功能。
 </p>
 
 <p>
@@ -120,13 +120,13 @@ for the JavaScript code in this tag.
 </p>
 
 <ol class="org-ol">
-<li>打开Emacs窗口（或把现有的Emacs窗口调到前台）
+<li>打开 Emacs 窗口（或把现有的 Emacs 窗口调到前台）
 </li>
 
 <li>把长文字粘贴进去
 </li>
 
-<li>按一下M-q快捷键（fill-paragraph）
+<li>按一下 M-q 快捷键（fill-paragraph）
 </li>
 
 <li>把折好了的所有文字选中，拷贝出来
@@ -134,7 +134,7 @@ for the JavaScript code in this tag.
 </ol>
 
 <p>
-我想要的是类似于cat、grep这类的过滤器，一头输入，另一头输出，这是Unix的设计精髓，那么，该怎么实现呢？打开Emacs man手册看了会儿帮助，试了几下，没什么收获，于是又上Google搜“emacs read from stdin”，马上找到一篇很有价值的回答：<a href="https://superuser.com/questions/31404/how-to-make-emacs-read-buffer-from-stdin-on-start/821624#821624?newreg=6202c67914054265976787f8ee07b9e4">见这篇回答中关于 process substitution 的那个</a>。
+我想要的是类似于 cat、grep 这类的过滤器，一头输入，另一头输出，这是 Unix 的设计精髓，那么，该怎么实现呢？打开 Emacs man 手册看了会儿帮助，试了几下，没什么收获，于是又上 Google 搜“emacs read from stdin”，马上找到一篇很有价值的回答：<a href="https://superuser.com/questions/31404/how-to-make-emacs-read-buffer-from-stdin-on-start/821624#821624?newreg=6202c67914054265976787f8ee07b9e4">见这篇回答中关于 process substitution 的那个</a>。
 </p>
 
 <p>
@@ -147,13 +147,16 @@ for the JavaScript code in this tag.
 <pre class="src src-sh">cat | emacs -nw --batch -Q --insert &lt;(cat) --eval <span class="org-string">'</span>
 <span class="org-string">; {%emacs-lisp%}</span>
 <span class="org-string">(progn</span>
-<span class="org-string">  (mark-whole-buffer)</span>
-<span class="org-string">  (fill-paragraph)</span>
-<span class="org-string">  (message (buffer-string)))</span>
-<span class="org-string">; {%/emacs-lisp%}</span>
+<span class="org-string">  (fill-region (point-min) (point-max))</span>
+<span class="org-string">  (message "%s" (buffer-string)))</span>
+<span class="org-string">  ; {%/emacs-lisp%}</span>
 <span class="org-string">'</span> 2&gt;&amp;1
 </pre>
 </div>
+
+<p>
+同时封装了一个名为 wrap 的脚本，在 <a href="http://github.com/baohaojun/system-config/raw/master/bin/wrap">http://github.com/baohaojun/system-config/raw/master/bin/wrap</a>。
+</p>
 
 <p>
 真是太赞了😆！
