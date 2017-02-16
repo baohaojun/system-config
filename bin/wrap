@@ -1,0 +1,21 @@
+#!/bin/bash
+function wrap() {
+    cat | emacs -nw --batch -Q --insert <(cat) --eval '
+  ; {%emacs-lisp%}
+(progn
+  (fill-region (point-min) (point-max))
+  (message "%s" (buffer-string)))
+  ; {%/emacs-lisp%}
+  ' 2>&1
+}
+
+if is-tty-io; then
+    out=$(
+        getclip|wrap
+       )
+    echo "$out"
+    echo "$out"|putclip
+
+else
+    wrap
+fi

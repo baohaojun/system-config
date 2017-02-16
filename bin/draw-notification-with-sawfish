@@ -107,7 +107,7 @@ fi
 
 tmp_content=/tmp/$(basename $0).$$.content
 
-echo -n "$content" > $tmp_content
+echo -n "$content" | wrap > $tmp_content
 
 read_content=$(cat <<EOF
 (progn
