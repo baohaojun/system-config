@@ -1,0 +1,35 @@
+#+title: 刚刚学到一招：简便Emacs折行
+# bhj-tags: tool
+有一行长长的文字，显示出来整个屏幕都戳出去看不到头尾了，于是想着怎么给它折一下行。
+
+上Google搜了一下，找到一个命令，叫fold，很简单好用，马上试了一下，呃，不行😖，对中文支持有问题，折出乱码来了...
+
+于是联想了一下，这个文字处理工作编辑器最在行了，我最常用的Emacs下就自带一个折行的快捷键。于是开始思考怎么方便的用Emacs实现这个简单的功能。
+
+有一种方法是显然不能接受的，步骤太多了：
+
+1. 打开Emacs窗口（或把现有的Emacs窗口调到前台）
+
+2. 把长文字粘贴进去
+
+3. 按一下M-q快捷键（fill-paragraph）
+
+4. 把折好了的所有文字选中，拷贝出来
+
+我想要的是类似于cat、grep这类的过滤器，一头输入，另一头输出，这是Unix的设计精髓，那么，该怎么实现呢？打开Emacs man手册看了会儿帮助，试了几下，没什么收获，于是又上Google搜“emacs read from stdin”，马上找到一篇很有价值的回答：[[https://superuser.com/questions/31404/how-to-make-emacs-read-buffer-from-stdin-on-start/821624#821624?newreg=6202c67914054265976787f8ee07b9e4][见这篇回答中关于 process substitution 的那个]]。
+
+最后实现的过滤管道组合命令如下：
+
+
+#+BEGIN_SRC sh
+  cat | emacs -nw --batch -Q --insert <(cat) --eval '
+  ; {%emacs-lisp%}
+  (progn
+    (mark-whole-buffer)
+    (fill-paragraph)
+    (message (buffer-string)))
+  ; {%/emacs-lisp%}
+  ' 2>&1
+#+END_SRC
+
+真是太赞了😆！
