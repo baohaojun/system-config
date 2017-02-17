@@ -488,12 +488,12 @@
         "unicode": "🇿🇦", 
         "name": "South Africa"
     }, 
-    "👩👩👧👧": {
+    "👩‍👩‍👧‍👧": {
         "style": "unicode", 
         "image": "1f469-1f469-1f467-1f467.png", 
         "name": "Family (woman,woman,girl,girl)"
     }, 
-    "👩👩👧👦": {
+    "👩‍👩‍👧‍👦": {
         "style": "unicode", 
         "image": "1f469-1f469-1f467-1f466.png", 
         "name": "Family (woman,woman,girl,boy)"
@@ -2103,12 +2103,12 @@
         "unicode": "😅", 
         "name": "Smiling Face With Open Mouth And Cold Sweat"
     }, 
-    "👨👨👧👧": {
+    "👨‍👨‍👧‍👧": {
         "style": "unicode", 
         "image": "1f468-1f468-1f467-1f467.png", 
         "name": "Family (man,man,girl,girl)"
     }, 
-    "👨👨👧👦": {
+    "👨‍👨‍👧‍👦": {
         "style": "unicode", 
         "image": "1f468-1f468-1f467-1f466.png", 
         "name": "Family (man,man,girl,boy)"
@@ -3338,12 +3338,12 @@
         "unicode": "🇲🇻", 
         "name": "Maldives"
     }, 
-    "👨👨👧": {
+    "👨‍👨‍👧": {
         "style": "unicode", 
         "image": "1f468-1f468-1f467.png", 
         "name": "Family (man,man,girl)"
     }, 
-    "👨👨👦": {
+    "👨‍👨‍👦": {
         "style": "unicode", 
         "image": "1f468-1f468-1f466.png", 
         "name": "Family (man,man,boy)"
@@ -5365,12 +5365,12 @@
         "image": "1f948.png", 
         "name": "Second Place Medal"
     }, 
-    "👩👩👧": {
+    "👩‍👩‍👧": {
         "style": "unicode", 
         "image": "1f469-1f469-1f467.png", 
         "name": "Family (woman,woman,girl)"
     }, 
-    "👩👩👦": {
+    "👩‍👩‍👦": {
         "style": "unicode", 
         "image": "1f469-1f469-1f466.png", 
         "name": "Family (woman,woman,boy)"
@@ -9996,7 +9996,7 @@
         "unicode": "🐐", 
         "name": "Goat"
     }, 
-    "👨❤👨": {
+    "👨‍❤️‍👨": {
         "style": "unicode", 
         "image": "1f468-2764-1f468.png", 
         "name": "Couple (man,man)"
@@ -11050,7 +11050,7 @@
         "unicode": "👙", 
         "name": "Bikini"
     }, 
-    "👨👩👦👦": {
+    "👨‍👩‍👦‍👦": {
         "style": "unicode", 
         "image": "1f468-1f469-1f466-1f466.png", 
         "name": "Family (man,woman,boy,boy)"
@@ -17666,7 +17666,7 @@
         "unicode": "🛄", 
         "name": "Baggage Claim"
     }, 
-    "👩👩👦👦": {
+    "👩‍👩‍👦‍👦": {
         "style": "unicode", 
         "image": "1f469-1f469-1f466-1f466.png", 
         "name": "Family (woman,woman,boy,boy)"
@@ -17816,7 +17816,7 @@
         "image": "1f352.png", 
         "name": "Cherries"
     }, 
-    "👨👩👧": {
+    "👨‍👩‍👧": {
         "style": "unicode", 
         "image": "1f468-1f469-1f467.png", 
         "name": "Family (man,woman,girl)"
@@ -19231,7 +19231,7 @@
         "image": "1f44c-1f3fb.png", 
         "name": "Ok Hand Sign - Tone 1"
     }, 
-    "👨👨👦👦": {
+    "👨‍👨‍👦‍👦": {
         "style": "unicode", 
         "image": "1f468-1f468-1f466-1f466.png", 
         "name": "Family (man,man,boy,boy)"
@@ -20833,7 +20833,7 @@
         "image": "1f22f.png", 
         "name": "Squared Cjk Unified Ideograph-6307"
     }, 
-    "👩❤💋👩": {
+    "👩‍❤️‍💋‍👩": {
         "style": "unicode", 
         "image": "1f469-2764-1f48b-1f469.png", 
         "name": "Kiss (woman,woman)"
@@ -23993,12 +23993,12 @@
         "unicode": "🚆", 
         "name": "Train"
     }, 
-    "👨👩👧👦": {
+    "👨‍👩‍👧‍👦": {
         "style": "unicode", 
         "image": "1f468-1f469-1f467-1f466.png", 
         "name": "Family (man,woman,girl,boy)"
     }, 
-    "👨👩👧👧": {
+    "👨‍👩‍👧‍👧": {
         "style": "unicode", 
         "image": "1f468-1f469-1f467-1f467.png", 
         "name": "Family (man,woman,girl,girl)"
@@ -25146,7 +25146,7 @@
         "unicode": "🖖🏾", 
         "name": "Raised Hand With Part Between Middle And Ring Fingers - Tone 4"
     }, 
-    "👩❤👩": {
+    "👩‍❤️‍👩": {
         "style": "unicode", 
         "image": "1f469-2764-1f469.png", 
         "name": "Couple (woman,woman)"
@@ -26556,7 +26556,7 @@
         "unicode": "👂🏽", 
         "name": "Ear - Tone 3"
     }, 
-    "👨❤💋👨": {
+    "👨‍❤️‍💋‍👨": {
         "style": "unicode", 
         "image": "1f468-2764-1f48b-1f468.png", 
         "name": "Kiss (man,man)"
