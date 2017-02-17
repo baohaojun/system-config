@@ -6,6 +6,53 @@ export LANGUAGE=en_US:en
 
 set -e
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @slave
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long slave,help,no-slave \
+              -n $(basename -- $0) -- "$@")
+slave=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --slave|--no-slave)
+            if test "$1" = --no-slave; then
+                slave=false
+            else
+                slave=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]slave'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+export SYSTEM_CONFIG_UPDATE_SLAVE=$slave
+
 if ! is-jenkins; then
     function failed-to-update() {
         if test "$?" != 0; then
@@ -50,11 +97,15 @@ system-config git 代码，如果发生冲突，请查看一下是否由你的�
     fi
 else # jenkins
     set -x
-    cd ~/system-config/
-    git reset --hard
-    git clean -xfd
-    git pull --rebase
-    git-get -u smartisan:tools/released-manifests -d ~/src/released-manifests
+    if test "$SYSTEM_CONFIG_UPDATE_SLAVE" = true; then
+        true # do not do it on a slave
+    else
+        cd ~/system-config/
+        git reset --hard
+        git clean -xfd
+        git pull --rebase
+        git-get -u smartisan:tools/released-manifests -d ~/src/released-manifests
+    fi
 fi
 
 rm ~/.config/system-config/.bashrc-path -f
@@ -110,46 +161,50 @@ function setup-ext-local() {
     fi
 }
 
-setup-ext-local
+if test "$SYSTEM_CONFIG_UPDATE_SLAVE" = true; then
+    true # do not do it on a slave
+else
+    setup-ext-local
 
-cd ~/external/local
+    cd ~/external/local
 
-function update-git() {
-    (
-        if test ! -d "$1"; then
-            git-get -u smartisan:baohaojun/$(basename $1) -d "$1"
-        fi
-        cd "$1"
-
-        if is-jenkins; then
-            git reset --hard
-            command git clean -xfd
-        else
-            if git status -s | grep . -q; then
-                die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
+    function update-git() {
+        (
+            if test ! -d "$1"; then
+                git-get -u smartisan:baohaojun/$(basename $1) -d "$1"
             fi
-        fi
-        git pull --rebase
+            cd "$1"
+
+            if is-jenkins; then
+                git reset --hard
+                command git clean -xfd
+            else
+                if git status -s | grep . -q; then
+                    die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
+                fi
+            fi
+            git pull --rebase
+        )
+    }
+
+    git_projects=(
+        $(
+            if test ! -d ~/system-config/src/github; then
+                . ~/system-config/etc/github-projects
+                for p in ${github_projects[@]} ${smartcm_projects[@]}; do
+                    echo ~/src/github/"$p"
+                done
+            fi
+        )
     )
-}
 
-git_projects=(
-    $(
-        if test ! -d ~/system-config/src/github; then
-            . ~/system-config/etc/github-projects
-            for p in ${github_projects[@]} ${smartcm_projects[@]}; do
-                echo ~/src/github/"$p"
-            done
-        fi
-    )
-)
+    for p in "${git_projects[@]}"; do
+        echo update $p
+        update-git $p
+    done
 
-for p in "${git_projects[@]}"; do
-    echo update $p
-    update-git $p
-done
-
-git-get -u smartisan:tools/jdk6 -d ~/external/bin/Linux/ext/jdk
+    git-get -u smartisan:tools/jdk6 -d ~/external/bin/Linux/ext/jdk
+fi
 
 ~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
 

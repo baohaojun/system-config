@@ -40,6 +40,7 @@
  '(eclim-interactive-completion-function (quote anything-completing-read))
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
+ '(emojify-emoji-styles (quote (unicode)))
  '(fci-rule-color "#444444")
  '(fill-column 70)
  '(gc-cons-threshold 3500000)
