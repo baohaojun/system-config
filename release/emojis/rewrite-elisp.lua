@@ -35,7 +35,7 @@ for emoji, val in pairs(j) do
 
    if val['style'] == 'unicode' then
       if not emoji_image_map[emoji] then
-         print("emoji is " .. emoji)
+         -- print("emoji is " .. emoji)
       else
          print("relative-link -f ../" .. emoji_image_map[emoji] .." emojione-v2.2.6-22/" .. val.image)
       end
