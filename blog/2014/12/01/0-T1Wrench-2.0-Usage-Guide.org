@@ -200,7 +200,7 @@ https://github.com/SmartisanTech/Wrench-releases/releases
 
 （以下的常见问题有一部分抄录自之前的版本说明书）
 
-- 程序后台出错。
+- <<runtime-error>> 程序后台出错。
 
   1. 确认自己的小扳手已经是最新版本（到这个网页上看一下有没有新版本： https://github.com/SmartisanTech/Wrench-releases/releases ），如果不是最新版本的话，请先升级到最新版本再试一下。
 
