@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/dichromacy.css" type="text/css" />
+ <link rel="stylesheet" href="/css/light-blue.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -578,7 +578,15 @@ for the JavaScript code in this tag.
 <li>其他手机支不支持？
 
 <p>
-从小扳手 3.1.0 版开始，只要是安卓手机，都支持小扳手。
+从小扳手 3.1.3 版开始，理论上只要是安卓手机，都支持小扳手。
+</p>
+
+<p>
+小扳手操作的原理是通过在屏幕上伪装点击事件，不同的手机分辨率对小扳手会有些影响。一般来说，小扳手已经对不同屏幕的窗口控件座标进行按比例缩放，但比较遗憾的是，有些屏幕分辨率下，有些App的窗口控件并不是按比例缩放的&#x2026;
+</p>
+
+<p>
+所以小扳手的某些功能在某些手机上会有问题，如果需要的话，可以考虑自己对自己的手机进行一些适配（具体请阅读 wrench.lua 里的源代码）。
 </p>
 
 <p>
