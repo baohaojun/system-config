@@ -2837,13 +2837,16 @@ local function clickForWeixinMoney()
    adb_event"adb-key back adb-key back sleep .5 adb-key home"
 end
 
-clickForQqMoney = function()
+clickForQqMoney = function(title, text)
    log("Click for QQ money")
    for i = 1, 20 do
       top_window = adb_top_window()
       if top_window and not top_window:match("^com.tencent.mobileqq/") then
          sleep(.1)
       else
+         if title == "QQ" then
+            adb_event"adb-tap 641 405 sleep .5" -- assume it's the first chat:D
+         end
          break
       end
    end
@@ -2876,7 +2879,7 @@ handle_notification = function(key, pkg, title, text)
       clickForWeixinMoney()
    elseif pkg == "com.tencent.mobileqq" and text:match("%[QQ红包%]") then
       clickNotification{key}
-      clickForQqMoney()
+      clickForQqMoney(title, text)
    end
 
    if not should_use_internal_pop then
