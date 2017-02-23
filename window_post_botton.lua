@@ -67,6 +67,7 @@ map['com.google.android.gsf.login/com.google.android.gsf.login.BrowserActivity']
 map['com.google.android.gsf.login/com.google.android.gsf.login.UsernamePasswordActivity'] = 'manual-post'
 map['com.google.android.talk/com.google.android.apps.hangouts.phone.ConversationActivity'] = 'weixin-chat'
 map['com.google.android.youtube'] = 'manual-post'
+map['com.google.android.youtube/com.google.android.apps.youtube.app.WatchWhileActivity'] = 'manual-post'
 map['com.immomo.momo/com.immomo.momo.account.activity.LoginActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.app.mall.login.LoginActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.common.sample.jshop.JshopSearchActivity'] = 'manual-post'
