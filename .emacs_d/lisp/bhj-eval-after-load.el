@@ -229,3 +229,8 @@
 (add-hook 'scala-mode-hook
           (lambda ()
             (setq imenu-create-index-function #'ajoke--create-index-function)))
+(add-hook 'package-menu-mode-hook
+          (lambda ()
+            (make-variable-buffer-local 'mmm-global-mode)
+            (setq mmm-global-mode nil)
+            (mmm-mode -1)))

@@ -2,7 +2,7 @@
 
 function wine() {
     cat > build.bat<<EOF
-set path=$(for x in ~/.wine/drive_c/Qt/Qt*/*/mingw*/bin; do
+set path=$(for x in ~/.wine/drive_c/Qt/Qt*/*/mingw*/bin ~/.wine/drive_c/cmake-w32/cmake-3.8.0-rc1-win32-x86/bin; do
                echo $x;
            done |
            perl -npe 'chomp; s!$ENV{HOME}/.wine/drive_c!c:!; s!$!;!')%path%
@@ -11,4 +11,8 @@ EOF
     command wine cmd.exe /c build.bat
 }
 
-wine "$@"
+if test $# != 0; then
+    wine "$@"
+else
+    wine cmd.exe
+fi
