@@ -23,7 +23,7 @@
 	    ((:keywords "languages" "ada")
 	     (:url . "http://www.nongnu.org/ada-mode/"))])
  (ada-ref-man .
-	      [(2012 0)
+	      [(2012 3)
 	       nil "Ada Reference Manual 2012" tar
 	       ((:keywords "languages" "ada")
 		(:url . "http://stephe-leake.org/ada/arm.html"))])
@@ -174,7 +174,7 @@
 		((:keywords "unicode" "symbols" "completion")
 		 (:url . "https://github.com/vspinu/company-math"))])
  (company-statistics .
-		     [(0 2 2)
+		     [(0 2 3)
 		      ((emacs
 			(24 3))
 		       (company
@@ -224,7 +224,7 @@
 		((:url . "http://elpa.gnu.org/packages/dbus-codegen.html")
 		 (:keywords "comm" "dbus" "convenience"))])
  (debbugs .
-	  [(0 12)
+	  [(0 14)
 	   ((soap-client
 	     (3 1 1))
 	    (cl-lib
@@ -398,7 +398,7 @@
 	 ((:keywords "mail" "org" "gnus" "bbdb" "todo" "task")
 	  (:url . "https://github.com/girzel/gnorb"))])
  (gnugo .
-	[(3 0 2)
+	[(3 1 0)
 	 ((ascii-art-to-unicode
 	   (1 5))
 	  (xpm
@@ -946,7 +946,7 @@
 	       ((:url . "https://github.com/tlikonen/wcheck-mode")
 		(:keywords "text" "spell" "check" "languages" "ispell"))])
  (wconf .
-	[(0 2 0)
+	[(0 2 1)
 	 ((emacs
 	   (24 4)))
 	 "Minimal window layout manager" single
@@ -998,7 +998,7 @@
 	((:keywords "unix")
 	 (:url . "https://github.com/ch11ng/xelb"))])
  (xpm .
-      [(1 0 3)
+      [(1 0 4)
        nil "edit XPM images" tar
        ((:keywords "multimedia" "xpm")
 	(:url . "http://www.gnuvola.org/software/xpm/"))])
