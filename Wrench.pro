@@ -8,6 +8,9 @@
 include(qt-solutions/qtsingleapplication/src/qtsingleapplication.pri)
 
 QT       += core gui network
+QT += LibsnoreQt5
+QT += LibsnoreSettingsQt5
+
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
