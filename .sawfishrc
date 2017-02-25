@@ -110,7 +110,10 @@
       class))))
 
 (defun bhj-window-class (window)
-  (or (window-class window) ""))
+  (let ((class (or (window-class window) "")))
+    (if (string= class "Firefox-esr")
+        (setq class "Firefox")
+      class)))
 
 (bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "F1"  '(system "EMACS=t s&"))
