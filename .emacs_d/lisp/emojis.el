@@ -44,10 +44,6 @@
         (if emoji
             (progn
               (setq emoji-names (cons (find-if (lambda (n) (string= key n)) emoji-names) (delete-if (lambda (n) (string= key n)) emoji-names)))
-              (with-temp-buffer
-                (let ((emoji-names-frecency (subseq emoji-names 0 20)))
-                  (recentf-dump-variable 'emoji-names-frecency))
-                (write-file "~/.config/system-config/emacs-local-custom.el"))
               (insert emoji))
           (setq key (substring key (length "Enter your emoji: ")))
           (let  ((emoji-names-copy (copy-sequence emoji-names))
