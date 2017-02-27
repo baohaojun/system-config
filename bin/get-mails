@@ -21,6 +21,7 @@ if (
     fi
     (
         offlineimap -a Smartisan,SmartCM || true
+        offlineimap -a Gmail || true
         tsocks offlineimap -a Gmail
     ) > ~/.cache/system-config/logs/$b0.log 2>&1
 ); then

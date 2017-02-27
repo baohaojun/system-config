@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if test "$#" = 0; then
+    set -- ~/.cache/system-config/logs/get-mails.log
+fi
+
 declare -A account_to_maildir
 account_to_maildir[Smartisan]=smt
 account_to_maildir[SmartCM]=smtcm
