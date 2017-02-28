@@ -55,7 +55,8 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     mQuit(false),
     ui(new Ui::WrenchMainWindow),
-    mSettings("Smartisan", "Wrench", parent)
+    mSettings("Smartisan", "Wrench", parent),
+    m_defaultIcon("emojis/iphone-emoji/WRENCH.png")
 {
     on_configurePushButton_clicked();
 
@@ -74,11 +75,30 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     ui->ptMailCc->installEventFilter(this);
     ui->ptMailBcc->installEventFilter(this);
     ui->ptMailAttachments->installEventFilter(this);
+
+    m_snore = &Snore::SnoreCore::instance();
+    m_snore->loadPlugins( Snore::SnorePlugin::Backend );
+
+    m_snore_application = Snore::Application("Wrench", m_defaultIcon);
+    m_alert = Snore::Alert("Wrench", m_defaultIcon);
+    m_snore_application.addAlert(m_alert);
+
+    m_snore->registerApplication(m_snore_application);
 }
 
 WrenchMainWindow::~WrenchMainWindow()
 {
     delete ui;
+}
+
+Snore::Icon WrenchMainWindow::getPkgIcon(const QString& pkg)
+{
+    if (m_pkg_icons.contains(pkg)) {
+        return m_pkg_icons[pkg];
+    }
+
+    QDir dir;
+    QStringList imgs = dir.entryList(QStringList(pkg + ".*.png"));
 }
 
 void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text)
@@ -91,6 +111,10 @@ void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QStrin
         NotificationModel::insertNotification(key, pkg, title, text);
 
         if (mWrenchExt.shouldUseInternalPop()) {
+            Snore::Notification n( m_snore_application, m_alert, title, text, m_defaultIcon );
+            n.addAction(Snore::Action(1, "HelloWorld"));
+
+
             trayIcon->showMessage(title, text);
         }
     }

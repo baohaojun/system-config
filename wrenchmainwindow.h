@@ -23,6 +23,9 @@
 #include <QMoveEvent>
 #include <QMutex>
 #include <QHash>
+#include <libsnore/application.h>
+#include <libsnore/snore.h>
+#include <libsnore/notification/icon.h>
 
 namespace Ui {
 class WrenchMainWindow;
@@ -110,6 +113,15 @@ private slots:
     void on_tbLauncher_clicked();
 
 private:
+
+    Snore::SnoreCore *m_snore;
+    Snore::Application m_snore_application;
+    Snore::Icon m_defaultIcon;
+    QHash<uint, QString> m_notification_map;
+    Snore::Alert m_alert;
+    QHash<QString, Snore::Icon> m_pkg_icons;
+
+    Snore::Icon getPkgIcon(const QString& pkg);
 
     WrenchExt mWrenchExt;
 
