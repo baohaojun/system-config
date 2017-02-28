@@ -16,7 +16,7 @@ if test "$USER" = bhj; then
     unset GTK_IM_MODULE XMODIFIERS XIM
 fi
 
-$EMACS -mm "$@"&
+$EMACS -mm "$@" >>~/.cache/system-config/logs/emacs.log 2>&1 &
 
 while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
     sleep 1

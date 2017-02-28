@@ -5,23 +5,21 @@ sub expand_regexp($)
 {
     my ($skeleton) = @_;
     my @skeleton = ($skeleton =~ m/./g);
-    @skeleton = map {('a' le $_ and $_ le 'z') ? sprintf("[%s%s]", $_, uc $_) : $_} @skeleton;
     $skeleton = join("[^/]*", @skeleton);
-    $skeleton = qr([^/]*$skeleton[^/]*);
+    $skeleton = qr([^/]*$skeleton[^/]*)i;
     return $skeleton;
 }
 
 @ARGV = map {expand_regexp $_} @ARGV;
 while (<STDIN>) {
-    chomp;
     my $matched = 1;
     for my $arg (@ARGV) {
         if ($_ !~ m/$arg/) {
             $matched = 0;
             last;
-        } else {
-            print "$&\n";
-            last;
         }
+    }
+    if ($matched) {
+        print $_;
     }
 }

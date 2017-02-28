@@ -2,6 +2,7 @@
 
 export EMACS=t
 export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
+export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 # adb forward --remove tcp:28888
 
 find-or-exec 'Wrench V%Wrench'

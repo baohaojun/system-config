@@ -4,6 +4,8 @@ function die() {
     exit -1
 }
 
+
+
 (
     set -e
     cd $(lookup-file -e .git/..)
@@ -12,22 +14,35 @@ function die() {
     fi
 
     find . -iname '*.h*'
-    cd /usr/include/
-    find . \( -type f -o -type l \) -print
-    (
-        if lookup-file -e ".bhj-includes" >/dev/null 2>&1; then
-            cd $(lookup-file -e ".bhj-includes")
-        fi
-        for x in *; do
-            if test -d "$x"; then
-                cd "$x"
-                find . \( -type f -o -type l \) -print
-            fi
-        done
-    )
-) | cut -b 3- |
+
+    for header_dir in /usr/include /usr/local/include \
+                                   $(
+                           if lookup-file -e ".bhj-includes" >/dev/null 2>&1; then
+                               cd $(lookup-file -e ".bhj-includes")
+                               for x in *; do
+                                   readlink "$x"
+                               done
+                           fi
+                                   ); do
+        (
+            cd $header_dir
+            find . -name '.git' -prune -o  \( -type f -o -type l \) -print
+        )
+    done
+) | cut -b 3- | perl -ne '
+# {%perl%}
+BEGIN{
+    sub count_slash($) {
+        my $l = $_[0];
+        $l =~ 's,[^/],,g';
+        return length($l);
+    }
+}
+print count_slash($_) . " $_" if (m/\.h$|\.hpp$/i or m,(/|^)[^\.]*$,)
+# {%/perl%}
+' | sort -n|pn 2| tee ~/tmp/cc-get-include.txt|
 if test $# = 0; then
    head -n 20
 else
-    expanded-grep "$@" | sort -u
+    expanded-grep "$@"
 fi

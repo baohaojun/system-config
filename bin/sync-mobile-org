@@ -107,7 +107,7 @@ if test -e mobileorg.org; then
 fi
 
 find-or-exec emacs emacs.bhj
-emacsclient -e '(progn (find-file "~/src/github/projects/Career.org") (org-mobile-pull))'
+emacsclient -e '(progn (find-file "~/src/github/projects/from-mobile.org") (org-mobile-pull))'
 
 if test -d images; then
     rsync ./images -av ~/src/github/projects -av
