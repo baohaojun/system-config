@@ -49,6 +49,7 @@
 #include "wrenchmainwindow.h"
 #include "ui_wrenchmainwindow.h"
 #include "notificationmodel.h"
+#include <QtGui/QKeySequence>
 
 QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
@@ -76,6 +77,9 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     ui->ptMailBcc->installEventFilter(this);
     ui->ptMailAttachments->installEventFilter(this);
 
+    m_shortcut.setShortcut(QKeySequence("Ctrl+F5"));
+    connect(&m_shortcut, SIGNAL(activated()), this, SLOT(slotShortCutActivated()));
+
     m_snore = &Snore::SnoreCore::instance();
     m_snore->loadPlugins( Snore::SnorePlugin::Backend );
 
@@ -84,6 +88,7 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     m_snore_application.addAlert(m_alert);
 
     m_snore->registerApplication(m_snore_application);
+    connect( m_snore, SIGNAL( notificationClosed(Snore::Notification) ), this, SLOT( slotNotificationClosed( Snore::Notification) ) );
 }
 
 WrenchMainWindow::~WrenchMainWindow()
@@ -94,11 +99,18 @@ WrenchMainWindow::~WrenchMainWindow()
 Snore::Icon WrenchMainWindow::getPkgIcon(const QString& pkg)
 {
     if (m_pkg_icons.contains(pkg)) {
-        return m_pkg_icons[pkg];
+        return m_pkg_icons.value(pkg, m_defaultIcon);
     }
 
     QDir dir;
     QStringList imgs = dir.entryList(QStringList(pkg + ".*.png"));
+    if (!imgs.empty()) {
+        QPixmap pixmap(imgs[0]);
+        Snore::Icon icon(pixmap);
+        m_pkg_icons.insert(pkg, icon);
+        return icon;
+    }
+    return m_defaultIcon;
 }
 
 void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text)
@@ -111,15 +123,13 @@ void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QStrin
         NotificationModel::insertNotification(key, pkg, title, text);
 
         if (mWrenchExt.shouldUseInternalPop()) {
-            Snore::Notification n( m_snore_application, m_alert, title, text, m_defaultIcon );
-            n.addAction(Snore::Action(1, "HelloWorld"));
-
-
-            trayIcon->showMessage(title, text);
+            Snore::Notification n(m_snore_application, m_alert, title, text, getPkgIcon(pkg));
+            m_notification_map.insert(n.id() % 1000, key);
+            m_snore->broadcastNotification(n);
+            m_last_sent_notification_id = n.id();
+            m_last_notification = n;
         }
     }
-
-
 }
 
 void WrenchMainWindow::adbStateUpdated(const QString& state)
@@ -425,7 +435,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     }
     connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
     connect(mLuaThread.data(), SIGNAL(selectAppsSig()), this, SLOT(onSelectApps()));
-    connect(mLuaThread.data(), SIGNAL(showNotificationsSig()), this, SLOT(onShowNotifications()));
+    connect(mLuaThread.data(), SIGNAL(showNotificationsSig()), this, SLOT(slotShortCutActivated()));
     connect(mLuaThread.data(), SIGNAL(sigClickNotification(QString)), this, SIGNAL(adbNotificationClicked(QString)));
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
@@ -1104,4 +1114,31 @@ void WrenchMainWindow::moveEvent(QMoveEvent* ev)
 void WrenchMainWindow::on_tbLauncher_clicked()
 {
     mLuaThread->addScript(QStringList() << "launch_apps");
+}
+
+void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
+{
+    qDebug() << "close notification" << n.closeReason();
+    m_last_closed_notification_id = n.id();
+    if (n.closeReason() != Snore::Notification::CloseReasons::Dismissed) {
+        return;
+    }
+    QString key = m_notification_map[n.id() % 1000];
+    if (!key.isEmpty()) {
+        emit adbNotificationClicked(key);
+    }
+}
+
+void WrenchMainWindow::slotShortCutActivated()
+{
+    qDebug() << "Hello shortcut";
+    if (m_last_sent_notification_id == m_last_closed_notification_id + 1) {
+        QString key = m_notification_map[m_last_sent_notification_id % 1000];
+        if (!key.isEmpty()) {
+            emit adbNotificationClicked(key);
+            m_snore->requestCloseNotification(m_last_notification, Snore::Notification::CloseReasons::None);
+        }
+    } else {
+        onShowNotifications();
+    }
 }

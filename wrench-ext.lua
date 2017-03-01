@@ -27,6 +27,13 @@ if file_exists(private_ext_file) then
    end
 end
 
+local ignored_pkgs = {
+   "com.google.android.apps.maps",
+   "android",
+   "com.bhj.setclip",
+   "com.android.systemui",
+}
+
 is_useful_notification = function(key, pkg, title, text)
    if private_config.is_useful_notification and
    private_config.is_useful_notification(key, pkg, title, text) == 0 then
@@ -41,8 +48,10 @@ is_useful_notification = function(key, pkg, title, text)
       return 0
    end
 
-   if pkg == "android" or pkg == "com.bhj.setclip" or pkg == "com.android.systemui" then
-      return 0
+   for _, p in ipairs(ignored_pkgs) do
+      if pkg == p then
+         return 0
+      end
    end
 
    return 1;

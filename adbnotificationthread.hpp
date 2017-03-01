@@ -23,6 +23,7 @@ private slots:
 private:
     QTimer *mConnectTimer;
     QTcpSocket *notificationSocket;
+    QByteArray mLastJsonStr;
 
 signals:
     void adbNotificationArrived(const QString& key, const QString& pkg,

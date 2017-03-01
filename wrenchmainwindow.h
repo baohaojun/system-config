@@ -26,6 +26,7 @@
 #include <libsnore/application.h>
 #include <libsnore/snore.h>
 #include <libsnore/notification/icon.h>
+#include "qxtglobalshortcut.h"
 
 namespace Ui {
 class WrenchMainWindow;
@@ -111,9 +112,15 @@ private slots:
     void on_tbPhoneScreen_toggled(bool checked);
 
     void on_tbLauncher_clicked();
+    void slotNotificationClosed(Snore::Notification);
+    void slotShortCutActivated();
 
 private:
 
+    uint m_last_sent_notification_id;
+    uint m_last_closed_notification_id;
+    Snore::Notification m_last_notification;
+    QxtGlobalShortcut m_shortcut;
     Snore::SnoreCore *m_snore;
     Snore::Application m_snore_application;
     Snore::Icon m_defaultIcon;
