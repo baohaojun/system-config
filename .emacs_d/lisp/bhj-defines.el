@@ -1,5 +1,6 @@
 (require 'ajoke)
 (require 'gnus-sum)
+(require 'qmake-mode "qmake.el")
 (when (file-exists-p "~/src/github/private-config/.emacs_d/bhj-emacs.el")
   (load "~/src/github/private-config/.emacs_d/bhj-emacs.el"))
 
