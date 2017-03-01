@@ -1271,6 +1271,8 @@ push_text = function(text)
          text = emoji_for_qq(text)
       end
    end
+
+   text = text:gsub("\n", "\r\n")
    local file, path
    local tmp = os.getenv("TEMP") or "/tmp"
    path = tmp .. package.config:sub(1, 1) .. "lua-smartisan-t1.txt"
@@ -1762,6 +1764,14 @@ if not dofile_res then
    WrenchExt = {}
 end
 
+local post_weibo_answer = function(text)
+   texts = split("\n\n", text)
+   for _, p in ipairs(texts) do
+      putclip(p)
+      adb_event("sleep 1 key scroll_lock sleep .2 key enter sleep .5")
+   end
+end
+
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
@@ -1793,6 +1803,12 @@ t1_post = function(text) -- use weixin
       sleep(.5)
        window = adb_focused_window()
    end
+
+   if window == "com.sina.weibo/com.sina.weibo.qac.answer.AnswerComposerActivity" then
+      post_weibo_answer(text)
+      return
+   end
+
    if window then print("window is " .. window) end
    if window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
       or (window:match("^com.sina.weibo/") and not window:match("com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"))
