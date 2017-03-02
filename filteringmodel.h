@@ -26,6 +26,7 @@ class FilteringModel : public QAbstractListModel
     virtual void filterSelectedItems(const QStringList&) = 0;
     virtual QString getHistoryName() = 0;
     QMap<QString, SelectedItem> mSelectedItemsRevMap;
+
     QSettings mSettings;
     virtual void initHistory();
     virtual QString getNthHistoryVarName(int n);
@@ -45,6 +46,7 @@ class FilteringModel : public QAbstractListModel
     virtual void maybeAddTextIntoHistory(const QString& text) {};
     QString getSelectedText(int i);
     QString getSelectedDisplayText(int i);
+    virtual QMap<QString, QString> getSelectedRawData(int i);
     void updateHistory(int i);
     void updateHistory(QString key);
 signals:

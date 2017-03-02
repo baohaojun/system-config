@@ -110,6 +110,11 @@ QString FilteringModel::getSelectedText(int i)
     return "";
 }
 
+QMap<QString, QString> FilteringModel::getSelectedRawData(int i)
+{
+    return QMap<QString, QString>();
+}
+
 QString FilteringModel::getSelectedDisplayText(int i)
 {
 

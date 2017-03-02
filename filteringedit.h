@@ -8,6 +8,11 @@ class FilteringEdit : public QTextEdit
     Q_OBJECT
 public:
     explicit FilteringEdit(QWidget *parent = 0);
+    void setAllowSelectAll(bool allow) {
+        m_allowSelectAll = allow;
+    }
+ private:
+    bool m_allowSelectAll;
 
 signals:
     void nextEntry();
@@ -20,6 +25,7 @@ signals:
     void getCurrentEntryForEdit();
     void selectedCurrentText(QString);
     void selectAllEntries();
+    void shiftSelectCurrentEntry();
 public slots:
     void changeCurrentText(const QString&);
 private:

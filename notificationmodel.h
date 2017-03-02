@@ -11,6 +11,7 @@
 #include "selectoutput.h"
 #include "vcard.h"
 #include "filteringmodel.h"
+#include <QtCore/QList>
 
 class NotificationModel : public FilteringModel
 {
@@ -36,11 +37,13 @@ public:
         Notification() {};
     };
 
+    virtual QMap<QString, QString> getSelectedRawData(int i);
+
     static void insertNotification(const QString& aKey, const QString& aPkg, const QString& aTitle, const QString& aText);
 
 private:
 
-    static QMap<QString, Notification> sNotifications;
+    static QList<Notification> m_saved_notifications;
     QPixmap mDefaultAvatar;
     QStringList mAppClasses;
     QMap<QString, QString> mAppPackageMap;

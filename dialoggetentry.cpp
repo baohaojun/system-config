@@ -1,7 +1,7 @@
 #include "dialoggetentry.h"
 #include "ui_dialoggetentry.h"
 
-DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidget *parent) :
+DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidget *parent, bool allowSelectAll) :
     QDialog(parent),
     ui(new Ui::DialogGetEntry)
 {
@@ -21,7 +21,11 @@ DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidg
     connect(ui->entryFilter, SIGNAL(getCurrentEntryForEdit()), ui->filteringListView, SLOT(getCurrentEntryForEdit()));
     connect(ui->filteringListView, SIGNAL(sendCurrentEntryToEdit(QString)), ui->entryFilter, SLOT(changeCurrentText(QString)));
     connect(ui->entryFilter, SIGNAL(selectedCurrentText(QString)), this, SLOT(on_currentTextSelected(QString)));
+    if (allowSelectAll)
+        ui->entryFilter->setAllowSelectAll(allowSelectAll);
     connect(ui->entryFilter, SIGNAL(selectAllEntries()), ui->filteringListView, SLOT(selectAllEntries()));
+    connect(ui->entryFilter, SIGNAL(shiftSelectCurrentEntry()), ui->filteringListView, SLOT(shiftSelectCurrentEntry()));
+    connect(ui->filteringListView, SIGNAL(selectRawData(QMap<QString, QString>)), this, SIGNAL(selectRawData(QMap<QString, QString>)));
     connect(ui->filteringListView, SIGNAL(selectedCurrentEntry(QModelIndex)), this, SLOT(on_filteringListView_doubleClicked(QModelIndex)));
     connect(ui->filteringListView, SIGNAL(selectedCurrentText(QString)), this, SLOT(on_currentTextSelected(QString)));
     connect(ui->filteringListView, SIGNAL(selectedCurrentEntryNoHistory(QModelIndex)), this, SLOT(selectedCurrentEntryNoHistory(QModelIndex)));

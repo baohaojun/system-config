@@ -5,6 +5,7 @@ local M
 
 -- functions
 local WrenchExt = {}
+local shift_click_notification
 local search_sms, string_strip, handle_notification
 local adb_input_method_is_null, close_ime
 local window_post_button_map = {}
@@ -2761,8 +2762,15 @@ local function t1_spread_it()
    adb_event("sleep .5 adb-key back sleep .5")
 end
 
+shift_click_notification = function(pkg, key, title, text)
+   if pkg == "com.tencent.mm" then
+      t1_call(title .. "@@wx")
+   end
+end
+
 M = {}
 M.log = log
+M.shift_click_notification = shift_click_notification
 M.open_weixin_scan = open_weixin_scan
 M.adb_get_input_window_dump = adb_get_input_window_dump
 M.putclip = putclip

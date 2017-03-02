@@ -288,6 +288,7 @@ void WrenchMainWindow::onShowNotifications()
 
     DialogGetEntry dialog(&model, prompt, this);
     connect(&dialog, SIGNAL(entrySelected(QString)), this, SIGNAL(adbNotificationClicked(QString)));
+    connect(&dialog, SIGNAL(selectRawData(QMap<QString, QString>)), this, SLOT(adbNotificationShiftClicked(QMap<QString, QString>)));
     dialog.exec();
     dialog.disconnect();
 }
@@ -515,7 +516,7 @@ void WrenchMainWindow::on_tbPicture_clicked()
 void WrenchMainWindow::on_tbEmoji_clicked()
 {
     if (mEmojiDialog.isNull()) {
-        mEmojiDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(new EmojiModel(0), "表情过滤", this));
+        mEmojiDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(new EmojiModel(0), "表情过滤", this, true));
         connect(mEmojiDialog.data(), SIGNAL(entrySelected(QString)), ui->phoneTextEdit, SLOT(on_emojiSelected(QString)));
     }
     QPoint pos = mSettings.value("emoji-dialog-pos", QVariant(QPoint(0, 0))).toPoint();
@@ -1141,4 +1142,9 @@ void WrenchMainWindow::slotShortCutActivated()
     } else {
         onShowNotifications();
     }
+}
+
+void WrenchMainWindow::adbNotificationShiftClicked(const QMap<QString, QString>& rawData)
+{
+    mLuaThread->addScript(QStringList({"shift_click_notification", rawData["pkg"], rawData["key"], rawData["title"], rawData["text"]}));
 }

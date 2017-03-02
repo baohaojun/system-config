@@ -114,6 +114,7 @@ private slots:
     void on_tbLauncher_clicked();
     void slotNotificationClosed(Snore::Notification);
     void slotShortCutActivated();
+    void adbNotificationShiftClicked(const QMap<QString, QString>& rawData);
 
 private:
 

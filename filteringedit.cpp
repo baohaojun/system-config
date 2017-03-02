@@ -3,7 +3,7 @@
 #include <QTimer>
 
 FilteringEdit::FilteringEdit(QWidget *parent) :
-    QTextEdit(parent)
+    QTextEdit(parent), m_allowSelectAll(false)
 {
 }
 
@@ -38,7 +38,10 @@ void FilteringEdit::keyPressEvent(QKeyEvent *e)
             return;
         }
         if (m == Qt::ShiftModifier) {
-            emit selectAllEntries();
+            if (m_allowSelectAll)
+                emit selectAllEntries();
+            else
+                emit shiftSelectCurrentEntry();
             return;
         }
         if (m == Qt::ControlModifier) {

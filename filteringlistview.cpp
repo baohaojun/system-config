@@ -101,3 +101,18 @@ void FilteringListView::getCurrentEntryForEdit()
         emit sendCurrentEntryToEdit(myModel->getSelectedDisplayText(selected));
     }
 }
+
+void FilteringListView::shiftSelectCurrentEntry()
+{
+    FilteringModel* myModel = (FilteringModel*) model();
+    QModelIndexList ml = selectedIndexes();
+    int selected = -1;
+    if (!ml.isEmpty()) {
+        selected = ml[0].row();
+    }
+
+    if (selected >= 0) {
+        QMap<QString, QString> rawData = myModel->getSelectedRawData(selected);
+        emit selectRawData(rawData);
+    }
+}

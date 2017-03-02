@@ -38,13 +38,11 @@ NotificationModel::NotificationModel(QObject *parent) :
 
 void NotificationModel::filterSelectedItems(const QStringList& split)
 {
-    QStringList keys = sNotifications.keys();
-    keys.sort();
-    foreach (const QString& key, keys) {
+    foreach (const Notification& n, m_saved_notifications) {
         int match = 1;
         foreach (const QString& stem, split) {
             int stem_match = 0;
-            if (sNotifications[key].title.contains(stem, Qt::CaseInsensitive)) {
+            if (n.title.contains(stem, Qt::CaseInsensitive)) {
                 stem_match = 1;
             }
             if (! stem_match) {
@@ -54,8 +52,8 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
         }
 
         if (match) {
-            SelectedItem si(sNotifications[key].key, sNotifications[key].title + "\n" + sNotifications[key].text);
-            si.icon = mAppIconMap[sNotifications[key].pkg];
+            SelectedItem si(n.key, n.title + "\n" + n.text);
+            si.icon = mAppIconMap[n.pkg];
             if (!mSelectedItemsRevMap.contains(si.displayText)) {
                 mSelectedItems << si;
                 mSelectedItemsRevMap[si.displayText] = si;
@@ -64,19 +62,32 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
     }
 }
 
+QMap<QString, QString> NotificationModel::getSelectedRawData(int i)
+{
+    QString key = getSelectedText(i);
+    QMap<QString, QString> map;
+    foreach (const Notification& n, m_saved_notifications) {
+        if (n.key == key) {
+            map.insert("key", n.key);
+            map.insert("pkg", n.pkg);
+            map.insert("title", n.title);
+            map.insert("text", n.text);
+            return map;
+        }
+    }
+    return map;
+}
 
 QString NotificationModel::getHistoryName()
 {
     return "";
 }
 
-QMap<QString, NotificationModel::Notification> NotificationModel::sNotifications;
+QList<NotificationModel::Notification> NotificationModel::m_saved_notifications;
 void NotificationModel::insertNotification(const QString& aKey, const QString& aPkg, const QString& aTitle, const QString& aText)
 {
-    sNotifications.insert((
-                              QString("") +
-                              QString::asprintf("%d", QDateTime::currentMSecsSinceEpoch()) +
-                              QString("|") +
-                              aKey),
-                          Notification(aKey, aPkg, aTitle, aText));
+    m_saved_notifications.push_front(Notification(aKey, aPkg, aTitle, aText));
+    while (m_saved_notifications.length() > 1000) {
+        m_saved_notifications.pop_back();
+    }
 }

@@ -14,6 +14,7 @@ signals:
     void selectedCurrentText(const QString&);
     void selectedCurrentEntryNoHistory(const QModelIndex&);
     void sendCurrentEntryToEdit(const QString&);
+    void selectRawData(const QMap<QString, QString>&);
 
 public slots:
     void nextEntry();
@@ -25,6 +26,7 @@ public slots:
     void prevPageOfEntries();
     void selectedCurrentEntryWithText(const QString& input = "");
     void selectAllEntries();
+    void shiftSelectCurrentEntry();
 
 protected slots:
     void dataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int> ());
