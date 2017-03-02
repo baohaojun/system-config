@@ -2119,7 +2119,7 @@ local function picture_to_weixin_chat(pics, ...)
                debug("chatWindow: clicked")
                wait_top_activity(weixinAlbumPreviewActivity)
             elseif window == weixinAlbumPreviewActivity then
-               adb_event("adb-tap 521 398")
+               adb_event("adb-tap 521 398") -- to get into image preview
                sleep(.2)
             elseif window == weixinImagePreviewActivity then
                adb_event("sleep .1 adb-key back")
@@ -2133,9 +2133,9 @@ local function picture_to_weixin_chat(pics, ...)
          end
       end
       local pic_share_buttons = {
-         "adb-tap 614 281", "adb-tap 1000 260", "adb-tap 268 629",
-         "adb-tap 652 645", "adb-tap 1004 632", "adb-tap 301 1008",
-         "adb-tap 612 996", "adb-tap 1006 992", "adb-tap 265 1346",
+         "adb-tap 316 260", "adb-tap 614 281", "adb-tap 1000 260",
+         "adb-tap 268 629", "adb-tap 652 645", "adb-tap 1004 632",
+         "adb-tap 301 1008", "adb-tap 612 996", "adb-tap 1006 992",
       }
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
@@ -2144,7 +2144,10 @@ local function picture_to_weixin_chat(pics, ...)
       adb_event("sleep .1 adb-tap 944 1894 sleep .1")
       wait_top_activity(weixinImagePreviewActivity)
    end
-   adb_event("sleep .2 adb-tap 59 1871 sleep .1 adb-tap 927 148")
+   adb_event("sleep .2 adb-tap 423 1861 sleep .1 ")
+   if yes_or_no_p("Confirm to send these images?") then
+      adb_event("adb-tap 927 148")
+   end
    window = wait_top_activity(chatWindow)
    if window == weixinImagePreviewActivity then
       adb_event("sleep .1 adb-tap 59 1871 sleep .1 adb-tap 927 148")
