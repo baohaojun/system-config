@@ -42,9 +42,6 @@ my $dest = pop( @ARGV);
 my $qdest = shell_quote($dest);
 
 my $dest_is_dir = qx(my-adb shell 'test -d $qdest && echo -n yes && echo $$') =~ m/yes\d/;
-if ($dest_is_dir) {
-    debug "Dest is a dir";
-}
 
 my $dir;
 if ($dest =~ m,^/data\b,) {
@@ -82,15 +79,7 @@ sub push_one_file($$)
 
     print "adb push $file $true_dest\n";
     if (system("adb", "push", $file, "$true_dest")) {
-        debug "push failed, try to use sdcard";
-        system("my-adb", "mkdir", "-p", "/sdcard/adb-push");
-        system("adb", "push", $_, "/sdcard/adb-push/$base");
-        (my $true_dest_dir = $true_dest) =~ s!(.*)/.*!$1!;
-        system("adb", "shell", "su", "-c", "cp -r /sdcard/adb-push/$base \"$true_dest_dir\"");
-        system("my-adb rm -r /sdcard/adb-push");
-        if ($true_dest =~ m!/xbin/|/bin/! or $executable) {
-            system("my-adb", "shell", "su", "-c", "chmod 755 $true_dest");
-        }
+        exit -1;
     }
     if ($true_dest =~ m/\.(png|jpg)$/i) {
         system("adb-scan-media", $true_dest);

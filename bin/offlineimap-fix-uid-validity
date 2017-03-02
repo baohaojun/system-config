@@ -1,6 +1,52 @@
 #!/bin/bash
 set -e
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt fforce
+## end code-generator
+## start generated code
+TEMP=$(getopt -o fh \
+              --long force,help,no-force \
+              -n $(basename -- $0) -- "$@")
+force=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--force|--no-force)
+            if test "$1" = --no-force; then
+                force=false
+            else
+                force=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--[no-]force'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 if test "$#" = 0; then
     set -- ~/.cache/system-config/logs/get-mails.log
 fi
@@ -39,12 +85,11 @@ EOF
             echo
             echo '****************'
             for path in $(echo "$cmd" | pn 2); do
-                if test ! -e "$path"; then
+                if test ! -e "$path" && test "$force" = false; then
                     hint "$path not exist, press C-c to exit" </dev/tty
                 fi
             done
-            if yes-or-no-p "Run the above commands?" </dev/tty; then
-
+            if test "$force" = true || yes-or-no-p "Run the above commands?" </dev/tty; then
                 bash -c "$cmd" </dev/null
             fi
         done
