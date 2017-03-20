@@ -43,7 +43,7 @@ protected:
     void setDefaultSettings() override;
 
 private:
-    friend class SnarlWidget;
+    friend class ::SnarlWidget;
     SnarlWidget *m_eventLoop = nullptr;
     QHash<QString, ::Snarl::V42::SnarlInterface *> m_applications;
 
