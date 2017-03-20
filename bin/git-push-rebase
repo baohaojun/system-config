@@ -354,6 +354,9 @@ if [[ "$(repo-remote-url $origin)" =~ https?://github.com/baohaojun ]]; then
 fi
 
 if test "$force_even_if_merged" != true && ! test -e .git/sc-not-merged; then
+    if test "$PWD" = ~/system-config; then
+        bash ~/system-config/.after-push-hook
+    fi
     exit
 fi
 

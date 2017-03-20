@@ -14,6 +14,15 @@ if test "$#" = 0 && yes-or-no-p -y "先更新 .repo/manifests ？"; then
     )
 fi
 
+function repo_init_extra_info() {
+    (
+        cd .repo/manifests || exit
+        if test "$(git config repo.depth)" = 1; then echo --depth 1; fi
+        if test "$(git config manifest.groups)"; then
+            echo -g $(git config manifest.groups)
+        fi
+    )
+}
 
 repo_init_url=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git-remote-url)
 repo_init_branch=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge)
@@ -55,7 +64,7 @@ while true; do
             ;;
         -p)
             print=$(
-                echo repo init $(cd .repo/manifests && if test "$(git config repo.depth)" = 1; then echo --depth 1; fi) -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
+                echo repo init $(repo_init_extra_info) -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
                      -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url) $(
                     ref=$(cd .repo/manifests.git; git config repo.reference || true)
                     if test "$ref"; then
@@ -261,7 +270,7 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
     (
         cd $(lookup-file -e .repo/..)
         repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name \
-             $(if test "$repo_reference"; then echo "$repo_reference"; fi) $(cd .repo/manifests && if test "$(git config repo.depth)" = 1; then echo --depth 1; fi)
+             $(if test "$repo_reference"; then echo "$repo_reference"; fi) $(repo_init_extra_info)
     )
 
     (

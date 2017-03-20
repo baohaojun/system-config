@@ -1,2 +1,4 @@
 #!/bin/bash
-mu index
+if which mu >/dev/null 2>&1; then
+    mu index
+fi
