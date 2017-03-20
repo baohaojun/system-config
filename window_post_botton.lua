@@ -69,6 +69,7 @@ map['com.google.android.talk/com.google.android.apps.hangouts.phone.Conversation
 map['com.google.android.youtube'] = 'manual-post'
 map['com.google.android.youtube/com.google.android.apps.youtube.app.WatchWhileActivity'] = 'manual-post'
 map['com.immomo.momo/com.immomo.momo.account.activity.LoginActivity'] = 'manual-post'
+map['com.instagram.android/com.instagram.android.nux.SignedOutFragmentActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.app.mall.login.LoginActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.common.sample.jshop.JshopSearchActivity'] = 'manual-post'
 map['com.matburt.mobileorg/com.matburt.mobileorg.Gui.Capture.EditActivity'] = 'manual-post'
