@@ -1121,7 +1121,9 @@ void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
 {
     qDebug() << "close notification" << n.closeReason();
     m_last_closed_notification_id = n.id();
-    if (n.closeReason() != Snore::Notification::CloseReasons::Dismissed) {
+
+    if (n.closeReason() != Snore::Notification::CloseReasons::Dismissed &&
+        n.closeReason() != Snore::Notification::CloseReasons::Activated) {
         return;
     }
     QString key = m_notification_map[n.id() % 1000];

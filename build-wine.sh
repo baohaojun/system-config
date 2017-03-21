@@ -2,13 +2,23 @@
 
 cd $(dirname $(readlink -f $0))
 
+if test ! -e ~/src/github/Wrench/windows/binaries/libsnore-qt5.dll; then
+    (
+        cd ~/src/github/snorenotify
+        git clean -xfd
+        mkdir -p cmake-build
+        qt-wine cmake -D ECM_DIR=z:/usr/share/ECM/cmake -G "MinGW Makefiles" z:/home/bhj/src/github/snorenotify
+        qt-wine mingw32-make -j8 install
+    )
+fi
+
 function copy-dlls()
 {
     rsync windows/binaries/* ./release -v -L -r
     rsync *.lua  ./release -v
 
     req_dlls=( #icudt5?.dll icuin5?.dll icuuc5?.dll
-               qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL Qt5Test.dll Qt5Svg.dll
+               qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL Qt5Test.dll Qt5Svg.dll Qt5DBus.dll Qt5Qml.dll Qt5Quick.dll
              )
 
     for x in "${req_dlls[@]}"; do
