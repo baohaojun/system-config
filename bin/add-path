@@ -1,0 +1,5 @@
+#!/bin/bash
+
+seq=$1
+path_ent=$2
+relative-link $path_ent $seq-${path_ent//\//.}

@@ -24,4 +24,7 @@ url=$(echo "$url" | perl -npe 's,ssh://172.16.0.9:29418/,smartisan:,')
 echo "$url"
 if is-tty-io; then
     putclip "$url"
+    if [[ $url =~ git@github.com:baohaojun ]]; then
+        echo "$url" | perl -npe 's,git\@github.com:,https://github.com/,'
+    fi
 fi

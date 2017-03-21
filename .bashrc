@@ -15,6 +15,10 @@ else
     . ~/system-config/.bashrc-linux
 fi
 
+if test -e ~/system-config/.bashrc-$uname; then
+    . ~/system-config/.bashrc-$uname
+fi
+
 if test ~/.config/system-config/.bashrc-path -ot ~/system-config/etc/path/$uname-$march; then
     if test -e ~/.config/system-config/.bashrc-path; then
         echo re-create ~/.config/system-config/.bashrc-path
@@ -33,8 +37,8 @@ if test -e ~/.config/system-config/.bashrc-path; then
         fi
     fi
 else
-    if test -x /opt/local/libexec/gnubin/readlink; then
-        export PATH=/opt/local/libexec/gnubin:$PATH
+    if test -x /usr/local/opt/coreutils/libexec/gnubin; then
+        export PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
     fi
     if test -d ~/system-config/etc/path/$uname-$march; then
         rm -rf ~/external/etc/overide/
