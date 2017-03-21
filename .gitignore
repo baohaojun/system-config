@@ -2,3 +2,4 @@
 *~
 *.autosave
 cmake-build
+.qmake.stash
