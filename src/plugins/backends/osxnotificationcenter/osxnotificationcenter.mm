@@ -71,7 +71,7 @@ BOOL installNSBundleHook()
     qCDebug(SNORE) << "User clicked on notification";
     int notificationId = [notification.userInfo[@"id"] intValue];
     [center removeDeliveredNotification: notification];
-    if (not m_IdToNotification.contains(notificationId)) {
+    if (! m_IdToNotification.contains(notificationId)) {
         qCWarning(SNORE) << "User clicked on notification that was not recognized";
         return;
     }
@@ -107,7 +107,7 @@ OSXNotificationCenter::OSXNotificationCenter()
 {
     installNSBundleHook();
     m_IdToNSNotification = [[NSMutableDictionary alloc] init];
-    if (not delegate) {
+    if (! delegate) {
         delegate = new UserNotificationItemClass();
     }
     
