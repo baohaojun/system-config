@@ -2351,7 +2351,7 @@ local function picture_to_weibo_chat(pics, ...)
    adb_event("key back")
 end
 
-local function t1_picture(...)
+local function wrench_picture(...)
    local pics = upload_pics(...)
    local window = adb_focused_window()
    if window == weixinLauncherActivity then
@@ -2785,7 +2785,7 @@ M.kill_android_vnc = kill_android_vnc
 M.t1_find_weixin_contact = t1_find_weixin_contact
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe
-M.t1_picture = t1_picture
+M.wrench_picture = wrench_picture
 M.t1_follow_me = t1_follow_me
 M.t1_share_to_weibo = t1_share_to_weibo
 M.t1_share_to_weixin = t1_share_to_weixin

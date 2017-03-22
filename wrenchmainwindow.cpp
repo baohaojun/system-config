@@ -326,7 +326,7 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
         mPictures.insert(0, "last-pic-notes.png");
         text = "#小扳手便笺#";
         if (!anyShareChecked()) {
-            mLuaThread->addScript((QStringList() << "t1_picture") + mPictures);
+            mLuaThread->addScript((QStringList() << "wrench_picture") + mPictures);
             mPictures.clear();
             return;
         } else {
@@ -482,7 +482,7 @@ void WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
         mPictures = QStringList() << "screen-shot.png";
         emit ui->sendItPushButton->clicked();
     } else {
-        mLuaThread->addScript(QStringList() << "t1_picture" << "screen-shot.png");
+        mLuaThread->addScript(QStringList() << "wrench_picture" << "screen-shot.png");
     }
 }
 
@@ -513,7 +513,7 @@ void WrenchMainWindow::on_tbPicture_clicked()
         mPictures = fns;
         emit ui->sendItPushButton->clicked();
     } else {
-        mLuaThread->addScript((QStringList() << "t1_picture") + fns);
+        mLuaThread->addScript((QStringList() << "wrench_picture") + fns);
     }
 }
 
