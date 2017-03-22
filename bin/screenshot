@@ -10,13 +10,14 @@ function die() {
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ffull sselected ddelay wcurrent
+# generate-getopt ffull sselected ddelay wcurrent eedit
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o fsdwh \
-              --long full,selected,delay,current,help,no-full,no-selected,no-delay,no-current \
+TEMP=$(getopt -o fesdwh \
+              --long full,edit,selected,delay,current,help,no-full,no-edit,no-selected,no-delay,no-current \
               -n $(basename -- $0) -- "$@")
 full=false
+edit=false
 selected=false
 delay=false
 current=false
@@ -29,6 +30,14 @@ while true; do
                 full=false
             else
                 full=true
+            fi
+            shift
+            ;;
+        -e|--edit|--no-edit)
+            if test "$1" = --no-edit; then
+                edit=false
+            else
+                edit=true
             fi
             shift
             ;;
@@ -66,6 +75,9 @@ while true; do
             echo
             printf %06s '-d, '
             printf %-24s '--[no-]delay'
+            echo
+            printf %06s '-e, '
+            printf %-24s '--[no-]edit'
             echo
             printf %06s '-f, '
             printf %-24s '--[no-]full'
@@ -119,7 +131,7 @@ fi
 while true; do
     scrot $select "$out"
     if test -e "$out"; then
-        if test "$(basename $0)" = screenshot-edit; then
+        if test "$(basename $0)" = screenshot-edit -o "$edit" = true; then
             gimp -n "$out" >/dev/null 2>&1
         else
             of "$out" >/dev/null 2>&1

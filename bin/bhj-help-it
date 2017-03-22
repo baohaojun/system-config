@@ -1,9 +1,10 @@
 #!/bin/bash
 
-if test "$EMACS" = t; then
+if test "$EMACS" = t -a "$RESTARTED_IN_BACKGROUND" != true; then
     unset EMACS
+    export RESTARTED_IN_BACKGROUND=true
     sawfish-start-special help firefox >/dev/null 2>&1 </dev/null &
-    (cat | $0 "$@" > ~/.cache/system-config/logs/$(basename $0).log 2>&1) &
+    (cat | EMACS=t $0 "$@" > ~/.cache/system-config/logs/$(basename $0).log 2>&1) &
     exit 0
 fi
 set -x
@@ -87,10 +88,19 @@ case $1 in
         ;;
     qt|qt-mode)
         export SELECT_DIST_WORD=${2,,}
-        file=$(select-output-line -- beagrep -e 'a name="'$2'(-prop|-enum)?"|<a href="[^"]*">'$2'</a>' -t "a name $2" -d /usr/share/qt5/doc --grep "-l -P")
+        file=$(
+            (
+                cd /usr/share/qt5/doc
+                beagrep -e 'a name="'$2'(-prop|-enum)?"|<a href="[^"]*">'$2'</a>' -t "a name $2" --grep "-l -P"
+                beagrep -e "$2" -f |perl -npe 's/:.*//'
+            ) | select-output-line cat
+            )
         if test -z "$file" -a "${2:0:3}" = set; then
             file=$(select-output-line -- beagrep -e 'a name="'${2:3}-prop'"' -d /usr/share/qt5/doc --grep -l -i)
             set -- "$1" "$(lc ${2:3:1})${2:4}-prop"
+        elif test -z "$file"; then
+            search-google "$2" site:doc.qt.io
+            exit
         elif grep -P -e 'a name="'$2'(-prop)"' "$file" -q; then
             set -- "$1" "$2-prop"
         elif grep -P -e 'a name="'$2'(-enum)"' "$file" -q; then
