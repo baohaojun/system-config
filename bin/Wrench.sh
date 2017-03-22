@@ -7,6 +7,9 @@ export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 
 find-or-exec 'Wrench V%Wrench'
 
+if test "$#" != 0; then
+    exec Wrench "$@"
+fi
 what_to_do=$(
     ask-for-input --history -a "Wrench" -p "你要小扳手的什么功能？（可以自己输入比如 baohaojun@@wx）"
           )

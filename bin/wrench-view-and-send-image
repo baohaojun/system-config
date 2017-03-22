@@ -1,0 +1,17 @@
+#!/bin/bash
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+cat > ~/tmp/$b0.$$.twa <<EOF
+wrench_picture([[$(readlink -f "$1")]])
+EOF
+Wrench.sh ~/tmp/$b0.$$.twa
+mv ~/tmp/$b0.$$.twa ~/tmp/$b0.twa
