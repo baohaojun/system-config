@@ -26,7 +26,7 @@
 #include <libsnore/application.h>
 #include <libsnore/snore.h>
 #include <libsnore/notification/icon.h>
-#include "qxtglobalshortcut.h"
+#include <QHotkey>
 
 namespace Ui {
 class WrenchMainWindow;
@@ -121,7 +121,7 @@ private:
     uint m_last_sent_notification_id;
     uint m_last_closed_notification_id;
     Snore::Notification m_last_notification;
-    QxtGlobalShortcut m_shortcut;
+    QHotkey m_hotkey;
     Snore::SnoreCore *m_snore;
     Snore::Application m_snore_application;
     Snore::Icon m_defaultIcon;

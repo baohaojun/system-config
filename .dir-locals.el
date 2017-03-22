@@ -30,6 +30,7 @@
                    "-I/usr/include/c++/v1"
                    "-I/home/bhj/tmp/build-wrench"
                    "-I/usr/local/include"
+                   "-I/home/bhj/src/github/Wrench/QHotKey/QHotkey"
                    "-I.")
   (flycheck-clang-include-path "/usr/include/x86_64-linux-gnu/qt5/QtConcurrent"
                                "/usr/include/x86_64-linux-gnu/qt5/QtCore"

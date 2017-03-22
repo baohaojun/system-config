@@ -57,6 +57,7 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     mQuit(false),
     ui(new Ui::WrenchMainWindow),
     mSettings("Smartisan", "Wrench", parent),
+    m_hotkey(QKeySequence("Ctrl+F6"), true),
     m_defaultIcon("emojis/iphone-emoji/WRENCH.png")
 {
     on_configurePushButton_clicked();
@@ -77,14 +78,17 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     ui->ptMailBcc->installEventFilter(this);
     ui->ptMailAttachments->installEventFilter(this);
 
-    m_shortcut.setShortcut(QKeySequence("Ctrl+F5"));
-    connect(&m_shortcut, SIGNAL(activated()), this, SLOT(slotShortCutActivated()));
+    qDebug() << "Is Registered: " << m_hotkey.isRegistered();
+    connect(&m_hotkey, SIGNAL(activated()), this, SLOT(slotShortCutActivated()));
 
     m_snore = &Snore::SnoreCore::instance();
-    m_snore->loadPlugins( Snore::SnorePlugin::Backend );
+    m_snore->loadPlugins( Snore::SnorePlugin::Backend);
 
     m_snore_application = Snore::Application("Wrench", m_defaultIcon);
     m_alert = Snore::Alert("Wrench", m_defaultIcon);
+#ifdef Q_OS_DARWIN
+    m_snore->setSettingsValue(QStringLiteral("PrimaryBackend"), QProcessEnvironment::systemEnvironment().value("SNORE_BACKEND", QStringLiteral("Snore")), Snore::LocalSetting);
+#endif
     m_snore_application.addAlert(m_alert);
 
     m_snore->registerApplication(m_snore_application);

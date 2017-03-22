@@ -6,15 +6,11 @@
 #-------------------------------------------------
 
 include(qt-solutions/qtsingleapplication/src/qtsingleapplication.pri)
+include(./QHotKey/qhotkey.pri)
 
-QT += core gui network gui-private
+QT += gui
 QT += LibsnoreQt5
 QT += LibsnoreSettingsQt5
-
-
-QT += widgets
-
-QT += testlib
 
 greaterThan(DEBUG, 0) {
     DEFINES += QVNCVIEWER_DEBUG
@@ -42,6 +38,7 @@ unix {
   } else {
     INCLUDEPATH += ./macx
     LIBS += -L./macx -llua
+
     ICON = Wrench.icns
   }
 }
@@ -181,22 +178,6 @@ surfacewidget.cpp \
 qt2keysym.cpp \
 aboutdialog.cpp \
 rangeslider.cpp
-
-HEADERS  += qxtglobalshortcut.h
-HEADERS  += qxtglobalshortcut_p.h
-SOURCES  += qxtglobalshortcut.cpp
-
-unix:!macx {
-SOURCES += qxtglobalshortcut_x11.cpp
-QT += x11extras
-}
-macx {
-SOURCES += qxtglobalshortcut_mac.cpp
-}
-win32 {
-SOURCES += qxtglobalshortcut_win.cpp
-}
-
 
 HEADERS  += wrenchmainwindow.h \
             adbclient.h \

@@ -36,9 +36,10 @@ else
             make -j8
         )
     done
-    rsync -L wrench.lua macx/binaries/* release/* Wrench.app/Contents/MacOS/ -r
+    rsync -L /usr/local/lib/plugins/libsnore-qt5/*.so wrench.lua macx/binaries/* release/* Wrench.app/Contents/MacOS/ -r
     rm Wrench.dmg -f
-    macdeployqt Wrench.app -dmg -verbose=1 -executable=Wrench.app/Contents/MacOS/download
+    macdeployqt Wrench.app -verbose=1 $(for x in Wrench.app/Contents/MacOS/*.so; do echo -executable=$x; done) -qmldir=${HOME}/src/github/snorenotify/src/plugins/backends/snore
+
     mv ~/Qt5 ~/Qt5.bak
     if test "$DOING_WRENCH_RELEASE"; then
         exit
