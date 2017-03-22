@@ -74,18 +74,19 @@ oldpwd=$PWD
 cd $build_dir
 
 set -o pipefail
+qmake_args=
+if test $# = 1 -a "$1" = debug; then
+    qmake_args='WRENCH_DEBUG=1'
+fi
+
 for x in . download; do
     (
         cd $x
-        qtchooser -qt=5 -run-tool=qmake && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
+        qmake $qmake_args && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
     )
 done
 
 for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
-
-if test $# = 1 -a "$1" = debug; then
-    perl -npe 'print "CONFIG += debug\n" if 1..1' -i *.pro
-fi
 
 echo $oldpwd/* $oldpwd/linux/binaries/* | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
 
@@ -107,7 +108,7 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
     ps-killall Wrench.\!pro || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.Wrench
-        myscr gdb ./Wrench
+        myscr bash -c 'LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu gdb ./Wrench'
         find-or-exec konsole
     else
         rm $build_dir-debug/Wrench -f || true

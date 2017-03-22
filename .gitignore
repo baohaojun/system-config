@@ -17,3 +17,4 @@ ui_phonescreendialog.h
 ui_preferencesdialog.h
 ui_rangeslider.h
 weixin-phones.txt
+.qmake.stash

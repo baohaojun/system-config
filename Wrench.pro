@@ -8,12 +8,12 @@
 include(qt-solutions/qtsingleapplication/src/qtsingleapplication.pri)
 include(./QHotKey/qhotkey.pri)
 
-QT += gui
+QT += gui core network
 QT += LibsnoreQt5
 QT += LibsnoreSettingsQt5
 QT += testlib
 
-greaterThan(DEBUG, 0) {
+greaterThan(WRENCH_DEBUG, 0) {
     DEFINES += QVNCVIEWER_DEBUG
     CONFIG += warn_on debug
 } else {
