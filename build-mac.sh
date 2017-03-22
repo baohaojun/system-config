@@ -15,7 +15,9 @@ else
 
     cd ~/src/github/snorenotify/
 
+    should_cmake_qmake=false
     if test ! -e Makefile; then
+        should_cmake_qmake=true
         cmake -D ECM_DIR=/usr/local/share/ECM/cmake .
     fi
     make -j8 install
@@ -29,13 +31,18 @@ else
 
     cd ~/src/github/snorenotify/src/snoresend
     rm -rf *.app
-    qmake
+
+    if test $should_cmake_qmake = true; then
+        rm Makefile -f
+        qmake
+    fi
     make
     (
         cd ~/src/github/snorenotify/src/snoresend/WrenchTest.app/Contents/MacOS
         ./WrenchTest -t hello2 -m world 2>&1|perl -npe 's/^/2: /'|| true
     )
-    macdeployqt WrenchTest.app -verbose=1
+    cp /usr/local/lib/plugins/libsnore-qt5/*.so WrenchTest.app/Contents/MacOS -av
+    macdeployqt WrenchTest.app -verbose=1 $(for x in WrenchTest.app/Contents/MacOS/*.so; do echo -executable=$x; done) -qmldir=${HOME}/src/github/snorenotify/src/plugins/backends/snore
 
     echo
     echo '****************************************************************'
