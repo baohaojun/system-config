@@ -31,6 +31,7 @@
 #include <QGuiApplication>
 #include <QSettings>
 #include <QThread>
+#include <QtCore/QMutex>
 
 using namespace Snore;
 
@@ -48,14 +49,21 @@ SnoreCore::SnoreCore(QObject *parent):
 SnoreCore &SnoreCore::instance()
 {
     static SnoreCore *instance = nullptr;
+    static QMutex mutex;
+
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__ << "mutex is:" << &mutex;
     if (!instance) {
-        qRegisterMetaType<Application>();
-        qRegisterMetaType<LambdaHint>();
-        qRegisterMetaType<Notification>();
-        qRegisterMetaType<SnorePlugin::PluginTypes>();
-        qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
-        instance = new SnoreCore(qApp);
-        SnoreCorePrivate::instance()->init();
+        mutex.lock();
+        if (!instance) {
+            qRegisterMetaType<Application>();
+            qRegisterMetaType<LambdaHint>();
+            qRegisterMetaType<Notification>();
+            qRegisterMetaType<SnorePlugin::PluginTypes>();
+            qRegisterMetaTypeStreamOperators<SnorePlugin::PluginTypes>();
+            instance = new SnoreCore(qApp);
+            SnoreCorePrivate::instance()->init();
+        }
+        mutex.unlock();
     }
     return *instance;
 }
@@ -143,14 +151,18 @@ void SnoreCore::registerApplication(const Application &application)
                "Applications mus be registered only once.");
     qCDebug(SNORE) << "Registering Application:" << application;
     d->m_applications.insert(application.key(), application);
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__ << "core instance: " << this << "applications: " << d->m_applications;
     emit d->applicationRegistered(application);
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
 }
 
 void SnoreCore::deregisterApplication(const Application &application)
 {
     Q_D(SnoreCore);
     emit d->applicationDeregistered(application);
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__ << "core instance: " << this << "applications: " << d->m_applications;
     d->m_applications.take(application.key());
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
 }
 
 const QHash<QString, Application> &SnoreCore::aplications() const

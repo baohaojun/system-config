@@ -21,6 +21,7 @@
 #include <libsnore/version.h>
 #include <libsnore/utils.h>
 #include <libsnore/snore_static_plugins.h>
+#include <QProcessEnvironment>
 
 
 #include <QGuiApplication>
@@ -118,8 +119,6 @@ int main(int argc, char *argv[])
     if (parser.isSet(title) && parser.isSet(message)) {
         SnoreCore &core = SnoreCore::instance();
 
-        core.loadPlugins(Snore::SnorePlugin::Backend | Snore::SnorePlugin::SecondaryBackend);
-
         Icon icon = Icon::defaultIcon();
         if (parser.isSet(iconPath)) {
             icon = Icon(parser.value(iconPath));
@@ -134,11 +133,16 @@ int main(int argc, char *argv[])
 
         core.registerApplication(application);
 
+
+        core.loadPlugins(Snore::SnorePlugin::Backend | Snore::SnorePlugin::SecondaryBackend);
+        core.setSettingsValue(QStringLiteral("PrimaryBackend"), QProcessEnvironment::systemEnvironment().value(QStringLiteral("SNORE_BACKEND"), QStringLiteral("Snore")), Snore::LocalSetting);
+
+
         int prio = parser.value(priority).toInt();
         if (prio < -2 || prio > 2) {
             parser.showHelp(-1);
         }
-        Notification n(application, alert, parser.value(title), parser.value(message), icon, Notification::defaultTimeout(), static_cast<Notification::Prioritys>(prio));
+        Notification n(application, alert, parser.value(title), parser.value(message), icon, 1, static_cast<Notification::Prioritys>(prio));
 #ifdef Q_OS_WIN
         if (parser.isSet(_bringProcessToFront) || parser.isSet(_bringWindowToFront)) {
             n.addAction(Action(1, qApp->translate("SnoreSend", "Bring to Front")));

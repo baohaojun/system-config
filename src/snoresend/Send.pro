@@ -5,7 +5,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui network 
+QT += core gui network quick qml
 QT += LibsnoreQt5
 QT += LibsnoreSettingsQt5
 

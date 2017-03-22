@@ -33,6 +33,7 @@ NotifyWidget::NotifyWidget(int id, const ::SnorePlugin::Snore *parent) :
     m_ready(true),
     m_fontFamily(qApp->font().family())
 {
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
 
 #ifdef Q_OS_WIN
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {

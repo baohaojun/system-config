@@ -26,6 +26,7 @@
 SnorePlugin::Snore::Snore():
     m_timer(new QTimer(this))
 {
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
     m_timer->setInterval(1000);
     connect(m_timer, &QTimer::timeout, this, &Snore::slotQueueTimeout);
 
@@ -86,6 +87,7 @@ void SnorePlugin::Snore::slotCloseNotification(::Snore::Notification notificatio
 
 void SnorePlugin::Snore::slotRegisterApplication(const ::Snore::Application &)
 {
+        qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
     if (!m_widgets.isEmpty())
         return;
     m_widgets.resize(3);

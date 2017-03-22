@@ -33,19 +33,27 @@ SnoreBackend::SnoreBackend()
 {
     connect(this, &SnoreBackend::enabledChanged, [this](bool enabled) {
         if (enabled) {
+            qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
             connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::applicationRegistered, this, &SnoreBackend::slotRegisterApplication, Qt::QueuedConnection);
+            qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
             connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::applicationDeregistered, this, &SnoreBackend::slotDeregisterApplication, Qt::QueuedConnection);
-
+            qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
             connect(this, &SnoreBackend::notificationClosed, SnoreCorePrivate::instance(), &SnoreCorePrivate::slotNotificationClosed, Qt::QueuedConnection);
+            qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
             connect(SnoreCorePrivate::instance(), &SnoreCorePrivate::notify, this, &SnoreBackend::slotNotify, Qt::QueuedConnection);
+            qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
 
+            qCDebug(SNORE) << __FILE__ << ":" << __LINE__ << "core instance: " << &SnoreCore::instance() << "applications: " << SnoreCore::instance().aplications();
             for (const Application &a : SnoreCore::instance().aplications()) {
+                qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
                 slotRegisterApplication(a);
+                qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
             }
         } else {
             for (const Application &a : SnoreCore::instance().aplications()) {
                 slotDeregisterApplication(a);
             }
+            qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
             disconnect(SnoreCorePrivate::instance(), &SnoreCorePrivate::applicationRegistered, this, &SnoreBackend::slotRegisterApplication);
             disconnect(SnoreCorePrivate::instance(), &SnoreCorePrivate::applicationDeregistered, this, &SnoreBackend::slotDeregisterApplication);
 
@@ -101,7 +109,9 @@ bool SnoreBackend::canUpdateNotification() const
 
 void SnoreBackend::slotRegisterApplication(const Application &application)
 {
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
     Q_UNUSED(application);
+    qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
 }
 
 void SnoreBackend::slotDeregisterApplication(const Application &application)

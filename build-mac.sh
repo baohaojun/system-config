@@ -3,8 +3,7 @@ set -e
 cd $(dirname $(readlink -f $0))
 
 if test $(uname) = Linux; then
-    rsync --exclude=release -av * bhj-mac:$(up $PWD)
-    rsync release bhj-mac:$(up .) -av -L --exclude=*/adb_usb_driver_smartisan
+    psync bhj-mac . $*
     remote-cmd bhj-mac bash -c "
         export ReleaseVersion='$ReleaseVersion';
         set -x;
@@ -12,25 +11,38 @@ if test $(uname) = Linux; then
         ./build-mac.sh"
 else
     set -e
+    set -x
 
-    rm Wrench.app -rf
-    if test ! -d ~/Qt5 -a -d ~/Qt5.bak; then
-        mv ~/Qt5.bak ~/Qt5
-    fi
-    for dir in . download; do
-        (
-            cd $dir
-            qmake
-            make -j8
-        )
-    done
-    rsync -L wrench.lua macx/binaries/* release/* Wrench.app/Contents/MacOS/ -r
-    rm Wrench.dmg -f
-    macdeployqt Wrench.app -dmg -verbose=1 -executable=Wrench.app/Contents/MacOS/download
-    mv ~/Qt5 ~/Qt5.bak
-    if test "$DOING_WRENCH_RELEASE"; then
-        exit
-    fi
+    cd ~/src/github/snorenotify/
 
-    myscr bash -c 'ps-killall Wrench; of Wrench.app; oc Wrench.app' || true
+    if test ! -e Makefile; then
+        cmake -D ECM_DIR=/usr/local/share/ECM/cmake .
+    fi
+    make -j8 install
+    export QT_LOGGING_RULES="libsnorenotify.debug=true"
+
+    snoresend -t hello1 -m world 2>&1|perl -npe 's/^/1: /'|| true
+
+    echo
+    echo '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+    echo
+
+    cd ~/src/github/snorenotify/src/snoresend
+    rm -rf *.app
+    qmake
+    make
+    (
+        cd ~/src/github/snorenotify/src/snoresend/WrenchTest.app/Contents/MacOS
+        ./WrenchTest -t hello2 -m world 2>&1|perl -npe 's/^/2: /'|| true
+    )
+    macdeployqt WrenchTest.app -verbose=1
+
+    echo
+    echo '****************************************************************'
+    echo
+
+    (
+        cd ~/src/github/snorenotify/src/snoresend/WrenchTest.app/Contents/MacOS
+        ./WrenchTest -t hello3 -m world || true
+    )
 fi
