@@ -11,6 +11,7 @@ include(./QHotKey/qhotkey.pri)
 QT += gui
 QT += LibsnoreQt5
 QT += LibsnoreSettingsQt5
+QT += testlib
 
 greaterThan(DEBUG, 0) {
     DEFINES += QVNCVIEWER_DEBUG
