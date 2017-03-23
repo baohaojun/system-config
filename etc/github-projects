@@ -20,6 +20,7 @@ github_projects=(
     gxr
     ibus-sdim
     adb-sync
+    Wrench
 )
 
 smartcm_projects=(
@@ -29,6 +30,6 @@ smartcm_projects=(
     smartcm
 )
 
-extra_projects=(
-    https://github.com/SmartisanTech/Wrench
-)
+declare -A project_repo_url
+
+project_repo_url[Wrench]=https://github.com/SmartisanTech/Wrench

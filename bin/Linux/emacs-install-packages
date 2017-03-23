@@ -41,17 +41,15 @@ else
 
     for x in "${github_projects[@]}"; do
         if test ! -e "$x/.git"; then
-            git clone ${git_server_prefix}baohaojun/$x -b ${github_branch} $(if test "$SYSTEM_CONFIG_LOCAL_REF"; then echo --reference "$SYSTEM_CONFIG_LOCAL_REF"/$x; fi)
+            git_repo_url=${git_server_prefix}baohaojun/$x
+            if test "${project_repo_url[$x]}"; then
+                git_repo_url=${project_repo_url[$x]}
+            fi
+            git clone $git_repo_url -b ${github_branch} $(if test "$SYSTEM_CONFIG_LOCAL_REF"; then echo --reference "$SYSTEM_CONFIG_LOCAL_REF"/$x; fi)
             need_regenerate_el=true
         fi
     done
 
-    for p in "${extra_projects[@]}"; do
-        x=$(basename $p)
-        if test ! -e "$x/.git"; then
-            git clone $p $(if test "$SYSTEM_CONFIG_LOCAL_REF"; then echo --reference "$SYSTEM_CONFIG_LOCAL_REF"/$x; fi)
-        fi
-    done
     if ! test -d ~/.emacs.d/site-lisp; then
         relative-link emacs.d/site-lisp ~/.emacs.d/
     fi
