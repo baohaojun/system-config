@@ -2,6 +2,6 @@
 subfont-text-scale=4
 #vf=expand=0:-80:0:0
 subfont-encoding=unicode
-subcp=gbk
+subcp=utf-8
 font="Microsoft YaHei"
 ao=alsa
