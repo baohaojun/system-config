@@ -68,7 +68,7 @@ else
     die ".repo not found"
 fi
 
-if test "$push_again" = true -o "$list" = true; then
+if test "$push_again" = false -a "$list" = false; then
     touch $mark_file
     sleep .5
     mm "$@"
