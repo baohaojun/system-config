@@ -2769,10 +2769,9 @@ shift_click_notification = function(pkg, key, title, text)
    if pkg == "com.tencent.mm" then
       t1_call(title .. "@@wx")
    elseif pkg == "com.tencent.mobileqq" then
+      local sender = ""
       if title:lower() == "qq" then
-         local sender = ""
-         text = text:match(".-%(([^()]-)%):")
-         sender = text or ""
+         sender = text:gsub(":.*", "")
       else
          title = title:gsub(" %(%d+条新消息%)$", "")
          title = title:gsub(" %(%d+条以上新消息%)$", "")
