@@ -111,14 +111,14 @@ export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
 if ! lookup-file -e .repo >/dev/null 2>&1 &&
        ! lookup-file -e .git >/dev/null 2>&1 &&
    test "$REPO_REMOTE"; then
-    git-get -u GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
+    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
     git_dir=~/src/$(basename $PROJECT)
 else
     git_dir=$(my-rfa 'if test "$(repo-abs-path)" = $PROJECT; then pwd; fi')
 fi
 
 if test -z "$git_dir"; then
-    git-get -u GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
+    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
     git_dir=~/src/$(basename $PROJECT)
 fi
 
