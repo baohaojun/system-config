@@ -1124,16 +1124,20 @@ void WrenchMainWindow::on_tbLauncher_clicked()
 void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
 {
     qDebug() << "close notification" << n.closeReason();
+
+    QString key = m_notification_map[n.id() % 1000];
+    if (key.isEmpty())
+        return;
+
     m_last_closed_notification_id = n.id();
 
-    if (n.closeReason() != Snore::Notification::CloseReasons::Dismissed &&
-        n.closeReason() != Snore::Notification::CloseReasons::Activated) {
-        return;
+    if (n.closeReason() == Snore::Notification::CloseReasons::Dismissed ||
+        n.closeReason() == Snore::Notification::CloseReasons::Activated) {
+        if (!key.isEmpty()) {
+            emit adbNotificationClicked(key);
+        }
     }
-    QString key = m_notification_map[n.id() % 1000];
-    if (!key.isEmpty()) {
-        emit adbNotificationClicked(key);
-    }
+    m_notification_map[n.id() % 1000] = "";
 }
 
 void WrenchMainWindow::slotShortCutActivated()
