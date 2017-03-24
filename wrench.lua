@@ -22,6 +22,7 @@ local social_need_confirm = false
 local right_button_x = 984
 local my_select_args
 
+local m_focused_app, m_window_dump, m_focused_window
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
 local reset_input_method, adb_shell
 local adb_push, adb_pull, adb_install
@@ -684,10 +685,10 @@ wait_input_target_n = function(n_loop, ...)
       local window = adb_focused_window()
       for ai = 1, #activities do
          local activity = activities[ai]
-         if window:match(activity) then
-            local adb_window_dump = split("\n", adb_pipe("dumpsys window"))
+         if window:match(activity) or (window:match("^PopupWindow:") and m_focused_app:match(activity)) then
+            local adb_window_dump = split("\n", m_window_dump)
             for x = 1, #adb_window_dump do
-               if adb_window_dump[x]:match("mInputMethodTarget.*"..activity) then
+               if adb_window_dump[x]:match("mInputMethodTarget.*" .. window) then
                   local input_method, ime_height, ime_connected = adb_get_input_window_dump()
                   if ime_connected then
                      local fields = split(" ", adb_window_dump[x])
@@ -705,13 +706,10 @@ end
 
 adb_top_window = function()
    -- dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
-   local adb_window_dump = adb_pipe("dumpsys window")
-   if not adb_window_dump then return nil end
-   local focused_line = adb_window_dump:match("mFocusedWindow=.-}")
-   if not focused_line then return nil end
-   local top_window = focused_line:match("%S+}$")
-   if not top_window then return nil end
-   return top_window:sub(1, -2)
+   m_window_dump = adb_pipe("dumpsys window") or ""
+   m_focused_app = m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
+   m_focused_window = m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
+   return m_focused_window
 end
 
 local function search_mail(what)
@@ -1810,7 +1808,12 @@ t1_post = function(text) -- use weixin
       return
    end
 
-   if window then print("window is " .. window) end
+   if window then print("window is %s", window) end
+
+   if string.match(window, "^PopupWindow:") then
+      window = m_focused_app
+   end
+
    if window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
       or (window:match("^com.sina.weibo/") and not window:match("com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"))
    then
@@ -1858,9 +1861,6 @@ t1_post = function(text) -- use weixin
    window == emailSmartisanActivity then
       t1_mail(window)
       return
-   elseif string.match(window, "^PopupWindow:") then
-      t1_paste()
-      return
    else
       local add, post_button = '', right_button_x .. ' 1850'
       local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
@@ -1879,9 +1879,11 @@ t1_post = function(text) -- use weixin
          end
       else
          if not ime_connected then
-            adb_event("560 1840")
+            adb_event("540 1840")
             wait_input_target(window)
-            adb_event("key back sleep .2")
+            if not adb_top_window():match("^PopupWindow") then
+               adb_event("key back sleep .2")
+            end
             add = ''
          end
       end
@@ -1892,7 +1894,7 @@ t1_post = function(text) -- use weixin
 
       local window_type = window_post_button_map[window]
       if not window_type then
-         window_type = select_args{'Where is the send button',
+         window_type = select_args{'Where is the send button for ' .. window,
                                    'Above the input method, the right end',
                                    'Above the input method, the right end, with a row of buttons in between (like QQ)',
                                    'Above the input method, the right end, confirm before send',
