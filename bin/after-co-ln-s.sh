@@ -376,7 +376,7 @@ if test -x ~/src/github/private-config/bin/bhj-after-co.sh; then
 fi
 
 
-if ! diff -q ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service; then
+if ! diff -q ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service >/dev/null 2>&1; then
     if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
         sudo cp ~/system-config/etc/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
         sudo chmod a+X /etc/systemd/system/rc-local.service
