@@ -1,12 +1,15 @@
 #!/bin/bash
 
 if test $# = 0; then
-   net=$(select-output-line "ifconfig | grep -P '^\S' | pn 1|tr -d :")
+   net=$(select-output-line "ifconfig | grep -P '^\S' | pn 1|grep -v '^lo:$'|tr -d :")
 else
     net=$1
 fi
 
-ip=$(ifconfig $net | perl -ne 'print $1 if m/(?:inet addr:|^\s*inet\s+)(\S+)/')
+ip=$(
+    ifconfig $net |
+        perl -ne 'print "$1\n" if m/(?:inet addr:|^\s*inet\s+)(\S+)/'|
+        grep -v 127.0.0.1)
 echo -n $ip
 if is-tty-io; then
     putclip "$ip"

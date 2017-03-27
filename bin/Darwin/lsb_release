@@ -1,0 +1,158 @@
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt vversion iid ddescription rrelease ccodename aall sshort
+## end code-generator
+## start generated code
+TEMP=$(getopt -o vsdiarch \
+              --long version,short,description,id,all,release,codename,help,no-version,no-short,no-description,no-id,no-all,no-release,no-codename \
+              -n $(basename -- $0) -- "$@")
+version=false
+short=false
+description=false
+id=false
+all=false
+release=false
+codename=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -v|--version|--no-version)
+            if test "$1" = --no-version; then
+                version=false
+            else
+                version=true
+            fi
+            shift
+            ;;
+        -s|--short|--no-short)
+            if test "$1" = --no-short; then
+                short=false
+            else
+                short=true
+            fi
+            shift
+            ;;
+        -d|--description|--no-description)
+            if test "$1" = --no-description; then
+                description=false
+            else
+                description=true
+            fi
+            shift
+            ;;
+        -i|--id|--no-id)
+            if test "$1" = --no-id; then
+                id=false
+            else
+                id=true
+            fi
+            shift
+            ;;
+        -a|--all|--no-all)
+            if test "$1" = --no-all; then
+                all=false
+            else
+                all=true
+            fi
+            shift
+            ;;
+        -r|--release|--no-release)
+            if test "$1" = --no-release; then
+                release=false
+            else
+                release=true
+            fi
+            shift
+            ;;
+        -c|--codename|--no-codename)
+            if test "$1" = --no-codename; then
+                codename=false
+            else
+                codename=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--[no-]all'
+            echo
+            printf %06s '-c, '
+            printf %-24s '--[no-]codename'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--[no-]description'
+            echo
+            printf %06s '-i, '
+            printf %-24s '--[no-]id'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]release'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]short'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--[no-]version'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$all" = true; then
+    version=true
+    id=true
+    description=true
+    release=true
+    codename=true
+fi
+
+if test "$version" = true; then
+    echo No LSB modules are available.
+fi
+
+if test "$id" = true; then
+    if test "$short" = false; then
+        printf %-16s 'Distributor ID: '
+    fi
+    echo Apple
+fi
+
+if test "$description" = true; then
+    if test "$short" = false; then
+        printf %-16s 'Description: '
+    fi
+    echo Mac OS X $(sw_vers -productVersion)
+fi
+
+if test "$release" = true; then
+    if test "$short" = false; then
+        printf %-16s 'Release: '
+    fi
+    echo $(sw_vers -productVersion)
+fi
+
+if test "$codename" = true; then
+    if test "$short" = false; then
+        printf %-16s 'Codename: '
+    fi
+    grep -oE 'SOFTWARE LICENSE AGREEMENT FOR OS X.*[A-Z]' '/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf'|perl -npe 'chomp;s/SOFTWARE LICENSE AGREEMENT FOR OS X\s+//; s/\W/_/g'
+fi
