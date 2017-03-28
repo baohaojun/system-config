@@ -99,6 +99,7 @@ map['com.skype.raider/com.skype.android.app.contacts.ContactDirectorySearchActiv
 map['com.skype.raider/com.skype.android.app.signin.SignInActivity'] = 'manual-post'
 map['com.skype.raider/com.skype.android.app.signin.SignUpActivity'] = 'manual-post'
 map['com.skype.raider/com.skype.android.app.signin.unified.UnifiedLandingPageActivity'] = 'manual-post'
+map['com.smartisanos.appstore'] = 'manual-post'
 map['com.smartisanos.appstore/com.smartisanos.appstore.AppStoreActivity'] = 'manual-post'
 map['com.smartisanos.cloudsync/com.smartisanos.accounts.AccountsManagerActivity'] = 'manual-post'
 map['com.smartisanos.launcher/com.smartisanos.launcher.Launcher'] = 'weixin-chat'
