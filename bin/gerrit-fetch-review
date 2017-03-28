@@ -2,12 +2,13 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set
+# generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set @do-review
 ## end code-generator
 ## start generated code
 TEMP=$(getopt -o caH:p:r:h \
-              --long cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,help,no-cherry-pick,no-auto \
+              --long do-review,cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,help,no-do-review,no-cherry-pick,no-auto \
               -n $(basename -- $0) -- "$@")
+do_review=false
 cherry_pick=false
 auto=false
 GERRIT_HOST=
@@ -17,6 +18,14 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --do-review|--no-do-review)
+            if test "$1" = --no-do-review; then
+                do_review=false
+            else
+                do_review=true
+            fi
+            shift
+            ;;
         -c|--cherry-pick|--no-cherry-pick)
             if test "$1" = --no-cherry-pick; then
                 cherry_pick=false
@@ -50,20 +59,23 @@ while true; do
             echo
             echo
             echo Options and arguments:
+            printf %06s '-H, '
+            printf %-24s '--GERRIT-HOST=GERRIT_HOST'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--REPO-REMOTE=REPO_REMOTE'
+            echo
             printf %06s '-a, '
             printf %-24s '--[no-]auto'
             echo
             printf %06s '-c, '
             printf %-24s '--[no-]cherry-pick'
             echo
-            printf %06s '-H, '
-            printf %-24s '--GERRIT-HOST=GERRIT_HOST'
+            printf "%06s" " "
+            printf %-24s '--[no-]do-review'
             echo
             printf %06s '-p, '
             printf %-24s '--patch-set=PATCH_SET'
-            echo
-            printf %06s '-r, '
-            printf %-24s '--REPO-REMOTE=REPO_REMOTE'
             echo
             exit
             shift
@@ -107,18 +119,23 @@ function die() {
 
 
 export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
+branch=$(cat $tmpf | grep 'branch: '|pn 2)
 
 if ! lookup-file -e .repo >/dev/null 2>&1 &&
        ! lookup-file -e .git >/dev/null 2>&1 &&
-   test "$REPO_REMOTE"; then
-    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
+   test -z "$REPO_REMOTE"; then
+    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT) -b "$branch"
     git_dir=~/src/$(basename $PROJECT)
 else
     git_dir=$(my-rfa 'if test "$(repo-abs-path)" = $PROJECT; then pwd; fi')
 fi
 
 if test -z "$git_dir"; then
-    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT)
+    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT) -b "$branch"
+    (
+        cd ~/src/$(basename $PROJECT)
+        git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+    )
     git_dir=~/src/$(basename $PROJECT)
 fi
 
@@ -128,6 +145,7 @@ if test -n "$git_dir"; then
 fi
 
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
+
 if test "$patch_set"; then
     if test "$patch_set" = '*'; then
         cat <<EOF | putclip
@@ -144,7 +162,14 @@ fi
 )
 
 if test "$cherry_pick" = true || is-jenkins; then
-    git cherry-pick FETCH_HEAD
+    git cherry-pick FETCH_HEAD --ff
+fi
+
+if test "$do_review" = true; then
+    git-interactive-add -r HEAD^ || true
+    if yes-or-no-p "Do review and submit for this patch?"; then
+        gerrit-do-review
+    fi
 fi
 
 if test "$auto" = true; then

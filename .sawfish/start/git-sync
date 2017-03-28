@@ -1,3 +1,3 @@
 #!/bin/bash
 cd ~/system-config/
-git-pull-mac --fetch-only
+git-pull-mac --fetch-only || true

@@ -31,7 +31,7 @@ else
 fi
 
 if grep 'WARNING:OfflineImap:UID validity problem for folder' -q ~/.cache/system-config/logs/$b0.log; then
-    mail-bhj "Offlineimap got UID validity problems, please check"
+    grep 'WARNING:OfflineImap:UID validity problem for folder' -q ~/.cache/system-config/logs/$b0.log|mail-bhj -i -s "Offlineimap got UID validity problems, please check"
 fi
 
 if test $fail = true; then

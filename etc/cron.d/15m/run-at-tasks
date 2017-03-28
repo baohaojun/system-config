@@ -23,7 +23,7 @@ for x in ~/system-config/etc/at/$h:$m ~/external/etc/at/$h:$m; do
             echo '****************************************************************'
             echo "running $x at $(date), check log at $logdir/$(basename $x).$(today)"
             bash -x $x ||
-                mail-bhj "run-at-tasks $(basename $x) failed"
+                mail-bhj -s "run-at-tasks $(basename $x) failed"
         ) 2>&1 | tee $logdir/$(basename $x).$(today)
     fi
 done
