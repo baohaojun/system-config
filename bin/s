@@ -8,6 +8,9 @@ fi
 
 if echo $SHELLOPTS | grep -q xtrace; then
     exec > ~/tmp/$(basename $0).txt 2>&1
+elif ! is-tty-io; then
+    set -x
+    exec 2>~/tmp/s.txt
 fi
 
 if test $# = 1 -a "$1" = '' || test $# = 0; then
@@ -26,9 +29,11 @@ if test "$DESKTOP_SESSION" = sawfish; then
         start_event=$button3
     fi
 
-    if [[ $start_event =~ Super-Button.*Click ]]; then
+    if [[ $start_event =~ Super-Button ]]; then
         s_how=sawfish
         last_search=~/.cache/system-config/logs/last-search.$s_how
+        start_event=${start_event/Click2/Click}
+        start_event=${start_event/-Off/-Click}
     fi
 
     if test "$start_event" = '"Super-Button1-Click"'; then
