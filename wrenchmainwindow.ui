@@ -46,7 +46,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QHBoxLayout" name="buttonsContainer">
           <item>
            <widget class="QToolButton" name="tbEmoji">
             <property name="toolTip">

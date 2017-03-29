@@ -1771,6 +1771,23 @@ local post_weibo_answer = function(text)
    end
 end
 
+local shouldNotPostActivitys = {
+   "com.tencent.mobileqq/com.tencent.mobileqq.activity.aio.photo.AIOGalleryActivity",
+   "com.tencent.mm/com.tencent.mm.ui.chatting.gallery.ImageGalleryUI",
+   "StatusBar",
+}
+
+local function postAfterBackKey(window)
+   for _, w in ipairs(shouldNotPostActivitys) do
+      if window == w then
+         adb_event"key back sleep .2"
+         t1_post()
+         return true
+      end
+   end
+   return false
+end
+
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
@@ -1830,13 +1847,7 @@ t1_post = function(text) -- use weixin
       end
       t1_post()
       return
-   elseif window == "com.tencent.mm/com.tencent.mm.ui.chatting.gallery.ImageGalleryUI" then
-      adb_event"key back sleep .2"
-      t1_post()
-      return
-   elseif window == "StatusBar" then
-      adb_event"key back sleep .2"
-      t1_post()
+   elseif postAfterBackKey(window) then
       return
    elseif window == "com.google.android.gm/com.google.android.gm.ComposeActivityGmail" then
       adb_event("key scroll_lock adb-tap 870 173")
@@ -1893,6 +1904,10 @@ t1_post = function(text) -- use weixin
       end
 
       local window_type = window_post_button_map[window]
+      if not window_type and window:match("^com.tencent.mm/com.tencent.mm.ui.chatting.") then
+         window_type = 'weixin-chat'
+      end
+
       if not window_type then
          window_type = select_args{'Where is the send button for ' .. window,
                                    'Above the input method, the right end',
@@ -2842,6 +2857,31 @@ local function be_verbose()
    social_need_confirm = true
 end
 
+local function isWeixinLuckyMoneyReceiver(window)
+   if window == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" or (
+      window:match("^com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.") and
+         window ~= "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI"
+   ) then
+      log("got lucky window %s", window)
+      return true
+   end
+   return false
+end
+
+local function sayThankYouForLuckyMoney()
+   for i = 1, 20 do
+      adb_event"sleep 1 adb-key back sleep 1"
+      top_window = adb_top_window()
+      log("Got after luck window: %s", top_window)
+      if not top_window:match("^com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.") and
+      not top_window:match("^com.tencent.mobileqq/cooperation.qwallet.") then
+         t1_post("谢谢老板的红包🤓")
+         sleep(1)
+         break
+      end
+   end
+end
+
 local function clickForWeixinMoney()
    log("Click for weixin money")
 
@@ -2860,7 +2900,7 @@ local function clickForWeixinMoney()
          adb_event"adb-tap 327 1395"
       end
       adb_event "sleep .1"
-      if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
+      if isWeixinLuckyMoneyReceiver(adb_top_window()) then
          break
       end
    end
@@ -2870,10 +2910,12 @@ local function clickForWeixinMoney()
       top_window = adb_top_window()
       if top_window == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
          break
-      elseif top_window ~= "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
+      elseif not isWeixinLuckyMoneyReceiver(top_window) then
          break
       end
    end
+
+   sayThankYouForLuckyMoney()
    adb_event"adb-key back adb-key back sleep .5 adb-key home"
 end
 
@@ -2895,6 +2937,7 @@ clickForQqMoney = function(title, text)
       adb_event"adb-tap 306 1398 adb-tap 179 1587 adb-tap 951 1762"
       adb_event "sleep .1"
       if adb_top_window() == "com.tencent.mobileqq/cooperation.qwallet.plugin.QWalletPluginProxyActivity" then
+         sayThankYouForLuckyMoney()
          break
       end
    end

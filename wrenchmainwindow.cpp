@@ -50,6 +50,8 @@
 #include "ui_wrenchmainwindow.h"
 #include "notificationmodel.h"
 #include <QtGui/QKeySequence>
+#include <QtWidgets/QToolButton>
+#include <QtCore/QRegularExpression>
 
 QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
@@ -77,6 +79,10 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     ui->ptMailCc->installEventFilter(this);
     ui->ptMailBcc->installEventFilter(this);
     ui->ptMailAttachments->installEventFilter(this);
+    QList<QToolButton*> tbs = findChildren<QToolButton*>(QRegularExpression(".*"));
+    foreach(QToolButton* tb, tbs) {
+        tb->installEventFilter(this);
+    }
 
     qDebug() << "Is Registered: " << m_hotkey.isRegistered();
     connect(&m_hotkey, SIGNAL(activated()), this, SLOT(slotShortCutActivated()));
@@ -986,7 +992,15 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 
 bool WrenchMainWindow::eventFilter(QObject *obj, QEvent *ev)
 {
-    if (ev->type() == QEvent::KeyPress) {
+    if (strcmp(obj->metaObject()->className(), "QToolButton") == 0) {
+        if (ev->type() == QEvent::KeyPress) {
+            QKeyEvent* e = (QKeyEvent*) ev;
+            if (e->key() == Qt::Key_Escape && ui->tabWidget->currentIndex() == 0) {
+                ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
+                return true;
+            }
+        }
+    } else if (ev->type() == QEvent::KeyPress) {
         QWidget* w = (QWidget *)obj;
         QKeyEvent* e = (QKeyEvent*)ev;
         return handleEmacsKeys(w, e);
