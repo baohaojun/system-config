@@ -37,7 +37,7 @@ public class OrgNodeDate {
 		if (schedule.find()) {
 			try {
 				if(schedule.group(BEGIN_TIME) == null) { // event is an entire day event
-					this.beginTime = dateformatter.parse(schedule.group(DATE)).getTime();
+					this.beginTime = dateformatter.parse(schedule.group(DATE)).getTime() + 86400000;
 					
 					this.endTime = this.beginTime + DateUtils.DAY_IN_MILLIS;
 					this.allDay = 1;
