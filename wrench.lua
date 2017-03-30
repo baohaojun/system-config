@@ -1392,46 +1392,15 @@ t1_config = function(passedConfigDirPath)
 
    adb_shell"mkdir -p /sdcard/Wrench"
    local uname = adb_pipe(UNAME_CMD)
+
    if not uname:match("Linux") then
-      local home = os.getenv("HOME")
-      if is_windows then
-         home = os.getenv("USERPROFILE")
-      end
-      if not home or home == "" or home == "/" then
-         error("Your HOME environment variable is not set up correctly: '" .. home .. "'")
-      end
-      local dot_android = home .. package.config:sub(1, 1) .. ".android"
-      if is_windows then
-         system{"md", dot_android}
-      else
-         system{"mkdir", "-p", dot_android}
-      end
-      local ini = dot_android .. package.config:sub(1, 1) .. "adb_usb.ini"
-      local ini_file = io.open(ini, "r")
-      local done_vid = true
-      if not ini_file then
-         done_vid = false
-      else
-         local ini_lines = ini_file:read("*a")
-         if ini_lines ~= "0x29a9\n" then
-            done_vid = false
-         end
-         ini_file:close()
-      end
-      if not done_vid then
-         local err
-         ini_file, err = io.open(ini, "w")
-         if not ini_file then
-            error("can't open " .. ini .. ": " .. err)
-         end
-         ini_file:write("0x29a9\n")
-         ini_file:close()
-         adb_kill_server()
-         error("Done config for your adb devices, please try again")
-      else
-         error(string.format("No phone found, can't set up, uname is: '%s', ANDROID_SERIAL is '%s'", uname, os.getenv("ANDROID_SERIAL")))
-      end
+      error("Phone uname is not Linux")
    end
+
+   if not file_exists("apps.info") then
+      M.update_apps()
+   end
+
    check_apk_installed("Setclip.apk", "Setclip.apk.md5")
    check_file_pushed("am.jar", "am.jar.md5")
    check_file_pushed("busybox", "busybox.md5")
@@ -1728,13 +1697,11 @@ file_exists = function(name)
    end
 end
 
-launch_apps = function()
-   if not file_exists("apps.info") then
-      if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listapps 1", "/sdcard/Wrench/apps.info") then
-         adb_pull{"/sdcard/Wrench/apps.info", "apps.info"}
-      else
-         log("Can't get apps.info")
-      end
+M.update_apps = function()
+   if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listapps 1", "/sdcard/Wrench/apps.info") then
+      adb_pull{"/sdcard/Wrench/apps.info", "apps.info"}
+   else
+      log("Can't get apps.info")
    end
    apps_file = io.open("apps.info")
    local apps_txt = apps_file:read("*a")
@@ -1752,6 +1719,12 @@ launch_apps = function()
       end
    end
    apps_file.close()
+end
+
+launch_apps = function()
+   if not file_exists("apps.info") then
+      M.update_apps()
+   end
    select_apps()
 end
 
@@ -2742,6 +2715,9 @@ t1_call = function(number)
          search_sms(who)
       elseif where == "ext" then
          t1_run(configDir .. package.config:sub(1, 1) .. who .. ".lua")
+      elseif where == "eval" then
+         local func = loadstring(who)
+         t1_eval(func)
       else
          prompt_user("Don't know how to do it: " .. where)
       end
