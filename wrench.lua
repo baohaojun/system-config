@@ -1904,7 +1904,10 @@ t1_post = function(text) -- use weixin
       end
 
       local window_type = window_post_button_map[window]
-      if not window_type and window:match("^com.tencent.mm/com.tencent.mm.ui.chatting.") then
+      if not window_type and (
+         window:match("^com.tencent.mm/com.tencent.mm.ui.chatting.") or -- weixin chat with a friend open from group members
+            window:match("^com.tencent.mm/com.tencent.mm.plugin.sns.ui.") -- weixin moments comment
+      ) then
          window_type = 'weixin-chat'
       end
 
