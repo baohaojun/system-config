@@ -8,6 +8,9 @@ export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 find-or-exec 'Wrench V%Wrench'
 
 if test "$#" != 0; then
+    if test $# = 1 -a -e "$1" && [[ $1 =~ \.twa$ ]]; then
+        exec Wrench "$(readlink -f "$1")"
+    fi
     exec Wrench "$@"
 fi
 what_to_do=$(
