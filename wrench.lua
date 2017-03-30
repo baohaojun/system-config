@@ -2740,6 +2740,8 @@ t1_call = function(number)
          find_weibo_friend(who)
       elseif where == "sms" then
          search_sms(who)
+      elseif where == "ext" then
+         t1_run(configDir .. package.config:sub(1, 1) .. who .. ".lua")
       else
          prompt_user("Don't know how to do it: " .. where)
       end
@@ -2787,7 +2789,7 @@ end
 
 t1_run = function (file)
    local ext = file:gsub(".*%.", "")
-   if ext ~= "twa" and ext ~= "小扳手" then
+   if ext ~= "twa" and ext ~= "小扳手" and ext ~= "lua" then
       return "Can not run this script, must be a .twa file"
    end
    local f = loadfile(file)
