@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 -- module
-local M
+local M = {}
 
 -- functions
 local WrenchExt = {}
@@ -21,6 +21,7 @@ local file_exists
 local social_need_confirm = false
 local right_button_x = 984
 local my_select_args
+local start_or_stop_recording, m_is_recording, current_recording_file
 
 local m_focused_app, m_window_dump, m_focused_window
 local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
@@ -386,6 +387,8 @@ adb_start_activity = function(a)
    adb_am("am start -n " .. a)
 end
 
+M.adb_start_activity = adb_start_activity
+
 adb_focused_window = function()
    return adb_top_window() or ""
 end
@@ -429,6 +432,14 @@ local function adb_event(events)
          local width_ratio, height_ratio = app_width_ratio, app_height_ratio
          if (events[i - 1] == 'adb-no-virt-key-tap') then
             width_ratio, height_ratio = real_width_ratio, real_height_ratio
+            if m_is_recording then
+               local record_file = io.open(m_is_recording, "a")
+               local comment = select_args{"You are recording screen operations, please comment this click", "", ""}
+               top_window = adb_top_window()
+               record_file:write(("wait_top_activity_n_ok(5, [[%s]])\n"):format(top_window))
+               record_file:write(('adb_event"adb-tap %d %d" -- %s\n'):format(events[i], events[i+1], comment))
+               record_file:close()
+            end
          end
          local add = ('input tap %d %d;'):format(events[i] * width_ratio, events[i+1] * height_ratio)
          command_str = command_str .. add
@@ -652,6 +663,15 @@ local wait_top_activity_n = function(n_retry, ...)
       sleep(.1)
    end
    return window
+end
+
+M.wait_top_activity_n = wait_top_activity_n
+
+M.wait_top_activity_n_ok = function(n_retry, activity)
+   local window = wait_top_activity_n(n_retry, activity)
+   if window == activity then
+      return true
+   end
 end
 
 wait_top_activity = function(...)
@@ -1788,6 +1808,22 @@ local function postAfterBackKey(window)
    return false
 end
 
+start_or_stop_recording = function()
+   if not m_is_recording then
+      m_is_recording = select_args{"What function do you want to record to?", "", ""}
+      if (m_is_recording ~= "") then
+         m_is_recording = m_is_recording:gsub("[^a-z0-9_A-Z]", "_")
+         m_is_recording = configDir .. package.config:sub(1, 1) .. m_is_recording .. ".lua"
+      else
+         prompt_user("Must provide a name to record it")
+         m_is_recording = nil
+      end
+   else
+      m_is_recording = nil
+   end
+
+end
+
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
@@ -2802,7 +2838,6 @@ shift_click_notification = function(pkg, key, title, text)
    end
 end
 
-M = {}
 M.log = log
 M.shift_click_notification = shift_click_notification
 M.open_weixin_scan = open_weixin_scan
@@ -2987,6 +3022,7 @@ M.handle_notification = handle_notification
 M.my_select_args = my_select_args
 M.my_show_notifications = my_show_notifications
 M.yes_or_no_p = yes_or_no_p
+M.start_or_stop_recording = start_or_stop_recording
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then

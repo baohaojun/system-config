@@ -104,6 +104,12 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
         int x = mev->x() * 1080 / this->width();
         int y = mev->y() * 1920 / this->height();
         QTime now = QTime::currentTime();
+
+        if (mev->button() == Qt::RightButton) {
+            mLuaThread()->addScript(QStringList() << "start_or_stop_recording");
+            return true;
+        }
+
         if (abs(x - phone_x) + abs(y - phone_y) > 20) {
             mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-swipe-%d %d %d %d %d", now.msecsTo(press_time), phone_x, phone_y, x, y));
         } else {
