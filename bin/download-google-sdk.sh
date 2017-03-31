@@ -12,14 +12,14 @@ function wget() {
 
 export -f wget
 
-if ! mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p; then
-    mount-share-folders
-    mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p
+if test -e ~/external/bin/Linux/ext/android-sdk-linux/google/do.not.download; then
+    mkdir -p ~/external/bin/Linux/ext/android-sdk-linux/google
+    . mount-share-folders
 fi
 if test -e ~/external/bin/Linux/ext/android-sdk-linux/google/download-all; then
     export DOWNLOAD_ALL=true
 fi
-test -e ~/external/bin/Linux/ext/android-sdk-linux/google/do.not.download && exit 0
+test ! -e ~/external/bin/Linux/ext/android-sdk-linux/google/do.download && exit 0
 cd ~/external/bin/Linux/ext/android-sdk-linux/google
 
 rm -rf sdk.html

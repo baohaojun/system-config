@@ -45,7 +45,8 @@ sub read_ans($) {
     } else {
         my @accrue_prompt = split("\n", $accrue_prompt);
         if (@accrue_prompt > 20) {
-            @accrue_prompt = (@accrue_prompt[0..20], "...");
+            my $n_items = @accrue_prompt - 1;
+            @accrue_prompt = (@accrue_prompt[0..19], "... ($n_items total)", $accrue_prompt[-1]);
         }
         my $sawfish_prompt = join("\n", @accrue_prompt);
         use String::ShellQuote;
