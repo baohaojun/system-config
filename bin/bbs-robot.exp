@@ -102,7 +102,7 @@ proc strcat args {
 
 
 if [string eq "" $mode] {
-    spawn $loc ssh $user@$host
+    spawn $loc ssh -o ServerAliveInterval=300 $user@$host
 } else {
     spawn $loc ssh1 $mode $user@$host
 }
