@@ -897,7 +897,7 @@ weixin_open_homepage = function()
             sleep(.1)
             waiting_search = false
             return
-         elseif top_window and top_window ~= weixinLauncherActivity then
+         elseif top_window ~= '' and top_window ~= weixinLauncherActivity then
             log("exit the current '%s' by back key %d", top_window, i)
             waiting_search = false
          end
