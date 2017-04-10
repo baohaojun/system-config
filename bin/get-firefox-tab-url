@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export SAWFISH_BROWSER_INPUT_SLEEP=.0
+export SAWFISH_BROWSER_INPUT_SLEEP=.05
 putclip "shit"
 
 for x in $(seq 1 5); do

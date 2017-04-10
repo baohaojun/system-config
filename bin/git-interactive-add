@@ -159,7 +159,7 @@ for x in "$@" $(
         fi
 
         if test "$out" = discard; then
-            git checkout "$x"
+            git checkout $revision "$x"
             break
         fi
 

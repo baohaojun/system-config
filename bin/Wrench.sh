@@ -17,6 +17,10 @@ what_to_do=$(
     ask-for-input --history -a "Wrench" -p "你要小扳手的什么功能？（可以自己输入比如 baohaojun@@wx）"
           )
 
+if test "$what_to_do" = $'\003'; then
+    exit
+fi
+
 if test "$what_to_do" -a "$what_to_do" != Wrench; then
     cat <<EOF > ~/.cache/system-config/wrench-$$.twa
 -- -*- mode: lua -*-
