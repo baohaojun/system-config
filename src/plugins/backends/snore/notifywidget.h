@@ -95,6 +95,7 @@ private:
     int m_id;
     const SnorePlugin::Snore *m_parent;
     QSharedMemory m_mem;
+    QQmlApplicationEngine *engine;
     bool m_ready;
 
     Qt::Corner m_corner = Qt::TopLeftCorner;

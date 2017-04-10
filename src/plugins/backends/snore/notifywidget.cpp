@@ -33,7 +33,6 @@ NotifyWidget::NotifyWidget(int id, const ::SnorePlugin::Snore *parent) :
     m_ready(true),
     m_fontFamily(qApp->font().family())
 {
-    qCDebug(SNORE) << __FILE__ << ":" << __LINE__;
 
 #ifdef Q_OS_WIN
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_WINDOWS8) {
@@ -48,7 +47,7 @@ NotifyWidget::NotifyWidget(int id, const ::SnorePlugin::Snore *parent) :
     }
 #endif
 #endif
-    QQmlApplicationEngine *engine = new QQmlApplicationEngine(this);
+    engine = new QQmlApplicationEngine(this);
     engine->rootContext()->setContextProperty(QStringLiteral("notifyWidget"), this);
     engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
     m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
