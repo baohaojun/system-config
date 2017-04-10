@@ -47,6 +47,30 @@ void setenv(const char* name, const char* val, int overide)
 QtVncViewerSettings *globalConfig = 0;
 VncMainWindow *vncMainWindow = 0;
 
+#ifdef Q_OS_WIN32
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    switch (type) {
+    case QtDebugMsg:
+        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtInfoMsg:
+        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtWarningMsg:
+        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        abort();
+    }
+}
+#endif
+
 int main(int argc, char *argv[])
 {
     QtSingleApplication a(argc, argv);
@@ -69,9 +93,14 @@ int main(int argc, char *argv[])
 
 
 #ifdef Q_OS_WIN32
-    HWND hwnd = GetConsoleWindow();
-    if (hwnd) {
-        ShowWindow(hwnd, SW_HIDE);
+    QString debug = QProcessEnvironment::systemEnvironment().value("WRENCH_DEBUG");
+    if (debug == "true") {
+        qInstallMessageHandler(myMessageOutput); // Install the handler
+    } else {
+        HWND hwnd = GetConsoleWindow();
+        if (hwnd) {
+            ShowWindow(hwnd, SW_HIDE);
+        }
     }
 #endif
     QString appDir = QCoreApplication::applicationDirPath();

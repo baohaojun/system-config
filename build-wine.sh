@@ -1,14 +1,58 @@
 #!/bin/bash
 
+set -e
 cd $(dirname $(readlink -f $0))
 
-if test ! -e ~/src/github/Wrench/windows/binaries/libsnore-qt5.dll; then
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @build-snore
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long build-snore,help,no-build-snore \
+              -n $(basename -- $0) -- "$@")
+build_snore=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --build-snore|--no-build-snore)
+            if test "$1" = --no-build-snore; then
+                build_snore=false
+            else
+                build_snore=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]build-snore'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+if test ! -e ~/src/github/Wrench/windows/binaries/libsnore-qt5.dll || test "$build_snore" = true; then
     (
         cd ~/src/github/snorenotify
-        git clean -xfd
-        mkdir -p cmake-build
-        qt-wine cmake -D ECM_DIR=z:/usr/share/ECM/cmake -G "MinGW Makefiles" z:/home/bhj/src/github/snorenotify
-        qt-wine mingw32-make -j8 install
+        ./build-wine.sh
     )
 fi
 
@@ -42,12 +86,11 @@ function make-release-tgz()
     set -x
     if test "$DOING_WRENCH_RELEASE"; then
         command rsync wrench-release/ $release_dir -av -L --delete --exclude=.git
+        exit
     fi
 
-    if TMOUT=5 yes-or-no-p -y "Should run Wrench?"; then
-        cd $release_dir
-        myscr bash -c "WINEARCH=win32 WINEPREFIX=~/.wine2 wine ./Wrench.exe"
-    fi
+    cd $build_dir/release
+    myscr bash -c "WINEARCH=win32 WINEPREFIX=~/.wine2 SNORE_QML=z:$HOME/src/github/snorenotify/src/plugins/backends/snore/notification.qml wine cmd /c ./Wrench.exe"
 }
 
 
