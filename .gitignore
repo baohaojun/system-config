@@ -3,3 +3,4 @@
 *.autosave
 cmake-build
 .qmake.stash
+*.qmlc

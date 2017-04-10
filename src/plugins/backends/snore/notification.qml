@@ -8,7 +8,7 @@ Window {
 
 
   width:  snoreBaseSize * 30
-  height: snoreBaseSize * 9
+  height: snoreBaseSize * 6
   color: notifyWidget.color
 
   onVisibleChanged: {
@@ -119,12 +119,13 @@ Window {
       color: notifyWidget.textColor
       text: notifyWidget.body
       font.pointSize: 10
-      anchors.right: appIcon.left
+      anchors.right: parent.right
       anchors.top: title.bottom
       anchors.bottom: parent.bottom
       anchors.left: image.right
       anchors.margins: snoreBaseSize
       anchors.topMargin: snoreBaseSize / 2
+      anchors.bottomMargin: snoreBaseSize / 2
       wrapMode: Text.WrapAtWordBoundaryOrAnywhere
       onLinkActivated: Qt.openUrlExternally(link)
       textFormat: Text.StyledText
@@ -135,79 +136,15 @@ Window {
     Image {
       id: image
       fillMode: Image.PreserveAspectFit
-      height: root.height * 0.30
-      width: root.height * 0.30
+      height: Math.max(root.height * 0.40, 48)
+      width: Math.max(root.height * 0.40, 48)
       smooth: true
       anchors.left: parent.left
       anchors.margins: snoreBaseSize
-      anchors.bottom: parent.bottom
       anchors.top: parent.top
       z: 4
       onWidthChanged: notifyWidget.imageSize = width
       source: notifyWidget.image
-    }
-
-    Image {
-      id: appIcon
-      fillMode: Image.PreserveAspectFit
-      height: root.height * 0.30
-      width: root.height * 0.30
-      smooth: true
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      anchors.margins: snoreBaseSize
-      onWidthChanged: notifyWidget.appIconSize = width
-      source: notifyWidget.appIcon
-    }
-
-    Canvas{
-      id: closeButton
-      height: root.height * 0.25
-      width: root.height * 0.25
-      anchors.top: parent.top
-      anchors.margins: snoreBaseSize
-      anchors.right: parent.right
-      z: 91
-
-      onPaint: {
-        var context = getContext("2d");
-        context.lineWidth = snoreBaseSize * 0.25;
-
-        context.beginPath();
-        context.clearRect(0, 0, width, height);
-        context.fill();
-
-        if(mouseAreaCloseButton.containsMouse)
-        {
-          context.beginPath();
-          context.strokeStyle = root.color
-          context.fillStyle = body.color
-          context.globalAlpha = 0.5
-          context.moveTo(width/2 + width/2 , height/2);
-          context.arc(width/2, height/2, width/2 , 0, 2*Math.PI, true)
-          context.fill();
-          context.stroke();
-        }
-
-        var margin = snoreBaseSize * 0.5
-        context.beginPath();
-        context.globalAlpha = 1
-        context.strokeStyle = body.color
-        context.moveTo(margin, margin);
-        context.lineTo(width - margin, height - margin);
-        context.moveTo(width - margin, 0 + margin);
-        context.lineTo(margin, height - margin);
-        context.stroke();
-      }
-
-      MouseArea {
-        id: mouseAreaCloseButton
-        anchors.fill: parent
-        onClicked: notifyWidget.dismissed()
-        hoverEnabled: true
-        onEntered: parent.requestPaint()
-        onExited: parent.requestPaint()
-      }
     }
   }
 }

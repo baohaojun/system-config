@@ -22,6 +22,7 @@
 
 #include <QGuiApplication>
 #include <QQmlProperty>
+#include <QtCore/QProcessEnvironment>
 
 using namespace Snore;
 using namespace SnorePlugin;
@@ -49,7 +50,13 @@ NotifyWidget::NotifyWidget(int id, const ::SnorePlugin::Snore *parent) :
 #endif
     engine = new QQmlApplicationEngine(this);
     engine->rootContext()->setContextProperty(QStringLiteral("notifyWidget"), this);
-    engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
+
+    QString qml = QProcessEnvironment::systemEnvironment().value(QStringLiteral("SNORE_QML"), QStringLiteral(""));
+    if (qml.isEmpty()) {
+        engine->load(QUrl::fromEncoded("qrc:/notification.qml"));
+    } else {
+        engine->load(qml);
+    }
     m_window = qobject_cast<QQuickWindow *>(engine->rootObjects().value(0));
 
     // TODO: It looks like there is a Qt bug which make some Windows with this flag invisible in some cases...(Tested: Kubuntu willy)
