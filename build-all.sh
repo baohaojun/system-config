@@ -119,6 +119,9 @@ git clean -xfd
 git submodule foreach 'git clean -xfd'
 
 function is-platform-needed() {
+    if test "$1" = ubuntu; then
+        return 1
+    fi
     test "$platforms" = all -o -z "$(arg1-arg2 "$1" "$platforms")"
 }
 
