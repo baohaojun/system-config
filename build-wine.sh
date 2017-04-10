@@ -12,33 +12,21 @@ if test ! -e ~/src/github/Wrench/windows/binaries/libsnore-qt5.dll; then
     )
 fi
 
-function copy-dlls()
+function deploy-wrench()
 {
     rsync windows/binaries/* ./release -v -L -r
     rsync *.lua  ./release -v
 
-    req_dlls=( #icudt5?.dll icuin5?.dll icuuc5?.dll
-               qt5network.dll QT5CORE.DLL QT5GUI.DLL QT5WIDGETS.DLL Qt5Test.dll Qt5Svg.dll Qt5DBus.dll Qt5Qml.dll Qt5Quick.dll
-             )
-
-    for x in "${req_dlls[@]}"; do
-        rsync $(find $1/bin/ -maxdepth 1 -iname $x | grep . || echo $1/bin/$x) ./release -av
-        chmod 555 $(find ./release/ -iname $x)
-    done
-
-    # rsync ~/.wine/drive_c/OpenSSL-Win32/*.dll ./release/ -av
-    chmod 555 ./release/*.dll
-
-    for x in libEGL.dll libGLESv2.dll libstdc++-6.dll libwinpthread-1.dll libgcc_s_dw2-1.dll; do
-        rsync $(find $1/bin/ -maxdepth 1 -iname $x | grep . || echo $1/bin/$x) ./release -av || continue
-        chmod 555 $(find ./release/ -iname $x)
-    done
-
-    mkdir -p ./release/platforms
-    mkdir -p ./release/imageformats
-    rsync $1/plugins/platforms/qwindows.dll ./release/platforms -av
-    rsync $1/plugins/imageformats/qjpeg.dll ./release/imageformats -av
-    chmod 555 ./release/platforms/* ./release/imageformats/*
+    (
+        cd ./release
+        mkdir -p tmp
+        mv adb.exe the-true-adb.exe luac.exe lua.exe tmp/
+        qt-wine windeployqt --qmldir z:$HOME/src/github/snorenotify/src/plugins/backends/snore -qml -quick .
+        mv tmp/* .
+        rmdir tmp
+        find . -iname '*.dll' -o -iname '*.exe' |xargs chmod +x
+        relative-link ~/src/github/Wrench/*.lua . -f
+    )
 }
 
 function make-release-tgz()
@@ -53,16 +41,13 @@ function make-release-tgz()
 
     set -x
     if test "$DOING_WRENCH_RELEASE"; then
-        command rsync Wrench-windows/ $release_dir -av -L --delete --exclude=.git
+        command rsync wrench-release/ $release_dir -av -L --delete --exclude=.git
     fi
 
-    exit
-    cd $release_dir
-    rm build.bat -f
-    mkfifo /tmp/build-wine.$$
-    myscr bash -c "wine ./Wrench.exe >/tmp/build-wine.$$ 2>&1"
-    cat /tmp/build-wine.$$
-    rm /tmp/build-wine.$$
+    if TMOUT=5 yes-or-no-p -y "Should run Wrench?"; then
+        cd $release_dir
+        myscr bash -c "WINEARCH=win32 WINEPREFIX=~/.wine2 wine ./Wrench.exe"
+    fi
 }
 
 
@@ -109,8 +94,7 @@ for x in . download; do
     )
 done
 
-copy-dlls ~/.wine/drive_c/Qt/Qt*/[0-9]*/mingw*/
+deploy-wrench
 set -x
-rm -f Wrench-windows
-ln -sf wrench-release Wrench-windows
+
 make-release-tgz

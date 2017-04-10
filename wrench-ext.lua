@@ -32,6 +32,7 @@ local ignored_pkgs = {
    "android",
    "com.bhj.setclip",
    "com.android.systemui",
+   "com.github.shadowsocks",
 }
 
 is_useful_notification = function(key, pkg, title, text)
