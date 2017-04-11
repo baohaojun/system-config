@@ -8,24 +8,34 @@ export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 find-or-exec 'Wrench V%Wrench'
 
 if test "$#" != 0; then
-    if test $# = 1 -a -e "$1" && [[ $1 =~ \.twa$ ]]; then
+    if test $# = 1 -a -e "$1" && [[ $1 =~ \.(twa|lua)$ ]]; then
         exec Wrench "$(readlink -f "$1")"
     fi
-    exec Wrench "$@"
 fi
-what_to_do=$(
-    ask-for-input --history -a "Wrench" -p "你要小扳手的什么功能？（可以自己输入比如 baohaojun@@wx）"
-          )
+
+if test "$#" = 1 -a ! -e "$1"; then
+    what_to_do=$1
+else
+    what_to_do=$(
+        ask-for-input --history -a "Wrench" -p "你要小扳手的什么功能？（可以自己输入比如 baohaojun@@wx）"
+              )
+fi
 
 if test "$what_to_do" = $'\003'; then
     exit
 fi
 
 if test "$what_to_do" -a "$what_to_do" != Wrench; then
-    cat <<EOF > ~/.cache/system-config/wrench-$$.twa
+
+    if [[ $what_to_do =~ \( ]]; then
+        format=%s
+    else
+        format='t1_call([==[%s]==])'
+    fi
+    cat <<EOF |tee ~/.cache/system-config/wrench-$$.twa
 -- -*- mode: lua -*-
 -- {%lua%}
-t1_call("$what_to_do")
+$(printf "$format" "$what_to_do")
 -- {%/lua%}
 EOF
     Wrench ~/.cache/system-config/wrench-$$.twa
