@@ -1,50 +1,14 @@
 #!/bin/bash
+
+set -e
 if test "$USER" != bhj; then
     exit 0
 fi
 
-if test $# = 0; then
-    set -- $(for x in $(find ~/system-config/etc/back-to-gmail/ -type l); do readlink -f $x || true; done)
-else
-    for x in "$@"; do
-        if yes-or-no-p "Put $x into ~/system-config/etc/back-to-gmail/ so that it will be tracked? "; then
-            relative-link "$x" ~/system-config/etc/back-to-gmail/ -f
-        fi
-    done
-fi
+target_dir=~/src/github/private-config/back-to-gmail/$(get-mac|pn 1|head -n 1)
+mkdir -p "$target_dir"
 
-for x in "$@"; do
-
-    if test -d "$x"; then
-        back=~/.cache/system-config/logs/back-to-gmail/$(dirname "$x")/$(basename "$x").tgz.gpg
-        if test -e "$back" && ! find "$x" -type f -newer "$back" | grep .; then
-            continue
-        fi
-    else
-        back=~/.cache/system-config/logs/back-to-gmail/"$x".gpg
-        if test -e "$back" -a "$back" -nt "$x"; then
-            continue
-        fi
-    fi
-
-    echo will back up "$back"
-    mkdir -p "$(dirname "$back")"
-    rm -rf "$back"
-
-    new_x=$(dirname "$back")/"$(basename "$x")"
-    if test -d "$x"; then
-        attachment=~/.cache/system-config/logs/back-to-gmail-"$(echo "$x"|perl -npe 's,/,-,g')".tgz
-        tar czfv "$attachment" "$x"
-        x=$attachment
-    fi
-
-    set -x
-    rm "$back" -f
-    gpg --output "$back" --encrypt --recipient baohaojun@gmail.com "$x"
-    if test -d "$new_x"; then
-        rm "$x"
-    fi
-
-    echo sending mail "back-to-gmail $x from $(from-mac)"
-    mailx -s "back-to-gmail $(basename $new_x) from $(from-mac|perl -npe 's!.*from-mac/!!')" -a "$back" baohaojun@gmail.com </dev/null
-done
+cd ~/system-config/etc/back-to-gmail
+rsync-with-dir-struct-L "$target_dir" . || true
+cd "$target_dir"
+git add .

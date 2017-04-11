@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ex
 
+. ensure-at-work
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent
 

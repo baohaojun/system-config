@@ -18,6 +18,8 @@ for x in "$@"; do
         cp "$x" "$target_dir/$(dirname "$x")" -av
     elif test $b0 = cp-with-dir-struct-L; then
         cp "$x" "$target_dir/$(dirname "$x")" -rv -H
+    elif test $b0 = rsync-with-dir-struct-L; then
+        rsync "$x" "$target_dir/$(dirname "$x")" -rv -L --exclude .git -a
     else
         die "don't know how to do $0"
     fi

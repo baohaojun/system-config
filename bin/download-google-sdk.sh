@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ex
 
+. ensure-at-work
 if ! is-tty-io && test -z "$http_proxy"; then
     bash -x start-http-proxy $0
     exit
