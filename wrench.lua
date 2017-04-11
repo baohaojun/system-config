@@ -3,6 +3,8 @@
 -- module
 local M = {}
 
+local W = {}
+
 -- functions
 local WrenchExt = {}
 local shift_click_notification
@@ -49,11 +51,8 @@ local wait_input_target_n
 local t1_eval, log, share_pics_to_app, share_text_to_app
 local picture_to_weibo_comment
 local check_scroll_lock, prompt_user, yes_or_no_p
-local smartisan_mail_compose = "com.android.email/com.android.mail.compose.ComposeActivity"
 
 -- variables
-local weibo_home_activity = "com.sina.weibo/com.sina.weibo.MainTabActivity"
-local weibo_search_activity = "com.sina.weibo/com.sina.weibo.page.SearchResultActivity"
 local where_is_dial_key
 local rows_mail_att_finder
 local UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
@@ -75,31 +74,36 @@ local sdk_version = 19
 local emojis, img_to_emoji_map, emoji_to_img_map
 local the_true_adb = "./the-true-adb"
 local t1_send_action
-local weixinAlbumPreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
-local weixinChatActivity = "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI"
-local weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
-local weixinSearchActivity = "com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI"
-local weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
-local weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
-local weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
-local qqShareActivity = "com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity"
-local emailSmartisanActivity = "com.android.email/com.android.mail.compose.ComposeActivity"
-local oiFileChooseActivity = "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity"
-local weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity"
-local weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
-local qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
-local qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity"
-local qqAlbumList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity"
-local qqCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.FlowCameraPtvActivity2"
-local qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
-local qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
-local qqPhotoPreview = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoPreviewActivity"
-local qqPhoteList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListActivity"
-local weiboAlbumActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PhotoAlbumActivity"
-local weiboImagePreviewActivity = "com.sina.weibo/com.sina.weibo.photoalbum.ImagePagerActivity"
-local weiboPicFilterActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PicFilterActivity"
-local weiboChatActivity = "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"
-local notePicPreview = "com.smartisanos.notes/com.smartisanos.notes.Convert2PicturePreviewActivity"
+
+W.sms = "com.android.mms/com.android.mms.ui.ComposeMessageActivity"
+W.weibo_home_activity = "com.sina.weibo/com.sina.weibo.MainTabActivity"
+W.weibo_search_activity = "com.sina.weibo/com.sina.weibo.page.SearchResultActivity"
+W.smartisan_mail_compose = "com.android.email/com.android.mail.compose.ComposeActivity"
+W.weixinAlbumPreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
+W.weixinChatActivity = "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI"
+W.weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
+W.weixinSearchActivity = "com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI"
+W.weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
+W.weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
+W.weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+W.qqShareActivity = "com.qzone/com.qzonex.module.operation.ui.QZonePublishMoodActivity"
+W.emailSmartisanActivity = "com.android.email/com.android.mail.compose.ComposeActivity"
+W.oiFileChooseActivity = "org.openintents.filemanager/org.openintents.filemanager.IntentFilterActivity"
+W.weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity"
+W.weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
+W.qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
+W.qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity"
+W.qqAlbumList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity"
+W.qqCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.FlowCameraPtvActivity2"
+W.qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
+W.qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
+W.qqPhotoPreview = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoPreviewActivity"
+W.qqPhoteList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListActivity"
+W.weiboAlbumActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PhotoAlbumActivity"
+W.weiboImagePreviewActivity = "com.sina.weibo/com.sina.weibo.photoalbum.ImagePagerActivity"
+W.weiboPicFilterActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PicFilterActivity"
+W.weiboChatActivity = "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"
+W.notePicPreview = "com.smartisanos.notes/com.smartisanos.notes.Convert2PicturePreviewActivity"
 
 emojis = require"emojis"
 img_to_emoji_map = {}
@@ -632,7 +636,7 @@ end
 
 local function t1_share_to_weibo(text)
    share_text_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", text)
-   wait_input_target(weiboShareActivity)
+   wait_input_target(W.weiboShareActivity)
    if yes_or_no_p("Share to Weibo?") then
       t1_send_action()
    end
@@ -640,7 +644,7 @@ end
 
 local function t1_share_to_qq(text)
    share_text_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity",  text)
-   wait_input_target(qqShareActivity)
+   wait_input_target(W.qqShareActivity)
    t1_send_action()
 end
 
@@ -799,11 +803,11 @@ local function get_coffee(what)
             if f_i == 10 then
                goto open_fav_search_again
             end
-            if top_window == weixinLauncherActivity then
+            if top_window == W.weixinLauncherActivity then
                log("Need click for fav again")
                adb_event"adb-tap 337 722"
             elseif top_window and top_window ~= "" then
-               log("Failed to get FavoriteIndexUI, and not in weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
+               log("Failed to get FavoriteIndexUI, and not in W.weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
                goto open_fav_search_again
             end
          else
@@ -882,7 +886,7 @@ local function get_coffee(what)
 end
 
 weixin_open_homepage = function()
-   adb_am("am start -n " .. weixinLauncherActivity)
+   adb_am("am start -n " .. W.weixinLauncherActivity)
    wait_top_activity_match("com.tencent.mm/")
    for i = 1, 20 do
       sleep(.1)
@@ -894,14 +898,14 @@ weixin_open_homepage = function()
       for i_search = 1, 4 do
          sleep(.1)
          top_window = adb_top_window()
-         if top_window == weixinSearchActivity then
+         if top_window == W.weixinSearchActivity then
             log("exit from search by key back " .. i_search)
-            wait_input_target(weixinSearchActivity)
+            wait_input_target(W.weixinSearchActivity)
             adb_event"key back sleep .1 key back sleep .1"
             sleep(.1)
             waiting_search = false
             return
-         elseif top_window ~= '' and top_window ~= weixinLauncherActivity then
+         elseif top_window ~= '' and top_window ~= W.weixinLauncherActivity then
             log("exit the current '%s' by back key %d", top_window, i)
             waiting_search = false
          end
@@ -912,7 +916,7 @@ weixin_open_homepage = function()
       log("exit the current '%s' by touching back botton %d", top_window, i)
       adb_event"88 170 sleep .1 88 170 sleep .1"
       sleep(.1)
-      adb_am("am start -n " .. weixinLauncherActivity)
+      adb_am("am start -n " .. W.weixinLauncherActivity)
    end
 end
 
@@ -990,7 +994,7 @@ local function dingding_open_homepage()
 end
 
 local function qq_open_homepage()
-   adb_start_activity(qqChatActivity2)
+   adb_start_activity(W.qqChatActivity2)
 
    for qq_try = 1, 40 do
       sleep(.2)
@@ -1005,7 +1009,7 @@ local function qq_open_homepage()
          done_back = true
          adb_event"key back sleep .1"
       end
-      if not done_back and adb_top_window() == qqChatActivity2 then
+      if not done_back and adb_top_window() == W.qqChatActivity2 then
          adb_event"adb-tap 186 1809 sleep .5"
          -- must be in such a place, that it make sure to get into
          -- first pane of qq main window, or activate the input method
@@ -1027,7 +1031,7 @@ local function qq_open_homepage()
       end
 
       adb_event"key back sleep .1"
-      adb_start_activity(qqChatActivity2)
+      adb_start_activity(W.qqChatActivity2)
    end
 end
 
@@ -1105,7 +1109,7 @@ end
 local function t1_mail(window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
-      wait_input_target(smartisan_mail_compose)
+      wait_input_target(W.smartisan_mail_compose)
       sleep(.5)
    end
    adb_event("key scroll_lock sleep .5")
@@ -1521,7 +1525,7 @@ get_a_note = function(text)
             sleep 1
             adb-tap 711 151
    ]])
-   if wait_top_activity(notePicPreview) ~= notePicPreview then
+   if wait_top_activity(W.notePicPreview) ~= notePicPreview then
       log("Seems to have a problem with Smartisan Notes")
    end
 
@@ -1574,10 +1578,10 @@ end
 find_weibo_friend = function(friend_name)
    putclip_nowait(friend_name)
    for i = 1, 20 do
-      adb_start_activity(weibo_home_activity)
+      adb_start_activity(W.weibo_home_activity)
       adb_event("adb-tap 336 1866 sleep .1 adb-tap 139 1872 adb-tap 583 30 sleep .2 adb-tap 568 251")
-      ime = wait_input_target_n(5, weibo_search_activity)
-      if ime and not ime:match(weibo_search_activity) then
+      ime = wait_input_target_n(5, W.weibo_search_activity)
+      if ime and not ime:match(W.weibo_search_activity) then
          log("wait for weibo search at %d: %s", i, ime)
          adb_event("key back")
       else
@@ -1596,19 +1600,19 @@ qq_find_friend = function(friend_name)
    for i = 1, 5 do
       qq_open_homepage()
       adb_event"sleep .3 adb-tap 324 254" -- click for group search
-      local top_window = wait_input_target_n(15, qqChatActivity2, qqGroupSearch)
+      local top_window = wait_input_target_n(15, W.qqChatActivity2, W.qqGroupSearch)
       adb_event"key scroll_lock sleep .8"
-      if top_window and top_window:match(qqGroupSearch) then
-         log"Found qqGroupSearch"
+      if top_window and top_window:match(W.qqGroupSearch) then
+         log"Found W.qqGroupSearch"
          adb_event"adb-tap 365 384 sleep .3"
-         if adb_top_window() ~= qqGroupSearch then
+         if adb_top_window() ~= W.qqGroupSearch then
             log("Found the qq friend %s", friend_name)
             break
          end
       else
-         log("Got stuck in qqChatActivity2, ime stuck?: %s at %d", top_window, i)
+         log("Got stuck in W.qqChatActivity2, ime stuck?: %s at %d", top_window, i)
          if i == 5 then
-            error("Can't get to qqGroupSearch in the end")
+            error("Can't get to W.qqGroupSearch in the end")
          end
          adb_event"key back adb-tap 303 291"
       end
@@ -1619,7 +1623,7 @@ qq_find_group_friend = function(friend_name)
    putclip_nowait(friend_name)
    log("qq find group friend: %s", friend_name)
    local window = adb_top_window()
-   if window ~= qqChatActivity and window ~= qqChatActivity2 then
+   if window ~= W.qqChatActivity and window ~= W.qqChatActivity2 then
       log("qq window is not chat: %s", window)
       return
    end
@@ -1830,7 +1834,7 @@ t1_post = function(text) -- use weixin
          putclip(text)
       end
    end
-   if window == weixinAlbumPreviewActivity or window == weiboPicFilterActivity then
+   if window == W.weixinAlbumPreviewActivity or window == W.weiboPicFilterActivity then
       sleep(.5)
        window = adb_focused_window()
    end
@@ -1881,10 +1885,10 @@ t1_post = function(text) -- use weixin
    elseif window == "com.smartisanos.notes/com.smartisanos.notes.NotesActivity" then
       t1_smartisan_notes(window)
       return
-   elseif window == smartisan_mail_compose or
+   elseif window == W.smartisan_mail_compose or
       window == "com.android.email/com.android.email.activity.Welcome" or
       window == "com.android.email/com.android.email2.ui.MailActivityEmail" or
-   window == emailSmartisanActivity then
+   window == W.emailSmartisanActivity then
       t1_mail(window)
       return
    else
@@ -2056,9 +2060,9 @@ picture_to_weixin_share = function(pics, ...)
       pics = last_uploaded_pics
    end
    share_pics_to_app("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI", pics)
-   wait_top_activity(weixinSnsUploadActivity)
+   wait_top_activity(W.weixinSnsUploadActivity)
    adb_event("adb-tap 228 401")
-   wait_input_target(weixinSnsUploadActivity)
+   wait_input_target(W.weixinSnsUploadActivity)
 end
 
 picture_to_qq_share = function(pics, ...)
@@ -2067,9 +2071,9 @@ picture_to_qq_share = function(pics, ...)
    end
    log("share to qq")
    share_pics_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity", pics)
-   wait_top_activity(qqShareActivity)
+   wait_top_activity(W.qqShareActivity)
    adb_event("adb-tap 228 401")
-   wait_input_target(qqShareActivity)
+   wait_input_target(W.qqShareActivity)
 end
 
 picture_to_weibo_share = function(pics, ...)
@@ -2077,9 +2081,9 @@ picture_to_weibo_share = function(pics, ...)
       pics = last_uploaded_pics
    end
    share_pics_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", pics)
-   wait_top_activity(weiboShareActivity)
+   wait_top_activity(W.weiboShareActivity)
    adb_event("adb-tap 162 286")
-   wait_input_target(weiboShareActivity)
+   wait_input_target(W.weiboShareActivity)
 end
 
 picture_to_weibo_comment = function(pics, ...)
@@ -2101,7 +2105,7 @@ picture_to_weibo_comment = function(pics, ...)
          for n = 1,10 do
             if adb_top_window() == weiboShareActivity then
                adb_event("adb-tap 62 1843")
-            elseif adb_top_window() == weiboAlbumActivity then
+            elseif adb_top_window() == W.weiboAlbumActivity then
                adb_event("sleep .3 adb-tap 501 340 sleep .2")
                if wait_top_activity(weiboShareActivity) == weiboShareActivity then
                   break
@@ -2152,16 +2156,16 @@ local function picture_to_weixin_chat(pics, ...)
                adb_event("adb-tap 203 1430")
 
                debug("chatWindow: clicked")
-               wait_top_activity(weixinAlbumPreviewActivity)
-            elseif window == weixinAlbumPreviewActivity then
+               wait_top_activity(W.weixinAlbumPreviewActivity)
+            elseif window == W.weixinAlbumPreviewActivity then
                adb_event("adb-tap 521 398") -- to get into image preview
                sleep(.2)
-            elseif window == weixinImagePreviewActivity then
+            elseif window == W.weixinImagePreviewActivity then
                adb_event("sleep .1 adb-key back")
-               if wait_top_activity(weixinAlbumPreviewActivity) == weixinAlbumPreviewActivity then
+               if wait_top_activity(W.weixinAlbumPreviewActivity) == weixinAlbumPreviewActivity then
                   sleep(.2)
                   break
-               elseif adb_top_window() == weixinImagePreviewActivity then
+               elseif adb_top_window() == W.weixinImagePreviewActivity then
                   adb_event("key back")
                end
             end
@@ -2175,16 +2179,16 @@ local function picture_to_weixin_chat(pics, ...)
       local i_button = pic_share_buttons[i]
       adb_event(i_button)
    end
-   while adb_top_window() ~= weixinImagePreviewActivity do
+   while adb_top_window() ~= W.weixinImagePreviewActivity do
       adb_event("sleep .1 adb-tap 944 1894 sleep .1")
-      wait_top_activity(weixinImagePreviewActivity)
+      wait_top_activity(W.weixinImagePreviewActivity)
    end
    adb_event("sleep .2 adb-tap 423 1861 sleep .1 ")
    if yes_or_no_p("Confirm to send these images?") then
       adb_event("adb-tap 927 148")
    end
    window = wait_top_activity(chatWindow)
-   if window == weixinImagePreviewActivity then
+   if window == W.weixinImagePreviewActivity then
       adb_event("sleep .1 adb-tap 59 1871 sleep .1 adb-tap 927 148")
    elseif window:match("^PopupWindow:") then
       debug("got popup window")
@@ -2299,31 +2303,31 @@ local function picture_to_qq_chat(pics, ...)
       if i == 1 then
          for n = 1,50 do
             local window = adb_top_window()
-            if window == qqChatActivity or window == qqChatActivity2 then
+            if window == W.qqChatActivity or window == W.qqChatActivity2 then
                chatWindow = window
                adb_event(image_button .. " sleep 2 adb-tap 70 1873")
-               local top_window = wait_top_activity(qqAlbumList, qqCameraFlow)
+               local top_window = wait_top_activity(W.qqAlbumList, W.qqCameraFlow)
 
-               if top_window == qqCameraFlow then
-                  log("get qqCameraFlow")
-                  while adb_top_window() == qqCameraFlow do
-                      log("still got qqCameraFlow")
+               if top_window == W.qqCameraFlow then
+                  log("get W.qqCameraFlow")
+                  while adb_top_window() == W.qqCameraFlow do
+                      log("still got W.qqCameraFlow")
                       adb_event"key back sleep .5"
                   end
                   image_button = ('380 %d'):format(1920 - ime_height - 50)
-               elseif top_window ~= qqAlbumList then
-                  log("Wait for qqAlbumList failed")
+               elseif top_window ~= W.qqAlbumList then
+                  log("Wait for W.qqAlbumList failed")
                   return
                else
                   adb_event("sleep .5 adb-tap 329 336")
                end
-            elseif window == qqPhoteList then
+            elseif window == W.qqPhoteList then
                adb_event("adb-tap 171 427")
-            elseif window == qqPhotoPreview then
+            elseif window == W.qqPhotoPreview then
                adb_event("adb-key back")
-               if wait_top_activity(qqPhoteList) == qqPhoteList then
+               if wait_top_activity(W.qqPhoteList) == qqPhoteList then
                   break
-               elseif adb_top_window() == qqPhotoPreview then
+               elseif adb_top_window() == W.qqPhotoPreview then
                    adb_event("adb-key back")
                end
             end
@@ -2356,18 +2360,18 @@ local function picture_to_weibo_chat(pics, ...)
       if i == 1 then
          for n = 1,30 do
             local window = adb_top_window()
-            if window == weiboChatActivity then
+            if window == W.weiboChatActivity then
                chatWindow = window
                adb_event(post_button .. " sleep .5 adb-tap 203 1430")
-               wait_top_activity(weiboAlbumActivity)
-            elseif window == weiboAlbumActivity then
+               wait_top_activity(W.weiboAlbumActivity)
+            elseif window == W.weiboAlbumActivity then
                adb_event("adb-tap 521 398")
                sleep(.2)
-            elseif window == weiboImagePreviewActivity then
+            elseif window == W.weiboImagePreviewActivity then
                adb_event("sleep .5 adb-key back sleep .5")
-               if wait_top_activity(weiboAlbumActivity) == weiboAlbumActivity then
+               if wait_top_activity(W.weiboAlbumActivity) == weiboAlbumActivity then
                   break
-               elseif adb_top_window() == weiboImagePreviewActivity then
+               elseif adb_top_window() == W.weiboImagePreviewActivity then
                   adb_event("key back sleep .5 ")
                end
             end
@@ -2382,14 +2386,14 @@ local function picture_to_weibo_chat(pics, ...)
       adb_event(i_button)
    end
    adb_event("sleep .1 adb-tap 922 138")
-   wait_top_activity(weiboChatActivity)
+   wait_top_activity(W.weiboChatActivity)
    adb_event("key back")
 end
 
 local function wrench_picture(...)
    local pics = upload_pics(...)
    local window = adb_focused_window()
-   if window == weixinLauncherActivity then
+   if window == W.weixinLauncherActivity then
       picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI" then
       picture_to_weixin_chat(pics)
@@ -2401,7 +2405,7 @@ local function wrench_picture(...)
       picture_to_qq_chat(pics)
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
       picture_to_weibo_chat(pics)
-   elseif window == weiboCommentActivity or window == weiboForwardActivity then
+   elseif window == W.weiboCommentActivity or window == W.weiboForwardActivity then
       picture_to_weibo_comment(pics)
    else
       return "Error: can't decide how to share for window: " .. window
@@ -2480,9 +2484,9 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
       cc = expand_mail_groups(cc)
       bcc = expand_mail_groups(bcc)
 
-      adb_am("am start -n " .. emailSmartisanActivity .. " mailto:")
+      adb_am("am start -n " .. W.emailSmartisanActivity .. " mailto:")
       adb_shell"mkdir -p /sdcard/adb-mail"
-      wait_input_target(emailSmartisanActivity)
+      wait_input_target(W.emailSmartisanActivity)
 
       adb_event("adb-tap 842 434 sleep 1.5") -- 展开
    end
@@ -2519,9 +2523,9 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
          target = "../../../../../.." .. target
          putclip(target)
 
-         wait_input_target(oiFileChooseActivity)
+         wait_input_target(W.oiFileChooseActivity)
          local window = adb_focused_window()
-         if window ~= oiFileChooseActivity then
+         if window ~= W.oiFileChooseActivity then
             window = window:gsub("/.*", "")
             error("Must install and use OI File Manager, you are using: " .. window)
          end
@@ -2552,7 +2556,7 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
 end
 
 adb_weixin_lucky_money_output = function(password, bless, money, number)
-   adb_am("am start -n " .. weixinLauncherActivity)
+   adb_am("am start -n " .. W.weixinLauncherActivity)
    local w = adb_focused_window()
    adb_event("key back")
    adb_event("adb-tap 448 336 adb-tap 961 1835 adb-tap 899 1313 sleep 2")
@@ -2599,9 +2603,9 @@ adb_weixin_lucky_money = function ()
    local loop_n = 1
    while true do
       loop_n = loop_n + 1
-      adb_am("am start -n " .. weixinLauncherActivity)
+      adb_am("am start -n " .. W.weixinLauncherActivity)
       local w = adb_focused_window()
-      if w ~= weixinLauncherActivity then
+      if w ~= W.weixinLauncherActivity then
          adb_event("key back key back")
       end
       adb_event("adb-tap 106 178 adb-tap 173 1862 adb-tap 375 340")
@@ -2743,15 +2747,25 @@ t1_call = function(number)
 end
 
 t1_add_mms_receiver = function(number)
-   while adb_is_window('com.android.mms/com.android.mms.ui.ComposeMessageActivity') do
+   while adb_is_window(W.sms) do
       adb_event("key back sleep .1")
    end
-   adb_am("am start -n com.android.mms/com.android.mms.ui.ComposeMessageActivity")
+   adb_am("am start -n " .. W.sms)
 
    putclip(number .. ',')
 
    adb_event("sleep 1 key scroll_lock")
    return "Please input your SMS in the Wrench Composer and click Send."
+end
+
+M.send_sms = function(sms, someone)
+   adb_am("am start -n " .. W.sms)
+   putclip(someone)
+   adb_event("sleep .2 adb-tap 203 291 sleep .2 key scroll_lock")
+
+   putclip(sms)
+
+   adb_event("adb-tap 568 1088 sleep .2 key scroll_lock")
 end
 
 log = function(fmt, ...)
