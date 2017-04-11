@@ -696,6 +696,10 @@ wait_input_target = function(...)
    return wait_input_target_n(20, ...)
 end
 
+M.wait_input_target_n_ok = function(n_loop, activity)
+   return wait_input_target_n(n_loop, activity) == activity and M.ime_height ~= 0
+end
+
 wait_input_target_n = function(n_loop, ...)
    activities = {...}
    for i = 1, #activities do
@@ -1178,6 +1182,7 @@ adb_get_input_window_dump = function()
    --     ime_height, real_height, default_height, app_height)
 
    ime_height = ime_height * default_height / app_height
+   M.ime_height = ime_height
 
    local ime_connected = not dump_str:match("mServedInputConnection=null")
    return input_method_active, ime_height, ime_connected, current_input_method
@@ -1746,6 +1751,7 @@ on_app_selected = function(app)
    end
    apps_file.close()
    if app ~= "" then
+      log("starting: %s", ("%s/%s"):format(app_table[app], app))
       adb_start_activity(("%s/%s"):format(app_table[app], app))
    end
 end
@@ -3001,6 +3007,7 @@ M.my_select_args = my_select_args
 M.my_show_notifications = my_show_notifications
 M.yes_or_no_p = yes_or_no_p
 M.start_or_stop_recording = start_or_stop_recording
+M.adb_top_window = adb_top_window
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then
