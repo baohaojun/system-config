@@ -76,7 +76,7 @@ for $start_p (@start_p) {
 
 sub print_branch($$) {
     my ($pid, $indent) = @_;
-    printf "$indent %d %d %s\n", $pid, $ppid_map{$start_p}, $command_map{$pid};
+    printf "$indent %d %d %s\n", $pid, $ppid_map{$pid}, $command_map{$pid};
 
     for (keys %{$print_children_map{$pid}}) {
         print_branch($_, $indent . "  ");
