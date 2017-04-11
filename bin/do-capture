@@ -15,6 +15,10 @@ fi
 
 file=$(select-output-line -o -- bash -c 'cd ~/system-config/doc/projects; ls -t *.org; echo daily; echo agenda')
 
+if test -z "$file"; then
+    exit
+fi
+
 if test -e ~/system-config/doc/projects/"$file"; then
    e ~/system-config/doc/projects/$file;
 elif test "$file" = agenda; then
