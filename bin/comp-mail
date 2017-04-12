@@ -53,7 +53,7 @@ if test $# = 1; then
     if [[ "$1" =~ = ]]; then
         query=$1
     else
-        query=$(printf '(|(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1")
+        query=$(printf '(|(sAMAccountName=%s*)(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1" "$1")
     fi
 elif test $# = 2; then
     query='(|'
