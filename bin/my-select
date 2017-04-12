@@ -159,7 +159,7 @@ sub my_select(\@) {
             }
 
             while (1) {
-                if ($ans =~ m/\003/) {
+                if ($ans eq "\003" || $ans eq "()") {
                     kill "TERM", getppid();
                     exit;
                 }
