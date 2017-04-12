@@ -15,7 +15,7 @@ user_email = user_email.sub(/\.cn$/, ".com")
 
 [user_email, user_email2].each { | user |
   result = ldap.bind_as(:base => "dc=smartisan, dc=cn",
-                        :filter => "(mail=#{user})",
+                        :filter => "(|(mail=#{user})(sAMAccountName=#{user}))",
                         :password => ARGV[1])
   if result
     puts "good: #{user}"
