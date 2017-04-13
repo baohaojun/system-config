@@ -7,7 +7,6 @@ local W = {}
 
 -- functions
 local WrenchExt = {}
-local shift_click_notification
 local search_sms, string_strip, handle_notification
 local adb_input_method_is_null, close_ime
 local window_post_button_map = {}
@@ -2819,13 +2818,14 @@ local function t1_spread_it()
    adb_event("sleep .5 adb-key back sleep .5")
 end
 
-shift_click_notification = function(pkg, key, title, text)
+M.shift_click_notification = function(pkg, key, title, text)
    if pkg == "com.tencent.mm" then
       t1_call(title .. "@@wx")
    elseif pkg == "com.tencent.mobileqq" then
       local sender = ""
       if title:lower() == "qq" then
          sender = text:gsub(":.*", "")
+         sender = sender:gsub(".-%((.-)%).*", "%1")
       else
          title = title:gsub(" %(%d+条新消息%)$", "")
          title = title:gsub(" %(%d+条以上新消息%)$", "")
@@ -2837,7 +2837,6 @@ shift_click_notification = function(pkg, key, title, text)
 end
 
 M.log = log
-M.shift_click_notification = shift_click_notification
 M.open_weixin_scan = open_weixin_scan
 M.adb_get_input_window_dump = adb_get_input_window_dump
 M.putclip = putclip
@@ -2998,6 +2997,10 @@ handle_notification = function(key, pkg, title, text)
       clickForWeixinMoney()
    elseif pkg == "com.tencent.mobileqq" and text:match("%[QQ红包%]") then
       clickNotification{key}
+      if title:lower() == "qq" then
+         M.shift_click_notification(pkg, key, title, text)
+      end
+
       clickForQqMoney(title, text)
    end
 
