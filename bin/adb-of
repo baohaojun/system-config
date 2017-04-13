@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+if test "$#" = 0; then
+    set -- "$(getclip)"
+fi
 if test ! -e "$1"; then
     perl -e '$_ = $ARGV[0];
              if (m!https://login.weibo.cn/login/.*backURL=http%3A%2F%2Fweibo.cn%2F[^%]*%2F([^%&]+)!i) {
