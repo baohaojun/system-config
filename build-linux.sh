@@ -64,7 +64,6 @@ relative-link -f $build_dir/Wrench ~/system-config/bin/overide
 mkdir -p $build_dir
 if test "$system_config" = true; then
     rsync -L * $build_dir -av --exclude=release --exclude=windows --exclude=macx --exclude=emojis
-    rsync release/ $build_dir -av -L --exclude=adb_usb_driver_smartisan --exclude=emojis
 else
     rsync * $build_dir -a -L --exclude=windows --exclude=macx
     rsync release/ $build_dir -a -L
@@ -88,7 +87,7 @@ done
 
 for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
 
-echo $oldpwd/* $oldpwd/linux/binaries/* | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
+echo $oldpwd/release/* $oldpwd/* $oldpwd/linux/binaries/* | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
 
 ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (

@@ -21,7 +21,6 @@ local weixin_open_homepage
 local file_exists
 local social_need_confirm = false
 local right_button_x = 984
-local my_select_args
 local start_or_stop_recording, m_is_recording, current_recording_file
 
 local m_focused_app, m_window_dump, m_focused_window
@@ -411,6 +410,8 @@ adb_am = function(cmd)
    end
 end
 
+M.adb_am = adb_am
+
 local function adb_event(events)
    if type(events) == 'string' then
       if social_need_confirm then
@@ -695,12 +696,15 @@ wait_top_activity_match = function(activity)
    return window
 end
 
+M.wait_top_activity_match = wait_top_activity_match
+
 wait_input_target = function(...)
    return wait_input_target_n(20, ...)
 end
 
+M.wait_input_target = wait_input_target
 M.wait_input_target_n_ok = function(n_loop, activity)
-   return wait_input_target_n(n_loop, activity) == activity and M.ime_height ~= 0
+   return (wait_input_target_n(n_loop, activity)):match(activity) and M.ime_height ~= 0
 end
 
 wait_input_target_n = function(n_loop, ...)
@@ -1055,8 +1059,8 @@ adb_start_weixin_share = function(text_or_image)
 
    weixin_open_homepage()
    adb_event("adb-tap 654 1850 sleep .5 adb-tap 332 358")
-   if wait_top_activity("com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI") == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsTimeLineUI" then
-      adb_event("sleep .2 " .. click .. " 1016 131")
+   if (wait_top_activity_match("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")):match"com.tencent.mm/com.tencent.mm.plugin.sns.ui." then
+      adb_event("sleep 1 " .. click .. " 977 132")
    else
       log("Can't switch to the Friend Zone page.")
    end
@@ -1064,7 +1068,7 @@ adb_start_weixin_share = function(text_or_image)
       adb_event("adb-tap 213 929") -- choose picture
    end
    adb_event("adb-tap 143 264")
-   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
+   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")
    log("start weixin share complete")
 end
 
@@ -1083,6 +1087,7 @@ end
 local function weixin_text_share(window, text)
    if text then
       text = text:gsub("\n", "​\n")
+      putclip(text)
    end
    adb_event("adb-key scroll_lock sleep .2")
    if yes_or_no_p("Share to wechat?") then
@@ -1206,6 +1211,8 @@ check_phone = function()
       error("exiting")
    end
 end
+
+M.check_phone = check_phone
 
 adb_wait_file_gone = function(file)
    adb_shell(
@@ -1763,6 +1770,11 @@ local dofile_res = nil
 dofile_res, WrenchExt = pcall(dofile, "wrench-ext.lua")
 if not dofile_res then
    WrenchExt = {}
+end
+
+dofile_res, ExtMods = pcall(dofile, "ext/.modules.lua")
+if not dofile_res then
+   ExtMods = {}
 end
 
 local post_weibo_answer = function(text)
@@ -2412,24 +2424,6 @@ local function wrench_picture(...)
    return #pics .. " pictures sent"
 end
 
-local function t1_follow_me()
-   check_phone()
-   -- http://weibo.com/u/1611427581 (baohaojun)
-   -- http://weibo.com/u/1809968333 (beagrep)
-   adb_am("am start sinaweibo://userinfo?uid=1611427581")
-   wait_top_activity_match("com.sina.weibo/com.sina.weibo.page.")
-   adb_event("sleep 1 adb-tap 187 1884")
-   log("T1 follow me")
-   for n = 1, 10 do
-      sleep(.2)
-      if adb_top_window() == "com.sina.weibo" then
-         sleep(.5)
-         adb_event("key back")
-         break
-      end
-   end
-end
-
 t1_save_mail_heads = function(file, subject, to, cc, bcc, attachments)
    local f = io.open(file, "w")
    f:write(('t1_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments))
@@ -2773,6 +2767,10 @@ log = function(fmt, ...)
    end
 end
 
+if log_to_ui then
+   M.log_to_ui = log_to_ui
+end
+
 t1_eval = function(f)
    for k, v in pairs(M) do
       if not _ENV[k] then
@@ -2791,31 +2789,22 @@ t1_run = function (file)
    t1_eval(f)
 end
 
-local function t1_spread_it()
-   check_phone()
-   -- http://weibo.com/1611427581/Bviui9tzF
-   -- http://weibo.com/1611427581/BvnNk2PwH?from=page_1005051611427581_profile&wvr=6&mod=weibotime&type=comment
-   -- http://m.weibo.cn/1809968333/3774599487375417
-   adb_am("am start sinaweibo://userinfo?uid=1611427581")
-   wait_top_activity_match("com.sina.weibo/com.sina.weibo.page.")
-
-   for i = 1, 10 do
-      sleep((11 - i) * .06)
-      if adb_top_window() == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
-         break
-      end
-      adb_event("adb-tap 584 1087")
-      if adb_top_window() == "com.sina.weibo/com.sina.weibo.DetailWeiboActivity" then
-         break
-      end
+M.wrenchThumbUp = function()
+   if not ExtMods.descriptions then
+      prompt_user("扩展程序加载失败，无法执行此操作")
+      return
    end
-   adb_event("adb-tap 911 1863")
-   sleep(.2)
-   adb_event("sleep .2 adb-tap 527 1911")
-   wait_input_target("com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity")
-   adb_event("adb-tap 99 932")
-   t1_post("#小扳手真好用# 💑💓💕💖💗💘💙💚💛💜💝💞💟😍😻♥❤")
-   adb_event("sleep .5 adb-key back sleep .5")
+   local x = select_args(ExtMods.descriptions)
+   if not ExtMods.description_to_filename[x] then
+      prompt_user("你选择的操作（" .. x .. "）没有对应的扩展脚本，是否忘了更新ext/.modules.lua？")
+      return
+   end
+
+   if not ExtMods.description_to_loaded_func[x] then
+      ExtMods.description_to_loaded_func[x] = loadfile("ext/" .. ExtMods.description_to_filename[x])
+   end
+
+   t1_eval(ExtMods.description_to_loaded_func[x])
 end
 
 M.shift_click_notification = function(pkg, key, title, text)
@@ -3007,10 +2996,6 @@ handle_notification = function(key, pkg, title, text)
    if not should_use_internal_pop then
       system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}
    end
-end
-
-my_select_args =  function(...)
-   select_args{...}
 end
 
 my_show_notifications = function()
