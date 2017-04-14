@@ -548,6 +548,8 @@ prompt_user = function(txt)
    end
 end
 
+M.prompt_user = prompt_user
+
 yes_or_no_p = function(txt)
    if select_args then
       return select_args{txt} ~= ""
@@ -681,6 +683,8 @@ end
 wait_top_activity = function(...)
    return wait_top_activity_n(20, ...)
 end
+
+M.wait_top_activity = wait_top_activity
 
 wait_top_activity_match = function(activity)
    debug("waiting for %s", activity)
@@ -1807,7 +1811,7 @@ start_or_stop_recording = function()
       m_is_recording = select_args{"What function do you want to record to?", "", ""}
       if (m_is_recording ~= "") then
          m_is_recording = m_is_recording:gsub("[^a-z0-9_A-Z]", "_")
-         m_is_recording = configDir .. package.config:sub(1, 1) .. m_is_recording .. ".lua"
+         m_is_recording = "ext" .. package.config:sub(1, 1) .. m_is_recording .. ".lua"
       else
          prompt_user("Must provide a name to record it")
          m_is_recording = nil
@@ -1815,8 +1819,15 @@ start_or_stop_recording = function()
    else
       m_is_recording = nil
    end
-
 end
+
+M.call_ext = function(ext, ...)
+   M.ext_args = {...}
+   t1_run("ext" .. package.config:sub(1, 1) .. ext .. ".lua")
+   M.ext_args = nil
+end
+
+M.M = M
 
 t1_post = function(text) -- use weixin
    local window = adb_focused_window()
@@ -2717,7 +2728,7 @@ t1_call = function(number)
       elseif where == "sms" then
          search_sms(who)
       elseif where == "ext" then
-         t1_run(configDir .. package.config:sub(1, 1) .. who .. ".lua")
+         t1_run("ext" .. package.config:sub(1, 1) .. who .. ".lua")
       elseif where == "eval" then
          local func = loadstring(who)
          t1_eval(func)
