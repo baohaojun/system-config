@@ -590,8 +590,7 @@ void WrenchMainWindow::on_tbMomo_clicked()
 
 void WrenchMainWindow::on_tbThumbsUp_clicked()
 {
-    mLuaThread->addScript(QStringList() << "t1_spread_it");
-    mLuaThread->addScript(QStringList() << "t1_follow_me");
+    mLuaThread->addScript(QStringList() << "wrenchThumbUp");
 }
 
 void WrenchMainWindow::initContactDialog(bool isMail)
