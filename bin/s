@@ -83,6 +83,10 @@ else
     engineX=$(select-args -p "Which search engine for $s_how?" $search_engines)
 fi
 
+if test "$SAWFISH_CLICK" = t; then
+    sleep .5
+fi&
+
 exec 9>/dev/null
 
 function update-engine-order() {
