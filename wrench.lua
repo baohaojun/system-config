@@ -878,7 +878,7 @@ local function get_coffee(what)
          yes_or_no_p("I will alarm you in 3 minutes for your coffee")
          return
       end
-      adb_event"adb-tap 539 957"
+      adb_event"key back sleep .2 adb-tap 562 1662"
       system{'alarm', '3', 'Go get your coffee (take your coffee ticket!)'}
    end
 
