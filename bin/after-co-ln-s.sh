@@ -70,7 +70,7 @@ if ! which git >/dev/null 2>&1 ; then
     sudo apt-get install -y git || /cygdrive/c/setup-x86_64.exe -q -n -d -A -P git
 fi
 
-mkdir -p ~/Downloads/forever ~/external/local ~/.cache/system-config/logs
+mkdir -p ~/Downloads/forever ~/external/local ~/.cache/system-config/logs ~/.config/system-config
 
 if test -d ~/src/github/external-etc/; then
     rm -rf ~/external/etc || true
@@ -82,8 +82,8 @@ else
     mkdir -p ~/external/etc/at
 fi
 
-if test $can_sudo = true && test $(uname)  = Linux -a ! -e ~/.cache/system-config/logs/offline-is-unstable; then
-    (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.cache/system-config/logs/offline-is-unstable) || true
+if test $can_sudo = true && test $(uname)  = Linux -a ! -e ~/.config/system-config/offline-is-unstable; then
+    (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.config/system-config/offline-is-unstable) || true
 fi
 
 touch ~/.cache/system-config/.where.bak
