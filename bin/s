@@ -24,14 +24,14 @@ if test "$DESKTOP_SESSION" = sawfish; then
         if ! flock -n 9; then
             (
                 exec 9>/dev/null
-                bhj-notify "Can't lock s"
-            )&
+                # bhj-notify s "Can't lock s $(fuser ~/.cache/system-config/logs/s-sawfish-click|xargs ps $$ |tee ~/tmp/s.lock)"
+            )
             exit
         fi
         exec 2>~/tmp/s.txt
 
         declare -a start_events
-        max_try=10
+        max_try=30
 
         for x in $(seq 1 $max_try ); do
             start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
@@ -45,7 +45,7 @@ if test "$DESKTOP_SESSION" = sawfish; then
                 double_click=true
                 break
             fi
-            sleep .05
+            sleep .03
             if test $x = $max_try; then
                 start_event=${start_events[1]}
             fi
@@ -88,10 +88,6 @@ if test "$double_click" = true; then
 else
     engineX=$(select-args -p "Which search engine for $s_how?" $search_engines)
 fi
-
-if test "$SAWFISH_CLICK" = t; then
-    sleep .5
-fi&
 
 exec 9>/dev/null
 
