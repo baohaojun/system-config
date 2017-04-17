@@ -21,11 +21,17 @@ double_click=false
 if test "$DESKTOP_SESSION" = sawfish; then
     if test "$SAWFISH_CLICK" = t; then
         exec 9> ~/.cache/system-config/logs/s-sawfish-click.lock
-        flock -n 9 || exit
+        if ! flock -n 9; then
+            (
+                exec 9>/dev/null
+                bhj-notify "Can't lock s"
+            )&
+            exit
+        fi
         exec 2>~/tmp/s.txt
 
         declare -a start_events
-        max_try=8
+        max_try=10
 
         for x in $(seq 1 $max_try ); do
             start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")

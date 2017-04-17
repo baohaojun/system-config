@@ -7,6 +7,48 @@ prog=$(basename $0)
 host=$(basename $0 | perl -npe 's/.*?-//')
 domain=com/search?q=
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @:pat
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long pat:,help \
+              -n $(basename -- $0) -- "$@")
+pat=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --pat)
+            pat=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--pat=PAT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+## end generated code
+
+
+
 if test $# = 0; then
     set -- "$(xclip -o)"
 fi
@@ -27,7 +69,7 @@ fi
 
 for site in stackoverflow github gogen-allguide; do
     if [[ $host =~ $site ]]; then
-        exec search-google "$@" site:$site.com
+        exec search-google --pat site:$site.com "$@" site:$site.com
     fi
 done
 
@@ -139,6 +181,10 @@ set -x
 if test "$BHJ_URLIFY" = true; then
     echo -n "$url"
     exit
+fi
+
+if test -z "$pat" && [[ $url =~ ^https?:// ]]; then
+    pat=$(echo "$url" | grep -o '^https?://.*?/' -P)
 fi
 
 if test "$pat"; then

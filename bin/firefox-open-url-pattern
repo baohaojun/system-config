@@ -54,10 +54,10 @@ if test ! "$WHICH_TAB"; then
                 ((tab++)) || true
             fi
             echo $tab "$exact$pattern" > ~/.config/system-config/firefox-pattern/last-tab
-            echo $tab > ~/.config/system-config/firefox-pattern/$md5
+            echo $tab "$exact$pattern" > ~/.config/system-config/firefox-pattern/$md5
         fi
     ) 9> ~/.config/system-config/firefox-pattern/.lock
-    WHICH_TAB=$(cat ~/.config/system-config/firefox-pattern/$md5)
+    WHICH_TAB=$(cat ~/.config/system-config/firefox-pattern/$md5 | pn 1)
 fi
 WHICH_TAB=$(( (WHICH_TAB - 1) % 9 + 1))
 
@@ -89,7 +89,7 @@ if test $in_firefox = true -a "${current_url:0-8}" = 'file:///' || current_url_m
 elif firefox-search-for-tab $exact "$pattern"; then
     new_tab=-current-tab
 else
-    sawfish-browser-input "M-$WHICH_TAB"
+    sawfish-browser-input "M-$WHICH_TAB" "C-TAB"
     new_tab=-current-tab
 fi
 
