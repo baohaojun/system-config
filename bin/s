@@ -21,15 +21,28 @@ double_click=false
 if test "$DESKTOP_SESSION" = sawfish; then
     if test "$SAWFISH_CLICK" = t; then
         exec 9> ~/.cache/system-config/logs/s-sawfish-click.lock
-        flock -n 9 || exit
+        if ! flock -n 9; then
+            (
+                exec 9>/dev/null
+                echo "Can't lock s: $$" | tee ~/tmp/s.lock ~/tmp/s.lock.$$
+                # bhj-notify s "Can't lock s $(fuser ~/.cache/system-config/logs/s-sawfish-click|xargs ps $$ |tee ~/tmp/s.lock)"
+            )
+            exit
+        fi
         exec 2>~/tmp/s.txt
 
         declare -a start_events
-        max_try=8
+        max_try=50
 
         for x in $(seq 1 $max_try ); do
             start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
             if [[ ${start_event/-Off/-Click} =~ -Click[0-9] ]]; then # double click
+                double_click=true
+                break
+            fi
+
+            if perl -e '$x = -M "$ENV{HOME}/tmp/s.lock" || 5; print STDERR "Got -M date: $x"; exit 1 if ($x > 25.787037037037037e-06); exit 0'; then
+                cat ~/tmp/s.lock 1>&2
                 double_click=true
                 break
             fi
@@ -39,11 +52,12 @@ if test "$DESKTOP_SESSION" = sawfish; then
                 double_click=true
                 break
             fi
-            sleep .05
+            sleep .03
             if test $x = $max_try; then
                 start_event=${start_events[1]}
             fi
         done
+        rm -f ~/tmp/s.lock
     fi
 
     if test "$start_event" = '"F2"'; then
@@ -82,10 +96,6 @@ if test "$double_click" = true; then
 else
     engineX=$(select-args -p "Which search engine for $s_how?" $search_engines)
 fi
-
-if test "$SAWFISH_CLICK" = t; then
-    sleep .5
-fi&
 
 exec 9>/dev/null
 

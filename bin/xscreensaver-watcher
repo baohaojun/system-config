@@ -9,7 +9,7 @@ while (<IN>) {
             printf "blanked at %s", `date`;
             system("screen-lock-on&");
             system "xset dpms 10 120 180&";
-            system("test -e ~/.cache/system-config/logs/screensaver-no-sound-off || sound-off&");
+            system("test -e ~/.config/system-config/screensaver-no-sound-off || sound-off&");
 
             $blanked = 1;
         }

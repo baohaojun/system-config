@@ -8,7 +8,7 @@ if test $(basename $0) = screen-lock-off; then
     sleep 1
     xdotool mousemove 1024 10
     do-natural-scrolling
-else
+else # lock on
     # my-adb key power
     true
 fi

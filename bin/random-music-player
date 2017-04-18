@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use List::Util 'shuffle';
 my $song_list;
 my $song_list_exist;
 chdir glob("~/Music/like") or die "can't chdir ~/Music/like";
@@ -60,45 +61,90 @@ sub play_1_song($) {
         open(my $song_info, ">", $info_file);
         print $song_info "$_\n";
         close $song_info;
+        system "relative-link", $_, "$ENV{HOME}/Music/$$-last-play.mp3", "-f";
         if (not -e $no_disturb) {
             system("douban info&");
         } elsif (-e "$no_disturb.bak") {
             rename "$no_disturb.bak", "$no_disturb";
         }
         system("douban start-play-hook&");
-        system("mplayer.exp", "$_");
+        system("mplayer.exp", "$_") == 1024 and return 0;
         while (-e $should_replay) {
             unlink $should_replay;
-            system("mplayer.exp", "$_");
+            system("mplayer.exp", "$_") == 1024 and return 0;
         }
         while (-e $loop_file) {
-            system("mplayer.exp", "$_");
+            system("mplayer.exp", "$_") == 1024 and return 0;
         }
+        print STDERR "will now play next song\n";
+        return 1;
     }
 
 }
 
-while (1) {
-    for (keys %songs_map) {
-        if (not -e $should_loop_same_author) {
-            play_1_song $_;
-        }
-        while (-e $should_loop_same_author) {
-            my $author = $songs_map{$_}{author};
-            if (-s $should_loop_same_author) {
-                chomp($author = qx(cat $should_loop_same_author));
-            }
-            my @songs = sort keys %{$songs_author_map{$author}};
-            for ($i = 0; $i < @songs; $i++) {
-                last unless -e $should_loop_same_author;
-                if (-e "$ENV{HOME}/.cache/system-config/logs/douban-prev") {
-                    $i = $i - 2;
-                    unlink "$ENV{HOME}/.cache/system-config/logs/douban-prev";
-                }
-                $i = 0 if $i < 0;
+ one_whole_loop:
+    while (1) {
 
-                play_1_song $songs[$i]
-            }
+        my @songs;
+        if (-e "$ENV{HOME}/Music/no-random") {
+            @songs = sort keys %songs_map;
+        } else {
+            @songs = shuffle keys %songs_map;
         }
-    }
+        print STDERR "start playing a whole loop\n";
+
+        for ($s = 0; $s < @songs; $s++) {
+            if (-e "$ENV{HOME}/Music/jump-to.mp3") {
+                chomp(my $jump_to = qx"readlink -f ~/Music/jump-to.mp3");
+                for ($n = 0; $n < @songs; $n++) {
+                    if ($songs[$n] eq $jump_to) {
+                        $s = $n;
+                        print STDERR "should jump to $songs[$n]";
+                        unlink "$ENV{HOME}/Music/jump-to.mp3";
+                        system "rm ~/Music/*last-play.mp3 -f";
+                        last;
+                    }
+                }
+            }
+
+            $_ = $songs[$s];
+            if (not -e $should_loop_same_author) {
+
+                if (not play_1_song $_) {
+                    if (-e "$ENV{HOME}/Music/restart-loop") {
+                        unlink "$ENV{HOME}/Music/restart-loop";
+                        next one_whole_loop;
+                    }
+                }
+
+            }
+            while (-e $should_loop_same_author) {
+                my $author = $songs_map{$_}{author};
+                if (-s $should_loop_same_author) {
+                    chomp($author = qx(cat $should_loop_same_author));
+                }
+                my @songs = sort keys %{$songs_author_map{$author}};
+                for ($i = 0; $i < @songs; $i++) {
+                    last unless -e $should_loop_same_author;
+                    if (-e "$ENV{HOME}/.cache/system-config/logs/douban-prev") {
+                        $i = $i - 2;
+                        unlink "$ENV{HOME}/.cache/system-config/logs/douban-prev";
+                    }
+                    $i = 0 if $i < 0;
+
+                    if (not play_1_song $_) {
+                        if (-e "$ENV{HOME}/Music/restart-loop") {
+                            unlink "$ENV{HOME}/Music/restart-loop";
+                            next one_whole_loop;
+                        }
+                    }
+                }
+            }
+            if (-e "$ENV{HOME}/.cache/system-config/logs/douban-prev") {
+                $s = $s - 2;
+                unlink "$ENV{HOME}/.cache/system-config/logs/douban-prev";
+            }
+
+
+        }
 }

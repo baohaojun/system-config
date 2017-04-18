@@ -19,6 +19,9 @@ if test -d .git; then
     gitdir=.git
 fi
 
+if test -e $gitdir/objects/info/alternates; then
+    exit 0
+fi
 if test -d "$1/.git"; then
     echo "$(readlink -f "$1")"/.git/objects
 else
