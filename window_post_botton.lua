@@ -74,6 +74,7 @@ map['com.immomo.momo/com.immomo.molive.gui.activities.live.obslive.ObsLiveActivi
 map['com.immomo.momo/com.immomo.molive.gui.activities.live.PhoneLiveActivity'] = 'weixin-chat'
 map['com.immomo.momo/com.immomo.momo.account.activity.LoginActivity'] = 'manual-post'
 map['com.immomo.momo/com.immomo.momo.feed.activity.FeedProfileCommonFeedActivity'] = 'weixin-chat'
+map['com.instagram.android/com.instagram.android.activity.MainTabActivity'] = 'manual-post'
 map['com.instagram.android/com.instagram.android.nux.SignedOutFragmentActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.app.mall.login.LoginActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.common.sample.jshop.JshopSearchActivity'] = 'manual-post'
