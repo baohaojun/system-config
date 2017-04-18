@@ -15,7 +15,7 @@ fi
 
 if test "$#" = 1 -a ! -e "$1"; then
     what_to_do=$1
-else
+elif sawfish-window-exists Wrench; then
     what_to_do=$(
         ask-for-input --history -a "Wrench" -p "你要小扳手的什么功能？（可以自己输入比如 baohaojun@@wx）"
               )
