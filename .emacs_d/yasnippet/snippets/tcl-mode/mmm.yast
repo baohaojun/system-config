@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: mmm
+# key: mmm
+# --
+${1:#} {%${2:sawfish}%}
+$1 {%/$2%}

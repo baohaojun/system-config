@@ -10,14 +10,14 @@ if (system("timeout 1 ping -c 1 172.16.0.9") != 0) {
     exit 0;
 }
 
-open(my $gerrit_pipe, "-|", "gerrit -h s query owner:baohaojun is:open; gerrit -h s query reviewer:baohaojun is:open")
+open(my $gerrit_pipe, "-|", "gerrit -h s query owner:baohaojun is:open; gerrit -h s query reviewer:baohaojun is:open --comments")
     or die "Can't open gerrit pipe";
 
 
 open(my $gerrit_org, ">", glob("~/src/github/projects/gerrit.org.$$"))
     or die "Can't open gerrit org";
 
-my ($gerrit_id, $gerrit_url, $gerrit_subject, %gerrit_map, %gerrit_id_map);
+my ($gerrit_id, $gerrit_url, $gerrit_subject, %gerrit_map, %gerrit_id_map, %gerrit_seen_commenter, %gerrit_last_commenter);
 while (<$gerrit_pipe>) {
     chomp;
     if (s/^\s*subject:\s*//) {
@@ -34,12 +34,25 @@ while (<$gerrit_pipe>) {
         $gerrit_url = $_;
         $gerrit_map{$gerrit_url} = $gerrit_subject;
         $gerrit_id_map{$gerrit_url} = $gerrit_id;
+        $gerrit_seen_commenter{$gerrit_url} = 0;
         next;
+    }
+
+    if (m/^\s*comments:/) {
+        $gerrit_seen_commenter{$gerrit_url} = 1;
+    }
+
+    if ($gerrit_seen_commenter{$gerrit_url} and s/^\s*name:\s*//) {
+        $gerrit_last_commenter{$gerrit_url} = $_;
     }
 }
 
 my $ignore_dir = "$ENV{HOME}/.config/system-config/ignored-gerrit-id";
 for $gerrit_url (sort keys %gerrit_map) {
+    if ($gerrit_last_commenter{$gerrit_url} eq "baohaojun") {
+        print STDERR "$gerrit_url last reviewer is baohaojun, continue\n";
+        next;
+    }
     $gerrit_subject = $gerrit_map{$gerrit_url};
     $gerrit_id = $gerrit_id_map{$gerrit_url};
 
