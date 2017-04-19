@@ -5,6 +5,8 @@ local M = {}
 
 local W = {}
 
+M.ext_args = {}
+
 -- functions
 local WrenchExt = {}
 local search_sms, string_strip, handle_notification
@@ -548,6 +550,7 @@ prompt_user = function(txt)
    end
 end
 
+M.select_args = select_args
 M.prompt_user = prompt_user
 
 yes_or_no_p = function(txt)
@@ -1824,7 +1827,7 @@ end
 M.call_ext = function(ext, ...)
    M.ext_args = {...}
    t1_run("ext" .. package.config:sub(1, 1) .. ext .. ".lua")
-   M.ext_args = nil
+   M.ext_args = {}
 end
 
 M.M = M

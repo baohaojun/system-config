@@ -15,6 +15,14 @@ function start_kindle()
    adb_start_activity"com.amazon.kindle/com.amazon.kindle.UpgradePage"
 end
 
+local book
+if M.ext_args then
+   book = M.ext_args[1]
+end
+if not book then
+   book = M.select_args{"What book do you want to search on Kindle?", "", ""}
+end
+
 for i = 1, 20 do
 :: restart ::
    start_kindle()
@@ -34,8 +42,8 @@ for i = 1, 20 do
             log("can't get store search ime at %d", j)
          end
       end
-      log("we are sending %s", M.ext_args[1])
-      t1_post(M.ext_args[1])
+
+      t1_post(book)
       adb_event"sleep .1 key enter"
       break
    end
