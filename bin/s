@@ -25,7 +25,7 @@ if test "$DESKTOP_SESSION" = sawfish; then
             (
                 exec 9>/dev/null
                 echo "Can't lock s: $$" | tee ~/tmp/s.lock ~/tmp/s.lock.$$
-                # bhj-notify s "Can't lock s $(fuser ~/.cache/system-config/logs/s-sawfish-click|xargs ps $$ |tee ~/tmp/s.lock)"
+                bhj-notify s.$$ "Can't lock s $(fuser ~/.cache/system-config/logs/s-sawfish-click|xargs ps $$ |tee ~/tmp/s.lock)"
             )
             exit
         fi
@@ -97,6 +97,11 @@ else
     engineX=$(select-args -p "Which search engine for $s_how?" $search_engines)
 fi
 
+if test "$double_click" = true; then
+    (
+        sleep 2&
+    )
+fi
 exec 9>/dev/null
 
 function update-engine-order() {
