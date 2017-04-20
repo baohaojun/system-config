@@ -4,13 +4,15 @@ import java.io.File;
 import java.util.Arrays;
 
 import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
 
 public class LocalDirectoryBrowser extends DirectoryBrowser<File> {
 
 	public LocalDirectoryBrowser(Context context) {
 		super(context);
-		
-		browseTo(File.separator);
+
+		browseTo(Environment.getExternalStorageDirectory().getAbsolutePath());
 	}
 	
 	@Override
@@ -34,6 +36,7 @@ public class LocalDirectoryBrowser extends DirectoryBrowser<File> {
 			directoryListing.add(currentDirectory.getParentFile());
 		}
 		File[] tmpListing = currentDirectory.listFiles();
+        Log.e("bhj", String.format("%s:%d: directory is %s", "LocalDirectoryBrowser.java", 37, directory));
 		// default list order doesn't seem to be alpha
 		Arrays.sort(tmpListing);
 		for (File dir : tmpListing) {
