@@ -184,6 +184,7 @@ map['ctrip.android.view/ctrip.android.hotel.order.view.fill.HotelOrderActivity']
 map['ctrip.android.view/ctrip.android.search.GlobalHomeSearchActivity'] = 'manual-post'
 map['Keyguard'] = 'weixin-chat'
 map['org.mozilla.firefox/org.mozilla.firefox.App'] = 'manual-post'
+map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'manual-post'
 map['org.mozilla.firefox/org.mozilla.gecko.fxa.activities.FxAccountCreateAccountActivity'] = 'manual-post'
 map['org.openintents.filemanager/org.openintents.filemanager.FileManagerActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.answer.AnswerActivity'] = 'manual-post'
