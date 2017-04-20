@@ -1,4 +1,3 @@
-
 #+OPTIONS: toc:nil H:10
 
 #+LaTeX_HEADER: \usepackage{mycv}
@@ -7,88 +6,106 @@
 #+END_LaTeX
 
 
-#+MACRO: first  昊军
-#+MACRO: last   包
+#+MACRO: first 昊军
+#+MACRO: last 包
 #+MACRO: full {{{last}}}{{{first}}}
 #+MACRO: phone  18610314439
 
-#+TITLE: 包昊军
+#+TITLE: 包昊军的个人简历（电子版）
 #+LATEX_CLASS_OPTIONS: [11pt,CJKbookmarks]
 
 
 
 * 工作经历
-*** 2014年3月 - 现在
- *工具架构师*, 锤子科技, 北京
+*** 2014 年 3 月 - 现在
+    * *CM 架构师*，锤子科技，北京
+      - 搭建、改善锤子科技 CM（Configuration Management）系统
+      - 搭建锤子科技 CI（Continuous Integration）系统
+      - 搭建锤子科技 SmartBuilder（自助版本编译、发布）系统
+      - 制定、改进工程师开发流程，编写开发流程文档
+      - 结合个人的 [[https://github.com/baohaojun/system-config][system-config]] 开源项目，统一工程师开发环境
 
-- 负责某些工厂测试工具、工程师开发工具的设计、实现
-- 负责Configuration Management系统，优化工程师工作流程、手机版本发布流程
-- 设计、实现PC端操作手机的工具“小扳手”
+        简化了开发环境配置，提升了工程师的效率
 
-*** 2013年9月 - 2014年3月
- *技术专家*, Alibaba, 北京
+      - 对工程师工作中碰到的各种疑难杂症提供支持
+      - 对工程师提供开发工具、编程语言等培训
 
-- 在技术质量部测试工具团队负责SMART(软件测量分析报告工具）安卓客户端开发
-*** 2011年11月 - 2013年9月
-    *Staff Engineer*, [[http://marvell.com][Marvell]], 北京
+        拍摄了两小时长的 Linux 系统工具使用技巧视频，在 [[https://www.youtube.com/watch?v%3Dqp2b3-Guej0][YouTube]] 上
 
-    - 在Tools团队担任架构师的职务, 负责Marvell手机整体解决方案中工厂生
+      - 对 CM 团队其他同事的技术培训和支持
+
+    * *工具架构师*，锤子科技，北京
+
+      - 负责部分工厂生产测试工具、工程师开发工具的设计、实现等
+      - 设计、实现 PC 端操作手机的开源软件 [[https://github.com/SmartisanTech/Wrench][小扳手]]
+
+        并拍摄了使用视频，在 [[https://www.youtube.com/watch?v%3Dre_bECYY0rM&app%3Ddesktop][YouTube]] 上
+      - 调试并解决手机过热问题
+
+*** 2013 年 9 月 - 2014 年 3 月
+    * *技术专家*，技术质量部测试工具组，Alibaba，北京
+      - 负责 SMART(软件测量分析报告工具）安卓客户端开发
+
+*** 2011 年 11 月 - 2013 年 9 月
+    *Staff Engineer*，[[http://marvell.com][Marvell]]，北京
+
+    - 在 Tools 团队担任架构师的职务，负责 Marvell 手机整体解决方案中工厂生
       产工具的设计与实现
-      * 手机端测试case全部用Bash脚本实现, 使开发流程更为高效
+      * 手机端测试 case 全部用 Bash 脚本实现，使开发流程更为高效
 
-      * 用C/C++实现有必要的硬件测试case：LCD（framebuffer）、
+      * 用 C/C++ 实现所有必要的硬件测试 case：LCD（frame buffer）、
         Touch（input device）、Camera（V4L2）、Audio（ALSA、Marvell API）、
         CP（AT command）、Sensors/Wifi/BlueTooth（Android HAL
         programming）
 
-      * 试产时到深圳工厂跟踪此工具在产线的实际使用情况, 根据产线反馈对
+      * 试产时到深圳工厂跟踪此工具在产线的实际使用情况，根据产线反馈对
         其进行改进
 
-    - 在BSP团队负责与工具相关的功能模块的设计与实现, 包括Uboot, Kernel接口,
+    - 在 BSP 团队负责与工具相关的功能模块的设计与实现，包括 Uboot，Kernel 接口，
       工厂分区等
 
-      * 在Uboot里参考原有的usbtty代码（for old cpu and usb framework）,
-        从头重新bring up了usbtty以解决FormFactor上串口调试不便的问题
-      * 实现在Linux下用fastboot对Marvell方案的整机烧写, 解决了工程师只
-        能在Windows机器上用Marvell私有工具做整机烧写的问题, 提升同事的
+      * 在 Uboot 里参考原有的 usbtty 代码（for old CPU and USB framework），
+        从头重新 bring up 了 usbtty 以解决 Form Factor 上串口调试不便的问题
+      * 实现在 Linux 下用 fastboot 对 Marvell 方案的整机烧写，解决了工程师只
+        能在 Windows 机器上用 Marvell 私有工具做整机烧写的问题，提升同事的
         开发效率
 
-    - 结合对开源社区的认识, 对与Marvell其他团队之间的合作提出流程上的改
+    - 结合对开源社区的认识，对与 Marvell 其他团队之间的合作提出流程上的改
       良建议
 
-      * 更新Marvell Android Makefile脚本, 使其支持并行编译和ccache的使
-        用. Kernel代码编译时间从10min缩减到2min
+      * 更新 Marvell Android Makefile 脚本，使其支持并行编译和 ccache 的使
+        用。Kernel 代码编译时间从 10min 缩减到 2min
 
-*** 2010年3月 - 2011年10月
+*** 2010 年 3 月 - 2011 年 10 月
 
-    *Staff Engineer*, RayzerLink/Letou
+    *Staff Engineer*，RayzerLink/Letou
 
-    - 负责基于Nvidia Tegra2芯片的平板电脑底层软件开发, 主要包括Linux
-      Kernel bringup, 驱动（Touch、Lcd、Sensors）, Hal（硬件抽象层）的
+    - 负责基于 Nvidia Tegra2 芯片的平板电脑底层软件开发，主要包括 Linux
+      Kernel bring-up，驱动（Touch、LCD、Sensors），Hal（硬件抽象层）的
       开发等工作
 
-    - 指导bsp新同事底层系统开发工作
+    - 辅导 BSP 新同事底层系统开发工作
 
-*** 2008年11月 - 2010年3月
+*** 2008 年 11 月 - 2010 年 3 月
 
-    *Senior Engineer*, [[http://www.borqs.com][播思通讯]]
+    *Senior Engineer*，[[http://www.borqs.com][播思通讯]]
 
-    - 在Tools组工作
+    - 在 Tools 组工作
 
     - 设计并实现手机开发、测试、生产以及售后等各个环节需要用到的一系列
       工具
 
 
-*** 2005年9月 - 2008年9月
+*** 2005 年 9 月 - 2008 年 9 月
 
-    *Software Engineer*, [[http://motorola.com][摩托罗拉]],  MD/GSG
+    *Software Engineer*，[[http://motorola.com][摩托罗拉]]， MD/GSG
 
     - 手机多媒体软件自动调试工具开发
 
     - 手机多媒体软件开发
 
-*** 2004年10月 - 2005年9月
-    *Software Engineer*, 麒麟软件
+*** 2004 年 10 月 - 2005 年 9 月
+    *Software Engineer*，麒麟软件
 
     - 企业集成应用软件测试
 
@@ -96,63 +113,69 @@
 
 *** Emacs
 
-  - [[http://github.com/baohaojun/skeleton-complete][skeleton-complete.el]] ::  Emacs下的补齐工具（Emacs-lisp）
+  - [[http://github.com/baohaojun/bbyac][bbyac.el]] ::  Emacs 下的补齐工具（Emacs-lisp）
 
-  - [[https://github.com/baohaojun/org-jira][org-jira.el]] :: Emacs下用org-mode来进行Jira开发流程管理的工具
+  - [[https://github.com/baohaojun/org-jira][org-jira.el]] :: Emacs 下用 org-mode 来进行 Jira 开发流程管理的工具
                     （Emacs-lisp）
 
-  - [[https://github.com/baohaojun/ajoke][Ajoke.el]] :: 一个Emacs下的Java/Android集成开发环境、SDK开发包
+  - [[https://github.com/baohaojun/ajoke][Ajoke.el]] :: 一个 Emacs 下的 Java/Android 集成开发环境
 
 *** Android
-  - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] ::  Android下的英文字典软件, 在 [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdict][Google Play]] 上发布
-                  （Java, Android). 用 Ajoke.el 开发.
+  - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] ::  Android 下的英文字典软件，在 [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdict][Google Play]] 上发布（Java，Android）。用 Ajoke.el 开发
+  - [[https://github.com/SmartisanTech/Wrench][Wrench]] :: 用PC连接、控制手机的工具软件，允许流畅同步显示手机屏幕，用Lua编程语言录制屏幕操作脚本，在PC端显示手机端通知消息等。用Qt + Lua开发，支持所有主流操作系统
 
 *** Input Method
-  - sdim :: 跨所有主流平台（Win32/Linux/Mac OS甚至Emacs）的输入法
-            （Python, C++, ObjC, Emacs-lisp）
+  - [[https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py][sdim]] :: 跨所有主流平台（Win32/Linux/Mac OS 甚至 Emacs）的输入法
+            （Python，C++，ObjC，Emacs-lisp）
 
-  - scim-fcitx :: GNU/Linux下的输入法, 基于scim和fcitx移植(C++,
+  - [[https://github.com/scim-im/scim-fcitx][scim-fcitx]] :: GNU/Linux 下的输入法，基于 scim 和 fcitx 移植(C++，
                   GNU/Linux)
 
 *** System Software
-  - [[https://github.com/baohaojun/beagrep][beagrep]] ::  结合搜索引擎的源代码grep工具, 0.23秒grep两G代码（C#,
+  - [[https://github.com/baohaojun/beagrep][beagrep]] ::  结合搜索引擎的源代码 grep 工具，0.23 秒 grep 两 G 代码（C#，
                 Perl）
 
-  - system-config :: 其他一些较小的脚本/程序, 均放在 [[https://github.com/baohaojun][github]] 上用git管理
+  - [[https://github.com/baohaojun/system-config][system-config]] :: 其他一些较小的脚本/程序，均放在 [[https://github.com/baohaojun][github]] 上用 git 管理
 
 
 * 技术技能
 
 *** 编程语言 \& 库
-    - 熟练 :: Perl, Python, Bash, Emacs Lisp, C, C++, Java
+    - 熟练 :: Perl，Python，Bash，Emacs Lisp，C，C++，Java，Lua，Qt
 
-    - 用过 :: ObjC, C#, PHP
+    - 用过 :: ObjC，C#，PHP，Ruby
 *** 写作
-    - 文本 :: Org-mode, Emacs
+    - 文本 :: Org-mode，Emacs
 *** 版本管理
-    Git
+    Git & Gerrit
 *** 系统管理
-    基于Debian的Linux发行版系统管理、Bash脚本编程
+    基于 Debian 的 Linux 发行版系统管理、Bash 脚本编程
 
 * 教育
 
 *** 1997 - 2001
-    本科, 控制理论与工程, 浙江大学
+    本科，控制理论与工程，浙江大学
 *** 2001 - 2004
-    硕士, 控制理论与工程, 中科院自动化所
+    硕士，控制理论与工程，中科院自动化所
 
 * 个人信息
 *** 出生日期
-    1980年3月10日
+    1980 年 3 月 10 日
 *** 手机
     {{{phone}}}
 *** E-mail
     [[mailto:baohaojun@gmail.com][baohaojun@gmail.com]]
-*** 博客
-    [[http://baohaojun.github.io]]
-*** 代码
-    [[https://github.com/baohaojun]]
-
+*** 网址
+- 博客 :: [[http://baohaojun.github.io]]
+- 代码 :: [[https://github.com/baohaojun]]
+- System-config :: https://github.com/baohaojun/system-config
+- System-config 使用视频 :: https://www.youtube.com/watch?v=qp2b3-Guej0
+- Wrench :: https://github.com/SmartisanTech/Wrench
+- Wrench 视频 :: https://m.youtube.com/watch?v=re_bECYY0rM
+- Bbyac :: http://github.com/baohaojun/bbyac
+- Org-jira :: https://github.com/baohaojun/org-jira
+- Ajoke :: https://github.com/baohaojun/ajoke
+- Beagrep :: https://github.com/baohaojun/beagrep
 
 #+BEGIN_LaTeX
 \end{CJK*}

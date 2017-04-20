@@ -1,4 +1,4 @@
-% Created 2015-12-09 Wed 09:50
+% Created 2017-04-20 木 18:01
 \documentclass[11pt,dvipdfmx,CJKbookmarks]{article}
 \usepackage{CJKutf8}
 \usepackage[utf8]{inputenc}
@@ -21,11 +21,11 @@
 \usepackage{mycv}
 \author{Bao Haojun}
 \date{\today}
-\title{Haojun Bao}
+\title{Haojun Bao's Resume}
 \hypersetup{
   pdfkeywords={},
   pdfsubject={},
-  pdfcreator={Emacs 24.5.50.1 (Org mode 8.2.10)}}
+  pdfcreator={Emacs 25.1.91.1 (Org mode 8.2.10)}}
 \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 \begin{document}
 \begin{CJK*}{UTF8}{simsun}
@@ -33,23 +33,36 @@
 \maketitle
 \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 
-
-
 \section{Work Experience}
 \label{sec-1}
 \subsubsection{March 2014 - \emph{present}}
 \label{sec-1-0-1}
-\textbf{Tools Architect}, Smartisan, Beijing
+\begin{itemize}
+\item \textbf{CM Architect}, Smartisan, Beijing
+\begin{itemize}
+\item Build and improve the CM (Configuration Management) system
+\item Build CI (Continuous Integration) system
+\item Build SmartBuilder, an online on-demand android build and publish system
+\item Build and improve dev process, write dev process documents
+\item Deploy my \href{https://github.com/baohaojun/system-config}{system-config} project to each engineer's PC as the dev environment
+
+Simplify the deployment process, improve everyone's efficiency
+
+\item Help colleague engineers solving some difficult problems
+\item Provide training on dev tools and programming languages
+
+Record a 2 hours long video on Linux system tools usage tips: \href{https://www.youtube.com/watch?v\%3Dqp2b3-Guej0}{YouTube}
+
+\item Train and support colleagues in CM team
+\end{itemize}
+
+\item \textbf{Tools Architect}, Smartisan, Beijing
 
 \begin{itemize}
-\item Work as architect in Tools team.
-\begin{itemize}
-\item Implement tools for phone debug.
-\item Debug phone over heat issue.
-\item Write a server version of beagrep, allow colleagues search code quickly.
-\item Take over CM responsibility, build and release version for Smartisan T1.
-\item Implement T1Wrench, a PC tool that allows controling phone, see \url{http://t.cn/RyMEl18} .
-\item Implement phone flashing tool for Linux PC.
+\item Build some phone manufacturing test tools
+\item Build some dev tools
+\item Debug phone over heat issue
+\item Build \href{https://github.com/SmartisanTech/Wrench}{Wrench}, a PC tool to connect and control Android phones, sync phone screen, record and replay manual operations of the phone in Lua script, and show phone's notifications on the PC
 \end{itemize}
 \end{itemize}
 
@@ -90,7 +103,7 @@ Marvell.
 \begin{itemize}
 \item In charge of system software development for a Tablet product
 which uses Nvidia's Tegra2 CPU. Tasks include Linux Kernel
-bringup, device drivers (Touch, Lcd, Sensors), HAL.
+bring-up, device drivers (Touch, LCD, Sensors), HAL.
 
 \item Mentored junior BSP software engineers for system programming.
 \end{itemize}
@@ -150,11 +163,11 @@ Play} (Java, Android). Developed using Ajoke.el.
 \subsubsection{Input Method}
 \label{sec-2-0-3}
 \begin{description}
-\item[{sdim}] An input method for all major Operating Systems: Win32,
+\item[{\href{https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py}{sdim}}] An input method for all major Operating Systems: Win32,
 GNU/Linux, Mac OS X and Emacs (Python, C++, ObjC,
 Emacs-lisp).
 
-\item[{scim-fcitx}] An input method under GNU/Linux, ported from scim
+\item[{\href{https://github.com/scim-im/scim-fcitx}{scim-fcitx}}] An input method under GNU/Linux, ported from scim
 and fcitx (C++, GNU/Linux).
 \end{description}
 
@@ -166,7 +179,7 @@ and fcitx (C++, GNU/Linux).
 reading and debugging, can grep 2G source code in 0.23
 second (C\#, Perl).
 
-\item[{system-config}] A lot of other system admin scripts/programs, all
+\item[{\href{https://github.com/baohaojun/system-config}{system-config}}] A lot of other system admin scripts/programs, all
 can be found on \href{https://github.com/baohaojun}{github}.
 \end{description}
 
@@ -177,9 +190,9 @@ can be found on \href{https://github.com/baohaojun}{github}.
 \subsubsection{Languages \& Libraries}
 \label{sec-3-0-1}
 \begin{description}
-\item[{Proficient}] Perl, Python, Bash, Emacs Lisp, C, C++, Java, Lua
+\item[{Proficient}] Perl, Python, Bash, Emacs Lisp, C, C++, Java, Lua, Qt
 
-\item[{Used}] ObjC, C\#, PHP
+\item[{Used}] ObjC, C\#, PHP, Ruby
 \end{description}
 \subsubsection{Authoring}
 \label{sec-3-0-2}
@@ -205,7 +218,7 @@ Bachelor, Control Theory \& Engineering, Zhejiang University
 Master, Control Theory \& Engineering, Institute of Automation,
 Chinese Academy of Science
 
-\section{Personal Infomation}
+\section{Personal Information}
 \label{sec-5}
 \subsubsection{Date of Birth}
 \label{sec-5-0-1}
@@ -216,14 +229,23 @@ Chinese Academy of Science
 \subsubsection{E-mail}
 \label{sec-5-0-3}
 \href{mailto:baohaojun@gmail.com}{baohaojun@gmail.com}
-\subsubsection{Blog}
+\subsubsection{URLs}
 \label{sec-5-0-4}
-\url{http://baohaojun.github.io}
-\subsubsection{Code}
-\label{sec-5-0-5}
-\url{https://github.com/baohaojun}
+\begin{description}
+\item[{Blog}] \url{http://baohaojun.github.io}
+\item[{Code}] \url{https://github.com/baohaojun}
+\item[{System-config}] \url{https://github.com/baohaojun/system-config}
+\item[{System-config\thinspace Usage Video}] \url{https://www.youtube.com/watch?v=qp2b3-Guej0}
+\item[{Wrench}] \url{https://github.com/SmartisanTech/Wrench}
+\item[{Wrench\thinspace Video}] \url{https://m.youtube.com/watch?v=re_bECYY0rM}
+\item[{Bbyac}] \url{http://github.com/baohaojun/bbyac}
+\item[{Org-jira}] \url{https://github.com/baohaojun/org-jira}
+\item[{Ajoke}] \url{https://github.com/baohaojun/ajoke}
+\item[{Beagrep}] \url{https://github.com/baohaojun/beagrep}
+\end{description}
 
 
-% Emacs 24.5.50.1 (Org mode 8.2.10)
+
+% Emacs 25.1.91.1 (Org mode 8.2.10)
 \end{CJK*}
 \end{document}
