@@ -1,4 +1,46 @@
 #!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt m:mode
+## end code-generator
+## start generated code
+TEMP=$(getopt -o m:h \
+              --long mode:,help \
+              -n $(basename -- $0) -- "$@")
+mode=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -m|--mode)
+            mode=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--mode=MODE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 me=$(readlink -f $0)
 if test ! -e "$me"; then
     me=$(readlink -f "$(which $0)")
@@ -9,11 +51,17 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
+if test "$mode"; then
+    quote=_SRC
+else
+    quote=_EXAMPLE
+fi
+
 cat <<EOF > ~/tmp/$b0.org
 # {%org%}
-#+BEGIN_EXAMPLE
+#+BEGIN$quote $mode
 $(getclip | perl -npe 's/^/    /')
-#+END_EXAMPLE
+#+END$quote
 # {%/org%}
 
 EOF
@@ -21,6 +69,4 @@ EOF
 cd ~/tmp
 find-or-exec emacs
 org-export.bare $b0.org
-of $b0.html
-sleep 2
-sawfish-send-focused-window-event "C-l" "Tab" "Tab" "Tab" "C-x" "h" "C-c"
+xclip -i -selection clipboard < $b0.html

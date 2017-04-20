@@ -12,21 +12,32 @@
 #+MACRO: full {{{first}}}{{{Last}}}
 #+MACRO: phone  18610314439
 
-#+TITLE: Haojun Bao
-
-
+#+TITLE: Haojun Bao's Resume
 
 * Work Experience
 *** March 2014 - /present/
-    *Tools Architect*, Smartisan, Beijing
+    * *CM Architect*, Smartisan, Beijing
+      - Build and improve the CM (Configuration Management) system
+      - Build CI (Continuous Integration) system
+      - Build SmartBuilder, an online on-demand android build and publish system
+      - Build and improve dev process, write dev process documents
+      - Deploy my [[https://github.com/baohaojun/system-config][system-config]] project to each engineer's PC as the dev environment
 
-    - Work as architect in Tools team.
-      * Implement tools for phone debug.
-      * Debug phone over heat issue.
-      * Write a server version of beagrep, allow colleagues search code quickly.
-      * Take over CM responsibility, build and release version for Smartisan T1.
-      * Implement T1Wrench, a PC tool that allows controling phone, see http://t.cn/RyMEl18 .
-      * Implement phone flashing tool for Linux PC.
+        Simplify the deployment process, improve everyone's efficiency
+
+      - Help colleague engineers solving some difficult problems
+      - Provide training on dev tools and programming languages
+
+        Record a 2 hours long video on Linux system tools usage tips: [[https://www.youtube.com/watch?v%3Dqp2b3-Guej0][YouTube]]
+
+      - Train and support colleagues in CM team
+
+    * *Tools Architect*, Smartisan, Beijing
+
+      - Build some phone manufacturing test tools
+      - Build some dev tools
+      - Debug phone over heat issue
+      - Build [[https://github.com/SmartisanTech/Wrench][Wrench]], a PC tool to connect and control Android phones, sync phone screen, record and replay manual operations of the phone in Lua script, and show phone's notifications on the PC
 
 *** September 2013 - March 2014
     *Technical Expert*, Alibaba, Beijing
@@ -55,7 +66,7 @@
 
     - In charge of system software development for a Tablet product
       which uses Nvidia's Tegra2 CPU. Tasks include Linux Kernel
-      bringup, device drivers (Touch, Lcd, Sensors), HAL.
+      bring-up, device drivers (Touch, LCD, Sensors), HAL.
 
     - Mentored junior BSP software engineers for system programming.
 
@@ -96,11 +107,11 @@
   - [[https://github.com/baohaojun/BTAndroidWebViewSelection][CrossDict]] :: An English dictionary Android APK, released on [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdict][Google
                  Play]] (Java, Android). Developed using Ajoke.el.
 *** Input Method
-  - sdim :: An input method for all major Operating Systems: Win32,
+  - [[https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py][sdim]] :: An input method for all major Operating Systems: Win32,
             GNU/Linux, Mac OS X and Emacs (Python, C++, ObjC,
             Emacs-lisp).
 
-  - scim-fcitx ::  An input method under GNU/Linux, ported from scim
+  - [[https://github.com/scim-im/scim-fcitx][scim-fcitx]] ::  An input method under GNU/Linux, ported from scim
                    and fcitx (C++, GNU/Linux).
 
 *** System Software
@@ -109,16 +120,16 @@
                reading and debugging, can grep 2G source code in 0.23
                second (C#, Perl).
 
-  - system-config :: A lot of other system admin scripts/programs, all
+  - [[https://github.com/baohaojun/system-config][system-config]] :: A lot of other system admin scripts/programs, all
                      can be found on [[https://github.com/baohaojun][github]].
 
 
 * Technical Skills
 
 *** Languages \& Libraries
-    - Proficient :: Perl, Python, Bash, Emacs Lisp, C, C++, Java, Lua
+    - Proficient :: Perl, Python, Bash, Emacs Lisp, C, C++, Java, Lua, Qt
 
-    - Used :: ObjC, C#, PHP
+    - Used :: ObjC, C#, PHP, Ruby
 *** Authoring
     - Text :: Org-mode, Emacs
 *** Version Control
@@ -135,17 +146,25 @@
     Master, Control Theory \& Engineering, Institute of Automation,
     Chinese Academy of Science
 
-* Personal Infomation
+* Personal Information
 *** Date of Birth
     10^{th} March, 1980
 *** Mobile Phone
     {{{phone}}}
 *** E-mail
     [[mailto:baohaojun@gmail.com][baohaojun@gmail.com]]
-*** Blog
-    [[http://baohaojun.github.io]]
-*** Code
-    [[https://github.com/baohaojun]]
+*** URLs
+- Blog :: [[http://baohaojun.github.io]]
+- Code :: [[https://github.com/baohaojun]]
+- System-config :: https://github.com/baohaojun/system-config
+- System-config Usage Video :: https://www.youtube.com/watch?v=qp2b3-Guej0
+- Wrench :: https://github.com/SmartisanTech/Wrench
+- Wrench Video :: https://m.youtube.com/watch?v=re_bECYY0rM
+- Bbyac :: http://github.com/baohaojun/bbyac
+- Org-jira :: https://github.com/baohaojun/org-jira
+- Ajoke :: https://github.com/baohaojun/ajoke
+- Beagrep :: https://github.com/baohaojun/beagrep
+
 
 
 #+BEGIN_LaTeX
