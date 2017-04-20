@@ -486,7 +486,7 @@ class ime:
 
     def cand_possible_before_key(self, key): #impossible after key
         global _g_ime_single_mode
-        if key == 'return':
+        if key == 'return' or key == 'C j' or key == 'C m':
             self.__english_mode(key)
         elif key == 'space':
             self.__commit_cand()
@@ -657,7 +657,7 @@ class ime:
             self.compstr += key.name
         elif key == 'backspace':
             self.compstr = self.compstr[:-1]
-        elif key == 'return':
+        elif key == 'return' or key == 'C j' or key == 'C m':
             comp = self.compstr
             if self.compstr and self.compstr[0] == ';' and len(self.compstr) > 1:
                 comp = self.compstr[1:]
