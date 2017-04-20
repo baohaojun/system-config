@@ -1830,6 +1830,24 @@ M.call_ext = function(ext, ...)
    M.ext_args = {}
 end
 
+M.start_app = function(to_start, to_find)
+
+   pkg = to_start:gsub("/.*", "")
+   for i = 1, 20 do
+      adb_start_activity(to_start)
+      wait_top_activity_match("^" .. pkg)
+      adb_event"key back sleep .2"
+
+      top_window = adb_top_window()
+      if top_window ~= "" and not top_window:match("^" .. pkg) then
+         log("We got top window: %s at %d", top_window, i)
+         break
+      end
+   end
+
+   adb_start_activity(to_start)
+end
+
 M.M = M
 
 t1_post = function(text) -- use weixin
