@@ -5,6 +5,8 @@ local M = {}
 
 local W = {}
 
+M.ext_args = {}
+
 -- functions
 local WrenchExt = {}
 local search_sms, string_strip, handle_notification
@@ -546,6 +548,7 @@ prompt_user = function(txt)
    end
 end
 
+M.select_args = select_args
 M.prompt_user = prompt_user
 
 yes_or_no_p = function(txt)
@@ -1825,7 +1828,25 @@ end
 M.call_ext = function(ext, ...)
    M.ext_args = {...}
    t1_run("ext" .. package.config:sub(1, 1) .. ext .. ".lua")
-   M.ext_args = nil
+   M.ext_args = {}
+end
+
+M.start_app = function(to_start, to_find)
+
+   pkg = to_start:gsub("/.*", "")
+   for i = 1, 20 do
+      adb_start_activity(to_start)
+      wait_top_activity_match("^" .. pkg)
+      adb_event"key back sleep .2"
+
+      top_window = adb_top_window()
+      if top_window ~= "" and not top_window:match("^" .. pkg) then
+         log("We got top window: %s at %d", top_window, i)
+         break
+      end
+   end
+
+   adb_start_activity(to_start)
 end
 
 M.M = M
