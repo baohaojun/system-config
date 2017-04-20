@@ -38,8 +38,6 @@ local t1_config, check_phone
 local weixin_find_friend, qq_find_friend, qq_find_group_friend
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_rewrite, emoji_for_weibo
 local adb_get_last_pic, debugging
-local adb_weixin_lucky_money
-local adb_weixin_lucky_money_output
 local t1_find_weixin_contact, t1_find_qq_contact, t1_find_dingding_contact
 local find_weibo_friend
 local adb_start_service_and_wait_file_gone
@@ -1196,14 +1194,17 @@ adb_get_input_window_dump = function()
    ime_height = ime_height * default_height / app_height
    M.ime_height = ime_height
 
-   local ime_connected = not dump_str:match("mServedInputConnection=null")
+   local ime_connected = not (
+      dump_str:match("mServedInputConnection=null") or
+         dump_str:match("mStartedInputConnection=null")
+   )
    return input_method_active, ime_height, ime_connected, current_input_method
 end
 
 adb_input_method_is_null = function ()
-   --         if adb dumpsys input_method | grep mServedInputConnection=null -q; then
+   -- if adb dumpsys input_method | grep mServedInputConnection=null -q; then
    local dump = adb_pipe{'dumpsys', 'input_method'}
-   if dump:match("mServedInputConnection=null") then
+   if dump:match("mServedInputConnection=null") or dump_str:match("mStartedInputConnection=null") then
       return true
    else
       return false
@@ -1916,7 +1917,7 @@ t1_post = function(text) -- use weixin
    else
       local add, post_button = '', right_button_x .. ' 1850'
       local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
-      log("input_method is %s, ime_xy is %s", input_method, ime_height)
+      log("input_method is %s, ime_xy is %s, ime_connected is %s", input_method, ime_height, ime_connected)
       -- debugging("ime_xy is %s", ime_xy)
 
       if input_method then
@@ -2559,97 +2560,6 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_event"key DPAD_UP key DPAD_UP"
 end
 
-adb_weixin_lucky_money_output = function(password, bless, money, number)
-   adb_am("am start -n " .. W.weixinLauncherActivity)
-   local w = adb_focused_window()
-   adb_event("key back")
-   adb_event("adb-tap 448 336 adb-tap 961 1835 adb-tap 899 1313 sleep 2")
-
-   if money and number then
-      system(("sendtext-android %s; adb-key tab; sendtext-android %s; adb-key tab tab"):format(number, money))
-   else
-      system("sendtext-android $(random+1 5 5); adb-key tab; sendtext-android $(random+1 5 5).$(random+1 99); adb-key tab tab")
-   end
-
-   if not bless then
-      t1_post("二十连发，每周四Linux分享，一定要来哦🐉")
-   else
-      t1_post(bless)
-   end
-   adb_event("adb-tap 993 1210 adb-tap 375 1396 sleep 3")
-
-   password:gsub(".", function(c)
-                    if c == '1' then
-                       adb_event("adb-tap 202 1288")
-                    elseif c == '2' then
-                       adb_event("adb-tap 528 1319")
-                    elseif c == '3' then
-                       adb_event("adb-tap 910 1240")
-                    elseif c == '4' then
-                       adb_event("adb-tap 228 1465")
-                    elseif c == '5' then
-                       adb_event("adb-tap 554 1495")
-                    elseif c == '6' then
-                       adb_event("adb-tap 944 1475")
-                    elseif c == '7' then
-                       adb_event("adb-tap 380 1376")
-                    elseif c == '8' then
-                       adb_event("adb-tap 512 1670")
-                    elseif c == '9' then
-                       adb_event("adb-tap 886 1637")
-                    elseif c == '0' then
-                       adb_event("adb-tap 546 1855")
-                    end
-   end)
-end
-
-adb_weixin_lucky_money = function ()
-   local loop_n = 1
-   while true do
-      loop_n = loop_n + 1
-      adb_am("am start -n " .. W.weixinLauncherActivity)
-      local w = adb_focused_window()
-      if w ~= W.weixinLauncherActivity then
-         adb_event("key back key back")
-      end
-      adb_event("adb-tap 106 178 adb-tap 173 1862 adb-tap 375 340")
-
-
-      adb_event([[
-               adb-tap 703 1572 sleep .1 adb-tap 523 1263
-               adb-tap 711 1409 adb-tap 703 1572 sleep .1 adb-tap 523 1263
-               adb-tap 711 1209 adb-tap 703 1572 sleep .1 adb-tap 523 1263
-      ]])
-      local w = adb_focused_window()
-      if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
-         adb_event("adb-tap 523 1263 sleep .1")
-         if adb_focused_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
-            adb_event("key back")
-         else
-            adb_event("key back")
-         end
-      elseif loop_n % 3 == 1 then
-         adb_event("key back adb-tap 304 510")
-         adb_event([[
-                  adb-tap 703 1572 sleep .1 adb-tap 523 1263
-                  adb-tap 711 1409 adb-tap 703 1572 sleep .1 adb-tap 523 1263
-                  adb-tap 711 1209 adb-tap 703 1572 sleep .1 adb-tap 523 1263
-         ]])
-         w = adb_focused_window()
-         if w == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" then
-            adb_event("adb-tap 523 1263 sleep .1")
-
-            if adb_focused_window() == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
-               adb_event("key back")
-            else
-               adb_event("key back")
-            end
-         end
-      end
-   end
-end
-
-
 t1_find_weixin_contact = function(number)
    if not number:match("^[0-9]+$") then
       return weixin_find_friend(number)
@@ -2872,8 +2782,6 @@ M.t1_run = t1_run
 M.t1_add_mms_receiver = t1_add_mms_receiver
 M.t1_adb_mail = t1_adb_mail
 M.t1_save_mail_heads = t1_save_mail_heads
-M.adb_weixin_lucky_money = adb_weixin_lucky_money
-M.adb_weixin_lucky_money_output = adb_weixin_lucky_money_output
 M.adb_event = adb_event
 M.t1_send_action = t1_send_action
 M.t1_post2 = t1_post2
@@ -2893,6 +2801,7 @@ local function be_verbose()
 end
 
 local function isWeixinLuckyMoneyReceiver(window)
+   -- com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.En_fba4b94f
    if window == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI" or (
       window:match("^com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.") and
          window ~= "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI"
@@ -2908,8 +2817,10 @@ local function sayThankYouForLuckyMoney()
       adb_event"sleep 1 adb-key back sleep 1"
       top_window = adb_top_window()
       log("Got after luck window: %s", top_window)
-      if not top_window:match("^com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.") and
+      if top_window and
+         not top_window:match("^com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.") and
       not top_window:match("^com.tencent.mobileqq/cooperation.qwallet.") then
+         log("We've got to %s to say thank you", top_window)
          t1_post("谢谢老板的红包🤓")
          sleep(1)
          break
@@ -2941,11 +2852,12 @@ local function clickForWeixinMoney()
    end
 
    for i = 1, 20 do
-      adb_event"adb-tap 528 1197 adb-tap 507 1382 sleep .1"
+      adb_event"adb-tap 535 1197 adb-tap 507 1382 sleep .1"
       top_window = adb_top_window()
       if top_window == "com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI" then
          break
-      elseif not isWeixinLuckyMoneyReceiver(top_window) then
+      elseif top_window and not isWeixinLuckyMoneyReceiver(top_window) then
+         log("We have got to %s when click weixin money", top_window)
          break
       end
    end
@@ -2954,7 +2866,7 @@ local function clickForWeixinMoney()
    adb_event"adb-key back adb-key back sleep .5 adb-key home"
 end
 
-clickForQqMoney = function(title, text)
+M.clickForQqMoney = function(title, text)
    log("Click for QQ money")
    for i = 1, 20 do
       top_window = adb_top_window()
@@ -2969,7 +2881,7 @@ clickForQqMoney = function(title, text)
    end
    -- adb-tap 306 1398 adb-tap 179 1587 adb-tap 951 1762
    for i = 1, 20 do
-      adb_event"adb-tap 306 1398 adb-tap 179 1587 adb-tap 951 1762"
+      adb_event"adb-tap 351 1398 adb-tap 179 1587 adb-tap 951 1762"
       adb_event "sleep .1"
       if adb_top_window() == "com.tencent.mobileqq/cooperation.qwallet.plugin.QWalletPluginProxyActivity" then
          sayThankYouForLuckyMoney()
@@ -3001,7 +2913,7 @@ handle_notification = function(key, pkg, title, text)
          M.shift_click_notification(pkg, key, title, text)
       end
 
-      clickForQqMoney(title, text)
+      M.clickForQqMoney(title, text)
    end
 
    if not should_use_internal_pop then
