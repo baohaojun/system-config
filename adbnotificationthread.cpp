@@ -85,7 +85,7 @@ void AdbNotificationThread::onDisconnected()
 void AdbNotificationThread::onNewNotification()
 {
     QByteArray bytes = notificationSocket->readLine();
-    qint64 currentTime = QDateTime::currentMSecsSinceEpoch()
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
     if (bytes == mLastJsonStr) {
         if (currentTime - mLastTime < 2000) {
             return;
