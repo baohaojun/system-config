@@ -742,10 +742,22 @@ end
 
 adb_top_window = function()
    -- dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
-   m_window_dump = adb_pipe("dumpsys window") or ""
-   m_focused_app = m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
-   m_focused_window = m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
-   return m_focused_window
+   for i = 1, 50 do
+      m_window_dump = adb_pipe("dumpsys window") or ""
+      m_focused_app = m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
+      m_focused_window = m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
+      if m_focused_window ~= "" then
+         return m_focused_window
+      end
+      sleep(.1)
+      if i > 20 then
+         log("Can't get a valid top window at %d", i)
+      end
+
+      if i == 50 then
+         error("Error: can't get a valid top window")
+      end
+   end
 end
 
 local function search_mail(what)
@@ -2852,7 +2864,7 @@ end
 local function clickForWeixinMoney()
    log("Click for weixin money")
 
-   for i = 1, 20 do
+   for i = 1, 50 do
       top_window = adb_top_window()
       if top_window and not top_window:match("^com.tencent.mm/") then
          sleep(.1)
@@ -2861,7 +2873,7 @@ local function clickForWeixinMoney()
       end
    end
 
-   for i = 1, 20 do
+   for i = 1, 50 do
       adb_event"adb-tap 406 1660"
       if i > 2 then
          adb_event"adb-tap 327 1395"
@@ -2869,6 +2881,8 @@ local function clickForWeixinMoney()
       adb_event "sleep .1"
       if isWeixinLuckyMoneyReceiver(adb_top_window()) then
          break
+      elseif i == 50 then
+         log("Can't get get the money after %d times", i)
       end
    end
 
@@ -2889,7 +2903,7 @@ end
 
 M.clickForQqMoney = function(title, text)
    log("Click for QQ money")
-   for i = 1, 20 do
+   for i = 1, 50 do
       top_window = adb_top_window()
       if top_window and not top_window:match("^com.tencent.mobileqq/") then
          sleep(.1)
@@ -2901,12 +2915,14 @@ M.clickForQqMoney = function(title, text)
       end
    end
    -- adb-tap 306 1398 adb-tap 179 1587 adb-tap 951 1762
-   for i = 1, 20 do
+   for i = 1, 50 do
       adb_event"adb-tap 351 1398 adb-tap 179 1587 adb-tap 951 1762"
       adb_event "sleep .1"
       if adb_top_window() == "com.tencent.mobileqq/cooperation.qwallet.plugin.QWalletPluginProxyActivity" then
          sayThankYouForLuckyMoney()
          break
+      elseif i == 50 then
+         log("Can't get to QWalletPluginProxyActivity after %d times", i)
       end
    end
    adb_event"sleep .3 adb-key back adb-key back adb-key home"

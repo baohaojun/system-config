@@ -84,11 +84,6 @@ void AdbNotificationThread::onDisconnected()
 void AdbNotificationThread::onNewNotification()
 {
     QByteArray bytes = notificationSocket->readLine();
-    if (bytes == mLastJsonStr) {
-        return;
-    }
-
-    mLastJsonStr = bytes;
     QJsonDocument jdoc = QJsonDocument::fromJson(bytes);
     if (!jdoc.isObject()) {
         qDebug() << "Not a json object" << jdoc;

@@ -197,7 +197,6 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
     if (arg.startsWith("input ") || arg.startsWith("sleep ")) {
         QStringList actions = arg.split(";", QString::SkipEmptyParts);
         foreach (const QString& action, actions) {
-            qDebug() << "doing action" << action;
             if (action.startsWith("sleep ")) {
                 int msec = atof(qPrintable(action.mid(6))) * 1000;
                 emit requestSyncScreen();
@@ -211,7 +210,6 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
                 emit gotSomeLog("info", QString("命令超时： ") + action);
             }
             res = t1Sock->readLine();
-            qDebug() << "got result" << res;
         }
     } else if (arg.startsWith("am ")) {
         t1Sock->write(arg.toUtf8() + "\n");
@@ -220,7 +218,6 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
             emit gotSomeLog("info", QString("命令超时： ") + arg);
         }
         res = t1Sock->readLine();
-        qDebug() << "got result" << res;
     } else {
         QString error = "Invalid t1sock input: " + arg;
         luaL_argerror(L, 1, qPrintable(error));
