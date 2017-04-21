@@ -24,6 +24,7 @@ private:
     QTimer *mConnectTimer;
     QTcpSocket *notificationSocket;
     QByteArray mLastJsonStr;
+    qint64 mLastTime;
 
 signals:
     void adbNotificationArrived(const QString& key, const QString& pkg,

@@ -16,6 +16,7 @@ import android.os.Message;
 import android.service.notification.NotificationListenerService.*;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.system.Os;
 import android.util.Log;
 import android.widget.Toast;
 import com.Wrench.Input;
@@ -200,6 +201,11 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     @Override
     public void onCreate()  {
         super.onCreate();
+        if (Os.getuid() > 20000) {
+            Log.e("bhj", String.format("%s:%d: should not run notification listener for %d", "WrenchNotificationHelper.java", 207, Os.getuid()));
+            return;
+        }
+
         mHandler = new Handler() {
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
@@ -398,9 +404,13 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     public void onNotificationPosted(StatusBarNotification sbn)  {
         String pkg = sbn.getPackageName();
         if ("android".equals(pkg) ||
+            "com.github.shadowsocks".equals(pkg) ||
+            "com.bhj.setclip".equals(pkg) ||
             "com.android.systemui".equals(pkg)) {
             return;
         }
+
+        Log.e("bhj", String.format("%s:%d: got message from %s", "WrenchNotificationHelper.java", 406, pkg));
 
         Bundle extra = makeBundleFromSbn(sbn);
         Message msg = new Message();

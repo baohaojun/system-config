@@ -11,6 +11,7 @@
 #include <QTime>
 #include <QtCore/QJsonDocument>
 #include <QJsonObject>
+#include <QtCore/QDateTime>
 
 
 AdbNotificationThread::AdbNotificationThread(QObject* parent)
@@ -84,6 +85,16 @@ void AdbNotificationThread::onDisconnected()
 void AdbNotificationThread::onNewNotification()
 {
     QByteArray bytes = notificationSocket->readLine();
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch()
+    if (bytes == mLastJsonStr) {
+        if (currentTime - mLastTime < 2000) {
+            return;
+        }
+    }
+
+    mLastJsonStr = bytes;
+    mLastTime = currentTime;
+
     QJsonDocument jdoc = QJsonDocument::fromJson(bytes);
     if (!jdoc.isObject()) {
         qDebug() << "Not a json object" << jdoc;
