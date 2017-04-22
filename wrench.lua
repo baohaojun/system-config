@@ -919,7 +919,7 @@ weixin_open_homepage = function()
          sleep(.1)
          top_window = adb_top_window()
          if top_window == W.weixinSearchActivity then
-            log("exit from search by key back " .. i_search)
+            log("exit from search by key back: %d %s ", i_search, top_window)
             wait_input_target(W.weixinSearchActivity)
             adb_event"key back sleep .1 key back sleep .1"
             sleep(.1)
@@ -928,6 +928,8 @@ weixin_open_homepage = function()
          elseif top_window ~= '' and top_window ~= W.weixinLauncherActivity then
             log("exit the current '%s' by back key %d", top_window, i)
             waiting_search = false
+         else
+            log("We are in %s when %d", top_window, i)
          end
          if not waiting_search then
             break
@@ -940,26 +942,7 @@ weixin_open_homepage = function()
    end
 end
 
-
-local open_weixin_scan = function()
-   weixin_open_homepage()
-   adb_event"sleep .1 adb-tap 56 154 sleep .5 adb-tap 1002 115 sleep .5 adb-tap 717 477"
-   if true then
-      return
-   end
-   wx_login_page = "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI"
-   for i = 1, 60 do
-      w = adb_top_window()
-      if w == "com.tencent.mm/com.tencent.mm.plugin.scanner.ui.BaseScanUI" then
-         sleep(1)
-      elseif w == wx_login_page then
-         for y = 1, 10 do
-            adb_event"sleep .1 adb-tap 516 1020"
-         end
-         break
-      end
-   end
-end
+M.weixin_open_homepage = weixin_open_homepage
 
 string_split = function(s)
    s = s:gsub("^%s+", "")
