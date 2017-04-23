@@ -42,6 +42,7 @@ map['com.booking/com.booking.activity.UserLoginWithFacebookActivity'] = 'manual-
 map['com.demon.weism/com.demon.weism.activity.InfoBoxesActivity'] = 'weixin-chat'
 map['com.demon.weism/com.demon.weism.activity.LoginActivity'] = 'manual-post'
 map['com.demon.weism/com.demon.weism.activity.NewMainActivity'] = 'weixin-chat'
+map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.AnswerProblemWithCodeActivity'] = 'manual-post'
 map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.LoginActivity'] = 'weixin-chat'
 map['com.ecitic.bank.mobile/com.citicbank.newmobilebank.ui.CBWebviewActivity'] = 'manual-post'
 map['com.eg.android.AlipayGphone/com.alipay.android.phone.businesscommon.globalsearch.ui.MainSearchActivity'] = 'manual-post'
