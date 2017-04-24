@@ -204,9 +204,15 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     public void onCreate()  {
         super.onCreate();
         if (Os.getuid() > 20000) {
+            // This if-clause is to prevent Smartisan's clone app
+            // feature from trying to start another
+            // NotificationListener.  The "clone app" feature is the
+            // one that allow you to open 2 wechat/qq etc.
             mShouldSkip = true;
             Log.e("bhj", String.format("%s:%d: should not run notification listener for %d", "WrenchNotificationHelper.java", 207, Os.getuid()));
             return;
+        } else {
+            Log.e("bhj", String.format("%s:%d: onCreate", "WrenchNotificationHelper.java", 211));
         }
 
         mHandler = new Handler() {

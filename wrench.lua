@@ -813,7 +813,7 @@ local function get_coffee(what)
       if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
          return
       end
-      adb_event"adb-tap 337 722"
+      adb_event"adb-tap 337 782"
 
       for f_i = 1, 10 do
          local FavoriteIndexUI = "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavoriteIndexUI"
@@ -1470,6 +1470,9 @@ t1_config = function(passedConfigDirPath)
    app_width = dump:match('app=(%d+x%d+)')
    app_height = app_width:match('x(%d+)')
    app_width = app_width:match('(%d+)x')
+   if app_width > app_height and yes_or_no_p("Wrench found your phone screen maybe rotated, correct it? " .. app_width .. "x" .. app_height) then
+      app_width, app_height = app_height, app_width
+   end
    app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
    real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
    log("app_width_ratio is %f, app_height_ratio is %f ", app_width_ratio, app_height_ratio)
