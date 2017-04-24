@@ -2881,7 +2881,7 @@ local function clickForWeixinMoney()
    end
 
    sayThankYouForLuckyMoney()
-   adb_event"adb-key back adb-key back sleep .5 adb-key home"
+   adb_event"sleep .5 adb-key home"
 end
 
 M.clickForQqMoney = function(title, text)
@@ -2908,7 +2908,7 @@ M.clickForQqMoney = function(title, text)
          log("Can't get to QWalletPluginProxyActivity after %d times", i)
       end
    end
-   adb_event"sleep .3 adb-key back adb-key back adb-key home"
+   adb_event"sleep .3 adb-key home"
 end
 
 local should_use_internal_pop = true

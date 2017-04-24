@@ -197,17 +197,23 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     }
 
     LocalServerSocket t1WrenchServer;
+    private boolean mShouldSkip = false;
+    private boolean mConnected = false;
 
     @Override
     public void onCreate()  {
         super.onCreate();
         if (Os.getuid() > 20000) {
+            mShouldSkip = true;
             Log.e("bhj", String.format("%s:%d: should not run notification listener for %d", "WrenchNotificationHelper.java", 207, Os.getuid()));
             return;
         }
 
         mHandler = new Handler() {
                 public void handleMessage(Message msg) {
+                    if (!mConnected) {
+                        return;
+                    }
                     switch (msg.what) {
                     case gotCommandFromWrench:
                         {
@@ -402,6 +408,14 @@ public class WrenchNotificationHelper extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn)  {
+        if (mShouldSkip) {
+            return;
+        }
+
+        if (!mConnected) {
+            return;
+        }
+        
         String pkg = sbn.getPackageName();
         if ("android".equals(pkg) ||
             "com.github.shadowsocks".equals(pkg) ||
@@ -423,6 +437,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     public void onListenerConnected()
     {
         super.onListenerConnected();
+        mConnected = true;
         Log.e("bhj", String.format("%s:%d: onListenerConnected(%d)", "WrenchNotificationHelper.java", 48, this.hashCode()));
     }
 }
