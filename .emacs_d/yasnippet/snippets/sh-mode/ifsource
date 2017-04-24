@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: ifsource
+# key: ifsource
+# --
+if test "\$BASH_SOURCE" != \$0; then
+    # we are being sourced
+    ${1:true}
+fi
+$0

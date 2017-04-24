@@ -11,7 +11,7 @@ EMACS=emacs
 
 if test "$USER" = bhj; then
     if ! [[ $LANG =~ ja_JP ]]; then
-        exec ja_JP emacs.bhj "$@"
+        . lang ja_JP
     fi
 
     export SAVED_GTK_IM_MODULE=$GTK_IM_MODULE
