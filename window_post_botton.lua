@@ -109,6 +109,7 @@ map['com.skype.raider/com.skype.android.app.signin.SignUpActivity'] = 'manual-po
 map['com.skype.raider/com.skype.android.app.signin.unified.UnifiedLandingPageActivity'] = 'manual-post'
 map['com.smartisanos.appstore'] = 'manual-post'
 map['com.smartisanos.appstore/com.smartisanos.appstore.AppStoreActivity'] = 'manual-post'
+map['com.smartisanos.bug2go/com.smartisanos.bug2go.ui.MainActivity'] = 'manual-post'
 map['com.smartisanos.cloudsync/com.smartisanos.accounts.AccountsManagerActivity'] = 'manual-post'
 map['com.smartisanos.launcher/com.smartisanos.launcher.Launcher'] = 'weixin-chat'
 map['com.smartisanos.music/com.smartisanos.music.activities.MusicMain'] = 'manual-post'
