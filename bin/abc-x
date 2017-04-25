@@ -140,7 +140,7 @@ abc-base-build() {
         fi
     fi
 
-    product_branch=$(select-args </dev/tty -o -p "请选择你想使用的代码索引的产品、分支" ${!android_manifests[@]} ${!oem_manifests[@]})
+    product_branch=$(select-args -i -dev </dev/tty -o -p "请选择你想使用的代码索引的产品、分支" ${!android_manifests[@]} ${!oem_manifests[@]})
     android_or_oem=$(
         select-args </dev/tty -o -p "请选择你要搜索安卓代码还是OEM代码" android oem
                   )
@@ -161,16 +161,17 @@ abc-grep() {
     (
         croot
         ## start code-generator "^\\s *#\\s *"
-        # generate-getopt e:entry rremote ttags b:base-build
+        # generate-getopt e:entry rremote ttags b:base-build ssilent
         ## end code-generator
         ## start generated code
-        TEMP=$(getopt -o tb:e:rh \
-                      --long tags,base-build:,entry:,remote,help,no-tags,no-remote \
+        TEMP=$(getopt -o tb:e:rsh \
+                      --long tags,base-build:,entry:,remote,silent,help,no-tags,no-remote,no-silent \
                       -n $(basename -- $0) -- "$@")
         tags=false
         base_build=
         entry=
         remote=false
+        silent=false
         eval set -- "$TEMP"
         while true; do
             case "$1" in
@@ -199,6 +200,14 @@ abc-grep() {
                     fi
                     shift
                     ;;
+                -s|--silent|--no-silent)
+                    if test "$1" = --no-silent; then
+                        silent=false
+                    else
+                        silent=true
+                    fi
+                    shift
+                    ;;
                 -h|--help)
                     set +x
                     echo
@@ -212,6 +221,9 @@ abc-grep() {
                     echo
                     printf %06s '-r, '
                     printf %-24s '--[no-]remote'
+                    echo
+                    printf %06s '-s, '
+                    printf %-24s '--[no-]silent'
                     echo
                     printf %06s '-t, '
                     printf %-24s '--[no-]tags'
@@ -257,7 +269,16 @@ abc-grep() {
             exit
         fi
 
-        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|grep .|xargs -d \\n grep -H -n -e "$entry" "$@" /dev/null
+        ssh $abc_host abc abc-files -b "$(abc-base-build)" "$(echo "$entry" | perl -npe 's/[^\w]/ /g')"|grep .|
+            if test "$silent" = true; then
+                while read f; do
+                    if test -e "$f"; then
+                        echo "$f"
+                    fi
+                done
+            else
+                cat
+            fi | xargs -d \\n grep -H -n -e "$entry" "$@" /dev/null
     )
 }
 

@@ -31,8 +31,8 @@ sub tty(@) {
 
 sub read_ans($) {
     my ($prompt) = @_;
-    unless ($prompt =~ '\s$') {
-        $prompt .= " ";
+    unless ($prompt =~ '>$') {
+        $prompt .= ">";
     }
     if (not $tty) {
         tty "$prompt";
