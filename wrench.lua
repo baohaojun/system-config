@@ -2832,6 +2832,11 @@ local function isWeixinLuckyMoneyReceiver(window)
 end
 
 local function sayThankYouForLuckyMoney()
+   local thanks = {
+      "谢谢老板的红包🤓",
+      "老板爱发红包，我就爱这样的老板😍",
+      "黑夜给了我一双黑色的眼睛👀，我却用它抢红包💰——谢谢老板🙇🏿",
+   }
    for i = 1, 20 do
       adb_event"sleep 1 adb-key back sleep 1"
       top_window = adb_top_window()
@@ -2840,7 +2845,8 @@ local function sayThankYouForLuckyMoney()
          not top_window:match("^com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.") and
       not top_window:match("^com.tencent.mobileqq/cooperation.qwallet.") then
          log("We've got to %s to say thank you", top_window)
-         t1_post("谢谢老板的红包🤓")
+         local n = math.random(#thanks)
+         t1_post(thanks[n])
          sleep(1)
          break
       end
