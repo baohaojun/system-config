@@ -68,15 +68,6 @@ end
 M.is_useful_notification = is_useful_notification
 M.should_use_internal_pop = should_use_internal_pop
 
-M.should_tell_a_fortune = false
-if private_config.should_tell_a_fortune then
-   M.should_tell_a_fortune = true
-end
-
-M.getVncServerCommand = function()
-   return private_config.vnc_command or ""
-end
-
 M.configs = {
    ["phone-width"] = 1080,
    ["phone-height"] = 1920,

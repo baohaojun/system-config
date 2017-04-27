@@ -2927,7 +2927,7 @@ local function sayThankYouForLuckyMoney()
 
          local thank_you = thanks[n]
 
-         if WrenchExt.should_tell_a_fortune then
+         if WrenchExt.getConfig("should-tell-fortune") then
             local fortune = M.qx("fortune-zh")
             fortune = fortune:gsub("%[.-m", "")
             thank_you = thanks[n] .. "\n\n*****\n\n" .. fortune
