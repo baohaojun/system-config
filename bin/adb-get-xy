@@ -1,5 +1,53 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @resize=true
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long resize,help,no-resize \
+              -n $(basename -- $0) -- "$@")
+resize=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --resize|--no-resize)
+            if test "$1" = --no-resize; then
+                resize=false
+            else
+                resize=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]resize'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+export resize
+
+
 export TAP=adb-tap
 if test "$1"; then
     export TAP=$1
@@ -8,10 +56,15 @@ fi
 (sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
 adb-tty getevent -l </dev/tty | perl -ne '
     BEGIN {
-        $xy = qx(my-adb dumpsys window);
-        if ($xy =~ m/app=(\d+)x(\d+)/) {
-          $true_x = $1;
-          $true_y = $2;
+        if ($ENV{resize} eq "true") {
+            $true_x = 1080;
+            $true_y = 1920;
+        } else {
+            $xy = qx(my-adb dumpsys window);
+            if ($xy =~ m/app=(\d+)x(\d+)/) {
+              $true_x = $1;
+              $true_y = $2;
+            }
         }
     }
     if (m/ABS_MT_POSITION_/) {
