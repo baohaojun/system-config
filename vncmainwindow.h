@@ -47,6 +47,10 @@ protected:
 
 private:
     Ui::VncMainWindow *ui;
+    uint32_t mPhoneWidth;
+    uint32_t mPhoneHeight;
+    uint32_t mWheelScale;
+    uint32_t mWheelTime;
     ConnectionWindow *m_fullScreenWindow;
     QStringList m_recentConnections;
     static QStringList m_encodings;

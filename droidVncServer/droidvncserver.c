@@ -35,6 +35,8 @@ int VNC_PORT=5901;
 
 unsigned int *cmpbuf;
 unsigned int *vncbuf;
+extern uint32_t gVideoWidth;
+extern uint32_t gVideoHeight;
 
 static rfbScreenInfoPtr vncscr;
 
@@ -247,11 +249,16 @@ int main(int argc, char **argv)
           break;
         case 's':
           i++;
-          r=atoi(argv[i]); 
+          r=atoi(argv[i]);
           if (r >= 1 && r <= 150)
             scaling = r;
           else 
             scaling = 100;
+
+          if (r == 100) {
+            gVideoHeight = gVideoWidth = 0;
+          }
+
           L("scaling to %d%%\n",scaling);
           break;
         }

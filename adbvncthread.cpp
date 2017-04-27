@@ -8,6 +8,7 @@
 #include <QtCore/QThread>
 #include "bhj_help.hpp"
 #include "wrench.h"
+#include "wrenchext.h"
 #include <QTime>
 
 AdbVncThread::AdbVncThread(QObject* parent)
@@ -70,7 +71,14 @@ void AdbVncThread::onDisconnected()
             mAdbInput = NULL;
         }
 
-        mAdbInput = AdbClient::doAdbPipe("/data/data/com.android.shell/androidvncserver");
+        WrenchExt wrenchExt;
+
+        QString vncCommand = wrenchExt.getConfig("vnc-server-command");
+        if (vncCommand.isEmpty()) {
+            vncCommand = "/data/data/com.android.shell/androidvncserver";
+        }
+
+        mAdbInput = AdbClient::doAdbPipe(vncCommand);
         mAdbInputFinished = false;
         connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));
         connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));

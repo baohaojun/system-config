@@ -95,3 +95,8 @@ WrenchExt::~WrenchExt()
         L = NULL;
     }
 }
+
+QString WrenchExt::getConfig(const QString& config)
+{
+    return callLuaFunc("getConfig", QStringList() << config);
+}

@@ -53,7 +53,6 @@
 #include <QtWidgets/QToolButton>
 #include <QtCore/QRegularExpression>
 
-QString emacsWeixinSh;
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     mQuit(false),
@@ -64,7 +63,6 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
 {
     on_configurePushButton_clicked();
 
-    emacsWeixinSh = QCoreApplication::applicationDirPath() + QDir::separator() + "emacs-weixin.sh";
     ui->setupUi(this);
     connect(ui->phoneTextEdit, SIGNAL(controlEnterPressed()), this, SLOT(on_sendItPushButton_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(emojiShortcutPressed()), this, SLOT(on_tbEmoji_clicked()));
@@ -957,9 +955,16 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 
             if (vncMainWindow == NULL) {
                 vncMainWindow = new VncMainWindow(this);
-                vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
+
                 vncMainWindow->installEventFilter(vncMainWindow);
             }
+            if (mWrenchExt.getConfig("allow-vnc-resize") == "true") {
+                vncMainWindow->setFixedSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+                vncMainWindow->resize(this->size().height() * 1080 / 1920, this->size().height());
+            } else {
+                vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
+            }
+
             vncMainWindow->show();
             moveVncMainWin();
 

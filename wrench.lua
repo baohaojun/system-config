@@ -159,6 +159,7 @@ while test -e /sdcard/Wrench/usb_online; do
 done
 ime enable %s
 ime set %s
+killall -INT androidvncserver || busybox killall -INT androidvncserver
 '>nohup.ime 2>&1 & for i in 1 2 3 4 5 $(seq 1 20); do
    if test -e not-started.$$; then
       sleep .1 || sleep 1
@@ -528,6 +529,69 @@ local function adb_event(events)
    else
       adb_shell(command_str)
    end
+end
+
+M.vnc_scroll_a_page = function(how)
+   local dump = adb_pipe{'dumpsys', 'window'}
+   local real_width = dump:match('cur=(%d+x%d+)')
+   local real_height = tonumber(real_width:match('x(%d+)'))
+   local real_width = tonumber(real_width:match('(%d+)x'))
+
+   local x, y, old_x, old_y
+
+   x = real_width / 2
+   old_x = x
+
+   local min_y = 130
+   local scroll_back = 50
+   if how == "up" then
+      old_y = real_height - min_y
+      y = min_y
+   elseif how == "down" then
+      old_y = min_y
+      y = real_height - min_y
+      scroll_back = -scroll_back
+   end
+   adb_event(("adb-no-virt-key-swipe-200 %s %s %s %s adb-no-virt-key-swipe-100 %s %s %s %s"):format(old_x, old_y, x, y, x, y - scroll_back, x, y))
+end
+
+M.vnc_scroll = function(key, mod)
+   local dump = adb_pipe{'dumpsys', 'window'}
+   local real_width = dump:match('cur=(%d+x%d+)')
+   local real_height = tonumber(real_width:match('x(%d+)'))
+   local real_width = tonumber(real_width:match('(%d+)x'))
+
+   local x, y, old_x, old_y
+   local x_delta = 0
+   local y_delta = 0
+
+   delta = 50
+
+   if mod ~= "" then
+      delta = 200
+   end
+   x = real_width / 2
+   y = real_height / 2
+
+   if key == "up" then
+      y_delta = -delta
+   elseif key == "down" then
+      y_delta = delta
+   elseif key == "left" then
+      x_delta = -delta * 4
+   elseif key == "right" then
+      x_delta = delta * 4
+   end
+
+   adb_event(("adb-no-virt-key-swipe-80 %s %s %s %s"):format(x, y, x + x_delta, y + y_delta))
+end
+
+M.vnc_page_down = function()
+   M.vnc_scroll_a_page("down")
+end
+
+M.vnc_page_up = function()
+   M.vnc_scroll_a_page("up")
 end
 
 local function adb_tap_bot_left()
@@ -1398,6 +1462,12 @@ if not t1_set_variable then
    end
 end
 
+M.qx = function(command)
+   local p = io.popen(command)
+   local v = p:read("*a")
+   return v
+end
+
 t1_config = function(passedConfigDirPath)
    -- install the apk
    if not qt_adb_pipe then
@@ -1470,8 +1540,15 @@ t1_config = function(passedConfigDirPath)
    app_width = dump:match('app=(%d+x%d+)')
    app_height = app_width:match('x(%d+)')
    app_width = app_width:match('(%d+)x')
-   if app_width > app_height and yes_or_no_p("Wrench found your phone screen maybe rotated, correct it? " .. app_width .. "x" .. app_height) then
+   if app_width > app_height and
+      (
+         WrenchExt.getConfig("force-portrait") == 1 or
+            yes_or_no_p("Wrench found your phone screen maybe rotated, correct it? " .. app_width .. "x" .. app_height)
+      )
+   then
+      log("Force portrait mode")
       app_width, app_height = app_height, app_width
+      real_width, real_height = real_height, real_width
    end
    app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
    real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
@@ -1646,11 +1723,11 @@ qq_find_group_friend = function(friend_name)
       log("did not get chatSetting: %s", window)
       return
    end
-   adb_event("sleep 1 adb-tap 667 1326")
+   adb_event("sleep 1 adb-tap 426 1540") -- 点击进入群成员列表
    local troopList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity"
    window = wait_top_activity(troopList)
    if window ~= troopList then
-      log("did not get troopWindow: %s", window)
+      prompt_user("没有点到QQ群成员列表页面，可能是小扳手的座标出了点问题，请用录屏功能调整一下座标")
       return
    end
 
@@ -2836,6 +2913,7 @@ local function sayThankYouForLuckyMoney()
       "谢谢老板的红包🤓",
       "老板爱发红包，我就爱这样的老板😍",
       "黑夜给了我一双黑色的眼睛👀，我却用它抢红包💰——谢谢老板🙇🏿",
+      "你抢或者不抢，红包就在那里💗",
    }
    for i = 1, 20 do
       adb_event"sleep 1 adb-key back sleep 1"
@@ -2846,7 +2924,15 @@ local function sayThankYouForLuckyMoney()
       not top_window:match("^com.tencent.mobileqq/cooperation.qwallet.") then
          log("We've got to %s to say thank you", top_window)
          local n = math.random(#thanks)
-         t1_post(thanks[n])
+
+         local thank_you = thanks[n]
+
+         if WrenchExt.should_tell_a_fortune then
+            local fortune = M.qx("fortune-zh")
+            fortune = fortune:gsub("%[.-m", "")
+            thank_you = thanks[n] .. "\n\n*****\n\n" .. fortune
+         end
+         t1_post(thank_you)
          sleep(1)
          break
       end

@@ -14,6 +14,7 @@
 #include "qvncviewersettings.h"
 #include "aboutdialog.h"
 #include "wrenchmainwindow.h"
+#include "wrenchext.h"
 
 extern QtVncViewerSettings *globalConfig;
 
@@ -24,6 +25,23 @@ VncMainWindow::VncMainWindow(QWidget *parent) :
     ui(new Ui::VncMainWindow)
 {
     ui->setupUi(this);
+
+    WrenchExt wrenchExt;
+
+    QString phoneWidth = wrenchExt.getConfig("phone-width");
+    QString phoneHeight = wrenchExt.getConfig("phone-height");
+    QString wheelScale = wrenchExt.getConfig("wheel-scale");
+    QString wheelTime = wrenchExt.getConfig("wheel-time");
+
+    mPhoneWidth = phoneWidth.toInt();
+    mPhoneWidth = mPhoneWidth ? mPhoneWidth : 1080;
+    mPhoneHeight = phoneHeight.toInt();
+    mPhoneHeight = mPhoneHeight ? mPhoneHeight : 1920;
+    mWheelScale = wheelScale.toInt();
+    mWheelScale = mWheelScale ? mWheelScale : 1;
+    mWheelTime = wheelTime.toInt();
+    mWheelTime = mWheelTime ? mWheelTime : 100;
+
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
     m_fullScreenWindow = 0;
     mWrench = (WrenchMainWindow *)parent;
@@ -92,17 +110,25 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
 
     static int last_x, last_y;
 
-    if (ev->type() == QEvent::MouseButtonPress) {
+    if (ev->type() == QEvent::Resize) {
+        QResizeEvent *rev = (QResizeEvent *)ev;
+        QSize size = rev->size();
+        if (size.height() * mPhoneWidth / mPhoneHeight != size.width()) {
+            size.rwidth() = size.height() * mPhoneWidth / mPhoneHeight;
+            this->resize(size);
+            return true;
+        }
+    } else if (ev->type() == QEvent::MouseButtonPress) {
         QMouseEvent *mev = (QMouseEvent*) ev;
         last_x = mev->x();
         last_y = mev->y();
-        phone_x = mev->x() * 1080 / this->width();
-        phone_y = mev->y() * 1920 / this->height();
+        phone_x = mev->x() * mPhoneWidth / this->width();
+        phone_y = mev->y() * mPhoneHeight / this->height();
         press_time = QTime::currentTime();
     } else if (ev->type() == QEvent::MouseButtonRelease) {
         QMouseEvent *mev = (QMouseEvent*) ev;
-        int x = mev->x() * 1080 / this->width();
-        int y = mev->y() * 1920 / this->height();
+        int x = mev->x() * mPhoneWidth / this->width();
+        int y = mev->y() * mPhoneHeight / this->height();
         QTime now = QTime::currentTime();
 
         if (mev->button() == Qt::RightButton) {
@@ -110,8 +136,12 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
             return true;
         }
 
-        if (abs(x - phone_x) + abs(y - phone_y) > 20) {
-            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-swipe-%d %d %d %d %d", now.msecsTo(press_time), phone_x, phone_y, x, y));
+        int old_x = phone_x;
+        int old_y = phone_y;
+
+        if (abs(x - phone_x) + abs(y - phone_y) > 20 || press_time.msecsTo(now) > 200) {
+            QString event = QString().sprintf("adb-no-virt-key-swipe-%d %d %d %d %d", press_time.msecsTo(now), old_x, old_y, x, y);
+            mLuaThread()->addScript(QStringList() << "adb_event" << event);
         } else {
             mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-tap %d %d", x, y));
         }
@@ -134,7 +164,25 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
             } else if (key == Qt::Key_Backspace) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key DEL");
                 return true;
+            } else if (key == Qt::Key_PageDown || key == Qt::Key_PageUp) {
+                QString func = (key == Qt::Key_PageDown) ? "vnc_page_down" : "vnc_page_up";
+                mLuaThread()->addScript(QStringList() << func);
             }
+        }
+        if (key == Qt::Key_Left || key == Qt::Key_Right ||
+            key == Qt::Key_Down || key == Qt::Key_Up) {
+            QString scroll_key =
+                (key == Qt::Key_Left) ? "left" :
+                (key == Qt::Key_Right) ? "right" :
+                (key == Qt::Key_Down) ? "down" :
+                (key == Qt::Key_Up) ? "up" : "unknown";
+
+            QString scroll_mod =
+                (m & Qt::ControlModifier) ? "control" :
+                (m & Qt::AltModifier) ? "alt" :
+                (m & Qt::ShiftModifier) ? "shift" : "";
+
+            mLuaThread()->addScript(QStringList() << "vnc_scroll" << scroll_key << scroll_mod);
         }
 
         if (!kev->text().isEmpty()) {
@@ -156,10 +204,26 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
             return true;
         }
     } else if (ev->type() == QEvent::Wheel) {
-        QWheelEvent *wev = (QWheelEvent *)ev;
-        int y = wev->angleDelta().y();
-        int x = wev->angleDelta().x();
-        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-swipe-50 %d %d %d %d", wev->x(), wev->y(), wev->x() + x, wev->y() + y));
+        QWheelEvent *mev = (QWheelEvent *)ev;
+        int dy = mev->angleDelta().y() * mWheelScale;
+        int dx = mev->angleDelta().x() * mWheelScale;
+
+        int x = mev->x() * mPhoneWidth / this->width();
+        int y = mev->y() * mPhoneHeight / this->height();
+
+        int new_x = max(x + dx, 0);
+        int new_y = max(y + dy, 0);
+
+        if (new_y > mPhoneHeight) {
+            new_y = mPhoneHeight;
+        }
+
+        if (new_x > mPhoneWidth) {
+            new_x = mPhoneWidth;
+        }
+
+        QString event = QString().sprintf("adb-no-virt-key-swipe-%d %d %d %d %d", mWheelTime, x, y, new_x, new_y);
+        mLuaThread()->addScript(QStringList() << "adb_event" << event);
     }
     return QMainWindow::eventFilter(object, ev);
 }

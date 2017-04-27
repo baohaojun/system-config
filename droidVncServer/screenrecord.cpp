@@ -71,8 +71,8 @@ static bool gRotate = false;            // rotate 90 degrees
 static bool gSizeSpecified = false;     // was size explicitly requested?
 static bool gWantInfoScreen = false;    // do we want initial info screen?
 static bool gWantFrameTime = false;     // do we want times on each frame?
-static uint32_t gVideoWidth = 480;
-static uint32_t gVideoHeight = 640;
+uint32_t gVideoWidth = 480;
+uint32_t gVideoHeight = 640;
 static uint32_t gBitRate = 4000000;     // 4Mbps
 static uint32_t gTimeLimitSec = kMaxTimeLimitSec;
 
@@ -350,11 +350,13 @@ static status_t recordScreen() {
     bool rotated = isDeviceRotated(mainDpyInfo.orientation);
     if (gVideoWidth == 0) {
         gVideoWidth = rotated ? mainDpyInfo.h : mainDpyInfo.w;
+        if (gVideoHeight == 0) {
+            gVideoHeight = rotated ? mainDpyInfo.w : mainDpyInfo.h;
+        }
+    } else {
+        gVideoWidth = (mainDpyInfo.w * gVideoHeight / mainDpyInfo.h + 7 ) / 8 * 8;
     }
-    if (gVideoHeight == 0) {
-        gVideoHeight = rotated ? mainDpyInfo.w : mainDpyInfo.h;
-    }
-    gVideoWidth = (mainDpyInfo.w * gVideoHeight / mainDpyInfo.h + 7 ) / 8 * 8;
+
     fprintf(stderr, "%s:%d: gVideoWidth is %d\n", __FILE__, __LINE__, gVideoWidth);
 
 

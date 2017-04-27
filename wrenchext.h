@@ -16,12 +16,12 @@ public:
     bool shouldUseInternalPop();
     WrenchExt();
     ~WrenchExt();
-
+    QString callLuaFunc(const QString& func, const QStringList& args = QStringList());
+    QString getConfig(const QString& config);
 private:
     lua_State *L;
     bool mUseQtPop;
 
-    QString callLuaFunc(const QString& func, const QStringList& args);
     QString mErrorString;
     void reloadLuaScriptInternally();
 signals:
