@@ -2,11 +2,11 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set @do-review
+# generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set @do-review d:diff-patch-sets?'-d "1 2" to diff patch-set 1 and patch-set 2'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o caH:p:r:h \
-              --long do-review,cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,help,no-do-review,no-cherry-pick,no-auto \
+TEMP=$(getopt -o caH:p:r:d:h \
+              --long do-review,cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,diff-patch-sets:,help,no-do-review,no-cherry-pick,no-auto \
               -n $(basename -- $0) -- "$@")
 do_review=false
 cherry_pick=false
@@ -14,6 +14,7 @@ auto=false
 GERRIT_HOST=
 patch_set=
 REPO_REMOTE=
+diff_patch_sets=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -54,6 +55,10 @@ while true; do
             REPO_REMOTE=$2
             shift 2
             ;;
+        -d|--diff-patch-sets)
+            diff_patch_sets=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
             echo
@@ -71,6 +76,11 @@ while true; do
             printf %06s '-c, '
             printf %-24s '--[no-]cherry-pick'
             echo
+            printf %06s '-d, '
+            printf %-24s '--diff-patch-sets=DIFF_PATCH_SETS'
+            echo
+            printf "%30s" ""
+            echo '-d "1 2" to diff patch-set 1 and patch-set 2'
             printf "%06s" " "
             printf %-24s '--[no-]do-review'
             echo
@@ -92,6 +102,10 @@ done
 
 
 ## end generated code
+
+if test "$diff_patch_sets" -a -z "$patch_set"; then
+    patch_set='*'
+fi
 
 if test -e ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks; then
     . ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks
@@ -151,15 +165,18 @@ if test "$patch_set"; then
         cat <<EOF | putclip
 bash -c 'git diff $(dirname $ref)/\$1 $(dirname $ref)/\$2' true
 EOF
-        ref=$(dirname $ref)/*:$(dirname $ref)/*
+        ref="$(dirname $ref)/*"
     else
         ref=$(dirname $ref)/$patch_set
     fi
 fi
 (
     set -x
-    git fetch $(repo-remote-url $(repo-remote)) -v $ref
+    git fetch $(repo-remote-url $(repo-remote)) -v "$ref:$ref"
 )
+if test "$diff_patch_sets"; then
+    git diff $(for x in $diff_patch_sets; do echo $(dirname $ref)/$x; done)
+fi
 
 if test "$cherry_pick" = true || is-jenkins; then
     git cherry-pick FETCH_HEAD --ff
