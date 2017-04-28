@@ -435,8 +435,23 @@ local function adb_event(events)
 
       if tonumber(events[i]) then
          local width_ratio, height_ratio = app_width_ratio, app_height_ratio
-         if (events[i - 1] == 'adb-no-virt-key-tap') then
+
+         if (events[i - 1]:match("no%-virt")) then
             width_ratio, height_ratio = real_width_ratio, real_height_ratio
+         end
+
+         local action = events[i - 1]
+         if (action:match("%-down$")) then
+            action = "wrench-down"
+         elseif (action:match("%-up$")) then
+            action = "wrench-up"
+         elseif (action:match("%-move$")) then
+            action = "wrench-move"
+         else
+            action = "tap"
+         end
+
+         if (events[i - 1] == 'adb-no-virt-key-tap' or events[i - 1] == 'adb-no-virt-key-up') then
             if m_is_recording then
                local record_file = io.open(m_is_recording, "a")
                local comment = select_args{"You are recording screen operations, please comment this click", "", ""}
@@ -446,7 +461,7 @@ local function adb_event(events)
                record_file:close()
             end
          end
-         local add = ('input tap %d %d;'):format(events[i] * width_ratio, events[i+1] * height_ratio)
+         local add = ('input %s %d %d;'):format(action, events[i] * width_ratio, events[i+1] * height_ratio)
          command_str = command_str .. add
          i = i + 2
       elseif events[i] == 'tap2' or events[i] == 'adb-tap-2' then
@@ -488,21 +503,30 @@ local function adb_event(events)
       elseif events[i] == 'sleep' then
          command_str = command_str .. ('sleep %s || busybox sleep %s;'):format(events[i+1], events[i+1])
          i = i + 2
-      elseif events[i] == 'swipe' or (events[i]):match('adb%-swipe%-') or (events[i]):match('adb%-no%-virt%-key%-swipe%-') then
+      elseif events[i] == 'swipe' or (events[i]):match('adb%-swipe%-') or (events[i]):match('adb%-no%-virt%-key%-.*swipe') then
          ms = 500
          local width_ratio, height_ratio = app_width_ratio, app_height_ratio
+
+         if (events[i]):match('adb%-no%-virt%-key') then
+            width_ratio, height_ratio = real_width_ratio, real_height_ratio
+         end
 
          if (events[i]):match('adb%-swipe%-') then
             ms = (events[i]):sub(#'adb-swipe-' + 1)
          elseif (events[i]):match('adb%-no%-virt%-key%-swipe%-') then
             ms = (events[i]):sub(#'adb-no-virt-key-swipe-' + 1)
-            width_ratio, height_ratio = real_width_ratio, real_height_ratio
          end
          if sdk_version < 18 then
             ms = ""
          end
 
-         local add = ('input touchscreen swipe %d %d %d %d %s;'):format(
+         local action = "swipe"
+         if (events[i]):match('wrench%-swipe') then
+            action = "wrench-swipe"
+         end
+
+         local add = ('input touchscreen %s %d %d %d %d %s;'):format(
+            action,
             events[i+1] * width_ratio, events[i+2] * height_ratio,
             events[i+3] * width_ratio, events[i+4] * height_ratio, ms)
          if sdk_version < 17 then
@@ -513,7 +537,7 @@ local function adb_event(events)
             command_str = command_str .. add
          end
          i = i + 5
-      elseif events[i] == 'adb-tap' or events[i] == 'adb-no-virt-key-tap' then
+      elseif events[i] == 'adb-tap' or events[i]:match('adb%-no%-virt%-key%-') then
          i = i + 1
       else
          error(string.format("Error: unknown event: %d: '%s' (%s)", i, events[i], join(' ', events)))
@@ -542,17 +566,15 @@ M.vnc_scroll_a_page = function(how)
    x = real_width / 2
    old_x = x
 
-   local min_y = 130
-   local scroll_back = 50
+   local min_y = 50
    if how == "up" then
       old_y = real_height - min_y
       y = min_y
    elseif how == "down" then
-      old_y = min_y
-      y = real_height - min_y
-      scroll_back = -scroll_back
+      old_y = min_y * 2
+      y = real_height - 1
    end
-   adb_event(("adb-no-virt-key-swipe-200 %s %s %s %s adb-no-virt-key-swipe-100 %s %s %s %s"):format(old_x, old_y, x, y, x, y - scroll_back, x, y))
+   adb_event(("adb-no-virt-key-wrench-swipe %s %s %s %s"):format(old_x, old_y, x, y))
 end
 
 M.vnc_scroll = function(key, mod)

@@ -71,7 +71,7 @@ M.should_use_internal_pop = should_use_internal_pop
 M.configs = {
    ["phone-width"] = 1080,
    ["phone-height"] = 1920,
-   ["wheel-scale"] = 5,
+   ["wheel-scale"] = 1,
 }
 
 M.getConfig = function(config)

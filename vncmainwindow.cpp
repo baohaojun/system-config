@@ -109,6 +109,7 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
     static QTime press_time;
 
     static int last_x, last_y;
+    static bool isTouchDown;
 
     if (ev->type() == QEvent::Resize) {
         QResizeEvent *rev = (QResizeEvent *)ev;
@@ -120,11 +121,17 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
         }
     } else if (ev->type() == QEvent::MouseButtonPress) {
         QMouseEvent *mev = (QMouseEvent*) ev;
+        if (mev->button() != Qt::LeftButton) {
+            return false;
+        }
+
+        isTouchDown = true;
         last_x = mev->x();
         last_y = mev->y();
         phone_x = mev->x() * mPhoneWidth / this->width();
         phone_y = mev->y() * mPhoneHeight / this->height();
         press_time = QTime::currentTime();
+        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-down %d %d", phone_x, phone_y));
     } else if (ev->type() == QEvent::MouseButtonRelease) {
         QMouseEvent *mev = (QMouseEvent*) ev;
         int x = mev->x() * mPhoneWidth / this->width();
@@ -136,16 +143,31 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
             return true;
         }
 
+        if (mev->button() != Qt::LeftButton) {
+            return false;
+        }
+
+        isTouchDown = false;
+
         int old_x = phone_x;
         int old_y = phone_y;
 
-        if (abs(x - phone_x) + abs(y - phone_y) > 20 || press_time.msecsTo(now) > 200) {
-            QString event = QString().sprintf("adb-no-virt-key-swipe-%d %d %d %d %d", press_time.msecsTo(now), old_x, old_y, x, y);
-            mLuaThread()->addScript(QStringList() << "adb_event" << event);
-        } else {
-            mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-tap %d %d", x, y));
-        }
+        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-up %d %d", x, y));
         return true;
+    } else if (ev->type() == QEvent::MouseMove) {
+        if (isTouchDown) {
+            static int last_x, last_y;
+
+
+            QMouseEvent *mev = (QMouseEvent*) ev;
+            int x = mev->x() * mPhoneWidth / this->width();
+            int y = mev->y() * mPhoneHeight / this->height();
+            if (last_x && last_y && abs(x - last_x) + abs(y - last_y) > 10)
+                mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-move %d %d", x, y));
+            last_x = x;
+            last_y = y;
+            return true;
+        }
     } else if (ev->type() == QEvent::KeyPress) {
         QKeyEvent *kev = (QKeyEvent *)ev;
         int key = kev->key();

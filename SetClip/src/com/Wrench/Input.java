@@ -232,7 +232,32 @@ public class Input {
                             Float.parseFloat(args[index+2]));
                     return;
                 }
-            } else if (command.equals("swipe")) {
+            } else if (command.equals("wrench-down")) {
+                if (length == 3) {
+                    inputSource = getSource(inputSource, InputDevice.SOURCE_TOUCHSCREEN);
+                    sendWrenchDown(inputSource, Float.parseFloat(args[index+1]),
+                            Float.parseFloat(args[index+2]));
+                }
+            } else if (command.equals("wrench-up")) {
+                if (length == 3) {
+                    inputSource = getSource(inputSource, InputDevice.SOURCE_TOUCHSCREEN);
+                    sendWrenchUp(inputSource, Float.parseFloat(args[index+1]),
+                            Float.parseFloat(args[index+2]));
+                }
+            } else if (command.equals("wrench-move")) {
+                if (length == 3) {
+                    inputSource = getSource(inputSource, InputDevice.SOURCE_TOUCHSCREEN);
+                    sendWrenchMove(inputSource, Float.parseFloat(args[index+1]),
+                                   Float.parseFloat(args[index+2]));
+                }
+            } else if (command.equals("wrench-swipe")) {
+                sendWrenchSwipe(inputSource,
+                                Float.parseFloat(args[index+1]), Float.parseFloat(args[index+2]),
+                                Float.parseFloat(args[index+3]), Float.parseFloat(args[index+4]),
+                                100);
+                return;
+            }
+            else if (command.equals("swipe")) {
                 int duration = -1;
                 inputSource = getSource(inputSource, InputDevice.SOURCE_TOUCHSCREEN);
                 switch (length) {
@@ -325,6 +350,40 @@ public class Input {
         injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x, y, 0.0f);
     }
 
+    private void sendWrenchMove(int inputSource, float x, float y) {
+        long now = SystemClock.uptimeMillis();
+        injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, x, y, 1.0f);
+    }
+
+    private void sendWrenchDown(int inputSource, float x, float y) {
+        long now = SystemClock.uptimeMillis();
+        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x, y, 1.0f);
+    }
+
+    private void sendWrenchUp(int inputSource, float x, float y) {
+        long now = SystemClock.uptimeMillis();
+        injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x, y, 0.0f);
+    }
+
+    private void sendWrenchSwipe(int inputSource, float x1, float y1, float x2, float y2, int duration) {
+        long now = SystemClock.uptimeMillis();
+        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, 1.0f);
+        long startTime = now;
+        long endTime = startTime + duration;
+        while (now < endTime) {
+            long elapsedTime = now - startTime;
+            float alpha = (float) elapsedTime / duration;
+            injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, lerp(x1, x2, alpha),
+                              lerp(y1, y2, alpha), 1.0f);
+            now = SystemClock.uptimeMillis();
+        }
+        endTime = now + duration * 2;
+        while (now < endTime) {
+            injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, x2, y2, 1.0f);
+            now = SystemClock.uptimeMillis();
+        }
+        injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x2, y2, 0.0f);
+    }
     private void sendSwipe(int inputSource, float x1, float y1, float x2, float y2, int duration) {
         if (duration < 0) {
             duration = 300;
