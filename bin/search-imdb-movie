@@ -3,43 +3,73 @@
 
 # http://www.imdb.com/search/title?sort=num_votes,asc&title_type=feature&user_rating=7.0,10&year=2010,2010&num_votes=10000,100000000
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt y:year='$(date +%Y)' Y:YEAR='$(date +%Y)' r:rate=7 R:RATE=10 v:vote=10000 V:VOTE=100000000
+## end code-generator
+## start generated code
+TEMP=$(getopt -o Y:y:R:r:V:v:h \
+              --long YEAR:,year:,RATE:,rate:,VOTE:,vote:,help \
+              -n $(basename -- $0) -- "$@")
+YEAR=$(date +%Y)
 year=$(date +%Y)
-rate=7
-vote=10000
-YEAR=$year
 RATE=10
+rate=7
 VOTE=100000000
-TEMP=$(getopt -o hy:r:v:Y:R:V: --long year:rate:vote:YEAR:RATE:VOTE: -n $(basename $0) -- "$@")
+vote=10000
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -h)
-            grep ^TEMP $0
-            exit 0
+
+        -Y|--YEAR)
+            YEAR=$2
+            shift 2
             ;;
         -y|--year)
             year=$2
-            shift 2
-            ;;
-        -r|--rate)
-            rate=$2
-            shift 2
-            ;;
-        -v|--vote)
-            vote=$2
-            shift 2
-            ;;
-        -Y|--YEAR)
-            YEAR=$2
             shift 2
             ;;
         -R|--RATE)
             RATE=$2
             shift 2
             ;;
+        -r|--rate)
+            rate=$2
+            shift 2
+            ;;
         -V|--VOTE)
             VOTE=$2
             shift 2
+            ;;
+        -v|--vote)
+            vote=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-R, '
+            printf %-24s '--RATE=RATE'
+            echo
+            printf %06s '-V, '
+            printf %-24s '--VOTE=VOTE'
+            echo
+            printf %06s '-Y, '
+            printf %-24s '--YEAR=YEAR'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--rate=RATE'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--vote=VOTE'
+            echo
+            printf %06s '-y, '
+            printf %-24s '--year=YEAR'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -50,6 +80,9 @@ while true; do
             ;;
     esac
 done
+
+
+## end generated code
 
 function die() {
     echo Error: "$@"
