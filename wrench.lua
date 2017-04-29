@@ -436,11 +436,11 @@ local function adb_event(events)
       if tonumber(events[i]) then
          local width_ratio, height_ratio = app_width_ratio, app_height_ratio
 
-         if (events[i - 1]:match("no%-virt")) then
+         if (events[i - 1] and events[i - 1]:match("no%-virt")) then
             width_ratio, height_ratio = real_width_ratio, real_height_ratio
          end
 
-         local action = events[i - 1]
+         local action = (events[i - 1] or "adb-tap")
          if (action:match("%-down$")) then
             action = "wrench-down"
          elseif (action:match("%-up$")) then
