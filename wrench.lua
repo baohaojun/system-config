@@ -590,7 +590,7 @@ M.vnc_scroll = function(key, mod)
    delta = 50
 
    if mod ~= "" then
-      delta = 200
+      delta = 400
    end
    x = real_width / 2
    y = real_height / 2
@@ -605,7 +605,7 @@ M.vnc_scroll = function(key, mod)
       x_delta = delta * 4
    end
 
-   adb_event(("adb-no-virt-key-swipe-80 %s %s %s %s"):format(x, y, x + x_delta, y + y_delta))
+   adb_event(("adb-no-virt-key-swipe-180 %s %s %s %s"):format(x, y, x + x_delta, y + y_delta))
 end
 
 M.vnc_page_down = function()
