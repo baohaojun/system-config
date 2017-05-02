@@ -19,6 +19,7 @@ public:
 
 private slots:
     void on_entryFilter_textChanged();
+    void refreshFilter();
 
     void on_filteringListView_doubleClicked(const QModelIndex &index);
     void selectedCurrentEntryNoHistory(const QModelIndex &index);

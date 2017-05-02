@@ -1,5 +1,6 @@
 #include "dialoggetentry.h"
 #include "ui_dialoggetentry.h"
+#include <QDebug>
 
 DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidget *parent, bool allowSelectAll) :
     QDialog(parent),
@@ -10,6 +11,8 @@ DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidg
     ui->entryFilter->setPlaceholderText(hint);
     mEntryModel = model;
     ui->filteringListView->setModel(mEntryModel);
+
+    connect(mEntryModel, SIGNAL(iconsUpdated()), this, SLOT(refreshFilter()));
 
     connect(ui->entryFilter, SIGNAL(nextEntry()), ui->filteringListView, SLOT(nextEntry()));
     connect(ui->entryFilter, SIGNAL(prevEntry()), ui->filteringListView, SLOT(prevEntry()));
@@ -44,6 +47,20 @@ DialogGetEntry::~DialogGetEntry()
 void DialogGetEntry::on_entryFilter_textChanged()
 {
     mEntryModel->setFilter(ui->entryFilter->toPlainText());
+}
+
+void DialogGetEntry::refreshFilter()
+{
+    qDebug() << "refreshFilter";
+    QString entry = ui->entryFilter->toPlainText();
+    static int i = 0;
+    i++;
+
+    entry = entry + " ";
+    if (i % 2) {
+        entry = entry + " ";
+    }
+    mEntryModel->setFilter(entry);
 }
 
 void DialogGetEntry::on_filteringListView_doubleClicked(const QModelIndex &index)

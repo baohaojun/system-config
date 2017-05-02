@@ -4,6 +4,7 @@
 #include <QBrush>
 #include <lua.hpp>
 #include <QSettings>
+#include <QTimer>
 
 EmojiModel::EmojiModel(QObject *parent) :
     FilteringModel(parent)
@@ -38,8 +39,29 @@ EmojiModel::EmojiModel(QObject *parent) :
     initHistory();
 }
 
+const int maxLoad = 100;
+void EmojiModel::loadAllEmojis()
+{
+    qDebug() << "load all Emojis" << mEmojiIconMap.size();
+    int loaded = 0;
+    foreach (const QString& emoji, mEmojis) {
+        if (!mEmojiIconMap.contains(emoji) && loaded < maxLoad) {
+            mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
+            loaded++;
+        } else if (loaded == maxLoad) {
+            QTimer::singleShot(500, this, SLOT(loadAllEmojis()));
+            break;
+        }
+    }
+
+    emit iconsUpdated();
+}
+
 void EmojiModel::filterSelectedItems(const QStringList& split)
 {
+    int loaded = 0;
+
+    QPixmap defaultPixmap;
     foreach (const QString& emoji, mEmojis) {
         bool match = 1;
         foreach(const QString& stem, split) {
@@ -49,11 +71,24 @@ void EmojiModel::filterSelectedItems(const QStringList& split)
             }
         }
         if (match) {
+            QPixmap emojiPixmap;
+            if (!mEmojiIconMap.contains(emoji) && loaded < maxLoad) {
+                emojiPixmap = mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
+                loaded++;
+            } else if (mEmojiIconMap.contains(emoji)) {
+                emojiPixmap = mEmojiIconMap[emoji];
+            } else {
+                if (loaded == maxLoad) {
+                    QTimer::singleShot(500, this, SLOT(loadAllEmojis()));
+                    loaded++;
+                }
 
-            if (!mEmojiIconMap.contains(emoji)) {
-                mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
+                if (defaultPixmap.isNull()) {
+                    defaultPixmap = QPixmap("loading.png");
+                }
+                emojiPixmap = defaultPixmap;
             }
-            SelectedItem si(mEmojiIconPathMap[emoji], emoji, mEmojiIconMap[emoji]);
+            SelectedItem si(mEmojiIconPathMap[emoji], emoji, emojiPixmap);
             mSelectedItems << si;
             mSelectedItemsRevMap[emoji] = si;
         }

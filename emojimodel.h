@@ -17,6 +17,9 @@ public:
     explicit EmojiModel(QObject *parent = 0);
     void filterSelectedItems(const QStringList& split);
     QString getHistoryName();
+private slots:
+    void loadAllEmojis();
+
 
 private:
     QMap<QString, QString> mEmojiIconPathMap;

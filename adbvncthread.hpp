@@ -13,14 +13,14 @@ public:
     ~AdbVncThread();
 
 private slots:
-    void onInputDataReady();
-    void inputServerFinished();
+    void onVncCmdDataReady();
+    void vncCmdServerFinished();
     void onDisconnected();
 
 private:
     QTimer *mConnectTimer;
-    bool mAdbInputFinished;
-    AdbClient* mAdbInput;
+    bool mAdbVncCmdFinished;
+    AdbClient* mAdbVncCmd;
 
 signals:
     void adbVncUpdate(const QString& state);

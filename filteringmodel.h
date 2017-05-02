@@ -50,7 +50,7 @@ class FilteringModel : public QAbstractListModel
     void updateHistory(int i);
     void updateHistory(QString key);
 signals:
-
+    void iconsUpdated();
 public slots:
 
 };

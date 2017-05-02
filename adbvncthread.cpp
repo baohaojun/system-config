@@ -14,8 +14,8 @@
 AdbVncThread::AdbVncThread(QObject* parent)
     : QThread(parent)
 {
-    mAdbInput = NULL;
-    mAdbInputFinished = false;
+    mAdbVncCmd = NULL;
+    mAdbVncCmdFinished = false;
     mConnectTimer = NULL;
 }
 
@@ -24,15 +24,15 @@ AdbVncThread::~AdbVncThread()
 }
 
 
-void AdbVncThread::onInputDataReady()
+void AdbVncThread::onVncCmdDataReady()
 {
-    qDebug() << mAdbInput->getSock()->readAll();
+    qDebug() << mAdbVncCmd->getSock()->readAll();
     emit adbVncUpdate("Online");
 }
 
-void AdbVncThread::inputServerFinished()
+void AdbVncThread::vncCmdServerFinished()
 {
-    mAdbInputFinished = true;
+    mAdbVncCmdFinished = true;
 }
 
 void AdbVncThread::onDisconnected()
@@ -65,10 +65,10 @@ void AdbVncThread::onDisconnected()
         lastAdbVnc = "Online";
     }
 
-    if (!mAdbInput || mAdbInput && mAdbInputFinished) {
-        if (mAdbInput) {
-            delete mAdbInput;
-            mAdbInput = NULL;
+    if (!mAdbVncCmd || mAdbVncCmd && mAdbVncCmdFinished) {
+        if (mAdbVncCmd) {
+            delete mAdbVncCmd;
+            mAdbVncCmd = NULL;
         }
 
         WrenchExt wrenchExt;
@@ -78,11 +78,11 @@ void AdbVncThread::onDisconnected()
             vncCommand = "/data/data/com.android.shell/androidvncserver";
         }
 
-        mAdbInput = AdbClient::doAdbPipe(vncCommand);
-        mAdbInputFinished = false;
-        connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));
-        connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));
-        connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()), Qt::QueuedConnection);
+        mAdbVncCmd = AdbClient::doAdbPipe(vncCommand);
+        mAdbVncCmdFinished = false;
+        connect(mAdbVncCmd->getSock(), SIGNAL(readyRead()), this, SLOT(onVncCmdDataReady()));
+        connect(mAdbVncCmd->getSock(), SIGNAL(readChannelFinished()), this, SLOT(vncCmdServerFinished()));
+        connect(mAdbVncCmd->getSock(), SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()), Qt::QueuedConnection);
     }
 
     static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");

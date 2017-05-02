@@ -151,7 +151,7 @@ void AdbStateThread::onDisconnected()
 
     if (QString(pingSocket->readLine(100)).contains("input ok")) {
         emit adbStateUpdate("Online");
-        connect(pingSocket, SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()));
+        connect(pingSocket, SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()), Qt::QueuedConnection);
     } else {
         qDebug() << "Can't read";
         mConnectTimer->start(1000);
