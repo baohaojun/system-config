@@ -101,21 +101,24 @@ if test "$do_fetch" = true; then
     fi
 fi
 
-if test "$fetch_only" != true; then
-    for x in remotes/$(git-remote-branch); do
-        remote=$(echo $x|awk -F/ '{print $2}')
-        branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
-        if git-is-ancestor $x HEAD; then
-            echo no need to merge $branch, it is already '*contained*' in HEAD
-            continue;
-        else
-            git merge $x >/dev/null 2>&1 || {
-                echo $remote/$branch merge failed
-                exit -1
-            }
-        fi
-    done
-fi
+
+for x in remotes/$(git-remote-branch); do
+    remote=$(echo $x|awk -F/ '{print $2}')
+    branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
+    if git-is-ancestor $x HEAD; then
+        echo no need to merge $branch, it is already '*contained*' in HEAD
+        touch .git/sc-merged
+        continue;
+    elif test "$fetch_only" != true; then
+        git merge $x >/dev/null 2>&1 || {
+            echo $remote/$branch merge failed
+            exit -1
+        }
+    else
+        touch .git/sc-not-merged
+    fi
+done
+
 
 if test "$fetch_only" = true; then
     if test "$gpm_recurse" = true; then
