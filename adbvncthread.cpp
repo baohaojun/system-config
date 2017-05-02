@@ -82,7 +82,7 @@ void AdbVncThread::onDisconnected()
         mAdbInputFinished = false;
         connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));
         connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));
-        connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()));
+        connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()), Qt::QueuedConnection);
     }
 
     static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");

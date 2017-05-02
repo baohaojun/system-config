@@ -2,25 +2,30 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/tmp/build-wrench
+# generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/tmp/build-wrench ddo-debug
 ## end code-generator
 ## start generated code
 
-release_dir=Wrench-debian
+do_debug=false
 build_dir=~/tmp/build-wrench
+release_dir=Wrench-debian
 OPTIND=1
-while getopts "r:b:h" opt; do
+while getopts "db:r:h" opt; do
     case "$opt" in
 
-        r) release_dir=$OPTARG ;;
+        d) do_debug=true ;;
         b) build_dir=$OPTARG ;;
+        r) release_dir=$OPTARG ;;
         h)
             echo
             echo
-            printf %06s '-b '
+            printf %06s%s '-b ' 'build-dir'
             printf %-24s 'BUILD_DIR'
             echo ''
-            printf %06s '-r '
+            printf %06s%s '-d ' 'do-debug'
+            printf %-24s ''
+            echo ''
+            printf %06s%s '-r ' 'release_dir'
             printf %-24s 'RELEASE_DIR'
             echo ''
             shift
@@ -29,10 +34,13 @@ while getopts "r:b:h" opt; do
         *)
             echo
             echo
-            printf %06s '-b '
+            printf %06s%s '-b ' 'build-dir'
             printf %-24s 'BUILD_DIR'
             echo ''
-            printf %06s '-r '
+            printf %06s%s '-d ' 'do-debug'
+            printf %-24s ''
+            echo ''
+            printf %06s%s '-r ' 'release_dir'
             printf %-24s 'RELEASE_DIR'
             echo ''
             exit 2
@@ -40,12 +48,13 @@ while getopts "r:b:h" opt; do
     esac
 done
 
+shift $((OPTIND - 1))
 
 ## end generated code
 
 cd $(dirname $(readlink -f $0))
 
-if test $# = 1 && [[ "$1" =~ debug ]]; then
+if test "$do_debug" = true; then
     build_dir=~/tmp/build-wrench-debug
 fi
 
@@ -74,7 +83,7 @@ cd $build_dir
 
 set -o pipefail
 qmake_args=
-if test $# = 1 -a "$1" = debug; then
+if test "$do_debug" = true; then
     qmake_args='WRENCH_DEBUG=1'
 fi
 

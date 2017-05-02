@@ -27,6 +27,7 @@
 #include <libsnore/snore.h>
 #include <libsnore/notification/icon.h>
 #include <QHotkey>
+#include <QNetworkAccessManager>
 
 namespace Ui {
 class WrenchMainWindow;
@@ -43,6 +44,7 @@ public:
     void dropEvent(QDropEvent *event);
 
 public slots:
+    void handleNetworkData(QNetworkReply*);
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
     void onSelectArgs(const QStringList& args);
@@ -57,6 +59,7 @@ public slots:
 private:
     void movePhoneScreenWindowXY(int x, int y);
 private slots:
+    void imageDropped(const QDropEvent& ev);
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
     void onAdbNotificationArrived(const QString& , const QString& , const QString& , const QString&);
@@ -118,6 +121,8 @@ private slots:
 
 private:
 
+    void sharePictures(const QStringList& files);
+    QNetworkAccessManager m_manager;
     uint m_last_sent_notification_id;
     uint m_last_closed_notification_id;
     Snore::Notification m_last_notification;

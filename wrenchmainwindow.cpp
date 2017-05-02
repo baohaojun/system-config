@@ -52,6 +52,9 @@
 #include <QtGui/QKeySequence>
 #include <QtWidgets/QToolButton>
 #include <QtCore/QRegularExpression>
+#include <QtGui/QImage>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -64,9 +67,13 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     on_configurePushButton_clicked();
 
     ui->setupUi(this);
+    connect(&m_manager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(handleNetworkData(QNetworkReply*)));
+
     connect(ui->phoneTextEdit, SIGNAL(controlEnterPressed()), this, SLOT(on_sendItPushButton_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(emojiShortcutPressed()), this, SLOT(on_tbEmoji_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(phoneCallShortcutPressed()), this, SLOT(on_tbPhoneCall_clicked()));
+    connect(ui->phoneTextEdit, SIGNAL(imageDropEvent(QDropEvent)), this, SLOT(imageDropped(QDropEvent)));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
     mLastRadioButton = NULL;
     createTrayIcon();
@@ -505,7 +512,12 @@ void WrenchMainWindow::on_tbPicture_clicked()
         return;
     }
 
-    if (anyShareChecked()) {
+    sharePictures(fns);
+}
+
+void WrenchMainWindow::sharePictures(const QStringList& files)
+{
+        if (anyShareChecked()) {
         QString text = get_text();
         ui->tbPicture->setCheckable(true);
         ui->tbPicture->setChecked(true);
@@ -514,10 +526,10 @@ void WrenchMainWindow::on_tbPicture_clicked()
                 return;
             }
         }
-        mPictures = fns;
+        mPictures = files;
         emit ui->sendItPushButton->clicked();
     } else {
-        mLuaThread->addScript((QStringList() << "wrench_picture") + fns);
+        mLuaThread->addScript((QStringList() << "wrench_picture") + files);
     }
 }
 
@@ -785,10 +797,25 @@ void WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
 void WrenchMainWindow::dropEvent(QDropEvent *event)
 {
     event->acceptProposedAction();
+    qDebug() << "WrenchMainWindow::dropEvent";
+    if (event->mimeData()->hasImage()) {
+        imageDropped(*event);
+        qDebug() << "WrenchMainWindow::dropEvent" << "hasImage";
+        return;
+    }
     if (event->mimeData()->hasUrls()) {
         QList<QUrl> urls = event->mimeData()->urls();
         if (urls.size() == 1 && urls[0].isLocalFile()) {
-            startTask(urls[0].toLocalFile());
+            QFileInfo fi(urls[0].toLocalFile());
+            QString suf = fi.suffix();
+            if (suf == "twa" || suf == "lua") {
+                startTask(urls[0].toLocalFile());
+                return;
+            }
+        }
+
+        if (urls.size()) {
+            imageDropped(*event);
         }
     }
 }
@@ -1175,4 +1202,46 @@ void WrenchMainWindow::slotShortCutActivated()
 void WrenchMainWindow::adbNotificationShiftClicked(const QMap<QString, QString>& rawData)
 {
     mLuaThread->addScript(QStringList({"shift_click_notification", rawData["pkg"], rawData["key"], rawData["title"], rawData["text"]}));
+}
+
+void WrenchMainWindow::imageDropped(const QDropEvent& ev)
+{
+    qDebug() << __FUNCTION__;
+
+    const QDropEvent* event = &ev;
+    QList<QUrl> urls = event->mimeData()->urls();
+    if (urls.count()) {
+        QUrl url = urls[0];
+        if (url.isLocalFile()) { // if first is local, suppose all are local
+            QStringList files;
+            foreach(const QUrl& u, urls) {
+                if (u.isLocalFile())
+                    files << u.toLocalFile();
+            }
+            sharePictures(files);
+        } else {
+            qDebug() << "imageDropped got " << url;
+            m_manager.get(QNetworkRequest(url));
+        }
+    } else if (event->mimeData()->hasImage()) {
+        QImage image = qvariant_cast<QImage>(event->mimeData()->imageData());
+        image.save("drag-and-drop.jpg");
+        sharePictures(QStringList() << "drag-and-drop.jpg");
+    }
+}
+
+void WrenchMainWindow::handleNetworkData(QNetworkReply *networkReply)
+{
+    QImage image;
+
+    qDebug() << "Received" << networkReply->size() << "bytes";
+    QUrl url = networkReply->url();
+    if (networkReply->error()) {
+        prompt_user(QString("Can't download ") + url.toString());
+        return;
+    } else {
+        image.load(networkReply, 0);
+        image.save("drag-and-drop.jpg");
+        sharePictures(QStringList() << "drag-and-drop.jpg");
+    }
 }

@@ -24,6 +24,17 @@ QCellPhoneTextEdit::~QCellPhoneTextEdit()
 {
 }
 
+void QCellPhoneTextEdit::dropEvent(QDropEvent *ev)
+{
+    QList<QUrl> urls = ev->mimeData()->urls();
+    if (urls.count()) {
+        emit imageDropEvent(*ev);
+        ev->acceptProposedAction();
+        return;
+    }
+    QTextEdit::dropEvent(ev);
+}
+
 void QCellPhoneTextEdit::resizeImages()
 {
     QTextDocument *doc = document();

@@ -2285,29 +2285,35 @@ local function picture_to_weixin_chat(pics, ...)
       if i == 1 then
          for n = 1,10 do
             local window = adb_top_window()
+            log("doing first picture for n = %d, window is %s", n, window)
             if window == chatWindow then
-               debug("chatWindow for n: %d", n)
                chatWindow = window
                adb_event(post_button .. " sleep .3")
-               if adb_top_window():match("PopupWindow") then
+               if adb_top_window():match("PopupWindow") then -- weixin may suggest with popup window a picture just created
                   debug("got popup window?")
                   adb_event("key back sleep .1 adb-tap 123 1853")
                   wait_top_activity(chatWindow)
                end
-               adb_event("adb-tap 203 1430")
+               adb_event("adb-tap 203 1430") -- click the "album" button
 
                debug("chatWindow: clicked")
                wait_top_activity(W.weixinAlbumPreviewActivity)
             elseif window == W.weixinAlbumPreviewActivity then
+               log("got into album preview for n = %d", n)
                adb_event("adb-tap 521 398") -- to get into image preview
                sleep(.2)
             elseif window == W.weixinImagePreviewActivity then
+               log("got into image preview for n = %d", n)
                adb_event("sleep .1 adb-key back")
-               if wait_top_activity(W.weixinAlbumPreviewActivity) == weixinAlbumPreviewActivity then
+               if wait_top_activity(W.weixinAlbumPreviewActivity) == W.weixinAlbumPreviewActivity then
                   sleep(.2)
+                  log("get back into album preview from image preview")
                   break
                elseif adb_top_window() == W.weixinImagePreviewActivity then
+                  log("still in image preview at %d", n)
                   adb_event("key back")
+               else
+                  log("got into %s at n = %d", adb_top_window(), n)
                end
             end
          end
@@ -2318,6 +2324,7 @@ local function picture_to_weixin_chat(pics, ...)
          "adb-tap 301 1008", "adb-tap 612 996", "adb-tap 1006 992",
       }
       local i_button = pic_share_buttons[i]
+      log("click image button %d", i)
       adb_event(i_button)
    end
    while adb_top_window() ~= W.weixinImagePreviewActivity do
@@ -2549,7 +2556,9 @@ local function wrench_picture(...)
    elseif window == W.weiboCommentActivity or window == W.weiboForwardActivity then
       picture_to_weibo_comment(pics)
    else
-      return "Error: can't decide how to share for window: " .. window
+      if yes_or_no_p("不知道此窗口（" .. window .. "）下如何分享图片，如需继续上传，请手动调整手机应用，然后点击确认，否则请点取消") then
+         return wrench_picture(...)
+      end
    end
    return #pics .. " pictures sent"
 end

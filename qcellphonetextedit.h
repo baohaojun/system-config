@@ -12,11 +12,13 @@ public:
     explicit QCellPhoneTextEdit(QWidget *parent = 0);
     ~QCellPhoneTextEdit();
     QString getMyText();
+    void dropEvent(QDropEvent *ev);
 
 signals:
     void controlEnterPressed();
     void emojiShortcutPressed();
     void phoneCallShortcutPressed();
+    void imageDropEvent(const QDropEvent& ev);
 
 public slots:
     void on_emojiSelected(const QString& emojiPath);

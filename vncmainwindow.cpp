@@ -15,6 +15,7 @@
 #include "aboutdialog.h"
 #include "wrenchmainwindow.h"
 #include "wrenchext.h"
+#include "wrench.h"
 
 extern QtVncViewerSettings *globalConfig;
 
@@ -260,6 +261,10 @@ void VncMainWindow::closeEvent(QCloseEvent *e)
 void VncMainWindow::hideEvent(QHideEvent *e)
 {
     fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
+
+    gPhoneScreenSyncOn = false;
+    mLuaThread()->addScript(QStringList("kill_android_vnc"));
+
     ui->connectionWindow->doDisconnect();
 }
 
