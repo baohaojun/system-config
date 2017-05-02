@@ -46,11 +46,13 @@ protected:
     void showEvent(QShowEvent *e);
 
 private:
+    void initFromWrenchExt();
     Ui::VncMainWindow *ui;
     uint32_t mPhoneWidth;
     uint32_t mPhoneHeight;
     uint32_t mWheelScale;
     uint32_t mWheelTime;
+    bool mAllowResize;
     ConnectionWindow *m_fullScreenWindow;
     QStringList m_recentConnections;
     static QStringList m_encodings;

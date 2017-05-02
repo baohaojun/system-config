@@ -21,18 +21,19 @@ extern QtVncViewerSettings *globalConfig;
 
 QStringList VncMainWindow::m_encodings;
 
-VncMainWindow::VncMainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::VncMainWindow)
+void VncMainWindow::initFromWrenchExt()
 {
-    ui->setupUi(this);
-
     WrenchExt wrenchExt;
 
     QString phoneWidth = wrenchExt.getConfig("phone-width");
     QString phoneHeight = wrenchExt.getConfig("phone-height");
     QString wheelScale = wrenchExt.getConfig("wheel-scale");
     QString wheelTime = wrenchExt.getConfig("wheel-time");
+    if (wrenchExt.getConfig("allow-vnc-resize") == "true") {
+        mAllowResize = true;
+    } else {
+        mAllowResize = false;
+    }
 
     mPhoneWidth = phoneWidth.toInt();
     mPhoneWidth = mPhoneWidth ? mPhoneWidth : 1080;
@@ -43,6 +44,22 @@ VncMainWindow::VncMainWindow(QWidget *parent) :
     mWheelTime = wheelTime.toInt();
     mWheelTime = mWheelTime ? mWheelTime : 100;
 
+    if (mAllowResize) {
+        setFixedSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+        resize(parentWidget()->size().height() * mPhoneWidth / mPhoneHeight, parentWidget()->size().height());
+    } else {
+        setFixedSize(parentWidget()->size().height() * 1080 / 1920, parentWidget()->size().height());
+    }
+    this->activateWindow();
+}
+
+VncMainWindow::VncMainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::VncMainWindow)
+{
+    ui->setupUi(this);
+
+    initFromWrenchExt();
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
     m_fullScreenWindow = 0;
     mWrench = (WrenchMainWindow *)parent;
@@ -181,6 +198,8 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
             } else if (key == Qt::Key_Escape) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key back");
                 return true;
+            } else if (key == Qt::Key_F12) {
+                mLuaThread()->addScript(QStringList() << "call_ext" << "reconnect-vpn");
             } else if (key == Qt::Key_Pause) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key power");
                 return true;
@@ -271,11 +290,16 @@ void VncMainWindow::hideEvent(QHideEvent *e)
 void VncMainWindow::showEvent(QShowEvent *e)
 {
     fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
+    initFromWrenchExt();
     QTimer::singleShot(10, ui->connectionWindow, SLOT(doConnect()));
 }
 
-void VncMainWindow::onVncUpdate(QString) {
+void VncMainWindow::onVncUpdate(QString state) {
     if (this->isVisible() && ! ui->connectionWindow->connected()) {
         QTimer::singleShot(0, ui->connectionWindow, SLOT(doConnect()));
+    }
+
+    if (state == "Online") {
+        initFromWrenchExt();
     }
 }

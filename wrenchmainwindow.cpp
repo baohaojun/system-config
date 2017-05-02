@@ -985,12 +985,6 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 
                 vncMainWindow->installEventFilter(vncMainWindow);
             }
-            if (mWrenchExt.getConfig("allow-vnc-resize") == "true") {
-                vncMainWindow->setFixedSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
-                vncMainWindow->resize(this->size().height() * 1080 / 1920, this->size().height());
-            } else {
-                vncMainWindow->setFixedSize(this->size().height() * 1080 / 1920, this->size().height());
-            }
 
             vncMainWindow->show();
             moveVncMainWin();

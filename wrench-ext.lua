@@ -72,7 +72,28 @@ M.configs = {
    ["phone-width"] = 1080,
    ["phone-height"] = 1920,
    ["wheel-scale"] = 1,
+   ["vnc-server-command"] = "/data/data/com.android.shell/androidvncserver",
 }
+
+local dofile_res = nil
+dofile_res, vpn_mode = pcall(dofile, "vpn-mode.lua")
+if not dofile_res then
+   vpn_mode = "横屏高清"
+end
+
+if vpn_mode ~= "演示模式" then
+   M.configs["vnc-server-command"] = "/data/data/com.android.shell/androidvncserver -s 100"
+   M.configs["allow-vnc-resize"] = "true"
+   if vpn_mode == "横屏高清" then
+      M.configs["phone-width"] = 1920
+      M.configs["phone-height"] = 1080
+   elseif vpn_mode == "竖屏高清" then
+      M.configs["phone-width"] = 1080
+      M.configs["phone-height"] = 1920
+   end
+end
+
+M.configs['vpn_mode'] = vpn_mode
 
 M.getConfig = function(config)
    -- if true then return "" end
