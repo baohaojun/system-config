@@ -175,7 +175,7 @@ fi
     git fetch $(repo-remote-url $(repo-remote)) -v "$ref:$ref"
 )
 if test "$diff_patch_sets"; then
-    git diff $(for x in $diff_patch_sets; do echo $(dirname $ref)/$x; done)
+    git diff -w $(for x in $diff_patch_sets; do echo $(dirname $ref)/$x; done)
 fi
 
 if test "$cherry_pick" = true || is-jenkins; then
