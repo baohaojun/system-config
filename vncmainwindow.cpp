@@ -253,8 +253,8 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
         int x = mev->x() * mPhoneWidth / this->width();
         int y = mev->y() * mPhoneHeight / this->height();
 
-        int new_x = max(x + dx, 0);
-        int new_y = max(y + dy, 0);
+        int new_x = qMax(x + dx, 0);
+        int new_y = qMax(y + dy, 0);
 
         if (new_y > mPhoneHeight) {
             new_y = mPhoneHeight;
