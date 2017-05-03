@@ -20,10 +20,6 @@ public:
     void filterSelectedItems(const QStringList& split);
     QString getHistoryName();
     void setMail(bool isMail) {mIsMail = isMail; setFilter("\t");};
-    void setWeixin(bool isWeixin) {
-        mIsWeixin = isWeixin;
-        setFilter("\t");
-    };
 
     void maybeAddTextIntoHistory(const QString& text);
 
@@ -31,7 +27,6 @@ private:
     bool mIsMail;
     QStringList mInputTextHistory;
 
-    bool mIsWeixin;
     QPixmap mDefaultAvatar;
     QList<VCard> mVcards;
 

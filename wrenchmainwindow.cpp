@@ -611,18 +611,6 @@ void WrenchMainWindow::initContactDialog(bool isMail)
         mContactDialog = QSharedPointer<DialogGetEntry>(new DialogGetEntry(mContactModel, placeHolder, this));
     }
     mContactModel->setInitFilter("");
-    if (ui->tbWeixin->isChecked() && !isMail) {
-        placeHolder = "微信联系人过滤";
-        mContactModel->setWeixin(true);
-    } else if (ui->tbQq->isChecked()) {
-        placeHolder = "QQ号@qq.com过滤";
-        mContactModel->setWeixin(false);
-        mContactModel->setInitFilter("@qq.com");
-        isMail = true;
-    } else {
-        mContactModel->setWeixin(false);
-    }
-
     mContactDialog->setHint(placeHolder);
     mContactModel->setMail(isMail);
 }

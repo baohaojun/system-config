@@ -40,7 +40,6 @@ static bool vCardLess(const VCard& v1, const VCard& v2)
 
 ContactModel::ContactModel(QObject *parent) :
     FilteringModel(parent),
-    mIsWeixin(false),
     mDefaultAvatar("emojis/iphone-emoji/WRENCH.png")
 {
     int error = luaL_loadstring(L, "contacts = require('contacts')") || lua_pcall(L, 0, 0, 0);
@@ -170,24 +169,6 @@ void ContactModel::filterSelectedItems(const QStringList& split)
 
     bool mFilterWeixin = false;
     QMap <QString, bool> weixinPhoneMap;
-    if (mIsWeixin && QFile("weixin-phones.txt").exists()) {
-        mFilterWeixin = true;
-        QFile f("weixin-phones.txt");
-        if (!f.open(QFile::ReadOnly | QFile::Text)) {
-            mFilterWeixin = false;
-        } else {
-            QTextStream in(&f);
-            QString phones = in.readAll();
-            foreach (const QString& phone, phones.split("\n")) {
-                if (phone.isEmpty()) {
-                    continue;
-                }
-                weixinPhoneMap[phone] = 1;
-            }
-            f.close();
-        }
-    }
-
     foreach(const QString& history, mInputTextHistory) {
         int match = 1;
         QStringList pinyinHistoryList = getPinyinSpelling(history);
