@@ -51,6 +51,33 @@ if test "$#" != 0; then
     exit
 fi
 
+if test "$#" != 0; then
+    for x in "$@"; do
+        sync-with-xml "$x"
+        (
+            if test ! -d ~/src/android-mirror.google; then
+                exit 0
+            fi
+            cd ~/src/android-mirror
+            find . -name '*.git' -type d -print -prune | grep -v /\\.repo/ | while read gitdir; do
+                if test -d ~/src/android-mirror.google/$gitdir; then
+                    continue
+                fi
+                echo add $gitdir to google mirror
+                mkdir -p ~/src/android-mirror.google/$(dirname $gitdir)
+                git init --bare ~/src/android-mirror.google/$gitdir
+                abs_gitdir=$(readlink -f $gitdir)
+
+                (
+                    cd ~/src/android-mirror.google/$gitdir
+                    git-set-alternates $abs_gitdir
+                )
+            done
+        )
+    done
+    exit
+fi
+
 sync-with-xml aosp-master.xml || true
 sync-with-xml sfo-rom.xml
 if test -e ~/src/github/smartcm/scm-helpers/.mirror-xmls; then
