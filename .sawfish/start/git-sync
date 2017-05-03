@@ -1,3 +1,11 @@
 #!/bin/bash
 cd ~/system-config/
+for x in $(seq 1 10); do
+    if ps.pl sslocal; then
+        break
+    fi
+    sleep 2
+done
+sleep 2
+
 git-pull-mac --fetch-only || true
