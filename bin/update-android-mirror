@@ -5,9 +5,17 @@ set -ex
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent
 
-export ALL_PROXY=socks5://127.0.0.1:3080
+if test "$REMOTEIP"; then
+    export http_proxy=http://$REMOTEIP:19999
+    export https_proxy=$http_proxy
+elif test -e ~/src/github/private-config/etc/update-android-mirror; then
+    . ~/src/github/private-config/etc/update-android-mirror
+else
+    export ALL_PROXY=socks5://127.0.0.1:3080
+fi
+
 (
-    if test ! -d ~/src/android-mirror.google/; then
+    if test ! -d ~/src/android-mirror.google/.repo; then
         if test ! -d ~/src/android-mirror; then
             exit 0
         fi
@@ -35,20 +43,6 @@ export ALL_PROXY=socks5://127.0.0.1:3080
 
     day=$(today +%d|perl -npe 's/^0*//')
     weekday=$(today +%w)
-
-    if test $weekday = 6; then
-        find ~/src/android-mirror/ -name '*.git' -print -prune |
-            while read dir; do
-                (
-                    cd $dir
-                    pwd
-                    if test ! -e .gc-is-done; then
-                        git gc || true
-                        touch .gc-is-done
-                    fi
-                )
-            done
-    fi
 
     (
         cd .repo/manifests
