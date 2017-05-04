@@ -13,17 +13,21 @@ if [[ "$(tty)" =~ /dev/tty ]]; then
     exit
 fi
 
+do-dvp() {
+    setxkbmap -layout us -variant dvp
+    re-xmodmap 2>&1|tee
+    do-natural-scrolling
+}
+
 (
     flock 9
-    if test "$1" = am; then
-        setxkbmap -layout us -variant dvp
-        re-xmodmap 2>&1|tee
+    if test "$1" = am -o "$1" = dvp; then
+        do-dvp
     elif test "$1" = ma || setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
         setxkbmap -layout us
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
         do-unnatural-scrolling
     else
-        setxkbmap -layout us -variant dvp
-        re-xmodmap 2>&1|tee
+        do-dvp
     fi
 ) 9> ~/.cache/system-config/logs/$(basename $0).lock
