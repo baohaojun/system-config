@@ -196,7 +196,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         }
     }
 
-    LocalServerSocket t1WrenchServer;
+    LocalServerSocket WrenchServer;
     private boolean mShouldSkip = false;
     private boolean mConnected = false;
 
@@ -273,7 +273,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                 public void run() {
                     Log.e("bhj", String.format("%s:%d: new thread at %d", "WrenchNotificationHelper.java", 148, this.hashCode()));
                     try {
-                        t1WrenchServer = new LocalServerSocket("WrenchNotifications");
+                        WrenchServer = new LocalServerSocket("WrenchNotifications");
 
                     } catch(IOException e) {
                         try {
@@ -302,7 +302,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                 closeSocket.close();
                             }
 
-                            t1WrenchServer = new LocalServerSocket("WrenchNotifications");
+                            WrenchServer = new LocalServerSocket("WrenchNotifications");
                         } catch (IOException e2) {
                             Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 169), e2);
                             return;
@@ -313,7 +313,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                     while (!shouldExit()) {
                         LocalSocket notificationSocket = null;
                         try {
-                            notificationSocket = t1WrenchServer.accept();
+                            notificationSocket = WrenchServer.accept();
                             if (!Input.checkPerm(notificationSocket.getFileDescriptor())) {
                                 Log.e("bhj", String.format("%s:%d: only socket from shell is allowed", "WrenchNotificationHelper.java", 47));
                                 try {
@@ -358,7 +358,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                     String line = locReader.readLine();
                                     Log.e("bhj", String.format("%s:%d: got first line: %s", "WrenchNotificationHelper.java", 325, line));
                                     if ("close yourself".equals (line)) {
-                                        t1WrenchServer.close();
+                                        WrenchServer.close();
                                         setShouldExit ();
                                         delAllSocks ();
                                         return;

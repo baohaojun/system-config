@@ -126,9 +126,9 @@ void AdbStateThread::onDisconnected()
     static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");
 
     if (adb_serial.isEmpty()) {
-        AdbClient::doAdbForward("host:forward:tcp:28888;localabstract:T1Wrench");
+        AdbClient::doAdbForward("host:forward:tcp:28888;localabstract:Wrench");
     } else {
-        AdbClient::doAdbForward("host-serial:" + adb_serial + ":forward:tcp:28888;localabstract:T1Wrench");
+        AdbClient::doAdbForward("host-serial:" + adb_serial + ":forward:tcp:28888;localabstract:Wrench");
     }
 
     pingSocket->connectToHost("127.0.0.1", 28888 + QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0").toInt(), QIODevice::ReadWrite);

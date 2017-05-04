@@ -107,7 +107,7 @@ Now, with some phones (according to the Android SDK version and CPU arch), Wrenc
 
 Please refer to [[https://www.youtube.com/watch?v%3Dv8QVFbYDnCQ][this youtube video]].
 
-There is also [[http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html][a blog]] explaining all the details, but it's in Chinese.
+There is also [[http://baohaojun.github.io/blog/2014/12/01/0-Wrench-2.0-Usage-Guide.html][a blog]] explaining all the details, but it's in Chinese.
 
 Here's the simple steps:
 

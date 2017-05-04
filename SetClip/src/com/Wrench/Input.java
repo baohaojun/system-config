@@ -35,8 +35,8 @@ public class Input {
     private native static int getUid();
     private static String optCacheDirName;
     static {
-        System.loadLibrary("t1wrench-jni");
-        optCacheDirName = "/data/data/com.android.shell/t1wrench." + String.format("%d", getUid());
+        System.loadLibrary("wrench-jni");
+        optCacheDirName = "/data/data/com.android.shell/wrench." + String.format("%d", getUid());
     }
 
     private static final String TAG = "Input";
@@ -141,9 +141,9 @@ public class Input {
 
     private void startServer() {
         try {
-            LocalServerSocket t1WrenchServer = new LocalServerSocket("T1Wrench");
+            LocalServerSocket WrenchServer = new LocalServerSocket("Wrench");
             while (true) {
-                LocalSocket t1socket = t1WrenchServer.accept();
+                LocalSocket t1socket = WrenchServer.accept();
                 if (!checkPerm(t1socket.getFileDescriptor())) {
                     System.err.println("socket permission denied");
                     t1socket.close();

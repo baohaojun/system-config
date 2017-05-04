@@ -522,7 +522,7 @@ int AdbClient::doAdbKill()
     return 0;
 }
 
-// "host:forward:tcp:28888;localabstract:T1Wrench"
+// "host:forward:tcp:28888;localabstract:Wrench"
 int AdbClient::doAdbForward(const QString& forwardSpec)
 {
     AdbClient *adb = new AdbClient();

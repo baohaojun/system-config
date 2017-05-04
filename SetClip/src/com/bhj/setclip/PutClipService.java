@@ -249,14 +249,14 @@ public class PutClipService extends Service {
             } else if (intent.getIntExtra("watch-clipboard", 0) == 1) {
                 startMonitorClipboard();
                 try {
-                    writeFile("hello", new File(sdcard, ".t1wrench-watching-clipboard.txt"));
+                    writeFile("hello", new File(sdcard, ".wrench-watching-clipboard.txt"));
                 } catch (Throwable e) {
                     Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 122), e);
                 }
 
             } else if (intent.getIntExtra("stop-watch-clipboard", 0) == 1) {
                 mWatchingClipboard = false;
-                new File(sdcard, ".t1wrench-watching-clipboard.txt").delete();
+                new File(sdcard, ".wrench-watching-clipboard.txt").delete();
             } else if (intent.getIntExtra("gettask", 0) == 1) {
                 String foregroundTaskPackageName = getTask();
                 writeFile(foregroundTaskPackageName);
@@ -402,7 +402,7 @@ public class PutClipService extends Service {
                     Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 134), e);
                 }
 
-                if (new File(sdcard, ".t1wrench-watching-clipboard.txt").exists()) {
+                if (new File(sdcard, ".wrench-watching-clipboard.txt").exists()) {
                     startMonitorClipboard();
                 } else {
                     mWatchingClipboard = false;
