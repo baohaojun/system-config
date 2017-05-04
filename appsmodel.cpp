@@ -14,14 +14,17 @@
 #include <QPixmap>
 #include <algorithm>
 #include <QTextStream>
+#include "wrench.h"
 
 AppsModel::AppsModel(QObject *parent) :
     FilteringModel(parent),
     mDefaultAvatar("emojis/iphone-emoji/WRENCH.png")
 {
     mAppClasses.clear();
-    if (QFile("apps.info").exists()) {
-        QFile appsFile("apps.info");
+    QDir configDir(configDirPath);
+
+    if (QFileInfo(configDir, "apps.info").exists()) {
+        QFile appsFile(QFileInfo(configDir, "apps.info").absolutePath());
         if (appsFile.open(QFile::ReadOnly | QFile::Text)) {
             QTextStream in(&appsFile);
             in.setCodec("UTF-8");
@@ -32,7 +35,7 @@ AppsModel::AppsModel(QObject *parent) :
                     mAppClasses.push_back(info[0]);
                     mAppPackageMap[info[0]] = info[1];
                     mAppLabelMap[info[0]] = QStringList() << info[2] << getPinyinSpelling(info[2]);
-                    mAppIconMap[info[0]] = QPixmap(info[0] + ".png").scaled(48, 48);
+                    mAppIconMap[info[0]] = QPixmap(QFileInfo(configDir, info[0] + ".png").absolutePath()).scaled(48, 48);
                 }
             }
         }

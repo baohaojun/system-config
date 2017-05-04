@@ -15,20 +15,22 @@
 #include <algorithm>
 #include <QTextStream>
 #include <QDateTime>
+#include "wrench.h"
 
 NotificationModel::NotificationModel(QObject *parent) :
     FilteringModel(parent),
     mDefaultAvatar("emojis/iphone-emoji/WRENCH.png")
 {
-    if (QFile("apps.info").exists()) {
-        QFile appsFile("apps.info");
+    QDir configDir(configDirPath);
+    if (QFileInfo(configDir, "apps.info").exists()) {
+        QFile appsFile(QFileInfo(configDir, "apps.info").absolutePath());
         if (appsFile.open(QFile::ReadOnly | QFile::Text)) {
             QTextStream in(&appsFile);
             QString lines = in.readAll();
             foreach (const QString& line, lines.split("\n")) {
                 QStringList info = line.split("=");
                 if (info.size() == 3) {
-                    mAppIconMap[info[1]] = QPixmap(info[0] + ".png").scaled(48, 48);
+                    mAppIconMap[info[1]] = QPixmap(QFileInfo(configDir, info[0] + ".png").absoluteDir()).scaled(48, 48);
                 }
             }
         }

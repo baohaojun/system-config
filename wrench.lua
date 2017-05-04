@@ -1579,13 +1579,14 @@ wrench_config = function(passedConfigDirPath)
    if passedConfigDirPath then
       configDir = passedConfigDirPath
    end
+   M.writableDir = configDir .. package.config:sub(1, 1)
    local dofile_res
-   dofile_res, mail_group_map = pcall(dofile, configDir .. package.config:sub(1, 1) .. "mail_groups.lua")
+   dofile_res, mail_group_map = pcall(dofile, M.writableDir .. "mail_groups.lua")
    if not dofile_res then
       mail_group_map = {}
    end
 
-   dofile_res, window_post_button_map = pcall(dofile, configDir .. package.config:sub(1, 1) .. "window_post_botton.lua")
+   dofile_res, window_post_button_map = pcall(dofile, M.writableDir .. "window_post_botton.lua")
    if not dofile_res then
       dofile_res, window_post_button_map = pcall(dofile, "window_post_botton.lua")
       if not dofile_res then
@@ -1594,7 +1595,7 @@ wrench_config = function(passedConfigDirPath)
       end
    end
 
-   dofile_res, phone_info_map = pcall(dofile, configDir .. package.config:sub(1, 1) .. "phone_info.lua")
+   dofile_res, phone_info_map = pcall(dofile, M.writableDir .. "phone_info.lua")
    if not dofile_res then
       log("phone info failed")
       phone_info_map = {}
@@ -1641,7 +1642,7 @@ adb_get_last_pic = function(which, remove)
    adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei get-last-note-pic 1", "/sdcard/putclip.txt")
    local pic = adb_pipe("cat /sdcard/putclip.txt")
    pic = pic:gsub('^/storage/emulated/0', '/sdcard')
-   adb_pull{pic, ("last-pic-%s.png"):format(which)}
+   adb_pull{pic, ("%slast-pic-%s.png"):format(M.writableDir, which)}
    if remove then
       adb_shell{rm, pic}
       adb_am(("am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture %s"):format(pic))
@@ -1769,7 +1770,7 @@ qq_find_group_friend = function(friend_name)
 end
 
 save_window_types = function()
-   local mapfile = io.open(configDir .. package.config:sub(1, 1) .. "window_post_botton.lua", "w")
+   local mapfile = io.open(M.writableDir .. "window_post_botton.lua", "w")
    mapfile:write("local map = {}\n")
    for k, v in spairs(window_post_button_map) do
       if k ~= "" then
@@ -1781,7 +1782,7 @@ save_window_types = function()
 end
 
 save_phone_info = function()
-   local infofile = io.open(configDir .. package.config:sub(1, 1) .. "phone_info.lua", "w")
+   local infofile = io.open(M.writableDir .. "phone_info.lua", "w")
    infofile:write("local map = {}\n")
    for k, v in pairs(phone_info_map) do
       infofile:write(("map['%s'] = '%s'\n"):format(k, v))
@@ -1806,7 +1807,7 @@ end
 
 M.update_apps = function()
    if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listapps 1", "/sdcard/Wrench/apps.info") then
-      adb_pull{"/sdcard/Wrench/apps.info", "apps.info"}
+      adb_pull{"/sdcard/Wrench/apps.info", M.writableDir .. "apps.info"}
    else
       log("Can't get apps.info")
    end
@@ -1822,7 +1823,7 @@ M.update_apps = function()
       app_table[class_] = package_
       local label_ = s[3]
       if not file_exists(class_ .. ".png") then
-         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", class_ .. ".png"}
+         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.writableDir .. class_ .. ".png"}
       end
    end
    apps_file.close()
@@ -1848,7 +1849,7 @@ on_app_selected = function(app)
       app_table[class_] = package_
       local label_ = s[3]
       if not file_exists(class_ .. ".png") then
-         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", class_ .. ".png"}
+         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.writableDir .. class_ .. ".png"}
       end
    end
    apps_file.close()
@@ -2725,7 +2726,7 @@ local press_dial_key = function()
       adb_event"adb-tap 420 1634"
    else
       adb_event("adb-tap 554 1668")
-      log("Error: unknown where_is_dial_key: %s, must be one of Middle, First from left, Second from left.\n\nPlease update %s", where_is_dial_key, configDir .. package.config:sub(1, 1) .. "phone_info.lua")
+      log("Error: unknown where_is_dial_key: %s, must be one of Middle, First from left, Second from left.\n\nPlease update %s", where_is_dial_key, M.writableDir .. "phone_info.lua")
       where_is_dial_key = nil
    end
 end
