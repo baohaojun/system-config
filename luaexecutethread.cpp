@@ -164,16 +164,16 @@ static int l_adbQuickInputAm(lua_State* L)
     return 1;
 }
 
-static bool t1SockOk(QTcpSocket* t1Sock)
+static bool wrenchSockOk(QTcpSocket* wrenchSock)
 {
-    if (t1Sock == NULL) {
+    if (wrenchSock == NULL) {
         return false;
     }
 
-    t1Sock->write("ping\n");
-    t1Sock->flush();
-    t1Sock->readLine();
-    if (t1Sock->state() != QAbstractSocket::ConnectedState) {
+    wrenchSock->write("ping\n");
+    wrenchSock->flush();
+    wrenchSock->readLine();
+    if (wrenchSock->state() != QAbstractSocket::ConnectedState) {
         return false;
     }
     return true;
@@ -181,16 +181,16 @@ static bool t1SockOk(QTcpSocket* t1Sock)
 
 QString LuaExecuteThread::adbQuickInputAm(QString arg)
 {
-    if (!t1SockOk(t1Sock)) {
-        if (t1Sock) {
-            delete t1Sock;
-            t1Sock = NULL;
-            qDebug() << "prepare to reconnect t1Sock";
+    if (!wrenchSockOk(wrenchSock)) {
+        if (wrenchSock) {
+            delete wrenchSock;
+            wrenchSock = NULL;
+            qDebug() << "prepare to reconnect wrenchSock";
         }
         qDebug() << "connect to localhost 28888";
-        t1Sock = new QTcpSocket();
-        t1Sock->connectToHost("localhost", 28888, QIODevice::ReadWrite);
-        t1Sock->waitForConnected();
+        wrenchSock = new QTcpSocket();
+        wrenchSock->connectToHost("localhost", 28888, QIODevice::ReadWrite);
+        wrenchSock->waitForConnected();
     }
 
     QString res;
@@ -204,22 +204,22 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
                 continue;
             }
 
-            t1Sock->write(action.toUtf8() + "\n");
-            t1Sock->flush();
-            if (!t1Sock->waitForReadyRead(2000)) {
+            wrenchSock->write(action.toUtf8() + "\n");
+            wrenchSock->flush();
+            if (!wrenchSock->waitForReadyRead(2000)) {
                 emit gotSomeLog("info", QString("命令超时： ") + action);
             }
-            res = t1Sock->readLine();
+            res = wrenchSock->readLine();
         }
     } else if (arg.startsWith("am ")) {
-        t1Sock->write(arg.toUtf8() + "\n");
-        t1Sock->flush();
-        if (!t1Sock->waitForReadyRead(2000)) {
+        wrenchSock->write(arg.toUtf8() + "\n");
+        wrenchSock->flush();
+        if (!wrenchSock->waitForReadyRead(2000)) {
             emit gotSomeLog("info", QString("命令超时： ") + arg);
         }
-        res = t1Sock->readLine();
+        res = wrenchSock->readLine();
     } else {
-        QString error = "Invalid t1sock input: " + arg;
+        QString error = "Invalid wrenchsock input: " + arg;
         luaL_argerror(L, 1, qPrintable(error));
     }
 
@@ -246,8 +246,8 @@ QString LuaExecuteThread::getVariableLocked(const QString& name, const QString& 
     return res;
 }
 
-//f:write(('t1_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments));
-static int l_t1_load_mail_heads(lua_State* L)
+//f:write(('wrench_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments));
+static int l_wrench_load_mail_heads(lua_State* L)
 {
     QString subject = QString::fromUtf8(lua_tolstring(L, 1, NULL));
     QString to = QString::fromUtf8(lua_tolstring(L, 2, NULL));
@@ -259,7 +259,7 @@ static int l_t1_load_mail_heads(lua_State* L)
     return 0;
 }
 
-static int l_t1_set_variable(lua_State* L)
+static int l_wrench_set_variable(lua_State* L)
 {
     QString name = QString::fromUtf8(lua_tolstring(L, 1, NULL));
     QString val = QString::fromUtf8(lua_tolstring(L, 2, NULL));
@@ -313,11 +313,11 @@ void LuaExecuteThread::run()
     lua_pushcfunction(L, l_is_exiting);
     lua_setglobal(L, "is_exiting");
 
-    lua_pushcfunction(L, l_t1_load_mail_heads);
-    lua_setglobal(L, "t1_load_mail_heads");
+    lua_pushcfunction(L, l_wrench_load_mail_heads);
+    lua_setglobal(L, "wrench_load_mail_heads");
 
-    lua_pushcfunction(L, l_t1_set_variable);
-    lua_setglobal(L, "t1_set_variable");
+    lua_pushcfunction(L, l_wrench_set_variable);
+    lua_setglobal(L, "wrench_set_variable");
 
     int error = luaL_loadstring(L, "wrench = require('wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {
@@ -368,14 +368,14 @@ void LuaExecuteThread::run()
 LuaExecuteThread::LuaExecuteThread(QObject* parent)
     : QThread(parent),
       mQuit(false),
-      t1Sock(NULL)
+      wrenchSock(NULL)
 {
 }
 
 LuaExecuteThread::~LuaExecuteThread()
 {
-    if (t1Sock)
-        t1Sock->deleteLater();
+    if (wrenchSock)
+        wrenchSock->deleteLater();
 }
 
 void LuaExecuteThread::addScript(QStringList script)

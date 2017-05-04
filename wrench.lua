@@ -26,27 +26,27 @@ local right_button_x = 984
 local start_or_stop_recording, m_is_recording, current_recording_file
 
 local m_focused_app, m_window_dump, m_focused_window
-local t1_call, t1_run, t1_adb_mail, t1_save_mail_heads
+local wrench_call, wrench_run, wrench_adb_mail, wrench_save_mail_heads
 local reset_input_method, adb_shell
 local adb_push, adb_pull, adb_install
-local shell_quote, putclip, t1_post, push_text, t1_post2
+local shell_quote, putclip, wrench_post, push_text, wrench_post2
 local adb_start_activity, launch_apps, on_app_selected
 local picture_to_weixin_share, picture_to_weibo_share, picture_to_qq_share
-local picture_to_momo_share, t1_add_mms_receiver
+local picture_to_momo_share, wrench_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share, adb_is_window
 local adb_focused_window
-local t1_config, check_phone
+local wrench_config, check_phone
 local weixin_find_friend, qq_find_friend, qq_find_group_friend
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_rewrite, emoji_for_weibo
 local adb_get_last_pic, debugging
-local t1_find_weixin_contact, t1_find_qq_contact, t1_find_dingding_contact
+local wrench_find_weixin_contact, wrench_find_qq_contact, wrench_find_dingding_contact
 local find_weibo_friend
 local adb_start_service_and_wait_file_gone
 local adb_start_service_and_wait_file, adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
 local wait_input_target_n
-local t1_eval, log, share_pics_to_app, share_text_to_app
+local wrench_eval, log, share_pics_to_app, share_text_to_app
 local picture_to_weibo_comment
 local check_scroll_lock, prompt_user, yes_or_no_p
 
@@ -66,12 +66,12 @@ local app_width_ratio, app_height_ratio = app_width / default_width,  app_height
 local real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
 local using_oppo_os = false
 local brand = "smartisan"
-local model = "T1"
+local model = "Wrench"
 local qq_emojis_remap, weixin_emojis_remap, weibo_emojis_remap
 local sdk_version = 19
 local emojis, img_to_emoji_map, emoji_to_img_map
 local the_true_adb = "./the-true-adb"
-local t1_send_action
+local wrench_send_action
 
 W.sms = "com.android.mms/com.android.mms.ui.ComposeMessageActivity"
 W.weibo_home_activity = "com.sina.weibo/com.sina.weibo.MainTabActivity"
@@ -723,18 +723,18 @@ local function weibo_text_share(window)
    end
 end
 
-local function t1_share_to_weibo(text)
+local function wrench_share_to_weibo(text)
    share_text_to_app("com.sina.weibo", ".composerinde.ComposerDispatchActivity", text)
    wait_input_target(W.weiboShareActivity)
    if yes_or_no_p("Share to Weibo?") then
-      t1_send_action()
+      wrench_send_action()
    end
 end
 
-local function t1_share_to_qq(text)
+local function wrench_share_to_qq(text)
    share_text_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity",  text)
    wait_input_target(W.qqShareActivity)
-   t1_send_action()
+   wrench_send_action()
 end
 
 local wait_top_activity_n = function(n_retry, ...)
@@ -1158,7 +1158,7 @@ adb_start_weixin_share = function(text_or_image)
    log("start weixin share complete")
 end
 
-local function t1_share_to_weixin(text)
+local function wrench_share_to_weixin(text)
    debug("share to weixin: %s", text)
    weixinShareActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui"
    adb_start_weixin_share('text')
@@ -1167,7 +1167,7 @@ local function t1_share_to_weixin(text)
       putclip(text)
    end
    wait_input_target(weixinShareActivity)
-   t1_post()
+   wrench_post()
 end
 
 local function weixin_text_share(window, text)
@@ -1181,22 +1181,22 @@ local function weixin_text_share(window, text)
    end
 end
 
-local function t1_sms(window)
+local function wrench_sms(window)
    adb_event"adb-tap 192 1227 sleep .5 adb-key scroll_lock"
    if yes_or_no_p("确认发送短信？") then
       adb_event"adb-tap 857 1008"
    end
 end
 
-local function t1_google_plus(window)
+local function wrench_google_plus(window)
    adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
 end
 
-local function t1_smartisan_notes(window)
+local function wrench_smartisan_notes(window)
    adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
 end
 
-local function t1_mail(window)
+local function wrench_mail(window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
       wait_input_target(W.smartisan_mail_compose)
@@ -1212,7 +1212,7 @@ local function t1_mail(window)
    end
 end
 
-local function t1_paste()
+local function wrench_paste()
    adb_event{'key', 'scroll_lock'}
 end
 
@@ -1398,7 +1398,7 @@ push_text = function(text)
    text = text:gsub("\n", "\r\n")
    local file, path
    local tmp = os.getenv("TEMP") or "/tmp"
-   path = tmp .. package.config:sub(1, 1) .. "lua-smartisan-t1.txt"
+   path = tmp .. package.config:sub(1, 1) .. "lua-smartisan-wrench.txt"
    file = io.open(path, "w")
    if not file then
       error("TEMP env not set")
@@ -1479,8 +1479,8 @@ local check_apk_installed = function(apk, md5)
    end
 end
 
-if not t1_set_variable then
-   t1_set_variable = function(name, val)
+if not wrench_set_variable then
+   wrench_set_variable = function(name, val)
    end
 end
 
@@ -1490,7 +1490,7 @@ M.qx = function(command)
    return v
 end
 
-t1_config = function(passedConfigDirPath)
+wrench_config = function(passedConfigDirPath)
    -- install the apk
    if not qt_adb_pipe then
       local p = io.popen("the-true-adb version")
@@ -1531,9 +1531,9 @@ t1_config = function(passedConfigDirPath)
 
    if file_exists(androidvncserver) then
       check_file_push_and_renamed(androidvncserver, androidvncserver ..  ".md5", "androidvncserver")
-      t1_set_variable("using-vnc", "true")
+      wrench_set_variable("using-vnc", "true")
    else
-      t1_set_variable("using-vnc", "false")
+      wrench_set_variable("using-vnc", "false")
    end
 
    debugging("sdk is %s\nbrand is %s\nmodel is %s\n", sdk_version, brand, model)
@@ -1648,10 +1648,10 @@ adb_get_last_pic = function(which, remove)
    end
 end
 
-t1_post2 = function(text1, text2)
-   putclip(text1)
+wrench_post2 = function(texwrench, text2)
+   putclip(texwrench)
    adb_event("key scroll_lock key dpad_down")
-   t1_post(text2)
+   wrench_post(text2)
 end
 
 weixin_find_friend = function(friend_name)
@@ -1663,7 +1663,7 @@ weixin_find_friend = function(friend_name)
    adb_event"adb-tap 245 382"
 end
 
-t1_find_dingding_contact = function(friend_name)
+wrench_find_dingding_contact = function(friend_name)
    dingding_open_homepage()
    adb_event"adb-tap 770 105"
    putclip(friend_name)
@@ -1887,7 +1887,7 @@ local function postAfterBackKey(window)
    for _, w in ipairs(shouldNotPostActivitys) do
       if window == w then
          adb_event"key back sleep .2"
-         t1_post()
+         wrench_post()
          return true
       end
    end
@@ -1911,7 +1911,7 @@ end
 
 M.call_ext = function(ext, ...)
    M.ext_args = {...}
-   t1_run("ext" .. package.config:sub(1, 1) .. ext .. ".lua")
+   wrench_run("ext" .. package.config:sub(1, 1) .. ext .. ".lua")
    M.ext_args = {}
 end
 
@@ -1935,20 +1935,20 @@ end
 
 M.M = M
 
-t1_post = function(text) -- use weixin
+wrench_post = function(text) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
    if text then
       if text:match("^​") and text ~= "​" then
          text = text:sub(string.len("​") + 1)
          local func = loadstring(text)
-         t1_eval(func)
+         wrench_eval(func)
          return "executed string"
       end
       if text:match("^#!lua") and text ~= "#!lua" then
          text = text:sub(string.len("#!lua") + 1)
          local func = loadstring(text)
-         t1_eval(func)
+         wrench_eval(func)
          return "executed string"
       end
 
@@ -1992,7 +1992,7 @@ t1_post = function(text) -- use weixin
       else
          adb_event("sleep 1")
       end
-      t1_post()
+      wrench_post()
       return
    elseif postAfterBackKey(window) then
       return
@@ -2005,19 +2005,19 @@ t1_post = function(text) -- use weixin
       weixin_text_share(window, text)
       return
    elseif window == "SmsPopupDialog" then
-      t1_sms(window)
+      wrench_sms(window)
       return
    elseif window == "com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity" then
-      t1_google_plus(window)
+      wrench_google_plus(window)
       return
    elseif window == "com.smartisanos.notes/com.smartisanos.notes.NotesActivity" then
-      t1_smartisan_notes(window)
+      wrench_smartisan_notes(window)
       return
    elseif window == W.smartisan_mail_compose or
       window == "com.android.email/com.android.email.activity.Welcome" or
       window == "com.android.email/com.android.email2.ui.MailActivityEmail" or
    window == W.emailSmartisanActivity then
-      t1_mail(window)
+      wrench_mail(window)
       return
    else
       local add, post_button = '', right_button_x .. ' 1850'
@@ -2111,8 +2111,8 @@ t1_post = function(text) -- use weixin
    return "text sent"
 end
 
-t1_send_action = function()
-   t1_post('​')
+wrench_send_action = function()
+   wrench_post('​')
 end
 
 local function upload_pics(...)
@@ -2352,12 +2352,12 @@ close_ime = function()
    return input_method, ime_height
 end
 
-local function click_to_album_wx_chat_style(event1, activity1, ...)
+local function click_to_album_wx_chat_style(evenwrench, activity1, ...)
    local input_method, ime_height = close_ime()
    local post_button = ('%d %d'):format(right_button_x, 1920 - 50)
    local old_top_window = adb_top_window()
 
-   adb_event(post_button .. " sleep .2 " .. event1)
+   adb_event(post_button .. " sleep .2 " .. evenwrench)
    local top_window = activity1
    if top_window ~= activity1 then
       log("Can't get to %s, got %s", activity1, top_window)
@@ -2550,11 +2550,11 @@ local function wrench_picture(...)
    return #pics .. " pictures sent"
 end
 
-t1_save_mail_heads = function(file, subject, to, cc, bcc, attachments)
+wrench_save_mail_heads = function(file, subject, to, cc, bcc, attachments)
    local f = io.open(file, "w")
-   f:write(('t1_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments))
+   f:write(('wrench_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments))
    f:close()
-   debugging("hello saving to %s t1_save_mail_heads", file)
+   debugging("hello saving to %s wrench_save_mail_heads", file)
 end
 
 expand_mail_groups = function(contacts)
@@ -2572,7 +2572,7 @@ expand_mail_groups = function(contacts)
    return res
 end
 
-t1_adb_mail = function(subject, to, cc, bcc, attachments)
+wrench_adb_mail = function(subject, to, cc, bcc, attachments)
    if subject ~= "" and file_exists(os.getenv("HOME") .. "/src/github/private-config/bin/wrench-thunderbird") then
       if yes_or_no_p("Do you want to use thunderbird?") then
          system{"wrench-thunderbird", subject, to, cc, bcc, attachments}
@@ -2674,14 +2674,14 @@ t1_adb_mail = function(subject, to, cc, bcc, attachments)
    adb_event"key DPAD_UP key DPAD_UP"
 end
 
-t1_find_weixin_contact = function(number)
+wrench_find_weixin_contact = function(number)
    if not number:match("^[0-9]+$") then
       return weixin_find_friend(number)
    end
    adb_am("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getcontact 1 --es contact " .. number)
 end
 
-t1_find_qq_contact = function(number)
+wrench_find_qq_contact = function(number)
    local contact_type
    if (number:match("@qq.com")) then
       number = number:gsub("@qq.com", "")
@@ -2703,7 +2703,7 @@ t1_find_qq_contact = function(number)
    if using_adb_root then
       adb_am(("am start --user 0 -n com.tencent.mobileqq/.activity.ChatActivity --es uin %d --ei uintype %d"):format(number, contact_type))
    else
-      t1_find_qq_contact(number)
+      wrench_find_qq_contact(number)
    end
 end
 
@@ -2730,17 +2730,17 @@ local press_dial_key = function()
    end
 end
 
-t1_call = function(number)
+wrench_call = function(number)
    if number:match("@@") then
       number = string_split(number)
       local names = split("@@", number)
       local who, where = names[1] or "", names[2] or ""
       if where == "qq" then
-         t1_find_qq_contact(who)
+         wrench_find_qq_contact(who)
       elseif where == "wx" then
-         t1_find_weixin_contact(who)
+         wrench_find_weixin_contact(who)
       elseif where == "dd" then
-         t1_find_dingding_contact(who)
+         wrench_find_dingding_contact(who)
       elseif where == "coffee" then
          get_coffee(who)
       elseif where == "app" then
@@ -2752,10 +2752,10 @@ t1_call = function(number)
       elseif where == "sms" then
          search_sms(who)
       elseif where == "ext" then
-         t1_run("ext" .. package.config:sub(1, 1) .. who .. ".lua")
+         wrench_run("ext" .. package.config:sub(1, 1) .. who .. ".lua")
       elseif where == "eval" then
          local func = loadstring(who)
-         t1_eval(func)
+         wrench_eval(func)
       else
          prompt_user("Don't know how to do it: " .. where)
       end
@@ -2774,7 +2774,7 @@ t1_call = function(number)
    end
 end
 
-t1_add_mms_receiver = function(number)
+wrench_add_mms_receiver = function(number)
    while adb_is_window(W.sms) do
       adb_event("key back sleep .1")
    end
@@ -2806,7 +2806,7 @@ if log_to_ui then
    M.log_to_ui = log_to_ui
 end
 
-t1_eval = function(f)
+wrench_eval = function(f)
    for k, v in pairs(M) do
       if not _ENV[k] then
          _ENV[k] = v
@@ -2815,13 +2815,13 @@ t1_eval = function(f)
    f()
 end
 
-t1_run = function (file)
+wrench_run = function (file)
    local ext = file:gsub(".*%.", "")
    if ext ~= "twa" and ext ~= "小扳手" and ext ~= "lua" then
       return "Can not run this script, must be a .twa file"
    end
    local f = loadfile(file)
-   t1_eval(f)
+   wrench_eval(f)
 end
 
 M.wrenchThumbUp = function()
@@ -2839,12 +2839,12 @@ M.wrenchThumbUp = function()
       ExtMods.description_to_loaded_func[x] = loadfile("ext/" .. ExtMods.description_to_filename[x])
    end
 
-   t1_eval(ExtMods.description_to_loaded_func[x])
+   wrench_eval(ExtMods.description_to_loaded_func[x])
 end
 
 M.shift_click_notification = function(pkg, key, title, text)
    if pkg == "com.tencent.mm" then
-      t1_call(title .. "@@wx")
+      wrench_call(title .. "@@wx")
    elseif pkg == "com.tencent.mobileqq" then
       local sender = ""
       if title:lower() == "qq" then
@@ -2856,7 +2856,7 @@ M.shift_click_notification = function(pkg, key, title, text)
          sender = title or ""
       end
 
-      t1_call(sender .. "@@qq")
+      wrench_call(sender .. "@@qq")
    end
 end
 
@@ -2865,24 +2865,24 @@ M.open_weixin_scan = open_weixin_scan
 M.adb_get_input_window_dump = adb_get_input_window_dump
 M.putclip = putclip
 M.start_weibo_share = start_weibo_share
-M.t1_post = t1_post
+M.wrench_post = wrench_post
 M.launch_apps = launch_apps
 M.on_app_selected = on_app_selected
-M.t1_find_weixin_contact = t1_find_weixin_contact
+M.wrench_find_weixin_contact = wrench_find_weixin_contact
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe
 M.wrench_picture = wrench_picture
-M.t1_follow_me = t1_follow_me
-M.t1_share_to_weibo = t1_share_to_weibo
-M.t1_share_to_weixin = t1_share_to_weixin
+M.wrench_follow_me = wrench_follow_me
+M.wrench_share_to_weibo = wrench_share_to_weibo
+M.wrench_share_to_weixin = wrench_share_to_weixin
 M.picture_to_weibo_share = picture_to_weibo_share
 M.picture_to_weixin_share = picture_to_weixin_share
 M.picture_to_momo_share = picture_to_momo_share
 M.picture_to_qq_share = picture_to_qq_share
-M.t1_spread_it = t1_spread_it
+M.wrench_spread_it = wrench_spread_it
 M.upload_pics = upload_pics
 M.adb_start_weixin_share = adb_start_weixin_share
-M.t1_config = t1_config
+M.wrench_config = wrench_config
 M.emoji_for_qq = emoji_for_qq
 M.split = split
 M.replace_img_with_emoji = replace_img_with_emoji
@@ -2890,16 +2890,16 @@ M.system = system
 M.sleep = sleep
 M.debugg = debug
 M.get_a_note = get_a_note
-M.t1_call = t1_call
-M.t1_run = t1_run
-M.t1_add_mms_receiver = t1_add_mms_receiver
-M.t1_adb_mail = t1_adb_mail
-M.t1_save_mail_heads = t1_save_mail_heads
+M.wrench_call = wrench_call
+M.wrench_run = wrench_run
+M.wrench_add_mms_receiver = wrench_add_mms_receiver
+M.wrench_adb_mail = wrench_adb_mail
+M.wrench_save_mail_heads = wrench_save_mail_heads
 M.adb_event = adb_event
-M.t1_send_action = t1_send_action
-M.t1_post2 = t1_post2
-M.t1_find_qq_contact = t1_find_qq_contact
-M.t1_share_to_qq = t1_share_to_qq
+M.wrench_send_action = wrench_send_action
+M.wrench_post2 = wrench_post2
+M.wrench_find_qq_contact = wrench_find_qq_contact
+M.wrench_share_to_qq = wrench_share_to_qq
 M.weixin_find_friend = weixin_find_friend
 M.qq_open_homepage = qq_open_homepage
 M.get_coffee = get_coffee
@@ -2949,7 +2949,7 @@ local function sayThankYouForLuckyMoney()
             fortune = fortune:gsub("%[.-m", "")
             thank_you = thanks[n] .. "\n\n*****\n\n" .. fortune
          end
-         t1_post(thank_you)
+         wrench_post(thank_you)
          sleep(1)
          break
       end
@@ -3068,10 +3068,10 @@ M.adb_top_window = adb_top_window
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then
-      -- t1_post(join(' ', arg))
+      -- wrench_post(join(' ', arg))
       local file = io.open("setclip.apk.md5")
       if file then
-         t1_config()
+         wrench_config()
          file:close()
       end
       if type(M[arg[1]]) == 'function' then
@@ -3089,7 +3089,7 @@ local function do_it()
          loadstring(cmd)()
       end
       os.exit(0)
-      t1_picture(arg[1]) -- , arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
+      wrench_picture(arg[1]) -- , arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9])
       os.exit(0)
       print(5)
       debug_set_x = arg[#arg]

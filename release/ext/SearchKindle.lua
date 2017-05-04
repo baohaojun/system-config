@@ -43,7 +43,7 @@ for i = 1, 20 do
          end
       end
 
-      t1_post(book)
+      wrench_post(book)
       adb_event"sleep .1 key enter"
       prompt_user("I have searched " .. book .. " for you in kindle, please check")
       break

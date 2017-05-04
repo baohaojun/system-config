@@ -62,16 +62,16 @@ public class Input {
      * @param args The command-line arguments
      */
 
-    private class T1Thread extends Thread {
-        LocalSocket t1socket;
-        T1Thread(LocalSocket localSock) {
-            t1socket = localSock;
+    private class WrenchThread extends Thread {
+        LocalSocket wrenchsocket;
+        WrenchThread(LocalSocket localSock) {
+            wrenchsocket = localSock;
         }
 
         public void run() {
             try {
-                InputStream in = t1socket.getInputStream();
-                OutputStream out = t1socket.getOutputStream();
+                InputStream in = wrenchsocket.getInputStream();
+                OutputStream out = wrenchsocket.getOutputStream();
 
                 InputStreamReader ir = new InputStreamReader(in);
                 OutputStreamWriter ow = new OutputStreamWriter(out);
@@ -80,7 +80,7 @@ public class Input {
                 char[] buffer = new char[1];
                 while (ir.read(buffer) == 1) {
                     if (buffer[0] == '\n') {
-                        if (doT1Command(sb.toString()) < 0) {
+                        if (doWrenchCommand(sb.toString()) < 0) {
                             ir.close();
                             ow.close();
                             break;
@@ -131,8 +131,8 @@ public class Input {
     }
 
     public static void main(String[] args) {
-        File t1OptimizeDir = new File(optCacheDirName);
-        t1OptimizeDir.mkdir();
+        File wrenchOptimizeDir = new File(optCacheDirName);
+        wrenchOptimizeDir.mkdir();
 
         mInput = new Input();
         initAm();
@@ -143,14 +143,14 @@ public class Input {
         try {
             LocalServerSocket WrenchServer = new LocalServerSocket("Wrench");
             while (true) {
-                LocalSocket t1socket = WrenchServer.accept();
-                if (!checkPerm(t1socket.getFileDescriptor())) {
+                LocalSocket wrenchsocket = WrenchServer.accept();
+                if (!checkPerm(wrenchsocket.getFileDescriptor())) {
                     System.err.println("socket permission denied");
-                    t1socket.close();
+                    wrenchsocket.close();
                     continue;
                 }
-                T1Thread t1Thread = new T1Thread(t1socket);
-                t1Thread.start();
+                WrenchThread wrenchThread = new WrenchThread(wrenchsocket);
+                wrenchThread.start();
             }
         }
         catch (Throwable e) {
@@ -162,7 +162,7 @@ public class Input {
     private static Input mInput;
     private static Object mAm;
     private static Method mAmRun;
-    private static synchronized int doT1Command(String cmd) {
+    private static synchronized int doWrenchCommand(String cmd) {
         System.err.println("cmd is " + cmd);
         String[] args = cmd.split("\\s+");
         if (args.length == 0)

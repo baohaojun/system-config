@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     pathEnv += QProcessEnvironment::systemEnvironment().value("PATH");
 
     setenv("PATH", qPrintable(pathEnv), 1);
-    // FILE* fp = fopen("/Users/bhj/t1.log", "w");
+    // FILE* fp = fopen("/Users/bhj/wrench.log", "w");
     // if (fp) {
     //     char cwd[1024];
     //     fprintf(fp, "cwd is %s, app is %s\n", getcwd(cwd, sizeof(cwd)), qPrintable(QCoreApplication::applicationDirPath()));

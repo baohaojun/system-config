@@ -89,19 +89,19 @@ atexit() {
 }
 trap atexit 0
 
-export T1_GIT_HASH=$(git log --pretty=%h -1 HEAD)
+export Wrench_GIT_HASH=$(git log --pretty=%h -1 HEAD)
 if git log --pretty=%s -1 | grep -P 'Release for \Q'"$ReleaseVersion"'\E' -q; then
     echo "Already released"
     true
 else
     oldVersion=$(perl -ne 'print $1 if m!<string>Wrench\s*(V.*)</string>!' wrenchmainwindow.ui)
-    perl -npe 's!<string>Wrench\s*V.*</string>!<string>Wrench $ENV{shortVersion} ($ENV{T1_GIT_HASH})</string>!' -i wrenchmainwindow.ui
+    perl -npe 's!<string>Wrench\s*V.*</string>!<string>Wrench $ENV{shortVersion} ($ENV{Wrench_GIT_HASH})</string>!' -i wrenchmainwindow.ui
 
-    git commit -m "Release for $ReleaseVersion $T1_GIT_HASH" -a
+    git commit -m "Release for $ReleaseVersion $Wrench_GIT_HASH" -a
 
     if test $(compare-version "$oldVersion" "$shortVersion") != '<'; then
         if test $(compare-version "$oldVersion" "$shortVersion") = "=" &&
-                yes-or-no-p -n "Use the same version $shortVersion ($T1_GIT_HASH) = $oldVersion?"; then
+                yes-or-no-p -n "Use the same version $shortVersion ($Wrench_GIT_HASH) = $oldVersion?"; then
             true
         else
             die "old version $oldVersion >= new version $shortVersion"
@@ -112,7 +112,7 @@ fi
 if is-tty-io; then
     src_version=$(cd ~/src/github/Wrench-debian; cat .src-version.txt)
     git log $src_version..HEAD || true
-    yes-or-no-p -y "Continue from old version '$oldVersion' -> new version '$shortVersion ($T1_GIT_HASH)'?"
+    yes-or-no-p -y "Continue from old version '$oldVersion' -> new version '$shortVersion ($Wrench_GIT_HASH)'?"
 fi
 
 git clean -xfd
@@ -193,7 +193,7 @@ for x in $(
         lookup-file -e .git
         cd $(dirname $(lookup-file -e .git))
         git add .
-        git commit -m "Release for $ReleaseVersion ($T1_GIT_HASH)"
+        git commit -m "Release for $ReleaseVersion ($Wrench_GIT_HASH)"
         touch .git/sc-not-merged
         git push&
         dir=$(basename $PWD)

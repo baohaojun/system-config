@@ -151,7 +151,7 @@ void WrenchMainWindow::adbStateUpdated(const QString& state)
 {
     if (state.toLower() == "online" && ui->adbStateLabel->text().toLower() != "online") {
         if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
-            mLuaThread->addScript(QStringList() << "t1_config" << configDirPath);
+            mLuaThread->addScript(QStringList() << "wrench_config" << configDirPath);
         } else {
             on_configurePushButton_clicked();
         }
@@ -358,10 +358,10 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
     if (ui->tbWeibo->isChecked()) {
         share = 1;
         if (mPictures.isEmpty()) {
-            mLuaThread->addScript(QStringList() << "t1_share_to_weibo" << text);
+            mLuaThread->addScript(QStringList() << "wrench_share_to_weibo" << text);
         } else {
             mLuaThread->addScript(QStringList() << "picture_to_weibo_share");
-            mLuaThread->addScript(QStringList() << "t1_post" << text);
+            mLuaThread->addScript(QStringList() << "wrench_post" << text);
         }
         ui->tbWeibo->setChecked(false);
     }
@@ -369,10 +369,10 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
     if (ui->tbWeixin->isChecked()) {
         share = 1;
         if (mPictures.isEmpty()) {
-            mLuaThread->addScript(QStringList() << "t1_share_to_weixin" << text);
+            mLuaThread->addScript(QStringList() << "wrench_share_to_weixin" << text);
         } else {
             mLuaThread->addScript(QStringList() << "picture_to_weixin_share");
-            mLuaThread->addScript(QStringList() << "t1_post" << text);
+            mLuaThread->addScript(QStringList() << "wrench_post" << text);
         }
         ui->tbWeixin->setChecked(false);
     }
@@ -380,10 +380,10 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
     if (ui->tbQq->isChecked()) {
         share = 1;
         if (mPictures.isEmpty()) {
-            mLuaThread->addScript(QStringList() << "t1_share_to_qq" << text);
+            mLuaThread->addScript(QStringList() << "wrench_share_to_qq" << text);
         } else {
             mLuaThread->addScript(QStringList() << "picture_to_qq_share");
-            mLuaThread->addScript(QStringList() << "t1_post" << text);
+            mLuaThread->addScript(QStringList() << "wrench_post" << text);
         }
         ui->tbQq->setChecked(false);
     }
@@ -394,7 +394,7 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
             prompt_user("Failed to share to Momo, must have at least 1 picture.");
         } else {
             mLuaThread->addScript(QStringList() << "picture_to_momo_share");
-            mLuaThread->addScript(QStringList() << "t1_post" << text);
+            mLuaThread->addScript(QStringList() << "wrench_post" << text);
         }
         ui->tbMomo->setChecked(false);
     }
@@ -406,7 +406,7 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
     }
 
     if (! share) {
-        mLuaThread->addScript(QStringList() << "t1_post" << text);
+        mLuaThread->addScript(QStringList() << "wrench_post" << text);
     }
     ui->phoneTextEdit->selectAll();
 }
@@ -456,7 +456,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
     if (! is_starting) {
-        mLuaThread->addScript(QStringList() << "t1_config" << configDirPath);
+        mLuaThread->addScript(QStringList() << "wrench_config" << configDirPath);
     }
 }
 
@@ -637,7 +637,7 @@ void WrenchMainWindow::on_tbMms_clicked()
     foreach (const QString& receiver, mMmsReceiverMap.keys()) {
         receivers += receiver + ",";
     }
-    mLuaThread->addScript(QStringList() << "t1_add_mms_receiver" << receivers);
+    mLuaThread->addScript(QStringList() << "wrench_add_mms_receiver" << receivers);
 }
 
 void WrenchMainWindow::afterUsingContactDialog()
@@ -683,14 +683,14 @@ void WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString& d
 void WrenchMainWindow::on_Dial(const QString&contact)
 {
     if (ui->tbWeixin->isChecked()) {
-        mLuaThread->addScript(QStringList() << "t1_find_weixin_contact" << contact);
+        mLuaThread->addScript(QStringList() << "wrench_find_weixin_contact" << contact);
         return;
     }
     if (ui->tbQq->isChecked()) {
-        mLuaThread->addScript(QStringList() << "t1_find_qq_contact" << contact);
+        mLuaThread->addScript(QStringList() << "wrench_find_qq_contact" << contact);
         return;
     }
-    mLuaThread->addScript(QStringList() << "t1_call" << contact);
+    mLuaThread->addScript(QStringList() << "wrench_call" << contact);
 }
 
 void WrenchMainWindow::quitMyself()
@@ -772,7 +772,7 @@ void WrenchMainWindow::startTask(const QString& task)
     QString path = task;
     QFileInfo fileInfo = QFileInfo(path);
     if (fileInfo.isReadable() && fileInfo.isFile()) {
-        mLuaThread->addScript(QStringList() << "t1_run" << path);
+        mLuaThread->addScript(QStringList() << "wrench_run" << path);
     }
 
 }
@@ -889,19 +889,19 @@ void WrenchMainWindow::on_tbMailDone_clicked()
 {
     ui->tabWidget->setCurrentIndex(0);
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
-    mLuaThread->addScript((QStringList() << "t1_adb_mail") + getMailHeads(ui));
+    mLuaThread->addScript((QStringList() << "wrench_adb_mail") + getMailHeads(ui));
 }
 
 void WrenchMainWindow::on_tbMailLoad_clicked()
 {
     QString file = QFileDialog::getOpenFileName(0, "请选择打开哪个邮件小扳手脚本文件", QString(), "小扳手脚本文件(*.twa)");
-    mLuaThread->addScript(QStringList() << "t1_run" << file);
+    mLuaThread->addScript(QStringList() << "wrench_run" << file);
 }
 
 void WrenchMainWindow::on_tbMailSave_clicked()
 {
     QString file = QFileDialog::getSaveFileName(0, "请选择保存常用联系方式到哪个文件", QString(), "小扳手脚本文件(*.twa)");
-    mLuaThread->addScript((QStringList() << "t1_save_mail_heads" << file) + getMailHeads(ui));
+    mLuaThread->addScript((QStringList() << "wrench_save_mail_heads" << file) + getMailHeads(ui));
 }
 
 void WrenchMainWindow::on_tbMailClear_clicked()

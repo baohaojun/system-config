@@ -25,9 +25,9 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
         if ! test "$input"; then
             exit
         fi
-        if test -e ~/.t1-sig; then
-            input=$(echo "$input"; echo; cat ~/.t1-sig)
-            (echo; cat ~/.t1-sig) >> /tmp/$USE_BUFFER_NAME.out
+        if test -e ~/.wrench-sig; then
+            input=$(echo "$input"; echo; cat ~/.wrench-sig)
+            (echo; cat ~/.wrench-sig) >> /tmp/$USE_BUFFER_NAME.out
         fi
         (
             flock 10
@@ -43,7 +43,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             adb-tap 102 286
                             adb-tap 932 1818
                             ;;
-                        t1-putclip)
+                        wrench-putclip)
                             # do nothing, I will post it myself
                             adb-key SCROLL_LOCK
                             ;;
@@ -55,7 +55,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             if tail -n 1 /tmp/$USE_BUFFER_NAME.out| grep -P '^\(图\)$'; then
                                 wrench-get-pictures | xargs -d \\n wrench.lua picture_to_weibo_share
                             fi
-                            wrench.lua t1_share_to_weibo
+                            wrench.lua wrench_share_to_weibo
                             ;;
                         weixin-brand-new)
                             adb start-activity com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI --ei sns_comment_type 1
@@ -101,7 +101,7 @@ export USE_BUFFER_NAME=send-to-$(basename $0).org
                             fi
                             ;;
                         *) # most cases
-                            wrench.lua t1_post
+                            wrench.lua wrench_post
                             ;;
                     esac
                 }

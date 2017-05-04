@@ -222,7 +222,7 @@ bool PhoneScreenDialog::eventFilter(QObject *obj, QEvent *ev)
 
             if (key == Qt::Key_Enter || key == Qt::Key_Return) {
                 if (m == Qt::ControlModifier) {
-                    mLuaThread()->addScript(QStringList() << "t1_send_action");
+                    mLuaThread()->addScript(QStringList() << "wrench_send_action");
                 } else if (m == 0) {
                     mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key enter");
                 }

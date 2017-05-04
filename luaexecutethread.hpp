@@ -52,7 +52,7 @@ private:
     QWaitCondition mWait;
     QWaitCondition mSelectArgsWait;
     QMutex mSelectArgsMutex;
-    QTcpSocket* t1Sock;
+    QTcpSocket* wrenchSock;
 };
 
 #endif /* _LUAEXECUTETHREAD_H_ */

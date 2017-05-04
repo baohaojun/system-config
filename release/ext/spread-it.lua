@@ -8,7 +8,7 @@ local function wrench_spread_it()
    -- http://m.weibo.cn/1809968333/3774599487375417
 
    spread_text = "#小扳手真好用# 💑💓💕💖💗💘💙💚💛💜💝💞💟😍😻♥❤"
-   t1_share_to_weixin(spread_text)
+   wrench_share_to_weixin(spread_text)
    if 1 then
       return
    end
@@ -28,7 +28,7 @@ local function wrench_spread_it()
    adb_event("sleep .2 adb-tap 527 1911")
    wait_input_target("com.sina.weibo/com.sina.weibo.composerinde.CommentComposerActivity")
    adb_event("adb-tap 99 932")
-   t1_post(spread_text)
+   wrench_post(spread_text)
    adb_event("sleep .5 adb-key back sleep .5")
 end
 
