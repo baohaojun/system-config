@@ -76,7 +76,9 @@ M.configs = {
 }
 
 local dofile_res = nil
-dofile_res, vpn_mode = pcall(dofile, "vpn-mode.lua")
+local configDir = os.getenv("WRENCH_CONFIG_DIR")
+
+dofile_res, vpn_mode = pcall(dofile, configDir .. package.config:sub(1, 1) .. "vpn-mode.lua")
 if not dofile_res then
    vpn_mode = "横屏高清"
 end

@@ -143,6 +143,20 @@ int main(int argc, char *argv[])
         setenv("HOME", qPrintable(home), 1);
     }
 #endif
+
+    QString str = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    gConfigDir = QDir(str);
+    qDebug() << "config dir is " << gConfigDir;
+    gConfigDir.mkpath("ext");
+
+    str = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    gDataDir = QDir(str);
+    qDebug() << "data dir is " << gDataDir;
+    gDataDir.mkpath(".");
+
+    setenv("WRENCH_CONFIG_DIR", qPrintable(gConfigDir.absolutePath()), 1);
+    setenv("WRENCH_DATA_DIR", qPrintable(gDataDir.absolutePath()), 1);
+
     WrenchMainWindow w;
     a.setActivationWindow(&w);
     w.show();
@@ -173,15 +187,10 @@ int main(int argc, char *argv[])
 
     QProcess::startDetached("./the-true-adb", QStringList("start-server"));
 
-    QString str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, ".", QStandardPaths::LocateDirectory);
-    QDir configDir(str);
-    configDir.mkdir("Wrench");
-    str = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "Wrench", QStandardPaths::LocateDirectory);
-    configDirPath = str;
-
     int result = a.exec();
     globalConfig->deleteLater();
     return result;
 }
 
-QString configDirPath;
+QDir gConfigDir;
+QDir gDataDir;

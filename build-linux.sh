@@ -57,6 +57,7 @@ cd $(dirname $(readlink -f $0))
 if test "$do_debug" = true; then
     build_dir=~/tmp/build-wrench-debug
 fi
+chmod u+w $build_dir
 
 if type relative-link >/dev/null 2>&1; then
     system_config=true
@@ -121,6 +122,7 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
     else
         rm $build_dir-debug/Wrench -f || true
         mkfifo /tmp/build-linux.$$
+        chmod a-w $build_dir
         myscr bash -c "echo Wrench; LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu ./Wrench > /tmp/build-linux.$$ 2>&1"
         cat /tmp/build-linux.$$
         rm /tmp/build-linux.$$

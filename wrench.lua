@@ -1490,7 +1490,21 @@ M.qx = function(command)
    return v
 end
 
+M.dataDirFile = function(file)
+   return M.dataDir .. file
+end
+
+M.configDirFile = function(file)
+   return M.configDir .. file
+end
+
 wrench_config = function(passedConfigDirPath)
+   if passedConfigDirPath then
+      configDir = passedConfigDirPath
+   end
+   M.configDir = configDir .. package.config:sub(1, 1)
+   M.dataDir = os.getenv("WRENCH_DATA_DIR") .. package.config:sub(1, 1)
+
    -- install the apk
    if not qt_adb_pipe then
       local p = io.popen("the-true-adb version")
@@ -1507,7 +1521,7 @@ wrench_config = function(passedConfigDirPath)
       error("Phone uname is not Linux")
    end
 
-   if not file_exists("apps.info") then
+   if not file_exists(M.dataDirFile("apps.info")) then
       M.update_apps()
    end
 
@@ -1576,17 +1590,13 @@ wrench_config = function(passedConfigDirPath)
 
    check_apk_installed("WrenchIME.apk", "WrenchIME.apk.md5")
 
-   if passedConfigDirPath then
-      configDir = passedConfigDirPath
-   end
-   M.writableDir = configDir .. package.config:sub(1, 1)
    local dofile_res
-   dofile_res, mail_group_map = pcall(dofile, M.writableDir .. "mail_groups.lua")
+   dofile_res, mail_group_map = pcall(dofile, M.configDirFile("mail_groups.lua"))
    if not dofile_res then
       mail_group_map = {}
    end
 
-   dofile_res, window_post_button_map = pcall(dofile, M.writableDir .. "window_post_botton.lua")
+   dofile_res, window_post_button_map = pcall(dofile, M.configDirFile("window_post_botton.lua"))
    if not dofile_res then
       dofile_res, window_post_button_map = pcall(dofile, "window_post_botton.lua")
       if not dofile_res then
@@ -1595,7 +1605,7 @@ wrench_config = function(passedConfigDirPath)
       end
    end
 
-   dofile_res, phone_info_map = pcall(dofile, M.writableDir .. "phone_info.lua")
+   dofile_res, phone_info_map = pcall(dofile, M.configDirFile("phone_info.lua"))
    if not dofile_res then
       log("phone info failed")
       phone_info_map = {}
@@ -1770,7 +1780,7 @@ qq_find_group_friend = function(friend_name)
 end
 
 save_window_types = function()
-   local mapfile = io.open(M.writableDir .. "window_post_botton.lua", "w")
+   local mapfile = io.open(M.configDirFile("window_post_botton.lua"), "w")
    mapfile:write("local map = {}\n")
    for k, v in spairs(window_post_button_map) do
       if k ~= "" then
@@ -1782,7 +1792,7 @@ save_window_types = function()
 end
 
 save_phone_info = function()
-   local infofile = io.open(M.writableDir .. "phone_info.lua", "w")
+   local infofile = io.open(M.configDirFile("phone_info.lua"), "w")
    infofile:write("local map = {}\n")
    for k, v in pairs(phone_info_map) do
       infofile:write(("map['%s'] = '%s'\n"):format(k, v))
@@ -1807,11 +1817,11 @@ end
 
 M.update_apps = function()
    if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listapps 1", "/sdcard/Wrench/apps.info") then
-      adb_pull{"/sdcard/Wrench/apps.info", M.writableDir .. "apps.info"}
+      adb_pull{"/sdcard/Wrench/apps.info", M.dataDirFile("apps.info")}
    else
       log("Can't get apps.info")
    end
-   apps_file = io.open("apps.info")
+   apps_file = io.open(M.dataDirFile("apps.info"))
    local apps_txt = apps_file:read("*a")
    local apps = split("\n", apps_txt)
    local app_table = {}
@@ -1822,22 +1832,22 @@ M.update_apps = function()
       local package_ = s[2]
       app_table[class_] = package_
       local label_ = s[3]
-      if not file_exists(class_ .. ".png") then
-         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.writableDir .. class_ .. ".png"}
+      if not file_exists(M.dataDirFile(class_ .. ".png")) then
+         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.dataDirFile(class_ .. ".png")}
       end
    end
    apps_file.close()
 end
 
 launch_apps = function()
-   if not file_exists("apps.info") then
+   if not file_exists(M.dataDirFile("apps.info")) then
       M.update_apps()
    end
    select_apps()
 end
 
 on_app_selected = function(app)
-   apps_file = io.open("apps.info")
+   apps_file = io.open(M.dataDirFile("apps.info"))
    local apps_txt = apps_file:read("*a")
    local apps = split("\n", apps_txt)
    local app_table = {}
@@ -1849,7 +1859,7 @@ on_app_selected = function(app)
       app_table[class_] = package_
       local label_ = s[3]
       if not file_exists(class_ .. ".png") then
-         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.writableDir .. class_ .. ".png"}
+         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.dataDirFile(class_ .. ".png")}
       end
    end
    apps_file.close()
@@ -1900,7 +1910,7 @@ start_or_stop_recording = function()
       m_is_recording = select_args{"What function do you want to record to?", "", ""}
       if (m_is_recording ~= "") then
          m_is_recording = m_is_recording:gsub("[^a-z0-9_A-Z]", "_")
-         m_is_recording = "ext" .. package.config:sub(1, 1) .. m_is_recording .. ".lua"
+         m_is_recording = M.configDirFile("ext" .. package.config:sub(1, 1) .. m_is_recording .. ".lua")
       else
          prompt_user("Must provide a name to record it")
          m_is_recording = nil
@@ -2726,7 +2736,7 @@ local press_dial_key = function()
       adb_event"adb-tap 420 1634"
    else
       adb_event("adb-tap 554 1668")
-      log("Error: unknown where_is_dial_key: %s, must be one of Middle, First from left, Second from left.\n\nPlease update %s", where_is_dial_key, M.writableDir .. "phone_info.lua")
+      log("Error: unknown where_is_dial_key: %s, must be one of Middle, First from left, Second from left.\n\nPlease update %s", where_is_dial_key, M.configDirFile("phone_info.lua"))
       where_is_dial_key = nil
    end
 end

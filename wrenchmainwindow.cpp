@@ -117,10 +117,9 @@ Snore::Icon WrenchMainWindow::getPkgIcon(const QString& pkg)
         return m_pkg_icons.value(pkg, m_defaultIcon);
     }
 
-    QDir dir;
-    QStringList imgs = dir.entryList(QStringList(pkg + ".*.png"));
+    QStringList imgs = gDataDir.entryList(QStringList(pkg + ".*.png"));
     if (!imgs.empty()) {
-        QPixmap pixmap(imgs[0]);
+        QPixmap pixmap(gDataDir.absoluteFilePath(imgs[0]));
         Snore::Icon icon(pixmap);
         m_pkg_icons.insert(pkg, icon);
         return icon;
@@ -151,7 +150,7 @@ void WrenchMainWindow::adbStateUpdated(const QString& state)
 {
     if (state.toLower() == "online" && ui->adbStateLabel->text().toLower() != "online") {
         if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
-            mLuaThread->addScript(QStringList() << "wrench_config" << configDirPath);
+            mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath());
         } else {
             on_configurePushButton_clicked();
         }
@@ -456,7 +455,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     mLuaThread->start();
     if (! is_starting) {
-        mLuaThread->addScript(QStringList() << "wrench_config" << configDirPath);
+        mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath());
     }
 }
 
@@ -471,13 +470,13 @@ void WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
     //mScreenCapture.clear();
     if (pix.isNull()) return;
 
-    pix.save("screen-shot.png", "PNG");
+    pix.save(gDataDir.absoluteFilePath("screen-shot.png"), "PNG");
 
     if (anyShareChecked() &&
         ui->tbScreenCapture->isChecked() &&
         !mPictures.isEmpty()) {
         ui->tbScreenCapture->setChecked(false);
-        mPictures.removeOne("screen-shot.png");
+        mPictures.removeOne(gDataDir.absoluteFilePath("screen-shot.png"));
         return;
     }
 
@@ -490,10 +489,10 @@ void WrenchMainWindow::slotHandleCaptureScreen(const QPixmap &pix)
                 return;
             }
         }
-        mPictures = QStringList() << "screen-shot.png";
+        mPictures = QStringList() << gDataDir.absoluteFilePath("screen-shot.png");
         emit ui->sendItPushButton->clicked();
     } else {
-        mLuaThread->addScript(QStringList() << "wrench_picture" << "screen-shot.png");
+        mLuaThread->addScript(QStringList() << "wrench_picture" << gDataDir.absoluteFilePath("screen-shot.png"));
     }
 }
 
@@ -1207,8 +1206,8 @@ void WrenchMainWindow::imageDropped(const QDropEvent& ev)
         }
     } else if (event->mimeData()->hasImage()) {
         QImage image = qvariant_cast<QImage>(event->mimeData()->imageData());
-        image.save("drag-and-drop.jpg");
-        sharePictures(QStringList() << "drag-and-drop.jpg");
+        image.save(gDataDir.absoluteFilePath("drag-and-drop.jpg"));
+        sharePictures(QStringList() << gDataDir.absoluteFilePath("drag-and-drop.jpg"));
     }
 }
 
@@ -1223,7 +1222,7 @@ void WrenchMainWindow::handleNetworkData(QNetworkReply *networkReply)
         return;
     } else {
         image.load(networkReply, 0);
-        image.save("drag-and-drop.jpg");
-        sharePictures(QStringList() << "drag-and-drop.jpg");
+        image.save(gDataDir.absoluteFilePath("drag-and-drop.jpg"));
+        sharePictures(QStringList() << gDataDir.absoluteFilePath("drag-and-drop.jpg"));
     }
 }
