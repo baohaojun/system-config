@@ -2,5 +2,5 @@
 
 while true; do
     open -W ~/Applications/DDHotKey.app
-    sleep 2
+    sleep 5
 done&
