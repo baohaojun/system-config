@@ -182,7 +182,7 @@ void WrenchMainWindow::adbStateUpdated(const QString& state)
 
     if (mInputOnline) {
         if (mNotificationOnline) {
-            ui->adbStateIndicator->setIcon(QIcon(":/images/green.png"));
+            ui->adbStateIndicator->setIcon(QIcon("emojis/iphone-new/BELL.png"));
         } else {
             ui->adbStateIndicator->setIcon(QIcon("emojis/iphone-new/BELL_WITH_CANCELLATION_STROKE.png"));
         }
@@ -1278,5 +1278,5 @@ void WrenchMainWindow::on_adbStateIndicator_clicked()
         return;
     }
 
-    prompt_user("小扳手连接正常，接收通知功能正常！");
+    onShowNotifications();
 }
