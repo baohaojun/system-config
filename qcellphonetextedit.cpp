@@ -29,10 +29,10 @@ void QCellPhoneTextEdit::dropEvent(QDropEvent *ev)
     QList<QUrl> urls = ev->mimeData()->urls();
     if (urls.count()) {
         emit imageDropEvent(*ev);
-        ev->acceptProposedAction();
-        return;
     }
+    this->setReadOnly(true);
     QTextEdit::dropEvent(ev);
+    this->setReadOnly(false);
 }
 
 void QCellPhoneTextEdit::resizeImages()

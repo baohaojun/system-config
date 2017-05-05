@@ -114,7 +114,7 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
     fi
 
     destroy-windows Wrench || true
-    ps-killall Wrench.\!pro || true
+    killall Wrench || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.Wrench
         myscr bash -c 'LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu gdb ./Wrench'

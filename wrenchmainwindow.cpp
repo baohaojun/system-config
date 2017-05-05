@@ -1251,16 +1251,32 @@ void WrenchMainWindow::imageDropped(const QDropEvent& ev)
 void WrenchMainWindow::handleNetworkData(QNetworkReply *networkReply)
 {
     QImage image;
-
-    qDebug() << "Received" << networkReply->size() << "bytes";
     QUrl url = networkReply->url();
+
+    qDebug() << "Received" << networkReply->size() << "bytes" << "from" << url.fileName();
+
     if (networkReply->error()) {
         prompt_user(QString("Can't download ") + url.toString());
         return;
     } else {
-        image.load(networkReply, 0);
-        image.save(gDataDir.absoluteFilePath("drag-and-drop.jpg"));
-        sharePictures(QStringList() << gDataDir.absoluteFilePath("drag-and-drop.jpg"));
+        if (url.toString().endsWith(".gif", Qt::CaseInsensitive)) {
+            QByteArray gifData = networkReply->readAll();
+            QFile gifFile(gDataDir.absoluteFilePath("drag-and-drop.gif"));
+            if (!gifFile.open(QIODevice::WriteOnly)) {
+                prompt_user("can't open " + gDataDir.absoluteFilePath("drag-and-drop.gif"));
+                return;
+            }
+            if (gifFile.write(gifData) != gifData.size()) {
+                prompt_user("Failed to write all gif data");
+                return;
+            }
+            gifFile.close();
+            sharePictures(QStringList() << gDataDir.absoluteFilePath("drag-and-drop.gif"));
+        } else {
+            image.load(networkReply, 0);
+            image.save(gDataDir.absoluteFilePath("drag-and-drop.jpg"));
+            sharePictures(QStringList() << gDataDir.absoluteFilePath("drag-and-drop.jpg"));
+        }
     }
 }
 
