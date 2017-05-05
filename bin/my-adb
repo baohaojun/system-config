@@ -366,21 +366,36 @@ function adb() {
         fi
     else
 
-        adb_commands=(backup bugreport emu forward get-devpath
-            get-serialno get-state help jdwp kill-server
-            logcat ppp pull push reboot reboot-bootloader remount
-            restore root shell start-server status-window sync tcpip
-            uninstall usb version wait-for-device devices connect sideload
-            disconnect)
+        if test ! -e ~/.config/system-config/adb-commands ||
+                test $the_adb -nt ~/.config/system-config/adb-commands; then
+            (
+                $the_adb 2>&1 | grep '^\s*adb ' -P|pn 2 |sort -u |grep -v 'wait-for.*-'
+                echo wait-for-device
+                for transport in usb local any; do
+                    for state in device recovery sideload bootloader; do
+                        echo wait-for-$transport-$state
+                    done
+                done
+            ) |(
+                cat <<EOF
+declare -A adb_commands
+EOF
+                while read command; do
+                    cat <<EOF
+adb_commands["$command"]=true
+EOF
+                done
+            ) > ~/.config/system-config/adb-commands.$$
+            mv ~/.config/system-config/adb-commands.$$ ~/.config/system-config/adb-commands
+        fi
+
+        . ~/.config/system-config/adb-commands
 
         is_adb_command=false
 
-        for x in "${adb_commands[@]}"; do
-            if test "$1" = $x; then
-                is_adb_command=true;
-                break
-            fi
-        done
+        if test "${adb_commands[$1]}" = true; then
+            is_adb_command=true;
+        fi
 
         if test $is_adb_command = true; then
             exec_the_adb "$@"
