@@ -849,20 +849,18 @@ end
 local function search_mail(what)
    putclip_nowait(what)
    for i = 1, 5 do
-      adb_start_activity"com.android.email/com.android.email.activity.Welcome"
-      adb_event"sleep .5 adb-tap 66 155 sleep .5"
-      if adb_top_window() == "com.android.email/com.android.email.activity.setup.AccountSettings" then
+      M.start_app"com.android.email/com.android.email.activity.Welcome"
+      adb_event"adb-no-virt-key-wrench-swipe 549 483 552 778 sleep 1 adb-tap 595 324"
+      if M.wait_input_target_n_ok(5, "^com.android.email/") then
          break
+      elseif i == 5 then
+         prompt_user("Can't get mail search input, check your adb events")
+         return
       end
-      log("Did not get mail settings at %d", i)
-      adb_event"key back"
    end
-   if adb_top_window() ~= "com.android.email/com.android.email.activity.setup.AccountSettings" then
-      log("Failed to get mail settings")
-      return
-   end
-   adb_event"key back sleep .5 adb-tap 218 323 sleep .2 key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 667 608"
+   adb_event"key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 841 728"
 end
+
 local function search_and_start_app(what)
    search_activity = "com.smartisanos.quicksearch/com.android.quicksearchbox.SearchActivity"
    adb_start_activity(search_activity)
@@ -1161,13 +1159,12 @@ end
 local function wrench_share_to_weixin(text)
    debug("share to weixin: %s", text)
    weixinShareActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui"
-   adb_start_weixin_share('text')
    if text then
       text = text:gsub("\n", "​\n")
-      putclip(text)
+      putclip_nowait(text)
    end
-   wait_input_target(weixinShareActivity)
-   wrench_post()
+   adb_start_weixin_share('text')
+   wrench_post(nil, 'top-right', "分享到微信朋友圈？")
 end
 
 local function weixin_text_share(window, text)
@@ -1929,11 +1926,10 @@ end
 M.start_app = function(to_start, to_find)
 
    pkg = to_start:gsub("/.*", "")
+   adb_start_activity(to_start)
+   wait_top_activity_match("^" .. pkg)
    for i = 1, 20 do
-      adb_start_activity(to_start)
-      wait_top_activity_match("^" .. pkg)
       adb_event"key back sleep .2"
-
       top_window = adb_top_window()
       if top_window ~= "" and not top_window:match("^" .. pkg) then
          log("We got top window: %s at %d", top_window, i)
@@ -1942,11 +1938,13 @@ M.start_app = function(to_start, to_find)
    end
 
    adb_start_activity(to_start)
+   wait_top_activity_match("^" .. pkg)
+   sleep(.5)
 end
 
 M.M = M
 
-wrench_post = function(text) -- use weixin
+wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
    if text then
@@ -1966,6 +1964,7 @@ wrench_post = function(text) -- use weixin
       if window:match("com.tencent.mobileqq") then
          putclip(emoji_for_qq(text))
       elseif window:match("com.tencent.mm/") then
+         text = text:gsub("\n", "​\n")
          putclip(emoji_for_weixin(text))
       elseif window:match("com.sina.weibo/") then
          putclip(emoji_for_weibo(text))
@@ -2061,7 +2060,7 @@ wrench_post = function(text) -- use weixin
          post_button = right_button_x .. ' 166'
       end
 
-      local window_type = window_post_button_map[window]
+      local window_type = (how_to_post or window_post_button_map[window])
       if not window_type and (
          window:match("^com.tencent.mm/com.tencent.mm.ui.chatting.") or -- weixin chat with a friend open from group members
             window:match("^com.tencent.mm/com.tencent.mm.plugin.sns.ui.") -- weixin moments comment
@@ -2099,25 +2098,28 @@ wrench_post = function(text) -- use weixin
       elseif window_type == 'qq-chat' then
          post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - 200)
       elseif window_type == 'weixin-confirm' then
-         if yes_or_no_p("Send button is above the input method, on the right end. Confirm?") then
-            post_button = post_button
-         else
-            post_button = ''
-         end
-      elseif window_type == 'weibo-share' then
+         post_button = post_button
+      elseif window_type == 'weibo-share' or window_type == 'top-right' then
          post_button = right_button_x .. ' 166'
       elseif window_type == 'weibo-confirm' then
-         if yes_or_no_p("Send button is top-right corner of phone's screen. Confirm?") then
-            post_button = right_button_x .. ' 166'
-         else
-            post_button = ''
-         end
+         post_button = right_button_x .. ' 166'
       elseif window_type == 'manual-post' then
          post_button = ''
       end
 
       debugging("add is %s", add)
-      adb_event(string.format("%s key scroll_lock %s", add, post_button))
+      adb_event(add .. " key scroll_lock")
+      if confirm_before_post and not yes_or_no_p(confirm_before_post) then
+         return ""
+      end
+
+      if window_type:match("confirm") and not yes_or_no_p(("确认发送？（发送按钮位置与 %s 类似）"):format(window_type:gsub("-confirm", ""))) then
+         return ""
+      end
+
+      if post_button ~= "" then
+         adb_event(post_button)
+      end
    end
    return "text sent"
 end
@@ -2955,12 +2957,16 @@ local function sayThankYouForLuckyMoney()
 
          local thank_you = thanks[n]
 
-         if WrenchExt.getConfig("should-tell-fortune") then
+         if WrenchExt.getConfig("should-tell-fortune") == "true" then
             local fortune = M.qx("fortune-zh")
             fortune = fortune:gsub("%[.-m", "")
             thank_you = thanks[n] .. "\n\n*****\n\n" .. fortune
          end
-         wrench_post(thank_you)
+         local how = 'weixin-chat'
+         if top_window:match("^com.tencent.mobileqq/") then
+            how = 'qq-chat'
+         end
+         wrench_post(thank_you, how)
          sleep(1)
          break
       end

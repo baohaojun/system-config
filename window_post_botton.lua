@@ -174,6 +174,7 @@ map['com.tencent.mobileqq/com.tencent.mobileqq.activity.EditInfoActivity'] = 'ma
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.LoginActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.LoginPhoneNumActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.QQBrowserActivity'] = 'manual-post'
+map['com.tencent.mobileqq/com.tencent.mobileqq.activity.qwallet.SendHbActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.selectmember.SelectMemberActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity'] = 'qq-chat'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity'] = 'manual-post'
