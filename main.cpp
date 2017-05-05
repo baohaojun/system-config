@@ -179,6 +179,7 @@ int main(int argc, char *argv[])
     adbNotification.moveToThread(&adbNotification);
     adbNotification.start();
     w.connect(&adbNotification, SIGNAL(adbNotificationArrived(QString, QString, QString, QString)), &w, SLOT(onAdbNotificationArrived(QString, QString, QString, QString)));
+    w.connect(&adbNotification, SIGNAL(adbNotificationState(QString)), &w, SLOT(adbStateUpdated(QString)));
     w.connect(&w, SIGNAL(adbNotificationClicked(QString)), &adbNotification, SLOT(onAdbNotificationClicked(QString)));
 
     QDir::addSearchPath("skin", ":/skin/default/resources");
@@ -188,7 +189,17 @@ int main(int argc, char *argv[])
     QProcess::startDetached("./the-true-adb", QStringList("start-server"));
 
     int result = a.exec();
+
     globalConfig->deleteLater();
+    adbNotification.quit();
+    if (!adbNotification.wait(1000)) {
+        qDebug() << "Failed to wait for adbNotification";
+    }
+
+    adbState.quit();
+    if (!adbState.wait(1000)) {
+        qDebug() << "Failed to wait for adbState";
+    }
     return result;
 }
 

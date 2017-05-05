@@ -595,15 +595,19 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QLabel" name="adbStateIndicator">
+       <widget class="QToolButton" name="adbStateIndicator">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;小扳手与手机的连接状态（红圈表示未连接，绿圈表示连接正常，静音表示手机已连接，但无法接收手机通知）&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
-         <string/>
+         <string>...</string>
         </property>
-        <property name="pixmap">
-         <pixmap resource="Wrench.qrc">:/images/red.png</pixmap>
+        <property name="icon">
+         <iconset resource="Wrench.qrc">
+          <normaloff>:/images/red.png</normaloff>:/images/red.png</iconset>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="checkable">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

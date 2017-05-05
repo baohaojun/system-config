@@ -23,6 +23,10 @@ AdbNotificationThread::AdbNotificationThread(QObject* parent)
 
 AdbNotificationThread::~AdbNotificationThread()
 {
+    if (notificationSocket) {
+        notificationSocket->close();
+        delete notificationSocket;
+    }
 }
 
 void AdbNotificationThread::timeOut()
@@ -38,6 +42,7 @@ void AdbNotificationThread::onDisconnected()
         connect(mConnectTimer, SIGNAL(timeout()), this, SLOT(onDisconnected()));
 
     }
+    emit adbNotificationState("Notification-Offline");
 
     // at the start, suppose the adb not connected.
     if (notificationSocket) {
@@ -73,6 +78,7 @@ void AdbNotificationThread::onDisconnected()
         connect(notificationSocket, SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()), Qt::QueuedConnection);
         connect(notificationSocket, SIGNAL(readyRead()), this, SLOT(onNewNotification()));
         notificationSocket->write("list\n");
+        emit adbNotificationState("Notification-Online");
     } else {
         qDebug() << "Can't read from notification";
         mConnectTimer->start(1000);

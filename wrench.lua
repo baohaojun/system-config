@@ -1631,7 +1631,7 @@ get_a_note = function(text)
             sleep 1
             adb-tap 711 151
    ]])
-   if wait_top_activity(W.notePicPreview) ~= notePicPreview then
+   if wait_top_activity(W.notePicPreview) ~= W.notePicPreview then
       log("Seems to have a problem with Smartisan Notes")
    end
 
@@ -2194,6 +2194,11 @@ share_pics_to_app = function(pkg, cls, pics, ...)
           "--es", "package", pkg,
           "--es", "class", cls
    }
+
+   sleep(.5)
+   if adb_top_window() == "smartisanos/smartisanos.app.DoppelgangerChooseActivity" then
+      adb_event"sleep 2 adb-tap 370 1727"
+   end
 end
 
 picture_to_weixin_share = function(pics, ...)
@@ -2201,9 +2206,10 @@ picture_to_weixin_share = function(pics, ...)
       pics = last_uploaded_pics
    end
    share_pics_to_app("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI", pics)
-   wait_top_activity(W.weixinSnsUploadActivity)
-   adb_event("adb-tap 228 401")
-   wait_input_target(W.weixinSnsUploadActivity)
+   adb_event("sleep 1 adb-tap 228 401 sleep 1")
+   if not M.wait_input_target_n_ok(10, "^com.tencent.mm/com.tencent.mm.plugin.sns.ui") then
+      prompt_user("图片分享到微信朋友圈时出错：输入法没有在朋友圈分享页面激活")
+   end
 end
 
 picture_to_qq_share = function(pics, ...)
@@ -2473,7 +2479,7 @@ local function picture_to_qq_chat(pics, ...)
                adb_event("adb-tap 171 427")
             elseif window == W.qqPhotoPreview then
                adb_event("adb-key back")
-               if wait_top_activity(W.qqPhoteList) == qqPhoteList then
+               if wait_top_activity(W.qqPhoteList) == W.qqPhoteList then
                   break
                elseif adb_top_window() == W.qqPhotoPreview then
                    adb_event("adb-key back")
@@ -2517,7 +2523,7 @@ local function picture_to_weibo_chat(pics, ...)
                sleep(.2)
             elseif window == W.weiboImagePreviewActivity then
                adb_event("sleep .5 adb-key back sleep .5")
-               if wait_top_activity(W.weiboAlbumActivity) == weiboAlbumActivity then
+               if wait_top_activity(W.weiboAlbumActivity) == W.weiboAlbumActivity then
                   break
                elseif adb_top_window() == W.weiboImagePreviewActivity then
                   adb_event("key back sleep .5 ")
@@ -2543,7 +2549,7 @@ local function wrench_picture(...)
    local window = adb_focused_window()
    if window == W.weixinLauncherActivity then
       picture_to_weixin_chat(pics)
-   elseif window == "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI" then
+   elseif window:match("^com.tencent.mm/com.tencent.mm.ui.chatting") then
       picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
       picture_to_qq_chat(pics)

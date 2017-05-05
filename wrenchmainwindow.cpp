@@ -62,7 +62,9 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     ui(new Ui::WrenchMainWindow),
     mSettings("Smartisan", "Wrench", parent),
     m_hotkey(QKeySequence("Ctrl+F6"), true),
-    m_defaultIcon("emojis/iphone-emoji/WRENCH.png")
+    m_defaultIcon("emojis/iphone-emoji/WRENCH.png"),
+    mNotificationOnline(false),
+    mInputOnline(false)
 {
     on_configurePushButton_clicked();
 
@@ -108,6 +110,7 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
 
 WrenchMainWindow::~WrenchMainWindow()
 {
+    deleteLuaThread();
     delete ui;
 }
 
@@ -148,7 +151,27 @@ void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QStrin
 
 void WrenchMainWindow::adbStateUpdated(const QString& state)
 {
-    if (state.toLower() == "online" && ui->adbStateLabel->text().toLower() != "online") {
+    if (state.contains("notification-", Qt::CaseInsensitive)) {
+        if (state.contains("-online", Qt::CaseInsensitive)) {
+            mNotificationOnline = true;
+        } else {
+            mNotificationOnline = false;
+        }
+        if (mInputOnline) {
+            adbStateUpdated("Online");
+        } else {
+            adbStateUpdated("Offline");
+        }
+        return;
+    }
+
+    if (state.toLower() == "online") {
+        mInputOnline = true;
+    } else {
+        mInputOnline = false;
+    }
+
+    if (mInputOnline && ui->adbStateLabel->text().toLower() != "online") {
         if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
             mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath());
         } else {
@@ -156,10 +179,15 @@ void WrenchMainWindow::adbStateUpdated(const QString& state)
         }
     }
     ui->adbStateLabel->setText(state);
-    if (state.toLower() == "online") {
-        ui->adbStateIndicator->setPixmap(QPixmap(":/images/green.png"));
+
+    if (mInputOnline) {
+        if (mNotificationOnline) {
+            ui->adbStateIndicator->setIcon(QIcon(":/images/green.png"));
+        } else {
+            ui->adbStateIndicator->setIcon(QIcon("emojis/iphone-new/BELL_WITH_CANCELLATION_STROKE.png"));
+        }
     } else {
-        ui->adbStateIndicator->setPixmap(QPixmap(":/images/red.png"));
+        ui->adbStateIndicator->setIcon(QIcon(":/images/red.png"));
 
         qint64 currentSec = QDateTime::currentMSecsSinceEpoch();
         static qint64 lastSec;
@@ -371,7 +399,7 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
             mLuaThread->addScript(QStringList() << "wrench_share_to_weixin" << text);
         } else {
             mLuaThread->addScript(QStringList() << "picture_to_weixin_share");
-            mLuaThread->addScript(QStringList() << "wrench_post" << text);
+            mLuaThread->addScript(QStringList() << "wrench_post" << text << "top-right" << "确认分享到微信？");
         }
         ui->tbWeixin->setChecked(false);
     }
@@ -410,6 +438,32 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
     ui->phoneTextEdit->selectAll();
 }
 
+void WrenchMainWindow::deleteLuaThread()
+{
+    if (mLuaThread.isNull()) {
+        return;
+    }
+
+    mLuaThread->quitLua();
+    mLuaThread->disconnect();
+
+    if (!mLuaThread->wait(1000)) {
+        for (int i = 0; i < 10; i ++) {
+            getExecutionOutput("the-true-adb kill-server");
+            getExecutionOutput("the-true-adb devices");
+            if (mLuaThread->wait(100)) {
+                break;
+            }
+        }
+    }
+
+    if (mLuaThread->isRunning()) {
+        qDebug() << "it is still running";
+        mLuaThread->terminate();
+    }
+    mLuaThread.clear();
+
+}
 void WrenchMainWindow::on_configurePushButton_clicked()
 {
     bool is_starting = false;
@@ -424,24 +478,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
                 return;
             }
         }
-        mLuaThread->quitLua();
-        mLuaThread->disconnect();
-
-        if (!mLuaThread->wait(1000)) {
-            for (int i = 0; i < 10; i ++) {
-                getExecutionOutput("the-true-adb kill-server");
-                getExecutionOutput("the-true-adb devices");
-                if (mLuaThread->wait(100)) {
-                    break;
-                }
-            }
-        }
-
-        if (mLuaThread->isRunning()) {
-            qDebug() << "it is still running";
-            mLuaThread->terminate();
-        }
-        mLuaThread.clear();
+        deleteLuaThread();
     }
     mLuaThread = QSharedPointer<LuaExecuteThread>(new LuaExecuteThread(this));
     connect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
@@ -1225,4 +1262,21 @@ void WrenchMainWindow::handleNetworkData(QNetworkReply *networkReply)
         image.save(gDataDir.absoluteFilePath("drag-and-drop.jpg"));
         sharePictures(QStringList() << gDataDir.absoluteFilePath("drag-and-drop.jpg"));
     }
+}
+
+void WrenchMainWindow::on_adbStateIndicator_clicked()
+{
+    if (! mInputOnline) {
+        prompt_user("小扳手尚未连接至手机，请检查手机adb是否打开、驱动是否安装，USB线是否已连接");
+        return;
+    }
+
+    if (!mNotificationOnline) {
+        prompt_user("小扳手已连接至手机，但无法接收手机端的通知。需要打开手机第三方通知设置，并允许小扳手辅助App接收通知");
+
+        mLuaThread->addScript(QStringList() << "call_ext" << "switch-notification");
+        return;
+    }
+
+    prompt_user("小扳手连接正常，接收通知功能正常！");
 }

@@ -119,8 +119,13 @@ private slots:
     void slotShortCutActivated();
     void adbNotificationShiftClicked(const QMap<QString, QString>& rawData);
 
+    void on_adbStateIndicator_clicked();
+
 private:
 
+    bool mNotificationOnline;
+    bool mInputOnline;
+    void deleteLuaThread();
     void sharePictures(const QStringList& files);
     QNetworkAccessManager m_manager;
     uint m_last_sent_notification_id;

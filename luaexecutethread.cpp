@@ -376,6 +376,7 @@ LuaExecuteThread::~LuaExecuteThread()
 {
     if (wrenchSock)
         wrenchSock->deleteLater();
+    qDebug() << "LuaExecuteThread::~LuaExecuteThread()";
 }
 
 void LuaExecuteThread::addScript(QStringList script)

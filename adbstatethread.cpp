@@ -144,9 +144,11 @@ void AdbStateThread::onDisconnected()
     }
 
     if (!pingSocket->waitForReadyRead(500)) {
-        qDebug() << "Can't wait for read\n";
+        qDebug() << "Can't wait for read from adb input server\n";
         mConnectTimer->start(1000);
         return;
+    } else {
+        qDebug() << "Ping adb input server ok";
     }
 
     if (QString(pingSocket->readLine(100)).contains("input ok")) {
