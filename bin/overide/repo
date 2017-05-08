@@ -74,7 +74,7 @@ if test "$1" = init; then
 fi
 
 if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help "$@")" = --help; then
-    set -- "$@" --no-tags
+     set -- "$@" --no-tags
     if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
         set -- "$@" --force-sync
     fi
@@ -106,9 +106,13 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     fi
     exit
 else
-    if ! ~/system-config/bin/repo "$@"; then
+    if ~/system-config/bin/repo "$@"; then
+        exit 0
+    else
+        ret=$?
         if test "$1" = init -a -e ".repo/local_manifests"; then
             echo 1>&2 "Warning: you have local_manifest set, might cause error"
         fi
+        exit $ret
     fi
 fi
