@@ -2361,6 +2361,48 @@ local function picture_to_weixin_chat(pics, ...)
    end
 end
 
+M.tap_top_right = function()
+   adb_event"adb-tap 1012 151"
+end
+
+M.tap_bottom_center = function()
+   adb_event"adb-tap 592 1836"
+end
+
+M.picture_to_weixin_scan = function(pics, ...)
+   if pics == nil then
+      pics = last_uploaded_pics
+   end
+   if type(pics) ~= "table" then
+      pics = {pics, ...}
+   end
+
+   for i = 1, 5 do
+      M.tap_top_right()
+      sleep(.2)
+      M.tap_bottom_center()
+      sleep(.5)
+      if adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI" then
+         break
+      elseif i == 5 then
+         prompt_user("无法进入扫描手机相册预览界面")
+         return
+      end
+   end
+
+   for i = 1, 5 do
+      adb_event"adb-tap 567 425 sleep .5"
+      if adb_top_window() ~= "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI" then
+         break
+      elseif i == 5 then
+         prompt_user("无法退出扫描手机相册预览界面")
+         return
+      end
+   end
+
+   prompt_user("真的要通过微信给作者打钱了吗？请输入金额并确认支付。谢谢你*_^！")
+end
+
 close_ime = function()
    local input_method, ime_height = adb_get_input_window_dump()
    if (ime_height ~= 0) then
@@ -2549,6 +2591,8 @@ local function wrench_picture(...)
    local window = adb_focused_window()
    if window == W.weixinLauncherActivity then
       picture_to_weixin_chat(pics)
+   elseif window == "com.tencent.mm/com.tencent.mm.plugin.scanner.ui.BaseScanUI" then
+      M.picture_to_weixin_scan(pics)
    elseif window:match("^com.tencent.mm/com.tencent.mm.ui.chatting") then
       picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
