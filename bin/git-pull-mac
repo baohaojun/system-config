@@ -81,14 +81,19 @@ fi
 if test "$do_fetch" = true; then
     echo fetching $PWD 1>&2
     (
+        extra_fetch_args=
+        if [[ $PWD =~ $HOME/src/github/ ]] && test "$PWD" != ~/src/github/private-config; then
+            extra_fetch_args=$(repo-remote-branch|perl -npe 's,.*?/,,')
+        fi
+
         for x in $(seq 1 3); do
-            if timeout 30 git fetch $origin; then
+            if timeout 30 git fetch $origin $extra_fetch_args; then
                 exit
             fi
             echo failed $PWD at $x
             sleep 10
         done
-        tsocks1 git fetch $origin || {
+        tsocks1 git fetch $origin $extra_fetch_args || {
             touch .git/sc-not-merged
             kill $$
         }
