@@ -12,8 +12,8 @@ M.description_to_filename[ [==[各种搜索功能（搜微信联系人、QQ联�
 M.descriptions[4] = [==[各种搜索功能（搜微信联系人、QQ联系人、QQ群里的用户、微博用户、邮件（按发信人搜）等等）]==]
 M.description_to_filename[ [==[重置手机 VPN 连接模式（演示、竖屏高清、横屏高清）]==] ] = 'reconnect-vpn.lua'
 M.descriptions[5] = [==[重置手机 VPN 连接模式（演示、竖屏高清、横屏高清）]==]
-M.description_to_filename[ [==[打开京东 App，扫描登录 PC 网页]==] ] = 'scan_jd.lua'
-M.descriptions[6] = [==[打开京东 App，扫描登录 PC 网页]==]
+M.description_to_filename[ [==[打开京东 App 扫描二维码]==] ] = 'scan_jd.lua'
+M.descriptions[6] = [==[打开京东 App 扫描二维码]==]
 M.description_to_filename[ [==[通过微博、微信朋友圈传播小扳手（不一定成功）]==] ] = 'spread-it.lua'
 M.descriptions[7] = [==[通过微博、微信朋友圈传播小扳手（不一定成功）]==]
 M.description_to_filename[ [==[打开通知授权设置页，再手动（可能要多次尝试）打开、关闭小扳手接收通知权限]==] ] = 'switch-notification.lua'
