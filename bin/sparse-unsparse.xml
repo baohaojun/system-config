@@ -5,6 +5,8 @@ if test $# = 0; then
     echo "$@"
 fi
 
+check-perl-module Marpa::R2
+
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt ?'把高通system_NNN.img等稀疏文件拼成system.img文件，一个可以mount的ext4文件系统' \
         #p:part?'指定对应哪个分区的稀疏文件，可选system、userdata、cache、persist等' \

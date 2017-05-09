@@ -439,8 +439,8 @@ if test -d ~/src/github/elpa; then
 fi || true
 
 if test $can_sudo = true; then
-    check-perl-module String::ShellQuote libstring-shellquote-perl
-    check-perl-module Marpa::R2           libmarpa-r2-perl
+    check-perl-module String::ShellQuote
+    check-perl-module Marpa::R2
 fi
 (
     cd ~/system-config/
