@@ -282,8 +282,8 @@ my-rfa -j $jobs '
         exit
     fi
     echo git-change-id-ffable $from $to in $PWD
-    if ! git log -1 $from || ! git log -1 $to; then
-        git fetch $(repo-remote)
+    if ! git log -1 "$from" || ! git log -1 "$to"; then
+        git fetch $(repo-remote) || true
     fi
     git-change-id-ffable $from $to > $log || true
     if test $(stat -c %s $log) = 0; then
