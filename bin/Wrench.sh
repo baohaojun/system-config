@@ -35,7 +35,7 @@ if test "$what_to_do" -a "$what_to_do" != Wrench; then
     if [[ $what_to_do =~ \( ]]; then
         format=%s
     else
-        format='t1_call([==[%s]==])'
+        format='wrench_call([==[%s]==])'
     fi
     cat <<EOF |tee ~/.cache/system-config/wrench-$$.twa
 -- -*- mode: lua -*-

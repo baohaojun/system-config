@@ -252,6 +252,9 @@ print $_ . "\n";
             if test -z "$head_branch"; then
                 command git push $(repo-remote) HEAD:$(repo-branch)
                 exit
+            elif [[ $PWD =~ /.repo/manifests$ ]]; then
+                command git push $(repo-remote) HEAD:$(repo-remote-branch|perl -npe 's,.*?/,,')
+                exit
             fi
         fi
 

@@ -5,6 +5,8 @@ if test ${#branch} = 40; then
     echo $branch
 elif [[ $branch =~ /tags/ ]]; then
     echo $branch
+elif test "$(git config branch.$branch.merge)" -a "$(git config branch.$branch.merge)" != refs/heads/$branch; then
+    echo $(repo-remote)/$(git config branch.$branch.merge|perl -npe 's,refs/heads/,,')
 else
     echo $(repo-remote)/$branch
 fi
