@@ -820,6 +820,16 @@ void WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
 
 void WrenchMainWindow::dropEvent(QDropEvent *event)
 {
+    if (ui->tbWeibo->rect().contains(ui->tbWeibo->mapFromGlobal(QCursor::pos()))) {
+        if (event->mimeData()->hasUrls()) {
+            QList<QUrl> urls = event->mimeData()->urls();
+            if (urls.size() == 1) {
+                mLuaThread->addScript(QStringList() << "call_ext" << "open-weibo" << urls[0].toString());
+                return;
+            }
+        }
+    }
+
     event->acceptProposedAction();
     qDebug() << "WrenchMainWindow::dropEvent";
     if (event->mimeData()->hasImage()) {

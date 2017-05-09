@@ -2399,8 +2399,6 @@ M.picture_to_weixin_scan = function(pics, ...)
          return
       end
    end
-
-   prompt_user("真的要通过微信给作者打钱了吗？请输入金额并确认支付。谢谢你*_^！")
 end
 
 close_ime = function()
