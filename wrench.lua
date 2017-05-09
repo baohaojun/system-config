@@ -600,9 +600,13 @@ M.vnc_scroll = function(key, mod)
    elseif key == "down" then
       y_delta = delta
    elseif key == "left" then
-      x_delta = -delta * 4
+      x_delta = -delta * 4 -- I want to scroll kindle page to the left
+      adb_event(("adb-no-virt-key-tap %s %s"):format(real_width * 7 / 8, real_height * 3 / 4))
+      return
    elseif key == "right" then
-      x_delta = delta * 4
+      x_delta = delta * 4 -- I want to scroll to the right
+      adb_event(("adb-no-virt-key-tap %s %s"):format(real_width * 1 / 8, real_height * 3 / 4))
+      return
    end
 
    adb_event(("adb-no-virt-key-swipe-180 %s %s %s %s"):format(x, y, x + x_delta, y + y_delta))
