@@ -6,6 +6,7 @@ local M = {}
 local W = {}
 
 M.ext_args = {}
+M.ExtMods = {}
 
 -- functions
 local WrenchExt = {}
@@ -1506,6 +1507,12 @@ wrench_config = function(passedConfigDirPath)
    M.configDir = configDir .. package.config:sub(1, 1)
    M.dataDir = os.getenv("WRENCH_DATA_DIR") .. package.config:sub(1, 1)
 
+   M.ExtMods = wrench_run("ext/.ls-modules.lua")
+   if not M.ExtMods then
+      log("无法加载 ext/.ls-modules.lua")
+   end
+
+
    -- install the apk
    if not qt_adb_pipe then
       local p = io.popen("the-true-adb version")
@@ -1816,12 +1823,7 @@ file_exists = function(name)
    end
 end
 
-M.update_apps = function()
-   if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listapps 1", "/sdcard/Wrench/apps.info") then
-      adb_pull{"/sdcard/Wrench/apps.info", M.dataDirFile("apps.info")}
-   else
-      log("Can't get apps.info")
-   end
+M.get_apps_table = function()
    apps_file = io.open(M.dataDirFile("apps.info"))
    local apps_txt = apps_file:read("*a")
    local apps = split("\n", apps_txt)
@@ -1831,13 +1833,24 @@ M.update_apps = function()
       local s = split("=", line)
       local class_ = s[1]
       local package_ = s[2]
-      app_table[class_] = package_
+      app_table[class_] = package_ .. "/" .. class_
+      app_table[package_] = package_ .. "/" .. class_
       local label_ = s[3]
       if not file_exists(M.dataDirFile(class_ .. ".png")) then
          adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.dataDirFile(class_ .. ".png")}
       end
    end
    apps_file.close()
+   return app_table
+end
+
+M.update_apps = function()
+   if adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei listapps 1", "/sdcard/Wrench/apps.info") then
+      adb_pull{"/sdcard/Wrench/apps.info", M.dataDirFile("apps.info")}
+   else
+      log("Can't get apps.info")
+   end
+   M.get_apps_table()
 end
 
 launch_apps = function()
@@ -1848,25 +1861,10 @@ launch_apps = function()
 end
 
 on_app_selected = function(app)
-   apps_file = io.open(M.dataDirFile("apps.info"))
-   local apps_txt = apps_file:read("*a")
-   local apps = split("\n", apps_txt)
-   local app_table = {}
-   for i = 1, #apps do
-      line = apps[i]
-      local s = split("=", line)
-      local class_ = s[1]
-      local package_ = s[2]
-      app_table[class_] = package_
-      local label_ = s[3]
-      if not file_exists(class_ .. ".png") then
-         adb_pull{"/sdcard/Wrench/" .. class_ .. ".png", M.dataDirFile(class_ .. ".png")}
-      end
-   end
-   apps_file.close()
+   local apps_table = M.get_apps_table()
    if app ~= "" then
-      log("starting: %s", ("%s/%s"):format(app_table[app], app))
-      adb_start_activity(("%s/%s"):format(app_table[app], app))
+      log("starting: %s", app_table[app])
+      adb_start_activity(app_table[app])
    end
 end
 
@@ -1874,11 +1872,6 @@ local dofile_res = nil
 dofile_res, WrenchExt = pcall(dofile, "wrench-ext.lua")
 if not dofile_res then
    WrenchExt = {}
-end
-
-dofile_res, ExtMods = pcall(dofile, "ext/.modules.lua")
-if not dofile_res then
-   ExtMods = {}
 end
 
 local post_weibo_answer = function(text)
@@ -1928,6 +1921,13 @@ M.call_ext = function(ext, ...)
 end
 
 M.start_app = function(to_start, to_find)
+   if not to_start:match("/") then
+      pkg = to_start
+      local apps_table = M.get_apps_table()
+      if apps_table[pkg] then
+         to_start = apps_table[pkg]
+      end
+   end
 
    pkg = to_start:gsub("/.*", "")
    adb_start_activity(to_start)
@@ -2877,7 +2877,7 @@ wrench_eval = function(f)
          _ENV[k] = v
       end
    end
-   f()
+   return f()
 end
 
 wrench_run = function (file)
@@ -2886,25 +2886,25 @@ wrench_run = function (file)
       return "Can not run this script, must be a .twa file"
    end
    local f = loadfile(file)
-   wrench_eval(f)
+   return wrench_eval(f)
 end
 
 M.wrenchThumbUp = function()
-   if not ExtMods.descriptions then
+   if not M.ExtMods.descriptions then
       prompt_user("扩展程序加载失败，无法执行此操作")
       return
    end
-   local x = select_args(ExtMods.descriptions)
-   if not ExtMods.description_to_filename[x] then
+   local x = select_args(M.ExtMods.descriptions)
+   if not M.ExtMods.description_to_filename[x] then
       prompt_user("你选择的操作（" .. x .. "）没有对应的扩展脚本，是否忘了更新ext/.modules.lua？")
       return
    end
 
-   if not ExtMods.description_to_loaded_func[x] then
-      ExtMods.description_to_loaded_func[x] = loadfile("ext/" .. ExtMods.description_to_filename[x])
+   if not M.ExtMods.description_to_loaded_func[x] then
+      M.ExtMods.description_to_loaded_func[x] = loadfile(M.ExtMods.description_to_filename[x])
    end
 
-   wrench_eval(ExtMods.description_to_loaded_func[x])
+   wrench_eval(M.ExtMods.description_to_loaded_func[x])
 end
 
 M.shift_click_notification = function(pkg, key, title, text)
@@ -3108,13 +3108,14 @@ handle_notification = function(key, pkg, title, text)
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
       clickForWeixinMoney()
-   elseif pkg == "com.tencent.mobileqq" and text:match("%[QQ红包%]") then
+   elseif pkg == "com.tencent.mobileqq" then
       clickNotification{key}
       if title:lower() == "qq" then
          M.shift_click_notification(pkg, key, title, text)
       end
-
-      M.clickForQqMoney(title, text)
+      if text:match("%[QQ红包%]") then
+         M.clickForQqMoney(title, text)
+      end
    end
 
    if not should_use_internal_pop then

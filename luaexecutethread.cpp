@@ -9,6 +9,7 @@
 #include <QTcpSocket>
 #include "wrench.h"
 #include "adbclient.h"
+#include <QtCore/QFileInfoList>
 
 LuaExecuteThread* that;
 
@@ -105,6 +106,32 @@ static int l_clickNotification(lua_State* L)
     }
     that->clickNotification(args);
     return 0;
+}
+
+static int l_lsFiles(lua_State* L)
+{
+    int n = luaL_len(L, -1);
+    QStringList args;
+    for (int i = 1; i <= n; i++) {
+        lua_rawgeti(L, -1, i);
+        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
+        lua_settop(L, -2);
+    }
+    if (args.length() != 2) {
+        luaL_argerror(L, 2, "takes 2 argument: dir, pattern");
+    }
+
+    QDir dir(args[0], args[1]);
+    QFileInfoList fileInfoList = dir.entryInfoList();
+
+    lua_createtable(L, fileInfoList.size(), 0);
+    int table_index = lua_gettop(L);
+    for (int i = 0; i < fileInfoList.size(); i++)
+    {
+        lua_pushstring(L, fileInfoList[i].absoluteFilePath().toUtf8().constData());
+        lua_rawseti(L, table_index, i + 1);
+    }
+    return 1;
 }
 
 static int l_selectApps(lua_State* L)
@@ -285,6 +312,9 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_selectApps);
     lua_setglobal(L, "select_apps");
+
+    lua_pushcfunction(L, l_lsFiles);
+    lua_setglobal(L, "ls_files");
 
     lua_pushcfunction(L, l_showNotifications);
     lua_setglobal(L, "show_notifications");
