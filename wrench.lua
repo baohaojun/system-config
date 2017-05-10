@@ -3108,15 +3108,15 @@ handle_notification = function(key, pkg, title, text)
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
       clickForWeixinMoney()
-   elseif pkg == "com.tencent.mobileqq" then
+   elseif pkg == "com.tencent.mobileqq" and text:match("%[QQ红包%]") then
       clickNotification{key}
       if title:lower() == "qq" then
-         M.shift_click_notification(pkg, key, title, text)
+         adb_event"adb-tap 633 481 sleep .2"
+         -- M.shift_click_notification(pkg, key, title, text)
       end
-      if text:match("%[QQ红包%]") then
+
          M.clickForQqMoney(title, text)
       end
-   end
 
    if not should_use_internal_pop then
       system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}
