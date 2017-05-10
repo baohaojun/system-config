@@ -20,10 +20,10 @@ def where_pushd():
 
 
     if not os.path.exists(where_file):
-        fil_ = open(where_file, 'w')
+        fil_ = open(where_file, 'w', encoding="utf-8")
         fil_.close()
 
-    dir_history = open(where_file).read().split('\n');
+    dir_history = open(where_file, encoding="utf-8").read().split('\n');
     dir_history[:0] = [pwd]
     dir_history = OrderedSet(dir_history);
 
@@ -33,13 +33,13 @@ def where_pushd():
 
     dir_history.add('')
     where_file_tmp = where_file + ('.%d' % os.getpid())
-    fil_ = open(where_file_tmp, 'w')
+    fil_ = open(where_file_tmp, 'w', encoding="utf-8")
     fil_.write('\n'.join(dir_history))
     fil_.close();
     os.rename(where_file_tmp, where_file)
 
 def where_ask(argv):
-    dir_history = open(where_file).read().split('\n');
+    dir_history = open(where_file, encoding="utf-8").read().split('\n');
     for dir in dir_history:
         if all([x.lower() in dir.lower() for x in argv]):
             if any([x.lower() in dir.split('/')[-1].lower() for x in argv]):
