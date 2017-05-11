@@ -346,18 +346,18 @@ public class Input {
 
     private void sendTap(int inputSource, float x, float y) {
         long now = SystemClock.uptimeMillis();
-        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x, y, 1.0f);
+        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x, y, 0.15f);
         injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x, y, 0.0f);
     }
 
     private void sendWrenchMove(int inputSource, float x, float y) {
         long now = SystemClock.uptimeMillis();
-        injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, x, y, 1.0f);
+        injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, x, y, 0.15f);
     }
 
     private void sendWrenchDown(int inputSource, float x, float y) {
         long now = SystemClock.uptimeMillis();
-        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x, y, 1.0f);
+        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x, y, 0.15f);
     }
 
     private void sendWrenchUp(int inputSource, float x, float y) {
@@ -367,19 +367,19 @@ public class Input {
 
     private void sendWrenchSwipe(int inputSource, float x1, float y1, float x2, float y2, int duration) {
         long now = SystemClock.uptimeMillis();
-        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, 1.0f);
+        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, 0.15f);
         long startTime = now;
         long endTime = startTime + duration;
         while (now < endTime) {
             long elapsedTime = now - startTime;
             float alpha = (float) elapsedTime / duration;
             injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, lerp(x1, x2, alpha),
-                              lerp(y1, y2, alpha), 1.0f);
+                              lerp(y1, y2, alpha), 0.15f);
             now = SystemClock.uptimeMillis();
         }
         endTime = now + duration * 2;
         while (now < endTime) {
-            injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, x2, y2, 1.0f);
+            injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, x2, y2, 0.15f);
             now = SystemClock.uptimeMillis();
         }
         injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x2, y2, 0.0f);
@@ -389,14 +389,14 @@ public class Input {
             duration = 300;
         }
         long now = SystemClock.uptimeMillis();
-        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, 1.0f);
+        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, 0.15f);
         long startTime = now;
         long endTime = startTime + duration;
         while (now < endTime) {
             long elapsedTime = now - startTime;
             float alpha = (float) elapsedTime / duration;
             injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, lerp(x1, x2, alpha),
-                    lerp(y1, y2, alpha), 1.0f);
+                    lerp(y1, y2, alpha), 0.15f);
             now = SystemClock.uptimeMillis();
         }
         injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x2, y2, 0.0f);
@@ -446,7 +446,7 @@ public class Input {
      * @param pressure pressure of event
      */
     private void injectMotionEvent(int inputSource, int action, long when, float x, float y, float pressure) {
-        final float DEFAULT_SIZE = 1.0f;
+        final float DEFAULT_SIZE = 0.15f;
         final int DEFAULT_META_STATE = 0;
         final float DEFAULT_PRECISION_X = 1.0f;
         final float DEFAULT_PRECISION_Y = 1.0f;
