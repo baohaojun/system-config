@@ -12,7 +12,9 @@ elif ! is-tty-io; then
     set -x
 fi
 
+use_clip=false
 if test $# = 1 -a "$1" = '' || test $# = 0; then
+    use_clip=true
     set -- "$(xclip -o)"
 fi
 
@@ -121,6 +123,10 @@ fi&
 if test ! -x ~/system-config/bin/"$engineX" -a "${engineX:0:2}" = "s "; then
     s "${engineX:2}"
     exit
+fi
+
+if test "$(sawfish-top-window)" = Wrench -a "$use_clip" = true; then
+    set -- "$(getclip-android)"
 fi
 
 "$engineX" "$@"
