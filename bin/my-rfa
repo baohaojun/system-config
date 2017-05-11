@@ -24,6 +24,14 @@ function die() {
 }
 
 export -f die
+function locked-echo() {
+    (
+        exec 9> ~/.cache/system-config/logs/my-rfa.lock
+        flock 9
+        echo "$@"
+    )
+}
+export -f locked-echo
 function parallel-xargs() {
     set -- "${cmds[@]}"
     xargs -d \\n -P $jobs -I %N bash -c "cd %N; ""$(

@@ -369,14 +369,17 @@ for diff_file in $diffs; do
                     fi
                     if (set -o pipefail; git cherry-pick -x --allow-empty $git_commit_id 2>&1 | tee $diff_file.$git_commit_id.cp ); then
                         if test "$ok_function"; then
-                            "$ok_function" $(ap) $git_commit_id </dev/null
+                            "$ok_function" $ap $git_commit_id </dev/null
                         fi
                     elif grep -q 'The previous cherry-pick is now empty, possibly due to conflict resolution' $diff_file.$git_commit_id.cp; then
                         echo $git_commit_id is now empty
                         git cherry-pick --abort
+                        if test "$skip_function"; then
+                            skip_reason=empty "$skip_function" $ap $git_commit_id </dev/null
+                        fi
                         true
                     elif test "$fail_function"; then
-                        "$fail_function" $(ap) $git_commit_id </dev/null
+                        "$fail_function" $ap $git_commit_id </dev/null
                     elif is-tty-io </dev/stderr ; then
                         start_recursive_shell "cherry failed: $git_commit_id" </dev/stderr || ret=$?
                     else
@@ -385,7 +388,7 @@ for diff_file in $diffs; do
                     if test $ret = 5; then
                         exit
                     elif test $ret = 4; then
-                        echo cherry-failed: $WORKING_REV in $(ap) |tee -a ~/tmp/repo-cherry-pick-all.txt
+                        echo cherry-failed: $WORKING_REV in $ap |tee -a ~/tmp/repo-cherry-pick-all.txt
                         break
                     fi
                 done
