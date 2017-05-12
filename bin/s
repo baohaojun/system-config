@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if is-tty-io; then
+if test "$s_how"; then
+    true
+elif is-tty-io; then
     s_how=tty
 elif is-in-emacs; then
     s_how=emacs
@@ -70,8 +72,6 @@ if test "$DESKTOP_SESSION" = sawfish; then
 
     if [[ $start_event =~ Super-Button ]]; then
         s_how=$(echo ${start_event,,} | grep -o -P -e 'button\d+' -i)
-        last_search=~/.cache/system-config/logs/last-search.$s_how
-        start_event=${start_event/-Off/-Click}
     fi
 fi
 

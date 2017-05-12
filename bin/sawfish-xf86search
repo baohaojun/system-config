@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if test "$(sawfish-top-window)" = Wrench; then
+    s_how=button3 s
+else
+    find-or-exec Search beagle-search
+fi
