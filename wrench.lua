@@ -1823,7 +1823,7 @@ file_exists = function(name)
    end
 end
 
-M.get_apps_table = function()
+M.get_app_table = function()
    apps_file = io.open(M.dataDirFile("apps.info"))
    local apps_txt = apps_file:read("*a")
    local apps = split("\n", apps_txt)
@@ -1850,7 +1850,7 @@ M.update_apps = function()
    else
       log("Can't get apps.info")
    end
-   M.get_apps_table()
+   M.get_app_table()
 end
 
 launch_apps = function()
@@ -1861,7 +1861,7 @@ launch_apps = function()
 end
 
 on_app_selected = function(app)
-   local apps_table = M.get_apps_table()
+   local app_table = M.get_app_table()
    if app ~= "" then
       log("starting: %s", app_table[app])
       adb_start_activity(app_table[app])
@@ -1923,9 +1923,9 @@ end
 M.start_app = function(to_start, to_find)
    if not to_start:match("/") then
       pkg = to_start
-      local apps_table = M.get_apps_table()
-      if apps_table[pkg] then
-         to_start = apps_table[pkg]
+      local app_table = M.get_app_table()
+      if app_table[pkg] then
+         to_start = app_table[pkg]
       end
    end
 

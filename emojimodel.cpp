@@ -49,7 +49,7 @@ void EmojiModel::loadAllEmojis()
             mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
             loaded++;
         } else if (loaded == maxLoad) {
-            QTimer::singleShot(500, this, SLOT(loadAllEmojis()));
+            QTimer::singleShot(5000, this, SLOT(loadAllEmojis()));
             break;
         }
     }
