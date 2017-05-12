@@ -367,7 +367,8 @@ function adb() {
     else
 
         if test ! -e ~/.config/system-config/adb-commands ||
-                test $the_adb -nt ~/.config/system-config/adb-commands; then
+                test $the_adb -nt ~/.config/system-config/adb-commands ||
+           test ~/system-config/bin/my-adb -nt ~/.config/system-config/adb-commands; then
             (
                 $the_adb 2>&1 | grep '^\s*adb ' -P|pn 2 |sort -u |grep -v 'wait-for.*-'
                 echo wait-for-device
@@ -376,6 +377,7 @@ function adb() {
                         echo wait-for-$transport-$state
                     done
                 done
+                $the_adb 2>&1 |grep ' - '|pn 1|sort -u|grep -v '^-$|^A|\[|^adb$' -P
             ) |(
                 cat <<EOF
 declare -A adb_commands
