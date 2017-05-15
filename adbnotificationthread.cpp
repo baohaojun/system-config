@@ -112,8 +112,9 @@ void AdbNotificationThread::onNewNotification()
     QString pkg = jobj.value("pkg").toString();
     QString title = jobj.value("title").toString();
     QString text = jobj.value("text").toString();
+    QString ticker = jobj.value("ticker").toString();
 
-    emit adbNotificationArrived(key, pkg, title, text);
+    emit adbNotificationArrived(key, pkg, title, text, ticker);
     qDebug() << key << "(" << pkg << "): " << title << "(" << text << ")";
     if (notificationSocket->bytesAvailable() > 0) {
         qDebug() << "Still more notifications readable";

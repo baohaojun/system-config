@@ -35,13 +35,23 @@ local ignored_pkgs = {
    "com.github.shadowsocks",
 }
 
-is_useful_notification = function(key, pkg, title, text)
+M.rewrite_notification_text = function(key, pkg, title, text, ticker)
+   if pkg == "com.android.mms" and title:match("通の新しいメッセージ") then
+      return ticker
+   end
+   if ticker ~= "" then
+      return ("%s ticker(%s)"):format(text, ticker)
+   end
+   return text
+end
+
+is_useful_notification = function(key, pkg, title, text, ticker)
    if private_config.is_useful_notification and
    private_config.is_useful_notification(key, pkg, title, text) == 0 then
       return 0
    end
 
-   if title == "no title" or text == "no text" then
+   if title == "" or (text == "" and ticker == "") then
       return 0
    end
 

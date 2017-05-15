@@ -49,10 +49,15 @@ bool WrenchExt::shouldUseInternalPop()
     return mUseQtPop;
 }
 
-bool WrenchExt::isUsefulNotification(const QString &key, const QString &pkg, const QString &title, const QString &text)
+bool WrenchExt::isUsefulNotification(const QString &key, const QString &pkg, const QString &title, const QString &text, const QString &ticker)
 {
-    QString res = callLuaFunc("is_useful_notification", QStringList() << key << pkg << title << text);
+    QString res = callLuaFunc("is_useful_notification", QStringList() << key << pkg << title << text << ticker);
     return res == "1";
+}
+
+QString WrenchExt::reWriteNotificationText(const QString& key, const QString& pkg, const QString& title, const QString& text, const QString& ticker)
+{
+    return callLuaFunc("rewrite_notification_text", QStringList() << key << pkg << title << text << ticker);
 }
 
 QString WrenchExt::callLuaFunc(const QString &func, const QStringList &args)

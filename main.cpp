@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
     AdbNotificationThread adbNotification;
     adbNotification.moveToThread(&adbNotification);
     adbNotification.start();
-    w.connect(&adbNotification, SIGNAL(adbNotificationArrived(QString, QString, QString, QString)), &w, SLOT(onAdbNotificationArrived(QString, QString, QString, QString)));
+    w.connect(&adbNotification, SIGNAL(adbNotificationArrived(QString, QString, QString, QString, QString)), &w, SLOT(onAdbNotificationArrived(QString, QString, QString, QString, QString)));
     w.connect(&adbNotification, SIGNAL(adbNotificationState(QString)), &w, SLOT(adbStateUpdated(QString)));
     w.connect(&w, SIGNAL(adbNotificationClicked(QString)), &adbNotification, SLOT(onAdbNotificationClicked(QString)));
 
