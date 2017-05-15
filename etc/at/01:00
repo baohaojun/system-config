@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+ps-killall tinyproxy.conf || true
+tsocks tinyproxy -c ~/system-config/etc/tinyproxy.conf

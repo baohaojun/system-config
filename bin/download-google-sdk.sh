@@ -3,8 +3,8 @@ set -ex
 
 . ensure-at-work
 if ! is-tty-io && test -z "$http_proxy"; then
-    bash -x start-http-proxy $0
-    exit
+    export http_proxy=http://localhost:19999
+    export https_proxy=$http_proxy
 fi
 
 function wget() {
