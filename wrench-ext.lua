@@ -48,6 +48,10 @@ function is_dup(s1, s2)
 end
 
 M.rewrite_notification_text = function(key, pkg, title, text, ticker)
+   if pkg == "com.tencent.mobileqq" then
+      return ticker
+   end
+
    if pkg == "com.android.mms" and title:match("通の新しいメッセージ") then
       return ticker
    end

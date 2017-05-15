@@ -141,10 +141,6 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         String pkg = extra.getString("pkg");
         String ticker = extra.getString("tickerText", "");
 
-        if (pkg.equals("com.tencent.mobileqq") && text.matches("有.*个联系人给你发过来.*条新消息")) {
-            text = extra.getString("tickerText", "");
-        }
-
         JSONObject jo = new JSONObject();
 
         try {
