@@ -35,11 +35,23 @@ local ignored_pkgs = {
    "com.github.shadowsocks",
 }
 
+function is_dup(s1, s2)
+   if s2:len() > s1:len() then
+      s1, s2 = s2, s1
+   end
+
+   if s1:sub(1, s2:len()) == s2 or s1:sub(-s2:len()) == s2 then
+      return true
+   end
+
+   return false
+end
+
 M.rewrite_notification_text = function(key, pkg, title, text, ticker)
    if pkg == "com.android.mms" and title:match("通の新しいメッセージ") then
       return ticker
    end
-   if ticker ~= "" then
+   if ticker ~= "" and not is_dup(ticker, text) then
       return ("%s ticker(%s)"):format(text, ticker)
    end
    return text
@@ -52,6 +64,10 @@ is_useful_notification = function(key, pkg, title, text, ticker)
    end
 
    if title == "" or (text == "" and ticker == "") then
+      return 0
+   end
+
+   if text == "" and title == ticker and title:match("件の新しいメール") then
       return 0
    end
 
