@@ -28,7 +28,8 @@ private:
 
 signals:
     void adbNotificationArrived(const QString& key, const QString& pkg,
-                                const QString& title, const QString& text);
+                                const QString& title, const QString& text,
+                                const QString& ticker);
     void adbNotificationState(const QString&);
 protected:
     void run();

@@ -135,13 +135,14 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     }
 
     private String joStringFromBundle(Bundle extra) {
-        String title = extra.getCharSequence(Notification.EXTRA_TITLE, "no title").toString();
-        String text = extra.getCharSequence(Notification.EXTRA_TEXT, "no text").toString();
+        String title = extra.getCharSequence(Notification.EXTRA_TITLE, "").toString();
+        String text = extra.getCharSequence(Notification.EXTRA_TEXT, "").toString();
         String key = extra.getString("key");
         String pkg = extra.getString("pkg");
+        String ticker = extra.getString("tickerText", "");
 
         if (pkg.equals("com.tencent.mobileqq") && text.matches("有.*个联系人给你发过来.*条新消息")) {
-            text = extra.getString("tickerText", "no text");
+            text = extra.getString("tickerText", "");
         }
 
         JSONObject jo = new JSONObject();
@@ -151,6 +152,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
             jo.put("pkg", pkg);
             jo.put("title", title);
             jo.put("text", text);
+            jo.put("ticker", ticker);
         } catch (JSONException e) {
             Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 65), e);
         }

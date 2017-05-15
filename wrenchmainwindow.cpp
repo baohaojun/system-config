@@ -130,17 +130,19 @@ Snore::Icon WrenchMainWindow::getPkgIcon(const QString& pkg)
     return m_defaultIcon;
 }
 
-void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text)
+void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text, const QString& ticker)
 {
 
-    if (mWrenchExt.isUsefulNotification(key, pkg, title, text)) {
+    if (mWrenchExt.isUsefulNotification(key, pkg, title, text, ticker)) {
+        QString newText = mWrenchExt.reWriteNotificationText(key, pkg, title, text, ticker);
         if (!mLuaThread.isNull()) {
-            mLuaThread->addScript(QStringList() << "handle_notification" << key << pkg << title << text);
+            mLuaThread->addScript(QStringList() << "handle_notification" << key << pkg << title << newText);
         }
-        NotificationModel::insertNotification(key, pkg, title, text);
+
+        NotificationModel::insertNotification(key, pkg, title, newText);
 
         if (mWrenchExt.shouldUseInternalPop()) {
-            Snore::Notification n(m_snore_application, m_alert, title, text, getPkgIcon(pkg));
+            Snore::Notification n(m_snore_application, m_alert, title, newText, getPkgIcon(pkg));
             m_notification_map.insert(n.id() % 1000, key);
             m_snore->broadcastNotification(n);
             m_last_sent_notification_id = n.id();

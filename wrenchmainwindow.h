@@ -62,7 +62,7 @@ private slots:
     void imageDropped(const QDropEvent& ev);
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
-    void onAdbNotificationArrived(const QString& , const QString& , const QString& , const QString&);
+    void onAdbNotificationArrived(const QString& , const QString& , const QString& , const QString&, const QString&);
     void onLoadMailHeads(const QString& , const QString& , const QString& , const QString& , const QString&);
     void on_sendItPushButton_clicked();
 

@@ -11,7 +11,8 @@
 class WrenchExt : public QObject {
     Q_OBJECT
 public:
-    bool isUsefulNotification(const QString& key, const QString& pkg, const QString& title, const QString& text);
+    bool isUsefulNotification(const QString& key, const QString& pkg, const QString& title, const QString& text, const QString& ticker);
+    QString reWriteNotificationText(const QString& key, const QString& pkg, const QString& title, const QString& text, const QString& ticker);
     void reloadLuaScript();
     bool shouldUseInternalPop();
     WrenchExt();
