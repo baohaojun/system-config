@@ -416,7 +416,7 @@ M.adb_am = adb_am
 
 local function adb_event(events)
    if type(events) == 'string' then
-      if social_need_confirm then
+      if false then -- events:match("no.virt") or social_need_confirm then
          log("adb_event %s", events)
       end
       adb_event(split(" ", events))
@@ -579,7 +579,7 @@ M.vnc_scroll_a_page = function(how)
 end
 
 M.vnc_scroll = function(key, mod)
-   local dump = adb_pipe{'dumpsys', 'window'}
+   local dump = adb_pipe{'dumpsys', 'window', 'displays'}
    local real_width = dump:match('cur=(%d+x%d+)')
    local real_height = tonumber(real_width:match('x(%d+)'))
    local real_width = tonumber(real_width:match('(%d+)x'))
