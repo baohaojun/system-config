@@ -1,0 +1,24 @@
+#!/bin/bash
+
+option=$1
+shift 1
+
+for x in "$@"; do
+    if test "$option" = "$x"; then
+        exit 0
+    fi
+
+    if [[ $option =~ ^-- ]] && test "${x:0:${#option}+1}" = "$option="; then
+        exit 0
+    fi
+
+    if [[ "$option" =~ ^-.$ ]] && [[ $x =~ ^- ]] && ! [[ $x =~ ^-- ]]; then
+        for y in $(seq 0 ${#x}); do
+            if test "${x:$y:$y + 1}" = "${option#-}"; then
+                exit 0
+            fi
+        done
+    fi
+done
+
+exit 1

@@ -79,10 +79,12 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
         set -- "$@" --force-sync
     fi
     if time ~/system-config/bin/repo "$@"; then
-        if is-jenkins; then
+        if option-included -n "$@"; then
+            true
+        elif is-jenkins; then
             (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags')
         else
-            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags'&)
+            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags' >/dev/null 2>&1&)
         fi || true
     elif is-jenkins && test "$REDO_REPO_SYNC" != true; then
         export REDO_REPO_SYNC=true
