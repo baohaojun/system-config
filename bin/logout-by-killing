@@ -1,4 +1,9 @@
 #!/bin/bash
+if echo $SHELLOPTS | grep -q xtrace; then
+    xdebug=-x
+else
+    xdebug=
+fi
 
 
 if id | grep 'uid=0\b' -P; then
@@ -13,12 +18,78 @@ if id | grep 'uid=0\b' -P; then
             if test "$pid" = "$screen_pid"; then
                 continue
             fi
+
             if is-ppid "$screen_pid" "$pid"; then
                 continue
             fi
-            kill -9 "$pid"
+
+            if test "$pid" = "$MY_PPID"; then
+                continue
+            fi
+
+            if is-ppid "$MY_PPID" "$pid"; then
+                continue
+            fi
+
+            if test "$WAIT" = true; then
+                ps "$pid"
+                sleep 3
+            fi
+
+	    kill "$pid"
+	    (
+		sleep 3
+		kill -9 "$pid"
+	    ) >/dev/null 2>&1&
         done
 else
     sudo umount -l ~/smb;
-    sudo setsid env PATH=$PATH OLDUSER=${1:-$USER} bash -c $0&
+
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt wwait
+    ## end code-generator
+    ## start generated code
+    TEMP=$(getopt -o wh \
+                  --long wait,help,no-wait \
+                  -n $(basename -- $0) -- "$@")
+    wait=false
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -w|--wait|--no-wait)
+                if test "$1" = --no-wait; then
+                    wait=false
+                else
+                    wait=true
+                fi
+                shift
+                ;;
+            -h|--help)
+                set +x
+                echo
+                echo
+                echo Options and arguments:
+                printf %06s '-w, '
+                printf %-24s '--[no-]wait'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    MY_PPID=$(ps -o ppid -h $$)
+    sudo setsid env PATH=$PATH OLDUSER=${1:-$USER} WAIT=$wait MY_PPID=$MY_PPID bash $xdebug $0
 fi
