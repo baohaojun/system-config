@@ -1,0 +1,88 @@
+#!/bin/bash
+
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @sync=true
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long sync,help,no-sync \
+              -n $(basename -- $0) -- "$@")
+sync=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --sync|--no-sync)
+            if test "$1" = --no-sync; then
+                sync=false
+            else
+                sync=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]sync'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$sync" = true; then
+    repo sync -j4 -n -c
+fi
+
+function fast-init-git-repo() {
+    skipping=$1
+    dir=$2
+    if test "$skipping" = skipping -a "$dir"; then
+        if test -d "$dir/.git"; then
+            return 0
+        fi
+        mkdir -p "$dir"
+        (
+            cd "$dir"
+            git init .
+            repo_info=$(repo forall . -c 'echo $REPO_PROJECT $REPO_LREV')
+            repo_lrev=${repo_info#* }
+            repo_project=${repo_info% *}
+
+            repo_path=$(ap)
+            (
+                cd .git
+                tolink=()
+                for x in description hooks info objects rr-cache svn config logs packed-refs refs shallow; do
+                    rm -rf $x
+                    source=$(lookup-file -e .repo)/projects/$repo_path.git/$x
+                    if test -e "$source"; then
+                        tolink=($(readlink -f "$source") ${tolink[@]})
+                    fi
+                done
+                relative-link ${tolink[@]} .
+            )
+            git reset --soft -q ${repo_lrev}
+        )
+    fi
+}
+
+export -f fast-init-git-repo
+
+repo forall -c 'true' 2>&1 >/dev/null | xargs -d \\n -P 10 -n 1 bash -c 'set -e; if ! fast-init-git-repo $@; then echo $@ failed; exit -1; fi' true

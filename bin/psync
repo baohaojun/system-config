@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$#" = 1 && is-in-emacs; then
+    nohup setsid bash -c 'set -x; out-of-emacs psync "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
+    exit
+fi
+
 if test $# = 0 -o $# = 1; then
     cd ~/system-config/
     function do_x() {
