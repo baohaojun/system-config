@@ -54,6 +54,9 @@ function fast-init-git-repo() {
     skipping=$1
     dir=$2
     if test "$skipping" = skipping -a "$dir"; then
+        if test -d "$dir/.git"; then
+            return 0
+        fi
         mkdir -p "$dir"
         (
             cd "$dir"
@@ -75,7 +78,7 @@ function fast-init-git-repo() {
                 done
                 relative-link ${tolink[@]} .
             )
-            git reset --soft ${repo_lrev}
+            git reset --soft -q ${repo_lrev}
         )
     fi
 }
