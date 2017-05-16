@@ -1,0 +1,15 @@
+#!/usr/bin/env exec-with
+
+exec-with emacsclient -e
+
+;;;;  real script start here
+(let ((buffers (buffer-list))
+      buf)
+  (while buffers
+    (setq buf (car buffers)
+          buffers (cdr buffers))
+    (when (buffer-file-name buf)
+      (setq buffers nil)))
+  (message "current-file %s" (buffer-file-name buf))
+  (intern (buffer-file-name buf)))
+

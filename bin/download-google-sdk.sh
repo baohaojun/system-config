@@ -94,7 +94,7 @@ function check-shasum-or-download() {
     fi
 
     if test $(shasum </dev/null $(basename $1)|pn 1)x = ${2}x; then
-        touch $(basename $1).shasum
+        echo $1:${2} > $(basename $1).shasum
     fi
 }
 

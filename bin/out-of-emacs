@@ -1,0 +1,4 @@
+#!/bin/bash
+unset EMACS
+unset INSIDE_EMACS
+"$@"
