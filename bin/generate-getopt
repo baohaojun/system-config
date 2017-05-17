@@ -10,7 +10,10 @@ declare -A help_map
 declare -A default_val_map
 declare -A var_name_map
 
-for spec in "$@"; do
+
+while test "$1"; do
+    spec=$1
+    shift
     if [[ $spec =~ ^\? ]]; then
         description=${spec:1}
         continue
@@ -31,6 +34,18 @@ for spec in "$@"; do
     help=$(echo "$spec" | perl -ne 'print if s/.*\?(.*?)(=.*|\@.*|$)/$1/')
     default=$(echo "$spec" | perl -ne 'print if s/.*=(.*?)(\?.*|\@.*|$)/$1/')
     var_name=$(echo "$spec" | perl -ne 'print if s/.*\@(.*?)(\?.*|=.*|$)/$1/')
+
+    while true; do
+        if test "${1:0:1}" = '?'; then
+            help=${1:1}
+            shift
+        elif test "${1:0:1}" = '='; then
+            default=${1:1}
+            shift
+        else
+            break
+        fi
+    done
 
     short_opts_map[$long]=$short
     long_opts_map[$long]=$long
@@ -93,8 +108,13 @@ for long in "${!long_opts_map[@]}"; do
         )
         $(
             if test $is_boolean = false; then
-                echo ${var}=\$2
-                echo shift 2
+                if test "${default_val_map[$long]}" = '()'; then
+                    echo ${var}=\(\"\${${var}[@]}\" \""\$2\""\)
+                    echo shift 2
+                else
+                    echo ${var}=\$2
+                    echo shift 2
+                fi
             else
                 cat << EOF3
                 if test "\$1" = --no-$long; then

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# This script will actually start a literate programming
+
+if test -z "$1"; then
+    if is-in-emacs; then
+        nohup setsid out-of-emacs knuth-mode >/dev/null 2>&1&
+        exit
+    fi
+    target=$(emacs-current-file)
+else
+    target=$(readlink -f "$1")
+fi
+
+org_target=$(
+    echo ~/src/github/private-config/knuth-mode/$(basename $target).org
+          )
+if test -e "$org_target"; then
+    die "Can't do knuth-mode when $org_target exists"
+fi
+
+mkdir -p ~/src/github/private-config/knuth-mode
+cat <<EOF > $org_target
+** 最终的版本：
+
+   #+name: the-ultimate-script
+   #+BEGIN_SRC sh :tangle $target :comments link :shebang "#!/bin/bash" :noweb yes
+   $(cat $target)
+   #+END_SRC
+
+   #+results: the-ultimate-script
+EOF
+
+e $org_target
