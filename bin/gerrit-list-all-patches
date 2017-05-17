@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt a:after='$(today -20)' b:before='$(today)'
+## end code-generator
+## start generated code
+TEMP=$(getopt -o a:b:h \
+              --long after:,before:,help \
+              -n $(basename -- $0) -- "$@")
+after=$(today -20)
+before=$(today)
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--after)
+            after=$2
+            shift 2
+            ;;
+        -b|--before)
+            before=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--after=AFTER'
+            echo
+            printf %06s '-b, '
+            printf %-24s '--before=BEFORE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+echo -n > ~/tmp/$b0.$$
+
+total=0
+while true; do
+    n=$(
+        gerrit -h s query status:merged limit:100000 after:$after before:$before --start $total | tee -a ~/tmp/$b0.$$ |grep '^change'|wc -l
+     )
+
+    total=$((total + n)) || true
+    if test "$n" = 0; then
+        break
+    fi
+done
+cat ~/tmp/$b0.$$
+
+mv ~/tmp/$b0.$$ ~/tmp/$b0.log
+
