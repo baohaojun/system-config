@@ -851,6 +851,10 @@ adb_top_window = function()
    end
 end
 
+M.swipe_down = function()
+   adb_event"adb-no-virt-key-wrench-swipe 549 483 552 1778 adb-no-virt-key-wrench-swipe 549 483 552 1778 sleep 1"
+end
+
 local function search_mail(what)
    putclip_nowait(what)
    for i = 1, 5 do
@@ -1716,6 +1720,7 @@ qq_find_friend = function(friend_name)
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
       qq_open_homepage()
+      M.swipe_down()
       adb_event"sleep .3 adb-tap 324 254" -- click for group search
       local top_window = wait_input_target_n(15, W.qqChatActivity2, W.qqGroupSearch)
       adb_event"key scroll_lock sleep .8"
@@ -2494,7 +2499,7 @@ local function picture_to_qq_chat(pics, ...)
 
    local input_method, ime_height = close_ime()
    local chatWindow
-   local image_button = ('288 %d'):format(1920 - ime_height - 50)
+   local image_button = ('206 %d'):format(1920 - ime_height - 50)
    local post_button = ('159 %d'):format(1920 - ime_height - 50)
    for i = 1, #pics do
       local target = pics[i]
