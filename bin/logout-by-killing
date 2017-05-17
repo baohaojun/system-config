@@ -90,6 +90,6 @@ else
 
     ## end generated code
 
-    MY_PPID=$(ps -o ppid -h $$)
+    MY_PPID=$(ps -o ppid -h $$|perl -npe 's/\s//g')
     sudo setsid env PATH=$PATH OLDUSER=${1:-$USER} WAIT=$wait MY_PPID=$MY_PPID bash $xdebug $0
 fi
