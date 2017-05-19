@@ -29,8 +29,16 @@ for i = 1, 20 do
    if not wait_top_activity_n_ok(5, [[com.amazon.kindle/com.amazon.kcp.library.StandaloneLibraryActivity]]) then
       log("can't find amazon StandaloneLibraryActivity at %d", i)
    else
-      adb_event"adb-tap 1024 152" -- click store
-      wait_top_activity_n_ok(5, [[com.amazon.kindle/com.amazon.kcp.store.LegacyStoreActivity]])
+      for waitStore = 1, 5 do
+         adb_event"sleep .3 adb-tap 1024 152" -- click store
+         if wait_top_activity_n_ok(5, [[com.amazon.kindle/com.amazon.kcp.store.LegacyStoreActivity]]) then
+            log("got store at %d", waitStore)
+            break
+         end
+      end
+      if waitStore == 5 then
+         goto restart
+      end
       for j = 1, 20 do
 
          adb_event"sleep .5"
