@@ -455,9 +455,9 @@ local function adb_event(events)
          if (events[i - 1] == 'adb-no-virt-key-tap' or events[i - 1] == 'adb-no-virt-key-up') then
             if m_is_recording then
                local record_file = io.open(m_is_recording, "a")
-               local comment = select_args{"You are recording screen operations, please comment this click", "", ""}
+               local comment = select_args{"你正在录制屏幕，请输入对本次点击的目的描述", "", ""} -- You are recording screen operations, please comment this click
                top_window = adb_top_window()
-               record_file:write(("wait_top_activity_n_ok(5, [[%s]])\n"):format(top_window))
+               record_file:write(("wait_top_activity_n_ok(10, [[%s]])\n"):format(top_window))
                record_file:write(('adb_event"adb-tap %d %d" -- %s\n'):format(events[i], events[i+1], comment))
                record_file:close()
             end
@@ -1680,11 +1680,21 @@ wrench_post2 = function(texwrench, text2)
 end
 
 weixin_find_friend = function(friend_name)
+   local need_confirm
+   if friend_name:match("%?$") then
+      friend_name = friend_name:gsub("%?$", "")
+      need_confirm = true
+   end
+
    weixin_open_homepage()
    adb_event"adb-tap 786 116"
    putclip(friend_name)
    wait_input_target("com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI")
    adb_event"sleep .2 key scroll_lock sleep .5"
+   if need_confirm then
+      prompt_user("请确认哪个是你要找的联系人")
+      return
+   end
    adb_event"adb-tap 245 382"
 end
 
@@ -1908,15 +1918,29 @@ end
 
 start_or_stop_recording = function()
    if not m_is_recording then
-      m_is_recording = select_args{"What function do you want to record to?", "", ""}
+      m_is_recording = select_args{"请输入你想录制的文件名（例：SearchKindle）?", "", ""}
       if (m_is_recording ~= "") then
          m_is_recording = m_is_recording:gsub("[^a-z0-9_A-Z]", "_")
          m_is_recording = M.configDirFile("ext" .. package.config:sub(1, 1) .. m_is_recording .. ".lua")
+         local headString = select_args{"请输入你对本次录制功能的描述（例：在Kindle里搜书）", "", " "}
+         if headString == "" then
+            prompt_user("必须对录制的功能进行描述，后续使用时才能正确显示")
+            m_is_recording = nil
+            return
+         end
+         local start_app = adb_top_window()
+         local record_file = io.open(m_is_recording, "a")
+
+         record_file:write(("-- %s\n\n"):format(headString))
+         record_file:write(('M.start_app"%s"\n\n'):format(start_app))
+         record_file:close()
+
       else
-         prompt_user("Must provide a name to record it")
+         prompt_user("必须输入一个文件名字才可以录制")
          m_is_recording = nil
       end
    else
+      prompt_user(("你的屏幕操作已经录制在 %s 文件中，请对其进行一些编辑，然后点一下小扳手设置按钮，以便可以使用此功能"):format(m_is_recording))
       m_is_recording = nil
    end
 end
