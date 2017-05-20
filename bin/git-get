@@ -83,7 +83,6 @@ if test -z "$dir" -o -z "$url"; then
 fi
 
 if test ! -d $dir/.git; then
-    rm -f $dir
     mkdir -p $dir
     (
         cd $dir
