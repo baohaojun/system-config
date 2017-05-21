@@ -327,6 +327,7 @@
         ("(" . '((Wine mm8-5)))
         ("=" . '((Wine mm6-drop)))
         ("j" . '((Wine mm6-c)))
+        ("F23" . '((Wine "F2")))
         ("Super-*" . '((Wrench "Meta-*") (Firefox "Meta-*") (Firefox-esr "Meta-*") (Iceweasel "Meta-*")))))
 
 (defun mm6-reverse-tab ()
