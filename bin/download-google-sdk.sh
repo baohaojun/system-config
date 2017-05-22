@@ -120,6 +120,7 @@ fi
 
 function check-shasum-or-download() {
     if test -s $(basename $1).shasum; then
+        touch $(basename $1).shasum
         return;
     fi
 
@@ -194,26 +195,11 @@ export -f check-shasum-or-download
     debug "got a line: $_";
     s,https?://'$xhost'/,,;
     ($file, $cs) = split /:/;
-    $non_version = qx(extract-nonversion $file);
-    $version = qx(extract-version $file);
-
-    $cur_ver = $hash{$non_version}{version} || 0;
-
-    if ($ENV{DOWNLOAD_ALL} eq "true") {
-        $hash{$file} = {
-            version => $version,
-            file => $file,
-            cs => $cs,
-        }
-    } elsif (qx(compare-version $cur_ver $version) eq "<") {
-        $hash{$non_version} = {
-            version => $version,
-            file => $file,
-            cs => $cs,
-        }
-    } else {
-        debug "$file version $version is old than $cur_ver, not selected"
-    }
+    $hash{$file} = {
+        version => $version,
+        file => $file,
+        cs => $cs,
+    };
 
     END {
         for (keys %hash) {
