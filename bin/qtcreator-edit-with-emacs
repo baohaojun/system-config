@@ -1,13 +1,15 @@
 #!/bin/bash
 top_window=$(sawfish-top-window)
 
+next_file=~/tmp/$(get-next-file -p "emacs-edit-%d.org")
+
 if test "$top_window" = QtCreator; then
     exec sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
 else
     sawfish-events-delayed .1 "C-Home" "C-S-End" "C-c"
-    getclip > ~/tmp/emacs-edit.$$
-    ew ~/tmp/emacs-edit.$$
-    cat ~/tmp/emacs-edit.$$ | putclip
+    getclip > $next_file
+    ew $next_file
+    cat $next_file| putclip
     find-or-exec $top_window
     exec sawfish-events-delayed .1 "S-Insert"
 fi

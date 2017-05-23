@@ -4,6 +4,12 @@ script=$1
 shift
 
 exec=$(cat "$script" | grep ^exec-with|head -n 1|perl -npe 's/^exec-with\s*//')
-$exec "$(cat "$script"|perl -ne 'print if m/real script start here/ .. -1')"
+data=$(cat "$script"|perl -ne 'print if m/real script start here/ .. -1')
+if [[ $exec =~ %s ]]; then
+    export data
+    eval ${exec/\%s/\"\$data\"}
+else
+    $exec "$data"
+fi
 
 

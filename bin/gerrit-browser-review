@@ -20,7 +20,11 @@ test $# = 0 && set -- $(git log -1 HEAD|grep 'change-id:' -i |pn 2)
             exit
         fi
         echo $url | tee /dev/stderr | putclip
-        firefox "$url"
-        sleep 1;
+        if test -z "$REMOTEIP"; then
+            firefox "$url"
+            sleep 1;
+        else
+            echo 在远程访问，无法打开浏览器，但已将网址放入剪贴板 >/dev/stderr
+        fi
     done
 )

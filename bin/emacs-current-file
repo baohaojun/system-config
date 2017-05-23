@@ -1,6 +1,6 @@
 #!/usr/bin/env exec-with
 
-exec-with emacsclient -e
+exec-with emacsclient -e %s | tr -d '\\'
 
 ;;;;  real script start here
 (let ((buffers (buffer-list))

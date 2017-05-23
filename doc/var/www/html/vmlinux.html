@@ -1,10 +1,12 @@
 <html>
   <body>
+    <h2>手机版本信息自助查询</h2>
+    <p>请访问 <a href="http://172.16.2.18/docs/cm/workflow.html#version-lookup">Workflow 文档关于版本查询相关的 Faq</a> 以查看更多信息</p>
     <form method="get" id="vmlinux" action="/cgi-bin/vmlinux-lookup.cgi">
       <table>
         <tr>
           <td>
-            Linux version:
+            Linux version（Kernel 版本标志）:
           </td>
           <td>
             <input type="text" name="version" placeholder="Linux version 3.4.0-perf-g8ed39d1-00531-g07eae65 (smartcm@build4) (gcc version 4.7 (GCC) ) #1 SMP PREEMPT Wed Jun 10 01:05:26 CST 2015" size="150" />
@@ -15,7 +17,7 @@
         </tr>
         <tr>
           <td>
-            Base Folder:
+            Base Folder（刷机包目录名）:
           </td>
           <td>
             <input type="text" name="base_build" placeholder="sfo-rom-msm8974sfo-userdebug-20150610-005540-32g" size="150"/>
@@ -27,7 +29,7 @@
 
         <tr>
           <td>
-            OTA Version:
+            OTA Version（OTA版本）:
           </td>
           <td>
             <input type="text" name="ota_version" placeholder="3.0.0-2016061217-NIGHTLY-userdebug-sfo_lte" size="150"/>
@@ -39,7 +41,7 @@
 
         <tr>
           <td>
-            Build UTC <br/>(adb shell getprop ro.build.date.utc):
+            Build UTC <br/>(手机版本编译时间戳，通过adb shell getprop ro.build.date.utc打印):
           </td>
           <td>
             <input type="text" name="utc_date" placeholder="1434388874" size="150"/>
