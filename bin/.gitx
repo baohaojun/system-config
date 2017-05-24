@@ -196,6 +196,10 @@ print $_ . "\n";
             exit
         fi
 
+        if test "$1" = log && lookup-file -e .git/shallow >/dev/null 2>&1; then
+            hint "你的 git 是个 shallow 仓储，git log 可能显示不全"
+        fi
+
         if test "$#" = 1 -a "$1" = reset-files-to-rev; then
             x=$(select-output-line 'git reflog | head -n 20' | pn 1)
             git ls-tree --name-only HEAD | xargs -d \\n git rm -rf
