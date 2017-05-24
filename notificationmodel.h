@@ -40,6 +40,7 @@ public:
     virtual QMap<QString, QString> getSelectedRawData(int i);
 
     static void insertNotification(const QString& aKey, const QString& aPkg, const QString& aTitle, const QString& aText);
+    static QMap<QString, QString> lookupNotification(const QString& aKey);
 
 private:
 

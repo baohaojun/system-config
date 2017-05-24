@@ -132,7 +132,11 @@ Snore::Icon WrenchMainWindow::getPkgIcon(const QString& pkg)
 
 void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text, const QString& ticker)
 {
-
+    if (pkg == "WrenchNotificationResult") {
+        QMap<QString, QString> notification = NotificationModel::lookupNotification(key);
+        adbNotificationShiftClicked(notification);
+        return;
+    }
     if (mWrenchExt.isUsefulNotification(key, pkg, title, text, ticker)) {
         QString newText = mWrenchExt.reWriteNotificationText(key, pkg, title, text, ticker);
         if (!mLuaThread.isNull()) {
@@ -1217,7 +1221,6 @@ void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
 
 void WrenchMainWindow::slotShortCutActivated()
 {
-    qDebug() << "Hello shortcut";
     if (m_last_sent_notification_id == m_last_closed_notification_id + 1) {
         QString key = m_notification_map[m_last_sent_notification_id % 1000];
         if (!key.isEmpty()) {

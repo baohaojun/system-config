@@ -66,17 +66,7 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
 QMap<QString, QString> NotificationModel::getSelectedRawData(int i)
 {
     QString key = getSelectedText(i);
-    QMap<QString, QString> map;
-    foreach (const Notification& n, m_saved_notifications) {
-        if (n.key == key) {
-            map.insert("key", n.key);
-            map.insert("pkg", n.pkg);
-            map.insert("title", n.title);
-            map.insert("text", n.text);
-            return map;
-        }
-    }
-    return map;
+    return lookupNotification(key);
 }
 
 QString NotificationModel::getHistoryName()
@@ -91,4 +81,19 @@ void NotificationModel::insertNotification(const QString& aKey, const QString& a
     while (m_saved_notifications.length() > 1000) {
         m_saved_notifications.pop_back();
     }
+}
+
+QMap<QString, QString> NotificationModel::lookupNotification(const QString& key)
+{
+    QMap<QString, QString> map;
+    foreach (const Notification& n, m_saved_notifications) {
+        if (n.key == key) {
+            map.insert("key", n.key);
+            map.insert("pkg", n.pkg);
+            map.insert("title", n.title);
+            map.insert("text", n.text);
+            return map;
+        }
+    }
+    return map;
 }

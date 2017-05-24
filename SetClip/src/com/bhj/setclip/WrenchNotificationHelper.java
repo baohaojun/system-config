@@ -156,12 +156,16 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     }
 
 
-    private void clickNotification(String line) {
+    private boolean clickNotification(String line) {
         String key = line.replaceAll("click ", "");
         key = key.replaceAll("\n", "");
 
         StatusBarNotification[] notifications = getActiveNotifications(new String[] {key});
         Log.e("bhj", String.format("%s:%d: notifications: %d, key %s", "WrenchNotificationHelper.java", 51, notifications.length, key));
+        if (notifications.length == 0) {
+            return false;
+        }
+        boolean ret = false;
         for (StatusBarNotification sbn : notifications) {
             Notification n = sbn.getNotification();
             PendingIntent i = n.contentIntent;
@@ -169,6 +173,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                 try {
                     Log.e("bhj", String.format("%s:%d: can send intent", "WrenchNotificationHelper.java", 93));
                     i.send();
+                    ret = true;
                     break;
                 } catch (CanceledException e) {
                     Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 64), e);
@@ -184,6 +189,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                     if (i2 != null) {
                         try {
                             i2.send();
+                            ret = true;
                         } catch (CanceledException e) {
                             Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 57), e);
                         }
@@ -192,6 +198,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                 }
             }
         }
+        return ret;
     }
 
     LocalServerSocket WrenchServer;
@@ -227,7 +234,35 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                             LocalSocket sock = getSocket (sockNumber);
                             Log.e("bhj", String.format("%s:%d: line is %s", "WrenchNotificationHelper.java", 46, line));
                             if (line.matches("^click .*")) {
-                                clickNotification(line);
+                                if (! clickNotification(line)) {
+                                    try {
+                                        BufferedWriter lockedWriter = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+                                        if (lockedWriter != null) {
+                                            String key = line.replaceAll("click ", "");
+                                            key = key.replaceAll("\n", "");
+
+                                            Bundle payload = new Bundle();
+                                            payload.putCharSequence(Notification.EXTRA_TITLE, "Can't click notification");
+                                            payload.putCharSequence(Notification.EXTRA_TEXT, key);
+                                            payload.putString("pkg", "WrenchNotificationResult");
+                                            payload.putString("key", key);
+                                            payload.putString("ticker", "");
+                                            String joString = joStringFromBundle(payload);
+                                            joString = joString.replaceAll("\n", " ");
+                                            lockedWriter.write(joString + "\n");
+                                            lockedWriter.flush();
+                                        } else {
+                                            Log.e("bhj", String.format("%s:%d: Writer is null in WrenchNotificationResult", "WrenchNotificationHelper.java", 255));
+                                        }
+                                    } catch (IOException e) {
+                                        delSocket(sock);
+                                        try {
+                                            sock.close();
+                                        } catch (IOException eClose) {
+                                            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 262), e);
+                                        }
+                                    }
+                                }
                             } else if (line.matches("^list") && sock != null) {
                                 listStatusBarNotifications(sock);
                             }
