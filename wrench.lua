@@ -1561,6 +1561,7 @@ wrench_config = function(passedConfigDirPath)
       check_file_push_and_renamed(androidvncserver, androidvncserver ..  ".md5", "androidvncserver")
       wrench_set_variable("using-vnc", "true")
    else
+      log("没有找到跟手机系统版本匹配的 androidvncserver，无法使用流畅手机屏幕同步（请找作者报个 Bug，或自己编译 androidvncserver。")
       wrench_set_variable("using-vnc", "false")
    end
 
