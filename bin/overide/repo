@@ -78,6 +78,11 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
         set -- "$@" --force-sync
     fi
+
+    if is-jenkins && test -e ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release; then
+        . ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release
+    fi
+
     if time ~/system-config/bin/repo "$@"; then
         if option-included -n "$@"; then
             true
