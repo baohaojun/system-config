@@ -836,6 +836,13 @@ void WrenchMainWindow::dropEvent(QDropEvent *event)
         }
     }
 
+    if (ui->adbStateIndicator->rect().contains(ui->adbStateIndicator->mapFromGlobal(QCursor::pos()))) {
+        if (event->mimeData()->hasText()) {
+            mLuaThread->addScript(QStringList() << "call_ext" << "GTD-Capture" << event->mimeData()->text());
+            return;
+        }
+    }
+
     event->acceptProposedAction();
     qDebug() << "WrenchMainWindow::dropEvent";
     if (event->mimeData()->hasImage()) {
