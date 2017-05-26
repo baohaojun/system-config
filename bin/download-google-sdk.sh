@@ -119,11 +119,6 @@ if test "$update_xmls" = true; then
 fi
 
 function check-shasum-or-download() {
-    if test -s $(basename $1).shasum; then
-        touch $(basename $1).shasum
-        return;
-    fi
-
     ## start code-generator "^\\s *#\\s *"
     # generate-getopts -l a:algo=shasum
     ## end code-generator
@@ -158,6 +153,11 @@ function check-shasum-or-download() {
     shift $((OPTIND - 1))
 
     ## end generated code
+
+    if test -s $(basename $1).shasum; then
+        touch $(basename $1).shasum
+        return;
+    fi
 
     if test $($algo </dev/null $(basename $1)|pn 1)x = ${2}x; then
         echo $1:$2 > $(basename $1).shasum
