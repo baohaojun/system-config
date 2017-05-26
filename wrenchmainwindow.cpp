@@ -824,15 +824,29 @@ void WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)
     event->acceptProposedAction();
 }
 
+static bool isCursorOverIt(const QWidget* it)
+{
+    return it->rect().contains(it->mapFromGlobal(QCursor::pos()));
+}
+
 void WrenchMainWindow::dropEvent(QDropEvent *event)
 {
-    if (ui->tbWeibo->rect().contains(ui->tbWeibo->mapFromGlobal(QCursor::pos()))) {
+    if (isCursorOverIt(ui->tbWeibo)) {
         if (event->mimeData()->hasUrls()) {
             QList<QUrl> urls = event->mimeData()->urls();
             if (urls.size() == 1) {
                 mLuaThread->addScript(QStringList() << "call_ext" << "open-weibo" << urls[0].toString());
                 return;
             }
+        }
+    }
+
+    if (isCursorOverIt(ui->tbThumbsUp)) {
+        if (event->mimeData()->hasText()) {
+            mLuaThread->addScript(QStringList() << "set_ext_args" << event->mimeData()->text());
+            mLuaThread->addScript(QStringList() << "wrenchThumbUp");
+            mLuaThread->addScript(QStringList() << "set_ext_args");
+            return;
         }
     }
 

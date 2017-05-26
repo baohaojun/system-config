@@ -1712,8 +1712,8 @@ end
 find_weibo_friend = function(friend_name)
    putclip_nowait(friend_name)
    for i = 1, 20 do
-      adb_start_activity(W.weibo_home_activity)
-      adb_event("adb-tap 336 1866 sleep .1 adb-tap 139 1872 adb-tap 583 30 sleep .2 adb-tap 568 251")
+      M.start_app(W.weibo_home_activity)
+      adb_event("adb-tap 139 1872 sleep .2 adb-tap 612 52 sleep .2 adb-tap 583 30 sleep .2 adb-tap 568 251")
       ime = wait_input_target_n(5, W.weibo_search_activity)
       if ime and not ime:match(W.weibo_search_activity) then
          log("wait for weibo search at %d: %s", i, ime)
@@ -1950,6 +1950,10 @@ M.call_ext = function(ext, ...)
    M.ext_args = {...}
    wrench_run("ext" .. package.config:sub(1, 1) .. ext .. ".lua")
    M.ext_args = {}
+end
+
+M.set_ext_args = function(...)
+   M.ext_args = {...}
 end
 
 M.start_app = function(to_start, to_find)
