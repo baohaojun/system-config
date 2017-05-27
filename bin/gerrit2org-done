@@ -1,0 +1,81 @@
+#!/bin/bash
+
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt gget sset
+## end code-generator
+## start generated code
+TEMP=$(getopt -o gsh \
+              --long get,set,help,no-get,no-set \
+              -n $(basename -- $0) -- "$@")
+get=false
+set=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -g|--get|--no-get)
+            if test "$1" = --no-get; then
+                get=false
+            else
+                get=true
+            fi
+            shift
+            ;;
+        -s|--set|--no-set)
+            if test "$1" = --no-set; then
+                set=false
+            else
+                set=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-g, '
+            printf %-24s '--[no-]get'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]set'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+gerrit_url=$1
+
+if test -z "$gerrit_url"; then
+    die "Usage: gerrit-url-added [-g|-s] url"
+fi
+
+gerrit_review_number=$(basename "$gerrit_url")
+
+saved_file=$(get-distributed-file --no-from-head -s gerrit-url-added "$gerrit_review_number")
+gerrit -h s query --current-patch-set "$gerrit_review_number" | grep -v 'runTimeMilliseconds:' > "$saved_file".$$
+
+if test "$get" = true; then
+    ret_val=0 # return true if already added
+    if ! diff -q "$saved_file".$$ "$saved_file"; then
+        ret_val=1
+    fi
+    rm "$saved_file".$$
+    exit $ret_val
+fi
+
+mv "$saved_file".$$ "$saved_file"

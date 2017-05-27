@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt s:stem n:number-chars=2 @from-head=true
+## end code-generator
+## start generated code
+TEMP=$(getopt -o s:n:h \
+              --long from-head,stem:,number-chars:,help,no-from-head \
+              -n $(basename -- $0) -- "$@")
+from_head=true
+stem=
+number_chars=2
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --from-head|--no-from-head)
+            if test "$1" = --no-from-head; then
+                from_head=false
+            else
+                from_head=true
+            fi
+            shift
+            ;;
+        -s|--stem)
+            stem=$2
+            shift 2
+            ;;
+        -n|--number-chars)
+            number_chars=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]from-head'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--number-chars=NUMBER_CHARS'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--stem=STEM'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+file=$1
+
+if test -z "$file"; then
+    die "Usage: get-distributed-file $file"
+fi
+
+if test "$from_head" = true; then
+    head_dir=${file:0:$number_chars}
+else
+    head_dir=${file:0-$number_chars}
+fi
+
+s_dir=~/.cache/system-config/get-distributed-file/$stem/$head_dir
+mkdir -p "$s_dir"
+echo -n "$s_dir/$file"

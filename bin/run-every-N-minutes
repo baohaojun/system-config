@@ -1,0 +1,52 @@
+#!/bin/bash
+## start code-generator "^\\s *#\\s *"
+# generate-getopts  n:n-minutes
+## end code-generator
+## start generated code
+
+n_minutes=
+OPTIND=1
+while getopts "n:h" opt; do
+    case "$opt" in
+
+        n) n_minutes=$OPTARG ;;
+        h)
+            echo
+            echo
+            printf %06s%s '-n ' 'n-minutes'
+            printf %-24s 'N_MINUTES'
+            echo ''
+            shift
+            exit 0
+            ;;
+        *)
+            echo
+            echo
+            printf %06s%s '-n ' 'n-minutes'
+            printf %-24s 'N_MINUTES'
+            echo ''
+            exit 2
+            ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+## end generated code
+
+n_sec=$(perl -e "printf('%d', $n_minutes * 60)")
+if test -z "$n_sec" -o "$n_sec" -le 0; then
+    n_sec=3600
+fi
+
+while true; do
+    start_time=$(date +%s)
+    "$@"
+    end_time=$(date +%s)
+
+    if (( end_time - start_time < n_sec )); then
+        sleep_s=$((n_sec - (end_time - start_time)))
+        echo wait for $sleep_s seconds
+        sleep $sleep_s
+    fi
+done

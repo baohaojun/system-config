@@ -8,4 +8,4 @@ if test "$SCREEN_TITLE" != bbs; then
     exec ssssh bbs
 fi
 
-bbs-robot.exp "$@" 2> ~/.cache/system-config/logs/bbs-robot.log
+run-every-N-minutes bbs-robot.exp "$@" 2> ~/.cache/system-config/logs/bbs-robot.log

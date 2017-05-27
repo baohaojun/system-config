@@ -13,9 +13,8 @@ if (system("timeout 1 ping -c 1 172.16.0.9") != 0) {
 open(my $gerrit_pipe, "-|", "gerrit -h s query owner:baohaojun is:open; gerrit -h s query reviewer:baohaojun is:open --comments")
     or die "Can't open gerrit pipe";
 
-
-open(my $gerrit_org, ">", glob("~/src/github/projects/gerrit.org.$$"))
-    or die "Can't open gerrit org";
+my $gerrit_org;
+my $new_review = 0;
 
 my ($gerrit_id, $gerrit_url, $gerrit_subject, %gerrit_map, %gerrit_id_map, %gerrit_seen_commenter, %gerrit_last_commenter);
 while (<$gerrit_pipe>) {
@@ -49,7 +48,7 @@ while (<$gerrit_pipe>) {
 
 my $ignore_dir = "$ENV{HOME}/.config/system-config/ignored-gerrit-id";
 for $gerrit_url (sort keys %gerrit_map) {
-    if ($gerrit_last_commenter{$gerrit_url} eq "baohaojun") {
+    if (system("gerrit2org-done", "-g", $gerrit_url) == 0) {
         print STDERR "$gerrit_url last reviewer is baohaojun, continue\n";
         next;
     }
@@ -57,6 +56,18 @@ for $gerrit_url (sort keys %gerrit_map) {
     $gerrit_id = $gerrit_id_map{$gerrit_url};
 
     next if -e "$ignore_dir/$gerrit_id";
+
+    if (not $gerrit_org) {
+        open($gerrit_org, ">>", glob("~/src/github/projects/gerrit.org"))
+            or die "Can't open gerrit org";
+    }
+
+    if (system("gerrit2org-done", "-s", $gerrit_url) != 0) {
+        system("bhj-notify", "gerrit2org", "Faled to add $gerrit_url");
+        die "Failed to mark $gerrit_url as added";
+    }
+
+    $new_review = 1;
 
     print $gerrit_org <<EOF;
 * TODO [#A] $gerrit_subject
@@ -67,22 +78,10 @@ for $gerrit_url (sort keys %gerrit_map) {
 
 EOF
 
-}
-close $gerrit_org;
-
-# if (system("diff ~/src/github/projects/mantis.org.$$ ~/src/github/projects/mantis.org -q") != 0) {
-#     rename(glob("~/src/github/projects/mantis.org.$$"), glob("~/src/github/projects/mantis.org"));
-# } else {
-#     debug "No update to mantis.org";
-#     unlink("$ENV{HOME}/src/github/projects/mantis.org.$$");
-# }
-
-if (system("diff ~/src/github/projects/gerrit.org.$$ ~/src/github/projects/gerrit.org -q") != 0) {
-    rename("$ENV{HOME}/src/github/projects/gerrit.org.$$", "$ENV{HOME}/src/github/projects/gerrit.org");
-    if (-s "$ENV{HOME}/src/github/projects/gerrit.org") {
-        system("bhj-notify gerrit \"You've have got gerrit review requests\"");
     }
-} else {
-    debug "No update to gerrit";
-    unlink "$ENV{HOME}/src/github/projects/gerrit.org.$$";
+
+close $gerrit_org if $gerrit_org;
+
+if ($new_review) {
+  system("bhj-notify gerrit \"You've have got gerrit review requests\"");
 }
