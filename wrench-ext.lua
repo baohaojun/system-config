@@ -14,11 +14,10 @@ local file_exists = function(name)
    end
 end
 
-if os.getenv("HOME") then
-   private_ext_file = os.getenv("HOME") .. "/src/github/private-config/etc/wrench-ext.lua"
-else
-   private_ext_file = ""
-end
+local dofile_res = nil
+local configDir = os.getenv("WRENCH_CONFIG_DIR")
+
+private_ext_file = configDir .. package.config:sub(1, 1) .. "my-wrench-ext.lua"
 
 if file_exists(private_ext_file) then
    dofile_res, private_config = pcall(dofile, private_ext_file)
@@ -104,9 +103,6 @@ M.configs = {
    ["wheel-scale"] = 1,
    ["vnc-server-command"] = "/data/data/com.android.shell/androidvncserver",
 }
-
-local dofile_res = nil
-local configDir = os.getenv("WRENCH_CONFIG_DIR")
 
 dofile_res, vpn_mode = pcall(dofile, configDir .. package.config:sub(1, 1) .. "vpn-mode.lua")
 if not dofile_res then
