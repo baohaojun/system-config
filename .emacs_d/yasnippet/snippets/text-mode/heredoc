@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: heredoc
+# key: heredoc
+# --
+"\$(cat <<'EOF${1:`(shell-command-to-string "random-mac|tr -d :")`}'
+EOF$1
+)"
