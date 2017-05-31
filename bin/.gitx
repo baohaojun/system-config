@@ -267,6 +267,9 @@ print $_ . "\n";
             if test -z "$head_branch" && lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
                 command git checkout -B $(repo-branch) $(repo-remote)/$(repo-branch)
             fi
+            if test ! -z "$head_branch"; then
+                set -- pull $(repo-remote) $(repo-branch)
+            fi
         fi
         command git "$@"
     )

@@ -126,7 +126,7 @@ if test ! -x ~/system-config/bin/"$engineX" -a "${engineX:0:2}" = "s "; then
 fi
 
 if test "$(sawfish-top-window)" = Wrench -a "$use_clip" = true; then
-    set -- "$(getclip-android)"
+    set -- "$(getclip-android|perl -npe 's/(、|……。|。)$//')"
 fi
 
 "$engineX" "$@"
