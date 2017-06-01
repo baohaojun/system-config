@@ -54,7 +54,7 @@ if is-jenkins; then
             fi
         )
         my-rfa "git clean -xfd; git reset --hard" || true
-        echo "repo init, but no sync yet." > .repo/grep-errors.txt
+        echo "will now do repo init, but no sync yet." > .repo/grep-errors.txt
         (
             cd .repo/manifests
             git reset --hard
