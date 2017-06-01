@@ -2,13 +2,16 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set @do-review d:diff-patch-sets?'-d "1 2" to diff patch-set 1 and patch-set 2'
+    # generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set \
+        # @do-review d:diff-patch-sets?'-d "1 2" to diff patch-set 1 and patch-set 2' \
+        # Cdo-checkout
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o caH:p:r:d:h \
-              --long do-review,cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,diff-patch-sets:,help,no-do-review,no-cherry-pick,no-auto \
+TEMP=$(getopt -o CcaH:p:r:d:h \
+              --long do-review,do-checkout,cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,diff-patch-sets:,help,no-do-review,no-do-checkout,no-cherry-pick,no-auto \
               -n $(basename -- $0) -- "$@")
 do_review=false
+do_checkout=false
 cherry_pick=false
 auto=false
 GERRIT_HOST=
@@ -24,6 +27,14 @@ while true; do
                 do_review=false
             else
                 do_review=true
+            fi
+            shift
+            ;;
+        -C|--do-checkout|--no-do-checkout)
+            if test "$1" = --no-do-checkout; then
+                do_checkout=false
+            else
+                do_checkout=true
             fi
             shift
             ;;
@@ -81,6 +92,9 @@ while true; do
             echo
             printf "%30s" ""
             echo '-d "1 2" to diff patch-set 1 and patch-set 2'
+            printf %06s '-C, '
+            printf %-24s '--[no-]do-checkout'
+            echo
             printf "%06s" " "
             printf %-24s '--[no-]do-review'
             echo
@@ -105,6 +119,10 @@ done
 
 if test "$diff_patch_sets" -a -z "$patch_set"; then
     patch_set='*'
+fi
+
+if test "$do_checkout" = true -a "$cherry_pick" = true; then
+    die "不能同时指定 checkout 和 cherry-pick"
 fi
 
 if test -e ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks; then
@@ -182,6 +200,14 @@ if test "$cherry_pick" = true || is-jenkins; then
     git cherry-pick FETCH_HEAD --ff
 fi
 
+if is-jenkins; then
+    exit 0
+fi
+
+if test "$do_checkout" = true; then
+    git checkout FETCH_HEAD
+fi
+
 if test "$do_review" = true; then
     git-interactive-add -r HEAD^ || true
     if yes-or-no-p "Do review and submit for this patch?"; then
@@ -191,4 +217,10 @@ fi
 
 if test "$auto" = true; then
     start_recursive_shell gerrit
+else
+    cat <<EOF
+你的Gerrit Patch已经下载，请
+    cd $PWD
+前往查看
+EOF
 fi
