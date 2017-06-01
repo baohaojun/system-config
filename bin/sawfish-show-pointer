@@ -1,17 +1,29 @@
 #!/bin/bash
 me=$(readlink -f $0)
 if test ! -e "$me"; then
-me=$(readlink -f "$(which $0)")
-if test ! -e "$me"; then
-die "Can't find out about me"
-exit 1
-fi
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
 fi
 b0=$(basename $0)
 if test "$b0" = sawfish-show-pointer; then
     export MARKER=show-pointer
 elif test "$b0" = sawfish-get-pointer-color; then
     export MARKER=get-pointer-color
+elif test "$b0" = sawfish-for-rob-dragon; then
+    putclip ""
+    (
+        sawfish-show-pointer;
+        sleep 1;
+        sawfish-get-pointer-color
+        sleep 1;
+    ) || true
+    getclip |tee /dev/stderr | perl -ne '
+        print "X=$1\nY=$2\nC=$3\n" if m/(\d+)\s*(\d+)(#\d+)/
+    ' | putclip
+    exit
 fi
 cat $me | perl -ne 'print if m/^; start '$MARKER'/ .. m/^; end '$MARKER'/' |perl -ne 'print unless 1..1' |sawfish-client;
 exit
@@ -22,11 +34,14 @@ exit
        (x (car pos))
        (y (cdr pos))
        (last-key (event-name (last-event))))
-  (if (string= last-key "C-p")
-      (system (format nil "putclip %d %d&" x y))
-    (system (format nil "(getclip; echo 'xdotool mousemove %d %d\nxdotool click 1\n')|putclip&" x y)))
-  (read-event (format nil "%d x %d" (car (query-pointer)) (cdr (query-pointer))))
-  )
+  (case last-key
+    (("C-p")
+       (system (format nil "putclip %d %d&" x y))
+       (read-event (format nil "%d x %d" x y)))
+    (("M-C-p")
+     (system (format nil "(getclip; echo 'xdotool mousemove %d %d\nxdotool click 1\n')|putclip&" x y)))
+    (t
+     (system (format nil "putclip %d %d&" x y)))))
 ; end show-pointer
 {%/sawfish%}
 
