@@ -54,13 +54,20 @@ if is-jenkins; then
             fi
         )
         my-rfa "git clean -xfd; git reset --hard" || true
-        echo "repo sync failed?" > .repo/grep-errors.txt
+        echo "repo init, but no sync yet." > .repo/grep-errors.txt
         (
             cd .repo/manifests
             git reset --hard
             git clean -xfd
             find . -type f -name '*.xml'|xargs touch /dev/null
         )
+        if (
+            cd .repo/manifests/
+            git tag 2>&1 | grep -q 'does not point to a valid object'
+        ); then
+            mail-cms "Your repo manifest has 'does not point to a valid object' errors, will now clean them"
+            rm .repo/manifests .repo/manifests.git .repo/manifest.xml -rf
+        fi
     fi
 fi
 
@@ -74,7 +81,7 @@ if test "$1" = init; then
 fi
 
 if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help "$@")" = --help; then
-     set -- "$@" --no-tags
+    set -- "$@" --no-tags
     if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
         set -- "$@" --force-sync
     fi
@@ -110,6 +117,9 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
             mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
             ~/system-config/bin/repo "$@"
         )
+    fi
+    if is-jenkins; then
+        echo "repo sync completed" >> .repo/grep-errors.txt
     fi
     exit
 else
