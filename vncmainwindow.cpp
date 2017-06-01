@@ -102,7 +102,7 @@ void VncMainWindow::init()
 void VncMainWindow::initClientFromArguments()
 {
     QStringList lastArgumentList;
-    lastArgumentList << "127.0.0.1" << "1";
+    lastArgumentList << "127.0.0.1" << QString("%1").arg(1 + QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0").toInt());
     if ( lastArgumentList.count() == 2 ) {
         QString hostName = lastArgumentList[0];
         int displayNumber = lastArgumentList[1].toInt();
