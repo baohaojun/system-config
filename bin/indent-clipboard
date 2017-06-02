@@ -1,16 +1,16 @@
 #!/bin/bash
-if test "$1" = -; then
+if test "$1" = - -o "$(basename $0)" = indent-stdin; then
     cat
 else
     getclip
 fi > ~/.cache/system-config/logs/$(basename $0).$$
-if test $(basename $0) = indent-clipboard; then
+if [[ $(basename $0) =~ ^indent ]]; then
     perl -npe 's/^/    /' -i ~/.cache/system-config/logs/$(basename $0).$$
 else
     perl -npe 's/^    //' -i ~/.cache/system-config/logs/$(basename $0).$$
 fi
 cat ~/.cache/system-config/logs/$(basename $0).$$|
-    if test "$1" = -; then
+    if test "$1" = - -o "$(basename $0)" = indent-stdin; then
         cat
     else
         putclip

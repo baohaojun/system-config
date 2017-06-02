@@ -264,7 +264,7 @@
       '(("C-a" . '((t "Home")))
         ("C-z" . '((Lxterminal "C-z" "z") (Gnome-terminal "C-z" "z") (Xfce4-terminal "C-z" "z")))
         ("Super-z" . '((Lxterminal "C-S-z" "z") (Gnome-terminal "ctrl+shift+z" "z") (Xfce4-terminal "C-z" "z") (t "C-z")))
-        ("Super-SPC" . '((Lxterminal "C-S-z") (Gnome-terminal "ctrl+shift+z") (Xfce4-terminal "C-z") (t "next")))
+        ("Super-SPC" . '((Special-Notice "Check your ibus hotkey!") (Lxterminal "C-S-z") (Gnome-terminal "ctrl+shift+z") (Xfce4-terminal "C-z") (t "next")))
         ("C-g" . '((Firefox "C-g") (Firefox-esr "C-g") (Iceweasel "C-g") (t "ESC")))
         ("Next" . '((Firefox "C-v") (Firefox-esr "C-v") (Iceweasel "C-v") (qpdfview "SPC")))
         ("Prior" . '((Firefox "ESC" "v") (Firefox-esr "ESC" "v") (Iceweasel "ESC" "v") (qpdfview "BS")))

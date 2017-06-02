@@ -35,6 +35,12 @@ export LC_ALL=C
 export LANG=C
 export retry=1
 unset -f sudo
+if test "$http_proxy"; then
+    function sudo() {
+        command sudo env http_proxy="$http_proxy" "$@"
+    }
+fi
+
 while ! sudo apt-get install "$@" -y $packages; do
     retry=$((retry + 1))
     if (( retry % 20 == 0)); then

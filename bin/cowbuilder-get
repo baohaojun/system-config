@@ -12,6 +12,11 @@ fi
 
 check-program pbuilder pbuilder
 
+mirror_host=mirrors.aliyun.com
+if test -e ~/src/github/smartcm/etc/cowbuilder-get.rc; then
+    . ~/src/github/smartcm/etc/cowbuilder-get.rc
+fi
+
 scriptd=/usr/share/debootstrap/scripts
 systems=$(
     cd /usr/share/debootstrap/scripts;
@@ -27,11 +32,17 @@ systems=$(
     done
 )
 
+if echo $SHELLOPTS | grep -q xtrace; then
+    bashx='bash -x'
+else
+    bashx=
+fi
+
 if test $# = 0; then
     while true; do
         system=$(select-args -o $systems)
         arch=$(select-args amd64 i386)
-        $0 $system-$arch
+        $bashx $0 $system-$arch
         if yes-or-no-p -y installed $system-$arch, exit; then
             exit
         fi
@@ -60,6 +71,10 @@ for system_arch in $system_archs; do
     system=${system_arch%-*}
     arch=${system_arch##*-}
     basepath=~/external/cowbuilder/$system_arch/bare
+    if test -e "$basepath/base.tgz" && yes-or-no-p -y "$basepath/base.tgz already exist, exit?"; then
+        exit
+    fi
+
     sudo rm $(dirname $basepath)/bare -rf
     mkdir $basepath -p
     components='main contrib non-free'
@@ -81,18 +96,31 @@ for system_arch in $system_archs; do
     sysname=${system%-*} #debian/ubuntu
     dist=${system#*-} #lucid/testing
 
+    set -o pipefail
     sudo unshare -m -- bash -c "
         if test $DEBUG = true; then
             set -x
         fi
         mkdir -p $basepath/base.cow2
         mount -t tmpfs none $basepath/base.cow2 -o size=2000000k
-        othermirror='deb-src http://mirrors.aliyun.com/$sysname $dist $components'
+        othermirror='deb-src http://$mirror_host/$sysname $dist $components'
         if test $dist = lucid; then
-            othermirror=\"\$othermirror|deb http://mirrors.aliyun.com/$sysname $dist-backports $components\"
+            othermirror=\"\$othermirror|deb http://$mirror_host/$sysname $dist-backports $components\"
         fi
-        command sudo pbuilder --create --basetgz $basepath/base.tgz --mirror http://mirrors.aliyun.com/$sysname --othermirror \"\$othermirror\" --distribution $dist --components \"$components\" $extra_args --architecture $arch $(if test $DEBUG = true; then echo --debug; fi) --buildplace $basepath/base.cow2 ||
-        cp $basepath/base.cow2 $basepath/base.error -av
+        command sudo pbuilder --create --basetgz $basepath/base.tgz \
+            --mirror http://$mirror_host/$sysname \
+            --othermirror \"\$othermirror\" \
+            --distribution $dist \
+            --components \"$components\" \
+            $extra_args \
+            --architecture $arch \
+            $var_http_proxy \
+            $(if test $DEBUG = true; then echo --debug; fi) \
+            --buildplace $basepath/base.cow2 ||
+        (
+            cp $basepath/base.cow2 $basepath/base.error -av
+            exit -1
+        )
         echo done
     "
 done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | time tee ~/.cache/system-config/logs/$(basename $0).log

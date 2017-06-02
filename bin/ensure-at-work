@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if test -e ~/src/github/smartcm/ensure-at-work; then
+    . ~/src/github/smartcm/ensure-at-work
+else
+    exit 1
+fi
