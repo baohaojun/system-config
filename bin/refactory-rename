@@ -6,30 +6,68 @@ function die() {
     exit -1
 }
 
-export prepend=
-export postpend=
-export ASK_REPLACER=true
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:prepend P:postpend aask-replacer=true f:change-files='()' @:perl-re=-P ?'by default, use grep -P (perl re), --perl-re="" to overide this'
+## end code-generator
+## start generated code
+TEMP=$(getopt -o P:f:ap:h \
+              --long perl-re:,postpend:,change-files:,ask-replacer,prepend:,help,no-ask-replacer \
+              -n $(basename -- $0) -- "$@")
 perl_re=-P
-TEMP=$(getopt -o p:P:A --long "no-perl-re pre:post:no-ask" -n $(basename $0) -- "$@")
+postpend=
+change_files=()
+ask_replacer=true
+prepend=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -p|--pre)
-            prepend=$2
+
+        --perl-re)
+            perl_re=$2
             shift 2
             ;;
-        -P|--post)
+        -P|--postpend)
             postpend=$2
             shift 2
             ;;
-        --no-perl-re)
-            perl_re=''
+        -f|--change-files)
+            change_files=("${change_files[@]}" "$2")
+            shift 2
+            ;;
+        -a|--ask-replacer|--no-ask-replacer)
+            if test "$1" = --no-ask-replacer; then
+                ask_replacer=false
+            else
+                ask_replacer=true
+            fi
             shift
             ;;
-
-        -A|--no-ask)
-            ASK_REPLACER=false
+        -p|--prepend)
+            prepend=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--[no-]ask-replacer'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--change-files=CHANGE_FILES'
+            echo
+            printf "%06s" " "
+            printf %-24s '--perl-re=PERL_RE'
+            echo 'by default, use grep -P (perl re), --perl-re="" to overide this'
+            printf %06s '-P, '
+            printf %-24s '--postpend=POSTPEND'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--prepend=PREPEND'
+            echo
+            exit
             shift
             ;;
         --)
@@ -41,6 +79,13 @@ while true; do
             ;;
     esac
 done
+
+
+## end generated code
+
+export ask_replacer
+export prepend
+export postpend
 
 if test -z "$prepend" -a -z "$postpend" && [[ "$1" =~ ^\\b.*\\b$ ]]; then
     prepend="\b"
@@ -68,11 +113,23 @@ function debug() {
 IFS=$'\n'
 
 function get-files-r() {
-    find . -name '.git' -prune -o -type f -print | perl -npe 's#^\./##';
+    if test "${#change_files[@]}" != 0; then
+        for x in "${change_files[@]}"; do
+            echo "$x"
+        done
+    else
+        find . -name '.git' -prune -o -type f -print | perl -npe 's#^\./##';
+    fi
 }
 
 function get-files-this-dir() {
-    find . -maxdepth 1 -name '.git' -prune -o -print | perl -npe 's#^\./##' | grep -v $perl_re -e '^\.$';
+    if test "${#change_files[@]}" != 0; then
+        for x in "${change_files[@]}"; do
+            echo "$x"
+        done
+    else
+        find . -maxdepth 1 -name '.git' -prune -o -print | perl -npe 's#^\./##' | grep -v $perl_re -e '^\.$';
+    fi
 }
 
 if ! git-is-clean .; then
@@ -107,7 +164,7 @@ while (m#($prepend$from$postpend)#ig) {
     if (defined $rep_save{$1}) {
         next;
     } else {
-        if ($ENV{ASK_REPLACER} eq "true") {
+        if ($ENV{ask_replacer} eq "true") {
             system("echo please input your replacement for \"$1\" > /tmp/get-stdin.$$");
             chomp($rep_save{$1} = qx(get-stdin /tmp/get-stdin.$$));
             $rep_save{$1} =~ s/^please input your replacement for //;
@@ -159,12 +216,18 @@ function rename-files() {
 
                 if test -L "$x"; then
                     new_link=$(compute-new-string "$(readlink "$x")")
-                    git rm "$x" --cached
-                    rm "$x"
+                    if test "${#change_files[@]}" = 0; then
+                        git rm "$x" --cached
+                        rm "$x"
+                    fi
                     ln -s "$new_link" "$y"
                     git add "$y"
                 elif test "$x" != "$y"; then
-                    git mv "$x" "$y"
+                    if test "${#change_files[@]}" = 0; then
+                        git mv "$x" "$y"
+                    else
+                        cp "$x" "$y"
+                    fi
                 fi
 
             fi
@@ -173,5 +236,9 @@ function rename-files() {
 }
 
 rename-files . "$@"
+if test "${#change_files[@]}" != 0; then
+    git checkout "${change_files[@]}"
+fi
 git-interactive-add
+
 rm $tmpf.tmp $tmpf.hash $tmpf
