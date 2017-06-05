@@ -104,7 +104,6 @@ else # jenkins
         git reset --hard
         git clean -xfd
         git pull --rebase
-        git-get -u smartisan:tools/released-manifests -d ~/src/released-manifests
     fi
 fi
 
