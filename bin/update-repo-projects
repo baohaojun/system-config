@@ -3,6 +3,7 @@
 . ~/system-config/bin/set-ssh-agent
 
 set -e
+. ensure-at-work
 
 (
     cd ~/src/android

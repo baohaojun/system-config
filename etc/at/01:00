@@ -1,4 +1,12 @@
 #!/bin/bash
 set -e
+
+exec 9> ~/.cache/system-config/logs/tinyproxy.lock
+flock -n 9 || exit 0
+
 ps-killall tinyproxy.conf || true
-tsocks tinyproxy -c ~/system-config/etc/tinyproxy.conf
+
+while true; do
+    tsocks tinyproxy -c ~/system-config/etc/tinyproxy.conf -d
+    sleep 5.12345678
+done
