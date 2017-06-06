@@ -1,6 +1,10 @@
 #!/bin/bash
 
-set -ex
+set -e
+
+if is-jenkins; then
+    set -x
+fi
 
 function die() {
     echo Error: "$@"

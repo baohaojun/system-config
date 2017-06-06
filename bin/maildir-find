@@ -78,6 +78,7 @@ mu find $subject date:$after..$before --fields 'l d f s' | (
                 fi
             done
                      )
+        echo "selected $selected_file"
         of "$selected_file"
     fi
 )

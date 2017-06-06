@@ -114,7 +114,7 @@ if test -d images; then
 fi
 
 emacsclient -e '(save-some-buffers)'
-todo-from-sticky-mail
+# todo-from-sticky-mail
 
 function check_git_dir() {
     if test $# != 2; then
