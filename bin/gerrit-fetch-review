@@ -205,7 +205,7 @@ if is-jenkins; then
 fi
 
 if test "$do_checkout" = true; then
-    git checkout FETCH_HEAD
+    git reset --hard FETCH_HEAD
 fi
 
 if test "$do_review" = true; then

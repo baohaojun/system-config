@@ -1,14 +1,25 @@
 #!/bin/bash
 top_window=$(sawfish-top-window)
 
-next_file=~/tmp/$(get-next-file -p "emacs-edit-%d.org")
+next_file=~/src/github/edit-with-emacs/$(get-next-file -p "emacs-edit-%d.org")
 
 if test "$top_window" = QtCreator; then
     exec sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
 else
+    (
+        cd ~/src/github/edit-with-emacs
+        git add .
+        git commit -m "auto commit at $(now)" >/dev/null 2>&1 || true
+    )
     sawfish-events-delayed .1 "C-Home" "C-S-End" "C-c"
     getclip > $next_file
     ew $next_file
+    (
+        cd ~/src/github/edit-with-emacs
+        git add .
+        git commit -m "auto commit for $(bp $next_file)" >/dev/null 2>&1 || true
+        git push&
+    )
     cat $next_file| putclip
     find-or-exec $top_window
     exec sawfish-events-delayed .1 "S-Insert"

@@ -11,5 +11,5 @@ sawfish-client -e '
       (lambda (w)
         (when (string-equal (bhj-window-class w) "'$class'")
           (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (bhj-window-class w)))
-          (destroy-window w)))
+          (delete-window-safely w)))
       (managed-windows))'

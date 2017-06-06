@@ -1,0 +1,61 @@
+#!/bin/bash
+
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt n:remote-name u:remote-url
+## end code-generator
+## start generated code
+TEMP=$(getopt -o u:n:h \
+              --long remote-url:,remote-name:,help \
+              -n $(basename -- $0) -- "$@")
+remote_url=
+remote_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -u|--remote-url)
+            remote_url=$2
+            shift 2
+            ;;
+        -n|--remote-name)
+            remote_name=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--remote-name=REMOTE_NAME'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--remote-url=REMOTE_URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+current_url=$(
+    git config remote.$remote_name.url
+           )
+
+if test "$current_url" -a "$current_url" != "$remote_url"; then
+    git remote set-url "$remote_name" "$remote_url"
+elif test -z "$current_url"; then
+    git remote add "$remote_name" "$remote_url"
+fi

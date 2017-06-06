@@ -86,5 +86,13 @@ fi
 
 if is-jenkins; then
     du -hs | tee .repo/du.txt
+    if test ! -d DS-5.git; then
+        git clone --mirror smartisan:arm-compiler/DS-5 DS-5.git
+    else
+        (
+            cd DS-5.git
+            git pull
+        )
+    fi
 fi
 
