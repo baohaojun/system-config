@@ -5,6 +5,52 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @check-first
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long check-first,help,no-check-first \
+              -n $(basename -- $0) -- "$@")
+check_first=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --check-first|--no-check-first)
+            if test "$1" = --no-check-first; then
+                check_first=false
+            else
+                check_first=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]check-first'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 if grep '^deb htt' /etc/apt/sources.list; then
     sudo dpkg --add-architecture i386 || true
     sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
@@ -28,6 +74,20 @@ else
     packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,'|grep -v '^\.' -P)
     if test -d "$packages_dir/$USER"; then
         packages="$packages $(find "$packages_dir/$USER" -maxdepth 1 -type f|perl -npe 's,.*/,,')"
+    fi
+fi
+
+if test "$check_first" = true; then
+    need_install=false
+    for x in "${packages[@]}"; do
+        if ! dpkg-query -l $x >/dev/null 2>&1; then
+            need_install=true
+            hint "你需要安装 $x 程序，可能需要输入sudo密码"
+            break
+        fi
+    done
+    if test "$need_install" = false; then
+       exit
     fi
 fi
 
