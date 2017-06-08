@@ -12,18 +12,18 @@ if dofile_res then
       emoji_char = emoji_def[1]
       emoji_what = emoji_def[2]
       emoji_png = emoji_def[3]
-      if emoji_def[2]:match("unicode$") then
+      if true then
          emoji_image_map[emoji_char] = emoji_png
          print (
             (
                [[ ("%s" "~/src/github/Wrench/release/%s" "%s") ]]
-            ):format(emoji_char:gsub('"', '\\"'),
+            ):format(emoji_char:gsub('"', '\\"'):gsub("%[", "［"):gsub("%]", "］"),
                      emoji_png:gsub('"', '\\"'),
                      emoji_what:gsub('"', '\\"')))
       end
    end
 end
-print"))"
+print")) ; end of emojis.el"
 
 require 'json'
 
