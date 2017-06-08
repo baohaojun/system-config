@@ -116,6 +116,17 @@ if test $org_file = true || yes-or-no-p -y "Export from .org"; then
 EOF
             )
     emacsclient -e "$eval_arg"
+
+    emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1/%.org/.tex},g"
+(with-temp-buffer
+  (insert-file "%file%")
+  (org2pdf-emojify)
+  (goto-char (point-min))
+  (search-forward "\\usepackage{graphicx}")
+  (insert "\n\\usepackage[export]{adjustbox}")
+  (write-file "%file%"))
+EOF6405e5bce1d2
+)"
     set -- "${1/%.org/.tex}"
 fi
 

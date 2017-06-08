@@ -2,19 +2,25 @@
 
 (defvar emoji-hash-table (make-hash-table :test 'equal) "The hash table for emojis.")
 (defvar emoji-names () "The names of the emojis.")
-(defvar emoji-history nil "History of emojis")
+(defvar emoji-history nil "History of emojis input.")
+(defvar emoji-regexp nil "The regexp for finding emojis.")
+(defvar emoji-alist nil "The alist for emojis.")
 
 (defun setup-emoji-hash ()
   (interactive)
   (setq emoji-hash-table (make-hash-table :test 'equal)
         emoji-names nil)
   (load "~/src/github/Wrench/release/emojis/emojis.el")
-
+  (setq emoji-alist emojis-string-list)
+  (setq emoji-regexp nil)
   (while emojis-string-list
-    (let* ((val (caar emojis-string-list))
-           (key (concat " " val " " (caddar emojis-string-list)))
+    (let* ((emoji (caar emojis-string-list))
+           (key (concat " " emoji " " (caddar emojis-string-list)))
            (png (cadar emojis-string-list))
            (emoji-image-size (floor (* bhj-english-font-size 2.5))))
+      (if emoji-regexp
+          (setq emoji-regexp (concat emoji-regexp "\\|" emoji))
+        (setq emoji-regexp emoji))
       (unless (string= png "")
         (setq png (create-image png
                                 (when (fboundp 'imagemagick-types)
@@ -23,12 +29,24 @@
                                 :ascent 'center
                                 :heuristic-mask t
                                 :height emoji-image-size))
-        (add-text-properties 0 (length val) `(display ,png) val)
-        (add-text-properties 1 (1+ (length val)) `(display ,png) key))
-      (puthash key val emoji-hash-table)
+        (add-text-properties 0 (length emoji) `(display ,png) emoji)
+        (add-text-properties 1 (1+ (length emoji)) `(display ,png) key))
+      (puthash key emoji emoji-hash-table)
       (setq emoji-names (cons key emoji-names)))
     (setq emojis-string-list (cdr emojis-string-list)))
   (setq emoji-names (reverse emoji-names)))
+
+(defun org2pdf-emojify ()
+  (interactive)
+  (unless emoji-alist
+    (setup-emoji-hash))
+  (replace-regexp
+   emoji-regexp
+   '(replace-eval-replacement
+     replace-quote
+     (format
+      "\\text{\\includegraphics[width=1em,valign=t,raise=0.1em]{%s}}"
+      (expand-file-name (nth 1 (assoc (match-string 0) emoji-alist))))) nil (point-min) (point-max) nil))
 
 ;;;###autoload
 (defun enter-emoji ()
