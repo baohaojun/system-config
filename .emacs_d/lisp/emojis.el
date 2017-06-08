@@ -10,7 +10,11 @@
   (interactive)
   (setq emoji-hash-table (make-hash-table :test 'equal)
         emoji-names nil)
-  (load "~/src/github/Wrench/release/emojis/emojis.el")
+  (let* ((wrench-emojis-file "~/src/github/Wrench/release/emojis/emojis.el")
+         (wrench-emojis-file-x (concat wrench-emojis-file ".x")))
+    (if (file-exists-p wrench-emojis-file-x)
+        (load wrench-emojis-file-x)
+      (load wrench-emojis-file)))
   (setq emoji-alist emojis-string-list)
   (setq emoji-regexp nil)
   (while emojis-string-list

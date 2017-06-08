@@ -3,6 +3,12 @@ use strict;
 use Encode;
 open(my $tbl, "<", glob("~/system-config/etc/uc-to-py.tbl")) or die "can't open pinyin table";
 
+my $single_py = 0;
+if ($ARGV[0] eq "-1") {
+    $single_py = 1;
+    shift @ARGV;
+}
+
 my %pinyin_map;
 while (<$tbl>) {
     if (m/^([0-9a-f]+)\s+\((.*)\)/i) {
@@ -42,7 +48,14 @@ my %printed;
 
 for (@res) {
     if (not $printed{$_}) {
-        print "$_\n";
+        if (%printed) {
+            print "\n";
+        }
+
+        print "$_";
         $printed{$_} = 1;
+        if ($single_py) {
+            exit;
+        }
     }
 }

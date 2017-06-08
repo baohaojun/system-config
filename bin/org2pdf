@@ -134,6 +134,16 @@ for x in aux log out dvi; do
     rm ${1/%.tex/.$x} -f
 done
 
+perl -npe "$(cat <<'EOFf0ea35142ce4'
+while (m,/home/bhj/src/github/private-config/Wrench-cache/.*?.png,g) {
+    $png_file = $&;
+    system "convert", "$png_file", "$png_file.ps";
+}
+
+s,/home/bhj/src/github/private-config/Wrench-cache/.*?.png,$&.ps,g
+
+EOFf0ea35142ce4
+)" -i "$1"
 
 perl -ne "$(cat <<'EOF1f8ab604aea3'
 
