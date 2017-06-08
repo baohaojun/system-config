@@ -41,10 +41,14 @@ elif test -d ./.true_build_dir; then
     cd "$(readlink -f ./.true_build_dir)"
 fi
 
+old_manifest_target=
 if is-jenkins; then
     set -x
     if test "$1" = init; then
         scm check-df
+        if test -e .repo/manifest.xml; then
+            old_manifest_target=$(readlink -f .repo/manifest.xml)
+        fi
     fi
     if test "$1" = init -a -d .repo/manifests/.git; then
         (
@@ -53,7 +57,6 @@ if is-jenkins; then
                 die "Can't do repo with depth=1 in jenkins task, will lock up gerrit"
             fi
         )
-        my-rfa "git clean -xfd; git reset --hard" || true
         echo "will now do repo init, but no sync yet." > .repo/grep-errors.txt
         (
             cd .repo/manifests
@@ -133,6 +136,19 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     exit
 else
     if ~/system-config/bin/repo "$@"; then
+        if test "$1" = init; then
+            if test "$old_manifest_target"; then
+                if test "$old_manifest_target" != "$(readlink -f .repo/manifest.xml)"; then
+                    if test -d .repo/project-objects; then
+                        rm * .repo/projects -rf # we changed manifest.xml, remove all to ensure better mirror usage
+                    else
+                        mail-cms "jenkins repo has no .repo/project-objects: $(jenkins-info)"
+                    fi
+                else
+                    my-rfa "git clean -xfd; git reset --hard" || true
+                fi
+            fi
+        fi
         exit 0
     else
         ret=$?
