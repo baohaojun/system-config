@@ -123,15 +123,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     fi
     if is-jenkins; then
         echo "repo sync completed" >> .repo/grep-errors.txt
-        (
-            cd .repo/project-objects
-            du=$(
-                du -s . | pn 1
-              )
-            if test "$du" -gt 10000000; then
-                mail-cms "jenkins repo space is a bit too large $du(K), check mirror setting: $(jenkins-info)"
-            fi
-        )&
+        scm check-repo-project-objects
     fi
     exit
 else

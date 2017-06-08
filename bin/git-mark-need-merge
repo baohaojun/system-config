@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+cd "$(dirname "$(lookup-file -e .git)")"/.git
+touch sc-not-merged
