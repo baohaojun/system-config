@@ -641,6 +641,85 @@ prompt_user = function(txt)
    end
 end
 
+M.history_map = {}
+M.history_loaded = false
+
+M.member = function(elt, array)
+  for _, value in pairs(array) do
+    if value == elt then
+      return true
+    end
+  end
+  return false
+end
+
+M.load_history = function()
+   local dofile_res, history_map = pcall(dofile, M.configDirFile("history.lua"))
+   if dofile_res then
+      M.history_map = history_map
+   else
+      M.history_map = {}
+   end
+   M.history_loaded = true
+end
+
+M.quote_string = function(str)
+   local equals = ""
+   while true do
+      local try = "]" .. equals .. "]"
+      if not (str .. "]"):match(try) then
+         return "["..equals.."[" .. str .. try
+      end
+      equals = equals .. "="
+   end
+end
+
+M.save_history = function()
+   local history_file = io.open(M.configDirFile("history.lua"), "w")
+   history_file:write("local map = {}\n")
+   for k, v in spairs(M.history_map) do
+      if k ~= "" then
+         history_file:write(("\nmap[ %s ] = {\n"):format(M.quote_string(k)))
+         local saved_vals = {}
+         local length = 0
+         for _, val in pairs(v) do
+            if not saved_vals[val] and length < 100 then
+               saved_vals[val] = 1
+               history_file:write(("    %s,\n"):format(M.quote_string(val)))
+               length = length + 1
+            end
+         end
+         history_file:write(("}\n"))
+      end
+   end
+   history_file:write("return map\n")
+   history_file:close()
+end
+
+M.select_args_with_history = function(history_name, prompt, init_args, ...)
+   if not M.history_loaded then
+      M.load_history()
+   end
+
+   local args= {prompt, init_args, ...}
+
+   if not M.history_map[history_name] then
+      M.history_map[history_name] = {}
+   end
+
+   for i = 1, #M.history_map[history_name] do
+      if not M.member(M.history_map[history_name][i], args) then
+         args[#args + 1] = M.history_map[history_name][i]
+      end
+   end
+
+   local ret = M.select_args(args)
+
+   M.history_map[history_name][#M.history_map[history_name] + 1] = ret
+   M.save_history()
+   return ret
+end
+
 M.select_args = select_args
 M.prompt_user = prompt_user
 
@@ -1683,7 +1762,7 @@ end
 weixin_find_friend = function(friend_name)
 
    if friend_name == "" then
-      friend_name = string_strip(select_args{"请输入想找的微信联系人名字", "", " "})
+      friend_name = string_strip(M.select_args_with_history("weixin-friends", "请输入想找的微信联系人名字", "", " "))
       if friend_name == "" then
          prompt_user("没有输入你想查找的QQ联系人，无法查找")
          return
@@ -1931,7 +2010,7 @@ end
 
 start_or_stop_recording = function()
    if not m_is_recording then
-      m_is_recording = select_args{"请输入你想录制的文件名（例：SearchKindle）?", "", ""}
+      m_is_recording = M.select_args{"请输入你想录制的文件名（例：SearchKindle）?", "", ""}
       if (m_is_recording ~= "") then
          m_is_recording = m_is_recording:gsub("[^a-z0-9_A-Z]", "_")
          m_is_recording = M.configDirFile("ext" .. package.config:sub(1, 1) .. m_is_recording .. ".lua")
@@ -2681,7 +2760,7 @@ local function wrench_picture(...)
       end
    end
    if yes_or_no_p("不知道此窗口（" .. window .. "）下如何分享图片，如需继续上传，请点击确认后选择把图片发给谁，否则请点取消") then
-      local how_to_send = select_args{
+      local how_to_send = M.select_args_with_history("how-to-send-pic",
          "请输入微信、QQ 联系人搜索方式或选择如何分享",
          "再试一下发送给新的当前窗口",
          "分享到微信朋友圈",
@@ -2689,7 +2768,7 @@ local function wrench_picture(...)
          "输入 XXX@@wx 并回车发给微信联系人 XXX",
          "输入 XXX@@qq 并回车发给 QQ 联系人 XXX",
          "输入 XXX@YYY@@qq 并回车发给 QQ 群 YYY 里的联系人 XXX"
-      }
+         )
 
       if how_to_send == "分享到微信朋友圈" then
          picture_to_weixin_share()
@@ -2842,7 +2921,7 @@ end
 wrench_find_qq_contact = function(number)
    local contact_type
    if number == "" then
-      number = string_strip(select_args{"请输入 QQ_FRIEND_NAME 或 QQ_USER@QQ_GROUP", "", " "})
+      number = string_strip(M.select_args_with_history("qq-contact", "请输入 QQ_FRIEND_NAME 或 QQ_USER@QQ_GROUP", "", " "))
       if number == "" then
          prompt_user("没有输入你想查找的QQ联系人，无法查找")
          return
@@ -3231,7 +3310,6 @@ end
 M.be_verbose = be_verbose
 M.be_quiet = be_quiet
 M.handle_notification = handle_notification
-M.my_select_args = my_select_args
 M.my_show_notifications = my_show_notifications
 M.yes_or_no_p = yes_or_no_p
 M.start_or_stop_recording = start_or_stop_recording
