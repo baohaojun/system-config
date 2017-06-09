@@ -1039,7 +1039,7 @@ end
 
 M.weixin_open_homepage = weixin_open_homepage
 
-string_split = function(s)
+string_strip = function(s)
    s = s:gsub("^%s+", "")
    s = s:gsub("%s+$", "")
    return s
@@ -1832,7 +1832,7 @@ M.kill_android_vnc = function()
    adb_shell"killall -INT androidvncserver || busybox killall -INT androidvncserver"
 end
 
-file_exists = function(name)
+M.file_exists = function(name)
    local f=io.open(name,"r")
    if f ~= nil then
       io.close(f)
@@ -1841,6 +1841,8 @@ file_exists = function(name)
       return false
    end
 end
+
+file_exists = M.file_exists
 
 M.get_app_table = function()
    apps_file = io.open(M.dataDirFile("apps.info"))
@@ -2834,7 +2836,7 @@ end
 
 wrench_call = function(number)
    if number:match("@@") then
-      number = string_split(number)
+      number = string_strip(number)
       local names = split("@@", number)
       local who, where = names[1] or "", names[2] or ""
       if where == "qq" then
