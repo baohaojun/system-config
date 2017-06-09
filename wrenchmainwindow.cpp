@@ -859,6 +859,13 @@ void WrenchMainWindow::dropEvent(QDropEvent *event)
 
     event->acceptProposedAction();
     qDebug() << "WrenchMainWindow::dropEvent";
+
+    if (isCursorOverIt(ui->tbQq)) {
+        mLuaThread->addScript(QStringList() << "wrench_call" << "@@qq");
+    } else if (isCursorOverIt(ui->tbWeixin)) {
+        mLuaThread->addScript(QStringList() << "wrench_call" << "@@wx");
+    }
+
     if (event->mimeData()->hasImage()) {
         imageDropped(*event);
         qDebug() << "WrenchMainWindow::dropEvent" << "hasImage";

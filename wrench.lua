@@ -1681,6 +1681,15 @@ wrench_post2 = function(texwrench, text2)
 end
 
 weixin_find_friend = function(friend_name)
+
+   if friend_name == "" then
+      friend_name = string_strip(select_args{"请输入想找的微信联系人名字", "", " "})
+      if friend_name == "" then
+         prompt_user("没有输入你想查找的QQ联系人，无法查找")
+         return
+      end
+   end
+
    local need_confirm
    if friend_name:match("%?$") then
       friend_name = friend_name:gsub("%?$", "")
@@ -2173,6 +2182,10 @@ end
 
 local function upload_pics(...)
    local pics = {...}
+   if #pics == 0 then
+      return last_uploaded_pics
+   end
+
    adb_shell(
       [[
             for x in /sdcard/DCIM/Camera/000-wrench-*; do
@@ -2376,11 +2389,19 @@ local function picture_to_weixin_chat(pics, ...)
       log("click image button %d", i)
       adb_event(i_button)
    end
-   while adb_top_window() ~= W.weixinImagePreviewActivity do
-      adb_event("sleep .1 adb-tap 944 1894 sleep .1")
-      wait_top_activity(W.weixinImagePreviewActivity)
+   for n = 1, 10 do
+      if adb_top_window() ~= W.weixinImagePreviewActivity then
+         adb_event("sleep .1 adb-tap 944 1894 sleep .1")
+         wait_top_activity(W.weixinImagePreviewActivity)
+         if n == 10 then
+            prompt_user("没有等到 weixinImagePreviewActivity，无法完成此操作")
+            return
+         end
+      else
+         break
+      end
    end
-   adb_event("sleep .2 adb-tap 423 1861 sleep .1 ")
+   adb_event("sleep .2 adb-tap 423 1861 adb-tap 490 1862 sleep .1 ")
    if yes_or_no_p("Confirm to send these images?") then
       adb_event("adb-tap 927 148")
    end
@@ -2630,25 +2651,58 @@ end
 local function wrench_picture(...)
    local pics = upload_pics(...)
    local window = adb_focused_window()
-   if window == W.weixinLauncherActivity then
-      picture_to_weixin_chat(pics)
+   if window == W.weixinLauncherActivity and yes_or_no_p("发送给当前微信聊天窗口") then
+      return picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mm/com.tencent.mm.plugin.scanner.ui.BaseScanUI" then
-      M.picture_to_weixin_scan(pics)
+      return M.picture_to_weixin_scan(pics)
    elseif window:match("^com.tencent.mm/com.tencent.mm.ui.chatting") then
-      picture_to_weixin_chat(pics)
+      if yes_or_no_p("发送给当前微信聊天窗口") then
+         return picture_to_weixin_chat(pics)
+      end
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
-      picture_to_qq_chat(pics)
+      if yes_or_no_p("发送给当前QQ聊天窗口") then
+         return picture_to_qq_chat(pics)
+      end
    elseif window == "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" then
-      picture_to_dingding_chat(pics)
+      if yes_or_no_p("发送给当前钉钉聊天窗口") then
+         return picture_to_dingding_chat(pics)
+      end
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity" then
-      picture_to_qq_chat(pics)
+      if yes_or_no_p("发送给当前QQ聊天窗口") then
+         return picture_to_qq_chat(pics)
+      end
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
-      picture_to_weibo_chat(pics)
+      if yes_or_no_p("发送给当前微博私信聊天窗口") then
+         return picture_to_weibo_chat(pics)
+      end
    elseif window == W.weiboCommentActivity or window == W.weiboForwardActivity then
-      picture_to_weibo_comment(pics)
-   else
-      if yes_or_no_p("不知道此窗口（" .. window .. "）下如何分享图片，如需继续上传，请手动调整手机应用，然后点击确认，否则请点取消") then
-         return wrench_picture(...)
+      if yes_or_no_p("发送给当前微博回复窗口") then
+         return picture_to_weibo_comment(pics)
+      end
+   end
+   if yes_or_no_p("不知道此窗口（" .. window .. "）下如何分享图片，如需继续上传，请点击确认后选择把图片发给谁，否则请点取消") then
+      local how_to_send = select_args{
+         "请输入微信、QQ 联系人搜索方式或选择如何分享",
+         "再试一下发送给新的当前窗口",
+         "分享到微信朋友圈",
+         "分享到微博",
+         "输入 XXX@@wx 并回车发给微信联系人 XXX",
+         "输入 XXX@@qq 并回车发给 QQ 联系人 XXX",
+         "输入 XXX@YYY@@qq 并回车发给 QQ 群 YYY 里的联系人 XXX"
+      }
+
+      if how_to_send == "分享到微信朋友圈" then
+         picture_to_weixin_share()
+         return
+      elseif how_to_send == "分享到微博" then
+         picture_to_weibo_share()
+         return
+      elseif how_to_send == "再试一下发送给新的当前窗口" then
+         return wrench_picture()
+      else
+         wrench_call(how_to_send)
+         sleep(1)
+         return wrench_picture()
       end
    end
    return #pics .. " pictures sent"
@@ -2787,6 +2841,14 @@ end
 
 wrench_find_qq_contact = function(number)
    local contact_type
+   if number == "" then
+      number = string_strip(select_args{"请输入 QQ_FRIEND_NAME 或 QQ_USER@QQ_GROUP", "", " "})
+      if number == "" then
+         prompt_user("没有输入你想查找的QQ联系人，无法查找")
+         return
+      end
+   end
+
    if (number:match("@qq.com")) then
       number = number:gsub("@qq.com", "")
       contact_type = 0
@@ -2837,7 +2899,7 @@ end
 wrench_call = function(number)
    if number:match("@@") then
       number = string_strip(number)
-      local names = split("@@", number)
+      local names = split("@@", number, true)
       local who, where = names[1] or "", names[2] or ""
       if where == "qq" then
          wrench_find_qq_contact(who)
