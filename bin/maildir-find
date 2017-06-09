@@ -67,8 +67,24 @@ mu find $subject date:$after..$before --fields 'l d f s' | (
     done
 
     selected_info=$(
-        select-args -p "你想查看哪封邮件？" "${!maildir_file_map[@]}" </dev/tty
+        select-args -p "你想查看哪封邮件？" "${!maildir_file_map[@]}" "All of the above! 老子想批处理一下！"</dev/tty
                  )
+    if [[ $selected_info =~ ^'All of the above' ]]; then
+        action=$(
+            select-args -o -p "你想执行什么操作？" "打印每封 maildir 邮件的文件名" "用 editor 一封一封的打开我看一下" </dev/tty
+              )
+        for x in "${!maildir_file_map[@]}"; do
+            case "$action" in
+                "打印每封 maildir 邮件的文件名")
+                    echo "${maildir_file_map[$x]}"
+                    ;;
+                "用 editor 一封一封的打开我看一下")
+                    ew "${maildir_file_map[$x]}"
+                    ;;
+            esac
+        done
+        exit
+    fi
     if test "$selected_info"; then
         selected_file=$(
             for x in "${!maildir_file_map[@]}"; do
