@@ -94,7 +94,7 @@ Used to replace the text upon completion of editing.")
     (define-key map (kbd "C-c '")   'fence-edit-exit)
     (define-key map (kbd "C-c C-k") 'fence-edit-abort)
     map)
-  "The keymap used in fence-edit-mode.")
+  "The keymap used in ‘fence-edit-mode’.")
 
 (define-minor-mode fence-edit-mode
   "A minor mode used when editing a fence-edit block."
