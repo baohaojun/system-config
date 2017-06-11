@@ -1,11 +1,16 @@
-;;; fence-edit.el -- Edit code in fenced code blocks in a specific mode.
+;;; fence-edit.el --- Edit fenced code blocks in a specific mode.
+
+;; Copyright (c) 2017 Aaron Bieber
 
 ;; Author: Aaron Bieber <aaron@aaronbieber.com>
+;; Version: 0.1
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: tools mode
 ;; Homepage: https://github.com/aaronbieber/fence-edit.el
 
 ;; Fence Edit requires at least GNU Emacs 24.4.
+
+;; This file is not part of GNU Emacs.
 
 ;;; Commentary:
 
