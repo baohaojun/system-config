@@ -1,47 +1,143 @@
 #!/bin/bash
 set -e
 
-export SELECT_PROMPT="Please enter your selection"
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+## start code-generator "^\\s *#\\s *"
+    # generate-getopt O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?Should use history for list order' \
+        # @:select-dist-word \
+        # m:max-history=-1 \
+        # p:prompt='"Please enter your selection"' \
+        # i:init \
+        # @select-from-history-too \
+        # vverbose
+## end code-generator
+## start generated code
+TEMP=$(getopt -o i:vom:O:p:h \
+              --long init:,select-from-history-too,verbose,ORDERED,max-history:,select-dist-word:,order-name:,prompt:,help,no-select-from-history-too,no-verbose,no-ORDERED \
+              -n $(basename -- $0) -- "$@")
+init=
+select_from_history_too=false
+verbose=false
 ORDERED=${SELECT_HISTORY_ORDER:-false}
-max=-1
-if test "${1:0:1}" = -; then
-    TEMP=$(getopt -o m:O:op:i: --long order-name:,prompt:,init:,dist-sort: -n $(basename $0) -- "$@")
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-            --dist-sort)
-                SELECT_DIST_WORD=$2
-                shift 2
-                ;;
-            -O|--order-name)
-                ORDERED=$2
-                shift 2
-                ;;
-            -m)
-                max=$((0 + $2))
-                shift 2
-                ;;
-            -o)
+max_history=-1
+select_dist_word=
+order_name=
+prompt="Please enter your selection"
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--init)
+            init=$2
+            shift 2
+            ;;
+        --select-from-history-too|--no-select-from-history-too)
+            if test "$1" = --no-select-from-history-too; then
+                select_from_history_too=false
+            else
+                select_from_history_too=true
+            fi
+            shift
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=false
+            else
+                verbose=true
+            fi
+            shift
+            ;;
+        -o|--ORDERED|--no-ORDERED)
+            if test "$1" = --no-ORDERED; then
+                ORDERED=false
+            else
                 ORDERED=true
-                shift
-                ;;
-            -p|--prompt)
-                SELECT_PROMPT=$2
-                shift 2
-                ;;
-            -i|--init)
-                export ORIGINAL_MATCHER=$2
-                shift 2
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error"
-                ;;
-        esac
-    done
+            fi
+            shift
+            ;;
+        -m|--max-history)
+            max_history=$2
+            shift 2
+            ;;
+        --select-dist-word)
+            select_dist_word=$2
+            shift 2
+            ;;
+        -O|--order-name)
+            order_name=$2
+            shift 2
+            ;;
+        -p|--prompt)
+            prompt=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-o, '
+            printf %-24s '--[no-]ORDERED'
+            echo 'Should use history for list order'
+            printf %06s '-i, '
+            printf %-24s '--init=INIT'
+            echo
+            printf %06s '-m, '
+            printf %-24s '--max-history=MAX_HISTORY'
+            echo
+            printf %06s '-O, '
+            printf %-24s '--order-name=ORDER_NAME'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--prompt=PROMPT'
+            echo
+            printf "%06s" " "
+            printf %-24s '--select-dist-word=SELECT_DIST_WORD'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]select-from-history-too'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+export SELECT_PROMPT=$prompt
+if test "$init"; then
+    export ORIGINAL_MATCHER=$init
+fi
+
+if test "$order_name"; then
+    ORDERED=$order_name
+fi
+
+if test "$select_from_history_too" = true -a "$ORDERED" = false; then
+    ORDERED=true
 fi
 
 if test $ORDERED != false; then
@@ -52,6 +148,9 @@ if test $ORDERED != false; then
     fi
     cmdfile=~/.cache/system-config/bhj/select-output-line/$md5.cmd.$UID
     histfile=~/.cache/system-config/bhj/select-output-line/$md5.hist.$UID
+    if test "$verbose" = true; then
+        echo 1>&2 "Histfile is $histfile"
+    fi
     (
         touch $histfile.$$
         mv $histfile $histfile.$$ &&
@@ -67,7 +166,11 @@ dood=(
     $(
         tmpfile=/tmp/$(basename $0).$$
         (
-            if test $# = 1; then
+            if test "$b0" = select-args; then
+               for x in "$@"; do
+                   echo "$x"
+               done
+            elif test $# = 1; then
                 bash -c "$1"
             else
                 "$@"
@@ -83,6 +186,10 @@ dood=(
 
                           print if $lines{$_};
                       ' $histfile.$$
+            fi
+
+            if test "$select_from_history_too" -a -e "$histfile"; then
+                cat "$histfile"
             fi
 
             cat $tmpfile
@@ -110,18 +217,24 @@ fi
 
 n=$(my-select "${dood[@]}")
 
+function is-good-n() {
+    echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}
+}
 
+output=$(
+    if is-good-n; then
+        echo -n ${dood[n-1]}
+    else
+        echo -n "$n"
+    fi
+      )
 
-if echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}; then
-    echo -n ${dood[n-1]}
-    if test $ORDERED != false; then
+echo -n "$output"
 
-        (
-            echo ${dood[n-1]}
-            cat $histfile.$$ 2>/dev/null || true
-        ) | perl -ne "print if 1..$max" | uniq-even-non-ajacent > $histfile.$$.2 &&
-            mv $histfile.$$.2 $histfile && rm $histfile.$$ -f
-    fi&
-else
-    echo -n "$n"
-fi
+if (  is-good-n && test "$ORDERED" != false ) || test "$select_from_history_too" = true; then
+    (
+        echo "$output"
+        cat $histfile.$$ 2>/dev/null || true
+    ) | perl -ne "print if 1..$max_history" | uniq-even-non-ajacent > $histfile.$$.2 &&
+        mv $histfile.$$.2 $histfile && rm $histfile.$$ -f
+fi&

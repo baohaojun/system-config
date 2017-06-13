@@ -69,32 +69,49 @@ mu find $subject date:$after..$before --fields 'l d f s' | (
     selected_info=$(
         select-args -p "你想查看哪封邮件？" "${!maildir_file_map[@]}" "All of the above! 老子想批处理一下！"</dev/tty
                  )
+
     if [[ $selected_info =~ ^'All of the above' ]]; then
-        action=$(
-            select-args -o -p "你想执行什么操作？" "打印每封 maildir 邮件的文件名" "用 editor 一封一封的打开我看一下" </dev/tty
-              )
-        for x in "${!maildir_file_map[@]}"; do
-            case "$action" in
-                "打印每封 maildir 邮件的文件名")
-                    echo "${maildir_file_map[$x]}"
-                    ;;
-                "用 editor 一封一封的打开我看一下")
-                    ew "${maildir_file_map[$x]}"
-                    ;;
-            esac
-        done
-        exit
+        selected_files=(
+            "${maildir_file_map[@]}"
+        )
+    elif test "$selected_info"; then
+        handle_all_files=false
+        selected_files=(
+            $(
+                for x in "${!maildir_file_map[@]}"; do
+                    if test "$x" = "$selected_info"; then
+                        echo "${maildir_file_map[$x]}"
+                        exit
+                    fi
+                done
+            )
+        )
     fi
-    if test "$selected_info"; then
-        selected_file=$(
-            for x in "${!maildir_file_map[@]}"; do
-                if test "$x" = "$selected_info"; then
-                    echo "${maildir_file_map[$x]}"
+
+    action=$(
+        select-args --select-from-history-too -o -p "你想执行什么操作？" "用 of 脚本打开此邮件" "打印每封 maildir 邮件的文件名" "用 editor 一封一封的打开我看一下" </dev/tty
+          )
+    for file in "${selected_files[@]}"; do
+        case "$action" in
+            "用 of 脚本打开此邮件")
+                of "$file"
+                hint "请按回车键继续，或Ctrl-C退出" </dev/tty
+                ;;
+            "打印每封 maildir 邮件的文件名")
+                echo "${maildir_file_map[$x]}"
+                ;;
+            "用 editor 一封一封的打开我看一下")
+                ew "${maildir_file_map[$x]}"
+                ;;
+            *)
+                if yes-or-no-p "用你输入的 $action 命令处理每一封邮件吗？" </dev/tty; then
+                    if ! [[ $action =~ \$@ ]]; then
+                        action="$action \$@"
+                    fi
+                    bash -c "$action" true "${selected_files[@]}"
                     exit
                 fi
-            done
-                     )
-        echo "selected $selected_file"
-        of "$selected_file"
-    fi
+                ;;
+        esac
+    done
 )
