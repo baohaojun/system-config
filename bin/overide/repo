@@ -133,8 +133,8 @@ else
                 if test "$old_manifest_target" != "$(readlink -f .repo/manifest.xml)"; then
                     if test -d .repo/project-objects; then
                         rm * .repo/projects -rf # we changed manifest.xml, remove all to ensure better mirror usage
-                    else
-                        mail-cms "jenkins repo has no .repo/project-objects: $(jenkins-info)"
+                    elif test -d .repo/projects; then
+                        mail-cms "jenkins repo has projects but no project-objects: $(jenkins-info)"
                     fi
                 else
                     my-rfa "git clean -xfd; git reset --hard" || true
