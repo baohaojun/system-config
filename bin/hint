@@ -26,5 +26,9 @@ done
 
 ## end generated code
 
+if is-jenkins; then
+    echo "$*"
+fi
+
 read -p "$*.
 请按‘回车’继续.. " || true

@@ -57,7 +57,7 @@ function failed-to-update() {
     if test "$?" != 0; then
         if is-jenkins; then
             mail-cms "system-config-update failed"
-            exit 0
+            exit 1
         fi
         hint "你的system-config-update好像失败了，需要重新运行 setup-system-config.sh "
         if test -d ~/system-config/src/github || timeout 1 ping -c 1 172.16.0.9; then
