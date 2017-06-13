@@ -53,19 +53,23 @@ done
 
 export SYSTEM_CONFIG_UPDATE_SLAVE=$slave
 
-if ! is-jenkins; then
-    function failed-to-update() {
-        if test "$?" != 0; then
-            hint "你的system-config-update好像失败了，需要重新运行 setup-system-config.sh "
-            if test -d ~/system-config/src/github || timeout 1 ping -c 1 172.16.0.9; then
-                bash -c "$(curl -s http://172.16.0.9/setup-system-config.sh)" setup-system-config.sh
-            fi
+function failed-to-update() {
+    if test "$?" != 0; then
+        if is-jenkins; then
+            mail-cms "system-config-update failed"
             exit 0
         fi
-    }
+        hint "你的system-config-update好像失败了，需要重新运行 setup-system-config.sh "
+        if test -d ~/system-config/src/github || timeout 1 ping -c 1 172.16.0.9; then
+            bash -c "$(curl -s http://172.16.0.9/setup-system-config.sh)" setup-system-config.sh
+        fi
+        exit 0
+    fi
+}
 
-    trap failed-to-update 0
+trap failed-to-update 0
 
+if ! is-jenkins; then
     cd ~/system-config/
 
     if git status -s | grep . -q; then
