@@ -4,16 +4,17 @@
     (export bhj-draw-wininfo)
 
     (open rep
-	  rep.system
+          rep.system
+          rep.util.utf8
           rep.regexp
-	  rep.data.records
-	  sawfish.wm.colors
-	  sawfish.wm.events
-	  sawfish.wm.fonts
-	  sawfish.wm.images
-	  sawfish.wm.misc
-	  sawfish.wm.util.x
-	  sawfish.wm.windows)
+          rep.data.records
+          sawfish.wm.colors
+          sawfish.wm.events
+          sawfish.wm.fonts
+          sawfish.wm.images
+          sawfish.wm.misc
+          sawfish.wm.util.x
+          sawfish.wm.windows)
 
 ;;; variables
 
@@ -42,8 +43,8 @@
 
   (define (make-text-item string font)
     (make-text-item-1 string font
-		      (text-width string font)
-		      (font-height font)))
+                      (text-width string font)
+                      (font-height font)))
 
   (define-record-type :window-info
     (make-window-info-1 window text icon selected height width font)
@@ -81,24 +82,31 @@
   (define (get-window-pos w dims)
     (let ((head (current-head w)))
       (if head
-	  (cons (+ (quotient (- (car (head-dimensions head)) (car dims)) 2)
-		   (car (head-offset head)))
-		(+ (quotient (- (cdr (head-dimensions head)) (cdr dims)) 2)
-		   (cdr (head-offset head))))
-	(cons (quotient (- (screen-width) (car dims)) 2)
-	      (quotient (- (screen-height) (cdr dims)) 2)))))
+          (cons (+ (quotient (- (car (head-dimensions head)) (car dims)) 2)
+                   (car (head-offset head)))
+                (+ (quotient (- (cdr (head-dimensions head)) (cdr dims)) 2)
+                   (cdr (head-offset head))))
+        (cons (quotient (- (screen-width) (car dims)) 2)
+              (quotient (- (screen-height) (cdr dims)) 2)))))
 
   ;; Returns a list of string describing window W in some way
+
+  (define (bhj-window-short-name w)
+    (let ((name (window-name w)))
+      (if (> (utf8-string-length name) 60)
+          (concat (utf8-substring name 0 30) " ... " (utf8-substring name (- (utf8-string-length name) 30)))
+        name)))
+
   (define (window-info w)
     (concat (and (window-get w 'iconified) ?[)
-                 (window-name w)
+                 (bhj-window-short-name w)
                  (and (window-get w 'iconified) ?])
 
             (let ((class-name (get-x-text-property w 'WM_CLASS)))
               (when class-name
-                  (concat "  <" 
-                          (aref class-name 1)
-                          ">")))))
+                (concat "  <"
+                        (aref class-name 1)
+                        ">")))))
 
 ;;; entry point
 
@@ -112,17 +120,17 @@
           match (or match ""))
     (let* ((wi-list (make-window-list-info wlist default-font))
            (match-list (delete "" (string-split "\\s+" match))))
-      
+
       (bhj-draw-wi-list close (if match-list
-                            (filter (lambda (wi)
-                                      (if (= (length (filter (lambda (match-item)
-                                                    (string-match match-item (wi-get-text wi) 0 t))
-                                                  match-list))
-                                             (length match-list))
-                                          t
-                                        nil))
-                                    wi-list)
-                          wi-list) active (car wlist) (concat match "_"))))
+                                  (filter (lambda (wi)
+                                            (if (= (length (filter (lambda (match-item)
+                                                                     (string-match match-item (wi-get-text wi) 0 t))
+                                                                   match-list))
+                                                   (length match-list))
+                                                t
+                                              nil))
+                                          wi-list)
+                                wi-list) active (car wlist) (concat match "_"))))
 
   (define line-height (+ icon-size 4))
 
@@ -131,21 +139,21 @@
 the active window ACTIVE should be highlighted"
 
     ;; if there's an old window, destroy it
-        
+
     (when info-window
       (x-destroy-window info-window)
       (setq info-window nil))
 
     (unless wi-list ;; there will be errow down below
       (setq wi-list (cons (make-window-info-1
-                           nil 
-                           "no more matching windows!" 
+                           nil
+                           "no more matching windows!"
                            Kill-image
-                           nil 
-                           line-height 
+                           nil
+                           line-height
                            (+ (* 3 x-margin) icon-size (text-width "no more matching windows!" default-font))
                            default-font))))
-	
+
     (unless close
       (let* ((dealing 0)
              (max-display (length wi-list))
@@ -168,15 +176,15 @@ the active window ACTIVE should be highlighted"
                                 (* (1+ max-display)
                                    line-height)))))
 
-	(define (event-handler type xw)
-	  ;; XW is the handle of the X drawable to draw in
-	  (case type
-	    ((expose)
-	     (x-clear-window xw)
+        (define (event-handler type xw)
+          ;; XW is the handle of the X drawable to draw in
+          (case type
+            ((expose)
+             (x-clear-window xw)
 
-	     ;; draw the icon
+             ;; draw the icon
              (setq dealing 0)
-	     (while (< dealing max-display)
+             (while (< dealing max-display)
                (setq icon (wi-get-icon (nth dealing wi-list)))
                (when icon
                  (x-draw-image icon xw
@@ -187,12 +195,12 @@ the active window ACTIVE should be highlighted"
                                            line-height)
                                         2))))
                (setq dealing (1+ dealing)))
-             
-	     ;; draw lines of text one at a time
-	     (let ((gc (x-create-gc xw
-				    `((foreground . ,(get-color "black"))
-				      (background . ,(get-color "white")))))
-		   (x (+ (* 2 x-margin) icon-size)))
+
+             ;; draw lines of text one at a time
+             (let ((gc (x-create-gc xw
+                                    `((foreground . ,(get-color "black"))
+                                      (background . ,(get-color "white")))))
+                   (x (+ (* 2 x-margin) icon-size)))
 
                (x-draw-string xw gc (cons (quotient (- (car win-size) (text-width match default-font)) 2)
                                           (+ y-margin
@@ -214,32 +222,32 @@ the active window ACTIVE should be highlighted"
                    (setq rest (cdr rest)
                          y (+ y line-height))))
 
-	       (x-destroy-gc gc))
-             
+               (x-destroy-gc gc))
+
              (let ((gc (x-create-gc xw
                                     `((foreground . ,(get-color "yellow"))
                                       (background . ,(get-color "green"))
                                       (function . ,'xor)))))
-               (x-fill-rectangle xw 
-                                 gc 
+               (x-fill-rectangle xw
+                                 gc
                                  (cons (+ 2x-margin icon-size) (+ 2y-margin
-                                            line-height
-                                            (* active line-height)))
+                                                                  line-height
+                                                                  (* active line-height)))
                                  (cons (- (car win-size)
                                           2x-margin
                                           x-margin
                                           icon-size
-                                          ) 
+                                          )
                                        line-height))
                (x-destroy-gc gc))
 
              )))
 
-	;; create new window
-	(setq info-window (x-create-window
-			   (get-window-pos w win-size) win-size 1
-			   `((background . ,(get-color "white"))
-			     (border-color . ,(get-color "black")))
-			   event-handler))
-	(x-map-window info-window)
+        ;; create new window
+        (setq info-window (x-create-window
+                           (get-window-pos w win-size) win-size 1
+                           `((background . ,(get-color "white"))
+                             (border-color . ,(get-color "black")))
+                           event-handler))
+        (x-map-window info-window)
         (wi-get-window (nth active wi-list))))))

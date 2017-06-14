@@ -113,9 +113,9 @@
   (or (window-class window) ""))
 
 (bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
-(bind-keys s-h-keymap "F1"  '(system "EMACS=t s&"))
-(bind-keys s-h-keymap "F2"  '(system "EMACS=t s&"))
-(bind-keys s-h-keymap "F3"  '(system "EMACS=t s&"))
+(bind-keys s-h-keymap "F1"  '(system "EMACS=t do-capture&"))
+(bind-keys s-h-keymap "F2"  '(system "find-or-exec 'Wrench V%Wrench' Wrench.sh&"))
+(bind-keys s-h-keymap "F3"  '(system "find-or-exec gjiten gjiten&"))
 (bind-keys s-h-keymap "S"  '(system "os&"))
 (bind-keys s-h-keymap "n"  '(system "douban next&"))
 (bind-both-global&window-keymaps "KP_Multiply" '(system "douban like&"))
@@ -256,7 +256,7 @@
     (when (eq keymap global-keymap)
       (unbind-keys window-keymap key))))
 
-(setq emacs-style-window-class-re "rdesktop|wrench|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|wine")
+(setq emacs-style-window-class-re "rdesktop|wrench|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|wine|xterm")
 (defvar global-emacs-remap-alist nil
   "Window specific remap list")
 
