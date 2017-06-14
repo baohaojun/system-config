@@ -369,9 +369,13 @@ if [[ "$(repo-remote-url $origin)" =~ github.com.baohaojun ]]; then
     git merge $origin/$branch
 fi
 (
+    set -o pipefail
     for try in $(seq 1 3); do
-        if timeout 30 git push $origin HEAD:refs/heads/$branch; then
+        if timeout 30 git push $origin HEAD:refs/heads/$branch 2>&1 | tee .git/sc-git-push.log; then
             exit 0
+        fi
+        if grep 'fetch first' .git/sc-git-push.log; then
+            git pull
         fi
         echo try $try failed in $PWD
         sleep 10
