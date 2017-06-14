@@ -53,13 +53,30 @@ done
 
 ## end generated code
 
-if test "$style" = s; then
-    style=$(select-args -o -p "您想使用哪种风格？" $(
-                cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/theme/
-                for x in *; do
-                    echo ${x%.*}
-                done|perl -npe 's/beamertheme//'
-                        ))
+if test "$style" = '?' -o "$style" = 's'; then
+    styles=$(
+        cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/theme/
+        for x in *; do
+            echo ${x%.*}
+        done|perl -npe 's/beamertheme//'
+          );
+    if test "$style" = '?'; then
+        for style in $styles; do
+            if timeout 15 org2pdf "$@" -s $style -c $color; then
+                touch "$style.work"
+            fi
+            git add .
+            pdf=${1%.org}.pdf
+            if test -e "$pdf"; then
+                mv "$pdf" $style-$pdf
+            fi
+        done
+        exit
+    fi
+
+    if test "$style" = s; then
+        style=$(select-args -o -p "您想使用哪种风格？" $styles)
+    fi
 fi
 
 if test "$color" = s; then
@@ -199,7 +216,7 @@ if test "$color" != default; then
     perl -npe "s,(\\\\usetheme\\{\\w+\\}),\$1 \\\\usecolortheme{$color}," -i "$1"
 fi
 perl -npe 's/ /\\thinspace /g' -i $1
-latex -shell-escape $1
+latex -halt-on-error -shell-escape $1
 latex -shell-escape $1
 dvipdfmx ${1/%.tex/.dvi}
 
