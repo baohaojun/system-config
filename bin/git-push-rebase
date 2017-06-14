@@ -375,7 +375,8 @@ fi
             exit 0
         fi
         if grep 'fetch first' .git/sc-git-push.log; then
-            git pull
+            git fetch $(repo-remote)
+            myscr -n push-$(bp) -w 'git-interactive-add -r $(repo-remote-branch); if yes-or-no-p "Merge?"; then git merge $(repo-remote-branch); fi'
         fi
         echo try $try failed in $PWD
         sleep 10

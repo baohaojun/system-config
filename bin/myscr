@@ -1,4 +1,52 @@
 #!/bin/bash
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopts wwait-exit n:window-name
+## end code-generator
+## start generated code
+
+wait_exit=false
+window_name=
+OPTIND=1
+while getopts "wn:h" opt; do
+    case "$opt" in
+
+        w) wait_exit=true ;;
+        n) window_name=$OPTARG ;;
+        h)
+            echo
+            echo
+            printf %06s%s '-w ' 'wait-exit'
+            printf %-24s ''
+            echo ''
+            printf %06s%s '-n ' 'window-name'
+            printf %-24s 'WINDOW_NAME'
+            echo ''
+            shift
+            exit 0
+            ;;
+        *)
+            echo
+            echo
+            printf %06s%s '-w ' 'wait-exit'
+            printf %-24s ''
+            echo ''
+            printf %06s%s '-n ' 'window-name'
+            printf %-24s 'WINDOW_NAME'
+            echo ''
+            exit 2
+            ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+## end generated code
+
+if test "$window_name"; then
+    export SCREEN_TITLE=$window_name
+fi
+
 oldpwd=$PWD
 cd
 
@@ -28,11 +76,23 @@ session_name=${1:-first}
 screen -wipe
 if screen -list|grep $session_name; then
     shift;
+
+    if test "$#" = 1 && [[ $1 =~ " " ]]; then
+        set -- bash -c "$1"
+    fi
+
     if test $# != 0; then
         (
             if echo $SHELLOPTS | grep -q xtrace; then
                 echo 'set -x;'
             fi
+
+            if test "$wait_exit" = true; then
+                echo . atexit rm /tmp/screen-exec.$$
+            else
+                echo rm /tmp/screen-exec.$$
+            fi
+
             echo . ~/system-config/bin/set-ssh-agent
             printf "cd %q;" "$oldpwd"
             echo export SCREEN_TITLE=$SCREEN_TITLE
@@ -42,11 +102,16 @@ if screen -list|grep $session_name; then
         ) > /tmp/screen-exec.$$
 
         find-or-exec konsole >/dev/null 2>&1 || true
-        (sleep 5 && rm /tmp/screen-exec.$$)&
         if test -z "$SCREEN_TITLE"; then
             SCREEN_TITLE=bash
         fi
-        exec screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$
+        screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
+        if test "$wait_exit" = true; then
+            while test -e /tmp/screen-exec.$$; do
+                sleep 2
+            done
+        fi
+        exit
     fi
     exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL
 else

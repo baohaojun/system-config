@@ -1,0 +1,10 @@
+#!/bin/bash
+
+atexit_args=(
+    "$@"
+)
+function atexit() {
+    "${atexit_args[@]}"
+}
+
+trap atexit 0
