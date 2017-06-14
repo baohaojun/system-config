@@ -67,6 +67,10 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     mInputOnline(false)
 {
     on_configurePushButton_clicked();
+    weixinSelectContactTimer.setSingleShot(true);
+    qqSelectContactTimer.setSingleShot(true);
+    connect(&weixinSelectContactTimer, SIGNAL(timeout()), this, SLOT(selectWeixinContact()));
+    connect(&qqSelectContactTimer, SIGNAL(timeout()), this, SLOT(selectQqContact()));
 
     ui->setupUi(this);
     connect(&m_manager, SIGNAL(finished(QNetworkReply*)),
@@ -1338,4 +1342,39 @@ void WrenchMainWindow::on_adbStateIndicator_clicked()
     }
 
     onShowNotifications();
+}
+
+void WrenchMainWindow::on_tbWeixin_pressed()
+{
+    weixinSelectContactTimer.start(500);
+}
+
+void WrenchMainWindow::on_tbQq_pressed()
+{
+    qqSelectContactTimer.start(500);
+}
+
+void WrenchMainWindow::on_tbWeixin_released()
+{
+    weixinSelectContactTimer.stop();
+
+}
+
+void WrenchMainWindow::on_tbQq_released()
+{
+    qqSelectContactTimer.stop();
+}
+
+void WrenchMainWindow::selectQqContact()
+{
+    mLuaThread->addScript(QStringList() << "wrench_call" << "@@qq");
+    ui->tbQq->click();
+    ui->tbQq->click();
+}
+
+void WrenchMainWindow::selectWeixinContact()
+{
+    mLuaThread->addScript(QStringList() << "wrench_call" << "@@wx");
+    ui->tbWeixin->click();
+    ui->tbWeixin->click();
 }

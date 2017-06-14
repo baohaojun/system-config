@@ -28,6 +28,8 @@
 #include <libsnore/notification/icon.h>
 #include <QHotkey>
 #include <QNetworkAccessManager>
+#include <QTime>
+#include <QTimer>
 
 namespace Ui {
 class WrenchMainWindow;
@@ -59,6 +61,8 @@ public slots:
 private:
     void movePhoneScreenWindowXY(int x, int y);
 private slots:
+    void selectQqContact();
+    void selectWeixinContact();
     void imageDropped(const QDropEvent& ev);
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
@@ -121,8 +125,17 @@ private slots:
 
     void on_adbStateIndicator_clicked();
 
-private:
+    void on_tbWeixin_pressed();
 
+    void on_tbQq_pressed();
+
+    void on_tbWeixin_released();
+
+    void on_tbQq_released();
+
+private:
+    QTimer weixinSelectContactTimer;
+    QTimer qqSelectContactTimer;
     bool mNotificationOnline;
     bool mInputOnline;
     void deleteLuaThread();

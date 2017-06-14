@@ -999,7 +999,7 @@ local function get_coffee(what)
             end
             if top_window == W.weixinLauncherActivity then
                log("Need click for fav again")
-               adb_event"adb-tap 337 722"
+               adb_event"adb-tap 501 872"
             elseif top_window and top_window ~= "" then
                log("Failed to get FavoriteIndexUI, and not in W.weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
                goto open_fav_search_again
@@ -1762,9 +1762,9 @@ end
 weixin_find_friend = function(friend_name)
 
    if friend_name == "" then
-      friend_name = string_strip(M.select_args_with_history("weixin-friends", "请输入想找的微信联系人名字", "", " "))
+      friend_name = string_strip(M.select_args_with_history("weixin-friends", "请输入想找的微信联系人名字", "", " ")):gsub("@@wx$", "")
       if friend_name == "" then
-         prompt_user("没有输入你想查找的QQ联系人，无法查找")
+         prompt_user("没有输入你想查找的微信联系人，无法查找")
          return
       end
    end
