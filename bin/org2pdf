@@ -135,12 +135,18 @@ for x in aux log out dvi; do
 done
 
 perl -npe "$(cat <<'EOFf0ea35142ce4'
-while (m,/home/bhj/src/github/private-config/Wrench-cache/.*?.png,g) {
+while (m,(/home/bhj/src/github/private-config/Wrench-cache|/home/bhj/src/github/Wrench/release/emojis)/.*?.png,g) {
     $png_file = $&;
-    system "convert", "$png_file", "$png_file.ps";
+    unless (-e "$png_file.ps") {
+        system "convert", "$png_file", "$png_file.ps";
+        system "touch",
+            "/home/bhj/src/github/private-config/.git/sc-not-merged",
+            "/home/bhj/src/github/Wrench/.git/sc-not-merged";
+    }
+
 }
 
-s,/home/bhj/src/github/private-config/Wrench-cache/.*?.png,$&.ps,g
+s,/home/bhj/src/github/.*?.png,$&.ps,g
 
 EOFf0ea35142ce4
 )" -i "$1"
