@@ -34,6 +34,7 @@ if Wrench.file_exists(Wrench.dataDirFile("apps.info")) then
    local apps_txt = apps_file:read("*a")
    local apps = Wrench.split("\n", apps_txt)
    local app_table = {}
+   apps[#apps + 1] = "smartisan=smartisan=锤子科技 smartisan"
    for i = 1, #apps do
       fields = Wrench.split("=", apps[i])
       local activity, class_, name  = fields[1], fields[2], fields[3]
