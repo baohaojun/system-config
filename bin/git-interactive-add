@@ -165,9 +165,11 @@ for x in "$@" $(
 
         if test "$out" = yes; then
             git add "$x"
+            touch $(lookup-file -e .git)/sc-not-merged
         elif test "${out:0:1}" != @; then
             git add "$x"
             echo $(gitp "$x"): $out >> $(lookup-file-dir -e .git)/.commit-msg-bhj
+            touch $(lookup-file -e .git)/sc-not-merged
         fi
         break
     done

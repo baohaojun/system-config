@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if test -e ~/.config/system-config/is-recording-desktop; then
+    exit 0
+else
+    exit 1
+fi

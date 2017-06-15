@@ -2,6 +2,9 @@
 dir=~/tmp/$(basename $0)
 mkdir -p $dir
 
+touch ~/.config/system-config/is-recording-desktop
+. atexit rm ~/.config/system-config/is-recording-desktop
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt w:window-class
 ## end code-generator

@@ -1,13 +1,5 @@
 #!/bin/bash
 
-if echo $SHELLOPTS | grep -q xtrace; then
-    if ! is-tty-io; then
-        exec > ~/.cache/system-config/logs/find-or-exec.log 2>&1
-    fi
-else
-    exec >/dev/null 2>&1
-fi
-
 set -e
 
 
@@ -15,13 +7,31 @@ set -e
 # generate-getopt eerror-exit
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o e --long "error-exit"  -n $(basename $0) -- "$@")
+TEMP=$(getopt -o eh \
+              --long error-exit,help,no-error-exit \
+              -n $(basename -- $0) -- "$@")
 error_exit=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -e|--error-exit)
-            error_exit=true
+
+        -e|--error-exit|--no-error-exit)
+            if test "$1" = --no-error-exit; then
+                error_exit=false
+            else
+                error_exit=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-e, '
+            printf %-24s '--[no-]error-exit'
+            echo
+            exit
             shift
             ;;
         --)
@@ -34,12 +44,16 @@ while true; do
     esac
 done
 
+
 ## end generated code
 
-function die() {
-    echo Error: "$@"
-    exit -1
-}
+if echo $SHELLOPTS | grep -q xtrace; then
+    if ! is-tty-io; then
+        exec > ~/.cache/system-config/logs/find-or-exec.log 2>&1
+    fi
+else
+    exec >/dev/null 2>&1
+fi
 
 if test $# = 0; then
     die "Error: Usage $(basename $0) window_class [program_to_exec]"

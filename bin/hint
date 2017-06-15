@@ -30,5 +30,10 @@ if is-jenkins; then
     echo "$*"
 fi
 
-read -p "$*.
-请按‘回车’继续.. " || true
+if is-recording; then
+    sawfish-ask-for-input -p "$*
+请按‘回车’继续.. "
+else
+    read -p "$*.
+请按‘回车’继续.. "
+fi || true

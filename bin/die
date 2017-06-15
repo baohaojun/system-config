@@ -1,3 +1,8 @@
 #!/bin/bash
-echo "$@"
+if is-recording; then
+    sawfish-ask-for-input -p "$*
+请按回车继续"
+else
+    echo "$@"
+fi
 exit 1
