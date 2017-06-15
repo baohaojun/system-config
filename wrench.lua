@@ -1760,7 +1760,6 @@ wrench_post2 = function(texwrench, text2)
 end
 
 weixin_find_friend = function(friend_name)
-
    if friend_name == "" then
       friend_name = string_strip(M.select_args_with_history("weixin-friends", "请输入想找的微信联系人名字", "", " ")):gsub("@@wx$", "")
       if friend_name == "" then
@@ -1784,7 +1783,15 @@ weixin_find_friend = function(friend_name)
       prompt_user("请确认哪个是你要找的联系人")
       return
    end
-   adb_event"adb-tap 245 382"
+   for i = 1, 10 do
+      adb_event"adb-tap 245 382 sleep .2"
+      if adb_top_window() == W.weixinSearchActivity then
+         log("still at weixin search at %d", i)
+         if i == 10 then
+            prompt_user("Can't get out of weixinSearchActivity")
+         end
+      end
+   end
 end
 
 wrench_find_dingding_contact = function(friend_name)
