@@ -199,7 +199,7 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key back");
                 return true;
             } else if (key == Qt::Key_F12) {
-                mLuaThread()->addScript(QStringList() << "call_ext" << "reconnect-vpn");
+                mLuaThread()->addScript(QStringList() << "call_ext" << "reconnect-vnc");
             } else if (key == Qt::Key_Pause) {
                 mLuaThread()->addScript(QStringList() << "adb_event" << "adb-key power");
                 return true;
