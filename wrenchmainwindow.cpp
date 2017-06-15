@@ -56,6 +56,8 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+static const int max_notification_entries = 1000;
+
 WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     QMainWindow(parent),
     mQuit(false),
@@ -137,8 +139,12 @@ Snore::Icon WrenchMainWindow::getPkgIcon(const QString& pkg)
 void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QString& pkg, const QString& title, const QString& text, const QString& ticker)
 {
     if (pkg == "WrenchNotificationResult") {
-        QMap<QString, QString> notification = NotificationModel::lookupNotification(key);
-        adbNotificationShiftClicked(notification);
+        if (key == mLastClickedNotification["key"]) {
+            addLog("No result handling notification, use shift click");
+            adbNotificationShiftClicked(mLastClickedNotification);
+        } else {
+            addLog("Don't know how to handle notification: " + key);
+        }
         return;
     }
     if (mWrenchExt.isUsefulNotification(key, pkg, title, text, ticker)) {
@@ -151,9 +157,12 @@ void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QStrin
 
         if (mWrenchExt.shouldUseInternalPop()) {
             Snore::Notification n(m_snore_application, m_alert, title, newText, getPkgIcon(pkg));
-            m_notification_map.insert(n.id() % 1000, key);
+            m_notification_map.insert(n.id() % max_notification_entries, key);
+            m_notification_map.insert(n.id() % max_notification_entries + max_notification_entries, pkg);
+            m_notification_map.insert(n.id() % max_notification_entries + max_notification_entries * 2, title);
+            m_notification_map.insert(n.id() % max_notification_entries + max_notification_entries * 3, newText);
             m_snore->broadcastNotification(n);
-            m_last_sent_notification_id = n.id();
+            m_last_shown_notification_id = n.id();
             m_last_notification = n;
         }
     }
@@ -265,6 +274,11 @@ QString WrenchMainWindow::get_text()
     return text;
 }
 
+void WrenchMainWindow::addLog(const QString& log)
+{
+    onInfoUpdate("log", log);
+}
+
 void WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
 {
     static int nTasks;
@@ -314,7 +328,7 @@ void WrenchMainWindow::onSelectArgs(const QStringList& args)
     mSelectArgDialog = &dialog;
     dialog.exec();
     if (mSelectArgDialog != NULL) {
-        on_argSelected(args[1]);
+        on_argSelected("");
     } else {
         qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__));
     }
@@ -341,8 +355,15 @@ void WrenchMainWindow::onShowNotifications()
     DialogGetEntry dialog(&model, prompt, this);
     connect(&dialog, SIGNAL(entrySelected(QString)), this, SIGNAL(adbNotificationClicked(QString)));
     connect(&dialog, SIGNAL(selectRawData(QMap<QString, QString>)), this, SLOT(adbNotificationShiftClicked(QMap<QString, QString>)));
+    connect(&model, SIGNAL(saveLastDialogClickedNotification(QMap<QString, QString>)), this, SLOT(saveLastDialogClickedNotification(QMap<QString, QString>)));
     dialog.exec();
+    model.disconnect();
     dialog.disconnect();
+}
+
+void WrenchMainWindow::saveLastDialogClickedNotification(const QMap<QString, QString>& notification)
+{
+    mLastClickedNotification = notification;
 }
 
 bool WrenchMainWindow::anyShareChecked()
@@ -1244,13 +1265,25 @@ void WrenchMainWindow::on_tbLauncher_clicked()
     mLuaThread->addScript(QStringList() << "launch_apps");
 }
 
+void WrenchMainWindow::saveLastClickedSnoreNotification(uint n_key)
+{
+    mLastClickedNotification.insert("key", m_notification_map[n_key]);
+    mLastClickedNotification.insert("pkg", m_notification_map[n_key + max_notification_entries]);
+    mLastClickedNotification.insert("title", m_notification_map[n_key + max_notification_entries * 2]);
+    mLastClickedNotification.insert("text", m_notification_map[n_key + max_notification_entries * 3]);
+}
+
 void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
 {
     qDebug() << "close notification" << n.closeReason();
 
-    QString key = m_notification_map[n.id() % 1000];
+    uint n_key = n.id() % max_notification_entries;
+
+    QString key = m_notification_map[n_key];
     if (key.isEmpty())
         return;
+
+    saveLastClickedSnoreNotification(n_key);
 
     m_last_closed_notification_id = n.id();
 
@@ -1260,15 +1293,17 @@ void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
             emit adbNotificationClicked(key);
         }
     }
-    m_notification_map[n.id() % 1000] = "";
+    m_notification_map[n.id() % max_notification_entries] = "";
 }
 
 void WrenchMainWindow::slotShortCutActivated()
 {
-    if (m_last_sent_notification_id == m_last_closed_notification_id + 1) {
-        QString key = m_notification_map[m_last_sent_notification_id % 1000];
+    if (m_last_shown_notification_id == m_last_closed_notification_id + 1) {
+        uint n_key = m_last_shown_notification_id % max_notification_entries;
+        QString key = m_notification_map[n_key];
         if (!key.isEmpty()) {
             emit adbNotificationClicked(key);
+            saveLastClickedSnoreNotification(n_key);
             m_snore->requestCloseNotification(m_last_notification, Snore::Notification::CloseReasons::None);
         }
     } else {

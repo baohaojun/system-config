@@ -20,6 +20,7 @@ public:
     explicit NotificationModel(QObject *parent = 0);
     void filterSelectedItems(const QStringList& split);
     QString getHistoryName();
+    void on_indexSelected(int row);
 
     class Notification {
     public:
@@ -40,7 +41,7 @@ public:
     virtual QMap<QString, QString> getSelectedRawData(int i);
 
     static void insertNotification(const QString& aKey, const QString& aPkg, const QString& aTitle, const QString& aText);
-    static QMap<QString, QString> lookupNotification(const QString& aKey);
+    static QMap<QString, QString> lookupNotification(const QString& aKey, const QString& displayText = "");
 
 private:
 
@@ -53,6 +54,7 @@ private:
     QSettings mSettings;
 
 signals:
+    void saveLastDialogClickedNotification(const QMap<QString, QString>&);
 
 public slots:
 

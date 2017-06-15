@@ -37,6 +37,11 @@ NotificationModel::NotificationModel(QObject *parent) :
     initHistory();
 }
 
+static QString getDisplayText(const NotificationModel::Notification& n)
+{
+    return n.title + "\n" + n.text;
+}
+
 void NotificationModel::filterSelectedItems(const QStringList& split)
 {
     foreach (const Notification& n, m_saved_notifications) {
@@ -53,7 +58,7 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
         }
 
         if (match) {
-            SelectedItem si(n.key, n.title + "\n" + n.text);
+            SelectedItem si(n.key, getDisplayText(n));
             si.icon = mAppIconMap[n.pkg];
             if (!mSelectedItemsRevMap.contains(si.displayText)) {
                 mSelectedItems << si;
@@ -63,10 +68,17 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
     }
 }
 
+void NotificationModel::on_indexSelected(int row)
+{
+    QMap<QString, QString> notification = getSelectedRawData(row);
+    emit saveLastDialogClickedNotification(notification);
+}
+
 QMap<QString, QString> NotificationModel::getSelectedRawData(int i)
 {
     QString key = getSelectedText(i);
-    return lookupNotification(key);
+    QString displayText = getSelectedDisplayText(i);
+    return lookupNotification(key, displayText);
 }
 
 QString NotificationModel::getHistoryName()
@@ -83,11 +95,11 @@ void NotificationModel::insertNotification(const QString& aKey, const QString& a
     }
 }
 
-QMap<QString, QString> NotificationModel::lookupNotification(const QString& key)
+QMap<QString, QString> NotificationModel::lookupNotification(const QString& key, const QString& displayText)
 {
     QMap<QString, QString> map;
     foreach (const Notification& n, m_saved_notifications) {
-        if (n.key == key) {
+        if (n.key == key && (displayText == "" || displayText == getDisplayText(n))) {
             map.insert("key", n.key);
             map.insert("pkg", n.pkg);
             map.insert("title", n.title);

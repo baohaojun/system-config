@@ -19,6 +19,7 @@ class FilteringModel : public QAbstractListModel
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual void setFilter(QString filter);
+    virtual void on_indexSelected(int row) {};
 
  protected:
     QList<SelectedItem> mSelectedItems;
@@ -37,9 +38,6 @@ class FilteringModel : public QAbstractListModel
     QString mFilter;
     QList<QString> mHistoryList;
     void sortEntriesWithHistory(int oldRows = 0);
-
-
-
 
  public:
     void setInitFilter(QString initFilter) { mInitFilter = initFilter; };

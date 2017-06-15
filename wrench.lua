@@ -3082,6 +3082,9 @@ M.wrenchThumbUp = function()
       return
    end
    local x = select_args(M.ExtMods.descriptions)
+   if x == "" then
+      return
+   end
    if not M.ExtMods.description_to_filename[x] then
       prompt_user("你选择的操作（" .. x .. "）没有对应的扩展脚本，是否忘了更新ext/.modules.lua？")
       return

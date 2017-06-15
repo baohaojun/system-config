@@ -61,6 +61,10 @@ public slots:
     void moveEvent(QMoveEvent*);
 private:
     void movePhoneScreenWindowXY(int x, int y);
+    bool mLastNotificationIsSelection;
+    QMap<QString, QString> mLastClickedNotification;
+    void saveLastClickedSnoreNotification(uint);
+    void addLog(const QString&);
 private slots:
     void selectQqContact();
     void selectWeixinContact();
@@ -123,6 +127,7 @@ private slots:
     void slotNotificationClosed(Snore::Notification);
     void slotShortCutActivated();
     void adbNotificationShiftClicked(const QMap<QString, QString>& rawData);
+    void saveLastDialogClickedNotification(const QMap<QString, QString>&);
 
     void on_adbStateIndicator_clicked();
 
@@ -135,6 +140,8 @@ private slots:
     void on_tbQq_released();
 
 private:
+
+
     QTimer weixinSelectContactTimer;
     QTimer qqSelectContactTimer;
     bool mNotificationOnline;
@@ -142,7 +149,7 @@ private:
     void deleteLuaThread();
     void sharePictures(const QStringList& files);
     QNetworkAccessManager m_manager;
-    uint m_last_sent_notification_id;
+    uint m_last_shown_notification_id;
     uint m_last_closed_notification_id;
     Snore::Notification m_last_notification;
     QHotkey m_hotkey;
@@ -190,6 +197,7 @@ private:
     bool handleEmacsKeys(QWidget *w, QKeyEvent *e);
     friend class PhoneScreenDialog;
     friend class VncMainWindow;
+
 
 signals:
     void activateWindow();
