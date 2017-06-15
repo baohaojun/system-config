@@ -789,6 +789,10 @@ void WrenchMainWindow::closeEvent(QCloseEvent *event)
         if (!mPhoneScreenDialog.isNull()) {
             mPhoneScreenDialog->close();
         }
+
+        if (vncMainWindow) {
+            vncMainWindow->close();
+        }
         QMainWindow::closeEvent(event);
         return;
     }
@@ -798,6 +802,10 @@ void WrenchMainWindow::closeEvent(QCloseEvent *event)
         if (mPhoneScreenDialog) {
             mPhoneScreenDialog->hide();
         }
+
+        if (vncMainWindow) {
+            vncMainWindow->hide();
+        }
         event->ignore();
     }
 }
@@ -806,6 +814,10 @@ void WrenchMainWindow::showEvent(QShowEvent *event)
 {
     if (mPhoneScreenDialog && ui->tbPhoneScreen->isChecked()) {
         mPhoneScreenDialog->show();
+    }
+
+    if (vncMainWindow && ui->tbPhoneScreen->isChecked()) {
+        vncMainWindow->show();
     }
 }
 
@@ -1377,4 +1389,18 @@ void WrenchMainWindow::selectWeixinContact()
     mLuaThread->addScript(QStringList() << "wrench_call" << "@@wx");
     ui->tbWeixin->click();
     ui->tbWeixin->click();
+}
+
+void WrenchMainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::ActivationChange &&
+        vncMainWindow &&
+        ! vncMainWindow->isHidden() &&
+        ui->tbPhoneScreen->isChecked()) {
+        QTimer::singleShot(100, [&]() {
+                if (this->isActiveWindow()) {
+                    vncMainWindow->raise();
+                }
+            });
+    }
 }

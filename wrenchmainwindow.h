@@ -44,6 +44,7 @@ public:
     ~WrenchMainWindow();
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
+    void changeEvent(QEvent *event);
 
 public slots:
     void handleNetworkData(QNetworkReply*);
