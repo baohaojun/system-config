@@ -40,6 +40,18 @@ if test "$DESKTOP_SESSION" = sawfish; then
 
         for x in $(seq 1 $max_try ); do
             start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
+            if test "$x" = 1 && [[ ${start_event,,} =~ button1 ]] &&
+                    test "$(sawfish-top-window)" = Wrench -a "$use_clip" = true; then
+                text=$(getclip-android)
+                (
+                    if echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
+                        search-dict "$text"
+                    else
+                        search-gjiten "$text"
+                    fi&
+                ) 9> /dev/null
+                exit
+            fi
             if [[ ${start_event/-Off/-Click} =~ -Click[0-9] ]]; then # double click
                 double_click=true
                 break
