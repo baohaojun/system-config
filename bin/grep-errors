@@ -38,6 +38,7 @@ int ret = FAILED;
 if \(ret == MAP_FAILED\) \{
 cp: cannot stat.*recovery_tool/.*\*.*No such file or directory
 FindEmulator: find:.*No such file or directory
+dex2oatd.*art/runtime/gc/space/image_space.cc:.*dex_bootjars/system/framework/arm.*/boot.art.*failed
 EOF
 
     if test -e flashing-files/.scripts/false-build-error-filter; then
