@@ -2085,7 +2085,25 @@ M.M = M
 wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    local window = adb_focused_window()
    debug("sharing text: %s for window: %s", text, window)
+   if text and text:match("^@%?") then
+      wrench_post("@", 'manual-post')
+      prompt_user("请选择你要@谁，然后继续")
+      text = text:gsub("^@%?", "")
+      how_to_post = 'manual-post'
+   end
+
+   if text and text:match("@%?$") then
+      text = text:gsub("@%?$", "")
+      wrench_post(text, 'manual-post')
+      wrench_post("@", 'manual-post')
+      return
+   end
+
    if text then
+      if text:match("@$") and not how_to_post then
+         how_to_post = 'manual-post'
+      end
+
       if text:match("^​") and text ~= "​" then
          text = text:sub(string.len("​") + 1)
          local func = loadstring(text)
