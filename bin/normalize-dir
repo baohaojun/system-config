@@ -41,7 +41,7 @@ done
 
 ## end generated code
 
-dir="$(echo "$1"|perl -npe 's,/+,/,g; s,/*$,,')"
+dir="$(echo "$1"|perl -npe 's,^\./+,,; s,/+,/,g; s,/*$,,')"
 
 if test "$suffix"; then
     echo "${dir%$suffix}$suffix"
