@@ -152,6 +152,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.wallet_core.ui.WalletBankcardIdUI'] = 
 map['com.tencent.mm/com.tencent.mm.plugin.wallet_core.ui.WalletCardElementUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.webview.stub.WebViewStubProxyUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.fts.FTSSearchTabWebViewUI'] = 'manual-post'
+map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.fts.FTSWebViewUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.account.LoginHistoryUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.account.mobile.MobileInputUI'] = 'manual-post'

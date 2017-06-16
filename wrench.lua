@@ -3117,6 +3117,7 @@ end
 
 M.shift_click_notification = function(pkg, key, title, text)
    if pkg == "com.tencent.mm" then
+      title = title:gsub("%.", " ")
       wrench_call(title .. "@@wx")
    elseif pkg == "com.tencent.mobileqq" then
       local sender = ""
@@ -3129,6 +3130,7 @@ M.shift_click_notification = function(pkg, key, title, text)
          sender = title or ""
       end
 
+      sender = sender:gsub("%.", " ")
       wrench_call(sender .. "@@qq")
    end
 end
