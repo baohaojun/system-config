@@ -152,18 +152,34 @@ for x in aux log out dvi; do
 done
 
 perl -npe "$(cat <<'EOFf0ea35142ce4'
+
 while (m,(/home/bhj/src/github/private-config/Wrench-cache|/home/bhj/src/github/Wrench/release/emojis)/.*?.png,g) {
     $png_file = $&;
-    unless (-e "$png_file.ps") {
-        system "convert", "$png_file", "$png_file.ps";
-        system "touch",
-            "/home/bhj/src/github/private-config/.git/sc-not-merged",
-            "/home/bhj/src/github/Wrench/.git/sc-not-merged";
+    unless (-e "$png_file.size") {
+        $size = qx(identify "$png_file" | pn 3);
+        ($x = $size) =~ s/x.*//;
+        ($y = $size) =~ s/.*x//;
+        open my $file, ">$png_file.size" or
+            die "Can't open $png_file.size";
+
+        print $file ",natwidth=${x}bp,natheight=${y}bp";
+        close $file;
+        $done_edit = 1;
     }
 
+    $size_map{$png_file} = qx(cat $png_file.size) unless $size_map{$png_file} ;
 }
 
-s,/home/bhj/src/github/.*?.png,$&.ps,g
+s|\]\{(/home/bhj/src/github/.*?.png)|$size_map{$1}$&|g;
+END {
+    system "touch",
+        "/home/bhj/src/github/private-config/.git/sc-not-merged",
+        "/home/bhj/src/github/Wrench/.git/sc-not-merged"
+        if $done_edit;
+}
+
+
+
 
 EOFf0ea35142ce4
 )" -i "$1"
