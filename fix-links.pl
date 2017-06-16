@@ -111,7 +111,7 @@ sub fix_link($)
         debug "file is $file";
         if ($0 =~ /org2pdf/) {
             (my $ps_file = $file) =~ s/\.(png|jpg)$/.ps/;
-            system("convert", "$file", "$ps_file");
+            system("convert", "$file", "$ps_file") unless (-e "$ps_file" and system "test", "$ps_file", "-nt", "$file");
             $file = $ps_file;
         }
         $file = shell_quote($file);
