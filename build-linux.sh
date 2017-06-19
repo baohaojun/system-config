@@ -96,9 +96,19 @@ for x in .; do
     )
 done
 
-for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
+(
+    set -o pipefail
 
-echo $oldpwd/release/* $oldpwd/* $oldpwd/linux/binaries/* | xargs -P 5 -n 1 relative-link -f >/dev/null 2>&1
+    (
+        for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P | xargs -P 5 -n 1 relative-link -f
+        echo $oldpwd/release/* $oldpwd/* $oldpwd/linux/binaries/* | xargs -P 5 -n 1 relative-link -f
+    ) 2>&1 |
+        if echo $SHELLOPTS | grep -q xtrace; then
+            cat
+        else
+            cat >/dev/null 2>&1
+        fi
+)
 
 ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
