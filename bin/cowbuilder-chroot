@@ -118,4 +118,7 @@ done
     sudo chown $USER\. $chroot/$HOME
 )
 
+if test -e /etc/apt/apt.conf.d/02proxy; then
+    sudo cp /etc/apt/apt.conf.d/02proxy "$chroot/etc/apt/apt.conf.d/02proxy"
+fi
 sudo chroot "$chroot" "$@"

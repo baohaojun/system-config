@@ -28,6 +28,7 @@ smartcm_projects=(
     gapps-6.0
     gapps-t1
     smartcm
+    Wrench-ubuntu-14.04
 )
 
 declare -A project_repo_url
