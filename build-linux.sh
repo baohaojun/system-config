@@ -89,7 +89,7 @@ if test "$do_debug" = true; then
     qmake_args='WRENCH_DEBUG=1'
 fi
 
-for x in . download; do
+for x in .; do
     (
         cd $x
         qmake $qmake_args && make -j8 | perl -npe "s|$PWD|$oldpwd|g"
@@ -104,7 +104,7 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
     if test "$DOING_WRENCH_RELEASE"; then
         mkdir -p ~/src/github/$release_dir
-        command rsync -L $oldpwd/linux/binaries/* Wrench download/download $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/Wrench/release-exclude.txt
+        command rsync -L $oldpwd/linux/binaries/* Wrench $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/Wrench/release-exclude.txt
         exit
     fi
 
