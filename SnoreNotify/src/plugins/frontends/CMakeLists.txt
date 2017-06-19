@@ -1,0 +1,3 @@
+ecm_optional_add_subdirectory(freedesktop_frontend)
+ecm_optional_add_subdirectory(snarlnetwork)
+ecm_optional_add_subdirectory(pushover_frontend)

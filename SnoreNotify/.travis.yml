@@ -1,0 +1,75 @@
+language: cpp
+
+os:
+    - osx
+    - linux
+
+before_install: |- 
+                if  [ "$TRAVIS_OS_NAME" == "osx" ]
+                then
+                    brew update
+                    brew install ninja qt5
+                fi
+                if [ "$TRAVIS_OS_NAME" == "linux" ]
+                then
+                    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+                    sudo add-apt-repository -y ppa:beineri/opt-qt532
+                    sudo add-apt-repository -y ppa:kubuntu-ppa/backports
+                    sudo apt-get -qq update
+                    sudo apt-get install -q qt53base qt53tools qt53quick1 qt53quickcontrols qt53websockets qt53multimedia
+                    sudo apt-get install -q ninja-build cmake
+                    source /opt/qt53/bin/qt53-env.sh
+                    if [ "$CXX" = "g++" ]
+                    then
+                        sudo apt-get install -q gcc-4.8 g++-4.8
+                        export CXX="g++-4.8"
+                        export CC="gcc-4.8"
+                    fi
+                fi
+                mkdir -p ~/git
+                cd ~/git
+                git clone -q git://anongit.kde.org/extra-cmake-modules.git
+                git clone -q https://github.com/Snorenotify/SnoreGrowl.git
+                mkdir -p ~/build
+                cd ~/build
+                mkdir -p ~/build/extra-cmake-modules
+                cd ~/build/extra-cmake-modules
+                cmake -G"Ninja" ~/git/extra-cmake-modules -DCMAKE_INSTALL_PREFIX=~/installs/
+                ninja install
+                mkdir -p ~/build/snoregrowl && cd ~/build/snoregrowl
+                cmake -G"Ninja" ~/git/SnoreGrowl -DCMAKE_INSTALL_PREFIX=~/installs/
+                ninja install
+  
+compiler:
+  - clang
+#  - gcc
+  
+script: |-
+        cd $TRAVIS_BUILD_DIR
+        mkdir build
+        cd build
+        if [ "$TRAVIS_OS_NAME" == "osx" ]
+        then
+            cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/installs/ -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5
+        fi
+        if [ "$TRAVIS_OS_NAME" == "linux" ]
+        then
+            cmake -G"Ninja" .. -DCMAKE_INSTALL_PREFIX=~/installs/
+        fi
+        ninja install
+
+    
+notifications:
+    irc: "chat.freenode.net#snorenotify"
+
+# addons:
+  # apt:
+    # sources:
+    # - kubuntu-backports 
+    # packages:
+    # - cmake
+    # - qtbase5-dev
+    # - qtquick1-5-dev
+    # - qttools5-dev
+    # - extra-cmake-modules
+    

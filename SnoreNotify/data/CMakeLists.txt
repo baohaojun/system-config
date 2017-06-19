@@ -1,0 +1,1 @@
+set(SNORE_RCS ${SNORE_RCS} ${CMAKE_CURRENT_SOURCE_DIR}/../data/snore.qrc PARENT_SCOPE)

@@ -1,0 +1,6 @@
+*.pyc
+*~
+*.autosave
+cmake-build
+.qmake.stash
+*.qmlc

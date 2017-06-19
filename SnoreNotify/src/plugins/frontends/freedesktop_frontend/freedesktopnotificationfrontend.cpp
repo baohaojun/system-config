@@ -1,0 +1,140 @@
+/*
+    SnoreNotify is a Notification Framework based on Qt
+    Copyright (C) 2013-2015  Hannah von Reth <vonreth@kde.org>
+
+    SnoreNotify is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SnoreNotify is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with SnoreNotify.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "freedesktopnotificationfrontend.h"
+#include "notificationsadaptor.h"
+
+#include "plugins/backends/freedesktop_backend/fredesktopnotification.h"
+#include "libsnore/snore.h"
+#include "libsnore/version.h"
+#include "libsnore/notification/notification_p.h"
+
+#include <QImage>
+#include <QIcon>
+
+using namespace Snore;
+
+FreedesktopFrontend::FreedesktopFrontend()
+{
+    connect(this, &FreedesktopFrontend::enabledChanged, [this](bool enabled) {
+        if (enabled) {
+            m_adaptor = new  NotificationsAdaptor(this);
+            QDBusConnection dbus = QDBusConnection::sessionBus();
+            if (dbus.registerService(QStringLiteral("org.freedesktop.Notifications"))) {
+                if (!dbus.registerObject(QStringLiteral("/org/freedesktop/Notifications"), this)) {
+                    setErrorString(tr("Failed to register dbus object."));
+                }
+            } else {
+                setErrorString(tr("Failed to register dbus service."));
+            }
+        } else {
+            QDBusConnection dbus = QDBusConnection::sessionBus();
+            dbus.unregisterService(QStringLiteral("org.freedesktop.Notifications"));
+            dbus.unregisterObject(QStringLiteral("/org/freedesktop/Notifications"));
+            m_adaptor->deleteLater();
+            m_adaptor = nullptr;
+        }
+    });
+}
+
+void FreedesktopFrontend::slotActionInvoked(Notification notification)
+{
+    if (notification.isActiveIn(this)) {
+        if (notification.actionInvoked().isValid()) {
+            emit ActionInvoked(notification.id(), QString::number(notification.actionInvoked().id()));
+        }
+    }
+}
+
+void FreedesktopFrontend::slotNotificationClosed(Notification notification)
+{
+    if (notification.removeActiveIn(this)) {
+        emit NotificationClosed(notification.id(), notification.closeReason());
+    }
+}
+
+uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
+                                 const QString &app_icon, const QString &summary, const QString &body,
+                                 const QStringList &actions, const QVariantMap &hints, int timeout)
+{
+    Application app;
+    Notification::Prioritys priotity = Notification::Normal;
+
+    if (!SnoreCore::instance().aplications().contains(app_name)) {
+        Icon appIcon(QIcon::fromTheme(app_icon, QIcon(QStringLiteral(":/root/snore.png"))));
+        app = Application(app_name, appIcon);
+        app.hints().setValue("use-markup", true);
+        SnoreCore::instance().registerApplication(app);
+    } else {
+        app = SnoreCore::instance().aplications()[app_name];
+    }
+
+    Icon icon = app.icon();
+    if (hints.contains(QStringLiteral("image_data"))) {
+        FreedesktopImageHint image;
+        hints.value(QStringLiteral("image_data")).value<QDBusArgument>() >> image;
+        icon = Icon(QPixmap::fromImage(image.toQImage()));
+    }
+
+    if (hints.contains(QStringLiteral("urgency"))) {
+        priotity =  Notification::Prioritys(hints.value(QStringLiteral("urgency")).toInt() - 1);
+    }
+
+    Notification noti;
+    Notification toReplace = SnoreCore::instance().getActiveNotificationByID(replaces_id);
+    if (replaces_id != 0 && toReplace.isValid()) {
+        noti = Notification(toReplace, summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
+    } else {
+        noti = Notification(app, app.defaultAlert(), summary, body, icon, timeout == -1 ? Notification::defaultTimeout() : timeout / 1000, priotity);
+    }
+    for (int i = 0; i < actions.length(); i += 2) {
+        noti.addAction(Action(actions.at(i).toInt(), actions.at(i + 1)));
+    }
+
+    noti.addActiveIn(this);
+    noti.data()->setSource(this);
+    SnoreCore::instance().broadcastNotification(noti);
+    return noti.id();
+}
+
+void FreedesktopFrontend::CloseNotification(uint id)
+{
+    Notification noti = SnoreCore::instance().getActiveNotificationByID(id);
+    if (noti.isValid()) {
+        SnoreCore::instance().requestCloseNotification(noti, Notification::TimedOut);
+    }
+}
+
+QStringList FreedesktopFrontend::GetCapabilities()
+{
+    return QStringList({ QStringLiteral("body"),
+                         QStringLiteral("urgency"),
+                         QStringLiteral("body-hyperlinks"),
+                         QStringLiteral("body-markup"),
+                         QStringLiteral("icon-static"),
+                         QStringLiteral("actions")
+                       });
+}
+
+QString FreedesktopFrontend::GetServerInformation(QString &vendor, QString &version, QString &specVersion)
+{
+    vendor = QStringLiteral("SnoreNotify");
+    version = Version::version();
+    specVersion = QStringLiteral("0.9");
+    return vendor;
+}

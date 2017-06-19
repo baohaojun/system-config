@@ -1,0 +1,7 @@
+ecm_optional_add_subdirectory(freedesktop_backend)
+ecm_optional_add_subdirectory(snarl)
+ecm_optional_add_subdirectory(growl)
+ecm_optional_add_subdirectory(trayicon)
+ecm_optional_add_subdirectory(snoretoast)
+ecm_optional_add_subdirectory(snore)
+ecm_optional_add_subdirectory(osxnotificationcenter)
