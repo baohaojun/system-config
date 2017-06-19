@@ -1,0 +1,105 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: extra-cmake-modules
+Source: https://projects.kde.org/projects/kdesupport/extra-cmake-modules
+
+Files: *
+Copyright: 2006,2008 Alexander Neundorf <neundorf@kde.org>
+           2008 Adrian Page <adrian@pagenet.plus.com>
+           2013, Albert Astals Cid <aacid@kde.org>
+           2013-2014, Aleix Pol Gonzalez <aleixpol@kde.org>
+           2013-2015, Alex Merry <alex.merry@kde.org>
+           2006 Alexander Dymo <adymo@kdevelop.org>
+           2006-2013 Alexander Neundorf <neundorf@kde.org>
+           2013, Alexander Richardson <arichardson.kde@gmail.com>
+           2007 Allen Winter <winter@kde.org>
+           2010 Andreas Holzammer <andy@kdab.com>
+           2007 Andreas Pakulat <apaku@gmx.de>
+           2014, Aurélien Gâteau <agateau@kde.org>
+           2006 Benjamin Reed <ranger@befunk.com>
+           2009, Canonical Ltd
+           2007 Charles Connell <charles@connells.org>
+           2007 Christian Ehrlicher <ch.ehrlicher@gmx.de>
+           2014, Christoph Cullmann <cullmann@kde.org>
+           2006 Chusslove Illich <caslav.ilic@gmx.net>
+           2009 Cyrille Berger <cberger@cberger.net>
+           2008 Daniel Gollub <dgollub@suse.de>
+           2009 Daniel Nicoletti <dantti85-pk@yahoo.com.br>
+           2013, David Edmundson <kde@davidedmundson.co.uk>
+           2009 Dario Freddi <drf54321@gmail.com>
+           2006-2014 David Faure <faure@kde.org>
+           2006 Egon Willighagen <egonw@users.sf.net>
+           2009 Frederik Gladhorn <gladhorn@kde.org>
+           2011 Fredrik Höglund <fredrik@kde.org>
+           2008, 2009 Gael Guennebaud <g.gael@free.fr>
+           2007 Gerd Fleisher <gerdfleischer@web.de>
+           2008 Gilles Caulier <caulier.gilles@gmail.com>
+           2009 Harald Fernengel <harry@kdevelop.org>
+           2009 Helio Chissini de Castro <helio@kde.org>
+           2007 Jakub Stachowski <qbast@go2.pl>
+           2006-2008 Jarosław Staniek <staniek@kde.org>
+           2008 Jos van den Oever <jos@vandenoever.info>
+           2002-2009 Kitware, Inc
+           2000-2013, Kitware, Inc., Insight Software Consortium
+           2006,2007 Laurent Montel <montel@kde.org>
+           2010 Luigi Toscano <luigi.toscano@tiscali.it>
+           2006,2009 Marcus Hufgard <hufgardm@hufgard.de>
+           2013-2014, Martin Gräßlin <mgraesslin@kde.org>
+           2014, Mathieu Tarral <mathieu.tarral@gmail.com>
+           2006-2008, Matthias Kretz <kretz@kde.org>
+           2006 Michael Larouche <michael.larouche@kdemail.net>
+           2009 Michal Malek <michalm@jabster.pl>
+           2008 Patrick Spendrin <ps_ml@gmx.de>
+           2010 Paulo Romulo Alves Barros <paulo.romulo@kdemail.net>
+           2008 Per Øyvind Karlsen <peroyvind@mandriva.org>
+           2012-2014, Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+           2006-2007, Pino Toscano <toscano.pino@tiscali.it>
+           2010 Rafael Fernández López <ereslibre@kde.org>
+           2006-2009, Ralf Habacker
+           2007-2009, Ralf Habacker <ralf.habacker@freenet.de>
+           2011-2013, Raphael Kubo da Costa <kubito@gmail.com>
+           2014, Raphael Kubo da Costa <rakuco@FreeBSD.org>
+           2006 Richard Laerkaeng <richard@goteborg.utfors.se>
+           2007-2009, Sebastian Trueg <sebastian@trueg.de>
+           2007-2008, Simon Edwards <simon@simonzone.com>
+           2012-2013, Stephen Kelly <steveire@gmail.com>
+           2006 Thorsten Roeder <thorsten.roeder@weihenstephan.org>
+           2006 Tim Beaulen <tbscope@gmail.com>
+           2006 Wilfried Huss <wilfried.huss@gmx.at>
+           2007 Will Stephenson <wstephenson@kde.org>
+           2011-2013, Yury Kudryashov <urkud@ya.ru>
+           2006 Zack Rusin <zack@kde.org>
+License: BSD-3-Clause
+
+Files: attic/modules/FindPyKDE4.cmake
+       attic/modules/PythonCompile.py
+Copyright: no copyright claimed
+License: public-domain
+ This file is in the public domain.
+
+Files: debian/*
+Copyright: 2014 Jonathan Riddell <jriddell@ubuntu.com>
+License: BSD-3-Clause
+
+License: BSD-3-Clause
+ Redistribution and use in source and binary forms with or without
+ modification are permitted provided that the following conditions
+ are met:
+ .
+ 1. Redistributions of source code must retain the copyright
+    notice this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the copyright
+    notice this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. The name of the author may not be used to endorse or promote products
+    derived from this software without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT INDIRECT
+ INCIDENTAL SPECIAL EXEMPLARY OR CONSEQUENTIAL DAMAGES (INCLUDING BUT
+ NOT LIMITED TO PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE
+ DATA OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ THEORY OF LIABILITY WHETHER IN CONTRACT STRICT LIABILITY OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ THIS SOFTWARE EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
