@@ -120,7 +120,7 @@ git submodule foreach 'git clean -xfd'
 
 function is-platform-needed() {
     if test "$1" = ubuntu; then
-        if "$platforms" != "$1"; then
+        if test "$platforms" != "$1"; then
             return 1
         fi
     fi
