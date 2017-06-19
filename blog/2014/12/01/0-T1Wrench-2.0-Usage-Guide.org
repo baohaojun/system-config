@@ -306,6 +306,16 @@ https://github.com/SmartisanTech/Wrench-releases/releases
 
   [[./../../../../images/exported.vcf-on-pc.png][file:../../../../images/exported.vcf-on-pc.png]]
 
+** <<bugs-howto>> 怎么报Bug
+
+您可以在微博上给我私信（微博ID：baohaojun），报Bug的时候注意：
+
+1. 尽量描述清楚发生Bug时您在做什么操作
+
+2. 如果小扳手出错时有弹出对话框的话，最好有这个对话框的清楚的截屏
+
+3. 把小扳手下方的Log窗口里的文字复制、粘贴一下发给我，如果文字太多的话，截最后20行左右就可以了
+
 * 版本变更记录
 
 ** <<notifications>> V3.1.3 小扳手接收手机通知、抢红包
