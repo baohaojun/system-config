@@ -68,6 +68,7 @@ private:
 private slots:
     void selectQqContact();
     void selectWeixinContact();
+    void selectWeiboContact();
     void imageDropped(const QDropEvent& ev);
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
@@ -89,14 +90,10 @@ private slots:
 
     void on_tbQq_clicked();
 
-    void on_tbMomo_clicked();
-
     void on_tbThumbsUp_clicked();
 
     void on_tbPhoneCall_clicked();
     void on_tbMms_clicked();
-
-    void on_tbNotes_clicked();
 
     void on_Dial(const QString&);
     void on_MailTo(const QString&);
@@ -139,9 +136,12 @@ private slots:
 
     void on_tbQq_released();
 
+    void on_tbWeibo_pressed();
+    void on_tbWeibo_released();
+
 private:
 
-
+    QTimer weiboSelectContactTimer;
     QTimer weixinSelectContactTimer;
     QTimer qqSelectContactTimer;
     bool mNotificationOnline;

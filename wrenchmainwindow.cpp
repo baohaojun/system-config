@@ -71,6 +71,9 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     on_configurePushButton_clicked();
     weixinSelectContactTimer.setSingleShot(true);
     qqSelectContactTimer.setSingleShot(true);
+    weiboSelectContactTimer.setSingleShot(true);
+
+    connect(&weiboSelectContactTimer, SIGNAL(timeout()), this, SLOT(selectWeiboContact()));
     connect(&weixinSelectContactTimer, SIGNAL(timeout()), this, SLOT(selectWeixinContact()));
     connect(&qqSelectContactTimer, SIGNAL(timeout()), this, SLOT(selectQqContact()));
 
@@ -370,8 +373,7 @@ bool WrenchMainWindow::anyShareChecked()
 {
     return  ui->tbWeibo->isChecked() ||
         ui->tbWeixin->isChecked() ||
-        ui->tbQq->isChecked() ||
-        ui->tbMomo->isChecked();
+        ui->tbQq->isChecked();
 }
 
 void WrenchMainWindow::on_sendItPushButton_clicked()
@@ -389,25 +391,6 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
     }
 
     ui->phoneTextEdit->setPlaceholderText("");
-
-    if (ui->tbNotes->isChecked()) {
-        mLuaThread->addScript(QStringList() << "get_a_note" << text);
-        mPictures.insert(0, "last-pic-notes.png");
-        text = "#小扳手便笺#";
-        if (!anyShareChecked()) {
-            mLuaThread->addScript((QStringList() << "wrench_picture") + mPictures);
-            mPictures.clear();
-            return;
-        } else {
-            bool ok = false;
-            text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                         tr("请输入分享文字内容"), QLineEdit::Normal,
-                                         text, &ok);
-            if (!ok) {
-                text = "#小扳手便笺#";
-            }
-        }
-    }
 
     bool share = 0;
     if (anyShareChecked() && ! mPictures.isEmpty()) {
@@ -444,17 +427,6 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
             mLuaThread->addScript(QStringList() << "wrench_post" << text);
         }
         ui->tbQq->setChecked(false);
-    }
-
-    if (ui->tbMomo->isChecked()) {
-        share = 1;
-        if (mPictures.isEmpty()) {
-            prompt_user("Failed to share to Momo, must have at least 1 picture.");
-        } else {
-            mLuaThread->addScript(QStringList() << "picture_to_momo_share");
-            mLuaThread->addScript(QStringList() << "wrench_post" << text);
-        }
-        ui->tbMomo->setChecked(false);
     }
 
     if (share && !mPictures.isEmpty()) {
@@ -653,18 +625,6 @@ void WrenchMainWindow::on_tbQq_clicked()
     }
 }
 
-void WrenchMainWindow::on_tbMomo_clicked()
-{
-    if (ui->tbMomo->isChecked() && mSettings.value("firstTimeMomo", 1).toInt() == 1) {
-        mSettings.setValue("firstTimeMomo", 0);
-        prompt_user("Your text/picture will be shared to Momo");
-    }
-    if (!anyShareChecked()) {
-        ui->tbPicture->setCheckable(false);
-        mPictures.clear();
-    }
-}
-
 void WrenchMainWindow::on_tbThumbsUp_clicked()
 {
     mLuaThread->addScript(QStringList() << "wrenchThumbUp");
@@ -726,14 +686,6 @@ void WrenchMainWindow::on_tbPhoneCall_clicked()
     afterUsingContactDialog();
     ui->tbWeixin->setChecked(false);
     ui->tbQq->setChecked(false);
-}
-
-void WrenchMainWindow::on_tbNotes_clicked()
-{
-    if (ui->tbNotes->isChecked() && mSettings.value("firstTimeNotes", 1).toInt() == 1) {
-        mSettings.setValue("firstTimeNotes", 0);
-        prompt_user("Your text will be rendered with Smartisan Notes before sharing");
-    }
 }
 
 void WrenchMainWindow::on_addMmsReceiver(const QString&contact, const QString& display)
@@ -1240,8 +1192,6 @@ bool WrenchMainWindow::handleEmacsKeys(QWidget *w, QKeyEvent *e)
             this->ui->tbWeibo->toggle();
         } else if (key == Qt::Key_W) {
             this->ui->tbWeixin->toggle();
-        } else if (key == Qt::Key_M) {
-            this->ui->tbMomo->toggle();
         } else {
             goto default_filter;
         }
@@ -1401,6 +1351,16 @@ void WrenchMainWindow::on_tbQq_pressed()
     qqSelectContactTimer.start(500);
 }
 
+void WrenchMainWindow::on_tbWeibo_pressed()
+{
+    weiboSelectContactTimer.start(500);
+}
+
+void WrenchMainWindow::on_tbWeibo_released()
+{
+    weiboSelectContactTimer.stop();
+}
+
 void WrenchMainWindow::on_tbWeixin_released()
 {
     weixinSelectContactTimer.stop();
@@ -1424,6 +1384,13 @@ void WrenchMainWindow::selectWeixinContact()
     mLuaThread->addScript(QStringList() << "wrench_call" << "@@wx");
     ui->tbWeixin->click();
     ui->tbWeixin->click();
+}
+
+void WrenchMainWindow::selectWeiboContact()
+{
+    mLuaThread->addScript(QStringList() << "wrench_call" << "@@wb");
+    ui->tbWeibo->click();
+    ui->tbWeibo->click();
 }
 
 void WrenchMainWindow::changeEvent(QEvent *event)

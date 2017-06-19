@@ -635,9 +635,9 @@ local function sleep(time)
    adb_event(("sleep %s"):format(time))
 end
 
-prompt_user = function(txt)
+prompt_user = function(fmt, ...)
    if select_args then
-      return select_args{txt}
+      return select_args{string.format(fmt, ...)}
    end
 end
 
@@ -1514,6 +1514,11 @@ local check_file_push_and_renamed = function(file, md5, rename_to)
    local md5_on_phone = adb_pipe(("if test -e /data/data/com.android.shell/%s; then cat /sdcard/%s; fi"):format(rename_to, md5))
    md5_on_phone = md5_on_phone:gsub("\n", "")
    local md5file = io.open(md5)
+   if not md5file then
+      prompt_user("%s 文件打开失败，小扳手可能无法正常运行，请联系作者报Bug（参考 http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html#bugs-howto ）", md5)
+      return
+   end
+
    local md5_on_PC = md5file:read("*a")
    md5_on_PC = md5_on_PC:gsub("\n", "")
    io.close(md5file)
@@ -1805,6 +1810,14 @@ wrench_find_dingding_contact = function(friend_name)
 end
 
 find_weibo_friend = function(friend_name)
+   if friend_name == "" then
+      friend_name = string_strip(M.select_args_with_history("weibo-friends", "请输入想找的微博联系人名字", "", " ")):gsub("@@wb$", "")
+      if friend_name == "" then
+         prompt_user("没有输入你想查找的微博联系人，无法查找")
+         return
+      end
+   end
+
    putclip_nowait(friend_name)
    for i = 1, 3 do
       M.start_app(W.weibo_home_activity)

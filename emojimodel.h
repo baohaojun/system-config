@@ -9,6 +9,7 @@
 #include <lua.hpp>
 #include <QSettings>
 #include "filteringmodel.h"
+#include <QTimer>
 
 class EmojiModel : public FilteringModel
 {
@@ -25,6 +26,7 @@ private:
     QMap<QString, QString> mEmojiIconPathMap;
     QMap<QString, QPixmap> mEmojiIconMap;
     QStringList mEmojis;
+    QTimer mLoadEmojiTimer;
 
 signals:
 

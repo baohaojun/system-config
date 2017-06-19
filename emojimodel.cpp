@@ -35,6 +35,9 @@ EmojiModel::EmojiModel(QObject *parent) :
         mEmojiIconPathMap[key] = pngPath;
         mEmojis << key;
     }
+    mLoadEmojiTimer.setSingleShot(true);
+    mLoadEmojiTimer.setInterval(100);
+    connect(&mLoadEmojiTimer, SIGNAL(timeout()), this, SLOT(loadAllEmojis()));
     lua_settop(L, 0);
     initHistory();
 }
@@ -49,7 +52,7 @@ void EmojiModel::loadAllEmojis()
             mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
             loaded++;
         } else if (loaded == maxLoad) {
-            QTimer::singleShot(5000, this, SLOT(loadAllEmojis()));
+            mLoadEmojiTimer.start();
             break;
         }
     }
@@ -79,7 +82,7 @@ void EmojiModel::filterSelectedItems(const QStringList& split)
                 emojiPixmap = mEmojiIconMap[emoji];
             } else {
                 if (loaded == maxLoad) {
-                    QTimer::singleShot(500, this, SLOT(loadAllEmojis()));
+                    mLoadEmojiTimer.start();
                     loaded++;
                 }
 
