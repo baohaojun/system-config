@@ -57,6 +57,7 @@ cd $(dirname $(readlink -f $0))
 if test "$do_debug" = true; then
     build_dir=~/tmp/build-wrench-debug
 fi
+mkdir -p $build_dir
 chmod u+w $build_dir
 
 if type relative-link >/dev/null 2>&1; then
