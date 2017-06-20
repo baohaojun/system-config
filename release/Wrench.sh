@@ -8,6 +8,8 @@ export EMACS=t
 export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
 export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 
+export RUNNING_WRENCH=true
+
 if ! [[ $LANG =~ en_US ]]; then
     exec en_US Wrench.sh "$@"
 fi
