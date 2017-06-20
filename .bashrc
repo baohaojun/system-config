@@ -7,7 +7,11 @@ export PATH=/bin:"$PATH"
 uname=$(uname)
 march=$(uname -m)
 
-if test "$uname" = CYGWIN_NT-5.1 -o "$uname" = CYGWIN_NT-6.1; then
+if [[ $uname =~ CYGWIN_NT- ]]; then
+    uname=${uname%-*}
+fi
+
+if test "$uname" = CYGWIN_NT; then
     if test ! "$EMACS"; then
         . ~/system-config/.bashrc-windows
     fi
