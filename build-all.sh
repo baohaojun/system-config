@@ -153,6 +153,7 @@ fi
 
 if is-platform-needed debian; then
     (
+        chmod u+w ~/tmp/build-wrench/ -R
         rm ~/tmp/build-wrench -rf
         ./build-linux.sh -b ~/tmp/build-wrench
         touch ~/tmp/build-wrench/build-ok
