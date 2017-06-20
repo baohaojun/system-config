@@ -47,6 +47,12 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="buttonsContainer">
+          <property name="spacing">
+           <number>15</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QToolButton" name="tbEmoji">
             <property name="toolTip">
@@ -61,7 +67,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbPicture">
             <property name="toolTip">
@@ -76,7 +81,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbScreenCapture">
             <property name="toolTip">
@@ -91,7 +95,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbWeibo">
             <property name="toolTip">
@@ -109,7 +112,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbWeixin">
             <property name="toolTip">
@@ -127,7 +129,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbQq">
             <property name="toolTip">
@@ -145,8 +146,6 @@
             </property>
            </widget>
           </item>
-
-
           <item>
            <widget class="QToolButton" name="tbPhoneScreen">
             <property name="toolTip">
@@ -164,8 +163,6 @@
             </property>
            </widget>
           </item>
-
-
           <item>
            <widget class="QToolButton" name="tbPhoneCall">
             <property name="toolTip">
@@ -180,7 +177,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbMms">
             <property name="toolTip">
@@ -195,7 +191,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbLauncher">
             <property name="toolTip">
@@ -210,7 +205,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="tbThumbsUp">
             <property name="toolTip">
@@ -225,7 +219,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="configurePushButton">
             <property name="toolTip">
@@ -240,7 +233,6 @@
             </property>
            </widget>
           </item>
-
           <item>
            <widget class="QToolButton" name="sendItPushButton">
             <property name="toolTip">

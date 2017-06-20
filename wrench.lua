@@ -1634,7 +1634,7 @@ wrench_config = function(passedConfigDirPath)
    androidvncserver = ("androidvncserver-%s.sdk%s"):format(arm_arch, sdk_version)
 
    codename = adb_pipe("getprop ro.product.codename"):gsub(" ", ".")
-   codenamed_vnc = ("%s.%s"):format(androidvncserver, codename)
+   codenamed_vnc = ("%s-%s"):format(androidvncserver, codename)
    if file_exists(codenamed_vnc) then
       androidvncserver = codenamed_vnc
    end

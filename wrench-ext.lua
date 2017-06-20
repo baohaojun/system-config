@@ -106,7 +106,7 @@ M.configs = {
 
 dofile_res, vnc_mode = pcall(dofile, configDir .. package.config:sub(1, 1) .. "vnc-mode.lua")
 if not dofile_res then
-   vnc_mode = "横屏高清"
+   vnc_mode = "演示模式"
 end
 
 if vnc_mode ~= "演示模式" then
