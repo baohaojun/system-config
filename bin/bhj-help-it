@@ -30,7 +30,12 @@ if test $# -lt 2; then
     die "Usage: bhj-help-it major-mode word..."
 fi
 
-exec 2> ~/tmp/bhj-help-it.log
+if echo $SHELLOPTS | grep -q xtrace; then
+    true
+else
+    exec 2> ~/tmp/bhj-help-it.log
+fi
+
 set -x
 echo "$@"
 

@@ -188,7 +188,7 @@ dood=(
                       ' $histfile.$$
             fi
 
-            if test "$select_from_history_too" -a -e "$histfile"; then
+            if test "$select_from_history_too" = true -a -e "$histfile"; then
                 cat "$histfile"
             fi
 
