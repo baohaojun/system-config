@@ -12,4 +12,7 @@ for x in androidvncserver-*; do
     md5sum $x | tee ../release/$target.md5
 done
 
-relative-link ../release/androidvncserver-* ~/tmp/build-wrench
+(
+    chmod u+w ~/tmp/build-wrench
+    relative-link ../release/androidvncserver-* ~/tmp/build-wrench
+)  >/dev/null 2>&1 || true
