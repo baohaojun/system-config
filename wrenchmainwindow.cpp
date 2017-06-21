@@ -153,7 +153,7 @@ void WrenchMainWindow::onAdbNotificationArrived(const QString& key, const QStrin
     if (mWrenchExt.isUsefulNotification(key, pkg, title, text, ticker)) {
         QString newText = mWrenchExt.reWriteNotificationText(key, pkg, title, text, ticker);
         if (!mLuaThread.isNull()) {
-            mLuaThread->addScript(QStringList() << "handle_notification" << key << pkg << title << newText);
+            mLuaThread->addScript(QStringList() << "notification_arrived" << key << pkg << title << newText);
         }
 
         NotificationModel::insertNotification(key, pkg, title, newText);
@@ -1223,6 +1223,17 @@ void WrenchMainWindow::saveLastClickedSnoreNotification(uint n_key)
     mLastClickedNotification.insert("text", m_notification_map[n_key + max_notification_entries * 3]);
 }
 
+void WrenchMainWindow::clickLastSnoreNotification()
+{
+    mLuaThread->addScript(QStringList()
+                          << "wrench_click_notification"
+                          << mLastClickedNotification["key"]
+                          << mLastClickedNotification["pkg"]
+                          << mLastClickedNotification["title"]
+                          << mLastClickedNotification["text"]
+        );
+}
+
 void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
 {
     qDebug() << "close notification" << n.closeReason();
@@ -1233,14 +1244,14 @@ void WrenchMainWindow::slotNotificationClosed( Snore::Notification n)
     if (key.isEmpty())
         return;
 
-    saveLastClickedSnoreNotification(n_key);
 
     m_last_closed_notification_id = n.id();
 
     if (n.closeReason() == Snore::Notification::CloseReasons::Dismissed ||
         n.closeReason() == Snore::Notification::CloseReasons::Activated) {
         if (!key.isEmpty()) {
-            emit adbNotificationClicked(key);
+            saveLastClickedSnoreNotification(n_key);
+            clickLastSnoreNotification();
         }
     }
     m_notification_map[n.id() % max_notification_entries] = "";
@@ -1252,8 +1263,8 @@ void WrenchMainWindow::slotShortCutActivated()
         uint n_key = m_last_shown_notification_id % max_notification_entries;
         QString key = m_notification_map[n_key];
         if (!key.isEmpty()) {
-            emit adbNotificationClicked(key);
             saveLastClickedSnoreNotification(n_key);
+            clickLastSnoreNotification();
             m_snore->requestCloseNotification(m_last_notification, Snore::Notification::CloseReasons::None);
         }
     } else {
@@ -1263,7 +1274,7 @@ void WrenchMainWindow::slotShortCutActivated()
 
 void WrenchMainWindow::adbNotificationShiftClicked(const QMap<QString, QString>& rawData)
 {
-    mLuaThread->addScript(QStringList({"shift_click_notification", rawData["pkg"], rawData["key"], rawData["title"], rawData["text"]}));
+    mLuaThread->addScript(QStringList({"shift_click_notification", rawData["key"], rawData["pkg"], rawData["title"], rawData["text"]}));
 }
 
 void WrenchMainWindow::imageDropped(const QDropEvent& ev)

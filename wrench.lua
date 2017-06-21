@@ -11,7 +11,7 @@ M.is_debugging = false
 
 -- functions
 local WrenchExt = {}
-local search_sms, string_strip, handle_notification
+local search_sms, string_strip
 local adb_input_method_is_null, close_ime
 local window_post_button_map = {}
 local mail_group_map = {}
@@ -1261,7 +1261,7 @@ local function wrench_share_to_weixin(text)
    weixinShareActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui"
    if text then
       text = text:gsub("\n", "​\n")
-      putclip_nowait(text)
+      putclip_nowait(emoji_for_weixin(text))
    end
    adb_start_weixin_share('text')
    wrench_post(nil, 'top-right', "分享到微信朋友圈？")
@@ -2283,9 +2283,9 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       elseif window_type == 'weixin-confirm' then
          post_button = post_button
       elseif window_type == 'weibo-share' or window_type == 'top-right' then
-         post_button = right_button_x .. ' 166'
+         post_button = right_button_x .. ' 150'
       elseif window_type == 'weibo-confirm' then
-         post_button = right_button_x .. ' 166'
+         post_button = right_button_x .. ' 150'
       elseif window_type == 'manual-post' then
          post_button = ''
       end
@@ -3142,7 +3142,7 @@ M.wrenchThumbUp = function()
    wrench_eval(M.ExtMods.description_to_loaded_func[x])
 end
 
-M.shift_click_notification = function(pkg, key, title, text)
+M.shift_click_notification = function(key, pkg, title, text)
    if pkg == "com.tencent.mm" then
       title = title:gsub("%.", " ")
       wrench_call(title .. "@@wx")
@@ -3334,7 +3334,14 @@ if WrenchExt.should_use_internal_pop and WrenchExt.should_use_internal_pop() ~= 
    should_use_internal_pop = false
 end
 
-handle_notification = function(key, pkg, title, text)
+M.wrench_click_notification = function(key, pkg, title, text)
+   clickNotification{key}
+   if pkg == "com.tencent.mobileqq" and title:lower() == "qq" then
+      M.shift_click_notification(key, pkg, title, text)
+   end
+end
+
+M.notification_arrived = function(key, pkg, title, text)
    ignored_pkgs = {"com.github.shadowsocks", "com.android.systemui"}
    for p = 1, #ignored_pkgs do
       if pkg == ignored_pkgs[p] then
@@ -3349,7 +3356,7 @@ handle_notification = function(key, pkg, title, text)
       clickNotification{key}
       if title:lower() == "qq" then
          adb_event"adb-tap 633 481 sleep .2"
-         -- M.shift_click_notification(pkg, key, title, text)
+         -- M.shift_click_notification(key, pkg, title, text)
       end
 
          M.clickForQqMoney(title, text)
@@ -3366,7 +3373,6 @@ end
 
 M.be_verbose = be_verbose
 M.be_quiet = be_quiet
-M.handle_notification = handle_notification
 M.my_show_notifications = my_show_notifications
 M.yes_or_no_p = yes_or_no_p
 M.start_or_stop_recording = start_or_stop_recording
@@ -3444,6 +3450,11 @@ unicode_remap = {
    ['[吐]'] = '😖',
 }
 
+for k, v in pairs(M) do
+   if not _ENV[k] then
+      _ENV[k] = v
+   end
+end
 
 return do_it()
 

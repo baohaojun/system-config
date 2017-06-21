@@ -64,6 +64,7 @@ private:
     bool mLastNotificationIsSelection;
     QMap<QString, QString> mLastClickedNotification;
     void saveLastClickedSnoreNotification(uint);
+    void clickLastSnoreNotification();
     void addLog(const QString&);
 private slots:
     void selectQqContact();
@@ -141,6 +142,7 @@ private slots:
 
 private:
 
+    void wrench_click_notification();
     QTimer weiboSelectContactTimer;
     QTimer weixinSelectContactTimer;
     QTimer qqSelectContactTimer;
