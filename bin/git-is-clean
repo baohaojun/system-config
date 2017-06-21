@@ -1,16 +1,57 @@
 #!/bin/bash
 set -e
 
-function die() {
-    echo Error: "$@"
-    exit -1
-}
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt r:target_revision
+## end code-generator
+## start generated code
+TEMP=$(getopt -o r:h \
+              --long target_revision:,help \
+              -n $(basename -- $0) -- "$@")
+target_revision=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -r|--target_revision)
+            target_revision=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-r, '
+            printf %-24s '--target_revision=TARGET_REVISION'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 
 function test-git-clean() {
     (
         set -e
         cd "$1"
-        git status -s . >/dev/null 2>&1
+
+        if test "$target_revision"; then
+            git diff --quiet "$target_revision"
+            exit
+        fi
 
         for x in $(git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' | pn 2); do
             if test -d $x; then

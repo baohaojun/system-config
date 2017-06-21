@@ -265,7 +265,12 @@ print $_ . "\n";
         if test "$1" = pull; then
             touch $(lookup-file -e .git)/sc-not-merged >/dev/null 2>&1 || true
             if is-tty-io; then
-                . atexit git-interactive-add -r $(git log -1 --pretty=%H "HEAD")
+                . atexit bash -c "
+                    old_rev=$(git log -1 --pretty=%H HEAD);
+                    if git-any-changes -r \$old_rev; then
+                        hint 'You have pulled, please review changes';
+                        git-interactive-add -r \$old_rev
+                    fi"
             fi
            if test $# = 1; then
                head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)

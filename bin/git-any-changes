@@ -1,3 +1,3 @@
 #!/bin/bash
 set -e
-! git-is-clean
+! git-is-clean "$@"
