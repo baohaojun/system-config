@@ -24,6 +24,11 @@
         <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY"/>
         <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
+        <supports-screens
+            android:largeScreens="true"
+            android:xlargeScreens="true"
+            android:anyDensity="true" />
+
         <application android:icon="@drawable/app_icon"
           android:label="@string/ime_name">
             <service android:name=".PinyinDecoderService"
