@@ -19,6 +19,11 @@ fi
 find-or-exec 'Wrench V%Wrench'
 
 if test "$#" != 0; then
+    if test $# = 1 -a "$1" = kill; then
+        kill-env RUNNING_WRENCH true&
+        exit
+    fi
+
     if test $# = 1 -a -e "$1" && [[ $1 =~ \.(twa|lua)$ ]]; then
         exec Wrench "$(readlink -f "$1")"
     fi
