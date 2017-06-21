@@ -135,7 +135,7 @@ if test "$do_busybox" = true; then
 fi
 
 for x in "$@"; do
-    target=$(select-output-line find $tdir -name $(basename $x))
+    target=$(select-output-line -- find $tdir -name $(basename $x))
     if test ! -e "$target"; then
         die "target for $x not exist: $(find $tdir)"
     else
