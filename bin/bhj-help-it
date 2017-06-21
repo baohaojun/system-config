@@ -3,10 +3,15 @@
 if test "$EMACS" = t -a "$RESTARTED_IN_BACKGROUND" != true; then
     unset EMACS
     export RESTARTED_IN_BACKGROUND=true
-    sawfish-start-special help firefox >/dev/null 2>&1 </dev/null &
+    find-or-exec firefox firefox >/dev/null 2>&1 </dev/null &
     (cat | EMACS=t $0 "$@" > ~/.cache/system-config/logs/$(basename $0).log 2>&1) &
     exit 0
 fi
+
+function firefox-open-url-pattern() {
+    command firefox-open-url-pattern --no-special "$@"
+}
+
 set -x
 function die() {
     echo "$@"
@@ -73,11 +78,11 @@ case $1 in
         start=$(basename "$start")
         start=${start%.java}
         html=$(select-output-line -- find ~/external/bin/Linux/ext/android-sdk-linux/docs -name "$start.html")
-        if test -e "$html"; then
+        if test -e "$html" && yes-or-no-p -y "View help for $html?"; then
             shift
             anchor=$(perl -ne 'if (m/a\s+name="(.*\b'$1'\b.*?)"/i) {print $1; exit}' "$html")
             firefox-open-url-pattern /android-sdk-linux/ file://"$html#$anchor"
-        elif test -z "$html"; then
+        else
             word=$2
             java=$(select-output-line -- "grep-beatags -e "$word" -d ~/src/android | grep -P -e '\.java:' | perl -npe 's/java:.*/java/'|sort -u")
             java=$(basename "$java")

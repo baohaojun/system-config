@@ -12,30 +12,77 @@ function reset_clip() {
 
 trap reset_clip 0
 
-exact=
-TEMP=$(getopt -o e --long exact -n $(basename $0) -- "$@")
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt eexact @special=true
+## end code-generator
+## start generated code
+TEMP=$(getopt -o eh \
+              --long special,exact,help,no-special,no-exact \
+              -n $(basename -- $0) -- "$@")
+special=true
+exact=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -e|--exact)
-            exact=-e
-            shift 1
+
+        --special|--no-special)
+            if test "$1" = --no-special; then
+                special=false
+            else
+                special=true
+            fi
+            shift
+            ;;
+        -e|--exact|--no-exact)
+            if test "$1" = --no-exact; then
+                exact=false
+            else
+                exact=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-e, '
+            printf %-24s '--[no-]exact'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]special'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
             break
             ;;
         *)
-            die "internal error: $1"
+            die "internal error"
             ;;
     esac
 done
+
+
+## end generated code
+
+if test "$exact" = true; then
+    exact=-e
+else
+    exact=
+fi
 
 if test $# != 2; then
     die "Error: Usage $(basename $0) pattern url"
 fi
 
-sawfish-start-special help firefox
+if test "$special" = true; then
+    sawfish-start-special help firefox
+fi
 
 pattern=$1
 url=$2
