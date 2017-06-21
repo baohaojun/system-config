@@ -125,7 +125,7 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
     fi
 
     destroy-windows Wrench || true
-    killall Wrench || true
+    Wrench.sh kill || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.Wrench
         myscr bash -c 'LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu gdb ./Wrench'
@@ -134,7 +134,7 @@ ln -s $oldpwd/linux/binaries/the-true-adb . -f
         rm $build_dir-debug/Wrench -f || true
         mkfifo /tmp/build-linux.$$
         chmod a-w $build_dir
-        myscr bash -c "echo Wrench; LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu ./Wrench > /tmp/build-linux.$$ 2>&1"
+        myscr bash -c "echo Wrench; BUILDING_WRENCH=true Wrench.sh > /tmp/build-linux.$$ 2>&1"
         cat /tmp/build-linux.$$
         rm /tmp/build-linux.$$
     fi

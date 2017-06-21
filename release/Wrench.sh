@@ -5,7 +5,12 @@ if test -e ~/system-config/src/github/smartcm/etc/Wrench.config; then
 fi
 
 export EMACS=t
-export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
+
+if test "$BUILDING_WRENCH" = true; then
+    unset ANDROID_SERIAL
+else
+    export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
+fi
 export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 
 export RUNNING_WRENCH=true

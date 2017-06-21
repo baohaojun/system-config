@@ -161,8 +161,9 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
             return true;
         }
 
+        QStringList command("adb_event");
         if (mev->button() != Qt::LeftButton) {
-            return false;
+            command = QStringList() << "log", "%s";
         }
 
         isTouchDown = false;
@@ -170,7 +171,7 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
         int old_x = phone_x;
         int old_y = phone_y;
 
-        mLuaThread()->addScript(QStringList() << "adb_event" << QString().sprintf("adb-no-virt-key-up %d %d", x, y));
+        mLuaThread()->addScript(QStringList() << command << QString().sprintf("adb-no-virt-key-up %d %d", x, y));
         return true;
     } else if (ev->type() == QEvent::MouseMove) {
         if (isTouchDown) {

@@ -7,6 +7,7 @@ local W = {}
 
 M.ext_args = {}
 M.ExtMods = {}
+M.is_debugging = false
 
 -- functions
 local WrenchExt = {}
@@ -55,7 +56,7 @@ local check_scroll_lock, prompt_user, yes_or_no_p
 local where_is_dial_key
 local rows_mail_att_finder
 local UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
-local is_debugging = false
+
 local using_adb_root
 local adb_unquoter
 local is_windows = false
@@ -175,7 +176,7 @@ done
 end
 
 if package.config:sub(1, 1) == '/' then
-   if is_debugging then
+   if M.is_debugging then
       debug_set_x = "set -x; "
    else
       debug_set_x = ""
@@ -252,10 +253,12 @@ local function system(cmds)
 end
 
 debugging = function(fmt, ...)
-   if is_debugging then
-      debug(fmt, ...)
+   if M.is_debugging then
+      log(fmt, ...)
    end
 end
+
+M.debugging = debugging
 
 debug = function(fmt, ...)
    print(string.format(fmt, ...))
@@ -414,11 +417,21 @@ end
 
 M.adb_am = adb_am
 
+M.adjust_x = function(x)
+   return x * app_width_ratio
+end
+
+M.adjust_y = function(y)
+   if y * 2 < default_height then
+      return y * real_height_ratio
+   else
+      return y * app_height_ratio
+   end
+end
+
 local function adb_event(events)
    if type(events) == 'string' then
-      if false then -- events:match("no.virt") or social_need_confirm then
-         log("adb_event %s", events)
-      end
+      debugging("adb_event %s", events)
       adb_event(split(" ", events))
       return
    end
@@ -439,6 +452,8 @@ local function adb_event(events)
 
          if (events[i - 1] and events[i - 1]:match("no%-virt")) then
             width_ratio, height_ratio = real_width_ratio, real_height_ratio
+         elseif events[i+1] * 2 < default_height then
+            height_ratio = real_height_ratio
          end
 
          local action = (events[i - 1] or "adb-tap")
@@ -465,11 +480,6 @@ local function adb_event(events)
          local add = ('input %s %d %d;'):format(action, events[i] * width_ratio, events[i+1] * height_ratio)
          command_str = command_str .. add
          i = i + 2
-      elseif events[i] == 'tap2' or events[i] == 'adb-tap-2' then
-         i = i + 1
-         local add = ('input tap %d %d;'):format(events[i] * app_width_ratio, events[i+1] * app_height_ratio)
-         command_str = command_str .. add .. add
-         i = i + 2
       elseif (events[i]):match('^adb%-long%-press') then
          ms = 500
          if (events[i]):match('^adb%-long%-press%-%d+') then
@@ -479,8 +489,8 @@ local function adb_event(events)
             ms = ""
          end
          local add = ('input touchscreen swipe %d %d %d %d %s;'):format(
-            events[i+1] * app_width_ratio, events[i+2] * app_height_ratio,
-            events[i+1] * app_width_ratio, events[i+2] * app_height_ratio, ms)
+            M.adjust_x(events[i+1]), M.adjust_y(events[i+2]),
+            M.adjust_x(events[i+1]), M.adjust_y(events[i+2]), ms)
          if sdk_version < 17 then
             add = add:gsub("touchscreen ", "")
          end
@@ -2216,7 +2226,11 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          end
       else
          if not ime_connected then
-            adb_event("540 1840")
+            if window == W.qqChatActivity2 or window == W.qqChatActivity then
+               adb_event("540 1740")
+            else
+               adb_event("540 1840")
+            end
             wait_input_target(window)
             if not adb_top_window():match("^PopupWindow") then
                adb_event("key back sleep .2")
