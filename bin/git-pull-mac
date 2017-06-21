@@ -68,6 +68,18 @@ test $PWD = ~ && cd ~/system-config/
 
 cd "$(dirname "$(lookup-file .git)")"
 origin=$(repo-remote)
+origin_name_or_url=$origin
+
+if false && is-cron; then # sadly, it won't work, because I have private repos.
+    origin_name_or_url=$(git config remote.$origin.url)
+    if [[ $origin_name_or_url =~ github.com: ]]; then
+        origin_name_or_url=${origin_name_or_url/*github.com:/https:\/\/github.com\/}
+    fi
+    cron_fetch_refspec="refs/heads/*:refs/remotes/$origin/*"
+else
+    cron_fetch_refspec=
+fi
+
 if git config remote.$origin.url | grep -q .; then
     if git config remote.$origin.url | grep 'git://github.com'; then
         git config remote.$origin.url $(git config remote.$origin.url | perl -npe 's,^git://github.com,https://github.com,')
@@ -87,13 +99,13 @@ if test "$do_fetch" = true; then
         fi
 
         for x in $(seq 1 3); do
-            if timeout 30 git fetch $origin $extra_fetch_args; then
+            if timeout 30 git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args; then
                 exit
             fi
             echo failed $PWD at $x
             sleep 10
         done
-        tsocks1 git fetch $origin $extra_fetch_args || {
+        tsocks1 git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args || {
             touch .git/sc-not-merged
             kill $$
         }

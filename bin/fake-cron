@@ -1,0 +1,3 @@
+#!/bin/bash
+
+RUNNING_IN_CRON=true "$@"
