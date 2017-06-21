@@ -24,17 +24,22 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:revision
+# generate-getopt r:revision b:review-base
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o r:h \
-              --long revision:,help \
+TEMP=$(getopt -o b:r:h \
+              --long review-base:,revision:,help \
               -n $(basename -- $0) -- "$@")
+review_base=
 revision=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -b|--review-base)
+            review_base=$2
+            shift 2
+            ;;
         -r|--revision)
             revision=$2
             shift 2
@@ -44,6 +49,9 @@ while true; do
             echo
             echo
             echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--review-base=REVIEW_BASE'
+            echo
             printf %06s '-r, '
             printf %-24s '--revision=REVISION'
             echo
@@ -83,8 +91,8 @@ function git-diff() {
         read -e -p "$@ seems to be a new file, press Enter to continue...  "
         diff /dev/null "$@"
     else
-        if git diff -w $revision -- "$@" | grep -q .; then
-            git diff -w $revision -- "$@"
+        if git diff -w $review_base $revision -- "$@" | grep -q .; then
+            git diff -w $review_base $revision -- "$@"
         else
             read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
         fi
@@ -108,7 +116,7 @@ for x in "$@" $(
                       esac
                       len=${#gitp}
                       start=$((9 + len))
-                      git diff --name-status $revision . | expand | cut -b $start-;
+                      git diff --name-status $review_base $revision . | expand | cut -b $start-;
                   fi
               fi
     if test "$FOR_REVIEW"; then

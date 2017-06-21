@@ -3,8 +3,12 @@ if ! . ~/system-config/etc/check-system-config; then
     return 0
 fi
 
-if test "$SYSTEM_CONFIG_INITED" != true -a -e ~/.config/system-config/.bashrc-path; then
-    . ~/.config/system-config/.bashrc-path
+if test -e ~/.config/system-config/.bashrc-path; then
+    if test "$SYSTEM_CONFIG_INITED" != true; then
+        . ~/.config/system-config/.bashrc-path
+    elif test "$HISTFILE" = ~/.tramp_history; then
+        . ~/.config/system-config/.bashrc-path
+    fi
 fi
 
 if test -e ~/system-config/.by-user/$USER/.profile; then

@@ -374,9 +374,9 @@ fi
         if timeout 30 git push $origin HEAD:refs/heads/$branch 2>&1 | tee .git/sc-git-push.log; then
             exit 0
         fi
-        if grep 'fetch first' .git/sc-git-push.log; then
+        if grep 'fetch first|non-fast-forward' -P .git/sc-git-push.log; then
             git fetch $(repo-remote)
-            myscr -n push-$(bp) -w 'git-interactive-add -r $(repo-remote-branch); if yes-or-no-p "Merge?"; then git merge $(repo-remote-branch); fi'
+            myscr -n push-$(bp) -w 'git-interactive-add -b "$(git merge-base $(repo-remote-branch) HEAD)" -r "$(repo-remote-branch)"; if yes-or-no-p "Merge?"; then git merge $(repo-remote-branch); fi'
         fi
         echo try $try failed in $PWD
         sleep 10
