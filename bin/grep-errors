@@ -39,6 +39,10 @@ if \(ret == MAP_FAILED\) \{
 cp: cannot stat.*recovery_tool/.*\*.*No such file or directory
 FindEmulator: find:.*No such file or directory
 dex2oatd.*art/runtime/gc/space/image_space.cc:.*dex_bootjars/system/framework/arm.*/boot.art.*failed
+m_pHDCPInputBuffers.*start == MAP_FAILED
+int rc = FAILED
+void reportError\(LocationError::LocationErrorType errorType\);
+tNFA_STATUS \w+ = NFA_STATUS_FAILED;
 EOF
 
     if test -e flashing-files/.scripts/false-build-error-filter; then
