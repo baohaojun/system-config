@@ -384,12 +384,6 @@ void WrenchMainWindow::on_sendItPushButton_clicked()
         return;
     }
 
-    if (anyShareChecked() && mSettings.value("firstTimeWeibo", 1).toInt() == -1) {
-        if (yes_or_no_p("Your text will be shared to social networks, please confirm") != "yes") {
-            return;
-        }
-    }
-
     ui->phoneTextEdit->setPlaceholderText("");
 
     bool share = 0;
@@ -589,24 +583,14 @@ void WrenchMainWindow::on_tbEmoji_clicked()
 
 void WrenchMainWindow::on_tbWeibo_clicked()
 {
-    if (ui->tbWeibo->isChecked() && mSettings.value("firstTimeWeibo", 1).toInt() == 1) {
-        mSettings.setValue("firstTimeWeibo", 0);
-        prompt_user("Your text/picture will be shared to Sina Weibo");
-    }
-
     if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
     }
-
 }
 
 void WrenchMainWindow::on_tbWeixin_clicked()
 {
-    if (ui->tbWeixin->isChecked() && mSettings.value("firstTimeWeixin", 1).toInt() == 1) {
-        mSettings.setValue("firstTimeWeixin", 0);
-        prompt_user("Your text/picture will be shared to Weixin Friend Zone");
-    }
     if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
@@ -615,10 +599,6 @@ void WrenchMainWindow::on_tbWeixin_clicked()
 
 void WrenchMainWindow::on_tbQq_clicked()
 {
-    if (ui->tbQq->isChecked() && mSettings.value("firstTimeQq", 1).toInt() == 1) {
-        mSettings.setValue("firstTimeQq", 0);
-        prompt_user("Your text/picture will be shared to QQ Zone");
-    }
     if (!anyShareChecked()) {
         ui->tbPicture->setCheckable(false);
         mPictures.clear();
