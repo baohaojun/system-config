@@ -830,7 +830,9 @@ end
 local function wrench_share_to_qq(text)
    share_text_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity",  text)
    wait_input_target(W.qqShareActivity)
-   wrench_send_action()
+   if yes_or_no_p("分享到QQ空间？") then
+      wrench_send_action()
+   end
 end
 
 local wait_top_activity_n = function(n_retry, ...)
@@ -1553,7 +1555,7 @@ local check_file_pushed = function(file, md5)
    return check_file_push_and_renamed(file, md5, nil)
 end
 
-local check_apk_installed = function(apk, md5)
+local check_apk_installed = function(apk, md5, reason)
    local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
    md5_on_phone = md5_on_phone:gsub("\n", "")
    local md5file = io.open(md5)
@@ -1562,6 +1564,7 @@ local check_apk_installed = function(apk, md5)
    io.close(md5file)
    debugging("on phone: %s, local: %s", md5_on_phone, md5_on_PC)
    if md5_on_phone ~= md5_on_PC then
+      prompt_user(reason .. "\n\n如有必要，请在你的手机上确认允许安装")
       log("Need to install on your phone Wrench helper App %s, please make sure your phone allows it.", apk)
       local install_output = adb_install(apk)
       if install_output:match("\nSuccess") or install_output:match("^Success") then
@@ -1633,7 +1636,7 @@ wrench_config = function(passedConfigDirPath)
       M.update_apps()
    end
 
-   check_apk_installed("Setclip.apk", "Setclip.apk.md5")
+   check_apk_installed("Setclip.apk", "Setclip.apk.md5", "需要安装小扳手辅助 App")
    check_file_pushed("am.jar", "am.jar.md5")
    check_file_pushed("busybox", "busybox.md5")
 
@@ -1697,7 +1700,7 @@ wrench_config = function(passedConfigDirPath)
       using_adb_root = false
    end
 
-   check_apk_installed("WrenchIME.apk", "WrenchIME.apk.md5")
+   check_apk_installed("WrenchIME.apk", "WrenchIME.apk.md5", "需要安装小扳手输入法")
 
    local dofile_res
    dofile_res, mail_group_map = pcall(dofile, M.configDirFile("mail_groups.lua"))

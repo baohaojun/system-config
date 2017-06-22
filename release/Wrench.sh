@@ -6,6 +6,11 @@ fi
 
 export EMACS=t
 
+if test "$1" = test; then
+    shift
+    export BUILDING_WRENCH=true
+fi
+
 if test "$BUILDING_WRENCH" = true; then
     unset ANDROID_SERIAL
 else
