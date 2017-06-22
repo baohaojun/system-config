@@ -31,6 +31,9 @@ cat <<EOF > $org_target
    set -e
 
    $(cat $target)
+   # Local Variables: #
+   # eval: (read-only-mode 1) #
+   # End: #
    #+END_SRC
 
    #+results: the-ultimate-script

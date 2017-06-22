@@ -101,25 +101,30 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
         else
             (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags' >/dev/null 2>&1&)
         fi || true
-    elif is-jenkins && test "$REDO_REPO_SYNC" != true; then
-        export REDO_REPO_SYNC=true
-        (
+    else
+        ret=$?
+        if is-jenkins && test "$REDO_REPO_SYNC" != true; then
+            export REDO_REPO_SYNC=true
             (
-                cd $(lookup-file -e .repo/manifests)
-                if test "$(git config repo.mirror)" = true; then
-                    mail-cms "Jenkins mirror repo sync failed for $(jenkins-info)"
-                    exit 1
-                fi
+                (
+                    cd $(lookup-file -e .repo/manifests)
+                    if test "$(git config repo.mirror)" = true; then
+                        mail-cms "Jenkins mirror repo sync failed for $(jenkins-info)"
+                        exit 1
+                    fi
+                )
+                cd $(lookup-file -e .repo/..)
+                rm * -rf
+                (
+                    cd .repo
+                    rm project-objects/ projects/ -rf
+                )
+                mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
+                ~/system-config/bin/repo "$@"
             )
-            cd $(lookup-file -e .repo/..)
-            rm * -rf
-            (
-                cd .repo
-                rm project-objects/ projects/ -rf
-            )
-            mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
-            ~/system-config/bin/repo "$@"
-        )
+        else
+            exit $ret
+        fi
     fi
     if is-jenkins; then
         echo "repo sync completed" >> .repo/grep-errors.txt
