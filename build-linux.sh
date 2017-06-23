@@ -73,11 +73,28 @@ fi
 relative-link -f $build_dir/Wrench ~/system-config/bin/overide
 
 mkdir -p $build_dir
-if test "$system_config" = true; then
-    rsync -L * $build_dir -av --exclude=release --exclude=windows --exclude=macx --exclude=emojis
-else
-    rsync * $build_dir -a -L --exclude=windows --exclude=macx
-    rsync release/ $build_dir -a -L
+
+if test -f "$build_dir"/wrenchmainwindow.ui -a ! -L "$build_dir"/wrenchmainwindow.ui; then
+    mv "$build_dir"/wrenchmainwindow.ui "$build_dir"/wrenchmainwindow.ui.bak
+fi
+
+ln -sf $PWD/* "$build_dir"
+
+if test "$SYSTEM_CONFIG_INITED" = true; then
+    rm "$build_dir"/wrenchmainwindow.ui
+    export Wrench_GIT_HASH=$(git log --pretty=%h -1 HEAD)
+
+    if git-any-changes -r HEAD; then
+        Wrench_GIT_HASH=${Wrench_GIT_HASH}-dirty
+    fi
+
+    perl -npe 's!<string>(Wrench\s*.*?)\(.*?\)</string>!<string>$1($ENV{Wrench_GIT_HASH})</string>!' \
+         wrenchmainwindow.ui > "$build_dir"/wrenchmainwindow.ui
+
+    if test -e "$build_dir"/wrenchmainwindow.ui.bak &&
+            diff -q "$build_dir"/wrenchmainwindow.ui "$build_dir"/wrenchmainwindow.ui.bak; then
+        mv "$build_dir"/wrenchmainwindow.ui.bak "$build_dir"/wrenchmainwindow.ui
+    fi
 fi
 
 oldpwd=$PWD
@@ -100,8 +117,7 @@ done
     set -o pipefail
 
     (
-        for x in $oldpwd/*.*; do echo $x; done | grep -v '\.pro$' -P | xargs -P 5 -n 1 relative-link -f
-        echo $oldpwd/release/* $oldpwd/* $oldpwd/linux/binaries/* | xargs -P 5 -n 1 relative-link -f
+        ln -sf $oldpwd/release/* $oldpwd/linux/binaries/* .
     ) 2>&1 |
         if echo $SHELLOPTS | grep -q xtrace; then
             cat
@@ -110,7 +126,6 @@ done
         fi
 )
 
-ln -s $oldpwd/linux/binaries/the-true-adb . -f
 (
     if test "$DOING_WRENCH_RELEASE"; then
         mkdir -p ~/src/github/$release_dir

@@ -42,11 +42,37 @@ EmojiModel::EmojiModel(QObject *parent) :
     initHistory();
 }
 
-const int maxLoad = 100;
+const int maxLoad = 50;
 void EmojiModel::loadAllEmojis()
 {
     qDebug() << "load all Emojis" << mEmojiIconMap.size();
     int loaded = 0;
+    int checked = 0;
+    if (! mSelectedItems.isEmpty()) {
+        foreach (const SelectedItem& si, mSelectedItems) {
+            checked++;
+            const QString& emoji = si.displayText;
+            if (!mEmojiIconMap.contains(emoji) && loaded < maxLoad) {
+                mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
+                loaded++;
+            } else if (loaded == maxLoad) {
+                mLoadEmojiTimer.start();
+                if (checked < loaded * 2) {
+                    emit iconsUpdated();
+                } else {
+                    // if I checked a lot of selected item to load
+                    // maxLoad, then there's no need to do
+                    // iconsUpdated.
+                }
+                return;
+            }
+        }
+    }
+    if (loaded != 0) {
+        emit iconsUpdated();
+        return;
+    }
+
     foreach (const QString& emoji, mEmojis) {
         if (!mEmojiIconMap.contains(emoji) && loaded < maxLoad) {
             mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
@@ -56,14 +82,11 @@ void EmojiModel::loadAllEmojis()
             break;
         }
     }
-
-    emit iconsUpdated();
 }
 
 void EmojiModel::filterSelectedItems(const QStringList& split)
 {
-    int loaded = 0;
-
+    bool startedTimer = false;
     QPixmap defaultPixmap;
     foreach (const QString& emoji, mEmojis) {
         bool match = 1;
@@ -75,17 +98,14 @@ void EmojiModel::filterSelectedItems(const QStringList& split)
         }
         if (match) {
             QPixmap emojiPixmap;
-            if (!mEmojiIconMap.contains(emoji) && loaded < maxLoad) {
-                emojiPixmap = mEmojiIconMap[emoji] = QPixmap(mEmojiIconPathMap[emoji]);
-                loaded++;
-            } else if (mEmojiIconMap.contains(emoji)) {
+            if (!mEmojiIconMap.contains(emoji) && !startedTimer) {
+                mLoadEmojiTimer.start();
+                startedTimer = true;
+            }
+
+            if (mEmojiIconMap.contains(emoji)) {
                 emojiPixmap = mEmojiIconMap[emoji];
             } else {
-                if (loaded == maxLoad) {
-                    mLoadEmojiTimer.start();
-                    loaded++;
-                }
-
                 if (defaultPixmap.isNull()) {
                     defaultPixmap = QPixmap("loading.png");
                 }

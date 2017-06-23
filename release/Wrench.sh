@@ -11,12 +11,18 @@ if test "$1" = test; then
     export BUILDING_WRENCH=true
 fi
 
+if test $# = 1 -a "$1" = kill; then
+    kill-env RUNNING_WRENCH true
+    exit
+fi
+
 if test "$BUILDING_WRENCH" = true; then
     unset ANDROID_SERIAL
 else
     export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
 fi
 export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+
 
 export RUNNING_WRENCH=true
 
@@ -29,11 +35,6 @@ fi
 find-or-exec 'Wrench V%Wrench'
 
 if test "$#" != 0; then
-    if test $# = 1 -a "$1" = kill; then
-        kill-env RUNNING_WRENCH true&
-        exit
-    fi
-
     if test $# = 1 -a -e "$1" && [[ $1 =~ \.(twa|lua)$ ]]; then
         exec Wrench "$(readlink -f "$1")"
     fi
