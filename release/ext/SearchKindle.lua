@@ -20,7 +20,7 @@ if M.ext_args then
    book = M.ext_args[1]
 end
 if not book then
-   book = M.select_args{"What book do you want to search on Kindle?", "", ""}
+   book = M.select_args_with_history{"SearchKindle", "What book do you want to search on Kindle?", "", ""}
 end
 
 for i = 1, 20 do

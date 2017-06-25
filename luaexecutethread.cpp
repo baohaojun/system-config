@@ -305,7 +305,7 @@ void LuaExecuteThread::run()
     luaL_openlibs(L);        /* opens the standard libraries */
 
     lua_pushcfunction(L, l_selectArg);
-    lua_setglobal(L, "select_args");
+    lua_setglobal(L, "select_from_args_table");
 
     lua_pushcfunction(L, l_clickNotification);
     lua_setglobal(L, "clickNotification");

@@ -8,6 +8,7 @@ local W = {}
 M.ext_args = {}
 M.ExtMods = {}
 M.is_debugging = false
+M.W = W
 
 -- functions
 local WrenchExt = {}
@@ -27,7 +28,6 @@ local social_need_confirm = false
 local right_button_x = 984
 local start_or_stop_recording, m_is_recording, current_recording_file
 
-local m_focused_app, m_window_dump, m_focused_window
 local wrench_call, wrench_run, wrench_adb_mail, wrench_save_mail_heads
 local reset_input_method, adb_shell
 local adb_push, adb_pull, adb_install
@@ -37,7 +37,6 @@ local picture_to_weixin_share, picture_to_weibo_share, picture_to_qq_share
 local picture_to_momo_share, wrench_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share, adb_is_window
-local adb_focused_window
 local wrench_config, check_phone
 local weixin_find_friend, qq_find_friend, qq_find_group_friend
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_rewrite, emoji_for_weibo
@@ -387,7 +386,7 @@ adb_pipe = function(cmds)
 end
 
 adb_is_window = function (w)
-   return w == adb_focused_window()
+   return w == adb_top_window()
 end
 
 adb_start_activity = function(a)
@@ -395,10 +394,6 @@ adb_start_activity = function(a)
 end
 
 M.adb_start_activity = adb_start_activity
-
-adb_focused_window = function()
-   return adb_top_window() or ""
-end
 
 adb_am = function(cmd)
    if type(cmd) ~= 'string' then
@@ -651,6 +646,14 @@ prompt_user = function(fmt, ...)
    end
 end
 
+M.select_args = function(arg1, ...)
+   if type(arg1) == 'table' then
+      return select_from_args_table(arg1)
+   else
+      return select_from_args_table{arg1, ...}
+   end
+end
+
 M.history_map = {}
 M.history_loaded = false
 
@@ -706,12 +709,26 @@ M.save_history = function()
    history_file:close()
 end
 
+function table.slice(tbl, first, last, step)
+  local sliced = {}
+
+  for i = first or 1, last or #tbl, step or 1 do
+    sliced[#sliced+1] = tbl[i]
+  end
+
+  return sliced
+end
+
 M.select_args_with_history = function(history_name, prompt, init_args, ...)
    if not M.history_loaded then
       M.load_history()
    end
 
    local args= {prompt, init_args, ...}
+
+   if type(history_name) == 'table' and prompt == nil then
+      history_name, args = history_name[1], table.slice(history_name, 2)
+   end
 
    if not M.history_map[history_name] then
       M.history_map[history_name] = {}
@@ -730,12 +747,11 @@ M.select_args_with_history = function(history_name, prompt, init_args, ...)
    return ret
 end
 
-M.select_args = select_args
 M.prompt_user = prompt_user
 
-yes_or_no_p = function(txt)
+yes_or_no_p = function(txt, ...)
    if select_args then
-      return select_args{txt} ~= ""
+      return select_args{string.format(txt, ...)} ~= ""
    end
    return false
 end
@@ -845,7 +861,7 @@ local wait_top_activity_n = function(n_retry, ...)
    for i = 1, n_retry do
       for ai = 1, #activities do
          local activity = activities[ai]
-         window = adb_focused_window()
+         window = adb_top_window()
          if window == activity then
             debug("wait ok")
             return window
@@ -875,7 +891,7 @@ wait_top_activity_match = function(activity)
    debug("waiting for %s", activity)
    local window
    for i = 1, 20 do
-      window = adb_focused_window()
+      window = adb_top_window()
       if window:match(activity) then
          debug("wait ok")
          return window
@@ -893,7 +909,7 @@ end
 
 M.wait_input_target = wait_input_target
 M.wait_input_target_n_ok = function(n_loop, activity)
-   return (wait_input_target_n(n_loop, activity)):match(activity) and M.ime_height ~= 0
+   return (wait_input_target_n(n_loop, activity)):match(activity)
 end
 
 wait_input_target_n = function(n_loop, ...)
@@ -902,11 +918,11 @@ wait_input_target_n = function(n_loop, ...)
       debug("wait for input method for %s", activities[i])
    end
    for i = 1, n_loop do
-      local window = adb_focused_window()
+      local window = adb_top_window()
       for ai = 1, #activities do
          local activity = activities[ai]
-         if window:match(activity) or (window:match("^PopupWindow:") and m_focused_app:match(activity)) then
-            local adb_window_dump = split("\n", m_window_dump)
+         if window:match(activity) or (window:match("^PopupWindow:") and M.m_focused_app:match(activity)) then
+            local adb_window_dump = split("\n", M.m_window_dump)
             for x = 1, #adb_window_dump do
                if adb_window_dump[x]:match("mInputMethodTarget.*" .. window) then
                   local input_method, ime_height, ime_connected = adb_get_input_window_dump()
@@ -927,11 +943,11 @@ end
 adb_top_window = function()
    -- dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
    for i = 1, 50 do
-      m_window_dump = adb_pipe("dumpsys window") or ""
-      m_focused_app = m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
-      m_focused_window = m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
-      if m_focused_window ~= "" then
-         return m_focused_window
+      M.m_window_dump = adb_pipe("dumpsys window policy; dumpsys window windows") or ""
+      M.m_focused_app = M.m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
+      M.m_focused_window = M.m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
+      if M.m_focused_window ~= "" then
+         return M.m_focused_window
       end
       sleep(.1)
       if i > 20 then
@@ -942,6 +958,7 @@ adb_top_window = function()
          error("Error: can't get a valid top window")
       end
    end
+   return ""
 end
 
 M.swipe_down = function()
@@ -1091,14 +1108,17 @@ local function get_coffee(what)
 
 end
 
-weixin_open_homepage = function()
+weixin_open_homepage = function(depth)
+   if not depth then depth = 0 end
    adb_am("am start -n " .. W.weixinLauncherActivity)
    wait_top_activity_match("com.tencent.mm/")
    for i = 1, 20 do
       sleep(.1)
       log("touch the search button " .. i)
 
-      adb_event"adb-tap 801 132"
+      local click_weixin_search_button = "adb-tap 801 132"
+
+      adb_event(click_weixin_search_button)
       local waiting_search = true
       local top_window
       for i_search = 1, 4 do
@@ -1106,11 +1126,19 @@ weixin_open_homepage = function()
          top_window = adb_top_window()
          if top_window == W.weixinSearchActivity then
             log("exit from search by key back: %d %s ", i_search, top_window)
-            wait_input_target(W.weixinSearchActivity)
-            adb_event"key back sleep .1 key back sleep .1"
-            sleep(.1)
-            waiting_search = false
-            return
+            if not wait_input_target_n_ok(5, W.weixinSearchActivity) then
+               if i_search == 4 and
+                  yes_or_no_p("本次（第 %d 次）打开微信首页的自动操作没有点出微信搜索框，再试一次？", depth + 1)
+               then
+                  return weixin_open_homepage(depth + 1)
+               end
+               adb_event(click_weixin_search_button)
+            else
+               adb_event"key back sleep .1 key back sleep .1"
+               sleep(.1)
+               waiting_search = false
+               return
+            end
          elseif top_window ~= '' and top_window ~= W.weixinLauncherActivity then
             log("exit the current '%s' by back key %d", top_window, i)
             waiting_search = false
@@ -1327,7 +1355,7 @@ end
 
 adb_get_input_window_dump = function()
    -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]+.*\SInputMethod/i .. m/^\s*mHasSurface/')
-   local dump_str = adb_pipe("dumpsys input_method; dumpsys window")
+   local dump_str = adb_pipe("dumpsys input_method; dumpsys window policy; dumpsys window windows")
    local dump = split("\n", dump_str)
    local current_input_method
    local input_method_lines = {}
@@ -1376,6 +1404,7 @@ adb_get_input_window_dump = function()
 
    ime_height = ime_height * default_height / app_height
    M.ime_height = ime_height
+   M.input_method_active = input_method_active
 
    local ime_connected = not (
       dump_str:match("mServedInputConnection=null") or
@@ -1488,7 +1517,7 @@ push_text = function(text)
       local file = io.open(os.getenv("PUTCLIP_ANDROID_FILE"))
       text = file:read("*a")
       file:close()
-      local window = adb_focused_window()
+      local window = adb_top_window()
       if window:match("com.tencent.mobileqq") then
          text = emoji_for_qq(text)
       end
@@ -1777,7 +1806,8 @@ wrench_post2 = function(texwrench, text2)
    wrench_post(text2)
 end
 
-weixin_find_friend = function(friend_name)
+weixin_find_friend = function(friend_name, depth)
+   if not depth then depth = 0 end
    if friend_name == "" then
       friend_name = string_strip(M.select_args_with_history("weixin-friends", "请输入想找的微信联系人名字", "", " ")):gsub("@@wx$", "")
       if friend_name == "" then
@@ -1793,9 +1823,19 @@ weixin_find_friend = function(friend_name)
    end
 
    weixin_open_homepage()
-   adb_event"adb-tap 786 116"
-   putclip(friend_name)
-   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI")
+   for i_search = 1, 4 do
+      adb_event"adb-tap 786 116"
+      if i_search == 1 then putclip(friend_name) end
+      if not wait_input_target_n_ok(5, W.weixinSearchActivity) then
+         if i_search == 4 and
+            yes_or_no_p("本次（第 %d 次）找微信联系人操作没有点出微信搜索框，再来一次？", depth + 1)
+         then
+            return weixin_find_friend(friend_name, depth + 1)
+         end
+      else
+         break
+      end
+   end
    adb_event"sleep .2 key scroll_lock sleep .5"
    if need_confirm then
       prompt_user("请确认哪个是你要找的联系人")
@@ -1808,6 +1848,8 @@ weixin_find_friend = function(friend_name)
          if i == 10 then
             prompt_user("Can't get out of weixinSearchActivity")
          end
+      else
+         break
       end
    end
 end
@@ -2109,7 +2151,7 @@ end
 M.M = M
 
 wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
-   local window = adb_focused_window()
+   local window = adb_top_window()
    debug("sharing text: %s for window: %s", text, window)
    if text and text:match("^@%?") then
       wrench_post("@", 'manual-post')
@@ -2156,7 +2198,7 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    end
    if window == W.weixinAlbumPreviewActivity or window == W.weiboPicFilterActivity then
       sleep(.5)
-       window = adb_focused_window()
+       window = adb_top_window()
    end
 
    if window == "com.sina.weibo/com.sina.weibo.qac.answer.AnswerComposerActivity" then
@@ -2167,7 +2209,7 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    if window then print("window is %s", window) end
 
    if string.match(window, "^PopupWindow:") then
-      window = m_focused_app
+      window = M.m_focused_app
    end
 
    if window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
@@ -2784,7 +2826,7 @@ end
 
 local function wrench_picture(...)
    local pics = upload_pics(...)
-   local window = adb_focused_window()
+   local window = adb_top_window()
    if window == W.weixinLauncherActivity and yes_or_no_p("发送给当前微信聊天窗口") then
       return picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mm/com.tencent.mm.plugin.scanner.ui.BaseScanUI" then
@@ -2935,7 +2977,7 @@ wrench_adb_mail = function(subject, to, cc, bcc, attachments)
          putclip(target)
 
          wait_input_target(W.oiFileChooseActivity)
-         local window = adb_focused_window()
+         local window = adb_top_window()
          if window ~= W.oiFileChooseActivity then
             window = window:gsub("/.*", "")
             error("Must install and use OI File Manager, you are using: " .. window)
