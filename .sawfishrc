@@ -745,6 +745,8 @@
   (system "switch-caps-led on&")
   (load-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl"))
 
+(bind-both-global&window-keymaps "XF86Calculator"  '(system "sawfish-window-custom-menu&"))
+
 (defun unload-keys-in-file (file)
   (let* ((file (open-file file 'read))
          (event "")
