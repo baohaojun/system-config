@@ -1,26 +1,94 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt ttest kkill 1one-phone
+## end code-generator
+## start generated code
+TEMP=$(getopt -o k1th \
+              --long kill,one-phone,test,help,no-kill,no-one-phone,no-test \
+              -n $(basename -- $0) -- "$@")
+kill=false
+one_phone=false
+test=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -k|--kill|--no-kill)
+            if test "$1" = --no-kill; then
+                kill=false
+            else
+                kill=true
+            fi
+            shift
+            ;;
+        -1|--one-phone|--no-one-phone)
+            if test "$1" = --no-one-phone; then
+                one_phone=false
+            else
+                one_phone=true
+            fi
+            shift
+            ;;
+        -t|--test|--no-test)
+            if test "$1" = --no-test; then
+                test=false
+            else
+                test=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-k, '
+            printf %-24s '--[no-]kill'
+            echo
+            printf %06s '-1, '
+            printf %-24s '--[no-]one-phone'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--[no-]test'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 if test -e ~/system-config/src/github/smartcm/etc/Wrench.config; then
     . ~/system-config/src/github/smartcm/etc/Wrench.config
 fi
 
 export EMACS=t
 
-if test "$1" = test; then
-    shift
-    export BUILDING_WRENCH=true
-fi
-
-if test $# = 1 -a "$1" = kill; then
+if test "$kill" = true; then
     kill-env RUNNING_WRENCH true
     exit
 fi
 
-if test "$BUILDING_WRENCH" = true; then
+if test "$test" = true; then
     unset ANDROID_SERIAL
+elif test "$ANDROID_SERIAL" -a "$one_phone" = true; then
+    true
 else
     export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
 fi
+
 export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 
 
