@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$#" = 0; then
+    trap - 0
+    return
+fi
+
 atexit_args=(
     "$@"
 )

@@ -10,6 +10,7 @@ top_window=$(sawfish-top-window)
 declare -A window_operations
 
 window_operations[kdenlive-fade-effects]="M-i e f"
+window_operations[kdenlive-blur-effects]="M-i e b"
 
 window_operations[*-get-cursor-pos-in-window]=function
 window_operations[*-get-current-window-size]=function
