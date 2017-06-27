@@ -7,6 +7,6 @@ set -e
 
 (
     cd ~/src/android
-    repo sync -j4 -f
+    repo sync -j4 -f -d
     repo-changes\?
 )
