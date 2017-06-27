@@ -8,6 +8,7 @@ alias aptitude='sudo aptitude'
 alias umount='command sudo umount'
 alias mplayer='mplayer -heartbeat-cmd "xscreensaver-command -deactivate"'
 alias adb=my-adb
+alias mplayer=mplayer.x
 
 jcd() {
     # http://build1:8080/job/Daily-surabaya-dev-colombo-Vuserdebug-Onone/6/console
