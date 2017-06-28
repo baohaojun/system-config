@@ -51,7 +51,7 @@ done
 ## end generated code
 
 current_url=$(
-    git config remote.$remote_name.url
+    git config remote.$remote_name.url || true
            )
 
 if test "$current_url" -a "$current_url" != "$remote_url"; then
