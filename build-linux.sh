@@ -140,7 +140,7 @@ done
     fi
 
     destroy-windows Wrench || true
-    Wrench.sh kill || true
+    Wrench.sh -k || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.Wrench
         myscr bash -c 'LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu gdb ./Wrench'
