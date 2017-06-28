@@ -92,6 +92,7 @@ W.weiboCommentActivity = "com.sina.weibo/com.sina.weibo.composerinde.CommentComp
 W.weiboForwardActivity = "com.sina.weibo/com.sina.weibo.composerinde.ForwardComposerActivity"
 W.qqChatActivity = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity"
 W.qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity"
+W.qqSplashActivity = W.qqChatActivity2
 W.qqAlbumList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity"
 W.qqCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.FlowCameraPtvActivity2"
 W.qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
@@ -898,6 +899,9 @@ wait_top_activity_match = function(activity)
       end
       sleep(.1)
    end
+   if not yes_or_no_p("等了两秒钟也没有等到 %s 窗口，请确认是否放弃此操作（重启Lua后台）？") then
+      error("用户取消了小扳手的操作")
+   end
    return window
 end
 
@@ -980,22 +984,6 @@ local function search_mail(what)
    adb_event"key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 841 728"
 end
 
-local function search_and_start_app(what)
-   search_activity = "com.smartisanos.quicksearch/com.android.quicksearchbox.SearchActivity"
-   adb_start_activity(search_activity)
-   putclip_nowait(what)
-   for i = 1, 10 do
-      if wait_input_target_n(1, search_activity) ~= "" then
-         break
-      else
-         log("wait for search_activity: %d", i)
-         if i == 10 then
-            return
-         end
-      end
-   end
-   adb_event"adb-tap 999 127 key scroll_lock"
-end
 local function get_coffee(what)
    for i = 1, 5 do
       if social_need_confirm and not yes_or_no_p("Will now open the Wechat App and goto it's home page") then
@@ -1210,45 +1198,46 @@ local function dingding_open_homepage()
    end
 end
 
-local function qq_open_homepage()
-   adb_start_activity(W.qqChatActivity2)
-
-   for qq_try = 1, 40 do
-      sleep(.2)
-      local ime_active, height, ime_connected = adb_get_input_window_dump()
-      log("ime activity is %s, height is %d, ime_connected is %s", ime_active, height, ime_connected)
-      local done_back = false
-      if ime_connected then
-         adb_event"key back sleep .1"
-         done_back = true
-      end
-      if ime_active then
-         done_back = true
-         adb_event"key back sleep .1"
-      end
-      if not done_back and adb_top_window() == W.qqChatActivity2 then
-         adb_event"adb-tap 186 1809 sleep .5"
-         -- must be in such a place, that it make sure to get into
-         -- first pane of qq main window, or activate the input method
-
-         ime_active, height, ime_connected = adb_get_input_window_dump()
-
-         if ime_active then
-            adb_event"key back sleep .1 key back sleep .2"
-            break
-            break
-         end
-         local top_window = adb_top_window()
-         if not top_window or top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQSettingSettingActivity" then
-            log("got into setting!")
-            adb_event"key back sleep .1 key back sleep .1 key back sleep .1"
-         else
-            break
-         end
-      end
-
-      adb_event"key back sleep .1"
+M.qq_open_search = function ()
+   for qq_try = 1, 10 do
       adb_start_activity(W.qqChatActivity2)
+      adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809 sleep .3 adb-tap 539 311 sleep .3"
+      local ime_active, height, ime_connected = adb_get_input_window_dump()
+      top_window = adb_top_window()
+      if ime_active and top_window == W.qqGroupSearch then
+         return
+      end
+
+      if ime_active then
+         log("got ime active in %s with ime height: %d, try: %d", top_window, height, qq_try)
+         if height ~= 0 then
+            adb_event("key back sleep .1")
+         end
+         adb_event("key back sleep .1")
+      end
+
+      debugging("qq @ %s when try = %d", top_window, qq_try)
+      for findHomePageTry = 1, 10 do
+         if not (qq_try < 3 and top_window == W.qqSplashActivity and ime_active) then
+            adb_event"key back sleep .2"
+         end
+         top_window = adb_top_window()
+         if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQSettingSettingActivity" then
+            log("进入了QQ设置页面")
+            adb_event("key back sleep .2")
+         end
+         if not top_window:match("^com.tencent.mobileqq/") then
+            log("got out of qq (%s) when try = %d", top_window, qq_try)
+            break
+         end
+
+         if top_window == W.qqSplashActivity then
+            break
+         end
+      end
+   end
+   if yes_or_no_p("没法打开QQ主页窗口，放弃？（会重启Lua后台）") then
+      error("用户放弃操作")
    end
 end
 
@@ -1896,9 +1885,7 @@ qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
-      qq_open_homepage()
-      M.swipe_down()
-      adb_event"sleep .3 adb-tap 324 254" -- click for group search
+      qq_open_search()
       local top_window = wait_input_target_n(15, W.qqChatActivity2, W.qqGroupSearch)
       adb_event"key scroll_lock sleep .8"
       if top_window and top_window:match(W.qqGroupSearch) then
@@ -1907,8 +1894,14 @@ qq_find_friend = function(friend_name)
          if adb_top_window() ~= W.qqGroupSearch then
             log("Found the qq friend %s", friend_name)
             break
+         else
+            yes_or_no_p("小扳手好像没有找到你想找的 QQ 好友（%s），请自己手动点一下...", friend_name)
+            return
          end
       else
+         if i > 1 and not yes_or_no_p("没有找到 QQ 好友 %s，再试一遍？", friend_name) then
+            return
+         end
          log("Got stuck in W.qqChatActivity2, ime stuck?: %s at %d", top_window, i)
          if i == 5 then
             error("Can't get to W.qqGroupSearch in the end")
@@ -3085,8 +3078,6 @@ wrench_call = function(number)
          wrench_find_dingding_contact(who)
       elseif where == "coffee" then
          get_coffee(who)
-      elseif where == "app" then
-         search_and_start_app(who)
       elseif where == "mail" then
          search_mail(who)
       elseif where == "wb" or where == "weibo" then
@@ -3248,9 +3239,7 @@ M.wrench_post2 = wrench_post2
 M.wrench_find_qq_contact = wrench_find_qq_contact
 M.wrench_share_to_qq = wrench_share_to_qq
 M.weixin_find_friend = weixin_find_friend
-M.qq_open_homepage = qq_open_homepage
 M.get_coffee = get_coffee
-M.search_and_start_app = search_and_start_app
 
 local function be_quiet()
    social_need_confirm = false
