@@ -13,7 +13,7 @@ M.W = W
 -- functions
 local WrenchExt = {}
 local search_sms, string_strip
-local adb_input_method_is_null, close_ime
+local adb_input_method_is_null
 local window_post_button_map = {}
 local mail_group_map = {}
 local phone_info_map = {}
@@ -2634,7 +2634,20 @@ M.picture_to_weixin_scan = function(pics, ...)
    end
 end
 
-close_ime = function()
+M.exit_ime = function()
+   local input_active, ime_height = adb_get_input_window_dump()
+   log("exit ime: %s %s", ime_active, ime_height)
+   if ime_height ~= 0 then
+      adb_event("key back sleep .1 key back sleep .1")
+      return
+   end
+
+   if ime_active then
+      adb_event("key back sleep .1")
+   end
+end
+
+M.close_ime = function()
    local input_method, ime_height = adb_get_input_window_dump()
    if (ime_height ~= 0) then
       ime_height = 0
