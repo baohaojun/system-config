@@ -25,6 +25,26 @@ emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
 EOF6405e5bce1d2
 )"
 
+perl -npe "$(cat <<'EOFf0ea35142ce4'
+     # class='emoji' src='/home/bhj/src/github/Wrench/release/emojis/iphone-new/RING.png'
+     while (m,class='emoji' src='(.*?)',g) {
+         $png_file = $1;
+         ($png_file_basename = $png_file) =~ s,.*/,,;
+     
+         system("mkdir -p emojis") unless -d "emojis";
+         system "cp", "$png_file", "emojis/$png_file_basename" unless -e "emojis/$png_file_basename";
+     
+         $png_file_map{$png_file} = "emojis/$png_file_basename";
+     }
+     
+     s|class='emoji' src='(.*?)'|class='emoji' src='$png_file_map{$1}'|g;
+     
+EOFf0ea35142ce4
+)" -i "$html_file"
+
+css-inline "$html_file" > "$html_file".$$
+mv "$html_file".$$ "$html_file"
+
 of "$html_file"
 
 # Local Variables: #
