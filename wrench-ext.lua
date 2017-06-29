@@ -71,7 +71,12 @@ is_useful_notification = function(key, pkg, title, text, ticker)
       return 0
    end
 
-   if text == "" and title == ticker and title:match("件の新しいメール") then
+   if text == "" and title == ticker and
+      (
+         title:match("件の新しいメール") or
+            title:match("封新邮件")
+      )
+   then
       return 0
    end
 
