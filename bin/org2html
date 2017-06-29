@@ -11,12 +11,19 @@ html_file=${1%.org}.html
 
 emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
 (let ((org-file "%file%")
+      (my-loaded-themes custom-enabled-themes)
       (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%")))
   (package-initialize)
   (require 'ox-html)
   (require 'emojis)
   (find-file "%file%")
+  (when custom-enabled-themes
+    (dolist (theme custom-enabled-themes)
+      (disable-theme theme)))
   (org-html-export-to-html)
+  (when my-loaded-themes
+    (dolist (theme my-loaded-themes)
+      (load-theme theme)))
   (with-temp-buffer
     (insert-file html-file)
     (org2html-emojify)

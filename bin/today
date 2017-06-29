@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$1" = -/; then
+    use_slash=true
+    shift
+fi
+
 fmt=+%Y-%m-%d
 if test "${1:0:1}" = +; then
     fmt=$1
@@ -11,4 +16,9 @@ if echo "$1"|grep -q -P '^[-+]?\d+$'; then
     date "$fmt" -d "$1 days"
 else
     date "$fmt" -d "$1"
-fi | tr -d '\n'
+fi |
+    if test "$use_slash" = true; then
+        perl -npe 's,-,/,g'| tr -d '\n'
+    else
+        tr -d '\n'
+    fi
