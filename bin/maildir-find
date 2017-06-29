@@ -4,12 +4,13 @@ declare -A maildir_file_map;
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt s:subject @:after='$(today -1)' @:before='$(today 1)'
+# generate-getopt s:subject @:after='$(today -1)' @:before='$(today 1)' f:from
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o s:h \
-              --long after:,subject:,before:,help \
+TEMP=$(getopt -o f:s:h \
+              --long from:,after:,subject:,before:,help \
               -n $(basename -- $0) -- "$@")
+from=
 after=$(today -1)
 subject=
 before=$(today 1)
@@ -17,6 +18,10 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -f|--from)
+            from=$2
+            shift 2
+            ;;
         --after)
             after=$2
             shift 2
@@ -40,6 +45,9 @@ while true; do
             printf "%06s" " "
             printf %-24s '--before=BEFORE'
             echo
+            printf %06s '-f, '
+            printf %-24s '--from=FROM'
+            echo
             printf %06s '-s, '
             printf %-24s '--subject=SUBJECT'
             echo
@@ -60,14 +68,15 @@ done
 ## end generated code
 
 subject=$(echo $subject | perl -npe 's/[^\w]|_/ /g; s/(\w+)/subject:$1/g')
+from=$(echo $from | perl -npe 's/[^\w]|_/ /g; s/(\w+)/from:$1/g')
 
-mu find $subject date:$after..$before --fields 'l d f s' | (
+mu find $subject $from date:$after..$before --fields 'l d f s' | (
     while read file info; do
         maildir_file_map[$info]=$file
     done
 
     selected_info=$(
-        select-args -p "你想查看哪封邮件？" "${!maildir_file_map[@]}" "All of the above! 老子想批处理一下！"</dev/tty
+        select-args -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort)" "All of the above! 老子想批处理一下！"</dev/tty
                  )
 
     if [[ $selected_info =~ ^'All of the above' ]]; then

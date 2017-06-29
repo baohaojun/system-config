@@ -127,6 +127,7 @@ if test $org_file = true || yes-or-no-p -y "Export from .org"; then
 (progn
   (package-initialize)
   (require 'ox-latex)
+  (require 'emojis)
   (setq org-latex-listings 'minted)
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (find-file "${1/%.tex/.org}") ($exp_func))

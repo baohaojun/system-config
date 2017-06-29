@@ -17,27 +17,27 @@
       (load wrench-emojis-file)))
   (setq emoji-alist emojis-string-list)
   (setq emoji-regexp nil)
-  (while emojis-string-list
-    (let* ((emoji (caar emojis-string-list))
-           (key (concat " " emoji " " (caddar emojis-string-list)))
-           (png (cadar emojis-string-list))
-           (emoji-image-size (floor (* bhj-english-font-size 2.5))))
-      (if emoji-regexp
-          (setq emoji-regexp (concat emoji-regexp "\\|" emoji))
-        (setq emoji-regexp emoji))
-      (unless (string= png "")
-        (setq png (create-image png
-                                (when (fboundp 'imagemagick-types)
-                                  'imagemagick)
-                                nil
-                                :ascent 'center
-                                :heuristic-mask t
-                                :height emoji-image-size))
-        (add-text-properties 0 (length emoji) `(display ,png) emoji)
-        (add-text-properties 1 (1+ (length emoji)) `(display ,png) key))
-      (puthash key emoji emoji-hash-table)
-      (setq emoji-names (cons key emoji-names)))
-    (setq emojis-string-list (cdr emojis-string-list)))
+  (let (emoji-regexp-list)
+    (while emojis-string-list
+      (let* ((emoji (caar emojis-string-list))
+             (key (concat " " emoji " " (caddar emojis-string-list)))
+             (png (cadar emojis-string-list))
+             (emoji-image-size (floor (* bhj-english-font-size 2.5))))
+        (setq emoji-regexp-list (cons emoji emoji-regexp-list))
+        (unless (string= png "")
+          (setq png (create-image png
+                                  (when (fboundp 'imagemagick-types)
+                                    'imagemagick)
+                                  nil
+                                  :ascent 'center
+                                  :heuristic-mask t
+                                  :height emoji-image-size))
+          (add-text-properties 0 (length emoji) `(display ,png) emoji)
+          (add-text-properties 1 (1+ (length emoji)) `(display ,png) key))
+        (puthash key emoji emoji-hash-table)
+        (setq emoji-names (cons key emoji-names)))
+      (setq emojis-string-list (cdr emojis-string-list)))
+    (setq emoji-regexp (string-join (nreverse (sort emoji-regexp-list #'string<)) "\\|")))
   (setq emoji-names (reverse emoji-names)))
 
 (defun org2pdf-emojify ()
@@ -50,6 +50,18 @@
      replace-quote
      (format
       "\\text{\\includegraphics[width=1em,valign=t,raise=0.1em]{%s}}"
+      (expand-file-name (nth 1 (assoc (match-string 0) emoji-alist))))) nil (point-min) (point-max) nil))
+
+(defun org2html-emojify ()
+  (interactive)
+  (unless emoji-alist
+    (setup-emoji-hash))
+  (replace-regexp
+   emoji-regexp
+   '(replace-eval-replacement
+     replace-quote
+     (format
+      "<img class='emoji' src='%s' style='width: 1.3em; vertical-align: -0.35em;' />"
       (expand-file-name (nth 1 (assoc (match-string 0) emoji-alist))))) nil (point-min) (point-max) nil))
 
 ;;;###autoload

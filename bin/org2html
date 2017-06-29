@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# [[file:~/src/github/private-config/knuth-mode/org2html.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+
+set -e
+
+git-interactive-add
+
+org_file=$1
+html_file=${1%.org}.html
+
+emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
+(let ((org-file "%file%")
+      (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%")))
+  (package-initialize)
+  (require 'ox-html)
+  (require 'emojis)
+  (find-file "%file%")
+  (org-html-export-to-html)
+  (with-temp-buffer
+    (insert-file html-file)
+    (org2html-emojify)
+    (goto-char (point-min))
+    (write-file html-file)))
+EOF6405e5bce1d2
+)"
+
+of "$html_file"
+
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+
+# the-ultimate-script ends here
