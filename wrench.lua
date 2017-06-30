@@ -22,7 +22,6 @@ local save_phone_info
 local phone_serial = ""
 local configDir = "."
 local last_uploaded_pics = {}
-local weixin_open_homepage
 local file_exists
 local social_need_confirm = false
 local right_button_x = 984
@@ -75,6 +74,7 @@ local the_true_adb = "./the-true-adb"
 local wrench_send_action
 
 W.sms = "com.android.mms/com.android.mms.ui.ComposeMessageActivity"
+W.weixinPackage = "com.tencent.mm/"
 W.weibo_home_activity = "com.sina.weibo/com.sina.weibo.MainTabActivity"
 W.weibo_search_activity = "com.sina.weibo/com.sina.weibo.page.SearchResultActivity"
 W.smartisan_mail_compose = "com.android.email/com.android.mail.compose.ComposeActivity"
@@ -503,6 +503,10 @@ local function adb_event(events)
          local event = events[i+1]:upper()
          command_str = command_str .. ('input keyevent %s;'):format(event)
          if event == "SCROLL_LOCK" then
+            if M.need_wait_putclip then
+               adb_wait_file_gone(M.sdcard_putclip_path)
+               M.need_wait_putclip = false
+            end
             check_scroll_lock()
             command_str = command_str .. "sleep .1;"
          end
@@ -873,6 +877,7 @@ local wait_top_activity_n = function(n_retry, ...)
    return window
 end
 
+M.sdcard_putclip_path = "/sdcard/putclip.txt"
 M.wait_top_activity_n = wait_top_activity_n
 
 M.wait_top_activity_n_ok = function(n_retry, activity)
@@ -1096,55 +1101,74 @@ local function get_coffee(what)
 
 end
 
-weixin_open_homepage = function(depth)
-   if not depth then depth = 0 end
-   adb_am("am start -n " .. W.weixinLauncherActivity)
-   wait_top_activity_match("com.tencent.mm/")
-   for i = 1, 20 do
-      sleep(.1)
-      log("touch the search button " .. i)
+M.weixin_open_homepage = function()
+   weixin_open_search()
+   exit_ime()
+end
 
+M.weixin_open_search = function(depth)
+   if not depth then depth = 0 end
+   for i = 1, 10 do
+      adb_am("am start -n " .. W.weixinLauncherActivity)
+      wait_top_activity_match("com.tencent.mm/")
+
+      log("touch the search button " .. i)
       local click_weixin_search_button = "adb-tap 801 132"
 
-      adb_event(click_weixin_search_button)
-      local waiting_search = true
       local top_window
       for i_search = 1, 4 do
+         adb_event(click_weixin_search_button)
          sleep(.1)
          top_window = adb_top_window()
          if top_window == W.weixinSearchActivity then
+            if wait_input_target_n_ok(1, W.weixinSearchActivity) then
+               adb_event("key space sleep .1 adb-tap 1008 154 sleep .1")
+               if wait_input_target_n_ok(5, W.weixinSearchActivity) then
+                  return
+               end
+            end
+
             log("exit from search by key back: %d %s ", i_search, top_window)
             if not wait_input_target_n_ok(5, W.weixinSearchActivity) then
-               if i_search == 4 and
-                  yes_or_no_p("本次（第 %d 次）打开微信首页的自动操作没有点出微信搜索框，再试一次？", depth + 1)
-               then
-                  return weixin_open_homepage(depth + 1)
+               if i_search == 4 then
+                  if yes_or_no_p("本次（第 %d 次）打开微信首页的自动操作没有点出微信搜索框，再试一次？", depth + 1)
+                  then
+                     return weixin_open_search(depth + 1)
+                  else
+                     error("用户取消了操作")
+                  end
                end
-               adb_event(click_weixin_search_button)
-            else
-               adb_event"key back sleep .1 key back sleep .1"
-               sleep(.1)
-               waiting_search = false
-               return
             end
          elseif top_window ~= '' and top_window ~= W.weixinLauncherActivity then
             log("exit the current '%s' by back key %d", top_window, i)
-            waiting_search = false
-         else
-            log("We are in %s when %d", top_window, i)
-         end
-         if not waiting_search then
+            for launcher_or_search = 1, 10 do
+               if top_window ~= '' then
+                  adb_event("key back")
+               end
+               adb_event"sleep .1"
+               top_window = adb_top_window()
+               log("got %s", top_window)
+               if top_window == W.weixinLauncherActivity or
+                  (top_window ~= '' and not top_window:match(W.weixinPackage))
+               then
+                  break
+               elseif top_window == W.weixinSearchActivity then
+                  if (depth < 5) then
+                     return weixin_open_search(depth + 1)
+                  end
+               end
+            end
+            break
+         elseif top_window == W.weixinLauncherActivity then
+            log("We are in %s when %d@%d", top_window, i_search, i)
             break
          end
       end
       log("exit the current '%s' by touching back botton %d", top_window, i)
       adb_event"88 170 sleep .1 88 170 sleep .1"
       sleep(.1)
-      adb_am("am start -n " .. W.weixinLauncherActivity)
    end
 end
-
-M.weixin_open_homepage = weixin_open_homepage
 
 string_strip = function(s)
    s = s:gsub("^%s+", "")
@@ -1523,17 +1547,18 @@ push_text = function(text)
    file:write(text)
    file:close()
    check_phone()
-   adb_push{path, '/sdcard/putclip.txt'}
+   adb_push{path, M.sdcard_putclip_path}
 end
 
 putclip_nowait = function(text)
    push_text(text)
    adb_start_service('com.bhj.setclip/.PutClipService')
+   M.need_wait_putclip = true
 end
 
 putclip = function(text)
    push_text(text)
-   adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', '/sdcard/putclip.txt')
+   adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', M.sdcard_putclip_path)
 end
 
 local check_file_push_and_renamed = function(file, md5, rename_to)
@@ -1779,8 +1804,8 @@ end
 
 adb_get_last_pic = function(which, remove)
    -- WHICH must be 'notes'
-   adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei get-last-note-pic 1", "/sdcard/putclip.txt")
-   local pic = adb_pipe("cat /sdcard/putclip.txt")
+   adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei get-last-note-pic 1", M.sdcard_putclip_path)
+   local pic = adb_pipe("cat " .. M.sdcard_putclip_path)
    pic = pic:gsub('^/storage/emulated/0', '/sdcard')
    adb_pull{pic, ("%slast-pic-%s.png"):format(M.writableDir, which)}
    if remove then
@@ -1811,20 +1836,9 @@ weixin_find_friend = function(friend_name, depth)
       need_confirm = true
    end
 
-   weixin_open_homepage()
-   for i_search = 1, 4 do
-      adb_event"adb-tap 786 116"
-      if i_search == 1 then putclip(friend_name) end
-      if not wait_input_target_n_ok(5, W.weixinSearchActivity) then
-         if i_search == 4 and
-            yes_or_no_p("本次（第 %d 次）找微信联系人操作没有点出微信搜索框，再来一次？", depth + 1)
-         then
-            return weixin_find_friend(friend_name, depth + 1)
-         end
-      else
-         break
-      end
-   end
+   putclip_nowait(friend_name)
+
+   weixin_open_search()
    adb_event"sleep .2 key scroll_lock sleep .5"
    if need_confirm then
       prompt_user("请确认哪个是你要找的联系人")
