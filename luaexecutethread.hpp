@@ -29,10 +29,13 @@ public:
     void load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
     void setVariableLocked(const QString& name, const QString& val);
     QString getVariableLocked(const QString& name, const QString& defaultVal = "");
+    void setProcessVarLocked(const QString& name, const QString& val);
+    QString getProcessVarLocked(const QString& name, const QString& defaultVal = "");
 
 private:
     QMutex mVariableMutex;
     QHash<QString, QString> mVariableHash;
+    static QHash<QString, QString> mProcessVarHash;
 
 signals:
     void gotSomeLog(const QString& key, const QString& val);

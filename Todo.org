@@ -21,3 +21,5 @@
    :LOGBOOK:
    - State "DONE"       from "TODO"       [2016-08-23 Tue 10:14]
    :END:
+
+** TODO 图片拖到QQ、微信按钮上后，要允许分享到朋友圈

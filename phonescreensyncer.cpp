@@ -13,9 +13,6 @@ PhoneScreenSyncer::PhoneScreenSyncer(QObject *parent) : QObject(parent)
 void PhoneScreenSyncer::syncScreen()
 {
     const char *screenFile = "wrench-screen.png";
-    if (gScreenCapJpg) {
-        screenFile = "wrench-screen.jpg";
-    }
 
 #ifdef Q_OS_WIN32
     qSystem(QString().sprintf("the-true-adb shell screencap /sdcard/%s", screenFile));

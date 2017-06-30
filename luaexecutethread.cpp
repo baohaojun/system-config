@@ -95,6 +95,30 @@ static int l_selectArg(lua_State* L)
     return 1;
 }
 
+static int l_wrench_get_variable(lua_State* L)
+{
+    QStringList args = l_getArgs(L);
+    if (args.length() != 1) {
+        luaL_argerror(L, 1, "takes 1 argument");
+    }
+    QString res = that->getVariableLocked(args[0]);
+    lua_pushstring(L, res.toUtf8().constData());
+    return 1;
+}
+
+static int l_wrench_get_proc_var(lua_State* L)
+{
+    QStringList args = l_getArgs(L);
+    if (args.length() != 1) {
+        luaL_argerror(L, 1, "takes 1 argument");
+    }
+    QString res = that->getProcessVarLocked(args[0]);
+    lua_pushstring(L, res.toUtf8().constData());
+    return 1;
+}
+
+QHash<QString, QString> LuaExecuteThread::mProcessVarHash;
+
 static int l_clickNotification(lua_State* L)
 {
     int n = luaL_len(L, -1);
@@ -260,12 +284,32 @@ void LuaExecuteThread::setVariableLocked(const QString& name, const QString& val
     mVariableMutex.unlock();
 }
 
+void LuaExecuteThread::setProcessVarLocked(const QString& name, const QString& val)
+{
+    mVariableMutex.lock();
+    mProcessVarHash[name] = val;
+    mVariableMutex.unlock();
+}
+
 QString LuaExecuteThread::getVariableLocked(const QString& name, const QString& defaultVal)
 {
     QString res;
     mVariableMutex.lock();
     if (mVariableHash.contains(name)) {
         res = mVariableHash[name];
+    } else {
+        res = defaultVal;
+    }
+    mVariableMutex.unlock();
+    return res;
+}
+
+QString LuaExecuteThread::getProcessVarLocked(const QString& name, const QString& defaultVal)
+{
+    QString res;
+    mVariableMutex.lock();
+    if (mProcessVarHash.contains(name)) {
+        res = mProcessVarHash[name];
     } else {
         res = defaultVal;
     }
@@ -291,6 +335,14 @@ static int l_wrench_set_variable(lua_State* L)
     QString name = QString::fromUtf8(lua_tolstring(L, 1, NULL));
     QString val = QString::fromUtf8(lua_tolstring(L, 2, NULL));
     that->setVariableLocked(name, val);
+    return 0;
+}
+
+static int l_wrench_set_proc_var(lua_State* L)
+{
+    QString name = QString::fromUtf8(lua_tolstring(L, 1, NULL));
+    QString val = QString::fromUtf8(lua_tolstring(L, 2, NULL));
+    that->setProcessVarLocked(name, val);
     return 0;
 }
 
@@ -348,6 +400,15 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_wrench_set_variable);
     lua_setglobal(L, "wrench_set_variable");
+
+    lua_pushcfunction(L, l_wrench_get_variable);
+    lua_setglobal(L, "wrench_get_variable");
+
+    lua_pushcfunction(L, l_wrench_set_proc_var);
+    lua_setglobal(L, "wrench_set_proc_var");
+
+    lua_pushcfunction(L, l_wrench_get_proc_var);
+    lua_setglobal(L, "wrench_get_proc_var");
 
     int error = luaL_loadstring(L, "wrench = require('wrench')") || lua_pcall(L, 0, 0, 0);
     if (error) {

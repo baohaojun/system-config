@@ -10,8 +10,6 @@
 #include "wrench.h"
 #include <QTime>
 
-bool gScreenCapJpg;
-
 AdbStateThread::AdbStateThread(QObject* parent)
     : QThread(parent)
 {
@@ -70,12 +68,6 @@ void AdbStateThread::onDisconnected()
 
     if (lastAdbState != "Online") {
         lastAdbState = "Online";
-        QString screencapHelp = adb_quote_shell(QStringList() << "screencap" << "-h");
-        if (screencapHelp.contains("jpg")) {
-            gScreenCapJpg = 1;
-        } else {
-            gScreenCapJpg = 0;
-        }
     }
 
     if (pingSocket) {

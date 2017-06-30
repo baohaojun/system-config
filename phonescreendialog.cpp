@@ -33,9 +33,6 @@ void qSystem(QString str)
 void PhoneScreenDialog::phoneScreenUpdated()
 {
     QString screenFile = "wrench-screen.png";
-    if (gScreenCapJpg) {
-        screenFile = "wrench-screen.jpg";
-    }
     QImage screen(screenFile);
     if (screen.isNull()) {
         qDebug() << "using" << screenFile;

@@ -1701,7 +1701,12 @@ wrench_config = function(passedConfigDirPath)
       check_file_push_and_renamed(androidvncserver, androidvncserver ..  ".md5", "androidvncserver")
       wrench_set_variable("using-vnc", "true")
    else
-      log("没有找到跟手机系统版本匹配的 androidvncserver，无法使用流畅手机屏幕同步（请找作者报个 Bug，或自己编译 androidvncserver。")
+      if wrench_get_proc_var{"vnc-warning"} ~= "done" then
+         prompt_user("没有找到跟你的手机系统 sdk 版本匹配的 %s，无法使用流畅手机屏幕同步。\n\n只能通过对屏幕截屏来同步显示，效率较低。\n\n请查看小扳手说明书了解详情。", androidvncserver)
+         wrench_set_proc_var("vnc-warning", "done")
+      end
+      log("没有找到跟手机系统版本匹配的 %s，无法使用流畅手机屏幕同步（请找作者报个 Bug，或自己编译 androidvncserver。",
+          androidvncserver)
       wrench_set_variable("using-vnc", "false")
    end
 
@@ -2435,8 +2440,12 @@ share_pics_to_app = function(pkg, cls, pics, ...)
    }
 
    sleep(.5)
-   if adb_top_window() == "smartisanos/smartisanos.app.DoppelgangerChooseActivity" then
-      adb_event"sleep 2 adb-tap 370 1727"
+   for try = 1, 5 do
+      if adb_top_window() == "smartisanos/smartisanos.app.DoppelgangerChooseActivity" then
+         adb_event"sleep .1 adb-tap 370 1727 sleep .1"
+      else
+         return
+      end
    end
 end
 
@@ -2445,9 +2454,25 @@ picture_to_weixin_share = function(pics, ...)
       pics = last_uploaded_pics
    end
    share_pics_to_app("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI", pics)
-   adb_event("sleep 1 adb-tap 228 401 sleep 1")
-   if not M.wait_input_target_n_ok(10, "^com.tencent.mm/com.tencent.mm.plugin.sns.ui") then
-      prompt_user("图片分享到微信朋友圈时出错：输入法没有在朋友圈分享页面激活")
+
+   local wait_chooser = true
+   local wait_input = true
+
+
+   for try = 1, 10 do
+      log("pic to wx: %d", try)
+      if wait_chooser and M.wait_top_activity_n_ok(1, "smartisanos/smartisanos.app.DoppelgangerChooseActivity") then
+         log("got app chooser @%d", try)
+         adb_event("adb-tap 341 1739 sleep .1")
+         wait_chooser = false
+      elseif wait_input and adb_top_window():match"^com.tencent.mm/com.tencent.mm.plugin.sns.ui" then
+         adb_event"adb-tap 228 401"
+         if not M.wait_input_target_n_ok(10, "^com.tencent.mm/com.tencent.mm.plugin.sns.ui") then
+            prompt_user("图片分享到微信朋友圈时出错：输入法没有在朋友圈分享页面激活")
+         else
+            break
+         end
+      end
    end
 end
 
