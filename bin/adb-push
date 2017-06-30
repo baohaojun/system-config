@@ -82,8 +82,8 @@ sub push_one_file($$)
         exit -1;
     }
     if ($true_dest =~ m/\.(png|jpg|mp4)$/i) {
-        print "scan $true_dest"
-        system("adb-scan-media", $true_dest);
+        print "scan $true_dest";
+        system("adb-scan-media", "-q", "$true_dest");
     }
 }
 
