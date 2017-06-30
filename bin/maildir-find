@@ -67,8 +67,14 @@ done
 
 ## end generated code
 
-subject=$(echo $subject | perl -npe 's/[^\w]|_/ /g; s/(\w+)/subject:$1/g')
-from=$(echo $from | perl -npe 's/[^\w]|_/ /g; s/(\w+)/from:$1/g')
+function handle-query-string() {
+    export prefix=$1
+    shift
+    echo "$@" | perl -npe 'BEGIN{use Encode;} $_ = decode_utf8 $_; s/[^\w\p{CJK}]|_/ /g; s/(\w+\p{CJK})/$ENV{prefix}:$1/g; $_ = encode_utf8 $_;'
+}
+
+subject=$(handle-query-string subject $subject)
+from=$(handle-query-string from $from)
 
 mu find $subject $from date:$after..$before --fields 'l d f s' | (
     while read file info; do
@@ -107,10 +113,10 @@ mu find $subject $from date:$after..$before --fields 'l d f s' | (
                 hint "请按回车键继续，或Ctrl-C退出" </dev/tty
                 ;;
             "打印每封 maildir 邮件的文件名")
-                echo "${maildir_file_map[$x]}"
+                echo "$file"
                 ;;
             "用 editor 一封一封的打开我看一下")
-                ew "${maildir_file_map[$x]}"
+                ew "$file"
                 ;;
             *)
                 if yes-or-no-p "用你输入的 $action 命令处理每一封邮件吗？" </dev/tty; then

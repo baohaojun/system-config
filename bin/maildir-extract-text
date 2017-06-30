@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+mkdir -p ~/tmp/$b0.$$
+
+. atexit rm -rf ~/tmp/$b0.$$
+
+for file in "$@"; do
+    file=$(readlink -f "$file")
+    if test ! -e "$file"; then
+        continue
+    fi
+
+    (
+        cd ~/tmp/$b0.$$
+        parts=$(
+            mu extract "$file" 2>&1 | grep '^\s*\d+\b.*text/plain' -P | pn 1
+             )
+        parts=$(string-join , $parts)
+        mu extract --parts "$parts" "$file"
+        for x in *; do
+            if test -e "$x"; then
+                cat "$x"
+                rm "$x"
+            fi
+        done
+    )
+done

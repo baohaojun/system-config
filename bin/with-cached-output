@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt i:cache-input='()'
+## end code-generator
+## start generated code
+TEMP=$(getopt -o i:h \
+              --long cache-input:,help \
+              -n $(basename -- $0) -- "$@")
+cache_input=()
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--cache-input)
+            cache_input=("${cache_input[@]}" "$2")
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--cache-input=CACHE_INPUT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+hash=$(echo "$@"|md5sum|pn 1)
+
+cache_output=~/.cache/system-config/$b0/${cache_input[0]}/"$hash"
+
+if test -e "$cache_output" && (
+        for i in "${cache_input[@]}"; do
+            if test "$i" -nt "$cache_output"; then
+                exit 1
+            fi
+        done
+        exit 0
+    );
+then
+    cat "$cache_output"
+else
+    mkdir -p "$(dirname "$cache_output")"
+    "$@" > "$cache_output".$$
+    mv "$cache_output".$$ "$cache_output"
+    cat "$cache_output"
+fi
+
