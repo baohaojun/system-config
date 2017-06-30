@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[小扳手的野望]]></title>
+    <link href="http://baohaojun.github.io/blog/2017/06/29/0-One-Wrench-To-Screw-Them-All.html"/>
+    <updated>2017-06-29T12:37:20+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2017/06/29/0-One-Wrench-To-Screw-Them-All.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[刚刚学到一招：简便 Emacs 折行]]></title>
     <link href="http://baohaojun.github.io/blog/2017/02/16/0-wrap-lines-with-emacs.html"/>
     <updated>2017-02-16T11:26:07+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/06/07/0-My-University-Entrance-Exam.html"/>
     <updated>2016-06-07T10:28:22+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/06/07/0-My-University-Entrance-Exam.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[最近读完了日文版的“海边的卡夫卡”]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/05/06/0-A-Chinese-programmer-learning-Japanese.html"/>
-    <updated>2016-05-06T21:00:44+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/05/06/0-A-Chinese-programmer-learning-Japanese.html</id>
   </entry>
 </feed>
