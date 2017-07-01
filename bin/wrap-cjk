@@ -16,7 +16,11 @@ while (<>) {
     $_ = decode_utf8 $_;
     $last_line_has_newline = chomp;
     if (m/^($cjk_re|\w)/) {
-        print "\n" unless ($last_is_cjk or $is_first_line);
+        if (m/^(\d+\.)/) {
+            print "\n"
+        } else {
+            print "\n" unless ($last_is_cjk or $is_first_line);
+        }
     } else {
         print "\n" unless $is_first_line;
     }

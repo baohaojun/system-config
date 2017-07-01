@@ -6,8 +6,13 @@ set -e
 
 git-interactive-add
 
-org_file=$1
-html_file=${1%.org}.html
+if [[ $1 =~ .org$ ]]; then
+    org_file=$1
+    html_file=${1%.org}.html
+elif [[ $1 =~ .html$ ]]; then
+    org_file="no-such-file"
+    html_file=$1
+fi
 
 emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
 (let ((org-file "%file%")
@@ -16,14 +21,15 @@ emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
   (package-initialize)
   (require 'ox-html)
   (require 'emojis)
-  (find-file "%file%")
-  (when custom-enabled-themes
-    (dolist (theme custom-enabled-themes)
-      (disable-theme theme)))
-  (org-html-export-to-html)
-  (when my-loaded-themes
-    (dolist (theme my-loaded-themes)
-      (load-theme theme)))
+  (when (string-match ".org$" org-file)
+    (when custom-enabled-themes
+      (dolist (theme custom-enabled-themes)
+        (disable-theme theme)))
+    (find-file org-file)
+    (org-html-export-to-html)
+    (when my-loaded-themes
+      (dolist (theme my-loaded-themes)
+        (load-theme theme))))
   (with-temp-buffer
     (insert-file html-file)
     (org2html-emojify)
@@ -49,10 +55,11 @@ perl -npe "$(cat <<'EOFf0ea35142ce4'
 EOFf0ea35142ce4
 )" -i "$html_file"
 
-css-inline "$html_file" > "$html_file".$$
-mv "$html_file".$$ "$html_file"
-
-of "$html_file"
+if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
+    css-inline "$html_file" > "$html_file".$$
+    mv "$html_file".$$ "$html_file"
+    of "$html_file"
+fi
 
 # Local Variables: #
 # eval: (read-only-mode 1) #

@@ -183,6 +183,14 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo -n "/scp:`whoami`@$LOCALIP:$FILE"
     }
 
+    if is-in-emacs && test $# = 0 -a "$GET_PATH_FOR_CURRENT_EMACS_FILE" != true; then
+        nohup setsid bash -c '
+            set -x; export GET_PATH_FOR_CURRENT_EMACS_FILE=true;
+            '$0' "$(emacs-current-file)"
+        ' $0 </dev/null > ~/tmp/wp.log 2>&1&
+        exit
+    fi
+
     export FILE=${1:-$PWD}
     export FILE=$(lookup-file "$FILE")
     if [[ "$FILE" =~ ^smb:// ]]; then

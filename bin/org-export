@@ -162,6 +162,20 @@ for x in "$@"; do
     export ORG_ORIGFILE_BASENAME=$(basename "$x")
 
     perl -npe 's|\Q$ENV{ORG_TEMPFILE_BASENAME}\E|$ENV{ORG_ORIGFILE_BASENAME}|g' $tf.html > "$x".html
+    if grep "emojify-mode" "$x".org -q; then
+        (
+            cd $(dirname "$x")
+            if test ! -e emojis; then
+                relative-link $(readlink -f ".git/../emojis") .
+            fi
+            org2html "$(basename "$x".html)"
+            (
+                cd emojis
+                git add .
+            ) >/dev/null 2>&1 || true
+        )
+
+    fi
     if test $# = 1 -a "$RUN_IN_PARALLEL" != true; then
         of "$x".html
     fi
