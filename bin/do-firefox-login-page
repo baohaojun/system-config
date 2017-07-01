@@ -1,5 +1,7 @@
 #!/bin/bash
 url=$(firefox-get-tab-url)
+
+sawfish-browser-input TAB TAB
 host=$(echo "$url" | perl -npe 's!^http.*?://!!; s!/.*!!')
 echo $host
 
