@@ -23,5 +23,11 @@
    :END:
 
 ** TODO 图片拖到QQ、微信按钮上后，要允许分享到朋友圈
+   :PROPERTIES:
+   :ID:       6c5a25cd-6da2-427e-86f4-32093c952df2
+   :END:
 
 ** TODO QQ聊天发送图片有概率失败
+   :PROPERTIES:
+   :ID:       838b2a2c-8386-4b97-9dd1-40b3954846fa
+   :END:
