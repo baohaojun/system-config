@@ -1,24 +1,31 @@
 #+title: 小扳手使用手册
-# bhj-tags: tool
+# bhj-tags: tool 
+# emojify-mode: 1
 * 小扳手介绍
 
 小扳手是一款开源软件，它让你可以通过 PC 连接、操作你的安卓手机，某种程度上，小扳手能把手机上安装的 QQ、微信等 App，变得比 Windows 下的 QQ 还方便的聊天软件。
 
 这里有一个小扳手的操作演示视频，看完后你会对小扳手有个更直观的了解：
 
-#+BEGIN_HTML
+#+BEGIN_HTML 
 <iframe width="640" height="360" src="https://www.youtube.com/embed/d9_5RMgUnXc" frameborder="0" allowfullscreen></iframe>
-#+END_HTML
+#+END_HTML 
 
-如果你不能访问 Youtube，我在腾迅视频也上传了一份，但是分辨率被压缩到了 480p［流汗］：
+如果你不能访问 Youtube，我在腾迅视频也上传了一份，但是分辨率被压缩到了 480p［流汗］，但将就还能看一下（至少比优酷强［咒骂］）：
 
-https://v.qq.com/x/page/h0519beib91.html
+https://v.qq.com/x/page/h0519beib91.html 
 
-* 小扳手使用方法
+* 小扳手使用手册
+
+小扳手的第一次使用需要做一些连接、配置操作，参考后面的 [[wrench-connection][小扳手的连接、配置]]。配好之后，就可以正常使用小扳手的各种功能了。
 
 这是小扳手的界面，下面会结合这个界面大致介绍一下小扳手的功能点：
 
 [[./../../../../images/wrench-main-windows.png][file:./../../../../images/wrench-main-windows.png]]
+
+这是手机上收到新的通知（比如 QQ、微信等的聊天消息）时，小扳手在 PC 上弹出的桌面通知：
+
+[[./../../../../images/Wrench-qq-notification.png][file:./../../../../images/Wrench-qq-notification.png]]
 
  - 文字输入区1⃣ :: 在这里输入、编辑想通过手机发送的文字
 
@@ -41,6 +48,10 @@ https://v.qq.com/x/page/h0519beib91.html
      [[./../../../../images/wrench-window-types.png][file:./../../../../images/wrench-window-types.png]]
 
      （以后你还会多次见到这个小扳手的选择输入界面，后面会做一下详细介绍）
+
+ - PC 桌面通知窗口 :: 弹出此通知时，点击此窗口（或按快捷键 Ctrl+F6），会在手机上点开对应的通知消息（比如如果是微信聊天消息，则会直接打开手机微信相应的聊天窗口）。
+
+                     如果没有及时点这个窗口，可以按🔔按钮或者再按 Ctrl-F6 显示所有历史消息。
  - 表情符按钮［Wrench-emoji］ :: 按此按钮可以输入表情符，输入的表情符在1⃣中与文字一起显示、发送
 
       注意小扳手支持 4 类表情符：
@@ -106,7 +117,7 @@ https://v.qq.com/x/page/h0519beib91.html
    1. 新增扩展、改动之后，点一下这个按钮就可以让小扳手使用新的配置
    2. 小扳手出错的话可能需要点此按钮恢复
 
- - 状态按钮［Wrench-red］🔕🔔 :: 显示小扳手连接状态，参考 [[wrench-connection]]。
+ - 状态按钮［Wrench-red］🔕🔔 :: 显示小扳手连接状态，参考 [[wrench-connection-status][三种状态按钮的说明]]。
 
  - 手机屏幕同步窗口2⃣ :: 手机屏幕同步，在此窗口内可以对手机进行简单的操作，以及一些更高级的功能。在此窗口内：
 
@@ -163,19 +174,19 @@ https://v.qq.com/x/page/h0519beib91.html
 
 - ［Wrench-emoji］ :: Alt-8
 - ［Wrench-phone-call］ :: Alt-7
-- ［Wrench-smartisan］ :: Ctrl-Enter
-- ［Wrench-com_sina_weibo_icon］ :: Ctrl-Alt-b
-- ［Wrench-com_tencent_mm_icon］ :: Ctrl-Alt-w
-- ［Wrench-qq］ :: Ctrl-Alt-q
+- ［Wrench-smartisan］ :: Ctrl-Enter 
+- ［Wrench-com_sina_weibo_icon］ :: Ctrl-Alt-b 
+- ［Wrench-com_tencent_mm_icon］ :: Ctrl-Alt-w 
+- ［Wrench-qq］ :: Ctrl-Alt-q 
 - 🔔 :: Ctrl-F6
 
 这是以前总结的一个小扳手 Emacs 风格快捷键清单：
 
-#+BEGIN_EXAMPLE
-    C-b: 向后移动一个字符（b for back），也可以用 Left
-    C-f: 向前移动一个字符（f for forth)，也可以用 Right
-    M-b: 向后移动一个单词，也可以用 C-Left
-    M-f: 向前移动一个单词，也可以用 C-Right
+#+BEGIN_EXAMPLE 
+    C-b: 向后移动一个字符（b for back），也可以用 Left 
+    C-f: 向前移动一个字符（f for forth)，也可以用 Right 
+    M-b: 向后移动一个单词，也可以用 C-Left 
+    M-f: 向前移动一个单词，也可以用 C-Right 
     C-p: 向上移动一行，Up (p for prev)
     C-n: 向下移动一行，Down (n for next)
     C-a: 移动到行首，Home (a 是第一个字母）
@@ -197,7 +208,7 @@ https://v.qq.com/x/page/h0519beib91.html
     Enter: 输入当前选中的表情
     Shift-Enter: 输入当前过滤出来的所有表情
 
-#+END_EXAMPLE
+#+END_EXAMPLE 
 
 
 * <<wrench-connection>> 小扳手的下载、安装、跟手机的连接
@@ -206,17 +217,28 @@ https://v.qq.com/x/page/h0519beib91.html
 
 下载下来之后，不需要安装，解压后直接双击运行即可。
 
+运行之后，第一次用小扳手连接你的手机时，需要进行以下操作（只有第一个操作是手动，后续的是小扳手自动执行的）：
+
+1. 确保 PC 与手机之间确保 adb 连接 
+2. 小扳手检测到 adb 手机设备后，自动安装小扳手辅助 apk 
+3. 小扳手自动安装小扳手输入法 apk、上传屏幕同步后台程序。
+4. 可以开始使用小扳手控制手机了
+
+   注：第一次把 PC 上输好的文字输到手机编辑窗口时，小扳手会提示要自动把输入法切换成“小扳手输入法”。不用担心，拔掉 USB 线后，手机会自动切换回你原来的那个输入法。
+
 ** adb 连接问题
 
 小扳手需要你的 PC 通过 usb 线用 adb 的方式连接到你的安卓手机，这个操作对一些以前没玩过 adb 的用户来讲可能有点难度，你可以通过搜索引擎输入 =你的手机型号 adb 驱动 连接= 等关键字搜一下相关方法。
 
+只有 Windows 下还需要安装驱动，其他 PC 系统不用。可以考虑使用 360 手机助手帮忙安装驱动，但用完后记得一定要删掉，因为——
+
 这里需要注意的是，小扳手自带了谷歌官方的 adb 程序，请确保你的系统里没有别的版本的 adb 程序，尤其是不能有那种不断重启的其他版本 adb 程序。如果是 Windows 系统的话，要注意各种手机助手，它们都自带 adb 功能，但版本都比较老，肯定会有兼容问题，最好把它们卸载了。在 Mac 系统下，锤子科技公司提供的 HandShaker 程序，某些较早的版本好像也自带 adb 功能，想使用小扳手的话，目前也没有好的解决办法，只能也建议卸载该软件。
 
-** adb 连上之后
+** <<wrench-connection-status>> adb 连上之后
 
 1. adb 连上之前，小扳手的状态按钮是［Wrench-red］，点击会提示你尚未连到手机。
 
-2. 手机第一次连上之后，小扳手会自动往你的手机里安装两个应用，请确保在手机上允许安装。
+2. 手机第一次连上之后，小扳手会自动往你的手机里安装两个应用（分别是小扳手辅助 App 和小扳手输入法 App），请确保在手机上允许安装。
 
    然后小扳手的状态按钮会变成🔕，这时候你可以正常使用小扳手的大部分功能，但是不能在 PC 上显示手机上收到的通知消息。
 
@@ -225,6 +247,10 @@ https://v.qq.com/x/page/h0519beib91.html
    这个操作可能要多试几次，并且中间重新拔插手机 USB 线试一下，最后小扳手的状态图标会变成🔔。
 
 4. 小扳手状态变成🔔后，就可以正常使用所有功能了，包括自动抢红包。
+
+   这时候如果手机上有未读通知，小扳手会全部接收并通过 PC 端桌面通知窗口提醒你。
+
+   此时按一下这个按钮，会用一个“选择输入对话框”显示从手机上收到的所有通知，双击某通知会在手机上处理此通知（比如打开相应的 App 或社交软件好友聊天窗口）——如果此消息尚未处理过的话。
 
 * 常见问题
 
@@ -253,7 +279,7 @@ Smartisan T1 的安卓 sdk 版本是 19，因此无法使用 VNC 屏
 解决的方法是重新打开、关闭一下通知机制（点［Wrench-thumbs_up］，选“switch-notification.lua”提供的功能在手机上打开通知设置界面）。
 
 
-** <<bugs-howto>> 怎么报 Bug
+** <<bugs-howto>> 怎么报 Bug 
 
 您可以在微博上给我私信（微博 ID：baohaojun），报 Bug 的时候注意：
 
