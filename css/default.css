@@ -2528,7 +2528,11 @@ a img {
   #sidebar {
     width:240px;
     float:right;
-    }
+  }
+  img.emoji {
+      width: 1.3em;
+      vertical-align: -0.35em;
+  }
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),   /* Webkit-based browsers */
@@ -2556,6 +2560,11 @@ only screen and (min-resolution: 192dpi) {             /* dppx fallback */
     #description {
         font:60%/1.2em "Trebuchet MS",Trebuchet,Arial,Verdana,Sans-serif;
         text-transform:uppercase;
+    }
+
+    img.emoji {
+        width: 3.9em;
+        vertical-align: -1.05em;
     }
 }
 
