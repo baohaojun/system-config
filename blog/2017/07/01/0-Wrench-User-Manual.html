@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/adwaita.css" type="text/css" />
+ <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -123,11 +123,12 @@ for the JavaScript code in this tag.
 </li>
 <li><a href="#sec-4">4. 常见问题</a>
 <ul>
-<li><a href="#sec-4-1">4.1. 小扳手一直显示<img class='emoji' src='emojis/BELL_WITH_CANCELLATION_STROKE.png' /></a></li>
-<li><a href="#sec-4-2">4.2. 小扳手一直显示<img class='emoji' src='emojis/red.png' /></a></li>
-<li><a href="#sec-4-3">4.3. 小扳手一直无法使用 VNC 屏幕同步，只能截屏屏幕同步</a></li>
-<li><a href="#sec-4-4">4.4. 小扳手状态已经显示<img class='emoji' src='emojis/BELL.png' />，但收不到通知，或者收到通知点击没有反应</a></li>
-<li><a href="#sec-4-5">4.5. 怎么报 Bug</a></li>
+<li><a href="#sec-4-1">4.1. 手机灭屏就不能用小扳手了怎么办？</a></li>
+<li><a href="#sec-4-2">4.2. 小扳手一直显示<img class='emoji' src='emojis/BELL_WITH_CANCELLATION_STROKE.png' /></a></li>
+<li><a href="#sec-4-3">4.3. 小扳手一直显示<img class='emoji' src='emojis/red.png' /></a></li>
+<li><a href="#sec-4-4">4.4. 小扳手一直无法使用 VNC 屏幕同步，只能截屏屏幕同步</a></li>
+<li><a href="#sec-4-5">4.5. 小扳手状态已经显示<img class='emoji' src='emojis/BELL.png' />，但收不到通知，或者收到通知点击没有反应</a></li>
+<li><a href="#sec-4-6">4.6. 怎么报 Bug</a></li>
 </ul>
 </li>
 </ul>
@@ -385,7 +386,7 @@ for the JavaScript code in this tag.
 </dl>
 </dd>
 
-<dt> Log 输出窗口<img class='emoji' src='emojis/DIGIT_THREE+COMBINING_ENCLOSING_KEYCAP.png' /> </dt><dd>小扳手运行过程中输出一些 Log。如果给我报 Bug 的话，要记得把这些 Log 发过来（参考 <a href="#bugs-howto">4.5</a>）。
+<dt> Log 输出窗口<img class='emoji' src='emojis/DIGIT_THREE+COMBINING_ENCLOSING_KEYCAP.png' /> </dt><dd>小扳手运行过程中输出一些 Log。如果给我报 Bug 的话，要记得把这些 Log 发过来（参考 <a href="#bugs-howto">4.6</a>）。
 </dd>
 
 <dt> 发送邮件页面<img class='emoji' src='emojis/DIGIT_FOUR+COMBINING_ENCLOSING_KEYCAP.png' /> </dt><dd>必须配合锤子科技手机使用，很久没有用了，不展开讲了。
@@ -613,8 +614,33 @@ for the JavaScript code in this tag.
 <h2 id="sec-4"><span class="section-number-2">4</span> 常见问题</h2>
 <div class="outline-text-2" id="text-4">
 </div><div id="outline-container-sec-4-1" class="outline-3">
-<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 小扳手一直显示<img class='emoji' src='emojis/BELL_WITH_CANCELLATION_STROKE.png' /></h3>
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 手机灭屏就不能用小扳手了怎么办？</h3>
 <div class="outline-text-3" id="text-4-1">
+<p>
+灭屏了的确没办法了，小扳手肯定不能再操作手机了。
+</p>
+
+<p>
+这里告诉大家一个小技巧，就是我自己用小扳手的时候的做法：
+</p>
+
+<ol class="org-ol">
+<li>手机屏幕熄灭时间选最长的那个
+</li>
+
+<li>开发者选项里有一个“充电时屏幕不熄灭”，给选上
+</li>
+</ol>
+
+<p>
+如果你担心这样做会影响电池寿命什么的，建议你再好好想想，一边是好玩的小扳手，另一边是一两千块钱也就用一两年的一部手机的电池有可能会变得不禁用那么一丢丢（好，可能是两丢丢），你怎么取舍<img class='emoji' src='emojis/smiley_32.png' /><img class='emoji' src='emojis/smiley_4.png' />。
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 小扳手一直显示<img class='emoji' src='emojis/BELL_WITH_CANCELLATION_STROKE.png' /></h3>
+<div class="outline-text-3" id="text-4-2">
 <ol class="org-ol">
 <li>小扳手的通知功能不支持 Smartisan T1，因为安卓版本有点太老了。请你看一下自己手机的 sdk 版本（<code>命令行上运行 =adb shell getprop ro.build.version.sdk</code>），最低要求是 21。
 </li>
@@ -625,18 +651,18 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-sec-4-2" class="outline-3">
-<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 小扳手一直显示<img class='emoji' src='emojis/red.png' /></h3>
-<div class="outline-text-3" id="text-4-2">
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 小扳手一直显示<img class='emoji' src='emojis/red.png' /></h3>
+<div class="outline-text-3" id="text-4-3">
 <p>
 如果 adb 连接没问题的话，我曾经碰到过手机上装的小扳手辅助应用太老，然后导致一直装不上新的版本。解决方法是把辅助应用的旧版本删了。
 </p>
 </div>
 </div>
 
-<div id="outline-container-sec-4-3" class="outline-3">
-<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 小扳手一直无法使用 VNC 屏幕同步，只能截屏屏幕同步</h3>
-<div class="outline-text-3" id="text-4-3">
+<div id="outline-container-sec-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> 小扳手一直无法使用 VNC 屏幕同步，只能截屏屏幕同步</h3>
+<div class="outline-text-3" id="text-4-4">
 <p>
 用 VNC 屏幕同步的话，比截屏屏幕同步要流畅很多，但它跟通知机制一样，需要 sdk 版本 21 以上。
 </p>
@@ -651,9 +677,9 @@ Smartisan T1 的安卓 sdk 版本是 19，因此无法使用 VNC 屏
 </div>
 </div>
 
-<div id="outline-container-sec-4-4" class="outline-3">
-<h3 id="sec-4-4"><span class="section-number-3">4.4</span> 小扳手状态已经显示<img class='emoji' src='emojis/BELL.png' />，但收不到通知，或者收到通知点击没有反应</h3>
-<div class="outline-text-3" id="text-4-4">
+<div id="outline-container-sec-4-5" class="outline-3">
+<h3 id="sec-4-5"><span class="section-number-3">4.5</span> 小扳手状态已经显示<img class='emoji' src='emojis/BELL.png' />，但收不到通知，或者收到通知点击没有反应</h3>
+<div class="outline-text-3" id="text-4-5">
 <p>
 这种情况在锤子手机上因为有应用双开的功能，导致系统里有两路通知，一路是给正常的微信、QQ 用的，另一路是给“克隆”出来的微信、QQ 等 App 用的，小扳手有时候会搞错，但目前还查不出来什么原因。
 </p>
@@ -665,9 +691,9 @@ Smartisan T1 的安卓 sdk 版本是 19，因此无法使用 VNC 屏
 </div>
 
 
-<div id="outline-container-sec-4-5" class="outline-3">
-<h3 id="sec-4-5"><span class="section-number-3">4.5</span> <a id="bugs-howto" name="bugs-howto"></a> 怎么报 Bug</h3>
-<div class="outline-text-3" id="text-4-5">
+<div id="outline-container-sec-4-6" class="outline-3">
+<h3 id="sec-4-6"><span class="section-number-3">4.6</span> <a id="bugs-howto" name="bugs-howto"></a> 怎么报 Bug</h3>
+<div class="outline-text-3" id="text-4-6">
 <p>
 您可以在微博上给我私信（微博 ID：baohaojun），报 Bug 的时候注意：
 </p>
