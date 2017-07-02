@@ -2,6 +2,12 @@
 
 set -e
 
+shopt -s nocasematch
+
+if echo $SHELLOPTS | grep -q xtrace; then
+    exec 2> ~/tmp/sawfish-start-special.log
+fi
+
 special_tag=$1
 program=$2
 window_class=${3:-$program}
@@ -33,13 +39,15 @@ if test "$(sawfish-client -e "$sawfish_find_tagged_window_command")" = $special_
     exit 0
 else
     $program&
+    window_match=
     for x in $(seq 1 30); do
         if [[ $(sawfish-client -e '(window-class (input-focus))') =~ $window_class ]]; then
+            window_match=-y
             break
         fi
-        sleep .1
+        sleep .5
     done
-    if EMACS=t yes-or-no-p -y "Is the top window special for $special_tag"; then
+    if EMACS=t yes-or-no-p $window_match "Is the top window special for $special_tag"; then
         sawfish_apply_tag_command=$(
             cat <<EOF
 ; {%sawfish%}
