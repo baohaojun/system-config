@@ -2561,11 +2561,6 @@ only screen and (min-resolution: 192dpi) {             /* dppx fallback */
         font:60%/1.2em "Trebuchet MS",Trebuchet,Arial,Verdana,Sans-serif;
         text-transform:uppercase;
     }
-
-    img.emoji {
-        width: 3.9em;
-        vertical-align: -1.05em;
-    }
 }
 
 /* Headings
