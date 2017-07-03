@@ -1,9 +1,16 @@
 #!/bin/bash
 
-if test "$#" = 1 && is-in-emacs; then
-    nohup setsid bash -c 'set -x; out-of-emacs bash -x psync "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
-    exit
+if is-in-emacs; then
+    if test $# = 0; then
+        set -- cmdev
+    fi
+
+    if test "$#" = 1; then
+        nohup setsid bash -c 'set -x; out-of-emacs bash -x psync "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
+        exit
+    fi
 fi
+
 
 if test $# = 0 -o $# = 1; then
     cd ~/system-config/
