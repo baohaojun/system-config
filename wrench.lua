@@ -95,6 +95,7 @@ W.qqChatActivity2 = "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashAc
 W.qqSplashActivity = W.qqChatActivity2
 W.qqAlbumList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity"
 W.qqCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.FlowCameraPtvActivity2"
+W.qqNewCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.NewFlowCameraActivity"
 W.qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
 W.qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
 W.qqPhotoPreview = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoPreviewActivity"
@@ -2768,6 +2769,30 @@ local function picture_to_dingding_chat(pics, ...)
    end
 end
 
+M.get_out_of_windows = function(windows, ...)
+   if type(windows) ~= "table" then
+      windows = {windows, ...}
+   end
+
+   for i = 1, 20 do
+      if not member(adb_top_window(), windows) then
+         return
+      end
+      sleep(.2)
+   end
+
+   prompt_user("试了很多次，还是在 %s 里，小扳手的自动化脚本可能有问题，请检查一下", adb_top_window())
+   error("Failed to get out of %s", join(", ", windows))
+end
+
+M.need_confirm = function(fmt, ...)
+   if yes_or_no_p(fmt, ...) then
+      return true
+   else
+      return false
+   end
+end
+
 local function picture_to_qq_chat(pics, ...)
    if type(pics) ~= "table" then
       pics = {pics, ...}
@@ -2780,25 +2805,23 @@ local function picture_to_qq_chat(pics, ...)
    for i = 1, #pics do
       local target = pics[i]
       if i == 1 then
-         for n = 1,50 do
+         for n = 1,10 do
             local window = adb_top_window()
             if window == W.qqChatActivity or window == W.qqChatActivity2 then
                chatWindow = window
                adb_event(image_button .. " sleep 2 adb-tap 70 1873")
-               local top_window = wait_top_activity(W.qqAlbumList, W.qqCameraFlow)
+               local top_window = wait_top_activity(W.qqAlbumList, W.qqCameraFlow, W.qqNewCameraFlow)
 
-               if top_window == W.qqCameraFlow then
+               if top_window == W.qqCameraFlow or top_window == W.qqNewCameraFlow then
                   log("get W.qqCameraFlow")
-                  while adb_top_window() == W.qqCameraFlow do
-                      log("still got W.qqCameraFlow")
-                      adb_event"key back sleep .5"
-                  end
+                  get_out_of_windows(W.qqCameraFlow, W.qqNewCameraFlow)
                   image_button = ('380 %d'):format(1920 - ime_height - 50)
                elseif top_window ~= W.qqAlbumList then
                   log("Wait for W.qqAlbumList failed")
+                  prompt_user("小扳手自动化脚本没有点到QQ像册界面，无法继续执行发图片功能")
                   return
-               else
-                  adb_event("sleep .5 adb-tap 329 336")
+               else -- qqAlbumList
+                  adb_event("sleep .5 adb-tap 329 336") -- 点到第一个像册里去
                end
             elseif window == W.qqPhoteList then
                adb_event("adb-tap 171 427")
@@ -2822,8 +2845,12 @@ local function picture_to_qq_chat(pics, ...)
       sleep(.1)
       adb_event(i_button)
    end
-   adb_event("sleep .1 adb-tap 477 1835 sleep .1 adb-tap 898 1840")
-   wait_top_activity(chatWindow)
+   adb_event("sleep .1 adb-tap 477 1835")
+   if need_confirm("请确认是不是要发送这些图片？") then
+      adb_event"adb-tap 898 1840"
+      wait_top_activity(chatWindow)
+      adb_event("key back")
+   end
 end
 
 local function picture_to_weibo_chat(pics, ...)
@@ -3231,6 +3258,7 @@ M.wrenchThumbUp = function()
 end
 
 M.shift_click_notification = function(key, pkg, title, text)
+   -- log("click %s, %s, %s, %s", key, pkg, title, text)
    if pkg == "com.tencent.mm" then
       title = title:gsub("%.", " ")
       wrench_call(title .. "@@wx")
@@ -3435,6 +3463,10 @@ M.notification_arrived = function(key, pkg, title, text)
       end
    end
    -- log("got %s(%s): %s(%s)", key, pkg, title, text)
+   if pkg == "com.android.mms" and text:match("验证码") then
+      log("%s", text:match("验证码.-[0-9]+"))
+   end
+
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
       clickForWeixinMoney()
