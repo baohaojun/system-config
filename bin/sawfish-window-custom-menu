@@ -4,16 +4,29 @@
 
 set -e
 
+if echo $SHELLOPTS | grep -q xtrace; then
+    exec 2> ~/tmp/sawfish-window-custom-menu.org.log
+fi
+
 #!/bin/bash
 top_window=$(sawfish-top-window)
+top_window=${top_window,,}
 
 declare -A window_operations
 
 window_operations[kdenlive-fade-effects]="M-i e f"
 window_operations[kdenlive-blur-effects]="M-i e b"
 
+window_operations[wrench-send-a-key-to-phone]=function
+
 window_operations[*-get-cursor-pos-in-window]=function
 window_operations[*-get-current-window-size]=function
+
+function send-a-key-to-phone() {
+    key=$(sawfish-get-key)
+    bhj-notify hello "key is $key"
+    adb-key "$key"
+}
 
 function get-current-window-size() {
     sawfish-client -e '(window-dimensions (input-focus))'
@@ -44,11 +57,14 @@ operations=$(
 
 operation=$(EMACS=t select-args -o -p "What operation do you want for $top_window?" -- $operations)
 
-if test "${window_operations[$top_window-$operation]}"; then
-    for x in ${window_operations[$top_window-$operation]}; do
-        sawfish-send-focused-window-event "$x"
-    done
-    exit
+func_or_key="${window_operations[$top_window-$operation]}"
+if test "$func_or_key" = function; then
+    $operation
+elif test "$func_or_key"; then
+     for x in ${window_operations[$top_window-$operation]}; do
+         sawfish-send-focused-window-event "$x"
+     done
+     exit
 fi
 
 if test "${window_operations[*-$operation]}"; then

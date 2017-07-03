@@ -1,13 +1,32 @@
 #!/bin/bash
 
-prompt=
-TEMP=$(getopt -o p: --long prompt: -n $(basename $0) -- "$@")
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:prompt='"请按一下你想让 Sawfish 读取的按键"'
+## end code-generator
+## start generated code
+TEMP=$(getopt -o p:h \
+              --long prompt:,help \
+              -n $(basename -- $0) -- "$@")
+prompt="请按一下你想让 Sawfish 读取的按键"
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
         -p|--prompt)
             prompt=$2
             shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--prompt=PROMPT'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -18,5 +37,8 @@ while true; do
             ;;
     esac
 done
+
+
+## end generated code
 
 sawfish-client -e '(event-name (read-event "'"$prompt"'"))' | perl -npe 's/^"|"$//g'

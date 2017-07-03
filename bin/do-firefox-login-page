@@ -9,10 +9,19 @@ user=$(get-authinfo -h $host -u \?)
 
 declare -A search_for_map
 declare -A n_stab_map
+declare -A n_before_search_taps_map
+
 search_for_map[i.smartisan.com]="登录"
 search_for_map[mp.weixin.qq.com]="记住帐号"
+n_before_search_taps_map[mp.weixin.qq.com]=2
 n_stab_map[i.smartisan.com]=3
 n_stab_map[mp.weixin.qq.com]=4
+
+if test "${n_before_search_taps_map[$host]}"; then
+    for n in $(seq 1 ${n_before_search_taps_map[$host]}); do
+        sawfish-browser-input TAB
+    done
+fi
 
 sleep .2
 if test "$host" = chipcode.qti.qualcomm.com; then
@@ -32,8 +41,13 @@ elif test "${search_for_map[$host]}"; then
 else
     sawfish-search-in-firefox user
 fi
+
+if ! yes-or-no-p -y "是不是已经找到了用户名输入窗口？"; then
+    bhj-notify "do-firefox-login-page" "请手动调整到用户名输入窗口，然后把鼠标滑到屏幕最右侧"
+    sawfish-wait-for-start
+fi
+
 putclip "$user"
-bhj-notify "ff-login" "$user"
 sleep .8
 sawfish-browser-input TAB DEL C-v
 putclip $(get-authinfo $host $user)
