@@ -3258,7 +3258,7 @@ M.wrenchThumbUp = function()
 end
 
 M.shift_click_notification = function(key, pkg, title, text)
-   -- log("click %s, %s, %s, %s", key, pkg, title, text)
+   log("click %s, %s, %s, %s", key, pkg, title, text)
    if pkg == "com.tencent.mm" then
       title = title:gsub("%.", " ")
       wrench_call(title .. "@@wx")
@@ -3463,8 +3463,14 @@ M.notification_arrived = function(key, pkg, title, text)
       end
    end
    -- log("got %s(%s): %s(%s)", key, pkg, title, text)
-   if pkg == "com.android.mms" and text:match("验证码") then
-      log("%s", text:match("验证码.-[0-9]+"))
+   if pkg == "com.android.mms" then
+      verification_codes = {"验证码", "驗證碼"}
+      for i = 1, #verification_codes do
+         if text:match(verification_codes[i]) then
+            log("%s", text:match(verification_codes[i] .. ".-[0-9]+"))
+            return
+         end
+      end
    end
 
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
