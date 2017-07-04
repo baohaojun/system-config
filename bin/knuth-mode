@@ -24,23 +24,30 @@ fi
 
 mkdir -p ~/src/github/private-config/knuth-mode
 cat <<EOF > $org_target
-# Local Variables: #
-# eval: (read-only-mode 0) #
-# End: #
-
 ** 最终的版本：
 
-   #+name: the-ultimate-script
-   #+BEGIN_SRC sh :tangle $target :comments link :shebang "#!/bin/bash" :noweb yes
-   set -e
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
 
-   $(cat $target)
-   # Local Variables: #
-   # eval: (read-only-mode 1) #
-   # End: #
-   #+END_SRC
+#+name: old-code
+#+BEGIN_SRC sh
+$(cat $target|perl -npe 's/^/  /')
+#+END_SRC
 
-   #+results: the-ultimate-script
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle $target :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
 EOF
 
 e $org_target
