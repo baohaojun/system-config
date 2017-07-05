@@ -110,6 +110,9 @@ if test "$do_fetch" = true; then
             kill $$
         }
 
+        if test "$fetch_only" = true && ! git-is-ancestor $(git-remote-branch) HEAD; then
+            touch .git/sc-not-merged
+        fi
     )&
     if test "$fetch_only" != true; then
         wait
