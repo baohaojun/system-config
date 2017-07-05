@@ -263,5 +263,4 @@ if test -n "$has_python3"; then
 fi
 alias cow='cp --reflink=always -a'
 shopt -s nocaseglob
-shopt -s nocasematch
 shopt -s histappend
