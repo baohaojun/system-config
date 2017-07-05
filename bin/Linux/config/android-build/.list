@@ -42,6 +42,7 @@ lua5.2
 mysql-client
 openjdk-7-jdk
 openssh-client
+pkg-config
 policycoreutils
 python3
 python-mysqldb

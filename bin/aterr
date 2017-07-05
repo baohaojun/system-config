@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+if test "$#" = 0; then
+    trap - ERR
+    return
+fi
+
+atexit_args=(
+    "$@"
+)
+function atexit() {
+    "${atexit_args[@]}"
+}
+
+trap atexit ERR

@@ -118,7 +118,7 @@ if ! is-jenkins; then
     (
         cd ~/system-config/bin/Linux/config/android-build
         for x in *; do
-            if ! dpkg-query -l $x >/dev/null 2>&1; then
+            if ! dpkg-query -l $x | grep -P "^ii\s+\Q$x\E" -q; then
                 hint "你需要安装 $x 程序，可能需要输入sudo密码"
                 install-pkgs android-build
                 exit
