@@ -63,7 +63,7 @@ end
 
 is_useful_notification = function(key, pkg, title, text, ticker)
    if private_config.is_useful_notification and
-   private_config.is_useful_notification(key, pkg, title, text) == 0 then
+   private_config.is_useful_notification(key, pkg, title, text, ticker) == 0 then
       return 0
    end
 
