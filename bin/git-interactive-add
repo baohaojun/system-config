@@ -173,6 +173,16 @@ for x in "$@" $(
 
         if test "$out" = yes; then
             git add "$x"
+            if [[ $x =~ \.org$ ]] && grep 'BEGIN_SRC.*:tangle '-i "$x" -q; then
+                (
+                    tangle_target=$(grep -o ':tangle\s+\S+\s+' -P "$x" -i |pn 2)
+                    if test -e "$tangle_target" -a "$x" -nt "$tangle_target" && yes-or-no-p -y "Your .org knuth-mode file newer than tangled version, export?"; then
+                        emacsclient -e '(progn (find-file "$x") (org-babel-tangle))'
+                        git-interactive-add "$x"
+                    fi
+                )
+            fi
+
             touch $(lookup-file -e .git)/sc-not-merged
         elif test "${out:0:1}" != @; then
             git add "$x"
