@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: readonly
+# key: readonly
+# --
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
