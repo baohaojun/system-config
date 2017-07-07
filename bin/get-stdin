@@ -53,6 +53,10 @@ else
     cat > $tmp
 fi
 
+cat <<EOF >> $tmp
+
+EOF
+
 echo -n Edit it... 1>&2
 edit-wait $tmp >/dev/null 2>&1
 echo " done" 1>&2

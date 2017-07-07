@@ -15,7 +15,12 @@ else
 fi
 
 org_target=$(
-    echo ~/src/github/private-config/knuth-mode/$(basename $target).org
+    if [[ $target =~ /smartcm/ ]]; then
+        knuth_repo=smartcm
+    else
+        knuth_repo=private-config
+    fi
+    echo ~/src/github/$knuth_repo/knuth-mode/$(basename $target).org
           )
 if test -e "$org_target"; then
     e $org_target

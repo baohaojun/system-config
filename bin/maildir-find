@@ -67,6 +67,10 @@ done
 
 ## end generated code
 
+if [[ $after =~ ^- ]]; then
+    after=$(today $after)
+fi
+
 function handle-query-string() {
     export prefix=$1
     shift

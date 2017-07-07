@@ -38,7 +38,7 @@ fi
 
 verbose=
 config=
-keep=-k
+keep=
 make_dir=
 . ~/system-config/etc/.fix-java-version
 TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
@@ -47,7 +47,7 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
         -k)
-            keep=
+            keep=-k
             shift
             ;;
         -c)
