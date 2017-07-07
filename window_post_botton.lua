@@ -147,6 +147,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyPrepareUI'] = 
 map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.ContactInfoUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.SayHiWithSnsPermissionUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.remittance.ui.RemittanceUI'] = 'weixin-chat'
+map['com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSAddFriendUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSChattingTalkerUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.setting.ui.setting.SettingsAccountInfoUI'] = 'manual-post'
