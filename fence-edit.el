@@ -72,6 +72,12 @@ that list, the `fence-edit-default-mode' will be used."
            (choice (integer "Capture group number")
                    (symbol "Language name")))))
 
+(defconst fence-edit-window-layout 48529384
+  "Register in which to save the window layout.
+
+Registers are chars, so this is set to an int that is not likely to be
+used by anything else.")
+
 (defvar-local fence-edit-previous-mode nil
   "Mode set before narrowing, restored upon widening.")
 
@@ -191,6 +197,7 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
                 ovl (make-overlay beg end)
                 edit-buffer (generate-new-buffer
                              (fence-edit--make-edit-buffer-name (buffer-name) lang)))
+          (window-configuration-to-register fence-edit-window-layout)
           (if (string-match-p (rx "\n" string-end) code)
               (setq code (replace-regexp-in-string (rx "\n" string-end) "" code)))
           (overlay-put ovl 'edit-buffer edit-buffer)
@@ -225,7 +232,7 @@ The edit buffer is expected to be the current buffer."
   (fence-edit--guard-edit-buffer)
   (let ((buffer (current-buffer)))
     (switch-to-buffer-other-window dest-buffer)
-    (delete-other-windows)
+    (jump-to-register fence-edit-window-layout)
     (with-current-buffer buffer
       (set-buffer-modified-p nil))
     (kill-buffer buffer)))
