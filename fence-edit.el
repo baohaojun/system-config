@@ -153,10 +153,9 @@ Return nil if no block is found."
                   (re-search-backward re-start nil t))
               (progn
                 (setq start (fence-edit--next-line-beginning-position-at-pos (match-end 0))
-                      lang (cond ((integerp lang-id)
-                                  (match-string lang-id))
-                                 ((functionp lang-id)
-                                  (funcall lang-id))))
+                      lang (if (integerp lang-id)
+                               (match-string lang-id)
+                             (symbol-name lang-id)))
                 (if (and (and (goto-char (match-end 0))
                               (re-search-forward re-end nil t))
                          (>= (match-beginning 0) pos))
