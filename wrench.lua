@@ -595,6 +595,12 @@ M.vnc_scroll = function(key, mod)
    local real_height = tonumber(real_width:match('x(%d+)'))
    local real_width = tonumber(real_width:match('(%d+)x'))
 
+   if real_width > real_height then
+      real_width, real_height = default_height, default_width
+   else
+      real_width, real_height = default_width, default_height
+   end
+
    local x, y, old_x, old_y
    local x_delta = 0
    local y_delta = 0
