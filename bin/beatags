@@ -28,6 +28,9 @@ for x in $db_dir/.java-fallback.*; do
             cd -P "$x"
             db_dir=$PWD
             source_dir=${db_dir#*/.cache/system-config/for-code-reading}
+            if test ! -d "$source_dir"; then
+                exit 0
+            fi
             cd $source_dir >/dev/null 2>&1
             export DOING_FALLBACKS=true
             beatags "$@" | perl -npe 's,(.*?\s+\S+\s+\d+\s+)(\S+),$1'"$source_dir"'/$2,'
