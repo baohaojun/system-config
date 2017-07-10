@@ -1,5 +1,7 @@
 #!/bin/bash
 
+memory=$(free | grep ^Mem: | pn 2)
+ulimit -v $((memory / 2))
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt ttest kkill 1one-phone

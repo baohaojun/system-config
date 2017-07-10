@@ -57,10 +57,18 @@ void AdbStateThread::onDisconnected()
     QStringList args1 = QStringList() << "sh" << "-c" << "if test \"$(getprop sys.boot_completed)\" = 1; then { echo -n Lin && echo -n ux; }; fi";
 
 
-    QString uname = adb_quote_shell(args1);
+    QStringList uname_and_error = AdbClient::doAdbShellWithStderr(shell_quote(args1));
+    QString uname = uname_and_error[0];
+
     static QString lastAdbState;
     emit adbStateUpdate("Offline");
     if (!uname.contains("Linux")) {
+        if (uname_and_error.length() > 1) {
+            emit adbStateInfo("adb", uname_and_error[1]);
+        }
+        if (lastAdbState != "Offline") {
+            qDebug() << "uname: " << uname;
+        }
         lastAdbState = "Offline";
         mConnectTimer->start(1000);
         return;
@@ -124,7 +132,7 @@ void AdbStateThread::onDisconnected()
         connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));
     }
 
-    static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");
+    QString adb_serial = AdbClient::getAdbSerial();
 
     if (adb_serial.isEmpty()) {
         AdbClient::doAdbForward("host:forward:tcp:28888;localabstract:Wrench");
@@ -203,13 +211,18 @@ QString shell_quote(const QString& str)
     return res;
 }
 
-QString adb_quote_shell(const QStringList& args)
+QStringList shell_quote(const QStringList& args)
 {
     QStringList qargs;
     foreach (const QString& arg, args) {
         qargs << shell_quote(arg);
     }
-    return AdbClient::doAdbShell(qargs);
+    return qargs;
+}
+
+QString adb_quote_shell(const QStringList& args)
+{
+    return AdbClient::doAdbShell(shell_quote(args));
 }
 
 QString getExecutionOutput(const QString& cmd)

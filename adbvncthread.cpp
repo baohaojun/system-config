@@ -10,6 +10,7 @@
 #include "wrench.h"
 #include "wrenchext.h"
 #include <QTime>
+#include "adbclient.h"
 
 AdbVncThread::AdbVncThread(QObject* parent)
     : QThread(parent)
@@ -85,7 +86,7 @@ void AdbVncThread::onDisconnected()
         connect(mAdbVncCmd->getSock(), SIGNAL(readChannelFinished()), this, SLOT(onDisconnected()), Qt::QueuedConnection);
     }
 
-    static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");
+    QString adb_serial = AdbClient::getAdbSerial();
 
     if (adb_serial.isEmpty()) {
         AdbClient::doAdbForward("host:forward:tcp:5901;tcp:5901");
@@ -100,3 +101,9 @@ void AdbVncThread::run()
     QTimer::singleShot(0, this, SLOT(onDisconnected()));
     exec();
 }
+
+
+
+
+
+

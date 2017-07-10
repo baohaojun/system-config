@@ -46,15 +46,18 @@ public:
     void dropEvent(QDropEvent *event);
     void changeEvent(QEvent *event);
 
+private:
+    QString selectArgs(const QString& prompt, const QStringList& args);
+
 public slots:
     void handleNetworkData(QNetworkReply*);
     void adbStateUpdated(const QString& state);
     void onInfoUpdate(const QString& key, const QString& val);
-    void onSelectArgs(const QStringList& args);
+    void onSelectArgsForLua(const QStringList& args);
+
     void onSelectApps();
     void onShowNotifications();
     void startTask(const QString& task);
-    void on_argSelected(const QString& arg);
     void on_appSelected(const QString& app);
     void moveVncMainWin();
     void moveVncMainWinWhenMoving();
@@ -170,7 +173,6 @@ private:
 
     QMap<QString, QString> mMmsReceiverMap;
 
-    DialogGetEntry* mSelectArgDialog;
     void createTrayIcon();
     void closeEvent(QCloseEvent *event);
     void showEvent(QShowEvent *event);

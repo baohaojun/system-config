@@ -95,6 +95,22 @@ static int l_selectArg(lua_State* L)
     return 1;
 }
 
+static int l_wrench_get_adb_devices(lua_State* L)
+{
+
+    QStringList adbDevices = AdbClient::doAdbDevices();
+    if (adbDevices.size() == 0)
+        return 0;
+
+    lua_createtable(L, adbDevices.size(), 0);
+    for (int i = 0; i < adbDevices.size(); i++) {
+        lua_pushinteger(L, i + 1);
+        lua_pushstring(L, adbDevices[i].toUtf8().constData());
+        lua_settable(L, -3);
+    }
+    return 1;
+}
+
 static int l_wrench_get_variable(lua_State* L)
 {
     QStringList args = l_getArgs(L);
@@ -289,6 +305,12 @@ void LuaExecuteThread::setProcessVarLocked(const QString& name, const QString& v
     mVariableMutex.lock();
     mProcessVarHash[name] = val;
     mVariableMutex.unlock();
+
+    if (name == "ANDROID_SERIAL") {
+        if (val != AdbClient::getAdbSerial()) {
+            AdbClient::setAdbSerial(val);
+        }
+    }
 }
 
 QString LuaExecuteThread::getVariableLocked(const QString& name, const QString& defaultVal)
@@ -370,6 +392,9 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_showNotifications);
     lua_setglobal(L, "show_notifications");
+
+    lua_pushcfunction(L, l_wrench_get_adb_devices);
+    lua_setglobal(L, "adb_devices");
 
     lua_pushcfunction(L, l_adb_push);
     lua_setglobal(L, "qt_adb_push");
@@ -461,6 +486,7 @@ LuaExecuteThread::LuaExecuteThread(QObject* parent)
       mQuit(false),
       wrenchSock(NULL)
 {
+    ignoreOkScripts << "notification_arrived";
 }
 
 LuaExecuteThread::~LuaExecuteThread()
@@ -474,7 +500,12 @@ void LuaExecuteThread::addScript(QStringList script)
 {
     extern QString prompt_user(const QString &info, QMessageBox::StandardButtons buttons = QMessageBox::Ok);
     if (!this->isRunning()) {
-        prompt_user("后台已停止运行，无法执行此动作，请连接手机或点一下设置按钮: " + script.join(", "));
+        if (ignoreOkScripts.contains(script[0])) {
+            // do nothing
+        } else {
+            prompt_user("后台已停止运行，无法执行此动作，请连接手机或点一下设置按钮: " + script.join(", "));
+        }
+        return;
     }
 
     if (this != that) {

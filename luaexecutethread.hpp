@@ -36,6 +36,7 @@ private:
     QMutex mVariableMutex;
     QHash<QString, QString> mVariableHash;
     static QHash<QString, QString> mProcessVarHash;
+    QStringList ignoreOkScripts;
 
 signals:
     void gotSomeLog(const QString& key, const QString& val);

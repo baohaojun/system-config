@@ -5,7 +5,7 @@
 #include <QStringList>
 #include <QTcpSocket>
 
-extern const char* __adb_serial;
+extern volatile const char* __adb_serial;
 
 #define htoll(x) (x)
 #define ltohl(x) (x)
@@ -132,6 +132,7 @@ public:
     AdbClient();
     ~AdbClient();
 
+    static QStringList doAdbShellWithStderr(const QStringList& cmdAndArgs);
     static QString doAdbShell(const QStringList& cmdAndArgs);
     static QString doAdbShell(const QString& cmdLine);
     static AdbClient* doAdbPipe(const QStringList& cmdAndArgs);
@@ -140,7 +141,10 @@ public:
     static bool doAdbPull(const QString& rptah, const QString& lpath);
     static bool doAdbPush(const QString& lpath, const QString& rpath);
     static int doAdbKill();
+    static QStringList doAdbDevices();
     static int doAdbForward(const QString& forwardSpec);
+    static void setAdbSerial(const QString& ser);
+    static QString getAdbSerial();
 };
 
 #endif // ADBCLIENT_H

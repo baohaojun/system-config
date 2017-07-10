@@ -16,6 +16,13 @@ public:
     explicit DialogGetEntry(FilteringModel*, const QString&, QWidget *parent = 0, bool allowSelectAll = false);
     ~DialogGetEntry();
     void setHint(const QString& hint);
+    QString mSelectedEntry;
+    void setOneShot(bool oneShot = true) {
+        mIsOneShot = oneShot;
+    };
+
+private:
+    bool mIsOneShot;
 
 private slots:
     void on_entryFilter_textChanged();

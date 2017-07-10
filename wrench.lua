@@ -652,6 +652,31 @@ prompt_user = function(fmt, ...)
    end
 end
 
+M.flatten_table = function(arg1, ...)
+   local t1 = {arg1, ...}
+   if #t1 == 1 and type(arg1) == 'table' then
+      t1 = arg1
+   end
+
+   local t2 = {}
+   for _, val in pairs(t1) do
+      if type(val) == 'table' then
+         for _, val2 in pairs(flatten_table(val)) do
+            t2[#t2 + 1] = val2;
+         end
+      else
+         t2[#t2 + 1] = val
+      end
+   end
+   return t2
+end
+
+M.print_table = function(x)
+   for _, val in pairs(x) do
+      print(("%d: %s"):format(_, val))
+   end
+end
+
 M.select_args = function(arg1, ...)
    if type(arg1) == 'table' then
       return select_from_args_table(arg1)
@@ -1686,6 +1711,7 @@ wrench_config = function(passedConfigDirPath)
 
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
+   adb_serial = adb_pipe("getprop ro.serialno")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
    arm_arch = adb_pipe("/data/data/com.android.shell/busybox uname -m 2>/dev/null || uname -m")
    androidvncserver = ("androidvncserver-%s.sdk%s"):format(arm_arch, sdk_version)
@@ -1775,7 +1801,7 @@ wrench_config = function(passedConfigDirPath)
 
    phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
    reset_input_method()
-   return ("brand is %s"):format(brand)
+   return ("brand is %s, adb serial is %s"):format(brand, adb_serial)
 end
 
 get_a_note = function(text)

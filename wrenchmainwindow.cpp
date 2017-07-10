@@ -55,6 +55,7 @@
 #include <QtGui/QImage>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include "adbclient.h"
 
 static const int max_notification_entries = 1000;
 
@@ -301,16 +302,49 @@ void WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
     } else if (key == "end task") {
         ui->adbStateLabel->setText(QString().sprintf("Tasks: %d", --nTasks));
     } else {
+        static int lines = 0;
+        if (lines > 1000) {
+            ui->cmdOutputEdit->clear();
+            lines = 0;
+        }
+
+        static QString lastKey, lastVal;
+
         ui->cmdOutputEdit->moveCursor(QTextCursor::End);
         QString v = val;
         if (val.isEmpty()) {
             v = "OK";
         }
-        ui->cmdOutputEdit->insertPlainText(key + ": " + v + "\n");
+
+        if (lastKey == key && lastVal == val) {
+
+        } else {
+            ui->cmdOutputEdit->insertPlainText(key + ": " + v + "\n");
+        }
+
+        lastKey = key;
+        lastVal = val;
+        lines++;
     }
 }
 
-void WrenchMainWindow::onSelectArgs(const QStringList& args)
+QString WrenchMainWindow::selectArgs(const QString& prompt, const QStringList &args)
+{
+    switch (args.size()) {
+    case 1:
+        return args[0];
+    case 0:
+        return "";
+    }
+
+    StrlistModel model(args);
+    DialogGetEntry dialog(&model, prompt, this);
+    dialog.setOneShot();
+    dialog.exec();
+    return dialog.mSelectedEntry;
+}
+
+void WrenchMainWindow::onSelectArgsForLua(const QStringList& args)
 {
     if (args.size() == 1) {
         if (yes_or_no_p(args[0]) == "yes") {
@@ -327,16 +361,10 @@ void WrenchMainWindow::onSelectArgs(const QStringList& args)
     StrlistModel model(argsCopy);
 
     DialogGetEntry dialog(&model, prompt, this);
-    connect(&dialog, SIGNAL(entrySelected(QString)), this, SLOT(on_argSelected(QString)));
-    mSelectArgDialog = &dialog;
-    dialog.exec();
-    if (mSelectArgDialog != NULL) {
-        on_argSelected("");
-    } else {
-        qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__));
-    }
+    dialog.setOneShot();
 
-    dialog.disconnect();
+    dialog.exec();
+    mLuaThread->on_argSelected(dialog.mSelectedEntry);
 }
 
 void WrenchMainWindow::onSelectApps()
@@ -482,7 +510,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     if (!mPhoneScreenDialog.isNull()) {
         this->connect(mLuaThread.data(), SIGNAL(requestSyncScreen()), mPhoneScreenDialog.data(), SLOT(syncScreen()), Qt::QueuedConnection);
     }
-    connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgs(QStringList)));
+    connect(mLuaThread.data(), SIGNAL(selectArgsSig(QStringList)), this, SLOT(onSelectArgsForLua(QStringList)));
     connect(mLuaThread.data(), SIGNAL(selectAppsSig()), this, SLOT(onSelectApps()));
     connect(mLuaThread.data(), SIGNAL(showNotificationsSig()), this, SLOT(slotShortCutActivated()));
     connect(mLuaThread.data(), SIGNAL(sigClickNotification(QString)), this, SIGNAL(adbNotificationClicked(QString)));
@@ -855,13 +883,6 @@ void WrenchMainWindow::dropEvent(QDropEvent *event)
             imageDropped(*event);
         }
     }
-}
-
-void WrenchMainWindow::on_argSelected(const QString& arg)
-{
-    mSelectArgDialog->close();
-    mSelectArgDialog = NULL;
-    mLuaThread->on_argSelected(arg);
 }
 
 void WrenchMainWindow::on_appSelected(const QString& app)
@@ -1318,13 +1339,26 @@ void WrenchMainWindow::handleNetworkData(QNetworkReply *networkReply)
 void WrenchMainWindow::on_adbStateIndicator_clicked()
 {
     if (! mInputOnline) {
-        prompt_user("小扳手尚未连接至手机，请检查手机adb是否打开、驱动是否安装，USB线是否已连接");
+
+        QStringList adb_devices = AdbClient::doAdbDevices();
+        if (adb_devices.size() == 0) {
+            prompt_user("小扳手尚未连接至手机，请检查手机adb是否打开、驱动是否安装，USB线是否已连接");
+        }
+
+        QString adb_current_device = AdbClient::getAdbSerial();
+        if (adb_devices.contains(adb_current_device)) {
+            // do nothing
+        } else {
+            AdbClient::setAdbSerial(
+                selectArgs("你想连接到哪个 adb 设备？", adb_devices)
+                );
+        }
+
         return;
     }
 
     if (!mNotificationOnline) {
         prompt_user("小扳手已连接至手机，但无法接收手机端的通知。需要打开手机第三方通知设置，并允许小扳手辅助App接收通知");
-
         mLuaThread->addScript(QStringList() << "call_ext" << "switch-notification");
         return;
     }

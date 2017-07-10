@@ -12,14 +12,33 @@ AdbClient::AdbClient()
 {
     static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");
     static QByteArray adb_serial_buffer = adb_serial.toUtf8();
-    if (adb_serial.isEmpty()) {
-        __adb_serial = NULL;
-    } else {
-        __adb_serial = adb_serial_buffer.data();
+    static bool adb_serial_inited = false;
+    if (not adb_serial_inited) {
+        adb_serial_inited = true;
+        if (! adb_serial.isEmpty()) {
+            __adb_serial = adb_serial_buffer.data();
+        }
     }
     isOK = true;
     adbSock.connectToHost("127.0.0.1", 5037, QIODevice::ReadWrite);
     adbSock.waitForConnected();
+}
+
+void AdbClient::setAdbSerial(const QString& ser)
+{
+    static QByteArray adb_serial_buffer;
+    adb_serial_buffer = ser.toUtf8();
+    __adb_serial = adb_serial_buffer.data();
+    qDebug() << "set adb serial to" << __adb_serial;
+    AdbClient::doAdbKill();
+}
+
+QString AdbClient::getAdbSerial()
+{
+    if (__adb_serial) {
+        return QString((const char*) __adb_serial);
+    }
+    return "";
 }
 
 AdbClient::~AdbClient()
@@ -27,7 +46,7 @@ AdbClient::~AdbClient()
     adbSock.close();
 }
 
-const char* __adb_serial = NULL;
+volatile const char* __adb_serial = NULL;
 
 bool AdbClient::readx(void* data, qint64 max)
 {
@@ -35,9 +54,11 @@ bool AdbClient::readx(void* data, qint64 max)
     while (max > done) {
         int n = adbSock.read((char*)data + done, max - done);
         if (n < 0) {
+            qDebug() << "adb read wait failed";
             return false;
         } else if (n == 0) {
-            if (!adbSock.waitForReadyRead()) {
+            if (!adbSock.waitForReadyRead(-1)) {
+                qDebug() << "adb read ended prematurely, done: " << done << "max: " << max;
                 return false;
             }
         }
@@ -72,8 +93,10 @@ void AdbClient::adb_close()
 
 bool AdbClient::adb_status()
 {
-     char buf[5];
+    char buf[5];
     unsigned len;
+
+    adbSock.flush();
 
     if(!readx(buf, 4)) {
         __adb_error = "protocol fault (no status)";
@@ -173,17 +196,25 @@ AdbClient* AdbClient::doAdbPipe(const QStringList& cmdAndArgs)
     bool res = adb->adb_connect(cmdLine.toUtf8().constData());
     if (!res) {
         adb->isOK = false;
-        delete adb;
-        return NULL;
     }
     return adb;
 }
 
 QString AdbClient::doAdbShell(const QStringList& cmdAndArgs)
 {
+    QStringList res = doAdbShellWithStderr(cmdAndArgs);
+    if (res.length() >= 1) {
+        return res[0];
+    }
+    return "";
+}
+
+QStringList AdbClient::doAdbShellWithStderr(const QStringList& cmdAndArgs)
+{
     AdbClient *adb = doAdbPipe(cmdAndArgs);
-    if (!adb)
-        return NULL;
+    if (!adb->isOK) {
+        return QStringList() << "" << adb->__adb_error;
+    }
 
     QByteArray buf;
 
@@ -198,7 +229,7 @@ QString AdbClient::doAdbShell(const QStringList& cmdAndArgs)
     while (ret.endsWith("\n")) {
         ret.chop(1);
     }
-    return ret;
+    return QStringList() << ret;
 }
 
 QString AdbClient::doAdbShell(const QString& cmdLine) {
@@ -517,9 +548,46 @@ int AdbClient::doAdbKill()
     AdbClient *adb = new AdbClient();
     adb->adbSock.write("0009host:kill");
     adb->adbSock.flush();
+
+    while (adb->adbSock.waitForReadyRead()) {
+        adb->adbSock.readAll();
+    }
+
     adb->adbSock.close();
     delete adb;
     return 0;
+}
+
+QStringList AdbClient::doAdbDevices()
+{
+    AdbClient *adb = new AdbClient();
+    bool res = adb->adb_connect("host:devices");
+    QByteArray buf(5, 0);
+    QString devicesStr;
+    if (res) {
+        if (adb->readx(buf.data(), 4)) {
+            int len = strtoul(buf.data(), 0, 16);
+            buf.reserve(len + 1);
+            buf[len] = 0;
+            adb->readx(buf.data(), len);
+        } else {
+            buf.fill(0);
+        }
+        devicesStr = QString::fromUtf8(buf);
+    } else {
+        qDebug() << "adb devices not ok:" << adb->__adb_error;
+    }
+    delete adb;
+    QStringList ret;
+    foreach(const QString& line, devicesStr.split("\n", QString::SkipEmptyParts)) {
+        if (line.contains("\t")) {
+            foreach(const QString& dev, line.split("\t")) {
+                ret << dev;
+                break;
+            }
+        }
+    }
+    return ret;
 }
 
 // "host:forward:tcp:28888;localabstract:Wrench"

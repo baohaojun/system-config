@@ -50,7 +50,7 @@ void AdbNotificationThread::onDisconnected()
     }
     notificationSocket = new QTcpSocket();
 
-    static QString adb_serial = QProcessEnvironment::systemEnvironment().value("ANDROID_SERIAL");
+    QString adb_serial = AdbClient::getAdbSerial();
 
     if (adb_serial.isEmpty()) {
         AdbClient::doAdbForward("host:forward:tcp:58888;localabstract:WrenchNotifications");

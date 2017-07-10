@@ -4,6 +4,7 @@
 
 DialogGetEntry::DialogGetEntry(FilteringModel* model, const QString& hint, QWidget *parent, bool allowSelectAll) :
     QDialog(parent),
+    mIsOneShot(false),
     ui(new Ui::DialogGetEntry)
 {
     ui->setupUi(this);
@@ -79,11 +80,15 @@ void DialogGetEntry::on_filteringListView_doubleClicked(const QModelIndex &index
 void DialogGetEntry::on_entrySelected(const QString& entry)
 {
     emit entrySelected(entry);
+    mSelectedEntry = entry;
+    if (mIsOneShot) {
+        close();
+    }
 }
 
 void DialogGetEntry::on_currentTextSelected(const QString& text)
 {
-    emit entrySelected(text);
+    on_entrySelected(text);
     mEntryModel->maybeAddTextIntoHistory(text);
 }
 
