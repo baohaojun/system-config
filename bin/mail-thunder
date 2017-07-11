@@ -126,6 +126,9 @@ fi
 
 function build_mailto_recipients()
 {
+    if test ! -d ~/.mail.addr; then
+        return
+    fi
     cd ~/.mail.addr
 
     echo -n "'"
