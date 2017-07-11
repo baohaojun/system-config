@@ -212,24 +212,26 @@ QString AdbClient::doAdbShell(const QStringList& cmdAndArgs)
 QStringList AdbClient::doAdbShellWithStderr(const QStringList& cmdAndArgs)
 {
     AdbClient *adb = doAdbPipe(cmdAndArgs);
+    QStringList res;
     if (!adb->isOK) {
-        return QStringList() << "" << adb->__adb_error;
-    }
+        res << "" << adb->__adb_error;
+    } else {
+        QByteArray buf;
 
-    QByteArray buf;
+        while (adb->adbSock.waitForReadyRead(-1)) {
+            buf += adb->adbSock.readAll();
+        }
 
-    while (adb->adbSock.waitForReadyRead()) {
-        buf += adb->adbSock.readAll();
+        QString ret = QString::fromUtf8(buf);
+        ret.replace("\r", "");
+        while (ret.endsWith("\n")) {
+            ret.chop(1);
+        }
+        res << ret;
     }
 
     delete adb;
-
-    QString ret = QString::fromUtf8(buf);
-    ret.replace("\r", "");
-    while (ret.endsWith("\n")) {
-        ret.chop(1);
-    }
-    return QStringList() << ret;
+    return res;
 }
 
 QString AdbClient::doAdbShell(const QString& cmdLine) {
