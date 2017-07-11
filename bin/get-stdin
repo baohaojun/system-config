@@ -53,9 +53,11 @@ else
     cat > $tmp
 fi
 
-cat <<EOF >> $tmp
+if ! grep "" -q $tmp; then
+    cat <<EOF >> $tmp
 
 EOF
+fi
 
 echo -n Edit it... 1>&2
 edit-wait $tmp >/dev/null 2>&1

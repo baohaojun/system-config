@@ -33,11 +33,13 @@ function renew-xauth() { # so that in the saved gnu screen session, I can reset 
     fi
 }
 
-function sudo() {
+function sudo_x() {
     (
         unset PROMPT_COMMAND
         exec sudo -E env PATH="$PATH" "$@"
     )
 }
 
-export -f sudo
+export -f sudo_x
+
+alias sudo=sudo_x

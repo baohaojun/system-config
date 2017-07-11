@@ -323,6 +323,7 @@ if git status -s | grep . ; then
             git diff -w HEAD | perl -npe 's,^diff --git ,* ,'
             LOCAL=Local
             cat <<EOF
+
 # $LOCAL Variables: #
 # mode:org #
 # End: #

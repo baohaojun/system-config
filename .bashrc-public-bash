@@ -49,7 +49,7 @@ lcd()
             if test ! -d $smb_mount || ! get-mount-1 "$smb_mount" | grep ^// -q; then
                 hint "你还没有打开过 smb://$smb_server/$smb_share"
                 if test -e ~/src/github/smartcm/scm-helpers/.smb_mount &&
-                        . ~/src/github/smartcm/scm-helpers/.smb_mount $smb_server $smb_share
+                        ~/src/github/smartcm/scm-helpers/.smb_mount $smb_server $smb_share
                 then
                     true
                 else

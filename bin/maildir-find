@@ -74,11 +74,14 @@ fi
 function handle-query-string() {
     export prefix=$1
     shift
-    echo "$@" | perl -npe 'BEGIN{use Encode;} $_ = decode_utf8 $_; s/[^\w\p{CJK}]|_/ /g; s/(\w+\p{CJK})/$ENV{prefix}:$1/g; $_ = encode_utf8 $_;'
+    echo "$@" | perl -npe 'BEGIN{use Encode;} $_ = decode_utf8 $_; s/[^\w\p{CJK}]|_/ /g; s/([\w\p{CJK}]+)/$ENV{prefix}:$1/g; $_ = encode_utf8 $_;'
 }
 
 subject=$(handle-query-string subject $subject)
 from=$(handle-query-string from $from)
+if echo $SHELLOPTS | grep -q xtrace; then
+    exit
+fi
 
 mu find $subject $from date:$after..$before --fields 'l d f s' | (
     while read file info; do
