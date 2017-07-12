@@ -1,2 +1,1 @@
-!/system-config/.git/smartcm/Hi, all
- 之前胡恒一和王前闯提出查看某版本是否已包含某 Patch 太费劲，CM 经过调研之后，现已解决该问题，请大家使用 [[http://172.16.2.18/vmlinux.html]]，输入你想查找的 Change-Id，即可查到最近所有包含此 Patch 的版本。
+!/system-config/.git/smartcm/
