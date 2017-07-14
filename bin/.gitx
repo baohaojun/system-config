@@ -116,7 +116,13 @@ function git()
                                 exit 0
                             fi
 
-                            y=$(command git status -s)
+                            y=$(
+                                if test -e .git-status-filter; then
+                                    command git status -s | ./.git-status-filter
+                                else
+                                    command git status -s
+                                fi
+                             )
                             if test "$y"; then
                                 echo $x not clean 1>&2
                                 command git status -s
