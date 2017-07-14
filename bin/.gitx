@@ -129,7 +129,13 @@ function git()
                                 echo ---------------- 1>&2
                                 exit 0
                             fi
-                            y=$(command git diff --name-status $(git-remote-branch))
+                            y=$(
+                                if test -e .git-status-filter; then
+                                    command git diff --name-status $(git-remote-branch) | ./.git-status-filter
+                                else
+                                    command git status -s
+                                fi
+                             )
                             if test "$y"; then
                                 echo $x not clean with $(git-remote-branch) 1>&2
                                 command git diff --name-status $(git-remote-branch)
