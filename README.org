@@ -27,7 +27,15 @@ Under Debian Linux or Ubuntu, it's simple to set up system-config:
 
 You probably need to fix some bugs when running =after-check-out.sh=. And then, make system-config your own by forking it and customizing it.
 
-On non debian systems, it's not automated yet -- patches are welcome.
+On non debian systems, or if you don't have sudo permission, you can try to use [[http://linuxbrew.sh/][Linuxbrew]]:
+
+#+BEGIN_SRC sh
+  git clone https://github.com/baohaojun/system-config/ ~/system-config &&
+      ~/system-config/bin/after-co-ln-s.sh && (
+          . ~/.bashrc
+          install-brew.sh
+      )
+#+END_SRC
 
 * How to use
 

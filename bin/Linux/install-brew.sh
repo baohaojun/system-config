@@ -4,7 +4,8 @@ set -e
 export HOMEBREW_NO_AUTO_UPDATE=true
 
 if ! which brew >/dev/null 2>&1; then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install)"
+    hint "Please make sure homebrew is installed into your ~/.linuxbrew/"
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install)" </dev/null
 fi
 
 brew install atk
