@@ -8,13 +8,8 @@ $ENV{'LANG'} = 'C';
 $ENV{'LC_ALL'} = 'C'; # fix grep too slow when ignore_case and gbk file recognized as binary
 
 delete $ENV{GREP_OPTIONS};
-if (-e "$ENV{HOME}/external/local/bin/mkbeagrepidx" and not -e "/usr/local/bin/mkbeagrepidx") {
-    if ($ENV{LD_LIBRARY_PATH}) {
-        $ENV{LD_LIBRARY_PATH} = "$ENV{HOME}/external/local/lib:$ENV{LD_LIBRARY_PATH}"
-    } else {
-        $ENV{LD_LIBRARY_PATH} = "$ENV{HOME}/external/local/lib";
-    }
-    $ENV{PATH} = "$ENV{HOME}/external/bin/Linux/ext/debug/:$ENV{HOME}/external/local/bin:$ENV{PATH}"; # force using the right version
+if (not -e "/usr/local/bin/mkbeagrepidx") {
+    eval qx(cat ~/src/github/beagrep/.setenv.pl);
 }
 
 my $pat = '';
@@ -99,7 +94,7 @@ if ($grep_use_perl_regexp) {
 }
 
 
-die 'no regexp specified' unless $pat;
+die 'no regexp specified' unless $pat ne "";
 if ($pwd_opt) {
     if (not -d $pwd_opt) {
         $pwd_opt = qx(select-beagrep-dir $pwd_opt);

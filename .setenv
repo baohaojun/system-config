@@ -1,0 +1,6 @@
+#!/bin/bash
+bin_dir=$(dirname $(which beagrep-static-query || true))
+if test "$bin_dir"; then
+    export LD_LIBRARY_PATH=$(cd "$bin_dir"; cd ../lib; pwd)
+    export PATH=$bin_dir:$PATH
+fi
