@@ -15,6 +15,10 @@ brew install gtk+
 brew install libgpg-error
 brew install lzlib
 brew install mono --without-fsharp
+(
+    cd ~/.linuxbrew/bin
+    relative-link -f mcs gmcs
+)
 
 export LD_LIBRARY_PATH=~/.linuxbrew/lib:$LD_LIBRARY_PATH
 download-debian-source -p gtk-sharp2
