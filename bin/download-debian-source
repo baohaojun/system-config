@@ -1,0 +1,127 @@
+#!/bin/bash
+
+set -e
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt r:release=testing p:package m:mirror=http://mirrors.aliyun.com @:repository=main
+## end code-generator
+## start generated code
+TEMP=$(getopt -o p:r:m:h \
+              --long repository:,package:,release:,mirror:,help \
+              -n $(basename -- $0) -- "$@")
+repository=main
+package=
+release=testing
+mirror=http://mirrors.aliyun.com
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --repository)
+            repository=$2
+            shift 2
+            ;;
+        -p|--package)
+            package=$2
+            shift 2
+            ;;
+        -r|--release)
+            release=$2
+            shift 2
+            ;;
+        -m|--mirror)
+            mirror=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--mirror=MIRROR'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--package=PACKAGE'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--release=RELEASE'
+            echo
+            printf "%06s" " "
+            printf %-24s '--repository=REPOSITORY'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+arg-not-empty package "$package"
+
+mkdir ~/src/debian-sources/ -p
+cd ~/src/debian-sources
+
+souces_gz=$mirror/debian/dists/$release/$repository/source/Sources.gz
+
+
+
+hint "接下来会自动从 $souces_gz 去下载 $package 的源代码"
+
+out_file=${souces_gz//\//_}
+(
+    mkdir -p .$out_file
+    cd .$out_file
+    wget -N $souces_gz
+    relative-link "$(basename $souces_gz)" ../$out_file -f
+)
+
+zcat $out_file | while read line; do
+    case "$line" in
+        Binary:*\ $package,*|Binary:*\ $package$)
+            while read line; do
+                case "$line" in
+                    ?*)
+                        if echo "$line" | grep -P '^[0-9a-f]{32} \d+ .*orig.tar.*'; then
+                            source_tar=$(echo "$line" | pn 3)
+                            source_md5=$(echo "$line" | pn 1)
+                        elif [[ $line =~ ^Directory:\  ]]; then
+                            source_dir=$(echo "$line" | pn 2)
+                        fi
+                        ;;
+                    *)
+                        arg-not-empty source-dir "$source_dir"
+                        arg-not-empty source-tar "$source-tar"
+                        arg-not-empty source-md5 "$source_md5"
+
+                        source_url="$mirror/debian/$source_dir/$source_tar"
+                        out_file=${source_url#*://}
+                        out_dir=$(dirname "$out_file")
+                        mkdir -p "$out_dir"
+                        (
+                            cd "$out_dir"
+                            wget -N "$source_url"
+                        )
+                        rm -rf "$package"/
+                        mkdir -p "$package"
+                        if test "$(md5sum "$out_file"|pn 1)" != "$source_md5"; then
+                            die "md5 for $out_file not match: should be $source_md5"
+                        fi
+                        tar xfv "$out_file" -C "$package"
+                        exit
+                        ;;
+                esac
+            done
+    esac
+done

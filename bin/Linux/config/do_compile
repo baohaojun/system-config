@@ -21,9 +21,9 @@ function compile_beagrep() {
         fi
         autoreconf -i
         if test -e /opt/local/bin/bash; then
-            ./configure --prefix=/opt/local
+            ./configure --prefix=/opt/local "$@"
         else
-            ./configure
+            ./configure "$@"
         fi
     fi
     make
@@ -122,10 +122,9 @@ function compile_ctags() {
     cd ~/system-config/gcode/ctags-exuberant
     git clean -xfd
     autoreconf -i
-    ./configure
+    ./configure "$@" --program-suffix=-exuberant
     make
     sudo make install
-    sudo mv /usr/local/bin/ctags /usr/local/bin/ctags-exuberant
 }
 
 
@@ -143,13 +142,14 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt cdo-clean=true
+# generate-getopt cdo-clean=true @sudo=true
 ## end code-generator
 ## start generated code
 TEMP=$(getopt -o ch \
-              --long do-clean,help,no-do-clean \
+              --long do-clean,sudo,help,no-do-clean,no-sudo \
               -n $(basename -- $0) -- "$@")
 do_clean=true
+sudo=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -162,6 +162,14 @@ while true; do
             fi
             shift
             ;;
+        --sudo|--no-sudo)
+            if test "$1" = --no-sudo; then
+                sudo=false
+            else
+                sudo=true
+            fi
+            shift
+            ;;
         -h|--help)
             set +x
             echo
@@ -169,6 +177,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-c, '
             printf %-24s '--[no-]do-clean'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]sudo'
             echo
             exit
             shift
@@ -197,4 +208,11 @@ if test "$DEBUG_COMPILE" = true; then
         fi
     }
 fi
+
+if test "$sudo" = false; then
+    function sudo() {
+        "$@"
+    }
+fi
+
 `basename $0` "$@"

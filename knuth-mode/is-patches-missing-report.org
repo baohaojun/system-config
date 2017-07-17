@@ -1,0 +1,138 @@
+* 用Perl脚本解析Gerrit Patches (from query output)
+
+  #+name: parse-gerrit-output
+  #+BEGIN_SRC perl
+    BEGIN {
+        our %change_subject_map;
+        our %change_owner_map;
+        our %change_project_map;
+        our %change_product_branch_map;
+
+        $id_re = qr(I[0-9a-f]{40});
+        our %last_info;
+        our $id;
+        our %change_url_map;
+        our $seq = 0;
+        our %change_seq_map;
+
+        our @check_project_branches = sort {$a cmp $b} split(" ", $ENV{check_project_branches});
+    }
+
+    if (m/^change ($id_re)/) {
+        $id = $1;
+        our $patch_dir = "$ENV{HOME}/src/product-patches/patches/" . substr($id, 0, 3) . "/$id/";
+        my @matched_project_branches = grep {-e "$patch_dir/$_"} @check_project_branches;
+        if (@matched_project_branches and @matched_project_branches != @check_project_branches) {
+            true;
+        } else {
+            $id = "";
+            next;
+        }
+        $change_product_branch_map{$id} = join(" ", @matched_project_branches);
+
+        $change_seq_map{$id} = $seq;
+        $seq++;
+    } elsif (m/^(\s+)(\S+):\s*(.*)/) {
+        next unless $id;
+
+        $last_info{length $1} = $2;
+        if ($2 eq "email" and $last_info{2} eq "owner") {
+            $change_owner_map{$id} = $3;
+        } elsif ($2 eq "project") {
+            $change_project_map{$id} = $3;
+        } elsif ($2 eq "subject") {
+            ($change_subject_map{$id} = $3) =~ s/,/ /g;
+        } elsif ($2 eq "url") {
+            $change_url_map{$id} = $3;
+        }
+    }
+
+    END {
+        for $id (sort {$change_project_map{$a} cmp $change_project_map{$b} or $change_seq_map{$a} <=> $change_seq_map{$b}} keys %change_product_branch_map) {
+            print "$id,$change_project_map{$id},$change_owner_map{$id},$change_product_branch_map{$id},\n";
+        }
+    }
+  #+END_SRC
+** 最终的版本：
+
+   #+name: the-ultimate-script
+   #+BEGIN_SRC sh :tangle /home/bhj/src/github/smartcm/scm-helpers/is-patches-missing-report :comments link :shebang "#!/bin/bash" :noweb yes
+     set -e
+
+     ## start code-generator "^\\s *#\\s *"
+     # generate-getopt b:product-branches ='()' ?'我们要查看哪些产品分支下的Patch差异' a:after ='$(today -30)' ?'要查看从哪一天开始的Patch？' \
+         # @do-patch-dump=true
+     ## end code-generator
+     ## start generated code
+     TEMP=$(getopt -o b:a:h \
+                   --long product-branches:,after:,do-patch-dump,help,no-do-patch-dump \
+                   -n $(basename -- $0) -- "$@")
+     product_branches=()
+     after=$(today -30)
+     do_patch_dump=true
+     eval set -- "$TEMP"
+     while true; do
+         case "$1" in
+
+             -b|--product-branches)
+                 product_branches=("${product_branches[@]}" "$2")
+                 shift 2
+                 ;;
+             -a|--after)
+                 after=$2
+                 shift 2
+                 ;;
+             --do-patch-dump|--no-do-patch-dump)
+                 if test "$1" = --no-do-patch-dump; then
+                     do_patch_dump=false
+                 else
+                     do_patch_dump=true
+                 fi
+                 shift
+                 ;;
+             -h|--help)
+                 set +x
+                 echo
+                 echo
+                 echo Options and arguments:
+                 printf %06s '-a, '
+                 printf %-24s '--after=AFTER'
+                 echo '要查看从哪一天开始的Patch？'
+                 printf "%06s" " "
+                 printf %-24s '--[no-]do-patch-dump'
+                 echo
+                 printf %06s '-b, '
+                 printf %-24s '--product-branches=PRODUCT_BRANCHES'
+                 echo
+                 printf "%30s" ""
+                 echo '我们要查看哪些产品分支下的Patch差异'
+                 exit
+                 shift
+                 ;;
+             --)
+                 shift
+                 break
+                 ;;
+             ,*)
+                 die "internal error"
+                 ;;
+         esac
+     done
+
+
+     ## end generated code
+
+     export check_project_branches=$(echo "${product_branches[@]}")
+     for p_b in "${product_branches[@]}"; do
+         scm product-dump-all-patches -p ${p_b%%-*} -b ${p_b#*-}
+     done
+
+     gerrit-list-all-patches --after "$after" | perl -ne "$(cat <<'EOF6af8f48ddd50'
+     <<parse-gerrit-output>>
+     EOF6af8f48ddd50
+     )"
+
+
+   #+END_SRC
+
+   #+results: the-ultimate-script

@@ -16,11 +16,11 @@ fi
 
 org_target=$(
     if [[ $target =~ /smartcm/ ]]; then
-        knuth_repo=smartcm
+        knuth_repo=~/src/github/smartcm
     else
-        knuth_repo=private-config
+        knuth_repo=~/system-config
     fi
-    echo ~/src/github/$knuth_repo/knuth-mode/$(basename $target).org
+    echo $knuth_repo/knuth-mode/$(basename $target).org
           )
 if test -e "$org_target"; then
     e $org_target

@@ -7,9 +7,8 @@ export TMPDIR=~/.cache
 mkdir -p $TMPDIR
 mkdir -p ~/.cache/system-config/logs
 
-if test -x ~/external/local/bin/beagrep -a ! -e /usr/local/bin/mkbeagrepidx; then
-    export LD_LIBRARY_PATH=~/external/local/lib
-    export PATH=~/external/local/bin:$PATH
+if test ! -e /usr/local/bin/mkbeagrepidx; then
+    . ~/src/github/beagrep/.setenv
 fi
 
 if [[ $PWD =~ /for-code-reading/ ]] && test -d .beagrep; then
