@@ -3,12 +3,8 @@
 use Getopt::Long;
 use strict;
 use String::ShellQuote;
-if (-e glob("~/external/local/bin/mkbeagrepidx")) {
-    if ($ENV{LD_LIBRARY_PATH}) {
-        $ENV{LD_LIBRARY_PATH} = glob("~/external/local/lib") . ":$ENV{LD_LIBRARY_PATH}"
-    } else {
-        $ENV{LD_LIBRARY_PATH} = glob("~/external/local/lib");
-    }
+if (not -e "/usr/local/bin/mkbeagrepidx") {
+    eval qx(cat ~/src/github/beagrep/.setenv.pl);
 }
 
 my $pat = '';
