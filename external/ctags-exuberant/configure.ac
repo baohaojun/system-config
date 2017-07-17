@@ -205,6 +205,7 @@ else
 	AC_MSG_RESULT(no)
 fi
 AC_SUBST(install_targets)
+AC_SUBST(program_suffix)
 
 if test "$enable_custom_config" = no -o "$enable_custom_config" = yes ; then
 	AC_MSG_RESULT(no name supplied for custom configuration file)
