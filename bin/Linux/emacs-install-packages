@@ -34,13 +34,20 @@ else
             if test "${project_repo_url[$x]}"; then
                 git_repo_url=${project_repo_url[$x]}
             fi
-            git clone $git_repo_url -b ${github_branch} $(if test "$SYSTEM_CONFIG_LOCAL_REF"; then echo --reference "$SYSTEM_CONFIG_LOCAL_REF"/$x; fi)
+            git clone $git_repo_url -b ${github_branch} $(
+                if test "$SYSTEM_CONFIG_LOCAL_REF"; then
+                    echo --reference "$SYSTEM_CONFIG_LOCAL_REF"/$x;
+                else
+                    echo --reference ~/system-config/
+                fi
+                )
             need_regenerate_el=true
         fi
     done
 
     if ! test -d ~/.emacs.d/site-lisp; then
-        relative-link emacs.d/site-lisp ~/.emacs.d/
+        mkdir -p ~/.emacs.d/
+        relative-link emacs.d/site-lisp ~/.emacs.d/ -f
     fi
 fi
 

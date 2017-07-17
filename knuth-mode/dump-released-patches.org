@@ -1,0 +1,173 @@
+#+name: handle-git-log
+#+BEGIN_SRC perl
+  if (m/^commit ([a-f0-9]{40})/) {
+      $commit_hash = $1;
+  } elsif (m/Author:.*?<(.*)>/) {
+      $author = $1;
+  } elsif (m/Change-Id:\s*(I[a-f0-9]{40})/) {
+      $change_id = $1;
+
+      if ($author =~ m/smartisan/) {
+          print "$commit_hash $author $change_id\n";
+      }
+  }
+
+#+END_SRC
+** 最终的版本：
+
+   #+name: the-ultimate-script
+   #+BEGIN_SRC sh :tangle /home/bhj/src/github/smartcm/scm-helpers/dump-released-patches :comments link :shebang "#!/bin/bash" :noweb yes
+          set -e
+
+          git-get -u smartisan:qualcomm/platform/manifest.git -d ~/src/backup-manifests -b backup-manifests
+
+          function dump-one-repo() {
+              set -o pipefail
+              last_commit_time=$(git log --pretty=%ct -1 $(repo-branch))
+
+              git log --since=$(
+                  epoch2date $(( $last_commit_time - 2592000 * 3))
+                  ) -300 $(repo-branch) | perl -ne "$(cat <<'EOF2580f4e25b87'
+            <<handle-git-log>>
+          EOF2580f4e25b87
+            )" | (
+                  export ap=$(ap)
+                  cd $(lookup-file .repo)
+                  exec 9> lock-dump-one-repo
+                  flock 9
+                  perl -npe 's/^/$ENV{ap} /' | tee -a dump-released-patches.log
+              )
+          }
+
+          export -f dump-one-repo
+
+          function dump-one-version() {
+              local dump_version_dir=$1
+
+              if test -d ~/src/backup-manifests/$dump_version_dir; then
+                  dump_version_dir=~/src/backup-manifests/$dump_version_dir
+              fi
+
+              (
+                  mkdir -p ~/src/android-dump-released-patches
+                  cd ~/src/android-dump-released-patches
+
+                  . atexit eval 'if test $? != 0; then mail-cms "failed to dump $dump_version_dir"; fi'
+
+                  repo init -g all -u smartisan:qualcomm/platform/manifest.git -b sanfrancisco -m odin-rom.xml --repo-url smartisan:googlesource/git-repo --reference ~/src/android-mirror
+
+                  for m in $dump_version_dir/*manifest.xml; do
+                      if test ! -e $m; then
+                          continue
+                      fi
+                      if test -e $m.patches; then
+                          continue
+                      fi
+                      (
+                          cd .repo/manifests
+                          cp $m ../manifest.xml
+                          git add .
+                          git commit -m "$m"
+                      )
+                      rm .repo/projects -rf
+                      repo-fast-sync --no-do-reset
+                      rm -f .repo/dump-released-patches.log
+                      my-rfa 'dump-one-repo'
+                      mv .repo/dump-released-patches.log $m.patches
+                  done
+              )
+          }
+
+
+          ## start code-generator "^\\s *#\\s *"
+          # generate-getopt d:dump-manifest-dir
+          ## end code-generator
+          ## start generated code
+          TEMP=$(getopt -o d:h \
+                        --long dump-manifest-dir:,help \
+                        -n $(basename -- $0) -- "$@")
+          dump_manifest_dir=
+          eval set -- "$TEMP"
+          while true; do
+              case "$1" in
+
+                  -d|--dump-manifest-dir)
+                      dump_manifest_dir=$2
+                      shift 2
+                      ;;
+                  -h|--help)
+                      set +x
+                      echo
+                      echo
+                      echo Options and arguments:
+                      printf %06s '-d, '
+                      printf %-24s '--dump-manifest-dir=DUMP_MANIFEST_DIR'
+                      echo
+                      exit
+                      shift
+                      ;;
+                  --)
+                      shift
+                      break
+                      ;;
+                  ,*)
+                      die "internal error"
+                      ;;
+              esac
+          done
+
+
+          ## end generated code
+
+          if test "$dump_manifest_dir"; then
+              dump-one-version "$dump_manifest_dir"
+          else
+              do_months=$(
+                  for d in 0 30 60 90; do
+                      today-- -$d|cut -b 1-6
+                  done
+                       )
+
+              do_months=$(string-join '|' $do_months)
+
+              find ~/src/backup-manifests/*/ -name 'is-full-release' -type f |
+                  grep "$do_months" -P |
+                  while read full_release_file; do
+                      for xml in $(dirname $full_release_file)/*manifest.xml; do
+                          (
+                              base_dir=$(basename $(dirname "$xml"))
+
+                              if test -e "$xml.patches"; then
+                                  echo $xml already done
+                                  exit
+                              else
+                                  echo working with $xml
+                              fi
+
+                              if ! dump-one-version "${xml%/*}"; then
+                                  mail-cms "failed to dump release for $xml"
+                              fi
+                          ) </dev/null
+                      done
+                  done
+          fi
+
+          (
+              cd ~/src/backup-manifests/
+              git add .
+              if git-any-changes; then
+                  git commit -m 'Dump some manifests'
+                  git push
+              fi
+              . ~/src/github/smartcm/smart-builder/jc-build
+              jc-build deploy-manifests-for-vmlinux
+          )
+
+          # Local Variables: #
+          # eval: (read-only-mode 1) #
+          # End: #
+   #+END_SRC
+
+   #+results: the-ultimate-script
+
+

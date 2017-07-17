@@ -1,0 +1,298 @@
+#+LAST_MOBILE_CHANGE: 2015-03-08 21:47:17
+#+title: Bash参数处理（使用getopt命令）
+
+* 准备工作
+
+  我希望使用的语法格式是这样的：
+
+  ~gerenate-getopt oboolean-option=def-value-o?help-o a:argument?help-a=def-value-a~
+
+  其中，第一个字母是短选项，比如上面的这段脚本，最后生成的会有 =-o= 和 =-a= 两个选项。第二个字母如果是 =:= 的话，表示这个选项是带参数的；否则它是不带参数的（真/假 / 乒乓 / 开关）选项。
+
+  后面的 ~=.*~ 代表这个选项的初始值，等号前面可以不加空格。
+
+  后面的 =?.*= 代表这个选项的帮助，问号前面也可以不加空格。
+
+  如果 ~='()'~ 的话，表示这个选项带的参数是个数组（多次指定该选项会累积），否则它是个简单的字符串（多次指定该选项会覆盖，以最后指定的值为准）。
+
+  最后输出一段脚本，可以用来进行参数处理。
+
+   #+name: prepare
+   #+BEGIN_SRC sh
+     declare -A short_opts_map
+     declare -A long_opts_map
+     declare -A help_map
+     declare -A default_val_map
+     declare -A var_name_map
+
+
+     while test "$1"; do
+         spec=$1
+         shift
+         if [[ $spec =~ ^\? ]]; then
+             description=${spec:1}
+             continue
+         fi
+
+         if [[ $spec =~ ^@ ]]; then
+             short=
+         else
+             short=${spec:0:1}
+         fi
+         spec=${spec:1}
+         if [[ $spec =~ ^: ]]; then
+             short=$short:
+             spec=${spec:1}
+         fi
+
+         long=$(echo "$spec"|perl -npe 's/(\?|=|\@).*//')
+         help=$(echo "$spec" | perl -ne 'print if s/.*\?(.*?)(=.*|\@.*|$)/$1/')
+         default=$(echo "$spec" | perl -ne 'print if s/.*=(.*?)(\?.*|\@.*|$)/$1/')
+         var_name=$(echo "$spec" | perl -ne 'print if s/.*\@(.*?)(\?.*|=.*|$)/$1/')
+
+         while true; do
+             if test "${1:0:1}" = '?'; then
+                 help=${1:1}
+                 shift
+             elif test "${1:0:1}" = '='; then
+                 default=${1:1}
+                 shift
+             else
+                 break
+             fi
+         done
+
+         short_opts_map[$long]=$short
+         long_opts_map[$long]=$long
+         var_name_map[$long]=$var_name
+         if [[ $short =~ : ]]; then
+             long_opts_map[$long]=$long:
+         fi
+
+         if test -z "$default" && ! [[ $short =~ : ]]; then
+             default=false
+         fi
+
+         default_val_map[$long]=$default
+         help_map[$long]=$help
+     done
+
+     output-no-long-opts() {
+         output_done=false
+         for long in "${!long_opts_map[@]}"; do
+             short=${short_opts_map[$long]}
+             if ! [[ $short =~ : ]]; then
+                 echo -n ,no-$long
+             fi
+         done
+     }
+
+   #+END_SRC
+
+* 输出范本：
+
+#+BEGIN_SRC sh
+
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt ggnu p:phone
+  ## end code-generator
+  ## start generated code
+  TEMP=$(getopt -o p:g --long phone:,gnu  -n $(basename -- $0) -- "$@")
+  phone=
+  gnu=false
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+          -p|--phone)
+              phone=$2
+              shift 2
+              ;;
+          -g|--gnu|--no-gnu)
+              if test "$1" = --no-gnu; then
+                  gnu=false
+              else
+                  gnu=true
+              fi
+              ;;
+          --)
+              shift
+              break
+              ;;
+          ,*)
+              die "internal error"
+              ;;
+      esac
+  done
+
+  ## end generated code
+
+#+END_SRC
+
+* 输出 ~TEMP=~
+
+  #+name: output-temp-eq
+  #+BEGIN_SRC sh
+    TEMP=\$(getopt -o $(string-join '' $(for x in "${short_opts_map[@]}"; do if test "$x" != :; then echo $x; fi; done) h) \\
+     --long $(string-join , ${long_opts_map[@]} help; output-no-long-opts) \\
+     -n \$(basename -- \$0) -- "\$@")
+  #+END_SRC
+
+* 输出变量初始值
+
+  #+name: output-var-def-val
+  #+BEGIN_SRC sh
+    for long in "${!long_opts_map[@]}"; do
+        var=${long//-/_}
+        echo ${var}=${default_val_map[$long]}
+    done
+  #+END_SRC
+
+* 输出范本2
+  #+name: template2
+  #+BEGIN_SRC sh
+  eval set -- "\$TEMP"
+  while true; do
+    case "\$1" in
+
+  #+END_SRC
+
+* 输出参数处理
+  #+name: arg-handle
+  #+BEGIN_SRC sh
+    for long in "${!long_opts_map[@]}"; do
+        s=${short_opts_map[$long]}
+        is_boolean=true
+        if [[ $s =~ : ]]; then
+            is_boolean=false
+        fi
+        s=${s/:/}
+        var=${long//-/_}
+        cat << EOF2
+            $(
+                if test "$s"; then
+                    echo -n "-$s|"
+                fi
+                echo -n "--$long";
+                if test "$is_boolean" = true; then
+                    echo -n "|--no-$long"
+                fi
+                echo ")"
+            )
+            $(
+                if test $is_boolean = false; then
+                    if test "${default_val_map[$long]}" = '()'; then
+                        echo ${var}=\(\"\${${var}[@]}\" \""\$2\""\)
+                        echo shift 2
+                    else
+                        echo ${var}=\$2
+                        echo shift 2
+                    fi
+                else
+                    cat << EOF3
+                    if test "\$1" = --no-$long; then
+                        ${var}=false
+                    else
+                        ${var}=true
+                    fi
+                    shift
+    EOF3
+                fi
+            )
+    EOF2
+        echo ";;"
+    done
+
+  #+END_SRC
+
+* 输出帮助
+
+  #+name: output-help
+  #+BEGIN_SRC sh
+    $(
+        echo set +x
+        echo echo "$description"
+        echo echo
+        echo echo Options and arguments:
+        for long in ${!long_opts_map[@]}; do
+            echo $long
+        done | sort | while read long; do
+            short=${short_opts_map[$long]}
+            is_boolean=true
+            if [[ $short =~ : ]]; then
+                is_boolean=false
+            fi
+            short=${short/:/}
+            if test "$short"; then
+                echo printf "%06s" "'-$short, '"
+            else
+                echo 'printf "%06s" " "'
+            fi
+            long_output=$(
+                if test "$is_boolean" = true; then
+                    echo -n --[no-]$long
+                else
+                    uc_long=${var_name_map[$long]}
+                    if test -z "$uc_long"; then
+                        uc_long=$long
+                    fi
+                    uc_long=${uc_long^^}
+                    echo -n --$long=${uc_long//-/_}
+                fi
+                       )
+            opt_chars=$(( ${#long_output} + 6))
+            echo printf "%-24s" "'$long_output'"
+
+            if test "${help_map[$long]}"; then
+                if test "$opt_chars" -gt 30; then
+                    echo echo
+                    echo 'printf "%30s" ""'
+                fi
+                echo echo "'${help_map[$long]}'"
+            else
+                echo echo
+            fi
+        done
+        echo exit
+    )
+  #+END_SRC
+
+* 输出范本3
+  #+name: foot
+  #+BEGIN_SRC sh
+    -h|--help)
+        <<output-help>>
+        shift
+        ;;
+    --)
+       shift
+       break
+       ;;
+       ,*)
+           die "internal error"
+           ;;
+       esac
+    done
+
+  #+END_SRC
+* 最终脚本
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/generate-getopt :comments link :shebang "#!/bin/bash" :noweb yes
+
+  # All bash scripts should start with ~set -e~ to fail early and loudly.
+  set -e
+  <<prepare>>
+  cat <<EOF
+  <<output-temp-eq>>
+  $(
+  <<output-var-def-val>>
+  )
+  <<template2>>
+  $(
+  <<arg-handle>>
+  )
+  <<foot>>
+  EOF
+#+END_SRC
+
+#+results: the-ultimate-script

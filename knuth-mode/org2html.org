@@ -1,0 +1,83 @@
+# Local Variables: #
+# eval: (read-only-mode 0) #
+# End: #
+
+#+name: replace-emojis-with-local-files
+#+BEGIN_SRC perl
+  # class='emoji' src='/home/bhj/src/github/Wrench/release/emojis/iphone-new/RING.png'
+  while (m,class='emoji' src='(.*?)',g) {
+      $png_file = $1;
+      ($png_file_basename = $png_file) =~ s,.*/,,;
+
+      system("mkdir -p emojis") unless -d "emojis";
+      system "cp", "$png_file", "emojis/$png_file_basename" unless -e "emojis/$png_file_basename";
+
+      $png_file_map{$png_file} = "emojis/$png_file_basename";
+  }
+
+  s|class='emoji' src='(.*?)'|class='emoji' src='$png_file_map{$1}'|g;
+
+#+END_SRC
+
+#+name: emacs-lisp-export
+#+BEGIN_SRC emacs-lisp
+  (let ((org-file "%file%")
+        (my-loaded-themes custom-enabled-themes)
+        (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%")))
+    (package-initialize)
+    (require 'ox-html)
+    (require 'emojis)
+    (when (string-match ".org$" org-file)
+      (when custom-enabled-themes
+        (dolist (theme custom-enabled-themes)
+          (disable-theme theme)))
+      (find-file org-file)
+      (org-html-export-to-html)
+      (when my-loaded-themes
+        (dolist (theme my-loaded-themes)
+          (load-theme theme))))
+    (with-temp-buffer
+      (insert-file html-file)
+      (org2html-emojify)
+      (goto-char (point-min))
+      (write-file html-file)))
+#+END_SRC
+
+** 最终的版本：
+
+   #+name: the-ultimate-script
+   #+BEGIN_SRC sh :tangle /home/bhj/system-config/bin/org2html :comments link :shebang "#!/bin/bash" :noweb yes
+          set -e
+
+          git-interactive-add
+
+          if [[ $1 =~ .org$ ]]; then
+              org_file=$1
+              html_file=${1%.org}.html
+          elif [[ $1 =~ .html$ ]]; then
+              org_file="no-such-file"
+              html_file=$1
+          fi
+
+          emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
+          <<emacs-lisp-export>>
+          EOF6405e5bce1d2
+          )"
+
+          perl -npe "$(cat <<'EOFf0ea35142ce4'
+               <<replace-emojis-with-local-files>>
+          EOFf0ea35142ce4
+          )" -i "$html_file"
+
+          if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
+              css-inline "$html_file" > "$html_file".$$
+              mv "$html_file".$$ "$html_file"
+              of "$html_file"
+          fi
+
+          # Local Variables: #
+          # eval: (read-only-mode 1) #
+          # End: #
+   #+END_SRC
+
+   #+results: the-ultimate-script

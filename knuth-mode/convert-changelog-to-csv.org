@@ -1,0 +1,160 @@
+#+name: change-log-to-csv
+#+BEGIN_SRC perl
+  # "$Folder,$CAuthor,$CCommitter,$CTicket,$ChangeID,$CSummary
+  BEGIN {
+      $print_format="%s, %s, %s, %s, %s, %s, %s, %s, %s\n";
+      printf $print_format,
+          "repo name",
+          "git commit",
+          "author",
+          "autho date",
+          "committer",
+          "commit date",
+          "ticket",
+          "change id",
+          "subject";
+  }
+
+  sub fix_for_csv($) {
+      ($str) = @_;
+      $str =~ s/"/""/g;
+      $str = sprintf '"%s"', $str;
+      return $str;
+  }
+
+  sub print_one_repo() {
+      for $commit (@commits) {
+          printf $print_format,
+              $repo_name,
+              $commit,
+              $commit_author_map{$commit},
+              $commit_author_date_map{$commit},
+              $commit_committer_map{$commit},
+              $commit_commit_date_map{$commit},
+              $commit_ticket_map{$commit},
+              $commit_change_id_map{$commit},
+              $commit_subject_map{$commit};
+      }
+
+      $repo_name = "";
+      @commits = ();
+  }
+
+  sub save_one_commit() {
+      push @commits, $commit;
+      $commit_author_map{$commit} = $author;
+      $commit_author_date_map{$commit} = $author_date;
+      $commit_committer_map{$commit} = $committer;
+      $commit_commit_date_map{$commit} = $commit_date;
+      $commit_subject_map{$commit} = $subject;
+      $commit_ticket_map{$commit} = $ticket;
+      $commit_change_id_map{$commit} = $change_id;
+
+      $subject = "";
+      $ticket = "";
+      $change_id = "";
+  }
+
+  END {
+      save_one_commit();
+      print_one_repo();
+  }
+
+  if (m/^(\S+): old: [0-9a-f]{40}, new: [0-9a-f]{40}/) {
+
+      if ($repo_name) {
+          print_one_repo();
+      }
+
+      $repo_name = $1;
+  } elsif (m/^ {8}commit ([0-9a-f]{40})$/) {
+      if ($commit) {
+          save_one_commit();
+      }
+      $commit = $1;
+  } elsif (m/^ {8}Author:\s+(.*)/) {
+      $author = $1;
+  } elsif (m/^ {8}AuthorDate:\s+(.*)/) {
+      $author_date = $1;
+  } elsif (m/^ {8}Commit:\s+(.*)/) {
+      $committer = $1;
+  } elsif (m/^ {8}CommitDate:\s+(.*)/) {
+      $commit_date = $1;
+  } elsif (m/^ {12}(\S.*)/ and not $subject) {
+      $subject = fix_for_csv $1;
+  } elsif (m/^\s+ticket:\s*(\d+.*)/i) {
+      $ticket = fix_for_csv $1;
+  } elsif (m/^\s+change-id:\s*(I[0-9a-f]{40})/i) {
+      $change_id = $1;
+  }
+#+END_SRC
+
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh
+  set -e
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt l:changelog
+  ## end code-generator
+  ## start generated code
+  TEMP=$(getopt -o l:h \
+                --long changelog:,help \
+                -n $(basename -- $0) -- "$@")
+  changelog=
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+
+          -l|--changelog)
+              changelog=$2
+              shift 2
+              ;;
+          -h|--help)
+              set +x
+              echo 
+              echo
+              echo Options and arguments:
+              printf %06s '-l, '
+              printf %-24s '--changelog=CHANGELOG'
+              echo
+              exit
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          ,*)
+              die "internal error"
+              ;;
+      esac
+  done
+
+
+  ## end generated code
+
+  cat $changelog | perl -ne "$(cat <<'EOF3c6586cb5e5a'
+  <<change-log-to-csv>>
+  EOF3c6586cb5e5a
+    )"
+
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle /home/bhj/src/github/smartcm/scm-helpers/convert-changelog-to-csv :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
