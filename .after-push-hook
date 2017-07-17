@@ -7,9 +7,8 @@ fi || true
 
 function push-all-projects() {
     (
-
+        . ~/system-config/etc/github-projects
         projects=$(
-            . ~/system-config/etc/github-projects
             echo ~/system-config
             for x in ${github_projects[*]} ${smartcm_projects[*]}; do
                 echo ~/src/github/$x
@@ -26,7 +25,23 @@ function push-all-projects() {
                 git push s HEAD:refs/heads/dev || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; } || true
             )
         done
+
+        if test ! -e ~/.config/system-config/push-all-submodules ||
+                test "$(perl -e 'print int(-M "$ENV{HOME}/.config/system-config/push-all-submodules")')" -gt 7; then
+            touch ~/.config/system-config/push-all-submodules
+
+
+            for p in "${github_projects[@]}"; do
+                (
+                    # to make system-config projects download faster
+                    cd ~/src/github/"$p"
+                    git push github.com:baohaojun/system-config HEAD:refs/heads/submodules/$p ||
+                        bhj-notify $PWD "push to submodules failed"
+                )
+            done
+        fi
     )&
+
 }
 
 if test -d ~/src/system-config/; then
