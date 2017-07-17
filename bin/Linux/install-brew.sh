@@ -47,3 +47,7 @@ if ! grep -P '^\Qexport LD_LIBRARY_PATH=~/.linuxbrew/lib:$LD_LIBRARY_PATH\E' ~/.
 fi
 mkdir -p ~/.mono/MimeKit.1.0.3.0/lib/net40
 chmod 700 ~/.mono/
+
+for p in String::ShellQuote String::Approx; do
+    check-perl-module --no-apt-get $p
+done

@@ -1,6 +1,51 @@
 #!/bin/bash
 set -e
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @apt-get=true
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long apt-get,help,no-apt-get \
+              -n $(basename -- $0) -- "$@")
+apt_get=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --apt-get|--no-apt-get)
+            if test "$1" = --no-apt-get; then
+                apt_get=false
+            else
+                apt_get=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]apt-get'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 function check-perl-module() {
     if test $# != 2; then
         set -- "$1" "$(echo -n $1 | perl -npe 's/::/-/g; $_ = lc $_; $_ = "lib" . $_ . "-perl"')"
@@ -9,8 +54,11 @@ function check-perl-module() {
     if perl -m$1 -e '' >/dev/null 2>&1; then
         true
     elif yes-or-no-p -y "没有找到运行当前命令要用到的名为 $1 的 Perl 模块，需要从 apt-get（需输入 sudo 密码） 或 CPAN 安装，继续？"; then
-        sudo apt-get install $2 && exit 0
-        hint "无法通过 apt-get 安装，下面将尝试通过 cpan 手动安装$1，请按 cpan 命令的提示操作（如有不明之处，请上网查询）"
+        if test "$apt_get" = true; then
+            sudo apt-get install $2 && exit 0
+            hint "无法通过 apt-get 安装，下面将尝试通过 cpan 手动安装$1，请按 cpan 命令的提示操作（如有不明之处，请上网查询）"
+        fi
+
         mkdir -p ~/perl5
         cpan -i "$1"
 
