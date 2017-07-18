@@ -12,5 +12,6 @@ if test $(basename $0) = screen-lock-off; then
     fi
 else # lock on
     # my-adb key power
+    destroy-windows Wrench
     true
 fi

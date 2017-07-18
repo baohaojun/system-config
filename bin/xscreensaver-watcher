@@ -1,5 +1,15 @@
 #!/usr/bin/perl
 
+use Fcntl qw(:flock SEEK_END);
+
+open($lock_fd, ">", "$ENV{HOME}/.cache/system-config/logs/xscreensaver-watcher.lock")
+    or die "Can't open lock";
+
+unless (flock($lock_fd, LOCK_EX|LOCK_NB)) {
+    print "Can't lock, already running?";
+    exit 0;
+}
+
 my $blanked = 0;
 open (IN, "xscreensaver-command -watch |");
 while (<IN>) {

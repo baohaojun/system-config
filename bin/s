@@ -52,7 +52,7 @@ if test "$DESKTOP_SESSION" = sawfish; then
                                 *ん)
                                     text=${text}だ
                                     ;;
-                                *っ|*い)
+                                *っ|*い|*し)
                                     text=${text}た
                                     ;;
                                 ## start code-generator "^\\s *#"
