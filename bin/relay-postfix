@@ -79,6 +79,12 @@ arg-not-empty port "$port"
 arg-not-empty user "$user"
 arg-not-empty password "$password"
 
+if test ! -e /etc/postfix/main.cf; then
+    hint "接下来要安装postfix服务器，配置时请选择“Internet Site”。可能需要输入sudo密码。"
+    sudo apt-get install postfix
+fi
+
+
 if ! grep "^relayhost.*$host" /etc/postfix/main.cf; then
     sudo perl -npe 's/^relayhost\s*=\s*$//' -i /etc/postfix/main.cf
     cat <<EOF | sudo tee -a /etc/postfix/main.cf
@@ -111,5 +117,17 @@ EOF
 EOF
     sudo postmap /etc/postfix/sasl_passwd
     sudo postfix reload
-    set -- "mailx is OK on $MYNAME $(date)"; /usr/bin/mailx -S from=$user  -S smtp=localhost:25 -s "$*" baohaojun@smartisan.com </dev/null
+    if ! which heirloom-mailx >/dev/null 2>&1; then
+        hint "需要安装 heirloom-mailx，可能需要输入 sudo 密码"
+        sudo apt-get install heirloom-mailx
+    fi
+
+    user_email=$(git config user.email)
+
+    if [[ $user_email =~ cmbuild@ ]]; then
+        user_email=baohaojun${user_email#cmbuild}
+    fi
+    if test "$user_email"; then
+        set -- "mailx is OK on $MYNAME $(date)"; heirloom-mailx -S from=$user  -S smtp=localhost:25 -s "$*" $user_email </dev/null
+    fi
 fi
