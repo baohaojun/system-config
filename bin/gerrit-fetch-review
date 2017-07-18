@@ -134,8 +134,8 @@ export REPO_REMOTE
 
 tmpf=/tmp/$(basename $0).$$
 if test $# = 1 -a "${1:0:4}" = http; then
-    if echo "$1" |grep -q "/\d+/\d+$" -P; then
-        set -- $(echo "$1"|perl -npe 's,.*/(\d+)/\d+$,$1,')
+    if echo "$1" |grep -q "#/c/\d+/" -P; then
+        set -- $(echo "$1"|perl -npe 's,.*#/c/(\d+)/.*,$1,')
     else
         set -- "$(basename "$1")"
     fi
@@ -156,8 +156,8 @@ branch=$(cat $tmpf | grep 'branch: '|pn 2)
 if ! lookup-file -e .repo >/dev/null 2>&1 &&
        ! lookup-file -e .git >/dev/null 2>&1 &&
    test -z "$REPO_REMOTE"; then
-    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT) -b "$branch"
-    git_dir=~/src/$(basename $PROJECT)
+    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/gerrit-fetch-review/$(basename $PROJECT) -b "$branch"
+    git_dir=~/src/gerrit-fetch-review/$(basename $PROJECT)
 else
     git_dir=$(my-rfa 'if test "$(repo-abs-path)" = $PROJECT; then pwd; fi')
 fi

@@ -2,6 +2,10 @@
 
 set -e
 
+my_http_proxy=$(rgrep Acquire::http::proxy /etc/apt/apt.conf.d/|pn 2 \"|grep .)
+if test "$my_http_proxy"; then
+    http_proxy=$my_http_proxy
+fi
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt r:release=testing p:package m:mirror=http://mirrors.aliyun.com @:repository=main
@@ -87,6 +91,7 @@ out_file=${souces_gz//\//_}
     relative-link "$(basename $souces_gz)" ../$out_file -f
 )
 
+declare -A md5_map
 zcat $out_file | while read line; do
     case "$line" in
         Binary:*\ $package,*|Binary:*\ $package$)
@@ -95,7 +100,10 @@ zcat $out_file | while read line; do
                     ?*)
                         if echo "$line" | grep -P '^[0-9a-f]{32} \d+ .*orig.tar.*'; then
                             source_tar=$(echo "$line" | pn 3)
-                            source_md5=$(echo "$line" | pn 1)
+                            md5_map[$source_tar]=$(echo "$line" | pn 1)
+                        elif echo "$line" | grep -P '^[0-9a-f]{32} \d+ .*debian.tar.*'; then
+                            debian_tar=$(echo "$line" | pn 3)
+                            md5_map[$debian_tar]=$(echo "$line" | pn 1)
                         elif [[ $line =~ ^Directory:\  ]]; then
                             source_dir=$(echo "$line" | pn 2)
                         fi
@@ -103,22 +111,44 @@ zcat $out_file | while read line; do
                     *)
                         arg-not-empty source-dir "$source_dir"
                         arg-not-empty source-tar "$source-tar"
-                        arg-not-empty source-md5 "$source_md5"
-
-                        source_url="$mirror/debian/$source_dir/$source_tar"
-                        out_file=${source_url#*://}
-                        out_dir=$(dirname "$out_file")
-                        mkdir -p "$out_dir"
-                        (
-                            cd "$out_dir"
-                            wget -N "$source_url"
-                        )
+                        arg-not-empty source-md5 "${md5_map[$source_tar]}"
                         rm -rf "$package"/
-                        mkdir -p "$package"
-                        if test "$(md5sum "$out_file"|pn 1)" != "$source_md5"; then
-                            die "md5 for $out_file not match: should be $source_md5"
+                        for source_tar in "$source_tar" $debian_tar; do
+                            source_md5=${md5_map[$source_tar]}
+
+                            source_url="$mirror/debian/$source_dir/$source_tar"
+                            out_file=${source_url#*://}
+                            out_dir=$(dirname "$out_file")
+                            mkdir -p "$out_dir"
+                            (
+                                cd "$out_dir"
+                                wget -N "$source_url"
+                            )
+
+                            mkdir -p "$package"
+                            if test "$(md5sum "$out_file"|pn 1)" != "$source_md5"; then
+                                die "md5 for $out_file not match: should be $source_md5"
+                            fi
+                            tar xfv "$out_file" -C "$package"
+                        done
+
+                        if test -d "$package"/debian; then
+                            (
+                                cd "$package"
+                                mv debian .debian
+                                s_dir=$(echo */)
+
+                                mv .debian "$s_dir"/debian
+                                cd "$s_dir"/
+                                cat debian/patches/series | while read line; do
+                                    patch=debian/patches/$line
+                                    if test -e $patch; then
+                                        echo applying $patch;
+                                        patch -p 1 < $patch
+                                    fi
+                                done
+                            )
                         fi
-                        tar xfv "$out_file" -C "$package"
                         exit
                         ;;
                 esac
