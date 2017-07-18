@@ -723,6 +723,7 @@ void WrenchMainWindow::on_Dial(const QString&contact)
 void WrenchMainWindow::quitMyself()
 {
     mQuit = true;
+    wrenchSetQuitting();
     close();
 }
 
@@ -799,7 +800,9 @@ void WrenchMainWindow::showEvent(QShowEvent *event)
 
     if (vncMainWindow && ui->tbPhoneScreen->isChecked()) {
         vncMainWindow->show();
+        moveVncMainWin();
     }
+
 }
 
 void WrenchMainWindow::startTask(const QString& task)
@@ -1031,7 +1034,6 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
         }
         static AdbVncThread* vncThread;
         if (checked) {
-            gPhoneScreenSyncOn = true;
             if (vncThread == NULL) {
                 vncThread = new AdbVncThread();
                 vncThread->moveToThread(vncThread);
@@ -1050,7 +1052,6 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
             connect(vncThread, SIGNAL(adbVncUpdate(QString)), vncMainWindow, SLOT(onVncUpdate(QString)));
 
         } else if (vncMainWindow) {
-            gPhoneScreenSyncOn = false;
             mLuaThread->addScript(QStringList("kill_android_vnc"));
             vncMainWindow->hide();
         }

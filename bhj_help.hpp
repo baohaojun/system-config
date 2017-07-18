@@ -11,4 +11,6 @@ QStringList filterMatchedStrings(const QStringList& strList, const QString& str)
 QStringList getPinyinSpelling(const QString& str);
 QString shell_quote(const QString& str);
 QStringList shell_quote(const QStringList& args);
+bool isWrenchQuitting();
+void wrenchSetQuitting();
 #endif /* _BHJ_HELP_H_ */

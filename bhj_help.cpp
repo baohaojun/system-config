@@ -72,3 +72,13 @@ QStringList getPinyinSpelling(const QString& str)
     }
     return res;
 }
+
+static bool gIsWrenchQuitting;
+bool isWrenchQuitting()
+{
+    return gIsWrenchQuitting;
+}
+void wrenchSetQuitting()
+{
+    gIsWrenchQuitting = true;
+}

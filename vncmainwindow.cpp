@@ -16,6 +16,7 @@
 #include "wrenchmainwindow.h"
 #include "wrenchext.h"
 #include "wrench.h"
+#include "bhj_help.hpp"
 
 extern QtVncViewerSettings *globalConfig;
 
@@ -273,15 +274,20 @@ bool VncMainWindow::eventFilter(QObject *object, QEvent *ev)
 
 void VncMainWindow::closeEvent(QCloseEvent *e)
 {
-    saveSettings();
-    e->accept();
+
+    if (isWrenchQuitting()) {
+        saveSettings();
+        e->accept();
+    } else {
+        fprintf(stderr, "%s:%d: hide\n", __FILE__, __LINE__);
+        hide();
+        e->ignore();
+    }
     // QTimer::singleShot(0, qApp, SLOT(quit()));
 }
 
 void VncMainWindow::hideEvent(QHideEvent *e)
 {
-    fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
-
     gPhoneScreenSyncOn = false;
     mLuaThread()->addScript(QStringList("kill_android_vnc"));
 
@@ -290,7 +296,7 @@ void VncMainWindow::hideEvent(QHideEvent *e)
 
 void VncMainWindow::showEvent(QShowEvent *e)
 {
-    fprintf(stderr, "%s:%d: \n", __FILE__, __LINE__);
+    gPhoneScreenSyncOn = true;
     initFromWrenchExt();
     QTimer::singleShot(10, ui->connectionWindow, SLOT(doConnect()));
 }
