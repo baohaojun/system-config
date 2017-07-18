@@ -1,0 +1,115 @@
+#!/bin/bash
+
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt ?'第三方邮件服务器 postfix 转发设置' \
+    # h:host ?'第三方邮件服务器主机名' \
+    # p:port ?'第三方邮件服务器端口' \
+    # u:user ?'第三方邮件服务器登录用户' \
+    # P:password ?'第三方邮件服务器登录密码'
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h:u:P:p:h \
+              --long host:,user:,password:,port:,help \
+              -n $(basename -- $0) -- "$@")
+host=
+user=
+password=
+port=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -h|--host)
+            host=$2
+            shift 2
+            ;;
+        -u|--user)
+            user=$2
+            shift 2
+            ;;
+        -P|--password)
+            password=$2
+            shift 2
+            ;;
+        -p|--port)
+            port=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo 第三方邮件服务器 postfix 转发设置
+            echo
+            echo Options and arguments:
+            printf %06s '-h, '
+            printf %-24s '--host=HOST'
+            echo '第三方邮件服务器主机名'
+            printf %06s '-P, '
+            printf %-24s '--password=PASSWORD'
+            echo '第三方邮件服务器登录密码'
+            printf %06s '-p, '
+            printf %-24s '--port=PORT'
+            echo '第三方邮件服务器端口'
+            printf %06s '-u, '
+            printf %-24s '--user=USER'
+            echo '第三方邮件服务器登录用户'
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -e ~/src/github/private-config/etc/relay-postfix.rc; then
+    . ~/src/github/private-config/etc/relay-postfix.rc
+fi
+
+arg-not-empty host "$host"
+arg-not-empty port "$port"
+arg-not-empty user "$user"
+arg-not-empty password "$password"
+
+if ! grep "^relayhost.*$host" /etc/postfix/main.cf; then
+    sudo perl -npe 's/^relayhost\s*=\s*$//' -i /etc/postfix/main.cf
+    cat <<EOF | sudo tee -a /etc/postfix/main.cf
+
+# inserted by relay-postfix ...
+smtp_sasl_auth_enable = yes
+# api_user和api_key
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_pix_workarounds =
+
+default_transport = smtp
+relay_transport = smtp
+
+home_mailbox = Maildir/postfix.localhost/
+smtpd_tls_auth_only = no
+smtp_always_send_ehlo = yes
+inet_protocols = ipv4
+myorigin = /etc/mailname
+
+relayhost = [$host]:$port
+smtp_use_tls = yes
+smtp_sender_dependent_authentication = yes
+
+EOF
+
+    echo smtp_use_tls = yes | sudo tee -a /etc/postfix/main.cf
+    cat <<EOF | sudo tee -a /etc/postfix/sasl_passwd
+[$host]:$port $user:$password
+EOF
+    sudo postmap /etc/postfix/sasl_passwd
+    sudo postfix reload
+    set -- "mailx is OK on $MYNAME $(date)"; /usr/bin/mailx -S from=$user  -S smtp=localhost:25 -s "$*" baohaojun@smartisan.com </dev/null
+fi
