@@ -14,6 +14,7 @@ brew install gmime
 brew install gtk+
 brew install libgpg-error
 brew install lzlib
+brew install giflib
 brew install mono --without-fsharp
 (
     cd ~/.linuxbrew/bin
@@ -37,6 +38,22 @@ download-debian-source -p libgmime2.6-cil-dev
     make -j8 CFLAGS=-I${HOME}/.linuxbrew/include LDFLAGS=-L${HOME}/.linuxbrew/lib
     make install
 )
+
+if false; then
+    download-debian-source -p emacs25
+    (
+        cd ~/src/debian-sources/emacs25/*/
+        ./autogen.sh
+        CFLAGS=$(pkg-config --cflags x11) \
+              LIBS=$(pkg-config --libs x11) \
+              ./configure --prefix=${HOME}/.linuxbrew \
+              --x-includes=$(pkg-config --cflags x11|perl -npe 's,-I,\n,g'|xargs string-join ":" $HOME/.linuxbrew/include/) \
+              --x-libraries=$HOME/.linuxbrew/Cellar/libx11/1.6.5/lib:$HOME/.linuxbrew/lib/
+
+        make -j8
+        make install
+    )
+fi
 
 for x in ~/.linuxbrew/Cellar/shared-mime-info/*/; do
     (
