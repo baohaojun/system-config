@@ -22,6 +22,8 @@ if test -e "$file"; then
     exit
 fi
 
+hint "Can't find $@ from emacs recentf, continue to look in history directories"
+
 if test -e "$(lookup-file -e .git)"; then
     f "$@" && exit
 fi

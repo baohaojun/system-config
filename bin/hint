@@ -27,8 +27,10 @@ done
 ## end generated code
 
 if is-jenkins; then
-    echo "$*"
+    echo "$*" 1>&2
 fi
+
+exec >/dev/null
 
 if is-recording; then
     sawfish-ask-for-input -p "$*

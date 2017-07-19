@@ -162,11 +162,16 @@ if test $# = 0; then
     fi
 fi
 
+. ~/src/github/smartcm/etc/team-map
 while test $# -gt 0; do
+    if test "${team_map[$1]}"; then
+        tmp_reviewers=${team_map[$1]}
+        shift
+        set -- $tmp_reviewers "$@"
+    fi
     reviewers=("${reviewers[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
     shift
 done
-
 
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
@@ -226,6 +231,12 @@ for try in $(seq 1 10); do
                 exit 1
             fi
         elif grep -q '(no new changes)' ~/.cache/system-config/logs/gerrit-review.log.$$; then
+            if test "${#reviewers[@]}"; then
+                change_id=$(gerrit-change-id)
+                for x in "${reviewers[@]}"; do
+                    gerrit -- set-reviewers "$change_id" -a "$x"
+                done
+            fi || true
             if yes-or-no-p -y "你的改动之前已经提交过gerrit review，是否继续（进行gerrit-do-review）？"; then
                 break
             fi
