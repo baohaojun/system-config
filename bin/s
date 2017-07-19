@@ -42,7 +42,7 @@ if test "$DESKTOP_SESSION" = sawfish; then
             start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
             if test "$x" = 1 && [[ ${start_event,,} =~ button1 ]] &&
                     test "$(sawfish-top-window)" = Wrench -a "$use_clip" = true; then
-                text=$(getclip-android|perl -npe 's/(、|……。|。)$//')
+                text=$(getclip-android|perl -npe 's/(……」|』、『|、|……。|。|』)$//')
                 (
                     if echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
                         search-dict "$text"
@@ -59,6 +59,7 @@ if test "$DESKTOP_SESSION" = sawfish; then
                                 # declare -A au_map
                                 # au_map[あ]=う
                                 # au_map[か]=く
+                                # au_map[き]=く
                                 # au_map[さ]=す
                                 # au_map[た]=つ
                                 # au_map[な]=ぬ
@@ -66,6 +67,7 @@ if test "$DESKTOP_SESSION" = sawfish; then
                                 # au_map[ま]=む
                                 # au_map[や]=ゆ
                                 # au_map[ら]=る
+                                # au_map[り]=る
                                 # au_map[わ]=う
                                 # for a in ${!au_map[@]}; do
                                 # cat <<EOF
@@ -78,6 +80,9 @@ if test "$DESKTOP_SESSION" = sawfish; then
                                 ## start generated code
                                 *か)
                                     text=${text%か}く
+                                    ;;
+                                *き)
+                                    text=${text%き}く
                                     ;;
                                 *あ)
                                     text=${text%あ}う
