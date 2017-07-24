@@ -41,8 +41,19 @@ if test "$DESKTOP_SESSION" = sawfish; then
         for x in $(seq 1 $max_try ); do
             start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
             if test "$x" = 1 && [[ ${start_event,,} =~ button1 ]] &&
-                    test "$(sawfish-top-window)" = Wrench -a "$use_clip" = true; then
-                text=$(getclip-android|perl -npe 's/(……」|』、『|、|……。|。|！|……|」|』)$//')
+                    {
+                        top_window=$(sawfish-top-window)
+
+                        test "$top_window" = Wrench -o  "$top_window" = Gjiten &&
+                            test "$use_clip" = true
+
+                    }; then
+
+                if test "$top_window" = Wrench; then
+                    text=$(getclip-android|perl -npe 's/(……」|』、『|、|……。|。|！|……|」|』)$//')
+                else
+                    text=$(getclip)
+                fi
                 (
                     if echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
                         search-dict "$text"

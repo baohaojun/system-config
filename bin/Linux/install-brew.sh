@@ -1,6 +1,10 @@
 #!/bin/bash
 
+# make sure to not use sudo to install into /home/linuxbrew
+command sudo -k
+
 set -e
+
 export HOMEBREW_NO_AUTO_UPDATE=true
 
 if ! which brew >/dev/null 2>&1; then
