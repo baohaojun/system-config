@@ -59,6 +59,8 @@ private:
     WrenchMainWindow* mWrench;
     QSharedPointer<LuaExecuteThread> mLuaThread();
     friend class WrenchMainWindow;
+signals:
+    void vncWindowClosed();
 };
 
 #endif // MAINWINDOW_H

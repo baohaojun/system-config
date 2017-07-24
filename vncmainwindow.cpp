@@ -292,6 +292,7 @@ void VncMainWindow::hideEvent(QHideEvent *e)
     mLuaThread()->addScript(QStringList("kill_android_vnc"));
 
     ui->connectionWindow->doDisconnect();
+    emit vncWindowClosed();
 }
 
 void VncMainWindow::showEvent(QShowEvent *e)

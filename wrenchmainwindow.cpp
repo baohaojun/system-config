@@ -788,6 +788,9 @@ void WrenchMainWindow::closeEvent(QCloseEvent *event)
         if (vncMainWindow) {
             vncMainWindow->hide();
         }
+        if (ui->tbPhoneScreen->isChecked()) {
+            ui->tbPhoneScreen->click();
+        }
         event->ignore();
     }
 }
@@ -1022,10 +1025,18 @@ void WrenchMainWindow::movePhoneScreenWindowXY(int x, int y)
 }
 
 volatile bool gPhoneScreenSyncOn;
+
+void WrenchMainWindow::onVncWindowClosed()
+{
+    if (ui->tbPhoneScreen->isChecked()) {
+        ui->tbPhoneScreen->click();
+    }
+}
+
 void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     QString usingVnc = mLuaThread->getVariableLocked("using-vnc");
-    if (usingVnc.isEmpty()) {
+    if (usingVnc.isEmpty() && checked) {
         prompt_user("Have not decided whether you have vnc, using screencapture");
     }
     if (usingVnc == "true") {
@@ -1044,6 +1055,7 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
                 vncMainWindow = new VncMainWindow(this);
 
                 vncMainWindow->installEventFilter(vncMainWindow);
+                connect(vncMainWindow, SIGNAL(vncWindowClosed()), this, SLOT(onVncWindowClosed()));
             }
 
             vncMainWindow->show();

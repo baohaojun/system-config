@@ -79,6 +79,7 @@ private slots:
     void onAdbNotificationArrived(const QString& , const QString& , const QString& , const QString&, const QString&);
     void onLoadMailHeads(const QString& , const QString& , const QString& , const QString& , const QString&);
     void on_sendItPushButton_clicked();
+    void onVncWindowClosed();
 
     void on_configurePushButton_clicked();
 
