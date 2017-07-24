@@ -1,0 +1,28 @@
+xterm*cjkWidth: true
+
+!英文用系统默认字体，中文用文泉驿正黑，这个配置适合笔记本，屏幕分辨率是1280X800。
+!look and feel
+xterm.termName: xterm-256color
+xterm.geometry: 80x36
+xterm*scrollBar: false
+xterm*rightScrollBar: true
+xterm*loginshell: true
+xterm*cursorBlink: true
+xterm*background:   black
+xterm*foreground:   gray
+xterm.borderLess: true
+xterm.cursorBlink: true
+xterm*colorUL: yellow
+xterm*colorBD: white
+
+!font and locale
+xterm*locale: true
+xterm.utf8:     true
+xterm*utf8Title: true
+xterm*fontMenu*fontdefault*Label: Default
+xterm*faceName:Monaco:antialias=True:pixelsize=15
+xterm*boldFont:Sans:style=Bold:pixelsize=15
+xterm*faceNameDoublesize:WenQuanYi Zen Hei:antialias=True:pixelsize=15
+xterm*xftAntialias: true
+xterm.cjkWidth:true
+XTerm*preeditType: Root
