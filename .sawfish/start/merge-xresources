@@ -1,0 +1,6 @@
+#!/bin/bash
+
+xrdb -merge ~/system-config/.Xresources
+if test -e ~/.config/system-config/.Xresources; then
+    xrdb -merge ~/.config/system-config/.Xresources
+fi

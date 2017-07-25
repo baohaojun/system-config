@@ -1,0 +1,85 @@
+** 最终的版本：
+
+   #+name: sawfish-script
+   #+BEGIN_SRC sawfish
+     (let ((skip-top %skip-top%)
+           (n-killed 0))
+       (mapcar
+        (lambda (w)
+          (when (string-equal (bhj-window-class w) "%arg%")
+            (unless (and skip-top (= n-killed 0))
+              (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (bhj-window-class w)))
+              (destroy-window w))
+            (setq n-killed (1+ n-killed))))
+        (if skip-top
+            (reverse (managed-windows))
+          (managed-windows))))
+   #+END_SRC
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh
+  #!/bin/bash
+
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt @:skip-top=nil
+  ## end code-generator
+  ## start generated code
+  TEMP=$(getopt -o h \
+                --long skip-top:,help \
+                -n $(basename -- $0) -- "$@")
+  skip_top=nil
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+
+          --skip-top)
+              skip_top=$2
+              shift 2
+              ;;
+          -h|--help)
+              set +x
+              echo
+              echo
+              echo Options and arguments:
+              printf "%06s" " "
+              printf %-24s '--skip-top=SKIP_TOP'
+              echo
+              exit
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          ,*)
+              die "internal error"
+              ;;
+      esac
+  done
+
+
+  ## end generated code
+
+  sawfish-client -e "$(cat <<'EOF2dca9b6e46e5' | perl -npe "s:%arg%:$1:g; s:%skip-top%:$skip_top:g"
+      <<sawfish-script>>
+  EOF2dca9b6e46e5
+  )"
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle /home/bhj/system-config/bin/sawfish-destroy-window :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+

@@ -1,18 +1,49 @@
 #!/bin/bash
 set -e
-file=$(readlink -f ~/.config/lxterminal/lxterminal.conf)
-size=$(perl -ne 'if (m/^fontname=.* (\d+)$/) {print $1; last}' $file)
-if test "$1" = +; then
-    (( size += 2 )) || true
-elif test "$1" = -; then
-    (( size -= 2 )) || true
-else
-    echo usage: $(basename $0) '+|-'
-    exit
+
+default_terminal=xterm
+
+change-size() {
+    if test "$1" = +; then
+        (( size += 2 )) || true
+    elif test "$1" = -; then
+        (( size -= 2 )) || true
+    else
+        echo usage: $(basename $0) '+|-'
+        exit
+    fi
+    bhj-notify terminal-font: $size
+}
+
+if test "$default_terminal" = lxterminal; then
+    file=$(readlink -f ~/.config/lxterminal/lxterminal.conf)
+    size=$(perl -ne 'if (m/^fontname=.* (\d+)$/) {print $1; last}' $file)
+    change-size "$@"
+    perl -npe "s!(fontname=.* )(\d+)\$!\${1}$size!" $file > $file.$$
+
+    mv $file.$$ $file
+    sawfish-destroy-window 'Lxterminal'
+    sleep .1
+    konsole.bhj
+elif test "$default_terminal" = xterm; then
+    if test ! -e ~/.config/system-config/.Xresources; then
+        cat ~/system-config/.Xresources |grep pixelsize > ~/.config/system-config/.Xresources
+    fi
+
+    size=$(
+        perl -npe 's/.*pixelsize=(\d+)/$1/' ~/.config/system-config/.Xresources |pn 1|head -n 1
+        )
+    change-size "$@"
+
+    perl -npe "s/(.*pixelsize=)(\d+)/\${1}$size/" -i ~/.config/system-config/.Xresources
+    xrdb -merge ~/.config/system-config/.Xresources ||
+        {
+            mv ~/.config/system-config/.Xresources ~/.config/system-config/.Xresources.$$
+            bhj-notify hello "font file ~/.config/system-config/.Xresources.$$ error"
+            exit
+        }
+
+    konsole.bhj&
+    sleep 2
+    sawfish-destroy-window --skip-top t 'XTerm'
 fi
-perl -npe "s!(fontname=.* )(\d+)\$!\${1}$size!" $file > $file.$$
-bhj-notify terminal-font: $size
-mv $file.$$ $file
-sawfish-destroy-window 'Lxterminal'
-sleep .1
-konsole.bhj

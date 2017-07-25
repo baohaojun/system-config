@@ -13,9 +13,28 @@ import os
 from OrderedSet import *
 import sys
 where_file = os.path.expanduser("~/.cache/system-config/.where")
+
+def is_ignored_dir(dir_):
+    """is this dir ignored?"""
+    ignored_dirs = (
+        '/.cache/system-config/for-code-reading',
+        '/smb',
+        '//',
+        '/mnt/',
+        '/run/',
+        'src/system-config',
+    )
+
+    for idir in ignored_dirs:
+        if idir in dir_:
+            return True
+
+    return False
+
 def where_pushd():
+    """push into history"""
     pwd = os.environ['PWD']
-    if '/.cache/system-config/for-code-reading' in pwd or '/smb' in pwd or '//' in pwd or '/mnt/' in pwd or '/run/' in pwd:
+    if is_ignored_dir(pwd):
         return
 
 
@@ -23,9 +42,9 @@ def where_pushd():
         fil_ = open(where_file, 'w', encoding="utf-8")
         fil_.close()
 
-    dir_history = open(where_file, encoding="utf-8").read().split('\n');
+    dir_history = open(where_file, encoding="utf-8").read().split('\n')
     dir_history[:0] = [pwd]
-    dir_history = OrderedSet(dir_history);
+    dir_history = OrderedSet(dir_history)
 
     for x in OrderedSet(dir_history):
         if not (os.path.exists(x) and os.path.isdir(x)):
@@ -35,16 +54,16 @@ def where_pushd():
     where_file_tmp = where_file + ('.%d' % os.getpid())
     fil_ = open(where_file_tmp, 'w', encoding="utf-8")
     fil_.write('\n'.join(dir_history))
-    fil_.close();
+    fil_.close()
     os.rename(where_file_tmp, where_file)
 
 def where_ask(argv):
-    dir_history = open(where_file, encoding="utf-8").read().split('\n');
-    for dir in dir_history:
-        if all([x.lower() in dir.lower() for x in argv]):
-            if any([x.lower() in dir.split('/')[-1].lower() for x in argv]):
-                if (os.path.exists(dir)):
-                    print(dir)
+    dir_history = open(where_file, encoding="utf-8").read().split('\n')
+    for dir_ in dir_history:
+        if all([x.lower() in dir_.lower() for x in argv]):
+            if any([x.lower() in dir_.split('/')[-1].lower() for x in argv]):
+                if os.path.exists(dir_):
+                    print(dir_)
 
 if sys.argv[1:]:
     where_ask(sys.argv[1:])
