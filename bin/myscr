@@ -90,6 +90,7 @@ if test -z "$session_name"; then
         set -- first "$@"
     fi
     session_name=$1
+    shift
 fi
 
 screen -wipe

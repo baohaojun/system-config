@@ -1,4 +1,5 @@
 vbell off
+defdynamictitle on
 bindkey -m \033[4~ stuff G
 bindkey -m \033[1~ stuff g
 bindkey -m \033b stuff b

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+x=$'\e'
+echo "${x}k${1:-nil}${x}\\"
