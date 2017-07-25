@@ -1,6 +1,10 @@
 #!/bin/bash
 # konsole --profile myscr --hide-menubar --hide-tabbar&
-if which lxterminal >/dev/null 2>&1; then
+if which xterm >/dev/null 2>&1; then
+    xterm -e myscr&
+    sawfish-wait-window -w XTerm
+    sawfish-client -e '(maximize-window (input-focus))'
+elif which lxterminal >/dev/null 2>&1; then
     lxterminal -e myscr&
     sawfish-wait-window -w Lxterminal
     sawfish-client -e '(maximize-window (input-focus))'
@@ -8,6 +12,4 @@ elif which gnome-terminal >/dev/null 2>&1; then
     gnome-terminal -e myscr
 elif which konsole >/dev/null 2>&1; then
     konsole -e myscr
-elif which xterm >/dev/null 2>&1; then
-    xterm myscr
 fi
