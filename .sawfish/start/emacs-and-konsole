@@ -10,7 +10,7 @@ if xrandr | grep -P 'HDMI. connected|^DP1 connected'; then
 fi
 
 emacs.bhj&
-konsole.bhj&
+konsole.bhj -S 'run-every-N-minutes bbs-robot.exp' -n bbs&
 
 while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
     sleep 1
