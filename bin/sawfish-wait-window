@@ -48,7 +48,7 @@ done
 
 ## end generated code
 
-if test "$time" -lt 50; then
+if test "$time" && test "$time" -lt 50; then
     time=50
 elif test $? = 2; then
     time=50
