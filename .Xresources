@@ -23,3 +23,7 @@ xterm*xftAntialias: true
 xterm.cjkWidth:false
 XTerm*preeditType: Root
 XTerm*allowSendEvents: true
+
+XTerm*on2Clicks:  regex [^      \n]+
+XTerm*on3Clicks:  regex .*
+XTerm*on4Clicks:  line

@@ -208,7 +208,7 @@ print $_ . "\n";
             exit
         fi
 
-        if test "$1" = log && lookup-file -e .git/shallow >/dev/null 2>&1; then
+        if test "$1" = log && test -e $(lookup-file -e .git/)/shallow >/dev/null 2>&1; then
             hint "你的 git 是个 shallow 仓储，git log 可能显示不全"
         fi
 
