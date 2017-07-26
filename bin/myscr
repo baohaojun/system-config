@@ -1,21 +1,31 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts wwait-exit n:window-name
+# generate-getopts wwait-exit n:window-name s:session-name S:start-cmd
 ## end code-generator
 ## start generated code
 
+session_name=
+start_cmd=
 wait_exit=false
 window_name=
 OPTIND=1
-while getopts "wn:h" opt; do
+while getopts "s:S:wn:h" opt; do
     case "$opt" in
 
+        s) session_name=$OPTARG ;;
+        S) start_cmd=$OPTARG ;;
         w) wait_exit=true ;;
         n) window_name=$OPTARG ;;
         h)
             echo
             echo
+            printf %06s%s '-s ' 'session-name'
+            printf %-24s 'SESSION_NAME'
+            echo ''
+            printf %06s%s '-S ' 'start-cmd'
+            printf %-24s 'START_CMD'
+            echo ''
             printf %06s%s '-w ' 'wait-exit'
             printf %-24s ''
             echo ''
@@ -28,6 +38,12 @@ while getopts "wn:h" opt; do
         *)
             echo
             echo
+            printf %06s%s '-s ' 'session-name'
+            printf %-24s 'SESSION_NAME'
+            echo ''
+            printf %06s%s '-S ' 'start-cmd'
+            printf %-24s 'START_CMD'
+            echo ''
             printf %06s%s '-w ' 'wait-exit'
             printf %-24s ''
             echo ''
@@ -68,10 +84,14 @@ fi
 
 . ~/system-config/.profile
 #. /etc/bash_completion
-if test "$1" != first; then
-    set -- first "$@"
+
+if test -z "$session_name"; then
+    if test "$1" != first; then
+        set -- first "$@"
+    fi
+    session_name=$1
+    shift
 fi
-session_name=${1:-first}
 
 screen -wipe
 if screen -list|grep $session_name; then
@@ -113,7 +133,7 @@ if screen -list|grep $session_name; then
         fi
         exit
     fi
-    exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL
+    exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL $start_cmd "$@"
 else
-    exec screen -h 100000 -S $session_name -t $session_name -s $SHELL
+    exec screen -h 100000 -S $session_name -t $session_name -s $SHELL $start_cmd "$@"
 fi

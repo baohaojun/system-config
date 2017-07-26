@@ -4,7 +4,66 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export DEBUG=true
 fi
 
-if test "$SCREEN_TITLE" != bbs; then
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @use-current-screen-window @find-bbs-screen
+## end code-generator
+## start generated code
+TEMP=$(getopt -o h \
+              --long find-bbs-screen,use-current-screen-window,help,no-find-bbs-screen,no-use-current-screen-window \
+              -n $(basename -- $0) -- "$@")
+find_bbs_screen=false
+use_current_screen_window=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --find-bbs-screen|--no-find-bbs-screen)
+            if test "$1" = --no-find-bbs-screen; then
+                find_bbs_screen=false
+            else
+                find_bbs_screen=true
+            fi
+            shift
+            ;;
+        --use-current-screen-window|--no-use-current-screen-window)
+            if test "$1" = --no-use-current-screen-window; then
+                use_current_screen_window=false
+            else
+                use_current_screen_window=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]find-bbs-screen'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]use-current-screen-window'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$use_current_screen_window" = true; then
+    screen-set-title bbs
+elif test "$find_bbs_screen" = true -a "$SCREEN_TITLE" != bbs; then
     exec ssssh bbs
 fi
 
