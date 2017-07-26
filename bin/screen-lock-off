@@ -3,6 +3,7 @@ exec >> ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
 set -x
 date
 if test $(basename $0) = screen-lock-off; then
+    Wrench.sh
     find-or-exec emacs emacs.bhj
     xdotool mousemove 20 10
     sleep 1
@@ -10,6 +11,7 @@ if test $(basename $0) = screen-lock-off; then
     if test -e ~/src/github/private-config/.gitconfig.bhj; then
         am dvp
     fi
+
 else # lock on
     # my-adb key power
     destroy-windows Wrench

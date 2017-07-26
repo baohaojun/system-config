@@ -1,25 +1,30 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts wwait-exit n:window-name s:session-name S:start-cmd
+# generate-getopts wwait-exit n:window-name s:session-name S:start-cmd ddebug
 ## end code-generator
 ## start generated code
 
 session_name=
 start_cmd=
 wait_exit=false
+debug=false
 window_name=
 OPTIND=1
-while getopts "s:S:wn:h" opt; do
+while getopts "s:S:wdn:h" opt; do
     case "$opt" in
 
         s) session_name=$OPTARG ;;
         S) start_cmd=$OPTARG ;;
         w) wait_exit=true ;;
+        d) debug=true ;;
         n) window_name=$OPTARG ;;
         h)
             echo
             echo
+            printf %06s%s '-d ' 'debug'
+            printf %-24s ''
+            echo ''
             printf %06s%s '-s ' 'session-name'
             printf %-24s 'SESSION_NAME'
             echo ''
@@ -38,6 +43,9 @@ while getopts "s:S:wn:h" opt; do
         *)
             echo
             echo
+            printf %06s%s '-d ' 'debug'
+            printf %-24s ''
+            echo ''
             printf %06s%s '-s ' 'session-name'
             printf %-24s 'SESSION_NAME'
             echo ''
@@ -95,8 +103,6 @@ fi
 
 screen -wipe
 if screen -list|grep $session_name; then
-    shift;
-
     if test "$#" = 1 && [[ $1 =~ " " ]]; then
         set -- bash -c "$1"
     fi
@@ -107,10 +113,12 @@ if screen -list|grep $session_name; then
                 echo 'set -x;'
             fi
 
-            if test "$wait_exit" = true; then
-                echo . atexit rm /tmp/screen-exec.$$
-            else
-                echo rm /tmp/screen-exec.$$
+            if test "$debug" = false; then
+                if test "$wait_exit" = true; then
+                    echo . atexit rm /tmp/screen-exec.$$
+                else
+                    echo rm /tmp/screen-exec.$$
+                fi
             fi
 
             echo . ~/system-config/bin/set-ssh-agent
