@@ -244,7 +244,7 @@ for try in $(seq 1 10); do
             change_url=$(grep -o '(change .* closed)' ~/.cache/system-config/logs/gerrit-review.log.$$ | pn 2)
             die "你想提交的某个改动好像已经被close掉了（比如被abandon掉了），请在此页面将其重新打开然后重试： $change_url"
         else
-            die gerrit-push-review 发生未知错误，请联系CM
+            die gerrit-push-review 发生未知错误，请仔细阅读出错信息并尝试解决，如不能自己解决，请联系 CM
         fi
     else
         break
