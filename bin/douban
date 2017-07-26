@@ -318,6 +318,9 @@ case "$1" in
         true
         ;;
     pause)
+        (
+            flock -n 0 && random-music-player
+        ) 0< ~/system-config/bin/random-music-player&
         touch ~/.cache/system-config/logs/douban.pause
         ps-killall -USR1 mplayer.expect
         ;;
