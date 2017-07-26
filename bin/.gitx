@@ -244,7 +244,10 @@ print $_ . "\n";
             command git fetch $(select-output-line -o -m 1 git remote)
             exit
         elif test "$1" = fetch -a "$#" = 2; then
-            if test "$2" = ?; then
+            if test "$2" = -a; then
+                set -- "$1" -v
+                git config remote.$(repo-remote).fetch "+refs/heads/*:refs/remotes/$(repo-remote)/*"
+            elif test "$2" = ?; then
                 set -- "$1" $(git-choose-branch)
             fi
             if [[ "$2" =~ ^remotes/ ]]; then

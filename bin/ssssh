@@ -7,7 +7,14 @@ fi
 
 if test ! -e ~/src/github/private-config/.ssssh/search-$host; then
     bhj-notify hello "host $host not found in .ssssh"
-    exit
+    if EMACS=t yes-or-no-p -n "Add $host to ~/src/github/private-config/.ssssh?"; then
+        cat <<EOF > ~/src/github/private-config/.ssssh/search-$host
+regexp='bhj@$host\s'
+name=$host
+EOF
+    else
+        exit
+    fi
 fi
 
 regexp=
