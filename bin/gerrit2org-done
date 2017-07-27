@@ -59,6 +59,7 @@ done
 ## end generated code
 
 gerrit_url=$1
+gerrit_id=$2
 
 if test -z "$gerrit_url"; then
     die "Usage: gerrit-url-added [-g|-s] url"
@@ -71,6 +72,10 @@ gerrit -h s query --current-patch-set "$gerrit_review_number" | grep -v 'runTime
 
 if test "$get" = true; then
     ret_val=0 # return true if already added
+    if test "$gerrit_id" && grep -q '^\* TODO.*:'$gerrit_id':' ~/src/github/projects/gerrit.org; then
+        exit 0
+    fi
+
     if ! diff -q "$saved_file".$$ "$saved_file"; then
         ret_val=1
     fi
