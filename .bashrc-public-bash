@@ -204,12 +204,12 @@ cd_record()
         . ~/system-config/bin/set-ssh-agent
         touch /proc/$$/cmdline >/dev/null 2>&1
     fi
-    if test "$ANDROID_SERIAL" && ! echo "$RECURSIVE_SHELL" | grep -q -e "adb-$ANDROID_SERIAL\."; then
-        RECURSIVE_SHELL=$(echo "$RECURSIVE_SHELL" | perl -npe 's/adb-\S+\s*//g;')
-        if test "$RECURSIVE_SHELL"; then
-            export RECURSIVE_SHELL="$RECURSIVE_SHELL: ""adb-$ANDROID_SERIAL."
+    if test "$ANDROID_SERIAL" && ! echo "$SC_EXTRA_PS1" | grep -q -e "adb-$ANDROID_SERIAL\."; then
+        SC_EXTRA_PS1=$(echo "$SC_EXTRA_PS1" | perl -npe 's/adb-\S+\s*//g;')
+        if test "$SC_EXTRA_PS1"; then
+            export SC_EXTRA_PS1="$SC_EXTRA_PS1: ""adb-$ANDROID_SERIAL."
         else
-            export RECURSIVE_SHELL="adb-$ANDROID_SERIAL."
+            export SC_EXTRA_PS1="adb-$ANDROID_SERIAL."
         fi
     fi
 
