@@ -4,6 +4,18 @@ if test "$DEBUG"; then
     set -x
 fi
 
+if test "$SC_USE_TMUX" = true; then
+    if test ${0##*/} = sawfish-get-screen-shot-whole; then
+        tmux capture-pane -S -
+    else
+        tmux capture-pane
+    fi
+
+    tmux saveb /tmp/screen-exchange
+    cat /tmp/screen-exchange
+    exit
+fi
+
 function get-by-copy-window() {
     go_back="End Prior"
     if test $(basename $0) = sawfish-get-screen-shot-whole; then

@@ -40,7 +40,11 @@ if echo "$current_window_text"| grep -P -q -e "$search"; then
 fi
 
 xdotool key super+space
-xdotool key apostrophe
+if test "$SC_USE_TMUX" = true; then
+    xdotool key f
+else
+    xdotool key apostrophe
+fi
 sleep .05
 xdotool type "$name"
 sleep .05

@@ -67,6 +67,11 @@ shift $((OPTIND - 1))
 
 ## end generated code
 
+if echo $SHELLOPTS | grep -q xtrace; then
+    debug=true
+fi
+
+
 if test "$window_name"; then
     export SCREEN_TITLE=$window_name
 fi
@@ -101,8 +106,35 @@ if test -z "$session_name"; then
     shift
 fi
 
-screen -wipe
-if screen -list|grep $session_name; then
+session-exists() {
+    if test "$SC_USE_TMUX" = true; then
+        tmux list-sessions | grep "$session_name"
+    else
+        screen -list|grep "$session_name"
+    fi
+}
+
+using-screen() {
+    test "$SC_USE_TMUX" != true
+}
+
+using-tmux() {
+    test "$SC_USE_TMUX" = true
+}
+
+if using-screen; then
+    screen -wipe
+else
+    tmux_start_cmd=$(for x in $start_cmd "$@"; do
+                         printf "%q " "$x"
+                     done
+                  )
+    if test -z "$tmux_start_cmd"; then
+        tmux_start_cmd=/bin/bash
+    fi
+fi
+
+if session-exists; then
     if test "$#" = 1 && [[ $1 =~ " " ]]; then
         set -- bash -c "$1"
     fi
@@ -133,7 +165,11 @@ if screen -list|grep $session_name; then
         if test -z "$SCREEN_TITLE"; then
             SCREEN_TITLE=bash
         fi
-        screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
+        if using-screen; then
+            screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
+        else
+            tmux new-window -n "$SCREEN_TITLE" "bash /tmp/screen-exec.$$" &
+        fi
         if test "$wait_exit" = true; then
             while test -e /tmp/screen-exec.$$; do
                 sleep 2
@@ -141,7 +177,17 @@ if screen -list|grep $session_name; then
         fi
         exit
     fi
-    exec screen -h 100000 -x -r $session_name -t $session_name -s $SHELL $start_cmd "$@"
+
+    # $# = 0 ...
+    if using-screen; then
+        exec screen -x -r $session_name -t $session_name -s $SHELL $start_cmd "$@"
+    else
+        exec tmux new-window -n "$session_name" "$tmux_start_cmd"
+    fi
 else
-    exec screen -h 100000 -S $session_name -t $session_name -s $SHELL $start_cmd "$@"
+    if using-screen; then
+        exec screen -S $session_name -t $session_name -s $SHELL $start_cmd "$@"
+    else
+        exec tmux new-session -s $session_name -n $session_name "$tmux_start_cmd"
+    fi
 fi

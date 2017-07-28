@@ -19,6 +19,7 @@ fi
 env=$(cat <<EOF
 (progn
   (setenv "PATH" "$PATH")
+  (setenv "SC_USE_TMUX" "$SC_USE_TMUX")
   (setenv "LC_ALL" "$LC_ALL")
   (setenv "LANG" "$LANG")
   (setenv "LANGUAGE" "$LANGUAGE")
