@@ -39,16 +39,16 @@ if echo "$current_window_text"| grep -P -q -e "$search"; then
     exit
 fi
 
-xdotool key super+space
 if test "$SC_USE_TMUX" = true; then
-    xdotool key f
+    tmux find-window -N "$name"
 else
+    xdotool key super+space
     xdotool key apostrophe
+    sleep .05
+    xdotool type "$name"
+    sleep .05
+    xdotool key Return
 fi
-sleep .05
-xdotool type "$name"
-sleep .05
-xdotool key Return
 
 current_window_text=$(sawfish-get-screen-shot)
 if echo "$current_window_text"| grep -P -q -e "$search"; then
