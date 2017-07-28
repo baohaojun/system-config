@@ -801,6 +801,7 @@
 (bind-keys print-keymap "c" '(system "screenshot --current&"))
 (bind-keys print-keymap "k" '(system "sawfish-get-screen-shot-whole&"))
 (bind-keys print-keymap "e" '(system "e /tmp/screen-exchange&"))
+(bind-keys print-keymap "t" '(system "edit-terminal-capture&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
 (bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular'&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))

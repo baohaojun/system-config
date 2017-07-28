@@ -1,0 +1,1 @@
+MyCLI.start(ARGV)

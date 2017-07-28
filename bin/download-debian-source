@@ -2,7 +2,7 @@
 
 set -e
 
-my_http_proxy=$(rgrep Acquire::http::proxy /etc/apt/apt.conf.d/|pn 2 \"|grep .)
+my_http_proxy=$(rgrep Acquire::http::proxy /etc/apt/apt.conf.d/|pn 2 \"|grep . || true)
 if test "$my_http_proxy"; then
     http_proxy=$my_http_proxy
 fi
@@ -92,9 +92,9 @@ out_file=${souces_gz//\//_}
 )
 
 declare -A md5_map
-zcat $out_file | while read line; do
+zcat $out_file |perl -ne "print if m=^Binary:.* $package,|^Binary:.* $package$= .. m,^Package:," | while read line; do
     case "$line" in
-        Binary:*\ $package,*|Binary:*\ $package$)
+        Binary:*\ $package,*|Binary:*\ $package)
             while read line; do
                 case "$line" in
                     ?*)
