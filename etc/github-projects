@@ -29,6 +29,7 @@ smartcm_projects=(
     gapps-t1
     smartcm
     Wrench-ubuntu-14.04
+    android-documents
 )
 
 declare -A project_repo_url
