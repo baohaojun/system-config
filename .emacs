@@ -248,11 +248,11 @@
       (random-theme)
     (error nil)))
 
-
-
+(defun knuth-mode ()
+  (interactive)
+  (shell-command "knuth-mode"))
 
 (defvar grep-func-call-history nil)
-
 
 (defmacro set-remote-env (name val)
   `(let ((process-environment tramp-remote-process-environment))

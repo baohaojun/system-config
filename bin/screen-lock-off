@@ -8,10 +8,9 @@ if test $(basename $0) = screen-lock-off; then
     xdotool mousemove 20 10
     sleep 1
     xdotool mousemove 1024 10
-    if test -e ~/src/github/private-config/.gitconfig.bhj; then
-        am dvp
-    fi
-
+    # if test -e ~/src/github/private-config/.gitconfig.bhj; then
+    #     am dvp
+    # fi
 else # lock on
     # my-adb key power
     destroy-windows Wrench

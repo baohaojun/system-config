@@ -44,7 +44,7 @@ $(cat $target|perl -npe 's/^/  /')
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle $target :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle $(echo ${target} | perl -npe 's,^$ENV{HOME}/,~/,') :comments link :shebang "#!/bin/bash" :noweb yes
 set -e
 
 <<old-code>>

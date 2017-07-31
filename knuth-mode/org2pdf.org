@@ -86,7 +86,7 @@ END {
 ** 最终的版本：
 
    #+name: the-ultimate-script
-   #+BEGIN_SRC sh :tangle /home/bhj/system-config/bin/org2pdf :comments link :shebang "#!/bin/bash" :noweb yes
+   #+BEGIN_SRC sh :tangle ~/system-config/bin/org2pdf :comments link :shebang "#!/bin/bash" :noweb yes
           set -e
 
 
