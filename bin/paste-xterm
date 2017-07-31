@@ -1,0 +1,3 @@
+#!/bin/bash
+xclip -o -selection clipboard | xclip -i -selection primary
+sawfish-send-focused-window-event "S-Insert"

@@ -485,10 +485,10 @@
 (setq super-key-window-remap
       `(("v" . ((Dia . "C-v")
                 (Lxterminal . "C-S-v")
-                (XTerm . "S-Insert")
                 (Gnome-terminal . "C-S-v")
                 (Xfce4-terminal . "C-S-v")
                 (QtCreator . ("M-e" "p"))
+                (XTerm . ,(lambda () (system "paste-xterm&")))
                 (t . "S-Insert")))
         ("n" . ((Firefox . "Down") (Firefox-esr . "Down") (Iceweasel . "Down")))
         ("y" . ((Dia . "S-C-z")
