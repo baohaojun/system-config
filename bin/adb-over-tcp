@@ -2,8 +2,8 @@
 
 if test "$1"; then
     wifi_ip=$1
-    echo my-adb connect "$wifi_ip":${2:-5555} > ~/.cache/system-config/logs/adb-over-tcp
-    my-adb connect "$wifi_ip":${2:-5555}
+    echo my-adb connect "$wifi_ip":${2:-34872} > ~/.cache/system-config/logs/adb-over-tcp
+    my-adb connect "$wifi_ip":${2:-34872}
     exit
 fi
 
@@ -17,10 +17,10 @@ if my-adb devices | grep : -q && yes-or-no-p -y my-adb disconnect?; then
 fi
 
 my-adb -S
-my-adb -w tcpip ${1:-5555};
+my-adb -w tcpip ${1:-34872};
 sleep 1
 my-adb -w shell echo hello
 wifi_ip=$(adb-get-wifi-ip)
 echo wifi is $wifi_ip
-echo my-adb connect "$wifi_ip":${1:-5555} > ~/.cache/system-config/logs/adb-over-tcp
-my-adb connect "$wifi_ip":${1:-5555}
+echo my-adb connect "$wifi_ip":${1:-34872} > ~/.cache/system-config/logs/adb-over-tcp
+my-adb connect "$wifi_ip":${1:-34872}
