@@ -182,7 +182,7 @@ if session-exists; then
     if using-screen; then
         exec screen -x -r $session_name -t $session_name -s $SHELL $start_cmd "$@"
     else
-        exec tmux new-window -n "$session_name" "$tmux_start_cmd"
+        exec tmux attach
     fi
 else
     if using-screen; then

@@ -270,9 +270,9 @@
         ("Prior" . '((Firefox "ESC" "v") (Firefox-esr "ESC" "v") (Iceweasel "ESC" "v") (qpdfview "BS")))
         ("C-d" . '((t "DEL")))
         ("C-e" . '((t "End")))
-        ("C-b" . '((Firefox "C-b") (Firefox-esr "C-b") (Iceweasel "C-b") (t "Left")))
+        ("C-b" . '((Firefox "Left") (Firefox-esr "Left") (Iceweasel "Left") (t "Left")))
         ("C-y" . '((Firefox "C-y") (Firefox-esr "C-y") (Iceweasel "C-y") (t "C-v")))
-        ("C-f" . '((Firefox "C-f") (Firefox-esr "C-f") (Iceweasel "C-f") (t "Right")))
+        ("C-f" . '((Firefox "Right") (Firefox-esr "Right") (Iceweasel "Right") (t "Right")))
         ("M-b" . '((t "C-Left"))) ; this is for Escape only, not Alt
         ("M-f" . '((t "C-Right")))
         ("M-B" . '((t "C-S-Left")))
