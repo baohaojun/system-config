@@ -1,0 +1,84 @@
+#!/bin/bash
+
+function sort-args() {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -l t:save-to-var gset-global=true
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o gt:h \
+                          --long set-global,save-to-var:,help,no-set-global \
+                          -n $(basename -- $0) -- "$@")
+    local set_global=true
+    local save_to_var=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -g|--set-global|--no-set-global)
+                if test "$1" = --no-set-global; then
+                    set_global=false
+                else
+                    set_global=true
+                fi
+                shift
+                ;;
+            -t|--save-to-var)
+                save_to_var=$2
+                shift 2
+                ;;
+            -h|--help)
+                set +x
+                echo
+                echo
+                echo Options and arguments:
+                printf %06s '-t, '
+                printf %-24s '--save-to-var=SAVE_TO_VAR'
+                echo
+                printf %06s '-g, '
+                printf %-24s '--[no-]set-global'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if test "$set_global" = true; then
+        set_global=-g
+    else
+        set_global=
+    fi
+
+    local x
+    x=$(
+        for x in "$@"; do
+            printf "%q\n" "$x"$'\n'
+        done |perl -npe "s,\\\\n'$,'," | sort
+     )
+    local IFS=$'\n'
+    local sorted_args=()
+    for x in $x; do
+        sorted_args=(
+            "${sorted_args[@]}"
+            "$(eval echo "$x")"
+        )
+    done
+    declare -p sorted_args |
+        if test "$save_to_var"; then
+            perl -npe "s,declare -a sorted_args=,declare $set_global -a $save_to_var=,"
+        else
+            cat
+        fi
+}
+
+sort-args "$@"

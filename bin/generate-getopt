@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/src/github/private-config/doc/generate-getopt.org::*%E6%9C%80%E7%BB%88%E8%84%9A%E6%9C%AC][the-ultimate-script]]
+# [[file:~/system-config/knuth-mode/generate-getopt.org::*%E6%9C%80%E7%BB%88%E8%84%9A%E6%9C%AC][the-ultimate-script]]
 
 # All bash scripts should start with ~set -e~ to fail early and loudly.
 set -e
@@ -8,7 +8,13 @@ declare -A short_opts_map
 declare -A long_opts_map
 declare -A help_map
 declare -A default_val_map
-declare -A var_name_map
+
+is_local=
+
+if test "$1" = -l; then
+    is_local=local
+    shift
+fi
 
 
 while test "$1"; do
@@ -30,10 +36,9 @@ while test "$1"; do
         spec=${spec:1}
     fi
 
-    long=$(echo "$spec"|perl -npe 's/(\?|=|\@).*//')
-    help=$(echo "$spec" | perl -ne 'print if s/.*\?(.*?)(=.*|\@.*|$)/$1/')
-    default=$(echo "$spec" | perl -ne 'print if s/.*=(.*?)(\?.*|\@.*|$)/$1/')
-    var_name=$(echo "$spec" | perl -ne 'print if s/.*\@(.*?)(\?.*|=.*|$)/$1/')
+    long=$(echo "$spec"|perl -npe 's/(\?|=).*//')
+    help=$(echo "$spec" | perl -ne 'print if s/.*\?(.*?)(=.*|$)/$1/')
+    default=$(echo "$spec" | perl -ne 'print if s/.*=(.*?)(\?.*|$)/$1/')
 
     while true; do
         if test "${1:0:1}" = '?'; then
@@ -49,7 +54,6 @@ while test "$1"; do
 
     short_opts_map[$long]=$short
     long_opts_map[$long]=$long
-    var_name_map[$long]=$var_name
     if [[ $short =~ : ]]; then
         long_opts_map[$long]=$long:
     fi
@@ -62,9 +66,11 @@ while test "$1"; do
     help_map[$long]=$help
 done
 
+eval "$(sort-args.reliably -t long_opts_sorted -- "${!long_opts_map[@]}")"
+
 output-no-long-opts() {
     output_done=false
-    for long in "${!long_opts_map[@]}"; do
+    for long in "${long_opts_sorted[@]}"; do
         short=${short_opts_map[$long]}
         if ! [[ $short =~ : ]]; then
             echo -n ,no-$long
@@ -73,21 +79,25 @@ output-no-long-opts() {
 }
 
 cat <<EOF
-TEMP=\$(getopt -o $(string-join '' $(for x in "${short_opts_map[@]}"; do if test "$x" != :; then echo $x; fi; done) h) \\
- --long $(string-join , ${long_opts_map[@]} help; output-no-long-opts) \\
+TEMP=\$($(
+            if test "$is_local"; then
+                echo POSIXLY_CORRECT=true
+            fi
+        ) getopt -o $(string-join '' $(for x in "${long_opts_sorted[@]}"; do x="${short_opts_map[$x]}"; if test "$x" -a "$x" != :; then echo $x; fi; done) h) \\
+ --long $(string-join , $(for x in "${long_opts_sorted[@]}"; do echo ${long_opts_map[$x]}; done) help; output-no-long-opts) \\
  -n \$(basename -- \$0) -- "\$@")
-$(
-for long in "${!long_opts_map[@]}"; do
+  $(
+for long in "${long_opts_sorted[@]}"; do
     var=${long//-/_}
-    echo ${var}=${default_val_map[$long]}
+    echo $is_local ${var}=${default_val_map[$long]}
 done
-)
+  )
 eval set -- "\$TEMP"
 while true; do
   case "\$1" in
 
-$(
-for long in "${!long_opts_map[@]}"; do
+  $(
+for long in "${long_opts_sorted[@]}"; do
     s=${short_opts_map[$long]}
     is_boolean=true
     if [[ $s =~ : ]]; then
@@ -130,16 +140,14 @@ EOF2
     echo ";;"
 done
 
-)
+  )
 -h|--help)
     $(
         echo set +x
         echo echo "$description"
         echo echo
         echo echo Options and arguments:
-        for long in ${!long_opts_map[@]}; do
-            echo $long
-        done | sort | while read long; do
+        for long in ${long_opts_sorted[@]}; do
             short=${short_opts_map[$long]}
             is_boolean=true
             if [[ $short =~ : ]]; then
@@ -155,10 +163,7 @@ done
                 if test "$is_boolean" = true; then
                     echo -n --[no-]$long
                 else
-                    uc_long=${var_name_map[$long]}
-                    if test -z "$uc_long"; then
-                        uc_long=$long
-                    fi
+                    uc_long=$long
                     uc_long=${uc_long^^}
                     echo -n --$long=${uc_long//-/_}
                 fi
@@ -190,6 +195,10 @@ done
    esac
 done
 
+
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
 EOF
 
 # the-ultimate-script ends here

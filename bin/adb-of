@@ -13,7 +13,7 @@ if test ! -e "$1"; then
                  system("my-adb", "am", "start", "-n", "com.youku.phone/com.youku.ui.activity.DetailActivity", "--es", "video_id", $1);
              } elsif (m!http://(?:www.)?weibo.(?:com|cn)/[^/]*/([^?/]+)!) {
                  open_sina($1);
-             } elsif (m!http://m.weibo.cn/[^/]*/([^/?]*)!) {
+             } elsif (m!https?://m.weibo.cn/[^/]*/([^/?]*)!) {
                  open_sina($1);
              } elsif (m!https://passport.(?:weibo|sine).cn/.*r=http%3A%2F%2Fm.weibo.cn%2F[^%]*%2F([^%&]+)!) {
                  open_sina($1);

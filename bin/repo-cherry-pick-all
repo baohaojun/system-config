@@ -53,25 +53,33 @@ if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt sshell hdo_here nno_fetch Rno_reverts ddry-run o:ok-function f:fail-function S:skip-function @:should-function
+# generate-getopt sshell hdo-here nno-fetch Rno-reverts ddry-run o:ok-function f:fail-function S:skip-function @:should-function
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o dRno:hsf:S:h \
-              --long dry-run,no_reverts,no_fetch,ok-function:,do_here,should-function:,shell,fail-function:,skip-function:,help,no-dry-run,no-no_reverts,no-no_fetch,no-do_here,no-shell \
-              -n $(basename -- $0) -- "$@")
-dry_run=false
-no_reverts=false
-no_fetch=false
-ok_function=
+TEMP=$( getopt -o Rno:dsf:hS:h \
+               --long no-reverts,no-fetch,ok-function:,should-function:,dry-run,shell,fail-function:,do-here,skip-function:,help,no-do-here,no-dry-run,no-no-fetch,no-no-reverts,no-shell \
+               -n $(basename -- $0) -- "$@")
 do_here=false
-should_function=
-shell=false
+dry_run=false
 fail_function=
+no_fetch=false
+no_reverts=false
+ok_function=
+shell=false
+should_function=
 skip_function=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -h|--do-here|--no-do-here)
+            if test "$1" = --no-do-here; then
+                do_here=false
+            else
+                do_here=true
+            fi
+            shift
+            ;;
         -d|--dry-run|--no-dry-run)
             if test "$1" = --no-dry-run; then
                 dry_run=false
@@ -80,36 +88,28 @@ while true; do
             fi
             shift
             ;;
-        -R|--no_reverts|--no-no_reverts)
-            if test "$1" = --no-no_reverts; then
-                no_reverts=false
-            else
-                no_reverts=true
-            fi
-            shift
+        -f|--fail-function)
+            fail_function=$2
+            shift 2
             ;;
-        -n|--no_fetch|--no-no_fetch)
-            if test "$1" = --no-no_fetch; then
+        -n|--no-fetch|--no-no-fetch)
+            if test "$1" = --no-no-fetch; then
                 no_fetch=false
             else
                 no_fetch=true
             fi
             shift
             ;;
-        -o|--ok-function)
-            ok_function=$2
-            shift 2
-            ;;
-        -h|--do_here|--no-do_here)
-            if test "$1" = --no-do_here; then
-                do_here=false
+        -R|--no-reverts|--no-no-reverts)
+            if test "$1" = --no-no-reverts; then
+                no_reverts=false
             else
-                do_here=true
+                no_reverts=true
             fi
             shift
             ;;
-        --should-function)
-            should_function=$2
+        -o|--ok-function)
+            ok_function=$2
             shift 2
             ;;
         -s|--shell|--no-shell)
@@ -120,8 +120,8 @@ while true; do
             fi
             shift
             ;;
-        -f|--fail-function)
-            fail_function=$2
+        --should-function)
+            should_function=$2
             shift 2
             ;;
         -S|--skip-function)
@@ -134,7 +134,7 @@ while true; do
             echo
             echo Options and arguments:
             printf %06s '-h, '
-            printf %-24s '--[no-]do_here'
+            printf %-24s '--[no-]do-here'
             echo
             printf %06s '-d, '
             printf %-24s '--[no-]dry-run'
@@ -143,10 +143,10 @@ while true; do
             printf %-24s '--fail-function=FAIL_FUNCTION'
             echo
             printf %06s '-n, '
-            printf %-24s '--[no-]no_fetch'
+            printf %-24s '--[no-]no-fetch'
             echo
             printf %06s '-R, '
-            printf %-24s '--[no-]no_reverts'
+            printf %-24s '--[no-]no-reverts'
             echo
             printf %06s '-o, '
             printf %-24s '--ok-function=OK_FUNCTION'
@@ -172,6 +172,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -277,6 +278,14 @@ for diff_file in $diffs; do
                         if echo "$line" | grep '{{{Revert "' -q; then
                             subject=$(echo "$line" | perl -npe 's,.*\{\{\{Revert "(.*)"\}\}\}.*,$1,')
                             reverted_commits[$subject]=1
+                            if [[ $subject =~ 'Revert "' ]]; then
+                                subject=$(echo "$subject" | perl -npe 's,^Revert "(.*)",$1, while m,^Revert "(.*)",')
+                                if test -z "${reverted_commits[$subject]}"; then
+                                    reverted_commits[$subject]=1
+                                else
+                                    reverted_commits[$subject]=$((${reverted_commits[$subject]} + 1))
+                                fi
+                            fi
                         fi
                     done
                     export reverted_commits
@@ -330,13 +339,20 @@ for diff_file in $diffs; do
                     ret=0
                     if test "$no_reverts" = true; then
                         . $diff_file.env
-                        if test "${reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, it is reverted later?; then
-                            echo skip $git_commit_id: $subject
-                            skiped_later_reverted_commits[Revert \"$subject\"]=1
-                            if test "$skip_function"; then
-                                skip_reason=reverted "$skip_function" $ap $git_commit_id </dev/null
+                        if test "${reverted_commits[$subject]}"; then
+                            if test $((${reverted_commits[$subject]} % 2)) = 1; then
+                                yn_flag=-y
+                            else
+                                yn_flag=-n
                             fi
-                            continue
+                            if yes-or-no-p -$yn_flag skip $git_commit_id: $subject, it is reverted ${reverted_commits[$subject]} times later?; then
+                                echo skip $git_commit_id: $subject
+                                skiped_later_reverted_commits[Revert \"$subject\"]=1
+                                if test "$skip_function"; then
+                                    skip_reason=reverted "$skip_function" $ap $git_commit_id </dev/null
+                                fi
+                                continue
+                            fi
                         fi
 
                         if test "${skiped_later_reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, the original has been skipped?; then
