@@ -1,4 +1,0 @@
-# name: require
-# key: require
-# --
-(:require [$1 :as $2])$>

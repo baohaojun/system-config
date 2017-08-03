@@ -1,4 +1,0 @@
-# name: import
-# key: import
-# --
-(:import ($1))$>
