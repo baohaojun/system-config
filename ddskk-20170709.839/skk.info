@@ -1,0 +1,435 @@
+This is skk.info, produced by makeinfo version 5.2 from skk.texi.
+
+
+
+
+
+
+
+
+
+
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+ Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+ Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the author.
+
+ Copyright © 1991-2007 Masahiko Sato（佐藤雅彦）, Yukiyoshi Kameyama（亀
+山幸義）, NAKAJIMA Mikio（中島幹夫）, IRIE Tetsuya（入江）, Kitamoto
+Tsuyoshi（北本剛）, Teika Kazura（定家）, Tsukamoto Tetsuo（塚本徹雄）
+and Tsuyoshi AKIHO（秋保強）.  Revised by Kiyotaka Sakai（酒井清隆） and
+Satoshi Harauchi（原内聡）.
+
+     Permission is granted to make and distribute verbatim copies of
+     this manual provided the copyright notice and this permission
+     notice are preserved on all copies.
+
+     Permission is granted to copy and distribute modified versions of
+     this manual under the conditions for verbatim copying, provided
+     that the entire resulting derived work is distributed under the
+     terms of a permission notice identical to this one.
+
+     Permission is granted to copy and distribute translations of this
+     manual into another language, under the above conditions for
+     modified versions, except that this permission notice may be stated
+     in a translation approved by the author.
+INFO-DIR-SECTION GNU Emacs Lisp
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* SKK: (skk).           Simple Kana to Kanji conversion program.
+END-INFO-DIR-ENTRY
+
+
+Indirect:
+skk.info-1: 1957
+skk.info-2: 306145
+
+Tag Table:
+(Indirect)
+Node: Top1957
+Node: はじめに10034
+Node: このバージョンの SKK について10229
+Ref: このバージョンの SKK について-Footnote-114276
+Ref: このバージョンの SKK について-Footnote-214349
+Node: SKK とはなにか14421
+Ref: SKK とはなにか-Footnote-116876
+Ref: SKK とはなにか-Footnote-216976
+Node: インストール17079
+Node: APEL のインストール17421
+Node: DDSKK のインストール18155
+Ref: DDSKK のインストール-Footnote-118978
+Ref: DDSKK のインストール-Footnote-219439
+Node: GNU Emacs へのインストール19531
+Node: XEmacs へのインストール21332
+Node: 対話的なインストール22802
+Node: MELPA によるインストール24305
+Ref: MELPA によるインストール-Footnote-124871
+Ref: MELPA によるインストール-Footnote-224943
+Node: 辞書について25126
+Node: 辞書の入手26382
+Node: 辞書を DDSKK と同時にインストールする28936
+Ref: 辞書を DDSKK と同時にインストールする-Footnote-130031
+Node: 辞書サーバの入手30113
+Node: はじめの設定31024
+Ref: はじめの設定-Footnote-131753
+Node: 最も基本的な設定32417
+Ref: 最も基本的な設定-Footnote-134017
+Ref: 最も基本的な設定-Footnote-234152
+Ref: 最も基本的な設定-Footnote-334295
+Ref: 最も基本的な設定-Footnote-434484
+Node: インクリメント検索の設定34535
+Ref: インクリメント検索の設定-Footnote-135467
+Node: 辞書サーバを使いたいときの設定35840
+Node: DDSKK を Emacs の Input Method とする38346
+Node: 基本的な使い方39802
+Ref: 基本的な使い方-Footnote-140581
+Ref: 基本的な使い方-Footnote-240620
+Node: 起動と終了40659
+Ref: 起動と終了-Footnote-142849
+Ref: 起動と終了-Footnote-243013
+Ref: 起動と終了-Footnote-343246
+Ref: 起動と終了-Footnote-443430
+Node: SKK オートフィルモード43481
+Ref: SKK オートフィルモード-Footnote-144492
+Ref: SKK オートフィルモード-Footnote-244560
+Node: 辞書の保存44623
+Ref: 辞書の保存-Footnote-145402
+Ref: 辞書の保存-Footnote-245447
+Node: 入力モード45492
+Ref: 入力モード-Footnote-145938
+Node: 入力モードの説明46013
+Ref: 入力モードの説明-Footnote-147165
+Node: 入力モードを切り替えるキー47283
+Node: 変換モード48973
+Node: ■モード50060
+Node: ▽モード51494
+Ref: ▽モード-Footnote-152414
+Node: 後から▽モードに入る方法52447
+Ref: 後から▽モードに入る方法-Footnote-153801
+Node: ▽モードを抜ける方法53856
+Node: ▼モード54659
+Node: 送り仮名が無い場合55378
+Ref: 送り仮名が無い場合-Footnote-156744
+Ref: 送り仮名が無い場合-Footnote-256929
+Ref: 送り仮名が無い場合-Footnote-357043
+Node: 次候補・前候補57094
+Ref: 次候補・前候補-Footnote-159841
+Ref: 次候補・前候補-Footnote-259895
+Ref: 次候補・前候補-Footnote-359945
+Ref: 次候補・前候補-Footnote-460243
+Ref: 次候補・前候補-Footnote-560294
+Ref: 次候補・前候補-Footnote-660362
+Node: 送り仮名が有る場合60401
+Ref: 送り仮名が有る場合-Footnote-162280
+Ref: 送り仮名が有る場合-Footnote-262325
+Ref: 送り仮名が有る場合-Footnote-362409
+Node: 辞書登録モード62464
+Node: 送り仮名が無い場合の辞書登録64615
+Ref: 送り仮名が無い場合の辞書登録-Footnote-165809
+Ref: 送り仮名が無い場合の辞書登録-Footnote-265842
+Node: 送り仮名が有る場合の辞書登録65994
+Node: サ変動詞の辞書登録に関する注意67827
+Ref: サ変動詞の辞書登録に関する注意-Footnote-168590
+Ref: サ変動詞の辞書登録に関する注意-Footnote-268635
+Node: 再帰的辞書登録69173
+Node: 改行文字を含む辞書登録71521
+Node: インクリメンタル・サーチ72163
+Node: skk-isearchの操作性72748
+Ref: skk-isearchの操作性-Footnote-173723
+Ref: skk-isearchの操作性-Footnote-273948
+Node: skk-isearch と入力モード73986
+Node: チュートリアル74916
+Node: 便利な応用機能76303
+Node: ファイル構成77001
+Ref: ファイル構成-Footnote-185532
+Node: ユーザオプションの設定方法85641
+Node: 設定ファイル86366
+Node: skk-init-file の自動コンパイル89076
+Node: フック90355
+Node: Customize による設定変更92181
+Node: skk-customize による設定変更93756
+Node: カタカナ、英字入力の便法94692
+Node: かなモードからカタカナを入力95317
+Ref: かなモードからカタカナを入力-Footnote-197119
+Ref: かなモードからカタカナを入力-Footnote-297322
+Node: 全英文字の入力97849
+Ref: 全英文字の入力-Footnote-198993
+Ref: 全英文字の入力-Footnote-299412
+Node: 領域の操作99589
+Ref: 領域の操作-Footnote-1104645
+Ref: 領域の操作-Footnote-2105019
+Ref: 領域の操作-Footnote-3105119
+Node: カタカナの見出し語105363
+Node: 文脈に応じた自動モード切り替え106072
+Node: 補完108425
+Node: 読みの補完109067
+Ref: 読みの補完-Footnote-1113642
+Node: 補完しながら変換114021
+Node: 動的補完115428
+Ref: 動的補完-Footnote-1120925
+Ref: 動的補完-Footnote-2121053
+Node: 便利な変換、その他の変換121178
+Node: 単漢字変換121770
+Node: 検索キーの設定123732
+Node: 辞書の設定124345
+Node: 総画数による単漢字変換126116
+Node: 部首による単漢字変換126915
+Node: 部首の読みによる単漢字変換128731
+Node: 候補の絞り込み129750
+Node: 接頭辞・接尾辞132244
+Node: 数値変換135256
+Ref: 数値変換-Footnote-1140368
+Ref: 数値変換-Footnote-2140508
+Ref: 数値変換-Footnote-3140672
+Node: アスキー文字を見出し語とした変換140947
+Node: 今日の日付の入力142687
+Node: プログラム実行変換144961
+Ref: プログラム実行変換-Footnote-1149734
+Ref: プログラム実行変換-Footnote-2150163
+Ref: プログラム実行変換-Footnote-3150205
+Node: 空白・改行・タブを含んだ見出し語の変換150235
+Node: カタカナ変換152306
+Ref: カタカナ変換-Footnote-1153521
+Ref: カタカナ変換-Footnote-2153581
+Node: サ変動詞変換154040
+Ref: サ変動詞変換-Footnote-1155816
+Node: 異体字へ変換する156278
+Ref: 異体字へ変換する-Footnote-1157472
+Node: ファンクションキーの使い方157734
+Node: キー設定159098
+Node: かなモード／カナモードのキー設定159670
+Node: ローマ字のルールの設定160069
+Node: ローマ字ルールの変更例162191
+Node: ■モードに関連するその他の変数163822
+Ref: ■モードに関連するその他の変数-Footnote-1166741
+Node: 数字や記号文字の入力166830
+Node: 全英モードのキー設定168146
+Node: 閉じ括弧の自動入力169960
+Node: リージョンを括弧で囲む174692
+Node: 確定するキー175588
+Node: 候補の選択に用いるキー176012
+Ref: 候補の選択に用いるキー-Footnote-1177569
+Node: ▼モードでの RET177599
+Ref: ▼モードでの RET-Footnote-1178818
+Node: ▼モードでの BS178918
+Node: 送りあり変換中の C-g180606
+Node: 変換位置の指定方法181839
+Ref: 変換位置の指定方法-Footnote-1184433
+Ref: 変換位置の指定方法-Footnote-2184778
+Ref: 変換位置の指定方法-Footnote-3185005
+Node: １回の取り消し操作 (undo) の対象185089
+Ref: １回の取り消し操作 (undo) の対象-Footnote-1187321
+Ref: １回の取り消し操作 (undo) の対象-Footnote-2187469
+Ref: １回の取り消し操作 (undo) の対象-Footnote-3188271
+Ref: １回の取り消し操作 (undo) の対象-Footnote-4188417
+Node: 変換、確定の前後188551
+Node: ポイントを戻して▽モードへ189045
+Node: 直前の確定を再変換191523
+Ref: 直前の確定を再変換-Footnote-1193755
+Node: 自動変換開始193890
+Ref: 自動変換開始-Footnote-1195785
+Ref: 自動変換開始-Footnote-2195979
+Node: 暗黙の確定のタイミング196024
+Ref: 暗黙の確定のタイミング-Footnote-1197991
+Ref: 暗黙の確定のタイミング-Footnote-2198089
+Node: 積極的な確定198383
+Node: 確定辞書199986
+Ref: 確定辞書-Footnote-1201791
+Node: 送り仮名関連202223
+Node: 送り仮名の厳密なマッチ202725
+Ref: 送り仮名の厳密なマッチ-Footnote-1205492
+Ref: 送り仮名の厳密なマッチ-Footnote-2205692
+Node: 送り仮名の優先的なマッチ206082
+Ref: 送り仮名の優先的なマッチ-Footnote-1207762
+Ref: 送り仮名の優先的なマッチ-Footnote-2207902
+Node: 送り仮名の自動処理207971
+Node: どのように変換されるか208451
+Ref: どのように変換されるか-Footnote-1212093
+Ref: どのように変換されるか-Footnote-2212319
+Ref: どのように変換されるか-Footnote-3212382
+Ref: どのように変換されるか-Footnote-4212519
+Ref: どのように変換されるか-Footnote-5212647
+Node: 辞書登録の際に注意すべきこと212879
+Ref: 辞書登録の際に注意すべきこと-Footnote-1217929
+Node: 送りあり変換の変換開始のタイミング218022
+Ref: 送りあり変換の変換開始のタイミング-Footnote-1219971
+Node: 候補の順序220004
+Node: 変換の学習220587
+Ref: 変換の学習-Footnote-1226712
+Node: 候補の順序の固定226911
+Node: ベイズ統計を用いた学習228269
+Ref: ベイズ統計を用いた学習-Footnote-1230500
+Ref: ベイズ統計を用いた学習-Footnote-2230535
+Node: 辞書関連230670
+Node: 辞書の種類231473
+Node: 辞書ファイルの指定233433
+Ref: 辞書ファイルの指定-Footnote-1237907
+Ref: 辞書ファイルの指定-Footnote-2238090
+Node: 辞書の検索方法の設定238153
+Node: 辞書検索の設定の具体例238599
+Node: 辞書検索のための関数241281
+Ref: 辞書検索のための関数-Footnote-1245164
+Node: Emacs 付属の辞書245233
+Node: サーバ関連247206
+Node: サーバコンプリージョン250823
+Node: 辞書の書式252370
+Node: 送りありエントリと送りなしエントリ252708
+Ref: 送りありエントリと送りなしエントリ-Footnote-1256171
+Node: 送りありエントリのブロック形式256306
+Ref: 送りありエントリのブロック形式-Footnote-1258255
+Ref: 送りありエントリのブロック形式-Footnote-2258393
+Node: エントリの配列258671
+Ref: エントリの配列-Footnote-1259971
+Ref: エントリの配列-Footnote-2260524
+Node: 強制的に辞書登録モードへ入る260684
+Node: 誤った登録の削除261290
+Ref: 誤った登録の削除-Footnote-1262600
+Node: 個人辞書ファイルの編集262648
+Ref: 個人辞書ファイルの編集-Footnote-1263590
+Node: 個人辞書の保存動作263783
+Ref: 個人辞書の保存動作-Footnote-1267464
+Ref: 個人辞書の保存動作-Footnote-2267792
+Ref: 個人辞書の保存動作-Footnote-3267981
+Node: 変換及び個人辞書に関する統計268249
+Node: 辞書バッファ270902
+Ref: 辞書バッファ-Footnote-1271982
+Node: 辞書バッファの文字コードの設定272553
+Ref: 辞書バッファの文字コードの設定-Footnote-1273476
+Ref: 辞書バッファの文字コードの設定-Footnote-2273542
+Node: 辞書バッファの buffer-file-name274202
+Node: 注釈（アノテーション）275244
+Node: アノテーションの基礎276072
+Ref: アノテーションの基礎-Footnote-1277806
+Node: アノテーションの使用277874
+Ref: アノテーションの使用-Footnote-1281912
+Ref: アノテーションの使用-Footnote-2282076
+Ref: アノテーションの使用-Footnote-3282131
+Node: アノテーションの登録282405
+Node: アノテーションとして EPWING 辞書を表示する284047
+Ref: アノテーションとして EPWING 辞書を表示する-Footnote-1285109
+Node: skk-treat-candidate-appearance-function を設定する方法285151
+Node: skk-annotation-lookup-lookup を設定する方法287067
+Ref: skk-annotation-lookup-lookup を設定する方法-Footnote-1287969
+Node: Apple macOS 「辞書」サービスからアノテーションを取得する288270
+Ref: Apple macOS 「辞書」サービスからアノテーションを取得する-Footnote-1290408
+Node: Wikipedia/Wiktionary からアノテーションを取得する290724
+Ref: Wikipedia/Wiktionary からアノテーションを取得する-Footnote-1293050
+Node: 外部コマンドからアノテーションを取得する293163
+Node: 各種アノテーション機能を SKK の枠をこえて活用する294121
+Ref: 各種アノテーション機能を SKK の枠をこえて活用する-Footnote-1296939
+Node: 文字コード関連297208
+Node: 文字コードまたはメニューによる文字入力297602
+Node: メニューによる文字入力299493
+Ref: メニューによる文字入力-Footnote-1303976
+Node: 文字コード一覧306145
+Node: 文字コードを知る方法309207
+Ref: 文字コードを知る方法-Footnote-1310889
+Ref: 文字コードを知る方法-Footnote-2311017
+Node: DDSKK 以外のツールを用いた辞書変換311295
+Node: skk-lookup311700
+Ref: skk-lookup-Footnote-1313376
+Ref: skk-lookup-Footnote-2313509
+Node: skk-look313551
+Node: 英単語の補完314034
+Ref: 英単語の補完-Footnote-1315099
+Node: 英単語をあいまいに変換して取り出す315132
+Node: 英単語をあいまいに変換して取り出した後、更に再帰的な英和変換を行う316765
+Ref: 英単語をあいまいに変換して取り出した後、更に再帰的な英和変換を行う-Footnote-1318133
+Node: Lisp シンボル名の補完検索変換318463
+Node: Google CGI API for Japanese Input を利用したかな漢字変換321030
+Node: 飾りつけ322646
+Node: 仮名文字のローマ字プレフィックスのエコー323217
+Node: 入力モードを示すモードラインの文字列の変更324983
+Node: 入力モードを示すカーソル色に関する設定326088
+Node: 変換候補一覧の表示方法328118
+Node: 現在のウィンドウにインライン表示する329003
+Node: ツールティップで表示する330475
+Node: 現在のウィンドウの隣に別なウィンドウを開いて表示する（ポップアップ）334396
+Node: エコーエリアに表示する336218
+Ref: エコーエリアに表示する-Footnote-1336926
+Node: ▼モードにおける変換候補のハイライト表示337035
+Ref: ▼モードにおける変換候補のハイライト表示-Footnote-1339052
+Ref: ▼モードにおける変換候補のハイライト表示-Footnote-2339804
+Node: 変換候補の更なる装飾340001
+Node: モードラインの装飾342283
+Node: インジケータ342590
+Ref: インジケータ-Footnote-1344061
+Ref: インジケータ-Footnote-2344127
+Node: アイコン344244
+Node: ユーザガイダンス関連344929
+Node: エラーなどの日本語表示345214
+Node: 冗長な案内メッセージの表示346180
+Ref: 冗長な案内メッセージの表示-Footnote-1350112
+Node: I-search 関連350386
+Node: 起動時の入力モードの指定350664
+Node: 間に空白等を含む文字列の検索351970
+Node: VIP/VIPERとの併用354259
+Ref: VIP/VIPERとの併用-Footnote-1354887
+Node: picture-modeとの併用355051
+Node: ローマ字入力以外の入力方式356231
+Node: AZIK356683
+Node: ACT360157
+Node: TUT-code360693
+Node: かな入力と親指シフト361490
+Node: そのほかの拡張機能364218
+Node: 交ぜ書き変換364581
+Node: SKK に関する情報365017
+Node: 最新情報365428
+Node: SKKメーリングリスト366491
+Node: SKK 関連ソフトウェア368157
+Node: SKK 辞書について368622
+Node: 辞書ツール369343
+Node: SKK の作者369943
+Node: SKKの歴史370457
+Node: このマニュアルについて370997
+Node: 謝辞371327
+Node: よくある質問とその回答 (FAQ)372926
+Node: Introduction373313
+Node: Q1-1 Daredevil SKK って SKK とは違うのですか?373763
+Node: Q1-2 SKK はシンプルなのが長所だったのでは?374867
+Node: Q1-3 DDSKK はどの Emacs で使えますか?375973
+Node: Q1-4 DDSKK はどんなオペレーティングシステムで使えますか?376533
+Node: Q1-5 APEL って何? 必要ですか?377590
+Node: Installation378237
+Node: Q2-1 SKK を使うのに何が必要ですか?378560
+Node: Q2-2 SKK 辞書はどこにありますか?379030
+Node: Q2-3 SKK サーバはどこにありますか?379352
+Node: Customization379779
+Node: Q3-1 「．」、「，」 が入力できるようにカスタマイズしたいのですが。380453
+Node: Q3-2 「ゐ」や「ヰ」 が入力できるようにカスタマイズしたいのですが。382688
+Node: Q3-3 検索する辞書を増やしたいのですが。383821
+Node: Q3-4 左手の小指を SHIFT で酷使したくありません。387321
+Ref: Q3-4 左手の小指を SHIFT で酷使したくありません。-Footnote-1391503
+Node: Q3-5 全く漢字が出てきません。391729
+Node: Q3-6 チュートリアルが起動できません。392935
+Node: Q3-7 C-x C-j で dired が起動してしまいます。393726
+Node: Dictionaries394370
+Node: Q4-1 SKK には郵便番号辞書がありますか?394795
+Node: Q4-2 SKK の辞書には、品詞情報がないんですね。395341
+Node: Q4-3 複数の SKK 辞書を結合できますか?396225
+Node: Q4-4 SKK 形式の英和辞書があると聞いたのですが。396730
+Node: Miscellaneous398381
+Node: Q5-1 SKK abbrev モードでもっと英単語を利用した変換ができませんか?398802
+Node: Q5-2 市販の CD-ROM 辞書やネットワークの辞書サーバが利用できますか?402023
+Node: Q5-3 他の FEP を使用中にも SHIFT を押してしまいます。403783
+Node: 事項索引404338
+Node: 変数索引422647
+Node: 関数索引454220
+Node: キー索引458543
+
+End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:
