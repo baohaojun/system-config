@@ -3373,7 +3373,7 @@ local function isWeixinLuckyMoneyReceiver(window)
    return false
 end
 
-local function sayThankYouForLuckyMoney()
+M.sayThankYouForLuckyMoney = function()
    local thanks = {
       "谢谢老板的红包🤓",
       "老板爱发红包，我就爱这样的老板😍",
