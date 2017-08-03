@@ -71,7 +71,7 @@ for long in "${long_opts_sorted[@]}"; do
 done
 echo $is_local OPTIND=1
 )
-while getopts "$(string-join '' "${short_opts_map[@]}" h)" opt; do
+while getopts "$(string-join '' $(for x in "${long_opts_sorted[@]}"; do echo "${short_opts_map[$x]}"; done) h)" opt; do
   case "\$opt" in
 
 $(
