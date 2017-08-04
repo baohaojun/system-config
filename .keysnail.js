@@ -58,15 +58,15 @@ hook.addToHook('KeyBoardQuit', function (aEvent) {
 
 // ============================= Key bindings ============================== //
 
-key.setGlobalKey('C-M-r', function (ev) {
+key.setGlobalKey([['C-M-r'], ['ESC', 'C-r']], function (ev) {
                 userscript.reload();
             }, '設定ファイルを再読み込み', true);
 
-key.setGlobalKey('M-x', function (ev, arg) {
+key.setGlobalKey([['M-x'], ['ESC', 'x']], function (ev, arg) {
                 ext.select(arg, ev);
             }, 'エクステ一覧表示', true);
 
-key.setGlobalKey('M-:', function (ev) {
+key.setGlobalKey([['M-:'], ['ESC', ':']], function (ev) {
                 command.interpreter();
             }, 'JavaScript のコードを評価', true);
 
@@ -98,7 +98,7 @@ key.setGlobalKey(["C-x", "s"], function (ev) {
                 command.focusElement(command.elementsRetrieverButton, 0);
             }, '最初のボタンへフォーカス', true);
 
-key.setGlobalKey('M-w', function (ev) {
+key.setGlobalKey([['M-w'], ['ESC', 'w']], function (ev) {
                 command.copyRegion(ev);
             }, '選択中のテキストをコピー', true);
 
@@ -110,7 +110,7 @@ key.setGlobalKey('C-r', function (ev) {
                 command.iSearchBackwardKs(ev);
             }, 'Emacs ライクな逆方向インクリメンタル検索', true);
 
-key.setGlobalKey(["C-x", "k"], function (ev) {
+key.setGlobalKey([["C-x", "k"], ["C-x", "C-w"]], function (ev) {
                 BrowserCloseTabOrWindow();
             }, 'タブ / ウィンドウを閉じる', false);
 
@@ -126,11 +126,11 @@ key.setGlobalKey(["C-x", "n"], function (ev) {
                 OpenBrowserWindow();
             }, 'ウィンドウを開く', false);
 
-key.setGlobalKey('C-M-l', function (ev) {
+key.setGlobalKey([['C-M-l'], ['ESC', 'C-l']], function (ev) {
                 getBrowser().mTabContainer.advanceSelectedTab(1, true);
             }, 'ひとつ右のタブへ', false);
 
-key.setGlobalKey('C-M-h', function (ev) {
+key.setGlobalKey([['C-M-h'], ['ESC', 'C-h']], function (ev) {
                 getBrowser().mTabContainer.advanceSelectedTab(-1, true);
             }, 'ひとつ左のタブへ', false);
 
@@ -200,11 +200,11 @@ key.setEditKey('C-b', function (ev) {
                 command.previousChar(ev);
             }, '一文字左へ移動', false);
 
-key.setEditKey('M-f', function (ev) {
+key.setEditKey([['M-f'], ['ESC', 'f']], function (ev) {
                 command.forwardWord(ev);
             }, '一単語右へ移動', false);
 
-key.setEditKey('M-b', function (ev) {
+key.setEditKey([['M-b'], ['ESC', 'b']], function (ev) {
                 command.backwardWord(ev);
             }, '一単語左へ移動', false);
 
@@ -220,15 +220,15 @@ key.setEditKey('C-v', function (ev) {
                 command.pageDown(ev);
             }, '一画面分下へ', false);
 
-key.setEditKey('M-v', function (ev) {
+key.setEditKey([['M-v'], ['ESC', 'v']], function (ev) {
                 command.pageUp(ev);
             }, '一画面分上へ', false);
 
-key.setEditKey('M-<', function (ev) {
+key.setEditKey([['M-<'], ['ESC', '<']], function (ev) {
                 command.moveTop(ev);
             }, 'テキストエリア先頭へ', false);
 
-key.setEditKey('M->', function (ev) {
+key.setEditKey([['M->'], ['ESC', '>']], function (ev) {
                 command.moveBottom(ev);
             }, 'テキストエリア末尾へ', false);
 
@@ -240,7 +240,7 @@ key.setEditKey('C-h', function (ev) {
                 goDoCommand("cmd_deleteCharBackward");
             }, '前の一文字を削除', false);
 
-key.setEditKey('M-d', function (ev) {
+key.setEditKey([['M-d'], ['ESC', 'd']], function (ev) {
                 command.deleteForwardWord(ev);
             }, '次の一単語を削除', false);
 
@@ -248,15 +248,15 @@ key.setEditKey([["C-<backspace>"], ["M-<delete>"]], function (ev) {
                 command.deleteBackwardWord(ev);
             }, '前の一単語を削除', false);
 
-key.setEditKey('M-u', function (ev, arg) {
+key.setEditKey([['M-u'], ['ESC', 'u']], function (ev, arg) {
                 command.wordCommand(ev, arg, command.upcaseForwardWord, command.upcaseBackwardWord);
             }, '次の一単語を全て大文字に (Upper case)', false);
 
-key.setEditKey('M-l', function (ev, arg) {
+key.setEditKey([['M-l'], ['ESC', 'l']], function (ev, arg) {
                 command.wordCommand(ev, arg, command.downcaseForwardWord, command.downcaseBackwardWord);
             }, '次の一単語を全て小文字に (Lower case)', false);
 
-key.setEditKey('M-c', function (ev, arg) {
+key.setEditKey([['M-c'], ['ESC', 'c']], function (ev, arg) {
                 command.wordCommand(ev, arg, command.capitalizeForwardWord, command.capitalizeBackwardWord);
             }, '次の一単語をキャピタライズ', false);
 
@@ -266,9 +266,9 @@ key.setEditKey('C-k', function (ev) {
 
 key.setEditKey('C-y', command.yank, '貼り付け (Yank)', false);
 
-key.setEditKey('M-y', command.yankPop, '古いクリップボードの中身を順に貼り付け (Yank pop)', true);
+key.setEditKey([['M-y'], ['ESC', 'y']], command.yankPop, '古いクリップボードの中身を順に貼り付け (Yank pop)', true);
 
-key.setEditKey('C-M-y', function (ev) {
+key.setEditKey([['C-M-y'], ['ESC', 'C-y']], function (ev) {
                 if (!command.kill.ring.length)
                     return;
 
@@ -315,11 +315,11 @@ key.setEditKey(["C-x", "r", "y"], function (ev) {
                 command.yankRectangle(ev.originalTarget, command.kill.buffer);
             }, '矩形ヤンク', true);
 
-key.setEditKey('M-n', function (ev) {
+key.setEditKey([['M-n'], ['ESC', 'n']], function (ev) {
                 command.walkInputElement(command.elementsRetrieverTextarea, true, true);
             }, '次のテキストエリアへフォーカス', false);
 
-key.setEditKey('M-p', function (ev) {
+key.setEditKey([['M-p'], ['ESC', 'p']], function (ev) {
                 command.walkInputElement(command.elementsRetrieverTextarea, false, true);
             }, '前のテキストエリアへフォーカス', false);
 
@@ -339,7 +339,7 @@ key.setViewKey([["C-b"], [","]], function (ev) {
                 key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
             }, '左へスクロール', false);
 
-key.setViewKey([["M-v"], ["b"]], function (ev) {
+key.setViewKey([["M-v"], ['ESC', 'v'], ["b"]], function (ev) {
                 goDoCommand("cmd_scrollPageUp");
             }, '一画面分スクロールアップ', false);
 
@@ -347,11 +347,11 @@ key.setViewKey('C-v', function (ev) {
                 goDoCommand("cmd_scrollPageDown");
             }, '一画面スクロールダウン', false);
 
-key.setViewKey([["M-<"], ["g"]], function (ev) {
+key.setViewKey([["M-<"], ['ESC', "<"], ["g"]], function (ev) {
                 goDoCommand("cmd_scrollTop");
             }, 'ページ先頭へ移動', true);
 
-key.setViewKey([["M->"], ["G"]], function (ev) {
+key.setViewKey([["M->"], ['ESC', '>'], ["G"]], function (ev) {
                 goDoCommand("cmd_scrollBottom");
             }, 'ページ末尾へ移動', true);
 
@@ -387,11 +387,11 @@ key.setViewKey('f', function (ev) {
                 command.focusElement(command.elementsRetrieverTextarea, 0);
             }, '最初のインプットエリアへフォーカス', true);
 
-key.setViewKey('M-p', function (ev) {
+key.setViewKey([['M-p'], ['ESC', 'p']], function (ev) {
                 command.walkInputElement(command.elementsRetrieverButton, true, true);
             }, '次のボタンへフォーカスを当てる', false);
 
-key.setViewKey('M-n', function (ev) {
+key.setViewKey([['M-n'], ['ESC', 'n']], function (ev) {
                 command.walkInputElement(command.elementsRetrieverButton, false, true);
             }, '前のボタンへフォーカスを当てる', false);
 
@@ -419,11 +419,11 @@ key.setCaretKey([["C-b"], ["h"], ["C-h"]], function (ev) {
                 ev.target.ksMarked ? goDoCommand("cmd_selectCharPrevious") : goDoCommand("cmd_scrollLeft");
             }, 'キャレットを一文字左へ移動', false);
 
-key.setCaretKey([["M-f"], ["w"]], function (ev) {
+key.setCaretKey([["M-f"], ['ESC', 'f'], ["w"]], function (ev) {
                 ev.target.ksMarked ? goDoCommand("cmd_selectWordNext") : goDoCommand("cmd_wordNext");
             }, 'キャレットを一単語右へ移動', false);
 
-key.setCaretKey([["M-b"], ["W"]], function (ev) {
+key.setCaretKey([["M-b"], ['ESC', 'b'], ["W"]], function (ev) {
                 ev.target.ksMarked ? goDoCommand("cmd_selectWordPrevious") : goDoCommand("cmd_wordPrevious");
             }, 'キャレットを一単語左へ移動', false);
 
@@ -431,15 +431,15 @@ key.setCaretKey([["C-v"], ["SPC"]], function (ev) {
                 ev.target.ksMarked ? goDoCommand("cmd_selectPageNext") : goDoCommand("cmd_movePageDown");
             }, 'キャレットを一画面分下へ', false);
 
-key.setCaretKey([["M-v"], ["b"]], function (ev) {
+key.setCaretKey([["M-v"], ['ESC', 'v'], ["b"]], function (ev) {
                 ev.target.ksMarked ? goDoCommand("cmd_selectPagePrevious") : goDoCommand("cmd_movePageUp");
             }, 'キャレットを一画面分上へ', false);
 
-key.setCaretKey([["M-<"], ["g"]], function (ev) {
+key.setCaretKey([["M-<"], ['ESC', '<'], ["g"]], function (ev) {
                 ev.target.ksMarked ? goDoCommand("cmd_selectTop") : goDoCommand("cmd_scrollTop");
             }, 'キャレットをページ先頭へ移動', false);
 
-key.setCaretKey([["M->"], ["G"]], function (ev) {
+key.setCaretKey([["M->"], ['ESC', '>'], ["G"]], function (ev) {
                 ev.target.ksMarked ? goDoCommand("cmd_selectEndLine") : goDoCommand("cmd_endLine");
             }, 'キャレットを行末へ移動', false);
 
@@ -493,11 +493,11 @@ key.setCaretKey('f', function (ev) {
                 command.focusElement(command.elementsRetrieverTextarea, 0);
             }, '最初のインプットエリアへフォーカス', true);
 
-key.setCaretKey('M-p', function (ev) {
+key.setCaretKey([['M-p'], ['ESC', 'p']], function (ev) {
                 command.walkInputElement(command.elementsRetrieverButton, true, true);
             }, '次のボタンへフォーカスを当てる', false);
 
-key.setCaretKey('M-n', function (ev) {
+key.setCaretKey([['M-n'], ['ESC', 'n']], function (ev) {
                 command.walkInputElement(command.elementsRetrieverButton, false, true);
             }, '前のボタンへフォーカスを当てる', false);
 
