@@ -177,9 +177,10 @@ h)
 done
 
 shift \$((OPTIND - 1))
+EOF
+
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-EOF
 
 # the-ultimate-script ends here

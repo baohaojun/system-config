@@ -238,8 +238,10 @@
   <<arg-handle>>
   )
   <<foot>>
-  <<read-only>>
   EOF
+
+  <<read-only>>
+
 #+END_SRC
 
 #+results: the-ultimate-script

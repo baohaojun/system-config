@@ -11,7 +11,11 @@ else
         git add .
         git commit -m "auto commit at $(now)" >/dev/null 2>&1 || true
     )
-    sawfish-events-delayed .1 "C-Home" "C-S-End" "C-c"
+    if test "$1" = region; then
+        sawfish-events-delayed .1 "C-c"
+    else
+        sawfish-events-delayed .1 "C-Home" "C-S-End" "C-c"
+    fi
     getclip > $next_file
     ew $next_file
     (
