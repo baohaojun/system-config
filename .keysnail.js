@@ -244,7 +244,7 @@ key.setEditKey([['M-d'], ['ESC', 'd']], function (ev) {
                 command.deleteForwardWord(ev);
             }, '次の一単語を削除', false);
 
-key.setEditKey([["C-<backspace>"], ["M-<delete>"]], function (ev) {
+key.setEditKey([["C-<backspace>"], ['ESC', '<backspace>'], ["M-<delete>"]], function (ev) {
                 command.deleteBackwardWord(ev);
             }, '前の一単語を削除', false);
 
@@ -351,9 +351,16 @@ key.setViewKey([["M-<"], ['ESC', "<"], ["g"]], function (ev) {
                 goDoCommand("cmd_scrollTop");
             }, 'ページ先頭へ移動', true);
 
-key.setViewKey([["M->"], ['ESC', '>'], ["G"]], function (ev) {
-                goDoCommand("cmd_scrollBottom");
-            }, 'ページ末尾へ移動', true);
+key.setViewKey([["M->"], ["G"]], function (ev) {
+  goDoCommand("cmd_scrollBottom");
+}, 'ページ末尾へ移動', true);
+
+key.setViewKey(['ESC', '>'], function (ev) {
+  goDoCommand("cmd_scrollBottom");
+  window.setTimeout(function() {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_END, true)
+  }, 200);
+}, 'ページ末尾へ移動2', true);
 
 key.setViewKey('l', function (ev) {
                 getBrowser().mTabContainer.advanceSelectedTab(1, true);

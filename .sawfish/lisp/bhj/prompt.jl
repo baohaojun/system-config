@@ -540,6 +540,7 @@ displayed. See the `display-message' function for more details.")
 
   (bind-keys bhj-prompt-keymap
              "ESC" bhj-prompt-esc
+             "XF86Calculator" bhj-prompt-accept
              "Super-Button1-Click" bhj-prompt-accept
              "Super-Button2-Click" bhj-prompt-accept
              "Super-Button3-Click" bhj-prompt-accept

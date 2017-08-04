@@ -1,0 +1,34 @@
+#!/bin/bash
+url=$(firefox-get-tab-url)
+
+sawfish-browser-input TAB TAB
+host=$(echo "$url" | perl -npe 's!^http.*?://!!; s!/.*!!')
+echo $host
+
+declare -A search_for_map
+declare -A n_stab_map
+declare -A n_before_search_taps_map
+
+search_for_map[learn.jquery.com]="Last Updated"
+n_stab_map[learn.jquery.com]=1
+
+if test "${n_before_search_taps_map[$host]}"; then
+    for n in $(seq 1 ${n_before_search_taps_map[$host]}); do
+        sawfish-browser-input TAB
+    done
+fi
+
+sleep .2
+if test "${search_for_map[$host]}"; then
+    sawfish-search-in-firefox "${search_for_map[$host]}"
+    if test "${n_stab_map[$host]}"; then
+        for n in $(seq 1 "${n_stab_map[$host]}"); do
+            sawfish-browser-input ISO_Left_Tab
+        done
+    fi
+else
+    bhj-notify sawfish-next-link "Don't know how to search $host"
+    exit 1
+fi
+
+sawfish-browser-input RET

@@ -1,7 +1,7 @@
 #!/bin/bash
 putclip "$1"
 
-for x in C-s C-v C-g ; do
+for x in C-s C-y C-g RET; do
     sawfish-browser-input $x
     sleep .1
 done
