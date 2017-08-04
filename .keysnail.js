@@ -4,7 +4,7 @@
 // 特殊キー, キーバインド定義, フック, ブラックリスト以外のコードは, この中に書くようにして下さい
 // ========================================================================= //
 //{{%PRESERVE%
-// ここにコードを入力して下さい
+plugins.options["kkk.sites"] = ["^https?://weibo\\.com/"];
 //}}%PRESERVE%
 // ========================================================================= //
 
@@ -351,16 +351,9 @@ key.setViewKey([["M-<"], ['ESC', "<"], ["g"]], function (ev) {
                 goDoCommand("cmd_scrollTop");
             }, 'ページ先頭へ移動', true);
 
-key.setViewKey([["M->"], ["G"]], function (ev) {
+key.setViewKey([["M->"], ['ESC', '>'], ["G"]], function (ev) {
   goDoCommand("cmd_scrollBottom");
 }, 'ページ末尾へ移動', true);
-
-key.setViewKey(['ESC', '>'], function (ev) {
-  goDoCommand("cmd_scrollBottom");
-  window.setTimeout(function() {
-    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_END, true)
-  }, 200);
-}, 'ページ末尾へ移動2', true);
 
 key.setViewKey('l', function (ev) {
                 getBrowser().mTabContainer.advanceSelectedTab(1, true);
@@ -507,4 +500,3 @@ key.setCaretKey([['M-p'], ['ESC', 'p']], function (ev) {
 key.setCaretKey([['M-n'], ['ESC', 'n']], function (ev) {
                 command.walkInputElement(command.elementsRetrieverButton, false, true);
             }, '前のボタンへフォーカスを当てる', false);
-
