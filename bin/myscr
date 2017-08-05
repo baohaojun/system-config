@@ -168,7 +168,8 @@ if session-exists; then
         if using-screen; then
             screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
         else
-            tmux new-window -n "$SCREEN_TITLE" "bash /tmp/screen-exec.$$" &
+            tmux new-window -n "$SCREEN_TITLE" "bash /tmp/screen-exec.$$"
+            find-or-exec konsole
         fi
         if test "$wait_exit" = true; then
             while test -e /tmp/screen-exec.$$; do
@@ -184,7 +185,7 @@ if session-exists; then
     else
         exec tmux attach
     fi
-else
+else # session not exist
     if using-screen; then
         exec screen -S $session_name -t $session_name -s $SHELL $start_cmd "$@"
     else

@@ -172,25 +172,21 @@
     nil))
 
 (defun find-window-or-exec (wclass-or-lambda #!optional wcommand)
-  (if (eq (catch 'wFound
-            (mapc (lambda (window)
-                    (when (if (stringp wclass-or-lambda)
-                              (if (string-match "%" wclass-or-lambda)
-                                  (and (string-match (string-replace "%.*" "" wclass-or-lambda) (window-name window) 0 t)
-                                       (string-match (string-replace ".*%" "" wclass-or-lambda) (bhj-window-class window) 0 t))
-                                (string-match wclass-or-lambda (bhj-window-class window) 0 t))
-                            (when functionp wclass-or-lambda
-                                  (wclass-or-lambda window)))
-                      (bhj-activate-window window)
-                      (throw 'wFound 'wFound)))
-                  (remove-if (lambda (w) (window-get w 'special)) (stacking-order))))
-          'wFound)
-      (when  (and (current-event)
-                  (string-equal (event-name (current-event)) "Super-n"))
-        (eat-a-key-release "n"))
-    (if wcommand
-        (system (concat wcommand "&")))
-    nil))
+  (unless (eq (catch 'wFound
+                (mapc (lambda (window)
+                        (when (if (stringp wclass-or-lambda)
+                                  (if (string-match "%" wclass-or-lambda)
+                                      (and (string-match (string-replace "%.*" "" wclass-or-lambda) (window-name window) 0 t)
+                                           (string-match (string-replace ".*%" "" wclass-or-lambda) (bhj-window-class window) 0 t))
+                                    (string-match wclass-or-lambda (bhj-window-class window) 0 t))
+                                (when functionp wclass-or-lambda
+                                      (wclass-or-lambda window)))
+                          (bhj-activate-window window)
+                          (throw 'wFound 'wFound)))
+                      (remove-if (lambda (w) (window-get w 'special)) (stacking-order))))
+              'wFound)
+    (when wcommand
+      (system (concat wcommand "&")))))
 
 (mapc
  (lambda (args)
@@ -236,10 +232,7 @@
                   from)))
     (mapc (lambda (map-1)
             (synthesize-event-gnome? map-1 (input-focus)))
-          map-to)
-    (when (and (string-equal ">" (event-name (current-event)))
-               (string-match "Firefox|Iceweasel" class 0 t))
-      (eat-a-key-release ">" "Release->$|Release-\\.$"))))
+          map-to)))
 
 (defun get-window-map (window-map-assoc class)
   (setq window-map-assoc (cadr window-map-assoc))
@@ -560,13 +553,6 @@
                  (rewrite-event-for-xdotool event))))
     (synthesize-event event window)))
 
-(defun eat-a-key-release (key &optional regexp)
-  (let ((eval-key-release-events t) event)
-    (while eval-key-release-events
-      (setq event (read-event (format nil "Release the %s to eat it" key)))
-      (when (string-match (or regexp (format nil "Release-%s$" key)) (event-name event))
-        (setq eval-key-release-events nil)))))
-
 (defun my-debug (fmt &rest args)
   (message (apply format nil fmt args)))
 
@@ -584,11 +570,7 @@
       (mapc (lambda (map-1)
               (synthesize-event-gnome? map-1 (input-focus)))
             map-to))
-     (t (synthesize-event-gnome? map-to (input-focus))))
-    (when (and (string-equal key "n")
-               (string-match "Firefox|Iceweasel" class)
-               (not eval-key-release-events))
-      (eat-a-key-release key))))
+     (t (synthesize-event-gnome? map-to (input-focus))))))
 
 (defun bind-super-key (key)
   (bind-both-global&window-keymaps

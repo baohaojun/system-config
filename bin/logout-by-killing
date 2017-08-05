@@ -7,7 +7,8 @@ fi
 
 
 if id | grep 'uid=0\b' -P; then
-    screen_pid=$(ps.pl SCREEN.first|grep SCREEN|pn 1)
+    screen_pid=$SCREEN_PID
+
     uid=$(id ${OLDUSER:-bhj} | perl -npe 's,^uid=(\d+).*,$1,')
     if ! [[ $uid =~ ^[0-9]+$ ]]; then
         echo "Can't determine your uid: $uid"
@@ -36,16 +37,13 @@ if id | grep 'uid=0\b' -P; then
                 sleep 3
             fi
 
-	    kill "$pid"
-	    (
-		sleep 3
-		kill -9 "$pid"
-	    ) >/dev/null 2>&1&
+            kill "$pid"
+            (
+                sleep 3
+                kill -9 "$pid"
+            ) >/dev/null 2>&1&
         done
 else
-    sudo umount -l ~/smb;
-
-
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt wwait
     ## end code-generator
@@ -91,5 +89,10 @@ else
     ## end generated code
 
     MY_PPID=$(ps -o ppid -h $$|perl -npe 's/\s//g')
-    sudo setsid env PATH=$PATH OLDUSER=${1:-$USER} WAIT=$wait MY_PPID=$MY_PPID bash $xdebug $0
+    screen_pid=$(ps.pl SCREEN.first|grep SCREEN|pn 1)
+    if test "$SC_USE_TMUX" = true; then
+        screen_pid=$(ps.pl tmux.first.new.session|grep '^\s*\d+\s+1\s+' -P|pn 1)
+    fi
+
+    sudo setsid env SCREEN_PID=$screen_pid PATH=$PATH OLDUSER=${1:-$USER} WAIT=$wait MY_PPID=$MY_PPID bash $xdebug $0
 fi

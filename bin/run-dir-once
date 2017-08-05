@@ -17,8 +17,17 @@ fi
 cd "$1"
 
 (
-    flock -n 9
+    if ! flock -n 9; then
+        cat <<EOF > .lock-failed
+Can't lock because of:
+$(fuser .$(basename $0).lock)
+EOF
+    else
+        echo start running > .log
+    fi
+
     for x in $PWD/*; do
+        echo run $x >> .log
         (cd /tmp; $x || true&)
     done
 ) 9> .$(basename $0).lock
