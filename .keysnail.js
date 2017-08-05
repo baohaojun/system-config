@@ -392,7 +392,7 @@ key.setViewKey([["C-b"], [","]], function (ev) {
   key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
 }, '左へスクロール', false);
 
-key.setViewKey([["M-v"], ['ESC', 'v'], ["b"]], function (ev) {
+key.setViewKey([["M-v"], ['ESC', 'v'], ['<backspace>'], ["b"]], function (ev) {
   goDoCommand("cmd_scrollPageUp");
 }, '一画面分スクロールアップ', false);
 
