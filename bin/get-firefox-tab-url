@@ -4,7 +4,7 @@ export SAWFISH_BROWSER_INPUT_SLEEP=.05
 putclip "shit"
 
 for x in $(seq 1 5); do
-    sawfish-browser-input C-l M-w $(if test $(basename $(readlink -f $(which the-firefox))) = firefox; then echo TAB TAB; fi 2>/dev/null)
+    sawfish-browser-input C-l M-w
     sleep .1
     out=$(
         getclip |grep . ||
