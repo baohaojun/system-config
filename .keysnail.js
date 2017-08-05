@@ -408,14 +408,6 @@ key.setViewKey([["M->"], ['ESC', '>'], ["G"]], function (ev) {
   goDoCommand("cmd_scrollBottom");
 }, 'ページ末尾へ移動', true);
 
-key.setViewKey('l', function (ev) {
-  getBrowser().mTabContainer.advanceSelectedTab(1, true);
-}, 'ひとつ右のタブへ', false);
-
-key.setViewKey('h', function (ev) {
-  getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-}, 'ひとつ左のタブへ', false);
-
 key.setViewKey(':', function (ev, arg) {
   shell.input(null, arg);
 }, 'コマンドの実行', true);
@@ -424,11 +416,11 @@ key.setViewKey('R', function (ev) {
   BrowserReload();
 }, '更新', true);
 
-key.setViewKey('B', function (ev) {
+key.setViewKey('l', function (ev) {
   BrowserBack();
 }, '戻る', false);
 
-key.setViewKey('F', function (ev) {
+key.setViewKey('r', function (ev) {
   BrowserForward();
 }, '進む', false);
 
@@ -538,11 +530,11 @@ key.setCaretKey('R', function (ev) {
   BrowserReload();
 }, '更新', true);
 
-key.setCaretKey('B', function (ev) {
+key.setCaretKey('l', function (ev) {
   BrowserBack();
 }, '戻る', false);
 
-key.setCaretKey('F', function (ev) {
+key.setCaretKey('r', function (ev) {
   BrowserForward();
 }, '進む', false);
 
