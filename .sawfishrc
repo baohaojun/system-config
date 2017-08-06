@@ -802,6 +802,9 @@
 (bind-keys s-h-keymap "M-C-p" '(system "sawfish-show-pointer&"))
 (bind-keys s-h-keymap "M-C-c" '(system "sawfish-get-pointer-color&"))
 (bind-keys s-h-keymap "C-XF86Favorites" '(system "mm6 all&"))
+(bind-keys s-h-keymap "F23" '(raise-window-depth (input-focus)))
+(bind-keys s-h-keymap "F24" '(lower-window-depth (input-focus)))
+(bind-keys s-h-keymap "SPC" '(set-window-depth (input-focus) 0))
 (bind-both-global&window-keymaps "XF86Favorites" '(system "wrench-show-notifications.sh&"))
 
 (defun get-window-xy-size (class)
