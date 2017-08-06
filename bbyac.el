@@ -52,6 +52,18 @@
 (require 'thingatpt)
 (require 'browse-kill-ring)
 
+(defvar bbyac--major-mode-buffer-hash
+  (make-hash-table)
+  "The major mode -> buffer hash table.")
+
+(defvar bbyac--source-file
+  load-file-name
+  "The bbyac source file.")
+
+(defvar bbyac--source-dir
+  (file-name-directory (file-truename bbyac--source-file))
+  "The bbyac source dir.")
+
 (defgroup bbyac nil
   "Type a little Bit, and Bang! You Are Completed."
   :group 'abbrev)
@@ -65,6 +77,12 @@ select from the matches.
 If you don't like the ecomplete style or think ecomplete is
 unreliable, change this to a very small value, such as 1 to force browse-kill-ring."
   :type 'integer
+  :group 'bbyac)
+
+(defcustom bbyac-user-config-dir
+  (expand-file-name "~/.config/bbyac")
+  "The directory to find user's bbyac config files."
+  :type 'string
   :group 'bbyac)
 
 (defvar bbyac--start
@@ -232,6 +250,7 @@ variables mb and me in these sexps.  Result of EXTRACT-MATCH
 should be a string; MOVE-ALONG is only used for its side-effects."
   (declare (doc-string 2))
   `(defun ,matcher-name (re buffer tag)
+     ,matcher-doc
      (let ((strlist-before nil)
            (strlist-after nil)
            (strlist nil)
@@ -393,8 +412,19 @@ Return the list of strings thus matched."
   (or (> (length str) bbyac-max-chars)
       (string-match-p "\n" str)))
 
-(defun bbyac--general-expand (extracter &optional matcher buffer-filter)
+(defun bbyac--general-expand (extracter &optional matcher buffer-filter match-rewriter)
   "General function to expand a bit using the functional arguments.
+
+EXTRACTER will extract a regexp from the current BIT of text.
+
+MATCHER will match the regexp returned by EXTRACTER to match some
+completions. The default matcher is `bbyac--matcher'.
+
+BUFFER-FILTER should return some tagged buffers in which MATCHER
+works.
+
+MATCH-REWRITER, if present, will rewrite the final matched
+completion before inserting it.
 
 See `bbyac--symbol-bbyac-extracter' for EXTRACTER.  See
 `bbyac--matcher' for MATCHER.  See `bbyac--buffer-filter' for
@@ -412,11 +442,17 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
     (when (and the-regexp
                (setq matches (bbyac--get-matches the-regexp matcher buffer-filter)))
       (if (or (minibufferp)
-              (cl-notany #'bbyac--string-multiline-p matches))
+              (cl-notany #'bbyac--string-multiline-p matches)
+              match-rewriter)
           (progn
-            (setq match (bbyac--display-matches matches))
+            (setq match (if (and (not (minibufferp))
+                                 (fboundp 'helm-comp-read))
+                            (helm-comp-read "Select which match do you want: " matches)
+                          (bbyac--display-matches matches)))
             (when (and bbyac--start bbyac--end)
               (delete-region bbyac--start bbyac--end))
+            (when match-rewriter
+              (setq match (funcall match-rewriter match)))
             (insert match))
         (when (and bbyac--start bbyac--end)
           (delete-region bbyac--start bbyac--end))
@@ -432,6 +468,39 @@ The bit itself is constructed by symbol constituting
 characters before the point."
   (interactive)
   (bbyac--general-expand #'bbyac--symbol-bbyac-extracter))
+
+(defun bbyac--major-mode-match-rewriter (matched-str)
+  "Rewrite the MATCHED-STR from the major-mode's bbyac file."
+  (replace-regexp-in-string ".*{\\(.*\\)}.*" "\\1" matched-str))
+
+(defun bbyac-expand-symbols-by-major-mode ()
+  "Find and expand the bit into a symbol (method) for current major mode.
+
+For e.g., when editing a .js file, a BIT like _subs_ is inputed,
+and this command is called, than it should be able to complete
+with _substring_ for the String objects."
+  (interactive)
+  (bbyac--general-expand #'bbyac--symbol-bbyac-extracter
+                         #'bbyac--line-extracting-matcher
+                         #'bbyac--buffer-filter-by-major-mode
+                         #'bbyac--major-mode-match-rewriter))
+
+(defun bbyac--buffer-filter-by-major-mode ()
+  "Return the (buffer . tag) for current major mode completion.
+
+See `bbyac--buffer-filter' for more info."
+  (let* ((mode-name (replace-regexp-in-string "-mode$" "" (symbol-name major-mode)))
+         (mode-buffer (gethash major-mode bbyac--major-mode-buffer-hash))
+         (bbyac-major-mode-match-file (expand-file-name (concat mode-name ".bbyac") bbyac--source-dir))
+         (bbyac-major-mode-match-file-user (expand-file-name (concat mode-name ".bbyac") bbyac-user-config-dir)))
+    (unless (buffer-live-p mode-buffer)
+      (when (file-exists-p bbyac-major-mode-match-file-user)
+        (setq bbyac-major-mode-match-file bbyac-major-mode-match-file-user))
+      (when (file-exists-p bbyac-major-mode-match-file)
+        (puthash major-mode (find-file-noselect bbyac-major-mode-match-file) bbyac--major-mode-buffer-hash)
+        (setq mode-buffer (gethash major-mode bbyac--major-mode-buffer-hash))))
+    (when (buffer-live-p mode-buffer)
+      (list (cons mode-buffer 'visible)))))
 
 (defun bbyac-expand-substring ()
   "Expand the bit into a partial line match.
@@ -555,6 +624,7 @@ This func is copied and modified from `ecomplete-display-matches'."
 (defvar bbyac-mode-map (make-sparse-keymap)
   "Bbyac mode map.")
 (define-key bbyac-mode-map (kbd "M-g <return>") 'bbyac-expand-symbols)
+(define-key bbyac-mode-map (kbd "M-g .") 'bbyac-expand-symbols-by-major-mode)
 (define-key bbyac-mode-map (kbd "M-g <RET>") 'bbyac-expand-symbols)
 (define-key bbyac-mode-map (kbd "M-s <return>") 'bbyac-expand-substring)
 (define-key bbyac-mode-map (kbd "M-s <RET>") 'bbyac-expand-substring)

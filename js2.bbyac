@@ -1,0 +1,26 @@
+String.{charAt()}
+String.{charCodeAt()}
+String.{concat()}
+String.{endsWith()}
+String.{fromCharCode()}
+String.{includes()}
+String.{indexOf()}
+String.{lastIndexOf()}
+String.{localeCompare()}
+String.{match()}
+String.{repeat()}
+String.{replace()}
+String.{search()}
+String.{slice()}
+String.{split()}
+String.{startsWith()}
+String.{substr()}(start[, length])
+String.{substring()}(indexStart[, indexEnd])
+String.{toLocaleLowerCase()}
+String.{toLocaleUpperCase()}
+String.{toLowerCase()}
+String.{toString()}
+String.{toUpperCase()}
+String.{trim()}
+String.{valueOf()}
+
