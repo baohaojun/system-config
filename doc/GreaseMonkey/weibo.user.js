@@ -6,26 +6,25 @@
 // ==/UserScript==
 
 
-function check_keyup() {
-  var all = document.getElementsByTagName("*");
+(function () {
+  let eventType = ["keydown", "keyup"];
 
-  // document.onkeyup = window.onkeyup = function(e) {
-  //   e.stopPropagation();
-  //   e.preventDefault();
-  //   e.returnValue = false;
-  //   e.cancelBubble = true;
-  //   return false;
-  // }
+  function isEventOnEditor(ev) {
+    var elem = ev.originalTarget;
+    if (!elem) return false;
+    var elementName = (elem.localName || "").toLowerCase();
+    return elementName === "input" || elementName === "textarea";
+  }
 
-  for (var i=0, max=all.length; i < max; i++) {
-    if (all[i].onkeyup) {
-      alert(all[i])
+  function preventEvent(ev) {
+    if (!isEventOnEditor(ev)) {
+      ev.stopPropagation();
     }
   }
 
-  if (window.onkeyup) {
-    alert("window")
+  function start () {
+    for (let type of eventType)
+      window.addEventListener(type, preventEvent, true);
   }
-}
-
-window.setTimeout(check_keyup, 5000)
+  window.setTimeout(start, 1000);
+})();
