@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name          login-newsmth
+// @name          stop-weibo-keys
 // @namespace     http://github.com/baohaojun/system-config
-// @description   Script for auto login at newsmth
+// @description   Script for stop annoying weibo edit keys.
 // @include       http://weibo.com/*
 // ==/UserScript==
 
