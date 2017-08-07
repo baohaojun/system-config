@@ -17,7 +17,7 @@
   }
 
   function preventEvent(ev) {
-    if (!isEventOnEditor(ev)) {
+    if (!isEventOnEditor(ev) && ev.key !== 'Escape') {
       ev.stopPropagation();
     }
   }

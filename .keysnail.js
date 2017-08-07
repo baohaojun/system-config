@@ -168,7 +168,13 @@ key.setGlobalKey(["C-x", "K"], function (ev) {
 }, 'ウィンドウを閉じる', false);
 
 key.setGlobalKey(["ESC", "ESC"], function(ev) {
-  key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
+  display.echoStatusBar("Escape next key: ", 1000);
+  key.escapeCurrentChar = true;
+  window.setTimeout(
+    function() {
+      key.escapeCurrentChar = false;
+    }, 1000
+  );
 }, "Send Escape");
 
 key.setGlobalKey([["C-x", "r"], ["C-c", "u"]], function (ev) {
