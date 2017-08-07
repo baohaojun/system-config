@@ -89,7 +89,7 @@ mu find $subject $from date:$after..$before --fields 'l d f s' | (
     done
 
     selected_info=$(
-        select-args -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort)" "All of the above! 老子想批处理一下！"</dev/tty
+        select-args -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r)" "All of the above! 老子想批处理一下！"</dev/tty
                  )
 
     if [[ $selected_info =~ ^'All of the above' ]]; then
