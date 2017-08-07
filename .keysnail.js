@@ -171,7 +171,7 @@ key.setGlobalKey(["ESC", "ESC"], function(ev) {
   key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
 }, "Send Escape");
 
-key.setGlobalKey([["C-x", "r"], ["C-c", "u"]], function (ev) {
+key.setGlobalKey([["C-x", "r", "r"], ["C-c", "u"]], function (ev) {
   undoCloseTab();
 }, '閉じたタブを元に戻す', false);
 
