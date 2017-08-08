@@ -53,11 +53,11 @@ if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt sshell hdo-here nno-fetch Rno-reverts ddry-run o:ok-function f:fail-function S:skip-function @:should-function
+# generate-getopt sshell hdo-here @:target-branch nno-fetch Rno-reverts ddry-run o:ok-function f:fail-function S:skip-function @:should-function
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o Rno:dsf:hS:h \
-               --long no-reverts,no-fetch,ok-function:,should-function:,dry-run,shell,fail-function:,do-here,skip-function:,help,no-do-here,no-dry-run,no-no-fetch,no-no-reverts,no-shell \
+TEMP=$( getopt -o hdf:nRo:sS:h \
+               --long do-here,dry-run,fail-function:,no-fetch,no-reverts,ok-function:,shell,should-function:,skip-function:,target-branch:,help,no-do-here,no-dry-run,no-no-fetch,no-no-reverts,no-shell \
                -n $(basename -- $0) -- "$@")
 do_here=false
 dry_run=false
@@ -68,6 +68,7 @@ ok_function=
 shell=false
 should_function=
 skip_function=
+target_branch=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -128,6 +129,10 @@ while true; do
             skip_function=$2
             shift 2
             ;;
+        --target-branch)
+            target_branch=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
             echo
@@ -159,6 +164,9 @@ while true; do
             echo
             printf %06s '-S, '
             printf %-24s '--skip-function=SKIP_FUNCTION'
+            echo
+            printf "%06s" " "
+            printf %-24s '--target-branch=TARGET_BRANCH'
             echo
             exit
             shift
@@ -245,10 +253,12 @@ for diff_file in $diffs; do
             start_recursive_shell 'shell for cherry'
             exit
         fi
-        if test $do_here = true; then
-            target_branch=HEAD
-        else
-            target_branch=$(grep -o 'not found in .*' $diff_file|pn 4|head -n 1)
+        if test -z "$target_branch"; then
+            if test $do_here = true; then
+                target_branch=HEAD
+            else
+                target_branch=$(grep -o 'not found in .*' $diff_file|pn 4|head -n 1)
+            fi
         fi
 
         if ! is-jenkins && test -z "$target_branch"; then
@@ -266,9 +276,16 @@ for diff_file in $diffs; do
             fi
         else
             if test $do_here = false -a "$target_branch"; then
-                git checkout $target_branch -B $(
-                    echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
-                    ) || true
+                if [[ "$target_branch" =~ ^remotes/ ]]; then
+                    local_branch=$(
+                        echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
+                                )
+                    if git log -1 $local_branch >/dev/null 2>&1; then
+                        git co -b $local_branch.bak-$$ $local_branch
+                        git branch -D $local_branch
+                    fi
+                    git checkout -B $local_branch $target_branch
+                fi
             fi
 
             if test "$no_reverts" = true; then

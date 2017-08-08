@@ -1,6 +1,15 @@
 #!/usr/bin/env perl
 
 use strict;
+
+use Getopt::Long;
+my $program_to_run;
+GetOptions(
+    "program=s" => \$program_to_run,
+    );
+
+$program_to_run = "bash" unless $program_to_run;
+
 my $f1 = shift @ARGV;
 my $f2 = shift @ARGV;
 
@@ -46,7 +55,7 @@ for my $path1 (sort {"$a" cmp "$b"} keys %path_rev1) {
     if ($rev2) {
       $rev2 = "revision=\"$rev2\"";
     }
-      printf('(cd %s; export REV1=%s; export REV2=%s; export UP1=%s; export UP2=%s; bash)' . "\n", $path1, $path_rev1{$path1}, $path_rev2{$path1}, $up1, $up2) if $path1;
+      printf('(cd %s; export REV1=%s; export REV2=%s; export UP1=%s; export UP2=%s; %s)' . "\n", $path1, $path_rev1{$path1}, $path_rev2{$path1}, $up1, $up2, $program_to_run) if $path1;
   } else {
     chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@revision $f1));
     if ($rev1) {

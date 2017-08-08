@@ -2,6 +2,52 @@
 # http://github.com/baohaojun/system-config/raw/master/bin/Linux/
 . ~/system-config/.bashrc-public-bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @blob
+## end code-generator
+## start generated code
+TEMP=$( getopt -o h \
+               --long blob,help,no-blob \
+               -n $(basename -- $0) -- "$@")
+blob=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --blob|--no-blob)
+            if test "$1" = --no-blob; then
+                blob=false
+            else
+                blob=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]blob'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 set -e
 test $# = 0 && set -- .
 set -- "$(readlink -f "$(lookup-file $1)")"
@@ -16,10 +62,18 @@ cd -P .
 git_dir=$(dirname $(lookup-file .git))
 git_proj_http=$(repo-remote-url|perl -npe 's,git\@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
 
-stem=/raw/$(git-remote-branch|xargs basename)
-if test -d "$1"; then
-    stem=/tree/${stem#/raw/}
+if test "$blob" = true; then
+    where=blob
+else
+    where=raw
 fi
+
+stem=/$where/$(git-remote-branch|xargs basename)
+if test -d "$1"; then
+    stem=/tree/${stem#/where/}
+fi
+
+
 
 url=$(lookup-file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n')
 echo "$url"
@@ -27,5 +81,3 @@ echo "$url"
 if is-tty-io; then
     putclip "$url"
 fi
-
-

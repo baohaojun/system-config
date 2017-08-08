@@ -247,10 +247,10 @@ print $_ . "\n";
             if test "$2" = -a; then
                 shift 2
                 set -- "fetch" -v "$@"
-                for remote in $(git remote); do
-                    git config remote.$remote.fetch "+refs/heads/*:refs/remotes/$remote/*"
+                for remote in $(command git remote); do
+                    command git config remote.$remote.fetch "+refs/heads/*:refs/remotes/$remote/*"
                 done
-            elif test "$2" = ?; then
+            elif test "$2" = \?; then
                 shift 2
                 set -- "fetch" $(git-choose-branch) "$@"
             fi
