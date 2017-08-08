@@ -1037,7 +1037,10 @@ void WrenchMainWindow::on_tbPhoneScreen_toggled(bool checked)
 {
     QString usingVnc = mLuaThread->getVariableLocked("using-vnc");
     if (usingVnc.isEmpty() && checked) {
-        prompt_user("Have not decided whether you have vnc, using screencapture");
+        prompt_user("小扳手刚连接上？还没弄明白你的手机是否支持更流畅的 vnc 屏幕同步哦。\n\n"
+
+                    "暂时只能通过截屏来同步屏幕显示，可能会很慢，你可以等小扳手完全连上后再重新关闭、打开屏幕同步，看能不能支持 vnc 连接。"
+            );
     }
     if (usingVnc == "true") {
         if (!mPhoneScreenDialog.isNull() && mPhoneScreenDialog->isVisible()) {
