@@ -91,11 +91,14 @@
 (require 'init-flycheck)
 
 (require 'init-recentf)
-                                        ; (require 'init-ido)
-                                        ; (require 'init-hippie-expand)
-(require 'init-auto-complete)
+;; (require 'init-ido)
+;; (require 'init-hippie-expand)
+;;(require 'init-auto-complete)
+(require-package 'company)
+(require 'company)
+(global-company-mode 1)
 (require 'init-windows)
-; (require 'init-sessions)
+;; (require 'init-sessions)
 (require 'init-fonts)
 (require 'init-mmm)
 
@@ -166,6 +169,7 @@
   (global-auto-complete-mode t))
 
 ;; (my-ac-config)
+
 
 (require-package 'ac-helm)
 (require-package 'lua-mode)
