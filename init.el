@@ -93,7 +93,7 @@
 (require 'init-recentf)
 ;; (require 'init-ido)
 ;; (require 'init-hippie-expand)
-;;(require 'init-auto-complete)
+(require 'init-auto-complete)
 (require-package 'company)
 (require 'company)
 (global-company-mode 1)
