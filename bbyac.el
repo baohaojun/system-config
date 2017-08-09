@@ -445,9 +445,14 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
               (cl-notany #'bbyac--string-multiline-p matches)
               match-rewriter)
           (progn
-            (setq match (if (and (not (minibufferp))
-                                 (fboundp 'helm-comp-read))
-                            (helm-comp-read "Select which match do you want: " matches)
+            (setq match (if (not (minibufferp))
+                            (cond
+                             ((fboundp 'ivy-read)
+                              (ivy-read "Select which match do you want: " matches))
+                             ((fboundp 'helm-comp-read)
+                              (helm-comp-read "Select which match do you want: " matches))
+                             (t
+                              (bbyac--display-matches matches)))
                           (bbyac--display-matches matches)))
             (when (and bbyac--start bbyac--end)
               (delete-region bbyac--start bbyac--end))
