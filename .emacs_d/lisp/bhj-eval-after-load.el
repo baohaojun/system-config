@@ -178,6 +178,14 @@
      (global-set-key (kbd "C-.") 'ac-complete-with-helm)
      (define-key ac-complete-mode-map (kbd "C-.") 'ac-complete-with-helm)))
 
+(eval-after-load 'company
+  '(progn
+     (define-key company-active-map (kbd "C-n") 'company-select-next)
+     (define-key company-active-map (kbd "C-p") 'company-select-previous)
+     (global-set-key (kbd "C-.") 'company-complete)
+     (require 'helm-company)
+     (define-key company-active-map (kbd "C-.") 'helm-company)))
+
 (defun org-html-fontify-code-compout (orig-fun &rest args)
   "Make compilation output htmlized."
   (if (or (string= (cadr args) "compout")
