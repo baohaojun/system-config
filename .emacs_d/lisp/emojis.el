@@ -81,7 +81,8 @@
             (progn
               (setq emoji-names (cons (find-if (lambda (n) (string= key n)) emoji-names) (delete-if (lambda (n) (string= key n)) emoji-names)))
               (insert emoji))
-          (setq key (substring key (length "Enter your emoji: ")))
+          (setq key (car (split-string key "\n")))
+          (setq key (replace-regexp-in-string ".*Enter your emoji: " "" key))
           (let  ((emoji-names-copy (copy-sequence emoji-names))
                  (stems (split-string key "\\s +")))
             (while stems

@@ -197,11 +197,15 @@
   '(advice-add 'org-html-fontify-code :around #'org-html-fontify-code-compout))
 
 (defun bhj-hack-helm-s-return ()
+  "This command does nothing, it's only for flet later."
   (interactive)
   (bhj-hack-helm-s-return-helper))
 
 (defun bhj-hack-helm-s-return-helper ()
-    (message "hello world: %s" (buffer-substring-no-properties (point-min) (point-max))))
+  (message "hello world: %s" (buffer-substring-no-properties (point-min) (point-max))))
+
+(eval-after-load 'ivy
+  '(define-key ivy-mode-map [(shift return)] 'bhj-hack-helm-s-return))
 
 (eval-after-load 'helm
   '(define-key helm-map [(shift return)] 'bhj-hack-helm-s-return))
