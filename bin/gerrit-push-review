@@ -11,65 +11,105 @@ function die() {
     exit -1
 }
 
-rev=HEAD
 
-head_branch=
-TEMP=$(getopt -o dnBb:r:Rac --long draft,revision:,norebase,remote: -n $(basename $0) -- "$@")
-do_fetch=true
-do_commit=-n
-do_rebase=true
-do_review=true
-where=refs/for
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -p gpr -e -H "往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push" \
+    # r:push-rev=HEAD '?要 push 哪个 revision，默认是 HEAD' \
+    # t:patch-topic '?要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review' \
+    # Rskip-local-review '?提交前不要做 local review（鼓励做 local review！）' \
+    # @draft '?提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事' \
+    # b:to-branch '?提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支' \
+    # @:repo-remote=${REPO_REMOTE} '?提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）' \
+    # @do-rebase=true '?要不要先 rebase 到远程服务器分支，默认是要 rebase'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o t:r:Rb:h \
+               --long do-rebase,draft,patch-topic:,push-rev:,repo-remote:,skip-local-review,to-branch:,help,no-do-rebase,no-draft,no-skip-local-review \
+               -n $(basename -- $0) -- "$@")
+gpr_do_rebase=${gpr_do_rebase:-true}
+gpr_draft=${gpr_draft:-false}
+gpr_patch_topic=${gpr_patch_topic:-}
+gpr_push_rev=${gpr_push_rev:-HEAD}
+gpr_repo_remote=${gpr_repo_remote:-}
+gpr_skip_local_review=${gpr_skip_local_review:-false}
+gpr_to_branch=${gpr_to_branch:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -c)
-            do_commit=-y
+
+        --do-rebase|--no-do-rebase)
+            if test "$1" = --no-do-rebase; then
+                gpr_do_rebase=false
+            else
+                gpr_do_rebase=true
+            fi
             shift
             ;;
-        --remote)
-            export REPO_REMOTE=$2
+        --draft|--no-draft)
+            if test "$1" = --no-draft; then
+                gpr_draft=false
+            else
+                gpr_draft=true
+            fi
+            shift
+            ;;
+        -t|--patch-topic)
+            gpr_patch_topic=$2
             shift 2
             ;;
-        --norebase)
-            do_rebase=false;
-            shift
+        -r|--push-rev)
+            gpr_push_rev=$2
+            shift 2
             ;;
-        -d|--draft)
-            where=refs/drafts
-            shift
+        --repo-remote)
+            gpr_repo_remote=$2
+            shift 2
             ;;
-        -a)
-            shift
-            if test "$1" = --; then
-                shift
+        -R|--skip-local-review|--no-skip-local-review)
+            if test "$1" = --no-skip-local-review; then
+                gpr_skip_local_review=false
+            else
+                gpr_skip_local_review=true
             fi
-            for x in "$@"; do
-                gerrit -- set-reviewers $(git rev-parse HEAD) -a "$x"
-            done
+            shift
+            ;;
+        -b|--to-branch)
+            gpr_to_branch=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo 往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]do-rebase'
+            echo '要不要先 rebase 到远程服务器分支，默认是要 rebase'
+            printf "%06s" " "
+            printf %-24s '--[no-]draft'
+            echo '提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事'
+            printf %06s '-t, '
+            printf %-24s '--patch-topic=PATCH_TOPIC'
+            echo
+            printf "%30s" ""
+            echo '要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review'
+            printf %06s '-r, '
+            printf %-24s '--push-rev=PUSH_REV'
+            echo '要 push 哪个 revision，默认是 HEAD'
+            printf "%06s" " "
+            printf %-24s '--repo-remote=REPO_REMOTE'
+            echo
+            printf "%30s" ""
+            echo '提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）'
+            printf %06s '-R, '
+            printf %-24s '--[no-]skip-local-review'
+            echo '提交前不要做 local review（鼓励做 local review！）'
+            printf %06s '-b, '
+            printf %-24s '--to-branch=TO_BRANCH'
+            echo '提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支'
             exit
-            ;;
-        -n)
-            do_fetch=false
-            shift
-            ;;
-        -B)
-            export REPO_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
-            shift
-            ;;
-        -b)
-            export REPO_BRANCH=$2
-            if test "$REPO_BRANCH" = x; then
-                REPO_BRANCH=$(git-choose-branch | perl -npe 's!^\s*remotes/!!; s!.*?/!!')
-            fi
-            shift 2
-            ;;
-        -r|--revision)
-            rev=$2
-            shift 2
-            ;;
-        -R)
-            do_review=false
             shift
             ;;
         --)
@@ -81,6 +121,135 @@ while true; do
             ;;
     esac
 done
+
+
+export gpr_do_rebase
+export gpr_draft
+export gpr_patch_topic
+export gpr_push_rev
+export gpr_repo_remote
+export gpr_skip_local_review
+export gpr_to_branch
+
+## end generated code
+
+if test -d .repo; then
+    hint 看起来你想要 push 所有有改动的 repo，这个需要你选择一下要 push 哪些 repo。
+    declare -A all_history_projects
+    if ( test -e ~/.config/gerrit-push-review.projects && . ~/.config/gerrit-push-review.projects); then
+        . ~/.config/gerrit-push-review.projects
+    fi
+
+    repo-is-dirty () {
+        (
+            cd "$1"
+            repo-changes? | grep . -q
+        )
+    }
+
+    all_changed_projects=(
+            $(
+                for p in "${!all_history_projects[@]}"; do
+                    if test -d "$p/.git" && repo-is-dirty "$p"; then
+                        echo "$p"
+                    fi
+                done
+            )
+        )
+
+    if test "${#all_changed_projects[@]}" = 0; then
+        hint "你以前全局 push 过的所有仓库下都没有改动，需要继续手动选择 push 哪些仓库"
+        manual_select=true
+    elif yes-or-no-p -y "这些是你以前全局 push 过、并且本次也有改动的仓库，确认这些就是全部要 push 的仓库么？"; then
+         manual_select=false
+    else
+        hint "接下来需要继续选择要 push 哪些仓库"
+        manual_select=true
+    fi
+
+    if test "$manual_select" = true; then
+       while true; do
+           if test "${#all_changed_projects[@]}" != 0; then
+               confirm_line=$(
+                   echo "当前已选择的有改动的仓库，确认没有遗漏： $(string-join ', ' ${all_changed_projects[@]})"
+                           )
+           else
+               confirm_line=
+           fi
+           selected_project=$(
+               select-args -p "请输入你的选择（第一个选项可直接回车，不需要输入 1 再回车，也可以输入字符串回车进一步细化选项）：" \
+                                  "$confirm_line" \
+                                  "运行一下 repo-changes? 命令，帮我看一下都有哪些仓库有改动（可能要花 15 秒到几分钟时间）" \
+                                  "请列出所有仓库列表，我手工从中选择"
+                           )
+           case "$selected_project" in
+               当前已选择*)
+                   break
+                   ;;
+               运行一下*)
+                   repo_changes=$(
+                       repo-changes\? | pn 1 | sort -u
+                               )
+                   if test -z "$repo_changes"; then
+                       hint "你的所有 repo 下都没有改动，即将退出"
+                       exit
+                   fi
+                   for r in $repo_changes; do
+                       if test -z "${all_history_projects[$r]}"; then
+                           all_history_projects[$r]=true
+                           all_changed_projects=(
+                               "${all_changed_projects[@]}"
+                               $r
+                           )
+                       fi
+                   done
+                   hint "已帮你找出所有可能要 push 的 repo： $(string-join ', ' ${all_changed_projects[@]})"
+                   break
+                   ;;
+               请列出所有*)
+                   if test -z "all_projects"; then
+                       all_projects=$(
+                           my-rfa 'ap'
+                                   )
+                   fi
+                   r=$(
+                       select-args -p "请选择你想 push review 的仓库（第一个选项可直接回车，不需要输入 1 再回车，也可以输入字符串回车进一步细化选项）" \
+                                   $all_projects
+                    )
+                   if test ! -d "$r"/.git; then
+                       die "你输入的目录 $r 不是一个 git 仓库"
+                   fi
+
+                   all_history_projects[$r]=true
+                   if repo-is-dirty "$r"; then
+                       all_changed_projects=(
+                           "${all_changed_projects[@]}"
+                           $r
+                       )
+                   elif yes-or-no-p -y "你选的这个仓库 $r 没有需要提交的改动。请问下次全局 push 的时候是否默认检查这个仓库？"; then
+                       true
+                   else
+                       unset all_history_projects[$r]
+                   fi
+                   ;;
+           esac
+       done
+    fi
+
+    declare -p all_history_projects > ~/.config/gerrit-push-review.projects
+
+    if test "${#all_changed_projects[@]}" != 0; then
+        for p in "${all_changed_projects[@]}"; do
+            (
+                cd "$p"
+                if yes-or-no-p -y "请确认是否要提交 $(ap) 这个仓储（如果不能马上确认，请自己再开一个终端窗口查看详细改动）"; then
+                   gerrit-push-review "$@"
+                fi
+            ) || true
+        done
+    fi
+    exit
+fi
 
 if git status -s | grep -q . && yes-or-no-p -y "你的git仓储还有改动，是否要退出？"; then
     echo
@@ -95,14 +264,14 @@ function confirm-with-repo() {
     fi
 }
 
-if test -z "$REPO_BRANCH"; then
+if test -z "$gpr_to_branch"; then
     head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
     merge_head=
     if test "$head_branch"; then
         merge_head=$(git config branch.$head_branch.merge | perl -npe 's!^refs/heads/!!' || true)
         if test -z "$merge_head"; then
             if test "$(repo-remote)" -a "$(repo-branch)"; then
-                hint "你的本地分支 $head_branch 没有对应的远程服务器分支，但你的git仓储是一个repo仓储，将使用repo manifest.xml里提供的信息决定要push的远程目标分支名称"
+                hint "你的本地分支 $head_branch 没有对应的远程服务器分支，但你的 git 仓储是一个 repo 仓储，将使用 repo manifest.xml 里提供的信息决定要 push 的远程目标分支名称"
                 head_branch=
                 merge_head=
             fi
@@ -113,7 +282,7 @@ if test -z "$REPO_BRANCH"; then
         fi
     fi
     if test "$head_branch" && yes-or-no-p -y "你的git设置了远程跟踪分支 $head_branch ，是否要push到此分支？"; then
-        export REPO_BRANCH=$head_branch
+        export gpr_to_branch=$head_branch
         if test -z "$REPO_REMOTE" -a -z "$merge_head"; then
             export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
         fi
@@ -122,7 +291,13 @@ if test -z "$REPO_BRANCH"; then
     fi
 fi
 
-if test $do_fetch = true; then
+if test "$gpr_repo_remote" -a "$REPO_REMOTE" -a "$gpr_repo_remote" != "$REPO_REMOTE"; then
+    die "你指定了 --repo-remote=$gpr_repo_remote，但跟环境变量 REPO_REMOTE ($REPO_REMOTE) 的值不一致，不知如何处理"
+elif test -z "$REPO_REMOTE"; then
+    export REPO_REMOTE=$gpr_repo_remote
+fi
+
+if test $gpr_do_rebase = true; then
     echo git fetching remote: $(repo-remote), branch: $(repo-branch)
     if test -z "$(lookup-file -e .repo)" || [[ $PWD =~ /\.repo/manifests ]]; then
         git fetch -n -v $(repo-remote) $(repo-branch)
@@ -132,7 +307,7 @@ if test $do_fetch = true; then
     echo git fetch done
 fi
 
-if test $do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/dev/null 2>&1; then
+if test $gpr_do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/dev/null 2>&1; then
     if yes-or-no-p -y "远程有提交，需要先rebase到远程，自动处理？"; then
         git rebase $(repo-remote-branch) ||
         die "Rebase failed"
@@ -141,7 +316,7 @@ if test $do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/dev/
     fi
 fi
 
-n_commits=$(git log $(repo-remote-branch)..HEAD --pretty=%H|wc -l)
+n_commits=$(git log $(repo-remote-branch)..${gpr_push_rev} --pretty=%H|wc -l)
 
 if test "$n_commits" = 0; then
     echo 你的本地仓储没有改动需要提交到远程服务器
@@ -176,7 +351,7 @@ done
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
 
-if is-tty-io && test $do_review = true && yes-or-no-p -y "在请别人review之前，要不要先自己本地review一下（加-R参数可以跳过此提示）"; then
+if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别人review之前，要不要先自己本地review一下（加-R参数可以跳过此提示）"; then
     (
         cd $(dirname $(lookup-file -e .git))
         FOR_REVIEW=true git-interactive-add
@@ -195,21 +370,25 @@ fi
 
 for try in $(seq 1 10); do
     if ! (
-            if [[ "$(git log --pretty=%ae -1 "$rev")" =~ cmbuild@ ]] && test "$SMARTCM_ALLOW_CMBUILD_AUTHOR" != true; then
+            if [[ "$(git log --pretty=%ae -1 "$gpr_push_rev")" =~ cmbuild@ ]] && test "$SMARTCM_ALLOW_CMBUILD_AUTHOR" != true; then
                 die "Must not push with author as cmbuild@"
             fi
-            echo git push $REMOTE "$rev":$where/`repo-branch`
+
+            push_where=refs/for
+            if test "$gpr_draft" = true; then
+                push_where=refs/drafts
+            fi
             if ! git push --no-thin --receive-pack="$(
                 echo -n 'git receive-pack ';
                 for x in "${reviewers[@]}"; do
                     echo -n "--reviewer=$x "
-                done)" $REMOTE "$rev":$where/`repo-branch` 2>&1; then
+                done)" $REMOTE "$gpr_push_rev":$push_where/`repo-branch`$(if test "$gpr_patch_topic"; then echo /"$gpr_patch_topic"; fi) 2>&1; then
                 exit 1
             fi
             echo
             echo '* git commit message:'
             echo
-            git log -1 "$rev"
+            git log -1 "$gpr_push_rev"
         ) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee ~/.cache/system-config/logs/gerrit-review.log.$$; then
         if grep -q 'internal error while processing changes\|(Synchronous hook timed out' ~/.cache/system-config/logs/gerrit-review.log.$$; then
             echo There is an error, need retry git push...

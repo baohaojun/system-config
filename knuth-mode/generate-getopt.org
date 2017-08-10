@@ -23,22 +23,82 @@
      declare -A long_opts_map
      declare -A help_map
      declare -A default_val_map
+     declare -A var_name_map
 
+     ## start code-generator "^\\s *#\\s *"
+     # generate-getopts p:prefix l:is-local H:global-help eexport-all
+     ## end code-generator
+     ## start generated code
+
+     export_all=false
+     global_help=
      is_local=
+     prefix=
+     OPTIND=1
+     while getopts "eH:l:p:h" opt; do
+         case "$opt" in
 
-     if test "$1" = -l; then
+             e) export_all=true ;;
+             H) global_help=$OPTARG ;;
+             l) is_local=$OPTARG ;;
+             p) prefix=$OPTARG ;;
+             h)
+                 echo
+                 echo
+                 printf %06s%s '-e ' 'export-all'
+                 printf %-24s ''
+                 echo ''
+                 printf %06s%s '-H ' 'global-help'
+                 printf %-24s 'GLOBAL_HELP'
+                 echo ''
+                 printf %06s%s '-l ' 'is-local'
+                 printf %-24s 'IS_LOCAL'
+                 echo ''
+                 printf %06s%s '-p ' 'prefix'
+                 printf %-24s 'PREFIX'
+                 echo ''
+                 shift
+                 exit 0
+                 ;;
+             ,*)
+                 echo
+                 echo
+                 printf %06s%s '-e ' 'export-all'
+                 printf %-24s ''
+                 echo ''
+                 printf %06s%s '-H ' 'global-help'
+                 printf %-24s 'GLOBAL_HELP'
+                 echo ''
+                 printf %06s%s '-l ' 'is-local'
+                 printf %-24s 'IS_LOCAL'
+                 echo ''
+                 printf %06s%s '-p ' 'prefix'
+                 printf %-24s 'PREFIX'
+                 echo ''
+                 exit 2
+                 ;;
+         esac
+     done
+
+     shift $((OPTIND - 1))
+
+     ## end generated code
+
+
+     if test "$is_local" = true; then
          is_local=local
-         shift
+     else
+         is_local=
      fi
 
+     if [[ $1 =~ ^\? ]]; then
+         global_help=${1:1}
+         shift
+     fi
 
      while test "$1"; do
          spec=$1
          shift
-         if [[ $spec =~ ^\? ]]; then
-             description=${spec:1}
-             continue
-         fi
 
          if [[ $spec =~ ^@ ]]; then
              short=
@@ -79,6 +139,10 @@
 
          default_val_map[$long]=$default
          help_map[$long]=$help
+         var_name_map[$long]=${long//-/_}
+         if test "$prefix"; then
+             var_name_map[$long]=${prefix}_${long//-/_}
+         fi
      done
 
      eval "$(sort-args.reliably -t long_opts_sorted -- "${!long_opts_map[@]}")"
@@ -152,8 +216,12 @@
   #+name: output-var-def-val
   #+BEGIN_SRC sh
     for long in "${long_opts_sorted[@]}"; do
-        var=${long//-/_}
-        echo $is_local ${var}=${default_val_map[$long]}
+        var=${var_name_map[$long]}
+        if test "$export_all" = false; then
+            echo $is_local ${var}=${default_val_map[$long]}
+        else
+            echo $is_local ${var}=\$\{$var:-${default_val_map[$long]}\}
+        fi
     done
   #+END_SRC
 
@@ -176,7 +244,7 @@
             is_boolean=false
         fi
         s=${s/:/}
-        var=${long//-/_}
+        var=${var_name_map[$long]}
         cat << EOF2
             $(
                 if test "$s"; then
@@ -220,7 +288,7 @@
   #+BEGIN_SRC sh
     $(
         echo set +x
-        echo echo "$description"
+        echo echo "$global_help"
         echo echo
         echo echo Options and arguments:
         for long in ${long_opts_sorted[@]}; do
@@ -263,21 +331,33 @@
 
 * 输出范本3
   #+name: foot
-  #+BEGIN_SRC sh
-    -h|--help)
-        <<output-help>>
-        shift
-        ;;
-    --)
+ #+BEGIN_SRC sh
+   -h|--help)
+       <<output-help>>
        shift
-       break
        ;;
-       ,*)
-           die "internal error"
-           ;;
-       esac
-    done
+   --)
+      shift
+      break
+      ;;
+      ,*)
+          die "internal error"
+          ;;
+      esac
+   done
 
+  #+END_SRC
+
+* 输出全部变量
+
+  #+name: maybe-export-all
+  #+BEGIN_SRC sh
+    if test "$export_all" = "true"; then
+        echo
+        for long in "${long_opts_sorted[@]}"; do
+            echo export ${var_name_map[$long]}
+        done
+    fi
   #+END_SRC
 
 * Read only
@@ -308,8 +388,10 @@
   <<foot>>
   EOF
 
+  <<maybe-export-all>>
   <<read-only>>
 
 #+END_SRC
 
 #+results: the-ultimate-script
+
