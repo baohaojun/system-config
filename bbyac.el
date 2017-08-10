@@ -254,13 +254,22 @@ should be a string; MOVE-ALONG is only used for its side-effects."
      (let ((strlist-before nil)
            (strlist-after nil)
            (strlist nil)
+           (re-2 nil)
            (old-point (point)))
+       (when (string-match "" re)
+         (setq re-2 (replace-regexp-in-string ".*" "" re)
+               re (replace-regexp-in-string ".*" "" re))
+         (message "re is %s, re-2 is %s" re re-2))
        (with-current-buffer buffer
          (save-excursion
            (goto-char (point-min))
            (while (re-search-forward re nil t)
              (let ((mb (match-beginning 0))
                    (me (match-end 0)))
+               (when (and re-2
+                          (goto-char me)
+                          (re-search-forward re-2 nil t))
+                 (setq me (match-end 0)))
                (let ((substr ,extract-match))
                  (cond
                   ((and (eq tag 'current)
@@ -302,7 +311,12 @@ Or else the returned list of strings is in the order they appear in the buffer."
  "Search the buffer to collect a list of all lines matching `re'.
 
 See `bbyac--matcher'."
- (buffer-substring-no-properties (line-beginning-position) (line-end-position))
+ (buffer-substring-no-properties (if (>= mb (line-beginning-position))
+                                     (line-beginning-position)
+                                   (save-excursion
+                                     (goto-char mb)
+                                     (line-beginning-position)))
+                                 (line-end-position))
  (end-of-line))
 
 (bbyac--make-matcher
@@ -447,6 +461,8 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
           (progn
             (setq match (if (not (minibufferp))
                             (cond
+                             ((not (cdr matches))
+                              (car matches))
                              ((fboundp 'ivy-read)
                               (ivy-read "Select which match do you want: " matches))
                              ((fboundp 'helm-comp-read)
