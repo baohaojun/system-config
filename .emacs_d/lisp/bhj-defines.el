@@ -1284,8 +1284,16 @@ criteria can be provided via the optional match-string argument "
 
 ;;;###autoload
 (defun bhj-file-basename ()
-  (let ((fn (or (buffer-file-name) (buffer-name))))
-    (setq fn (file-name-nondirectory fn))))
+  (let ((buffers (buffer-list)))
+    (while (and
+            (car buffers)
+            (minibufferp (car buffers)))
+      (setq buffers (cdr buffers)))
+    (with-current-buffer (or (car buffers) (current-buffer))
+      (let ((fn (buffer-file-name)))
+        (if fn
+            (file-name-nondirectory fn)
+          (buffer-name))))))
 
 ;;;###autoload
 (defun bhj-insert-pwdw ()
