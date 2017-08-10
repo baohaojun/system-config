@@ -212,7 +212,7 @@ done
 -h|--help)
     $(
         echo set +x
-        echo echo "$global_help"
+        echo echo -e "$global_help"
         echo echo
         echo echo Options and arguments:
         for long in ${long_opts_sorted[@]}; do

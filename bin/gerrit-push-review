@@ -11,11 +11,21 @@ function die() {
     exit -1
 }
 
+set -e
 
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -p gpr -e -H "往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push" \
+# generate-getopt -p gpr -e -H '"使用方法：$b0 [OPTIONS]... REVIEWERS...\n往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）\n"' \
     # r:push-rev=HEAD '?要 push 哪个 revision，默认是 HEAD' \
     # t:patch-topic '?要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review' \
     # Rskip-local-review '?提交前不要做 local review（鼓励做 local review！）' \
@@ -81,7 +91,7 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo 往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push
+            echo -e "使用方法：$b0 [OPTIONS]... REVIEWERS...\n往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）\n"
             echo
             echo Options and arguments:
             printf "%06s" " "
