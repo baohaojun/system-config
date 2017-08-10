@@ -49,22 +49,10 @@
 (add-hook 'dts-mode-hook (lambda ()  (setq indent-tabs-mode t)))
 (require-package 'csharp-mode)
 (require 'helm-config)
-(helm-mode 1)
 
-(require-package 'ivy)
-(require 'ivy)
-(ivy-mode 1)
-(define-key global-map [remap execute-extended-command] 'counsel-M-x)
-(define-key global-map [remap find-file] 'counsel-find-file)
-(define-key global-map [remap occur] 'counsel-occur)
-
-(require-package 'ac-clang)
 (require-package 'keydef)
 (require-package 'lua-mode)
-(require-package 'mmm-mode)
-(require 'mmm-auto)
 (require-package 'oauth2)
-(require-package 'session)
 (require-package 'yasnippet)
 (yas-global-mode)
 (setq yas-snippet-dirs
@@ -79,7 +67,7 @@
 
 (require 'init-frame-hooks)
 (require 'init-xterm)
-; (require 'init-themes)
+;; (require 'init-themes)
 (require 'init-osx-keys)
 (require 'init-gui-frames)
 (require 'init-dired)
@@ -95,7 +83,7 @@
 (require 'init-hippie-expand)
 (require 'init-company)
 (require 'init-windows)
-;; (require 'init-sessions)
+(require 'init-sessions)
 (require 'init-fonts)
 (require 'init-mmm)
 
@@ -151,28 +139,6 @@
 ;; Extra packages which don't require any configuration
 
 (require-package 'gnuplot)
-
-(defun ac-clang-restart-for-local-variables ()
-  (when (or (eq major-mode 'c-mode)
-            (eq major-mode 'c++-mode))
-    (ac-clang-shutdown-process)
-    (ac-clang-launch-completion-process)))
-
-(defun ac-cc-mode-setup ()
-  (setq ac-clang-complete-executable "~/system-config/bin/Linux/clang-complete")
-  (setq ac-sources '(ac-source-clang-async))
-  (ac-clang-restart-for-local-variables)
-  (add-hook 'hack-local-variables-hook #'ac-clang-restart-for-local-variables))
-(require 'auto-complete-clang-async)
-(defun my-ac-config ()
-  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
-  (global-auto-complete-mode t))
-
-;; (my-ac-config)
-
-
-(require-package 'ac-helm)
 (require-package 'lua-mode)
 (require-package 'htmlize)
 (require-package 'dsvn)

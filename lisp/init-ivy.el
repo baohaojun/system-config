@@ -40,7 +40,10 @@
   (setq-default counsel-mode-override-describe-bindings t)
   (when (maybe-require-package 'diminish)
     (after-load 'counsel
-      (diminish 'counsel-mode)))
+      (diminish 'counsel-mode)
+      (define-key global-map [remap execute-extended-command] 'counsel-M-x)
+      (define-key global-map [remap find-file] 'counsel-find-file)
+      (define-key global-map [remap occur] 'counsel-occur)))
   (add-hook 'after-init-hook 'counsel-mode)
 
   (when (and (executable-find "ag") (maybe-require-package 'projectile))
