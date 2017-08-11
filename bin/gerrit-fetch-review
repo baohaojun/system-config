@@ -132,7 +132,23 @@ fi
 export GERRIT_HOST
 export REPO_REMOTE
 
-tmpf=/tmp/$(basename $0).$$
+. atexit bash -c "rm ~/tmp/gerrit-fetch-review*.$$ -f || true"
+
+tmpf=~/tmp/$(basename $0).$$
+
+if is-jenkins; then
+    if test $# != 1 -o "${1:0:4}" != http || ! echo "$1" | grep -q '#/c/\d+/?$' -P; then
+        mail-cms -i "Can't gerrit-fetch-review $@" <<EOF
+无法 Gerrit Fetch 不安全的 Patch 参数： $@
+
+用法：gerrit-fetch-review GERRIT-URL （比如：https://172.16.0.9:8080/#/c/266798/）
+
+一般来说，从 Gerrit 网页上打开一个 Review 页面，直接把网址拷下来就可以。
+EOF
+    fi
+fi
+
+
 if test $# = 1 -a "${1:0:4}" = http; then
     if echo "$1" |grep -q "#/c/\d+/" -P; then
         set -- $(echo "$1"|perl -npe 's,.*#/c/(\d+)/.*,$1,')
@@ -141,7 +157,6 @@ if test $# = 1 -a "${1:0:4}" = http; then
     fi
 fi
 
-
 gerrit query "$@" --current-patch-set > $tmpf
 
 function die() {
@@ -149,6 +164,24 @@ function die() {
     exit -1
 }
 
+if grep 'value:\s+-' -P -q $tmpf; then
+    all_review_ok=false
+else
+    all_review_ok=true
+fi
+
+if grep 'value:\s+2' -P -q $tmpf; then
+    approved_review=true
+else
+    approved_review=false
+fi
+
+git_commit_revision=$(
+    cat $tmpf | grep revision: | pn 2
+          )
+if ! [[ "$git_commit_revision" =~ ^[0-9a-f]{40}$ ]]; then
+    die "Invaled git commit: $git_commit_revision"
+fi
 
 export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
 branch=$(cat $tmpf | grep 'branch: '|pn 2)
@@ -217,7 +250,33 @@ if test "$diff_patch_sets"; then
 fi
 
 if test "$cherry_pick" = true || is-jenkins; then
-    git cherry-pick FETCH_HEAD --ff
+    if is-jenkins; then
+        if cat $tmpf | grep '^\s+status:\s+ABANDONED' -P; then
+            cat $tmpf | mail-cms -i "Patch must not be abandoned"
+            die "Patch is abandoned"
+        fi
+        if test "$all_review_ok" != true -o "$approved_review" != true; then
+            cat $tmpf |
+                mail-cms -i "Patch need review: $@, must has +2 +1, and no -1 -2."
+            cat $tmpf | grep 'value:|description:' -P
+            die "Error: Review needed, can't cherry-pick this patch $@:, see above output."
+            exit -1
+        fi
+    fi
+    if ! git cherry-pick $git_commit_revision --ff > ~/tmp/gerrit-fetch-review.log.$$ 2>&1; then
+        (
+            git diff HEAD || true
+            cat ~/tmp/gerrit-fetch-review.log.$$ $tmpf
+        ) | mail-cms -i "Patch can't cherry-pick: $@"
+
+        die "Error: patch can't cherry-pick: $(
+            echo git diff:;
+            git diff HEAD;
+            echo;
+            echo cherry-pick output:;
+            cat ~/tmp/gerrit-fetch-review.log.$$
+        )"
+    fi
 fi
 
 if is-jenkins; then

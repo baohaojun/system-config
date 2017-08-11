@@ -274,7 +274,9 @@ function confirm-with-repo() {
     fi
 }
 
-if test -z "$gpr_to_branch"; then
+if test "$gpr_to_branch"; then
+    export REPO_BRANCH=$gpr_to_branch
+else
     head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
     merge_head=
     if test "$head_branch"; then

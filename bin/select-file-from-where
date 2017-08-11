@@ -15,7 +15,7 @@ if test ~/.emacs.d/recentf -nt $recentf; then
 fi
 
 file=$(select-output-line -i "$(echo $@; cat ~/system-config/etc/no-edit-files)" -p 'Which emacs recentf file do you whant? (Input ! to quit select)' \
-                          -- cat $recentf | perl -npe 's/^\s+//; s/^"|"$//g')
+                          -- cat $recentf | perl -npe 's/^\s+//; s/.*?"//; s/".*//;')
 
 if test -e "$file"; then
     echo "$file"

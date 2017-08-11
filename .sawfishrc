@@ -55,6 +55,13 @@
 
 (bind-keys s-h-keymap "q" '(synthesize-event-gnome? (read-event "Press the key you wanna send") (input-focus)))
 
+(defun delete-window-class-safely (class)
+  "Delete all windows of the same CLASS"
+  (mapc (lambda (window)
+          (when (equal (bhj-window-class window) class)
+            (delete-window-safely window)))
+        (managed-windows)))
+
 (defun do-esc-map ()
   (let* ((event (read-event "ESC"))
          (key (event-name event))
@@ -832,4 +839,12 @@
              (let ((window (input-focus)))
                (unless (equal (bhj-window-class window) "Xfce4-panel")
                  (delete-window-safely window)))))
+
+(bind-keys window-keymap "Super-Q"
+           (lambda ()
+             (let* ((window (input-focus))
+                    (class (bhj-window-class window)))
+               (unless (equal class "Xfce4-panel")
+                 (delete-window-class-safely class)))))
+
 (bind-both-global&window-keymaps "Super-h" s-h-keymap)

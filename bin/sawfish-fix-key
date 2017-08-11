@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$#" = 0; then
+    hint "You need to specify the key to fix, such as C-w"
+    set -- C-w
+fi
+
 if test $# = 1; then
     set -- "$1" "$1"
 fi
