@@ -7,7 +7,6 @@ github_projects=(
     org-jira
     weibo.emacs
     emacs.d
-    DoubanMusic
     guilt
     emacs-clang-complete-async
     mo-git-blame
