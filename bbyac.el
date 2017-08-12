@@ -258,8 +258,7 @@ should be a string; MOVE-ALONG is only used for its side-effects."
            (old-point (point)))
        (when (string-match "" re)
          (setq re-2 (replace-regexp-in-string ".*" "" re)
-               re (replace-regexp-in-string ".*" "" re))
-         (message "re is %s, re-2 is %s" re re-2))
+               re (replace-regexp-in-string ".*" "" re)))
        (with-current-buffer buffer
          (save-excursion
            (goto-char (point-min))
@@ -268,6 +267,7 @@ should be a string; MOVE-ALONG is only used for its side-effects."
                    (me (match-end 0)))
                (when (and re-2
                           (goto-char me)
+                          (or (end-of-line) t)
                           (re-search-forward re-2 nil t))
                  (setq me (match-end 0)))
                (let ((substr ,extract-match))
@@ -276,13 +276,14 @@ should be a string; MOVE-ALONG is only used for its side-effects."
                         (< mb bbyac--start)
                         (> me bbyac--start)))
                   (t
-                   (if (and (< (point) old-point) (eq tag 'current))
+                   (if (and (eq tag 'current)
+                            (< (point) old-point))
                        ;; substr closer to the old-point is at the head of strlist-before, in good order
                        (setq strlist-before (cons substr strlist-before))
                      ;; substr further to the old-point is at the head of strlist-after, in bad order
                      (setq strlist-after (cons substr strlist-after))))))
                ,move-along))
-           (setq strlist (bbyac--interleave strlist-before (nreverse strlist-after)))
+           (setq strlist (bbyac--interleave (nreverse strlist-after) strlist-before))
            ;; This expansion is useless, it's the same as the bit
            ;; (in fact, extracted from the same place, and thus at the
            ;; car of strlist. We must remove it here, or else the
@@ -371,12 +372,12 @@ The buffers should be in the order of the tags listed above:
 first 1 'current buffer, then 0 or more 'visible buffers, then
 all 'buried buffers."
   (let* ((current-buffer (current-buffer))
-        (visible-buffers (delete current-buffer
-                                 (delete-dups
-                                  (mapcar (lambda (w)
-                                            (window-buffer w))
-                                          (window-list)))))
-        (buried-buffers (bbyac--difference (buffer-list) (cons current-buffer visible-buffers))))
+         (visible-buffers (delete current-buffer
+                                  (delete-dups
+                                   (mapcar (lambda (w)
+                                             (window-buffer w))
+                                           (window-list)))))
+         (buried-buffers (bbyac--difference (buffer-list) (cons current-buffer visible-buffers))))
     (cl-delete-if
      (lambda (buf-tag) (eq (with-current-buffer (car buf-tag) major-mode) 'image-mode))
      (nconc
@@ -531,11 +532,6 @@ matched region."
   (interactive)
   (bbyac--general-expand #'bbyac--line-bbyac-extracter))
 
-(defun bbyac-expand-partial-lines ()
-  "Obsolete. Use bbyac-expand-substring."
-  (interactive)
-  (call-interactively bbyac-expand-substring))
-
 (defun bbyac-expand-lines ()
   "Expand the bit into a full line match.
 
@@ -544,21 +540,6 @@ line where the match occured."
   (interactive)
   (bbyac--general-expand #'bbyac--line-bbyac-extracter
                          #'bbyac--line-extracting-matcher))
-
-(defun bbyac-expand-sexp ()
-  "Expand the bit into an S-expression.
-
-This means expand to string from the beginning to the end of the
-S-expression enclosing the matched region."
-  (interactive)
-  (bbyac--general-expand #'bbyac--line-bbyac-extracter
-                            #'bbyac--sexp-extracting-matcher))
-
-(defun bbyac-expand-paragraph ()
-  "Expand the bit into a whole paragraph."
-    (interactive)
-    (bbyac--general-expand #'bbyac--line-bbyac-extracter
-                              #'bbyac--paragraph-extracting-matcher))
 
 (defmacro bbyac--max-minibuffer-lines ()
   "Compute the max number of lines the minibuffer can display."
@@ -649,10 +630,7 @@ This func is copied and modified from `ecomplete-display-matches'."
 (define-key bbyac-mode-map (kbd "M-g <RET>") 'bbyac-expand-symbols)
 (define-key bbyac-mode-map (kbd "M-s <return>") 'bbyac-expand-substring)
 (define-key bbyac-mode-map (kbd "M-s <RET>") 'bbyac-expand-substring)
-(define-key bbyac-mode-map (kbd "M-g x") 'bbyac-expand-partial-lines)
 (define-key bbyac-mode-map (kbd "M-s l") 'bbyac-expand-lines)
-(define-key bbyac-mode-map (kbd "M-s s") 'bbyac-expand-sexp)
-(define-key bbyac-mode-map (kbd "M-s p") 'bbyac-expand-paragraph)
 
 ;;;###autoload
 (define-minor-mode bbyac-mode

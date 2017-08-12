@@ -1,13 +1,4 @@
-#+title: Bit Bang! Yet Another Completion.
-
-Or you can think it as: type a little Bit, and Bang! Your Are Completed.
-
-Or you can call it The Bit Bang Completion, if you like watching The Big Bang Theory😁。
-
-With bbyac, you can type a little bit, and bang❗, you can complete it
-into a much longer string. Isn't this what every completion method do?
-😼, the secret is, with bbyac, the *a little bit* you need to type
-before you bang it, is actually almost *any* little bit.
+#+title: Bit Bang! Yet Another Completion
 
 Say you have a =very-very-long-emacs-lisp-variable-name=, you need
 only type =vvn= and press a shortcut key (=M-s <return>=), it will be
