@@ -42,6 +42,7 @@
     (goto-char (point-min))
     (search-forward "\\usepackage{graphicx}")
     (insert "\n\\usepackage[export]{adjustbox}")
+    (insert "\n\\usepackage{lmodern}")
     (write-file "%file%"))
 #+END_SRC
 #+name: handle-tex

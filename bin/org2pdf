@@ -142,6 +142,7 @@ EOF
   (goto-char (point-min))
   (search-forward "\\usepackage{graphicx}")
   (insert "\n\\usepackage[export]{adjustbox}")
+  (insert "\n\\usepackage{lmodern}")
   (write-file "%file%"))
 EOF6405e5bce1d2
 )"
