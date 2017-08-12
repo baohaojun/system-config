@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# [[file:~/src/github/private-config/knuth-mode/org2pdf.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/system-config/knuth-mode/org2pdf.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 set -e
 
@@ -214,7 +214,6 @@ if (m/\\\Qbegin{document}/) {
 } else {
       push @saved_lines, $_;
       if (m/^\\documentclass/) {
-          push @saved_lines, "\\usepackage{coloremoji}" if (-e "coloremoji.sty");
           push @saved_lines, "\\usepackage{CJKutf8}\n";
       }
 }

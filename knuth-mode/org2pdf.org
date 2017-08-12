@@ -74,7 +74,6 @@ if (m/\\\Qbegin{document}/) {
 } else {
       push @saved_lines, $_;
       if (m/^\\documentclass/) {
-          push @saved_lines, "\\usepackage{coloremoji}" if (-e "coloremoji.sty");
           push @saved_lines, "\\usepackage{CJKutf8}\n";
       }
 }
@@ -212,6 +211,7 @@ END {
           (progn
             (package-initialize)
             (require 'ox-latex)
+            (require 'emojis)
             (setq org-latex-listings 'minted)
             (add-to-list 'org-latex-packages-alist '("" "minted"))
             (find-file "${1/%.tex/.org}") ($exp_func))
@@ -266,3 +266,4 @@ END {
    #+END_SRC
 
    #+results: the-ultimate-script
+
