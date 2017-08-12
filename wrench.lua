@@ -3373,7 +3373,7 @@ local function isWeixinLuckyMoneyReceiver(window)
    return false
 end
 
-M.sayThankYouForLuckyMoney = function()
+M.sayThankYouForLuckyMoney = function(say_it_directly)
    local thanks = {
       "谢谢老板的红包🤓",
       "老板爱发红包，我就爱这样的老板😍",
@@ -3381,7 +3381,11 @@ M.sayThankYouForLuckyMoney = function()
       "你抢或者不抢，红包就在那里💗",
    }
    for i = 1, 20 do
-      adb_event"sleep 1 adb-key back sleep 1"
+      if say_it_directly then
+         adb_event"sleep 1"
+      else
+         adb_event"sleep 1 adb-key back sleep 1"
+      end
       top_window = adb_top_window()
       log("Got after luck window: %s", top_window)
       if top_window and
@@ -3392,10 +3396,14 @@ M.sayThankYouForLuckyMoney = function()
 
          local thank_you = thanks[n]
 
+         if say_it_directly then
+            thank_you = "http://mp.weixin.qq.com/s/h6jFAnbrtTu6mqhW5eKvQw"
+         end
+
          if WrenchExt.getConfig("should-tell-fortune") == "true" then
             local fortune = M.qx("fortune-zh")
             fortune = fortune:gsub("%[.-m", "")
-            thank_you = thanks[n] .. "\n\n*****\n\n" .. fortune
+            thank_you = thank_you .. "\n\n*****\n\n" .. fortune
          end
          local how = 'weixin-chat'
          if top_window:match("^com.tencent.mobileqq/") then
@@ -3409,6 +3417,7 @@ M.sayThankYouForLuckyMoney = function()
 end
 
 local function clickForWeixinMoney()
+
    log("Click for weixin money")
 
    for i = 1, 50 do
@@ -3507,7 +3516,12 @@ M.notification_arrived = function(key, pkg, title, text)
 
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
-      clickForWeixinMoney()
+      if WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then
+         sayThankYouForLuckyMoney(true)
+         adb_event"sleep .5 adb-key home"
+      else
+         clickForWeixinMoney()
+      end
    elseif pkg == "com.tencent.mobileqq" and text:match("%[QQ红包%]") then
       clickNotification{key}
       if title:lower() == "qq" then
@@ -3515,8 +3529,13 @@ M.notification_arrived = function(key, pkg, title, text)
          -- M.shift_click_notification(key, pkg, title, text)
       end
 
+      if WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then
+         sayThankYouForLuckyMoney(true)
+         adb_event"sleep .5 adb-key home"
+      else
          M.clickForQqMoney(title, text)
       end
+   end
 
    if not should_use_internal_pop then
       system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}

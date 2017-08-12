@@ -93,6 +93,13 @@ is_useful_notification = function(key, pkg, title, text, ticker)
    return 1;
 end
 
+M.should_not_pick_money = function(key, pkg, title, text)
+   if private_config.should_not_pick_money then
+      return private_config.should_not_pick_money(key, pkg, title, text)
+   end
+   return 0
+end
+
 should_use_internal_pop = function()
    if private_config.should_use_internal_pop then
       return private_config.should_use_internal_pop()
