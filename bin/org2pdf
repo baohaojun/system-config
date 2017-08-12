@@ -241,11 +241,8 @@ evince --unique ${1/%.tex/.pdf}&
 sleep 2
 qpdfview-resize
 
-
-
-
-# (let ((move-around-lines '("\\AtBeginDvi{\\special{pdf:tounicode UTF8-UCS2}}"
-#                           "\\begin{CJK"
-#                           "\\CJKtilde")))
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
 
 # the-ultimate-script ends here

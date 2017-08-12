@@ -86,184 +86,186 @@ END {
 
    #+name: the-ultimate-script
    #+BEGIN_SRC sh :tangle ~/system-config/bin/org2pdf :comments link :shebang "#!/bin/bash" :noweb yes
-          set -e
+     set -e
 
 
-          ## start code-generator "^\\s *#\\s *"
-          # generate-getopt s:style=default c:color=default
-          ## end code-generator
-          ## start generated code
-          TEMP=$(getopt -o s:c:h \
-                        --long style:,color:,help \
-                        -n $(basename -- $0) -- "$@")
-          style=default
-          color=default
-          eval set -- "$TEMP"
-          while true; do
-              case "$1" in
+     ## start code-generator "^\\s *#\\s *"
+     # generate-getopt s:style=default c:color=default
+     ## end code-generator
+     ## start generated code
+     TEMP=$(getopt -o s:c:h \
+                   --long style:,color:,help \
+                   -n $(basename -- $0) -- "$@")
+     style=default
+     color=default
+     eval set -- "$TEMP"
+     while true; do
+         case "$1" in
 
-                  -s|--style)
-                      style=$2
-                      shift 2
-                      ;;
-                  -c|--color)
-                      color=$2
-                      shift 2
-                      ;;
-                  -h|--help)
-                      set +x
-                      echo
-                      echo
-                      echo Options and arguments:
-                      printf %06s '-c, '
-                      printf %-24s '--color=COLOR'
-                      echo
-                      printf %06s '-s, '
-                      printf %-24s '--style=STYLE'
-                      echo
-                      exit
-                      shift
-                      ;;
-                  --)
-                      shift
-                      break
-                      ;;
-                  ,*)
-                      die "internal error"
-                      ;;
-              esac
-          done
-
-
-          ## end generated code
-
-          if test "$style" = '?' -o "$style" = 's'; then
-              styles=$(
-                  cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/theme/
-                  for x in *; do
-                      echo ${x%.*}
-                  done|perl -npe 's/beamertheme//'
-                    );
-              if test "$style" = '?'; then
-                  for style in $styles; do
-                      if timeout 15 org2pdf "$@" -s $style -c $color; then
-                          touch "$style.work"
-                      fi
-                      git add .
-                      pdf=${1%.org}.pdf
-                      if test -e "$pdf"; then
-                          mv "$pdf" $style-$pdf
-                      fi
-                  done
-                  exit
-              fi
-
-              if test "$style" = s; then
-                  style=$(select-args -o -p "您想使用哪种风格？" $styles)
-              fi
-          fi
-
-          if test "$color" = s; then
-              color=$(
-                  select-args -o -p "您想使用哪种颜色？" $(
-                      cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/color/
-                      for x in *; do
-                          echo ${x%.*}
-                      done|perl -npe 's/beamercolortheme//'
-                              )
-                   )
-          fi
-          export ORG2PDF=true
-          function die() {
-              echo Error: "$@"
-              exit -1
-          }
-
-          if test $# != 1; then
-              die "Error: Usage $(basename $0) TEX_FILE"
-          fi
-
-          if test ! -e "$1"; then
-              die "$1 doesn't exist"
-          fi
-
-          org_file=false
-          if test "${1##*.}" = org; then
-              org_file=true
-              git-interactive-add
-              org2pdf-fix-images.pl "$1"
-              if test -d ./images/; then
-                  git add ./images/
-              fi
-              e "$1"
-              find-or-exec "konsole"
-              git-interactive-add
-
-              set -- "${1/%.org/.tex}"
-          fi
-
-          if test $org_file = true || yes-or-no-p -y "Export from .org"; then
-              exp_func=org-latex-export-to-latex
-              if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
-                  exp_func=org-beamer-export-to-latex
-              fi
-              eval_arg=$(cat <<EOF
-          (progn
-            (package-initialize)
-            (require 'ox-latex)
-            (require 'emojis)
-            (setq org-latex-listings 'minted)
-            (add-to-list 'org-latex-packages-alist '("" "minted"))
-            (find-file "${1/%.tex/.org}") ($exp_func))
-          EOF
-                      )
-              emacsclient -e "$eval_arg"
-
-              emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1/%.org/.tex},g"
-          <<org2pdf-emojify>>
-          EOF6405e5bce1d2
-          )"
-              set -- "${1/%.org/.tex}"
-          fi
-
-          for x in aux log out dvi; do
-              rm ${1/%.tex/.$x} -f
-          done
-
-          perl -npe "$(cat <<'EOFf0ea35142ce4'
-          <<replace-pngs-with-pdfs>>
-          EOFf0ea35142ce4
-          )" -i "$1"
-
-          perl -ne "$(cat <<'EOF1f8ab604aea3'
-          <<handle-tex>>
-          EOF1f8ab604aea3
-          )" -i $1
-
-          perl -npe 's/\QCJKbookmarks]\E/dvipdfmx,CJKbookmarks]/;
-          s/\Q\documentclass[11pt]{article}\E/\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}/' -i $1
-
-          perl -npe "s,\\\\usetheme\\{\\w+\\},\\\\usetheme{$style}," -i "$1"
-          if test "$color" != default; then
-              perl -npe "s,(\\\\usetheme\\{\\w+\\}),\$1 \\\\usecolortheme{$color}," -i "$1"
-          fi
-          perl -npe 's/ /\\thinspace /g' -i $1
-          latex -halt-on-error -shell-escape $1
-          latex -shell-escape $1
-          dvipdfmx ${1/%.tex/.dvi}
-
-          ps-killall acroread
-          evince --unique ${1/%.tex/.pdf}&
-          sleep 2
-          qpdfview-resize
+             -s|--style)
+                 style=$2
+                 shift 2
+                 ;;
+             -c|--color)
+                 color=$2
+                 shift 2
+                 ;;
+             -h|--help)
+                 set +x
+                 echo
+                 echo
+                 echo Options and arguments:
+                 printf %06s '-c, '
+                 printf %-24s '--color=COLOR'
+                 echo
+                 printf %06s '-s, '
+                 printf %-24s '--style=STYLE'
+                 echo
+                 exit
+                 shift
+                 ;;
+             --)
+                 shift
+                 break
+                 ;;
+             ,*)
+                 die "internal error"
+                 ;;
+         esac
+     done
 
 
+     ## end generated code
 
+     if test "$style" = '?' -o "$style" = 's'; then
+         styles=$(
+             cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/theme/
+             for x in *; do
+                 echo ${x%.*}
+             done|perl -npe 's/beamertheme//'
+               );
+         if test "$style" = '?'; then
+             for style in $styles; do
+                 if timeout 15 org2pdf "$@" -s $style -c $color; then
+                     touch "$style.work"
+                 fi
+                 git add .
+                 pdf=${1%.org}.pdf
+                 if test -e "$pdf"; then
+                     mv "$pdf" $style-$pdf
+                 fi
+             done
+             exit
+         fi
 
-          # (let ((move-around-lines '("\\AtBeginDvi{\\special{pdf:tounicode UTF8-UCS2}}"
-          #                           "\\begin{CJK"
-          #                           "\\CJKtilde")))
+         if test "$style" = s; then
+             style=$(select-args -o -p "您想使用哪种风格？" $styles)
+         fi
+     fi
+
+     if test "$color" = s; then
+         color=$(
+             select-args -o -p "您想使用哪种颜色？" $(
+                 cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/color/
+                 for x in *; do
+                     echo ${x%.*}
+                 done|perl -npe 's/beamercolortheme//'
+                         )
+              )
+     fi
+     export ORG2PDF=true
+     function die() {
+         echo Error: "$@"
+         exit -1
+     }
+
+     if test $# != 1; then
+         die "Error: Usage $(basename $0) TEX_FILE"
+     fi
+
+     if test ! -e "$1"; then
+         die "$1 doesn't exist"
+     fi
+
+     org_file=false
+     if test "${1##*.}" = org; then
+         org_file=true
+         git-interactive-add
+         org2pdf-fix-images.pl "$1"
+         if test -d ./images/; then
+             git add ./images/
+         fi
+         e "$1"
+         find-or-exec "konsole"
+         git-interactive-add
+
+         set -- "${1/%.org/.tex}"
+     fi
+
+     if test $org_file = true || yes-or-no-p -y "Export from .org"; then
+         exp_func=org-latex-export-to-latex
+         if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
+             exp_func=org-beamer-export-to-latex
+         fi
+         eval_arg=$(cat <<EOF
+     (progn
+       (package-initialize)
+       (require 'ox-latex)
+       (require 'emojis)
+       (setq org-latex-listings 'minted)
+       (add-to-list 'org-latex-packages-alist '("" "minted"))
+       (find-file "${1/%.tex/.org}") ($exp_func))
+     EOF
+                 )
+         emacsclient -e "$eval_arg"
+
+         emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1/%.org/.tex},g"
+     <<org2pdf-emojify>>
+     EOF6405e5bce1d2
+     )"
+         set -- "${1/%.org/.tex}"
+     fi
+
+     for x in aux log out dvi; do
+         rm ${1/%.tex/.$x} -f
+     done
+
+     perl -npe "$(cat <<'EOFf0ea35142ce4'
+     <<replace-pngs-with-pdfs>>
+     EOFf0ea35142ce4
+     )" -i "$1"
+
+     perl -ne "$(cat <<'EOF1f8ab604aea3'
+     <<handle-tex>>
+     EOF1f8ab604aea3
+     )" -i $1
+
+     perl -npe 's/\QCJKbookmarks]\E/dvipdfmx,CJKbookmarks]/;
+     s/\Q\documentclass[11pt]{article}\E/\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}/' -i $1
+
+     perl -npe "s,\\\\usetheme\\{\\w+\\},\\\\usetheme{$style}," -i "$1"
+     if test "$color" != default; then
+         perl -npe "s,(\\\\usetheme\\{\\w+\\}),\$1 \\\\usecolortheme{$color}," -i "$1"
+     fi
+     perl -npe 's/ /\\thinspace /g' -i $1
+     latex -halt-on-error -shell-escape $1
+     latex -shell-escape $1
+     dvipdfmx ${1/%.tex/.dvi}
+
+     ps-killall acroread
+     evince --unique ${1/%.tex/.pdf}&
+     sleep 2
+     qpdfview-resize
+
+     <<read-only>>
    #+END_SRC
 
    #+results: the-ultimate-script
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
 
