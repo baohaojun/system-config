@@ -1,0 +1,28 @@
+ 	QStringList.{QStringList()}
+	QStringList.{QStringList(const QString &str)}
+	QStringList.{QStringList(const QList<QString> &other)}
+	QStringList.{QStringList(QList<QString> &&other)}
+	QStringList.{QStringList(std::initializer_list<QString> args)}
+bool 	QStringList.{contains(const QString &str, Qt::CaseSensitivity cs = Qt::CaseSensitive)} const
+QStringList 	QStringList.{filter(const QString &str, Qt::CaseSensitivity cs = Qt::CaseSensitive)} const
+QStringList 	QStringList.{filter(const QRegExp &rx)} const
+QStringList 	QStringList.{filter(const QRegularExpression &re)} const
+int 	QStringList.{indexOf(const QRegExp &rx, int from = 0)} const
+int 	QStringList.{indexOf(QRegExp &rx, int from = 0)} const
+int 	QStringList.{indexOf(const QRegularExpression &re, int from = 0)} const
+QString 	QStringList.{join(const QString &separator)} const
+QString 	QStringList.{join(QChar separator)} const
+int 	QStringList.{lastIndexOf(const QRegExp &rx, int from = -1)} const
+int 	QStringList.{lastIndexOf(QRegExp &rx, int from = -1)} const
+int 	QStringList.{lastIndexOf(const QRegularExpression &re, int from = -1)} const
+int 	QStringList.{removeDuplicates()}
+QStringList &	QStringList.{replaceInStrings(const QString &before, const QString &after, Qt::CaseSensitivity cs = Qt::CaseSensitive)}
+QStringList &	QStringList.{replaceInStrings(const QRegExp &rx, const QString &after)}
+QStringList &	QStringList.{replaceInStrings(const QRegularExpression &re, const QString &after)}
+void 	QStringList.{sort(Qt::CaseSensitivity cs = Qt::CaseSensitive)}
+QStringList 	QStringList.{operator+(const QStringList &other)} const
+QStringList &	QStringList.{operator<<(const QString &str)}
+QStringList &	QStringList.{operator<<(const QStringList &other)}
+QStringList &	QStringList.{operator<<(const QList<QString> &other)}
+QStringList &	QStringList.{operator=(const QList<QString> &other)}
+QStringList &	QStringList.{operator=(QList<QString> &&other)}
