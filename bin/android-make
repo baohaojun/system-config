@@ -120,7 +120,7 @@ fi
 export CCACHE_DIR=$PWD/.repo/.ccache
 rm ~/.ccache >/dev/null 2>&1 || true
 
-android-set-product # this is for mm to use
+android-set-product $TARGET_PRODUCT-$TARGET_BUILD_VARIANT # this is for mm to use
 
 export TARGET_PRODUCT=$TARGET_PRODUCT
 export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT

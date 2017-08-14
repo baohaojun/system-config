@@ -121,6 +121,9 @@ time (
     if test "$TARGET_PRODUCT" -a "$TARGET_BUILD_VARIANT" -a ! -e buildspec.mk; then
         echo Set product to $TARGET_PRODUCT-$TARGET_BUILD_VARIANT at $PWD
         android-set-product $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+    else
+        hint "你还没有设置过安卓编译产品与类型，请现在设置"
+        android-set-product
     fi
     if test "$quick" = false; then
         . build/envsetup.sh
