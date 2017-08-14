@@ -48,7 +48,7 @@ void NotificationModel::filterSelectedItems(const QStringList& split)
         int match = 1;
         foreach (const QString& stem, split) {
             int stem_match = 0;
-            if (n.title.contains(stem, Qt::CaseInsensitive)) {
+            if (n.mMatchString.contains(stem, Qt::CaseInsensitive)) {
                 stem_match = 1;
             }
             if (! stem_match) {

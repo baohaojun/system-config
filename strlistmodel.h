@@ -24,6 +24,7 @@ private:
     QPixmap mDefaultAvatar;
     QStringList mStrList;
     QSettings mSettings;
+    QMap<QString, QString> mPinyinMap;
 
 signals:
 

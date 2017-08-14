@@ -27,8 +27,12 @@ QStringList filterMatchedStrings(const QStringList& strList, const QString& str)
     return res;
 }
 
-QStringList getPinyinSpelling(const QString& str)
+QStringList getPinyinSpelling(const QString& str, bool only_first_spell)
 {
+    if (only_first_spell == 0 && str.size() > 20) {
+        only_first_spell = 1;
+    }
+
     static QMap<QString, QStringList> pinYinMap;
 
     if (pinYinMap.isEmpty()) {
@@ -58,7 +62,12 @@ QStringList getPinyinSpelling(const QString& str)
     foreach(const QChar& ch, str) {
         QStringList pyList;
         if (pinYinMap.contains(QString(ch))) {
-            pyList = pinYinMap[QString(ch)];
+            if (only_first_spell) {
+                pyList << pinYinMap[QString(ch)][0];
+            } else {
+                pyList = pinYinMap[QString(ch)];
+            }
+
         } else {
             pyList << ch;
         }

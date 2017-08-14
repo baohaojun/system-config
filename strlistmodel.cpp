@@ -20,14 +20,18 @@ StrlistModel::StrlistModel(const QStringList& strList, QObject *parent) :
 {
     mStrList = strList;
     initHistory();
+    foreach (const QString& str, mStrList) {
+        mPinyinMap[str] = (QStringList() << getPinyinSpelling(str, 1) << str).join(" ");
+    }
 }
 
 void StrlistModel::filterSelectedItems(const QStringList& split)
 {
     foreach (const QString& str, mStrList) {
         int match = 1;
+        const QString& pinyin_str = mPinyinMap[str];
         foreach(const QString& stem, split) {
-            if (str.contains(stem, Qt::CaseInsensitive)) {
+            if (pinyin_str.contains(stem, Qt::CaseInsensitive)) {
                 continue;
             }
             match = 0;

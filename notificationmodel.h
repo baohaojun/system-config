@@ -12,6 +12,7 @@
 #include "vcard.h"
 #include "filteringmodel.h"
 #include <QtCore/QList>
+#include "bhj_help.hpp"
 
 class NotificationModel : public FilteringModel
 {
@@ -28,12 +29,15 @@ public:
         QString pkg;
         QString title;
         QString text;
+        QString mMatchString;
+
 
         Notification(const QString& aKey, const QString& aPkg, const QString& aTitle, const QString& aText) {
             key = aKey;
             pkg = aPkg;
             title = aTitle;
             text = aText;
+            mMatchString = (QStringList() << getPinyinSpelling(title + " " + text, 1) << title << text).join(" ");
         }
         Notification() {};
     };
