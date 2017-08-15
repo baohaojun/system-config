@@ -16,7 +16,7 @@ if test "$SYSTEM_CONFIG_LOCAL_BRANCH"; then
     github_branch=${$SYSTEM_CONFIG_LOCAL_BRANCH}
 fi
 
-if test -d ~/system-config/src/github/twittering-mode; then
+if test -d ~/system-config/src/github/beagrep; then
     mkdir -p ~/src/github
     for x in ~/system-config/src/github/*; do
         if test ! -e ~/src/github/$(basename $x); then

@@ -306,19 +306,6 @@
 (when (eq system-type 'windows-nt)
   (setq nntp-authinfo-file "~/../.authinfo"
         auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
-(when nil
-  (require 'twittering-mode)
-  (twittering-enable-unread-status-notifier)
-  (setq-default twittering-icon-mode t)
-  (setq twittering-use-ssl nil
-        twittering-oauth-use-ssl nil)
-  (setq twittering-icon-mode 1)
-  (setq twittering-enabled-services '(sina))
-  (setq twittering-accounts '((sina (username "baohj_zj@hotmail.com")
-                                    (auth oauth))))
-
-  (setq twittering-initial-timeline-spec-string `(":home@sina")))
-
 
 ;; (unless (or (eq system-type 'windows-nt)
 ;;             (eq system-type 'darwin))

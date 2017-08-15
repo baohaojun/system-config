@@ -3,18 +3,27 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt p:prompt m:mode
+# generate-getopt p:prompt m:mode eempty-ok
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o m:p:h \
-               --long mode:,prompt:,help \
+TEMP=$( getopt -o em:p:h \
+               --long empty-ok,mode:,prompt:,help,no-empty-ok \
                -n $(basename -- $0) -- "$@")
+empty_ok=false
 mode=
 prompt=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -e|--empty-ok|--no-empty-ok)
+            if test "$1" = --no-empty-ok; then
+                empty_ok=false
+            else
+                empty_ok=true
+            fi
+            shift
+            ;;
         -m|--mode)
             mode=$2
             shift 2
@@ -28,6 +37,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-e, '
+            printf %-24s '--[no-]empty-ok'
+            echo
             printf %06s '-m, '
             printf %-24s '--mode=MODE'
             echo
@@ -75,7 +87,7 @@ if test "$prompt"; then
     cat <<EOF >> $tmp
 
 ###start of comment###
-"$prompt"
+"$prompt"$(if test $empty_ok = true; then echo "（空白输入 OK）"; fi)
 
 # Local variables:
 # eval: (activate-input-method "sdim")
@@ -117,7 +129,7 @@ if (not $comment) {
 }
 '
 }
-if test "`get-rid-of-comment $tmp | perl -npe 's/\s//g' | wc -c`" == 0; then
+if test $empty_ok = false -a "`get-rid-of-comment $tmp | perl -npe 's/\s//g' | wc -c`" == 0; then
     if ! ps.pl emacs.mm >/dev/null 2>&1; then
         exit -1
     fi
