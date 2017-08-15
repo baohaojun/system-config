@@ -96,7 +96,8 @@ W.qqSplashActivity = W.qqChatActivity2
 W.qqAlbumList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.AlbumListActivity"
 W.qqCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.FlowCameraPtvActivity2"
 W.qqNewCameraFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.richmedia.NewFlowCameraActivity"
-W.qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
+-- W.qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.GroupSearchActivity"
+W.qqGroupSearch = "com.tencent.mobileqq/com.tencent.mobileqq.search.activity.UniteSearchActivity"
 W.qqPhotoFlow = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListFlowActivity"
 W.qqPhotoPreview = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoPreviewActivity"
 W.qqPhoteList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.photo.PhotoListActivity"
@@ -1255,13 +1256,23 @@ local function dingding_open_homepage()
 end
 
 M.qq_open_search = function ()
-   for qq_try = 1, 10 do
+   local max_qq_try = 10
+   for qq_try = 1, max_qq_try do
       adb_start_activity(W.qqChatActivity2)
-      adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809 sleep .3 adb-tap 539 311 sleep .3"
-      local ime_active, height, ime_connected = adb_get_input_window_dump()
-      top_window = adb_top_window()
-      if ime_active and top_window == W.qqGroupSearch then
-         return
+      adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809 sleep .3 adb-tap 539 311 sleep .2"
+      local ime_active, height, ime_connected
+
+      for ime_try = 1, 2 + math.floor(qq_try / 3) do
+         ime_active, height, ime_connected = adb_get_input_window_dump()
+         top_window = adb_top_window()
+         if ime_active and top_window == W.qqGroupSearch then
+            return
+         else
+            if qq_try == max_qq_try then
+               prompt_user("在等 %s 的输入，但最后找到的是 %s，请检查 wrench.lua 脚本", W.qqGroupSearch, top_window)
+            end
+            sleep(.1)
+         end
       end
 
       if ime_active then
