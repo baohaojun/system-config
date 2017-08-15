@@ -173,14 +173,20 @@ else
 
     function update-git() {
         (
+
             if test ! -d "$1"; then
-                git-get -u smartisan:baohaojun/$(basename $1) -d "$1"
+                git-get -u smartisan:baohaojun/$(basename $1) -d "$1" -b dev
             fi
             cd "$1"
 
             if is-jenkins; then
                 git reset --hard
                 command git clean -xfd
+                if ! git remote get-url s; then
+                    git remote add s smartisan:baohaojun/${PWD##*/}
+                    git fetch s
+                    git checkout -B dev s/dev
+                fi
             else
                 if git status -s | grep . -q; then
                     die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "

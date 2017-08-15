@@ -1,0 +1,4 @@
+#!/bin/bash
+
+tmux save-buffer /tmp/screen-exchange
+e /tmp/screen-exchange
