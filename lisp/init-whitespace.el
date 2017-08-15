@@ -14,7 +14,6 @@
                 term-mode-hook
                 comint-mode-hook
                 compilation-mode-hook
-                twittering-mode-hook
                 minibuffer-setup-hook))
   (add-hook hook #'sanityinc/no-trailing-whitespace))
 
