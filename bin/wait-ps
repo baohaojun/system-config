@@ -1,6 +1,6 @@
 #!/bin/bash
 if test "$wait_ps"; then
-    while ps.pl "$wait_ps"; do
+    while ps.pl "$wait_ps.!wait-ps"; do
         sleep 1
     done
 else

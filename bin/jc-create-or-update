@@ -14,5 +14,5 @@ function jc-create-job() {
         done
     fi
 }
-
+echo jc-create-or-update "$1"
 jc-create-job "$1"

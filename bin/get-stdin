@@ -1,14 +1,41 @@
 #!/bin/bash
 set -e
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:prompt m:mode
+## end code-generator
+## start generated code
+TEMP=$( getopt -o m:p:h \
+               --long mode:,prompt:,help \
+               -n $(basename -- $0) -- "$@")
+mode=
 prompt=
-TEMP=$(getopt -o p: --long prompt: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
+        -m|--mode)
+            mode=$2
+            shift 2
+            ;;
         -p|--prompt)
             prompt=$2
             shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--mode=MODE'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--prompt=PROMPT'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -19,6 +46,13 @@ while true; do
             ;;
     esac
 done
+
+
+## end generated code
+
+if test -z "$mode"; then
+    mode=org
+fi
 
 test $# = 0 -o $# = 1
 tmp=/tmp/`basename $0`.$$
@@ -46,6 +80,7 @@ if test "$prompt"; then
 # Local variables:
 # eval: (activate-input-method "sdim")
 # whitespace-cleanup-mode: nil
+# mode : $mode
 # End:
 EOF
 elif tty >/dev/null 2>&1 || test $# = 1; then
