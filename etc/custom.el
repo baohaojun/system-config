@@ -18,7 +18,7 @@
  '(bbyac-max-chars 80)
  '(before-save-hook
    (quote
-    (confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode sc--mark-need-merge)))
+    (sc--mark-need-merge confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(compilation-message-face (quote default))
@@ -49,6 +49,7 @@
  '(gdb-same-frame t)
  '(gdb-show-main t)
  '(global-emojify-mode t)
+ '(global-origami-mode t)
  '(gnus-article-date-headers (quote (local lapsed)))
  '(gnus-group-name-charset-group-alist (quote (("ali\\..*" . utf-8) (".*" . chinese-iso-8bit))))
  '(gnus-ignored-newsgroups "")
