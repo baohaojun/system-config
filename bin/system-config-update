@@ -182,7 +182,8 @@ else
             if is-jenkins; then
                 git reset --hard
                 command git clean -xfd
-                if ! git remote get-url s; then
+                if ! git remote get-url s || test "$(git config remote.s.url)" != smartisan:baohaojun/${PWD##*/}; then
+                    git remote remove s || true
                     git remote add s smartisan:baohaojun/${PWD##*/}
                     git fetch s
                     git checkout -B dev s/dev
