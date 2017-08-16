@@ -3,7 +3,6 @@
 github_projects=(
     elpa
     opencc
-    twittering-mode
     org-jira
     weibo.emacs
     emacs.d
