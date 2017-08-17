@@ -19,6 +19,10 @@ if test ! -e buildspec.mk -a -z "$TARGET_PRODUCT"; then
     android-set-product
 fi
 
+if test -z "$TARGET_PRODUCT"; then
+    lunch $(cat buildspec.mk|grep TARGET_PRODUCT|pn 2 =)-$(cat buildspec.mk|grep TARGET_BUILD_VARIANT|pn 2 =)
+fi
+
 cd "$oldpwd"
 
 if test "$(basename $0)" = android-env; then
