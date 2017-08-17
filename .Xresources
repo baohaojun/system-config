@@ -27,3 +27,7 @@ XTerm*allowSendEvents: true
 XTerm*on2Clicks:  regex [^      \n]+
 XTerm*on3Clicks:  regex .*
 XTerm*on4Clicks:  line
+xterm*eightBitInput: false
+xterm*metaSendsEscape: true
+xterm*altIsNotMeta: true
+xetrm*altSendsEscape: true

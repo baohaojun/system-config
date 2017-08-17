@@ -10,7 +10,30 @@ if xrandr | grep -P 'HDMI. connected|^DP1 connected'; then
 fi
 
 emacs.bhj&
-konsole.bhj bbs-robot --use-current-screen-window&
+
+(
+    if test "$SC_USE_TMUX" = true; then
+        export check_program=tmux
+    else
+        export check_program=screen
+    fi
+
+    if ! which $check_program; then
+        xterm -e bash -c '
+hint "你没有装过 $check_program，现在为你安装 $check_program。"
+sudo apt-get install $check_program
+hint "$check_program 安装完成，请按回车键关闭此窗口"
+'
+    fi
+)
+
+
+
+if test -e ~/src/github/private-config/etc/baohaojun; then
+    konsole.bhj bbs-robot --use-current-screen-window
+else
+    konsole.bhj
+fi&
 
 while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
     sleep 1
