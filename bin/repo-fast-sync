@@ -3,41 +3,57 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @sync=true @do-reset=true
+# generate-getopt -p rfs -e @sync=true @do-reset=true @:reset-style=--soft @:jobs=10
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h \
-              --long do-reset,sync,help,no-do-reset,no-sync \
-              -n $(basename -- $0) -- "$@")
-do_reset=true
-sync=true
+TEMP=$( getopt -o h \
+               --long do-reset,jobs:,reset-style:,sync,help,no-do-reset,no-sync \
+               -n $(basename -- $0) -- "$@")
+rfs_do_reset=${rfs_do_reset:-true}
+rfs_jobs=${rfs_jobs:-10}
+rfs_reset_style=${rfs_reset_style:---soft}
+rfs_sync=${rfs_sync:-true}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
         --do-reset|--no-do-reset)
             if test "$1" = --no-do-reset; then
-                do_reset=false
+                rfs_do_reset=false
             else
-                do_reset=true
+                rfs_do_reset=true
             fi
             shift
             ;;
+        --jobs)
+            rfs_jobs=$2
+            shift 2
+            ;;
+        --reset-style)
+            rfs_reset_style=$2
+            shift 2
+            ;;
         --sync|--no-sync)
             if test "$1" = --no-sync; then
-                sync=false
+                rfs_sync=false
             else
-                sync=true
+                rfs_sync=true
             fi
             shift
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--[no-]do-reset'
+            echo
+            printf "%06s" " "
+            printf %-24s '--jobs=JOBS'
+            echo
+            printf "%06s" " "
+            printf %-24s '--reset-style=RESET_STYLE'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]sync'
@@ -56,11 +72,14 @@ while true; do
 done
 
 
+export rfs_do_reset
+export rfs_jobs
+export rfs_reset_style
+export rfs_sync
+
 ## end generated code
 
-export do_reset
-
-if test "$sync" = true; then
+if test "$rfs_sync" = true; then
     repo sync -j4 -n -c
 fi
 
@@ -103,8 +122,9 @@ function fast-init-git-repo() {
                     echo "$repo_project" > repo-project
                 )
             fi
-            if test "$do_reset" = true; then
-                git reset --soft -q ${repo_lrev}
+            if test "$rfs_do_reset" = true; then
+                echo reset $PWD
+                git reset $rfs_reset_style -q ${repo_lrev}
             fi
         )
     fi
@@ -112,4 +132,4 @@ function fast-init-git-repo() {
 
 export -f fast-init-git-repo
 
-repo forall -c 'echo skipping $PWD' 2>&1 | xargs -d \\n -P 10 -n 1 bash -c 'set -e; if ! fast-init-git-repo $@; then echo $@ failed; exit -1; fi' true
+repo forall -c 'echo skipping $PWD' 2>&1 | xargs -d \\n -P $rfs_jobs -n 1 bash -c 'set -e; if ! fast-init-git-repo $@; then echo $@ failed; exit -1; fi' true

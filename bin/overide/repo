@@ -138,7 +138,11 @@ else
             if test "$old_manifest_target"; then
                 if test "$old_manifest_target" != "$(readlink -f .repo/manifest.xml)"; then
                     if test -d .repo/project-objects; then
-                        rm * .repo/projects -rf # we changed manifest.xml, remove all to ensure better mirror usage
+                        sc_tmpdir=.repo/delete.$$
+                        rm -rf $sc_tmpdir # just in case last time it's not deleted.
+                        mkdir -p $sc_tmpdir
+                        mv * .repo/projects $sc_tmpdir
+                        rm $sc_tmpdir -rf& # we changed manifest.xml, remove all to ensure better mirror usage
                     elif test -d .repo/projects; then
                         mail-cms "jenkins repo has projects but no project-objects: $(jenkins-info)"
                     fi
