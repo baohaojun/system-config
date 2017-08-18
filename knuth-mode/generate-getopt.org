@@ -26,21 +26,23 @@
      declare -A var_name_map
 
      ## start code-generator "^\\s *#\\s *"
-     # generate-getopts p:prefix l:is-local H:global-help eexport-all
+     # generate-getopts p:prefix Pposixly-correct lis-local H:global-help eexport-all
      ## end code-generator
      ## start generated code
 
      export_all=false
      global_help=
-     is_local=
+     is_local=false
+     posixly_correct=false
      prefix=
      OPTIND=1
-     while getopts "eH:l:p:h" opt; do
+     while getopts "eH:lPp:h" opt; do
          case "$opt" in
 
              e) export_all=true ;;
              H) global_help=$OPTARG ;;
-             l) is_local=$OPTARG ;;
+             l) is_local=true ;;
+             P) posixly_correct=true ;;
              p) prefix=$OPTARG ;;
              h)
                  echo
@@ -52,7 +54,10 @@
                  printf %-24s 'GLOBAL_HELP'
                  echo ''
                  printf %06s%s '-l ' 'is-local'
-                 printf %-24s 'IS_LOCAL'
+                 printf %-24s ''
+                 echo ''
+                 printf %06s%s '-P ' 'posixly-correct'
+                 printf %-24s ''
                  echo ''
                  printf %06s%s '-p ' 'prefix'
                  printf %-24s 'PREFIX'
@@ -70,7 +75,10 @@
                  printf %-24s 'GLOBAL_HELP'
                  echo ''
                  printf %06s%s '-l ' 'is-local'
-                 printf %-24s 'IS_LOCAL'
+                 printf %-24s ''
+                 echo ''
+                 printf %06s%s '-P ' 'posixly-correct'
+                 printf %-24s ''
                  echo ''
                  printf %06s%s '-p ' 'prefix'
                  printf %-24s 'PREFIX'
@@ -203,7 +211,7 @@
   #+name: output-temp-eq
   #+BEGIN_SRC sh
     TEMP=\$($(
-                if test "$is_local"; then
+                if test "$is_local" -o "$posixly_correct" = true; then
                     echo POSIXLY_CORRECT=true
                 fi
             ) getopt -o $(string-join '' $(for x in "${long_opts_sorted[@]}"; do x="${short_opts_map[$x]}"; if test "$x" -a "$x" != :; then echo $x; fi; done) h) \\

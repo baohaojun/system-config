@@ -12,7 +12,9 @@ row5=(- / : \; \( \) \$ \& @ \")
 row6=(. , \? \! \')
 
 bank=zhaoshang
-if test "$(adb-top-activity)" = com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.LoginActivity; then
+top_activity=$(adb-top-activity)
+
+if [[ $top_activity =~ ^com.ecitic.bank.mobile/ ]]; then
     bank=zhongxin
 fi
 

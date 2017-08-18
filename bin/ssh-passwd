@@ -2,5 +2,5 @@
 if test $(basename $0) = ssh-passwd; then
     exec en_US ssh -o PreferredAuthentications=password "$@"
 elif test $(basename $0) = ssh-tty; then
-    exec en_US ssh -o requesttty=true "$@"
+    exec en_US ssh-quote --ssh-args "-o requesttty=true" "$@"
 fi

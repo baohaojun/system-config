@@ -14,21 +14,26 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
+default_keep_building=false
+if test "$b0" = mma; then
+    default_keep_building=true
+fi
+
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt "?\$b0' [OPTIONS]... [TARGETS]...\n使用安卓提供的模块化编译，节省编译时间。\nmma 编译当前目录下的所有模块（或指定 TARGETS）及其依赖\nmm 编译当前目录下所有模块（或指定的 TARGETS），但不编译其依赖（如果某依赖模块尚未编译，mm 会出错）\n如果不指定 TARGETS，默认的 TARGET 是 all_modules（当前目录下所有模块）'" \
-        # vverbose '?编译的时候打印所使用的详细编译命令' \
-        # j:jobs '?使用多少个线程进行编译（默认是你的机器的 CPU 线程数）' \
-        # kkeep-building '?即使出错了，也继续编译没有出错的模块' \
-        # f:make-flags '?其他想要传给make命令的标志和参数' \
-        # qquick '?不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）'
+# generate-getopt "?\$b0' [OPTIONS]... [TARGETS]...\n使用安卓提供的模块化编译，节省编译时间。\nmma 编译当前目录下的所有模块（或指定 TARGETS）及其依赖\nmm 编译当前目录下所有模块（或指定的 TARGETS），但不编译其依赖（如果某依赖模块尚未编译，mm 会出错）\n如果不指定 TARGETS，默认的 TARGET 是 all_modules（当前目录下所有模块）'" \
+    # vverbose '?编译的时候打印所使用的详细编译命令' \
+    # j:jobs '?使用多少个线程进行编译（默认是你的机器的 CPU 线程数）' \
+    # kkeep-building='$default_keep_building' '?即使出错了，也继续编译没有出错的模块' \
+    # f:make-flags '?其他想要传给make命令的标志和参数' \
+    # qquick '?不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o j:kf:qvh \
                --long jobs:,keep-building,make-flags:,quick,verbose,help,no-keep-building,no-quick,no-verbose \
                -n $(basename -- $0) -- "$@")
 jobs=
-keep_building=false
+keep_building=$default_keep_building
 make_flags=
 quick=false
 verbose=false

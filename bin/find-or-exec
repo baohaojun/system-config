@@ -102,9 +102,16 @@ else
     sawfish_exp=$(printf '(find-window-or-exec "%s" "%s")' "$1" "$window_not_found_command")
 fi
 
-
-
 sawfish-client -e "$sawfish_exp"
+
+(
+    if test "$1" = emacs; then
+        if emacsclient -e 'before-save-hook' | grep "'"; then
+            bhj-notify "Warning" "Emacs before-save-hook has gone weird"
+        fi
+    fi
+)&
+
 if test $error_exit = true; then
     if test -e ~/tmp/find-or-exec-failed.$$; then
         rm ~/tmp/find-or-exec-failed.$$
