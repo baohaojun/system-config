@@ -13,11 +13,16 @@
 (let ((versioned-package-dir
        (expand-file-name (format "elpa-%s.%s" emacs-major-version emacs-minor-version)
                          user-emacs-directory)))
-  (when (file-directory-p package-user-dir)
+  (when (and (file-directory-p package-user-dir)
+             (not (file-directory-p versioned-package-dir)))
     (message "Default package locations have changed in this config: renaming old package dir %s to %s."
              package-user-dir
              versioned-package-dir)
-    (rename-file package-user-dir versioned-package-dir))
+    (unless (and (file-symlink-p package-user-dir)
+                 (file-symlink-p versioned-package-dir)
+                 (string= (file-symlink-p package-user-dir)
+                          (file-symlink-p versioned-package-dir)))
+      (rename-file package-user-dir versioned-package-dir)))
   (setq package-user-dir versioned-package-dir))
 
 
