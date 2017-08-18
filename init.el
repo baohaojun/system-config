@@ -83,7 +83,7 @@
 (require 'init-hippie-expand)
 (require 'init-company)
 (require 'init-windows)
-(require 'init-sessions)
+;; (require 'init-sessions)
 (require 'init-fonts)
 (require 'init-mmm)
 
@@ -96,7 +96,7 @@
 (require 'init-git)
 (require 'init-github)
 
-(require 'init-projectile)
+;; (require 'init-projectile)
 
 (require 'init-compile)
 (require 'init-crontab)
