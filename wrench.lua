@@ -3515,16 +3515,7 @@ M.notification_arrived = function(key, pkg, title, text)
       end
    end
    -- log("got %s(%s): %s(%s)", key, pkg, title, text)
-   if pkg == "com.android.mms" then
-      verification_codes = {"验证码", "驗證碼"}
-      for i = 1, #verification_codes do
-         if text:match(verification_codes[i]) then
-            log("%s", text:match(verification_codes[i] .. ".-[0-9]+"))
-            return
-         end
-      end
-   end
-
+   
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
       if WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then
@@ -3547,6 +3538,8 @@ M.notification_arrived = function(key, pkg, title, text)
          M.clickForQqMoney(title, text)
       end
    end
+
+   WrenchExt.notification_arrived(key, pkg, title, text)
 
    if not should_use_internal_pop then
       system{"bhj-notify-from-wrench", "-h", title, "-c", text, "--pkg", pkg}

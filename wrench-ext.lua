@@ -110,6 +110,12 @@ end
 M.is_useful_notification = is_useful_notification
 M.should_use_internal_pop = should_use_internal_pop
 
+M.notification_arrived = function(key, pkg, title, text)
+   if private_config.notification_arrived then
+      private_config.notification_arrived(key, pkg, title, text)
+   end
+end
+
 M.configs = {
    ["phone-width"] = 1080,
    ["phone-height"] = 1920,
