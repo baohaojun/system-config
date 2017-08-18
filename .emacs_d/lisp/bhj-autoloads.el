@@ -1,9 +1,7 @@
 (autoload 'weblogger-mode "weblogger")
-;;;### (autoloads (w3m-buffer w3m-region w3m-find-file w3m-browse-url
-;;;;;;  w3m w3m-create-empty-session w3m-gohome w3m-goto-url-new-session
-;;;;;;  w3m-goto-url w3m-download w3m-retrieve) "../../../../../usr/share/emacs24/site-lisp/w3m/w3m"
-;;;;;;  "../../../../../usr/share/emacs24/site-lisp/w3m/w3m.el" (20843
-;;;;;;  22906 367956 641000))
+;;;### (autoloads nil "../../../../../usr/share/emacs24/site-lisp/w3m/w3m"
+;;;;;;  "../../../../../usr/share/emacs24/site-lisp/w3m/w3m.el" (22816
+;;;;;;  62977 110958 342000))
 ;;; Generated autoloads from ../../../../../usr/share/emacs24/site-lisp/w3m/w3m.el
 
 (autoload 'w3m-retrieve "../../../../../usr/share/emacs24/site-lisp/w3m/w3m" "\
@@ -31,7 +29,7 @@ POST-DATA and REFERER will be sent to the web server with a request.
 
 (autoload 'w3m-download "../../../../../usr/share/emacs24/site-lisp/w3m/w3m" "\
 Download contents of URL to a file named FILENAME.
-NO-CHACHE (which the prefix argument gives when called interactively)
+NO-CACHE (which the prefix argument gives when called interactively)
 specifies not using the cached data.
 
 \(fn &optional URL FILENAME NO-CACHE HANDLER POST-DATA)" t nil)
@@ -42,25 +40,31 @@ If the second argument RELOAD is non-nil, reload a content of URL.
 Except that if it is 'redisplay, re-display the page without reloading.
 The third argument CHARSET specifies a charset to be used for decoding
 a content.
-The fourth argument POST-DATA should be a string or a cons cell.  If
-it is a string, it makes this function request a body as if the
-content-type is \"x-www-form-urlencoded\".  If it is a cons cell, the
-car of a cell is used as the content-type and the cdr of a cell is
+The fourth argument POST-DATA should be a string or a cons cell.
+If it is a string, it makes this function request a body as if
+the content-type is \"x-www-form-urlencoded\".  If it is a cons cell,
+the car of a cell is used as the content-type and the cdr of a cell is
 used as the body.
 If the fifth argument REFERER is specified, it is used for a Referer:
 field for this request.
-The remaining HANDLER, ELEMENT[1], and NO-POPUP are for the
-internal operations of emacs-w3m.
+The remaining HANDLER, ELEMENT[1], NO-POPUP, and SAVE-POS[2] are for
+the internal operations of emacs-w3m.
 You can also use \"quicksearch\" url schemes such as \"gg:emacs\" which
-would search for the term \"emacs\" with the Google search engine.  See
-the `w3m-search' function and the variable `w3m-uri-replace-alist'.
+would search for the term \"emacs\" with the Google search engine.
+See the `w3m-search' function and the variable `w3m-uri-replace-alist'.
 
-\[1] A note for the developers: ELEMENT is a history element which has
-already been registered in the `w3m-history-flat' variable.  It is
-corresponding to URL to be retrieved at this time, not for the url of
-the current page.
+Notes for the developers:
+\[1] ELEMENT is a history element which has already been registered in
+the `w3m-history-flat' variable.  It is corresponding to URL to be
+retrieved at this time, not for the url of the current page.
 
-\(fn URL &optional RELOAD CHARSET POST-DATA REFERER HANDLER ELEMENT NO-POPUP)" t nil)
+\[2] SAVE-POS leads this function to save the current emacs-w3m window
+configuration; i.e. to run `w3m-history-store-position'.
+`w3m-history-store-position' should be called in a w3m-mode buffer, so
+this will be convenient if a command that calls this function may be
+invoked in other than a w3m-mode buffer.
+
+\(fn URL &optional RELOAD CHARSET POST-DATA REFERER HANDLER ELEMENT NO-POPUP SAVE-POS)" t nil)
 
 (autoload 'w3m-goto-url-new-session "../../../../../usr/share/emacs24/site-lisp/w3m/w3m" "\
 Visit World Wide Web pages in a new session.
@@ -99,8 +103,9 @@ nil, (default t), you will be prompted for a URL (which defaults to
 `popup' meaning to pop to an existing emacs-w3m buffer up).
 
 In addition, if the prefix argument is given or you enter the empty
-string for the prompt, it will visit the home page specified by the
-`w3m-home-page' variable or the \"about:\" page.
+string for the prompt, this command will visit a url at the point, or
+the home page the `w3m-home-page' variable specifies, or the \"about:\"
+page.
 
 You can also run this command in the batch mode as follows:
 
@@ -153,10 +158,8 @@ See `w3m-region' for the optional arguments.
 
 ;;;***
 
-;;;### (autoloads (ajoke-search-local-id ajoke-complete-method ajoke-resolve
-;;;;;;  ajoke-get-override ajoke-get-hierarchy ajoke-get-imports
-;;;;;;  ajoke--pick-one) "../../gcode/ajoke/etc/elisp/ajoke" "../../gcode/ajoke/etc/elisp/ajoke.el"
-;;;;;;  (21032 15180 282361 356000))
+;;;### (autoloads nil "../../gcode/ajoke/etc/elisp/ajoke" "../../gcode/ajoke/etc/elisp/ajoke.el"
+;;;;;;  (22565 50747 892628 16000))
 ;;; Generated autoloads from ../../gcode/ajoke/etc/elisp/ajoke.el
 
 (autoload 'ajoke--pick-one "../../gcode/ajoke/etc/elisp/ajoke" "\
@@ -202,150 +205,53 @@ beginning of current defun.
 
 \(fn)" t nil)
 
-;;;***
-
-;;;### (autoloads (douban-music) "../../src/github/DoubanMusic/douban-music-mode"
-;;;;;;  "../../../src/github/DoubanMusic/douban-music-mode.el" (20872
-;;;;;;  37462 699706 737000))
-;;; Generated autoloads from ../../../src/github/DoubanMusic/douban-music-mode.el
+(autoload 'ajoke-get-imports-if-java-mode "../../gcode/ajoke/etc/elisp/ajoke" "\
+get imports if java-mode
 
-(autoload 'douban-music "../../src/github/DoubanMusic/douban-music-mode" "\
-Play douban music in its own buffer.
+\(fn)" t nil)
+
+(autoload 'ajoke--pick-output-line "../../gcode/ajoke/etc/elisp/ajoke" "\
+
+
+\(fn PROMPT COMMAND &rest COMP-READ-ARGS)" nil nil)
+
+(autoload 'ajoke-find-file-using-beagrep "../../gcode/ajoke/etc/elisp/ajoke" "\
+
+
+\(fn)" t nil)
+
+(autoload 'ajoke-android-add-string "../../gcode/ajoke/etc/elisp/ajoke" "\
+
 
 \(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads (twit) "../../src/github/twittering-mode/twittering-mode"
+;;;### (autoloads nil "../../../src/github/twittering-mode/twittering-mode"
 ;;;;;;  "../../../src/github/twittering-mode/twittering-mode.el"
-;;;;;;  (20871 38424 871391 24000))
+;;;;;;  (21127 30529 662546 17000))
 ;;; Generated autoloads from ../../../src/github/twittering-mode/twittering-mode.el
 
-(autoload 'twit "../../src/github/twittering-mode/twittering-mode" "\
+(autoload 'twit "../../../src/github/twittering-mode/twittering-mode" "\
 Start twittering-mode.
 
 \(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads (weibo) "../../src/github/weibo.emacs/weibo" "../../../src/github/weibo.emacs/weibo.el"
-;;;;;;  (21132 30635 388610 383000))
+;;;### (autoloads nil "../../../src/github/weibo.emacs/weibo" "../../../src/github/weibo.emacs/weibo.el"
+;;;;;;  (22926 30368 24403 465000))
 ;;; Generated autoloads from ../../../src/github/weibo.emacs/weibo.el
 
-(autoload 'weibo "../../src/github/weibo.emacs/weibo" "\
+(autoload 'weibo "../../../src/github/weibo.emacs/weibo" "\
 
 
 \(fn)" t nil)
-
-;;;***
-
-;;;### (autoloads (org-jira-get-issues-from-filter-headonly org-jira-get-issues-from-filter
-;;;;;;  org-jira-browse-issue org-jira-progress-issue org-jira-refresh-issue
-;;;;;;  org-jira-create-subtask org-jira-create-issue org-jira-get-subtasks
-;;;;;;  org-jira-todo-to-jira org-jira-update-issue org-jira-copy-current-issue-key
-;;;;;;  org-jira-update-comment org-jira-get-issues org-jira-get-issues-headonly
-;;;;;;  org-jira-get-projects org-jira-mode) "../org-jira/org-jira"
-;;;;;;  "../../../.emacs_d/org-jira/org-jira.el" (20855 15281 643693
-;;;;;;  707000))
-;;; Generated autoloads from ../../../.emacs_d/org-jira/org-jira.el
-
-(autoload 'org-jira-mode "../org-jira/org-jira" "\
-Toggle org-jira mode.
-With no argument, the mode is toggled on/off.
-Non-nil argument turns mode on.
-Nil argument turns mode off.
-
-Commands:
-\\{org-jira-entry-mode-map}
-
-Entry to this mode calls the value of `org-jira-mode-hook'.
-
-\(fn &optional ARG)" t nil)
-
-(autoload 'org-jira-get-projects "../org-jira/org-jira" "\
-Get list of projects.
-
-\(fn)" t nil)
-
-(autoload 'org-jira-get-issues-headonly "../org-jira/org-jira" "\
-Get list of issues assigned to you and unresolved, head
-only. With a prefix argument, allow you to customize the jql. See `org-jira-get-issue-list'
-
-\(fn ISSUES)" t nil)
-
-(autoload 'org-jira-get-issues "../org-jira/org-jira" "\
-Get list of issues. Default is get unfinished issues assigned
-to you, but you can customize jql with a prefix argument. See
-`org-jira-get-issue-list'
-
-\(fn ISSUES)" t nil)
-
-(autoload 'org-jira-update-comment "../org-jira/org-jira" "\
-update a comment for the current issue
-
-\(fn)" t nil)
-
-(autoload 'org-jira-copy-current-issue-key "../org-jira/org-jira" "\
-Copy the current issue's key into clipboard
-
-\(fn)" t nil)
-
-(autoload 'org-jira-update-issue "../org-jira/org-jira" "\
-update an issue
-
-\(fn)" t nil)
-
-(autoload 'org-jira-todo-to-jira "../org-jira/org-jira" "\
-convert an ordinary todo item to a jira ticket
-
-\(fn)" t nil)
-
-(autoload 'org-jira-get-subtasks "../org-jira/org-jira" "\
-get subtasks for the current issue
-
-\(fn)" t nil)
-
-(autoload 'org-jira-create-issue "../org-jira/org-jira" "\
-create an issue
-
-\(fn PROJECT TYPE SUMMARY DESCRIPTION)" t nil)
-
-(autoload 'org-jira-create-subtask "../org-jira/org-jira" "\
-create an subtask issue
-
-\(fn PROJECT TYPE SUMMARY DESCRIPTION)" t nil)
-
-(autoload 'org-jira-refresh-issue "../org-jira/org-jira" "\
-Refresh issue from jira to org
-
-\(fn)" t nil)
-
-(autoload 'org-jira-progress-issue "../org-jira/org-jira" "\
-Progress issue workflow
-
-\(fn)" t nil)
-
-(autoload 'org-jira-browse-issue "../org-jira/org-jira" "\
-Open the current issue in external browser.
-
-\(fn)" t nil)
-
-(autoload 'org-jira-get-issues-from-filter "../org-jira/org-jira" "\
-Get issues from filter which are jql created and saved on the
-server side. Provide this command in case some users are not able
-to use client side jql (maybe because of Jira server version?).
-
-\(fn FILTER)" t nil)
-
-(autoload 'org-jira-get-issues-from-filter-headonly "../org-jira/org-jira" "\
-Get issues *head only* from saved filter. See `org-jira-get-issues-from-filter'
-
-\(fn FILTER)" t nil)
 
 ;;;***
 
 ;;;### (autoloads nil "../skeleton-complete/bbyac" "../skeleton-complete/bbyac.el"
-;;;;;;  (21706 12568 336956 481000))
+;;;;;;  (22926 36780 679730 327000))
 ;;; Generated autoloads from ../skeleton-complete/bbyac.el
 
 (autoload 'bbyac-mode "../skeleton-complete/bbyac" "\
@@ -355,7 +261,8 @@ Toggle the `bbyac-mode' minor mode.
 
 (defvar bbyac-global-mode nil "\
 Non-nil if Bbyac-Global mode is enabled.
-See the command `bbyac-global-mode' for a description of this minor mode.
+See the `bbyac-global-mode' command
+for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `bbyac-global-mode'.")
@@ -376,8 +283,8 @@ See `bbyac-mode' for more information on Bbyac mode.
 
 ;;;***
 
-;;;### (autoloads (ahk-mode) "ahk-mode" "ahk-mode.el" (21104 33899
-;;;;;;  312653 180000))
+;;;### (autoloads nil "ahk-mode" "ahk-mode.el" (21105 487 946563
+;;;;;;  464000))
 ;;; Generated autoloads from ahk-mode.el
 
 (add-to-list 'auto-mode-alist '("\\.ahk$" . ahk-mode))
@@ -394,10 +301,7 @@ Key bindings:
 
 ;;;***
 
-;;;### (autoloads (ajoke-get-imports-if-java-mode ajoke-search-local-id
-;;;;;;  ajoke-complete-method ajoke-resolve ajoke-get-override ajoke-get-hierarchy
-;;;;;;  ajoke-get-imports ajoke--pick-one) "ajoke" "ajoke.el" (21220
-;;;;;;  60716 980381 880000))
+;;;### (autoloads nil "ajoke" "ajoke.el" (22677 47767 48660 213000))
 ;;; Generated autoloads from ajoke.el
 
 (autoload 'ajoke--pick-one "ajoke" "\
@@ -446,12 +350,59 @@ beginning of current defun.
 (autoload 'ajoke-get-imports-if-java-mode "ajoke" "\
 get imports if java-mode
 
-\(fn)" nil nil)
+\(fn)" t nil)
+
+(autoload 'ajoke--pick-output-line "ajoke" "\
+
+
+\(fn PROMPT COMMAND &rest COMP-READ-ARGS)" nil nil)
+
+(autoload 'ajoke-find-file-using-beagrep "ajoke" "\
+
+
+\(fn)" t nil)
+
+(autoload 'ajoke-android-add-string "ajoke" "\
+
+
+\(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (22074 898 452473
-;;;;;;  123000))
+;;;### (autoloads nil "bbyac" "bbyac.el" (21714 4977 596324 222000))
+;;; Generated autoloads from bbyac.el
+
+(autoload 'bbyac-mode "bbyac" "\
+Toggle the `bbyac-mode' minor mode.
+
+\(fn &optional ARG)" t nil)
+
+(defvar bbyac-global-mode nil "\
+Non-nil if Bbyac-Global mode is enabled.
+See the `bbyac-global-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `bbyac-global-mode'.")
+
+(custom-autoload 'bbyac-global-mode "bbyac" nil)
+
+(autoload 'bbyac-global-mode "bbyac" "\
+Toggle Bbyac mode in all buffers.
+With prefix ARG, enable Bbyac-Global mode if ARG is positive;
+otherwise, disable it.  If called from Lisp, enable the mode if
+ARG is omitted or nil.
+
+Bbyac mode is enabled in all buffers where
+`turn-on-bbyac-mode' would do it.
+See `bbyac-mode' for more information on Bbyac mode.
+
+\(fn &optional ARG)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (22926 30334
+;;;;;;  741359 444000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -467,11 +418,6 @@ Make there 2 windows, and the other window visit the next buffer in buffer-list
 \(fn)" t nil)
 
 (autoload 'confirm-risky-remote-edit "bhj-defines" "\
-
-
-\(fn)" nil nil)
-
-(autoload 'bhj-douban-start "bhj-defines" "\
 
 
 \(fn)" nil nil)
@@ -623,6 +569,11 @@ Major mode for output from \\[where-are-we].
 
 (autoload 'java-bt-mode "bhj-defines" "\
 Major mode for output from java back trace.
+
+\(fn)" t nil)
+
+(autoload 'sc--mark-need-merge "bhj-defines" "\
+Mark git need merge for system-config.
 
 \(fn)" t nil)
 
@@ -832,8 +783,8 @@ Pop back to where ajoke was last invoked.
 
 ;;;***
 
-;;;### (autoloads nil "bhj-grep" "bhj-grep.el" (21706 12324 252963
-;;;;;;  618000))
+;;;### (autoloads nil "bhj-grep" "bhj-grep.el" (22291 25036 565117
+;;;;;;  73000))
 ;;; Generated autoloads from bhj-grep.el
 
 (autoload 'bhj-grep-tag-default "bhj-grep" "\
@@ -850,7 +801,6 @@ Pop back to where ajoke was last invoked.
 
 
 \(fn)" t nil)
-
 
 (autoload 'grep-beatags "bhj-grep" "\
 
@@ -877,6 +827,11 @@ Pop back to where ajoke was last invoked.
 
 \(fn)" t nil)
 
+(autoload 'bhj-abc-grep "bhj-grep" "\
+
+
+\(fn)" t nil)
+
 (autoload 'bhj-grep-mode "bhj-grep" "\
 Toggle the `bhj-grep-mode' minor mode.
 
@@ -884,7 +839,8 @@ Toggle the `bhj-grep-mode' minor mode.
 
 (defvar bhj-grep-global-mode nil "\
 Non-nil if Bhj-Grep-Global mode is enabled.
-See the command `bhj-grep-global-mode' for a description of this minor mode.
+See the `bhj-grep-global-mode' command
+for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `bhj-grep-global-mode'.")
@@ -905,7 +861,7 @@ See `bhj-grep-mode' for more information on Bhj-Grep mode.
 
 ;;;***
 
-;;;### (autoloads nil "emojis" "emojis.el" (21609 25372 9764 792000))
+;;;### (autoloads nil "emojis" "emojis.el" (22922 62975 794362 221000))
 ;;; Generated autoloads from emojis.el
 
 (autoload 'enter-emoji "emojis" "\
@@ -915,9 +871,432 @@ Let the user input an emoji interactively
 
 ;;;***
 
-;;;### (autoloads (weblogger-fetch-entries weblogger-start-entry
-;;;;;;  weblogger-setup-weblog weblogger-select-configuration) "../weblogger/weblogger"
-;;;;;;  "../weblogger/weblogger.el" (20622 27199 0 0))
+;;;### (autoloads nil "install-elisp" "install-elisp.el" (20874 19848
+;;;;;;  307221 889000))
+;;; Generated autoloads from install-elisp.el
+
+(autoload 'install-elisp "install-elisp" "\
+Retrieve Emacs Lisp program from URL and save and byte-compile and load.
+If optional FILENAME is supplied, save URL as FILENAME, otherwise URL's basename.
+
+\(fn URL &optional FILENAME)" t nil)
+
+(autoload 'install-elisp-from-emacswiki "install-elisp" "\
+Install Emacs Lisp program from the EmacsWiki.
+
+\(fn FILENAME)" t nil)
+
+(autoload 'install-elisp-from-gist "install-elisp" "\
+Install Emacs Lisp program from gist.
+
+\(fn GISTID &optional FILENAME)" t nil)
+
+(autoload 'dired-install-elisp-from-emacswiki "install-elisp" "\
+Upgrade the current Emacs Lisp program from the EmacsWiki.
+
+\(fn &optional FILENAME)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "linkd" "linkd.el" (20874 19848 307221 889000))
+;;; Generated autoloads from linkd.el
+
+(autoload 'linkd-version "linkd" "\
+Display Linkd version.
+
+\(fn)" t nil)
+
+(autoload 'linkd-back "linkd" "\
+Return to the buffer being viewed before the last link was followed.
+
+\(fn)" t nil)
+
+(autoload 'linkd-follow-at-point "linkd" "\
+Follow the link at point.
+
+\(fn)" t nil)
+
+(autoload 'linkd-next-link "linkd" "\
+Move point to the next link, if any.
+
+\(fn)" t nil)
+
+(autoload 'linkd-previous-link "linkd" "\
+Move point to the previous link, if any.
+
+\(fn)" t nil)
+
+(autoload 'linkd-insert-single-arg-link "linkd" "\
+Insert a link containing ARGUMENT.
+
+\(fn TYPE-STRING ARGUMENT)" nil nil)
+
+(autoload 'linkd-insert-tag "linkd" "\
+Insert a tag.
+
+\(fn TAG-NAME)" t nil)
+
+(autoload 'linkd-insert-star "linkd" "\
+Insert a star.
+
+\(fn STAR-NAME)" t nil)
+
+(autoload 'linkd-insert-wiki "linkd" "\
+Insert a wiki link.
+
+\(fn WIKI-NAME)" t nil)
+
+(autoload 'linkd-insert-lisp "linkd" "\
+Insert a Lisp sexp.
+
+\(fn SEXP)" t nil)
+
+(autoload 'linkd-insert-link "linkd" "\
+Insert a link.
+Optional arg TYPE is the link type.
+Optional arg CURRENT-VALUES is a property list of current values.
+
+\(fn &optional TYPE CURRENT-VALUES)" t nil)
+
+(autoload 'linkd-edit-link-at-point "linkd" "\
+Edit the Linkd link at point.
+
+\(fn)" t nil)
+
+(autoload 'linkd-export-default "linkd" "\
+Export the current buffer with default settings to all available formats.
+
+\(fn)" t nil)
+
+(autoload 'linkd-latex-export "linkd" "\
+Render a buffer as a LaTeX book chapter.
+
+\(fn)" t nil)
+
+(autoload 'linkd-wiki-find-page "linkd" "\
+Find Linkd wiki page named PAGE-NAME.
+
+\(fn PAGE-NAME)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "moy-bbdb" "moy-bbdb.el" (21033 52657 866743
+;;;;;;  951000))
+;;; Generated autoloads from moy-bbdb.el
+
+(autoload 'bbdb/send-ignore-most-messages-hook "moy-bbdb" "\
+For use as the value of `bbdb/send-auto-create-p'.
+This will automatically create BBDB entries for messages which match
+the bbdb/send-ignore-most-messages-alist (which see) and *no* others.
+
+\(fn &optional INVERT-SENSE)" nil nil)
+
+(autoload 'bbdb/send-ignore-some-messages-hook "moy-bbdb" "\
+For use as a `bbdb/send-auto-create-hook'.
+This will automatically create BBDB entries for messages which do *not*
+match the `bbdb/send-ignore-some-messages-alist' (which see).
+
+\(fn)" nil nil)
+
+(autoload 'bbdb/send-auto-notes-hook "moy-bbdb" "\
+For use as a `bbdb/send-notice-hook'.  This might automatically add
+some text to  the notes field of the BBDB  record corresponding to the
+current record  based on the header  of the current  message.  See the
+documentation  for   the  variables  `bbdb/send-auto-notes-alist'  and
+`bbdb/send-auto-notes-ignore'.
+
+\(fn RECORD)" nil nil)
+
+(autoload 'bbdb/send-hook "moy-bbdb" "\
+Parse headers of outgoing message, insert the addresses of the
+  recipients one by one into BBDB if they do not exist already
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "nsi-mode" "nsi-mode.el" (20874 19848 307221
+;;;;;;  889000))
+;;; Generated autoloads from nsi-mode.el
+
+(autoload 'nsi-mode "nsi-mode" "\
+Major mode for editing Nsi files.
+To submit a problem report, enter `\\[nsi-submit-bug-report]' from a
+`nsi-mode' buffer.  Do `\\[nsi-describe-mode]' for detailed
+documentation.  To see what version of `nsi-mode' you are running,
+enter `\\[nsi-version]'.
+
+This mode knows about Nsi indentation, tokens, comments and
+continuation lines.  Paragraphs are separated by blank lines only.
+
+COMMANDS
+\\{nsi-mode-map}
+VARIABLES
+
+nsi-indent-offset		indentation increment
+nsi-block-comment-prefix		comment string used by `comment-region'
+nsi-nsi-command		shell command to invoke Nsi interpreter
+nsi-temp-directory		directory used for temp files (if needed)
+nsi-beep-if-tab-change		ring the bell if `tab-width' is changed
+
+\(fn)" t nil)
+
+(autoload 'nsi-shell "nsi-mode" "\
+Start an interactive Nsi interpreter in another window.
+This is like Shell mode, except that Nsi is running in the window
+instead of a shell.  See the `Interactive Shell' and `Shell Mode'
+sections of the Emacs manual for details, especially for the key
+bindings active in the `*Nsi*' buffer.
+
+With optional \\[universal-argument], the user is prompted for the
+flags to pass to the Nsi interpreter.  This has no effect when this
+command is used to switch to an existing process, only when a new
+process is started.  If you use this, you will probably want to ensure
+that the current arguments are retained (they will be included in the
+prompt).  This argument is ignored when this function is called
+programmatically, or when running in Emacs 19.34 or older.
+
+Note: You can toggle between using the CNsi interpreter and the
+JNsi interpreter by hitting \\[nsi-toggle-shells].  This toggles
+buffer local variables which control whether all your subshell
+interactions happen to the `*JNsi*' or `*Nsi*' buffers (the
+latter is the name used for the CNsi buffer).
+
+Warning: Don't use an interactive Nsi if you change sys.ps1 or
+sys.ps2 from their default values, or if you're running code that
+prints `>>> ' or `... ' at the start of a line.  `nsi-mode' can't
+distinguish your output from Nsi's output, and assumes that `>>> '
+at the start of a line is a prompt from Nsi.  Similarly, the Emacs
+Shell mode code assumes that both `>>> ' and `... ' at the start of a
+line are Nsi prompts.  Bad things can happen if you fool either
+mode.
+
+Warning:  If you do any editing *in* the process buffer *while* the
+buffer is accepting output from Nsi, do NOT attempt to `undo' the
+changes.  Some of the output (nowhere near the parts you changed!) may
+be lost if you do.  This appears to be an Emacs bug, an unfortunate
+interaction between undo and process filters; the same problem exists in
+non-Nsi process buffers using the default (Emacs-supplied) process
+filter.
+
+\(fn &optional ARGPROMPT)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "org-mime" "org-mime.el" (21799 46161 841928
+;;;;;;  385000))
+;;; Generated autoloads from org-mime.el
+
+(autoload 'org-mime-htmlize "org-mime" "\
+Export a portion of an email body composed using `mml-mode' to
+html using `org-mode'.  If called with an active region only
+export that region, otherwise export the entire body.
+
+\(fn ARG)" t nil)
+
+(autoload 'org-mime-org-buffer-htmlize "org-mime" "\
+Create an email buffer containing the current org-mode file
+  exported to html and encoded in both html and in org formats as
+  mime alternatives.
+
+\(fn)" t nil)
+
+(autoload 'org-mime-subtree "org-mime" "\
+Create an email buffer containing the current org-mode subtree
+  exported to a org format or to the format specified by the
+  MAIL_FMT property of the subtree.
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "ox-freemind" "ox-freemind.el" (21122 10352
+;;;;;;  596297 883000))
+;;; Generated autoloads from ox-freemind.el
+
+(autoload 'org-freemind-export-to-freemind "ox-freemind" "\
+Export current buffer to a Freemind Mindmap file.
+
+If narrowing is active in the current buffer, only export its
+narrowed part.
+
+If a region is active, export that region.
+
+A non-nil optional argument ASYNC means the process should happen
+asynchronously.  The resulting file should be accessible through
+the `org-export-stack' interface.
+
+When optional argument SUBTREEP is non-nil, export the sub-tree
+at point, extracting information from the headline properties
+first.
+
+When optional argument VISIBLE-ONLY is non-nil, don't export
+contents of hidden elements.
+
+When optional argument BODY-ONLY is non-nil, only write code
+between \"<body>\" and \"</body>\" tags.
+
+EXT-PLIST, when provided, is a property list with external
+parameters overriding Org default settings, but still inferior to
+file-local settings.
+
+Return output file's name.
+
+\(fn &optional ASYNC SUBTREEP VISIBLE-ONLY BODY-ONLY EXT-PLIST)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "qt-pro" "qt-pro.el" (20874 19848 307221 889000))
+;;; Generated autoloads from qt-pro.el
+
+(autoload 'qt-pro-mode "qt-pro" "\
+A major mode for editing Qt-pro files.
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "revive" "revive.el" (20874 19848 339221 890000))
+;;; Generated autoloads from revive.el
+
+(autoload 'current-window-configuration-printable "revive" "\
+Return the printable current-window-configuration.
+This configuration will be stored by restore-window-configuration.
+Returned configurations are list of:
+'(Screen-Width Screen-Height Edge-List Buffer-List)
+
+Edge-List is a return value of revive:all-window-edges, list of all
+window-edges whose first member is always of north west window.
+
+Buffer-List is a list of buffer property list of all windows.  This
+property lists are stored in order corresponding to Edge-List.  Buffer
+property list is formed as
+'((buffer-file-name) (buffer-name) (point) (window-start)).
+
+\(fn)" nil nil)
+
+(autoload 'restore-window-configuration "revive" "\
+Restore the window configuration.
+Configuration CONFIG should be created by
+current-window-configuration-printable.
+
+\(fn CONFIG)" nil nil)
+
+(autoload 'wipe "revive" "\
+Wipe Emacs.
+
+\(fn)" t nil)
+
+(autoload 'save-current-configuration "revive" "\
+Save current window/buffer configuration into configuration file.
+
+\(fn &optional NUM)" t nil)
+
+(autoload 'resume "revive" "\
+Resume window/buffer configuration.
+Configuration should be saved by save-current-configuration.
+
+\(fn &optional NUM)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "screen-lines" "screen-lines.el" (20874 19848
+;;;;;;  339221 890000))
+;;; Generated autoloads from screen-lines.el
+
+(autoload 'screen-lines-mode "screen-lines" "\
+Toggle Screen Lines minor mode for the current buffer.
+With ARG, turn the mode on if ARG is positive, off otherwise.
+
+\(fn &optional ARG)" t nil)
+
+(autoload 'turn-on-screen-lines-mode "screen-lines" "\
+Turn on Screen Lines minor mode for the current buffer.
+
+\(fn)" t nil)
+
+(autoload 'turn-off-screen-lines-mode "screen-lines" "\
+Turn off Screen Lines minor mode for the current buffer.
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "twittering-mode" "twittering-mode.el" (20874
+;;;;;;  19848 339221 890000))
+;;; Generated autoloads from twittering-mode.el
+
+(autoload 'twit "twittering-mode" "\
+Start twittering-mode.
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "windows" "windows.el" (20874 19848 339221
+;;;;;;  890000))
+;;; Generated autoloads from windows.el
+
+(autoload 'win-switch-to-window "windows" "\
+Switch window configurations to a buffer specified by keyboard.
+If calling from program, optional second argument WINDOW can specify
+the window number.
+
+\(fn ARG &optional WINDOW)" t nil)
+
+(autoload 'win:set-wc "windows" "\
+(Windows low level internal) Set the NUM-th windows configuration.
+If Windows uses frame(Emacs 19), Select the NUM-th window frame.
+
+\(fn NUM)" nil nil)
+
+(autoload 'win:startup-with-window "windows" "\
+Start up Emacs with window[1] selected.
+
+\(fn)" nil nil)
+
+(autoload 'win-save-all-configurations "windows" "\
+Save all window configurations into the configuration file.
+
+\(fn)" t nil)
+
+(autoload 'wipe-windows "windows" "\
+Kill all buffers.  Optional argument NO-ASK non-nil skips query.
+
+\(fn &optional NO-ASK)" t nil)
+
+(autoload 'win-load-all-configurations "windows" "\
+Load all window configurations from the configuration file.
+Non-nil for optional argument PRESERVE keeps all current buffers.
+
+\(fn &optional PRESERVE)" t nil)
+
+(autoload 'see-you-again "windows" "\
+Save all of the window configurations and kill-emacs.
+
+\(fn)" t nil)
+
+(autoload 'resume-windows "windows" "\
+Restore all window configurations reading configurations from a file.
+Non-nil for optional argument PRESERVE keeps current buffers.
+
+\(fn &optional PRESERVE)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("auto-complete-clang-async.el" "bhj-darwin.el"
+;;;;;;  "bhj-eval-after-load.el" "bhj-fonts.el" "bhj-set-key.el"
+;;;;;;  "bhj-setq.el" "color-moccur.el" "color-theme-leuven.el" "cygwin-mount.el"
+;;;;;;  "emacs-25.el" "grep-buffers.el" "guess-offset.el" "moinmoin-mode.el"
+;;;;;;  "my-erc-config.el" "org-mime-autoloads.el" "org-mime-pkg.el"
+;;;;;;  "pink-bliss.el" "point-stack.el" "qmake.el" "sdim.el" "soap-client.el"
+;;;;;;  "soap-inspect.el" "subst2-ksc.el" "w32-symlinks.el") (22922
+;;;;;;  65337 803088 88000))
+
+;;;***
+
+;;;### (autoloads nil "../weblogger/weblogger" "../weblogger/weblogger.el"
+;;;;;;  (20874 19848 339221 890000))
 ;;; Generated autoloads from ../weblogger/weblogger.el
 
 (autoload 'weblogger-select-configuration "../weblogger/weblogger" "\
