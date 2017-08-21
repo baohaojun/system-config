@@ -204,6 +204,7 @@ function adb() {
 
     if test "$1" = remount; then
         if test "$#" = 1; then
+            the-true-adb disable-verity || true
             the-true-adb remount
             command my-adb -r shell sh -c 'mount -o rw,remount /system;
                                      mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
