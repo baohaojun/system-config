@@ -141,7 +141,7 @@ if is-jenkins; then
         mail-cms -i "Can't gerrit-fetch-review $@" <<EOF
 无法 Gerrit Fetch 不安全的 Patch 参数： $@
 
-用法：gerrit-fetch-review GERRIT-URL （比如：https://172.16.0.9:8080/#/c/266798/）
+用法：gerrit-fetch-review GERRIT-URL （比如：https://review.smartisan.cn:8080/#/c/266798/）
 
 一般来说，从 Gerrit 网页上打开一个 Review 页面，直接把网址拷下来就可以。
 EOF
