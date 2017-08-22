@@ -1,11 +1,11 @@
 package com.bhj.setclip;
 
-import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.Service;
-import android.content.ClipboardManager;
 import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -21,20 +21,22 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts.Entity;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
+import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -96,6 +98,12 @@ public class PutClipService extends Service {
                         if (!mWatchingClipboard) {
                             return;
                         }
+
+                        if (! new File(sdcard, "MobileOrg").isDirectory()) {
+                            mWatchingClipboard = false;
+                            return;
+                        }
+
                         ClipData clip = mClipboard.getPrimaryClip();
                         if (clip != null) {
                             ClipData.Item item = clip.getItemAt(0);
@@ -106,28 +114,33 @@ public class PutClipService extends Service {
 
                             String str = text.toString();
 
-                            if (!str.equals(PutClipService.myClipStr)) {
-                                int badChars = 0;
-                                for (int i = 0; i < str.length(); i++) {
-                                    char c = str.charAt(i);
-                                    if (c >= 0x2e80) {
-                                        return;
-                                    }
+                            if (!str.equals(PutClipService.myClipStr) && str.length() < 50) {
+                                // * F(edit:addheading) [[olp:jwords.org][jwords.org]]
+                                // ** Old value
 
-                                    if (! ((c >= 'a' && c <= 'z') ||
-                                           (c >= 'A' && c <= 'Z') ||
-                                           (c == ' '))) {
-                                        badChars++;
-                                    }
+                                // ** New value
+                                // TODO hh
+                                // [2017-08-22 周二 22:13]
+                                // ** End of edit
+
+                                try {
+                                    FileWriter mobileOrgWriter =
+                                        new FileWriter(new File(sdcard, "MobileOrg/mobileorg.org"), true);
+
+                                    Date now = new Date();
+                                    mobileOrgWriter.write(
+                                        "\n\n* F(edit:addheading) [[olp:jwords.org][jwords.org]]\n" +
+                                        "** Old value\n\n" +
+                                        "** New value\n" +
+                                        "TODO " +
+                                        str +
+                                        "\n[" + now.toString() + "]\n" +
+                                        "** End of edit\n");
+                                    mobileOrgWriter.close();
+                                } catch (IOException e) {
+                                    Log.e("bhj", String.format("%s:%d: can't write org-mode", "PutClipService.java", 134), e);
                                 }
-                                if (badChars >= 4) {
-                                    return;
-                                }
-                                Intent crossDictIntent = new Intent();
-                                crossDictIntent.setClassName("com.baohaojun.crossdict", "com.baohaojun.crossdict.CrossDictActivity")
-                                    .putExtra("android.intent.extra.TEXT", str)
-                                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(crossDictIntent);
+
                             }
                         }
                     }
@@ -403,6 +416,8 @@ public class PutClipService extends Service {
                 }
 
                 if (new File(sdcard, ".wrench-watching-clipboard.txt").exists()) {
+                    startMonitorClipboard();
+                } else if (new File(sdcard, "MobileOrg").isDirectory()) {
                     startMonitorClipboard();
                 } else {
                     mWatchingClipboard = false;
