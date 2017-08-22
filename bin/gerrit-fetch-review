@@ -264,10 +264,12 @@ if test "$cherry_pick" = true || is-jenkins; then
         fi
     fi
     if ! git cherry-pick $git_commit_revision --ff > ~/tmp/gerrit-fetch-review.log.$$ 2>&1; then
-        (
-            git diff HEAD || true
-            cat ~/tmp/gerrit-fetch-review.log.$$ $tmpf
-        ) | mail-cms -i "Patch can't cherry-pick: $@"
+        if is-jenkins; then
+            (
+                git diff HEAD || true
+                cat ~/tmp/gerrit-fetch-review.log.$$ $tmpf
+            ) | mail-cms -i "Patch can't cherry-pick: $@"
+        fi
 
         die "Error: patch can't cherry-pick: $(
             echo git diff:;
