@@ -45,6 +45,7 @@ else
 fi
 
 export the_adb
+export the_true_adb=$the_adb
 
 $the_adb start-server >/dev/null 2>&1
 
@@ -366,19 +367,18 @@ function adb() {
             the_adb=adb-expect exec_the_adb "$@"
         fi
     else
-
         if test ! -e ~/.config/system-config/adb-commands ||
-                test $the_adb -nt ~/.config/system-config/adb-commands ||
-           test ~/system-config/bin/my-adb -nt ~/.config/system-config/adb-commands; then
+                test $the_true_adb -nt ~/.config/system-config/adb-commands ||
+                test ~/system-config/bin/my-adb -nt ~/.config/system-config/adb-commands; then
             (
-                $the_adb 2>&1 | grep '^\s*adb ' -P|pn 2 |sort -u |grep -v 'wait-for.*-'
+                $the_true_adb 2>&1 | grep '^\s*adb ' -P|pn 2 |sort -u |grep -v 'wait-for.*-'
                 echo wait-for-device
                 for transport in usb local any; do
                     for state in device recovery sideload bootloader; do
                         echo wait-for-$transport-$state
                     done
                 done
-                $the_adb 2>&1 |grep ' - '|pn 1|sort -u|grep -v '^-$|^A|\[|^adb$' -P
+                $the_true_adb 2>&1 |grep ' - '|pn 1|sort -u|grep -v '^-$|^A|\[|^adb$' -P
             ) |(
                 cat <<EOF
 declare -A adb_commands
