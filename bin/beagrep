@@ -252,7 +252,6 @@ if (@fallback_dirs and not $ENV{DOING_BEAGREP_FALLBACK} and not $only_grep_mysel
     for (@fallback_dirs) {
         $_ = realpath $_;
         $_ =~ s,/.*\.cache/system-config/for-code-reading,,;
-        print STDERR "Going to work in $_\n";
         chdir $_ or die "Can't chdir to $_";
         $ENV{PWD} = $_;
         system("beagrep", @saved_args, "-d", "$_");
