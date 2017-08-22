@@ -1256,10 +1256,14 @@ local function dingding_open_homepage()
 end
 
 M.qq_open_search = function ()
-   local max_qq_try = 10
+   local max_qq_try = 5
    for qq_try = 1, max_qq_try do
       adb_start_activity(W.qqChatActivity2)
-      adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809 sleep .3 adb-tap 539 311 sleep .2"
+      adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809"
+      if qq_try > 1 then
+         adb_event"adb-swipe-100 433 701 433 751 sleep .1"
+      end
+      adb_event" sleep .3 adb-tap 539 251 adb-tap 539 311 sleep .2" -- double click the search bar
       local ime_active, height, ime_connected
 
       for ime_try = 1, 2 + math.floor(qq_try / 3) do
@@ -1270,6 +1274,7 @@ M.qq_open_search = function ()
          else
             if qq_try == max_qq_try then
                prompt_user("在等 %s 的输入，但最后找到的是 %s，请检查 wrench.lua 脚本", W.qqGroupSearch, top_window)
+               error("Wrench.lua 脚本可能有问题了，这个自动化操作需要更新脚本")
             end
             sleep(.1)
          end
