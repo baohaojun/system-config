@@ -98,4 +98,4 @@
   `custom-set-variables' is executed in your .emacs file.
 
   For more information and detailed usage, refer to the project page:
-     http://github.com/capitaomorte/yasnippet
+     http://github.com/joaotavora/yasnippet

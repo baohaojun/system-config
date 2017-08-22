@@ -171,6 +171,15 @@
 	   "Modular text completion framework" tar
 	   ((:keywords "abbrev" "convenience" "matching")
 	    (:url . "http://company-mode.github.io/"))])
+ (company-ebdb .
+	       [(1)
+		((company
+		  (0 9 4))
+		 (ebdb
+		  (0 2)))
+		"company-mode completion backend for EBDB in message-mode" single
+		((:url . "http://elpa.gnu.org/packages/company-ebdb.html")
+		 (:keywords))])
  (company-math .
 	       [(1 1)
 		((company
@@ -196,6 +205,15 @@
 		    "Highlight by scope" tar
 		    ((:keywords "convenience" "faces" "tools")
 		     (:url . "https://github.com/jacksonrayhamilton/context-coloring"))])
+ (counsel-ebdb .
+	       [(1)
+		((ivy
+		  (0 8 0))
+		 (ebdb
+		  (0 2)))
+		"Counsel integration for EBDB" single
+		((:url . "http://elpa.gnu.org/packages/counsel-ebdb.html")
+		 (:keywords))])
  (crisp .
 	[(1 3 4)
 	 nil "CRiSP/Brief Emacs emulator" single
@@ -245,9 +263,9 @@
 	   ((:url . "https://savannah.nongnu.org/projects/delight")
 	    (:keywords "convenience"))])
  (dict-tree .
-	    [(0 12 8)
+	    [(0 14)
 	     ((trie
-	       (0 2 5))
+	       (0 3))
 	      (tNFA
 	       (0 1 1))
 	      (heap
@@ -306,6 +324,35 @@
 	     "kill & mark things easily" tar
 	     ((:keywords "killing" "convenience")
 	      (:url . "https://github.com/leoliu/easy-kill"))])
+ (ebdb .
+       [(0 2)
+	((emacs
+	  (25 1))
+	 (cl-lib
+	  (0 5))
+	 (seq
+	  (2 15)))
+	"Contact management package" tar
+	((:keywords "convenience" "mail")
+	 (:url . "https://github.com/girzel/ebdb"))])
+ (ebdb-gnorb .
+	     [(1 0 2)
+	      ((gnorb
+		(1 1 0))
+	       (ebdb
+		(0 2)))
+	      "Utilities for connecting EBDB to Gnorb" single
+	      ((:url . "http://elpa.gnu.org/packages/ebdb-gnorb.html")
+	       (:keywords))])
+ (ebdb-i18n-chn .
+		[(1 0 1)
+		 ((pyim
+		   (1 6 0))
+		  (ebdb
+		   (0 2)))
+		 "China-specific internationalization support for EBDB" single
+		 ((:url . "http://elpa.gnu.org/packages/ebdb-i18n-chn.html")
+		  (:keywords))])
  (ediprolog .
 	    [(1 2)
 	     nil "Emacs Does Interactive Prolog" single
@@ -404,7 +451,7 @@
 	  ((:url . "https://github.com/leoliu/ggtags")
 	   (:keywords "tools" "convenience"))])
  (gited .
-	[(0 3 2)
+	[(0 3 3)
 	 ((emacs
 	   (24 4))
 	  (cl-lib
@@ -436,10 +483,19 @@
 	 ((:keywords "games" "processes")
 	  (:url . "http://www.gnuvola.org/software/gnugo/"))])
  (heap .
-       [(0 3)
+       [(0 5)
 	nil "Heap (a.k.a. priority queue) data structure" single
 	((:url . "http://www.dr-qubit.org/emacs.php")
 	 (:keywords "extensions" "data structures" "heap" "priority queue"))])
+ (helm-ebdb .
+	    [(1)
+	     ((helm
+	       (1 0))
+	      (ebdb
+	       (0 2)))
+	     "Helm integration for EBDB" single
+	     ((:url . "http://elpa.gnu.org/packages/helm-ebdb.html")
+	      (:keywords "mail" "convenience"))])
  (highlight-escape-sequences .
 			     [(0 3)
 			      nil "Highlight escape sequences" single
@@ -697,7 +753,7 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(20170807)
+      [(20170821)
        nil "Outline-based notes management and organizer" tar nil])
  (org-edna .
 	   [(1 0 -3 1)
@@ -766,7 +822,7 @@
 		 ((:url . "http://elpa.gnu.org/packages/quarter-plane.html")
 		  (:keywords "convenience" "wp"))])
  (queue .
-	[(0 1 1)
+	[(0 2)
 	 nil "Queue data structure" single
 	 ((:url . "http://www.dr-qubit.org/emacs.php")
 	  (:keywords "extensions" "data structures" "queue"))])
@@ -775,6 +831,16 @@
 		nil "Colorize color names in buffers" single
 		((:url . "http://elpa.gnu.org/packages/rainbow-mode.html")
 		 (:keywords "faces"))])
+ (rcirc-color .
+	      [(0 3)
+	       nil "color nicks" single
+	       ((:url . "http://elpa.gnu.org/packages/rcirc-color.html")
+		(:keywords "comm"))])
+ (rcirc-menu .
+	     [(1 1)
+	      nil "A menu of all your rcirc connections" single
+	      ((:url . "http://elpa.gnu.org/packages/rcirc-menu.html")
+	       (:keywords "comm"))])
  (realgud .
 	  [(1 4 4)
 	   ((load-relative
@@ -952,7 +1018,7 @@
 	      ((:url . "http://elpa.gnu.org/packages/transcribe.html")
 	       (:keywords))])
  (trie .
-       [(0 2 6)
+       [(0 4)
 	((tNFA
 	  (0 1 1))
 	 (heap
@@ -970,7 +1036,7 @@
 		   nil "Unicode confusables table" tar
 		   ((:url . "http://elpa.gnu.org/packages/uni-confusables.html"))])
  (url-http-ntlm .
-		[(2 0 3)
+		[(2 0 4)
 		 ((cl-lib
 		   (0 5))
 		  (ntlm
@@ -1034,6 +1100,12 @@
 	     "Emacs WebSocket client and server" tar
 	     ((:keywords "communication" "websocket" "server")
 	      (:url . "http://elpa.gnu.org/packages/websocket.html"))])
+ (which-key .
+	    [(3 0 2)
+	     ((emacs
+	       (24 4)))
+	     "Display available keybindings in popup" tar
+	     ((:url . "https://github.com/justbur/emacs-which-key"))])
  (windresize .
 	     [(0 1)
 	      nil "Resize windows interactively" single
