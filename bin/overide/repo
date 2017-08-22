@@ -84,54 +84,66 @@ if test "$1" = init; then
 fi
 
 if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help "$@")" = --help; then
-    set -- "$@" --no-tags
-    if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
-        set -- "$@" --force-sync
-    fi
-
-    if is-jenkins && test -e ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release; then
-        . ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release
-    fi
-
-    if time ~/system-config/bin/repo "$@"; then
-        if option-included -n "$@"; then
-            true
-        elif is-jenkins; then
-            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags')
-        else
-            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags' >/dev/null 2>&1&)
-        fi || true
-    else
-        ret=$?
-        if is-jenkins && test "$REDO_REPO_SYNC" != true; then
-            export REDO_REPO_SYNC=true
-            (
-                (
-                    cd $(lookup-file -e .repo/manifests)
-                    if test "$(git config repo.mirror)" = true; then
-                        readlink -f .repo/manifest.xml |
-                            mail-cms -i "Jenkins mirror repo sync failed for $(jenkins-info)"
-                        exit 1
-                    fi
-                )
-                cd $(lookup-file -e .repo/..)
-                rm * -rf
-                (
-                    cd .repo
-                    rm project-objects/ projects/ -rf
-                )
-                mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
-                ~/system-config/bin/repo "$@"
-            )
-        else
-            exit $ret
+    if test -d "$(lookup-file -e .repo/manifests)"; then
+        (
+            cd $(lookup-file .repo/manifests)
+            if ! git-remote-url | grep :// -q; then
+                if is-jenkins; then
+                    die "Can't download source code from $(git-remote-url)"
+                else
+                    hint "你的 repo init 初始化参数使用方法已过时，最新方法需要使用 -u ssh:// 的格式，否则代码同步可能出错"
+                    hint "请使用 repo-switch -p 查看你之前 repo init 时使用的命令，然后改一下 -u 参数，重新 repo init 一遍"
+                fi
+            fi
+        ) || true
+        set -- "$@" --no-tags
+        if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
+            set -- "$@" --force-sync
         fi
-    fi
-    if is-jenkins; then
-        echo "repo sync completed" >> .repo/grep-errors.txt
-        scm check-repo-project-objects
-    fi
-    exit
+
+        if is-jenkins && test -e ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release; then
+            . ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release
+        fi
+
+        if time ~/system-config/bin/repo "$@"; then
+            if option-included -n "$@"; then
+                true
+            elif is-jenkins; then
+                (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags')
+            else
+                (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags' >/dev/null 2>&1&)
+            fi || true
+        else
+            ret=$?
+            if is-jenkins && test "$REDO_REPO_SYNC" != true; then
+                export REDO_REPO_SYNC=true
+                (
+                    (
+                        cd $(lookup-file -e .repo/manifests)
+                        if test "$(git config repo.mirror)" = true; then
+                            readlink -f .repo/manifest.xml |
+                                mail-cms -i "Jenkins mirror repo sync failed for $(jenkins-info)"
+                            exit 1
+                        fi
+                    )
+                    cd $(lookup-file -e .repo/..)
+                    rm * -rf
+                    (
+                        cd .repo
+                        rm project-objects/ projects/ -rf
+                    )
+                    mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
+                    ~/system-config/bin/repo "$@"
+                )
+            else
+                exit $ret
+            fi
+        fi
+        if is-jenkins; then
+            echo "repo sync completed" >> .repo/grep-errors.txt
+            scm check-repo-project-objects
+        fi
+        exit
 else
     if ~/system-config/bin/repo "$@"; then
         if test "$1" = init; then
