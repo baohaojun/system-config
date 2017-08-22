@@ -4,6 +4,9 @@ use Getopt::Long;
 use Digest::MD5 qw(md5_hex);
 use File::Path qw(make_path);
 use Cwd;
+BEGIN {
+    push @INC, "$ENV{HOME}/system-config/etc/perl";
+}
 
 use BhjJava; # will chdir to beagrep src
 sub debug(@) {

@@ -3,7 +3,9 @@
 use strict;
 use String::ShellQuote;
 use Getopt::Long;
-
+BEGIN {
+    push @INC, "$ENV{HOME}/system-config/etc/perl";
+}
 use BhjJava; # will chdir to beagrep src
 sub debug(@) {
     print $debug "@_\n";
