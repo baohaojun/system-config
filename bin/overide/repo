@@ -87,14 +87,17 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     if test -d "$(lookup-file -e .repo/manifests)"; then
         (
             cd $(lookup-file .repo/manifests)
-            if ! git-remote-url | grep :// -q; then
+            git_remote_url=$(git-remote-url || true)
+            if [[ $git_remote_url =~ ^smartisan: ]]; then
+                git config remote.origin.url ssh://gerrit.smartisan.cn/${git_remote_url#smartisan:}
+            elif ! git-remote-url | grep :// -q; then
                 if is-jenkins; then
                     die "Can't download source code from $(git-remote-url)"
                 else
                     hint "你的 repo init 初始化参数使用方法已过时，最新方法需要使用 -u ssh:// 的格式，否则代码同步可能出错"
                     hint "请使用 repo-switch -p 查看你之前 repo init 时使用的命令，然后改一下 -u 参数，重新 repo init 一遍"
                 fi
-            fi
+                fi
         ) || true
     fi
     set -- "$@" --no-tags
