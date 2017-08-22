@@ -192,7 +192,7 @@ if ! lookup-file -e .repo >/dev/null 2>&1 &&
     git-get -u $GERRIT_HOST:$PROJECT -d ~/src/gerrit-fetch-review/$(basename $PROJECT) -b "$branch"
     git_dir=~/src/gerrit-fetch-review/$(basename $PROJECT)
 else
-    git_dir=$(my-rfa 'if test "$(repo-abs-path)" = $PROJECT; then pwd; fi')
+    git_dir=$(my-rfa 'if test "$(repo-abs-path)" = /$PROJECT; then pwd; fi')
 fi
 
 if test -z "$git_dir"; then
