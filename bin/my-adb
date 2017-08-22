@@ -67,16 +67,16 @@ function run_the_adb() {
             IFS=$'\n'
             for x in "$@"; do
                 args=("${args[@]}" $(
-                             if test "${x/ /}" != "$x"; then
-                                 # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
-                                 if [[ $adb_version =~ 1\.0\.31 ]]; then
-                                     printf \"%q\" "$x"
-                                 else
-                                     printf %q "$x"
-                                 fi
-                             else
-                                 printf %q "$x"
-                             fi))
+                          if test "${x/ /}" != "$x"; then
+                              # echo \"\'"$(echo -n "$x" | perl -npe "s!'!\\'!")"\'\"
+                              if [[ $adb_version =~ 1\.0\.31 ]]; then
+                                  printf \"%q\" "$x"
+                              else
+                                  printf %q "$x"
+                              fi
+                          else
+                              printf %q "$x"
+                          fi))
             done
 
             quote_the_args=false exec_the_adb ${args[@]}
@@ -367,9 +367,16 @@ function adb() {
             the_adb=adb-expect exec_the_adb "$@"
         fi
     else
-        if test ! -e ~/.config/system-config/adb-commands ||
-                test $the_true_adb -nt ~/.config/system-config/adb-commands ||
-                test ~/system-config/bin/my-adb -nt ~/.config/system-config/adb-commands; then
+        if test -e ~/.config/system-config/adb-commands; then
+            . ~/.config/system-config/adb-commands
+        else
+            declare -A adb_commands
+        fi
+
+        if test -z "${adb_commands[shell]}" -o \
+                ! -e ~/.config/system-config/adb-commands -o \
+                $the_true_adb -nt ~/.config/system-config/adb-commands -o \
+                ~/system-config/bin/my-adb -nt ~/.config/system-config/adb-commands; then
             (
                 $the_true_adb 2>&1 | grep '^\s*adb ' -P|pn 2 |sort -u |grep -v 'wait-for.*-'
                 echo wait-for-device
@@ -390,9 +397,8 @@ EOF
                 done
             ) > ~/.config/system-config/adb-commands.$$
             mv ~/.config/system-config/adb-commands.$$ ~/.config/system-config/adb-commands
+            . ~/.config/system-config/adb-commands
         fi
-
-        . ~/.config/system-config/adb-commands
 
         is_adb_command=false
 
