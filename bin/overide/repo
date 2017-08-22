@@ -96,54 +96,55 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                 fi
             fi
         ) || true
-        set -- "$@" --no-tags
-        if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
-            set -- "$@" --force-sync
-        fi
+    fi
+    set -- "$@" --no-tags
+    if grep -e --force-sync .repo/repo/subcmds/sync.py >/dev/null 2>&1; then
+        set -- "$@" --force-sync
+    fi
 
-        if is-jenkins && test -e ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release; then
-            . ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release
-        fi
+    if is-jenkins && test -e ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release; then
+        . ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release
+    fi
 
-        if time ~/system-config/bin/repo "$@"; then
-            if option-included -n "$@"; then
-                true
-            elif is-jenkins; then
-                (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags')
-            else
-                (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags' >/dev/null 2>&1&)
-            fi || true
+    if time ~/system-config/bin/repo "$@"; then
+        if option-included -n "$@"; then
+            true
+        elif is-jenkins; then
+            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags')
         else
-            ret=$?
-            if is-jenkins && test "$REDO_REPO_SYNC" != true; then
-                export REDO_REPO_SYNC=true
+            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags' >/dev/null 2>&1&)
+        fi || true
+    else
+        ret=$?
+        if is-jenkins && test "$REDO_REPO_SYNC" != true; then
+            export REDO_REPO_SYNC=true
+            (
                 (
-                    (
-                        cd $(lookup-file -e .repo/manifests)
-                        if test "$(git config repo.mirror)" = true; then
-                            readlink -f .repo/manifest.xml |
-                                mail-cms -i "Jenkins mirror repo sync failed for $(jenkins-info)"
-                            exit 1
-                        fi
-                    )
-                    cd $(lookup-file -e .repo/..)
-                    rm * -rf
-                    (
-                        cd .repo
-                        rm project-objects/ projects/ -rf
-                    )
-                    mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
-                    ~/system-config/bin/repo "$@"
+                    cd $(lookup-file -e .repo/manifests)
+                    if test "$(git config repo.mirror)" = true; then
+                        readlink -f .repo/manifest.xml |
+                            mail-cms -i "Jenkins mirror repo sync failed for $(jenkins-info)"
+                        exit 1
+                    fi
                 )
-            else
-                exit $ret
-            fi
+                cd $(lookup-file -e .repo/..)
+                rm * -rf
+                (
+                    cd .repo
+                    rm project-objects/ projects/ -rf
+                )
+                mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
+                ~/system-config/bin/repo "$@"
+            )
+        else
+            exit $ret
         fi
-        if is-jenkins; then
-            echo "repo sync completed" >> .repo/grep-errors.txt
-            scm check-repo-project-objects
-        fi
-        exit
+    fi
+    if is-jenkins; then
+        echo "repo sync completed" >> .repo/grep-errors.txt
+        scm check-repo-project-objects
+    fi
+    exit
 else
     if ~/system-config/bin/repo "$@"; then
         if test "$1" = init; then
