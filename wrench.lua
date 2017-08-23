@@ -1263,23 +1263,16 @@ M.qq_open_search = function ()
       if qq_try > 1 then
          adb_event"adb-swipe-100 433 701 433 751 sleep .1"
       end
-      adb_event" sleep .3 adb-tap 539 251 adb-tap 539 311 sleep .2" -- double click the search bar
+      adb_event" sleep .3 adb-tap 539 251 adb-tap 539 311" -- double click the search bar
       local ime_active, height, ime_connected
 
-      for ime_try = 1, 2 + math.floor(qq_try / 3) do
-         ime_active, height, ime_connected = adb_get_input_window_dump()
-         top_window = adb_top_window()
-         if ime_active and top_window == W.qqGroupSearch then
-            return
-         else
-            if qq_try == max_qq_try then
-               prompt_user("在等 %s 的输入，但最后找到的是 %s，请检查 wrench.lua 脚本", W.qqGroupSearch, top_window)
-               error("Wrench.lua 脚本可能有问题了，这个自动化操作需要更新脚本")
-            end
-            sleep(.1)
-         end
+      if wait_input_target_n_ok(4 + math.floor(qq_try / 2), W.qqGroupSearch) then
+         return
+      elseif qq_try == max_qq_try then
+         prompt_user("在等 %s 的输入，但最后找到的是 %s，请检查 wrench.lua 脚本", W.qqGroupSearch, top_window)
+         error("Wrench.lua 脚本可能有问题了，这个自动化操作需要更新脚本")
       end
-
+      
       if ime_active then
          log("got ime active in %s with ime height: %d, try: %d", top_window, height, qq_try)
          if height ~= 0 then
@@ -1954,17 +1947,19 @@ qq_find_friend = function(friend_name)
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
       qq_open_search()
-      local top_window = wait_input_target_n(15, W.qqChatActivity2, W.qqGroupSearch)
-      adb_event"key scroll_lock sleep .8"
+      local top_window = wait_input_target_n(5, W.qqChatActivity2, W.qqGroupSearch)
+      adb_event"adb-tap 804 167 key scroll_lock sleep .5" -- clear the search first
       if top_window and top_window:match(W.qqGroupSearch) then
-         log"Found W.qqGroupSearch"
-         adb_event"adb-tap 365 384 sleep .3"
-         if adb_top_window() ~= W.qqGroupSearch then
-            log("Found the qq friend %s", friend_name)
-            break
-         else
-            yes_or_no_p("小扳手好像没有找到你想找的 QQ 好友（%s），请自己手动点一下...", friend_name)
-            return
+         for click_search_res = 1, 3 do
+            log"Found W.qqGroupSearch"
+            adb_event"adb-tap 544 558 sleep .2"
+            if adb_top_window() ~= W.qqGroupSearch then
+               log("Found the qq friend %s", friend_name)
+               return
+            elseif click_search_res == 3 then
+               yes_or_no_p("小扳手好像没有找到你想找的 QQ 好友（%s），请自己手动点一下...", friend_name)
+               return
+            end
          end
       else
          if i > 1 and not yes_or_no_p("没有找到 QQ 好友 %s，再试一遍？", friend_name) then
