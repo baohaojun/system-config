@@ -28,7 +28,7 @@ while (<>) {
     $is_first_line = 0;
 
     if (m/$cjk_re$|\p{Po}$/) {
-        $last_is_cjk = 1;
+        $last_is_cjk = 1 unless m/\p{XPosixPunct}$/;
     } else {
         debug "$_: not cjk";
         $last_is_cjk = 0;
