@@ -1,0 +1,98 @@
+#!/bin/bash
+
+if test "$#" != 0; then
+    text=$(echo $*)
+else
+
+    top_window=$(sawfish-top-window)
+    if test "$top_window" = Wrench; then
+        text=$(getclip-android|perl -npe 's/(……」|』、『|、|……。|。|！|……|」|』)$//')
+    else
+        text=$(xclip -o -selection primary)
+    fi
+fi
+
+(
+    if echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
+        search-dict "$text"
+    else
+        if ! grep -q "$text" /usr/share/gjiten/dics/*; then
+            case "$text" in
+                *ん)
+                    text=${text}だ
+                    ;;
+                *っ|*い|*し)
+                    text=${text}た
+                    ;;
+                ## start code-generator "^\\s *#"
+                # declare -A au_map
+                # au_map[あ]=う
+                # au_map[か]=く
+                # au_map[き]=く
+                # au_map[さ]=す
+                # au_map[た]=つ
+                # au_map[な]=ぬ
+                # au_map[は]=ふ
+                # au_map[ま]=む
+                # au_map[み]=む
+                # au_map[や]=ゆ
+                # au_map[ら]=る
+                # au_map[り]=る
+                # au_map[わ]=う
+                # for a in ${!au_map[@]}; do
+                # cat <<EOF
+                # *$a)
+                # text=\${text%$a}${au_map[$a]}
+                # ;;
+                #EOF
+                # done
+                ## end code-generator
+                ## start generated code
+                *か)
+                    text=${text%か}く
+                    ;;
+                *き)
+                    text=${text%き}く
+                    ;;
+                *あ)
+                    text=${text%あ}う
+                    ;;
+                *た)
+                    text=${text%た}つ
+                    ;;
+                *さ)
+                    text=${text%さ}す
+                    ;;
+                *な)
+                    text=${text%な}ぬ
+                    ;;
+                *は)
+                    text=${text%は}ふ
+                    ;;
+                *ま)
+                    text=${text%ま}む
+                    ;;
+                *み)
+                    text=${text%み}む
+                    ;;
+                *や)
+                    text=${text%や}ゆ
+                    ;;
+                *ら)
+                    text=${text%ら}る
+                    ;;
+                *り)
+                    text=${text%り}る
+                    ;;
+                *わ)
+                    text=${text%わ}う
+                    ;;
+
+                ## end generated code
+            esac
+        fi
+        search-gjiten "$text"
+
+    fi&
+) 9> /dev/null
+exit

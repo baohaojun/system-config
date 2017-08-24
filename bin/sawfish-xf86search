@@ -1,7 +1,12 @@
 #!/bin/bash
 
-if test "$(sawfish-top-window)" = Wrench; then
+top_window=$(sawfish-top-window)
+
+
+if test "$top_window" = Wrench; then
     s_how=button3 s
+elif test "$top_window" = Emacs; then
+    sawfish-send-focused-window-event XF86Search
 else
     find-or-exec Search beagle-search
 fi

@@ -215,6 +215,15 @@
 (eval-after-load 'ivy
   '(define-key ivy-mode-map [(shift return)] 'bhj-hack-helm-s-return))
 
+(eval-after-load 'ajoke
+  '(progn
+     (require 'ivy)
+     (defadvice bbyac--general-expand (around bhj-bbyac--general-expand first activate)
+       (let ((ivy-minibuffer-map (copy-keymap ivy-minibuffer-map)))
+         (define-key ivy-minibuffer-map (kbd "n") 'ivy-next-line)
+         (define-key ivy-minibuffer-map (kbd "p") 'ivy-previous-line)
+         ad-do-it))))
+
 (eval-after-load 'helm
   '(define-key helm-map [(shift return)] 'bhj-hack-helm-s-return))
 

@@ -1108,19 +1108,35 @@ criteria can be provided via the optional match-string argument "
                           (format "md %s"
                                   (shell-quote-argument word))))))
 
+(defun s-dicts ()
+  "Look up the current WORD with English or Japanese dictionaries."
+  (interactive)
+  (bhj-do-search "s-dicts"))
+
+(defun shell-setsid (&rest command-and-args)
+  "Start a process with COMMAND-AND-ARGS with setsid in emacs."
+  (shell-command
+   (format "setsid bash -c %s\\& >/dev/null 2>&1"
+           (shell-quote-argument
+            (string-join
+             (mapcar
+              (lambda (str)
+                (shell-quote-argument str))
+              command-and-args)
+             " ")))))
+
 ;;;###autoload
-(defun bhj-do-search (word)
+(defun bhj-do-search (&optional program word)
   "lookup the current word (or region) in dictionary"
-  (interactive
-   (list (if mark-active
-             (buffer-substring-no-properties (region-beginning)
-                                             (region-end))
-           (current-word))))
-  (let ((default-directory (expand-file-name "~")))
-    (shell-command (format "setsid bash -c %s\\& >/dev/null 2>&1"
-                           (shell-quote-argument
-                            (format "s %s"
-                                    (shell-quote-argument word)))))))
+  (interactive)
+  (unless word
+    (setq word (if mark-active
+                   (buffer-substring-no-properties (region-beginning)
+                                                   (region-end))
+                 (current-word))))
+  (unless program
+    (setq program "s"))
+  (shell-setsid program word))
 
 ;;;###autoload
 (defun bhj-open-android-doc-on-java-buffer ()
