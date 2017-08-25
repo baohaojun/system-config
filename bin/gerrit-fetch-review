@@ -2,39 +2,41 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt r:REPO-REMOTE H:GERRIT-HOST aauto ccherry-pick p:patch-set \
-        # @do-review d:diff-patch-sets?'-d "1 2" to diff patch-set 1 and patch-set 2' \
-        # Cdo-checkout
+# generate-getopt -e mmultiple-patches r:REPO-REMOTE H:GERRIT-HOST \
+    # aauto ccherry-pick p:patch-set \
+    # @do-review d:diff-patch-sets?'-d "1 2" to diff patch-set 1 and patch-set 2' \
+    # Cdo-checkout
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o CcaH:p:r:d:h \
-              --long do-review,do-checkout,cherry-pick,auto,GERRIT-HOST:,patch-set:,REPO-REMOTE:,diff-patch-sets:,help,no-do-review,no-do-checkout,no-cherry-pick,no-auto \
-              -n $(basename -- $0) -- "$@")
-do_review=false
-do_checkout=false
-cherry_pick=false
-auto=false
-GERRIT_HOST=
-patch_set=
-REPO_REMOTE=
-diff_patch_sets=
+TEMP=$( getopt -o H:r:acd:Cmp:h \
+               --long GERRIT-HOST:,REPO-REMOTE:,auto,cherry-pick,diff-patch-sets:,do-checkout,do-review,multiple-patches,patch-set:,help,no-auto,no-cherry-pick,no-do-checkout,no-do-review,no-multiple-patches \
+               -n $(basename -- $0) -- "$@")
+GERRIT_HOST=${GERRIT_HOST:-}
+REPO_REMOTE=${REPO_REMOTE:-}
+auto=${auto:-false}
+cherry_pick=${cherry_pick:-false}
+diff_patch_sets=${diff_patch_sets:-}
+do_checkout=${do_checkout:-false}
+do_review=${do_review:-false}
+multiple_patches=${multiple_patches:-false}
+patch_set=${patch_set:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --do-review|--no-do-review)
-            if test "$1" = --no-do-review; then
-                do_review=false
-            else
-                do_review=true
-            fi
-            shift
+        -H|--GERRIT-HOST)
+            GERRIT_HOST=$2
+            shift 2
             ;;
-        -C|--do-checkout|--no-do-checkout)
-            if test "$1" = --no-do-checkout; then
-                do_checkout=false
+        -r|--REPO-REMOTE)
+            REPO_REMOTE=$2
+            shift 2
+            ;;
+        -a|--auto|--no-auto)
+            if test "$1" = --no-auto; then
+                auto=false
             else
-                do_checkout=true
+                auto=true
             fi
             shift
             ;;
@@ -46,33 +48,41 @@ while true; do
             fi
             shift
             ;;
-        -a|--auto|--no-auto)
-            if test "$1" = --no-auto; then
-                auto=false
+        -d|--diff-patch-sets)
+            diff_patch_sets=$2
+            shift 2
+            ;;
+        -C|--do-checkout|--no-do-checkout)
+            if test "$1" = --no-do-checkout; then
+                do_checkout=false
             else
-                auto=true
+                do_checkout=true
             fi
             shift
             ;;
-        -H|--GERRIT-HOST)
-            GERRIT_HOST=$2
-            shift 2
+        --do-review|--no-do-review)
+            if test "$1" = --no-do-review; then
+                do_review=false
+            else
+                do_review=true
+            fi
+            shift
+            ;;
+        -m|--multiple-patches|--no-multiple-patches)
+            if test "$1" = --no-multiple-patches; then
+                multiple_patches=false
+            else
+                multiple_patches=true
+            fi
+            shift
             ;;
         -p|--patch-set)
             patch_set=$2
             shift 2
             ;;
-        -r|--REPO-REMOTE)
-            REPO_REMOTE=$2
-            shift 2
-            ;;
-        -d|--diff-patch-sets)
-            diff_patch_sets=$2
-            shift 2
-            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-H, '
@@ -98,6 +108,9 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]do-review'
             echo
+            printf %06s '-m, '
+            printf %-24s '--[no-]multiple-patches'
+            echo
             printf %06s '-p, '
             printf %-24s '--patch-set=PATCH_SET'
             echo
@@ -115,7 +128,25 @@ while true; do
 done
 
 
+export GERRIT_HOST
+export REPO_REMOTE
+export auto
+export cherry_pick
+export diff_patch_sets
+export do_checkout
+export do_review
+export multiple_patches
+export patch_set
+
 ## end generated code
+
+if test "$multiple_patches" = true -a $# != 1; then
+    eval "$(sort-args.reliably -t patches_sorted -- "$@")"
+    for p in "${patches_sorted[@]}"; do
+        gerrit-fetch-review "$p"
+    done
+    exit
+fi
 
 if test "$diff_patch_sets" -a -z "$patch_set"; then
     patch_set='*'
@@ -178,7 +209,7 @@ fi
 
 git_commit_revision=$(
     cat $tmpf | grep revision: | pn 2
-          )
+                   )
 if ! [[ "$git_commit_revision" =~ ^[0-9a-f]{40}$ ]]; then
     die "Invaled git commit: $git_commit_revision"
 fi
@@ -188,7 +219,7 @@ branch=$(cat $tmpf | grep 'branch: '|pn 2)
 
 if ! lookup-file -e .repo >/dev/null 2>&1 &&
        ! lookup-file -e .git >/dev/null 2>&1 &&
-   test -z "$REPO_REMOTE"; then
+       test -z "$REPO_REMOTE"; then
     git-get -u $GERRIT_HOST:$PROJECT -d ~/src/gerrit-fetch-review/$(basename $PROJECT) -b "$branch"
     git_dir=~/src/gerrit-fetch-review/$(basename $PROJECT)
 else

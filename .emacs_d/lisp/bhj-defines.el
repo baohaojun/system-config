@@ -1508,7 +1508,8 @@ to the value of `temporary-file-directory'."
       (replace-regexp "^\\(\\*+\\) \\(TODO\\|DONE\\|SOMEDAY\\)" "\\1 DONE")
       (shell-command-on-region (point-min) (point-max) "jwords-done")
       (show-all)))
-  (outline-next-visible-heading 1))
+  (outline-next-visible-heading 1)
+  (move-end-of-line nil))
 
 (defun bhj-jwords-undone ()
   "Re-mark the previous jword as not done."
@@ -1527,7 +1528,8 @@ to the value of `temporary-file-directory'."
       (replace-regexp "^\\(\\*+\\) \\(TODO\\|DONE\\|SOMEDAY\\)" "\\1 SOMEDAY")
       (shell-command-on-region (point-min) (point-max) "jwords-someday")
       (show-all)))
-  (outline-next-visible-heading 1))
+  (outline-next-visible-heading 1)
+  (move-end-of-line nil))
 
 (setq interprogram-cut-function 'bhj-select-text
       interprogram-paste-function 'bhj-select-value)
