@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 function die() {
     echo Error: "$@"
     exit -1
@@ -166,6 +166,11 @@ fi
                 elif test ! -d "$path"; then
                     echo "$path not exist, will not show git log"
                 else
+                    (
+                        cd $path
+                        echo "branch: $(repo-branch)"
+                        echo
+                    )
                     echo "git log -1000 $f_rev..$revision"
                     echo
                     (
