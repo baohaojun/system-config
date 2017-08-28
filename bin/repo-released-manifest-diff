@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 function die() {
     echo Error: "$@"
     exit -1
