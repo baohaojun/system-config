@@ -140,6 +140,13 @@ if grep . -q ~/src/github/projects/from-mobile.org; then
 fi
 
 check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
+(
+    cd ~/src/github/projects
+    if grep '￥Qfpx02R9vJ8￥' -q "jwords.org"; then
+        perl -ne 'print unless m/^\* TODO ￥Qfpx02R9vJ8￥/..m/^\[.*\]$/' -i jwords.org
+        git-interactive-add
+    fi
+) || true
 emacsclient -e '(progn (find-file "~/src/github/projects/Captures.org") (org-mobile-push))'
 (
     cd ~/today/MobileOrg
