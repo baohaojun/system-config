@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+exec 1>&2
+
+# given 2 git commit, check if the 2nd commit revert the 1st perfectly.
+
+if test ! -d .git; then
+    exit 1
+fi
+
+
+current_commit=$(git rev-parse HEAD)
+
+function my-atexit() {
+    ret=$?
+    git cherry-pick --abort || true
+    git reset --hard "$current_commit"
+}
+
+. atexit my-atexit
+
+git reset --hard "$1"
+git cherry-pick "$2" || true
+if git diff --quiet "$1"^; then
+    exit 0
+else
+    echo "$1 和 $2 不是刚好互相抵消的 Patch，在$1 上打打完$2 后还有差异如下："
+    echo "$(git diff "$1"^)"
+    exit 1
+fi
