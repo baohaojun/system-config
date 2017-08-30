@@ -6,12 +6,12 @@ else
 
     top_window=$(sawfish-top-window)
     if test "$top_window" = Wrench; then
-        text=$(getclip-android|perl -npe 's/(……」|』、『|、|……。|。|！|……|」|』)$//')
+        text=$(getclip-android)
     else
         text=$(xclip -o -selection primary)
     fi
 fi
-
+text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|……|」|』)$//')
 (
     text=$(echo -n "$text" | perl -npe 's/^\s*//; s/\s*$//')
     if [[ $text =~ ^https?:// ]]; then
@@ -36,6 +36,7 @@ fi
                 # au_map[た]=つ
                 # au_map[な]=ぬ
                 # au_map[は]=ふ
+                # au_map[ば]=ぶ
                 # au_map[ま]=む
                 # au_map[み]=む
                 # au_map[や]=ゆ
@@ -77,6 +78,9 @@ fi
                     ;;
                 *み)
                     text=${text%み}む
+                    ;;
+                *ば)
+                    text=${text%ば}ぶ
                     ;;
                 *や)
                     text=${text%や}ゆ
