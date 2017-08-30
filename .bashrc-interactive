@@ -86,6 +86,24 @@ function rbcd()
 
 function re()
 {
+    if test $# = 1 && (
+            test "$1" = --help -o "$1" = -h
+        ); then
+        cat <<'EOF'
+Usage: re WORDS...<TAB>
+
+re(1) by itself does nothing.
+
+But if you press Tab key after you input `re WORD1 WORD2 ...', then
+Bash will prompt you with history commands that match with WORD1 and
+WORD2 and all other words that you have inputed so far.
+
+You may need run hir(1) command from time to time to put your command
+history (in ~/.bash_history) into re(1)'s command history file (in
+~/.cache/system-config/.bash_history.bak).
+
+EOF
+    fi
     true
 }
 

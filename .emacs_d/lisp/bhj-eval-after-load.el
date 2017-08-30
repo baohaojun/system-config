@@ -23,7 +23,7 @@
 (eval-after-load 'org
   '(progn
      (defadvice org-make-link-regexps (after bhj/org-link-tweak activate)
-       (setq org-plain-link-re (replace-regexp-in-string "\\[^ \t\n()<>\\]" "[^]  \t\n()<>]" org-plain-link-re)))
+       (setq org-plain-link-re (replace-regexp-in-string "\\[^ \t\n()<>\\]" "[^]  ，）、。\t\n()<>]" org-plain-link-re)))
      (org-defkey org-mode-map [?\e (shift return)] 'org-insert-todo-heading)
      (require 'org-jira)
      (require 'bhj-defines)

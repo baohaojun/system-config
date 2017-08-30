@@ -1,0 +1,6 @@
+#!/bin/bash
+if test $# == 0; then
+    set -- BHJ_PWD
+fi
+echo $1=$2 > ~/.reset-env.$$
+mv ~/.reset-env.$$ ~/.reset-env

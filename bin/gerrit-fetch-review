@@ -168,7 +168,7 @@ export REPO_REMOTE
 tmpf=~/tmp/$(basename $0).$$
 
 if is-jenkins; then
-    if test $# != 1 -o "${1:0:4}" != http || ! echo "$1" | grep -q '#/c/\d+/?$' -P; then
+    if test $# != 1 -o "${1:0:4}" != http || ! echo "$1" | grep -q '/\d+/?$' -P; then
         mail-cms -i "Can't gerrit-fetch-review $@" <<EOF
 无法 Gerrit Fetch 不安全的 Patch 参数： $@
 

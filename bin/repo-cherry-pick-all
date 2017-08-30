@@ -2,6 +2,16 @@
 
 set -e
 
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
 if is-jenkins; then
     set -x
 fi
@@ -48,32 +58,42 @@ export -f cherry-ok
 export -f cherry-fail
 export -f cherry-skip
 
-if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help; then
-    . ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help
-fi
-
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt sshell hdo-here @:target-branch nno-fetch Rno-reverts ddry-run o:ok-function f:fail-function S:skip-function @:should-function
+# generate-getopt '?"用法：$b0 [OPTIONS] REGEXP_FOR_AUTHORS_AND_COMMITTERS\n本脚本把 repo-cherry-find-all 提出来的 git 提交差异，挨个 Cherry-Pick 到指定的目标分支上\n\n此脚本主要用于：1. 新产品 Bring Up，2. 上游代码基线升级跟随 Rebase，3. 整理 Patch"' \
+    # @do-here '?在当前 Git HEAD 上开始 Cherry-Pick 工作' \
+    # @:target-branch '?提到哪个目标分支上，默认不用指定，会从 repo-cherry-find-all 结果里计算出来' \
+    # @do-fetch-first=true '?要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true' \
+    # @squash-reverts '?自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作' \
+    # o:ok-function '?如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理' \
+    # f:fail-function '?指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function' \
+    # S:skip-function '?指定跳过某 Patch 时执行的操作。参考 --ok-function' \
+    # @:should-function '?提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o hdf:nRo:sS:h \
-               --long do-here,dry-run,fail-function:,no-fetch,no-reverts,ok-function:,shell,should-function:,skip-function:,target-branch:,help,no-do-here,no-dry-run,no-no-fetch,no-no-reverts,no-shell \
+TEMP=$( getopt -o f:o:S:h \
+               --long do-fetch-first,do-here,fail-function:,ok-function:,should-function:,skip-function:,squash-reverts,target-branch:,help,no-do-fetch-first,no-do-here,no-squash-reverts \
                -n $(basename -- $0) -- "$@")
+do_fetch_first=true
 do_here=false
-dry_run=false
 fail_function=
-no_fetch=false
-no_reverts=false
 ok_function=
-shell=false
 should_function=
 skip_function=
+squash_reverts=false
 target_branch=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -h|--do-here|--no-do-here)
+        --do-fetch-first|--no-do-fetch-first)
+            if test "$1" = --no-do-fetch-first; then
+                do_fetch_first=false
+            else
+                do_fetch_first=true
+            fi
+            shift
+            ;;
+        --do-here|--no-do-here)
             if test "$1" = --no-do-here; then
                 do_here=false
             else
@@ -81,45 +101,13 @@ while true; do
             fi
             shift
             ;;
-        -d|--dry-run|--no-dry-run)
-            if test "$1" = --no-dry-run; then
-                dry_run=false
-            else
-                dry_run=true
-            fi
-            shift
-            ;;
         -f|--fail-function)
             fail_function=$2
             shift 2
             ;;
-        -n|--no-fetch|--no-no-fetch)
-            if test "$1" = --no-no-fetch; then
-                no_fetch=false
-            else
-                no_fetch=true
-            fi
-            shift
-            ;;
-        -R|--no-reverts|--no-no-reverts)
-            if test "$1" = --no-no-reverts; then
-                no_reverts=false
-            else
-                no_reverts=true
-            fi
-            shift
-            ;;
         -o|--ok-function)
             ok_function=$2
             shift 2
-            ;;
-        -s|--shell|--no-shell)
-            if test "$1" = --no-shell; then
-                shell=false
-            else
-                shell=true
-            fi
-            shift
             ;;
         --should-function)
             should_function=$2
@@ -129,45 +117,57 @@ while true; do
             skip_function=$2
             shift 2
             ;;
+        --squash-reverts|--no-squash-reverts)
+            if test "$1" = --no-squash-reverts; then
+                squash_reverts=false
+            else
+                squash_reverts=true
+            fi
+            shift
+            ;;
         --target-branch)
             target_branch=$2
             shift 2
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e "用法：$b0 [OPTIONS] REGEXP_FOR_AUTHORS_AND_COMMITTERS\n本脚本把 repo-cherry-find-all 提出来的 git 提交差异，挨个 Cherry-Pick 到指定的目标分支上\n\n此脚本主要用于：1. 新产品 Bring Up，2. 上游代码基线升级跟随 Rebase，3. 整理 Patch"
             echo
             echo Options and arguments:
-            printf %06s '-h, '
+            printf "%06s" " "
+            printf %-24s '--[no-]do-fetch-first'
+            echo '要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true'
+            printf "%06s" " "
             printf %-24s '--[no-]do-here'
-            echo
-            printf %06s '-d, '
-            printf %-24s '--[no-]dry-run'
-            echo
+            echo '在当前 Git HEAD 上开始 Cherry-Pick 工作'
             printf %06s '-f, '
             printf %-24s '--fail-function=FAIL_FUNCTION'
             echo
-            printf %06s '-n, '
-            printf %-24s '--[no-]no-fetch'
-            echo
-            printf %06s '-R, '
-            printf %-24s '--[no-]no-reverts'
-            echo
+            printf "%30s" ""
+            echo '指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function'
             printf %06s '-o, '
             printf %-24s '--ok-function=OK_FUNCTION'
             echo
-            printf %06s '-s, '
-            printf %-24s '--[no-]shell'
-            echo
+            printf "%30s" ""
+            echo '如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理'
             printf "%06s" " "
             printf %-24s '--should-function=SHOULD_FUNCTION'
             echo
+            printf "%30s" ""
+            echo '提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch'
             printf %06s '-S, '
             printf %-24s '--skip-function=SKIP_FUNCTION'
             echo
+            printf "%30s" ""
+            echo '指定跳过某 Patch 时执行的操作。参考 --ok-function'
+            printf "%06s" " "
+            printf %-24s '--[no-]squash-reverts'
+            echo '自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作'
             printf "%06s" " "
             printf %-24s '--target-branch=TARGET_BRANCH'
             echo
+            printf "%30s" ""
+            echo '提到哪个目标分支上，默认不用指定，会从 repo-cherry-find-all 结果里计算出来'
             exit
             shift
             ;;
@@ -184,18 +184,25 @@ done
 
 ## end generated code
 
+function hint() {
+    command hint "$@" </dev/tty || true
+}
+
+function select-args() {
+    command select-args "$@" </dev/tty || true
+}
+
+function yes-or-no-p() {
+    command yes-or-no-p "$@" </dev/tty
+}
+
+if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help; then
+    . ~/src/github/smartcm/scm-helpers/repo-cherry-pick-all.help
+fi
 
 if test $# != 1; then
     die "Error: Usage $(basename $0) REGEXP_FOR_AUTHORS_AND_COMMITTERS"
 fi
-
-if test "$no_reverts" != true && yes-or-no-p -y "Skip reverted patches"; then
-    no_reverts=true
-fi
-if test "$should_function" && is-jenkins; then
-    no_reverts=false
-fi
-
 
 if test -d .repo; then
     diffs=$(rgrep -l -P -e "$1" out/diff/*.log | sort)
@@ -245,14 +252,10 @@ for diff_file in $diffs; do
         git reset --hard
         command git clean -xfd
         (git cherry-pick --abort || true) >/dev/null 2>&1
-        if test $no_fetch = false; then
+        if test $do_fetch_first = true; then
             git fetch $(repo-remote)
         fi
         echo doing $dir
-        if test $shell = true; then
-            start_recursive_shell 'shell for cherry'
-            exit
-        fi
         if test -z "$target_branch"; then
             if test $do_here = true; then
                 target_branch=HEAD
@@ -288,30 +291,27 @@ for diff_file in $diffs; do
                 fi
             fi
 
-            if test "$no_reverts" = true; then
+            if test "$squash_reverts" = true; then
                 declare -A reverted_commits
-                grep -P -e "$1" $diff_file | (
-                    while read line; do
-                        if echo "$line" | grep '{{{Revert "' -q; then
-                            subject=$(echo "$line" | perl -npe 's,.*\{\{\{Revert "(.*)"\}\}\}.*,$1,')
-                            reverted_commits[$subject]=1
-                            if [[ $subject =~ 'Revert "' ]]; then
-                                subject=$(echo "$subject" | perl -npe 's,^Revert "(.*)",$1, while m,^Revert "(.*)",')
-                                if test -z "${reverted_commits[$subject]}"; then
-                                    reverted_commits[$subject]=1
-                                else
-                                    reverted_commits[$subject]=$((${reverted_commits[$subject]} + 1))
-                                fi
-                            fi
-                        fi
+                declare -A paired_reverts
+                declare -A should_skip_githash
+                cat "$diff_file" | scm is-patch-reverted -p | perl -ne 'print "$1 $2\n" if m/paired-revert: ([0-9a-f]{40}) ([0-9a-f]{40})/' |
+                    (
+                        while read g1 g2; do
+                            paired_reverts[$g1]=$g2
+                        done
+
+                        declare -p paired_reverts > $diff_file.env
+                    )
+
+                cat "$diff_file" | scm is-patch-reverted -m | grep '^\s*multi-revert:' | (
+                    while read multi_revert n g subject; do
+                        reverted_commits[$g]=$n
                     done
-                    export reverted_commits
-                    export -p |grep -P -e 'declare -Ax reverted_commits' > $diff_file.env
+                    declare -p reverted_commits >> $diff_file.env
                 )
                 . $diff_file.env
             fi
-
-            declare -A skiped_later_reverted_commits
 
             # /home/bhj/src/android/build commit 43762abec244028673342090b29c6d04a96b1f6f cid I85848cd29536e96e9d330bf1b38f184ac9e6b3f7 not found in remotes/smartisan/tools_r22.2 jinxiaodong@smartisan.cn(2016-03-03 18:03:26 +0800) jinxiaodong@smartisan.cn(2016-03-03 19:22:05 +0800) : {{{use full boot.img if imgdiff failure}}}
 
@@ -354,31 +354,99 @@ for diff_file in $diffs; do
 
                     export WORKING_REV=$git_commit_id
                     ret=0
-                    if test "$no_reverts" = true; then
+                    if test "$squash_reverts" = true; then
                         . $diff_file.env
-                        if test "${reverted_commits[$subject]}"; then
-                            if test $((${reverted_commits[$subject]} % 2)) = 1; then
-                                yn_flag=-y
-                            else
-                                yn_flag=-n
+                        if test "${reverted_commits[$git_commit_id]}"; then
+                            cat "$diff_file" | scm is-patch-reverted -m -r "$subject"
+                            hint "当前要处理的 Patch 有多个相关的 Revert Patch，请选择你想要如何处理这些 Patch（你可以选择跳过、另开一个终端检查并处理，等等）"
+                            should_continue=true
+                            while true; do
+                                revert_action=$(
+                                    select-args -p "请选择你要如何处理 $git_commit_id 及其相关 Revert Patches" \
+                                                "Pick （我确认过了，这个 Patch 是要 Cherry-Pick 的，帮我自动 Cherry 试试看吧，没冲突最好，有冲突我再解）" \
+                                                "Skip （跳过此 Patch，我自己确认了，它跟另一个 Patch 互消抵消了，所以不需要它的逻辑了）" \
+                                                "Done （不用处理此 Patch，我自己已经另开一个终端处理了）" \
+                                                "Show （请打印一下跟它相关的 Revert Patch 列表，我自己可以新开一个窗口，然后挨个检查一下，再决定如何处理）" |
+                                        pn 1
+                                             )
+
+                                if test "$revert_action" = Skip; then
+                                    echo Skip $git_commit_id: $subject
+                                    if test "$skip_function"; then
+                                        skip_reason=UserSkip "$skip_function" $ap $git_commit_id </dev/null
+                                    fi
+                                    break
+                                elif test "$revert_action" = Done; then
+                                    echo Done $git_commit_id: $subject
+                                    if test "$skip_function"; then
+                                        skip_reason=UserDone "$skip_function" $ap $git_commit_id </dev/null
+                                    fi
+                                elif test "$revert_action" = Show; then
+                                    cat "$diff_file" | scm is-patch-reverted -m -r "$subject"
+                                    hint "以上是相关的 Revert Patch 列表，请自己新开一个终端窗口检查这些 Patch 的逻辑关系，并决定如何处理"
+                                    continue
+                                elif test "$revert_action" = Pick; then
+                                    should_continue=false
+                                    break
+                                fi
+                            done
+
+                            if test "$should_continue" = true; then
+                                continue
                             fi
-                            if yes-or-no-p -$yn_flag skip $git_commit_id: $subject, it is reverted ${reverted_commits[$subject]} times later?; then
-                                echo skip $git_commit_id: $subject
-                                skiped_later_reverted_commits[Revert \"$subject\"]=1
+                        fi
+
+                        if test "${paired_reverts[$git_commit_id]}"; then
+                            hint "当前要处理的 Patch 有一个跟它成对的 Revert Patch，请选择你想要如何处理这些 Patch（你可以选择跳过、另开一个终端检查并处理，等等）"
+
+                            should_continue=true
+                            while true; do
+                                revert_action=$(
+                                    select-args -p "请选择你要如何处理这对 Patch： $git_commit_id ${paired_reverts[$git_commit_id]} （您可自己新开一个终端检查）" \
+                                                "Check （帮我看一下它们是否完美相互抵消——在 commit1 的提交上打上 commit2，如果没有冲突并且跟 commit1^没有 diff。。。）" \
+                                                "Skip2 （我已经确认了，它们完美抵消，因此把这个两个 Patch 都跳过就对了）" \
+                                                "Done （我自己在另一个窗口里处理了，跳过当前 Patch，跟它成对的下一个 Patch 有冲突的话，我自己再处理）" \
+                                                "Pick （我确认了，这个 Patch 要 Pick，跟它成对的下一个 Patch 有冲突的话，我自己再处理）" |
+                                        pn 1
+                                             )
+
+                                if test "$revert_action" = Check; then
+                                    if is-perfect-revert "$git_commit_id" "${paired_reverts[$git_commit_id]}"; then
+                                        if yes-or-no-p -y "这两个Patch刚好相互抵消，是否把两个都跳过？"; then
+                                            revert_action=Skip2
+                                        else
+                                            continue
+                                        fi
+                                    else
+                                        hint "这两个 Patch 不能互相抵消，请仔细检查它们的改动，然后再决定如何处理"
+                                        continue
+                                    fi
+                                fi
+
+                                if test "$revert_action" = Skip2; then
+                                    should_skip_githash[$git_commit_id]=true
+                                    should_skip_githash[${paired_reverts[$git_commit_id]}]=true
+                                    should_continue=false # goto the judge for should_skip_githash
+                                    break
+                                elif test "$revert_action" = Done; then
+                                    echo Done $git_commit_id: $subject
+                                    if test "$skip_function"; then
+                                        skip_reason=UserDone "$skip_function" $ap $git_commit_id </dev/null
+                                    fi
+                                    break
+                                elif test "$revert_action" = Pick; then
+                                    should_continue=false
+                                    break
+                                fi
+                            done
+
+                            if test "${should_skip_githash[$git_commit_id]}" = true; then
+                                echo "跳过 $git_commit_id: $subject，因为它和另一个 Patch 成对 Revert 并且互相完美抵消了"
                                 if test "$skip_function"; then
                                     skip_reason=reverted "$skip_function" $ap $git_commit_id </dev/null
                                 fi
                                 continue
                             fi
-                        fi
-
-                        if test "${skiped_later_reverted_commits[$subject]}" = 1 && yes-or-no-p -y skip $git_commit_id: $subject, the original has been skipped?; then
-                            echo skip $git_commit_id: $subject
-                            skiped_later_reverted_commits[Revert \"$subject\"]=1
-                            if test "$skip_function"; then
-                                skip_reason=reverted "$skip_function" $ap $git_commit_id </dev/null
-                            fi
-                            continue
                         fi
                     fi
 
@@ -428,7 +496,7 @@ for diff_file in $diffs; do
                         echo cherry-failed: $WORKING_REV in $ap |tee -a ~/tmp/repo-cherry-pick-all.txt
                         break
                     fi
-                done
-        fi
-    )
-done
+                                            done
+                                    fi
+                                )
+                            done
