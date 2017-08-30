@@ -210,7 +210,13 @@ print $_ . "\n";
         fi
 
         if test "$1" = log && test -e $(lookup-file -e .git/)/shallow >/dev/null 2>&1; then
-            hint "你的 git 是个 shallow 仓储，git log 可能显示不全"
+            hint "你的 git 是个 shallow 仓储，git log 可能显示不全，可能需要运行 sse unshallow"
+            if is-tty-io && \
+                    lookup-file -e .repo/manifest.xml >/dev/null 2>&1 && \
+                   test -e ~/src/github/smartcm/sse-helpers/unshallow-source-code && \
+                   yes-or-no-p -y "是否帮你自动运行sse unshallow以获取完整git log？"; then
+                sse unshallow-source-code
+            fi
         fi
 
         if test "$#" = 1 -a "$1" = reset-files-to-rev; then
