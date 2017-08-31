@@ -202,6 +202,7 @@ map['com.tencent.mobileqq/cooperation.qzone.QzonePublishMoodProxyActivity'] = 'm
 map['com.tencent.qqmusic/com.tencent.qqmusic.activity.AppStarterActivity'] = 'manual-post'
 map['com.ting.mp3.android/com.baidu.music.ui.UIMain'] = 'manual-post'
 map['com.tplink.cloudrouter/com.tplink.cloudrouter.activity.LoginCloudAccountActivity'] = 'manual-post'
+map['com.tplink.cloudrouter/com.tplink.cloudrouter.activity.LoginCloudActivity'] = 'manual-post'
 map['com.twitter.android/com.twitter.android.LoginActivity'] = 'manual-post'
 map['com.twitter.android/com.twitter.android.LoginChallengeActivity'] = 'manual-post'
 map['com.twitter.android/com.twitter.android.trends.TrendsPlusActivity'] = 'manual-post'
