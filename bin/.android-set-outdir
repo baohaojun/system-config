@@ -28,6 +28,11 @@ export OUT_DIR_LONG=.repo/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
     fi
 )
 
+if test -d out -a ! -L out; then
+    if test -e ~/src/github/smartcm/scm-helpers/.check-out-is-real-dir; then
+        . ~/src/github/smartcm/scm-helpers/.check-out-is-real-dir || true
+    fi
+fi
 rm -f out || rm -rf out || true
 mkdir -p $OUT_DIR_LONG/host $OUT_DIR_LONG/target
 
