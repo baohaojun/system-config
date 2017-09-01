@@ -68,7 +68,11 @@ if is-jenkins; then
             cd .repo/manifests/
             git tag 2>&1 | grep -q 'does not point to a valid object'
         ); then
-            mail-cms "Your repo manifest has 'does not point to a valid object' errors: $(jenkins-info)"
+            (
+                echo "It will be fixed automatically, no need to check, unless it occurs repeatedly, then please check ~/src/android-mirror on cmdev"
+                echo
+                git tag 2>&1 | grep  'does not point to a valid object'
+            ) | mail-cms -i "Your repo manifest has 'does not point to a valid object' errors: $(jenkins-info)"
             rm .repo/manifests .repo/manifests.git .repo/manifest.xml -rf
         fi
     fi
