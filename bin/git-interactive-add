@@ -156,34 +156,43 @@ for x in "$@" $(
         continue
     fi
     git-diff "$x";
+
+    declare -A gia_options
+    gia_options[yes]="yes     (accept this change, do git add)"
+    gia_options[no]="no      (do not accept this change, do nothing)"
+    gia_options[discard]="discard (something is wrong with this change, throw it away)"
+    gia_options[diff]="diff    (mmm, not sure, show diff again?)"
+    gia_options[meld]="meld    (mmm, want to see the diff with meld)"
+    gia_options[delete]="delete  (delete this file, dangerous!)"
+    gia_options[edit]="edit    (open it with my editor)"
     while true; do
         out=$(select-args -p "What do you want to do with this file?" \
-                          "yes     (accept this change, do git add)" \
-                          "no      (do not accept this change, do nothing)" \
-                          "discard (something is wrong with this change, throw it away)" \
-                          "diff    (mmm, not sure, show diff again?)" \
-                          "meld    (mmm, want to see the diff with meld)" \
-                          "delete  (delete this file, dangerous!)" \
-                          "edit    (open it with my editor)" \
+                          "${gia_options[yes]}" \
+                          "${gia_options[no]}" \
+                          "${gia_options[discard]}" \
+                          "${gia_options[diff]}" \
+                          "${gia_options[meld]}" \
+                          "${gia_options[delete]}" \
+                          "${gia_options[edit]}" \
                           "@       $PWD/$x " \
-                          "@       You can also type some comments, and end it with ! to do git add with comments." | pn 1
+                          "@       You can also type some comments, and end it with ! to do git add with comments."
            );
-        if test "$out" = diff; then
+        if test "$out" = "${gia_options[diff]}"; then
             git-diff "$x";
             continue;
         fi
 
-        if test "$out" = meld; then
+        if test "$out" = "${gia_options[meld]}"; then
             git-meld "$x";
             continue
         fi
 
-        if test "$out" = delete; then
+        if test "$out" = "${gia_options[delete]}"; then
             rm "$x"
             break
         fi
 
-        if test "$out" = edit; then
+        if test "$out" = "${gia_options[edit]}"; then
             ew "$x"
             find-or-exec konsole
             if test ! -e "$x"; then
@@ -193,16 +202,16 @@ for x in "$@" $(
             continue
         fi
 
-        if test "$out" = no; then
+        if test "$out" = "${gia_options[no]}"; then
             break
         fi
 
-        if test "$out" = discard; then
+        if test "$out" = "${gia_options[discard]}"; then
             git checkout $revision "$x"
             break
         fi
 
-        if test "$out" = yes; then
+        if test "$out" = "${gia_options[yes]}"; then
             git add "$x"
             if [[ $x =~ \.org$ ]] && grep 'BEGIN_SRC.*:tangle '-i "$x" -q; then
                 (
