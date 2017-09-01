@@ -86,7 +86,8 @@ if test ! -d $dir/.git; then
     mkdir -p $dir
     (
         cd $dir
-        if ! git clone --single-branch -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
+        if ! git clone --single-branch -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi) && # --single-branch fails for s:git-repo
+           ! git clone -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
             git init .
             git commit -m 'init commit' --allow-empty --author 'qualcomm <someone@qualcomm.com>'
             git push $url HEAD:refs/heads/$branch
