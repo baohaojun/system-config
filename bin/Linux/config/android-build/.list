@@ -45,6 +45,7 @@ openssh-client
 pkg-config
 policycoreutils
 python3
+python-crypto
 python-mysqldb
 qt5-default
 qtchooser

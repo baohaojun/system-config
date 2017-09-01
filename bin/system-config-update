@@ -146,6 +146,9 @@ function setup-ext-local() {
         git clone smartisan:baohaojun/ext-local ~/external/local
     else
         (
+            if test ! -w ~/external/local/.git; then
+                exit 0
+            fi
             cd ~/external/local
             git pull
         )

@@ -68,7 +68,6 @@ if is-jenkins; then
             cd .repo/manifests/
             git tag 2>&1 | grep -q 'does not point to a valid object'
         ); then
-            mail-cms "Your repo manifest has 'does not point to a valid object' errors: $(jenkins-info)"
             rm .repo/manifests .repo/manifests.git .repo/manifest.xml -rf
         fi
     fi

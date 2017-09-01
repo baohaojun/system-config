@@ -2,7 +2,7 @@
 if test "$1" = e; then
     ew ~/system-config/etc/udev/rules.d/90-bhj-personal.rules
 else
-    usb=$(select-output-line lsusb)
+    usb=$(select-output-line -p "请选择你要把上面那个 usb 设备设置成你自己的 uid/gid（设置完成后记得重新插拔一下）" lsusb)
     vid=$(echo $usb|pn 6)
     vid=${vid%:*}
 

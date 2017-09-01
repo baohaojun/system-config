@@ -89,7 +89,6 @@
        (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
  '(magit-use-overlays nil)
- '(major-mode (quote text-mode))
  '(makefile-mode-hook
    (quote
     ((lambda nil
