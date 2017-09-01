@@ -99,6 +99,22 @@ function git-diff() {
     fi
 }
 
+function git-meld() {
+    clear
+    if test "$FOR_REVIEW"; then
+        git difftool -t meld -y $(repo-remote-branch) HEAD -- "$@"
+        return 0
+    fi
+
+    if git status -s "$@" | grep -q -P -e '^\?\?'; then
+        read -e -p "$@ seems to be a new file, press Enter to continue...  "
+        diff /dev/null "$@"
+    else
+        git difftool -t meld -y $review_base $revision -- "$@"
+        return 0
+    fi
+}
+
 IFS=$'\n'
 for x in "$@" $(
               if test $# == 0; then
@@ -141,10 +157,25 @@ for x in "$@" $(
     fi
     git-diff "$x";
     while true; do
-        out=$(select-args yes no discard diff delete edit "@ $PWD/$x");
+        out=$(select-args -p "What do you want to do with this file?" \
+                          "yes     (accept this change, do git add)" \
+                          "no      (do not accept this change, do nothing)" \
+                          "discard (something is wrong with this change, throw it away)" \
+                          "diff    (mmm, not sure, show diff again?)" \
+                          "meld    (mmm, want to see the diff with meld)" \
+                          "delete  (delete this file, dangerous!)" \
+                          "edit    (open it with my editor)" \
+                          "@       $PWD/$x " \
+                          "@       You can also type some comments, and end it with ! to do git add with comments." | pn 1
+           );
         if test "$out" = diff; then
             git-diff "$x";
             continue;
+        fi
+
+        if test "$out" = meld; then
+            git-meld "$x";
+            continue
         fi
 
         if test "$out" = delete; then
