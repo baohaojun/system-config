@@ -25,6 +25,28 @@ mount() {
     fi
 }
 
+my-lunch () {
+    if (unalias lunch; test "$(type -t lunch)" = function); then
+        (
+            hint "在 system-config 环境下，不需要 . build/envsetup.sh，直接可以 lunch，请参考 workflow 文档 “lunch is harmful”"
+            unalias lunch
+            android-set-product "$@"
+        )
+        if test "$#" != 0; then
+            unalias lunch
+            lunch "$@"
+            alias lunch=my-lunch
+        fi
+    elif test "$(type -a -t lunch)" = alias; then
+        (
+            unalias lunch
+            android-set-product "$@"
+        )
+    fi
+}
+
+alias lunch=my-lunch
+
 if test -e ~/.config/system-config/vim-is-evil; then
     alias vi=e
     alias vim=e
