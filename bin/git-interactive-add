@@ -119,7 +119,7 @@ IFS=$'\n'
 for x in "$@" $(
               if test $# == 0; then
                   if test "$revision" = ""; then
-                      git st -s .|grep '^.\S' -P | cut -b 4-;
+                      git status -s .|grep '^.\S' -P | cut -b 4-;
                   else
                       gitp=$(gitp .)
                       case "$gitp" in
@@ -148,10 +148,10 @@ for x in "$@" $(
     if test -d "$x"; then
         continue
     fi
-    if test ! -e "$x" && git st -s |grep -P -e "\Q$x\E" | grep "^RM"; then
-        x=$(git st -s |grep -P -e "\Q$x\E" | grep "^RM" | perl -npe 's/.*-> //')
+    if test ! -e "$x" && git status -s |grep -P -e "\Q$x\E" | grep "^RM"; then
+        x=$(git status -s |grep -P -e "\Q$x\E" | grep "^RM" | perl -npe 's/.*-> //')
     fi
-    if test ! -e "$x" && git st -s "$x" | grep -P -e '^ D|^D' && yes-or-no-p "$x removed, remove it from git?"; then
+    if test ! -e "$x" && git status -s "$x" | grep -P -e '^ D|^D' && yes-or-no-p "$x removed, remove it from git?"; then
         git rm "$x"
         continue
     fi

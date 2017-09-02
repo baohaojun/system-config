@@ -72,17 +72,6 @@ function git()
         using_st=true
     fi
 
-    if test $# = 1 -a "$1" = st -a ! -e .git; then
-        echo only stat the current folder 1>&2
-        set -- status .
-    fi
-
-    if test $# = 2 -a "$1" = st -a "$2" = ..; then
-        echo stat the whole directory
-        command git status
-        return
-    fi
-
     if test $# = 1 -a "$1" = diff; then
         set -- diff -w
     fi

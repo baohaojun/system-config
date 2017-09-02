@@ -26,22 +26,37 @@ mount() {
 }
 
 my-lunch () {
+    alias lunch=my-lunch
     if (unalias lunch; test "$(type -t lunch)" = function); then
         (
-            hint "在 system-config 环境下，不需要 . build/envsetup.sh，直接可以 lunch，请参考 workflow 文档 “lunch is harmful”"
             unalias lunch
             android-set-product "$@"
         )
+        reset-env "alias lunch=my-lunch"
+        unalias lunch
         if test "$#" != 0; then
-            unalias lunch
             lunch "$@"
-            alias lunch=my-lunch
+        else
+            buildspec=$(lookup-file -e buildspec.mk || true)
+            if test -e "$buildspec"; then
+                local product=$(cat "$buildspec" | perl -ne 'print $1 if m,^\QTARGET_PRODUCT?=\E(.*),')
+                local variant=$(cat "$buildspec" | perl -ne 'print $1 if m,^\QTARGET_BUILD_VARIANT?=\E(.*),')
+            fi
+            if test "$product" -a "$variant"; then
+                lunch "$product"-"$variant"
+            fi
         fi
+        alias lunch=my-lunch
     elif test "$(type -a -t lunch)" = alias; then
         (
             unalias lunch
             android-set-product "$@"
         )
+    else
+        reset-env "alias lunch=my-lunch"
+        unalias lunch
+        lunch "$@"
+        alias lunch=my-lunch
     fi
 }
 

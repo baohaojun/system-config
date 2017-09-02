@@ -227,6 +227,10 @@ else
 fi
 
 if test -z "$git_dir"; then
+    if is-jenkins; then
+        echo "$@" | mail-cms -i "Smart Builder 加 Patch 编译没有找到相应的 git 仓库"
+        die "Can't find git dir for $@"
+    fi
     git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT) -b "$branch"
     (
         cd ~/src/$(basename $PROJECT)
@@ -266,7 +270,7 @@ if test "$diff_patch_sets"; then
         rev2=$(dirname $ref)/${patch_sets[1]}
 
         while true; do
-            hint 接下来让你选择你要review哪个文件，如果不想review了，请Ctrl-C退出
+            hint "接下来让你选择你要 review 哪个文件，如果不想 review 了，请 Ctrl-C 退出"
             review_file=$(
                 select-output-line -- "git diff --name-status $rev1 $rev2; echo exit now！ （直接退出）" | pn 2
                        )
@@ -330,8 +334,9 @@ fi
 if test "$auto" = true; then
     start_recursive_shell gerrit
 else
+    putclip "$PWD"
     cat <<EOF
-你的Gerrit Patch已经下载，请
+你的 Gerrit Patch 已经下载，请
     cd $PWD
 前往查看
 EOF

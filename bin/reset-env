@@ -1,6 +1,11 @@
 #!/bin/bash
 if test $# == 0; then
-    set -- BHJ_PWD
+    set -- BHJ_PWD ""
 fi
-echo $1=$2 > ~/.reset-env.$$
+
+if test "$#" = 2; then
+    echo $1=$2 > ~/.reset-env.$$
+elif test "$#" = 1; then
+    echo "$1" > ~/.reset-env.$$
+fi
 mv ~/.reset-env.$$ ~/.reset-env
