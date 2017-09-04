@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# this script set env for parent shell. so maybe the better name is
+# set-parent-shell-env...
+
 if test $# == 0; then
     set -- BHJ_PWD ""
 fi
@@ -8,4 +12,5 @@ if test "$#" = 2; then
 elif test "$#" = 1; then
     echo "$1" > ~/.reset-env.$$
 fi
-mv ~/.reset-env.$$ ~/.reset-env
+
+mv ~/.reset-env.$$ ~/.reset-env.$INTERACTIVE_BASH_PID

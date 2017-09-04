@@ -30,17 +30,9 @@ if test ~/.config/system-config/.bashrc-path -ot ~/system-config/etc/path/$uname
     fi
 fi
 
-if test -e ~/.config/system-config/.bashrc-path; then
-    if test -z "$RECURSIVE_SHELL"; then
-        if test "$USER" = bhj; then
-            . ~/.config/system-config/.bashrc-path
-        else
-            OLD_PATH=$PATH
-            . ~/.config/system-config/.bashrc-path
-            PATH=$PATH:$OLD_PATH
-        fi
-    fi
-else
+OLD_PATH=$PATH
+
+if test ! -e ~/.config/system-config/.bashrc-path; then
     if test -x /usr/local/opt/coreutils/libexec/gnubin; then
         export PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
     fi
@@ -84,7 +76,13 @@ else
     export PATH="$HOME/perl5/bin:$PATH";
 EOF
     fi
+fi
+
+if test -z "$RECURSIVE_SHELL"; then
     . ~/.config/system-config/.bashrc-path
+    if test ! -e ~/src/github/private-config/etc/baohaojun; then
+        PATH=$PATH:$OLD_PATH
+    fi
 fi
 
 if test ! "$EMACS"; then
@@ -96,14 +94,10 @@ else
     . ~/system-config/.bashrc-no-emacs
 fi
 
-
-export HISTCONTROL="ignoredups"
-export HISTIGNORE="bg:fg:exit"
-export HISTSIZE=2000
-export HISTFILESIZE=2000
 if test "$USER"x = x; then
     export USER=`whoami`
 fi
+
 export USE_CCACHE=1
 export MONO_PATH=~/.mono/MimeKit.1.0.3.0/lib/net40
 
@@ -111,13 +105,6 @@ if test -e ~/system-config/.by-user/$USER/.bashrc; then
     . ~/system-config/.by-user/$USER/.bashrc
 fi
 
-alias svngdiff='svn diff --diff-cmd ~/system-config/bin/svntkdiff'
-alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
-alias dir='ls --color=auto --format=vertical --show-control-chars'
-alias vdir='ls --color=auto --format=long --show-control-chars'
-alias ll='ls -l --show-control-chars'                              # long list
-alias la='ls -A --show-control-chars'                              # all but . and ..
-alias l='ls -CFl --show-control-chars --block-size=1'                              #
 case $- in
     *i*) . ~/system-config/.bashrc-interactive;;
 esac
@@ -136,5 +123,4 @@ do
     fi
 done
 export SYSTEM_CONFIG_INITED=true
-export STAY_OFF_MY_LAWN=true
-. ~/system-config/.bashrc-aliases
+export STAY_OFF_MY_LAWN=true # for android build/envsetup.sh

@@ -284,8 +284,10 @@ print $_ . "\n";
                 . atexit bash -c "
                     old_rev=$(git log -1 --pretty=%H HEAD);
                     if git-any-changes -r \$old_rev; then
-                        hint '你从远程服务器拉取了代码，请考虑 review 一下远程服务器上的改动。如果不想 review，请直接 Ctrl-C 退出';
-                        git-interactive-add -r \$old_rev
+                        if test '$SC_ACCOUNT_USER' = bhj; then
+                            hint '你从远程服务器拉取了代码，请考虑 review 一下远程服务器上的改动。如果不想 review，请直接 Ctrl-C 退出';
+                            git-interactive-add -r \$old_rev
+                        fi
                     fi"
             fi
            if test $# = 1; then

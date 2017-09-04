@@ -160,10 +160,10 @@ for x in "$@" $(
     declare -A gia_options
     gia_options[yes]="yes     (accept this change, do git add)"
     gia_options[no]="no      (do not accept this change, do nothing)"
-    gia_options[discard]="discard (something is wrong with this change, throw it away)"
-    gia_options[diff]="diff    (mmm, not sure, show diff again?)"
-    gia_options[meld]="meld    (mmm, want to see the diff with meld)"
-    gia_options[delete]="delete  (delete this file, dangerous!)"
+    gia_options[discard]="discard (discard the change)"
+    gia_options[diff]="diff    (show diff again)"
+    gia_options[meld]="meld    (check the patch with meld)"
+    gia_options[delete]="delete  (delete this file)"
     gia_options[edit]="edit    (open it with my editor)"
     while true; do
         out=$(select-args -p "What do you want to do with this file?" \
@@ -174,8 +174,7 @@ for x in "$@" $(
                           "${gia_options[meld]}" \
                           "${gia_options[delete]}" \
                           "${gia_options[edit]}" \
-                          "@       $PWD/$x " \
-                          "@       You can also type some comments, and end it with ! to do git add with comments."
+                          "@       $PWD/$x "
            );
         if test "$out" = "${gia_options[diff]}"; then
             git-diff "$x";

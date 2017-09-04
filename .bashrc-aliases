@@ -9,6 +9,14 @@ alias umount='command sudo umount'
 alias mplayer='mplayer -heartbeat-cmd "xscreensaver-command -deactivate"'
 alias adb=my-adb
 alias mplayer=mplayer.x
+alias svngdiff='svn diff --diff-cmd ~/system-config/bin/svntkdiff'
+alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
+alias dir='ls --color=auto --format=vertical --show-control-chars'
+alias vdir='ls --color=auto --format=long --show-control-chars'
+alias ll='ls -l --show-control-chars'                              # long list
+alias la='ls -A --show-control-chars'                              # all but . and ..
+alias l='ls -CFl --show-control-chars --block-size=1'                              #
+
 
 jcd() {
     # http://build1:8080/job/Daily-surabaya-dev-colombo-Vuserdebug-Onone/6/console
@@ -24,43 +32,6 @@ mount() {
         sudo mount "$@"
     fi
 }
-
-my-lunch () {
-    alias lunch=my-lunch
-    if (unalias lunch; test "$(type -t lunch)" = function); then
-        (
-            unalias lunch
-            android-set-product "$@"
-        )
-        reset-env "alias lunch=my-lunch"
-        unalias lunch
-        if test "$#" != 0; then
-            lunch "$@"
-        else
-            buildspec=$(lookup-file -e buildspec.mk || true)
-            if test -e "$buildspec"; then
-                local product=$(cat "$buildspec" | perl -ne 'print $1 if m,^\QTARGET_PRODUCT?=\E(.*),')
-                local variant=$(cat "$buildspec" | perl -ne 'print $1 if m,^\QTARGET_BUILD_VARIANT?=\E(.*),')
-            fi
-            if test "$product" -a "$variant"; then
-                lunch "$product"-"$variant"
-            fi
-        fi
-        alias lunch=my-lunch
-    elif test "$(type -a -t lunch)" = alias; then
-        (
-            unalias lunch
-            android-set-product "$@"
-        )
-    else
-        reset-env "alias lunch=my-lunch"
-        unalias lunch
-        lunch "$@"
-        alias lunch=my-lunch
-    fi
-}
-
-alias lunch=my-lunch
 
 if test -e ~/.config/system-config/vim-is-evil; then
     alias vi=e

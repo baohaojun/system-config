@@ -1,6 +1,5 @@
 #!/bin/bash
 
-. ~/system-config/.bashrc-public
 #search for AndroidManifest.xml
 function apkgname() {
 
