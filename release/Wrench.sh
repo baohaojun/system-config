@@ -4,12 +4,13 @@ memory=$(free | grep ^Mem: | pn 2)
 ulimit -v $((memory / 2))
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ttest kkill 1one-phone
+# generate-getopt ttest kkill 1one-phone ddo-debug
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o k1th \
-              --long kill,one-phone,test,help,no-kill,no-one-phone,no-test \
-              -n $(basename -- $0) -- "$@")
+TEMP=$( getopt -o dk1th \
+               --long do-debug,kill,one-phone,test,help,no-do-debug,no-kill,no-one-phone,no-test \
+               -n $(basename -- $0) -- "$@")
+do_debug=false
 kill=false
 one_phone=false
 test=false
@@ -17,6 +18,14 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -d|--do-debug|--no-do-debug)
+            if test "$1" = --no-do-debug; then
+                do_debug=false
+            else
+                do_debug=true
+            fi
+            shift
+            ;;
         -k|--kill|--no-kill)
             if test "$1" = --no-kill; then
                 kill=false
@@ -43,9 +52,12 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]do-debug'
+            echo
             printf %06s '-k, '
             printf %-24s '--[no-]kill'
             echo
@@ -95,6 +107,10 @@ export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 
 
 export RUNNING_WRENCH=true
+
+if test "$do_debug" = true; then
+    exec gdb --args Wrench
+fi
 
 if ! [[ $LANG =~ en_US ]]; then
     exec en_US Wrench.sh "$@"
