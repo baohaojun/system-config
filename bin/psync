@@ -1,4 +1,126 @@
 #!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt rreverse @symlink Sgit-st \
+    # t:target-dir-alias '?另一种指定 --target-dir 的方法' \
+    # d:target-dir @delete cchecksum
+## end code-generator
+## start generated code
+TEMP=$( getopt -o cSrd:t:h \
+               --long checksum,delete,git-st,reverse,symlink,target-dir:,target-dir-alias:,help,no-checksum,no-delete,no-git-st,no-reverse,no-symlink \
+               -n $(basename -- $0) -- "$@")
+checksum=false
+delete=false
+git_st=false
+reverse=false
+symlink=false
+target_dir=
+target_dir_alias=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -c|--checksum|--no-checksum)
+            if test "$1" = --no-checksum; then
+                checksum=false
+            else
+                checksum=true
+            fi
+            shift
+            ;;
+        --delete|--no-delete)
+            if test "$1" = --no-delete; then
+                delete=false
+            else
+                delete=true
+            fi
+            shift
+            ;;
+        -S|--git-st|--no-git-st)
+            if test "$1" = --no-git-st; then
+                git_st=false
+            else
+                git_st=true
+            fi
+            shift
+            ;;
+        -r|--reverse|--no-reverse)
+            if test "$1" = --no-reverse; then
+                reverse=false
+            else
+                reverse=true
+            fi
+            shift
+            ;;
+        --symlink|--no-symlink)
+            if test "$1" = --no-symlink; then
+                symlink=false
+            else
+                symlink=true
+            fi
+            shift
+            ;;
+        -d|--target-dir)
+            target_dir=$2
+            shift 2
+            ;;
+        -t|--target-dir-alias)
+            target_dir_alias=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--[no-]checksum'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]delete'
+            echo
+            printf %06s '-S, '
+            printf %-24s '--[no-]git-st'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]reverse'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]symlink'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--target-dir=TARGET_DIR'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--target-dir-alias=TARGET_DIR_ALIAS'
+            echo
+            printf "%30s" ""
+            echo '另一种指定 --target-dir 的方法'
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+. .set-true-val checksum --checksum
+. .set-true-val symlink -L
+. .set-true-val git_st --files-from=-
+. .set-true-val delete --delete
+
+if test -z "$target_dir" -a "$target_dir_alias"; then
+    target_dir=$target_dir_alias
+fi
 
 if is-in-emacs; then
     if test $# = 0; then
@@ -10,7 +132,6 @@ if is-in-emacs; then
         exit
     fi
 fi
-
 
 if test $# = 0 -o $# = 1; then
     cd ~/system-config/
@@ -50,60 +171,6 @@ if test $# = 0 -o $# = 1; then
     do_x
     exit
 fi
-
-TEMP=$(getopt -o t:SrdcL --long target-dir:,git-st,reverse,delete,checksum -n $(basename $0) -- "$@")
-reverse=false
-symlink=
-git_st=
-target_dir=$(up .)
-delete=
-checksum=
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-        -r|--reverse)
-            reverse=true
-            shift 1
-            ;;
-        -L)
-            symlink=-L
-            shift 1
-            ;;
-        -S|--git-st)
-            git_st='--files-from=-'
-            shift 1
-            ;;
-        -t|--target-dir)
-            target_dir=$2
-            shift 2
-            ;;
-        -d|--delete)
-            delete=--delete
-            shift 1
-            ;;
-        -c|--checksum)
-            checksum=--checksum
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error"
-            ;;
-    esac
-done
-
-if test "$1" = -r; then
-    reverse=true
-    shift
-fi
-
-function die() {
-    echo Error: "$@"
-    exit -1
-}
 
 host=$1
 shift

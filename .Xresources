@@ -20,7 +20,7 @@ xterm*faceName:DejaVu Sans Mono:antialias=True:pixelsize=20
 xterm*boldFont:Sans:style=Bold:pixelsize=20
 xterm*faceNameDoublesize:WenQuanYi Zen Hei:antialias=True:pixelsize=20
 xterm*xftAntialias: true
-xterm.cjkWidth:false
+xterm.cjkWidth: true
 XTerm*preeditType: Root
 XTerm*allowSendEvents: true
 

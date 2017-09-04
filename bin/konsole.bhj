@@ -1,7 +1,13 @@
 #!/bin/bash
 # konsole --profile myscr --hide-menubar --hide-tabbar&
-if which xterm >/dev/null 2>&1; then
+
+if test -e ~/src/github/private-config/etc/baohaojun; then
     xterm -e myscr "$@" &
+    exit
+fi
+
+if test -e ~/.config/system-config/term-program; then
+    ~/.config/system-config/term-program "$@"
 elif which lxterminal >/dev/null 2>&1; then
     lxterminal -e myscr&
     sawfish-wait-window -w Lxterminal
@@ -10,4 +16,6 @@ elif which gnome-terminal >/dev/null 2>&1; then
     gnome-terminal -e myscr
 elif which konsole >/dev/null 2>&1; then
     konsole -e myscr
+else
+    xterm -e myscr
 fi

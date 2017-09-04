@@ -1,0 +1,8 @@
+#!/bin/bash
+eval "
+if test \"\$$1\" = true; then
+   $1=$2
+else
+   $1=
+fi
+"
