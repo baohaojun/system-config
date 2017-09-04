@@ -220,7 +220,13 @@ branch=$(cat $tmpf | grep 'branch: '|pn 2)
 if ! lookup-file -e .repo >/dev/null 2>&1 &&
        ! lookup-file -e .git >/dev/null 2>&1 &&
        test -z "$REPO_REMOTE"; then
-    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/gerrit-fetch-review/$(basename $PROJECT) -b "$branch"
+    git-get -u $GERRIT_HOST:$PROJECT -d ~/src/gerrit-fetch-review/$(basename $PROJECT) -b "$branch" \
+            $(
+        if test -e ~/src/android-mirror/${PROJECT%.git}.git; then
+            echo --reference ~/src/android-mirror/${PROJECT%.git}.git
+        fi
+            )
+
     git_dir=~/src/gerrit-fetch-review/$(basename $PROJECT)
 else
     git_dir=$(my-rfa 'if test "$(repo-abs-path)" = /$PROJECT; then pwd; fi')
