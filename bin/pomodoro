@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if test -e ~/.config/system-config/pomodoro.task; then
+    pomodoro_task=$(
+        cat ~/.config/system-config/pomodoro.task
+                 )
+fi
+
+ans=$(sawfish-ask-for-input -p "What is your next pomodoro? (current is $pomodoro_task)")
+
+if test "$ans"; then
+    pomodoro_task=$ans
+    echo "$pomodoro_task" > ~/.config/system-config/pomodoro.task
+fi
+if test -z "$pomodoro_task"; then
+    bhj-notify hello "pomodoro task name must not be empty"
+    pomodoro_task=unknown
+fi
+
+tmux set status-right "pomodoro: $pomodoro_task@$(date +%H:%M)"
+alarm 25m "$pomodoro_task"
