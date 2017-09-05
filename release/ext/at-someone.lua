@@ -2,7 +2,6 @@
 -- 在QQ、微信等聊天时想@一下某人
 
 wrench_post("@", 'manual-post')
-search = select_args_with_history("at-someone", "你想@谁？", " ", "")
 top_window = adb_top_window()
 
 local wait_for_input = false
@@ -13,6 +12,8 @@ elseif top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMe
    adb_event"adb-tap 489 288"
    wait_for_input = 'qq'
 end
+
+search = select_args_with_history("at-someone", "你想@谁？", " ", "")
 
 if wait_for_input then
    if not wait_input_target_n_ok(5, top_window) then
