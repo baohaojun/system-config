@@ -1,3 +1,4 @@
+#!/usr/bin/env Wrench.sh
 -- 在QQ、微信等聊天时想@一下某人
 
 wrench_post("@", 'manual-post')

@@ -1,3 +1,4 @@
+#!/usr/bin/env Wrench.sh
 -- 重置手机 VNC 连接模式（演示、竖屏高清、横屏高清）
 
 local mode = select_args{"你希望采用什么模式连接手机VNC？", "演示模式", "竖屏高清", "横屏高清"}

@@ -1,3 +1,4 @@
+#!/usr/bin/env Wrench.sh
 -- 在微博上关注小扳手作者包昊军（不一定成功）
 
 local function wrench_follow_me()

@@ -1,3 +1,4 @@
+#!/usr/bin/env Wrench.sh
 -- 换个 adb 设备重新连接（如果有多个设备的话）
 
 local devices = adb_devices()

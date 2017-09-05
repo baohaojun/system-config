@@ -1,3 +1,4 @@
+#!/usr/bin/env Wrench.sh
 -- 打开微博扫码功能
 for i = 1, 20 do
    adb_start_activity([[com.sina.weibo/com.sina.weibo.MainTabActivity]])

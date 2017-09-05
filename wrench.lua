@@ -2153,7 +2153,7 @@ start_or_stop_recording = function()
          end
          local start_app = adb_top_window()
          local record_file = io.open(m_is_recording, "a")
-
+         record_file:wrench("#!/usr/bin/env Wrench.sh\n")
          record_file:write(("-- %s\n\n"):format(headString))
          record_file:write(('M.start_app"%s"\n\n'):format(start_app))
          record_file:close()

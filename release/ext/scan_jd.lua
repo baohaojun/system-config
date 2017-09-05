@@ -1,3 +1,4 @@
+#!/usr/bin/env Wrench.sh
 -- 打开京东 App 扫描二维码
 start_app("com.jingdong.app.mall/com.jingdong.app.mall.main.MainActivity")
 
