@@ -34,6 +34,7 @@ map['com.android.mms/com.android.mms.ui.ComposeMessageActivity'] = 'weixin-confi
 map['com.android.mms/com.android.mms.ui.ConversationList'] = 'manual-post'
 map['com.android.settings/com.android.settings.applications.ManageApplicationsActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.MainSettings'] = 'manual-post'
+map['com.android.settings/com.android.settings.MasterClearActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.search.SearchActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.SubSettings'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.AdvancedAccessPointSettingsActivity'] = 'manual-post'
