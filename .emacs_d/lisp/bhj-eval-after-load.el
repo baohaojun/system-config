@@ -20,6 +20,11 @@
                  '(("#[0-9a-fA-F]\\{2\\}\\([0-9a-fA-F]\\{6\\}\\)<"
                     (1 (rainbow-colorize-hexadecimal-without-sharp)))))))
 
+(eval-after-load 'thingatpt
+  '(progn
+     (setq thing-at-point-url-path-regexp
+           (replace-regexp-in-string "\t\n " "\t\n  " thing-at-point-url-path-regexp))))
+
 (eval-after-load 'org
   '(progn
      (defadvice org-make-link-regexps (after bhj/org-link-tweak activate)
