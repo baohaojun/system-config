@@ -13,6 +13,13 @@ for x in PS1 PROMPT_COMMAND; do
     unset "$x"
 done
 
+if [ "`id -u`" -eq 0 ]; then
+  PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+else
+  PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
+fi
+export PATH
+
 . /etc/profile
 for f in ~/.bash_profile ~/.bash_login ~/.profile; do
     if test -e "$f"; then
