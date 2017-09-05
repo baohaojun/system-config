@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: tangle
+# key: tangle
+# --
+:tangle ${1:`(buffer-file-name)`.sh} :comments link :shebang "#!/bin/bash" :noweb yes

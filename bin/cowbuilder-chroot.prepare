@@ -7,9 +7,14 @@ apt-get install -y ssh vim sudo bash-completion locales man git dput fakeroot lv
 apt-get install -y software-properties-common || apt-get install python-software-properties
 apt-get install -y linux-image-generic || true
 apt-get install -y console-setup tasksel rsync
-echo en_US.UTF-8 UTF-8 > /etc/locale.gen
+(
+    echo en_US.UTF-8 UTF-8
+    echo ja_JP.UTF-8 UTF-8
+) > /etc/locale.gen
 locale-gen en_US.UTF-8
+locale-gen ja_JP.UTF-8
 
 adduser bhj || true
 usermod -a -G sudo bhj
+mv /sbin/initctl /sbin/initctl.bak || true # make sure sshd restart ok
 find ~bhj -maxdepth 2 | xargs chown bhj\.||true
