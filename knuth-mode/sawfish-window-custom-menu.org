@@ -30,8 +30,14 @@
      declare -A window_operations
 
      for script in ~/system-config/etc/sawfish-window-custom-menu/$top_window/*; do
-         if test -e "$script"; then
+         if test -f "$script"; then
              window_operations[$top_window-$(basename "$script")]=script
+         elif test -d "$script"; then
+             for script in $script/*; do
+                 if test -f "$script"; then
+                     window_operations[$top_window-$(basename "$script")]=$script
+                 fi
+             done
          fi
      done
 
@@ -77,6 +83,8 @@
          $operation
      elif test "$func_or_key" = script; then
          bash ~/system-config/etc/sawfish-window-custom-menu/$top_window/$operation
+     elif test -f "$func_or_key" -a "${func_or_key:0:1}" = /; then
+         "$func_or_key"
      elif test "$func_or_key"; then
           for x in ${window_operations[$top_window-$operation]}; do
               sawfish-send-focused-window-event "$x"
@@ -95,4 +103,3 @@
    #+END_SRC
 
    #+results: the-ultimate-script
-
