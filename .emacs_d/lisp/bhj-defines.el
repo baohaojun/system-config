@@ -700,6 +700,11 @@ might be bad."
   )
 
 ;;;###autoload
+(defun buffer-file-localname (&optional buffer)
+  (or (file-remote-p (buffer-file-name buffer) 'localname)
+      (buffer-file-name buffer)))
+
+;;;###autoload
 (defun sc--after-save ()
   "Mark git need merge for system-config."
   (interactive)
@@ -707,7 +712,11 @@ might be bad."
     (make-local-variable 'sc--git-directory)
     (setq sc--git-directory (shell-command-to-string "lookup-file -e .git/")))
   (unless (string= sc--git-directory "")
-    (shell-command-to-string (format "cd %s && touch sc-not-merged" (shell-quote-argument sc--git-directory)))))
+    (shell-command-to-string
+     (format
+      "cd %s && nohup sc--after-save %s >/dev/null 2>&1&"
+      (shell-quote-argument sc--git-directory)
+      (shell-quote-argument (buffer-file-localname))))))
 
 ;;;###autoload
 (defun indent-same-space-as-prev-line (n-prev &optional from-bol)
