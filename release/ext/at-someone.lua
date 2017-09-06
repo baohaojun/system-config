@@ -8,12 +8,14 @@ local wait_for_input = false
 if top_window == "com.tencent.mm/com.tencent.mm.ui.chatting.AtSomeoneUI" then
    tap_top_right()
    wait_for_input = 'weixin'
-elseif top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity" then
-   adb_event"adb-tap 489 288"
-   wait_for_input = 'qq'
 end
 
 search = select_args_with_history("at-someone", "你想@谁？", " ", "")
+
+if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity" then
+   adb_event"adb-tap 489 288"
+   wait_for_input = 'qq'
+end
 
 if wait_for_input then
    if not wait_input_target_n_ok(5, top_window) then
