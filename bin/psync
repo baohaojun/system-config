@@ -118,6 +118,10 @@ done
 . .set-true-val git_st --files-from=-
 . .set-true-val delete --delete
 
+if [[ "$target_dir" =~ $HOME/ ]]; then
+    target_dir=\~/${target_dir#$HOME/}
+fi
+
 if test -z "$target_dir" -a "$target_dir_alias"; then
     target_dir=$target_dir_alias
 fi
