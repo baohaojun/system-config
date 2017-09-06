@@ -700,15 +700,14 @@ might be bad."
   )
 
 ;;;###autoload
-(defun sc--mark-need-merge ()
+(defun sc--after-save ()
   "Mark git need merge for system-config."
   (interactive)
-  (when vc-mode
-    (unless sc--git-directory
-      (make-local-variable 'sc--git-directory)
-      (setq sc--git-directory (shell-command-to-string "lookup-file -e .git/")))
-    (unless (string= sc--git-directory "")
-      (shell-command-to-string (format "cd %s && touch sc-not-merged" (shell-quote-argument sc--git-directory))))))
+  (unless sc--git-directory
+    (make-local-variable 'sc--git-directory)
+    (setq sc--git-directory (shell-command-to-string "lookup-file -e .git/")))
+  (unless (string= sc--git-directory "")
+    (shell-command-to-string (format "cd %s && touch sc-not-merged" (shell-quote-argument sc--git-directory)))))
 
 ;;;###autoload
 (defun indent-same-space-as-prev-line (n-prev &optional from-bol)

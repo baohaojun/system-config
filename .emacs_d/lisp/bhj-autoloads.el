@@ -227,18 +227,6 @@ get imports if java-mode
 
 ;;;***
 
-;;;### (autoloads nil "../../../src/github/twittering-mode/twittering-mode"
-;;;;;;  "../../../src/github/twittering-mode/twittering-mode.el"
-;;;;;;  (21127 30529 662546 17000))
-;;; Generated autoloads from ../../../src/github/twittering-mode/twittering-mode.el
-
-(autoload 'twit "../../../src/github/twittering-mode/twittering-mode" "\
-Start twittering-mode.
-
-\(fn)" t nil)
-
-;;;***
-
 ;;;### (autoloads nil "../../../src/github/weibo.emacs/weibo" "../../../src/github/weibo.emacs/weibo.el"
 ;;;;;;  (22926 30368 24403 465000))
 ;;; Generated autoloads from ../../../src/github/weibo.emacs/weibo.el
@@ -251,7 +239,7 @@ Start twittering-mode.
 ;;;***
 
 ;;;### (autoloads nil "../skeleton-complete/bbyac" "../skeleton-complete/bbyac.el"
-;;;;;;  (22926 36780 679730 327000))
+;;;;;;  (22928 65349 914363 65000))
 ;;; Generated autoloads from ../skeleton-complete/bbyac.el
 
 (autoload 'bbyac-mode "../skeleton-complete/bbyac" "\
@@ -283,8 +271,7 @@ See `bbyac-mode' for more information on Bbyac mode.
 
 ;;;***
 
-;;;### (autoloads nil "ahk-mode" "ahk-mode.el" (21105 487 946563
-;;;;;;  464000))
+;;;### (autoloads nil "ahk-mode" "ahk-mode.el" (21149 59837 0 0))
 ;;; Generated autoloads from ahk-mode.el
 
 (add-to-list 'auto-mode-alist '("\\.ahk$" . ahk-mode))
@@ -401,8 +388,8 @@ See `bbyac-mode' for more information on Bbyac mode.
 
 ;;;***
 
-;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (22926 30334
-;;;;;;  741359 444000))
+;;;### (autoloads nil "bhj-defines" "bhj-defines.el" (22959 37186
+;;;;;;  173776 344000))
 ;;; Generated autoloads from bhj-defines.el
 
 (autoload 'cleanup-buffer-safe "bhj-defines" "\
@@ -572,7 +559,7 @@ Major mode for output from java back trace.
 
 \(fn)" t nil)
 
-(autoload 'sc--mark-need-merge "bhj-defines" "\
+(autoload 'sc--after-save "bhj-defines" "\
 Mark git need merge for system-config.
 
 \(fn)" t nil)
@@ -704,7 +691,7 @@ lookup the current word (or region) in dictionary
 (autoload 'bhj-do-search "bhj-defines" "\
 lookup the current word (or region) in dictionary
 
-\(fn WORD)" t nil)
+\(fn &optional PROGRAM WORD)" t nil)
 
 (autoload 'bhj-open-android-doc-on-java-buffer "bhj-defines" "\
 
@@ -783,8 +770,8 @@ Pop back to where ajoke was last invoked.
 
 ;;;***
 
-;;;### (autoloads nil "bhj-grep" "bhj-grep.el" (22291 25036 565117
-;;;;;;  73000))
+;;;### (autoloads nil "bhj-grep" "bhj-grep.el" (22292 15016 170221
+;;;;;;  631000))
 ;;; Generated autoloads from bhj-grep.el
 
 (autoload 'bhj-grep-tag-default "bhj-grep" "\
@@ -980,8 +967,7 @@ Find Linkd wiki page named PAGE-NAME.
 
 ;;;***
 
-;;;### (autoloads nil "moy-bbdb" "moy-bbdb.el" (21033 52657 866743
-;;;;;;  951000))
+;;;### (autoloads nil "moy-bbdb" "moy-bbdb.el" (21037 52291 0 0))
 ;;; Generated autoloads from moy-bbdb.el
 
 (autoload 'bbdb/send-ignore-most-messages-hook "moy-bbdb" "\
@@ -1015,8 +1001,7 @@ Parse headers of outgoing message, insert the addresses of the
 
 ;;;***
 
-;;;### (autoloads nil "nsi-mode" "nsi-mode.el" (20874 19848 307221
-;;;;;;  889000))
+;;;### (autoloads nil "nsi-mode" "nsi-mode.el" (20882 64332 0 0))
 ;;; Generated autoloads from nsi-mode.el
 
 (autoload 'nsi-mode "nsi-mode" "\
@@ -1033,11 +1018,11 @@ COMMANDS
 \\{nsi-mode-map}
 VARIABLES
 
-nsi-indent-offset		indentation increment
-nsi-block-comment-prefix		comment string used by `comment-region'
-nsi-nsi-command		shell command to invoke Nsi interpreter
-nsi-temp-directory		directory used for temp files (if needed)
-nsi-beep-if-tab-change		ring the bell if `tab-width' is changed
+nsi-indent-offset               indentation increment
+nsi-block-comment-prefix                comment string used by `comment-region'
+nsi-nsi-command         shell command to invoke Nsi interpreter
+nsi-temp-directory              directory used for temp files (if needed)
+nsi-beep-if-tab-change          ring the bell if `tab-width' is changed
 
 \(fn)" t nil)
 
@@ -1083,8 +1068,8 @@ filter.
 
 ;;;***
 
-;;;### (autoloads nil "org-mime" "org-mime.el" (21799 46161 841928
-;;;;;;  385000))
+;;;### (autoloads nil "org-mime" "org-mime.el" (21799 49188 249997
+;;;;;;  320000))
 ;;; Generated autoloads from org-mime.el
 
 (autoload 'org-mime-htmlize "org-mime" "\
@@ -1110,8 +1095,8 @@ Create an email buffer containing the current org-mode subtree
 
 ;;;***
 
-;;;### (autoloads nil "ox-freemind" "ox-freemind.el" (21122 10352
-;;;;;;  596297 883000))
+;;;### (autoloads nil "ox-freemind" "ox-freemind.el" (21149 59837
+;;;;;;  0 0))
 ;;; Generated autoloads from ox-freemind.el
 
 (autoload 'org-freemind-export-to-freemind "ox-freemind" "\
@@ -1156,7 +1141,7 @@ A major mode for editing Qt-pro files.
 
 ;;;***
 
-;;;### (autoloads nil "revive" "revive.el" (20874 19848 339221 890000))
+;;;### (autoloads nil "revive" "revive.el" (21767 34952 954404 72000))
 ;;; Generated autoloads from revive.el
 
 (autoload 'current-window-configuration-printable "revive" "\
@@ -1222,17 +1207,6 @@ Turn off Screen Lines minor mode for the current buffer.
 
 ;;;***
 
-;;;### (autoloads nil "twittering-mode" "twittering-mode.el" (20874
-;;;;;;  19848 339221 890000))
-;;; Generated autoloads from twittering-mode.el
-
-(autoload 'twit "twittering-mode" "\
-Start twittering-mode.
-
-\(fn)" t nil)
-
-;;;***
-
 ;;;### (autoloads nil "windows" "windows.el" (20874 19848 339221
 ;;;;;;  890000))
 ;;; Generated autoloads from windows.el
@@ -1290,8 +1264,8 @@ Non-nil for optional argument PRESERVE keeps current buffers.
 ;;;;;;  "emacs-25.el" "grep-buffers.el" "guess-offset.el" "moinmoin-mode.el"
 ;;;;;;  "my-erc-config.el" "org-mime-autoloads.el" "org-mime-pkg.el"
 ;;;;;;  "pink-bliss.el" "point-stack.el" "qmake.el" "sdim.el" "soap-client.el"
-;;;;;;  "soap-inspect.el" "subst2-ksc.el" "w32-symlinks.el") (22922
-;;;;;;  65337 803088 88000))
+;;;;;;  "soap-inspect.el" "subst2-ksc.el" "w32-symlinks.el") (22958
+;;;;;;  15634 37163 635000))
 
 ;;;***
 

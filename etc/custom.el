@@ -4,6 +4,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Man-width 80)
+ '(after-save-hook
+   (quote
+    (sc--after-save sanityinc/set-mode-for-new-scripts executable-make-buffer-file-executable-if-script-p)))
  '(ahk-syntax-directory "~/system-config/doc/ahk/Syntax/")
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
@@ -18,7 +21,7 @@
  '(bbyac-max-chars 80)
  '(before-save-hook
    (quote
-    (sc--mark-need-merge confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
+    (confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(compilation-message-face (quote default))
