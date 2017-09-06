@@ -279,6 +279,9 @@ for diff_file in $diffs; do
             fi
         else
             if test $do_here = false -a "$target_branch"; then
+                if [[ "$target_branch" =~ ^$(repo-remote)/ ]]; then # dirty hack
+                    target_branch=remotes/$target_branch
+                fi
                 if [[ "$target_branch" =~ ^remotes/ ]]; then
                     local_branch=$(
                         echo $target_branch | perl -npe 's!^(remotes/)?.*?/!!'
