@@ -25,7 +25,10 @@ b0=$(basename $0)
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -p gpr -e -H '"使用方法：$b0 [OPTIONS]... REVIEWERS...\n往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）\n"' \
+# generate-getopt -p gpr -e -H '"使用方法：$b0 [OPTIONS]... REVIEWERS...
+# 往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）
+#
+# 如果 push 一个以前已经 push 过的 patch，Gerrit 会拒绝接受（出错信息：no new changes），但如果你有指定 Reviewers 的话，这个命令会把每个 Reviewer 都添加上去。"' \
     # r:push-rev=HEAD '?要 push 哪个 revision，默认是 HEAD' \
     # t:patch-topic '?要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review' \
     # Rskip-local-review '?提交前不要做 local review（鼓励做 local review！）' \
@@ -91,7 +94,10 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e "使用方法：$b0 [OPTIONS]... REVIEWERS...\n往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）\n"
+            echo -e "使用方法：$b0 [OPTIONS]... REVIEWERS...
+往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）
+
+如果 push 一个以前已经 push 过的 patch，Gerrit 会拒绝接受（出错信息：no new changes），但如果你有指定 Reviewers 的话，这个命令会把每个 Reviewer 都添加上去。"
             echo
             echo Options and arguments:
             printf "%06s" " "
@@ -144,7 +150,7 @@ export gpr_to_branch
 ## end generated code
 
 if test -d .repo; then
-    hint 看起来你想要 push 所有有改动的 repo，这个需要你选择一下要 push 哪些 repo。
+    hint "看起来你想要 push 所有有改动的 repo，这个需要你选择一下要 push 哪些 repo。"
     declare -A all_history_projects
     if ( test -e ~/.config/gerrit-push-review.projects && . ~/.config/gerrit-push-review.projects); then
         . ~/.config/gerrit-push-review.projects
@@ -227,7 +233,7 @@ if test -d .repo; then
                                    $all_projects
                     )
                    if test ! -d "$r"/.git; then
-                       die "你输入的目录 $r 不是一个 git 仓库"
+                       die "你输入的目录 $r 不是一个 git 仓库"
                    fi
 
                    all_history_projects[$r]=true
@@ -236,7 +242,7 @@ if test -d .repo; then
                            "${all_changed_projects[@]}"
                            $r
                        )
-                   elif yes-or-no-p -y "你选的这个仓库 $r 没有需要提交的改动。请问下次全局 push 的时候是否默认检查这个仓库？"; then
+                   elif yes-or-no-p -y "你选的这个仓库 $r 没有需要提交的改动。请问下次全局 push 的时候是否默认检查这个仓库？"; then
                        true
                    else
                        unset all_history_projects[$r]
@@ -252,7 +258,7 @@ if test -d .repo; then
         for p in "${all_changed_projects[@]}"; do
             (
                 cd "$p"
-                if yes-or-no-p -y "请确认是否要提交 $(ap) 这个仓储（如果不能马上确认，请自己再开一个终端窗口查看详细改动）"; then
+                if yes-or-no-p -y "请确认是否要提交 $(ap) 这个仓储（如果不能马上确认，请自己再开一个终端窗口查看详细改动）"; then
                    gerrit-push-review "$@"
                 fi
             ) || true
@@ -261,16 +267,16 @@ if test -d .repo; then
     exit
 fi
 
-if git status -s | grep -q . && yes-or-no-p -y "你的git仓储还有改动，是否要退出？"; then
+if git status -s | grep -q . && yes-or-no-p -y "你的 git 仓储还有改动，是否要退出？"; then
     echo
-    echo 以下是尚未提交的改动，请先提交再重试 $0 "$@"
+    echo "以下是尚未提交的改动，请先提交再重试 $0:" "$@"
     git status -s
     exit
 fi
 
 function confirm-with-repo() {
-    if ! yes-or-no-p -y "根据repo manifest.xml计算出你的remote是 $(repo-remote) ，远程分支是 $(repo-branch)，确认？"; then
-        die "不知道如何自动帮你提交review，请自己确定远程名、分支名，然后运行 git push 远程名 HEAD:refs/for/分支名"
+    if ! yes-or-no-p -y "根据 repo manifest.xml 计算出你的 remote 是 $(repo-remote) ，远程分支是 $(repo-branch)，确认？"; then
+        die "不知道如何自动帮你提交 review，请自己确定远程名、分支名，然后运行 git push 远程名 HEAD:refs/for/分支名"
     fi
 }
 
@@ -283,7 +289,7 @@ else
         merge_head=$(git config branch.$head_branch.merge | perl -npe 's!^refs/heads/!!' || true)
         if test -z "$merge_head"; then
             if test "$(repo-remote)" -a "$(repo-branch)"; then
-                hint "你的本地分支 $head_branch 没有对应的远程服务器分支，但你的 git 仓储是一个 repo 仓储，将使用 repo manifest.xml 里提供的信息决定要 push 的远程目标分支名称"
+                hint "你的本地分支 $head_branch 没有对应的远程服务器分支，但你的 git 仓储是一个 repo 仓储，将使用 repo manifest.xml 里提供的信息决定要 push 的远程目标分支名称"
                 head_branch=
                 merge_head=
             fi
@@ -293,7 +299,7 @@ else
             head_branch=$merge_head
         fi
     fi
-    if test "$head_branch" && yes-or-no-p -y "你的git设置了远程跟踪分支 $head_branch ，是否要push到此分支？"; then
+    if test "$head_branch" && yes-or-no-p -y "你的 git 设置了远程跟踪分支 $head_branch ，是否要 push 到此分支？"; then
         export gpr_to_branch=$head_branch
         export REPO_BRANCH=$gpr_to_branch
         if test -z "$REPO_REMOTE" -a -z "$merge_head"; then
@@ -305,7 +311,7 @@ else
 fi
 
 if test "$gpr_repo_remote" -a "$REPO_REMOTE" -a "$gpr_repo_remote" != "$REPO_REMOTE"; then
-    die "你指定了 --repo-remote=$gpr_repo_remote，但跟环境变量 REPO_REMOTE ($REPO_REMOTE) 的值不一致，不知如何处理"
+    die "你指定了 --repo-remote=$gpr_repo_remote，但跟环境变量 REPO_REMOTE ($REPO_REMOTE) 的值不一致，不知如何处理"
 elif test -z "$REPO_REMOTE"; then
     export REPO_REMOTE=$gpr_repo_remote
 fi
@@ -321,7 +327,7 @@ if test $gpr_do_rebase = true; then
 fi
 
 if test $gpr_do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/dev/null 2>&1; then
-    if yes-or-no-p -y "远程有提交，需要先rebase到远程，自动处理？"; then
+    if yes-or-no-p -y "远程有提交，需要先 rebase 到远程，自动处理？"; then
         git rebase $(repo-remote-branch) ||
         die "Rebase failed"
     else
@@ -332,12 +338,12 @@ fi
 n_commits=$(git log $(repo-remote-branch)..${gpr_push_rev} --pretty=%H|wc -l)
 
 if test "$n_commits" = 0; then
-    echo 你的本地仓储没有改动需要提交到远程服务器
+    echo "你的本地仓储没有改动需要提交到远程服务器"
     exit 0
 fi
 if test "$n_commits" != 1; then
-   if ! yes-or-no-p -y "你要一次提交多个（$n_commits个）patch，确认？"; then
-       die "请确认自己是否要提交多个patch"
+   if ! yes-or-no-p -y "你要一次提交多个（$n_commits 个）patch，确认？"; then
+       die "请确认自己是否要提交多个 patch"
    fi
 fi
 
@@ -364,7 +370,7 @@ done
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
 
-if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别人review之前，要不要先自己本地review一下（加-R参数可以跳过此提示）"; then
+if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别人 review 之前，要不要先自己本地 review 一下（加 -R 参数可以跳过此提示）"; then
     (
         cd $(dirname $(lookup-file -e .git))
         FOR_REVIEW=true git-interactive-add
@@ -411,11 +417,11 @@ for try in $(seq 1 10); do
             prior_commit=$(cat ~/.cache/system-config/logs/gerrit-review.log.$$ | grep -o 'No changes between prior commit \S+' -P | pn 6)
             current_commit=$(cat ~/.cache/system-config/logs/gerrit-review.log.$$ | grep -o 'No changes between prior commit.*' -P | pn 10)
 
-            if yes-or-no-p -y "你的某个改动($current_commit)之前已经提交过gerrit review($prior_commit)，需要先rebase到那个改动上去，自动执行？"; then
+            if yes-or-no-p -y "你的某个改动($current_commit)之前已经提交过 gerrit review($prior_commit)，需要先 rebase 到那个改动上去，自动执行？"; then
                 review_ref=$(git ls-remote $(repo-remote) | grep ^$prior_commit | pn 2 | head -n 1)
                 git fetch $(repo-remote) "$review_ref"
                 if test "$(git log -1 --pretty=%h FETCH_HEAD)" != $prior_commit; then
-                    die "不知道如何获取 $prior_commit"
+                    die "不知道如何获取 $prior_commit"
                 fi
                 git rebase $prior_commit
                 continue
@@ -423,18 +429,19 @@ for try in $(seq 1 10); do
                 exit 1
             fi
         elif grep -q '(no new changes)' ~/.cache/system-config/logs/gerrit-review.log.$$; then
-            if test "${#reviewers[@]}"; then
+            if test "${#reviewers[@]}" != 0; then
                 change_id=$(gerrit-change-id)
                 for x in "${reviewers[@]}"; do
                     gerrit -- set-reviewers "$change_id" -a "$x"
                 done
-            fi || true
-            if yes-or-no-p -y "你的改动之前已经提交过gerrit review，是否继续（进行gerrit-do-review）？"; then
+                hint "你的改动之前已经提交过 gerrit review，本次 push 只帮你添加了 Reviewer（如果以前没有添加过的话）"
                 break
-            fi
+            else
+                hint "Gerrit 提示没有新的改动，你以前已经提交过这个 Review 了。如果想添加 Reviewer 的话，请重新运行此命令，并在后面添加 Reviewer Gerrit 账号名字（一般就是邮箱前缀）"
+            fi || true
         elif grep -q '(change .* closed)' ~/.cache/system-config/logs/gerrit-review.log.$$; then
             change_url=$(grep -o '(change .* closed)' ~/.cache/system-config/logs/gerrit-review.log.$$ | pn 2)
-            die "你想提交的某个改动好像已经被close掉了（比如被abandon掉了），请在此页面将其重新打开然后重试： $change_url"
+            die "你想提交的某个改动好像已经被 close 掉了（比如被 abandon 掉了），请在此页面将其重新打开然后重试：$change_url"
         else
             die gerrit-push-review 发生未知错误，请仔细阅读出错信息并尝试解决，如不能自己解决，请联系 CM
         fi

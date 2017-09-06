@@ -1,5 +1,12 @@
 #!/bin/bash
 
-for x in "$@"; do
-    gerrit -- set-reviewers $(git rev-parse HEAD) -a "$x"
-done
+hint "这条命令已经不再维护，请使用 gerrit-push-review 并加 reviewer。
+
+详情请参考 gerrit-push-review --help：
+
+$(
+    gerrit-push-review --help
+)
+"
+
+
