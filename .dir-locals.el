@@ -3,7 +3,7 @@
 
 ((c++-mode
   (flycheck-mode . nil)
-  (company-clang-arguments "-DQT_BOOTSTRAPPED"
+  (company-clang-arguments "-D__PIC__"
                            "-std=c++11"
                            "-stdlib=libc++"
                            "-I/usr/lib/llvm-3.8/include"
