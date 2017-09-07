@@ -1,7 +1,48 @@
 #!/bin/bash
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt n:wait-seconds=5
+## end code-generator
+## start generated code
+TEMP=$( getopt -o n:h \
+               --long wait-seconds:,help \
+               -n $(basename -- $0) -- "$@")
+wait_seconds=5
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -n|--wait-seconds)
+            wait_seconds=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--wait-seconds=WAIT_SECONDS'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 if test "$wait_ps"; then
     while ps.pl "$wait_ps.!wait-ps"; do
-        sleep 1
+        sleep $wait_seconds
     done
 else
     export wait_ps=$(echo "$@")
