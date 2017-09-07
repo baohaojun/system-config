@@ -1,6 +1,11 @@
 #!/bin/bash
 # konsole --profile myscr --hide-menubar --hide-tabbar&
 
+if test "$default_terminal"; then
+    $default_terminal -e myscr&
+    exit
+fi
+
 if test -e ~/src/github/private-config/etc/baohaojun; then
     xterm -e myscr "$@" &
     exit

@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 
-default_terminal=xterm
+if test "$(sawfish-top-window)" = Lxterminal; then
+    export default_terminal=lxterminal
+else
+    export default_terminal=xterm
+fi
 
 change-size() {
     if test "$1" = +; then
@@ -23,7 +27,7 @@ if test "$default_terminal" = lxterminal; then
 
     mv $file.$$ $file
     sawfish-destroy-window 'Lxterminal'
-    sleep .1
+    sleep .3
     konsole.bhj
 elif test "$default_terminal" = xterm; then
     if test ! -e ~/.config/system-config/.Xresources; then
