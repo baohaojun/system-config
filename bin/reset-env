@@ -4,11 +4,9 @@
 # set-parent-shell-env...
 
 if test $# == 0; then
-    set -- BHJ_PWD ""
-fi
-
-if test "$#" = 2; then
-    echo $1=$2 > ~/.reset-env.$$
+    echo BHJ_PWD= > ~/.reset-env.$$
+elif test "$#" = 2; then
+    echo export $1=$2 > ~/.reset-env.$$
 elif test "$#" = 1; then
     echo "$1" > ~/.reset-env.$$
 fi

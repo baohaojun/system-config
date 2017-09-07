@@ -1,6 +1,9 @@
 #!/bin/bash
 
+# [[file:~/system-config/knuth-mode/repo-cherry-find-all.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+
 set -e
+
 function die() {
     echo Error: "$@"
     exit -1
@@ -241,53 +244,67 @@ EOF
     )
 fi
 rm -f out >/dev/null 2>&1 || true
-my-rfa -j $jobs '
-    if test "$DEBUG" = true; then
-        set -x
+my-rfa -j $jobs "$(cat <<'EOFb4e84b0385f1'
+if test "$DEBUG" = true; then
+    set -x
+fi
+if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
+    exit
+fi
+TOP=$ANDROID_TOP;
+log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
+if [[ $log =~ /\.log$ ]]; then
+    echo "Error for $(ap): can not find repo path"
+    exit 1
+fi
+mkdir -p $(dirname $log);
+if test -z "$to_manifest_xml"; then
+    if test ! "$remote" -a $local_from = false ; then
+        from=$(repo-remote)/$from
     fi
-    if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
-        exit
+    if test ! "$remote" -a $local_to = false ; then
+        to=$(repo-remote)/$to
     fi
-    TOP=$ANDROID_TOP;
-    log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
-    if [[ $log =~ /\.log$ ]]; then
-        echo "Error for $(ap): can not find repo path"
-        exit 1
-    fi
-    mkdir -p $(dirname $log);
-    if test -z "$to_manifest_xml"; then
-        if test ! "$remote" -a $local_from = false ; then
-            from=$(repo-remote)/$from
-        fi
-        if test ! "$remote" -a $local_to = false ; then
-            to=$(repo-remote)/$to
-        fi
+else
+    . $to_manifest_xml.env
+    . $from_manifest_xml.env
+    pwd=$(pwd -P)
+    if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+        from=${from_path_revision_map[$pwd]}
     else
-        . $to_manifest_xml.env
-        . $from_manifest_xml.env
-        pwd=$(pwd -P)
-        if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
-            from=${from_path_revision_map[$pwd]}
-        else
-            from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
-        fi
-        if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
-            to=${to_path_revision_map[$pwd]}
-        else
-            to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
-        fi
+        from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
     fi
+    if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+        to=${to_path_revision_map[$pwd]}
+    else
+        to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
+    fi
+fi
 
-    if test "$from" = / -o "$to" = /; then
+if test "$from" = / -o "$to" = /; then
+    exit
+fi
+echo git-change-id-ffable $from $to in $PWD
+if ! git log -1 "$from" >/dev/null 2>&1 || ! git log -1 "$to" >/dev/null 2>&1; then
+    if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
+        echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
         exit
-    fi
-    echo git-change-id-ffable $from $to in $PWD
-    if ! git log -1 "$from" || ! git log -1 "$to"; then
+    else
+        echo need to fetch "$from" or "$to" in $PWD
         git fetch $(repo-remote) || true
     fi
-    git-change-id-ffable $from $to > $log || true
-    if test $(stat -c %s $log) = 0; then
-        rm $log;
-    fi;
-    pwd
-'
+fi
+git-change-id-ffable $from $to > $log || true
+if test $(stat -c %s $log) = 0; then
+    rm $log;
+fi;
+pwd
+
+
+EOFb4e84b0385f1
+)"
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+
+# the-ultimate-script ends here

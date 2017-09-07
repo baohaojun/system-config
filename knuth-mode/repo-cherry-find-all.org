@@ -1,0 +1,326 @@
+#+name: script-to-find-patches
+#+BEGIN_SRC sh
+  if test "$DEBUG" = true; then
+      set -x
+  fi
+  if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
+      exit
+  fi
+  TOP=$ANDROID_TOP;
+  log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
+  if [[ $log =~ /\.log$ ]]; then
+      echo "Error for $(ap): can not find repo path"
+      exit 1
+  fi
+  mkdir -p $(dirname $log);
+  if test -z "$to_manifest_xml"; then
+      if test ! "$remote" -a $local_from = false ; then
+          from=$(repo-remote)/$from
+      fi
+      if test ! "$remote" -a $local_to = false ; then
+          to=$(repo-remote)/$to
+      fi
+  else
+      . $to_manifest_xml.env
+      . $from_manifest_xml.env
+      pwd=$(pwd -P)
+      if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+          from=${from_path_revision_map[$pwd]}
+      else
+          from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
+      fi
+      if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+          to=${to_path_revision_map[$pwd]}
+      else
+          to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
+      fi
+  fi
+
+  if test "$from" = / -o "$to" = /; then
+      exit
+  fi
+  echo git-change-id-ffable $from $to in $PWD
+  if ! git log -1 "$from" >/dev/null 2>&1 || ! git log -1 "$to" >/dev/null 2>&1; then
+      if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
+          echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
+          exit
+      else
+          echo need to fetch "$from" or "$to" in $PWD
+          git fetch $(repo-remote) || true
+      fi
+  fi
+  git-change-id-ffable $from $to > $log || true
+  if test $(stat -c %s $log) = 0; then
+      rm $log;
+  fi;
+  pwd
+
+
+#+END_SRC
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh
+  function die() {
+      echo Error: "$@"
+      exit -1
+  }
+
+  git_version=$(git version | pn 3)
+
+  if version-lower-than "$git_version" 2.0 && yes-or-no-p -y "Your git version is too low, upgrade?"; then
+      upgrade-git
+  fi
+
+  if ! which xmlstarlet >/dev/null 2>&1 && yes-or-no-p -y "You need to install xmlstarlet, do it now?"; then
+      sudo apt-get install xmlstarlet
+  fi
+
+  if echo $SHELLOPTS | grep -q xtrace; then
+      export SHELLOPTS
+  fi
+
+  if test $# = 0 || test "$#" = 2 -a "$1" = -F -a "$2" = -T; then
+      if test "$#" = 0; then
+          function remove-remotes() {
+              perl -npe 's!remotes/.*?/!!'
+          }
+      else
+          function remove-remotes() {
+              perl -npe 's!remotes/!!'
+          }
+      fi
+
+      if test -d .repo; then
+          set -- \
+              --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; find . -name "*.xml"') \
+              --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; find . -name "*.xml"')
+
+          if test -d out/diff; then
+              rm out/diff -rf
+          fi
+          mkdir -p out/diff
+      else
+          set -- \
+              -f $(git-choose-branch -p "From which branch in $PWD") -F \
+              -t $(git-choose-branch -p "To which branch in $PWD") -T
+      fi
+      yes-or-no-p -y -- "You want run with $@?"
+      if test -e ~/src/github/smartcm/scm-helpers/repo-cherry-find-all -a -d .repo; then
+          . ~/src/github/smartcm/scm-helpers/repo-cherry-find-all "$@"
+      fi
+  fi
+
+  local_from=false
+  local_to=false
+  from_manifest_xml=
+  to_manifest_xml=
+  jobs=5
+  TEMP=$(getopt -o j:TFf:t:r: --long xf:,xt:,from:,to:,remote: -n $(basename $0) -- "$@")
+  remote=
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+          -j)
+              jobs=$2
+              shift 2
+              ;;
+          --xf)
+              from_manifest_xml=$2
+              shift 2
+              ;;
+          --xt)
+              to_manifest_xml=$2
+              shift 2
+              ;;
+          -f|--from)
+              from=$2
+              shift 2
+              ;;
+          -t|--to)
+              to=$2
+              shift 2
+              ;;
+          -r|--remote)
+              remote=$2
+              shift 2
+              ;;
+          -F)
+              local_from=true;
+              shift
+              ;;
+          -T)
+              local_to=true;
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          ,*)
+              die "internal error"
+              ;;
+      esac
+  done
+
+  if test -z "$from_manifest_xml" -a -z "$to_manifest_xml"; then
+      if test -z "$from" -o -z "$to"; then
+          if test -e .git; then
+              export from=$(git-choose-branch -p from)
+              export to=$(git-choose-branch -p to)
+              local_from=true
+              local_to=true
+          else
+              die "Error: Usage $(basename $0) -f FROM -t TO"
+          fi
+      fi
+
+      if test $local_from = false -a "$remote"; then
+          from=$remote/$from
+      fi
+
+      if test $local_to = false -a "$remote"; then
+          to=$remote/$to
+      fi
+      export from
+      export to
+      export remote
+      export local_from
+      export local_to
+  else
+
+      if test -z "$to_manifest_xml"; then
+          to_manifest_xml=$(basename $(readlink -f $(lookup-file -e .repo/manifest.xml)))
+      elif test -z "$from_manifest_xml"; then
+          from_manifest_xml=$(basename $(readlink -f $(lookup-file -e .repo/manifest.xml)))
+      fi
+
+      mkdir -p out/diff
+      cat <<EOF > out/diff/$(basename $0).info
+  from_xml=$from_manifest_xml
+  to_xml=$to_manifest_xml
+  EOF
+
+
+      if test "$local_from" = true -o "$local_to" = true -o "$from" -o "$to" -o "$remote"; then
+          die "when using xml, these variables must not be set"
+      fi
+
+      if test -e $to_manifest_xml; then
+          true
+      elif test -e .repo/manifests/$to_manifest_xml; then
+          to_manifest_xml=$(readlink -f .repo/manifests/$to_manifest_xml)
+      else
+          to_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $to_manifest_xml))
+      fi
+
+      if test -e $from_manifest_xml; then
+          true
+      elif test -e .repo/manifests/$from_manifest_xml; then
+          from_manifest_xml=$(readlink -f .repo/manifests/$from_manifest_xml)
+      else
+          from_manifest_xml=$(lookup-file -e .repo/manifests/$(basename $from_manifest_xml))
+      fi
+
+      export to_manifest_xml from_manifest_xml
+      if test "$to_manifest_xml" = "$from_manifest_xml"; then
+          die "Can't cherry from the same xml"
+      fi
+      declare -A to_path_map from_path_map
+
+      (
+          xmlstarlet sel -t -m //default -v @remote -o ' ' -v @revision -n $to_manifest_xml
+          xmlstarlet sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $to_manifest_xml
+      ) | (
+          read default_remote default_revision
+          declare -A to_path_remote_map to_path_revision_map
+          while read line; do
+              path=${line#*:}
+              remote=${path#*:}
+              revision=${remote#*:}
+              path=${path%%:*}
+              remote=${remote%%:*}
+              name=${line%%:*}
+
+              if test -z "$revision"; then
+                  revision=$default_revision
+              fi
+
+              if test -z "$remote"; then
+                  remote=$default_remote
+              fi
+
+              if test -z "$path"; then
+                  path=$name
+              fi
+              if test ! -d "$path"; then
+                  continue
+              fi
+              path=$(cd $path; pwd -P)
+              to_path_revision_map[$path]=$revision
+              to_path_remote_map[$path]=$remote
+          done
+          export to_path_remote_map to_path_revision_map
+          export -p |grep -P -e 'declare -Ax (to_path_revision_map|to_path_remote_map)' > $to_manifest_xml.env
+      )
+
+      (
+          xmlstarlet sel -t -m //default -v @remote -o ' ' -v @revision -n $from_manifest_xml
+          xmlstarlet sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $from_manifest_xml
+      ) | (
+          read default_remote default_revision
+          declare -A from_path_remote_map from_path_revision_map
+          while read line; do
+              path=${line#*:}
+              remote=${path#*:}
+              revision=${remote#*:}
+              path=${path%%:*}
+              remote=${remote%%:*}
+              name=${line%%:*}
+
+              if test -z "$revision"; then
+                  revision=$default_revision
+              fi
+
+              if test -z "$remote"; then
+                  remote=$default_remote
+              fi
+
+              if test -z "$path"; then
+                  path=$name
+              fi
+              if test ! -d "$path"; then
+                  continue
+              fi
+              path=$(cd $path; pwd -P)
+              from_path_revision_map[$path]=$revision
+              from_path_remote_map[$path]=$remote
+          done
+          export from_path_remote_map from_path_revision_map
+          export -p |grep -P -e 'declare -Ax (from_path_revision_map|from_path_remote_map)' > $from_manifest_xml.env
+      )
+  fi
+  rm -f out >/dev/null 2>&1 || true
+  my-rfa -j $jobs "$(cat <<'EOFb4e84b0385f1'
+  <<script-to-find-patches>>
+  EOFb4e84b0385f1
+  )"
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/repo-cherry-find-all :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
