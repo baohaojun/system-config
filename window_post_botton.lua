@@ -39,6 +39,7 @@ map['com.android.settings/com.android.settings.search.SearchActivity'] = 'manual
 map['com.android.settings/com.android.settings.SubSettings'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.AdvancedAccessPointSettingsActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.WifiAuthorizeActivity'] = 'manual-post'
+map['com.android.settings/com.android.settings.wifi.WifiSettingsActivity'] = 'manual-post'
 map['com.android.settings/com.android.settings.wifi.WifiSetupActivity'] = 'manual-post'
 map['com.android.vending/com.google.android.finsky.activities.MainActivity'] = 'manual-post'
 map['com.android.vending/com.google.android.finsky.activities.RateReviewActivity'] = 'manual-post'
