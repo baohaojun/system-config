@@ -187,8 +187,20 @@
   '(progn
      (define-key company-active-map (kbd "C-n") 'company-select-next)
      (define-key company-active-map (kbd "C-p") 'company-select-previous)
-     (global-set-key (kbd "C-.") 'company-complete)
-     (require 'helm-company)
+     (autoload 'company-clang "company-clang" "\
+`company-mode' completion backend for Clang.
+Clang is a parser for C and ObjC.  Clang version 1.1 or newer is required.
+
+Additional command line arguments can be specified in
+`company-clang-arguments'.  Prefix files (-include ...) can be selected
+with `company-clang-set-prefix' or automatically through a custom
+`company-clang-prefix-guesser'.
+
+With Clang versions before 2.9, we have to save the buffer before
+performing completion.  With Clang 2.9 and later, buffer contents are
+passed via standard input." t nil)
+     (global-set-key (kbd "C-.") 'company-clang)
+     (load "helm-company-autoloads.el")
      (define-key company-active-map (kbd "C-.") 'helm-company)))
 
 (defun org-html-fontify-code-compout (orig-fun &rest args)

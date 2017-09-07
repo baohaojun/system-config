@@ -98,6 +98,7 @@
        (make-local-variable
         (quote ajoke-symbol-chars))
        (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
+ '(max-specpdl-size 5000)
  '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
  '(message-mail-alias-type nil)
  '(mmm-global-mode nil nil (mmm-mode))
@@ -110,7 +111,7 @@
     ((agenda habit-down time-up user-defined-up effort-up priority-down)
      (todo priority-down category-up effort-up)
      (tags category-up effort-up)
-     (search category-up))))
+     (search category-up))) t)
  '(org-clock-x11idle-program-name "xprintidle")
  '(org-directory "~/system-config/doc/projects")
  '(org-export-html-coding-system (quote utf-8))
@@ -173,11 +174,10 @@
  '(require-final-newline t)
  '(safe-local-variable-values
    (quote
-    ((emojify-mode . 1)
-     (company-clang-arguments "-DQT_BOOTSTRAPPED" "-std=c++11" "-stdlib=libc++" "-I/usr/lib/llvm-3.8/include" "-I/usr/lib/llvm-3.8/lib/clang/3.8.1/include" "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent" "-I/home/bhj/src/github/Wrench/qt-solutions/qtsingleapplication/src/" "-I/usr/include/x86_64-linux-gnu/qt5/QtCore" "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus" "-I/usr/include/x86_64-linux-gnu/qt5/QtGui" "-I/usr/include/x86_64-linux-gnu/qt5/QtNetwork" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions" "-I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtSql" "-I/usr/include/x86_64-linux-gnu/qt5/QtTest" "-I/usr/include/x86_64-linux-gnu/qt5/QtWidgets" "-I/usr/include/x86_64-linux-gnu/qt5/QtXml" "-I/usr/include/x86_64-linux-gnu/qt5" "-I/usr/include" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include/lua5.2" "-I/usr/include/x86_64-linux-gnu/c++/6" "-I/usr/include/c++/6" "-I/home/bhj/tmp/build-wrench" "-I/usr/local/include" "-I/home/bhj/src/github/Wrench/QHotKey/QHotkey" "-I.")
+    ((company-clang-arguments "-D__PIC__" "-std=c++11" "-stdlib=libc++" "-I/usr/lib/llvm-3.8/include" "-I/usr/lib/llvm-3.8/lib/clang/3.8.1/include" "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent" "-I/home/bhj/src/github/Wrench/qt-solutions/qtsingleapplication/src/" "-I/usr/include/x86_64-linux-gnu/qt5/QtCore" "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus" "-I/usr/include/x86_64-linux-gnu/qt5/QtGui" "-I/usr/include/x86_64-linux-gnu/qt5/QtNetwork" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions" "-I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtSql" "-I/usr/include/x86_64-linux-gnu/qt5/QtTest" "-I/usr/include/x86_64-linux-gnu/qt5/QtWidgets" "-I/usr/include/x86_64-linux-gnu/qt5/QtXml" "-I/usr/include/x86_64-linux-gnu/qt5" "-I/usr/include" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include/lua5.2" "-I/usr/include/x86_64-linux-gnu/c++/6" "-I/usr/include/c++/6" "-I/home/bhj/tmp/build-wrench" "-I/usr/local/include" "-I/home/bhj/src/github/Wrench/QHotKey/QHotkey" "-I.")
+     (emojify-mode . 1)
      (read-only-mode . t)
      (view-mode . t)
-     (mmm-mode . 1)
      (create-lockfiles)
      (org-html-table-default-attributes :border "2" :rules "all" :frame "border")
      (org-html-table-default-attributes quote
