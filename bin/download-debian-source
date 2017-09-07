@@ -98,7 +98,7 @@ zcat $out_file |perl -ne "print if m=^Binary:.* $package,|^Binary:.* $package$= 
             while read line; do
                 case "$line" in
                     ?*)
-                        if echo "$line" | grep -P '^[0-9a-f]{32} \d+ .*orig.tar.*'; then
+                        if echo "$line" | grep -P '^[0-9a-f]{32} \d+ .*(orig|\d).tar.*'; then
                             source_tar=$(echo "$line" | pn 3)
                             md5_map[$source_tar]=$(echo "$line" | pn 1)
                         elif echo "$line" | grep -P '^[0-9a-f]{32} \d+ .*debian.tar.*'; then

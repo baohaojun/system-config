@@ -51,7 +51,7 @@ function cherry-fail() {
     fail_file=$(lookup-file -e out)/diff/${ap//\//%}.fail
 
     (echo -n 'failed: '; grep $git_commit_id ${fail_file/.fail/.log}|head -n 1) | tee -a $fail_file
-    git cherry-pick --abort
+    git cherry-pick --abort || true
 }
 
 export -f cherry-ok
