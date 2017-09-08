@@ -2,19 +2,19 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt rreverse @symlink Sgit-st \
+# generate-getopt rreverse @follow-symlink Sgit-st \
     # t:target-dir-alias='$(up .)' '?另一种指定 --target-dir 的方法' \
     # d:target-dir @delete cchecksum
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o cSrd:t:h \
-               --long checksum,delete,git-st,reverse,symlink,target-dir:,target-dir-alias:,help,no-checksum,no-delete,no-git-st,no-reverse,no-symlink \
+               --long checksum,delete,follow-symlink,git-st,reverse,target-dir:,target-dir-alias:,help,no-checksum,no-delete,no-follow-symlink,no-git-st,no-reverse \
                -n $(basename -- $0) -- "$@")
 checksum=false
 delete=false
+follow_symlink=false
 git_st=false
 reverse=false
-symlink=false
 target_dir=
 target_dir_alias=$(up .)
 eval set -- "$TEMP"
@@ -37,6 +37,14 @@ while true; do
             fi
             shift
             ;;
+        --follow-symlink|--no-follow-symlink)
+            if test "$1" = --no-follow-symlink; then
+                follow_symlink=false
+            else
+                follow_symlink=true
+            fi
+            shift
+            ;;
         -S|--git-st|--no-git-st)
             if test "$1" = --no-git-st; then
                 git_st=false
@@ -50,14 +58,6 @@ while true; do
                 reverse=false
             else
                 reverse=true
-            fi
-            shift
-            ;;
-        --symlink|--no-symlink)
-            if test "$1" = --no-symlink; then
-                symlink=false
-            else
-                symlink=true
             fi
             shift
             ;;
@@ -80,14 +80,14 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]delete'
             echo
+            printf "%06s" " "
+            printf %-24s '--[no-]follow-symlink'
+            echo
             printf %06s '-S, '
             printf %-24s '--[no-]git-st'
             echo
             printf %06s '-r, '
             printf %-24s '--[no-]reverse'
-            echo
-            printf "%06s" " "
-            printf %-24s '--[no-]symlink'
             echo
             printf %06s '-d, '
             printf %-24s '--target-dir=TARGET_DIR'
@@ -114,7 +114,7 @@ done
 ## end generated code
 
 . .set-true-val checksum --checksum
-. .set-true-val symlink -L
+. .set-true-val follow_symlink -L
 . .set-true-val git_st --files-from=-
 . .set-true-val delete --delete
 
@@ -195,8 +195,8 @@ if test "$git_st"; then
 fi |
 if test "$reverse" = true; then
     for x in "$@"; do
-        my-rsync $git_st $symlink $checksum -av $host:"$target_dir"/$x $(dirname $x) --exclude .repo --exclude .git --exclude .gitmodules --exclude "*#*" --exclude ".#*" $local_exclude --progress
+        my-rsync $git_st $follow_symlink $checksum -av $host:"$target_dir"/$x $(dirname $x) --exclude .repo --exclude .git --exclude .gitmodules --exclude "*#*" --exclude ".#*" $local_exclude --progress
     done
 else
-    my-rsync $git_st $symlink $checksum -av "$@" $host:"$target_dir" --exclude .git --exclude .repo --exclude "*#*" --exclude ".#*" $delete $local_exclude --progress
+    my-rsync $git_st $follow_symlink $checksum -av "$@" $host:"$target_dir" --exclude .git --exclude .repo --exclude "*#*" --exclude ".#*" $delete $local_exclude --progress
 fi
