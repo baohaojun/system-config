@@ -4,8 +4,10 @@ use strict;
 
 use Getopt::Long;
 my $program_to_run;
+my $in_mirror;
 GetOptions(
-    "program=s" => \$program_to_run,
+           "program=s" => \$program_to_run,
+           "in-mirror!" => \$in_mirror,
     );
 
 $program_to_run = "bash" unless $program_to_run;
@@ -24,9 +26,12 @@ my %path_rev2;
 open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
 
 while (<$F1>) {
-    next unless m/^(.*?)\s*=\s*(.*?)\s*=\s*(.*)\s*$/;
-    my $path = ($1 or $2);
-    $path_rev1{$path} = $3;
+  next unless m/^(.*?)\s*=\s*(.*?)\s*=\s*(.*)\s*$/;
+  my $path = ($1 or $2);
+  if ($in_mirror)  {
+    $path = ("$2" or "$1") . ".git";
+  }
+  $path_rev1{$path} = $3;
 }
 close $F1;
 
@@ -34,6 +39,9 @@ open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o
 while (<$F2>) {
     next unless m/^(.*?)\s*=\s*(.*?)\s*=\s*(.*)\s*$/;
     my $path = ($1 or $2);
+    if ($in_mirror) {
+      $path = ("$2" or "$1") . ".git";
+    }
     $path_rev2{$path} = $3;
 }
 close $F2;
