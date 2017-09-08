@@ -20,6 +20,8 @@ else
 fi
 if test "$#" != 0; then
    "$@"
+elif is-cron; then
+    exit 0
 else
     start_recursive_shell proxy=set
 fi
