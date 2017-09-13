@@ -217,6 +217,19 @@ function mkbeagrepidx() {
     fi
 }
 
+(
+    PWD_STEM=$(bp | perl -npe 's/[^a-z]//gi')
+    stem_file=~/system-config/etc/ctags-custom/$PWD_STEM
+    if test -f "$stem_file"; then
+        relative-link "$stem_file" ctags-custom
+        db_file=~/.cache/system-config/for-code-reading/$PWD/.beagrep/FileAttributesStore.db
+
+        if test -e "$db_file" -a "$stem_file" -nt "$db_file" && yes-or-no-p -y "touch all the files for ctags-custom?"; then
+            find . -type f | xargs touch
+        fi
+    fi
+
+)
 function for-code-reading() {
     time mkbeagrepidx&
     export SOURCECODETAGSMODE=true

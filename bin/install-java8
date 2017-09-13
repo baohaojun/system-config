@@ -2,7 +2,7 @@
 
 set -e
 
-if test ! -e /usr/lib/jvm/java-8-openjdk-amd64/bin/java; then
+if test ! -e /usr/lib/jvm/java-8-openjdk-amd64/bin/javac; then
     hint "将为你的 $(lsb_release -i -s -r|tr '\n' ' ' )安装 openjdk 8，可能需要输入sudo密码"
     u_version=$(lsb_release -r -s)
 

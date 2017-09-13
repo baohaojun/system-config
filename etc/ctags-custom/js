@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+@ARGV = grep {-e $_} @ARGV;
+
+my $id_re = qr(\w+(?:\.\w+)*);
+
+while (<>) {
+  my $type, $tag;
+  if (m/^\s*($id_re)(?:\s*| = (?:\S+) )[=:]\s*function/) {
+    ($type, $tag) = ('function', $1);
+  } elsif (m/^($id_re) = /) {
+    ($type, $tag) = ('object', $1);
+  }
+  if ($tag and $type) {
+      print "$tag $type $. $ARGV $_";
+      if ($tag =~ m/\./) {
+        $tag =~ s/.*\.//;
+        print "$tag $type $. $ARGV $_";
+      }
+  }
+}
