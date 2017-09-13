@@ -493,7 +493,7 @@ characters before the point."
 
 (defun bbyac--major-mode-match-rewriter (matched-str)
   "Rewrite the MATCHED-STR from the major-mode's bbyac file."
-  (replace-regexp-in-string ".*{\\(.*\\)}.*" "\\1" matched-str))
+  (replace-regexp-in-string ".*?{\\(.*\\)}.*" "\\1" matched-str))
 
 (defun bbyac-expand-symbols-by-major-mode ()
   "Find and expand the bit into a symbol (method) for current major mode.

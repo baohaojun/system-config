@@ -112,3 +112,4 @@ String.{upcase}
 String.{upcase!}
 String.{upto}
 String.{valid_encoding?}
+Hash.init{x = { 'a' => 5 }}
