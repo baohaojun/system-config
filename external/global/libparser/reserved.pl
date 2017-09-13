@@ -176,7 +176,7 @@ while(<IP>) {
 		print "#define SHARP_${upper}\t${n_sharp}\n";
 		$n_sharp++;
 	} elsif ($type eq 'yacc') {
-		$upper =~ s/(%%|%{|%})/$yacctab{$1}/ge;
+		$upper =~ s/(%%|%\{|%\})/$yacctab{$1}/ge;
 		$upper =~ s/%//g;
 		$upper =~ s/-/_/g;
 		print "#define YACC_${upper}\t${n_yacc}\n";
@@ -213,7 +213,7 @@ while(<IP>) {
 			$upper =~ s/#//g;
 			print "\"${name}\", SHARP_${upper}\n";
 		} elsif ($type eq 'yacc') {
-			$upper =~ s/(%%|%{|%})/$yacctab{$1}/ge;
+			$upper =~ s/(%%|%\{|%\})/$yacctab{$1}/ge;
 			$upper =~ s/%//g;
 			$upper =~ s/-/_/g;
 			print "\"${name}\", YACC_${upper}\n";
