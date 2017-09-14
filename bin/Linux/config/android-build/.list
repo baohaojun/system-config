@@ -40,7 +40,6 @@ libxml2-utils
 libxml-parser-perl
 lua5.2
 mysql-client
-openjdk-7-jdk
 openssh-client
 pkg-config
 policycoreutils
