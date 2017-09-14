@@ -17,6 +17,8 @@ fi
 org_target=$(
     if [[ $target =~ /smartcm/ ]]; then
         knuth_repo=~/src/github/smartcm
+    elif [[ $target =~ /private-config/ ]]; then
+        knuth_repo=~/src/github/private-config/knuth-mode
     else
         knuth_repo=~/system-config
     fi

@@ -2,16 +2,42 @@
 
 set -e
 
-if test ! -e /usr/lib/jvm/java-8-openjdk-amd64/bin/java; then
-    hint "将为你的 $(lsb_release -i -s -r|tr '\n' ' ' )安装 openjdk 8，可能需要输入sudo密码"
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+version=${b0#install-java}
+
+
+if test ! -e /usr/lib/jvm/java-$version-openjdk-amd64/bin/java; then
+    hint "将为你的 $(lsb_release -i -s -r|tr '\n' ' ' )安装 openjdk $version，可能需要输入 sudo 密码"
     u_version=$(lsb_release -r -s)
 
-    if test "$u_version" = 14.04 -o "$u_version" = 12.04 ||
-       yes-or-no-p "Use ppa for installing openjdk8 for $u_version?"; then
-        sudo add-apt-repository ppa:openjdk-r/ppa
-        sudo apt-get update
+    if ! sudo apt-get install -y openjdk-$version-jdk; then
+        echo "没有在你的系统安装源里找到 openjdk-$version-jdk..."
+        echo
+
+        sleep 1
+        echo "随着 Ubuntu、Debian 等系统版本变化，有些老的软件版本会下架，有些新的软件版本只在新的系统版本里..."
+        echo
+        sleep 1
+
+        if yes-or-no-p -y "无法直接从默认安装源安装 openjdk-$version-jdk，用 Ubuntu PPA 安装？"; then
+            sudo add-apt-repository ppa:openjdk-r/ppa
+            sudo apt-get update
+        fi
+        if ! sudo apt-get install -y openjdk-$version-jdk; then
+            hint "从 Ubuntu PPA 上也无法安装你要的 openjdk-$version-jdk 版本"
+            exit 1
+        fi
     fi
-    sudo apt-get install -y openjdk-8-jdk
-fi || if test -e ~/src/github/smartcm/scm-helpers/.install-java8; then
-    . ~/src/github/smartcm/scm-helpers/.install-java8;
+fi || if test -e ~/src/github/smartcm/scm-helpers/.install-java$version; then
+    . ~/src/github/smartcm/scm-helpers/.install-java$version
 fi || true

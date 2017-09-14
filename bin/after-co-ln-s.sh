@@ -397,6 +397,9 @@ mkdir -p ~/.cache # just in case the following command will create
 
 (
     set +e
+    if test -d ~/system-config/src/github/; then
+        exit
+    fi
     (
         cd ~/src/github/mobileorg-android/ &&
             git remote add up https://github.com/matburt/mobileorg-android

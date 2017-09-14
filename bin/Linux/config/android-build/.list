@@ -8,9 +8,7 @@ cd $mydir
 for x in $(
               cat <<EOF
 ant
-time
 bc
-unzip
 bison
 build-essential
 ccache
@@ -35,23 +33,27 @@ libstring-approx-perl
 libstring-shellquote-perl
 libswitch-perl
 libtext-glob-perl
-libxml2:i386
-libxml2-utils
 libxml-parser-perl
+libxml2-utils
+libxml2:i386
 lua5.2
 mysql-client
+net-tools
 openssh-client
+openssh-server
 pkg-config
 policycoreutils
-python3
 python-crypto
 python-mysqldb
+python3
 qt5-default
 qtchooser
 rsync
 schedtool
 strace
 subversion
+time
+unzip
 xclip
 xmlstarlet
 xorriso
@@ -63,7 +65,4 @@ EOF
 done
 echo ok
 
-# Local Variables: #
-# after-save-hook: (lambda () (shell-command-to-string "bash ~/system-config/bin/Linux/config/android-build/.list")) #
-# eval: (mmm-mode 1) #
-# End: #
+# sc-after-save-hook: bash ~/system-config/bin/Linux/config/android-build/.list

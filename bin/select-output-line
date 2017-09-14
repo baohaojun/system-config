@@ -19,51 +19,29 @@ b0=$(basename $0)
         # m:max-history=-1 \
         # p:prompt='"Please enter your selection"' \
         # i:init \
+        # @:dot-sep-init \
         # @select-from-history-too \
         # @:exclude \
         # vverbose
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o i:vom:O:p:h \
-              --long init:,select-from-history-too,exclude:,verbose,ORDERED,max-history:,select-dist-word:,order-name:,prompt:,help,no-select-from-history-too,no-verbose,no-ORDERED \
-              -n $(basename -- $0) -- "$@")
-init=
-select_from_history_too=false
-exclude=
-verbose=false
+TEMP=$( getopt -o oi:m:O:p:vh \
+               --long ORDERED,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,verbose,help,no-ORDERED,no-select-from-history-too,no-verbose \
+               -n $(basename -- $0) -- "$@")
 ORDERED=${SELECT_HISTORY_ORDER:-false}
+dot_sep_init=
+exclude=
+init=
 max_history=-1
-select_dist_word=
 order_name=
 prompt="Please enter your selection"
+select_dist_word=
+select_from_history_too=false
+verbose=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -i|--init)
-            init=$2
-            shift 2
-            ;;
-        --select-from-history-too|--no-select-from-history-too)
-            if test "$1" = --no-select-from-history-too; then
-                select_from_history_too=false
-            else
-                select_from_history_too=true
-            fi
-            shift
-            ;;
-        --exclude)
-            exclude=$2
-            shift 2
-            ;;
-        -v|--verbose|--no-verbose)
-            if test "$1" = --no-verbose; then
-                verbose=false
-            else
-                verbose=true
-            fi
-            shift
-            ;;
         -o|--ORDERED|--no-ORDERED)
             if test "$1" = --no-ORDERED; then
                 ORDERED=false
@@ -72,12 +50,20 @@ while true; do
             fi
             shift
             ;;
-        -m|--max-history)
-            max_history=$2
+        --dot-sep-init)
+            dot_sep_init=$2
             shift 2
             ;;
-        --select-dist-word)
-            select_dist_word=$2
+        --exclude)
+            exclude=$2
+            shift 2
+            ;;
+        -i|--init)
+            init=$2
+            shift 2
+            ;;
+        -m|--max-history)
+            max_history=$2
             shift 2
             ;;
         -O|--order-name)
@@ -88,14 +74,37 @@ while true; do
             prompt=$2
             shift 2
             ;;
+        --select-dist-word)
+            select_dist_word=$2
+            shift 2
+            ;;
+        --select-from-history-too|--no-select-from-history-too)
+            if test "$1" = --no-select-from-history-too; then
+                select_from_history_too=false
+            else
+                select_from_history_too=true
+            fi
+            shift
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=false
+            else
+                verbose=true
+            fi
+            shift
+            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-o, '
             printf %-24s '--[no-]ORDERED'
             echo 'Should use history for list order'
+            printf "%06s" " "
+            printf %-24s '--dot-sep-init=DOT_SEP_INIT'
+            echo
             printf "%06s" " "
             printf %-24s '--exclude=EXCLUDE'
             echo
@@ -137,6 +146,9 @@ done
 ## end generated code
 
 export SELECT_PROMPT=$prompt
+if test -z "$init" -a "$dot_sep_init"; then
+    init=${dot_sep_init//./ }
+fi
 if test "$init"; then
     export ORIGINAL_MATCHER=$init
 fi

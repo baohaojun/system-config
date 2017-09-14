@@ -210,8 +210,17 @@ for x in "$@" $(
             break
         fi
 
+        done_add=false
         if test "$out" = "${gia_options[yes]}"; then
             git add "$x"
+            done_add=true
+        elif test "${out:0:1}" != @; then
+            git add "$x"
+            done_add=true
+            echo $(gitp "$x"): $out >> $(lookup-file-dir -e .git)/.commit-msg-bhj
+        fi
+
+        if test "$done_add" = true; then
             if [[ $x =~ \.org$ ]] && grep 'BEGIN_SRC.*:tangle '-i "$x" -q; then
                 (
                     tangle_target=$(grep -o ':tangle\s+\S+\s+' -P "$x" -i |pn 2)
@@ -220,12 +229,17 @@ for x in "$@" $(
                         git-interactive-add "$x"
                     fi
                 )
+            elif grep -q '^# sc-after-save-hook: ' "$x"; then
+                (
+                    bash_command=$(perl -ne 'print $1 if m/^# sc-after-save-hook: (.*)/' "$x");
+                    if yes-or-no-p -n "run: '$bash_command' ? "; then
+                        cd "$(dirname "$x")"
+                        bash -c "$bash_command"
+                        git-interactive-add
+                    fi
+                )
             fi
 
-            touch $(lookup-file -e .git)/sc-not-merged
-        elif test "${out:0:1}" != @; then
-            git add "$x"
-            echo $(gitp "$x"): $out >> $(lookup-file-dir -e .git)/.commit-msg-bhj
             touch $(lookup-file -e .git)/sc-not-merged
         fi
         break
