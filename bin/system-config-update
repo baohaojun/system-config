@@ -225,14 +225,29 @@ fi
 
 (
     cd ~/system-config/bin/Linux/config/android-build
-    for x in *; do
-        if ! dpkg-query -l $x >/dev/null 2>&1; then
-            hint -t 5 "需要重新安装 $x"
+
+    missing_pkgs=$(
+            for x in *; do
+                if ! dpkg-query -l $x >/dev/null 2>&1; then
+                    echo $x
+                fi
+            done
+                )
+    set -- $missing_pkgs
+    if test $# = 0; then
+        exit
+    fi
+    hint -t 5 "需要重新安装 $@"
+    if test $# -gt 5; then
+        hint "看上去你有很多个安卓编译的 debian 包没有装上，这可能会导致奇怪的编译错误"
+    fi
+    if ! (
             sudo apt-get update
             install-pkgs android-build
-            exit
-        fi
-    done
+        ); then
+        hint "你的安卓编译相关的 debian 包安装出错了，请仔细阅读一下上面打印出来的出错信息，并考虑上网查一下该如何解决。"
+        hint "也可以参考一下 http://172.16.2.18/docs/cm/workflow.html，看看里面有没有相关的 faq"
+    fi
 )
 
 if test -e ~/src/github/smartcm/smartcm-update; then

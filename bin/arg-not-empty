@@ -6,6 +6,9 @@ set -e
     val=$2
 
     if test -z "$val"; then
+        if test "${BASH_SOURCE[1]}"; then
+            die "$name must not be empty: try '${BASH_SOURCE[1]} --help' or read its source code."
+        fi
         die "$name must not be empty"
     fi
 )

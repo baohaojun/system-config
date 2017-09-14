@@ -279,18 +279,10 @@ print $_ . "\n";
         fi
 
         if test "$1" = pull; then
-            touch $(lookup-file -e .git)/sc-not-merged >/dev/null 2>&1 || true
-            if is-tty-io; then
-                . atexit bash -c "
-                    old_rev=$(git log -1 --pretty=%H HEAD);
-                    if git-any-changes -r \$old_rev; then
-                        if test '$SC_ACCOUNT_USER' = bhj; then
-                            hint '你从远程服务器拉取了代码，请考虑 review 一下远程服务器上的改动。如果不想 review，请直接 Ctrl-C 退出';
-                            git-interactive-add -r \$old_rev
-                        fi
-                    fi"
+            if test -e ~/src/github/smartcm/scm-helpers/git-pull-and-review; then
+                . ~/src/github/smartcm/scm-helpers/git-pull-and-review
             fi
-           if test $# = 1; then
+            if test $# = 1; then
                head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
                if test -z "$head_branch" && lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
                    command git checkout -B $(repo-branch) $(repo-remote)/$(repo-branch)
@@ -302,5 +294,4 @@ print $_ . "\n";
         fi
         command git "$@"
     )
-
 }

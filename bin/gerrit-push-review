@@ -299,6 +299,7 @@ else
             head_branch=$merge_head
         fi
     fi
+
     if test "$head_branch" && yes-or-no-p -y "你的 git 设置了远程跟踪分支 $head_branch ，是否要 push 到此分支？"; then
         export gpr_to_branch=$head_branch
         export REPO_BRANCH=$gpr_to_branch
@@ -306,7 +307,17 @@ else
             export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
         fi
     else
-        confirm-with-repo
+        detached_branch=$(git status|head -n 1|perl -ne 'print $1 if m/^HEAD detached at (\S+)/')
+        if test "$detached_branch" && yes-or-no-p -y "你的当前无名分支是从远程的 $detached_branch 上直接 checkout 出来的，是否要 push 到此分支？"; then
+            export gpr_to_branch=${detached_branch#*/}
+            export REPO_BRANCH=$gpr_to_branch
+            if test -z "$REPO_REMOTE"; then
+                export REPO_REMOTE=${detached_branch%%/*}
+            fi
+            hint "下回 git checkout 时可以试一下加一个 -B 参数，设置一下上下游的跟踪关系，尤其是可以试一下直接 git co -B，system-config 会把所有分支列出来让你选"
+        else
+            confirm-with-repo
+        fi
     fi
 fi
 
