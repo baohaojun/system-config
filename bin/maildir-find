@@ -85,16 +85,15 @@ mu find $subject $from date:$after..$before --fields 'l d f s' | (
         maildir_file_map[$info]=$file
     done
 
-    selected_info=$(
+    saved_selected_info=$(
         select-args -a "All of the above! 老子想批处理一下！" -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r)" </dev/tty
                  )
 
-    if test "$selected_info"; then
+    if test "$saved_selected_info"; then
         handle_all_files=false
         selected_files=(
             $(
                 IFS=$'\n'
-                saved_selected_info=$selected_info
                 for selected_info in $saved_selected_info; do
                     for x in "${!maildir_file_map[@]}"; do
                         if test "$x" = "$selected_info"; then
@@ -107,14 +106,37 @@ mu find $subject $from date:$after..$before --fields 'l d f s' | (
     fi
 
     action=$(
-        select-args --select-from-history-too -o -p "你想执行什么操作？" "用 of 脚本打开此邮件" "打印每封 maildir 邮件的文件名" "用 editor 一封一封的打开我看一下" </dev/tty
+        select-args --select-from-history-too -o -p "你想执行什么操作？" "用 of 脚本打开此邮件" "打印每封 maildir 邮件的文件名" "用 editor 一封一封的打开我看一下" </dev/tty
           )
+    if test "$action" = "用 of 脚本打开此邮件" && [[ $saved_selected_info =~ $'\n'.*[0-9] ]]; then
+        while true; do
+            selected_info=$(
+                IFS=$'\n'
+                select-args -p "你想看哪封邮件（或 Ctrl-C 退出）？" $saved_selected_info </dev/tty
+                         )
+
+            selected_files=(
+                $(
+                    IFS=$'\n'
+                    for x in "${!maildir_file_map[@]}"; do
+                        if test "$x" = "$selected_info"; then
+                            echo "${maildir_file_map[$x]}"
+                            exit
+                        fi
+                    done
+                ))
+            of "$selected_files"
+
+        done
+        exit
+    fi
+
     for file in "${selected_files[@]}"; do
         case "$action" in
-            "用 of 脚本打开此邮件")
+            "用 of 脚本打开此邮件")
                 echo "of $file"
                 of "$file"
-                hint "请按回车键继续，或Ctrl-C退出" </dev/tty
+                hint "请按回车键继续，或 Ctrl-C 退出" </dev/tty
                 ;;
             "打印每封 maildir 邮件的文件名")
                 echo "$file"
@@ -123,7 +145,7 @@ mu find $subject $from date:$after..$before --fields 'l d f s' | (
                 ew "$file"
                 ;;
             *)
-                if yes-or-no-p "用你输入的 $action 命令处理每一封邮件吗？" </dev/tty; then
+                if yes-or-no-p "用你输入的 $action 命令处理每一封邮件吗？" </dev/tty; then
                     if ! [[ $action =~ \$@ ]]; then
                         action="$action \$@"
                     fi
