@@ -66,6 +66,9 @@ done
 
 
 ## end generated code
+if [[ $after =~ ^[0-9]+$ ]]; then
+    after=-$after
+fi
 
 if [[ $after =~ ^- ]]; then
     after=$(today $after)

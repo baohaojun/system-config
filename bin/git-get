@@ -12,43 +12,51 @@ atexit() {
 trap atexit 0
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt d:dir u:url b:branch r:reference
+# generate-getopt d:dir u:url b:branch r:reference c:create
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o u:b:r:d:h \
-              --long url:,branch:,reference:,dir:,help \
-              -n $(basename -- $0) -- "$@")
-url=
+TEMP=$( getopt -o b:c:d:r:u:h \
+               --long branch:,create:,dir:,reference:,url:,help \
+               -n $(basename -- $0) -- "$@")
 branch=
-reference=
+create=
 dir=
+reference=
+url=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -u|--url)
-            url=$2
-            shift 2
-            ;;
         -b|--branch)
             branch=$2
             shift 2
             ;;
-        -r|--reference)
-            reference=$2
+        -c|--create)
+            create=$2
             shift 2
             ;;
         -d|--dir)
             dir=$2
             shift 2
             ;;
+        -r|--reference)
+            reference=$2
+            shift 2
+            ;;
+        -u|--url)
+            url=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-b, '
             printf %-24s '--branch=BRANCH'
+            echo
+            printf %06s '-c, '
+            printf %-24s '--create=CREATE'
             echo
             printf %06s '-d, '
             printf %-24s '--dir=DIR'
@@ -82,26 +90,53 @@ if test -z "$dir" -o -z "$url"; then
     die "Error: Usage $(basename $0) -d LOCAL_DIR -u REMOTE_GIT_URL"
 fi
 
+valid-git-dir() {
+    local dir=$1
+    if test -d "$dir"/.git; then
+        if (
+            cd "$dir"
+            git log -1
+        ) >/dev/null 2>&1; then
+            return 0;
+        else
+            echo "你的 $dir git 仓库目录好像有点问题，可能需要重新创建"
+            sleep 1
+        fi
+    fi
+    return 1
+}
+
+if ! valid-git-dir "$dir"; then
+    rm -rf "$dir"
+fi
+
 if test ! -d $dir/.git; then
     mkdir -p $dir
     (
         cd $dir
         if ! git clone --single-branch -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi) && # --single-branch fails for s:git-repo
-           ! git clone -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
-            git init .
-            git commit -m 'init commit' --allow-empty --author 'qualcomm <someone@qualcomm.com>'
-            git push $url HEAD:refs/heads/$branch
-            rm .git -rf
-            git clone --single-branch -b $branch $url .
+                ! git clone -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
+
+            if test "$create" = true; then
+                git init .
+                git commit -m 'init commit' --allow-empty --author 'qualcomm <someone@qualcomm.com>'
+                git push $url HEAD:refs/heads/$branch
+                rm .git -rf
+                git clone --single-branch -b $branch $url .
+            else
+                die "无法从 $url git clone 到 $dir 目录，请检查一下 1. $dir 目录是否已损坏，删除试试？ 2. 是否拥有 $url 仓库代码权限"
+            fi
         fi
     )
 else
-    (
-        cd $dir
-        git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
-        git fetch -v origin
-        git reset --hard || true
-        git clean -xfd || true
-        git checkout -B $branch origin/$branch
-    )
+    if ! (
+            cd $dir
+            git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+            git fetch -v origin
+            git reset --hard || true
+            git clean -xfd || true
+            git checkout -B $branch origin/$branch
+        ); then
+        die "从 $url 更新代码到 $dir 目录失败，请检查一下 1. $dir 目录是否已损坏，删除试试？ 2. 是否拥有 $url 仓库代码权限"
+    fi
 fi
