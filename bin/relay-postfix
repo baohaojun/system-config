@@ -6,17 +6,17 @@ set -e
 # generate-getopt ?'第三方邮件服务器 postfix 转发设置' \
     # h:host ?'第三方邮件服务器主机名' \
     # p:port ?'第三方邮件服务器端口' \
-    # u:user ?'第三方邮件服务器登录用户' \
-    # P:password ?'第三方邮件服务器登录密码'
+    # u:user='()' ?'第三方邮件服务器登录用户' \
+    # P:password='()' ?'第三方邮件服务器登录密码'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h:u:P:p:h \
-              --long host:,user:,password:,port:,help \
-              -n $(basename -- $0) -- "$@")
+TEMP=$( getopt -o h:P:p:u:h \
+               --long host:,password:,port:,user:,help \
+               -n $(basename -- $0) -- "$@")
 host=
-user=
-password=
+password=()
 port=
+user=()
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -25,21 +25,21 @@ while true; do
             host=$2
             shift 2
             ;;
-        -u|--user)
-            user=$2
-            shift 2
-            ;;
         -P|--password)
-            password=$2
+            password=("${password[@]}" "$2")
             shift 2
             ;;
         -p|--port)
             port=$2
             shift 2
             ;;
+        -u|--user)
+            user=("${user[@]}" "$2")
+            shift 2
+            ;;
         -h|--help)
             set +x
-            echo 第三方邮件服务器 postfix 转发设置
+            echo -e 第三方邮件服务器 postfix 转发设置
             echo
             echo Options and arguments:
             printf %06s '-h, '
@@ -110,24 +110,34 @@ smtp_use_tls = yes
 smtp_sender_dependent_authentication = yes
 
 EOF
-
-    echo smtp_use_tls = yes | sudo tee -a /etc/postfix/main.cf
-    cat <<EOF | sudo tee -a /etc/postfix/sasl_passwd
-[$host]:$port $user:$password
-EOF
-    sudo postmap /etc/postfix/sasl_passwd
-    sudo postfix reload
-    if ! which heirloom-mailx >/dev/null 2>&1; then
-        hint "需要安装 heirloom-mailx，可能需要输入 sudo 密码"
-        sudo apt-get install heirloom-mailx
-    fi
-
-    user_email=$(git config user.email)
-
-    if [[ $user_email =~ cmbuild@ ]]; then
-        user_email=baohaojun${user_email#cmbuild}
-    fi
-    if test "$user_email"; then
-        set -- "mailx is OK on $MYNAME $(date)"; heirloom-mailx -S from=$user  -S smtp=localhost:25 -s "$*" $user_email </dev/null
-    fi
 fi
+
+for n in $(seq 0 $(( ${#user[@]} - 1 ))); do
+    u=${user[$n]}
+    p=${password[$n]}
+
+    if ! grep -q " $u:" /etc/postfix/sasl_passwd; then
+cat <<EOF | sudo tee -a /etc/postfix/sasl_passwd
+$u $u:$p
+EOF
+    fi
+done
+
+sudo postmap /etc/postfix/sasl_passwd
+sudo postfix reload
+if ! which heirloom-mailx >/dev/null 2>&1; then
+    hint "需要安装 heirloom-mailx，可能需要输入 sudo 密码"
+    sudo apt-get install heirloom-mailx
+fi
+
+user_email=$(git config user.email)
+
+if [[ $user_email =~ cmbuild@ ]]; then
+    user_email=baohaojun${user_email#cmbuild}
+fi
+if test "$user_email"; then
+    for u in "${user[@]}"; do
+        set -- "mailx is OK on $MYNAME $(date)"; heirloom-mailx -S from=$user  -S smtp=localhost:25 -s "$*" $user_email </dev/null
+    done
+fi
+

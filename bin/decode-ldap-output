@@ -56,7 +56,7 @@ while (<>) {
         s/^\s+//;
         $last_line .= $_;
     } else {
-        $last_line =~ m/^(\w+)(:*\s*)(\S*)/;
+        $last_line =~ m/^(\w+)(::+\s*)(\S*)/;
         if ($to_decode{$1}) {
             print "$1$2" . $cb->decode($3) . "\n";
         } else {

@@ -79,9 +79,6 @@ function handle-query-string() {
 
 subject=$(handle-query-string subject $subject)
 from=$(handle-query-string from $from)
-if echo $SHELLOPTS | grep -q xtrace; then
-    exit
-fi
 
 mu find $subject $from date:$after..$before --fields 'l d f s' | (
     while read file info; do
@@ -89,22 +86,21 @@ mu find $subject $from date:$after..$before --fields 'l d f s' | (
     done
 
     selected_info=$(
-        select-args -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r)" "All of the above! 老子想批处理一下！"</dev/tty
+        select-args -a "All of the above! 老子想批处理一下！" -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r)" </dev/tty
                  )
 
-    if [[ $selected_info =~ ^'All of the above' ]]; then
-        selected_files=(
-            "${maildir_file_map[@]}"
-        )
-    elif test "$selected_info"; then
+    if test "$selected_info"; then
         handle_all_files=false
         selected_files=(
             $(
-                for x in "${!maildir_file_map[@]}"; do
-                    if test "$x" = "$selected_info"; then
-                        echo "${maildir_file_map[$x]}"
-                        exit
-                    fi
+                IFS=$'\n'
+                saved_selected_info=$selected_info
+                for selected_info in $saved_selected_info; do
+                    for x in "${!maildir_file_map[@]}"; do
+                        if test "$x" = "$selected_info"; then
+                            echo "${maildir_file_map[$x]}"
+                        fi
+                    done
                 done
             )
         )

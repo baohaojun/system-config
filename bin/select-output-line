@@ -17,6 +17,7 @@ b0=$(basename $0)
     # generate-getopt O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?Should use history for list order' \
         # @:select-dist-word \
         # m:max-history=-1 \
+        # a:always-selection \
         # p:prompt='"Please enter your selection"' \
         # i:init \
         # @:dot-sep-init \
@@ -25,10 +26,11 @@ b0=$(basename $0)
         # vverbose
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o oi:m:O:p:vh \
-               --long ORDERED,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,verbose,help,no-ORDERED,no-select-from-history-too,no-verbose \
+TEMP=$( getopt -o oa:i:m:O:p:vh \
+               --long ORDERED,always-selection:,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,verbose,help,no-ORDERED,no-select-from-history-too,no-verbose \
                -n $(basename -- $0) -- "$@")
 ORDERED=${SELECT_HISTORY_ORDER:-false}
+always_selection=
 dot_sep_init=
 exclude=
 init=
@@ -49,6 +51,10 @@ while true; do
                 ORDERED=true
             fi
             shift
+            ;;
+        -a|--always-selection)
+            always_selection=$2
+            shift 2
             ;;
         --dot-sep-init)
             dot_sep_init=$2
@@ -102,6 +108,9 @@ while true; do
             printf %06s '-o, '
             printf %-24s '--[no-]ORDERED'
             echo 'Should use history for list order'
+            printf %06s '-a, '
+            printf %-24s '--always-selection=ALWAYS_SELECTION'
+            echo
             printf "%06s" " "
             printf %-24s '--dot-sep-init=DOT_SEP_INIT'
             echo
@@ -144,6 +153,10 @@ done
 
 
 ## end generated code
+
+if test "$always_selection"; then
+    export always_selection
+fi
 
 export SELECT_PROMPT=$prompt
 if test -z "$init" -a "$dot_sep_init"; then

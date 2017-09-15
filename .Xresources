@@ -1,6 +1,3 @@
-xterm*cjkWidth: true
-
-!英文用系统默认字体，中文用文泉驿正黑，这个配置适合笔记本，屏幕分辨率是1280X800。
 !look and feel
 xterm.termName: xterm
 xterm*scrollBar: false
@@ -20,11 +17,10 @@ xterm*faceName:DejaVu Sans Mono:antialias=True:pixelsize=20
 xterm*boldFont:Sans:style=Bold:pixelsize=20
 xterm*faceNameDoublesize:WenQuanYi Zen Hei:antialias=True:pixelsize=20
 xterm*xftAntialias: true
-xterm.cjkWidth: true
 XTerm*preeditType: Root
 XTerm*allowSendEvents: true
 
-XTerm*on2Clicks:  regex [^      \n]+
+XTerm*on2Clicks:  regex [\!-~]+
 XTerm*on3Clicks:  regex .*
 XTerm*on4Clicks:  line
 xterm*eightBitInput: false

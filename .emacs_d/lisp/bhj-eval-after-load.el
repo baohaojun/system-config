@@ -166,6 +166,11 @@
      (dolist (helm-history-var (apropos-internal "\\`helm-.*-history\\'" 'boundp))
        (makunbound helm-history-var))))
 
+(eval-after-load 'anzu
+  '(defadvice anzu-query-replace-regexp (around sc--anzu-query-replace-regexp activate)
+     (let ((inhibit-modification-hooks t))
+       ad-do-it)))
+
 (add-hook 'emacs-lisp-mode-hook (lambda ()
                                   (make-local-variable
                                    (quote ajoke-symbol-chars))
