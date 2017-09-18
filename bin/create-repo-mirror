@@ -31,7 +31,21 @@ done
 if test -z "$jobs"; then
     jobs=4
     if is-jenkins; then
-        jobs=2
+        find . -name '*.git' -print -prune |
+            while read git_dir; do
+                (
+                    cd $git_dir
+                    if test ! -w .; then
+                        exit 0
+                    fi
+                    for prefix in '' qualcomm/; do
+                        project=$prefix$(ap)
+                        remote=back-$(echo "$project"|md5sum|cut -b 1-3)
+                        git fetch -f s:$project refs/heads/*:refs/remotes/$remote/*
+                    done
+                )
+            done
+        exit
     fi
 fi
 

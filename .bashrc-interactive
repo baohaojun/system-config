@@ -235,7 +235,6 @@ lcd()
     fi
 
     if [[ "$1" =~ ^\\\\|^//|^smb://|^file:///[0-9]+\.|/smb/ && `uname` = Linux ]]; then
-        chmod 600 ~/.smb/*
         set -- "$(ip-or-name "$1"|perl -npe 's,/+,/,g')"
 
         smb_server=${1%%/*}
