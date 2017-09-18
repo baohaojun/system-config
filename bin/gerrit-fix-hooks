@@ -7,3 +7,6 @@ if test -e ~/src/android/.repo/repo/hooks/commit-msg; then
 elif test -e ~/src/github/smartcm/scm-helpers/gerrit-fix-hooks; then
     ~/src/github/smartcm/scm-helpers/gerrit-fix-hooks
 fi
+
+echo "已经帮你把当前的 git 仓库修改了 commit-msg 的 hooks，请考虑 git commit --amend 一下，确保当前的 git 提交有 Change-Id。"
+sleep 1
