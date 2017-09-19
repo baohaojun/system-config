@@ -6,10 +6,11 @@
 
 if test -z "$1"; then
     set -- "$(select-args -p "您想进行什么 system-config 操作？" \
-                         "start （以后默认要使用 system-config ，马上给我启动一个环境）" \
-                         "stop （以后不用 system-config 了，用的话自己加命令或启动环境）" \
+                         "start （以后默认要使用 system-config，马上给我启动一个环境）" \
+                         "stop （以后不用 system-config 了，要用 system-config 下的命令的话，自己在前面加 sc 或用 sc start 启动环境）" \
                          "try （还没有想好以后要不要默认用，先试用一下）" \
                          "bg （默认继续使用 system-config，将 system-config 临时挂起，启动一个无 system-config 环境）" \
+                         "help （查看关于 sc 命令的帮助）" \
                          "exit （什么也不做，退出此选择框）" |
                          pn 1)"
 fi
@@ -22,8 +23,8 @@ if test "$action" = start; then
     bash
 elif test "$action" = stop; then
     touch ~/.config/system-config/no-system-config
-    hint "将退出此bash环境，并重新打开一个bash，请确认system-config环境已默认关闭"
-    hint "之后如果您改变主意，可以继续用sc start命令来使用system-config环境"
+    hint "将退出此 bash 环境，并重新打开一个 bash，请确认 system-config 环境已默认关闭"
+    hint "之后如果您改变主意，可以继续用 sc start 命令来使用 system-config 环境"
     exec sc bg
 elif test "$action" = try; then
     bash
@@ -32,9 +33,26 @@ elif test "$action" = bg; then
     exec bash
 elif test "$action" = exit; then
     exit
+elif test "$action" = help; then
+    cat <<EOF
+sc 命令可以用于切换 system-config 或非 system-config 环境，也可以用于在非 system-config 环境下快速执行 system-config 下的命令。
+
+如果不带参数，sc 会启动一个列表选单，让你从中选择你想要执行的操作，其中：
+
+- start :: 启动 system-config 环境，并且在以后每个新开的终端中，默认都使用 system-config。
+- stop :: 停止 system-config 环境，并且在以后每个新开的终端中，都不要启用 system-config。
+- try :: 在当前终端中试用一下 system-config，新开的终端中，还是非 system-config 环境。
+- bg :: 在当前终端中停用 system-config，启动一个没有 system-config 环境的 bash shell，但新开的终端中还是 system-config 环境的。
+- help :: 显示此帮助。
+
+你也可以直接在 sc 后面加上上面的子命令，效果相当于直接从上面的列表中选择了相应的操作，比如直接：sc start。
+
+你也可以在非 system-config 环境下，执行 sc 的时候后面加上 system-config 里的命令，效果相当于在 system-config 环境下直接执行此命令，比如：非 system-config 环境下“sc sse”相当于 system-config 环境下直接执行 sse。但是，这样的操作方法非常浪费能源，为了保护地球，建议直接将 system-config 设置为你的日常开发环境。
+
+EOF
 else
     if is-tty-io; then
-        hint "即将为您在system-config环境下运行 $@"
+        hint "即将为您在 system-config 环境下运行 $@"
     fi
     "$@"
     exit

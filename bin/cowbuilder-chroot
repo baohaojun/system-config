@@ -120,5 +120,7 @@ done
 
 if test -e /etc/apt/apt.conf.d/02proxy; then
     sudo cp /etc/apt/apt.conf.d/02proxy "$chroot/etc/apt/apt.conf.d/02proxy"
+elif grep -q Acquire::http::Proxy /etc/apt/apt.conf; then
+    grep Acquire::http::Proxy /etc/apt/apt.conf | sudo tee "$chroot/etc/apt/apt.conf.d/02proxy" >/dev/null 2>&1
 fi
 sudo chroot "$chroot" "$@"

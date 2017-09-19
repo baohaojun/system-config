@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: res
+# key: res
+# --
+:exports results :results output

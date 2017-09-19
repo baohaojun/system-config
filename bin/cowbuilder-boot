@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# [[file:~/system-config/knuth-mode/cowbuilder-boot.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+
+set -e
+
+#!/bin/bash
+
 # mount /dev/sda1 /home
 # mount /home/bhj /home/trusty/home/bhj-chroot -o bind
 # mount /home/bhj/src /home/trusty/home/bhj/src -o bind
@@ -25,13 +31,14 @@ sudo cp $cowchroot/boot /boot/$cowname -av
 cowboot_dir=/boot/$cowname/boot
 
 sudo mkdir -p /$cowname
-cat <<EOF |sudo tee /$cowname/chroot-cow
+cat <<EOF46c312a0e349|sudo tee /$cowname/chroot-cow
 #!/bin/bash
 set -x
+setupcon dvp
 mount -o remount,rw /
 $(
     if test $home_dev != $root_dev; then
-        echo mount $(get-mount-1 /home) /home
+        echo mount $(readlink -f $(get-mount-1 /home)) /home
     fi
 )
 
@@ -42,9 +49,26 @@ mount / $cowchroot/old-root -o bind
 $(
     echo mount /$cowname/boot $cowchroot/boot/ -o bind
 )
-exec /usr/sbin/chroot $cowchroot /bin/bash -c 'mount / / -o bind; mount udev /dev -t devtmpfs; exec /sbin/init'
 
-EOF
+read -t 5 -p "Do you want to chroot? (Yes/no)" x
+if test "\${x,,}" = yes -o -z "\$x"; then
+    exec /usr/sbin/chroot $cowchroot /bin/bash -c '
+        mount / / -o bind
+        mount udev /dev -t devtmpfs
+        if test -e "/sbin/init"; then
+            exec /sbin/init
+        elif test -e "/lib/systemd/systemd"; then
+            exec /lib/systemd/systemd
+        else
+            echo no init found, run bash
+            exec /bin/bash
+        fi
+    '
+else
+    exec bash
+fi
+
+EOF46c312a0e349
 
 vmlinux=${cowboot_dir#/boot}/$(
     cd $cowboot_dir
@@ -55,6 +79,10 @@ initrd=${cowboot_dir#/boot}/$(
     cd $cowboot_dir
     find . -name 'initrd*'|sort -h|tail -n 1|cut -b 2-
       )
+
+if test -z "$initrd"; then
+    die "Can't find initrd for you, maybe dpkg-reconfigure linux-image-XXX-generic?"
+fi
 
 if test "$(df /boot|pn 1)" = "$(df /|pn 1)"; then
     vmlinux=/boot$vmlinux
@@ -126,3 +154,8 @@ EOF
 
 sudo chmod +x /etc/grub.d/40_$cowname /$cowname/chroot-cow
 sudo update-grub
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+
+# the-ultimate-script ends here
