@@ -113,6 +113,7 @@
 (require 'init-css)
 (require 'init-haml)
 (require 'init-python-mode)
+(require 'init-bhj)
 (unless (version<= emacs-version "24.3")
   (require 'init-haskell))
 (require 'init-elm)
