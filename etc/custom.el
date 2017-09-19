@@ -24,6 +24,7 @@
     (confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
+ '(company-idle-delay nil)
  '(compilation-message-face (quote default))
  '(custom-safe-themes
    (quote
