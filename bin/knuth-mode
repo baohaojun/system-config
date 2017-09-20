@@ -14,7 +14,7 @@ else
     target=$(readlink -f "$1")
 fi
 
-if [[ "$target" =~ .org$ ]]; then
+if [[ "$target" =~ \.org$ ]]; then
     target=$(perl -ne 'print $1 if m/:tangle (\S+) /' "$target")
     target=${target/#\~/$HOME}
     e $target

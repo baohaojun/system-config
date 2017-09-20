@@ -1,195 +1,217 @@
 #!/bin/bash
 
+# [[file:~/system-config/knuth-mode/sync-mobile-org.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+
 set -e
 
+  #!/bin/bash
 
-function sync-phone-files() {
-    if test "$1" = ""; then
-        adb-sync --reverse /sdcard/MobileOrg ..
-    elif test "$1" = "-r"; then
-        touch mobileorg.org
-        adb push checksums.dat /sdcard/MobileOrg/ &
-        adb-sync . /sdcard/MobileOrg/ --exclude .git --delete
-    else
-        die "can't do sync-phone-files $@"
-    fi
-}
+  set -e
 
 
-## start generated code
-TEMP=$(getopt -o d --long "debug"  -n $(basename $0) -- "$@")
-debug=
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-        -d|--debug)
-            debug=true
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error"
-            ;;
-    esac
-done
-
-## end generated code
+  function sync-phone-files() {
+      if test "$1" = ""; then
+          adb-sync --reverse /sdcard/MobileOrg ..
+      elif test "$1" = "-r"; then
+          touch mobileorg.org
+          adb push checksums.dat /sdcard/MobileOrg/ &
+          adb-sync . /sdcard/MobileOrg/ --exclude .git --delete
+      else
+          die "can't do sync-phone-files $@"
+      fi
+  }
 
 
-function die() {
-    echo Error: "$@"
-    find-or-exec konsole
-    exit -1
-}
+  ## start generated code
+  TEMP=$(getopt -o d --long "debug"  -n $(basename $0) -- "$@")
+  debug=
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+          -d|--debug)
+              debug=true
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          *)
+              die "internal error"
+              ;;
+      esac
+  done
 
-find-or-exec emacs emacs.bhj
-while ! emacsclient -e '(save-some-buffers)'; do
-    sleep 1
-    echo "Emacs need save some buffers"
-done
+  ## end generated code
 
-find-or-exec konsole
-cd ~/system-config/doc/projects
 
-if git-dirty; then
-    if yes-or-no-p -y "git add all?"; then
-        git add .
-    else
-        git-interactive-add
-    fi
-    git commit -m 'auto commit' -s || true
-fi
+  function die() {
+      echo Error: "$@"
+      find-or-exec konsole
+      exit -1
+  }
 
-if test ! -d ~/today/MobileOrg; then
-    rm -rf ~/today/forever/MobileOrg;
-    mkdir -p ~/today/forever/MobileOrg;
-    download-today
-    cd -P ~/today/MobileOrg;
+  find-or-exec emacs emacs.bhj
+  while ! emacsclient -e '(save-some-buffers)'; do
+      sleep 1
+      echo "Emacs need save some buffers"
+  done
 
-    sync-phone-files
+  find-or-exec konsole
+  cd ~/system-config/doc/projects
 
-    git init
-    git add .
-    git commit -m 'Init version'
-fi
+  if git-dirty; then
+      if yes-or-no-p -y "git add all?"; then
+          git add .
+      else
+          git-interactive-add
+      fi
+      git commit -m 'auto commit' -s || true
+  fi
 
-cd ~/today/MobileOrg/
-if test ! -d .git; then
-    git init
-fi
-if git-dirty; then
-    git add .
-fi
-function sync-on-phone() {
-    my-adb touch /sdcard/MobileOrg/mobileorg.org.bak
-    my-adb am startservice -a com.matburt.mobileorg.SYNC_SERVICE
-    for x in $(seq 1 10); do
-        if my-adb 'if test -e /sdcard/MobileOrg/mobileorg.org.bak; then echo yes; fi' | grep -q yes; then
-            sleep .5
-        else
-            break
-        fi
-    done
-}
-sync-on-phone
+  if test ! -d ~/today/MobileOrg; then
+      rm -rf ~/today/forever/MobileOrg;
+      mkdir -p ~/today/forever/MobileOrg;
+      download-today
+      cd -P ~/today/MobileOrg;
 
-sync-phone-files
+      sync-phone-files
 
-if test -e mobileorg.org; then
-    if test "$debug" = true; then
-        cat mobileorg.org
-    fi
-    # undup-mobile-org-sync mobileorg.org > mobileorg.org2
-    # mv mobileorg.org2 mobileorg.org
-fi
+      git init
+      git add .
+      git commit -m 'Init version'
+  fi
 
-find-or-exec emacs emacs.bhj
-emacsclient -e '(progn (find-file "~/src/github/projects/from-mobile.org") (org-mobile-pull))'
+  cd ~/today/MobileOrg/
+  if test ! -d .git; then
+      git init
+  fi
+  if git-dirty; then
+      git add .
+  fi
+  function sync-on-phone() {
+      my-adb touch /sdcard/MobileOrg/mobileorg.org.bak
+      my-adb am startservice -a com.matburt.mobileorg.SYNC_SERVICE
+      for x in $(seq 1 10); do
+          if my-adb 'if test -e /sdcard/MobileOrg/mobileorg.org.bak; then echo yes; fi' | grep -q yes; then
+              sleep .5
+          else
+              break
+          fi
+      done
+  }
+  sync-on-phone
 
-if test -d images; then
-    rsync ./images -av ~/src/github/projects -av
-fi
+  sync-phone-files
 
-emacsclient -e '(save-some-buffers)'
-# todo-from-sticky-mail
+  if test -e mobileorg.org; then
+      if test "$debug" = true; then
+          cat mobileorg.org
+      fi
+      # undup-mobile-org-sync mobileorg.org > mobileorg.org2
+      # mv mobileorg.org2 mobileorg.org
+  fi
 
-function check_git_dir() {
-    if test $# != 2; then
-        die "Error: Usage $(basename $0) dir prompt"
-    fi
+  find-or-exec emacs emacs.bhj
+  emacsclient -e "$(cat <<'EOF3f6c48da0c2d'
+(progn
+  (find-file "~/src/github/projects/from-mobile.org")
+  (org-mobile-pull))
+EOF3f6c48da0c2d
+)"
 
-    cd  "$1"
+  if test -d images; then
+      rsync ./images -av ~/src/github/projects -av
+  fi
 
-    find-or-exec konsole
-    if test "$PWD" = ~/today/MobileOrg; then
-        git add .
-    else
-        git-interactive-add
-    fi
-    if ! yes-or-no-p -t 5 -y "Continue for $2 @$PWD"; then
-        exit 0
-    fi
-}
+  emacsclient -e '(save-some-buffers)'
+  # todo-from-sticky-mail
 
-if grep . -q ~/src/github/projects/from-mobile.org; then
-    cat ~/src/github/projects/from-mobile.org >> ~/src/github/projects/Captures.org
-    rm ~/src/github/projects/from-mobile.org -f
-fi
+  function check_git_dir() {
+      if test $# != 2; then
+          die "Error: Usage $(basename $0) dir prompt"
+      fi
 
-check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
-(
-    cd ~/src/github/projects
-    perl -ne '
-            next if m/^\* TODO ￥Qfpx02R9vJ8￥/..m/^\[.*\]$/;
-            if (m/^\* TODO (.*)/) {
-                if ($last eq $1) {
-                    while (<>) {
-                       if (m/^\[.*\]$/) {
-                           $_ = "";
-                           last;
-                       }
-                    }
-                } else {
-                    $last = $1;
-                }
-            }
-            print;
-    ' -i jwords.org
+      cd  "$1"
 
-    cat jwords.org >> done/jwords.org
-    echo -n > jwords.org
-    git-interactive-add
+      find-or-exec konsole
+      if test "$PWD" = ~/today/MobileOrg; then
+          git add .
+      else
+          git-interactive-add
+      fi
+      if ! yes-or-no-p -t 5 -y "Continue for $2 @$PWD"; then
+          exit 0
+      fi
+  }
 
-) || true
-emacsclient -e '(progn (find-file "~/src/github/projects/Captures.org") (org-mobile-push))'
-(
-    cd ~/today/MobileOrg
-    for x in *.org; do
-        if test "$x" = index.org -o "$x" = mobileorg.org; then
-            continue
-        fi
-        if ! grep -q -P -e '\[\[file:\Q'"$x"'\E\]' index.org; then
-            echo "$x" not exist anymore | tee -a .git/no-such.org
-            rm "$x"
-        fi
-    done
-)
+  if grep . -q ~/src/github/projects/from-mobile.org; then
+      cat ~/src/github/projects/from-mobile.org >> ~/src/github/projects/Captures.org
+      rm ~/src/github/projects/from-mobile.org -f
+  fi
 
-if (cd ~/system-config/doc/projects && git diff HEAD . | grep -v -e '^\+\s+:(properties|id|end):' -i -P | grep '^(-|\+) ' -P ); then
-    check_git_dir ~/system-config/doc/projects "Add all changes after org-mobile-push?"
-else
-    (cd ~/system-config/doc/projects && git add .)
-fi
+  check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
+  (
+      cd ~/src/github/projects
+      perl -ne '
+              next if m/^\* TODO ￥Qfpx02R9vJ8￥/..m/^\[.*\]$/;
+              if (m/^\* TODO (.*)/) {
+                  if ($last eq $1) {
+                      while (<>) {
+                         if (m/^\[.*\]$/) {
+                             $_ = "";
+                             last;
+                         }
+                      }
+                  } else {
+                      $last = $1;
+                  }
+              }
+              print;
+      ' -i jwords.org
 
-cd ~/today/MobileOrg
-git add .
-git commit -m "$(now)" || true
+      cat jwords.org >> done/jwords.org
+      echo -n > jwords.org
+      git-interactive-add
 
-check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
+  ) || true
+  emacsclient -e "$(cat <<'EOFfb21fb11dd50'
+(progn
+  (find-file "~/src/github/projects/Captures.org")
+  (find-file "~/src/github/projects/jwords.org")
+  (org-mobile-push))
+EOFfb21fb11dd50
+)"
+  (
+      cd ~/today/MobileOrg
+      for x in *.org; do
+          if test "$x" = index.org -o "$x" = mobileorg.org; then
+              continue
+          fi
+          if ! grep -q -P -e '\[\[file:\Q'"$x"'\E\]' index.org; then
+              echo "$x" not exist anymore | tee -a .git/no-such.org
+              rm "$x"
+          fi
+      done
+  )
 
-sync-phone-files -r
+  if (cd ~/system-config/doc/projects && git diff HEAD . | grep -v -e '^\+\s+:(properties|id|end):' -i -P | grep '^(-|\+) ' -P ); then
+      check_git_dir ~/system-config/doc/projects "Add all changes after org-mobile-push?"
+  else
+      (cd ~/system-config/doc/projects && git add .)
+  fi
 
-sync-on-phone&
+  cd ~/today/MobileOrg
+  git add .
+  git commit -m "$(now)" || true
+
+  check_git_dir ~/today/MobileOrg "Add all changes after org-mobile-push?"
+
+  sync-phone-files -r
+
+  sync-on-phone&
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+
+# the-ultimate-script ends here
