@@ -88,6 +88,11 @@
 	      nil "run the aumix program in a buffer" single
 	      ((:url . "http://user42.tuxfamily.org/aumix-mode/index.html")
 	       (:keywords "multimedia" "mixer" "aumix"))])
+ (auto-correct .
+	       [(1 1)
+		nil "Remembers and automatically fixes past corrections" single
+		((:url . "http://elpa.gnu.org/packages/auto-correct.html")
+		 (:keywords "editing"))])
  (auto-overlays .
 		[(0 10 9)
 		 nil "Automatic regexp-delimited overlays" tar
@@ -123,6 +128,11 @@
 	     nil "Caps-lock as a minor mode" single
 	     ((:url . "http://elpa.gnu.org/packages/caps-lock.html")
 	      (:keywords))])
+ (captain .
+	  [(1 0 1)
+	   nil "CAPiTalization is Automatic IN emacs" single
+	   ((:url . "http://elpa.gnu.org/packages/captain.html")
+	    (:keywords "editing"))])
  (chess .
 	[(2 0 4)
 	 ((cl-lib
@@ -325,7 +335,7 @@
 	     ((:keywords "killing" "convenience")
 	      (:url . "https://github.com/leoliu/easy-kill"))])
  (ebdb .
-       [(0 2)
+       [(0 3 2)
 	((emacs
 	  (25 1))
 	 (cl-lib
@@ -345,7 +355,7 @@
 	      ((:url . "http://elpa.gnu.org/packages/ebdb-gnorb.html")
 	       (:keywords))])
  (ebdb-i18n-chn .
-		[(1 0 1)
+		[(1 1)
 		 ((pyim
 		   (1 6 0))
 		  (ebdb
@@ -465,7 +475,7 @@
 		 ((:keywords "gnome" "c" "coding style")
 		  (:url . "http://elpa.gnu.org/packages/gnome-c-style.html"))])
  (gnorb .
-	[(1 2 3)
+	[(1 2 4)
 	 ((cl-lib
 	   (0 5)))
 	 "Glue code between Gnus, Org, and BBDB" tar
@@ -753,7 +763,7 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(20170821)
+      [(20170918)
        nil "Outline-based notes management and organizer" tar nil])
  (org-edna .
 	   [(1 0 -3 1)
@@ -933,8 +943,10 @@
 	       ((:keywords "soap" "web-services" "comm" "hypermedia")
 		(:url . "http://elpa.gnu.org/packages/soap-client.html"))])
  (sokoban .
-	  [(1 4 5)
-	   nil "Implementation of Sokoban for Emacs." tar
+	  [(1 4 6)
+	   ((emacs
+	     (23 1)))
+	   "Implementation of Sokoban for Emacs." tar
 	   ((:keywords "games")
 	    (:url . "http://elpa.gnu.org/packages/sokoban.html"))])
  (sotlisp .
@@ -1001,7 +1013,7 @@
 		  ((:url . "http://elpa.gnu.org/packages/timerfunctions.html")
 		   (:keywords))])
  (tiny .
-       [(0 1 1)
+       [(0 2 1)
 	nil "Quickly generate linear ranges in Emacs" tar
 	((:keywords "convenience")
 	 (:url . "https://github.com/abo-abo/tiny"))])
@@ -1064,6 +1076,13 @@
 	 "A diff tool similar to  vimdiff" single
 	 ((:url . "https://github.com/justbur/emacs-vdiff")
 	  (:keywords "diff"))])
+ (vigenere .
+	   [(1 0)
+	    ((emacs
+	      (25 1)))
+	    "Run a vigenere cipher on a block of text ;" single
+	    ((:url . "https://elpa.gnu.org/packages/vigenere.html")
+	     (:keywords "data" "vigenere" "cipher"))])
  (vlf .
       [(1 7)
        nil "View Large Files" tar
@@ -1145,7 +1164,7 @@
        ((:keywords "multimedia" "xpm")
 	(:url . "http://www.gnuvola.org/software/xpm/"))])
  (yasnippet .
-	    [(0 12 1)
+	    [(0 12 2)
 	     ((cl-lib
 	       (0 5)))
 	     "Yet another snippet extension for Emacs." tar
