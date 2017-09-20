@@ -117,7 +117,7 @@ function rex()
 
 function rcd() {
     if test $# = 0; then
-        cd .repo/manifests
+        cd_bhj .repo/manifests
     else
         scd "$@"
     fi

@@ -6,6 +6,10 @@
 //{{%PRESERVE%
 
 // first, install kkk and hok plugins
+plugins.options["tanything_opt.keymap"] = {
+    "C-z"   : "prompt-toggle-edit-mode",
+};
+
 plugins.options["kkk.sites"] = ["^https?://weibo\\.com/"];
 
 plugins.options["follow-link.nextrel"]     = 'a[rel="next"]';
@@ -457,6 +461,10 @@ key.setViewKey("n", function(ev) {
 key.setViewKey("p", function(ev) {
   ext.exec("follow-prev-link", null, ev);
 }, 'Follow prev link');
+
+key.setViewKey(["C-x", "b"], function (ev, arg) {
+                   ext.exec("tanything", arg);
+}, "view all tabs", true);
 
 key.setCaretKey([["C-a"], ["^"]], function (ev) {
   ev.target.ksMarked ? goDoCommand("cmd_selectBeginLine") : goDoCommand("cmd_beginLine");
