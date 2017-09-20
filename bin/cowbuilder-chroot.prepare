@@ -23,3 +23,5 @@ find ~bhj -maxdepth 2 | xargs chown bhj\.||true
 cp ~bhj/system-config/.keyboard.dvp /etc/default/keyboard.dvp
 
 echo you must config dpkg-reconfigure linux-image-XXX-generic
+echo maybe: sudo touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+sleep 1

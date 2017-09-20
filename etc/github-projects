@@ -4,7 +4,6 @@ github_projects=(
     elpa
     opencc
     org-jira
-    weibo.emacs
     emacs.d
     guilt
     emacs-clang-complete-async
