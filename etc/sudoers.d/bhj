@@ -5,6 +5,7 @@ Cmnd_Alias SETLEDS = sha512 : 49b64e280a413f2bfbddfa216314472fbb00973e544817141a
 bhj ALL = NOPASSWD: /usr/bin/apt-get update, \
     /usr/bin/apt-get dist-upgrade --download-only -y, \
     /usr/sbin/hibernate, \
+    /bin/kbd_mode -s, \
     XORGTTY, \
     SETLEDS, \
     /bin/loadkeys, \
