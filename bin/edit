@@ -35,7 +35,12 @@ my $remote_ip = $ENV{"REMOTEIP"};
 
 my $protocol = "";
 if ($remote_ip) {
-  $protocol = qx(get-remote-edit-protocol $remote_ip);
+  if ($ENV{REMOTEPROTOCOL}) {
+    $protocol = $ENV{REMOTEPROTOCOL};
+  } else {
+    $protocol = qx(get-remote-edit-protocol $remote_ip);
+  }
+
   if ($ENV{REMOTEUSER}) {
       $remote_ip = "$ENV{REMOTEUSER}\@$remote_ip";
   }

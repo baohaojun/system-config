@@ -89,6 +89,14 @@
   boot_dev=$(get-mount-1 /boot)
 
   sudo mkdir -p /boot/$cowname
+  if test ! -e $cowchroot/.cow-done; then
+      if test -e "$cowchroot".ext4 && sudo mount "$cowchroot".ext4 "$cowchroot" && test -e "$cowchroot"/.cow-done; then
+          true
+      else
+          die "Can't get .cow-done"
+      fi
+  fi
+
   sudo cp $cowchroot/boot /boot/$cowname -av
   cowboot_dir=/boot/$cowname/boot
 
