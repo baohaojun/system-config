@@ -173,6 +173,19 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
         subtree-end
       nil)))
 
+(defvar org-agenda-current-hour 17
+  "The current hour, used to decide if show an entry.")
+
+(defun my-skip-entry? ()
+  "My standard if should skip entry."
+  ;;When at work, do not show homework until 4:00 pm.
+  (cond
+   ((> org-agenda-current-hour 16) nil)
+   ((and (eq sc-where-am-i 'work)
+         (string-match ":@home:" (org-get-tags-string)))
+    (progn (outline-next-heading) (1- (point))))
+   (t nil)))
+
 (let ((active-project-match "-INBOX/PROJECT"))
 
   (setq org-stuck-projects
@@ -191,14 +204,15 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
         org-agenda-window-setup 'current-window
         org-agenda-custom-commands
         `(("d" "Daily agenda and all TODOs"
-           ((tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "" ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+           ((tags-todo "PRIORITY=\"A\""
+                       ((org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (agenda "" ((org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo 'done)
+                                                       (my-skip-entry?)))
                         (org-agenda-ndays 1)))
             (alltodo ""
                      ((org-agenda-skip-function '(or (air-org-skip-subtree-if-habit)
                                                      (air-org-skip-subtree-if-priority ?A)
+                                                     (my-skip-entry?)
                                                      (org-agenda-skip-if nil '(scheduled deadline))))
                       (org-agenda-overriding-header "ALL normal priority tasks:"))))
            ((org-agenda-compact-blocks t)))
