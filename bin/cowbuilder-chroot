@@ -85,7 +85,7 @@ else
 
     chroot="$cow"/$chroot_subdir
 fi
-cat /proc/self/mounts | grep "$chroot" |while read what where x; do
+cat /proc/self/mounts | grep "$chroot" |grep -v "$chroot".ext4 |while read what where x; do
     sudo umount "$where"
 done
 

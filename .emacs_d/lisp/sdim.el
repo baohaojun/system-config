@@ -221,6 +221,14 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
       (setq quit-flag nil
             unread-command-events '(7)))))
 
+(defun sdim-accept (input-str repeat)
+  (if (eq major-mode 'term-mode)
+      (term-send-raw-string input-str)
+    (insert input-str))
+  (when (and (window-minibuffer-p)
+             (= repeat 1))
+    (run-hooks 'post-command-hook)))
+
 (defun sdim-show ()
   (unless enable-multibyte-characters
     (setq sdim-current-key nil
@@ -239,9 +247,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
                 prefix-arg nil))
 
       (while (> repeat 0)
-        (if (eq major-mode 'term-mode)
-            (term-send-raw-string sdim-commit-str)
-          (insert sdim-commit-str))
+        (sdim-accept sdim-commit-str repeat)
         (setq repeat (1- repeat)))
       (if auto-fill-function
           (apply normal-auto-fill-function ())))
@@ -249,10 +255,10 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 
   (if (not (string-equal "" sdim-cands-str))
       (let ((cands-list (mapcar #'sdim--formalize-str
-                                 (split-string sdim-cands-str " ")))
+                                (split-string sdim-cands-str " ")))
             (cand-index (% (read sdim-cand-index) 10)))
         (unless (string-match "^zu" sdim-comp-str)
-         (setq sdim-comp-str (substring (nth cand-index cands-list) 0)))
+          (setq sdim-comp-str (substring (nth cand-index cands-list) 0)))
         (let ((i 0))
           (setq sdim-cands-str "")
           (mapc (lambda (str)
@@ -267,10 +273,6 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
                                                  " ")
                                                prefix
                                                str))) cands-list))))
-
-
-
-
   (let ((buffer-undo-list t))
     (insert sdim-comp-str)
     (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))

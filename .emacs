@@ -378,8 +378,8 @@
                 (concat initial-scratch-message
                         "请访问此网页查看Emacs作弊手册： http://baohaojun.github.io/emacs-cheat-sheet.html")))
 
-(when (file-exists-p "~/.emacs.cust")
-  (load "~/.emacs.cust"))
+(when (file-exists-p "~/.config/system-config/.emacs")
+  (load "~/.config/system-config/.emacs"))
 
 (when (file-exists-p "~/src/github/private-config/.emacs")
   (load "~/src/github/private-config/.emacs"))

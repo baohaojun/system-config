@@ -33,6 +33,7 @@ elif test "$file" = agenda; then
         (org-agenda-remove-restriction-lock)
         (org-agenda nil "d"))'
     emacsclient -e '(progn
+    (setq org-agenda-current-hour (string-to-number (format-time-string "%H")))
     (org-agenda nil "d")
     (org-agenda-redo t))'
 elif test "$file" = daily; then

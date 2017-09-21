@@ -503,7 +503,7 @@
                 (Konsole . "C-S-c")
                 (QtCreator . ("M-e" "c"))
                 (Lxterminal . "C-S-c")
-                (Firefox . ("M-w")) (Firefox-esr . ("M-w"))
+                (Firefox . ("C-q" "C-c")) (Firefox-esr . ("C-q" "C-c"))
                 (XTerm . ,(lambda () (system "xclip-to-gclip&")))
                 (Xfce4-terminal . "C-S-c")
                 (Gnome-terminal . "C-S-c")
