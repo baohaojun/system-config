@@ -367,37 +367,47 @@ function adb() {
             the_adb=adb-expect exec_the_adb "$@"
         fi
     else
-        if test -e ~/.config/system-config/adb-commands; then
-            . ~/.config/system-config/adb-commands
+        if test "$SC_ACCOUNT_USER" != bhj; then
+            . ~/system-config/etc/adb-commands
         else
-            declare -A adb_commands
-        fi
+            if test -e ~/.config/system-config/adb-commands; then
+                . ~/.config/system-config/adb-commands
+            else
+                declare -A adb_commands
+            fi
 
-        if test -z "${adb_commands[shell]}" -o \
-                ! -e ~/.config/system-config/adb-commands -o \
-                $the_true_adb -nt ~/.config/system-config/adb-commands -o \
-                ~/system-config/bin/my-adb -nt ~/.config/system-config/adb-commands; then
-            (
-                $the_true_adb 2>&1 | grep '^\s*adb ' -P|pn 2 |sort -u |grep -v 'wait-for.*-'
-                echo wait-for-device
-                for transport in usb local any; do
-                    for state in device recovery sideload bootloader; do
-                        echo wait-for-$transport-$state
+            if test -z "${adb_commands[shell]}" -o \
+                    ! -e ~/.config/system-config/adb-commands -o \
+                    $the_true_adb -nt ~/.config/system-config/adb-commands -o \
+                    ~/system-config/bin/my-adb -nt ~/.config/system-config/adb-commands; then
+                (
+                    (
+                        $the_true_adb 2>&1 | grep '^\s*adb ' -P|pn 2 | grep . ||
+                            $the_true_adb 2>&1 | grep '^ \w' -P|pn 1 | grep .
+                    ) | sort -u |grep -v 'wait-for.*-'
+                    echo wait-for-device
+                    for transport in usb local any; do
+                        for state in device recovery sideload bootloader; do
+                            echo wait-for-$transport-$state
+                        done
                     done
-                done
-                $the_true_adb 2>&1 |grep ' - '|pn 1|sort -u|grep -v '^-$|^A|\[|^adb$' -P
-            ) |(
-                cat <<EOF
+                    $the_true_adb 2>&1 |grep '^ -'|pn 1|sort -u|grep -v '^-$|^A|\[|^adb$' -P
+                ) |(
+                    cat <<EOF
 declare -A adb_commands
 EOF
-                while read command; do
-                    cat <<EOF
+                    while read command; do
+                        cat <<EOF
 adb_commands["$command"]=true
 EOF
-                done
-            ) > ~/.config/system-config/adb-commands.$$
-            mv ~/.config/system-config/adb-commands.$$ ~/.config/system-config/adb-commands
-            . ~/.config/system-config/adb-commands
+                    done
+                ) > ~/.config/system-config/adb-commands.$$
+                mv ~/.config/system-config/adb-commands.$$ ~/.config/system-config/adb-commands
+                . ~/.config/system-config/adb-commands
+                if ! diff -q ~/.config/system-config/adb-commands ~/system-config/etc/adb-commands; then
+                    hint -t 5 "你的 adb 有更新？ ~/.config/system-config/adb-commands 跟 ~/system-config/etc/adb-commands 不一致"
+                fi
+            fi
         fi
 
         is_adb_command=false
