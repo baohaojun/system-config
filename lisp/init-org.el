@@ -182,7 +182,9 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
   (cond
    ((> org-agenda-current-hour 16) nil)
    ((and (eq sc-where-am-i 'work)
-         (string-match ":@home:" (org-get-tags-string)))
+         (or(and org-file-tags
+                 (string-equal "@home" (car org-file-tags)))
+            (string-match ":@home:" (org-get-tags-string))))
     (progn (outline-next-heading) (1- (point))))
    (t nil)))
 
