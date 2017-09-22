@@ -2,32 +2,32 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @resize=true
+# generate-getopt -e @scaling=false
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h \
-              --long resize,help,no-resize \
-              -n $(basename -- $0) -- "$@")
-resize=true
+TEMP=$( getopt -o h \
+               --long scaling,help,no-scaling \
+               -n $(basename -- $0) -- "$@")
+scaling=${scaling:-false}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --resize|--no-resize)
-            if test "$1" = --no-resize; then
-                resize=false
+        --scaling|--no-scaling)
+            if test "$1" = --no-scaling; then
+                scaling=false
             else
-                resize=true
+                scaling=true
             fi
             shift
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf "%06s" " "
-            printf %-24s '--[no-]resize'
+            printf %-24s '--[no-]scaling'
             echo
             exit
             shift
@@ -43,10 +43,16 @@ while true; do
 done
 
 
+export scaling
+
 ## end generated code
 
-export resize
 
+true_size=$(my-adb dumpsys window|grep -o -P 'app=\d+x\d+')
+
+if test "$scaling" = false -a "$true_size" != "app=1080x1920" && yes-or-no-p -y "Need scaling: $true_size, use scaling?"; then
+    scaling=true
+fi
 
 export TAP=adb-tap
 if test "$1"; then
@@ -56,7 +62,7 @@ fi
 (sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
 adb-tty getevent -l </dev/tty | perl -ne '
     BEGIN {
-        if ($ENV{resize} eq "true") {
+        if ($ENV{scaling} eq "false") {
             $true_x = 1080;
             $true_y = 1920;
         } else {
