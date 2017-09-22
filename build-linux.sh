@@ -140,6 +140,11 @@ done
     fi
 
     destroy-windows Wrench || true
+    (
+        cd $(dirname $(readlink -f $(which Wrench)))
+        ln -s $(which the-true-adb) . -f
+    ) || true
+
     Wrench.sh -k || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.Wrench
