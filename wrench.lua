@@ -1086,7 +1086,7 @@ local function get_coffee(what)
       log("Need retry " .. i)
       return
    end
-   putclip"我正在使用咕咕机"
+   putclip"咕咕机 善良的动物"
 
    if social_need_confirm and not yes_or_no_p("Will now find the 咕咕机 Wechat App") then
       return
