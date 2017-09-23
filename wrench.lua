@@ -1198,7 +1198,7 @@ M.weixin_open_search = function(depth)
          end
       end
       log("exit the current '%s' by touching back botton %d", top_window, i)
-      adb_event"88 170 sleep .1 88 170 sleep .1"
+      adb_event"88 125 sleep .1 88 125 sleep .1"
       sleep(.1)
    end
 end
@@ -1257,13 +1257,19 @@ end
 
 M.qq_open_search = function ()
    local max_qq_try = 5
+
+   search_bar_y = 251
+   if real_height == 2160 then
+      search_bar_y = 204
+   end
+   
    for qq_try = 1, max_qq_try do
       adb_start_activity(W.qqChatActivity2)
-      adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809"
+      adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809" -- click first tab button, but maybe also click edit
       if qq_try > 1 then
          adb_event"adb-swipe-100 433 701 433 751 sleep .1"
       end
-      adb_event" sleep .3 adb-tap 539 251 adb-tap 539 311" -- double click the search bar
+      adb_event(" sleep .3 adb-tap 539 " .. search_bar_y .. " adb-tap 539 " .. search_bar_y) -- double click the search bar
       local ime_active, height, ime_connected
 
       if wait_input_target_n_ok(4 + math.floor(qq_try / 2), W.qqGroupSearch) then
@@ -1944,15 +1950,25 @@ end
 
 qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
+   local clear_button = "adb-tap 804 167"
+   if real_height == 2160 then
+      clear_button = "adb-tap 833 90"
+   end
+
+   local first_result_xy = "adb-tap 544 558"
+   if real_height == 2160 then
+      first_result_xy = "adb-tap 415 331"
+   end
+   
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
       qq_open_search()
       local top_window = wait_input_target_n(5, W.qqChatActivity2, W.qqGroupSearch)
-      adb_event"adb-tap 804 167 key scroll_lock sleep .5" -- clear the search first
+      adb_event("adb-tap 296 1594 adb-tap 522 1842 sleep .1 " .. clear_button .. " sleep .1 key scroll_lock sleep .5") -- clear the search first by input "x " and click ⓧ.
       if top_window and top_window:match(W.qqGroupSearch) then
          for click_search_res = 1, 3 do
             log"Found W.qqGroupSearch"
-            adb_event"adb-tap 544 558 sleep .2"
+            adb_event(first_result_xy .. " sleep .2")
             if adb_top_window() ~= W.qqGroupSearch then
                log("Found the qq friend %s", friend_name)
                return
@@ -1982,14 +1998,18 @@ qq_find_group_friend = function(friend_name)
       log("qq window is not chat: %s", window)
       return
    end
-   adb_event("adb-tap 994 167")
+   tap_top_right()
    local chatSetting = "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatSettingForTroop"
    window = wait_top_activity(chatSetting)
    if window ~= chatSetting then
       log("did not get chatSetting: %s", window)
       return
    end
-   adb_event("sleep 1 adb-tap 426 1540") -- 点击进入群成员列表
+   local group_list_button = "adb-tap 426 1540"
+   if real_height == 2160 then
+      group_list_button = "adb-tap 404 1167"
+   end
+   adb_event("sleep 1 " .. group_list_button) -- 点击进入群成员列表
    local troopList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity"
    window = wait_top_activity(troopList)
    if window ~= troopList then
@@ -1997,8 +2017,13 @@ qq_find_group_friend = function(friend_name)
       return
    end
 
+   local troop_list_search = "adb-tap 663 252"
+   if real_height == 2160 then
+      troop_list_search = "adb-tap 373 212"
+   end
+   
    for i = 1, 40 do
-         adb_event("sleep .1 adb-tap 663 252")
+         adb_event("sleep .1 " .. troop_list_search)
          if wait_input_target_n(3, troopList) ~= "" then
             break
          else
@@ -2007,6 +2032,10 @@ qq_find_group_friend = function(friend_name)
    end
 
    the_1st_member_click = "adb-tap 326 229"
+   if real_height == 2160 then
+      the_1st_member_click = "adb-tap 500 204"
+   end
+   
    adb_event("key scroll_lock key space key DEL sleep .5 " .. the_1st_member_click)
    local troopMember = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberCardActivity"
    for i = 1, 10 do
@@ -2022,7 +2051,11 @@ qq_find_group_friend = function(friend_name)
          end
       end
    end
-   adb_event("sleep " .. .5 * i .. " adb-tap 864 1800")
+   local send_msg_button = "adb-tap 857 1800"
+   if real_height == 2160 then
+      send_msg_button = "adb-tap 894 1872"
+   end
+   adb_event("sleep " .. .5 * i .. send_msg_button)
 end
 
 save_window_types = function()
@@ -2678,7 +2711,11 @@ local function picture_to_weixin_chat(pics, ...)
 end
 
 M.tap_top_right = function()
-   adb_event"adb-tap 1012 151"
+   if real_height == 2160 then
+      adb_event"adb-tap 1024 99"
+   else
+      adb_event"adb-tap 1012 151"
+   end
 end
 
 M.tap_bottom_center = function()
@@ -3518,7 +3555,7 @@ M.notification_arrived = function(key, pkg, title, text)
    
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
-      if WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then
+      if false and WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then
          sayThankYouForLuckyMoney(true)
          adb_event"sleep .5 adb-key home"
       else
