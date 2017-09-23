@@ -50,7 +50,8 @@ export scaling
 
 true_size=$(my-adb dumpsys window|grep -o -P 'app=\d+x\d+')
 
-if test "$scaling" = false -a "$true_size" != "app=1080x1920" && yes-or-no-p -y "Need scaling: $true_size, use scaling?"; then
+if test "$scaling" = false -a "$true_size" != "app=1080x1920"; then
+    echo "Need scaling: $true_size, using scaling"
     scaling=true
 fi
 
