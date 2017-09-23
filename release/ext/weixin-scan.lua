@@ -3,7 +3,11 @@
 
 local open_weixin_scan = function()
    weixin_open_homepage()
-   adb_event"sleep .1 adb-tap 56 154 sleep .5 adb-tap 1002 115 sleep .5 adb-tap 717 580"
+   local weixin_scan_button = 'adb-tap 717 580'
+   if real_height == 2160 then
+      weixin_scan_button = 'adb-tap 748 398'
+   end
+   adb_event("sleep .1 adb-tap 56 154 sleep .5 adb-tap 1002 115 sleep .5 " .. weixin_scan_button)
    if true then
       return
    end

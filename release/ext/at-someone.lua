@@ -13,7 +13,11 @@ end
 search = select_args_with_history("at-someone", "你想@谁？", " ", "")
 
 if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity" then
-   adb_event"adb-tap 489 288"
+   if real_height == 2160 then
+      adb_event"adb-tap 384 211"
+   else
+      adb_event"adb-tap 489 288"
+   end
    wait_for_input = 'qq'
 end
 
@@ -31,6 +35,7 @@ wrench_post(search, 'manual-post')
 if wait_for_input and yes_or_no_p("请确认你用 %s 搜出来的第一个联系人，是否就是你想@的那个\n\n如是，确认后自动为你点击；如不是，请取消并手动点击想@的联系人", search) then
    if wait_for_input == 'qq' then
       adb_event("adb-tap 502 272")
+      adb_event"adb-tap 500 226"
    elseif wait_for_input == 'weixin' then
       adb_event("adb-tap 382 298")
    end

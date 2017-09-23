@@ -15,5 +15,10 @@ end
 
 what = select_args{"请输入想对小扳手作者说的话", "谢谢你开发小扳手！", "小扳手真是太帅了！"}
 putclip(what)
-adb_event"key scroll_lock sleep .1 adb-tap 852 841 sleep .2 adb-tap 429 832"
+
+local msg_confirm = "adb-tap 852 841 sleep .2 adb-tap 429 832"
+if real_height == 2160 then
+   msg_confirm = "adb-tap 814 732 sleep .2 adb-tap 814 722"
+end
+adb_event("key scroll_lock sleep .1 " .. msg_confirm)
 prompt_user("真的要通过微信给作者打钱吗？请输入金额并确认支付。谢谢你对小扳手的支持^_*！")

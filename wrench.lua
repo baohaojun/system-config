@@ -59,11 +59,11 @@ local using_adb_root
 local adb_unquoter
 local is_windows = false
 local debug_set_x = ""
-local default_width, default_height = 1080, 1920
-local real_width, real_height = 1080, 1920
-local app_width, app_height = 1080,1920
-local app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
-local real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
+M.default_width, M.default_height = 1080, 1920
+M.real_width, M.real_height = 1080, 1920
+M.app_width, M.app_height = 1080,1920
+M.app_width_ratio, M.app_height_ratio = M.app_width / M.default_width, M.app_height / M.default_height
+M.real_width_ratio, M.real_height_ratio = M.real_width / M.default_width, M.real_height / M.default_height
 local using_oppo_os = false
 local brand = "smartisan"
 local model = "Wrench"
@@ -1155,7 +1155,9 @@ M.weixin_open_search = function(depth)
          top_window = adb_top_window()
          if top_window == W.weixinSearchActivity then
             if wait_input_target_n_ok(1, W.weixinSearchActivity) then
-               adb_event("key space sleep .1 adb-tap 1008 154 sleep .1")
+               adb_event("key space sleep .1")
+               tap_top_right() -- clear search text
+               adb_event"sleep .1"
                if wait_input_target_n_ok(5, W.weixinSearchActivity) then
                   return
                end
@@ -1459,7 +1461,7 @@ adb_get_input_window_dump = function()
    if input_method_active and ime_xy:match('Requested w=%d+ h=') then
       ime_height = app_height * 0.105 * 4
    end
-   -- log("ime_height = %d; real_height = %d; default_height = %d; app_height = %d",
+   -- log("ime_height = %d; real_height = %d; default_height = %d; napp_height = %d",
    --     ime_height, real_height, default_height, app_height)
 
    ime_height = ime_height * default_height / app_height
@@ -1768,9 +1770,9 @@ wrench_config = function(passedConfigDirPath)
    real_height = tonumber(real_width:match('x(%d+)'))
    real_width = tonumber(real_width:match('(%d+)x'))
 
-   app_width = dump:match('app=(%d+x%d+)')
-   app_height = app_width:match('x(%d+)')
-   app_width = app_width:match('(%d+)x')
+   app_width = dump:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
+   app_height = app_width:match(',(%d+)')
+   app_width = app_width:match('(%d+),')
    if app_width > app_height and
       (
          WrenchExt.getConfig("force-portrait") == 1 or
@@ -2212,6 +2214,7 @@ M.set_ext_args = function(...)
 end
 
 M.start_app = function(to_start, to_find)
+   
    if not to_start:match("/") then
       pkg = to_start
       local app_table = M.get_app_table()
@@ -2221,17 +2224,7 @@ M.start_app = function(to_start, to_find)
    end
 
    pkg = to_start:gsub("/.*", "")
-   adb_start_activity(to_start)
-   wait_top_activity_match("^" .. pkg)
-   for i = 1, 20 do
-      adb_event"key back sleep .2"
-      top_window = adb_top_window()
-      if top_window ~= "" and not top_window:match("^" .. pkg) then
-         log("We got top window: %s at %d", top_window, i)
-         break
-      end
-   end
-
+   adb_am{'am', 'force-stop', pkg}
    adb_start_activity(to_start)
    wait_top_activity_match("^" .. pkg)
    sleep(.5)
@@ -2670,6 +2663,14 @@ local function picture_to_weixin_chat(pics, ...)
          "adb-tap 268 629", "adb-tap 652 645", "adb-tap 1004 632",
          "adb-tap 301 1008", "adb-tap 612 996", "adb-tap 1006 992",
       }
+
+      if real_height == 2160 then
+         pic_share_buttons = {
+            "adb-tap 308 211", "adb-tap 668 223", "adb-tap 1013 217",
+            "adb-tap 306 544", "adb-tap 656 556", "adb-tap 1012 550",
+            "adb-tap 299 882", "adb-tap 663 882", "adb-tap 1036 894",
+         }
+      end
       local i_button = pic_share_buttons[i]
       log("click image button %d", i)
       adb_event(i_button)
@@ -2688,7 +2689,7 @@ local function picture_to_weixin_chat(pics, ...)
    end
    adb_event("sleep .2 adb-tap 423 1861 adb-tap 490 1862 sleep .1 ")
    if yes_or_no_p("Confirm to send these images?") then
-      adb_event("adb-tap 927 148")
+      tap_top_right()
    end
    window = wait_top_activity(chatWindow)
    if window == W.weixinImagePreviewActivity then
@@ -2921,11 +2922,26 @@ local function picture_to_qq_chat(pics, ...)
          "adb-tap 285 664", "adb-tap 625 644", "adb-tap 978 653",
          "adb-tap 284 989", "adb-tap 621 1024", "adb-tap 988 1019"
       }
+
+      if real_height == 2160 then
+         pic_share_buttons = {
+            "adb-tap 317 218", "adb-tap 656 190", "adb-tap 1009 204",
+            "adb-tap 301 516", "adb-tap 681 537", "adb-tap 1015 536",
+            "adb-tap 304 889", "adb-tap 654 874", "adb-tap 975 858",
+         }
+      end
+      
       local i_button = pic_share_buttons[i]
       sleep(.1)
       adb_event(i_button)
    end
-   adb_event("sleep .1 adb-tap 477 1835")
+
+   local original_pic_button = 'adb-tap 477 1835'
+   if real_height == 2160 then
+      original_pic_button = 'adb-tap 522 1859'
+   end
+
+   adb_event("sleep .1 " .. original_pic_button)
    if need_confirm("请确认是不是要发送这些图片？") then
       adb_event"adb-tap 898 1840"
       wait_top_activity(chatWindow)
