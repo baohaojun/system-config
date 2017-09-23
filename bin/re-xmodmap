@@ -1,6 +1,5 @@
 #!/bin/bash
 # use evtest to see key code for keymap
-set -x
 
 if id | grep 'uid=0\b'; then
     exec > ~bhj/.cache/system-config/logs/re-xmodmap.su.log 2>&1
@@ -16,7 +15,6 @@ if test -e ~/.renew-xauth; then
 fi
 (
     rm ~/.config/system-config/keyboard-dev-ids
-    set -x
     (
         flock -n 9 || exit
         do-natural-scrolling&

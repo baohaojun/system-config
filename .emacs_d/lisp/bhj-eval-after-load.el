@@ -23,7 +23,21 @@
 (eval-after-load 'thingatpt
   '(progn
      (setq thing-at-point-url-path-regexp
-           (replace-regexp-in-string "\t\n " "\t\n  " thing-at-point-url-path-regexp))))
+           (replace-regexp-in-string "\t\n " "\t\n  ，（）" thing-at-point-url-path-regexp))))
+
+;; (setq goto-address-url-regexp
+;;       (concat
+;;        "\\<\\("
+;;        (mapconcat 'identity
+;;                   (delete "mailto:"
+;;                           ;; Remove `data:', as it's not terribly useful to follow
+;;                           ;; those.  Leaving them causes `use Data::Dumper;' to be
+;;                           ;; fontified oddly in Perl files.
+;;                           (delete "data:"
+;;                                   (copy-sequence thing-at-point-uri-schemes)))
+;;                   "\\|")
+;;        "\\)"
+;;        thing-at-point-url-path-regexp))
 
 (eval-after-load 'org
   '(progn

@@ -33,16 +33,17 @@
 use strict;
 
 my %to_decode = (
-    dn => 1,
-    cn => 1,
-    sn => 1,
-    givenName => 1,
-    distinguishedName => 1,
-    displayName => 1,
-    memberOf => 1,
-    name => 1,
-    member => 1,
-    );
+                 dn => 1,
+                 cn => 1,
+                 sn => 1,
+                 givenName => 1,
+                 distinguishedName => 1,
+                 displayName => 1,
+                 memberOf => 1,
+                 name => 1,
+                 member => 1,
+                 description => 1,
+                );
 
 my $last_line;
 
@@ -51,10 +52,20 @@ use Convert::BaseN;
 my $cb = Convert::BaseN->new('base64');
 
 while (<>) {
-    chomp;
-    if (m/^\s+/) {
-        s/^\s+//;
-        $last_line .= $_;
+  chomp;
+  if (m/^\s+/) {
+    s/^\s+//;
+    $last_line .= $_;
+  } else {
+    $last_line =~ m/^(\w+)(:*\s*)(\S*)/;
+    if ($to_decode{$1}) {
+      my ($s1, $s2) = ($1, $2);
+      my $text = $3;
+      if ($text =~ m,^[a-z0-9+=/]*$,i) {
+        $text = $cb->decode($text);
+      }
+      print "$s1$s2$text\n";
+
     } else {
         $last_line =~ m/^(\w+)(::+\s*)(\S*)/;
         if ($to_decode{$1}) {
@@ -64,4 +75,6 @@ while (<>) {
         }
         $last_line = $_;
     }
+    $last_line = $_;
+  }
 }

@@ -8,15 +8,21 @@ my $thin_space = chr(0x2009);
 BEGIN {
     our $box = decode_utf8 "⃣";
     $box = qr($box);
+    our $symbols_always_add_space = qr((?:[-=~])*);
+    our $symbols_thinner_with_space = qr((?:[-=~.()\$])*);
 }
 
 our $box;
+our $symbols_always_add_space;
+our $symbols_thinner_with_space;
+
 while (<>) {
     $_ = decode_utf8 $_;
 
-    s/(\p{CJK})\s*((?:[-=~])*[a-z0-9])(?!$box)/$1$thin_space$2/gi;
-    s/(\p{CJK}) ((?:[.-=~])*[a-z0-9])(?!$box)/$1$thin_space$2/gi;
-    s/(\p{CJK})(?: |$thin_space)+((?:[-=~])*)(?!$box)/$1$thin_space$2/gi;
-    s/([a-z0-9][-=~]?)(?<!\\n)\s*(\p{CJK})/$1$thin_space$2/gi;
+    s/(\p{CJK})\s*($symbols_always_add_space[a-z0-9])(?!$box)/$1$thin_space$2/gi;
+    s/(\p{CJK})(?: |$thin_space)+($symbols_thinner_with_space[a-z0-9])(?!$box)/$1$thin_space$2/gi; # 这个目录 $PWD
+
+    s/([a-z0-9]$symbols_always_add_space)(?<!\\n)\s*(\p{CJK})/$1$thin_space$2/gi;
+    s/([a-z0-9]$symbols_thinner_with_space)(?<!\\n)(?: |$thin_space)(\p{CJK})/$1$thin_space$2/gi; # $(ap) 相关的
     print encode_utf8($_);
 }

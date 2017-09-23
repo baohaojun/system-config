@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 if [[ "$(tty)" =~ /dev/tty ]]; then
     if test "$(cat ~/.config/system-config/am-keyboard)" = en; then
@@ -14,6 +13,7 @@ if [[ "$(tty)" =~ /dev/tty ]]; then
 fi
 
 do-dvp() {
+    echo am: dvp layout
     setxkbmap -layout us -variant dvp
     re-xmodmap 2>&1|tee
     do-natural-scrolling
@@ -24,6 +24,7 @@ do-dvp() {
     if test "$1" = am -o "$1" = dvp; then
         do-dvp
     elif test "$1" = ma || setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
+        echo am: normal layout
         setxkbmap -layout us
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
         do-unnatural-scrolling

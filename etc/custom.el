@@ -24,6 +24,7 @@
     (confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
+ '(company-idle-delay nil)
  '(compilation-message-face (quote default))
  '(custom-safe-themes
    (quote
@@ -168,7 +169,7 @@
  '(org2blog/wp-use-tags-as-categories t)
  '(package-selected-packages
    (quote
-    (company-statistics helm-company ivy ivy-bibtex ivy-dired-history ivy-erlang-complete ivy-gitlab ivy-hydra ivy-pages ivy-pass ivy-purpose ivy-rich ivy-rtags ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode emojify jedi org tabbar evil helm ddskk flycheck-clojure flycheck yari whole-line-or-region tidy smarty-mode session rinari redshank project-local-variables org-fstree mwe-log-commands lively keydef js-comint ipretty ibuffer-vc htmlize hl-sexp hippie-expand-slime highlight-quoted highlight-escape-sequences hi2 hayoo guide-key gitignore-mode github-clone gitconfig-mode git-messenger git-gutter-fringe git-blame ghci-completion fullframe fill-column-indicator f expand-region exec-path-from-shell ess erlang elisp-slime-nav elein dts-mode dsvn dired-sort dired+ diminish diff-hl default-text-scale darcsum csv-nav csv-mode csharp-mode crontab-mode coffee-mode clojure-test-mode cljsbuild-mode cl-lib-highlight bug-reference-github bbyac bbdb-vcard auto-complete-clang auto-compile anzu aggressive-indent ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
+    (color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized company-shell company-statistics helm-company ivy ivy-bibtex ivy-dired-history ivy-erlang-complete ivy-gitlab ivy-hydra ivy-pages ivy-pass ivy-purpose ivy-rich ivy-rtags ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode emojify jedi org tabbar evil helm ddskk flycheck-clojure flycheck yari whole-line-or-region tidy smarty-mode session rinari redshank project-local-variables org-fstree mwe-log-commands lively keydef js-comint ipretty ibuffer-vc htmlize hl-sexp hippie-expand-slime highlight-quoted highlight-escape-sequences hi2 hayoo guide-key gitignore-mode github-clone gitconfig-mode git-messenger git-gutter-fringe git-blame ghci-completion fullframe fill-column-indicator f expand-region exec-path-from-shell ess erlang elisp-slime-nav elein dts-mode dsvn dired-sort dired+ diminish diff-hl default-text-scale darcsum csv-nav csv-mode csharp-mode crontab-mode coffee-mode clojure-test-mode cljsbuild-mode cl-lib-highlight bug-reference-github bbyac bbdb-vcard auto-complete-clang auto-compile anzu aggressive-indent ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
  '(rainbow-identifiers-cie-l*a*b*-lightness 70)
  '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(require-final-newline t)

@@ -16,7 +16,7 @@ b0=$(basename $0)
 version=${b0#install-java}
 
 
-if test ! -e /usr/lib/jvm/java-$version-openjdk-amd64/bin/java; then
+if test ! -e /usr/lib/jvm/java-$version-openjdk-amd64/bin/javac; then
     hint "将为你的 $(lsb_release -i -s -r|tr '\n' ' ' )安装 openjdk $version，可能需要输入 sudo 密码"
     u_version=$(lsb_release -r -s)
 
