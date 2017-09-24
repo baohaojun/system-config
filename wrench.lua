@@ -989,6 +989,15 @@ adb_top_window = function()
       M.m_focused_app = M.m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
       M.m_focused_window = M.m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
       if M.m_focused_window ~= "" then
+         -- mStableFullscreen=(0,0)-(1080,2160)
+         local mStableFullscreen = M.m_window_dump:match("mStableFullscreen=[-%(%)%d,]+")
+         if M.last_screen_size ~= mStableFullscreen then
+            M.last_screen_size = mStableFullscreen
+            app_width = M.last_screen_size:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
+            app_height = app_width:match(',(%d+)')
+            app_width = app_width:match('(%d+),')
+            app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
+         end
          return M.m_focused_window
       end
       sleep(.1)
