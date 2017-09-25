@@ -1,8 +1,18 @@
 #!/bin/bash
 seconds=${1:-60}
+bhj-notify "sawfish-wait-for-start" "please move your mouse to left end of screen"
+
 for x in $(seq 1 $seconds); do
     sleep 1
     if sawfish-client -e '(query-pointer)' | grep '^(0 '; then
+        bhj-notify "sawfish-wait-for-start" "about to start, move mouse away"
+        for x in $(seq 1 15); do
+            sleep 1
+            if ! sawfish-client -e '(query-pointer)' | grep '^(0 '; then
+                bhj-notify "sawfish-wait-for-start"
+                break
+            fi
+        done
         break
     fi
 done
