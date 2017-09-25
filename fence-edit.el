@@ -94,11 +94,17 @@ Used to replace the text upon completion of editing.")
 
 Used to replace the text upon completion of editing.")
 
+(defvar-local fence-edit-block-indent nil
+  "The indentation of the first line.
+
+Used to strip and replace the indentation upon beginning/completion of editing.")
+
 (defvar fence-edit-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-c") 'fence-edit-exit)
     (define-key map (kbd "C-c '")   'fence-edit-exit)
     (define-key map (kbd "C-c C-k") 'fence-edit-abort)
+    (define-key map (kbd "C-x C-s") 'fence-edit-save)
     map)
   "The keymap used in ‘fence-edit-mode’.")
 
@@ -152,20 +158,21 @@ Return nil if no block is found."
           block re-start re-end lang-id start end lang)
       (catch 'exit
         (while (setq block (pop blocks))
-          (setq re-start (car block)
-                re-end (nth 1 block)
-                lang-id (nth 2 block))
-          (if (or (looking-at re-start)
-                  (re-search-backward re-start nil t))
-              (progn
-                (setq start (fence-edit--next-line-beginning-position-at-pos (match-end 0))
-                      lang (if (integerp lang-id)
-                               (match-string lang-id)
-                             (symbol-name lang-id)))
-                (if (and (and (goto-char (match-end 0))
-                              (re-search-forward re-end nil t))
-                         (>= (match-beginning 0) pos))
-                    (throw 'exit `(,start ,(match-beginning 0) ,lang))))))))))
+          (save-excursion
+            (setq re-start (car block)
+                  re-end (nth 1 block)
+                  lang-id (nth 2 block))
+            (if (or (looking-at re-start)
+                    (re-search-backward re-start nil t))
+                (progn
+                  (setq start (fence-edit--next-line-beginning-position-at-pos (match-end 0))
+                        lang (if (integerp lang-id)
+                                 (match-string lang-id)
+                               (symbol-name lang-id)))
+                  (if (and (and (goto-char (match-end 0))
+                                (re-search-forward re-end nil t))
+                           (>= (match-beginning 0) pos))
+                      (throw 'exit `(,start ,(match-beginning 0) ,lang)))))))))))
 
 (defun fence-edit--get-mode-for-lang (lang)
   "Try to get a mode function from language name LANG.
@@ -185,7 +192,8 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
          (pos (point))
          (beg (make-marker))
          (end (copy-marker (make-marker) t))
-         edit-point lang code mode ovl edit-buffer vars)
+         (block-indent "")
+         edit-point lang code mode ovl edit-buffer vars first-line)
     (if block
         (progn
           (setq beg (move-marker beg (car block))
@@ -200,6 +208,10 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
           (window-configuration-to-register fence-edit-window-layout)
           (if (string-match-p (rx "\n" string-end) code)
               (setq code (replace-regexp-in-string (rx "\n" string-end) "" code)))
+          (setq first-line (car (split-string code "\n")))
+          (string-match "^[[:blank:]]*" first-line)
+          (setq block-indent (match-string 0 first-line))
+          (setq code (replace-regexp-in-string (concat "^" block-indent) "" code))
           (overlay-put ovl 'edit-buffer edit-buffer)
           (overlay-put ovl 'face 'secondary-selection)
           (overlay-put ovl :read-only "Please don't.")
@@ -215,9 +227,11 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
           (fence-edit-set-local 'fence-edit-editor t)
           (fence-edit-set-local 'fence-edit-mark-beg beg)
           (fence-edit-set-local 'fence-edit-mark-end end)
+          (fence-edit-set-local 'fence-edit-block-indent block-indent)
           (fence-edit-set-local 'fence-edit-overlay ovl)
           (fence-edit-set-local 'header-line-format "Press C-c ' (C-c apostrophe) to save, C-c C-k to abort.")
-          (goto-char edit-point)))))
+          (goto-char edit-point)
+          (set-buffer-modified-p nil)))))
 
 (defun fence-edit--guard-edit-buffer ()
   "Throw an error if current buffer doesn't look like an edit buffer."
@@ -237,26 +251,51 @@ The edit buffer is expected to be the current buffer."
       (set-buffer-modified-p nil))
     (kill-buffer buffer)))
 
+(defun fence-edit-save () 
+  "Save the original buffer with the new text."
+  (interactive)
+  (fence-edit--guard-edit-buffer)
+  (let ((beg fence-edit-mark-beg))
+    (fence-edit-replace)
+    (set-buffer-modified-p nil)
+    (with-current-buffer (marker-buffer beg)
+      (save-buffer))))
+
 (defun fence-edit-exit ()
   "Conclude editing, replacing the original text."
+  (interactive)
+  (fence-edit--guard-edit-buffer)
+  (let ((code (buffer-string))
+        (edit-point (point))
+        (beg fence-edit-mark-beg)
+        (end fence-edit-mark-end))
+    (fence-edit-replace)
+    (fence-edit--abandon-edit-buffer (marker-buffer beg))
+    (goto-char (1- (+ beg edit-point)))
+    (set-marker beg nil)
+    (set-marker end nil)))
+
+(defun fence-edit-replace ()
+  "Continue editing, replacing the original text."
   (interactive)
   (fence-edit--guard-edit-buffer)
   (let ((buffer (current-buffer))
         (code (buffer-string))
         (beg fence-edit-mark-beg)
         (end fence-edit-mark-end)
+        (block-indent fence-edit-block-indent)
         (edit-point (point))
         (ovl fence-edit-overlay))
     (if (not (string-match-p (rx "\n" string-end) code))
         (setq code (concat code "\n")))
-    (fence-edit--abandon-edit-buffer (marker-buffer beg))
-    (goto-char beg)
-    (undo-boundary)
-    (delete-region beg end)
-    (insert code)
-    (goto-char (1- (+ beg edit-point)))
-    (set-marker beg nil)
-    (set-marker end nil)))
+    (setq code (replace-regexp-in-string "\n" (concat "\n" block-indent) code))
+    (setq code (concat block-indent code))
+    (setq code (replace-regexp-in-string (concat "\n" block-indent "$") "\n" code))
+    (with-current-buffer (marker-buffer beg)
+      (goto-char beg)
+      (undo-boundary)
+      (delete-region beg end)
+      (insert code))))
 
 (defun fence-edit-abort ()
   "Conclude editing, discarding the edited text."
