@@ -33,14 +33,29 @@ if test -z "$search"; then
     exit
 fi
 
-current_window_text=$(sawfish-get-screen-shot)
+function window_text_match() {
+    current_window_text=$(sawfish-get-screen-shot)
+    if echo "$current_window_text"| grep -P -q -e "$search"; then
+        return 0
+    fi
+    return 1
+}
 
-if echo "$current_window_text"| grep -P -q -e "$search"; then
+if window_text_match; then
     exit
 fi
 
 if test "$SC_USE_TMUX" = true; then
-    tmux find-window -N "$name"
+    tmux list-windows | while read n current_name rest; do
+        # EMACS=t yes-or-no-p "hello: $n $current_name $rest"
+        if test "${current_name%[*-]}" = "$name"; then
+            window_n=${n%:}
+            tmux select-window -t "$window_n"
+            if window_text_match; then
+                exit 0
+            fi
+        fi
+    done && exit
 else
     xdotool key super+space
     xdotool key apostrophe
@@ -48,11 +63,11 @@ else
     xdotool type "$name"
     sleep .05
     xdotool key Return
-fi
 
-current_window_text=$(sawfish-get-screen-shot)
-if echo "$current_window_text"| grep -P -q -e "$search"; then
-    exit
+    if window_text_match; then
+        exit
+    fi
+
 fi
 
 echo "$current_window_text" > ~/tmp/1.txt
