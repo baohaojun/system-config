@@ -8,8 +8,8 @@ my $thin_space = chr(0x2009);
 BEGIN {
     our $box = decode_utf8 "⃣";
     $box = qr($box);
-    our $symbols_always_add_space = qr((?:[-=~])*);
-    our $symbols_thinner_with_space = qr((?:[-=~.()\$])*);
+    our $symbols_always_add_space = qr((?:[/-=~])*);
+    our $symbols_thinner_with_space = qr((?:[/-=~.()\$])*);
 }
 
 our $box;
