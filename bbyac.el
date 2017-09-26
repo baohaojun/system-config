@@ -223,11 +223,11 @@ See also `bbyac--symbol-bbyac-extracter'."
               ".*?")))
         ;; performance consideration: if syntax of bit's first char
         ;; is word, then it must match word boundary
-        (when (string-match-p "^\\w" bbyac--the-bit)
+        (when (string-match-p "^[[:alnum:]]" bbyac--the-bit)
           (setq the-regexp (concat "\\b" the-regexp)))
         ;; if bit's last char is word syntax, should extend the
         ;; completion to word boundaries
-        (when (string-match-p "\\w$" bbyac--the-bit)
+        (when (string-match-p "[[:alnum:]]$" bbyac--the-bit)
           (setq the-regexp (concat the-regexp "\\w*?\\b")))
         the-regexp))))
 
