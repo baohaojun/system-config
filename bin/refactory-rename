@@ -205,17 +205,17 @@ function rename-files() {
     dir=$1
     shift
     (
-        cd "$dir";
+        cd -- "$dir";
         for x in $(get-files-this-dir); do
             if test -d "$x"; then
                 test -L "$x" || rename-files "$x" "$@"
             fi
-            if echo "$x"|grep $perl_re -q -i -e "$prepend$1$postpend" || readlink "$x" | grep $perl_re -q -i -e "$prepend$1$postpend"; then
+            if echo "$x"|grep $perl_re -q -i -e "$prepend$1$postpend" || readlink -- "$x" | grep $perl_re -q -i -e "$prepend$1$postpend"; then
                 debug doing "$x", the name matched
                 y="$(compute-new-string "$x")"
 
                 if test -L "$x"; then
-                    new_link=$(compute-new-string "$(readlink "$x")")
+                    new_link=$(compute-new-string "$(readlink -- "$x")")
                     if test "${#change_files[@]}" = 0; then
                         git rm "$x" --cached
                         rm "$x"
