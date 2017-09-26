@@ -46,16 +46,19 @@ if window_text_match; then
 fi
 
 if test "$SC_USE_TMUX" = true; then
-    tmux list-windows | while read n current_name rest; do
-        # EMACS=t yes-or-no-p "hello: $n $current_name $rest"
-        if test "${current_name%[*-]}" = "$name"; then
-            window_n=${n%:}
-            tmux select-window -t "$window_n"
-            if window_text_match; then
-                exit 0
+    tmux list-windows | (
+        while read n current_name rest; do
+            # EMACS=t yes-or-no-p "hello: $n $current_name $rest"
+            if test "${current_name%[*-]}" = "$name"; then
+                window_n=${n%:}
+                tmux select-window -t "$window_n"
+                if window_text_match; then
+                    exit 0
+                fi
             fi
-        fi
-    done && exit
+        done
+        exit 1
+    ) && exit
 else
     xdotool key super+space
     xdotool key apostrophe
