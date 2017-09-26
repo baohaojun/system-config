@@ -50,6 +50,11 @@ function jc() {
 
 function jc-create-job() {
     task_name=${1%.xml}
+
+    if [[ $task_name =~ jobs/.*/config$ ]]; then
+        task_name=$(basename $(dirname "$task_name"))
+    fi
+
     if test -e $task_name.xml; then
         xml=$task_name.xml
     elif test -e jobs/$task_name/config.xml; then

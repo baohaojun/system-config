@@ -74,10 +74,13 @@ else
         if test -e "$cow"/$chroot_subdir.ext4 && sudo mount "$cow"/$chroot_subdir.ext4 "$cow"/$chroot_subdir && test -e "$cow"/$chroot_subdir/.cow-done; then
             true
         else
-            dd if=/dev/zero of="$cow"/$chroot_subdir.ext4 bs=1 seek=53687091199 count=1
-            mkfs.ext4 "$cow"/$chroot_subdir.ext4
             mkdir -p "$cow"/$chroot_subdir
-            sudo mount "$cow"/$chroot_subdir.ext4 "$cow"/$chroot_subdir
+
+            if yes-or-no-p -y "Do you want to boot into this chroot (then it must be a .ext4 file)?"; then
+                dd if=/dev/zero of="$cow"/$chroot_subdir.ext4 bs=1 seek=53687091199 count=1
+                mkfs.ext4 "$cow"/$chroot_subdir.ext4
+                sudo mount "$cow"/$chroot_subdir.ext4 "$cow"/$chroot_subdir
+            fi
             sudo tar zxfv "$base" -C "$cow"/$chroot_subdir
             sudo touch "$cow"/$chroot_subdir/.cow-done
         fi
