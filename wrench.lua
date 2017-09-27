@@ -1031,6 +1031,15 @@ local function search_mail(what)
    adb_event"key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 841 728"
 end
 
+M.adb_tap_1080x2160 = function (x, y, x1080, y1920)
+   if real_height ~= 2160 or real_width ~= 1080 then
+      x = x1080 or x
+      y = y1920 or y
+   end
+
+   adb_event("adb-tap " .. x .. " " .. y)
+end
+
 local function get_coffee(what)
    for i = 1, 5 do
       if social_need_confirm and not yes_or_no_p("Will now open the Wechat App and goto it's home page") then
@@ -1051,7 +1060,8 @@ local function get_coffee(what)
       if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
          return
       end
-      adb_event"adb-tap 337 782"
+
+      adb_tap_1080x2160(272, 633, 337, 782)
 
       for f_i = 1, 10 do
          local FavoriteIndexUI = "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavoriteIndexUI"
@@ -1064,6 +1074,7 @@ local function get_coffee(what)
             if top_window == W.weixinLauncherActivity then
                log("Need click for fav again")
                adb_event"adb-tap 501 872"
+               adb_tap_1080x2160(272, 633, 337, 782)
             elseif top_window and top_window ~= "" then
                log("Failed to get FavoriteIndexUI, and not in W.weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
                goto open_fav_search_again
@@ -1077,7 +1088,7 @@ local function get_coffee(what)
       if social_need_confirm and not yes_or_no_p("Next, click the “Search” button for the “My Favorites”") then
          return
       end
-      adb_event"adb-tap 833 145"
+      adb_tap_1080x2160(883, 88, 833, 145)
 
       for fs_i = 1, 10 do
          if wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI") ~= "" then
@@ -1085,7 +1096,7 @@ local function get_coffee(what)
             break
          else
             log("Still waiting for FavSearchUI at %d", fs_i)
-            adb_event"adb-tap 833 145"
+            adb_tap_1080x2160(883, 88, 833, 145)
          end
       end
       if fs_i ~= 10 then
@@ -1104,7 +1115,7 @@ local function get_coffee(what)
    if social_need_confirm and not yes_or_no_p("Will now open the 咕咕机 Wechat App") then
       return
    end
-   adb_event"adb-tap 535 458"
+   adb_tap_1080x2160(474, 356, 535, 458)
    if social_need_confirm and not yes_or_no_p("Will now wait for the input ready") then
       return
    end
@@ -1114,9 +1125,9 @@ local function get_coffee(what)
       if input_target:match"com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI" then
          break
       elseif input_target:match"com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI" then
-         adb_event"adb-tap 535 458"
+         adb_tap_1080x2160(474, 356, 535, 458)
       elseif i < 5 and adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
-         adb_event"adb-tap 535 458"
+         adb_tap_1080x2160(474, 356, 535, 458)
       end
       log("Click for coffee input: %s %d", input_target, i)
 
@@ -1137,7 +1148,8 @@ local function get_coffee(what)
          yes_or_no_p("I will alarm you in 3 minutes for your coffee")
          return
       end
-      adb_event"key back sleep .2 adb-tap 562 1662"
+      adb_event"key back sleep .2"
+      adb_tap_1080x2160(534, 1603, 562, 1662)
       system{'alarm', '3', 'Go get your coffee (take your coffee ticket!)'}
    end
 

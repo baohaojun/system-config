@@ -7,7 +7,7 @@ if M.ext_args then
 end
 
 if not where then
-   where = select_args{"请选择你想在哪个App里搜索（也可直接输入比如 baohaojun@@wx，如果我在你的微信好友里的话）？", "微信（用户名@@wx）", "QQ联系人（用户名@@qq）", "QQ群里的用户（用户名@群名@@qq）", "微博用户（用户名@@wb）", "邮件（用户名@@mail）", "帮助"}
+   where = select_args_with_history('misc-search', "请选择你想在哪个App里搜索（也可直接输入比如 baohaojun@@wx，如果我在你的微信好友里的话）？", "微信（用户名@@wx）", "QQ联系人（用户名@@qq）", "QQ群里的用户（用户名@群名@@qq）", "微博用户（用户名@@wb）", "邮件（用户名@@mail）", "帮助")
 end
 
 search_string = nil
