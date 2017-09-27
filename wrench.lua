@@ -2415,7 +2415,12 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       if window_type == 'weixin-chat' then
          post_button = post_button -- empty
       elseif window_type == 'qq-chat' then
-         post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - 200)
+         local qq_button_sub = 200
+         if real_height == 2160 then
+            qq_button_sub = 150
+         end
+         post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - qq_button_sub)
+         -- log("ime_height is %d, post_button is adb_event'adb-long-press %s'", ime_height, post_button)
       elseif window_type == 'weixin-confirm' then
          post_button = post_button
       elseif window_type == 'weibo-share' or window_type == 'top-right' then
