@@ -224,7 +224,7 @@ if test -d .repo; then
     )
 else
     prefix=$(lookup-file -e out/diff)/$(ap | perl -npe 's!/!%!g')
-    diffs=$(lookup-file -e $prefix.log)
+    diffs=$(lookup-file -e $prefix.log || true)
     rm $prefix.ok $prefix.fail -f
     if test ! -e "$diffs"; then
         echo "diff file not found"

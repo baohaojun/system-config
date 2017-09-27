@@ -55,6 +55,16 @@ if test "$SC_USE_TMUX" = true; then
                 if window_text_match; then
                     exit 0
                 elif yes-or-no-p -y "Use this window whose name matches?"; then
+                    user_at_host=$(
+                        echo "$current_window_text" | grep -o '\S+@\S+' -P | tail -n 1
+                                )
+
+                    if yes-or-no-p -y "update the regexp: $user_at_host?"; then
+                        cat <<EOF > ~/src/github/private-config/.ssssh/search-$host
+regexp='$user_at_host\s'
+name=$host
+EOF
+                    fi
                     exit 0
                 fi
             fi

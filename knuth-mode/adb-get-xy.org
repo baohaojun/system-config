@@ -1,9 +1,49 @@
-#!/bin/bash
+#+name: perl-script-xy
+#+BEGIN_SRC cperl
+        BEGIN {
+            if ($ENV{scaling} eq "false") {
+                $true_x = 1080;
+                $true_y = 1920;
+            } else {
+                $xy = qx(my-adb dumpsys window);
+                if ($xy =~ m/app=(\d+)x(\d+)/) {
+                  $true_x = $1;
+                  $true_y = $2;
+                }
+            }
+        }
+        if (m/ABS_MT_POSITION_/) {
+            chomp;
+            @fields = split;
+            ($name, $val) = @fields[2,3];
+            $val = hex($val);
+            # print "$name: $val\r\n";
+            if ($name =~ m/ABS_MT_POSITION_X/) {
+                $x = int($val * 1080 / $true_x);
+            } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
+                $y = int($val * 1920 / $true_y);
+              }
+            if ($ENV{print_tap}) {
+              print "$ENV{print_tap}($x, $y)\r\n";
+              system("putclip '$ENV{print_tap}($x, $y)'");
+            } else {
+              print "$ENV{TAP} $x $y\r\n";
+              system("putclip $ENV{TAP} $x $y");
+            }
+        }
 
-# [[file:~/system-config/knuth-mode/adb-get-xy.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+#+END_SRC
+** 最终的版本：
 
-set -e
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
 
+#+name: old-code
+#+BEGIN_SRC sh
   #!/bin/bash
 
 
@@ -76,42 +116,18 @@ set -e
 
   (sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
   adb-tty getevent -l </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
-BEGIN {
-    if ($ENV{scaling} eq "false") {
-        $true_x = 1080;
-        $true_y = 1920;
-    } else {
-        $xy = qx(my-adb dumpsys window);
-        if ($xy =~ m/app=(\d+)x(\d+)/) {
-          $true_x = $1;
-          $true_y = $2;
-        }
-    }
-}
-if (m/ABS_MT_POSITION_/) {
-    chomp;
-    @fields = split;
-    ($name, $val) = @fields[2,3];
-    $val = hex($val);
-    # print "$name: $val\r\n";
-    if ($name =~ m/ABS_MT_POSITION_X/) {
-        $x = int($val * 1080 / $true_x);
-    } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
-        $y = int($val * 1920 / $true_y);
-      }
-    if ($ENV{print_tap}) {
-      print "$ENV{print_tap}($x, $y)\r\n";
-      system("putclip '$ENV{print_tap}($x, $y)'");
-    } else {
-      print "$ENV{TAP} $x $y\r\n";
-      system("putclip $ENV{TAP} $x $y");
-    }
-}
-
+<<perl-script-xy>>
 EOF04cdaedc86bf
 )"
-# Local Variables: #
-# eval: (read-only-mode 1) #
-# End: #
+#+END_SRC
 
-# the-ultimate-script ends here
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/adb-get-xy :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
