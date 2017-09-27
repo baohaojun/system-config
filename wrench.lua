@@ -1405,7 +1405,7 @@ local function wrench_mail(window)
       if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
          adb_event{806, 178}
       else
-         adb_event("adb-tap 998 174")
+         tap_top_right()
       end
    end
 end
