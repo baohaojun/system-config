@@ -2241,6 +2241,33 @@ end
 
 M.M = M
 
+M.ask_for_window_type = function(window)
+   window_type = select_args{'Where is the send button for ' .. window,
+                             'Above the input method, the right end',
+                             'Above the input method, the right end, with a row of buttons in between (like QQ)',
+                             'Above the input method, the right end, confirm before send',
+                             "Top-right corner of phone's screen",
+                             "Top-right corner of phone's screen, confirm before send",
+                             'I will click the send button myself',
+   }
+   if window_type == 'Above the input method, the right end' then
+      window_type = 'weixin-chat'
+   elseif window_type == 'Above the input method, the right end, with a row of buttons in between (like QQ)' then
+      window_type = 'qq-chat'
+   elseif window_type == "Top-right corner of phone's screen" then
+      window_type = 'weibo-share'
+   elseif window_type == 'Above the input method, the right end, confirm before send' then
+      window_type = 'weixin-confirm'
+   elseif window_type == "Top-right corner of phone's screen, confirm before send" then
+      window_type = 'weibo-confirm'
+   else
+      window_type = 'manual-post'
+   end
+   window_post_button_map[window] = window_type
+   save_window_types()
+   return window_type
+end
+
 wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    local window = adb_top_window()
    debug("sharing text: %s for window: %s", text, window)
@@ -2369,7 +2396,17 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
             end
             wait_input_target(window)
             if not adb_top_window():match("^PopupWindow") then
-               adb_event("key back sleep .2")
+               adb_event("key back")
+               for n = 1, 5 do
+                  local input_method, ime_height, ime_connected = adb_get_input_window_dump()
+                  -- log("ime_height is %d: %d", ime_height, n)
+                  if ime_height == 0 then
+                     adb_top_window() -- make sure we know that the nav bar is gone.
+                     break
+                  else
+                     sleep(.2 * n)
+                  end
+               end
             end
             add = ''
          end
@@ -2388,29 +2425,7 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       end
 
       if not window_type then
-         window_type = select_args{'Where is the send button for ' .. window,
-                                   'Above the input method, the right end',
-                                   'Above the input method, the right end, with a row of buttons in between (like QQ)',
-                                   'Above the input method, the right end, confirm before send',
-                                   "Top-right corner of phone's screen",
-                                   "Top-right corner of phone's screen, confirm before send",
-                                   'I will click the send button myself',
-         }
-         if window_type == 'Above the input method, the right end' then
-            window_type = 'weixin-chat'
-         elseif window_type == 'Above the input method, the right end, with a row of buttons in between (like QQ)' then
-            window_type = 'qq-chat'
-         elseif window_type == "Top-right corner of phone's screen" then
-            window_type = 'weibo-share'
-         elseif window_type == 'Above the input method, the right end, confirm before send' then
-            window_type = 'weixin-confirm'
-         elseif window_type == "Top-right corner of phone's screen, confirm before send" then
-            window_type = 'weibo-confirm'
-         else
-            window_type = 'manual-post'
-         end
-         window_post_button_map[window] = window_type
-         save_window_types()
+         window_type = ask_for_window_type(window)
       end
       if window_type == 'weixin-chat' then
          post_button = post_button -- empty
