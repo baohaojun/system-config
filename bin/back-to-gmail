@@ -10,5 +10,6 @@ mkdir -p "$target_dir"
 
 cd ~/system-config/etc/back-to-gmail
 rsync-with-dir-struct-L "$target_dir" . || true
+cat ~/.cache/system-config/.where | sort > "$target_dir"/.where
 cd "$target_dir"
 git add .
