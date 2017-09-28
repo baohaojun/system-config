@@ -1,5 +1,6 @@
 local map = {}
 map['air.tv.douyu.android/tv.douyu.view.activity.SearchActivity'] = 'manual-post'
+map['cmb.pb/cmb.pb.mainframe.PBEntryActivity'] = 'manual-post'
 map['cmb.pb/cmb.pb.ui.PBEntryActivity'] = 'manual-post'
 map['cmb.pb/cmb.pb.ui.PBSearchActivity'] = 'manual-post'
 map['cmb.pb/cmb.pb.ui.PBWebViewActivity'] = 'manual-post'
