@@ -1,4 +1,43 @@
 #!/bin/bash
+## start code-generator "^\\s *#\\s *"
+# generate-getopts mmail-cms
+## end code-generator
+## start generated code
+
+mail_cms=false
+OPTIND=1
+while getopts "mh" opt; do
+    case "$opt" in
+
+        m) mail_cms=true ;;
+        h)
+            echo
+            echo
+            printf %06s%s '-m ' 'mail-cms'
+            printf %-24s ''
+            echo ''
+            shift
+            exit 0
+            ;;
+        *)
+            echo
+            echo
+            printf %06s%s '-m ' 'mail-cms'
+            printf %-24s ''
+            echo ''
+            exit 2
+            ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+## end generated code
+
+if test "$mail_cms" = true && is-jenkins; then
+    mail-cms "die: $*"
+fi || true
+
 if is-recording; then
     sawfish-ask-for-input -p "$*
 请按回车继续"
