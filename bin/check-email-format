@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -- $(echo "$@"|tr ',' ' ')
+
+non_at='[-_.a-zA-Z0-9+]'
+for m in "$@"; do
+    if ! [[ $m =~ ^${non_at}+@${non_at}+ ]]; then
+        die -m "Can't mail to $m"
+    else
+        echo "$m"
+    fi
+done

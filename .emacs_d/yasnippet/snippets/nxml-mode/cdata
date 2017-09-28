@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: cdata
+# key: cdata
+# --
+<![CDATA[$0]]>
