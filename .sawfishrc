@@ -129,7 +129,7 @@
 (bind-both-global&window-keymaps "Super-KP_Multiply" '(system "douban loop-same-author&"))
 (bind-both-global&window-keymaps "KP_Divide" '(system "douban unlike&"))
 (bind-both-global&window-keymaps "Super-Down"  '(system "douban info&"))
-(bind-both-global&window-keymaps "Super-Up" '(system "douban ba&"))
+(bind-both-global&window-keymaps "Super-Up" '(system "do-natural-scrolling&"))
 (bind-both-global&window-keymaps "Super-Right"  '(system "douban next&"))
 (bind-both-global&window-keymaps "Super-Left"  '(system "douban prev&"))
 (bind-both-global&window-keymaps "Super-S-Right"  '(system "douban forth&"))
