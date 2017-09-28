@@ -148,7 +148,7 @@ mu find $subject $from date:$after..$before --fields 'l d f s' | (
                 ew "$file"
                 ;;
             *)
-                if yes-or-no-p "用你输入的 $action 命令处理每一封邮件吗？" </dev/tty; then
+                if yes-or-no-p "用你输入的 $action 命令处理每一封邮件吗（比如rm -v: rm -v \"\$@\"）？" </dev/tty; then
                     if ! [[ $action =~ \$@ ]]; then
                         action="$action \$@"
                     fi
