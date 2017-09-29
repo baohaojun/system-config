@@ -67,13 +67,18 @@ while (<>) {
       print "$s1$s2$text\n";
 
     } else {
-        $last_line =~ m/^(\w+)(::+\s*)(\S*)/;
-        if ($to_decode{$1}) {
-            print "$1$2" . $cb->decode($3) . "\n";
-        } else {
-            print "$last_line\n" if $last_line;
-        }
-        $last_line = $_;
+      $last_line =~ m/^(\w+)(::+\s*)(\S*)/;
+      if ($to_decode{$1}) {
+        print "$1$2" . $cb->decode($3) . "\n";
+      } else {
+        print "$last_line\n" if $last_line;
+      }
+      if (m/^(lastLogonTimestamp:)\s+(\d+)/) {
+        my $timestamp = int ($2 / 10000) - 11644473600000;
+        print "$1 " . `epoch2date $timestamp`;
+        $_ = "";
+      }
+      $last_line = $_;
     }
     $last_line = $_;
   }
