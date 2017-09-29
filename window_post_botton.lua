@@ -173,6 +173,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.fts.FTSSearchTabWebVi
 map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.fts.FTSWebViewUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.account.LoginHistoryUI'] = 'manual-post'
+map['com.tencent.mm/com.tencent.mm.ui.account.LoginPasswordUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.account.mobile.MobileInputUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.account.RegByMobileSetPwdUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.AtSomeoneUI'] = 'manual-post'
