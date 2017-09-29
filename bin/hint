@@ -28,11 +28,12 @@ done
 
 if is-jenkins; then
     echo "$*" 1>&2
+    return
 fi
 
 exec >/dev/null
 
-if is-recording; then
+if is-recording || test "$EMACS"; then
     sawfish-ask-for-input -p "$*
 请按‘回车’继续.. "
 else
