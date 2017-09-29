@@ -307,7 +307,7 @@ else
             export REPO_REMOTE=$(git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!')
         fi
     else
-        detached_branch=$(git status|head -n 1|perl -ne 'print $1 if m/^HEAD detached at (\S+)/')
+        detached_branch=$(git status|head -n 1|perl -ne 'print $1 if m/^HEAD detached (?:at|from) (\S+\/\S+)/' || true) ## pipe fail!
         if test "$detached_branch" && yes-or-no-p -y "你的当前无名分支是从远程的 $detached_branch 上直接 checkout 出来的，是否要 push 到此分支？"; then
             export gpr_to_branch=${detached_branch#*/}
             export REPO_BRANCH=$gpr_to_branch
