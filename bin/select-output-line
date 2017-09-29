@@ -13,21 +13,36 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
+sol-help() {
+    cat <<EOF
+用法：$b0 选项... [命令（output-line）|参数（args）]...
+
+这个命令有两个名字（类似于 busybox，根据名字不同调用不同的功能），一个
+是 select-args，另一个是 select-output-line，前者让你从一长串参数选中一
+个参数，后者让你从一长串输出中选出一行输出。
+
+限制：select-args 的参数中不能包含换行符。
+
+EOF
+}
+
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?Should use history for list order' \
-        # @:select-dist-word \
-        # m:max-history=-1 \
-        # a:always-selection \
-        # p:prompt='"Please enter your selection"' \
-        # i:init \
-        # @:dot-sep-init \
-        # @select-from-history-too \
-        # @:exclude \
-        # vverbose
+    # generate-getopt '?"$(sol-help)"' \
+    # O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?Should use history for list order' \
+    # @:select-dist-word '?选中参数的时候，按照与这个参数的字符串距离排序' \
+    # m:max-history=-1 '?如果保存历史输入，最多保存几个历史输入，默认是无限' \
+    # a:always-selection '?这个参数给出的选项，永远出现在列表里' \
+    # p:prompt='"Please enter your selection"' '?让用户选择时给的提示' \
+    # i:init '?初始输入的匹配字符串，跟它匹配才会列出' \
+    # @:dot-sep-init '?用 . 把初始输入切割开'\
+    # @select-from-history-too '?是否也允许从历史中选择（默认只从给定的参数、输出中选择）' \
+    # @:exclude '?不要选中这个参数中给定的选项' \
+    # @use-file='${SA_USE_FILE:-false}' '?把参数写到文件中，而不是从命令行上传递' \
+    # vverbose '?调试选项，打印更多输出'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o oa:i:m:O:p:vh \
-               --long ORDERED,always-selection:,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,verbose,help,no-ORDERED,no-select-from-history-too,no-verbose \
+               --long ORDERED,always-selection:,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,use-file,verbose,help,no-ORDERED,no-use-file,no-verbose \
                -n $(basename -- $0) -- "$@")
 ORDERED=${SELECT_HISTORY_ORDER:-false}
 always_selection=
@@ -38,7 +53,7 @@ max_history=-1
 order_name=
 prompt="Please enter your selection"
 select_dist_word=
-select_from_history_too=false
+use_file=${SA_USE_FILE:-false}
 verbose=false
 eval set -- "$TEMP"
 while true; do
@@ -84,11 +99,11 @@ while true; do
             select_dist_word=$2
             shift 2
             ;;
-        --select-from-history-too|--no-select-from-history-too)
-            if test "$1" = --no-select-from-history-too; then
-                select_from_history_too=false
+        --use-file|--no-use-file)
+            if test "$1" = --no-use-file; then
+                use_file=false
             else
-                select_from_history_too=true
+                use_file=true
             fi
             shift
             ;;
@@ -102,7 +117,7 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e
+            echo -e "$(sol-help)"
             echo
             echo Options and arguments:
             printf %06s '-o, '
@@ -111,33 +126,41 @@ while true; do
             printf %06s '-a, '
             printf %-24s '--always-selection=ALWAYS_SELECTION'
             echo
+            printf "%30s" ""
+            echo '这个参数给出的选项，永远出现在列表里'
             printf "%06s" " "
             printf %-24s '--dot-sep-init=DOT_SEP_INIT'
             echo
+            printf "%30s" ""
+            echo '是否也允许从历史中选择（默认只从给定的参数、输出中选择）'
             printf "%06s" " "
             printf %-24s '--exclude=EXCLUDE'
-            echo
+            echo '不要选中这个参数中给定的选项'
             printf %06s '-i, '
             printf %-24s '--init=INIT'
-            echo
+            echo '初始输入的匹配字符串，跟它匹配才会列出'
             printf %06s '-m, '
             printf %-24s '--max-history=MAX_HISTORY'
             echo
+            printf "%30s" ""
+            echo '如果保存历史输入，最多保存几个历史输入，默认是无限'
             printf %06s '-O, '
             printf %-24s '--order-name=ORDER_NAME'
             echo
             printf %06s '-p, '
             printf %-24s '--prompt=PROMPT'
-            echo
+            echo '让用户选择时给的提示'
             printf "%06s" " "
             printf %-24s '--select-dist-word=SELECT_DIST_WORD'
             echo
+            printf "%30s" ""
+            echo '选中参数的时候，按照与这个参数的字符串距离排序'
             printf "%06s" " "
-            printf %-24s '--[no-]select-from-history-too'
-            echo
+            printf %-24s '--[no-]use-file'
+            echo '把参数写到文件中，而不是从命令行上传递'
             printf %06s '-v, '
             printf %-24s '--[no-]verbose'
-            echo
+            echo '调试选项，打印更多输出'
             exit
             shift
             ;;
