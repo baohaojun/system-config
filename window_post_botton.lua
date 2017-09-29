@@ -138,6 +138,7 @@ map['com.smartisanos.notes/com.smartisanos.notes.share.ShareActivity'] = 'manual
 map['com.smartisanos.notes/com.smartisanos.notes.share.weibo.ui.WeiboOAuthActivity'] = 'manual-post'
 map['com.smartisanos.quicksearch/com.android.quicksearchbox.SearchActivity'] = 'manual-post'
 map['com.smartisanos.tpassword/com.smartisanos.tpassword.FloatViewLoginActivity'] = 'manual-post'
+map['com.smartisanos.tpassword/com.smartisanos.tpassword.LoginActivity'] = 'manual-post'
 map['com.smartisanos.tpassword/com.smartisanos.tpassword.MKSettingsActivity'] = 'manual-post'
 map['com.smartisan.reader/com.smartisan.reader.activities.LoginCloudActivity_'] = 'manual-post'
 map['com.starbucks.cn/com.fs.starbucks.activity.LoginActivity'] = 'manual-post'
