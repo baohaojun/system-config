@@ -24,5 +24,6 @@ while (<>) {
 
     s/([a-z0-9]$symbols_always_add_space)(?<!\\n)\s*(\p{CJK})/$1$thin_space$2/gi;
     s/([a-z0-9]$symbols_thinner_with_space)(?<!\\n)(?: |$thin_space)(\p{CJK})/$1$thin_space$2/gi; # $(ap) 相关的
+    s/([a-z0-9]$symbols_thinner_with_space)(?<=\d\.)(?: |$thin_space)(\p{CJK})/$1 $2/gi; # $(ap) 相关的
     print encode_utf8($_);
 }

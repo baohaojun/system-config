@@ -34,7 +34,7 @@ EOF
     # a:always-selection '?这个参数给出的选项，永远出现在列表里' \
     # p:prompt='"Please enter your selection"' '?让用户选择时给的提示' \
     # i:init '?初始输入的匹配字符串，跟它匹配才会列出' \
-    # @:dot-sep-init '?用 . 把初始输入切割开'\
+    # @:dot-sep-init '?用 . 把初始输入切割开' \
     # @select-from-history-too '?是否也允许从历史中选择（默认只从给定的参数、输出中选择）' \
     # @:exclude '?不要选中这个参数中给定的选项' \
     # @use-file='${SA_USE_FILE:-false}' '?把参数写到文件中，而不是从命令行上传递' \
@@ -42,7 +42,7 @@ EOF
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o oa:i:m:O:p:vh \
-               --long ORDERED,always-selection:,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,use-file,verbose,help,no-ORDERED,no-use-file,no-verbose \
+               --long ORDERED,always-selection:,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-select-from-history-too,no-use-file,no-verbose \
                -n $(basename -- $0) -- "$@")
 ORDERED=${SELECT_HISTORY_ORDER:-false}
 always_selection=
@@ -53,6 +53,7 @@ max_history=-1
 order_name=
 prompt="Please enter your selection"
 select_dist_word=
+select_from_history_too=false
 use_file=${SA_USE_FILE:-false}
 verbose=false
 eval set -- "$TEMP"
@@ -99,6 +100,14 @@ while true; do
             select_dist_word=$2
             shift 2
             ;;
+        --select-from-history-too|--no-select-from-history-too)
+            if test "$1" = --no-select-from-history-too; then
+                select_from_history_too=false
+            else
+                select_from_history_too=true
+            fi
+            shift
+            ;;
         --use-file|--no-use-file)
             if test "$1" = --no-use-file; then
                 use_file=false
@@ -132,7 +141,7 @@ while true; do
             printf %-24s '--dot-sep-init=DOT_SEP_INIT'
             echo
             printf "%30s" ""
-            echo '是否也允许从历史中选择（默认只从给定的参数、输出中选择）'
+            echo '用 . 把初始输入切割开'
             printf "%06s" " "
             printf %-24s '--exclude=EXCLUDE'
             echo '不要选中这个参数中给定的选项'
@@ -155,6 +164,11 @@ while true; do
             echo
             printf "%30s" ""
             echo '选中参数的时候，按照与这个参数的字符串距离排序'
+            printf "%06s" " "
+            printf %-24s '--[no-]select-from-history-too'
+            echo
+            printf "%30s" ""
+            echo '是否也允许从历史中选择（默认只从给定的参数、输出中选择）'
             printf "%06s" " "
             printf %-24s '--[no-]use-file'
             echo '把参数写到文件中，而不是从命令行上传递'
