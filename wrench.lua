@@ -1055,7 +1055,7 @@ local function get_coffee(what)
          return
       end
 
-      adb_event"adb-tap 927 1830 sleep .3"
+      adb_event"sleep .3 adb-tap 927 1830 sleep .1 adb-tap 927 1830 sleep .3"
 
       if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
          return
@@ -1073,8 +1073,7 @@ local function get_coffee(what)
             end
             if top_window == W.weixinLauncherActivity then
                log("Need click for fav again")
-               adb_event"adb-tap 501 872"
-               adb_tap_1080x2160(272, 633, 337, 782)
+               adb_tap_1080x2160(272, 633, 501, 872)
             elseif top_window and top_window ~= "" then
                log("Failed to get FavoriteIndexUI, and not in W.weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
                goto open_fav_search_again
