@@ -59,6 +59,8 @@ function jc-create-job() {
         xml=$task_name.xml
     elif test -e jobs/$task_name/config.xml; then
         xml=jobs/$task_name/config.xml
+    else
+        die "can't find $task_name.xml"
     fi
 
     if cat $xml | jc update-job $(basename $task_name) >/dev/null 2>&1; then
