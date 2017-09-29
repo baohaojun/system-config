@@ -373,6 +373,7 @@
   (tool-bar-mode 1)
   (scroll-bar-mode 1)
   (evil-mode 1)
+  (load "sc-evil.el")
   (tabbar-mode 1)
   (setq-default initial-scratch-message
                 (concat initial-scratch-message
