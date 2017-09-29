@@ -7,6 +7,6 @@ for m in "$@"; do
     if ! [[ $m =~ ^${non_at}+@${non_at}+ ]]; then
         die -m "Can't mail to $m"
     else
-        echo "$m"
+        echo "${m/%@smartisan.cn/@smartisan.com}"
     fi
 done
