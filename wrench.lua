@@ -2800,12 +2800,14 @@ M.exit_ime = function()
    log("exit ime: %s %s", ime_active, ime_height)
    if ime_height ~= 0 then
       adb_event("key back sleep .1 key back sleep .1")
+      adb_top_window() -- for mix2, update the app_width (the nav bar comes with ime).
       return
    end
 
    if ime_active then
       adb_event("key back sleep .1")
    end
+   adb_top_window()
 end
 
 M.close_ime = function()
