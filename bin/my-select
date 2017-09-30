@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-no if ($] >= 5.018), 'warnings' => 'experimental';
-use feature 'signatures';
-
 use strict;
 our @current_input;
 
@@ -33,11 +30,10 @@ sub tty(@) {
   }
 }
 
-sub hint($prompt) {
-  read_ans($prompt, 1);
-}
 
-sub read_ans($prompt, $hint = 0) {
+
+sub read_ans {
+  my ($prompt, $hint) = @_;
   $prompt =~ s/\s*>?$//;
   if ($hint) {
     $prompt .= "\n请按回车继续... ";
@@ -72,13 +68,19 @@ sub read_ans($prompt, $hint = 0) {
   return $ans;
 }
 
+sub hint($) {
+  my ($prompt) = @_;
+  read_ans($prompt, 1);
+}
+
 my @options_list = @ARGV;
 @ARGV = ();
 if ($ENV{always_selection}) {
   push @options_list, $ENV{always_selection};
 }
 
-sub found_it($entry, $remaining_options) {
+sub found_it($$) {
+  my ($entry, $remaining_options) = @_;
 
   if ($ENV{always_selection} eq $entry) {
     pop @$remaining_options;
@@ -98,7 +100,11 @@ sub found_it($entry, $remaining_options) {
   }
 }
 
-sub my_select($remaining_options) {
+sub my_select($);
+
+sub my_select($) {
+  my ($remaining_options) = @_;
+
   if (@$remaining_options == 1) {
     found_it($$remaining_options[0], $remaining_options);
     return;
