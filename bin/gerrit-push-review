@@ -349,7 +349,7 @@ fi
 n_commits=$(git log $(repo-remote-branch)..${gpr_push_rev} --pretty=%H|wc -l)
 
 if test "$n_commits" = 0; then
-    echo "你的本地仓储没有改动需要提交到远程服务器"
+    echo "你的本地仓储没有改动需要提交到远程服务器。（你当前的 HEAD 跟服务器上对应分支的 HEAD 完全一致，请确认你是不是已经 git commit 过了？）"
     exit 0
 fi
 if test "$n_commits" != 1; then

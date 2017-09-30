@@ -144,7 +144,8 @@ sub my_select($) {
         tty "输入 ? 表示查看帮助\n  ";
         tty "输入 STRING!（字符串最后加英文叹号）表示强制接受 STRING 为最终的选择结果\n  ";
         tty "输入 - 表示删回上一层（丢弃上次输入的过滤选项）\n  ";
-        tty "输入 * 在终端下显示所有选项（如果你当前的选项太多的话）\n";
+        tty "输入 * 在终端下显示所有选项（如果你当前的选项太多的话）\n  ";
+        tty "输入 Ctrl-C 退出\n";
         if (@current_input) {
           tty "\n你当前输入的过滤文本是：" . join(", ", @current_input) . "\n";
         }
@@ -163,9 +164,9 @@ sub my_select($) {
     }
   }
 
-  if (not $ans or $ans =~ m/^\d+$/ and $ans > @$remaining_options) {
+  if (not $ans) {
     found_it($$remaining_options[0], $remaining_options);
-  } elsif ($ans =~ m/^\d+$/) {
+  } elsif ($ans =~ m/^\d+$/ and $ans <= @$remaining_options) {
     found_it($$remaining_options[$ans - 1], $remaining_options);
   } else {
     my @matches;
