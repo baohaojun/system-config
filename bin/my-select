@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+no if ($] >= 5.018), 'warnings' => 'experimental';
+use feature 'signatures';
+
 use strict;
 our @current_input;
 
@@ -30,13 +33,21 @@ sub tty(@) {
   }
 }
 
-sub read_ans($) {
-  my ($prompt) = @_;
+sub hint($prompt) {
+  read_ans($prompt, 1);
+}
+
+sub read_ans($prompt, $hint = 0) {
   $prompt =~ s/\s*>?$//;
-  if (@current_input) {
-    $prompt .= sprintf " l%d ", scalar(@current_input);
+  if ($hint) {
+    $prompt .= "\n请按回车继续... ";
+  } else {
+    if (@current_input) {
+      $prompt .= sprintf " l%d ", scalar(@current_input);
+    }
+    $prompt .= " (Type ? for help)>";
   }
-  $prompt .= " (Type ? for help)>";
+
   if (not $tty) {
     tty "$prompt";
   }
@@ -67,8 +78,7 @@ if ($ENV{always_selection}) {
   push @options_list, $ENV{always_selection};
 }
 
-sub found_it($$) {
-  my ($entry, $remaining_options) = @_;
+sub found_it($entry, $remaining_options) {
 
   if ($ENV{always_selection} eq $entry) {
     pop @$remaining_options;
@@ -88,9 +98,7 @@ sub found_it($$) {
   }
 }
 
-sub my_select(\@) {
-  my ($remaining_options) = @_;
-
+sub my_select($remaining_options) {
   if (@$remaining_options == 1) {
     found_it($$remaining_options[0], $remaining_options);
     return;
@@ -107,15 +115,19 @@ sub my_select(\@) {
       my $count = 1;
       foreach (@$remaining_options) {
         tty "$count) $_\n";
+        if ($count > 40 and @$remaining_options > $count) {
+          tty "... (" . scalar(@$remaining_options) . " total)\n";
+          last;
+        }
         $count++;
       }
 
-      $ans = read_ans ($ENV{SELECT_PROMPT} or 'Please select ');
+      $ans = read_ans($ENV{SELECT_PROMPT} or 'Please select ');
       if ($ans eq '-') {
         if (@current_input) {
           return 0;
         } else {
-          system("hint 'Can not go back another level up, we are at the top'");
+          hint("不能再返回上一层了，我们已经在最上层，所有过滤文本都丢弃了。");
         }
       } elsif ($ans eq '?') {
         tty "\n\nmy-select 用户界面帮助：\n\n";
@@ -125,8 +137,20 @@ sub my_select(\@) {
         tty "输入 !word1 word2：！表示反向过滤，这里表示删除跟 word1 匹配的和跟 word2 不匹配的选项\n  ";
         tty "输入 ? 表示查看帮助\n  ";
         tty "输入 STRING!（字符串最后加英文叹号）表示强制接受 STRING 为最终的选择结果\n  ";
-        tty "输入 - 表示删回上一层（丢弃上次输入的过滤选项）\n\n";
-        system "hint '以上'";
+        tty "输入 - 表示删回上一层（丢弃上次输入的过滤选项）\n  ";
+        tty "输入 * 在终端下显示所有选项（如果你当前的选项太多的话）\n";
+        if (@current_input) {
+          tty "\n你当前输入的过滤文本是：" . join(", ", @current_input) . "\n";
+        }
+
+        hint("\n");
+      } elsif ($ans eq '*') {
+        my $count = 1;
+        foreach (@$remaining_options) {
+          tty "$count) $_\n";
+          $count++;
+        }
+        hint "\n";
       } else {
         last;
       }
@@ -217,4 +241,4 @@ sub my_select(\@) {
   }
 }
 
-my_select @options_list;
+my_select \@options_list;
