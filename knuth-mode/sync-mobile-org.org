@@ -187,6 +187,18 @@
         ' -i jwords.org
 
         cat jwords.org >> done/jwords.org
+        if test "$(wc -l done/jwords.org|pn 1)" -gt 1000; then
+            (
+                n=1
+                while true; do
+                    if test ! -e done/jwords-$n.org; then
+                        mv done/jwords.org done/jwords-$n.org
+                        break
+                    fi
+                    ((n++))
+                done
+            )
+        fi
         emacs-empty-file jwords.org
         git-interactive-add
 
