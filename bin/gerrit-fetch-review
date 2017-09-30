@@ -304,7 +304,11 @@ if test "$cherry_pick" = true || is-jenkins; then
             exit -1
         fi
     fi
-    if ! git cherry-pick $git_commit_revision --ff > ~/tmp/gerrit-fetch-review.log.$$ 2>&1; then
+    if ! git cherry-pick $git_commit_revision --ff $(
+            if is-jenkins; then
+                echo --allow-empty --keep-redundant-commits
+            fi
+         ) > ~/tmp/gerrit-fetch-review.log.$$ 2>&1; then
         if is-jenkins; then
             (
                 git diff HEAD || true
