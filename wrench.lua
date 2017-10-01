@@ -937,7 +937,7 @@ wait_top_activity_match = function(activity)
       end
       sleep(.1)
    end
-   if not yes_or_no_p("等了两秒钟也没有等到 %s 窗口，请确认是否放弃此操作（重启Lua后台）？") then
+   if not yes_or_no_p("等了两秒钟也没有等到 %s 窗口，请确认是否放弃此操作（重启Lua后台）？", activity) then
       error("用户取消了小扳手的操作")
    end
    return window
