@@ -12,54 +12,19 @@ There are prebuilt versions for Windows, Mac and Linux (ubuntu 14.04). They are 
 
 ** Compilation
 
-*** Compling snorenotify
-
-You can get source code of snorenotify from [[https://github.com/baohaojun/snorenotify][my fork of this project]].
-
-First you need to =apt-get install extra-cmake-modules= (or download its source on Mac and Win32 platforms).
-
-Then you compile and install snorenotify. Under wine, please refer to this script (excerpt from [[./build-wine.sh]]):
-
-#+BEGIN_SRC sh
-if test ! -e ~/src/github/Wrench/windows/binaries/libsnore-qt5.dll; then
-    (
-        cd ~/src/github/snorenotify
-        git clean -xfd
-        mkdir -p cmake-build
-        qt-wine cmake -D ECM_DIR=z:/usr/share/ECM/cmake -G "MinGW Makefiles" z:/home/bhj/src/github/snorenotify
-        qt-wine mingw32-make -j8 install
-    )
-fi
-#+END_SRC
-
-=qt-wine= is a script to setup and run wine commands in my [[https://github.com/baohaojun/system-config][system-config project]].
-
-After compilation and install, you need make symlinks from snorenotify's mkspecs/modules/*.pri into system's Qt =mkspecs/modules/= directory. For e.g., under wine, I run:
-
-#+BEGIN_SRC sh
-  relative-link \
-      ~/.wine/drive_c/Program\ Files\ \(x86\)/SnoreNotify/mkspecs/modules/qt_LibsnoreQt5.pri \
-      ~/.wine/drive_c/Program\ Files\ \(x86\)/SnoreNotify/mkspecs/modules/qt_LibsnoreSettingsQt5.pri \
-      ~/.wine/drive_c/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules
-#+END_SRC
-
-Also, under wine, you need to use your editor to make sure the .pri files properly double quote some variables:
-
-#+BEGIN_EXAMPLE
-QT.LibsnoreQt5.includes = "C:/Program Files (x86)/SnoreNotify/include"
-#+END_EXAMPLE
-
-
+To compilen Wrench, you need make sure SnoreNotify is compiled and installed first. It's in the =SnoreNotify= sub-directory. Please refer to the ~SnoreNotify/build-*.sh~ for your platform.
 
 *** Compiling Wrench
 
 - Under Linux, compile Wrench with the =build-linux.sh= script. You should be able to run this script directly.
 
+  Because Wrench used QHotkey, you need to install =libqt5x11extras5-dev= first if you are under Debian/Ubuntu or something similar under other Linux distributions.
+
 - For Windows version, I compile with Wine under Linux, with the Qt for msys installed as compiler. Please refer to the =./build-wine.sh= script.
 
 - For Mac version, please refer to the =./build-mac.sh= script.
 
-You need to adapt the =./build-wine.sh= and =./build-mac.sh= scripts, there are some hardcoded parameters (such as the PATH environment and the Mac hostname).
+You need to adapt the =./build-wine.sh= and =./build-mac.sh= scripts, there are some hardcoded parameters (such as the PATH environment and the hostname of the Mac PC that I use for compilation).
 
 * How does it work
 
