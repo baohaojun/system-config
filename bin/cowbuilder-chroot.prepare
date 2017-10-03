@@ -5,7 +5,11 @@ apt-get update
 apt-get dist-upgrade -y
 apt-get install -y ssh vim sudo bash-completion locales man git dput fakeroot lvm2 less dialog
 apt-get install -y software-properties-common || apt-get install python-software-properties
-apt-get install -y linux-image-generic || true
+apt-get install -y initramfs-tools || true
+if ! grep ^loop -q /etc/initramfs-tools/modules; then
+    echo loop >> /etc/initramfs-tools/modules
+fi
+apt-get install -y linux-image-generic || apt-get install -y linux-image-amd64 || true
 apt-get install -y systemd-sysv || true
 apt-get install -y console-setup tasksel rsync
 (
@@ -21,6 +25,7 @@ usermod -a -G sudo bhj
 mv /sbin/initctl /sbin/initctl.bak || true # make sure sshd restart ok
 find ~bhj -maxdepth 2 | xargs chown bhj\.||true
 cp ~bhj/system-config/.keyboard.dvp /etc/default/keyboard.dvp
+vim /etc/ssh/sshd_config
 
 echo you must config dpkg-reconfigure linux-image-XXX-generic
 echo maybe: sudo touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
