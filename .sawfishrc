@@ -55,6 +55,15 @@
 
 (bind-keys s-h-keymap "q" '(synthesize-event-gnome? (read-event "Press the key you wanna send") (input-focus)))
 
+(defun sc-maxmize-window-toggle (&optional w)
+  (setq w (or w (input-focus)))
+  (when w
+    (if (window-maximized-p w)
+        (unmaximize-window w)
+      (maximize-window w))))
+
+(bind-both-global&window-keymaps "Super-F1" '(sc-maxmize-window-toggle))
+
 (defun delete-window-class-safely (class)
   "Delete all windows of the same CLASS"
   (mapc (lambda (window)
@@ -130,8 +139,8 @@
 (bind-both-global&window-keymaps "KP_Divide" '(system "douban unlike&"))
 (bind-both-global&window-keymaps "Super-Down"  '(system "douban info&"))
 (bind-both-global&window-keymaps "Super-Up" '(system "do-natural-scrolling&"))
-(bind-both-global&window-keymaps "Super-Right"  '(system "douban next&"))
-(bind-both-global&window-keymaps "Super-Left"  '(system "douban prev&"))
+(bind-both-global&window-keymaps "Super-Right"  '(system "sawfish-move-to-next-screen&"))
+(bind-both-global&window-keymaps "Super-Left"  '(system "sawfish-move-to-prev-screen&"))
 (bind-both-global&window-keymaps "Super-S-Right"  '(system "douban forth&"))
 (bind-both-global&window-keymaps "Super-S-Left"  '(system "douban back&"))
 (bind-both-global&window-keymaps "XF86AudioNext"  '(system "douban next&"))
@@ -813,6 +822,7 @@
 (bind-keys s-h-keymap "F24" '(lower-window-depth (input-focus)))
 (bind-keys s-h-keymap "SPC" '(set-window-depth (input-focus) 0))
 (bind-both-global&window-keymaps "XF86Favorites" '(system "wrench-show-notifications.sh&"))
+
 
 (defun get-window-xy-size (class)
   (let ((x 100000)

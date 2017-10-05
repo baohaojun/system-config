@@ -11,7 +11,7 @@ if ! grep ^loop -q /etc/initramfs-tools/modules; then
 fi
 apt-get install -y linux-image-generic || apt-get install -y linux-image-amd64 || true
 apt-get install -y systemd-sysv || true
-apt-get install -y console-setup tasksel rsync
+apt-get install -y console-setup tasksel rsync network-manager sawfish
 (
     echo en_US.UTF-8 UTF-8
     echo ja_JP.UTF-8 UTF-8
