@@ -22,6 +22,16 @@
 (bind-both-global&window-keymaps "Super-F23" '(move-cursor-up))
 (bind-both-global&window-keymaps "Super-F24" '(move-cursor-down))
 
+(define (sc-move-window-center w)
+  "Move the window to the center from the current screen."
+  (move-window-to w
+                  (+ (car (current-head-offset w))
+                     (quotient (- (car (current-head-dimensions w))
+                                  (car (window-frame-dimensions w))) 2))
+                  (+ (cdr (current-head-offset w))
+                     (quotient (- (cdr (current-head-dimensions w))
+                                  (cdr (window-frame-dimensions w))) 2))))
+
 (setq bhj-is-gnome? nil)
 (setq warp-to-window-offset 50
       warp-to-window-enabled t)

@@ -20,8 +20,9 @@ function move-window-to-x.y() {
           (x_y '$x_y))
       (when w
         (move-window-to w (car x_y) (cdr x_y))
-        (when (window-maximized-p w)
-          (maximize-window w))))"
+        (if (window-maximized-p w)
+            (maximize-window w)
+          (sc-move-window-center w))))"
 }
 
 if test $b0 = sawfish-move-to-next-screen -o \
