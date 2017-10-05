@@ -1954,8 +1954,9 @@ find_weibo_friend = function(friend_name)
    putclip_nowait(friend_name)
    for i = 1, 3 do
       M.start_app(W.weibo_home_activity)
-      adb_event("adb-tap 364 1835 sleep .3 adb-tap 139 1872 sleep .3 adb-tap 612 52 sleep .3 adb-tap 583 30 sleep .3 adb-tap 568 251")
-      -- switch to 2nd tab, then back to 1st tab, or else there will be a refresh wait
+      adb_tap_1080x2160(748, 1855) -- click 3rd tab
+      sleep(.3)
+      adb_tap_1080x2160(270, 100) -- click search
       ime = wait_input_target_n(5, W.weibo_search_activity)
       if ime and not ime:match(W.weibo_search_activity) then
          log("wait for weibo search at %d: %s", i, ime)
