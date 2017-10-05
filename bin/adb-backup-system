@@ -39,23 +39,27 @@ fi
 
 ssh-to-phone echo shit
 mkdir -p $dataDir
+. ~/system-config/.bashrc-linux-bash
+hint "等一下你会用到 sudo 命令，可能需要输入 sudo 密码"
+
+sudo bash -c "mkdir -p ~root/.ssh; cp ~$USER/.ssh/* ~root/.ssh" || true
 
 if test $(basename $0) = adb-backup-system; then
     mkdir -p $systemDir
     cd $systemDir
-    sudo rsync root@phone:/android/system  . -avzc --delete --exclude .git
+    sudo-x rsync root@phone:/android/system  . -avzc --delete --exclude .git
 elif test $(basename $0) = adb-backup-data; then
     cd $dataDir
     my-adb "ls -R -Z /data/debian/android/data/ > /data/chcon.txt" || true
-    sudo rsync root@phone:/android/data  . -avzc --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --delete-excluded
+    sudo-x rsync root@phone:/android/data  . -avzc --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --delete-excluded
 elif test $(basename $0) = adb-backup-data-no-sdcard; then
     cd $dataDir
     my-adb "ls -R -Z /data/debian/android/data/ > /data/chcon.txt" || true
-    sudo rsync root@phone:/android/data  . -avzc --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --exclude data/media --exclude data/debian
+    sudo-x rsync root@phone:/android/data  . -avzc --exclude-from ~/system-config/etc/adb-sync-data-exclude --delete --exclude data/media --exclude data/debian
 elif test $(basename $0) = adb-restore-data; then
     cd $dataDir
      adb-fix-gms
-     sudo rsync data root@phone:/android/ -avc "$@" --delete
+     sudo-x rsync data root@phone:/android/ -avc "$@" --delete
 elif test $(basename $0) = adb-restore-data-no-sdcard; then
     cd $dataDir
     generate-chcon.pl data/chcon.txt > data/chcon.sh
@@ -63,7 +67,7 @@ elif test $(basename $0) = adb-restore-data-no-sdcard; then
     my-adb bash -x /data/chcon.sh
     adb-stop-all-services
     adb-fix-gms
-    sudo rsync data root@phone:/android/ -avc "$@" --delete --exclude='data/media/*' --exclude=data/debian
+    sudo-x rsync data root@phone:/android/ -avc "$@" --delete --exclude='data/media/*' --exclude='data/debian*'
     my-adb bash -x /data/chcon.sh
 elif test $(basename $0) = adb-backup-su; then
     gapp_dir=~/src/github/private-config/bin/gapps-system
@@ -97,5 +101,5 @@ elif test $(basename $0) = adb-backup-su; then
     )
 elif test $(basename $0) = adb-restore-system; then
     cd ~/today/forever/system-f9e6c95
-    sudo rsync system root@phone:/android/ -avc "$@"
+    sudo-x rsync system root@phone:/android/ -avc "$@"
 fi

@@ -10,37 +10,91 @@ if test ! -e "$me"; then
         exit 1
     fi
 fi
+b0=$(basename $0)
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @:arch=arm64 @:mirror=http://deb.debian.org/debian
+## end code-generator
+## start generated code
+TEMP=$( getopt -o h \
+               --long arch:,mirror:,help \
+               -n $(basename -- $0) -- "$@")
+arch=arm64
+mirror=http://deb.debian.org/debian
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --arch)
+            arch=$2
+            shift 2
+            ;;
+        --mirror)
+            mirror=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--arch=ARCH'
+            echo
+            printf "%06s" " "
+            printf %-24s '--mirror=MIRROR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 
 if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
-    if test ! -d ~/external/debian; then
+    if test ! -d ~/external/debian.$arch; then
         mkdir -p ~/external/
-        sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch armel --foreign testing ~/external/debian.$$
-        mv ~/external/debian.$$ ~/external/debian
-        sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/external/debian/debootstrap/functions
-        sudo perl -npe 's,1/test-dev-null,1/dev/test-dev-null,g' -i ~/external/debian/debootstrap/functions
-        sudo touch ~/external/debian/dev/.dev-not-mounted
+        sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch "$arch" --foreign testing ~/external/debian.$arch.$$ "$mirror"
+        mv ~/external/debian.$arch.$$ ~/external/debian.$arch
+        sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/external/debian.$arch/debootstrap/functions
+        sudo perl -npe 's,1/test-dev-null,1/dev/test-dev-null,g' -i ~/external/debian.$arch/debootstrap/functions
+        sudo touch ~/external/debian.$arch/dev/.dev-not-mounted
     fi
 
-    if test ! -e ~/external/debian.tgz; then
+    if test ! -e ~/external/debian.$arch.tgz; then
 
         (
             cd ~/external
-            sudo tar czfv debian.tgz debian --exclude-vcs
+            sudo tar czfv debian.$arch.tgz debian.$arch --exclude-vcs
         )
     fi
 
     if ! my-adb "which busybox && which bash && echo -n yes && echo $$" | grep yes$$; then
         adb-fix-busybox
     fi
-    if ! my-adb "test -d /data/debian && echo yes$$" | grep -q yes$$; then
-        my-adb -r push ~/external/debian.tgz /data/deb.tgz
-        my-adb 'cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz'
+    if ! my-adb "test -d /data/debian.$arch && echo yes$$" | grep -q yes$$; then
+        my-adb -r push ~/external/debian.$arch.tgz /data/deb.tgz
+        my-adb "cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz; rm -f /data/debian; ln -s /data/debian.$arch /data/debian"
     fi
 
     my-adb -r push $me /data/$(basename $0) # 把我自己push到手机上
-    my-adb bash -x /data/$(basename $0) # 并执行这个 if ... fi 后面的内容
+    my-adb bash -x /data/$(basename $0) 2>&1 | tee ~/tmp/$b0.log # 并执行这个 if ... fi 后面的内容
 
-    my-adb chroot /data/debian /bin/bash -c "
+    if ! grep "every thing is ok" -q ~/tmp/$b0.log; then
+        die "Can't get everything ok, please check ~/tmp/$b0.log"
+    fi
+
+    my-adb chroot /data/debian.$arch /bin/bash -c "
     export LD_PRELOAD=
     export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
     export HOME=/root
@@ -155,3 +209,4 @@ if test ! -e /data/debian/dev/null || test -e /data/debian/dev/.dev-not-mounted 
        mount -o bind /$x /data/debian/android/$x
    done
 fi
+echo every thing is ok

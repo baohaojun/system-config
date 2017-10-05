@@ -10,9 +10,9 @@ if test "$ANDROID_SERIAL" = $(get-about-me adb-serial); then
     die "Must not run it on $ANDROID_SERIAL, it's your daily phone"
 fi
 
-my-adb 'cd /data;
+my-adb bash -c 'cd /data;
         for x in *; do
-            if test $x = media -o $x = debian -o $x = property; then
+            if [[ $x =~ ^media$|^debian|^property$ ]]; then
                 continue;
             else
                 rm -r $x;

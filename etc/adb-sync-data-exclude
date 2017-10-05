@@ -5,8 +5,7 @@ data/dalvik-cache/arm/*
 data/dalvik-cache/arm64/*
 data/dalvik-cache/*.dex
 data/data/com.smartisan.rem/.rem.log
-data/debian
-data/debian.tgz
+data/debian*
 data/diag_logs
 data/dontpanic
 data/log-crawler
