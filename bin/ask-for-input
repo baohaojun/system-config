@@ -3,20 +3,33 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ssecret p:prompt @history a:args
+# generate-getopt ssecret p:prompt @history a:args tforce-tty
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o a:sp:h \
-              --long history,args:,secret,prompt:,help,no-history,no-secret \
-              -n $(basename -- $0) -- "$@")
-history=false
+TEMP=$( getopt -o a:tp:sh \
+               --long args:,force-tty,history,prompt:,secret,help,no-force-tty,no-history,no-secret \
+               -n $(basename -- $0) -- "$@")
 args=
-secret=false
+force_tty=false
+history=false
 prompt=
+secret=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -a|--args)
+            args=$2
+            shift 2
+            ;;
+        -t|--force-tty|--no-force-tty)
+            if test "$1" = --no-force-tty; then
+                force_tty=false
+            else
+                force_tty=true
+            fi
+            shift
+            ;;
         --history|--no-history)
             if test "$1" = --no-history; then
                 history=false
@@ -25,8 +38,8 @@ while true; do
             fi
             shift
             ;;
-        -a|--args)
-            args=$2
+        -p|--prompt)
+            prompt=$2
             shift 2
             ;;
         -s|--secret|--no-secret)
@@ -37,17 +50,16 @@ while true; do
             fi
             shift
             ;;
-        -p|--prompt)
-            prompt=$2
-            shift 2
-            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-a, '
             printf %-24s '--args=ARGS'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--[no-]force-tty'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]history'
@@ -84,7 +96,9 @@ else
     secret=
 fi
 
-
+if test "$force_tty" = true; then
+    export IS_TTY_IO=true
+fi
 
 if test "$history" = true; then
     md5=$(echo $args $prompt | md5sum | pn 1)
@@ -116,6 +130,7 @@ if test "$history" = true; then
     exit
 fi
 
+prompt=$(echo "$prompt" | perl -npe 's/\s*>?$/>/;')
 if is-tty-io; then
     read $secret -p "${prompt:-Password: }" pass;
     echo $pass
