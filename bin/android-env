@@ -32,6 +32,10 @@ if test "$(basename $0)" = android-env; then
         "$@"
     fi
 else
+    if [[ $(basename $0) =~ mmm ]]; then
+        hint "你在使用 $(basename $0) 命令，这个命令会编译指定目录下的所有模块。如果没有指定目录的话，就是整个安卓代码。"
+        hint "推荐使用 mm 或 mma 命令，先自己 cd 到想要编译的目录下，然后开始编译。"
+    fi
     $(basename $0) "$@"
 fi
 
