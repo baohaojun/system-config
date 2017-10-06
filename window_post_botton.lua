@@ -223,6 +223,7 @@ map['com.yixia.videoeditor/com.yixia.videoeditor.login.ui.CheckPhoneActivity'] =
 map['com.yixia.videoeditor/com.yixia.videoeditor.login.ui.PhoneCaptchaActivity'] = 'manual-post'
 map['com.youku.phone/com.soku.searchsdk.activity.SearchActivity'] = 'manual-post'
 map['com.youku.phone/com.youku.ui.activity.DetailActivity'] = 'weixin-chat'
+map['com.zcbl.bjjj_driving/com.zcbl.driving_simple.activity.LoginActivity'] = 'manual-post'
 map['com.zhihu.android/com.zhihu.android.app.ui.activity.MainActivity'] = 'manual-post'
 map['com.zuzuChe/com.zuzuChe.activity.mbrowser.MBrowserActivity'] = 'manual-post'
 map['ctrip.android.view/ctrip.android.hotel.order.view.fill.HotelOrderActivity'] = 'manual-post'
