@@ -1,6 +1,13 @@
 #!/bin/bash
-if test $(basename $0) = urlify; then
-    rm-last-nl | perl -npe 's#([^-_0-9a-zA-Z. ])#sprintf("%%%02x", ord($1))#seg;'
+b0=$(basename $0)
+
+if test ${b0,,} = urlify; then
+    if test "$b0" = Urlify; then
+        case=uc
+    else
+        case=lc
+    fi
+    rm-last-nl | perl -npe 's#([^-/=_0-9a-zA-Z. ])#'"$case "'sprintf("%%%02x", ord($1))#seg;'
 else
     perl -npe 'chomp; s#%([0-9a-f]{2})#pack("C", hex("0x$1"))#egi'
 fi

@@ -1,0 +1,106 @@
+#+name: print-adb-usb
+#+BEGIN_SRC cperl
+  if (m/^Bus (\d+) Device (\d+):/) {
+    $bus = $1;
+    $device = $2;
+  } elsif (m/^\s+iSerial\s+\d+\s+(\S+)/) {
+    if ($1 eq $ENV{ANDROID_SERIAL}) {
+      print "mtp://[usb:$bus,$device]";
+      exit
+    }
+  }
+#+END_SRC
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt s:ANDROID-SERIAL='$ANDROID_SERIAL'
+  ## end code-generator
+  ## start generated code
+  TEMP=$( getopt -o s:h \
+                 --long ANDROID-SERIAL:,help \
+                 -n $(basename -- $0) -- "$@")
+  ANDROID_SERIAL=$ANDROID_SERIAL
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+
+          -s|--ANDROID-SERIAL)
+              ANDROID_SERIAL=$2
+              shift 2
+              ;;
+          -h|--help)
+              set +x
+              echo -e
+              echo
+              echo Options and arguments:
+              printf %06s '-s, '
+              printf %-24s '--ANDROID-SERIAL=ANDROID_SERIAL'
+              echo
+              exit
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          ,*)
+              die "internal error"
+              ;;
+      esac
+  done
+
+  ## end generated code
+
+  . .adb-check-sn
+
+  mtp_usb=$(
+      lsusb -v 2>&1 |
+          perl -ne "$(cat <<'EOFe1df7d4e6e11'
+          <<print-adb-usb>>
+  EOFe1df7d4e6e11
+  )"
+     )
+
+  mtp_mount_dir="/var/run/user/1000/gvfs/mtp:host=$(echo ${mtp_usb#*//}|Urlify)"
+
+  if test "$1" = mount; then
+      if test -d "$mtp_mount_dir"; then
+          echo "mtp already mounted"
+      else
+          gio mount "$mtp_usb"
+      fi
+  elif test "$1" = umount; then
+      if test -d "$mtp_mount_dir"; then
+          gio mount -u "$mtp_usb"
+      else
+          echo "mtp not mounted?"
+      fi
+  elif test "$1" = cd; then
+      if test ! -d "$mtp_mount_dir"; then
+          adb-mtp mount >/dev/null 2>&1
+      fi
+      echo cd "/var/run/user/1000/gvfs/mtp:host=$(echo ${mtp_usb#*//}|Urlify)"
+  else
+      echo "$mtp_usb"
+  fi
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/adb-mtp :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+

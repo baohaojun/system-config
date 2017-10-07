@@ -7,35 +7,37 @@ my $secure;
 my $executable;
 my $root_boot_image;
 my $edit_boot_image;
+my $should_remount = 1;
 
 sub debug(@) {
-    print STDERR "@_\n";
+  print STDERR "@_\n";
 }
 
 GetOptions(
-    "s!" => \$secure,
-    "d!" => \$root_boot_image,
-    "x!" => \$executable,
-    "e!" => \$edit_boot_image,
-    );
+           "s!" => \$secure,
+           "d!" => \$root_boot_image,
+           "x!" => \$executable,
+           "e!" => \$edit_boot_image,
+           "remount!" => \$should_remount,
+          );
 
 my $mount_cmd = "my-adb remount";
 map {s,/*$,,} @ARGV;
 map {s,^smb://,$ENV{HOME}/smb/,} @ARGV;
 if (@ARGV == 0) {
-    @ARGV = (qx(getclip));
+  @ARGV = (qx(getclip));
 }
 if (@ARGV == 1) {
-    my $dest = $ARGV[0];
-    $dest =~ s!(.*)/.*!$1!;
-    if ($dest =~ s!.*(/system/.*|/data/.*)!$1!) {
-        push @ARGV, $1;
-        debug "using $1 as dest dir";
-        if ($1 =~ m,^/system/,) {
-            system($mount_cmd);
-            system("my-adb", "mkdir", "-p", "$ARGV[1]")
-        }
+  my $dest = $ARGV[0];
+  $dest =~ s!(.*)/.*!$1!;
+  if ($dest =~ s!.*(/system/.*|/data/.*)!$1!) {
+    push @ARGV, $1;
+    debug "using $1 as dest dir";
+    if ($should_remount and $1 =~ m,^/system/,) {
+      system($mount_cmd);
+      system("my-adb", "mkdir", "-p", "$ARGV[1]")
     }
+  }
 }
 
 my $dest = pop( @ARGV);
@@ -45,111 +47,111 @@ my $dest_is_dir = qx(my-adb shell 'test -d $qdest && echo -n yes && echo $$') =~
 
 my $dir;
 if ($dest =~ m,^/data\b,) {
-    ;
-} elsif ($dest =~ m,^/system/,) {
-    system($mount_cmd);
+  ;
+} elsif ($should_remount and $dest =~ m,^/system/,) {
+  system($mount_cmd);
 }
 
 sub push_one_file($$)
-{
+  {
     my ($file, $base) = @_;
     my $true_dest = "$dest";
     if ($base eq "boot.img" and ($root_boot_image or $edit_boot_image)) {
-        my $file_q = shell_quote($file);
-        chomp($ENV{BOOT_IMAGE_PATH} = qx(readlink -f $file_q));
-        my $file_w = "/tmp/boot.img.$ENV{USER}";
-        system("cp", $file, $file_w);
-        system("replace-bootimage", "-b", $file_w, "--", "-d");
+      my $file_q = shell_quote($file);
+      chomp($ENV{BOOT_IMAGE_PATH} = qx(readlink -f $file_q));
+      my $file_w = "/tmp/boot.img.$ENV{USER}";
+      system("cp", $file, $file_w);
+      system("replace-bootimage", "-b", $file_w, "--", "-d");
 
-        if ($edit_boot_image) {
-            system("replace-bootimage", "-b", $file_w);
-        }
+      if ($edit_boot_image) {
+        system("replace-bootimage", "-b", $file_w);
+      }
 
-        $file = $file_w;
+      $file = $file_w;
     }
     if (not $dest_is_dir) {
-        $true_dest = $dest;
+      $true_dest = $dest;
     }
 
     if ($true_dest =~ m!/system/app/[^/]*.apk!) {
-        my $apk = $&;
-        (my $odex = $apk) =~ s/(apk|jar)$/odex/;
-        system("my-adb 'set -x; rm $odex'");
+      my $apk = $&;
+      (my $odex = $apk) =~ s/(apk|jar)$/odex/;
+      system("my-adb 'set -x; rm $odex'");
     }
 
     print "adb push $file $true_dest\n";
     if (system("adb", "push", $file, "$true_dest")) {
-        exit -1;
+      exit -1;
     }
     if ($true_dest =~ m/\.(png|jpg|mp4)$/i) {
-        print "scan $true_dest";
-        system("adb-scan-media", "-q", "$true_dest");
+      print "scan $true_dest";
+      system("adb-scan-media", "-q", "$true_dest");
     }
-}
+  }
 
 for (@ARGV) {
-    my $file = $_;
-    if ($_ !~ m!^/scp:|^[^/]+:!) {
-        $_ = shell_quote($_);
-        chomp($file=qx/lookup-file $_/);
-    }
+  my $file = $_;
+  if ($_ !~ m!^/scp:|^[^/]+:!) {
+    $_ = shell_quote($_);
+    chomp($file=qx/lookup-file $_/);
+  }
 
-    if (-d $file) {
-        $file =~ s!/*$!!;
-        (my $base = $file) =~ s!.*/!!;
-        push_one_file($file, $base);
-    } elsif (-e $file) {
-        (my $base = $file) =~ s!.*/!!;
-        $_ = $file;
-        push_one_file($_, $base);
-    } elsif ($file =~ m!^/scp:|^[^/]+:!) {
-        print "getting it with scp\n";
-        mkdir "/tmp/adb-push.$$";
-        my $port = "";
-        if ($file =~ m!^/scp:([^@]+\@[^#]+)(?:#(\d+))?:(.*)!) {
-            if ($2 ne "") {
-                $port = "-p $2";
-            }
-            $file = "$1:$3";
-        }
-        if (system("scp $port -r $file /tmp/adb-push.$$/") != 0 and system("yes-or-no-p -y 'failed to scp $file, continue?'") !=0) {
-            die "failed to scp $file";
-        }
-        $file =~ s!/*$!!;
-        (my $base = $file) =~ s!.*/!!;
-        my @files = glob("/tmp/adb-push.$$/$base");
-        debug "files are @files";
-        for (@files) {
-            ($base = $_) =~ s!.*/!!;
-            push_one_file($_, $base);
-        }
-        system("rm -rfv /tmp/adb-push.$$");
+  if (-d $file) {
+    $file =~ s!/*$!!;
+    (my $base = $file) =~ s!.*/!!;
+    push_one_file($file, $base);
+  } elsif (-e $file) {
+    (my $base = $file) =~ s!.*/!!;
+    $_ = $file;
+    push_one_file($_, $base);
+  } elsif ($file =~ m!^/scp:|^[^/]+:!) {
+    print "getting it with scp\n";
+    mkdir "/tmp/adb-push.$$";
+    my $port = "";
+    if ($file =~ m!^/scp:([^@]+\@[^#]+)(?:#(\d+))?:(.*)!) {
+      if ($2 ne "") {
+        $port = "-p $2";
+      }
+      $file = "$1:$3";
+    }
+    if (system("scp $port -r $file /tmp/adb-push.$$/") != 0 and system("yes-or-no-p -y 'failed to scp $file, continue?'") !=0) {
+      die "failed to scp $file";
+    }
+    $file =~ s!/*$!!;
+    (my $base = $file) =~ s!.*/!!;
+    my @files = glob("/tmp/adb-push.$$/$base");
+    debug "files are @files";
+    for (@files) {
+      ($base = $_) =~ s!.*/!!;
+      push_one_file($_, $base);
+    }
+    system("rm -rfv /tmp/adb-push.$$");
+  } else {
+    print "warning: $file not found\n";
+  }
+
+  if ($secure) {
+    my $base_file = $file;
+    $base_file =~ s!.*/!!;
+    my $base_dest = $dest;
+    $base_dest =~ s!.*/!!;
+
+    if ($base_file eq $base_dest) {
+      system("adb", "shell", "chmod", "644", $dest);
+      if ($executable) {
+        system("adb", "shell", "chmod", "755", $dest);
+      }
     } else {
-        print "warning: $file not found\n";
+      system("adb", "shell", "chmod", "644", "$dest/$base_file");
+      if ($executable) {
+        system("adb", "shell", "chmod", "755", "$dest/$base_file");
+      }
     }
-
-    if ($secure) {
-        my $base_file = $file;
-        $base_file =~ s!.*/!!;
-        my $base_dest = $dest;
-        $base_dest =~ s!.*/!!;
-
-        if ($base_file eq $base_dest) {
-            system("adb", "shell", "chmod", "644", $dest);
-            if ($executable) {
-                system("adb", "shell", "chmod", "755", $dest);
-            }
-        } else {
-            system("adb", "shell", "chmod", "644", "$dest/$base_file");
-            if ($executable) {
-                system("adb", "shell", "chmod", "755", "$dest/$base_file");
-            }
-        }
-    }
+  }
 }
 
 $mount_cmd = "echo my-adb shell mount -o remount,ro /system; exec >/dev/null 2>&1; my-adb shell sync; my-adb shell mount -o remount,ro /system";
 if ($dest =~ m,^/data\b,) {
-} else {
-    system($mount_cmd);
+} elsif ($should_remount) {
+  system($mount_cmd);
 }

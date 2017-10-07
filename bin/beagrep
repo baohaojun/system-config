@@ -31,6 +31,7 @@ my $file_default_line = 1;
 my $file_tag = "";
 my $grep_use_perl_regexp;
 my $replace_with;
+my $entering_dir;
 
 my @saved_args = @ARGV;
 my @fallback_dirs;
@@ -49,25 +50,26 @@ sub debug(@) {
 
 my $grep_add_opts = "";
 GetOptions(
-    "beagrep=s" => \$use_beagrep_for_dir,
-    "abc=s" => \$abc_base,
-    "top=s" => \$use_top_code_dir,
-    "a=s" => \$additional_tokens,
-    "t=s" => \$use_tokens,
-    "e=s" => \$pat,
-    "p=s" => \$pathpat,
-    "perl!" => \$grep_use_perl_regexp,
-    "grep=s" => \$grep_add_opts,
-    "v=s" => \$pathdeny,
-    "d=s" => \$pwd_opt,
-    "i!" => \$ignore_case,
-    "c!" => sub {$ENV{LC_ALL} = "C"},
-    "f!" => \$find_file_only,
-    "l!" => \$list_beagrep,
-    "o!" => \$only_grep_myself,
-    "s!" => \$short_format,
-    "rewrite=s" => \$replace_with,
-    ) or die;
+           "entering-dir=s" => \$entering_dir,
+           "beagrep=s" => \$use_beagrep_for_dir,
+           "abc=s" => \$abc_base,
+           "top=s" => \$use_top_code_dir,
+           "a=s" => \$additional_tokens,
+           "t=s" => \$use_tokens,
+           "e=s" => \$pat,
+           "p=s" => \$pathpat,
+           "perl!" => \$grep_use_perl_regexp,
+           "grep=s" => \$grep_add_opts,
+           "v=s" => \$pathdeny,
+           "d=s" => \$pwd_opt,
+           "i!" => \$ignore_case,
+           "c!" => sub {$ENV{LC_ALL} = "C"},
+           "f!" => \$find_file_only,
+           "l!" => \$list_beagrep,
+           "o!" => \$only_grep_myself,
+           "s!" => \$short_format,
+           "rewrite=s" => \$replace_with,
+          ) or die;
 
 if ($pwd_opt) {
     $abc_base = "";
@@ -189,7 +191,7 @@ chdir $pwd;
 chomp($pwd = qx/pwd -P/);
 my $start = length($pwd) + 1;
 if ($short_format) {
-    printf "Using short format, Entering directory \`%s'\n", $pwd;
+    printf "Using short format, Entering directory \`%s'\n", ($entering_dir or $pwd);
 }
 
 if ($list_beagrep) {

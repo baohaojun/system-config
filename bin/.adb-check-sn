@@ -1,0 +1,12 @@
+#!/bin/bash
+if test -z "$ANDROID_SERIAL"; then
+    if test "$(my-adb devices?|wc -l)" = 1; then
+        ANDROID_SERIAL=$(my-adb devices? | pn 1)
+    elif test "$(my-adb devices?|wc -l)" = 0; then
+        die "You have no adb devices, $b0 won't work without any adb devices"
+    else
+        die "You must specify which adb device to use by specifying ANDROID_SERIAL (you can use 'my-adb -s')"
+    fi
+fi
+
+export ANDROID_SERIAL

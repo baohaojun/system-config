@@ -20,7 +20,7 @@ if test ! -e buildspec.mk -a -z "$TARGET_PRODUCT"; then
 fi
 
 if test -z "$TARGET_PRODUCT"; then
-    lunch $(cat buildspec.mk|grep TARGET_PRODUCT|pn 2 =)-$(cat buildspec.mk|grep TARGET_BUILD_VARIANT|pn 2 =)
+    lunch $(cat buildspec.mk|grep TARGET_PRODUCT|pn 2 =)-$(cat buildspec.mk|grep TARGET_BUILD_VARIANT|pn 2 =) >/dev/null 2>&1
 fi
 
 cd "$oldpwd"

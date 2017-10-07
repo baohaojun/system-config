@@ -205,7 +205,13 @@ function adb() {
 
     if test "$1" = remount; then
         if test "$#" = 1; then
-            the-true-adb disable-verity || true
+            if the-true-adb disable-verity 2>&1 |grep -q 'Now reboot your device for settings to take effect'; then
+                hint "刚 disable 了 verity，手机需要重启才可以 remount"
+                the-true-adb reboot
+                sleep 5
+                my-adb -W
+                my-adb -r echo root check ok
+            fi
             the-true-adb remount
             command my-adb -r shell sh -c 'mount -o rw,remount /system;
                                      mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
@@ -412,7 +418,7 @@ EOF
 
         is_adb_command=false
 
-        if test "${adb_commands[$1]}" = true; then
+        if test "$1" && test "${adb_commands[$1]}" = true; then
             is_adb_command=true;
         fi
 
