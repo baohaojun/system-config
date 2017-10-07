@@ -44,22 +44,24 @@ my $working_file;
 my $wild_card;
 my $only_start_file;
 my $member_lookup;
+my $entering_dir;
 GetOptions(
-    "e=s" => \$lookup_needle,
-    "f=s" => \$working_file,
-    "a=s" => \$arch,
-    "d=s" => \$do_dir,
-    "c!"  => \$do_component,
-    "w!"  => \$wild_card,
-    "s!"  => \$silent,
-    "m!"  => \$member_lookup,
-    "o!"  => \$only_start_file,
-    "p=s" => sub {$path_matcher = qr($_[1])i},
-    "v=s" => sub {$path_matcher_inv = qr($_[1])i},
-    "i!"  => \$ignore_case,
-    "t=s" => sub {$type_re = qr($_[1])i},
-    "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
-    );
+           "e=s" => \$lookup_needle,
+           "f=s" => \$working_file,
+           "a=s" => \$arch,
+           "d=s" => \$do_dir,
+           "entering-dir=s" => \$entering_dir,
+           "c!"  => \$do_component,
+           "w!"  => \$wild_card,
+           "s!"  => \$silent,
+           "m!"  => \$member_lookup,
+           "o!"  => \$only_start_file,
+           "p=s" => sub {$path_matcher = qr($_[1])i},
+           "v=s" => sub {$path_matcher_inv = qr($_[1])i},
+           "i!"  => \$ignore_case,
+           "t=s" => sub {$type_re = qr($_[1])i},
+           "T=s" => sub {$type_re = qr($_[1])i; $reverse_type_re = 1},
+          );
 
 $saved_type_re = $type_re;
 
@@ -301,7 +303,10 @@ sub do_cscope($$$) {
 
     if (%matches and not $silent and not $use_full_path) {
         printf STDERR "Found total %d%s definitions: Entering directory \`%s'\n", scalar keys %matches, $filter_worked ? "/$filter_worked" : "", $code_dir;
-    }
+      } elsif ($entering_dir) {
+        printf STDERR "Found total %d%s definitions: Entering directory \`%s'\n", scalar keys %matches, $filter_worked ? "/$filter_worked" : "", $entering_dir;
+      }
+
 
     for (sort {
         ($matches{$a}{"dist"} <=> $matches{$b}{"dist"})
