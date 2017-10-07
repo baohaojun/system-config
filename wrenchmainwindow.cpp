@@ -810,16 +810,17 @@ void WrenchMainWindow::showEvent(QShowEvent *event)
 
 void WrenchMainWindow::startTask(const QString& task)
 {
-    qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__));
-    showNormal();
-    emit activateWindow();
-
-    QString path = task;
-    QFileInfo fileInfo = QFileInfo(path);
-    if (fileInfo.isReadable() && fileInfo.isFile()) {
-        mLuaThread->addScript(QStringList() << "wrench_run" << path);
-    }
-
+    if (task.isEmpty()) {
+        qDebug() << qPrintable(QString().sprintf("%s:%d:", __FILE__, __LINE__));
+        showNormal();
+        emit activateWindow();
+    } else {
+        QString path = task;
+        QFileInfo fileInfo = QFileInfo(path);
+        if (fileInfo.isReadable() && fileInfo.isFile()) {
+            mLuaThread->addScript(QStringList() << "wrench_run" << path);
+        }
+   }
 }
 
 void WrenchMainWindow::dragEnterEvent(QDragEnterEvent *event)

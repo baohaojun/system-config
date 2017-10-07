@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
     setenv("WRENCH_DATA_DIR", qPrintable(gDataDir.absolutePath()), 1);
 
     WrenchMainWindow w;
-    a.setActivationWindow(&w);
+    a.setActivationWindow(&w, false);
     w.show();
 
     QObject::connect(&a, SIGNAL(messageReceived(const QString&)),

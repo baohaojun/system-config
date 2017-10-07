@@ -35,6 +35,8 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     private Handler mHandler;
     private static final int gotCommandFromWrench = 1;
     private static final int gotNewNotification = 2;
+    private HashMap<String, StatusBarNotification> mNotificationMap =
+        new HashMap<String, StatusBarNotification>();
 
     private HashMap<LocalSocket, Integer> mSocketMap = new HashMap<LocalSocket, Integer>();
 
@@ -99,15 +101,8 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     }
 
     private void listStatusBarNotifications(LocalSocket sock) {
-        StatusBarNotification[] notifications;
-        try {
-            notifications = getActiveNotifications();
-        } catch (SecurityException es) {
-            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 105), es);
-            notifyWrenchWorks("Hello Wrench!", "Wrench is working!");
-            return;
-        }
-        
+        StatusBarNotification[] notifications = mNotificationMap.values().toArray(new StatusBarNotification[0]);
+
         try {
             BufferedWriter writer =
                 new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
@@ -170,17 +165,14 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         key = key.replaceAll("\n", "");
 
         StatusBarNotification[] notifications;
-        try {
-            notifications = getActiveNotifications(new String[] {key});
-        } catch (SecurityException es) {
-            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 176), es);
-            notifyWrenchWorks("Hello Wrench!", "Wrench got SecurityException :-(");
+        if (mNotificationMap.containsKey(key)) {
+            notifications = new StatusBarNotification[] {
+                mNotificationMap.get(key)
+            };
+        } else {
             return false;
         }
-        Log.e("bhj", String.format("%s:%d: notifications: %d, key %s", "WrenchNotificationHelper.java", 51, notifications.length, key));
-        if (notifications.length == 0) {
-            return false;
-        }
+
         boolean ret = false;
         for (StatusBarNotification sbn : notifications) {
             Notification n = sbn.getNotification();
@@ -484,6 +476,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn)  {
         Log.e("bhj", String.format("%s:%d: onNotificationRemoved()", "WrenchNotificationHelper.java", 22));
+        mNotificationMap.remove(sbn.getKey());
     }
 
     @Override
@@ -503,6 +496,9 @@ public class WrenchNotificationHelper extends NotificationListenerService {
             "com.android.systemui".equals(pkg)) {
             return;
         }
+
+        String key = sbn.getKey();
+        mNotificationMap.put(key, sbn);
 
         Log.e("bhj", String.format("%s:%d: got message from %s", "WrenchNotificationHelper.java", 406, pkg));
 
