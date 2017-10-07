@@ -1,4 +1,46 @@
 #!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:prefix-dir
+## end code-generator
+## start generated code
+TEMP=$( getopt -o p:h \
+               --long prefix-dir:,help \
+               -n $(basename -- $0) -- "$@")
+prefix_dir=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -p|--prefix-dir)
+            prefix_dir=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--prefix-dir=PREFIX_DIR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 target_dir=$1
 shift
 me=$(readlink -f $0)
@@ -11,15 +53,16 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 for x in "$@"; do
-    mkdir -p "$target_dir/$(dirname "$x")"
+    subdir=$(dirname "${x#$prefix_dir}")
+    mkdir -p "$target_dir/$subdir"
     if test $b0 = mv-with-dir-struct; then
-        mv "$x" "$target_dir/$(dirname "$x")" -v -n
+        mv "$x" "$target_dir/$subdir" -v -n
     elif test $b0 = cp-with-dir-struct; then
-        cp "$x" "$target_dir/$(dirname "$x")" -av
+        cp "$x" "$target_dir/$subdir" -av
     elif test $b0 = cp-with-dir-struct-L; then
-        cp "$x" "$target_dir/$(dirname "$x")" -rv -H
+        cp "$x" "$target_dir/$subdir" -rv -H
     elif test $b0 = rsync-with-dir-struct-L; then
-        rsync "$x" "$target_dir/$(dirname "$x")" -rv -L --exclude .git -a
+        rsync "$x" "$target_dir/$subdir" -rv -L --exclude .git -a
     else
         die "don't know how to do $0"
     fi

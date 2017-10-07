@@ -22,4 +22,14 @@ phone_size=$(my-adb dumpsys window|grep -o 'init=\S+' -P)
     done
 ) >/dev/null 2>&1 &
 
-the-true-adb install "$@"
+args=(
+    "$@"
+)
+
+if test ! -e ${args[$# - 1]}; then
+    args[$# - 1]=$(
+        lookup-file -e "${args[$# - 1]}"
+        )
+fi
+
+the-true-adb install "${args[@]}"
