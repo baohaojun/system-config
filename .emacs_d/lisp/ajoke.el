@@ -488,17 +488,17 @@ methods."
                              "Complete which class's methods/fields? "
                              (split-string
                               (shell-command-to-string (format "GTAGS_START_FILE= ajoke-get-qclass %s"
-                                                               (shell-quote-argument resolve))) "\n")))))
+                                                               (shell-quote-argument resolve))) "\n" t)))))
                     (format "%s." has-a-dot-resolve))
                 (let ((resolve-line
                        (ajoke--pick-one
                         "Complete which class's methods/fields? "
                         (split-string
                          (shell-command-on-region-to-string (format "ajoke-get-imports.pl -r %s -"
-                                                                    (shell-quote-argument id))) "\n")
+                                                                    (shell-quote-argument id))) "\n" t)
                         nil
                         t)))
-                  (car (split-string resolve-line "\\s +")))))
+                  (car (split-string resolve-line "\\s +" t)))))
              (comp (split-string resolve "\\."))
              (comp-last (car (last comp)))
              (class (cond
@@ -511,7 +511,7 @@ methods."
                       (mapconcat 'identity (butlast comp) "."))
                      (t resolve)))
              (hierarchy (shell-command-to-string (format "ajoke-get-hierarchy.pl %s -v|perl -npe 's/^\\s+//; if (not m/\\(/) {s/=.*|;//}'|sort -u" class)))
-             (methods (split-string hierarchy "\n")))
+             (methods (split-string hierarchy "\n" t)))
         (setq method (completing-read "Which method to call? " methods nil t))))
     (goto-char (ajoke--current-regexp "[.a-z0-9_]+" (lambda (start end) end)))
     (when (not (string-equal remove ""))
