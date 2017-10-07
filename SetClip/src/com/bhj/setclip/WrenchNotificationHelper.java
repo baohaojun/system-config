@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent.CanceledException;
 import android.app.PendingIntent;
 import android.net.LocalServerSocket;
@@ -98,7 +99,15 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     }
 
     private void listStatusBarNotifications(LocalSocket sock) {
-        StatusBarNotification[] notifications = getActiveNotifications();
+        StatusBarNotification[] notifications;
+        try {
+            notifications = getActiveNotifications();
+        } catch (SecurityException es) {
+            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 105), es);
+            notifyWrenchWorks("Hello Wrench!", "Wrench is working!");
+            return;
+        }
+        
         try {
             BufferedWriter writer =
                 new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
@@ -160,7 +169,14 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         String key = line.replaceAll("click ", "");
         key = key.replaceAll("\n", "");
 
-        StatusBarNotification[] notifications = getActiveNotifications(new String[] {key});
+        StatusBarNotification[] notifications;
+        try {
+            notifications = getActiveNotifications(new String[] {key});
+        } catch (SecurityException es) {
+            Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 176), es);
+            notifyWrenchWorks("Hello Wrench!", "Wrench got SecurityException :-(");
+            return false;
+        }
         Log.e("bhj", String.format("%s:%d: notifications: %d, key %s", "WrenchNotificationHelper.java", 51, notifications.length, key));
         if (notifications.length == 0) {
             return false;
@@ -204,6 +220,30 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     LocalServerSocket WrenchServer;
     private boolean mShouldSkip = false;
     private boolean mConnected = false;
+    private static int MOOD_NOTIFICATIONS = R.layout.layout_main;
+    private NotificationManager mNotificationManager;
+    
+    private PendingIntent makeMoodIntent(int moodId) {
+        PendingIntent contentIntent =
+            PendingIntent.getActivity(
+                this, 0,
+                new Intent(this, MainActivity.class).putExtra("moodimg", moodId),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        return contentIntent;
+    }
+
+    private void notifyWrenchWorks(CharSequence text, CharSequence title) {
+        int moodId = R.drawable.stat_happy;
+
+        Notification.Builder notifBuidler = new Notification.Builder(this)
+            .setSmallIcon(moodId)
+            .setWhen(System.currentTimeMillis())
+            .setContentTitle(title)
+            .setContentText(text)
+            .setContentIntent(makeMoodIntent(moodId));
+
+        mNotificationManager.notify(MOOD_NOTIFICATIONS, notifBuidler.build());
+    }
 
     @Override
     public void onCreate()  {
@@ -219,6 +259,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         } else {
             Log.e("bhj", String.format("%s:%d: onCreate", "WrenchNotificationHelper.java", 211));
         }
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         mHandler = new Handler() {
                 public void handleMessage(Message msg) {
