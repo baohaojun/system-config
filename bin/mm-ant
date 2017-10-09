@@ -7,7 +7,7 @@ set -e
         sleep 1;
         adb_top_activity=$(adb-top-activity)
         if test "$adb_top_activity" =  警告 -o "$adb_top_activity" = "Warning"; then
-            adb-tap 747 1186
+            Wrench.sh 'adb_tap_1080x2160(735, 1120, 747, 1186)'
             break
         fi
     done
