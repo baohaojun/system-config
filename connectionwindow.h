@@ -35,7 +35,6 @@ public:
     bool checkConnection() { return m_checkConnection; }
     void setCheckConnection(bool check) { m_checkConnection = check; }
 
-    static QMutex &mutex() { return m_mutex; }
     static void setConnecting(bool connecting) { m_connecting = connecting; }
     static bool connecting() { return m_connecting; }
 
@@ -51,7 +50,6 @@ private:
     bool m_exit;
     bool m_checkConnection;
     QElapsedTimer m_lastMessageReceivedTimer;
-    static QMutex m_mutex;
     static bool m_connecting;
 };
 

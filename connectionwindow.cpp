@@ -21,7 +21,6 @@ quint64 ConnectionWindow::m_nextConnectionNumber = 0;
 QHash<rfbClient *, QList<QPixmap> > ConnectionWindow::m_updatePixmaps;
 QHash<rfbClient *, QList<QRect> > ConnectionWindow::m_updateRects;
 QHash<rfbClient *, ConnectionWindow *> ConnectionWindow::m_clientToWindowHash;
-QMutex PollServerThread::m_mutex;
 bool PollServerThread::m_connecting = false;
 
 ConnectionWindow::ConnectionWindow(QWidget *parent) :
@@ -84,7 +83,7 @@ void ConnectionWindow::setConnected(bool conn)
      m_connected = conn;
      if ( connected() ) {
          m_pollServerThread = new PollServerThread(m_rfbClient, this);
-         connect(pollServerThread(), SIGNAL(messageArrived()), this, SLOT(messageArrived()));
+         connect(pollServerThread(), SIGNAL(messageArrived()), this, SLOT(messageArrived()), Qt::BlockingQueuedConnection);
          connect(pollServerThread(), SIGNAL(connectionClosed()), this, SLOT(connectionClosed()));
          switch ( surfaceType() ) {
          case QVNCVIEWER_SURFACE_RASTER:
@@ -103,8 +102,7 @@ void ConnectionWindow::setConnected(bool conn)
      } else {
          if ( pollServerThread() ) {
              pollServerThread()->setExit(true);
-             pollServerThread()->wait();
-             delete pollServerThread();
+             pollServerThread()->deleteLater();
              m_pollServerThread = 0;
          }
          switch ( surfaceType() ) {
@@ -268,11 +266,9 @@ void ConnectionWindow::configurationMenu_aboutToHide()
 void ConnectionWindow::messageArrived()
 {
     if ( pollServerThread() ) {
-        PollServerThread::mutex().lock();
         if ( WaitForMessage(m_rfbClient, 0) > 0 )
             if ( !HandleRFBServerMessage(m_rfbClient) )
                 QTimer::singleShot(0, this, SLOT(doDisconnect()));
-        PollServerThread::mutex().unlock();
     }
 }
 
@@ -298,9 +294,8 @@ PollServerThread::PollServerThread(rfbClient *client, QObject *parent) :
 void PollServerThread::run()
 {
     while ( !m_exit ) {
-        if ( !connecting() && mutex().tryLock(10) ) {
+        if ( !connecting() ) {
             int n = WaitForMessage(m_rfbClient, 500);
-            mutex().unlock();
             if ( n < 0 ) {
                 m_exit = true;
                 emit connectionClosed();
