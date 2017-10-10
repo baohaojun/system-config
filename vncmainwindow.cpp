@@ -71,6 +71,8 @@ VncMainWindow::VncMainWindow(QWidget *parent) :
     loadSettings();
     installEventFilter(this);
     QTimer::singleShot(0, this, SLOT(init()));
+    connect(&mDoConnectTimer, SIGNAL(timeout()), ui->connectionWindow, SLOT(doConnect()));
+    mDoConnectTimer.setSingleShot(true);
     rfbClientLog = rfbClientErr = ConnectionWindow::rfbLog;
 }
 
@@ -94,8 +96,7 @@ void VncMainWindow::log(QString message)
 
 void VncMainWindow::init()
 {
-    if ( QVNCVIEWER_ARG_QUIET )
-        ConnectionWindow::setQuiet(true);
+    ConnectionWindow::setQuiet(true);
     m_recentConnections = globalConfig->mainWindowRecentConnections();
     QTimer::singleShot(0, this, SLOT(initClientFromArguments()));
 }
@@ -279,7 +280,6 @@ void VncMainWindow::closeEvent(QCloseEvent *e)
         saveSettings();
         e->accept();
     } else {
-        fprintf(stderr, "%s:%d: hide\n", __FILE__, __LINE__);
         hide();
         e->ignore();
     }
@@ -298,12 +298,13 @@ void VncMainWindow::showEvent(QShowEvent *e)
 {
     gPhoneScreenSyncOn = true;
     initFromWrenchExt();
-    QTimer::singleShot(10, ui->connectionWindow, SLOT(doConnect()));
+
+    mDoConnectTimer.start(100);
 }
 
 void VncMainWindow::onVncUpdate(QString state) {
     if (this->isVisible() && ! ui->connectionWindow->connected()) {
-        QTimer::singleShot(0, ui->connectionWindow, SLOT(doConnect()));
+        mDoConnectTimer.start(100);
     }
 
     if (state == "Online") {

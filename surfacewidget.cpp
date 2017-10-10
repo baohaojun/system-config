@@ -39,7 +39,6 @@ SurfaceWidget::SurfaceWidget(ConnectionWindow *connectionWindow, QWidget *parent
     connect(&m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTimerTimeout()));
     m_frameTimer.setSingleShot(true);
     m_frameTimer.start(QVNCVIEWER_ONE_SECOND);
-    installEventFilter(this);
 }
 
 SurfaceWidget::~SurfaceWidget()
@@ -108,97 +107,6 @@ void SurfaceWidget::frameTimerTimeout()
     setCurrentFps(frameCounter());
     setFrameCounter(0);
     m_frameTimer.start(QVNCVIEWER_ONE_SECOND);
-}
-
-bool SurfaceWidget::eventFilter(QObject *object, QEvent *event)
-{
-    switch ( event->type() ) {
-    case QEvent::MouseMove: {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            if ( mouseEvent->pos().y() < QVNCVIEWER_MENUBAR_MOUSE_Y ) {
-                setFrameShadow(QFrame::Raised);
-                setFrameShape(QFrame::StyledPanel);
-                connectionWindow()->setMenuFrameVisible(true);
-                connectionWindow()->menuFrameTimer().start(QVNCVIEWER_MENUBAR_TIMEOUT);
-            }
-            if ( client() ) {
-                QPoint mappedPos = m_transform.map(mouseEvent->pos());
-                SendPointerEvent(client(), mappedPos.x(), mappedPos.y(), m_buttonMask);
-            }
-        }
-        break;
-    case QEvent::MouseButtonPress: {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            m_surfaceRect.moveCenter(rect().center());
-            if ( connectionWindow()->menuFrameVisible() && connectionWindow()->isFullScreen() )
-                connectionWindow()->setMenuFrameVisible(false);
-            if ( client() ) {
-                QPoint mappedPos = m_transform.map(mouseEvent->pos());
-                m_buttonMask |= translateMouseButton(mouseEvent->button());
-                SendPointerEvent(client(), mappedPos.x(), mappedPos.y(), m_buttonMask);
-                m_buttonMask &= ~(rfbButton4Mask | rfbButton5Mask);
-            }
-        }
-        break;
-    case QEvent::MouseButtonRelease: {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            m_surfaceRect.moveCenter(rect().center());
-            if ( client() ) {
-                QPoint mappedPos = m_transform.map(mouseEvent->pos());
-                m_buttonMask &= ~translateMouseButton(mouseEvent->button());
-                SendPointerEvent(client(), mappedPos.x(), mappedPos.y(), m_buttonMask);
-                m_buttonMask &= ~(rfbButton4Mask | rfbButton5Mask);
-            }
-        }
-        break;
-    case QEvent::MouseButtonDblClick: {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            m_surfaceRect.moveCenter(rect().center());
-            if ( client() ) {
-                QPoint mappedPos = m_transform.map(mouseEvent->pos());
-                m_buttonMask |= translateMouseButton(mouseEvent->button());
-                SendPointerEvent(client(), mappedPos.x(), mappedPos.y(), m_buttonMask);
-                m_buttonMask &= ~translateMouseButton(mouseEvent->button());
-                SendPointerEvent(client(), mappedPos.x(), mappedPos.y(), m_buttonMask);
-                m_buttonMask |= translateMouseButton(mouseEvent->button());
-                SendPointerEvent(client(), mappedPos.x(), mappedPos.y(), m_buttonMask);
-                m_buttonMask &= ~translateMouseButton(mouseEvent->button());
-                SendPointerEvent(client(), mappedPos.x(), mappedPos.y(), m_buttonMask);
-                m_buttonMask &= ~(rfbButton4Mask | rfbButton5Mask);
-            }
-        }
-        break;
-    case QEvent::KeyPress: {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-            if ( keyEvent->key() == Qt::Key_Alt ) {
-                if ( client() ) {
-                    SendKeyEvent(client(), qt2keysym(keyEvent->key()), true);
-                    setFocus();
-                    return true;
-                }
-            }
-            if ( QVNCVIEWER_FULLSCREEN_TOGGLED )
-                QTimer::singleShot(0, connectionWindow(), SLOT(on_toolButtonToggleFullScreen_clicked()));
-            if ( client() ) {
-                SendKeyEvent(client(), qt2keysym(keyEvent->key()), true);
-                return true;
-            }
-        }
-        break;
-    case QEvent::KeyRelease: {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-            if ( client() ) {
-                if ( keyEvent->key() == Qt::Key_Alt )
-                        setFocus();
-                SendKeyEvent(client(), qt2keysym(keyEvent->key()), false);
-                return true;
-            }
-        }
-        break;
-    default:
-        break;
-    }
-    return QFrame::eventFilter(object, event);
 }
 
 void SurfaceWidget::resizeEvent(QResizeEvent *e)
