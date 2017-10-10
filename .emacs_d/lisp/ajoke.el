@@ -647,7 +647,7 @@ beginning of current defun."
     (insert (format "\n<string name=\"%s\"></string>" tag))
     (search-backward "<")))
 
-(defun ajoke-jump-to-source-file ()
+(defun ajoke-header-and-source ()
   (interactive)
   (let* ((current-file (bhj-file-basename))
          (target-file-name (file-name-sans-extension current-file)))
@@ -662,7 +662,8 @@ beginning of current defun."
 (global-set-key [(meta g)(j)(p)] 'ajoke-insert-package)
 (global-set-key [(meta g)(j)(i)] 'ajoke-get-imports)
 (global-set-key [(control c)(i)(h)] 'ajoke-get-imports)
-(global-set-key [(control c)(f)(s)] 'ajoke-jump-to-source-file)
+(global-set-key [(control c)(f)(s)] 'ajoke-header-and-source)
+(global-set-key [(meta g) (h)] 'ajoke-header-and-source)
 (global-set-key [(meta g)(j)(h)] 'ajoke-get-hierarchy)
 (global-set-key [(meta g)(j)(o)] 'ajoke-get-override)
 (global-set-key [(meta g)(j)(r)] 'ajoke-resolve)
