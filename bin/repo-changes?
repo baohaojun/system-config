@@ -1,154 +1,155 @@
 #!/bin/bash
 
-if test $(basename $0) = repo-not-clean; then
-    export DO_GIT_ST_ONLY=true
-fi
+# [[file:~/system-config/knuth-mode/repo-changes?.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
-if echo $SHELLOPTS | grep -q xtrace; then
-    export SHELLOPTS
-fi
+set -e
 
-export path_pattern=
-export GIT_END_DATE=
-TEMP=$(getopt -o e:p: --long end:,pattern: -n $(basename $0) -- "$@")
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-        -e|--end)
-            export GIT_END_DATE=$(day-end $2)
-            shift 2
-            ;;
-        -p|--path)
-            path_pattern=$2
-            shift 2
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error"
-            ;;
-    esac
-done
+  #!/bin/bash
 
-if test "$1" = out/repo-changes.log; then
-    cd $(lookup-file .repo/..)
-fi
+  if test $(basename $0) = repo-not-clean; then
+      export DO_GIT_ST_ONLY=true
+  fi
 
-if test $# = 0 -a ! -d .repo; then
-    set -- $(repo-top)/$(repo-path)
-fi
+  if echo $SHELLOPTS | grep -q xtrace; then
+      export SHELLOPTS
+  fi
 
-set -- $(
-    for x in "$@"; do
-        echo -d "$x"
-    done
-)
+  export path_pattern=
+  export GIT_END_DATE=
+  TEMP=$(getopt -o e:p: --long end:,pattern: -n $(basename $0) -- "$@")
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+          -e|--end)
+              export GIT_END_DATE=$(day-end $2)
+              shift 2
+              ;;
+          -p|--path)
+              path_pattern=$2
+              shift 2
+              ;;
+          --)
+              shift
+              break
+              ;;
+          *)
+              die "internal error"
+              ;;
+      esac
+  done
 
-my-rfa -j 4 -p "$path_pattern" "$@" -- '
-#{%sh%}
+  if test "$1" = out/repo-changes.log; then
+      cd $(lookup-file .repo/..)
+  fi
+
+  if test $# = 0 -a ! -d .repo; then
+      set -- $(repo-top)/$(repo-path)
+  fi
+
+  set -- $(
+      for x in "$@"; do
+          echo -d "$x"
+      done
+  )
+
+  my-rfa -j 4 -p "$path_pattern" "$@" -- "$(cat <<'EOF552bc89ae4fe'
 (
-if test "$DEBUG" = true; then
-    set -x
-    function git()
-    {
-        command git "$@" ||
+    if test "$DEBUG" = true; then
+        set -x
+        function git()
         {
-            case "$1" in
-                *)
-                    echo $(pwd) git "$@" failed
-                    ;;
-            esac
-        } 1>&2
-    }
-    export -f git
-fi
-set -- $($REPO_INFO remote branch path)
-remote=$1
-branch=$2
-path=$3
-if test ${#branch} = 40; then
-    remote_rev=$branch
-elif [[ $branch =~ /tags/ ]]; then
-    remote_rev=$(git rev-parse $branch)
-else
-    remote_rev=$(git rev-parse $remote/$branch)
-fi
-
-if test -z "$GIT_END_DATE"; then
-    rev=$(git rev-parse $remote_rev)
-else
-    rev=$(git log --until="$GIT_END_DATE" -1 $remote_rev|head -n 1|pn 2)
-fi
-
-if git status -s |grep -q .; then
-    (
-        if test -e "$(git config core.excludesfile)"; then
-            exc_file=$(git config core.excludesfile)
-        else
-            exc_file=/dev/null
-        fi
-        for file in $(git status -s | pn 2); do
-            if ! grep -e "^$file\$" -q -- "$exc_file"; then
-                (
-                    flock -x 10;
-                    echo $path repo not clean: $file;
-                )
-
-                break
-            fi
-        done
-    )
-fi
-
-head_rev=$(git rev-parse HEAD)
-
-if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
-    need_bail=true
-
-    if git symbolic-ref HEAD >/dev/null 2>&1 && test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$path/series; then
-        if test "$(git rev-parse HEAD"~$(gq applied 2>/dev/null|wc -l )")" = $rev; then
-            need_bail=false
-        fi
-
-        if test "$(gq applied)" != "$(gq series)"; then
-            need_bail=false
-        fi
+            command git "$@" ||
+                {
+                    case "$1" in
+                        *)
+                            echo $(pwd) git "$@" failed
+                            ;;
+                    esac
+                } 1>&2
+        }
+        export -f git
+    fi
+    set -- $($REPO_INFO remote branch path)
+    remote=$1
+    branch=$2
+    path=$3
+    if test ${#branch} = 40; then
+        remote_rev=$branch
+    elif [[ $branch =~ /tags/ ]]; then
+        remote_rev=$(git rev-parse $branch)
+    else
+        remote_rev=$(git rev-parse $remote/$branch)
     fi
 
-    if test $need_bail = true; then
-        if [[ $branch =~ /tags/ ]]; then
-            git fetch $remote $branch >/dev/null 2>&1
-        else
-            git fetch $remote refs/heads/$branch >/dev/null 2>&1
-        fi
-        fetch_rev=$(git rev-parse FETCH_HEAD^0)
-
-        if test "$head_rev" = "$fetch_rev"; then
-            need_bail=false
-        fi
+    if test -z "$GIT_END_DATE"; then
+        rev=$(git rev-parse $remote_rev)
+    else
+        rev=$(git log --until="$GIT_END_DATE" -1 $remote_rev|head -n 1|pn 2)
     fi
 
-    if test $need_bail = true; then
-        (
-            flock -x 10;
-            echo $path rev not the same;
-        )
+    changed_files=$(git status -s | grep . || true)
+    if test "$changed_files"; then
+        n_changed=$(echo "$changed_files" | wc -l)
+        echo "$path repo contains changs: '$(echo "$changed_files" | head -n 1)' ($n_changed changed files)"
+    fi
+
+    if test "$DO_GIT_ST_ONLY" = true; then
+        exit 0
+    fi
+
+    # git status is clean, we need to check git revision and `git clean` output
+    git_clean_output=$(
+        git clean -xfdn 2>&1|grep -v '^Skipping repository |^Would skip repository' -P|grep .|head -n 1 || true
+                    )
+    if test "$git_clean_output"; then
+        echo "$path need clean: $git_clean_output"
         exit
-
     fi
-fi
+
+    head_rev=$(git rev-parse HEAD)
+
+    if test "$head_rev" != "$rev"; then
+        need_bail=true
+
+        if test $need_bail = true; then
+            if [[ $branch =~ /tags/ ]]; then
+                git fetch $remote $branch >/dev/null 2>&1
+            else
+                git fetch $remote refs/heads/$branch >/dev/null 2>&1
+            fi
+            fetch_rev=$(git rev-parse FETCH_HEAD^0)
+
+            if test "$head_rev" = "$fetch_rev"; then
+                need_bail=false
+            fi
+        fi
+
+        if test $need_bail = true; then
+            (
+                flock -x 10;
+                echo $path rev not the same;
+            )
+            exit
+
+        fi
+    fi
 ) || echo "$PWD git failed"
 
-#{%/sh%}
-' 2>&1 10>~/.cache/system-config/logs/repo-changes.lock | (
-    cd $(lookup-file .repo/..);
-    mkdir -p $(readlink -m out)
-    log=./out/repo-changes.log"$(echo -n $*)"
-    lognow="$log-$(now)"
-    tee "$lognow" 2>/dev/null
-    ln -sf $(basename "$lognow") "$log" >/dev/null 2>&1
-    cp "$log" .repo/repo-changes.log >/dev/null 2>&1
-    ln -sf .repo/repo-changes.log
-)
+
+
+EOF552bc89ae4fe
+)" 2>&1 10>~/.cache/system-config/logs/repo-changes.lock | (
+      cd $(lookup-file .repo/..);
+      mkdir -p $(readlink -m out)
+      log=./out/repo-changes.log"$(echo -n $*)"
+      lognow="$log-$(now)"
+      tee "$lognow" 2>/dev/null
+      ln -sf $(basename "$lognow") "$log" >/dev/null 2>&1
+      cp "$log" .repo/repo-changes.log >/dev/null 2>&1
+      ln -sf .repo/repo-changes.log
+  )
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+
+# the-ultimate-script ends here

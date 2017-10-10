@@ -1,0 +1,42 @@
+#+name: vnc-mode
+#+BEGIN_SRC lua
+local M = {}
+M.mode = "%s"
+M.width = %d
+M.height = %d
+return M
+#+END_SRC
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC lua
+  -- Local Variables: --
+  -- eval: (read-only-mode 1) --
+  -- End: --
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC lua
+  local mode = select_args{"你希望采用什么模式连接手机VNC？", "演示模式", "高清模式"}
+  log("mode is %s", mode)
+  M.update_screen_size()
+  local configDir = os.getenv("WRENCH_CONFIG_DIR")
+  local mode_file = io.open(configDir .. package.config:sub(1, 1) .. "vnc-mode.lua", "w")
+  local vnc_mode_str = [[
+  <<vnc-mode>>
+  ]]
+
+  mode_file:write(vnc_mode_str:format(mode, M.real_width, M.real_height))
+  mode_file:close()
+  kill_android_vnc()
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC lua :tangle ~/src/github/Wrench/release/ext/reconnect-vnc.lua :comments link :shebang "#!/usr/bin/env Wrench.sh\n-- 重置手机 VNC 连接模式（演示、竖屏高清、横屏高清）" :noweb yes
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
