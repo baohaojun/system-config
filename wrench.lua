@@ -457,7 +457,7 @@ local function adb_event(events)
          local width_ratio, height_ratio = app_width_ratio, app_height_ratio
 
          if (events[i - 1] and events[i - 1]:match("no%-virt")) then
-            width_ratio, height_ratio = real_width_ratio, real_height_ratio
+            width_ratio, height_ratio = 1, 1
          elseif events[i+1] * 2 < default_height then
             height_ratio = init_height_ratio
          end

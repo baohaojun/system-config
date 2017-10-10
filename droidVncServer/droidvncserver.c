@@ -70,13 +70,6 @@ inline int getCurrentRotation()
 
 rfbNewClientHookPtr clientHook(rfbClientPtr cl)
 {
-  if (g_scaling!=100)
-  {
-    rfbScalingSetup(cl, vncscr->width*g_scaling/100.0, vncscr->height*g_scaling/100.0);
-    L("Scaling to w=%d  h=%d\n",(int)(vncscr->width*g_scaling/100.0), (int)(vncscr->height*g_scaling/100.0));
-    //rfbSendNewScaleSize(cl);
-  }
-
   return RFB_CLIENT_ACCEPT;
 }
 
