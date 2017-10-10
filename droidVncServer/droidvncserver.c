@@ -43,7 +43,7 @@ static rfbScreenInfoPtr vncscr;
 uint32_t idle = 0;
 uint32_t standby = 1;
 uint16_t rotation = 0;
-uint16_t scaling = 100;
+uint16_t g_scaling = 100;
 uint8_t display_rotate_180 = 0;
 
 void (*update_screen)(void)=NULL;
@@ -70,10 +70,10 @@ inline int getCurrentRotation()
 
 rfbNewClientHookPtr clientHook(rfbClientPtr cl)
 {
-  if (scaling!=100)
+  if (g_scaling!=100)
   {
-    rfbScalingSetup(cl, vncscr->width*scaling/100.0, vncscr->height*scaling/100.0);
-    L("Scaling to w=%d  h=%d\n",(int)(vncscr->width*scaling/100.0), (int)(vncscr->height*scaling/100.0));
+    rfbScalingSetup(cl, vncscr->width*g_scaling/100.0, vncscr->height*g_scaling/100.0);
+    L("Scaling to w=%d  h=%d\n",(int)(vncscr->width*g_scaling/100.0), (int)(vncscr->height*g_scaling/100.0));
     //rfbSendNewScaleSize(cl);
   }
 
@@ -251,15 +251,12 @@ int main(int argc, char **argv)
           i++;
           r=atoi(argv[i]);
           if (r >= 1 && r <= 150)
-            scaling = r;
+            g_scaling = r;
           else 
-            scaling = 100;
+            g_scaling = 100;
 
-          if (r == 100) {
-            gVideoHeight = gVideoWidth = 0;
-          }
-
-          L("scaling to %d%%\n",scaling);
+          gVideoHeight = gVideoWidth = 0;
+          L("scaling to %d%%\n",g_scaling);
           break;
         }
       }

@@ -49,7 +49,7 @@ void VncMainWindow::initFromWrenchExt()
         setFixedSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
         resize(parentWidget()->size().height() * mPhoneWidth / mPhoneHeight, parentWidget()->size().height());
     } else {
-        setFixedSize(parentWidget()->size().height() * 1080 / 1920, parentWidget()->size().height());
+        setFixedSize(parentWidget()->size().height() * mPhoneWidth / mPhoneHeight, parentWidget()->size().height());
     }
     this->activateWindow();
 }
@@ -291,7 +291,6 @@ void VncMainWindow::hideEvent(QHideEvent *e)
     gPhoneScreenSyncOn = false;
     mLuaThread()->addScript(QStringList("kill_android_vnc"));
 
-    ui->connectionWindow->doDisconnect();
     emit vncWindowClosed();
 }
 

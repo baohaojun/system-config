@@ -353,8 +353,11 @@ static status_t recordScreen() {
         if (gVideoHeight == 0) {
             gVideoHeight = rotated ? mainDpyInfo.w : mainDpyInfo.h;
         }
+        extern uint16_t g_scaling;
+        gVideoWidth = (gVideoWidth * g_scaling / 100 + 7) / 8 * 8;
+        gVideoHeight = (gVideoHeight * g_scaling / 100 + 7) / 8 * 8;
     } else {
-        gVideoWidth = (mainDpyInfo.w * gVideoHeight / mainDpyInfo.h + 7 ) / 8 * 8;
+        gVideoWidth = (mainDpyInfo.w * gVideoHeight / mainDpyInfo.h + 7) / 8 * 8;
     }
 
     fprintf(stderr, "%s:%d: gVideoWidth is %d\n", __FILE__, __LINE__, gVideoWidth);

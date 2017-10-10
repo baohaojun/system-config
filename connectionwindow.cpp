@@ -12,6 +12,7 @@
 #include "ui_connectionwindow.h"
 #include "qvncviewersettings.h"
 #include "vncmainwindow.h"
+#include <QDebug>
 
 extern QtVncViewerSettings *globalConfig;
 extern VncMainWindow *vncMainWindow;
@@ -69,6 +70,8 @@ ConnectionWindow::~ConnectionWindow()
         rfbClientCleanup(m_rfbClient);
     }
     if ( pollServerThread() ) {
+        qDebug() << "~ConnectionWindow";
+        pollServerThread()->disconnect();
         pollServerThread()->setExit(true);
         pollServerThread()->wait();
         delete pollServerThread();
@@ -101,8 +104,10 @@ void ConnectionWindow::setConnected(bool conn)
          SendIncrementalFramebufferUpdateRequest(m_rfbClient);
      } else {
          if ( pollServerThread() ) {
+             pollServerThread()->disconnect();
              pollServerThread()->setExit(true);
-             pollServerThread()->deleteLater();
+             pollServerThread()->wait();
+             delete pollServerThread();
              m_pollServerThread = 0;
          }
          switch ( surfaceType() ) {
@@ -265,11 +270,9 @@ void ConnectionWindow::configurationMenu_aboutToHide()
 
 void ConnectionWindow::messageArrived()
 {
-    if ( pollServerThread() ) {
-        if ( WaitForMessage(m_rfbClient, 0) > 0 )
-            if ( !HandleRFBServerMessage(m_rfbClient) )
-                QTimer::singleShot(0, this, SLOT(doDisconnect()));
-    }
+    if (!HandleRFBServerMessage(m_rfbClient)) {
+        pollServerThread()->setExit(true);
+    };
 }
 
 void ConnectionWindow::connectionClosed()
