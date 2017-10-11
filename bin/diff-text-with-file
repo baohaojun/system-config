@@ -1,0 +1,17 @@
+#!/bin/bash
+
+text=$1
+file=$2
+
+if test -z "$text" && test -s "$file"; then
+    echo text is empty, file is not empty
+    exit 1
+fi
+
+if test "$text" && ! test -s "$file"; then
+    echo text is not empty, file is empty or not exist
+    exit 1
+fi
+
+echo "$text" > ~/tmp/diff-text-with-file.$$
+diff ~/tmp/diff-text-with-file.$$ "$file"
