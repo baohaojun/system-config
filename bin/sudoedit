@@ -27,4 +27,5 @@ if test $(basename $0) = sudoedit-wait; then
     export EDITOR=~/system-config/bin/edit-wait
 fi
 
+find-or-exec emacs
 sudoedit "$@"
