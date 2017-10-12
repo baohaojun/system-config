@@ -248,7 +248,7 @@ for diff_file in $diffs; do
         if test "$(basename $0)" = repo-cherry-push-all; then
             if test "$ok_function"; then
                 echo running $ok_function in $PWD
-                $ok_function || true
+                $ok_function
                 exit
             fi
             if ! start_recursive_shell repo-cherry-push-all; then
