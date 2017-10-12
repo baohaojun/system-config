@@ -3154,7 +3154,8 @@ wrench_adb_mail = function(subject, to, cc, bcc, attachments)
       adb_shell"mkdir -p /sdcard/adb-mail"
       wait_input_target(W.emailSmartisanActivity)
 
-      adb_event("adb-tap 842 434 sleep 1.5") -- 展开
+      adb_tap_1080x2160(364, 246)
+      adb_event("sleep 0.5") -- 展开
    end
 
    if attachments:gsub("%s", "") ~= "" then
@@ -3209,16 +3210,19 @@ wrench_adb_mail = function(subject, to, cc, bcc, attachments)
          putclip(contact)
          adb_event"sleep .8 key scroll_lock sleep .5"
       end
-      adb_event"key DPAD_DOWN"
+      adb_event"key enter sleep .5"
    end
-   adb_event"adb-tap 247 287"
+
+   adb_event"key enter sleep 1.5"
+   insert_text(subject)
+
+   adb_tap_1080x2160(415, 357)
+   adb_tap_1080x2160(370, 252)
    insert_text(to)
    insert_text(cc)
    insert_text(bcc)
-   adb_event"key DPAD_DOWN"
-   insert_text(subject)
 
-   adb_event"key DPAD_UP key DPAD_UP"
+   adb_event"key DPAD_DOWN key DPAD_DOWN"
 end
 
 wrench_find_weixin_contact = function(number)
