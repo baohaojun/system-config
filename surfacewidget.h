@@ -62,7 +62,6 @@ public slots:
     void frameTimerTimeout();
 
 protected:
-    bool eventFilter(QObject *object, QEvent *event);
     void resizeEvent(QResizeEvent *e);
     void paintEvent(QPaintEvent *);
 

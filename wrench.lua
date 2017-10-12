@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 -- module
-local M = {}
+local M = _ENV
 
 local W = {}
 
@@ -36,7 +36,7 @@ local picture_to_weixin_share, picture_to_weibo_share, picture_to_qq_share
 local picture_to_momo_share, wrench_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
 local adb_start_weixin_share, adb_is_window
-local wrench_config, check_phone
+local check_phone
 local weixin_find_friend, qq_find_friend, qq_find_group_friend
 local emoji_for_qq, debug, get_a_note, emoji_for_weixin, emoji_rewrite, emoji_for_weibo
 local adb_get_last_pic, debugging
@@ -60,10 +60,18 @@ local adb_unquoter
 local is_windows = false
 local debug_set_x = ""
 M.default_width, M.default_height = 1080, 1920
+M.init_width, M.init_height = 1080, 1920
 M.real_width, M.real_height = 1080, 1920
 M.app_width, M.app_height = 1080,1920
-M.app_width_ratio, M.app_height_ratio = M.app_width / M.default_width, M.app_height / M.default_height
-M.real_width_ratio, M.real_height_ratio = M.real_width / M.default_width, M.real_height / M.default_height
+
+M.update_screen_ratios = function()
+   M.real_width_ratio, M.real_height_ratio = M.real_width / M.default_width, M.real_height / M.default_height
+   M.init_width_ratio, M.init_height_ratio = M.init_width / M.default_width, M.init_height / M.default_height
+   M.app_width_ratio, M.app_height_ratio = M.app_width / M.default_width, M.app_height / M.default_height
+end
+
+M.update_screen_ratios()
+
 local using_oppo_os = false
 local brand = "smartisan"
 local model = "Wrench"
@@ -449,9 +457,9 @@ local function adb_event(events)
          local width_ratio, height_ratio = app_width_ratio, app_height_ratio
 
          if (events[i - 1] and events[i - 1]:match("no%-virt")) then
-            width_ratio, height_ratio = real_width_ratio, real_height_ratio
+            width_ratio, height_ratio = 1, 1
          elseif events[i+1] * 2 < default_height then
-            height_ratio = real_height_ratio
+            height_ratio = init_height_ratio
          end
 
          local action = (events[i - 1] or "adb-tap")
@@ -569,11 +577,6 @@ local function adb_event(events)
 end
 
 M.vnc_scroll_a_page = function(how)
-   local dump = adb_pipe{'dumpsys', 'window'}
-   local real_width = dump:match('cur=(%d+x%d+)')
-   local real_height = tonumber(real_width:match('x(%d+)'))
-   local real_width = tonumber(real_width:match('(%d+)x'))
-
    local x, y, old_x, old_y
 
    x = real_width / 2
@@ -591,17 +594,6 @@ M.vnc_scroll_a_page = function(how)
 end
 
 M.vnc_scroll = function(key, mod)
-   local dump = adb_pipe{'dumpsys', 'window', 'displays'}
-   local real_width = dump:match('cur=(%d+x%d+)')
-   local real_height = tonumber(real_width:match('x(%d+)'))
-   local real_width = tonumber(real_width:match('(%d+)x'))
-
-   if real_width > real_height then
-      real_width, real_height = default_height, default_width
-   else
-      real_width, real_height = default_width, default_height
-   end
-
    local x, y, old_x, old_y
    local x_delta = 0
    local y_delta = 0
@@ -1715,7 +1707,40 @@ M.configDirFile = function(file)
    return M.configDir .. file
 end
 
-wrench_config = function(passedConfigDirPath)
+local get_xy_from_dump = function(dump, prefix)
+   local xy_match = dump:match(prefix .. '=(%d+x%d+)')
+   local height = tonumber(xy_match:match('x(%d+)'))
+   local width = tonumber(xy_match:match('(%d+)x'))
+   return width, height
+end
+
+M.update_screen_size = function()
+   local dump = adb_pipe{'dumpsys', 'window'}
+
+   real_width, real_height = get_xy_from_dump(dump, "cur")
+   init_width, init_height = get_xy_from_dump(dump, "init")
+
+   app_width = dump:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
+   app_height = app_width:match(',(%d+)')
+   app_width = app_width:match('(%d+),')
+   if app_width > app_height and
+      (
+         WrenchExt.getConfig("force-portrait") == 1 or
+            yes_or_no_p("Wrench found your phone screen maybe rotated, correct it? " .. app_width .. "x" .. app_height)
+      )
+   then
+      log("Force portrait mode")
+      app_width, app_height = app_height, app_width
+   end
+   update_screen_ratios()
+   log("app_width_ratio is %f, app_height_ratio is %f ", app_width_ratio, app_height_ratio)
+
+   if app_width ~= default_width then
+      right_button_x = 1080 - 80 * default_width / app_width
+   end
+end
+
+M.wrench_config = function(passedConfigDirPath)
    if passedConfigDirPath then
       configDir = passedConfigDirPath
    end
@@ -1785,31 +1810,8 @@ wrench_config = function(passedConfigDirPath)
    if tonumber(sdk_version) < 16 then
        error("Error, you phone's sdk version is " .. sdk_version .. ",  must be at least 16")
    end
-   local dump = adb_pipe{'dumpsys', 'window'}
-   real_width = dump:match('cur=(%d+x%d+)')
-   real_height = tonumber(real_width:match('x(%d+)'))
-   real_width = tonumber(real_width:match('(%d+)x'))
 
-   app_width = dump:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
-   app_height = app_width:match(',(%d+)')
-   app_width = app_width:match('(%d+),')
-   if app_width > app_height and
-      (
-         WrenchExt.getConfig("force-portrait") == 1 or
-            yes_or_no_p("Wrench found your phone screen maybe rotated, correct it? " .. app_width .. "x" .. app_height)
-      )
-   then
-      log("Force portrait mode")
-      app_width, app_height = app_height, app_width
-      real_width, real_height = real_height, real_width
-   end
-   app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
-   real_width_ratio, real_height_ratio = real_width / default_width, real_height / default_height
-   log("app_width_ratio is %f, app_height_ratio is %f ", app_width_ratio, app_height_ratio)
-
-   if app_width ~= default_width then
-      right_button_x = 1080 - 80 * default_width / app_width
-   end
+   update_screen_size()
 
    local id = adb_pipe("id")
    if id:match("uid=0") then
@@ -3152,7 +3154,8 @@ wrench_adb_mail = function(subject, to, cc, bcc, attachments)
       adb_shell"mkdir -p /sdcard/adb-mail"
       wait_input_target(W.emailSmartisanActivity)
 
-      adb_event("adb-tap 842 434 sleep 1.5") -- 展开
+      adb_tap_1080x2160(364, 246)
+      adb_event("sleep 0.5") -- 展开
    end
 
    if attachments:gsub("%s", "") ~= "" then
@@ -3207,16 +3210,19 @@ wrench_adb_mail = function(subject, to, cc, bcc, attachments)
          putclip(contact)
          adb_event"sleep .8 key scroll_lock sleep .5"
       end
-      adb_event"key DPAD_DOWN"
+      adb_event"key enter sleep .5"
    end
-   adb_event"adb-tap 247 287"
+
+   adb_event"key enter sleep 1.5"
+   insert_text(subject)
+
+   adb_tap_1080x2160(415, 357)
+   adb_tap_1080x2160(370, 252)
    insert_text(to)
    insert_text(cc)
    insert_text(bcc)
-   adb_event"key DPAD_DOWN"
-   insert_text(subject)
 
-   adb_event"key DPAD_UP key DPAD_UP"
+   adb_event"key DPAD_DOWN key DPAD_DOWN"
 end
 
 wrench_find_weixin_contact = function(number)
@@ -3358,11 +3364,6 @@ if log_to_ui then
 end
 
 wrench_eval = function(f)
-   for k, v in pairs(M) do
-      if not _ENV[k] then
-         _ENV[k] = v
-      end
-   end
    return f()
 end
 
@@ -3439,7 +3440,6 @@ M.picture_to_qq_share = picture_to_qq_share
 M.wrench_spread_it = wrench_spread_it
 M.upload_pics = upload_pics
 M.adb_start_weixin_share = adb_start_weixin_share
-M.wrench_config = wrench_config
 M.emoji_for_qq = emoji_for_qq
 M.split = split
 M.replace_img_with_emoji = replace_img_with_emoji
@@ -3724,12 +3724,6 @@ unicode_remap = {
    ['[惊讶]'] = '😮', ['[难过]'] = '😞', ['[酷]'] = '😎', ['[冷汗]'] = '😳', ['[抓狂]'] = '😆',
    ['[吐]'] = '😖',
 }
-
-for k, v in pairs(M) do
-   if not _ENV[k] then
-      _ENV[k] = v
-   end
-end
 
 return do_it()
 

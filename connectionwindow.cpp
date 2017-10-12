@@ -12,6 +12,7 @@
 #include "ui_connectionwindow.h"
 #include "qvncviewersettings.h"
 #include "vncmainwindow.h"
+#include <QDebug>
 
 extern QtVncViewerSettings *globalConfig;
 extern VncMainWindow *vncMainWindow;
@@ -69,6 +70,8 @@ ConnectionWindow::~ConnectionWindow()
         rfbClientCleanup(m_rfbClient);
     }
     if ( pollServerThread() ) {
+        qDebug() << "~ConnectionWindow";
+        pollServerThread()->disconnect();
         pollServerThread()->setExit(true);
         pollServerThread()->wait();
         delete pollServerThread();
@@ -101,8 +104,10 @@ void ConnectionWindow::setConnected(bool conn)
          SendIncrementalFramebufferUpdateRequest(m_rfbClient);
      } else {
          if ( pollServerThread() ) {
+             pollServerThread()->disconnect();
              pollServerThread()->setExit(true);
-             pollServerThread()->deleteLater();
+             pollServerThread()->wait();
+             delete pollServerThread();
              m_pollServerThread = 0;
          }
          switch ( surfaceType() ) {
@@ -130,7 +135,6 @@ void ConnectionWindow::startSessionFromArguments(QString hostName, int displayNu
         showMaximized();
     mHostName = hostName;
     mDisplayNumber = displayNumber;
-    QTimer::singleShot(1000, this, SLOT(doConnect()));
 }
 
 QList<QPixmap> &ConnectionWindow::updatePixmaps(rfbClient *client)
@@ -265,11 +269,9 @@ void ConnectionWindow::configurationMenu_aboutToHide()
 
 void ConnectionWindow::messageArrived()
 {
-    if ( pollServerThread() ) {
-        if ( WaitForMessage(m_rfbClient, 0) > 0 )
-            if ( !HandleRFBServerMessage(m_rfbClient) )
-                QTimer::singleShot(0, this, SLOT(doDisconnect()));
-    }
+    if (!HandleRFBServerMessage(m_rfbClient)) {
+        pollServerThread()->setExit(true);
+    };
 }
 
 void ConnectionWindow::connectionClosed()
@@ -293,12 +295,13 @@ PollServerThread::PollServerThread(rfbClient *client, QObject *parent) :
 
 void PollServerThread::run()
 {
-    while ( !m_exit ) {
+    extern volatile bool gPhoneScreenSyncOn;
+    while ( !m_exit && gPhoneScreenSyncOn ) {
         if ( !connecting() ) {
             int n = WaitForMessage(m_rfbClient, 500);
             if ( n < 0 ) {
                 m_exit = true;
-                emit connectionClosed();
+                break;
             } else if ( n > 0 ) {
                 emit messageArrived();
                 m_lastMessageReceivedTimer.start();
@@ -317,6 +320,8 @@ void PollServerThread::run()
             qApp->processEvents(QEventLoop::AllEvents, 10);
         }
     }
+
+    emit connectionClosed();
 }
 
 void ConnectionWindow::doConnect()
@@ -376,7 +381,6 @@ void ConnectionWindow::doConnect()
             m_clientToWindowHash.remove(m_rfbClient);
             m_rfbClient = 0;
             setWindowTitle(m_defaultWindowTitle);
-            VncMainWindow::log(tr("WARNING: Failed RFB client initialization for %1:%2").arg(mHostName).arg(mDisplayNumber));
         }
     } else {
         PollServerThread::setConnecting(false);

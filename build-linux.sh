@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+echo Entering directory \`$PWD\'
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/tmp/build-wrench ddo-debug
 ## end code-generator

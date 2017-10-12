@@ -109,6 +109,7 @@ export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 export RUNNING_WRENCH=true
 
 if test "$do_debug" = true; then
+    cd ~/
     exec gdb --args Wrench
 fi
 

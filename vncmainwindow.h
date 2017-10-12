@@ -46,6 +46,7 @@ protected:
     void showEvent(QShowEvent *e);
 
 private:
+    QTimer mDoConnectTimer;
     void initFromWrenchExt();
     Ui::VncMainWindow *ui;
     uint32_t mPhoneWidth;
