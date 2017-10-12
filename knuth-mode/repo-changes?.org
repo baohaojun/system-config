@@ -96,8 +96,6 @@
 
 #+name: old-code
 #+BEGIN_SRC sh
-  #!/bin/bash
-
   if test $(basename $0) = repo-not-clean; then
       export DO_GIT_ST_ONLY=true
   fi
@@ -106,33 +104,50 @@
       export SHELLOPTS
   fi
 
-  export path_pattern=
-  export GIT_END_DATE=
-  TEMP=$(getopt -o e:p: --long end:,pattern: -n $(basename $0) -- "$@")
+
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt vverbose='("" -v)'
+  ## end code-generator
+  ## start generated code
+  TEMP=$( getopt -o vh \
+                 --long verbose,help,no-verbose \
+                 -n $(basename -- $0) -- "$@")
+  verbose=
   eval set -- "$TEMP"
   while true; do
       case "$1" in
-          -e|--end)
-              export GIT_END_DATE=$(day-end $2)
-              shift 2
+
+          -v|--verbose|--no-verbose)
+              if test "$1" = --no-verbose; then
+                  verbose=
+              else
+                  verbose=-v
+              fi
+              shift
               ;;
-          -p|--path)
-              path_pattern=$2
-              shift 2
+          -h|--help)
+              set +x
+              echo -e
+              echo
+              echo Options and arguments:
+              printf %06s '-v, '
+              printf %-24s '--[no-]verbose'
+              echo
+              exit
+              shift
               ;;
           --)
               shift
               break
               ;;
-          *)
+          ,*)
               die "internal error"
               ;;
       esac
   done
 
-  if test "$1" = out/repo-changes.log; then
-      cd $(lookup-file .repo/..)
-  fi
+
+  ## end generated code
 
   if test $# = 0 -a ! -d .repo; then
       set -- $(repo-top)/$(repo-path)
@@ -142,12 +157,12 @@
       for x in "$@"; do
           echo -d "$x"
       done
-  )
+      )
 
-  my-rfa -j 4 -p "$path_pattern" "$@" -- "$(cat <<'EOF552bc89ae4fe'
-<<check-if-git-is-clean>>
-EOF552bc89ae4fe
-)" 2>&1 10>~/.cache/system-config/logs/repo-changes.lock | (
+  my-rfa $verbose -j 4 "$@" -- "$(cat <<'EOF552bc89ae4fe'
+  <<check-if-git-is-clean>>
+  EOF552bc89ae4fe
+  )" 2>&1 10>~/.cache/system-config/logs/repo-changes.lock | (
       cd $(lookup-file .repo/..);
       mkdir -p $(readlink -m out)
       log=./out/repo-changes.log"$(echo -n $*)"

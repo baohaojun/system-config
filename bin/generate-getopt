@@ -126,8 +126,22 @@ while test "$1"; do
         long_opts_map[$long]=$long:
     fi
 
-    if test -z "$default" && ! [[ $short =~ : ]]; then
-        default=false
+    if ! [[ $short =~ : ]]; then
+        default_val_map[$long-off-]=false
+        default_val_map[$long-on-]=true
+
+        if [[ $default =~ \( ]]; then
+            eval bool_val=$default
+            default_val_map[$long-off-]=${bool_val[0]}
+            default_val_map[$long-on-]=${bool_val[1]}
+            if test ${#bool_val} = 3; then
+                default=${bool_val[2]}
+            else
+                default=${bool_val[0]}
+            fi
+        elif test -z "$default"; then
+            default=false
+        fi
     fi
 
     default_val_map[$long]=$default
@@ -204,9 +218,9 @@ for long in "${long_opts_sorted[@]}"; do
             else
                 cat << EOF3
                 if test "\$1" = --no-$long; then
-                    ${var}=false
+                    ${var}=${default_val_map[$long-off-]}
                 else
-                    ${var}=true
+                    ${var}=${default_val_map[$long-on-]}
                 fi
                 shift
 EOF3

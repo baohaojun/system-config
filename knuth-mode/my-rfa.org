@@ -1,9 +1,31 @@
-#!/bin/bash
+#+name: single-dir-script
+#+BEGIN_SRC sh
+  if test -d "%N"; then
+      cd "%N"
+  else
+      exit 0
+  fi
+  if test "$my_rfa_verbose" = true; then
+      echo -n . 1>&2
+  fi
+  if test $# = 1; then
+      eval "$@"
+  else
+      "$@"
+  fi
 
-# [[file:~/system-config/knuth-mode/my-rfa.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+#+END_SRC
+** 最终的版本：
 
-set -e
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
 
+#+name: old-code
+#+BEGIN_SRC sh
   #!/bin/bash
 
   set -e
@@ -18,20 +40,7 @@ set -e
   export -f locked-echo
   function parallel-xargs() {
       xargs -d \\n -P $my_rfa_jobs -I %N bash -c "$(cat <<'EOFf67e6c9ccf75'
-if test -d "%N"; then
-    cd "%N"
-else
-    exit 0
-fi
-if test "$my_rfa_verbose" = true; then
-    echo -n . 1>&2
-fi
-if test $# = 1; then
-    eval "$@"
-else
-    "$@"
-fi
-
+<<single-dir-script>>
 EOFf67e6c9ccf75
 )" true "${cmds[@]}"
   }
@@ -185,8 +194,15 @@ EOFf67e6c9ccf75
   done | parallel-xargs
   echo
   exit
-# Local Variables: #
-# eval: (read-only-mode 1) #
-# End: #
+#+END_SRC
 
-# the-ultimate-script ends here
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/my-rfa :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+

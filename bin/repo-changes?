@@ -4,55 +4,70 @@
 
 set -e
 
-  #!/bin/bash
+if test $(basename $0) = repo-not-clean; then
+    export DO_GIT_ST_ONLY=true
+fi
 
-  if test $(basename $0) = repo-not-clean; then
-      export DO_GIT_ST_ONLY=true
-  fi
+if echo $SHELLOPTS | grep -q xtrace; then
+    export SHELLOPTS
+fi
 
-  if echo $SHELLOPTS | grep -q xtrace; then
-      export SHELLOPTS
-  fi
 
-  export path_pattern=
-  export GIT_END_DATE=
-  TEMP=$(getopt -o e:p: --long end:,pattern: -n $(basename $0) -- "$@")
-  eval set -- "$TEMP"
-  while true; do
-      case "$1" in
-          -e|--end)
-              export GIT_END_DATE=$(day-end $2)
-              shift 2
-              ;;
-          -p|--path)
-              path_pattern=$2
-              shift 2
-              ;;
-          --)
-              shift
-              break
-              ;;
-          *)
-              die "internal error"
-              ;;
-      esac
-  done
+## start code-generator "^\\s *#\\s *"
+# generate-getopt vverbose='("" -v)'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o vh \
+               --long verbose,help,no-verbose \
+               -n $(basename -- $0) -- "$@")
+verbose=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-  if test "$1" = out/repo-changes.log; then
-      cd $(lookup-file .repo/..)
-  fi
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=
+            else
+                verbose=-v
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
 
-  if test $# = 0 -a ! -d .repo; then
-      set -- $(repo-top)/$(repo-path)
-  fi
 
-  set -- $(
-      for x in "$@"; do
-          echo -d "$x"
-      done
-  )
+## end generated code
 
-  my-rfa -j 4 -p "$path_pattern" "$@" -- "$(cat <<'EOF552bc89ae4fe'
+if test $# = 0 -a ! -d .repo; then
+    set -- $(repo-top)/$(repo-path)
+fi
+
+set -- $(
+    for x in "$@"; do
+        echo -d "$x"
+    done
+    )
+
+my-rfa $verbose -j 4 "$@" -- "$(cat <<'EOF552bc89ae4fe'
 (
     if test "$DEBUG" = true; then
         set -x
@@ -139,15 +154,15 @@ set -e
 
 EOF552bc89ae4fe
 )" 2>&1 10>~/.cache/system-config/logs/repo-changes.lock | (
-      cd $(lookup-file .repo/..);
-      mkdir -p $(readlink -m out)
-      log=./out/repo-changes.log"$(echo -n $*)"
-      lognow="$log-$(now)"
-      tee "$lognow" 2>/dev/null
-      ln -sf $(basename "$lognow") "$log" >/dev/null 2>&1
-      cp "$log" .repo/repo-changes.log >/dev/null 2>&1
-      ln -sf .repo/repo-changes.log
-  )
+    cd $(lookup-file .repo/..);
+    mkdir -p $(readlink -m out)
+    log=./out/repo-changes.log"$(echo -n $*)"
+    lognow="$log-$(now)"
+    tee "$lognow" 2>/dev/null
+    ln -sf $(basename "$lognow") "$log" >/dev/null 2>&1
+    cp "$log" .repo/repo-changes.log >/dev/null 2>&1
+    ln -sf .repo/repo-changes.log
+)
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
