@@ -313,7 +313,7 @@ if test "$cherry_pick" = true || is-jenkins; then
             (
                 git diff HEAD || true
                 cat ~/tmp/gerrit-fetch-review.log.$$ $tmpf
-            ) | mail-cms -i "Patch can't cherry-pick: $@"
+            ) | mail-cms -s -i "你的 Patch 有冲突，无法 cherry-pick，请修复后重试: $@"
         fi
 
         die "Error: patch can't cherry-pick: $(
