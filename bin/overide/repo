@@ -49,7 +49,7 @@ if is-jenkins; then
         if test -e .repo/manifest.xml; then
             old_manifest_target=$(readlink -f .repo/manifest.xml)
             old_manifest_name=$(scm manifest%name)
-            scm check-manifests-project -o "$old_manifest_target" --do-save
+            scm check-manifests-project-reuse -o "$old_manifest_target" --do-save
         fi
     fi
     if test "$1" = init -a -d .repo/manifests/.git; then
