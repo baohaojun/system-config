@@ -48,6 +48,8 @@ if is-jenkins; then
         scm check-df
         if test -e .repo/manifest.xml; then
             old_manifest_target=$(readlink -f .repo/manifest.xml)
+            old_manifest_name=$(scm manifest%name)
+            scm check-manifests-project -o "$old_manifest_target" --do-save
         fi
     fi
     if test "$1" = init -a -d .repo/manifests/.git; then
@@ -152,15 +154,8 @@ else
         if test "$1" = init; then
             if test "$old_manifest_target"; then
                 if test "$old_manifest_target" != "$(readlink -f .repo/manifest.xml)"; then
-                    if test -d .repo/project-objects; then
-                        sc_tmpdir=.repo/delete.$$
-                        rm -rf $sc_tmpdir # just in case last time it's not deleted.
-                        mkdir -p $sc_tmpdir
-                        mv * $sc_tmpdir || true
-                        rm $sc_tmpdir -rf& # we changed manifest.xml, remove all to ensure better mirror usage
-                    elif test -d .repo/projects; then
-                        mail-cms "jenkins repo has projects but no project-objects: $(jenkins-info)"
-                    fi
+                    echo need clean up for different xmls
+                    scm check-manifests-project-reuse -o "$old_manifest_name" -n .repo/manifest.xml --do-clean
                 else
                     my-rfa "git clean -xfd; git reset --hard" || true
                 fi
