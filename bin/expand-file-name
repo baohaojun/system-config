@@ -1,0 +1,3 @@
+#!/usr/bin/env perl
+use File::Path::Expand;
+print expand_filename($ARGV[0]);

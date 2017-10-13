@@ -223,11 +223,12 @@ for x in "$@" $(
         fi
 
         if test "$done_add" = true; then
-            if [[ $x =~ \.org$ ]] && grep 'BEGIN_SRC.*:tangle '-i "$x" -q; then
+            if [[ $x =~ \.org$ ]] && grep 'BEGIN_SRC.*:tangle ' -i "$x" -q; then
                 (
                     tangle_target=$(grep -o ':tangle\s+\S+\s+' -P "$x" -i |pn 2)
+                    tangle_target=$(expand-file-name "$tangle_target")
                     if test -e "$tangle_target" -a "$x" -nt "$tangle_target" && yes-or-no-p -y "Your .org knuth-mode file newer than tangled version, export?"; then
-                        emacsclient -e '(progn (find-file "$x") (org-babel-tangle))'
+                        emacsclient -e '(progn (find-file "'"$x"'") (org-babel-tangle))'
                         git-interactive-add "$x"
                     fi
                 )
