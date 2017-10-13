@@ -4,20 +4,20 @@
 
 set -e
 
-  #!/bin/bash
+#!/bin/bash
 
-  set -e
+set -e
 
-  function locked-echo() {
-      (
-          exec 9> ~/.cache/system-config/logs/my-rfa.lock
-          flock 9
-          echo "$@"
-      )
-  }
-  export -f locked-echo
-  function parallel-xargs() {
-      xargs -d \\n -P $my_rfa_jobs -I %N bash -c "$(cat <<'EOFf67e6c9ccf75'
+function locked-echo() {
+    (
+        exec 9> ~/.cache/system-config/logs/my-rfa.lock
+        flock 9
+        echo "$@"
+    )
+}
+export -f locked-echo
+function parallel-xargs() {
+    xargs -d \\n -P $my_rfa_jobs -I %N bash -c "$(cat <<'EOFf67e6c9ccf75'
 if test -d "%N"; then
     cd "%N"
 else
@@ -34,157 +34,148 @@ fi
 
 EOFf67e6c9ccf75
 )" true "${cmds[@]}"
-  }
+}
 
-  ## start code-generator "^\\s *#\\s *"
-  # generate-getopt -e -P -p my_rfa d:dirs='()' j:jobs=5 vverbose
-  ## end code-generator
-  ## start generated code
-  TEMP=$(POSIXLY_CORRECT=true getopt -o d:j:vh \
-                        --long dirs:,jobs:,verbose,help,no-verbose \
-                        -n $(basename -- $0) -- "$@")
-  my_rfa_dirs=${my_rfa_dirs:-()}
-  my_rfa_jobs=${my_rfa_jobs:-5}
-  my_rfa_verbose=${my_rfa_verbose:-false}
-  eval set -- "$TEMP"
-  while true; do
-      case "$1" in
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P -p my_rfa d:dirs='()' j:jobs=5 vverbose
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:j:vh \
+                      --long dirs:,jobs:,verbose,help,no-verbose \
+                      -n $(basename -- $0) -- "$@")
+my_rfa_dirs=()
+my_rfa_jobs=5
+my_rfa_verbose=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-          -d|--dirs)
-              my_rfa_dirs=("${my_rfa_dirs[@]}" "$2")
-              shift 2
-              ;;
-          -j|--jobs)
-              my_rfa_jobs=$2
-              shift 2
-              ;;
-          -v|--verbose|--no-verbose)
-              if test "$1" = --no-verbose; then
-                  my_rfa_verbose=false
-              else
-                  my_rfa_verbose=true
-              fi
-              shift
-              ;;
-          -h|--help)
-              set +x
-              echo -e
-              echo
-              echo Options and arguments:
-              printf %06s '-d, '
-              printf %-24s '--dirs=DIRS'
-              echo
-              printf %06s '-j, '
-              printf %-24s '--jobs=JOBS'
-              echo
-              printf %06s '-v, '
-              printf %-24s '--[no-]verbose'
-              echo
-              exit
-              shift
-              ;;
-          --)
-              shift
-              break
-              ;;
-          *)
-              die "internal error"
-              ;;
-      esac
-  done
+        -d|--dirs)
+            my_rfa_dirs=("${my_rfa_dirs[@]}" "$2")
+            shift 2
+            ;;
+        -j|--jobs)
+            my_rfa_jobs=$2
+            shift 2
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                my_rfa_verbose=false
+            else
+                my_rfa_verbose=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--dirs=DIRS'
+            echo
+            printf %06s '-j, '
+            printf %-24s '--jobs=JOBS'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
 
 
-  export my_rfa_dirs
-  export my_rfa_jobs
-  export my_rfa_verbose
+## end generated code
+export my_rfa_verbose
 
-  ## end generated code
+if test ! -e "$(lookup-file -e .repo/manifest.xml)"; then
+    cd $(dirname $(lookup-file -e .git))
+    export cmds=("$@")
+    export ANDROID_TOP=$(readlink -f ..)
+    echo $PWD | parallel-xargs
+    exit
+fi
 
-  if test ! -e "$(lookup-file -e .repo/manifest.xml)"; then
-      cd $(dirname $(lookup-file -e .git))
-      export cmds=("$@")
-      export ANDROID_TOP=$(readlink -f ..)
-      echo $PWD | parallel-xargs
-      exit
-  fi
+if test "${#my_rfa_dirs[@]}" = 0; then
+    my_rfa_dirs=(
+        $(
+            if test -d .repo; then
+                redo_path=false;
+                if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
+                    redo_path=true;
+                fi
+                if test -e .repo/repo-paths && grep ' ' -q .repo/repo-paths; then
+                    redo_path=true;
+                fi
+                if test -e .repo/repo-paths && test $(stat -c %s .repo/repo-paths) = 0; then
+                    redo_path=true
+                fi
 
-  if test "${#my_rfa_dirs[@]}" = 0; then
-      my_rfa_dirs=(
-          $(
-              if test -d .repo; then
-                  redo_path=false;
-                  if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
-                      redo_path=true;
-                  fi
-                  if test -e .repo/repo-paths && grep ' ' -q .repo/repo-paths; then
-                      redo_path=true;
-                  fi
-                  if test -e .repo/repo-paths && test $(stat -c %s .repo/repo-paths) = 0; then
-                      redo_path=true
-                  fi
+                if test $redo_path = true; then
+                    if test "$(cd .repo/manifests.git; git config repo.mirror)" != true; then
+                        xmlstarlet sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
+                    else
+                        xmlstarlet sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
+                    fi | while read dir name; do
+                        if test -d "$dir"; then
+                            echo $dir
+                        fi
+                    done > .repo/repo-paths.$$
+                    mv .repo/repo-paths.$$ .repo/repo-paths
+                fi
+                cat .repo/repo-paths | sort -u
+            else
+                pwd
+            fi
+        )
+    )
+else
+    my_rfa_dirs=(
+        $(
+            cd $(lookup-file -e .repo/..)
+            for x in "${my_rfa_dirs[@]}"; do
+                if test -d "$x"; then
+                    if test -d "$x"/.git; then
+                        echo "$x"
+                    else
+                        repo forall "$(ap "$x")" -c 'echo $REPO_PATH'
+                    fi
+                elif test -f "$x"; then
+                    cat "$x" | pn 1 | sort -u
+                else
+                    die "Error: not a dir: $x"
+                fi
+            done
+        )
+    )
+fi
+job=0
 
-                  if test $redo_path = true; then
-                      if test "$(cd .repo/manifests.git; git config repo.mirror)" != true; then
-                          xmlstarlet sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
-                      else
-                          xmlstarlet sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
-                      fi | while read dir name; do
-                               if test -d "$dir"; then
-                                   echo $dir
-                               fi
-                           done > .repo/repo-paths.$$
-                      mv .repo/repo-paths.$$ .repo/repo-paths
-                  fi
-                  cat .repo/repo-paths | sort -u
-              else
-                  pwd
-              fi
-          )
-      )
-  else
-      my_rfa_dirs=(
-          $(
-              cd $(lookup-file -e .repo/..)
-              for x in "${my_rfa_dirs[@]}"; do
-                  if test -d "$x"; then
-                      if test -d "$x"/.git; then
-                          echo "$x"
-                      else
-                          repo forall "$(ap "$x")" -c 'echo $REPO_PATH'
-                      fi
-                  elif test -f "$x"; then
-                      cat "$x" | pn 1 | sort -u
-                  else
-                      die "Error: not a dir: $x"
-                  fi
-              done
-          )
-      )
-  fi
-  job=0
+cd $(lookup-file .repo/..)
+test -d .repo
 
-  cd $(lookup-file .repo/..)
-  test -d .repo
+export ANDROID_TOP=$(pwd)
 
-  export ANDROID_TOP=$(pwd)
+(cd .repo; make -f ~/system-config/etc/generate-repo-info.mk) >/dev/null 2>&1
+export REPO_INFO=$(pwd)/.repo/repo_info.pl
 
-  (cd .repo; make -f ~/system-config/etc/generate-repo-info.mk) >/dev/null 2>&1
-  export REPO_INFO=$(pwd)/.repo/repo_info.pl
+mkdir -p ~/.cache/system-config/logs/my-rfa-locks
 
-  function die() {
-      echo "$@"
-      exit -1
-  }
-
-  export -f die
-  mkdir -p ~/.cache/system-config/logs/my-rfa-locks
-
-  export cmds=("$@")
-  for x in "${my_rfa_dirs[@]}"; do
-      echo "$x"
-  done | parallel-xargs
-  echo
-  exit
+export cmds=("$@")
+for x in "${my_rfa_dirs[@]}"; do
+    echo "$x"
+done | parallel-xargs
+echo
+exit
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
