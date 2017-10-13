@@ -108,8 +108,8 @@ EOFf67e6c9ccf75
       exit
   fi
 
-  if test "${#dirs[@]}" = 0; then
-      dirs=(
+  if test "${#my_rfa_dirs[@]}" = 0; then
+      my_rfa_dirs=(
           $(
               if test -d .repo; then
                   redo_path=false;
@@ -142,10 +142,10 @@ EOFf67e6c9ccf75
           )
       )
   else
-      dirs=(
+      my_rfa_dirs=(
           $(
               cd $(lookup-file -e .repo/..)
-              for x in "${dirs[@]}"; do
+              for x in "${my_rfa_dirs[@]}"; do
                   if test -d "$x"; then
                       if test -d "$x"/.git; then
                           echo "$x"
@@ -180,7 +180,7 @@ EOFf67e6c9ccf75
   mkdir -p ~/.cache/system-config/logs/my-rfa-locks
 
   export cmds=("$@")
-  for x in "${dirs[@]}"; do
+  for x in "${my_rfa_dirs[@]}"; do
       echo "$x"
   done | parallel-xargs
   echo
