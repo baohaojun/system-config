@@ -400,7 +400,7 @@ fi
 
 for try in $(seq 1 10); do
     if ! (
-            if [[ "$(git log --pretty=%ae -1 "$gpr_push_rev")" =~ cmbuild@ ]] && test "$SMARTCM_ALLOW_CMBUILD_AUTHOR" != true; then
+            if [[ "$(git log --pretty=%ae -1 "$gpr_push_rev")" =~ cmbuild@ ]] && ! is-jenkins; then
                 die "Must not push with author as cmbuild@"
             fi
 

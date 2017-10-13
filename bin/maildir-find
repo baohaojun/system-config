@@ -4,7 +4,7 @@ declare -A maildir_file_map;
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt s:subject @:after='$(today -1)' @:before='$(today 1)' f:from b:body
+# generate-getopt s:subject @:after='$(today -7)' @:before='$(today 1)' f:from b:body
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o b:f:s:h \
