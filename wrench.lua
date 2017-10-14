@@ -18,7 +18,6 @@ local window_post_button_map = {}
 local mail_group_map = {}
 local phone_info_map = {}
 local save_window_types
-local save_phone_info
 local phone_serial = ""
 local configDir = "."
 local last_uploaded_pics = {}
@@ -2095,11 +2094,15 @@ save_window_types = function()
    mapfile:close()
 end
 
-save_phone_info = function()
+M.save_phone_info = function()
    local infofile = io.open(M.configDirFile("phone_info.lua"), "w")
    infofile:write("local map = {}\n")
-   for k, v in pairs(phone_info_map) do
-      infofile:write(("map['%s'] = '%s'\n"):format(k, v))
+
+   local tkeys = {}
+   for k in pairs(phone_info_map) do table.insert(tkeys, k) end
+   table.sort(tkeys)
+   for _, k in ipairs(tkeys) do 
+      infofile:write(("map['%s'] = '%s'\n"):format(k, phone_info_map[k]))
    end
    infofile:write("return map\n")
    infofile:close()
