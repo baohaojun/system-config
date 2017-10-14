@@ -155,7 +155,14 @@ else
             if test "$old_manifest_target"; then
                 if test "$old_manifest_target" != "$(readlink -f .repo/manifest.xml)"; then
                     echo need clean up for different xmls
-                    scm check-manifests-project-reuse -o "$old_manifest_name" -n .repo/manifest.xml --do-clean
+                    if ! scm -x check-manifests-project-reuse -o "$old_manifest_name" -n .repo/manifest.xml --do-clean; then
+                        mail-cms "Can't force manifest reuse projects, will force clean"
+                        sc_tmpdir=.repo/delete.$$
+                        rm -rf $sc_tmpdir # just in case last time it's not deleted.
+                        mkdir -p $sc_tmpdir
+                        mv * .repo/projects $sc_tmpdir || true
+                        rm $sc_tmpdir -rf& # we changed manifest.xml, remove all to ensure better mirror usage
+                    fi
                 else
                     my-rfa "git clean -xfd; git reset --hard" || true
                 fi
