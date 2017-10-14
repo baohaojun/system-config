@@ -101,6 +101,7 @@ map['com.jingdong.app.mall/com.jingdong.app.mall.login.LoginActivity'] = 'manual
 map['com.jingdong.app.mall/com.jingdong.app.mall.WebActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.common.sample.jshop.JshopSearchActivity'] = 'manual-post'
 map['com.matburt.mobileorg/com.matburt.mobileorg.Gui.Capture.EditActivity'] = 'manual-post'
+map['com.netease.mail/com.netease.mobimail.activity.InitAddAccountActivity'] = 'manual-post'
 map['com.nike.ntc/com.nike.ntc.ui.NikeLoginActivity'] = 'manual-post'
 map['com.qq.reader/com.qq.reader.activity.NativeBookStoreSearchActivity'] = 'manual-post'
 map['com.qq.reader/com.qq.reader.module.bookstore.qnative.activity.NativeBookStoreEndPageActivity'] = 'weixin-chat'
