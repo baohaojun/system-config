@@ -20,10 +20,11 @@ while (<>) {
     $_ = decode_utf8 $_;
 
     s/(\p{CJK})\s*($symbols_always_add_space[a-z0-9])(?!$box)/$1$thin_space$2/gi;
-    s/(\p{CJK})(?: |$thin_space)+($symbols_thinner_with_space[a-z0-9])(?!$box)/$1$thin_space$2/gi; # 这个目录 $PWD
+    s/(\p{CJK})(?: |$thin_space)+($symbols_thinner_with_space[a-z0-9])(?!$box)/$1$thin_space$2/gi; # 这个目录 $PWD
 
     s/([a-z0-9]$symbols_always_add_space)(?<!\\n)\s*(\p{CJK})/$1$thin_space$2/gi;
-    s/([a-z0-9]$symbols_thinner_with_space)(?<!\\n)(?: |$thin_space)(\p{CJK})/$1$thin_space$2/gi; # $(ap) 相关的
-    s/([a-z0-9]$symbols_thinner_with_space)(?<=\d\.)(?: |$thin_space)(\p{CJK})/$1 $2/gi; # $(ap) 相关的
+    s/([a-z0-9]$symbols_thinner_with_space)(?<!\\n)(?: |$thin_space)(\p{CJK})/$1$thin_space$2/gi; # $(ap) 相关的
+    s/([a-z0-9]$symbols_thinner_with_space)(?<=\d\.)(?: |$thin_space)(\p{CJK})/$1 $2/gi; # $(ap) 相关的
+    s/^(\*+ \w+)$thin_space/$1 /; # fix org head
     print encode_utf8($_);
 }
