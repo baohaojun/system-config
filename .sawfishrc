@@ -103,7 +103,7 @@
     (when (let ((global-keymap c-x-map))
             (lookup-event-binding event))
 
-        (synthesize-event-gnome? key (input-focus)))))
+      (synthesize-event-gnome? key (input-focus)))))
 
 (bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
                                (synthesize-event-gnome? key (input-focus))))
@@ -229,8 +229,8 @@
    ("C-."              "hello world no such thing" "firefox push")
    ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox --new-window")
    ("Super-t"          (lambda (w) (and
-                               (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
-                               (not (string= "emacs" (window-name w))))) "konsole.bhj")
+                                    (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
+                                    (not (string= "emacs" (window-name w))))) "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
@@ -506,8 +506,8 @@
                 (Lxterminal . "C-S-v")
                 (Gnome-terminal . "C-S-v")
                 (Xfce4-terminal . "C-S-v")
-                (Firefox . "C-y")
-                (Firefox-esr . "C-y")
+                (Firefox . ("C-q" "C-v"))
+                (Firefox-esr . ("C-q" "C-v"))
                 (QtCreator . ("M-e" "p"))
                 (XTerm . ,(lambda () (system "paste-xterm&")))
                 (t . "S-Insert")))
@@ -631,8 +631,8 @@
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager
       bhj-cycle-groups (list im-class
-                     br-class
-                     dc-class))
+                             br-class
+                             dc-class))
 
 (define-cycle-command-pair
   'cycle-class-bhj 'cycle-class-bhj-backwards
@@ -840,17 +840,17 @@
         (X 0)
         (Y 0))
     (mapcar (lambda (w) (let* ((wx (+ (car (window-position w))))
-                          (wy (+ (cdr (window-position w))))
-                          (wX (+ wx (car (window-frame-dimensions w))))
-                          (wY (+ wy (cdr (window-frame-dimensions w)))))
-                     (when (> x wx)
-                       (setq x wx))
-                     (when (> y wy)
-                       (setq y wy))
-                     (when (< X wX)
-                       (setq X wX))
-                     (when (< Y wY)
-                       (setq Y wY))))
+                               (wy (+ (cdr (window-position w))))
+                               (wX (+ wx (car (window-frame-dimensions w))))
+                               (wY (+ wy (cdr (window-frame-dimensions w)))))
+                          (when (> x wx)
+                            (setq x wx))
+                          (when (> y wy)
+                            (setq y wy))
+                          (when (< X wX)
+                            (setq X wX))
+                          (when (< Y wY)
+                            (setq Y wY))))
             (filter (lambda (w) (string-equal class (bhj-window-class w))) (managed-windows)))
     (format nil "-x %d -y %d --width %d --height %d" x y (- X x) (- Y y))))
 

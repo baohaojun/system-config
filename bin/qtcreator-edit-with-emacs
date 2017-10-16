@@ -14,7 +14,14 @@ else
     if test "$1" = region; then
         sawfish-events-delayed .1 "C-c"
     else
-        sawfish-events-delayed .1 "C-Home" "C-S-End" "C-c"
+        sawfish-events-delayed .1 "C-Home" "C-S-End"
+        top_window=$(
+            sawfish-top-window
+                  )
+        if [[ $top_window =~ ^Firefox ]]; then
+            sawfish-events-delayed .1 "C-q"
+        fi
+        sawfish-events-delayed .1 "C-c"
     fi
     getclip > $next_file
     ew $next_file
