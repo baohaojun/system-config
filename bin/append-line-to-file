@@ -7,7 +7,7 @@ sudo=
 if test ! -w "$file"; then
     sudo=sudo
 fi
-if ! grep -P "\Q$line\E" -q "$file"; then
+if ! $sudo grep -P "\Q$line\E" -q "$file"; then
     echo "$line" | $sudo tee -a "$file" >/dev/null
 else
     echo "$line already in $file"

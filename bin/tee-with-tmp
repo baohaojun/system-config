@@ -1,0 +1,4 @@
+#!/bin/bash
+tee /tmp/tee-with-tmp.$$
+cat /tmp/tee-with-tmp.$$ | tee "$@"
+rm /tmp/tee-with-tmp.$$ -f
