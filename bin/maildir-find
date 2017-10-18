@@ -4,17 +4,18 @@ declare -A maildir_file_map;
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt s:subject @:after='$(today -7)' @:before='$(today 1)' f:from b:body
+# generate-getopt s:subject @:after='$(today -7)' @:before='$(today 1)' f:from b:body t:to
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o b:f:s:h \
-               --long after:,before:,body:,from:,subject:,help \
+TEMP=$( getopt -o b:f:s:t:h \
+               --long after:,before:,body:,from:,subject:,to:,help \
                -n $(basename -- $0) -- "$@")
-after=$(today -1)
+after=$(today -7)
 before=$(today 1)
 body=
 from=
 subject=
+to=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -39,6 +40,10 @@ while true; do
             subject=$2
             shift 2
             ;;
+        -t|--to)
+            to=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -58,6 +63,9 @@ while true; do
             echo
             printf %06s '-s, '
             printf %-24s '--subject=SUBJECT'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to=TO'
             echo
             exit
             shift
@@ -91,8 +99,9 @@ function handle-query-string() {
 subject=$(handle-query-string subject $subject)
 from=$(handle-query-string from $from)
 body=$(handle-query-string body $body)
+to=$(handle-query-string to $to)
 
-mu find $body $subject $from date:$after..$before --fields 'l d f s' | (
+mu find $to $body $subject $from date:$after..$before --fields 'l d f s' | (
     while read file info; do
         maildir_file_map[$info]=$file
     done
