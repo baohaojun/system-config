@@ -1,9 +1,16 @@
 #!/bin/bash
 
-if echo $SHELLOPTS | grep -q xtrace; then
-    export SHELLOPTS
-fi
+set -e
 
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
 
 declare -a subject
 declare -a body
@@ -260,7 +267,7 @@ elif test $(basename $0) = adb-mail -o $(basename $0) = adb-gmail; then
 
     find-or-exec T1Wrench T1Wrench
 
-elif test $(basename $0) = mailx; then
+elif test $b0 = mailx; then
     scheme=$(
         if test $(get-about-me conn-type) = ssl; then
             echo smtps://
@@ -271,9 +278,14 @@ elif test $(basename $0) = mailx; then
         STARTTLS="-S smtp-use-starttls=on"
     fi
 
-
     auth=$(get-authinfo $(get-about-me smtp) $(get-about-me mail))
-    (printf "$the_mailx $send_as -Ssmtp-auth=login -S from=$(get-about-me mail) $STARTTLS -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$auth"
+
+    (
+        if test -e /etc/postfix/sasl_passwd; then
+            printf "$the_mailx -S from=$(get-about-me mail) -S smtp=localhost:25 "
+        else
+            printf "$the_mailx $send_as -Ssmtp-auth=login -S from=$(get-about-me mail) $STARTTLS -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$auth"
+        fi
      for y in attachments cc bcc subject to; do
          eval '
                     if test ${#'$y'[@]} != 0; then
