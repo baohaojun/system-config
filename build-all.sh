@@ -125,6 +125,10 @@ if is-platform-needed wine; then
 fi
 
 if is-platform-needed ubuntu; then
+    if ! timeout 5 ssh trusty true; then
+        echo need cowbuild-chroot first
+        cowbuild-chroot
+    fi || true
     (
         if echo $SHELLOPTS | grep -q xtrace; then
             bashx=-x
