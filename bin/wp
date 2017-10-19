@@ -138,6 +138,11 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         printf %q "$FILE" | perl -npe 's#^$ENV{HOME}(/|$)#~$1#'
     }
 
+    function homep()
+    {
+        printf %q "$FILE" | perl -npe 's#^$ENV{HOME}(/|$)#\${HOME}$1#'
+    }
+
     function filep()
     {
         echo "file://$FILE"
@@ -207,7 +212,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo "$out" | putclip
     fi
 else # we are being sourced
-    for x in swp sup gitp wp ap up rp mp tmp realp filep urlp orgp ipp bp; do
+    for x in swp sup gitp wp ap up rp mp tmp realp filep urlp orgp ipp bp homep; do
         eval 'function '$x'() {
             command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             if test "$NO_PUTCLIP" = true; then

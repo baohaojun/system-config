@@ -6,11 +6,11 @@ if test "$#" = 0; then
     return
 fi
 
-atexit_args=(
+aterr_args=(
     "$@"
 )
-function atexit() {
-    "${atexit_args[@]}"
+function aterr() {
+    "${aterr_args[@]}"
 }
 
-trap atexit ERR
+trap aterr ERR

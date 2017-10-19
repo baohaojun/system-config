@@ -108,7 +108,10 @@ sub edit_1($)
                 } else {
                     system("bhj-notify hello 'This mail has no link'")
                 }
-            }
+              } elsif ($file =~ m,/src/gerrit-fetch-review/, and system("yes-or-no-p", "Do you want to edit gerrit-review file") != 0) {
+                print "Please double check your edit file, should not be under ~/src/gerrit-fetch-review";
+                exit;
+              }
         }
 
         if ((! -r $file or ! -w $file) && $ENV{USER} ne "root") {

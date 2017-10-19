@@ -1,3 +1,6 @@
 #!/bin/bash
 touch sc-not-merged
+if [[ $PWD =~ ${HOME}/src/gerrit-fetch-review ]]; then
+    bhj-notify "Warning" "You saved in ~/src/gerrit-fetch-review"
+fi
 

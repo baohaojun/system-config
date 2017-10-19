@@ -1,0 +1,3 @@
+#!/bin/bash
+my-adb mkdir -p /data/.sc-backup/$(today)
+my-adb "mv /data/* /data/.sc-backup/$(today)"
