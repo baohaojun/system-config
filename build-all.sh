@@ -136,10 +136,16 @@ if is-platform-needed ubuntu; then
             bashx=
         fi
 
-        mkdir -p ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-wrench
-        chmod u+w ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-wrench/ -R
-        rm ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-wrench/ -rf
-        ssh-quote trusty ". ~/.profile; export DOING_WRENCH_RELEASE=true; PATH=~/external/local/qt5-ubuntu-1404/bin/:\$PATH; cd $PWD; bash $bashx ./build-linux.sh -r Wrench-ubuntu-14.04"
+        ssh-quote trusty "
+            mkdir -p ~/tmp/build-wrench
+            chmod u+w ~/tmp/build-wrench/ -R
+            rm ~/tmp/build-wrench/ -rf
+            . ~/.profile;
+            export DOING_WRENCH_RELEASE=true;
+            PATH=~/external/local/qt5-ubuntu-1404/bin/:\$PATH;
+            cd $PWD;
+            bash $bashx ./build-linux.sh -r Wrench-ubuntu-14.04
+        "
         touch ~/external/cowbuilder/ubuntu-trusty-amd64/chroot/home/bhj/tmp/build-wrench/build-ok
     )&
 fi
