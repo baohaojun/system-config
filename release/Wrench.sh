@@ -84,8 +84,8 @@ done
 ## end generated code
 
 
-if test -e ~/system-config/src/github/smartcm/etc/Wrench.config; then
-    . ~/system-config/src/github/smartcm/etc/Wrench.config
+if test "$(lsb_release -cs)" = trusty -a -e ~/src/github/smartcm/etc/Wrench.config; then
+    . ~/src/github/smartcm/etc/Wrench.config
 fi
 
 export EMACS=t
