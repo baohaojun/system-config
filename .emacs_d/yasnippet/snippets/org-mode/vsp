@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: vsp
+# key: vsp
+# --
+#+BEGIN_HTML
+<style>
+  .bottom-three {
+     margin-bottom: 3cm;
+  }
+</style>
+
+
+<p class="bottom-three"/>
+#+END_HTML

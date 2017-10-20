@@ -1,0 +1,24 @@
+#!/bin/bash
+# given a date (2017-10-20), change it to en: 20, Oct, 2017 or cn: 2017 年 10 月 20 日
+
+if test "$#" = 2 -a "$1" = en -o "$1" = cn; then
+    if test "$2" = -; then
+        set -- "$1" "$(cat)"
+    fi
+else
+    die "Usage: org-date en/cn DATE"
+fi
+
+set -- "$1" "$(today "$2")"
+
+date=$2
+year=${date%%-*}
+date=${date#*-}
+month=${date%%-*}
+day=${date#*-}
+
+if test "$1" = en; then
+    echo -n _${day}_, _$(en_US date +%b -d "$2")_, _${year}_
+else
+    echo -n _${year}_ 年 _${month#0}_ 月 _${day#0}_ 日
+fi

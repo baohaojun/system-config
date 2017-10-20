@@ -1441,6 +1441,8 @@ criteria can be provided via the optional match-string argument "
 
 (defun bhj-todo-from-mail-view-mail ()
   (interactive)
+  (when (eq major-mode 'org-agenda-mode)
+    (org-agenda-goto))
   (ajoke--push-marker-ring)
   (let ((mail (org-entry-get (point) "FROM")))
     (setq mail (shell-quote-argument mail))
