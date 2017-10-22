@@ -59,13 +59,18 @@ local adb_unquoter
 local is_windows = false
 local debug_set_x = ""
 M.default_width, M.default_height = 1080, 1920
-M.init_width, M.init_height = 1080, 1920
+M.ref_width, M.ref_height = 1080, 1920
 M.real_width, M.real_height = 1080, 1920
 M.app_width, M.app_height = 1080,1920
+M.mCurrentRotation = 0
 
 M.update_screen_ratios = function()
+   M.default_width, M.default_height = M.ref_width, M.ref_height
+   if M.mCurrentRotation % 2 == 1 then
+      M.default_width, M.default_height = M.ref_height, M.ref_width
+   end
+
    M.real_width_ratio, M.real_height_ratio = M.real_width / M.default_width, M.real_height / M.default_height
-   M.init_width_ratio, M.init_height_ratio = M.init_width / M.default_width, M.init_height / M.default_height
    M.app_width_ratio, M.app_height_ratio = M.app_width / M.default_width, M.app_height / M.default_height
 end
 
@@ -458,7 +463,7 @@ local function adb_event(events)
          if (events[i - 1] and events[i - 1]:match("no%-virt")) then
             width_ratio, height_ratio = 1, 1
          elseif events[i+1] * 2 < default_height then
-            height_ratio = init_height_ratio
+            height_ratio = real_height_ratio
          end
 
          local action = (events[i - 1] or "adb-tap")
@@ -482,7 +487,22 @@ local function adb_event(events)
                record_file:close()
             end
          end
-         local add = ('input %s %d %d;'):format(action, events[i] * width_ratio, events[i+1] * height_ratio)
+
+         local x, y
+         x, y = events[i] * width_ratio, events[i+1] * height_ratio
+         if M.mCurrentRotation % 2 == 1 then
+            x, y = y, x
+         end
+
+         if M.mCurrentRotation == 1 then
+            y = real_height - y
+         elseif M.mCurrentRotation == 2 then
+            x, y = real_width - x, real_height - y
+         elseif M.mCurrentRotation == 3 then
+            x = real_width - x;
+         end
+
+         local add = ('input %s %d %d;'):format(action, x, y)
          command_str = command_str .. add
          i = i + 2
       elseif (events[i]):match('^adb%-long%-press') then
@@ -976,21 +996,11 @@ end
 adb_top_window = function()
    -- dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
    for i = 1, 50 do
-      M.m_window_dump = adb_pipe("dumpsys window policy; dumpsys window windows") or ""
-      M.m_focused_app = M.m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
-      M.m_focused_window = M.m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
+      update_screen_size()
       if M.m_focused_window ~= "" then
-         -- mStableFullscreen=(0,0)-(1080,2160)
-         local mStableFullscreen = M.m_window_dump:match("mStableFullscreen=[-%(%)%d,]+")
-         if M.last_screen_size ~= mStableFullscreen then
-            M.last_screen_size = mStableFullscreen
-            app_width = M.last_screen_size:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
-            app_height = app_width:match(',(%d+)')
-            app_width = app_width:match('(%d+),')
-            app_width_ratio, app_height_ratio = app_width / default_width,  app_height / default_height
-         end
          return M.m_focused_window
       end
+
       sleep(.1)
       if i > 20 then
          log("Can't get a valid top window at %d", i)
@@ -1022,13 +1032,18 @@ local function search_mail(what)
    adb_event"key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 841 728"
 end
 
-M.adb_tap_1080x2160 = function (x, y, x1080, y1920)
-   if real_height ~= 2160 or real_width ~= 1080 then
+M.adb_tap_1080x2160 = function (x, y, x1080, y1920, long_tap)
+   if not (real_height == 2160 and real_width == 1080 or
+           real_height == 1080 and real_width == 2160) then
       x = x1080 or x
       y = y1920 or y
    end
+   local action = "adb-tap "
+   if long_tap then
+      action = "adb-long-press-800 "
+   end
 
-   adb_event("adb-tap " .. x .. " " .. y)
+   adb_event(action .. x .. " " .. y)
 end
 
 local function get_coffee(what)
@@ -1714,28 +1729,29 @@ local get_xy_from_dump = function(dump, prefix)
 end
 
 M.update_screen_size = function()
-   local dump = adb_pipe{'dumpsys', 'window'}
 
-   real_width, real_height = get_xy_from_dump(dump, "cur")
-   init_width, init_height = get_xy_from_dump(dump, "init")
+   M.m_window_dump = adb_pipe("dumpsys window policy; dumpsys window windows") or ""
+   M.m_focused_app = M.m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
+   M.m_focused_window = M.m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
 
-   app_width = dump:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
-   app_height = app_width:match(',(%d+)')
-   app_width = app_width:match('(%d+),')
-   if app_width > app_height and
-      (
-         WrenchExt.getConfig("force-portrait") == 1 or
-            yes_or_no_p("Wrench found your phone screen maybe rotated, correct it? " .. app_width .. "x" .. app_height)
-      )
-   then
-      log("Force portrait mode")
-      app_width, app_height = app_height, app_width
+   -- mStableFullscreen=(0,0)-(1080,2160)
+   local mStableFullscreen = M.m_window_dump:match("mStableFullscreen=[-%(%)%d,]+")
+   if M.last_screen_size ~= mStableFullscreen then
+      M.last_screen_size = mStableFullscreen
+      app_width = M.last_screen_size:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
+      app_height = app_width:match(',(%d+)')
+      app_width = app_width:match('(%d+),')
+      M.mCurrentRotation = M.m_window_dump:match("mCurrentRotation=(%d+)")
+
+      local displays = adb_pipe"dumpsys window displays"
+      real_width, real_height = get_xy_from_dump(displays, "cur")
+
+      update_screen_ratios()
    end
-   update_screen_ratios()
-   log("app_width_ratio is %f, app_height_ratio is %f ", app_width_ratio, app_height_ratio)
+   
 
    if app_width ~= default_width then
-      right_button_x = 1080 - 80 * default_width / app_width
+      right_button_x = default_width - 80 * default_width / app_width
    end
 end
 
