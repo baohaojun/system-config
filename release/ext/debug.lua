@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 让小扳手进入、退出调试模式（打更多log）
 
 if M.is_debugging then

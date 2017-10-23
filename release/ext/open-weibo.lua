@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 用手机微博App打开微博网页
 
 local sina_url

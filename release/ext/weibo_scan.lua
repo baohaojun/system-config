@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 打开微博扫码功能
 local qr_button = "adb-tap 871 257"
 if real_height == 2160 then

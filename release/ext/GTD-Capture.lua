@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 把拖进来的文字保存到我的 GTD 列表里面
 
 local gtd_text

@@ -119,8 +119,6 @@ fi
 
 # adb forward --remove tcp:28888
 
-find-or-exec 'Wrench V%Wrench'
-
 if test "$#" != 0; then
     if test $# = 1 -a -e "$1" && [[ $1 =~ \.(twa|lua)$ ]]; then
         exec Wrench "$(readlink -f "$1")"
@@ -129,18 +127,9 @@ fi
 
 if test "$#" = 1 -a ! -e "$1"; then
     what_to_do=$1
-elif sawfish-window-exists Wrench; then
-    what_to_do=$(
-        ask-for-input --history -a "Wrench" -p "你要小扳手的什么功能？（可以自己输入比如 baohaojun@@wx）"
-              )
-fi
-
-if test "$what_to_do" = $'\003'; then
-    exit
 fi
 
 if test "$what_to_do" -a "$what_to_do" != Wrench; then
-
     if [[ $what_to_do =~ \( ]]; then
         format=%s
     else
@@ -153,7 +142,7 @@ $(printf "$format" "$what_to_do")
 -- {%/lua%}
 EOF
     Wrench ~/.cache/system-config/wrench-$$.twa
-    rm ~/.cache/system-config/wrench-$$.twa
+    mv ~/.cache/system-config/wrench-$$.twa ~/tmp/wrench.twa
 else
     exec Wrench
 fi

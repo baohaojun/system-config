@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 重置手机 VNC 连接模式（演示、竖屏高清、横屏高清）
 
 -- [[file:~/system-config/knuth-mode/reconnect-vnc.lua.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]

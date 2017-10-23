@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 各种搜索功能（搜微信联系人、QQ联系人、QQ群里的用户、微博用户、邮件（按发信人搜）等等）
 
 if M.ext_args then

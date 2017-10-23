@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 打开QQ App并扫描
 
 M.qq_open_search()

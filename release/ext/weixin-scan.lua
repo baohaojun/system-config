@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 打开微信扫描
 
 local open_weixin_scan = function()

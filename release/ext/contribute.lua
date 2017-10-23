@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 给作者打钱以表支持
 
 call_ext("weixin-scan")

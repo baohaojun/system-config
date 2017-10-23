@@ -3386,7 +3386,11 @@ wrench_eval = function(f)
    return f()
 end
 
-wrench_run = function (file)
+wrench_run = function (file, argType)
+   if argType == 'string' then
+      local f = loadstring(file)
+      return wrench_eval(f)
+   end
    local ext = file:gsub(".*%.", "")
    if ext ~= "twa" and ext ~= "小扳手" and ext ~= "lua" then
       return "Can not run this script, must be a .twa file"

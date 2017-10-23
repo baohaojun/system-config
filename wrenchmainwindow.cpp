@@ -818,7 +818,9 @@ void WrenchMainWindow::startTask(const QString& task)
         QString path = task;
         QFileInfo fileInfo = QFileInfo(path);
         if (fileInfo.isReadable() && fileInfo.isFile()) {
-            mLuaThread->addScript(QStringList() << "wrench_run" << path);
+            mLuaThread->addScript(QStringList() << "wrench_run" << path << "file");
+        } else {
+            mLuaThread->addScript(QStringList() << "wrench_run" << task << "string");
         }
    }
 }

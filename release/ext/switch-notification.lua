@@ -1,4 +1,4 @@
-#!/usr/bin/env Wrench.sh
+#!/usr/bin/env Wrench
 -- 打开通知授权设置页，再手动（可能要多次尝试）打开、关闭小扳手接收通知权限
 
 
