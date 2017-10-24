@@ -470,10 +470,10 @@ class ime:
 
     def is_selection_key(self, key):
         """Handle selection keys"""
-        if key == 'C n' or key == 'C f' or key == 'down':
+        if key == 'C n' or key == 'C f' or key == 'down' or key == 'right':
             self.cand_index += 1
             return True
-        elif key == 'C p' or key == 'C b' or key == 'up':
+        elif key == 'C p' or key == 'C b' or key == 'up' or key == 'left':
             self.cand_index -= 1
             return True
         elif key == 'next':
