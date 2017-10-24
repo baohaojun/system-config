@@ -36,7 +36,7 @@ while true; do
     cmd=$1
     if test $cmd = adb-tap; then
         shift
-        Wrench.sh "adb_event('adb-tap $1 $2')"
+        Wrench "adb_event('adb-tap $1 $2')"
         # echo -n "input tap $1 $2;"
     elif test $cmd = adb-tap-2; then
         shift
@@ -68,7 +68,7 @@ while true; do
         echo "input touchscreen swipe $(fix-width $1) $(fix-height $2) $(fix-width $3) $(fix-height $4) $ms;"
         break
     elif test "$1"; then
-        echo -n "input tap $1 $2;"
+        Wrench "adb_event('adb-tap $1 $2')" >/dev/null 2>&1
     fi
     shift 2
     if test $# = 0; then
