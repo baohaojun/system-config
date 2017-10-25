@@ -62,6 +62,10 @@ if test -z "$cow"; then
     cow=$(select-output-line -o -- find ~/external/cowbuilder/ -maxdepth 1 -type d -name '*-*')
 fi
 
+if [[ "$chroot_subdir" =~ / ]]; then
+    die "Can't contain / in your subdir."
+fi
+
 if test -d "$cow/home/bhj"; then
     chroot=$cow
 else
