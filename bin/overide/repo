@@ -48,8 +48,6 @@ if is-jenkins; then
         scm check-df
         if test -e .repo/manifest.xml; then
             old_manifest_target=$(readlink -f .repo/manifest.xml)
-            old_manifest_name=$(scm manifest%name)
-            scm check-manifests-project-reuse -o "$old_manifest_target" --do-save
         fi
     fi
     if test "$1" = init -a -d .repo/manifests/.git; then
@@ -106,10 +104,6 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
         set -- "$@" --force-sync
     fi
 
-    if is-jenkins && test -e ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release; then
-        . ~/src/github/smartcm/scm-helpers/.maybe-remove-oem-release
-    fi
-
     if time ~/system-config/bin/repo "$@"; then
         if option-included -n "$@"; then
             true
@@ -151,22 +145,16 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     exit
 else
     if ~/system-config/bin/repo "$@"; then
-        if test "$1" = init; then
-            if test "$old_manifest_target"; then
-                if test "$old_manifest_target" != "$(readlink -f .repo/manifest.xml)"; then
-                    echo need clean up for different xmls
-                    if ! scm -x check-manifests-project-reuse -o "$old_manifest_name" -n .repo/manifest.xml --do-clean; then
-                        mail-cms "Can't force manifest reuse projects, will force clean"
-                        sc_tmpdir=.repo/delete.$$
-                        rm -rf $sc_tmpdir # just in case last time it's not deleted.
-                        mkdir -p $sc_tmpdir
-                        mv * .repo/projects $sc_tmpdir || true
-                        rm $sc_tmpdir -rf& # we changed manifest.xml, remove all to ensure better mirror usage
-                    fi
-                else
-                    my-rfa "git clean -xfd; git reset --hard" || true
-                fi
-            fi
+        if test "$1" = init && is-jenkins; then
+            repo-external --do-delete &&
+                scm -x check-manifests-project-reuse --do-clean || (
+                    mail-cms "Can't force manifest reuse projects, will force clean"
+                    sc_tmpdir=.repo/delete.$$
+                    rm -rf $sc_tmpdir # just in case last time it's not deleted.
+                    mkdir -p $sc_tmpdir
+                    mv * .repo/projects $sc_tmpdir || true
+                    rm $sc_tmpdir -rf&
+                )
         fi
         exit 0
     else

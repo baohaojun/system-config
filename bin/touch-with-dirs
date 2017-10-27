@@ -1,0 +1,5 @@
+#!/bin/bash
+for x in "$@"; do
+    mkdir -p $(dirname "$x")
+    touch "$x"
+done

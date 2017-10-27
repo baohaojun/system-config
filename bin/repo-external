@@ -1,6 +1,51 @@
 #!/bin/bash
-
 set -e
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @do-delete
+## end code-generator
+## start generated code
+TEMP=$( getopt -o h \
+               --long do-delete,help,no-do-delete \
+               -n $(basename -- $0) -- "$@")
+do_delete=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --do-delete|--no-do-delete)
+            if test "$1" = --no-do-delete; then
+                do_delete=false
+            else
+                do_delete=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]do-delete'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 if test ! -d .repo; then
     die "must run at top of repo"
 fi
@@ -8,15 +53,35 @@ rm -rf .repo/repo-external
 
 mkdir -p .repo/repo-external
 
-my-rfa ap | (
-    last=;
-    while read d; do
-        if [[ $d =~ $last/.* ]]; then
-            continue;
-        fi;
-        echo $d;
-        last=$d;
-    done ) | xargs mv-with-dir-struct .repo/repo-external
-hint "external: $(echo *)"
+my-rfa -j1 pwd | sort |
+    (
+        last=
+        while read d; do
+            d=${d#$PWD/}
+            if [[ $d =~ ^$last/.* ]]; then
+                continue;
+            fi;
+            echo $d;
+            last=$d;
+        done
+    ) | xargs mv-with-dir-struct .repo/repo-external >/dev/null 2>&1
+
+if test "$do_delete" = false; then
+    rm -rf .repo/cleanlinks
+    mkdir -p .repo/cleanlinks
+    cp * .repo/cleanlinks -al
+    (
+        cd .repo/cleanlinks
+        cleanlinks >/dev/null 2>&1
+        echo These files/dirs are external: *
+    )
+    cp * .repo/repo-external -al >/dev/null 2>&1 || true
+else
+    if rmdir .repo/repo-external >/dev/null 2>&1; then
+        exit 0
+    fi
+fi
+
 rm * -rf
 mv .repo/repo-external/* .
+rmdir .repo/repo-external

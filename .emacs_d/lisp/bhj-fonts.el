@@ -73,7 +73,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
        (goto-char (point-min))
        (let ((monaco-font-size (read (current-buffer))))
          (kill-buffer (current-buffer))
-         monaco-font-size))
+         (if (numberp monaco-font-size)
+             monaco-font-size
+           12.5)))
    12.5)
  bhj-chinese-fonts)
 
