@@ -1601,6 +1601,9 @@ adb_install = function(apk)
 end
 
 push_text = function(text)
+   if text then
+      text = M.space_cjk_en(text)
+   end
    if not text and os.getenv("PUTCLIP_ANDROID_FILE") then
       local file = io.open(os.getenv("PUTCLIP_ANDROID_FILE"))
       text = file:read("*a")
@@ -1705,6 +1708,21 @@ end
 if not wrench_set_variable then
    wrench_set_variable = function(name, val)
    end
+end
+
+M.space_cjk_en = function(text)
+   if WrenchExt.getConfig("should-space-cjk-en") ~= "true" then
+      return text
+   end
+
+   local textFile = io.open(M.dataDirFile("space-cjk-en.txt"), "w")
+   textFile:write(text)
+   textFile:close()
+
+   local output = io.popen("space-cjk-en " .. M.dataDirFile("space-cjk-en.txt"))
+   text = output:read("*a")
+   output:close()
+   return text;
 end
 
 M.qx = function(command)
