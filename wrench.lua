@@ -439,6 +439,18 @@ M.adjust_y = function(y)
    end
 end
 
+M.adb_set_tap_params = function(pressure, size)
+   if not pressure then
+      pressure = math.random() * 0.1 + 0.1
+   end
+
+   if not size then
+      size = math.random() * 0.1 + 0.10
+   end
+
+   adb_quick_input{("input set-pressure-size %.2f %.2f"):format(pressure, size)};
+end
+
 local function adb_event(events)
    if type(events) == 'string' then
       debugging("adb_event %s", events)
@@ -490,17 +502,6 @@ local function adb_event(events)
 
          local x, y
          x, y = events[i] * width_ratio, events[i+1] * height_ratio
-         if M.mCurrentRotation % 2 == 1 then
-            x, y = y, x
-         end
-
-         if M.mCurrentRotation == 1 then
-            y = real_height - y
-         elseif M.mCurrentRotation == 2 then
-            x, y = real_width - x, real_height - y
-         elseif M.mCurrentRotation == 3 then
-            x = real_width - x;
-         end
 
          local add = ('input %s %d %d;'):format(action, x, y)
          command_str = command_str .. add
@@ -1032,15 +1033,27 @@ local function search_mail(what)
    adb_event"key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 841 728"
 end
 
-M.adb_tap_1080x2160 = function (x, y, x1080, y1920, long_tap)
+M.adb_tap_1080x2160 = function (x, y, x1080, y1920, long_tap, random)
    if not (real_height == 2160 and real_width == 1080 or
            real_height == 1080 and real_width == 2160) then
       x = x1080 or x
       y = y1920 or y
    end
    local action = "adb-tap "
+   if random then
+      if type(random) ~= 'number' then
+         random = 5
+      end
+      x = x - random + math.floor(random * 2 * math.random())
+      y = y - random + math.floor(random * 2 * math.random())
+      adb_set_tap_params(1.0)
+   end
+
    if long_tap then
-      action = "adb-long-press-800 "
+      if type(long_tap) ~= number then
+         long_tap = 800
+      end
+      action = ("adb-long-press-%d "):format(long_tap)
    end
 
    adb_event(action .. x .. " " .. y)
