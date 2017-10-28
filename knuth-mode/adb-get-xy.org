@@ -14,7 +14,7 @@
     } else {
       $xy = qx(my-adb dumpsys window);
 
-      $xy =~ m/app=(\d+)x(\d+)/;
+      $xy =~ m/mStableFullscreen=\(.*?\)-\((\d+),(\d+)\)/;
       $app_width = $1;
       $app_height = $2;
 
@@ -94,81 +94,81 @@
 
 #+name: old-code
 #+BEGIN_SRC sh
-  #!/bin/bash
+    #!/bin/bash
 
 
-  ## start code-generator "^\\s *#\\s *"
-  # generate-getopt -e @scaling=false
-  ## end code-generator
-  ## start generated code
-  TEMP=$( getopt -o h \
-                 --long scaling,help,no-scaling \
-                 -n $(basename -- $0) -- "$@")
-  scaling=${scaling:-false}
-  eval set -- "$TEMP"
-  while true; do
-      case "$1" in
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -e @scaling=false
+    ## end code-generator
+    ## start generated code
+    TEMP=$( getopt -o h \
+                   --long scaling,help,no-scaling \
+                   -n $(basename -- $0) -- "$@")
+    scaling=${scaling:-false}
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
 
-          --scaling|--no-scaling)
-              if test "$1" = --no-scaling; then
-                  scaling=false
-              else
-                  scaling=true
-              fi
-              shift
-              ;;
-          -h|--help)
-              set +x
-              echo -e
-              echo
-              echo Options and arguments:
-              printf "%06s" " "
-              printf %-24s '--[no-]scaling'
-              echo
-              exit
-              shift
-              ;;
-          --)
-              shift
-              break
-              ;;
-          *)
-              die "internal error"
-              ;;
-      esac
-  done
+            --scaling|--no-scaling)
+                if test "$1" = --no-scaling; then
+                    scaling=false
+                else
+                    scaling=true
+                fi
+                shift
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf "%06s" " "
+                printf %-24s '--[no-]scaling'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            ,*)
+                die "internal error"
+                ;;
+        esac
+    done
 
 
-  export scaling
+    export scaling
 
-  ## end generated code
+    ## end generated code
 
-  window_dump=$(
-      my-adb dumpsys window
-             )
+    window_dump=$(
+        my-adb dumpsys window
+               )
 
-  true_size=$(echo "$window_dump"|grep -o -P 'app=\d+x\d+')
-  init_size=$(echo "$window_dump"|grep -o -P 'init=\d+x\d+')
+    true_size=$(echo "$window_dump"|perl -ne 'print "app=${1}x${2}" if m/mStableFullscreen=.*?(\d+),(\d+)\)\s*$/')
+    init_size=$(echo "$window_dump"|grep -o -P 'init=\d+x\d+')
 
-  if test "$init_size" != "init=1080x1920"; then
-      export print_tap=adb_tap_${init_size#init=}
-  fi
+    if test "$init_size" != "init=1080x1920"; then
+        export print_tap=adb_tap_${init_size#init=}
+    fi
 
-  if test "$scaling" = false -a "$true_size" != "app=1080x1920"; then
-      echo "Need scaling: $true_size, using scaling"
-      scaling=true
-  fi
+    if test "$scaling" = false -a "$true_size" != "app=1080x1920"; then
+        echo "Need scaling: mStableFullscreen($true_size), using scaling"
+        scaling=true
+    fi
 
-  export TAP=adb-tap
-  if test "$1"; then
-      export TAP=$1
-  fi
+    export TAP=adb-tap
+    if test "$1"; then
+        export TAP=$1
+    fi
 
-  (sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
-  adb-tty getevent -l </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
-<<perl-script-xy>>
-EOF04cdaedc86bf
-)"
+    (sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
+    adb-tty getevent -l </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
+  <<perl-script-xy>>
+  EOF04cdaedc86bf
+  )"
 #+END_SRC
 
 #+name: the-ultimate-script

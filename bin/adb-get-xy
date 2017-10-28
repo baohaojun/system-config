@@ -57,7 +57,7 @@ set -e
       my-adb dumpsys window
              )
 
-  true_size=$(echo "$window_dump"|grep -o -P 'app=\d+x\d+')
+  true_size=$(echo "$window_dump"|perl -ne 'print "app=${1}x${2}" if m/mStableFullscreen=.*?(\d+),(\d+)\)\s*$/')
   init_size=$(echo "$window_dump"|grep -o -P 'init=\d+x\d+')
 
   if test "$init_size" != "init=1080x1920"; then
@@ -65,7 +65,7 @@ set -e
   fi
 
   if test "$scaling" = false -a "$true_size" != "app=1080x1920"; then
-      echo "Need scaling: $true_size, using scaling"
+      echo "Need scaling: mStableFullscreen($true_size), using scaling"
       scaling=true
   fi
 
@@ -90,7 +90,7 @@ BEGIN {
   } else {
     $xy = qx(my-adb dumpsys window);
 
-    $xy =~ m/app=(\d+)x(\d+)/;
+    $xy =~ m/mStableFullscreen=\(.*?\)-\((\d+),(\d+)\)/;
     $app_width = $1;
     $app_height = $2;
 
