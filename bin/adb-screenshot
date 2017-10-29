@@ -103,7 +103,7 @@ if test "$1"; then
         action=mv
     fi
     $action ~/tmp/$$-$sd_file "$1"
-    rm -f /tmp/android-screen.$$.png
+    rm -f ~/tmp/$$-$sd_file
     exit
 fi
 
