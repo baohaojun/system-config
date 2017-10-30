@@ -234,7 +234,18 @@ fi
 
 if test -z "$git_dir"; then
     if is-jenkins; then
-        echo "$@" | mail-cms -i "Smart Builder 加 Patch 编译没有找到相应的 git 仓库"
+        (
+            cat <<EOF
+详情：$@
+
+从 Gerrit 上查到的该 Patch 的项目地址是：$PROJECT
+
+从当前安卓 repo 里列出来的所有项目的地址是：
+
+$(my-rfa repo-abs-path|indent-stdin)
+
+EOF
+        ) | mail-cms -i "Smart Builder 加 Patch 编译没有找到相应的 git 仓库"
         die "Can't find git dir for $@"
     fi
     git-get -u $GERRIT_HOST:$PROJECT -d ~/src/$(basename $PROJECT) -b "$branch"
