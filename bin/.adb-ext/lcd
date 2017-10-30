@@ -1,0 +1,11 @@
+#!/bin/bash
+
+lcd_dev=$(
+    my-adb "find 2>&1 /sys -name '*bright*'"|grep lcd|grep -v max_bright
+)
+
+if test "$1" = off; then
+    my-adb "echo 0 > $lcd_dev"
+else
+    my-adb "echo 128 > $lcd_dev"
+fi
