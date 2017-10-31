@@ -169,8 +169,6 @@ test -e "$target_dir" || die "ln: target_dir \`$target_dir does not exist"
 old_target_dir=$target_dir;
 target_dir=$(formal-path "$target_dir")
 
-echo -n > ~/.failed-rln
-
 target_file_save=$target_file
 ret=0
 for x in $(seq 1 $n_targets); do
