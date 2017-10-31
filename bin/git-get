@@ -131,6 +131,8 @@ if test ! -d $dir/.git; then
 else
     if ! (
             cd $dir
+            git remote remove origin || true
+            git remote add origin $url
             git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
             git fetch -v origin
             git reset --hard || true
