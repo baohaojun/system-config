@@ -9,8 +9,13 @@
 (defun fix-cjk-spaces ()
   "Fix cjk spaces."
   (interactive)
-  (let ((my-point (point)))
-    (shell-command-on-region (point-min) (point-max) "fix-cjk-spaces" nil t)
+  (let ((my-point (point))
+        (my-start (point-min))
+        (my-end (point-max)))
+    (when (region-active-p)
+      (setq my-start (min (mark) (point))
+            my-end (max (mark) (point))))
+    (shell-command-on-region my-start my-end "fix-cjk-spaces" nil t)
     (goto-char (min my-point (point-max)))))
 
 (add-hook 'before-save-hook #'fix-cjk-spaces)
