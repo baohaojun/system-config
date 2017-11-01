@@ -148,6 +148,7 @@ else
         if test "$1" = init && is-jenkins; then
             repo-external --do-delete &&
                 scm -x check-manifests-project-reuse --do-clean || (
+                    sleep 5 # maybe it's being aborted!
                     mail-cms "Can't force manifest reuse projects, will force clean"
                     sc_tmpdir=.repo/delete.$$
                     rm -rf $sc_tmpdir # just in case last time it's not deleted.
