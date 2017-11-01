@@ -12,13 +12,14 @@ atexit() {
 trap atexit 0
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt d:dir u:url b:branch r:reference c:create
+# generate-getopt d:dir u:url b:branch r:reference c:create @:clone-args
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o b:c:d:r:u:h \
-               --long branch:,create:,dir:,reference:,url:,help \
+               --long branch:,clone-args:,create:,dir:,reference:,url:,help \
                -n $(basename -- $0) -- "$@")
 branch=
+clone_args=
 create=
 dir=
 reference=
@@ -29,6 +30,10 @@ while true; do
 
         -b|--branch)
             branch=$2
+            shift 2
+            ;;
+        --clone-args)
+            clone_args=$2
             shift 2
             ;;
         -c|--create)
@@ -54,6 +59,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-b, '
             printf %-24s '--branch=BRANCH'
+            echo
+            printf "%06s" " "
+            printf %-24s '--clone-args=CLONE_ARGS'
             echo
             printf %06s '-c, '
             printf %-24s '--create=CREATE'
@@ -110,12 +118,13 @@ if ! valid-git-dir "$dir"; then
     rm -rf "$dir"
 fi
 
-if test ! -d $dir/.git; then
-    mkdir -p $dir
+if test ! -d $dir; then
     (
+        . aterr rm -rf "$dir"
+        mkdir -p $dir
         cd $dir
-        if ! git clone --single-branch -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi) && # --single-branch fails for s:git-repo
-                ! git clone -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
+        if ! git clone $clone_args --single-branch -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi) && # --single-branch fails for s:git-repo
+                ! git clone $clone_args -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
 
             if test "$create" = true; then
                 git init .
