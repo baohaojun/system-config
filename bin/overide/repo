@@ -156,7 +156,12 @@ else
                     mv * .repo/projects $sc_tmpdir || true
                     rm $sc_tmpdir -rf&
                 )
+            (
+                cd .repo
+                rm repo-paths repo_info.pl -f
+            )
         fi
+
         exit 0
     else
         ret=$?
