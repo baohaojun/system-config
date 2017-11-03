@@ -7,3 +7,8 @@
      (define-key bbyac-mode-map (kbd "<f2> <RET>") 'bbyac-expand-substring)
      (define-key bbyac-mode-map (kbd "<f2> l") 'bbyac-expand-lines)
      ))
+
+(eval-after-load 'evil-commands
+  '(defadvice evil-quit (around sc--evil-quit-warning activate)
+     (when (yes-or-no-p "确定真的要退出吗？")
+       ad-do-it)))
