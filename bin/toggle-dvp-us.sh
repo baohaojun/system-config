@@ -13,6 +13,12 @@ if [[ "$(tty)" =~ /dev/tty ]]; then
 fi
 
 do-dvp() {
+    (
+        if test -e ~/.config/system-config/using-fcitx || ps.pl fcitx; then
+            ps-killall fcitx
+            touch ~/.config/system-config/using-fcitx
+        fi
+    ) >/dev/null 2>&1 || true
     echo am: dvp layout
     setxkbmap -layout us -variant dvp
     re-xmodmap 2>&1|tee
@@ -28,6 +34,9 @@ do-dvp() {
         setxkbmap -layout us
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
         do-unnatural-scrolling
+        if test -e ~/.config/system-config/using-fcitx; then
+            fcitx&
+        fi >/dev/null 2>&1
     else
         do-dvp
     fi
