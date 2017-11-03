@@ -126,7 +126,7 @@ if test "${#my_rfa_dirs[@]}" = 0; then
                     else
                         xmlstarlet sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
                     fi | while read dir name; do
-                        if test -d "$dir"; then
+                        if test -d "$dir"/.git || test -d "$dir" -a "${dir##*.}" = git; then
                             echo $dir
                         fi
                     done > .repo/repo-paths.$$

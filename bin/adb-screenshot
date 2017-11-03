@@ -77,14 +77,25 @@ done
 
 ## end generated code
 
-if test "$cord_orientation" = 1; then
-    tmp_x=$x
-    x=$((1080-$y-$s))
-    y=$tmp_x
+if [[ "$s" =~ x ]]; then
+    W=${s%x*}
+    H=${s#*x}
+else
+    W=$s
+    H=$s
 fi
 
-X=$(($x + $s))
-Y=$(($y + $s))
+if test "$cord_orientation" = 1; then
+    tmp_x=$x
+    x=$((1080-$y-$H))
+    y=$tmp_x
+    tmp_w=$W
+    W=$H
+    H=$tmp_w
+fi
+
+X=$(($x + $W))
+Y=$(($y + $H))
 
 if test "$x" != 0 -o "$X" != 0; then
     my-adb shell /data/data/com.android.shell/screencap -x $x -y $y -X $X -Y $Y /sdcard/screen.jpg

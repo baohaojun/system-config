@@ -115,6 +115,9 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     else
         ret=$?
         if is-jenkins && test "$REDO_REPO_SYNC" != true; then
+            if test -e .repo/do-not-retry-sync; then
+                exit 1
+            fi
             export REDO_REPO_SYNC=true
             (
                 (
@@ -157,6 +160,7 @@ else
                     rm $sc_tmpdir -rf&
                 )
             (
+                my-rfa 'echo clean: $PWD; git reset --hard && git clean -xfd'
                 cd .repo
                 rm repo-paths repo_info.pl -f
             )
