@@ -41,12 +41,7 @@
 (after-load 'ob-ditaa
   (unless (and (boundp 'org-ditaa-jar-path)
                (file-exists-p org-ditaa-jar-path))
-    (let ((jar-name "ditaa0_9.jar")
-          (url "http://jaist.dl.sourceforge.net/project/ditaa/ditaa/0.9/ditaa0_9.zip"))
-      (setq org-ditaa-jar-path (expand-file-name "~/src/github/private-config/lib/ditaa0_9.jar"))
-      (unless (file-exists-p org-ditaa-jar-path)
-        (setq org-ditaa-jar-path (expand-file-name "~/.config/system-config/ditaa0_9.jar"))
-        (sanityinc/grab-ditaa url jar-name)))))
+    (setq org-ditaa-jar-path (expand-file-name "~/system-config/lib/ditaa0_9.jar"))))
 
 
 
