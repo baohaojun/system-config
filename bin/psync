@@ -120,6 +120,8 @@ done
 
 if [[ "$target_dir" =~ $HOME/ ]]; then
     target_dir=\~/${target_dir#$HOME/}
+elif test "$target_dir" = "$HOME"; then
+    target_dir=\~
 fi
 
 if test -z "$target_dir" -a "$target_dir_alias"; then
