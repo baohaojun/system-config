@@ -165,7 +165,7 @@
     fi
 
     (sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
-    adb-tty getevent -l </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
+    adb-tty getevent -l "$@" </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
   <<perl-script-xy>>
   EOF04cdaedc86bf
   )"
