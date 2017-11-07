@@ -1,0 +1,3 @@
+#!/bin/bash
+
+EDITOR=add-change-id git commit --amend
