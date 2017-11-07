@@ -260,11 +260,21 @@ public class Input {
                                    Float.parseFloat(args[index+2]));
                 }
             } else if (command.equals("wrench-swipe")) {
-                sendWrenchSwipe(inputSource,
-                                Float.parseFloat(args[index+1]), Float.parseFloat(args[index+2]),
-                                Float.parseFloat(args[index+3]), Float.parseFloat(args[index+4]),
-                                100);
-                return;
+                int duration = 300;
+                int duration_static = 300;
+                inputSource = getSource(inputSource, InputDevice.SOURCE_TOUCHSCREEN);
+                switch (length) {
+                case 7:
+                    duration_static = Integer.parseInt(args[index+6]);
+                case 6:
+                    duration = Integer.parseInt(args[index+5]);
+                case 5:
+                    sendWrenchSwipe(inputSource,
+                                    Float.parseFloat(args[index+1]), Float.parseFloat(args[index+2]),
+                                    Float.parseFloat(args[index+3]), Float.parseFloat(args[index+4]),
+                                    duration, duration_static);
+                    return;
+                }
             }
             else if (command.equals("swipe")) {
                 int duration = -1;
@@ -374,7 +384,7 @@ public class Input {
         injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x, y, 0.0f);
     }
 
-    private void sendWrenchSwipe(int inputSource, float x1, float y1, float x2, float y2, int duration) {
+    private void sendWrenchSwipe(int inputSource, float x1, float y1, float x2, float y2, int duration, int duration_static) {
         long now = SystemClock.uptimeMillis();
         injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, default_pressure);
         long startTime = now;
@@ -386,7 +396,7 @@ public class Input {
                               lerp(y1, y2, alpha), default_pressure);
             now = SystemClock.uptimeMillis();
         }
-        endTime = now + duration * 2;
+        endTime += duration_static;
         while (now < endTime) {
             injectMotionEvent(inputSource, MotionEvent.ACTION_MOVE, now, x2, y2, default_pressure);
             now = SystemClock.uptimeMillis();
