@@ -167,6 +167,8 @@
       export print_tap=adb_tap_${init_size#init=}
       if test "$print_format" = Wrench; then
           export print_format="Wrench \"$print_tap(%d, %d)\""
+      elif [[ "$print_format" =~ Wrench- ]]; then
+          export print_format="Wrench \"$print_tap(%d, %d, nil, nil, nil, ${print_format#Wrench-})\""
       fi
   fi
 
