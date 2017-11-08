@@ -98,8 +98,8 @@ X=$(($x + $W))
 Y=$(($y + $H))
 
 if test "$x" != 0 -o "$X" != 0; then
-    adb shell /data/data/com.android.shell/screencap -x $x -y $y -X $X -Y $Y /sdcard/screen.jpg
-    sd_file=screen.jpg
+    sd_file=$(basename "$1").jpg
+    adb shell /data/data/com.android.shell/screencap -x $x -y $y -X $X -Y $Y /sdcard/$sd_file
 else
     adb shell screencap /sdcard/screen.png
     sd_file=screen.png
