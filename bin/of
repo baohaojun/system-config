@@ -12,6 +12,70 @@ else
     exec > ~/.cache/system-config/logs/of.log 2>&1
 fi
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @last c:command
+## end code-generator
+## start generated code
+TEMP=$( getopt -o c:h \
+               --long command:,last,help,no-last \
+               -n $(basename -- $0) -- "$@")
+command=
+last=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -c|--command)
+            command=$2
+            shift 2
+            ;;
+        --last|--no-last)
+            if test "$1" = --no-last; then
+                last=false
+            else
+                last=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--command=COMMAND'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]last'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$last" = true -a "$1"; then
+    (
+        cd $(dirname "$1")
+        set -- $(basename -- "$1")
+        find . -maxdepth 1 -name "*$1*" | xargs stat -c '%Y %n' |
+            sort -n|tail -n 1|perl -npe 's/^\d+\s+//'|
+            xargs -d \\n ${command:-of}
+    )
+    exit
+fi
+
 set -x
 
 if test $# = 0; then
