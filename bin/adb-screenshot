@@ -98,15 +98,15 @@ X=$(($x + $W))
 Y=$(($y + $H))
 
 if test "$x" != 0 -o "$X" != 0; then
-    my-adb shell /data/data/com.android.shell/screencap -x $x -y $y -X $X -Y $Y /sdcard/screen.jpg
+    adb shell /data/data/com.android.shell/screencap -x $x -y $y -X $X -Y $Y /sdcard/screen.jpg
     sd_file=screen.jpg
 else
-    my-adb shell screencap /sdcard/screen.png
+    adb shell screencap /sdcard/screen.png
     sd_file=screen.png
 fi
 
 if test "$1"; then
-    my-adb pull /sdcard/$sd_file ~/tmp/$$-$sd_file
+    adb pull /sdcard/$sd_file ~/tmp/$$-$sd_file
 
     if test "${1##*.}" != ${sd_file##*.}; then
         action=convert
