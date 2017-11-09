@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+
+set user [lindex $argv 0]
+set pass [lindex $argv 1]
+set sudo_pass [lindex $argv 2]
+
+spawn sudo adduser $user
+expect {
+    -re "password for [lindex [array get env USER] 1]:" {
+        send "$sudo_pass\n"
+        exp_continue
+    }
+    -re "Enter new UNIX password:" {
+	send "$pass\n"
+	exp_continue
+    }
+    -re "Retype new UNIX password:" {
+	send "$pass\n"
+	exp_continue
+    }
+    -re {\[\]:|\[Y/n\]} {
+        send "\n"
+        exp_continue
+    }
+}
+
+wait
