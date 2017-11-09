@@ -23,17 +23,20 @@ gitk
 gperf
 htop
 less
+lftp
 lib32stdc++6
 lib32z1
 libc6-dev-i386
 libc6-i386
 libdatetime-perl
 liblua5.2-dev
+libssl-dev
 libstring-approx-perl
 libstring-shellquote-perl
 libswitch-perl
 libtext-glob-perl
 libxml-parser-perl
+libxml-simple-perl
 libxml2-utils
 libxml2:i386
 lua5.2
@@ -54,11 +57,16 @@ strace
 subversion
 time
 unzip
+wget
+wmctrl
+xbindkeys
 xclip
 xmlstarlet
 xorriso
+zenity
 zip
 zlib1g-dev
+
 EOF
           ); do
     test -e $x || touch $x
