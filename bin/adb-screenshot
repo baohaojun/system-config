@@ -97,6 +97,28 @@ fi
 X=$(($x + $W))
 Y=$(($y + $H))
 
+if test "$cord_orientation" = 1; then
+    if test "$phone_width" -a "$Y" -gt "$phone_width"; then
+        Y=$phone_width
+    fi
+
+    if test "$phone_height" -a "$X" -gt "$phone_height"; then
+        X=$phone_height
+    fi
+else
+    if test "$phone_width" -a "$X" -gt "$phone_width"; then
+        X=$phone_width
+    fi
+
+    if test "$phone_height" -a "$Y" -gt "$phone_height"; then
+        Y=$phone_height
+    fi
+fi
+
+x=$((x < 0 ? 0 : x))
+y=$((y < 0 ? 0 : y))
+
+
 if test "$x" != 0 -o "$X" != 0; then
     sd_file=$(basename "$1").jpg
     adb shell /data/data/com.android.shell/screencap -x $x -y $y -X $X -Y $Y /sdcard/$sd_file
