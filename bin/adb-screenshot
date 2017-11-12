@@ -97,6 +97,9 @@ fi
 X=$(($x + $W))
 Y=$(($y + $H))
 
+phone_width=${phone_width:-2160}
+phone_height=${phone_height:-1080}
+
 if test "$cord_orientation" = 1; then
     if test "$phone_width" -a "$Y" -gt "$phone_width"; then
         Y=$phone_width
