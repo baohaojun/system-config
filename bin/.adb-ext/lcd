@@ -6,6 +6,8 @@ lcd_dev=$(
 
 if test "$1" = off; then
     my-adb "echo 0 > $lcd_dev"
-else
+elif test "$1" = on; then
     my-adb "echo 128 > $lcd_dev"
+else
+    my-adb "echo $1 > $lcd_dev"
 fi
