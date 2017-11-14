@@ -833,7 +833,7 @@ check_scroll_lock = function()
             old_input_method = phone_info_map['user_input_method']
          end
          if yes_or_no_p((
-               "不使用小扳手的时候，你想把你默认的输入法自动改成当前正在使用的 %s 吗？（你原来默认的输入法是 %s）"
+               "不使用小扳手的时候，你想把你默认的输入法自动改成当前正在使用的 %s 吗？（你原来默认的输入法是 %s）"
                         ):format(
                input_method_id,
                old_input_method
@@ -896,7 +896,7 @@ end
 local function wrench_share_to_qq(text)
    share_text_to_app("com.qzone", "com.qzonex.module.operation.ui.QZonePublishMoodActivity",  text)
    wait_input_target(W.qqShareActivity)
-   if yes_or_no_p("分享到QQ空间？") then
+   if yes_or_no_p("分享到 QQ 空间？") then
       wrench_send_action()
    end
 end
@@ -949,7 +949,7 @@ wait_top_activity_match = function(activity)
       end
       sleep(.1)
    end
-   if not yes_or_no_p("等了两秒钟也没有等到 %s 窗口，请确认是否放弃此操作（重启Lua后台）？", activity) then
+   if not yes_or_no_p("等了两秒钟也没有等到 %s 窗口，请确认是否放弃此操作（重启 Lua 后台）？", activity) then
       error("用户取消了小扳手的操作")
    end
    return window
@@ -1126,11 +1126,11 @@ local function get_coffee(what)
    end
    putclip"咕咕机 善良的动物"
 
-   if social_need_confirm and not yes_or_no_p("Will now find the 咕咕机 Wechat App") then
+   if social_need_confirm and not yes_or_no_p("Will now find the 咕咕机 Wechat App") then
       return
    end
    adb_event"key scroll_lock sleep .1 key enter sleep .5 "
-   if social_need_confirm and not yes_or_no_p("Will now open the 咕咕机 Wechat App") then
+   if social_need_confirm and not yes_or_no_p("Will now open the 咕咕机 Wechat App") then
       return
    end
    adb_tap_1080x2160(474, 356, 535, 458)
@@ -1205,7 +1205,7 @@ M.weixin_open_search = function(depth)
             log("exit from search by key back: %d %s ", i_search, top_window)
             if not wait_input_target_n_ok(5, W.weixinSearchActivity) then
                if i_search == 4 then
-                  if yes_or_no_p("本次（第 %d 次）打开微信首页的自动操作没有点出微信搜索框，再试一次？", depth + 1)
+                  if yes_or_no_p("本次（第 %d 次）打开微信首页的自动操作没有点出微信搜索框，再试一次？", depth + 1)
                   then
                      return weixin_open_search(depth + 1)
                   else
@@ -1316,7 +1316,7 @@ M.qq_open_search = function ()
       if wait_input_target_n_ok(4 + math.floor(qq_try / 2), W.qqGroupSearch) then
          return
       elseif qq_try == max_qq_try then
-         prompt_user("在等 %s 的输入，但最后找到的是 %s，请检查 wrench.lua 脚本", W.qqGroupSearch, top_window)
+         prompt_user("在等 %s 的输入，但最后找到的是 %s，请检查 wrench.lua 脚本", W.qqGroupSearch, top_window)
          error("Wrench.lua 脚本可能有问题了，这个自动化操作需要更新脚本")
       end
       
@@ -1335,7 +1335,7 @@ M.qq_open_search = function ()
          end
          top_window = adb_top_window()
          if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQSettingSettingActivity" then
-            log("进入了QQ设置页面")
+            log("进入了 QQ 设置页面")
             adb_event("key back sleep .2")
          end
          if not top_window:match("^com.tencent.mobileqq/") then
@@ -1348,7 +1348,7 @@ M.qq_open_search = function ()
          end
       end
    end
-   if yes_or_no_p("没法打开QQ主页窗口，放弃？（会重启Lua后台）") then
+   if yes_or_no_p("没法打开 QQ 主页窗口，放弃？（会重启 Lua 后台）") then
       error("用户放弃操作")
    end
 end
@@ -1661,7 +1661,7 @@ local check_file_push_and_renamed = function(file, md5, rename_to)
    md5_on_phone = md5_on_phone:gsub("\n", "")
    local md5file = io.open(md5)
    if not md5file then
-      prompt_user("%s 文件打开失败，小扳手可能无法正常运行，请联系作者报Bug（参考 http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html#bugs-howto ）", md5)
+      prompt_user("%s 文件打开失败，小扳手可能无法正常运行，请联系作者报 Bug（参考 http://baohaojun.github.io/blog/2014/12/01/0-T1Wrench-2.0-Usage-Guide.html#bugs-howto ）", md5)
       return
    end
 
@@ -1795,7 +1795,7 @@ M.wrench_config = function(passedConfigDirPath)
 
    M.ExtMods = wrench_run("ext/.ls-modules.lua")
    if not M.ExtMods then
-      log("无法加载 ext/.ls-modules.lua")
+      log("无法加载 ext/.ls-modules.lua")
    end
 
 
@@ -2044,12 +2044,12 @@ qq_find_friend = function(friend_name)
                log("Found the qq friend %s", friend_name)
                return
             elseif click_search_res == 3 then
-               yes_or_no_p("小扳手好像没有找到你想找的 QQ 好友（%s），请自己手动点一下...", friend_name)
+               yes_or_no_p("小扳手好像没有找到你想找的 QQ 好友（%s），请自己手动点一下...", friend_name)
                return
             end
          end
       else
-         if i > 1 and not yes_or_no_p("没有找到 QQ 好友 %s，再试一遍？", friend_name) then
+         if i > 1 and not yes_or_no_p("没有找到 QQ 好友 %s，再试一遍？", friend_name) then
             return
          end
          log("Got stuck in W.qqChatActivity2, ime stuck?: %s at %d", top_window, i)
@@ -2084,7 +2084,7 @@ qq_find_group_friend = function(friend_name)
    local troopList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity"
    window = wait_top_activity(troopList)
    if window ~= troopList then
-      prompt_user("没有点到QQ群成员列表页面，可能是小扳手的座标出了点问题，请用录屏功能调整一下座标")
+      prompt_user("没有点到 QQ 群成员列表页面，可能是小扳手的座标出了点问题，请用录屏功能调整一下座标")
       return
    end
 
@@ -2253,7 +2253,7 @@ start_or_stop_recording = function()
       if (m_is_recording ~= "") then
          m_is_recording = m_is_recording:gsub("[^a-z0-9_A-Z]", "_")
          m_is_recording = M.configDirFile("ext" .. package.config:sub(1, 1) .. m_is_recording .. ".lua")
-         local headString = select_args{"请输入你对本次录制功能的描述（例：在Kindle里搜书）", "", " "}
+         local headString = select_args{"请输入你对本次录制功能的描述（例：在 Kindle 里搜书）", "", " "}
          if headString == "" then
             prompt_user("必须对录制的功能进行描述，后续使用时才能正确显示")
             m_is_recording = nil
@@ -2271,7 +2271,7 @@ start_or_stop_recording = function()
          m_is_recording = nil
       end
    else
-      prompt_user(("你的屏幕操作已经录制在 %s 文件中，请对其进行一些编辑，然后点一下小扳手设置按钮，以便可以使用此功能"):format(m_is_recording))
+      prompt_user(("你的屏幕操作已经录制在 %s 文件中，请对其进行一些编辑，然后点一下小扳手设置按钮，以便可以使用此功能"):format(m_is_recording))
       m_is_recording = nil
    end
 end
@@ -2516,7 +2516,7 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          return ""
       end
 
-      if window_type:match("confirm") and not yes_or_no_p(("确认发送？（发送按钮位置与 %s 类似）"):format(window_type:gsub("-confirm", ""))) then
+      if window_type:match("confirm") and not yes_or_no_p(("确认发送？（发送按钮位置与 %s 类似）"):format(window_type:gsub("-confirm", ""))) then
          return ""
       end
 
@@ -2773,7 +2773,7 @@ local function picture_to_weixin_chat(pics, ...)
          adb_event("sleep .1 adb-tap 944 1894 sleep .1")
          wait_top_activity(W.weixinImagePreviewActivity)
          if n == 10 then
-            prompt_user("没有等到 weixinImagePreviewActivity，无法完成此操作")
+            prompt_user("没有等到 weixinImagePreviewActivity，无法完成此操作")
             return
          end
       else
@@ -2957,7 +2957,7 @@ M.get_out_of_windows = function(windows, ...)
       sleep(.2)
    end
 
-   prompt_user("试了很多次，还是在 %s 里，小扳手的自动化脚本可能有问题，请检查一下", adb_top_window())
+   prompt_user("试了很多次，还是在 %s 里，小扳手的自动化脚本可能有问题，请检查一下", adb_top_window())
    error("Failed to get out of %s", join(", ", windows))
 end
 
@@ -2994,10 +2994,13 @@ local function picture_to_qq_chat(pics, ...)
                   image_button = ('380 %d'):format(1920 - ime_height - 50)
                elseif top_window ~= W.qqAlbumList then
                   log("Wait for W.qqAlbumList failed")
-                  prompt_user("小扳手自动化脚本没有点到QQ像册界面，无法继续执行发图片功能")
+                  prompt_user("小扳手自动化脚本没有点到 QQ 像册界面，无法继续执行发图片功能")
                   return
                else -- qqAlbumList
-                  adb_event("sleep .5 adb-tap 329 336") -- 点到第一个像册里去
+                  sleep(.5)
+                  adb_tap_1080x2160(692, 243)
+                  log("注意：QQ 上传图片的功能可能没法用了，因为你要上传的图片在相册列表的第几行、第几张现在是不固定的")
+                  log("小扳手帮你点了最上面的相册里的前 %d 张，但有可能是错误的。有时候你可能要自己把一直占着前几个位置的照片删掉。。。", #pics)
                end
             elseif window == W.qqPhoteList then
                adb_event("adb-tap 171 427")
@@ -3099,7 +3102,7 @@ local function wrench_picture(...)
          return picture_to_weixin_chat(pics)
       end
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
-      if yes_or_no_p("发送给当前QQ聊天窗口") then
+      if yes_or_no_p("发送给当前 QQ 聊天窗口") then
          return picture_to_qq_chat(pics)
       end
    elseif window == "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" then
@@ -3107,7 +3110,7 @@ local function wrench_picture(...)
          return picture_to_dingding_chat(pics)
       end
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity" then
-      if yes_or_no_p("发送给当前QQ聊天窗口") then
+      if yes_or_no_p("发送给当前 QQ 聊天窗口") then
          return picture_to_qq_chat(pics)
       end
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
@@ -3285,9 +3288,9 @@ end
 wrench_find_qq_contact = function(number)
    local contact_type
    if number == "" then
-      number = string_strip(M.select_args_with_history("qq-contact", "请输入 QQ_FRIEND_NAME 或 QQ_USER@QQ_GROUP", "", " "))
+      number = string_strip(M.select_args_with_history("qq-contact", "请输入 QQ_FRIEND_NAME 或 QQ_USER@QQ_GROUP", "", " "))
       if number == "" then
-         prompt_user("没有输入你想查找的QQ联系人，无法查找")
+         prompt_user("没有输入你想查找的 QQ 联系人，无法查找")
          return
       end
    end
@@ -3440,7 +3443,7 @@ M.wrenchThumbUp = function()
       return
    end
    if not M.ExtMods.description_to_filename[x] then
-      prompt_user("你选择的操作（" .. x .. "）没有对应的扩展脚本，是否忘了更新ext/.modules.lua？")
+      prompt_user("你选择的操作（" .. x .. "）没有对应的扩展脚本，是否忘了更新 ext/.modules.lua？")
       return
    end
 

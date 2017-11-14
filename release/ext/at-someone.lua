@@ -1,8 +1,16 @@
 #!/usr/bin/env Wrench
 -- 在QQ、微信等聊天时想@一下某人
 
+local old_top_widow = adb_top_window()
+local top_window
 wrench_post("@", 'manual-post')
-top_window = adb_top_window()
+for i = 1, 10 do
+   top_window = adb_top_window()
+   if top_window and top_window ~= "" and top_window ~= old_top_widow then
+      break
+   end
+   sleep(.1)
+end
 
 local wait_for_input = false
 if top_window == "com.tencent.mm/com.tencent.mm.ui.chatting.AtSomeoneUI" then
