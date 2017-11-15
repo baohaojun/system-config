@@ -238,6 +238,8 @@ if test -z "$git_dir"; then
             cat <<EOF
 详情：$@
 
+（发生这种情况最常见的原因是把安卓的 Patch 添加到了高通 OEM 模块的 Patch 列表里。。。）
+
 从 Gerrit 上查到的该 Patch 的项目地址是：$PROJECT
 
 从当前安卓 repo 里列出来的所有项目的地址是：
