@@ -303,10 +303,6 @@ fi
 
 if test "$cherry_pick" = true || is-jenkins; then
     if is-jenkins; then
-        if cat $tmpf | grep '^\s+status:\s+ABANDONED' -P; then
-            cat $tmpf | mail-cms -i "Patch must not be abandoned"
-            die "Patch is abandoned"
-        fi
         if test "$all_review_ok" != true -o "$approved_review" != true; then
             cat $tmpf |
                 mail-cms -i "Patch need review: $@, must has +2 +1, and no -1 -2."
