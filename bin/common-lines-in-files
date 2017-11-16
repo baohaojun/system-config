@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+my $file1 = $ARGV[0];
+my $file2 = $ARGV[1];
+my %lines;
+if (-e $file1 and -e $file2) {
+  open($tmpfile, "<", $file1) or
+    die "Can't open $file1";
+
+  while (<$tmpfile>) {
+    $lines{$_} = 1;
+  }
+  close($tmpfile);
+
+  open($tmpfile, "<", $file2) or
+    die "Can't open $file2";
+  while (<$tmpfile>) {
+    print if $lines{$_};
+  }
+  close($tmpfile);
+}

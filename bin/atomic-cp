@@ -1,0 +1,10 @@
+#!/bin/bash
+
+src=$1
+dest=$2
+
+mv "$src" "$src".$$
+cp "$src".$$ "$dest".$$
+
+mv "$dest".$$ "$dest"
+mv "$src".$$ "$src"
