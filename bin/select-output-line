@@ -265,7 +265,7 @@ dood=(
                         uniq-and-dist-sort --keep 5 "$select_dist_word"
                     ) | uniq-even-non-ajacent
                 else
-                    cat
+                    uniq-even-non-ajacent
                 fi
             elif test "$select_dist_word" != 'not-set!'; then
                 uniq-and-dist-sort "$select_dist_word"
