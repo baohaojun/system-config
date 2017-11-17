@@ -2021,10 +2021,6 @@ end
 
 qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
-   local clear_button = "adb-tap 804 167"
-   if real_height == 2160 then
-      clear_button = "adb-tap 833 90"
-   end
 
    local first_result_xy = "adb-tap 544 558"
    if real_height == 2160 then
@@ -2035,7 +2031,9 @@ qq_find_friend = function(friend_name)
    for i = 1, 5 do
       qq_open_search()
       local top_window = wait_input_target_n(5, W.qqChatActivity2, W.qqGroupSearch)
-      adb_event("adb-tap 296 1594 adb-tap 522 1842 sleep .1 " .. clear_button .. " sleep .1 key scroll_lock sleep .5") -- clear the search first by input "x " and click ⓧ.
+      adb_event("adb-tap 296 1594 adb-tap 522 1842 sleep .1")
+      adb_tap_1080x2160(877, 91, 804, 167) -- click the clear search button "x"
+      adb_event"sleep .1 key scroll_lock sleep .5" -- clear the search first by input "x " and click ⓧ.
       if top_window and top_window:match(W.qqGroupSearch) then
          for click_search_res = 1, 3 do
             log"Found W.qqGroupSearch"
