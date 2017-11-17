@@ -104,11 +104,15 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
         set -- "$@" --force-sync
     fi
 
-    if time ~/system-config/bin/repo "$@"; then
+    if (
+        set -o pipefail
+        time ~/system-config/bin/repo "$@" 2>&1| tee .repo/repo-sync.log.$$
+    ); then
+        rm .repo/repo-sync.log.$$ -f
         if option-included -n "$@"; then
             true
         elif is-jenkins; then
-            (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags')
+            true # no need to config on jenkins, let's assume we won't fetch tags.
         else
             (my-rfa 'git config remote.$(repo-remote).tagopt --no-tags' >/dev/null 2>&1&)
         fi || true
@@ -120,6 +124,17 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
             fi
             export REDO_REPO_SYNC=true
             (
+                if grep "Permission denied (publickey)" .repo/repo-sync.log.$$ &&
+                        grep "fatal: Could not read from remote repository" .repo/repo-sync.log.$$; then
+                    # this might be temporary
+                    sleep 60
+                    if ~/system-config/bin/repo "$@"; then
+                        mail-cms "Info: Jenkins repo sync repaired after retry."
+                        exit 0
+                    else
+                        mail-cms "Warn: Jenkins repo sync still failding after retry."
+                    fi
+                fi
                 (
                     cd $(lookup-file -e .repo/manifests)
                     if test "$(git config repo.mirror)" = true; then
@@ -134,7 +149,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                     cd .repo
                     rm project-objects/ projects/ -rf
                 )
-                mail-cms "Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
+                mail-cms "Warn: Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
                 ~/system-config/bin/repo "$@"
             )
         else
@@ -150,6 +165,7 @@ else
     if ~/system-config/bin/repo "$@"; then
         if test "$1" = init && is-jenkins; then
             repo-external --do-delete &&
+                rm  .repo/project.list -f &&
                 scm -x check-manifests-project-reuse --do-clean || (
                     sleep 5 # maybe it's being aborted!
                     mail-cms "Can't force manifest reuse projects, will force clean"

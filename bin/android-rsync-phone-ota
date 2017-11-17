@@ -282,11 +282,11 @@ function update-non-system-partitions() {
             # cmnlibbak devcfg devcfgbak keymaster keymasterbak modem
             # rpm rpmbak tz tzbak xbl xblbak
 
-            all_skip_partitions="PrimaryGPT BackupGPT udisk modemst1 modemst2 persist fsg factory sec security $skip_partitions"
+            all_skip_partitions="PrimaryGPT BackupGPT udisk modemst1 modemst2 persist userdata fsg factory sec security $skip_partitions"
             if test "$b0" = android-rsync-phone-diff; then
                 all_skip_partitions="PrimaryGPT BackupGPT"
             fi
-            if test -z "$(arg1-arg2 "$part" $all_skip_partitions)"; then
+            if arg1-in-arg2 "$part" "$all_skip_partitions"; then
                 if test "$verbose" = true; then
                     echo "Setup to skip $part"
                 fi
