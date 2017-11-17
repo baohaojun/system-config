@@ -3669,7 +3669,7 @@ M.notification_arrived = function(key, pkg, title, text)
    
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
-      if false and WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then
+      if WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then
          sayThankYouForLuckyMoney(true)
          adb_event"sleep .5 adb-key home"
       else
