@@ -28,7 +28,7 @@ done
 
 if is-jenkins; then
     echo "$*" 1>&2
-    return
+    exit
 fi
 
 exec >/dev/null
