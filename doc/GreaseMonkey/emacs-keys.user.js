@@ -81,5 +81,5 @@
     for (let type of eventType)
       window.addEventListener(type, handleEmacsKeys, true);
   }
-  window.setTimeout(start, 1000);
+  window.setTimeout(start, 100);
 })();

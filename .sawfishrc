@@ -279,6 +279,35 @@
 (defvar global-emacs-remap-alist nil
   "Window specific remap list")
 
+
+(defun update-firefox-keys (alist from-key firefox-keys)
+  (let* ((elem (assoc from-key alist))
+         (is-quote (eq 'quote (cadr elem)))
+         (mapped-list (cdr elem)))
+    (when is-quote
+      (setq mapped-list (cdr mapped-list)))
+    (setq mapped-list (nconc `((Firefox . ,firefox-keys)
+                               (Firefox-esr . ,firefox-keys)
+                               (Iceweasel . ,firefox-keys))
+                             mapped-list))
+    (when is-quote
+      (setq mapped-list (list 'quote mapped-list)))
+
+    (if (null elem)
+        (setq elem (cons from-key mapped-list)
+              alist (cons elem alist))
+      (setcdr elem mapped-list)))
+  alist)
+
+(defun update-all-firefox-keys (alist &rest keymaps)
+  (while keymaps
+    (let ((from-key (car keymaps))
+          (firefox-keys (cadr keymaps)))
+      (setq keymaps (cddr keymaps))
+      (setq alist (update-firefox-keys alist from-key firefox-keys))))
+  alist)
+
+
 (setq global-emacs-remap-alist
       '(("C-a" . '((t "Home")))
         ("C-z" . '((Lxterminal "C-z" "z") (XTerm "C-z" "z") (Gnome-terminal "C-z" "z") (Xfce4-terminal "C-z" "z")))
@@ -529,6 +558,27 @@
                 (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))))
 
+(unless (string= (getenv "FIREFOX_57" true))
+  (setq emacs-style-window-class-re (concat "firefox|" emacs-style-window-class-re))
+  (setq super-key-window-remap
+        (update-all-firefox-keys super-key-window-remap
+                                 "w" '("C-x" "C-w")
+                                 "l" '("C-x" "C-l")
+                                 "r" '("C-x" "C-r")
+                                 "v" '("C-q" "C-v")
+                                 "c" '("C-q" "C-c")
+                                 "s" '("C-x" "C-s")
+                                 "d" '("C-x" "C-d")))
+  (setq global-emacs-remap-alist
+        (update-all-firefox-keys global-emacs-remap-alist
+                                 "Prior" '("ESC" "v")
+                                 "C-g" '("C-g")
+                                 "Next" '("C-v")
+                                 "C-y" '("C-y")
+                                 "C-f" '("Right")
+                                 "C-s" '("C-s")
+                                 "C-r" '("C-r")
+                                 "C-x" '("C-x"))))
 
 (setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Gucharmap|^libre.*")
 

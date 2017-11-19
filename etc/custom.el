@@ -29,7 +29,7 @@
  '(custom-enabled-themes (quote (sanityinc-tomorrow-bright)))
  '(custom-safe-themes
    (quote
-    ("1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
+    ("bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
  '(debug-on-error nil)
  '(debug-on-quit nil)
  '(default-input-method "sdim")
@@ -115,7 +115,7 @@
     ((agenda habit-down time-up user-defined-up effort-up priority-down)
      (todo priority-down category-up effort-up)
      (tags category-up effort-up)
-     (search category-up))))
+     (search category-up))) t)
  '(org-clock-x11idle-program-name "xprintidle")
  '(org-directory "~/system-config/doc/projects")
  '(org-export-html-coding-system (quote utf-8))
