@@ -49,8 +49,15 @@ done
 if test ! -d .repo; then
     die "must run at top of repo"
 fi
-rm -rf .repo/repo-external
 
+if test -e .repo/project.list; then
+    extra_repos=$(arg1-arg2 "$(cat .repo/project.list)" "$(cat .repo/my-project.list)"|sort|
+                      while read d; do if test -d "$d"; then echo $d; fi; done)
+else
+    extra_repos=
+fi
+
+rm -rf .repo/repo-external
 mkdir -p .repo/repo-external
 
 my-rfa -j1 pwd | perl -npe 's,$ENV{PWD}/,,' |tee .repo/my-project.list | sort |
@@ -64,13 +71,6 @@ my-rfa -j1 pwd | perl -npe 's,$ENV{PWD}/,,' |tee .repo/my-project.list | sort |
             last=$d;
         done
     ) | xargs mv-with-dir-struct .repo/repo-external >/dev/null 2>&1
-
-if test -e .repo/project.list; then
-    extra_repos=$(arg1-arg2 "$(cat .repo/project.list)" "$(cat .repo/my-project.list)"|sort|
-                      while read d; do if test -d "$d"; then echo $d; fi; done)
-else
-    extra_repos=
-fi
 
 if test "$extra_repos"; then
     echo "These repos are not needed: $extra_repos"
