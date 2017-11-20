@@ -2,12 +2,12 @@
 // @name          stop-weibo-keys
 // @namespace     http://github.com/baohaojun/system-config
 // @description   Script for stop annoying weibo edit keys.
-// @include       http://weibo.com/*
+// @include       https://weibo.com/*
 // ==/UserScript==
 
 
 (function () {
-  let eventType = ["keydown", "keyup"];
+  let eventType = ["keydown", "keyup", "keypress"];
 
   function isEventOnEditor(ev) {
     var elem = ev.originalTarget;
@@ -19,12 +19,14 @@
   function preventEvent(ev) {
     if (!isEventOnEditor(ev) && ev.key !== 'Escape') {
       ev.stopPropagation();
+      alert("hello: " + ev);
     }
   }
 
   function start () {
+    alert("hello prevented");
     for (let type of eventType)
       window.addEventListener(type, preventEvent, true);
   }
-  window.setTimeout(start, 1000);
+  window.setTimeout(start, 3000);
 })();

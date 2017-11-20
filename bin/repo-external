@@ -53,11 +53,10 @@ rm -rf .repo/repo-external
 
 mkdir -p .repo/repo-external
 
-my-rfa -j1 pwd | sort |
+my-rfa -j1 pwd | perl -npe 's,$ENV{PWD}/,,' |tee .repo/my-project.list | sort |
     (
         last=
         while read d; do
-            d=${d#$PWD/}
             if [[ $d =~ ^$last/.* ]]; then
                 continue;
             fi;
@@ -66,19 +65,41 @@ my-rfa -j1 pwd | sort |
         done
     ) | xargs mv-with-dir-struct .repo/repo-external >/dev/null 2>&1
 
+if test -e .repo/project.list; then
+    extra_repos=$(arg1-arg2 "$(cat .repo/project.list)" "$(cat .repo/my-project.list)"|sort|
+                      while read d; do if test -d "$d"; then echo $d; fi; done)
+else
+    extra_repos=
+fi
+
+if test "$extra_repos"; then
+    echo "These repos are not needed: $extra_repos"
+fi
 if test "$do_delete" = false; then
+    cp * .repo/repo-external -al >/dev/null 2>&1 || true # in clase * is empty
     rm -rf .repo/cleanlinks
     mkdir -p .repo/cleanlinks
-    cp * .repo/cleanlinks -al
+
+    mv * .repo/cleanlinks >/dev/null 2>&1 || true # see above
     (
         cd .repo/cleanlinks
         cleanlinks >/dev/null 2>&1
         echo These files/dirs are external: *
     )
-    cp * .repo/repo-external -al >/dev/null 2>&1 || true
 else
-    if rmdir .repo/repo-external >/dev/null 2>&1; then
+    if rmdir .repo/repo-external >/dev/null 2>&1; then # in case there is nothing in .repo/repo-external
         exit 0
+    fi
+    if test "$extra_repos"; then
+        (
+            cd .repo/repo-external
+            for r in $extra_repos; do
+                if test -d "$r"/.git; then
+                    echo clean "$r"
+                    rm -rf "$r"
+                fi
+            done
+        )
     fi
 fi
 

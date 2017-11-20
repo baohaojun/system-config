@@ -285,7 +285,14 @@
          (is-quote (eq 'quote (cadr elem)))
          (mapped-list (cdr elem)))
     (when is-quote
-      (setq mapped-list (cdr mapped-list)))
+      (setq mapped-list (cadr mapped-list)))
+    (setq mapped-list
+          (remove-if
+           (lambda (e) (or
+                   (eq (car e) 'Firefox)
+                   (eq (car e) 'Firefox-esr)
+                   (eq (car e) 'Iceweasel)))
+           mapped-list))
     (setq mapped-list (nconc `((Firefox . ,firefox-keys)
                                (Firefox-esr . ,firefox-keys)
                                (Iceweasel . ,firefox-keys))
@@ -327,8 +334,8 @@
         ("M-F" . '((t "C-S-Right")))
         ("S-F12" . '((Emacs "C-c" "M-j" "D")))
         ("S-F11" . '((Emacs "C-c" "M-j" "D")))
-        ("C-s" . '((Firefox "C-g") (Firefox-esr "C-g")
-                   (Iceweasel "C-g")
+        ("C-s" . '((Firefox "C-f") (Firefox-esr "C-f")
+                   (Iceweasel "C-f")
                    (Okular "F3")
                    (Gjiten "M-s" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "Home" "S-End" "RET")
                    (t "C-g")))
@@ -530,6 +537,9 @@
                                               (find-window-or-exec wclass)))))))
  '(0 1 2 3 4 5 6 7 8 9))
 
+(defvar super-key-window-remap nil
+  "Window specific remap list for super-keys")
+
 (setq super-key-window-remap
       `(("v" . ((Dia . "C-v")
                 (Lxterminal . "C-S-v")
@@ -541,10 +551,8 @@
         ("n" . ((Firefox . "Down") (Firefox-esr . "Down") (Iceweasel . "Down")))
         ("y" . ((Dia . "S-C-z")
                 (Qtcreator . "S-C-z")))
-        ("f" . ((Firefox . "C-M-l") (Firefox-esr . "C-M-l")
-                (t . "C-f")))
-        ("b" . ((Firefox . "C-M-h") (Firefox-esr . "C-M-h")
-                (t . "C-b")))
+        ("f" . ((t . "C-f")))
+        ("b" . ((t . "C-b")))
         ("c" . ((Emacs . "M-w")
                 (Konsole . "C-S-c")
                 (QtCreator . ("M-e" "c"))
@@ -558,10 +566,17 @@
                 (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))))
 
-(unless (string= (getenv "FIREFOX_57" true))
+(if (string= (getenv "SC_FIREFOX_57" "true"))
+    (progn
+      (setq super-key-window-remap
+            (update-all-firefox-keys super-key-window-remap
+                                     "f" '("C-l" "ISO_Left_Tab" "ISO_Left_Tab" "Right" "ISO_Left_Tab")
+                                     "b" '("C-l" "ISO_Left_Tab" "ISO_Left_Tab" "Left" "ISO_Left_Tab"))))
   (setq emacs-style-window-class-re (concat "firefox|" emacs-style-window-class-re))
   (setq super-key-window-remap
         (update-all-firefox-keys super-key-window-remap
+                                 "b" '("C-M-h")
+                                 "f" '("C-M-l")
                                  "w" '("C-x" "C-w")
                                  "l" '("C-x" "C-l")
                                  "r" '("C-x" "C-r")

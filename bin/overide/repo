@@ -176,7 +176,8 @@ else
                     rm $sc_tmpdir -rf&
                 )
             (
-                my-rfa 'echo clean: $PWD; git reset --hard && git clean -xfd'
+                my-rfa 'if test -d .git; then echo clean: $PWD; git reset --hard && git clean -xfd; else echo no clean: $PWD; fi' ||
+                    mail-cms "Warn: Failed to clean up every repo, please check"
                 cd .repo
                 rm repo-paths repo_info.pl -f
             )

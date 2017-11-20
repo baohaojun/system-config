@@ -7,7 +7,7 @@
 
 
 (function () {
-  let eventType = ["keydown"];
+  let eventType = ["keydown", "keyup"];
 
   function isEventOnEditor(ev) {
     var elem = ev.originalTarget;
@@ -61,18 +61,24 @@
 
   function handleEmacsKeys(ev) {
     if (!isEventOnEditor(ev)) {
-      if (ev.key == 'N' || ev.key == 'n') {
+      if (ev.type == "keydown") {
+        if (ev.key == 'N' || ev.key == 'n') {
           followRel(window.document,
                     "next",
                     plugins_options["follow-link.nextrel"],
                     plugins_options["follow-link.nextpattern"]);
-      } else if (ev.key == 'P' || ev.key == 'p') {
-        followRel(window.document,
-                  "prev",
-                  plugins_options["follow-link.prevrel"],
-                  plugins_options["follow-link.prevpattern"]);
-      } else if (ev.code == "Backspace") {
-        window.scrollByPages(-1);
+        } else if (ev.key == 'P' || ev.key == 'p') {
+          followRel(window.document,
+                    "prev",
+                    plugins_options["follow-link.prevrel"],
+                    plugins_options["follow-link.prevpattern"]);
+        } else if (ev.code == "Backspace") {
+          window.scrollByPages(-1);
+        }
+      }
+
+      if (ev.key !== "Escape") {
+        ev.stopPropagation();
       }
     }
   }
