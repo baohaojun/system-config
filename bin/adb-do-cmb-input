@@ -4,12 +4,16 @@ if test $# = 0; then
 fi
 set -e
 
-row1=(q w e r t y u i o p)
-row2=(a s d f g h j k l)
-row3=(z x c v b n m)
-row4=(1 2 3 4 5 6 7 8 9 0)
-row5=(- / : \; \( \) \$ \& @ \")
-row6=(. , \? \! \')
+declare -A layout
+layout[lc-1]='(1 2 3 4 5 6 7 8 9 0)'
+layout[lc-2]='(q w e r t y u i o p)'
+layout[lc-3]='(a s d f g h j k l bs)'
+layout[lc-4]='(lc-uc z x c v b n m lc-sym lc-num)'
+
+layout[sym-1]='(\~ \` \! \@ \# \$ \% \^ \& \*)'
+layout[sym-2]='(\( \) _ - + = \{ \} \[ \])'
+layout[sym-3]='(\| \\ \: \; \" "'\''" \< \, \>)'
+layout[sym-4]='(sym-num sym-abc \? . \  \  / £ € ¥)'
 
 bank=zhaoshang
 top_activity=$(adb-top-activity)
@@ -23,73 +27,83 @@ row_height[1.zhaoshang]=1409
 row_height[2.zhaoshang]=1546
 row_height[3.zhaoshang]=1692
 
-row_height[1.zhongxin]=1254
-row_height[2.zhongxin]=1454
-row_height[3.zhongxin]=1639
+row_height[1]=$((1170 * 1920 / 2070))
+row_height[2]=$((1380 * 1920 / 2070))
+row_height[3]=$((1586 * 1920 / 2070))
+row_height[4]=$((1792 * 1920 / 2070))
 
-function do-char() {
-    c=$1
-    x=$2
-    n=$3
-    r=$4
-    e=${5:-0}
-    h=${row_height[$r.$bank]}
-    if test "$(lc "$c")" = "$x"; then
-       if test "$c" != "$x"; then
-           adb-tap 108 ${row_height[3.$bank]}
-       fi
-       adb-tap $((40 + e + 1080 / 10 * n)) $h
-       if test "$c" != "$x"; then
-           adb-tap 108 ${row_height[3.$bank]}
-       fi
-       exit
-    fi
+declare -A char_panel
+declare -A char_row
+declare -A char_col
+
+for l in "${!layout[@]}"; do
+    eval row="${layout[$l]}"
+    col=0
+    for char in "${row[@]}"; do
+        char_col[$char]=$((++col)) || true
+        char_row[$char]=${l#*-}
+        char_panel[$char]=${l%-*}
+    done
+done
+
+for char in {A..Z}; do
+    char_col[$char]=${char_col[${char,,}]}
+    char_row[$char]=${char_row[${char,,}]}
+    char_panel[$char]=uc
+done
+
+function click-char() {
+    local char=$1
+    local row=${char_row[$char]}
+    local col=${char_col[$char]}
+
+    local x=$(((1080 - 0) / 20 * (col * 2 - 1)))
+    local y=$((${row_height[$row]} + 50))
+    adb-tap $x $y
 }
 
+current_panel=lc
 
-while test "$1"; do
-    c=${1:0:1}
-    set -- "${1:1}"
-    (
-        n=0
-        for x in "${row1[@]}"; do
-            do-char "$c" "$x" $n 1
-            n=$((n + 1)) || true
-        done
+IFS=$'\n'
 
-        n=0
-        for x in "${row2[@]}"; do
-            do-char "$c" "$x" $n 2 $((1080 / 10 / 2))
-            n=$((n + 1)) || true
-        done
 
-        n=1
-        for x in "${row3[@]}"; do
-            do-char "$c" "$x" $n 3 $((1080 / 10 / 2))
-            n=$((n + 1)) || true
-        done
 
-        adb-tap 69 1859
-        (
-            n=0
-            for x in "${row4[@]}"; do
-                do-char "$c" "$x" $n 1
-                n=$((n + 1)) || true
-            done
+function go-back-to-lc() {
+    if test "$current_panel" = uc; then
+        click-char lc-uc
+    elif test "$current_panel" = sym; then
+        click-char sym-abc
+    fi
+    current_panel=lc
+}
 
-            n=0
-            for x in "${row5[@]}"; do
-                do-char "$c" "$x" $n 2
-                n=$((n + 1)) || true
-            done
+function go-to-panel() {
+    if test "$1" = uc; then
+        click-char lc-uc
+    elif test "$1" = sym; then
+        click-char lc-sym;
+    fi
+    current_panel=$1
+}
 
-            n=2
-            for x in "${row6[@]}"; do
-                do-char "$c" "$x" $n 3 $((1080 / 10 / 2))
-                n=$((n + 1)) || true
-            done
-        )
-        adb-tap 69 1859
-    )
+for char in $(
+    perl -e 'use Encode; for (@ARGV) {
+        $_ = decode_utf8($_);
+        for (split(//, $_)) {
+            $_ = encode_utf8($_);
+            print "$_\n";
+        }
+    }' "$@"); do
+    panel=${char_panel[$char]}
+    if test -z "$panel"; then
+        die "Can't do $char: no panel"
+    fi
+    if test "$panel" != "$current_panel"; then
+        if test "$current_panel" != lc; then
+            go-back-to-lc
+        fi
+        go-to-panel "$panel"
+        sleep .5
+    fi
+    click-char "$char"
 done
-adb-key TAB
