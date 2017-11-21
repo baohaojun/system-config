@@ -1,17 +1,14 @@
 #!/bin/bash
+set -e
 
 if my-adb shell 'which busybox && which bash && echo yes' |grep -q yes; then
     true
 else
-    busybox_file=~/src/android/vendor/smartisanhw/log-crawler/busybox
-    bash_file=~/src/android/vendor/smartisanhw/log-crawler/bash
-    if test ! -e $busybox_file; then
-        busybox_file=~/system-config/doc/galaxy-nexus-root/system/xbin/busybox
-        bash_file=~/system-config/doc/galaxy-nexus-root/system/xbin/bash
-    fi
-    adb-push ~/src/android/vendor/smartisanhw/log-crawler/bash /system/bin/bash
-    adb-push $busybox_file /system/xbin
-    adb-push $bash_file /system/xbin
+    busybox_file=~/system-config/doc/galaxy-nexus-root/system/xbin/busybox
+    bash_file=~/system-config/doc/galaxy-nexus-root/system/xbin/bash
+    adb push $busybox_file /system/xbin/$(basename $busybox_file)
+    adb push $bash_file /system/xbin/$(basename $bash_file)
+    my-adb shell "chmod 755 /system/xbin/*"
 fi
 
 applets=$(
@@ -25,9 +22,8 @@ applets=$(
         echo busybox ln -sf \$busybox "$x"
     done
 ) > /tmp/ln.sh.$$
-my-adb push /tmp/ln.sh.$$ /sdcard/ln.sh
-my-adb remount
-my-adb shell sh -x /sdcard/ln.sh
-my-adb romount
+adb push /tmp/ln.sh.$$ /sdcard/ln.sh
+adb shell sh -x /sdcard/ln.sh
+
 
 
