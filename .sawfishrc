@@ -566,7 +566,7 @@
                 (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))))
 
-(if (string= (getenv "SC_FIREFOX_57" "true"))
+(if (string= (getenv "SC_FIREFOX_57") "true")
     (progn
       (setq super-key-window-remap
             (update-all-firefox-keys super-key-window-remap

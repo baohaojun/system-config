@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat /proc/net/tcp | perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'|grep -e ":$1\b"|
+cat /proc/net/tcp /proc/net/tcp6 | perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'|grep -e ":$1\b"|
     while read line; do
         echo $line 1>&2
         x=$(echo $line | pn 10)

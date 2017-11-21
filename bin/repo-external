@@ -46,9 +46,33 @@ done
 
 ## end generated code
 
+mv-1-if-exist() {
+    local dir=$1
+    shift
+    local x
+    for x in "$@"; do
+        if test -e "$x" -o -L "$x"; then
+            mv "$x" "$dir"
+        fi
+    done
+}
+
+cp-al-1-if-exist() {
+    local dir=$1
+    shift
+    local x
+    for x in "$@"; do
+        if test -e "$x" -o -L "$x"; then
+            cp -al "$x" "$dir"
+        fi
+    done
+}
+
 if test ! -d .repo; then
     die "must run at top of repo"
 fi
+
+my-rfa -j1 pwd | perl -npe 's,$ENV{PWD}/,,' > .repo/my-project.list
 
 if test -e .repo/project.list; then
     extra_repos=$(arg1-arg2 "$(cat .repo/project.list)" "$(cat .repo/my-project.list)"|sort|
@@ -60,11 +84,11 @@ fi
 rm -rf .repo/repo-external
 mkdir -p .repo/repo-external
 
-my-rfa -j1 pwd | perl -npe 's,$ENV{PWD}/,,' |tee .repo/my-project.list | sort |
+cat .repo/my-project.list | sort |
     (
         last=
         while read d; do
-            if [[ $d =~ ^$last/.* ]]; then
+            if [[ $d =~ ^$last/ ]]; then
                 continue;
             fi;
             echo $d;
@@ -76,11 +100,11 @@ if test "$extra_repos"; then
     echo "These repos are not needed: $extra_repos"
 fi
 if test "$do_delete" = false; then
-    cp * .repo/repo-external -al >/dev/null 2>&1 || true # in clase * is empty
+    cp-al-1-if-exist .repo/repo-external *
     rm -rf .repo/cleanlinks
     mkdir -p .repo/cleanlinks
+    mv-1-if-exist .repo/cleanlinks *
 
-    mv * .repo/cleanlinks >/dev/null 2>&1 || true # see above
     (
         cd .repo/cleanlinks
         cleanlinks >/dev/null 2>&1
@@ -104,5 +128,6 @@ else
 fi
 
 rm * -rf
-mv .repo/repo-external/* .
+
+mv-1-if-exist . .repo/repo-external/*
 rmdir .repo/repo-external
