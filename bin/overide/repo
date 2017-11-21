@@ -163,7 +163,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     exit
 else
     if ~/system-config/bin/repo "$@"; then
-        if test "$1" = init && is-jenkins; then
+        if test "$1" = init -a ! -e .repo/using-fast-sync && is-jenkins; then
             repo-external --do-delete &&
                 rm  .repo/project.list -f &&
                 scm -x check-manifests-project-reuse --do-clean || (

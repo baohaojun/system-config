@@ -131,5 +131,6 @@ function fast-init-git-repo() {
 }
 
 export -f fast-init-git-repo
+touch .repo/using-fast-sync
 
 repo forall -c 'echo skipping $PWD' 2>&1 | xargs -d \\n -P $rfs_jobs -n 1 bash -c 'set -e; if ! fast-init-git-repo $@; then echo $@ failed; exit -1; fi' true
