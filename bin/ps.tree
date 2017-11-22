@@ -17,7 +17,7 @@ for my $p (@ps) {
     my ($pid, $ppid, $time, $command) = ($1, $2, $3, $4);
 
     $ppid_map{$pid} = $ppid;
-    $command_map{$pid} = $command;
+    $command_map{$pid} = "$time $command";
 }
 
 my $start_p = $ARGV[0];
