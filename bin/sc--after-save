@@ -1,5 +1,6 @@
 #!/bin/bash
 touch sc-not-merged
+touch ~/tmp/github.backup
 if [[ $PWD =~ ${HOME}/src/gerrit-fetch-review ]]; then
     bhj-notify "Warning" "You saved in ~/src/gerrit-fetch-review"
 fi
