@@ -73,6 +73,15 @@ GetOptions(
 
 if ($pwd_opt) {
     $abc_base = "";
+  }
+
+if (not $pat and @ARGV == 1) {
+  $pat = $ARGV[0];
+  shift;
+}
+
+if (@ARGV) {
+  die "Don't know how to handle extra args: @ARGV";
 }
 
 if ($replace_with) {
