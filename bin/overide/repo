@@ -180,10 +180,10 @@ else
             (
                 function clean-a-repo() {
                     if test -d .git; then
-                        echo clean: $PWD
-                        exec 9 > .git/sc-clean-repo.lock
+                        exec 9> .git/sc-clean-repo.lock
                         flock 9
                         if git reset --hard && git clean -xfd; then
+                            echo clean: $PWD
                             exit 0
                         else
                             echo Failed to clean: $PWD
