@@ -35,7 +35,11 @@ do-dvp() {
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
         do-unnatural-scrolling
         if test -e ~/.config/system-config/using-fcitx; then
-            fcitx&
+            (
+                exec 9>/dev/null
+                cd ~/.cache/system-config/logs/
+                setsid nohup fcitx
+            )&
         fi >/dev/null 2>&1
     else
         do-dvp
