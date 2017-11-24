@@ -18,11 +18,9 @@ done
 function cd_bhj ()
 {
     local oldpwd=`pwd`
-    local ok=1 # 1 means not ok
     lcd "$@" && return $?
 
-    test $# == 1 -o $# == 0 && builtin cd "$@" >/dev/null 2>&1 || cd_failed "$@" && ok=0 # 0 means ok
-    return $ok
+    test $# == 1 -o $# == 0 && builtin cd "$@" >/dev/null 2>&1 || cd_failed "$@"
 }
 
 function cd_failed()
@@ -269,7 +267,7 @@ lcd()
         fi
 
         builtin cd "$smb_mount"/"$1"
-        return 0
+        return $?
     fi
 
     local ori=$1
