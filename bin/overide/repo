@@ -134,7 +134,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                         rm $repo_sync_log
                         exit 0
                     else
-                        mail-cms "Warn: Jenkins repo sync still failding after retry."
+                        mail-cms "Warn: Jenkins repo sync still failing after retry."
                     fi
                 fi
                 (

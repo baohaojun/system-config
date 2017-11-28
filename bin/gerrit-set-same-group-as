@@ -50,7 +50,8 @@ current_groups=$(
               )
 
 to_groups=$(
-    gerrit -h $host ls-groups --user "$template_user" | grep -v -P -e 'Registered Users|userid/|user/|Anonymous Users'
+    gerrit -h $host ls-groups --user "$template_user" | grep -v -P -e 'Registered Users|userid/|user/|Anonymous Users' ||
+        echo "$template_user"
          )
 
 remove_groups=$(

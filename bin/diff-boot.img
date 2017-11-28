@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e
+
+
+boot_img1=$(readlink -f $1)
+boot_img2=$(readlink -f $2)
+
+function exit-cleanup() {
+    if test "$?" = 0; then
+        if yes-or-no-p -y "check ~/tmp/del/diff-boot-img.$$?"; then
+            cd ~/tmp/del/diff-boot-img.$$
+            start_recursive_shell diff-boot.img
+        fi
+        rm ~/tmp/del/diff-boot-img.$$ -rf
+    else
+        echo "failed\! please check ~/tmp/del/diff-boot-img.$$"
+        exit 1
+    fi
+}
+. atexit exit-cleanup
+
+mkdir -p ~/tmp/del/diff-boot-img.$$
+cd ~/tmp/del/diff-boot-img.$$
+mkdir -p boot1 boot2
+(
+    cd boot1
+    unbootimg "$boot_img1"
+    ramdisk_len2dir ramdisk.img
+)
+
+(
+    cd boot2
+    unbootimg "$boot_img2"
+    ramdisk_len2dir ramdisk.img
+)
+
+meld boot1 boot2

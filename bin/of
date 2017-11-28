@@ -71,6 +71,11 @@ if test "$last" = true -a "$1"; then
         set -- $(basename -- "$1")
         find . -maxdepth 1 -name "*$1*" | xargs stat -c '%Y %n' |
             sort -n|tail -n 1|perl -npe 's/^\d+\s+//'|
+            (
+                x=$(cat)
+                putclip "$(up "$x")" >/dev/null 2>&1&
+                echo "$x"
+            ) |
             xargs -d \\n ${command:-of}
     )
     exit
