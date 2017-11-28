@@ -19,8 +19,7 @@ has no default or required localization
 has no default translation
 java-source-list: No such file or directory
 ln: failed to create symbolic link.*File exists
-".*failed.*"
-".*error.*"
+:\d+:\s+.*".*(failed|error).*"
 string .* is missing \d+ required localizations
 Setting locale failed
 find: `(src|phone/java|dummy)': No such file or directory
@@ -43,6 +42,9 @@ m_pHDCPInputBuffers.*start == MAP_FAILED
 int rc = FAILED
 void reportError\(LocationError::LocationErrorType errorType\);
 tNFA_STATUS \w+ = NFA_STATUS_FAILED;
+:\d+:\++ (grep 'Out of memory error' out/build.log|grep 'Communication error with Jack server' out/build.log|smartcm-android-build-failed|.*last-build-failed|build-failed out/build.log|mail-devs-for-build-failed|failed_times=|.*failed_times\+\+)
+grep 'Communication error with Jack server' out/build.log
+smartcm-android-build-failed
 EOF
 
     if test -e flashing-files/.scripts/false-build-error-filter; then
