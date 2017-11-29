@@ -42,7 +42,7 @@ local adb_get_last_pic, debugging
 local wrench_find_weixin_contact, wrench_find_qq_contact, wrench_find_dingding_contact
 local find_weibo_friend
 local adb_start_service_and_wait_file_gone
-local adb_start_service_and_wait_file, adb_am
+local adb_am
 local wait_input_target, wait_top_activity, wait_top_activity_match
 local wait_input_target_n
 local wrench_eval, log, share_pics_to_app, share_text_to_app
@@ -1555,7 +1555,7 @@ adb_start_service_and_wait_file_gone = function(service_cmd, file)
    adb_wait_file_gone(file)
 end
 
-adb_start_service_and_wait_file = function(service_cmd, file)
+M.adb_start_service_and_wait_file = function(service_cmd, file)
    local res = adb_pipe(
       (
          [[
@@ -1651,6 +1651,11 @@ putclip = function(text)
    push_text(text)
    adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', M.sdcard_putclip_path)
 end
+
+M.read_phone_file = function(file)
+   return adb_pipe(("cat %s"):format(file))
+end
+
 
 local check_file_push_and_renamed = function(file, md5, rename_to)
    if not rename_to then
