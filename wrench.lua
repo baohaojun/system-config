@@ -2505,7 +2505,7 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       elseif window_type == 'weibo-confirm' then
          post_button = right_button_x .. ' 150'
       elseif window_type == 'manual-post' then
-         post_button = ''
+         post_button = 'key enter'
       end
 
       debugging("add is %s", add)
