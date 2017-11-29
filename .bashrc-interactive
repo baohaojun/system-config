@@ -130,7 +130,7 @@ function cds() {
 . ~/system-config/bin/my-rsync
 . ~/system-config/bin/.gitx
 
-unalias lunch >/dev/null 2>&1
+unalias lunch >/dev/null 2>&1 || true
 my-lunch () {
     alias lunch=my-lunch
     if (unalias lunch; test "$(type -t lunch)" = function); then
