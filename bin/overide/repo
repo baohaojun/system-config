@@ -107,7 +107,12 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     repo_sync_log=~/tmp/repo-sync.log.$$
     if (
         set -o pipefail
-        time ~/system-config/bin/repo "$@" 2>&1| tee $repo_sync_log
+        if is-jenkins; then
+            time ~/system-config/bin/repo "$@" 2>&1| tee $repo_sync_log
+        else
+            touch $repo_sync_log || true
+            time ~/system-config/bin/repo "$@"
+        fi
     ); then
         rm $repo_sync_log -f
         if option-included -n "$@"; then
