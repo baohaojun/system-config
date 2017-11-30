@@ -1,0 +1,84 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt f:from-dir \
+    # t:to-dir \
+    # @print-only
+## end code-generator
+## start generated code
+TEMP=$( getopt -o f:t:h \
+               --long from-dir:,print-only,to-dir:,help,no-print-only \
+               -n $(basename -- $0) -- "$@")
+from_dir=
+print_only=false
+to_dir=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--from-dir)
+            from_dir=$2
+            shift 2
+            ;;
+        --print-only|--no-print-only)
+            if test "$1" = --no-print-only; then
+                print_only=false
+            else
+                print_only=true
+            fi
+            shift
+            ;;
+        -t|--to-dir)
+            to_dir=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--from-dir=FROM_DIR'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]print-only'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to-dir=TO_DIR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+from_dir=$(readlink -f "$from_dir")
+to_dir=$(readlink -f "$to_dir")
+
+(
+    cd "$from_dir"
+    find . -type d -o -print | while read f; do
+        if test -e "$to_dir"/"$f" ||
+                test -L "$from_dir"/"$f" -a -L "$to_dir"/"$f"; then
+            continue
+        else
+            if test "$print_only" = true; then
+                echo "$f" is missing
+            else
+                mkdir -p "$to_dir"/"$(dirname "$f")"
+                cp -av "$f" "$to_dir"/"$(dirname "$f")"
+            fi
+        fi
+    done
+)
