@@ -22,8 +22,8 @@ applets=$(
         echo busybox ln -sf \$busybox "$x"
     done
 ) > /tmp/ln.sh.$$
-adb push /tmp/ln.sh.$$ /sdcard/ln.sh
-adb shell sh -x /sdcard/ln.sh
+adb push /tmp/ln.sh.$$ /data/data/com.android.shell/ln.sh
+adb shell sh -x /data/data/com.android.shell/ln.sh
 
 
 
