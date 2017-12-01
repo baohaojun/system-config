@@ -1,17 +1,19 @@
 #!/bin/bash
 
+set -e
+
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt d:targte-dir
+# generate-getopt d:target-dir
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o d: --long "targte-dir:"  -n $(basename $0) -- "$@")
-targte_dir=
+TEMP=$(getopt -o d: --long "target-dir:"  -n $(basename $0) -- "$@")
+target_dir=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -d|--targte-dir)
-            targte_dir=$2
+        -d|--target-dir)
+            target_dir=$2
             shift 2
             ;;
         --)
@@ -26,13 +28,13 @@ done
 
 ## end generated code
 
-if test -z "$targte_dir"; then
-    targte_dir=.
+if test -z "$target_dir"; then
+    target_dir=.
 fi
 
 
 (
-    cd "$targte_dir"
+    cd "$target_dir"
     find . -type f -print0|xargs -0 touch
     sleep 1
     touch mark
@@ -44,7 +46,7 @@ if ! "$@"; then
     fi
 fi
 (
-    cd $targte_dir
+    cd $target_dir
     find . -type f -anewer mark -a \! -newermm mark > ~/tmp/newer.$$
     rm -rf oem-release-out
     mkdir oem-release-out
