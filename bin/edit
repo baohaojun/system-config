@@ -1,26 +1,38 @@
 #!/usr/bin/env perl
 use String::ShellQuote;
 use strict;
+use Getopt::Long;
 
-open (my $log_, ">", glob("~/.cache/system-config/logs/edit.log")) or die "Can not open log file";
-print $log_ "@ARGV\n";
+my $debug_mode;
+GetOptions(
+           "d!" => \$debug_mode,
+          ) or die "Can't get options";
+
+my $log_;
+if ($debug_mode) {
+  open ($log_, ">", glob("~/.cache/system-config/logs/edit.log")) or die "Can not open log file";
+  print $log_ "@ARGV\n";
+}
+
 
 sub debug(@) {
+  if ($debug_mode) {
     print $log_ "@_\n";
     print STDERR "@_\n";
+  }
 }
 
 if (@ARGV == 3 and $ARGV[1] eq "line" and $ARGV[2] =~ m/^\d+\.?$/) {
-    chop $ARGV[0] if $ARGV[0] =~ m/,$/;
-    chop $ARGV[2] if $ARGV[2] =~ m/\.$/;
-    system("e", "$ARGV[0]:$ARGV[2]");
-    exit;
+  chop $ARGV[0] if $ARGV[0] =~ m/,$/;
+  chop $ARGV[2] if $ARGV[2] =~ m/\.$/;
+  system("e", "$ARGV[0]:$ARGV[2]");
+  exit;
 }
 
 if (@ARGV > 1 and $0 =~ m!(^|/)e$!) {
-    map {$_ = shell_quote($_)} @ARGV;
-    chomp(my $file = qx(select-file-from-where @ARGV));
-    @ARGV = ($file);
+  map {$_ = shell_quote($_)} @ARGV;
+  chomp(my $file = qx(select-file-from-where @ARGV));
+  @ARGV = ($file);
 }
 
 if ($ARGV[0] =~ m/^\+\d+$/) {
@@ -42,7 +54,7 @@ if ($remote_ip) {
   }
 
   if ($ENV{REMOTEUSER}) {
-      $remote_ip = "$ENV{REMOTEUSER}\@$remote_ip";
+    $remote_ip = "$ENV{REMOTEUSER}\@$remote_ip";
   }
 }
 
@@ -51,25 +63,29 @@ my @emacsclient = ('emacs.client', '-n');
 
 my $do_wait = 0;
 if ($0 =~ m,/?edit-wait$, or $0 =~ m,/?ew$,) {
-    @emacsclient = ('emacs.client');
-    $do_wait = 1;
+  @emacsclient = ('emacs.client');
+  $do_wait = 1;
 }
 
 if ($ENV{REMOTEIP} eq "127.0.0.1") {
-    @emacsclient = ('emacs', '-nw', '-q');
+  @emacsclient = ('emacs', '-nw', '-q');
 }
 
 sub get_emacs_file_name($) {
   my ($file) = @_;
   if ($ENV{"REMOTEIP"} and $ENV{REMOTEIP} ne "127.0.0.1") {
-      if ($ENV{USER} eq 'root' and $ENV{REALUSER}) {
-          my ($myname, $myip, $myport) = @ENV{"REALUSER", "LOCALIP", "LOCALPORT"};
+    if ($ENV{PS1HOSTNAME}) {
+      debug "using $ENV{PS1HOSTNAME} as my local ip";
+      $ENV{LOCALIP}=$ENV{PS1HOSTNAME};
+    }
 
-          if ($myport eq "def") {
-              return "/ssh:$myname\@$myip|sudo:root\@$myip:$file";
-          }
-          return "/ssh:$myname\@$myip#$myport|sudo:root\@$myip#$myport:$file";
+    if ($ENV{USER} eq 'root' and $ENV{REALUSER}) {
+      my ($myname, $myip, $myport) = @ENV{"REALUSER", "LOCALIP", "LOCALPORT"};
+      if ($myport eq "def") {
+        return "/ssh:$myname\@$myip|sudo:root\@$myip:$file";
       }
+      return "/ssh:$myname\@$myip#$myport|sudo:root\@$myip#$myport:$file";
+    }
     my ($myname, $myip, $myport) = @ENV{"USER", "LOCALIP", "LOCALPORT"};
     if ($protocol eq "pscp") {
       # plink on win7 has a bug, can't handle ip connection, only hostname
@@ -78,7 +94,7 @@ sub get_emacs_file_name($) {
     }
 
     if ($myport eq "def") {
-        return "/$protocol:$myname\@$myip:$file";
+      return "/$protocol:$myname\@$myip:$file";
     }
     return "/$protocol:$myname\@$myip#$myport:$file";
   } else {
@@ -93,54 +109,54 @@ sub edit_1($)
 
     if (-e $file) {
 
-        if (-e $file) {
-            my $file = shell_quote($file);
-            chomp($file = qx(readlink -f $file));
-            if ($file =~ m!/Maildir/[^/]*/cur/! and not $do_wait) {
-                debug "working with $file";
-                $file = shell_quote($file);
-                chomp(my $gnus_link = qx(maildir-get-id $file));
-                # $gnus_link = shell_quote($gnus_link);
-                if ($gnus_link) {
-                    system("find-or-exec emacs");
-                    system("emacsclient", "-e", sprintf('(org-open-link-from-string "%s")', $gnus_link));
-                    exit 0;
-                } else {
-                    system("bhj-notify hello 'This mail has no link'")
-                }
-              } elsif ($file =~ m,/src/gerrit-fetch-review/, and system("yes-or-no-p", "Do you want to edit gerrit-review file") != 0) {
-                print "Please double check your edit file, should not be under ~/src/gerrit-fetch-review";
-                exit;
-              }
+      if (-e $file) {
+        my $file = shell_quote($file);
+        chomp($file = qx(readlink -f $file));
+        if ($file =~ m!/Maildir/[^/]*/cur/! and not $do_wait) {
+          debug "working with $file";
+          $file = shell_quote($file);
+          chomp(my $gnus_link = qx(maildir-get-id $file));
+          # $gnus_link = shell_quote($gnus_link);
+          if ($gnus_link) {
+            system("find-or-exec emacs");
+            system("emacsclient", "-e", sprintf('(org-open-link-from-string "%s")', $gnus_link));
+            exit 0;
+          } else {
+            system("bhj-notify hello 'This mail has no link'")
+          }
+        } elsif ($file =~ m,/src/gerrit-fetch-review/, and system("yes-or-no-p", "Do you want to edit gerrit-review file") != 0) {
+          print "Please double check your edit file, should not be under ~/src/gerrit-fetch-review";
+          exit;
         }
+      }
 
-        if ((! -r $file or ! -w $file) && $ENV{USER} ne "root") {
-            my $fileq = shell_quote($file);
-            my $user = qx(stat -c %U $fileq);
-            my $action ="readable";
-            if (-r $file) {
-                $action = "writable";
-            }
-            if ($user ne $ENV{USER} and system("yes-or-no-p -y 'file not $action, use root?'") == 0) {
-                system("sudoedit", $file);
-                exit;
-            }
-            if (! -d $file and ! -r $file) {
-                exit;
-            }
+      if ((! -r $file or ! -w $file) && $ENV{USER} ne "root") {
+        my $fileq = shell_quote($file);
+        my $user = qx(stat -c %U $fileq);
+        my $action ="readable";
+        if (-r $file) {
+          $action = "writable";
         }
+        if ($user ne $ENV{USER} and system("yes-or-no-p -y 'file not $action, use root?'") == 0) {
+          system("sudoedit", $file);
+          exit;
+        }
+        if (! -d $file and ! -r $file) {
+          exit;
+        }
+      }
 
-        my $file_q = $file = shell_quote($file);
-        chomp($file_q = qx(lookup-file -e -r -- $file));
-        if (not $file_q) {
-            chomp ($file_q = qx(lookup-file -r -- $file));
-        }
-        debug "file_q is $file_q";
-        return (@emacsclient, get_emacs_file_name($file_q));
+      my $file_q = $file = shell_quote($file);
+      chomp($file_q = qx(lookup-file -e -r -- $file));
+      if (not $file_q) {
+        chomp ($file_q = qx(lookup-file -r -- $file));
+      }
+      debug "file_q is $file_q";
+      return (@emacsclient, get_emacs_file_name($file_q));
 
     } else {
 
-        debug "file $file not exist";
+      debug "file $file not exist";
 
       # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
       $file =~ m,^[a|b]/, and $file = substr($file, 2); # for git diff output
@@ -158,7 +174,7 @@ sub edit_1($)
       my $file_q = $file = shell_quote($file);
       chomp($file_q = qx(select-output-line -- lookup-file -e -r -- $file));
       if (not $file_q or not -e $file_q) {
-          chomp($file_q = qx(select-output-line -- lookup-file -r -- $file));
+        chomp($file_q = qx(select-output-line -- lookup-file -r -- $file));
       }
       return (@emacsclient, "+$line", get_emacs_file_name($file_q));
 
@@ -177,40 +193,40 @@ $ssh_cmd
 EOC
 
   $ssh_cmd = shell_quote($ssh_cmd);
-  print "ssh $remote_ip $ssh_cmd";
+  debug "ssh $remote_ip $ssh_cmd";
   my $remote_port = ($ENV{REMOTEPORT} or 22);
   my $res = system("ssh -o StrictHostKeyChecking=no $remote_ip -p $remote_port $ssh_cmd");
   exit $res unless @ARGV;
 } else {
   my @cmd = edit_1($myfile);
-  print "will run: ";
+  debug "will run: ";
   for (@cmd) {
-    print "'$_' ";
+    debug "'$_' ";
   }
-  print "\n";
+  debug "\n";
   system("find-or-exec emacs emacs.bhj");
   while (1) {
-      my $ret = system(@cmd);
-      if ($ret != 0) {
-          debug "ret is", $ret >> 8, "and", $ret & 0xff;
-          if ($ret == 2) {
-              die "@cmd got interrupt";
-          }
-          warn("ret is $ret for @cmd");
-          if (system("sleep 5") == 2) {
-              die "@cmd got interrupt while sleeping"
-          }
-      } else {
-          last;
+    my $ret = system(@cmd);
+    if ($ret != 0) {
+      debug "ret is", $ret >> 8, "and", $ret & 0xff;
+      if ($ret == 2) {
+        die "@cmd got interrupt";
       }
+      warn("ret is $ret for @cmd");
+      if (system("sleep 5") == 2) {
+        die "@cmd got interrupt while sleeping"
+      }
+    } else {
+      last;
+    }
   }
 }
 
 while (@ARGV) {
-    my $arg = shell_quote(shift @ARGV);
-    while (system("$0 $arg") != 0) {
-        if (system("sleep 1") == 2) {
-            die "e $arg got interrupt while sleeping"
-        }
+  my $arg = shell_quote(shift @ARGV);
+  while (system("$0 $arg") != 0) {
+    if (system("sleep 1") == 2) {
+      die "e $arg got interrupt while sleeping"
     }
+  }
 }

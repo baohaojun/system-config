@@ -231,7 +231,7 @@ if test $ORDERED != false; then
     echo "$@" > $cmdfile
 fi
 
-. atexit rm -rf $histfile.$$
+. aterr rm -f $histfile.$$
 
 IFS=$'\n'
 dood=(

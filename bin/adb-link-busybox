@@ -1,29 +1,31 @@
 #!/bin/bash
 set -e
 
-if my-adb shell 'which busybox && which bash && echo yes' |grep -q yes; then
-    true
+if my-adb shell 'cd /data/data/com.android.shell/bin; test -e zcat && echo yes' |grep -q yes; then
+    exit
 else
     busybox_file=~/system-config/doc/galaxy-nexus-root/system/xbin/busybox
     bash_file=~/system-config/doc/galaxy-nexus-root/system/xbin/bash
-    adb push $busybox_file /system/xbin/$(basename $busybox_file)
-    adb push $bash_file /system/xbin/$(basename $bash_file)
-    my-adb shell "chmod 755 /system/xbin/*"
+    adb shell mkdir -p /data/data/com.android.shell/bin
+    adb push $busybox_file /data/data/com.android.shell/bin/$(basename $busybox_file)
+    adb push $bash_file /data/data/com.android.shell/bin/$(basename $bash_file)
+    adb push ~/system-config/bin/adb-sc-shell /data/data/com.android.shell/bin/sc-shell
+    my-adb shell "chmod 755 /data/data/com.android.shell/bin/*"
 fi
 
 applets=$(
-    my-adb shell busybox | perl -ne 'print if m/Currently defined functions:/..0' | perl -ne 's/,//g; print unless 1..1'
+    my-adb shell 'PATH=/data/data/com.android.shell/bin:$PATH; busybox' | perl -ne 'print if m/Currently defined functions:/..0' | perl -ne 's/,//g; print unless 1..1'
 )
 
 (
-    echo cd /system/xbin/
+    echo cd /data/data/com.android.shell/bin/
     echo 'busybox=$(busybox which busybox)'
     for x in $applets; do
         echo busybox ln -sf \$busybox "$x"
     done
 ) > /tmp/ln.sh.$$
 adb push /tmp/ln.sh.$$ /data/data/com.android.shell/ln.sh
-adb shell sh -x /data/data/com.android.shell/ln.sh
+adb shell 'PATH=/data/data/com.android.shell/bin:$PATH; sh -x /data/data/com.android.shell/ln.sh'
 
 
 

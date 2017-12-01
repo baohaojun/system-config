@@ -76,22 +76,20 @@ if test ! -e /sbin/adbd; then # 没有adbd文件，在PC上而不是手机上
         )
     fi
 
-    if ! my-adb "which busybox && which bash && echo -n yes && echo $$" | grep yes$$; then
-        adb-fix-busybox
-    fi
+    adb-fix-busybox
     if ! my-adb "test -d /data/debian.$arch && echo yes$$" | grep -q yes$$; then
         my-adb -r push ~/external/debian.$arch.tgz /data/deb.tgz
-        my-adb "cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz; rm -f /data/debian; ln -s /data/debian.$arch /data/debian"
+        my-adb sc-shell "cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz; rm -f /data/debian; ln -s /data/debian.$arch /data/debian"
     fi
 
     my-adb -r push $me /data/$(basename $0) # 把我自己push到手机上
-    my-adb bash -x /data/$(basename $0) 2>&1 | tee ~/tmp/$b0.log # 并执行这个 if ... fi 后面的内容
+    my-adb sc-shell bash -x /data/$(basename $0) 2>&1 | tee ~/tmp/$b0.log # 并执行这个 if ... fi 后面的内容
 
     if ! grep "every thing is ok" -q ~/tmp/$b0.log; then
         die "Can't get everything ok, please check ~/tmp/$b0.log"
     fi
 
-    my-adb chroot /data/debian.$arch /bin/bash -c "
+    my-adb sc-shell chroot /data/debian.$arch /bin/bash -c "
     export LD_PRELOAD=
     export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
     export HOME=/root
@@ -150,11 +148,11 @@ EOF
     my-adb chmod 600 /data/debian/root/.ssh/authorized_keys
 
     my-adb push ~/.ssh/authorized_keys /data/debian/home/$USER/.ssh/authorized_keys
-    my-adb busybox chown -R 1000.1000 /data/debian/home/$USER/.ssh/
+    my-adb sc-shell busybox chown -R 1000.1000 /data/debian/home/$USER/.ssh/
     my-adb chmod 600 /data/debian/home/$USER/.ssh/authorized_keys
 
     my-adb push ~/.ssh/authorized_keys /data/debian/home/media_rw/.ssh/authorized_keys
-    my-adb busybox chown -R 1023.1023 /data/debian/home/media_rw/.ssh/
+    my-adb sc-shell busybox chown -R 1023.1023 /data/debian/home/media_rw/.ssh/
     my-adb chmod 600 /data/debian/home/media_rw/.ssh/authorized_keys
 
     my-adb forward tcp:22222 tcp:22

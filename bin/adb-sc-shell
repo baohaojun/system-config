@@ -1,0 +1,3 @@
+#!/system/bin/sh
+PATH=/data/data/com.android.shell/bin:$PATH
+"$@"

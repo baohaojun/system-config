@@ -359,6 +359,15 @@ function adb() {
             command my-adb "echo -n '$prop: '; getprop $prop" </dev/null
         done
         exit
+    elif test "$1" = sc-shell; then
+        shift
+        if test "$#" = 1; then
+            command my-adb 'PATH=/data/data/com.android.shell/bin:$PATH; '"$*"
+        else
+            export SC_SHELL=true;
+            command my-adb /data/data/com.android.shell/bin/sc-shell "$@"
+        fi
+        exit
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
             if test $myname = adb -o $myname = my-adb; then
