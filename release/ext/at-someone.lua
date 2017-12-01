@@ -12,13 +12,14 @@ for i = 1, 10 do
    sleep(.1)
 end
 
+
+search = select_args_with_history("at-someone", "你想@谁？", " ", "")
+
 local wait_for_input = false
 if top_window == "com.tencent.mm/com.tencent.mm.ui.chatting.AtSomeoneUI" then
    tap_top_right()
    wait_for_input = 'weixin'
 end
-
-search = select_args_with_history("at-someone", "你想@谁？", " ", "")
 
 if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity" then
    if real_height == 2160 then
