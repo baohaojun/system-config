@@ -242,6 +242,7 @@ map['com.zuzuChe/com.zuzuChe.activity.mbrowser.MBrowserActivity'] = 'manual-post
 map['ctrip.android.view/ctrip.android.hotel.order.view.fill.HotelOrderActivity'] = 'manual-post'
 map['ctrip.android.view/ctrip.android.search.GlobalHomeSearchActivity'] = 'manual-post'
 map['Keyguard'] = 'weixin-chat'
+map['me.ele/me.ele.akk'] = 'manual-post'
 map['org.mozilla.firefox/org.mozilla.firefox.App'] = 'manual-post'
 map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'manual-post'
 map['org.mozilla.firefox/org.mozilla.gecko.fxa.activities.FxAccountCreateAccountActivity'] = 'manual-post'
