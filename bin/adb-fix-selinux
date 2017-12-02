@@ -8,6 +8,7 @@ my-adb dmesg >> .kmsg
 if test ! -d ~/external/selinux/external/selinux/.git; then
     mkdir ~/external/selinux/external -p
     git clone smartisan:qualcomm/platform/external/selinux --reference ~/src/android-mirror/platform/external/selinux.git ~/external/selinux/external/selinux
+    hint "You may need to switch branch for ~/external/selinux/external/selinux\!"
 fi
 
 if test ! -d ~/external/selinux/prebuilts/python/linux-x86/2.7.5/.git; then
