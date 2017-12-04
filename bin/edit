@@ -74,7 +74,7 @@ if ($ENV{REMOTEIP} eq "127.0.0.1") {
 sub get_emacs_file_name($) {
   my ($file) = @_;
   if ($ENV{"REMOTEIP"} and $ENV{REMOTEIP} ne "127.0.0.1") {
-    if ($ENV{PS1HOSTNAME}) {
+    if ($ENV{PS1HOSTNAME} and $ENV{LOCALIP} =~ m/^\d+\.\d+\.\d+\.\d+/) {
       debug "using $ENV{PS1HOSTNAME} as my local ip";
       $ENV{LOCALIP}=$ENV{PS1HOSTNAME};
     }

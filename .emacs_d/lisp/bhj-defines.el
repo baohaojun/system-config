@@ -708,15 +708,16 @@ might be bad."
 (defun sc--after-save ()
   "Mark git need merge for system-config."
   (interactive)
-  (unless sc--git-directory
-    (make-local-variable 'sc--git-directory)
-    (setq sc--git-directory (shell-command-to-string "lookup-file -e .git/")))
-  (unless (string= sc--git-directory "")
-    (shell-command-to-string
-     (format
-      "cd %s && nohup sc--after-save %s >/dev/null 2>&1&"
-      (shell-quote-argument sc--git-directory)
-      (shell-quote-argument (buffer-file-localname))))))
+  (unless (file-remote-p (buffer-file-name))
+    (unless sc--git-directory
+      (make-local-variable 'sc--git-directory)
+      (setq sc--git-directory (shell-command-to-string "lookup-file -e .git/")))
+    (unless (string= sc--git-directory "")
+      (shell-command-to-string
+       (format
+        "cd %s && nohup sc--after-save %s >/dev/null 2>&1&"
+        (shell-quote-argument sc--git-directory)
+        (shell-quote-argument (buffer-file-localname)))))))
 
 ;;;###autoload
 (defun indent-same-space-as-prev-line (n-prev &optional from-bol)
