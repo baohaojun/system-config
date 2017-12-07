@@ -216,6 +216,7 @@ print $_ . "\n";
             exit
         fi
 
+        # git co -B
         if test "$2" = -B && test "$1" = co -o "$1" = checkout; then
             if test "$#" = 2; then
                 git checkout -B "$(git-choose-branch remotes/ )"
