@@ -2,7 +2,7 @@
 
 set -e
 if test "$#" = 0; then
-    trap - ERR
+    trap - 0
     return
 fi
 
@@ -10,7 +10,11 @@ aterr_args=(
     "$@"
 )
 function aterr() {
-    "${aterr_args[@]}"
+    ret=$?
+    if test "$ret" != 0; then
+        "${aterr_args[@]}"
+    fi
+    return $?
 }
 
-trap aterr ERR
+trap aterr 0
