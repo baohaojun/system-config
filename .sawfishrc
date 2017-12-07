@@ -704,13 +704,13 @@
 
 (bind-keys s-h-keymap "Super-c" 'cycle-class-bhj)
 (bind-both-global&window-keymaps "Super-$" 'cycle-class-bhj)
-(bind-keys s-h-keymap "c"  '(system "do-capture&"))
+(bind-keys s-h-keymap "c"  '(system "EMACS=t do-capture&"))
 
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards
   (lambda () (filter-windows
-              (lambda (x) (string-match im-class (bhj-window-class x)))
-              (stacking-order))))
+         (lambda (x) (string-match im-class (bhj-window-class x)))
+         (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-br-window 'cycle-br-window-backwards
