@@ -61,7 +61,8 @@ local debug_set_x = ""
 M.default_width, M.default_height = 1080, 1920
 M.ref_width, M.ref_height = 1080, 1920
 M.real_width, M.real_height = 1080, 1920
-M.app_width, M.app_height = 1080,1920
+M.app_width, M.app_height = 1080, 1920
+M.ime_app_width, M.ime_app_height = 1080, 1920
 M.mCurrentRotation = 0
 
 M.update_screen_ratios = function()
@@ -1498,10 +1499,10 @@ adb_get_input_window_dump = function()
    local ime_xy = last(string.gmatch(input_window_dump, "Requested w=%d+ h=%d+"))
    local ime_height = 0
    if input_method_active and ime_xy:match('Requested w=%d+ h=') then
-      ime_height = app_height * 0.105 * 4
+      ime_height = ime_app_height * 0.105 * 4
    end
-   -- log("ime_height = %d; real_height = %d; default_height = %d; napp_height = %d",
-   --     ime_height, real_height, default_height, app_height)
+   debug("ime_height = %d; real_height = %d; default_height = %d; napp_height = %d",
+         ime_height, real_height, default_height, app_height)
 
    ime_height = ime_height * default_height / app_height
    M.ime_height = ime_height
@@ -1781,6 +1782,7 @@ M.update_screen_size = function()
 
       local displays = adb_pipe"dumpsys window displays"
       real_width, real_height = get_xy_from_dump(displays, "cur")
+      ime_app_width, ime_app_height = get_xy_from_dump(displays, "app")
 
       update_screen_ratios()
    end
