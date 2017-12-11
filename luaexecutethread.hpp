@@ -31,6 +31,7 @@ public:
     QString getVariableLocked(const QString& name, const QString& defaultVal = "");
     void setProcessVarLocked(const QString& name, const QString& val);
     QString getProcessVarLocked(const QString& name, const QString& defaultVal = "");
+    void gotUiTask(const QStringList&);
 
 private:
     QMutex mVariableMutex;
@@ -40,6 +41,7 @@ private:
 
 signals:
     void gotSomeLog(const QString& key, const QString& val);
+    void gotUiTaskSig(const QString&, const QStringList&);
     void selectArgsSig(const QStringList&);
     void showNotificationsSig();
     void selectAppsSig();

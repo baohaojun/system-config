@@ -148,6 +148,19 @@ static int l_clickNotification(lua_State* L)
     return 0;
 }
 
+static int l_gotUiTask(lua_State* L)
+{
+    int n = luaL_len(L, -1);
+    QStringList args;
+    for (int i = 1; i <= n; i++) {
+        lua_rawgeti(L, -1, i);
+        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
+        lua_settop(L, -2);
+    }
+    that->gotUiTask(args);
+    return 0;
+}
+
 static int l_lsFiles(lua_State* L)
 {
     int n = luaL_len(L, -1);
@@ -384,6 +397,9 @@ void LuaExecuteThread::run()
     lua_pushcfunction(L, l_clickNotification);
     lua_setglobal(L, "clickNotification");
 
+    lua_pushcfunction(L, l_gotUiTask);
+    lua_setglobal(L, "gotUiTask");
+
     lua_pushcfunction(L, l_selectApps);
     lua_setglobal(L, "select_apps");
 
@@ -539,6 +555,15 @@ void LuaExecuteThread::clickNotification(const QStringList& args)
 {
     foreach (const QString& s, args) {
         emit sigClickNotification(s);
+    }
+}
+
+void LuaExecuteThread::gotUiTask(const QStringList& args)
+{
+    if (args.length() > 0) {
+        QString cmd = args[0];
+        QStringList realArgs = args.mid(1);
+        emit gotUiTaskSig(cmd, realArgs);
     }
 }
 

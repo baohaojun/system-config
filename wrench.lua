@@ -3463,6 +3463,7 @@ M.shift_click_notification = function(key, pkg, title, text)
    log("click %s, %s, %s, %s", key, pkg, title, text)
    if pkg == "com.tencent.mm" then
       title = title:gsub("%.", " ")
+      title = title:gsub("、", " ")
       wrench_call(title .. "@@wx")
    elseif pkg == "com.tencent.mobileqq" then
       local sender = ""
@@ -3659,6 +3660,11 @@ if WrenchExt.should_use_internal_pop and WrenchExt.should_use_internal_pop() ~= 
 end
 
 M.wrench_click_notification = function(key, pkg, title, text)
+   local top_window = adb_top_window()
+   if top_window and top_window:match("com.netease.onmyoji/") then
+      system{os.getenv("HOME") .. "/src/github/private-config/bin/wrench-show-notifications.sh"}
+      return
+   end
    clickNotification{key}
    if pkg == "com.tencent.mobileqq" and title:lower() == "qq" then
       M.shift_click_notification(key, pkg, title, text)

@@ -70,6 +70,7 @@ private:
     void clickLastSnoreNotification();
     void addLog(const QString&);
 private slots:
+    void gotUiTask(const QString&, const QStringList&);
     void selectQqContact();
     void selectWeixinContact();
     void selectWeiboContact();

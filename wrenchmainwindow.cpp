@@ -489,6 +489,21 @@ void WrenchMainWindow::deleteLuaThread()
     mLuaThread.clear();
 
 }
+
+void WrenchMainWindow::gotUiTask(const QString& cmd, const QStringList& args) {
+    if (cmd == "start-vnc") {
+        if (! ui->tbPhoneScreen->isChecked()) {
+            ui->tbPhoneScreen->toggled(true);
+            ui->tbPhoneScreen->setChecked(true);
+        }
+    } else if (cmd == "stop-vnc") {
+        if (ui->tbPhoneScreen->isChecked()) {
+            ui->tbPhoneScreen->toggled(false);
+            ui->tbPhoneScreen->setChecked(false);
+        }
+    }
+}
+
 void WrenchMainWindow::on_configurePushButton_clicked()
 {
     bool is_starting = false;
@@ -507,6 +522,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     }
     mLuaThread = QSharedPointer<LuaExecuteThread>(new LuaExecuteThread(this));
     connect(mLuaThread.data(), SIGNAL(gotSomeLog(QString, QString)), this, SLOT(onInfoUpdate(QString, QString)));
+    connect(mLuaThread.data(), SIGNAL(gotUiTaskSig(QString, QStringList)), this, SLOT(gotUiTask(QString, QStringList)));
     if (!mPhoneScreenDialog.isNull()) {
         this->connect(mLuaThread.data(), SIGNAL(requestSyncScreen()), mPhoneScreenDialog.data(), SLOT(syncScreen()), Qt::QueuedConnection);
     }
