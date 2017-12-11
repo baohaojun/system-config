@@ -1,5 +1,53 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P -e @kill-group
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long kill-group,help,no-kill-group \
+                      -n $(basename -- $0) -- "$@")
+kill_group=${kill_group:-false}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --kill-group|--no-kill-group)
+            if test "$1" = --no-kill-group; then
+                kill_group=false
+            else
+                kill_group=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]kill-group'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+export kill_group
+
+## end generated code
+
+
 export sig=-9
 if test "${1:0:1}" = -; then
     sig=$1
@@ -14,7 +62,12 @@ else
     setx=
 fi
 
-ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  |
+ps.pl -o pgid $match | grep -v $(basename $0) | tee /dev/stderr |
+    if test "$kill_group" = true; then
+        pn 4 | sort -u | perl -npe 's/^/-/'
+    else
+        pn 1
+    fi |
     xargs bash $setx -c '
                       for x in $@; do
                           if is-ppid $x $$; then

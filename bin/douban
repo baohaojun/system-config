@@ -284,11 +284,11 @@ case "$1" in
     jump-forth)
 
         touch ~/.cache/system-config/logs/douban.forth
-        ps-killall -USR1 mplayer.expect
+        ps-killall -- -USR1 mplayer.expect
         ;;
     jump-back)
         touch ~/.cache/system-config/logs/douban.back
-        ps-killall -USR1 mplayer.expect
+        ps-killall -- -USR1 mplayer.expect
         ;;
     prev)
         touch ~/.cache/system-config/logs/douban-prev
@@ -322,7 +322,7 @@ case "$1" in
             flock -n 0 && random-music-player
         ) 0< ~/system-config/bin/random-music-player&
         touch ~/.cache/system-config/logs/douban.pause
-        ps-killall -USR1 mplayer.expect
+        ps-killall -- -USR1 mplayer.expect
         ;;
     show)
         (
