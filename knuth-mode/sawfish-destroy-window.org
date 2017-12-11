@@ -9,7 +9,7 @@
           (when (string-equal (bhj-window-class w) "%arg%")
             (unless (and skip-top (= n-killed 0))
               (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (bhj-window-class w)))
-              (destroy-window w))
+              (%cmd% w))
             (setq n-killed (1+ n-killed))))
         (if skip-top
             (reverse (managed-windows))
@@ -67,7 +67,21 @@
 
   ## end generated code
 
-  sawfish-client -e "$(cat <<'EOF2dca9b6e46e5' | perl -npe "s:%arg%:$1:g; s:%skip-top%:$skip_top:g"
+  set -e
+
+  me=$(readlink -f $0)
+  if test ! -e "$me"; then
+      me=$(readlink -f "$(which $0)")
+      if test ! -e "$me"; then
+          die "Can't find out about me"
+          exit 1
+      fi
+  fi
+  b0=$(basename $0)
+
+  sawfish_command=${b0#sawfish-}
+
+  sawfish-client -e "$(cat <<'EOF2dca9b6e46e5' | perl -npe "s:%arg%:$1:g; s:%cmd%:$sawfish_command:g; s:%skip-top%:$skip_top:g"
       <<sawfish-script>>
   EOF2dca9b6e46e5
   )"
