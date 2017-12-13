@@ -158,7 +158,10 @@ else
 fi
 
 if test $(basename $0) = smb-pull; then
-    smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; lcd \"$2\"; mget \"$base_src\""
+    if smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; lcd \"$2\"; mget \"$base_src\"" 2>&1|
+           grep 'getattrib: NT_STATUS_NOT_SUPPORTED'; then
+        bash -i -c "cd_bhj $share/$D; rsync \"$base_src\" \"$2\" -av"
+    fi
 else
     if test -d "$1"; then
         smbclient "$share" -D "$D" -U "$user_pass" -c "tarmode; recurse; prompt; lcd \"$1\"; mkdir \"$base_src\"; cd \"$base_src\"; mput *"
