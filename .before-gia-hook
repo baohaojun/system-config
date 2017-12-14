@@ -1,0 +1,12 @@
+#!/bin/bash
+if test ~/src/github/android-documents/cm/ABC.org -nt ~/system-config/bin/abc -o \
+        ~/src/github/smartcm/scm-helpers/sync-jenkins-projects-for-abc -nt ~/system-config/bin/abc; then
+    (
+        hint "你需要从 org-mode 更新 abc 脚本"
+        emacsclient -e '
+(progn
+(save-some-buffers t)
+(find-file "~/src/github/android-documents/cm/ABC.org")
+(org-babel-tangle))' 1>&2 && touch ~/system-config/bin/abc
+    )
+fi
