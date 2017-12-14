@@ -35,8 +35,8 @@ class ime_trans:
     def __init__(self):
         self.lock = threading.RLock()
         with autolock(self.lock):
-            import wubi86_trans
-            self.rules = wubi86_trans.g_trans_map
+            import wubi_trans
+            self.rules = wubi_trans.g_trans_map
 
     def has_trans(self, prefix):
         with autolock(self.lock):
@@ -95,10 +95,10 @@ class ime_history:
 
 class ime_quail:
     def __init__(self):
-        import wubi86
+        import wubi
         assert _g_ime_trans, "trans must be inited before quail"
         self.lock = threading.RLock()
-        self.rules = wubi86.g_quail_map
+        self.rules = wubi.g_quail_map
         self.__save_path = os.path.expanduser("~/.sdim/cands")
         os.system("mkdir -p ~/.sdim/cands")
 
@@ -169,8 +169,8 @@ class ime_quail:
 class ime_reverse:
     def __init__(self):
         self.lock = threading.RLock()
-        import wubi86_reverse
-        self.rules = wubi86_reverse.g_reverse_map
+        import wubi_reverse
+        self.rules = wubi_reverse.g_reverse_map
 
     def has_reverse(self, han):
         with autolock(self.lock):

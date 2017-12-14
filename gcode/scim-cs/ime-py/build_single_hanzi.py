@@ -1,12 +1,12 @@
-import wubi86
+import wubi
 from OrderedSet import *
 import sys
 
 g_single_map = {}
-for comp in wubi86.g_quail_map:
-    g_single_map[comp] = [x for x in filter(lambda y: len(y) == 1, wubi86.g_quail_map[comp])]
+for comp in wubi.g_quail_map:
+    g_single_map[comp] = [x for x in filter(lambda y: len(y) == 1, wubi.g_quail_map[comp])]
 
-single_file = open("wubi86_single.py", "w")
+single_file = open("wubi_single.py", "w")
 #single_file = sys.stdout
 
 single_file.write("""#!/bin/env python
