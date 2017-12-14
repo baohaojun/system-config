@@ -33,7 +33,8 @@ fi
     echo $(now): $who: "$SSH_ORIGINAL_COMMAND" >> ~/.cache/system-config/logs/abc.log
 ) 9> ~/.cache/system-config/logs/.abc.lock
 
-time (bash -c "$SSH_ORIGINAL_COMMAND" 2>&1) 2>~/.cache/system-config/logs/abc.time.$$ || true
+time (bash -c "$SSH_ORIGINAL_COMMAND" 2> ~/tmp/abc-user.err.$$) 2>~/.cache/system-config/logs/abc.time.$$ || true
+cat ~/tmp/abc-user.err.$$ 1>&2 || true
 
 (
     flock 9
