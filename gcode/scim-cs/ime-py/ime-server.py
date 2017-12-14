@@ -13,7 +13,11 @@ ime_listen_sock = socket(AF_INET, SOCK_STREAM);
 if os.name == 'posix':
     ime_listen_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 
-ime_listen_sock.bind(('127.0.0.1', 31415))
+sdim_port = 31415
+if 'SDIM_PORT' in os.environ:
+    sdim_port = int(os.environ['SDIM_PORT'])
+
+ime_listen_sock.bind(('127.0.0.1', sdim_port))
 ime_listen_sock.listen(5)
 
 bhj_ime.init()
@@ -23,4 +27,3 @@ while True:
     thread = threading.Thread(target=ime_handler, args=(ime_client_sock,))
     thread.start()
     del ime_client_sock
-
