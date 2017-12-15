@@ -41,7 +41,8 @@ _  = lambda a : dgettext ("ibus-sdim", a)
 N_ = lambda a : a
 
 import dbus
-from socket import *
+import socket
+import errno
 
 class KeyEvent:
     all_mods = [
@@ -102,8 +103,25 @@ class tabengine (IBus.Engine):
     def do_connect(self):
         if self.sock:
             self.do_disconnect()
-        self.sock = socket(AF_INET, SOCK_STREAM)
-        self.sock.connect(("localhost", 31415))
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.sock.connect(("localhost", 31415))
+        except socket.error as serr:
+            if serr.errno != errno.ECONNREFUSED:
+                raise serr
+            print "Failed to connect to sdim server"
+            os.system("~/system-config/gcode/ime-py/ime-server.py >/dev/null 2>&1&")
+            import time
+            for i in range(1, 30):
+                time.sleep(.1)
+                try:
+                    self.sock.connect(("localhost", 31415))
+                    break
+                except socket.error as serr:
+                    if serr.errno != errno.ECONNREFUSED:
+                        raise serr
+                    print "Still not connected to sdim server @" + str(i)
+
         self.sock = self.sock.makefile("rwb", 0)
 
     def do_disconnect(self):
