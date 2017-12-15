@@ -49,18 +49,27 @@ current_groups=$(
     gerrit -h $host ls-groups --user "$change_user"
               )
 
-to_groups=$(
-    gerrit -h $host ls-groups --user "$template_user" | grep -v -P -e 'Registered Users|userid/|user/|Anonymous Users|ldap/' ||
-        echo "$template_user"
-         )
-
-remove_groups=$(
-    arg1-arg2 -s $'\n' "$current_groups" "$to_groups"
+if [[ "$template_user" =~ ^- ]]; then
+    add_groups=
+    remove_groups=${template_user#-}
+elif [[ $template_user =~ ^\+ ]]; then
+    add_groups=${template_user#+}
+    remove_groups=
+else
+    to_groups=$(
+        gerrit -h $host ls-groups --user "$template_user" | grep -v -P -e 'Registered Users|userid/|user/|Anonymous Users|ldap/' ||
+            echo "$template_user"
              )
 
-add_groups=$(
-    arg1-arg2 -s $'\n' "$to_groups" "$current_groups"
-          )
+    remove_groups=$(
+        arg1-arg2 -s $'\n' "$current_groups" "$to_groups"
+                 )
+
+    add_groups=$(
+        arg1-arg2 -s $'\n' "$to_groups" "$current_groups"
+              )
+fi
+
 for x in $add_groups; do
     echo add: $x
 done
@@ -69,7 +78,7 @@ for x in $remove_groups; do
     echo remove: $x
 done
 
-if yes-or-no-p "确认把 $change_user 的 gerrit 分组设成跟 $template_user 一样？"; then
+if yes-or-no-p "确认把 $change_user 的 gerrit 分组设成跟 $template_user 一样（add：$add_groups；del：$remove_groups）？"; then
 
     for x in $add_groups; do
         gerrit -h $host set-members "'$x'" -a "$change_user"
