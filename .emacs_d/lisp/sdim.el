@@ -162,14 +162,19 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 (defun sdim-connect-to-server ()
   (unless sdim-ime-connection
     (setq sdim-ime-connection
-          (make-network-process :name "ime-server"
-                                :host "localhost"
-                                :service 31415
-                                :buffer "*ime-server*"
-                                :filter 'sdim-network-filter
-                                :sentinel 'sdim-network-sentinel))))
-
-
+          (condition-case network-error
+              (make-network-process :name "ime-server"
+                                    :host "localhost"
+                                    :service 31415
+                                    :buffer "*ime-server*"
+                                    :filter 'sdim-network-filter
+                                    :sentinel 'sdim-network-sentinel)
+            (error
+             (if (yes-or-no-p "Failed to connect to sdim server, (re)start it?")
+                 (progn
+                   (shell-command-to-string "nohup ~/system-config/gcode/ime-py/ime-server.py </dev/null >/dev/null 2>&1&")
+                   (error "Started sdim server for you, please try to re-activate SDIM again"))
+               (error "Failed to connect sdim server, please start it with: ~/system-config/gcode/ime-py/ime-server.py")))))))
 
 (defun sdim-use-package (package-name &optional word-file active-func)
   (interactive)
