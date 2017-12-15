@@ -133,8 +133,8 @@ if test ! -d $dir; then
         . aterr rm -rf "$dir"
         mkdir -p $dir
         cd $dir
-        if ! git clone $clone_args --single-branch -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi) && # --single-branch fails for s:git-repo
-                ! git clone $clone_args -b $branch $url . $(if test "$reference"; then echo --reference "$reference"; fi); then
+        if ! git clone $clone_args --single-branch -b $branch $url . $(if test -d "$reference"; then echo --reference "$reference"; fi) && # --single-branch fails for s:git-repo
+                ! git clone $clone_args -b $branch $url . $(if test -d "$reference"; then echo --reference "$reference"; fi); then
 
             if test "$create" = true; then
                 git init .
