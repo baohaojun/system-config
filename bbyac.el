@@ -427,6 +427,24 @@ Return the list of strings thus matched."
   (or (> (length str) bbyac-max-chars)
       (string-match-p "\n" str)))
 
+(defun bbyac--delete-region (start end)
+  "Delete the region marked by START and END.
+
+Works even in Term mode."
+  (if (eq major-mode 'term-mode)
+      (while (< start end)
+        (setq start (1+ start))
+        (term-send-backspace))
+    (delete-region start end)))
+
+(defun bbyac--insert (str)
+  "Insert the STR.
+
+Works even in Term mode."
+  (if (eq major-mode 'term-mode)
+      (term-send-raw-string str)
+    (insert str)))
+
 (defun bbyac--general-expand (extracter &optional matcher buffer-filter match-rewriter)
   "General function to expand a bit using the functional arguments.
 
@@ -472,10 +490,10 @@ EXTRACTER, MATCHER and BUFFER-FILTER."
                               (bbyac--display-matches matches)))
                           (bbyac--display-matches matches)))
             (when (and bbyac--start bbyac--end)
-              (delete-region bbyac--start bbyac--end))
+              (bbyac--delete-region bbyac--start bbyac--end))
             (when match-rewriter
               (setq match (funcall match-rewriter match)))
-            (insert match))
+            (bbyac--insert match))
         (when (and bbyac--start bbyac--end)
           (delete-region bbyac--start bbyac--end))
         (deactivate-mark)
