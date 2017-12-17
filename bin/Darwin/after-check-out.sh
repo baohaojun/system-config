@@ -21,13 +21,6 @@ if test ! -d /usr/local/share/info; then
     sudo mkdir -p /usr/local/share/info
 fi
 
-if test ! -e /usr/share/info/bash.info.gz; then
-    sudo ln -s ~/system-config/doc/bash.info.gz /usr/local/share/info/ -f
-    (
-        cd /usr/local/share/info/
-        sudo ginstall-info bash.info.gz /usr/local/share/info/dir
-    )
-fi
 #编译一些软件
 compile_beagrep
 compile_gtags
