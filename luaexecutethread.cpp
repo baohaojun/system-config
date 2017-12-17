@@ -269,7 +269,7 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
         }
         qDebug() << "connect to localhost 28888";
         wrenchSock = new QTcpSocket();
-        wrenchSock->connectToHost("localhost", 28888, QIODevice::ReadWrite);
+        wrenchSock->connectToHost("localhost", 28888 + QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0").toInt(), QIODevice::ReadWrite);
         wrenchSock->waitForConnected();
     }
 
