@@ -9,7 +9,7 @@ elif is-in-emacs; then
 fi
 
 if echo $SHELLOPTS | grep -q xtrace; then
-    exec > ~/tmp/$(basename $0).txt 2>&1
+    exec >> ~/tmp/$(basename $0).x 2>&1
 elif ! is-tty-io; then
     set -x
 fi

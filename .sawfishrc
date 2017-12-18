@@ -229,8 +229,8 @@
    ("C-."              "hello world no such thing" "firefox push")
    ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox --new-window")
    ("Super-t"          (lambda (w) (and
-                                    (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
-                                    (not (string= "emacs" (window-name w))))) "konsole.bhj")
+                               (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
+                               (not (string= "emacs" (window-name w))))) "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
@@ -238,7 +238,7 @@
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/system-config/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
 
-                                        ; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
+;; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-both-global&window-keymaps "XF86Search" '(system "sawfish-xf86search&"))
 
 (bind-both-global&window-keymaps "C-S-XF86PowerOff"  '(system "lock-screen&"))
