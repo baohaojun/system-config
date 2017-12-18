@@ -1628,7 +1628,7 @@ push_text = function(text)
       end
    end
 
-   text = text:gsub("\n", "\r\n")
+   -- text = text:gsub("\n", "\r\n")
    local file, path
    local tmp = os.getenv("TEMP") or "/tmp"
    path = tmp .. package.config:sub(1, 1) .. "lua-smartisan-wrench.txt"
@@ -2375,7 +2375,7 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       if window:match("com.tencent.mobileqq") then
          putclip(emoji_for_qq(text))
       elseif window:match("com.tencent.mm/") then
-         text = text:gsub("\n", "​\n")
+         -- text = text:gsub("\n", "​\n")
          putclip(emoji_for_weixin(text))
       elseif window:match("com.sina.weibo/") then
          putclip(emoji_for_weibo(text))

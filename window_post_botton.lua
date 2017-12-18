@@ -79,6 +79,7 @@ map['com.eico.weico/com.eico.weico.activity.detail.StatusDetailForFourActivity']
 map['com.facebook.katana/com.facebook.katana.dbl.activity.FacebookLoginActivity'] = 'manual-post'
 map['com.github.mobile/com.github.mobile.accounts.LoginActivity'] = 'manual-post'
 map['com.github.shadowsocks'] = 'manual-post'
+map['com.github.shadowsocks/com.github.shadowsocks.AppManager'] = 'manual-post'
 map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'manual-post'
 map['com.github.shadowsocks/com.github.shadowsocks.Shadowsocks'] = 'manual-post'
 map['com.google.android.apps.inbox/com.google.android.apps.bigtop.activities.InitActivity'] = 'manual-post'
