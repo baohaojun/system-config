@@ -214,8 +214,13 @@ for x in "$@" $(
 
         done_add=false
         if test "$out" = "${gia_options[yes]}"; then
-            git add "$x"
+            if test -z "$revision"; then
+                git add "$x"
+            fi
             done_add=true
+        elif test "${out:0:1}" = '!'; then
+            hint "Will run ${out#\!} for you, but may be you can simply use 'discard'"
+            eval ${out#\!}
         elif test "${out:0:1}" != @; then
             git add "$x"
             done_add=true
