@@ -26,21 +26,33 @@ fi
     # j:jobs '?使用多少个线程进行编译（默认是你的机器的 CPU 线程数）' \
     # kkeep-building='$default_keep_building' '?即使出错了，也继续编译没有出错的模块' \
     # f:make-flags '?其他想要传给make命令的标志和参数' \
-    # qquick '?不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）'
+    # qquick '?不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）' \
+    # @debug '?调试此脚本' \
+    # @:only-module '?只编这一个模块，不要编当前目录下所有模块'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o j:kf:qvh \
-               --long jobs:,keep-building,make-flags:,quick,verbose,help,no-keep-building,no-quick,no-verbose \
+               --long debug,jobs:,keep-building,make-flags:,only-module:,quick,verbose,help,no-debug,no-keep-building,no-quick,no-verbose \
                -n $(basename -- $0) -- "$@")
+debug=false
 jobs=
 keep_building=$default_keep_building
 make_flags=
+only_module=
 quick=false
 verbose=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
+            shift
+            ;;
         -j|--jobs)
             jobs=$2
             shift 2
@@ -55,6 +67,10 @@ while true; do
             ;;
         -f|--make-flags)
             make_flags=$2
+            shift 2
+            ;;
+        --only-module)
+            only_module=$2
             shift 2
             ;;
         -q|--quick|--no-quick)
@@ -78,6 +94,9 @@ while true; do
             echo -e $b0' [OPTIONS]... [TARGETS]...\n使用安卓提供的模块化编译，节省编译时间。\nmma 编译当前目录下的所有模块（或指定 TARGETS）及其依赖\nmm 编译当前目录下所有模块（或指定的 TARGETS），但不编译其依赖（如果某依赖模块尚未编译，mm 会出错）\n如果不指定 TARGETS，默认的 TARGET 是 all_modules（当前目录下所有模块）'
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]debug'
+            echo '调试此脚本'
             printf %06s '-j, '
             printf %-24s '--jobs=JOBS'
             echo '使用多少个线程进行编译（默认是你的机器的 CPU 线程数）'
@@ -87,6 +106,11 @@ while true; do
             printf %06s '-f, '
             printf %-24s '--make-flags=MAKE_FLAGS'
             echo '其他想要传给make命令的标志和参数'
+            printf "%06s" " "
+            printf %-24s '--only-module=ONLY_MODULE'
+            echo
+            printf "%30s" ""
+            echo '只编这一个模块，不要编当前目录下所有模块'
             printf %06s '-q, '
             printf %-24s '--[no-]quick'
             echo '不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）'
@@ -116,7 +140,7 @@ else
 fi
 
 if test -z "$jobs"; then
-    jobs=-j$(cat /proc/cpuinfo |grep ^processor|wc -l)
+    jobs=$(cat /proc/cpuinfo |grep ^processor|wc -l)
 fi
 
 unset CLASSPATH
@@ -163,6 +187,28 @@ time (
     export MY_ONE_SHOT_MAKEFILE=$(ap)/Android.mk
     project=$(ap)
 
+    if test "$only_module"; then
+        echo exporting make for $only_module
+        make() {
+            local args=()
+            local x
+
+            for x in "$@"; do
+                if test "$x" = all_modules || [[ $x =~ ^MODULES-IN- ]]; then
+                    true # skip these
+                else
+                    args=(
+                        "${args[@]}" "$x"
+                    )
+                fi
+            done
+            echo running real make: "${args[@]}"
+            command make "${args[@]}"
+        }
+    fi
+
+
+
     (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"
@@ -171,10 +217,15 @@ time (
         fi
         . ~/system-config/etc/.fix-java-version
         if test "$(type -t $b0)" = function; then
-            $b0 -j $jobs $verbose $keep_building $make_flags "$@" &&
+            if test "$debug" = true; then
+                type $b0
+                type make
+            fi
+            $b0 -j $jobs $verbose $keep_building $make_flags $only_module "$@" &&
                 echo $b0 build is ok
         else
             echo Error: $b0 is not a function\!
+            echo Please report a bug to Bao Haojun.
         fi
     ) 2>&1 | (
         cd $top_dir
