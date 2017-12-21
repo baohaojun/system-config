@@ -248,7 +248,7 @@ for x in "$@" $(
                 )
             fi
 
-            touch $(lookup-file -e .git)/sc-not-merged
+            git-mark-need-merge
         fi
         break
     done
