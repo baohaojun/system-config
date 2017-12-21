@@ -133,7 +133,7 @@ done
         command rsync -L $oldpwd/linux/binaries/* Wrench $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/Wrench/release-exclude.txt
         (
             cd ~/src/github/$release_dir
-            touch .git/sc-not-merged
+            git-mark-need-merge
         )
         exit
     fi

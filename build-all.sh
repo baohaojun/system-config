@@ -204,7 +204,7 @@ for x in $(
         cd $(dirname $(lookup-file -e .git))
         git add .
         git commit -m "Release for $ReleaseVersion ($Wrench_GIT_HASH)"
-        touch .git/sc-not-merged
+        git-mark-need-merge
         git push&
         dir=$(basename $PWD)
         cd ..
