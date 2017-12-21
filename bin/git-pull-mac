@@ -95,7 +95,7 @@ if test "$do_fetch" = true; then
     (
         function mark-merged() {
             if ! git-is-ancestor $(git-remote-branch) HEAD; then
-                touch .git/sc-not-merged
+                git-mark-need-merge
             fi
         }
         . atexit mark-merged

@@ -520,8 +520,13 @@ class ime:
             code1 = _g_ime_reverse.get_reverse(cand[1])
             if code0 and code1:
                 for c0 in code0:
+                    if len(c0) == 1:
+                        c0 = c0 + 'z'
                     for c1 in code1:
-                        comps.append(c0 + c1)
+                        if len(c1) == 1:
+                            c1 = c1 + 'z'
+                        comp = c0[0] + c0[1] + c1[0] + c1[1]
+                        comps.append(comp)
                 _g_ime_quail.add_cand(comps, cand)
         if len(cand) == 3:
             code0 = _g_ime_reverse.get_reverse(cand[0])

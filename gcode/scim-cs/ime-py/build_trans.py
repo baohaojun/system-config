@@ -19,7 +19,7 @@ for comp in wubi.g_quail_map:
             if char not in g_reverse_map:
                 g_reverse_map[char] = OrderedSet()
 
-            g_reverse_map[char].add('"' + comp + '"')
+            g_reverse_map[char].add('"' + (comp + 'zz')[0:2] + '"')
 
     for i in range(1, len(comp)):
         prefix = comp[0:i]
@@ -59,7 +59,7 @@ for char in keys:
     reverse = list(g_reverse_map[char])
     reverse.sort()
     reverse = ', '.join(reverse)
-    reverse_file.write('"%s" : (%s),\n' % (char, reverse))
+    reverse_file.write('"%s" : (%s,),\n' % (char, reverse))
 
 reverse_file.write('}\n')
 reverse_file.close()
