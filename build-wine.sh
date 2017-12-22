@@ -108,7 +108,7 @@ EOF
     command wine cmd.exe /c build.bat
 }
 
-build_dir=~/tmp/build-wrench-windows
+build_dir=~/tmp/build-wrench-windows/fix-snore-symlink
 release_dir=~/src/github/Wrench-windows
 rsync * $build_dir -a --exclude release
 rsync release $build_dir -a -L
