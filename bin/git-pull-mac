@@ -137,7 +137,7 @@ for x in remotes/$(git-remote-branch); do
             exit -1
         }
     else
-        touch .git/sc-not-merged
+        git-mark-need-merge
     fi
 done
 
