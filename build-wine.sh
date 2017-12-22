@@ -51,7 +51,7 @@ done
 
 if test ! -e ~/src/github/Wrench/windows/binaries/libsnore-qt5.dll || test "$build_snore" = true; then
     (
-        cd ~/src/github/snorenotify
+        cd ~/src/github/Wrench/SnoreNotify
         ./build-wine.sh
     )
 fi
@@ -65,7 +65,7 @@ function deploy-wrench()
         cd ./release
         mkdir -p tmp
         mv adb.exe the-true-adb.exe luac.exe lua.exe tmp/
-        qt-wine windeployqt --qmldir z:$HOME/src/github/snorenotify/src/plugins/backends/snore -qml -quick .
+        qt-wine windeployqt --qmldir z:$HOME/src/github/Wrench/SnoreNotify/src/plugins/backends/snore -qml -quick .
         mv tmp/* .
         rmdir tmp
         find . -iname '*.dll' -o -iname '*.exe' |xargs chmod +x
@@ -90,7 +90,7 @@ function make-release-tgz()
     fi
 
     cd $build_dir/release
-    myscr bash -c "WINEARCH=win32 WINEPREFIX=~/.wine2 SNORE_QML=z:$HOME/src/github/snorenotify/src/plugins/backends/snore/notification.qml wine cmd /c ./Wrench.exe"
+    myscr bash -c "WINEARCH=win32 WINEPREFIX=~/.wine2 SNORE_QML=z:$HOME/src/github/Wrench/SnoreNotify/src/plugins/backends/snore/notification.qml wine cmd /c ./Wrench.exe"
 }
 
 
