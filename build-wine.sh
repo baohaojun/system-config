@@ -109,6 +109,7 @@ EOF
 }
 
 build_dir=~/tmp/build-wrench-windows/fix-snore-symlink
+mkdir -p $build_dir
 release_dir=~/src/github/Wrench-windows
 rsync * $build_dir -a --exclude release
 rsync release $build_dir -a -L
