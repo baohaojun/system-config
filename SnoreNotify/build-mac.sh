@@ -13,7 +13,7 @@ else
     set -e
     set -x
 
-    cd ~/src/github/snorenotify/
+    cd ~/src/github/Wrench/SnoreNotify/
 
     should_cmake_qmake=false
     if test ! -e Makefile; then
@@ -29,7 +29,7 @@ else
     echo '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
     echo
 
-    cd ~/src/github/snorenotify/src/snoresend
+    cd ~/src/github/Wrench/SnoreNotify/src/snoresend
     rm -rf *.app
 
     if test $should_cmake_qmake = true; then
@@ -38,18 +38,18 @@ else
     fi
     make
     (
-        cd ~/src/github/snorenotify/src/snoresend/WrenchTest.app/Contents/MacOS
+        cd ~/src/github/Wrench/SnoreNotify/src/snoresend/WrenchTest.app/Contents/MacOS
         ./WrenchTest -t hello2 -m world 2>&1|perl -npe 's/^/2: /'|| true
     )
     cp /usr/local/lib/plugins/libsnore-qt5/*.so WrenchTest.app/Contents/MacOS -av
-    macdeployqt WrenchTest.app -verbose=1 $(for x in WrenchTest.app/Contents/MacOS/*.so; do echo -executable=$x; done) -qmldir=${HOME}/src/github/snorenotify/src/plugins/backends/snore
+    macdeployqt WrenchTest.app -verbose=1 $(for x in WrenchTest.app/Contents/MacOS/*.so; do echo -executable=$x; done) -qmldir=${HOME}/src/github/Wrench/SnoreNotify/src/plugins/backends/snore
 
     echo
     echo '****************************************************************'
     echo
 
     (
-        cd ~/src/github/snorenotify/src/snoresend/WrenchTest.app/Contents/MacOS
+        cd ~/src/github/Wrench/SnoreNotify/src/snoresend/WrenchTest.app/Contents/MacOS
         ./WrenchTest -t hello3 -m world || true
     )
 fi
