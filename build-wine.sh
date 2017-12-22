@@ -76,8 +76,8 @@ function deploy-wrench()
 function make-release-tgz()
 {
     # rsync readme.* ./release/
-    rsync -av *.png ./release/
-    command rsync -av -d release/ download/release/ wrench-release --exclude="*.obj" \
+    rsync -a *.png ./release/
+    command rsync -a -d release/ download/release/ wrench-release --exclude="*.obj" \
             --exclude="*.o" \
             --exclude="*.cpp" \
             --exclude="*.moc" \
@@ -85,7 +85,7 @@ function make-release-tgz()
 
     set -x
     if test "$DOING_WRENCH_RELEASE"; then
-        command rsync wrench-release/ $release_dir -av -L --delete --exclude=.git
+        command rsync wrench-release/ $release_dir -a -L --delete --exclude=.git
         exit
     fi
 
@@ -110,8 +110,8 @@ EOF
 
 build_dir=~/tmp/build-wrench-windows
 release_dir=~/src/github/Wrench-windows
-rsync * $build_dir -av --exclude release
-rsync release $build_dir -av -L
+rsync * $build_dir -a --exclude release
+rsync release $build_dir -a -L
 cd $build_dir
 
 if ! which i686-w64-mingw32-nm; then
