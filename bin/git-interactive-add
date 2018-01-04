@@ -82,7 +82,7 @@ function git-diff() {
 
     if test "$FOR_REVIEW"; then
         if git diff -w $(repo-remote-branch) HEAD -- "$@" | grep -q .; then
-            git diff -w $(repo-remote-branch) HEAD -- "$@"
+            git diff -w $(repo-remote-branch) HEAD -- "$@" || true
         else
             read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
         fi
@@ -94,7 +94,7 @@ function git-diff() {
         diff /dev/null "$@" || true
     else
         if git diff -w $review_base $revision -- "$@" | grep -q .; then
-            git diff -w $review_base $revision -- "$@"
+            git diff -w $review_base $revision -- "$@" || true
         else
             read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
         fi

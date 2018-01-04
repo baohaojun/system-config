@@ -5,13 +5,13 @@ set pass [lindex $argv 1]
 
 spawn sudo passwd $user
 expect {
-    -re "^Enter new UNIX password:" {
-	send "$pass\n"
-	exp_continue
+    -re "Enter new UNIX password:" {
+        send "$pass\n"
+        exp_continue
     }
     -re "Retype new UNIX password:" {
-	send "$pass\n"
-	exp_continue
+        send "$pass\n"
+        exp_continue
     }
 }
 
