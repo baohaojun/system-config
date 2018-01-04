@@ -1547,4 +1547,20 @@ to the value of `temporary-file-directory'."
 (setq interprogram-cut-function 'bhj-select-text
       interprogram-paste-function 'bhj-select-value)
 
+(defun bhj-half-to-full ()
+  "Replace full width with half width."
+  (interactive)
+  (replace-regexp "[ -~]"
+                  (quote
+                   (replace-eval-replacement
+                    replace-quote
+                    (if (string= " " (match-string 0))
+                        (char-to-string 12288)
+                      (char-to-string
+                       (+ 65248 (string-to-char (match-string 0)))))))
+                  nil
+                  (if (use-region-p) (region-beginning))
+                  (if (use-region-p) (region-end))
+                  nil))
+
 (provide 'bhj-defines)
