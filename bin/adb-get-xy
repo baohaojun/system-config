@@ -8,14 +8,16 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -e @scaling=false @:print-format
+# generate-getopt -e @scaling=false @:print-format @:standard-width=1080 @:standard-height=1920
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o h \
-               --long print-format:,scaling,help,no-scaling \
+               --long print-format:,scaling,standard-height:,standard-width:,help,no-scaling \
                -n $(basename -- $0) -- "$@")
 print_format=${print_format:-}
 scaling=${scaling:-false}
+standard_height=${standard_height:-1920}
+standard_width=${standard_width:-1080}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -32,6 +34,14 @@ while true; do
             fi
             shift
             ;;
+        --standard-height)
+            standard_height=$2
+            shift 2
+            ;;
+        --standard-width)
+            standard_width=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -42,6 +52,12 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--[no-]scaling'
+            echo
+            printf "%06s" " "
+            printf %-24s '--standard-height=STANDARD_HEIGHT'
+            echo
+            printf "%06s" " "
+            printf %-24s '--standard-width=STANDARD_WIDTH'
             echo
             exit
             shift
@@ -59,6 +75,8 @@ done
 
 export print_format
 export scaling
+export standard_height
+export standard_width
 
 ## end generated code
 
@@ -92,8 +110,8 @@ fi
 adb-tty getevent -l "$@" </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
   BEGIN {
     $mCurrentRotation = 0;
-    $standard_width = 1080;
-    $standard_height = 1920;
+    $standard_width = $ENV{standard_width};
+    $standard_height = $ENV{standard_height};
   
     $init_width = 1080;
     $init_height = 1920;
