@@ -43,7 +43,6 @@ done | grep -v '=$' > .buildenv.sh.$$
 
 cat <<EOF >> .buildenv.sh.$$
 export PATH=$PATH
-export ARCH=arm
 EOF
 
 mv .buildenv.sh.$$ $OUT_DIR/.buildenv.sh
