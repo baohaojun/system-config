@@ -1442,12 +1442,16 @@ criteria can be provided via the optional match-string argument "
 
 (defun bhj-todo-from-mail-view-mail ()
   (interactive)
-  (when (eq major-mode 'org-agenda-mode)
-    (org-agenda-goto))
-  (ajoke--push-marker-ring)
-  (let ((mail (org-entry-get (point) "FROM")))
-    (setq mail (shell-quote-argument mail))
-    (shell-command-to-string (format "of %s >/dev/null 2>&1&" mail))))
+  (let ((go-back-to-agenda nil))
+    (when (eq major-mode 'org-agenda-mode)
+      (setq go-back-to-agenda t)
+      (org-agenda-goto))
+    (ajoke--push-marker-ring)
+    (let ((mail (org-entry-get (point) "FROM")))
+      (setq mail (shell-quote-argument mail))
+      (shell-command-to-string (format "of %s >/dev/null 2>&1&" mail)))
+    (when go-back-to-agenda
+      (switch-window))))
 
 (defun bhj-todo-copy-id ()
   (interactive)

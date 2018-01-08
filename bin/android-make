@@ -177,12 +177,22 @@ exec 9> $OUT_DIR/.android-full-build.lock
                         android-make bootimage
                         exit
                     fi
-                    cat <<EOF > $OUT_DIR/Android.mk
+                    mkdir -p $OUT_DIR/
+                    cat <<EOF > $OUT_DIR/Android.mk.$$
 bootimage-nodeps: ${PRODUCT_OUTX}/kernel $(if test -e ${PRODUCT_OUTX}/dt.img; then echo ${PRODUCT_OUTX}/dt.img; fi)
-include build/target/board/Android.mk
+
+ifeq (\$(filter \$(TARGET_DEVICE_DIR)/AndroidBoard.mk, \$(MAKEFILE_LIST)),)
+\$(info need to include the AndroidBoard.mk)
+-include \$(TARGET_DEVICE_DIR)/AndroidBoard.mk
+else
+\$(info no need to include the AndroidBoard.mk)
+endif
 EOF
-                    cd $OUT_DIR
-                    $do_nice mm bootimage-nodeps -j$jobs $verbose
+                        cd $OUT_DIR/
+                        if ! diff Android.mk.$$ Android.mk; then
+                            mv Android.mk.$$ Android.mk
+                        fi
+                        $do_nice mm --only-module bootimage-nodeps -j$jobs $verbose
                 )
             elif test $# = 1 -a $1 = selinux; then
                 (

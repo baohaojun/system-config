@@ -2,9 +2,17 @@
 
 lcd_dev=$(
     my-adb "find 2>&1 /sys -name '*bright*'"|grep lcd|grep -v max_bright
-)
+       )
 
-if test "$1" = off; then
+if test -z "$1"; then
+    my-adb "
+        if test \"\$(cat $lcd_dev)\" = 0; then
+            echo 128 > $lcd_dev
+        else
+            echo 0 > $lcd_dev
+        fi
+    "
+elif test "$1" = off; then
     my-adb "echo 0 > $lcd_dev"
 elif test "$1" = on; then
     my-adb "echo 128 > $lcd_dev"
