@@ -183,6 +183,19 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
     (progn (outline-next-heading) (1- (point))))
    (t nil)))
 
+;; Common settings for all reviews
+(setq efs/org-agenda-review-settings
+      '((org-agenda-files '("~/src/github/projects/weekly.org"))
+        (org-agenda-show-all-dates t)
+        (org-agenda-start-with-log-mode t)
+        (org-agenda-start-with-clockreport-mode t)
+        (org-agenda-archives-mode t)
+        ;; I don't care if an entry was archived
+        (org-agenda-hide-tags-regexp
+         (concat org-agenda-hide-tags-regexp
+                 "\\|ARCHIVE"))
+        ))
+
 (let ((active-project-match "-INBOX/PROJECT"))
 
   (setq org-stuck-projects
@@ -216,6 +229,37 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
           ("N" "Notes" tags "NOTE"
            ((org-agenda-overriding-header "Notes")
             (org-tags-match-list-sublevels t)))
+          ("R" . "Review" )
+          ("Rw" "Week in review"
+           agenda ""
+           ;; agenda settings
+           ,(append
+             efs/org-agenda-review-settings
+             '((org-agenda-span 'week)
+               (org-agenda-start-on-weekday nil)
+               (org-agenda-overriding-header "Week in Review"))
+             )
+           ("~/org/review/week.html"))
+          ("Rd" "Day in review"
+           agenda ""
+           ;; agenda settings
+           ,(append
+             efs/org-agenda-review-settings
+             '((org-agenda-span 'day)
+               (org-agenda-overriding-header "Day in Review"))
+             )
+           ("~/org/review/day.html"))
+          ("Rm" "Month in review"
+           agenda ""
+           ;; agenda settings
+           ,(append
+             efs/org-agenda-review-settings
+             '((org-agenda-span 'month)
+               (org-agenda-start-day "01")
+               (org-read-date-prefer-future nil)
+               (org-agenda-overriding-header "Month in Review"))
+             )
+           ("~/org/review/month.html"))
           ("g" "GTD"
            ((agenda "" nil)
             (tags "INBOX"
@@ -278,7 +322,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
             ;;            ((org-agenda-overriding-header "All other TODOs")
             ;;             (org-match-list-sublevels t)))
             )))))
-
 
 (add-hook 'org-agenda-mode-hook 'hl-line-mode)
 
