@@ -219,6 +219,7 @@ map['com.tencent.mobileqq/com.tencent.mobileqq.activity.selectmember.SelectMembe
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity'] = 'qq-chat'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.VerifyCodeActivity'] = 'manual-post'
+map['com.tencent.mobileqq/com.tencent.mobileqq.businessCard.activity.BusinessCardEditActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.search.activity.ActiveEntitySearchActivity'] = 'manual-post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.search.activity.UniteSearchActivity'] = 'manual-post'
 map['com.tencent.mobileqq/cooperation.qzone.QzoneGPUPluginProxyActivity'] = 'manual-post'
