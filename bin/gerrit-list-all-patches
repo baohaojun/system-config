@@ -13,14 +13,19 @@ fi
 b0=$(basename $0)
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt a:after='$(today -20)' b:before='$(today)'
+    # generate-getopt a:after='$(today -20)' \
+        # b:before='$(today)' \
+        # q:query-args='()' '?额外的 gerrit query 的参数，比如 branch:trident-rom' \
+        # f:extra-query-flags='()' '?额外的 Gerrit Query 的查询标记，比如 --files'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o a:b:h \
-              --long after:,before:,help \
-              -n $(basename -- $0) -- "$@")
+TEMP=$( getopt -o a:b:f:q:h \
+               --long after:,before:,extra-query-flags:,query-args:,help \
+               -n $(basename -- $0) -- "$@")
 after=$(today -20)
 before=$(today)
+extra_query_flags=()
+query_args=()
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -33,9 +38,17 @@ while true; do
             before=$2
             shift 2
             ;;
+        -f|--extra-query-flags)
+            extra_query_flags=("${extra_query_flags[@]}" "$2")
+            shift 2
+            ;;
+        -q|--query-args)
+            query_args=("${query_args[@]}" "$2")
+            shift 2
+            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-a, '
@@ -44,6 +57,14 @@ while true; do
             printf %06s '-b, '
             printf %-24s '--before=BEFORE'
             echo
+            printf %06s '-f, '
+            printf %-24s '--extra-query-flags=EXTRA_QUERY_FLAGS'
+            echo
+            printf "%30s" ""
+            echo '额外的 Gerrit Query 的查询标记，比如 --files'
+            printf %06s '-q, '
+            printf %-24s '--query-args=QUERY_ARGS'
+            echo '额外的 gerrit query 的参数，比如 branch:trident-rom'
             exit
             shift
             ;;
@@ -66,7 +87,7 @@ echo -n > ~/tmp/$b0.$$
 total=0
 while true; do
     n=$(
-        gerrit -h s query status:merged limit:100000 after:$after before:$before --start $total | tee -a ~/tmp/$b0.$$ |grep '^change'|wc -l
+        gerrit -h s query status:merged limit:100000 "${query_args[@]}" after:$after before:$before "${extra_query_flags[@]}" --start $total | tee -a ~/tmp/$b0.$$ |grep '^change'|wc -l
      )
 
     total=$((total + n)) || true

@@ -43,14 +43,14 @@ elif [[ "$file" =~ " " ]]; then
     shift
     (
         cd ~/system-config/doc/projects
-        file=$(F_FIND_OPTS='-maxdepth 1' f "$@" '!# .org')
+        file=$(F_FIND_OPTS='-maxdepth 1' f "$@" '!# .org' '.org')
         file=$(readlink -f "$file")
         find-or-exec emacs
         emacs.client -d -e "(progn
                            (find-file \"$file\")
                            (org-agenda-remove-restriction-lock)
                            (org-agenda-set-restriction-lock 'file)
-                           (org-agenda nil \"d\"))"
+                           (org-agenda nil \"t\"))"
     )
 
 fi

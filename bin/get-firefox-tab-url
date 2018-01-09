@@ -4,7 +4,7 @@ export SAWFISH_BROWSER_INPUT_SLEEP=.05
 putclip "shit"
 
 for x in $(seq 1 5); do
-    sawfish-browser-input C-l M-w
+    sawfish-browser-input C-l C-c
     sleep .1
     out=$(
         getclip |grep . ||

@@ -49,13 +49,13 @@ fi
 
 putclip "$user"
 sleep .8
-sawfish-browser-input TAB DEL C-y
+sawfish-browser-input TAB DEL C-v
 putclip $(get-authinfo $host $user)
 sleep .5
 sawfish-browser-input TAB
 sleep .5
 sawfish-browser-input Home S-End DEL
 sleep .5
-sawfish-browser-input C-y
+sawfish-browser-input C-v
 putclip ""
 sawfish-browser-input RET
