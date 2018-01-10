@@ -22,7 +22,25 @@ function push-all-projects() {
                 if ! git remote add s s:baohaojun/$(basename $PWD) >/dev/null 2>&1; then
                     true
                 fi
-                git push s HEAD:refs/heads/dev || { bhj-notify system-config "$PWD failed to push to s"; sleep 5; } || true
+                if ! git push s HEAD:refs/heads/dev; then
+                    { bhj-notify system-config "$PWD failed to push to s"; sleep 5; } || true
+                    (
+                        if ! is-inside-tmux-or-screen; then
+                            exit
+                        fi
+                        myscr bash -c "
+                            hint pull from s at $PWD
+                            (
+                                . ~/src/github/smartcm/scm-helpers/git-pull-and-review
+                                git pull s dev
+                            )
+                            if yes-or-no-p 'Continue to push to s?'; then
+                                git push s HEAD:refs/heads/dev
+                                git push
+                            fi
+                        "
+                    )
+                fi
             )
         done
 
