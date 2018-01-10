@@ -228,6 +228,10 @@ if ! lookup-file -e .repo >/dev/null 2>&1 &&
             )
 
     git_dir=~/src/gerrit-fetch-review/$(basename $PROJECT)
+    (
+        cd "$git_dir"
+        gerrit-fix-hooks
+    ) || true
 else
     git_dir=$(my-rfa 'if test "$(repo-abs-path)" = /$PROJECT; then pwd; fi')
 fi
