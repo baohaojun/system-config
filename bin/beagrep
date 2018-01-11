@@ -204,11 +204,12 @@ if ($short_format) {
 }
 
 if ($list_beagrep) {
-    while (<$beagrep_files_pipe>) {
-        $_ = substr($_, $start) if ($short_format and not $abc_base);
-        print "$_:$file_default_line: [01;31m****************![0m\n";
-    }
-    exit 0;
+  while (<$beagrep_files_pipe>) {
+    $_ = substr($_, $start) if ($short_format and not $abc_base);
+    chomp;
+    print "$_:$file_default_line: [01;31m****************![0m\n";
+  }
+  exit 0;
 }
 
 my @beagrep_files;
