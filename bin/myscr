@@ -147,9 +147,9 @@ if session-exists; then
 
             if test "$debug" = false; then
                 if test "$wait_exit" = true; then
-                    echo . atexit rm /tmp/screen-exec.$$
+                    echo . atexit rm -f /tmp/screen-exec.$$
                 else
-                    echo rm /tmp/screen-exec.$$
+                    echo rm -f /tmp/screen-exec.$$
                 fi
             fi
 
@@ -168,7 +168,7 @@ if session-exists; then
         if using-screen; then
             screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
         else
-            tmux new-window -n "$SCREEN_TITLE" "bash /tmp/screen-exec.$$"
+            tmux new-window -n "$SCREEN_TITLE" "bash -l -i /tmp/screen-exec.$$"
             find-or-exec konsole
         fi
         if test "$wait_exit" = true; then
