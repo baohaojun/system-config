@@ -8,8 +8,6 @@ elif test -e ~/src/github/smartcm/scm-helpers/gerrit-fix-hooks; then
     ~/src/github/smartcm/scm-helpers/gerrit-fix-hooks
 fi
 
-""
-
 hint -t 1 "已经帮你把当前的 git 仓库修改了 commit-msg 的 hooks，请考虑 git commit --amend 一下，确保当前的 git 提交有 Change-Id。
 
 注意如果在用 git commit --fixup 的话，gerrit 的 hook 脚本被谷歌升过级之后，fixup 的 Patch 不给生成 change-id 了，想解决这个问题的话，必须自己 amend 两次，第一次把 fixup 去掉（比如在前面加个 x），然后第二次再把它加回来。"
