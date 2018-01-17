@@ -1,0 +1,25 @@
+#!/bin/bash
+(
+    PRODUCT_OUTX=$(android-env get_build_var PRODUCT_OUT)
+    if test ! -e "$PRODUCT_OUTX/boot.img"; then
+        hint "你之前还没有编译过boot.img，现在先编一下，用的命令是android-make bootimage"
+        android-make bootimage
+        exit
+    fi
+    mkdir -p $OUT_DIR/
+    cat <<EOF > $OUT_DIR/Android.mk.$$
+bootimage-nodeps: ${PRODUCT_OUTX}/kernel $(if test -e ${PRODUCT_OUTX}/dt.img; then echo ${PRODUCT_OUTX}/dt.img; fi)
+
+ifeq (\$(filter \$(TARGET_DEVICE_DIR)/AndroidBoard.mk, \$(MAKEFILE_LIST)),)
+\$(info need to include the AndroidBoard.mk)
+-include \$(TARGET_DEVICE_DIR)/AndroidBoard.mk
+else
+\$(info no need to include the AndroidBoard.mk)
+endif
+EOF
+        cd $OUT_DIR/
+        if ! diff Android.mk.$$ Android.mk; then
+            mv Android.mk.$$ Android.mk
+        fi
+        $do_nice mm --only-module bootimage-nodeps -j$jobs $verbose
+)

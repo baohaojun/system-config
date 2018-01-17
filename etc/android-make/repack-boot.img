@@ -1,0 +1,3 @@
+#!/bin/bash
+
+make bootimage-nodeps $verbose -j$jobs

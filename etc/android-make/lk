@@ -1,0 +1,26 @@
+#!/bin/bash
+(
+    if test -e "bootable/bootloader/edk2/AndroidBoot.mk"; then
+        (
+            echo mm edk2
+            cd .repo
+            if test ! -e Android.mk; then
+                touch Android.mk
+            fi
+            $do_nice mm -j$jobs $verbose --only-module abl
+        )
+    else
+        (
+            echo mm lk
+            cd build/target/board
+            $do_nice mm --only-module $(android-env get_build_var PRODUCT_OUT)/emmc_appsboot.mbn -j$jobs $verbose
+        )
+        (
+            echo mm sec lk
+            if test -d vendor/qcom/proprietary/common/scripts; then
+                cd vendor/qcom/proprietary/common/scripts
+                $do_nice mm --only-module gensecimage_target -j$jobs $verbose
+            fi
+        )
+    fi
+)
