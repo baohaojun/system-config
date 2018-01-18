@@ -25,14 +25,15 @@ fi
     # vverbose='("" showcommands)' '?编译的时候打印所使用的详细编译命令' \
     # j:jobs '?使用多少个线程进行编译（默认是你的机器的 CPU 线程数）' \
     # kkeep-building='$default_keep_building' '?即使出错了，也继续编译没有出错的模块' \
-    # f:make-flags '?其他想要传给make命令的标志和参数' \
+    # f:make-flags '?其他想要传给 make 命令的标志和参数' \
+    # nwith-ninja '?使用 ninja，快速调用 out/mm.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编'
     # qquick '?不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）' \
     # @debug '?调试此脚本' \
     # @:only-module '?只编这一个模块，不要编当前目录下所有模块'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o j:kf:qvh \
-               --long debug,jobs:,keep-building,make-flags:,only-module:,quick,verbose,help,no-debug,no-keep-building,no-quick,no-verbose \
+TEMP=$( getopt -o j:kf:qvnh \
+               --long debug,jobs:,keep-building,make-flags:,only-module:,quick,verbose,with-ninja,help,no-debug,no-keep-building,no-quick,no-verbose,no-with-ninja \
                -n $(basename -- $0) -- "$@")
 debug=false
 jobs=
@@ -41,6 +42,7 @@ make_flags=
 only_module=
 quick=false
 verbose=
+with_ninja=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -89,6 +91,14 @@ while true; do
             fi
             shift
             ;;
+        -n|--with-ninja|--no-with-ninja)
+            if test "$1" = --no-with-ninja; then
+                with_ninja=false
+            else
+                with_ninja=true
+            fi
+            shift
+            ;;
         -h|--help)
             set +x
             echo -e $b0' [OPTIONS]... [TARGETS]...\n使用安卓提供的模块化编译，节省编译时间。\nmma 编译当前目录下的所有模块（或指定 TARGETS）及其依赖\nmm 编译当前目录下所有模块（或指定的 TARGETS），但不编译其依赖（如果某依赖模块尚未编译，mm 会出错）\n如果不指定 TARGETS，默认的 TARGET 是 all_modules（当前目录下所有模块）'
@@ -105,7 +115,7 @@ while true; do
             echo '即使出错了，也继续编译没有出错的模块'
             printf %06s '-f, '
             printf %-24s '--make-flags=MAKE_FLAGS'
-            echo '其他想要传给make命令的标志和参数'
+            echo '其他想要传给 make 命令的标志和参数'
             printf "%06s" " "
             printf %-24s '--only-module=ONLY_MODULE'
             echo
@@ -117,6 +127,9 @@ while true; do
             printf %06s '-v, '
             printf %-24s '--[no-]verbose'
             echo '编译的时候打印所使用的详细编译命令'
+            printf %06s '-n, '
+            printf %-24s '--[no-]with-ninja'
+            echo '使用 ninja，快速调用 out/mm-build.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编'
             exit
             shift
             ;;
@@ -132,6 +145,27 @@ done
 
 
 ## end generated code
+
+if test "$with_ninja" = true; then
+    (
+        cd $(lookup-file-dir .repo)
+        if test ! -e out/mm.log; then
+            die "你的 out/ 目录下没有 mm.log 文件，因此无法确定如何调用 ninja。请先用 mm -v 编译一次以生成这个文件"
+        fi
+
+        ninja_command=$(
+            grep -P -o '\[prebuilts/build-tools/linux-x86/bin/ninja.*\]' out/mm.log | tr -d '[]'
+                     )
+
+        if test -z "$ninja_command"; then
+            die "无法从 out/mm.log 中找到 ninja 的使用方法，无法用 mm -n 快速编译"
+        fi
+
+        echo -e "重新调用 ninja 快速编译： \n\n    $ninja_command\n\n（如有错误，请自己手动调用——参考 workflow.html#fast-mm）"
+        time $ninja_command
+    )
+    exit
+fi
 
 if test "$keep_building" = true; then
     keep_building=-k
