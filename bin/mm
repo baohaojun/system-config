@@ -162,7 +162,7 @@ if test "$with_ninja" = true; then
         fi
 
         echo -e "重新调用 ninja 快速编译： \n\n    $ninja_command\n\n（如有错误，请自己手动调用——参考 workflow.html#fast-mm）"
-        time $ninja_command
+        CCACHE_DISABLE=true time $ninja_command
     )
     exit
 fi
