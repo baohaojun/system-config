@@ -26,7 +26,7 @@ fi
     # j:jobs '?使用多少个线程进行编译（默认是你的机器的 CPU 线程数）' \
     # kkeep-building='$default_keep_building' '?即使出错了，也继续编译没有出错的模块' \
     # f:make-flags '?其他想要传给 make 命令的标志和参数' \
-    # nwith-ninja '?使用 ninja，快速调用 out/mm.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编'
+    # nwith-ninja '?使用 ninja，快速调用 out/mm.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编' \
     # qquick '?不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）' \
     # @debug '?调试此脚本' \
     # @:only-module '?只编这一个模块，不要编当前目录下所有模块'
@@ -129,7 +129,7 @@ while true; do
             echo '编译的时候打印所使用的详细编译命令'
             printf %06s '-n, '
             printf %-24s '--[no-]with-ninja'
-            echo '使用 ninja，快速调用 out/mm-build.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编'
+            echo '使用 ninja，快速调用 out/mm.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编'
             exit
             shift
             ;;
