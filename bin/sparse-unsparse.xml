@@ -75,7 +75,13 @@ if test -z "$xml"; then
 fi
 
 if test ! -e "$xml"; then
-    xml=$(find . -name '*.xml' | xargs grep -l system_ |pn 1)
+    xml=$(find . -name '*.xml' | xargs grep -l ${part%_?}_ |pn 1|grep -v WIPE_PARTITIONS)
+fi
+
+if test -z "$xml"; then
+    die "Can't find xml for $part"
+else
+    echo "xml: $xml"
 fi
 
 if test -z "$out"; then
@@ -97,10 +103,11 @@ bs=$(xmlstarlet sel -B -t -m //program -v @SECTOR_SIZE_IN_BYTES -n $xml|sort -u)
 if test "$(echo "$bs"|wc -l)" != 1; then
     die "block size not decided: $bs"
 fi
-xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -n $xml | grep ${part} |
+xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -o " " -v @label -n $xml | grep ${part} |
+    tee ~/tmp/sparse-unsparse.xml.out |
 {
-    while read img start; do
-        if [[ $img =~ ${part}_1\. ]]; then
+    while read img start label; do
+        if [[ $img =~ ${part%_?}_1\. ]]; then
             the_start=$start
         fi
         start=$((start - the_start)) || true
