@@ -2,7 +2,8 @@
 my-adb '
     set -x;
     cd /data/;
-    setsid setsid busybox nohup bash -x -c "
+    export PATH=/system/bin:$PATH
+    setsid setsid busybox nohup sh -x -c "
         for x in \$(seq 1 5); do
             if test $(cat /sys/class/power_supply/usb/online) = 1; then
                 sleep 1;
