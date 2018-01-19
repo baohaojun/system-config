@@ -63,11 +63,20 @@ if test -e /system-2/system; then
         done
         mv /sbin/adbd.bak /sbin/adbd
     )
+    if test -L /system; then
+        busybox rm -f /system
+        mkdir -p /system
+    fi
     mount /system-2/system /system -o bind
     mount /system-root/etc/selinux/ /system/etc/selinux/ -o bind
     (
         cd /
-        sed -e 's/ro.adb.secure=./ro.adb.secure=0/;s/persist.sys.usb.config=.*/persist.sys.usb.config=diag,serial_cdev,rmnet,adb/;' default.prop > default.prop.bak
+        cat default.prop |
+            if test -e /system-root/bin/update-prop.sed; then
+                sed -f /system-root/bin/update-prop.sed
+            else
+                sed -e 's/ro.adb.secure=./ro.adb.secure=0/;s/persist.sys.usb.config=.*/persist.sys.usb.config=diag,serial_cdev,rmnet,adb/;'
+            fi > default.prop.bak
         busybox rm -f default.prop
         mv default.prop.bak default.prop
         chmod 600 default.prop
