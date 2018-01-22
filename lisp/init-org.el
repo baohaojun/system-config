@@ -41,7 +41,10 @@
 (after-load 'ob-ditaa
   (unless (and (boundp 'org-ditaa-jar-path)
                (file-exists-p org-ditaa-jar-path))
-    (setq org-ditaa-jar-path (expand-file-name "~/system-config/lib/ditaa0_9.jar"))))
+    (setq org-ditaa-jar-path
+          (or (and (file-exists-p "/usr/share/ditaa/ditaa.jar")
+                   "/usr/share/ditaa/ditaa.jar")
+              (expand-file-name "~/system-config/lib/ditaa0_9.jar")))))
 
 
 
