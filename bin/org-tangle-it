@@ -20,7 +20,7 @@ emacs_script=$(
            (org-babel-tangle))
 EOF
             )
-if test -e $org_file -a $org_file -nt $sh_file; then
+if test -e $org_file -a ! $sh_file -nt $org_file; then
     emacsclient -e "$emacs_script" 1>&2 &&
         touch $sh_file && exit 0
 fi
