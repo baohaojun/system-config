@@ -275,19 +275,32 @@ public class Input {
                                     duration, duration_static);
                     return;
                 }
+            } else if (command.equals("partial-swipe")) {
+                int duration = -1;
+                inputSource = getSource(inputSource, InputDevice.SOURCE_TOUCHSCREEN);
+                switch (length) {
+                case 6:
+                    duration =  Integer.parseInt(args[index+5]);
+                case 5:
+                    sendSwipe(inputSource,
+                              Float.parseFloat(args[index+1]), Float.parseFloat(args[index+2]),
+                              Float.parseFloat(args[index+3]), Float.parseFloat(args[index+4]),
+                              duration, true);
+                    return;
+                }
             }
             else if (command.equals("swipe")) {
                 int duration = -1;
                 inputSource = getSource(inputSource, InputDevice.SOURCE_TOUCHSCREEN);
                 switch (length) {
-                    case 6:
-                        duration = Integer.parseInt(args[index+5]);
-                    case 5:
-                        sendSwipe(inputSource,
-                                Float.parseFloat(args[index+1]), Float.parseFloat(args[index+2]),
-                                Float.parseFloat(args[index+3]), Float.parseFloat(args[index+4]),
-                                duration);
-                        return;
+                case 6:
+                    duration = Integer.parseInt(args[index+5]);
+                case 5:
+                    sendSwipe(inputSource,
+                              Float.parseFloat(args[index+1]), Float.parseFloat(args[index+2]),
+                              Float.parseFloat(args[index+3]), Float.parseFloat(args[index+4]),
+                              duration, false);
+                    return;
                 }
             } else if (command.equals("press")) {
                 inputSource = getSource(inputSource, InputDevice.SOURCE_TRACKBALL);
@@ -403,12 +416,15 @@ public class Input {
         }
         injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x2, y2, 0.0f);
     }
-    private void sendSwipe(int inputSource, float x1, float y1, float x2, float y2, int duration) {
+    private void sendSwipe(int inputSource, float x1, float y1, float x2, float y2, int duration, boolean partial) {
         if (duration < 0) {
             duration = 300;
         }
         long now = SystemClock.uptimeMillis();
-        injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, default_pressure);
+        if (! partial) {
+            injectMotionEvent(inputSource, MotionEvent.ACTION_DOWN, now, x1, y1, default_pressure);
+        }
+
         long startTime = now;
         long endTime = startTime + duration;
         while (now < endTime) {
@@ -418,7 +434,10 @@ public class Input {
                     lerp(y1, y2, alpha), default_pressure);
             now = SystemClock.uptimeMillis();
         }
-        injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x2, y2, 0.0f);
+        if (! partial) {
+            injectMotionEvent(inputSource, MotionEvent.ACTION_UP, now, x2, y2, 0.0f);
+        }
+
     }
 
     /**
