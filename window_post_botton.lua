@@ -90,6 +90,7 @@ map['com.google.android.apps.plus/com.google.android.apps.plus.phone.HostStreamO
 map['com.google.android.gms<14>'] = 'weixin-chat'
 map['com.google.android.gms/com.google.android.gms.auth.login.BrowserActivity'] = 'manual-post'
 map['com.google.android.gms/com.google.android.gms.auth.uiflows.minutemaid.MinuteMaidActivity'] = 'manual-post'
+map['com.google.android.googlequicksearchbox-15'] = 'manual-post'
 map['com.google.android.gsf.login/com.google.android.gsf.login.BrowserActivity'] = 'manual-post'
 map['com.google.android.gsf.login/com.google.android.gsf.login.UsernamePasswordActivity'] = 'manual-post'
 map['com.google.android.talk/com.google.android.apps.hangouts.phone.ConversationActivity'] = 'weixin-chat'
