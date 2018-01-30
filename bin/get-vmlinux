@@ -2,53 +2,66 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  u:utc b:base o:ota-version
+# generate-getopt -P u:utc b:base o:ota-version @:find-what '?要查找什么信息？仅供 CM 在服务器上使用，默认为空，只打印网页返回的结果。也可以跟 flash 代表刷机包，ota 代表全包，base 代表 base 包'
 ## end code-generator
 ## start generated code
-
-utc=
+TEMP=$(POSIXLY_CORRECT=true getopt -o b:o:u:h \
+                      --long base:,find-what:,ota-version:,utc:,help \
+                      -n $(basename -- $0) -- "$@")
 base=
+find_what=
 ota_version=
-OPTIND=1
-while getopts "u:b:o:h" opt; do
-    case "$opt" in
+utc=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-        u) utc=$OPTARG ;;
-        b) base=$OPTARG ;;
-        o) ota_version=$OPTARG ;;
-        h)
+        -b|--base)
+            base=$2
+            shift 2
+            ;;
+        --find-what)
+            find_what=$2
+            shift 2
+            ;;
+        -o|--ota-version)
+            ota_version=$2
+            shift 2
+            ;;
+        -u|--utc)
+            utc=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
             echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--base=BASE'
             echo
-            printf %06s%s '-b ' 'base'
-            printf %-24s 'BASE'
-            echo ''
-            printf %06s%s '-o ' 'ota-version'
-            printf %-24s 'OTA_VERSION'
-            echo ''
-            printf %06s%s '-u ' 'utc'
-            printf %-24s 'UTC'
-            echo ''
+            printf "%06s" " "
+            printf %-24s '--find-what=FIND_WHAT'
+            echo '要查找什么信息？仅供 CM 在服务器上使用，默认为空，只打印网页返回的结果。也可以跟 flash 代表刷机包，ota 代表全包，base 代表 base 包'
+            printf %06s '-o, '
+            printf %-24s '--ota-version=OTA_VERSION'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--utc=UTC'
+            echo
+            exit
             shift
-            exit 0
+            ;;
+        --)
+            shift
+            break
             ;;
         *)
-            echo
-            echo
-            printf %06s%s '-b ' 'base'
-            printf %-24s 'BASE'
-            echo ''
-            printf %06s%s '-o ' 'ota-version'
-            printf %-24s 'OTA_VERSION'
-            echo ''
-            printf %06s%s '-u ' 'utc'
-            printf %-24s 'UTC'
-            echo ''
-            exit 2
+            die "internal error"
             ;;
     esac
 done
 
-shift $((OPTIND - 1))
 
 ## end generated code
 
@@ -64,4 +77,42 @@ if test -e DDRCS0.BIN; then
 fi
 
 vmlinux=$(curl -s "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&base_build=$base&utc_date=$utc&ota_version=$ota_version")
-echo "$vmlinux"
+if test -z "$find_what"; then
+    echo "$vmlinux"
+else
+    flashing_file_dir=$(
+        echo "$vmlinux" | grep 'Flashing binary' -A 1 | perl -ne 'print if s,\s*smb://172.16.2.225,/mnt,'
+                     )
+    if test ! -e "$flashing_file_dir"; then
+        # maybe it's been backed up!
+        lunch_config=$(scm get-lunch-config-from-flashing-dir $flashing_file_dir)
+        backup_dir=$(
+            echo /mnt/flash/backup/auto-backup/$lunch_config/*$(basename $flashing_file_dir)
+                  )
+        if test ! -e "$backup_dir"; then
+            die "Can't find it in backup dir!"
+        fi
+        if test "$find_what" = flash; then
+            prefix="$backup_dir/flashing-files"
+        else
+            prefix="$backup_dir/ota-zips"
+        fi
+    else
+        prefix=
+    fi
+
+    if test "$find_what" = flash; then
+        echo $prefix$flashing_file_dir
+    elif test "$find_what" = ota; then
+        echo $prefix$(
+            echo "$vmlinux"|grep 'no base'|pn 2 :|perl -npe 's,//.*?/,/mnt/,'
+             )
+    elif test "$find_what" = base; then
+        echo $prefix$(
+            echo "$vmlinux"|grep 'This is the ota base'|pn 2 :|perl -npe 's,//.*?/,/,'
+             )
+    else
+        die "Don't know this FIND_WHAT parameter: $find_what"
+    fi
+
+fi
