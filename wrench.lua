@@ -2706,6 +2706,34 @@ picture_to_momo_share = function(pics, ...)
    wait_input_target("com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity")
 end
 
+M.calc_buttons = function(buttons_def)
+   -- buttons_def is an assoc array, where keys are: cols, rows, first, last, wanted, start
+
+   local first = split(" ", buttons_def['first'])
+   local last = split(" ", buttons_def['last'])
+   local wanted = buttons_def['wanted']
+   local start = buttons_def['start']
+   local first_x = first[2]
+   local first_y = first[3]
+   local last_x = last[2]
+   local last_y = last[3]
+   local cols = buttons_def.cols
+   local rows = buttons_def.rows
+
+   local return_buttons = {}
+   for i = start, (start + wanted) do
+      local row = math.floor((i - 1) / cols + 1)
+      local col = (i - 1) % cols + 1
+
+      local x = first_x + (last_x - first_x) / (cols - 1) * (col - 1)
+      local y = first_y + (last_y - first_y) / (rows - 1) * (row - 1)
+
+      return_buttons[i - start + 1] = ("adb-tap %d %d"):format(x, y)
+      -- log("picture button: %d %s", i - start + 1, return_buttons[i - start + 1])
+   end
+   return return_buttons
+end
+
 local function picture_to_weixin_chat(pics, ...)
    if pics == nil then
       pics = last_uploaded_pics
@@ -2762,12 +2790,16 @@ local function picture_to_weixin_chat(pics, ...)
          "adb-tap 301 1008", "adb-tap 612 996", "adb-tap 1006 992",
       }
 
-      if real_height == 2160 then
+      if real_height == 2160 and not M.pic_to_weixin_chat_share_buttons then
          pic_share_buttons = {
-            "adb-tap 308 211", "adb-tap 668 223", "adb-tap 1013 217",
-            "adb-tap 306 544", "adb-tap 656 556", "adb-tap 1012 550",
-            "adb-tap 299 882", "adb-tap 663 882", "adb-tap 1036 894",
+            ['cols'] = 4, ['rows'] = 3,
+            ['first'] = "adb-tap 251 193", ['last'] = "adb-tap 1053 693",
+            ['wanted'] = 9, ['start'] = 1,
          }
+         M.pic_to_weixin_chat_share_buttons = calc_buttons(pic_share_buttons)
+      end
+      if M.pic_to_weixin_chat_share_buttons then
+         pic_share_buttons = M.pic_to_weixin_chat_share_buttons
       end
       local i_button = pic_share_buttons[i]
       log("click image button %d", i)
