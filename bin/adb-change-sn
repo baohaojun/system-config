@@ -2,10 +2,17 @@
 if test $# = 1 -a -z "$1"; then
     set -- $(my-adb cat /proc/cmdline|grep -o 'androidboot.serialno=\S*' -P|perl -npe 's/.*=//')
 fi
+if test $# = 0; then
+    set -- $ANDROID_SERIAL
+fi
 unset ANDROID_SERIAL
 my-adb -r shell 'cd /data; setsid setsid nohup sh -x -c "
        usb=$(getprop persist.sys.usb.config)
        x='${1:-222222}'
        setprop persist.usb.serialno \$x
-       echo \$x > /sys/class/android_usb/android0/iSerial
+       if test -e /sys/class/android_usb/android0/iSerial; then
+           echo \$x > /sys/class/android_usb/android0/iSerial
+       elif test -e /config/usb_gadget/g1/strings/0x409/serialnumber; then
+           echo \$x > /config/usb_gadget/g1/strings/0x409/serialnumber
+       fi
        setprop persist.sys.usb.config \$usb"'
