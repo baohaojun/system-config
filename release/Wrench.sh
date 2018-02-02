@@ -83,7 +83,6 @@ done
 
 ## end generated code
 
-
 if test "$(lsb_release -cs)" = trusty -a -e ~/src/github/smartcm/etc/Wrench.config; then
     . ~/src/github/smartcm/etc/Wrench.config
 fi
@@ -106,7 +105,9 @@ fi
 export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 
 
-export RUNNING_WRENCH=true
+if test "${WRENCH_INSTANCE:-0}" != 0; then
+    export RUNNING_WRENCH=true
+fi
 
 if test "$do_debug" = true; then
     cd ~/
