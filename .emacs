@@ -9,7 +9,7 @@
 
 (setq org-emphasis-regexp-components
       '(
-        "：，。、  \t('\"{（" ;pre
+        "？：，。、  \t('\"{（" ;pre
         "- —；：，。、 \t.!,:!?？;！'\")}（）\\" ;post
         " \t\r\n," ;border *forbidden*
         "." ;body-regexp

@@ -4,7 +4,13 @@ complete working environment with a single command. I made an
 introductory video about it on youtube (It's in Chinese, with English
 subtitles).
 
-[[https://www.youtube.com/watch?v%3Dqp2b3-Guej0][http://baohaojun.github.io/images/system-config-youtube.png]]
+#+BEGIN_HTML
+<div class="figure">
+<p><a href="https://www.youtube.com/watch?v=qp2b3-Guej0"><img src="http://baohaojun.github.io/images/system-config-youtube.png" alt="system-config-youtube.png" /></a>
+</p>
+</div>
+
+#+END_HTML
 
 During set-up, system-config will download, install, compile many open
 source projects that I use frequently.
