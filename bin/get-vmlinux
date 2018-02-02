@@ -102,7 +102,7 @@ else
     fi
 
     if test "$find_what" = flash; then
-        echo $prefix$flashing_file_dir
+        echo $prefix$flashing_file_dir|perl -npe 's,/*$,,'
     elif test "$find_what" = ota; then
         echo $prefix$(
             echo "$vmlinux"|grep 'no base'|pn 2 :|perl -npe 's,//.*?/,/mnt/,'
