@@ -7,13 +7,15 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @check-first
+# generate-getopt @check-first @:extra-apt-args @:max-retry=20
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h \
-              --long check-first,help,no-check-first \
-              -n $(basename -- $0) -- "$@")
+TEMP=$( getopt -o h \
+               --long check-first,extra-apt-args:,max-retry:,help,no-check-first \
+               -n $(basename -- $0) -- "$@")
 check_first=false
+extra_apt_args=
+max_retry=20
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -26,13 +28,27 @@ while true; do
             fi
             shift
             ;;
+        --extra-apt-args)
+            extra_apt_args=$2
+            shift 2
+            ;;
+        --max-retry)
+            max_retry=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--[no-]check-first'
+            echo
+            printf "%06s" " "
+            printf %-24s '--extra-apt-args=EXTRA_APT_ARGS'
+            echo
+            printf "%06s" " "
+            printf %-24s '--max-retry=MAX_RETRY'
             echo
             exit
             shift
@@ -111,17 +127,17 @@ if test "$http_proxy"; then
     }
 fi
 
-while ! sudo apt-get install "$@" -y $packages; do
-    retry=$((retry + 1))
-    if (( retry % 20 == 0)); then
-        if yes-or-no-p "I have tried 20 times, should we continue trying to install?"; then
+while ! sudo apt-get install $extra_apt_args -y $packages; do
+    retry=$((retry + 1)) || true
+    if (( retry % max_retry == 0)); then
+        if yes-or-no-p "I have tried $max_retry times, should we continue trying to install?"; then
             true
         else
             echo "Failed: package installation not complete. Please ask for help."
             exit 1
         fi
     fi
-    packages=$(arg1-arg2 "$packages" "$(sudo apt-get install "$@" -y $packages 2>&1)");
+    packages=$(arg1-arg2 "$packages" "$(sudo apt-get install $extra_apt_args -y $packages 2>&1)");
     echo installing: $packages
 done
 
@@ -133,6 +149,6 @@ if test "$#" = 0; then
         if test ! -e "$x"; then
             continue
         fi
-        sudo apt-get install -y "${x##*/}" || true
+        sudo apt-get install $extra_apt_args -y "${x##*/}" || true
     done
 fi
