@@ -5,36 +5,56 @@ fi
 set -e
 
 declare -A layout
-layout[lc-1]='(1 2 3 4 5 6 7 8 9 0)'
-layout[lc-2]='(q w e r t y u i o p)'
-layout[lc-3]='(a s d f g h j k l bs)'
-layout[lc-4]='(lc-uc z x c v b n m lc-sym lc-num)'
+declare -A row_click_y
 
-layout[sym-1]='(\~ \` \! \@ \# \$ \% \^ \& \*)'
-layout[sym-2]='(\( \) _ - + = \{ \} \[ \])'
-layout[sym-3]='(\| \\ \: \; \" "'\''" \< \, \>)'
-layout[sym-4]='(sym-num sym-abc \? . \  \  / £ € ¥)'
-
-bank=zhaoshang
 top_activity=$(adb-top-activity)
+
 
 if [[ $top_activity =~ ^com.ecitic.bank.mobile/ ]]; then
     bank=zhongxin
+    layout[lc-1]='(1 2 3 4 5 6 7 8 9 0)'
+    layout[lc-2]='(q w e r t y u i o p)'
+    layout[lc-3]='(a s d f g h j k l bs)'
+    layout[lc-4]='(lc-uc z x c v b n m lc-sym lc-num)'
+
+    layout[sym-1]='(\~ \` \! \@ \# \$ \% \^ \& \*)'
+    layout[sym-2]='(\( \) _ - + = \{ \} \[ \])'
+    layout[sym-3]='(\| \\ \: \; \" "'\''" \< \, \>)'
+    layout[sym-4]='(sym-num sym-abc \? . \  \  / £ € ¥)'
+
+    single_row_height=$(((2160 - 1260) / 4))
+    total_rows=4
+    current_panel=lc
+elif [[ $top_activity =~ ^cmb.pb/ ]]; then
+    bank=zhaoshang
+    current_panel=num
+    layout[lc-1]='(q w e r t y u i o p)'
+    layout[lc-2]='(a s d f g h j k l)'
+    layout[lc-3]='(lc-uc z x c v b n m lc-sym)'
+    layout[lc-4]='(lc-num lc-num space space space space space lc-sym lc-sym)'
+
+    layout[sym-1]='(\! \@ \# \$ \% \^ \& \* \( \))'
+    layout[sym-2]='("'\''" \" = _ \: \; \? \~ \| ·)'
+    layout[sym-3]='(\+ - \\ / \[ \] \{ \} sym-bs)'
+    layout[sym-4]='(sym-num , . \< \> € £ ¥ sym-abc)'
+
+    layout[num-1]='(1 2 3)'
+    layout[num-2]='(4 5 6)'
+    layout[num-3]='(7 8 9)'
+    layout[num-4]='(num-abc 0 num-bs)'
+
+    single_row_height=$(((2160 - 1620) / 4))
+    total_rows=4
 fi
 
-declare -A row_height
-row_height[1.zhaoshang]=1409
-row_height[2.zhaoshang]=1546
-row_height[3.zhaoshang]=1692
-
-row_height[1]=$((1170 * 1920 / 2070))
-row_height[2]=$((1380 * 1920 / 2070))
-row_height[3]=$((1586 * 1920 / 2070))
-row_height[4]=$((1792 * 1920 / 2070))
+for i in $(seq 1 4); do
+    row_click_y[$i]=$(((2160 - single_row_height * ((4 - i) * 2 + 1) / 2) * 1920 / 2160))
+done
 
 declare -A char_panel
 declare -A char_row
 declare -A char_col
+declare -A char_layout
 
 for l in "${!layout[@]}"; do
     eval row="${layout[$l]}"
@@ -43,6 +63,7 @@ for l in "${!layout[@]}"; do
         char_col[$char]=$((++col)) || true
         char_row[$char]=${l#*-}
         char_panel[$char]=${l%-*}
+        char_layout[$char]=$l
     done
 done
 
@@ -50,6 +71,7 @@ for char in {A..Z}; do
     char_col[$char]=${char_col[${char,,}]}
     char_row[$char]=${char_row[${char,,}]}
     char_panel[$char]=uc
+    char_layout[$char]=${char_layout[${char,,}]}
 done
 
 function click-char() {
@@ -57,12 +79,21 @@ function click-char() {
     local row=${char_row[$char]}
     local col=${char_col[$char]}
 
-    local x=$(((1080 - 0) / 20 * (col * 2 - 1)))
-    local y=$((${row_height[$row]} + 50))
+    local layout_n_items=$(
+        eval line="${layout[${char_layout[$char]}]}"
+        echo ${#line[@]}
+          )
+
+    local y=${row_click_y[$row]}
+    if test "$layout_n_items" = 10; then
+        local x=$(((1080 - 0) / 20 * (col * 2 - 1)))
+    elif test "$layout_n_items" = 9; then
+        local x=$(((1080 - 0) / 20 * (col * 2)))
+    elif test "$layout_n_items" = 3; then
+        local x=$(((1080 - 0) / 6 * (col * 2 - 1)))
+    fi
     adb-tap $x $y
 }
-
-current_panel=lc
 
 IFS=$'\n'
 
@@ -73,6 +104,8 @@ function go-back-to-lc() {
         click-char lc-uc
     elif test "$current_panel" = sym; then
         click-char sym-abc
+    elif test "$current_panel" = num; then
+        click-char num-abc
     fi
     current_panel=lc
 }
