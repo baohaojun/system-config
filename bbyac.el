@@ -167,7 +167,7 @@ In addition, extracters can also set the variables
                              bbyac--end))))
   (if (or (eq bbyac--start nil)
           (eq bbyac--end nil))
-      (error "No BIT is found, thus can not BANG.")
+      (error "No BIT is found, thus can not BANG")
     (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
           bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
     (unless (string= "" bbyac--the-bit)
@@ -212,24 +212,26 @@ See also `bbyac--symbol-bbyac-extracter'."
               bbyac--end cp))))
   (if (or (eq bbyac--start nil)
           (eq bbyac--end nil))
-      (error "No BIT is found, thus can not BANG.")
+      (error "No BIT is found, thus can not BANG")
     (setq bbyac--the-bit (buffer-substring-no-properties bbyac--start bbyac--end)
           bbyac--contains-upcase (bbyac--contains-upcase-p bbyac--the-bit))
     (when bbyac--the-bit
-      (let ((the-regexp
-             (mapconcat
-              #'bbyac--regexp-quote
-              (string-to-list bbyac--the-bit)
-              ".*?")))
-        ;; performance consideration: if syntax of bit's first char
-        ;; is word, then it must match word boundary
-        (when (string-match-p "^[[:alnum:]]" bbyac--the-bit)
-          (setq the-regexp (concat "\\b" the-regexp)))
-        ;; if bit's last char is word syntax, should extend the
-        ;; completion to word boundaries
-        (when (string-match-p "[[:alnum:]]$" bbyac--the-bit)
-          (setq the-regexp (concat the-regexp "\\w*?\\b")))
-        the-regexp))))
+      (if (string-match-p "\\.\\*\\.\\*" bbyac--the-bit)
+          (setq the-regexp bbyac--the-bit)
+        (let ((the-regexp
+               (mapconcat
+                #'bbyac--regexp-quote
+                (string-to-list bbyac--the-bit)
+                ".*?")))
+          ;; performance consideration: if syntax of bit's first char
+          ;; is word, then it must match word boundary
+          (when (string-match-p "^[[:alnum:]]" bbyac--the-bit)
+            (setq the-regexp (concat "\\b" the-regexp)))
+          ;; if bit's last char is word syntax, should extend the
+          ;; completion to word boundaries
+          (when (string-match-p "[[:alnum:]]$" bbyac--the-bit)
+            (setq the-regexp (concat the-regexp "\\w*?\\b")))
+          the-regexp)))))
 
 (defmacro bbyac--make-matcher (matcher-name matcher-doc extract-match move-along)
   "Make a new matcher function named as MATCHER-NAME.
@@ -414,7 +416,10 @@ Return the list of strings thus matched."
                     (if matched-buried
                         nil
                       (prog1
-                          (unless (and matched-any (eq tag 'buried))
+                          (when (or
+                                 (not matched-any) ; found nothing yet
+                                 (not (eq tag 'buried)) ; this buffer is important
+                                 current-prefix-arg) ; user force to do all buffers with C-u
                             (setq strlist (funcall matcher re buffer tag)))
                         (when strlist
                           (setq matched-any t))
