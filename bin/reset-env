@@ -3,12 +3,20 @@
 # this script set env for parent shell. so maybe the better name is
 # set-parent-shell-env...
 
+echo -n > ~/.reset-env.$$
 if test $# == 0; then
     echo BHJ_PWD= > ~/.reset-env.$$
-elif test "$#" = 2; then
-    echo export $1=$2 > ~/.reset-env.$$
-elif test "$#" = 1; then
-    echo "$1" > ~/.reset-env.$$
+else
+    while true; do
+        if test "$#" -ge 2; then
+            printf "export %q=%q\n" "$1" "$2" >> ~/.reset-env.$$
+            shift 2
+        elif test "$#" = 1; then
+            echo "$1" >> ~/.reset-env.$$
+        else
+            break
+        fi
+    done
 fi
 
 mv ~/.reset-env.$$ ~/.reset-env.$INTERACTIVE_BASH_PID

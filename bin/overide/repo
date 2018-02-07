@@ -176,7 +176,7 @@ else
             repo-external --do-delete &&
                 rm  .repo/project.list -f &&
                 scm -x check-manifests-project-reuse --do-clean || (
-                    mail-cms --add-delay 30 "Can't force manifest reuse projects, will force clean"&
+                    mail-cms --add-delay 300 "Can't force manifest reuse projects, will force clean"&
                     sc_tmpdir=.repo/delete.$$
                     rm -rf $sc_tmpdir # just in case last time it's not deleted.
                     mkdir -p $sc_tmpdir

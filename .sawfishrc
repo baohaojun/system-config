@@ -361,7 +361,12 @@
         ("M-Right" . '((qpdfview "C-S-RET")))
         ("C-x" . '((t do-c-x-map)))
         ("Super-&" . '((Wrench "Meta-&")))
-        ("o" . '((Wine "s")))
+        ("F11" . '((Emacs "C-C-c" "M-j" "s") (Wine mm6-drop)))
+        ("F12" . '((Emacs "C-c" "M-j" "d") (Wine mm6-heal)))
+        ("Super-*" . '((Wrench "Meta-*")))))
+
+(setq wine-global-emacs-remap-alist
+      '(("o" . '((Wine "s")))
         ("F1" . '((Wine mm6-save)))
         ("F2" . '((Wine mm6-load)))
         ("F3" . '((Wine mm6-bless)))
@@ -372,8 +377,6 @@
         ("F8" . '((Wine mm6-cure-weakness)))
         ("F9" . '((Wine mm6-stone-skin)))
         ("F10" . '((Wine mm6-regeneration)))
-        ("F11" . '((Emacs "C-C-c" "M-j" "s") (Wine mm6-drop)))
-        ("F12" . '((Emacs "C-c" "M-j" "d") (Wine mm6-heal)))
         ("ISO_Left_Tab" . '((Wine mm6-reverse-tab)))
         ("&" . '((Wine mm6-1)))
         ("[" . '((Wine mm6-2)))
@@ -382,8 +385,11 @@
         ("(" . '((Wine mm6-5)))
         ("=" . '((Wine mm6-drop)))
         ("j" . '((Wine mm6-c)))
-        ("F23" . '((Wine "F2")))
-        ("Super-*" . '((Wrench "Meta-*")))))
+        ("F23" . '((Wine "F2")))))
+
+
+(when (file-exists-p "~/.config/system-config/playing-mm6")
+  (setq global-emacs-remap-alist (append global-emacs-remap-alist wine-global-emacs-remap-alist)))
 
 (defun mm6-reverse-tab ()
   (system "xdotool-when-keyboard-clear key Tab Tab Tab&"))
