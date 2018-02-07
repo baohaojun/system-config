@@ -1,3 +1,12 @@
 #!/bin/bash
 
 EDITOR=add-change-id git commit --amend
+
+if ! git log -1 | grep -q "Change-Id:"; then
+    hint "好像上面这个命令也没有帮你加上 Change-Id，请考虑按如下方法手动添加：
+
+1. 运行 git commit --amend，然后把“fixup!”里的“！”删掉，保存退出，运行 git log -1 确认 Change-Id 应该已经加上了。
+
+2. 再运行 git commit --amend，然后在“fixup”后面把“！”给加回去，保存退出。
+
+"
