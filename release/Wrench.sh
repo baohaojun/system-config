@@ -4,13 +4,14 @@ memory=$(free | grep ^Mem: | pn 2)
 ulimit -v $((memory / 2))
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ttest kkill 1one-phone ddo-debug
+# generate-getopt ttest kkill 1one-phone ddo-debug xexclusive
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o dk1th \
-               --long do-debug,kill,one-phone,test,help,no-do-debug,no-kill,no-one-phone,no-test \
+TEMP=$( getopt -o dxk1th \
+               --long do-debug,exclusive,kill,one-phone,test,help,no-do-debug,no-exclusive,no-kill,no-one-phone,no-test \
                -n $(basename -- $0) -- "$@")
 do_debug=false
+exclusive=false
 kill=false
 one_phone=false
 test=false
@@ -23,6 +24,14 @@ while true; do
                 do_debug=false
             else
                 do_debug=true
+            fi
+            shift
+            ;;
+        -x|--exclusive|--no-exclusive)
+            if test "$1" = --no-exclusive; then
+                exclusive=false
+            else
+                exclusive=true
             fi
             shift
             ;;
@@ -58,6 +67,9 @@ while true; do
             printf %06s '-d, '
             printf %-24s '--[no-]do-debug'
             echo
+            printf %06s '-x, '
+            printf %-24s '--[no-]exclusive'
+            echo
             printf %06s '-k, '
             printf %-24s '--[no-]kill'
             echo
@@ -88,6 +100,31 @@ if test "$(lsb_release -cs)" = trusty -a -e ~/src/github/smartcm/etc/Wrench.conf
 fi
 
 export EMACS=t
+
+if test "$exclusive" = true; then
+    if test -z "$ANDROID_SERIAL"; then
+        export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
+    fi
+    if test ! -e ~/.config/system-config/Wrench-adb.map; then
+        echo -e "declare -A wrench_adb_map\nwrench_adb_map[max]=1" > ~/.config/system-config/Wrench-adb.map
+    fi
+    . ~/.config/system-config/Wrench-adb.map
+    if test -z "${wrench_adb_map[$ANDROID_SERIAL]}"; then
+        wrench_adb_map[$ANDROID_SERIAL]=${wrench_adb_map[max]}
+        ((wrench_adb_map[max]++)) || true
+        cat <<EOF > ~/.config/system-config/Wrench-adb.map.$$
+declare -A wrench_adb_map
+$(
+    for x in ${!wrench_adb_map[@]}; do
+        echo wrench_adb_map[$x]=${wrench_adb_map[$x]}
+    done
+)
+EOF
+    fi
+    rsync ~/tmp/build-wrench.onmyoji/ ~/tmp/build-wrench.$ANDROID_SERIAL -a --chmod=D0755
+    reset-env WRENCH_INSTANCE 1 PATH ~/system-config/bin/Linux:~/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
+    exit
+fi
 
 if test "$kill" = true; then
     kill-env RUNNING_WRENCH true

@@ -2362,13 +2362,13 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       if text:match("^​") and text ~= "​" then
          text = text:sub(string.len("​") + 1)
          local func = loadstring(text)
-         wrench_eval(func)
+         wrench_eval(func, text)
          return "executed string"
       end
       if text:match("^#!lua") and text ~= "#!lua" then
          text = text:sub(string.len("#!lua") + 1)
          local func = loadstring(text)
-         wrench_eval(func)
+         wrench_eval(func, text)
          return "executed string"
       end
 
@@ -3402,7 +3402,7 @@ wrench_call = function(number)
          wrench_run("ext" .. package.config:sub(1, 1) .. who .. ".lua")
       elseif where == "eval" then
          local func = loadstring(who)
-         wrench_eval(func)
+         wrench_eval(func, who)
       else
          prompt_user("Don't know how to do it: " .. where)
       end
@@ -3453,21 +3453,25 @@ if log_to_ui then
    M.log_to_ui = log_to_ui
 end
 
-wrench_eval = function(f)
-   return f()
+wrench_eval = function(f, text)
+   if not f then
+      prompt_user("Empty f: %s", text)
+   else
+      return f()
+   end
 end
 
 wrench_run = function (file, argType)
    if argType == 'string' then
       local f = loadstring(file)
-      return wrench_eval(f)
+      return wrench_eval(f, file)
    end
    local ext = file:gsub(".*%.", "")
    if ext ~= "twa" and ext ~= "小扳手" and ext ~= "lua" then
       return "Can not run this script, must be a .twa file"
    end
    local f = loadfile(file)
-   return wrench_eval(f)
+   return wrench_eval(f, file)
 end
 
 M.wrenchThumbUp = function()
@@ -3488,7 +3492,7 @@ M.wrenchThumbUp = function()
       M.ExtMods.description_to_loaded_func[x] = loadfile(M.ExtMods.description_to_filename[x])
    end
 
-   wrench_eval(M.ExtMods.description_to_loaded_func[x])
+   wrench_eval(M.ExtMods.description_to_loaded_func[x], x)
 end
 
 M.shift_click_notification = function(key, pkg, title, text)
