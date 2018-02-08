@@ -64,6 +64,7 @@ map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.AnswerProble
 map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.LoginActivity'] = 'weixin-chat'
 map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.unified.user.UnifiedUserLoginActivity'] = 'manual-post'
 map['com.ecitic.bank.mobile/com.citicbank.newmobilebank.ui.CBWebviewActivity'] = 'manual-post'
+map['com.ecitic.bank.mobile/com.ecitic.bank.mobile.ui.MainActivity'] = 'manual-post'
 map['com.eg.android.AlipayGphone/com.alipay.android.phone.businesscommon.globalsearch.ui.MainSearchActivity'] = 'manual-post'
 map['com.eg.android.AlipayGphone/com.alipay.android.phone.wallet.socialfeedsmob.commentdetail.view.FeedDetailActivity'] = 'weixin-chat'
 map['com.eg.android.AlipayGphone/com.alipay.android.widget.security.ui.NickNameSettingActivity_'] = 'manual-post'

@@ -120,9 +120,10 @@ $(
     done
 )
 EOF
+        mv ~/.config/system-config/Wrench-adb.map.$$ ~/.config/system-config/Wrench-adb.map
     fi
     rsync ~/tmp/build-wrench.onmyoji/ ~/tmp/build-wrench.$ANDROID_SERIAL -a --chmod=D0755
-    reset-env WRENCH_INSTANCE 1 PATH ~/system-config/bin/Linux:~/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
+    reset-env WRENCH_INSTANCE 1 PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
     exit
 fi
 
