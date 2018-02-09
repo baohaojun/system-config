@@ -1,5 +1,58 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt aall-dev
+## end code-generator
+## start generated code
+TEMP=$( getopt -o ah \
+               --long all-dev,help,no-all-dev \
+               -n $(basename -- $0) -- "$@")
+all_dev=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--all-dev|--no-all-dev)
+            if test "$1" = --no-all-dev; then
+                all_dev=false
+            else
+                all_dev=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--[no-]all-dev'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$all_dev" = true; then
+    for x in $(my-adb devices?|pn 1); do
+        ANDROID_SERIAL=$x adb-lcd "$@"
+    done
+    exit
+fi
+
+
 lcd_dev=$(
     my-adb "find 2>&1 /sys -name '*bright*'"|grep lcd|grep -v max_bright
        )

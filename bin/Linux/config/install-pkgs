@@ -7,13 +7,14 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @check-first @:extra-apt-args @:max-retry=20
+# generate-getopt @check-first @:extra-apt-args @:max-retry=20 @check-only
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o h \
-               --long check-first,extra-apt-args:,max-retry:,help,no-check-first \
+               --long check-first,check-only,extra-apt-args:,max-retry:,help,no-check-first,no-check-only \
                -n $(basename -- $0) -- "$@")
 check_first=false
+check_only=false
 extra_apt_args=
 max_retry=20
 eval set -- "$TEMP"
@@ -25,6 +26,14 @@ while true; do
                 check_first=false
             else
                 check_first=true
+            fi
+            shift
+            ;;
+        --check-only|--no-check-only)
+            if test "$1" = --no-check-only; then
+                check_only=false
+            else
+                check_only=true
             fi
             shift
             ;;
@@ -43,6 +52,9 @@ while true; do
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--[no-]check-first'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]check-only'
             echo
             printf "%06s" " "
             printf %-24s '--extra-apt-args=EXTRA_APT_ARGS'
@@ -108,12 +120,21 @@ if test "$check_first" = true; then
     for x in $packages; do
         if ! dpkg-query -l $x >/dev/null 2>&1; then
             need_install=true
+            if test "$check_only" = true; then
+                echo "$x 还没有安装，请检查其安装为何安装失败，并尝试手动重装"
+                continue
+            fi
             hint "你需要安装 $x 程序，可能需要输入sudo密码"
             break
         fi
     done
-    if test "$need_install" = false; then
-       exit
+
+    if test "$need_install" = true; then
+        if test "$check_only" = true; then
+            exit 1
+        fi
+    else
+        exit 0
     fi
 fi
 

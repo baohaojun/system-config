@@ -452,25 +452,17 @@ fi
     done
 ) >/dev/null 2>&1 &
 
-if ! is-jenkins &&
-        test ! -e ~/.cache/system-config/android-build-install-done &&
-        yes-or-no-p -y "Do you want to install the debian/ubuntu packages for android build (requires sudo)?"; then
+if test "$FORCE_ANDROID_BUILD_INSTALL" = true; then
+    install-pkgs --check-first android-build || true
 
-    for pkgdir in ~/system-config/bin/Linux/config/android-build; do
-        (
-            cd $pkgdir
-            for x in *; do
-                if ! dpkg-query -l $x >/dev/null 2>&1; then
-                    echo "Setup almost done, but you need install some .deb packages for android build (requires sudo)"
-                    echo "Or press Ctrl-C if you want to install later."
-                    install-pkgs android-build && touch ~/.cache/system-config/android-build-install-done
-                    exit
-                fi
-            done
-        )
-    done
+    if ! install-pkgs --check-only android-build; then
+        hint "有一些安卓编译需要的系统程序安装失败，请仔细阅读上面的终端输出，检查其失败原因（也可以运行 install-pkgs --check-first android-build 重新安装）。
 
-
-
+注意某些重要的程序没有安装的话，可能导致安卓无法正常编译"
+        if yes-or-no-p -y "有安装包安装失败，是否退出？"; then
+            exit 1
+        fi
+    fi
 fi
+
 echo Simple config OK.
