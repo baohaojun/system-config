@@ -42,8 +42,12 @@ project_repo_branch[gapps-6.0]=gapps-6
 
 project_repo_url[Wrench]=https://github.com/SmartisanTech/Wrench
 project_repo_url[Wrench-ubuntu-14.04]=https://github.com/SmartisanTech/Wrench-releases
-for p in "${github_projects[@]}"; do
-    if test -z "${project_repo_url[$p]}"; then
-        project_repo_url[$p]=https://github.com/baohaojun/$p
-    fi
-done
+function calc-github-repo-urls() {
+    for p in "${github_projects[@]}"; do
+        if test -z "${project_repo_url[$p]}"; then
+            project_repo_url[$p]=https://github.com/baohaojun/$p
+        fi
+    done
+}
+
+calc-github-repo-urls
