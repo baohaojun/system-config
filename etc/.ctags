@@ -68,3 +68,7 @@
 --langmap=sh:.sh.SH.bsh.bash.ksh.zsh
 --regex-sh=/^[ \t]*(([[:alnum:]]|-|_)+)[ \t]*\([ \t]*\)/\1/f,function/
 --regex-sh=/^[ \t]*function[ \t]+(([[:alnum:]]|_|-)+)[ \t]*\([ \t]*\)/\1/f,function/
+
+--langdef=man
+--langmap=man:.1.2.3.4.5.6.7.8
+--regex-man=/^([[:alnum:]]+)/\1/s,section/
