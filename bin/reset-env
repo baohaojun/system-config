@@ -13,6 +13,7 @@ else
             shift 2
         elif test "$#" = 1; then
             echo "$1" >> ~/.reset-env.$$
+            shift
         else
             break
         fi
