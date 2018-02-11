@@ -94,7 +94,7 @@
 
 
      if test "$is_local" = true; then
-         is_local=local
+         is_local=declare
      else
          is_local=
      fi

@@ -18,7 +18,7 @@
      is_local=
 
      if test "$1" = -l; then
-         is_local=local
+         is_local=declare
          shift
      fi
 

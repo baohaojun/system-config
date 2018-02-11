@@ -2,13 +2,13 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P t:TMOUT
+# generate-getopt -l -P t:TMOUT
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o t:h \
                       --long TMOUT:,help \
                       -n $(basename -- $0) -- "$@")
-TMOUT=
+declare TMOUT=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
