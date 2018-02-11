@@ -13,7 +13,6 @@ case $1 in
                          set -x
                          sleep 1 && bash -x ~bhj/system-config/bin/switch-touchpad &
                          sleep 1 && re-xmodmap&
-                         sleep 1 && sudo ps-killall pulseaudio&
                          . ~/system-config/bin/set-ssh-agent
                          sleep 30 && notify-real-home&
             " >~bhj/.cache/system-config/logs/bhj-hibernate-hook.sh.log 2>&1

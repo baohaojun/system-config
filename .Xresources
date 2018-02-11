@@ -20,9 +20,11 @@ xterm*xftAntialias: true
 XTerm*preeditType: Root
 XTerm*allowSendEvents: true
 
-XTerm*on2Clicks:  regex [\!-~]+
-XTerm*on3Clicks:  regex .*
-XTerm*on4Clicks:  line
+xterm*charClass: 33:48,35:48,37-38:48,43:48,45-47:48,58:48,61:48,63-64:48,126:48,13312-40917:48
+XTerm*cutNewline: false
+XTerm*on2Clicks:  word
+XTerm*on3Clicks:  line
+
 xterm*eightBitInput: false
 xterm*metaSendsEscape: true
 xterm*altIsNotMeta: true

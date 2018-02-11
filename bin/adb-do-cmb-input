@@ -22,7 +22,8 @@ if [[ $top_activity =~ ^com.ecitic.bank.mobile/ ]]; then
     layout[sym-3]='(\| \\ \: \; \" "'\''" \< \, \>)'
     layout[sym-4]='(sym-num sym-abc \? . \  \  / £ € ¥)'
 
-    single_row_height=$(((2160 - 1260) / 4))
+    single_row_height=$(((1880 - 1260) / 3))
+    lowest_row_bottom_y=2055
     total_rows=4
     current_panel=lc
 elif [[ $top_activity =~ ^cmb.pb/ ]]; then
@@ -45,10 +46,11 @@ elif [[ $top_activity =~ ^cmb.pb/ ]]; then
 
     single_row_height=$(((2160 - 1620) / 4))
     total_rows=4
+    lowest_row_bottom_y=2160
 fi
 
 for i in $(seq 1 4); do
-    row_click_y[$i]=$(((2160 - single_row_height * ((4 - i) * 2 + 1) / 2) * 1920 / 2160))
+    row_click_y[$i]=$(((lowest_row_bottom_y - single_row_height * ((4 - i) * 2 + 1) / 2) * 1920 / 2160))
 done
 
 declare -A char_panel
