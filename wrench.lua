@@ -2793,7 +2793,8 @@ local function picture_to_weixin_chat(pics, ...)
       if real_height == 2160 and not M.pic_to_weixin_chat_share_buttons then
          pic_share_buttons = {
             ['cols'] = 4, ['rows'] = 3,
-            ['first'] = "adb-tap 251 193", ['last'] = "adb-tap 1053 693",
+            ['first'] = "adb-tap 239 218", -- (1, 1)
+            ['last'] = "adb-tap 1050 742", -- (3, 4)
             ['wanted'] = 9, ['start'] = 1,
          }
          M.pic_to_weixin_chat_share_buttons = calc_buttons(pic_share_buttons)
