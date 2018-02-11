@@ -458,8 +458,9 @@ if test "$FORCE_ANDROID_BUILD_INSTALL" = true; then
     if ! install-pkgs --check-only android-build; then
         hint "有一些安卓编译需要的系统程序安装失败，请仔细阅读上面的终端输出，检查其失败原因（也可以运行 install-pkgs --check-first android-build 重新安装）。
 
-注意某些重要的程序没有安装的话，可能导致安卓无法正常编译"
-        if yes-or-no-p -y "有安装包安装失败，是否退出？"; then
+注意某些重要的程序没有安装的话，可能导致安卓无法正常编译。一般来讲，CM 整理的安卓编译所需安装包每一个都能正确安装，所以你不应该看到这句提示信息，除非你在试验新的系统版本（比如最新的 Ubuntu 等等）；或者你的系统有了严重的安装包依赖混乱问题，导致有些包怎么也装不上"
+        if yes-or-no-p -y "有安装包安装失败，是否退出（选否的话会尝试继续配置安卓开发环境，所以如果你是在试验新的 Ubuntu 系统，请输入“No”并回车）？"; then
+            hint "即将退出，本次配置 system-config 环境失败，请检查、解决安装包问题后重试。"
             exit 1
         fi
     fi

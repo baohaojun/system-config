@@ -115,7 +115,7 @@ fi
 
 export complete_packages_list="$packages"
 
-if test "$check_first" = true; then
+if test "$check_first" = true || "$check_only" = true; then
     need_install=false
     for x in $packages; do
         if ! dpkg-query -l $x >/dev/null 2>&1; then
