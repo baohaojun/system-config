@@ -1,0 +1,168 @@
+#!/bin/bash
+
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' x:exclude-regexp=smartisan
+## end code-generator
+## start generated code
+TEMP=$( getopt -o x:f:p:t:h \
+               --long exclude-regexp:,from-adb:,package-regexp:,to-adb:,help \
+               -n $(basename -- $0) -- "$@")
+exclude_regexp=${exclude_regexp:-smartisan}
+from_adb=${from_adb:-}
+package_regexp=${package_regexp:-".*"}
+to_adb=${to_adb:-}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -x|--exclude-regexp)
+            exclude_regexp=$2
+            shift 2
+            ;;
+        -f|--from-adb)
+            from_adb=$2
+            shift 2
+            ;;
+        -p|--package-regexp)
+            package_regexp=$2
+            shift 2
+            ;;
+        -t|--to-adb)
+            to_adb=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-x, '
+            printf %-24s '--exclude-regexp=EXCLUDE_REGEXP'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--from-adb=FROM_ADB'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--package-regexp=PACKAGE_REGEXP'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to-adb=TO_ADB'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+export exclude_regexp
+export from_adb
+export package_regexp
+export to_adb
+
+## end generated code
+
+from_apk=$(
+    export ANDROID_SERIAL=$from_adb
+    my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
+        )
+
+to_apk=$(
+    export ANDROID_SERIAL=$to_adb
+    my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
+      )
+
+declare -A from_packages
+declare -A to_packages
+
+get-pkg-from-apk-path() {
+    local apk_path=$1
+    echo "$apk_path" | perl -npe 's,(.*?)[-/].*,$1,'
+}
+
+for apk in $from_apk; do
+    pkg=$(get-pkg-from-apk-path $apk)
+    if [[ $pkg =~ $package_regexp ]]; then
+        echo source phone: $pkg
+        from_packages[$pkg]=$apk
+    fi
+
+done
+
+for apk in $to_apk; do
+    pkg=$(get-pkg-from-apk-path $apk)
+    if [[ $pkg =~ $package_regexp ]]; then
+        echo target phone: $pkg
+        to_packages[$pkg]=$apk
+    fi
+
+done
+
+mkdir -p ~/tmp/$b0
+cd ~/tmp/$b0
+
+declare -p from_packages to_packages > pkgs.info
+
+function do-1-pkg() {
+    set -e
+    . pkgs.info
+    p=$1
+    echo working with $p
+    exec </dev/null
+
+    if ! [[ $p =~ $package_regexp ]]; then
+        exit
+    fi
+
+    if [[ $p =~ $exclude_regexp ]]; then
+        exit
+    fi
+
+    f_path=/data/app/${from_packages[$p]}
+    if test ! -v to_packages[$p]; then
+        ANDROID_SERIAL=$from_adb adb pull $f_path $p.apk
+        (
+            flock 9
+            echo locked to install $p
+            ANDROID_SERIAL=$to_adb adb install -r $p.apk
+        ) 9< pkgs.info
+
+    fi
+
+    to_uid=$(
+        ANDROID_SERIAL=$to_adb
+        my-adb shell "cat /data/system/packages.list|grep $p" | pn 2
+          )
+
+    (
+        ANDROID_SERIAL=$from_adb my-adb sc-shell "cd /data/data; tar czf /data/data/$p.tgz $p"
+        ANDROID_SERIAL=$from_adb adb pull /data/data/$p.tgz
+        ANDROID_SERIAL=$from_adb my-adb rm -f /data/data/$p.tgz
+        ANDROID_SERIAL=$to_adb adb push $p.tgz /data/data ;
+        ANDROID_SERIAL=$to_adb my-adb sc-shell "cd /data/data; rm -rf $p; tar xzf $p.tgz; chown -R $to_uid.$to_uid $p; restorecon -D -R -v $p"
+    ) > $p.log 2>&1
+
+}
+
+export -f do-1-pkg
+echo ${!from_packages[@]} | xargs -P 3 -n 1 bash -c 'do-1-pkg $1' true
