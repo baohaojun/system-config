@@ -372,8 +372,11 @@ function adb() {
         exit
     elif test "$1" = sc-shell; then
         shift
+        if test "$#" = 0; then
+            set -- bash
+        fi
         if test "$#" = 1; then
-            command my-adb 'PATH=/data/data/com.android.shell/bin:$PATH; '"$*"
+            command my-adb 'export HOME=/data/data/com.android.shell; PATH=~/bin:$PATH; '"$*"
         else
             export SC_SHELL=true;
             command my-adb /data/data/com.android.shell/bin/sc-shell "$@"
