@@ -316,10 +316,13 @@
 
 #+name: the-ultimate-script
 #+BEGIN_SRC sh :tangle ~/system-config/bin/repo-cherry-find-all :comments link :shebang "#!/bin/bash" :noweb yes
-set -e
+  set -e
+  if is-jenkins; then
+      set -x
+  fi
 
-<<old-code>>
-<<read-only>>
+  <<old-code>>
+  <<read-only>>
 #+END_SRC
 
 #+results: the-ultimate-script

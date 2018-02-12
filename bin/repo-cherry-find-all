@@ -3,6 +3,9 @@
 # [[file:~/system-config/knuth-mode/repo-cherry-find-all.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 set -e
+if is-jenkins; then
+    set -x
+fi
 
 function die() {
     echo Error: "$@"
