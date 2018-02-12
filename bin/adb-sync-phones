@@ -14,7 +14,7 @@ b0=$(basename $0)
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' x:exclude-regexp="'smartisan|com.android|com.google'"
+# generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' x:exclude-regexp="'smartisan|com.android|com.google|^android'"
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o x:f:p:t:h \
@@ -165,4 +165,4 @@ function do-1-pkg() {
 export -f do-1-pkg
 for x in "${!from_packages[@]}"; do
     echo "$x"
-done | sort | time xargs -P 3 -n 1 bash -c 'do-1-pkg $1' true
+done | sort | time xargs -P 5 -n 1 bash -c 'do-1-pkg $1' true
