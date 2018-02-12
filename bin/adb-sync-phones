@@ -87,6 +87,9 @@ from_apk=$(
     my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
         )
 
+ANDROID_SERIAL=$from_adb adb-fix-busybox
+ANDROID_SERIAL=$to_adb adb-fix-busybox
+
 to_apk=$(
     export ANDROID_SERIAL=$to_adb
     my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
