@@ -14,13 +14,13 @@ b0=$(basename $0)
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' x:exclude-regexp=smartisan
+# generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' x:exclude-regexp="'smartisan|com.android|com.google'"
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o x:f:p:t:h \
                --long exclude-regexp:,from-adb:,package-regexp:,to-adb:,help \
                -n $(basename -- $0) -- "$@")
-exclude_regexp=${exclude_regexp:-smartisan}
+exclude_regexp=${exclude_regexp:-'smartisan|com.android|com.google'}
 from_adb=${from_adb:-}
 package_regexp=${package_regexp:-".*"}
 to_adb=${to_adb:-}
@@ -127,16 +127,14 @@ function do-1-pkg() {
     set -e
     . pkgs.info
     p=$1
-    echo working with $p
     exec </dev/null
 
-    if ! [[ $p =~ $package_regexp ]]; then
+    if [[ $p =~ $exclude_regexp ]]; then
+        echo skip $p, because it is excluded
         exit
     fi
 
-    if [[ $p =~ $exclude_regexp ]]; then
-        exit
-    fi
+    echo working with $p
 
     f_path=/data/app/${from_packages[$p]}
     if test ! -v to_packages[$p]; then
@@ -165,4 +163,6 @@ function do-1-pkg() {
 }
 
 export -f do-1-pkg
-echo ${!from_packages[@]} | xargs -P 3 -n 1 bash -c 'do-1-pkg $1' true
+for x in "${!from_packages[@]}"; do
+    echo "$x"
+done | sort | time xargs -P 3 -n 1 bash -c 'do-1-pkg $1' true
