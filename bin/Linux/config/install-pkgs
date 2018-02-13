@@ -7,14 +7,15 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @check-first @:extra-apt-args @:max-retry=20 @check-only
+# generate-getopt @check-first @:extra-apt-args @:max-retry=20 @check-only eexit-on-err
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o h \
-               --long check-first,check-only,extra-apt-args:,max-retry:,help,no-check-first,no-check-only \
+TEMP=$( getopt -o eh \
+               --long check-first,check-only,exit-on-err,extra-apt-args:,max-retry:,help,no-check-first,no-check-only,no-exit-on-err \
                -n $(basename -- $0) -- "$@")
 check_first=false
 check_only=false
+exit_on_err=false
 extra_apt_args=
 max_retry=20
 eval set -- "$TEMP"
@@ -37,6 +38,14 @@ while true; do
             fi
             shift
             ;;
+        -e|--exit-on-err|--no-exit-on-err)
+            if test "$1" = --no-exit-on-err; then
+                exit_on_err=false
+            else
+                exit_on_err=true
+            fi
+            shift
+            ;;
         --extra-apt-args)
             extra_apt_args=$2
             shift 2
@@ -55,6 +64,9 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--[no-]check-only'
+            echo
+            printf %06s '-e, '
+            printf %-24s '--[no-]exit-on-err'
             echo
             printf "%06s" " "
             printf %-24s '--extra-apt-args=EXTRA_APT_ARGS'
@@ -118,7 +130,7 @@ export complete_packages_list="$packages"
 if test "$check_first" = true || "$check_only" = true; then
     need_install=false
     for x in $packages; do
-        if ! dpkg-query -l $x >/dev/null 2>&1; then
+        if ! dpkg-query -l $x | grep -q "^.i  \Q$x\E" -P; then
             need_install=true
             if test "$check_only" = true; then
                 echo "$x 还没有安装，请检查其安装为何安装失败，并尝试手动重装"
@@ -148,28 +160,42 @@ if test "$http_proxy"; then
     }
 fi
 
-while ! sudo apt-get install $extra_apt_args -y $packages; do
-    retry=$((retry + 1)) || true
-    if (( retry % max_retry == 0)); then
-        if yes-or-no-p "I have tried $max_retry times, should we continue trying to install?"; then
-            true
+set -o pipefail
+(
+    . atexit rm -f ~/tmp/install-pkgs.$$
+    for retry in $(seq 0 $max_retry); do
+        if ! sudo apt-get install $extra_apt_args -y $packages 2>&1 | tee ~/tmp/install-pkgs.$$; then
+            if test "$exit_on_err" = true; then
+                die "Some packages failed to install, will exit"
+            fi
+            if (( retry == max_retry)); then
+                if yes-or-no-p "I have tried $max_retry times, should we continue trying to install?"; then
+                    true
+                else
+                    echo "Failed: package installation not complete. Please ask for help."
+                    exit 1
+                fi
+            fi
+            packages=$(arg1-arg2 "$packages" "$(cat ~/tmp/install-pkgs.$$)");
+            echo installing: $packages
         else
-            echo "Failed: package installation not complete. Please ask for help."
-            exit 1
+            if test "$retry" = 0; then
+                exit 0 # no need to install other stuff
+            else
+                break
+            fi
         fi
-    fi
-    packages=$(arg1-arg2 "$packages" "$(sudo apt-get install $extra_apt_args -y $packages 2>&1)");
-    echo installing: $packages
-done
-
-if test $# = 0 || yes-or-no-p -y "install missing packages?"; then
-   ~/system-config/bin/Linux/config/install-missing-pkgs "$@"
-fi
-if test "$#" = 0; then
-    for x in ${PACKAGES_DIR:-~/system-config/bin/Linux/config/pkgs/}/*:*; do
-        if test ! -e "$x"; then
-            continue
-        fi
-        sudo apt-get install $extra_apt_args -y "${x##*/}" || true
     done
-fi
+    if test $# = 0 || yes-or-no-p -y "install missing packages?"; then
+        ~/system-config/bin/Linux/config/install-missing-pkgs "$@"
+    fi
+
+    if test "$#" = 0; then
+        for x in ${PACKAGES_DIR:-~/system-config/bin/Linux/config/pkgs/}/*:*; do
+            if test ! -e "$x"; then
+                continue
+            fi
+            sudo apt-get install $extra_apt_args -y "${x##*/}" || true
+        done
+    fi
+)

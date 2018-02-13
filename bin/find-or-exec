@@ -69,7 +69,7 @@ case "$1" in
         ;;
 esac
 
-if test "$DESKTOP_SESSION" != sawfish; then
+if ! is-sawfish; then
     wmctrl -l -x|(
         while read wid desktop class user name; do
             if [[ $class =~ $to_match ]]; then

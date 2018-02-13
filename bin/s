@@ -22,7 +22,7 @@ fi
 
 double_click=false
 
-if test "$DESKTOP_SESSION" = sawfish; then
+if is-sawfish; then
     if test "$SAWFISH_CLICK" = t; then
         exec 9> ~/.cache/system-config/logs/s-sawfish-click.lock
         if ! flock -n 9; then

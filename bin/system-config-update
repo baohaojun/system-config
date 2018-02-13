@@ -58,7 +58,7 @@ function failed-to-update() {
         set 2>&1|mail-cms -i "system-config-update failed"
         exit 1
     fi
-    hint "你的system-config-update好像失败了，需要重新运行 setup-system-config.sh "
+    hint "你的 system-config-update 好像失败了，需要重新运行 setup-system-config.sh "
     if test -d ~/system-config/src/github || timeout 1 ping -c 1 172.16.0.9; then
         bash -c "$(curl -s http://172.16.0.9/setup-system-config.sh)" setup-system-config.sh
     fi
@@ -73,13 +73,13 @@ if ! is-jenkins; then
 
         hint "
 
-你的 $HOME/system-config 目录有修改，可能会导致升级失败。接下来会同步
-system-config git 代码，如果发生冲突，请查看一下是否由你的改动导致。以
+你的 $HOME/system-config 目录有修改，可能会导致升级失败。接下来会同步
+system-config git 代码，如果发生冲突，请查看一下是否由你的改动导致。以
 下是有改动的文件列表：$(echo; echo; git diff --name-status HEAD)
 
 "
 
-        hint "或者按 Ctrl-C 直接退出此次升级，先查看、解决你的改动是否需要提交、备份"
+        hint "或者按 Ctrl-C 直接退出此次升级，先查看、解决你的改动是否需要提交、备份"
 
     fi
 
@@ -93,7 +93,7 @@ system-config git 代码，如果发生冲突，请查看一下是否由你的�
             cat ~/tmp/git-pull.log 1>&2
         fi
         if test "$FAILED" = true; then
-            die "你的system-config代码使用git pull命令同步失败"
+            die "你的 system-config 代码使用 git pull 命令同步失败"
         fi
     fi
 else # jenkins
@@ -112,16 +112,7 @@ rm ~/.config/system-config/.bashrc-path -f
 . ~/.bashrc
 
 if ! is-jenkins; then
-    (
-        cd ~/system-config/bin/Linux/config/android-build
-        for x in *; do
-            if ! dpkg-query -l $x | grep -P "^ii\s+\Q$x\E" -q; then
-                hint "你需要安装 $x 程序，可能需要输入sudo密码"
-                install-pkgs android-build
-                exit
-            fi
-        done
-    )
+    install-pkgs --check-first android-build
 fi
 
 ~/system-config/bin/after-co-ln-s.sh
@@ -138,7 +129,7 @@ fi || true
 
 function setup-ext-local() {
     if test ! -d ~/external/local/.git; then
-        hint "即将从gerrit服务器获取 ~/external/local"
+        hint "即将从 gerrit 服务器获取 ~/external/local"
         rmdir ~/external/local >/dev/null 2>&1 || true
         git clone smartisan:baohaojun/ext-local ~/external/local
     else
@@ -158,8 +149,8 @@ function setup-ext-local() {
     fi
 
     if test "$(readlink -f ~/external/local)" != "$(readlink -f /home/bhj/external/local)" -a ! -d /home/bhj/external/local; then
-        hint "即将为你配置~/external/local，可能会需要输入你的sudo密码"
-        # 必须保证能在 /home/bhj 目录下找到我的库文件。
+        hint "即将为你配置 ~/external/local，可能会需要输入你的 sudo 密码"
+        # 必须保证能在 /home/bhj 目录下找到我的库文件。
         sudo ln -sf ~ /home/bhj
     fi
 }
@@ -223,21 +214,11 @@ fi
 (
     cd ~/system-config/bin/Linux/config/android-build
 
-    missing_pkgs=$(
-            for x in *; do
-                if ! dpkg-query -l $x >/dev/null 2>&1; then
-                    echo $x
-                fi
-            done
-                )
-    set -- $missing_pkgs
-    if test $# = 0; then
+    if install-pkgs --check-only $(bp); then
         exit
     fi
-    hint -t 5 "需要重新安装 $@"
-    if test $# -gt 5; then
-        hint "看上去你有很多个安卓编译的 debian 包没有装上，这可能会导致奇怪的编译错误"
-    fi
+
+    hint -t 5 "你有一些 Debian/Ubuntu 程序需要重新安装（请查看上面 install-pkgs --check-only $(bp) 命令的输出），可能需要输入 sudo 密码。"
     if ! (
             sudo apt-get update
             install-pkgs android-build
@@ -248,7 +229,7 @@ fi
 )
 
 if test -z "$(command git config --global user.name)"; then
-    hint "你没有配过全局git user.name配置，现为你配成你的邮箱前缀"
+    hint "你没有配过全局 git user.name 配置，现为你配成你的邮箱前缀"
     command git config --global user.name "$(command git config --global user.email|perl -npe 's/\@.*//')"
 fi
 
