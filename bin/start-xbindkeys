@@ -2,7 +2,7 @@
 
 . ~/system-config/.bashrc
 
-if test "$DESKTOP_SESSION" = sawfish; then
+if is-sawfish; then
     true
 else
     xbindkeys

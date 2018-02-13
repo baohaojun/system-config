@@ -75,7 +75,7 @@ fi
 exec 9> ~/.cache/system-config/logs/$(basename $0).lock2
 flock 9
 
-if test "$DESKTOP_SESSION" != sawfish; then
+if ! is-sawfish; then
     title=$(echo "$prompt" | tail -n 1)
     text=$prompt
     (
