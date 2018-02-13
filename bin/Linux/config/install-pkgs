@@ -130,7 +130,7 @@ export complete_packages_list="$packages"
 if test "$check_first" = true || "$check_only" = true; then
     need_install=false
     for x in $packages; do
-        if ! dpkg-query -l $x | grep -q "^.i \Q$x\E" -P; then
+        if ! dpkg-query -l $x | grep -q "^.i  \Q$x\E" -P; then
             need_install=true
             if test "$check_only" = true; then
                 echo "$x 还没有安装，请检查其安装为何安装失败，并尝试手动重装"
