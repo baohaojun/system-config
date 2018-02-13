@@ -38,7 +38,6 @@ libtext-glob-perl
 libxml-parser-perl
 libxml-simple-perl
 libxml2-utils
-libxml2:i386
 lua5.2
 mysql-client
 net-tools
