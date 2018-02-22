@@ -21,7 +21,6 @@
 #define EGL_EGLEXT_PROTOTYPES
 
 #include <gui/BufferQueue.h>
-#include <gui/GraphicBufferAlloc.h>
 #include <gui/Surface.h>
 
 #include "EglWindow.h"

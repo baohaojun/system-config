@@ -23,7 +23,6 @@
 #include <utils/Log.h>
 
 #include <gui/BufferQueue.h>
-#include <gui/GraphicBufferAlloc.h>
 #include <gui/Surface.h>
 #include <cutils/properties.h>
 #include <utils/misc.h>
