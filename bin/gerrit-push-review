@@ -258,7 +258,7 @@ if test -d .repo; then
         for p in "${all_changed_projects[@]}"; do
             (
                 cd "$p"
-                if yes-or-no-p -y "请确认是否要提交 $(ap) 这个仓储（如果不能马上确认，请自己再开一个终端窗口查看详细改动）"; then
+                if yes-or-no-p -y "请确认是否要提交 $(ap) 这个仓储（如果不能马上确认，请自己再开一个终端窗口查看详细改动）"; then
                    gerrit-push-review "$@"
                 fi
             ) || true
@@ -276,7 +276,7 @@ fi
 
 function confirm-with-repo() {
     if ! yes-or-no-p -y "根据 repo manifest.xml 计算出你的 remote 是 $(repo-remote) ，远程分支是 $(repo-branch)，确认？"; then
-        die "不知道如何自动帮你提交 review，请自己确定远程名、分支名，然后运行 git push 远程名 HEAD:refs/for/分支名"
+        die "不知道如何自动帮你提交 review，请自己确定远程名、分支名，然后运行 git push 远程名 HEAD:refs/for/ 分支名"
     fi
 }
 
@@ -322,7 +322,7 @@ else
 fi
 
 if test "$gpr_repo_remote" -a "$REPO_REMOTE" -a "$gpr_repo_remote" != "$REPO_REMOTE"; then
-    die "你指定了 --repo-remote=$gpr_repo_remote，但跟环境变量 REPO_REMOTE ($REPO_REMOTE) 的值不一致，不知如何处理"
+    die "你指定了 --repo-remote=$gpr_repo_remote，但跟环境变量 REPO_REMOTE ($REPO_REMOTE) 的值不一致，不知如何处理"
 elif test -z "$REPO_REMOTE"; then
     export REPO_REMOTE=$gpr_repo_remote
 fi
@@ -454,7 +454,7 @@ for try in $(seq 1 10); do
             change_url=$(grep -o '(change .* closed)' ~/.cache/system-config/logs/gerrit-review.log.$$ | pn 2)
             die "你想提交的某个改动好像已经被 close 掉了（比如被 abandon 掉了），请在此页面将其重新打开然后重试：$change_url"
         else
-            die gerrit-push-review 发生未知错误，请仔细阅读出错信息并尝试解决，如不能自己解决，请联系 CM
+            die "gerrit-push-review 发生错误，请仔细阅读上面的出错信息并尝试解决，如不能自己解决，请联系自己的 Leader 或 CM 协助"
         fi
     else
         break
