@@ -249,7 +249,7 @@ dood=(
             fi > $tmpfile
 
             if test $ORDERED != false; then
-                common-lines-in-files $histfile.$$ $tmpfile
+                common-lines-in-files $tmpfile $histfile.$$
             fi
 
             if test "$select_from_history_too" = true -a -e "$histfile"; then

@@ -98,7 +98,7 @@ else
         if test "$host" = Smartisan; then
             host='-D 9090 Smartisan'
         elif test "$host" = realhome-pc; then
-            export extra_env='REMOTEIP=Smartisan-localhost REMOTEPORT=10711 LOCALIP=realhome-pc'
+            export extra_env='REMOTEIP=Smartisan-localhost REMOTEPORT=10711 LOCALIP=realhome-pc LOCALPORT=33333'
         fi
         myscr en_US ssh -X -o RequestTTY=true $host "REMOTEUSER=$USER $extra_env REMOTEPROTOCOL=scp exec bash"
     else
