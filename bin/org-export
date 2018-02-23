@@ -168,6 +168,7 @@ for x in "$@"; do
             if test ! -e emojis; then
                 relative-link $(readlink -f ".git/../emojis") .
             fi
+            git-interactive-add
             org2html "$(basename "$x".html)"
             perl -npe "$(cat <<'EOF39a3106553cd'
 s,(<img class='emoji' src=.*?) style='width: 1.3em; vertical-align: -0.35em;',$1,g;

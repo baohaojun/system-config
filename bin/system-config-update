@@ -55,7 +55,7 @@ export SYSTEM_CONFIG_UPDATE_SLAVE=$slave
 
 function failed-to-update() {
     if is-jenkins; then
-        set 2>&1|mail-cms -i "system-config-update failed"
+        set 2>&1|mail-cms -e -i "system-config-update failed"
         exit 1
     fi
     hint "你的 system-config-update 好像失败了，需要重新运行 setup-system-config.sh "

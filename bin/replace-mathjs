@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# This script should replace mathjs from perl -ne
+# http://orgmode.org/mathjax/MathJax.js to a URL that is local to your
+# company.
+
+true

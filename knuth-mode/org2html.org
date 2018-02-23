@@ -21,9 +21,12 @@
 
 #+name: emacs-lisp-export
 #+BEGIN_SRC emacs-lisp
-  (let ((org-file "%file%")
-        (my-loaded-themes custom-enabled-themes)
-        (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%")))
+  (let* ((org-file "%file%")
+         (my-loaded-themes custom-enabled-themes)
+         (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%"))
+         (html-buffer (find-buffer-visiting html-file)))
+    (when html-buffer
+      (kill-buffer html-buffer))
     (package-initialize)
     (require 'ox-html)
     (require 'emojis)
@@ -36,48 +39,53 @@
       (when my-loaded-themes
         (dolist (theme my-loaded-themes)
           (load-theme theme))))
+    (when (setq html-buffer (find-buffer-visiting html-file))
+      (kill-buffer html-buffer))
     (with-temp-buffer
       (insert-file html-file)
       (org2html-emojify)
       (goto-char (point-min))
-      (write-file html-file)))
+      (write-file html-file)
+      (kill-buffer)))
 #+END_SRC
 
 ** 最终的版本：
 
    #+name: the-ultimate-script
    #+BEGIN_SRC sh :tangle ~/system-config/bin/org2html :comments link :shebang "#!/bin/bash" :noweb yes
-          set -e
+     set -e
 
-          git-interactive-add
+     cd "$(dirname "$1")"
+     set -- "$(basename "$1")"
 
-          if [[ $1 =~ .org$ ]]; then
-              org_file=$1
-              html_file=${1%.org}.html
-          elif [[ $1 =~ .html$ ]]; then
-              org_file="no-such-file"
-              html_file=$1
-          fi
+     if [[ $1 =~ .org$ ]]; then
+         org_file=$1
+         html_file=${1%.org}.html
+     elif [[ $1 =~ .html$ ]]; then
+         org_file="no-such-file"
+         html_file=$1
+     fi
 
-          emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
-          <<emacs-lisp-export>>
-          EOF6405e5bce1d2
-          )"
+     emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
+     <<emacs-lisp-export>>
+     EOF6405e5bce1d2
+     )"
 
-          perl -npe "$(cat <<'EOFf0ea35142ce4'
-               <<replace-emojis-with-local-files>>
-          EOFf0ea35142ce4
-          )" -i "$html_file"
+     perl -npe "$(cat <<'EOFf0ea35142ce4'
+          <<replace-emojis-with-local-files>>
+     EOFf0ea35142ce4
+     )" -i "$html_file"
 
-          if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
-              css-inline "$html_file" > "$html_file".$$
-              mv "$html_file".$$ "$html_file"
-              of "$html_file"
-          fi
+     if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
+         css-inline "$html_file" > "$html_file".$$
+         replace-mathjs "$html_file".$$
+         mv "$html_file".$$ "$html_file"
+         of "$html_file"
+     fi
 
-          # Local Variables: #
-          # eval: (read-only-mode 1) #
-          # End: #
+     # Local Variables: #
+     # eval: (read-only-mode 1) #
+     # End: #
    #+END_SRC
 
    #+results: the-ultimate-script

@@ -5,8 +5,10 @@ if test "$#" != 0; then
 else
     set -- *.org
 fi
+
+emacsclient -e "(advice-remove 'org-html--build-pre/postamble 'ad-Advice-org-html--build-pre/postamble)"
 for x in "$@"; do
     if test -e "$x"; then
-        emacsclient -e "$(org-export-bare.sh $x)"
+        org2html "$x"
     fi
 done

@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# [[file:~/src/github/private-config/knuth-mode/org2html.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
+# [[file:~/system-config/knuth-mode/org2html.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 set -e
 
-git-interactive-add
+cd "$(dirname "$1")"
+set -- "$(basename "$1")"
 
 if [[ $1 =~ .org$ ]]; then
     org_file=$1
@@ -15,9 +16,12 @@ elif [[ $1 =~ .html$ ]]; then
 fi
 
 emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
-(let ((org-file "%file%")
-      (my-loaded-themes custom-enabled-themes)
-      (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%")))
+(let* ((org-file "%file%")
+       (my-loaded-themes custom-enabled-themes)
+       (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%"))
+       (html-buffer (find-buffer-visiting html-file)))
+  (when html-buffer
+    (kill-buffer html-buffer))
   (package-initialize)
   (require 'ox-html)
   (require 'emojis)
@@ -30,11 +34,14 @@ emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
     (when my-loaded-themes
       (dolist (theme my-loaded-themes)
         (load-theme theme))))
+  (when (setq html-buffer (find-buffer-visiting html-file))
+    (kill-buffer html-buffer))
   (with-temp-buffer
     (insert-file html-file)
     (org2html-emojify)
     (goto-char (point-min))
-    (write-file html-file)))
+    (write-file html-file)
+    (kill-buffer)))
 EOF6405e5bce1d2
 )"
 
@@ -57,6 +64,7 @@ EOFf0ea35142ce4
 
 if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
     css-inline "$html_file" > "$html_file".$$
+    replace-mathjs "$html_file".$$
     mv "$html_file".$$ "$html_file"
     of "$html_file"
 fi
