@@ -1035,8 +1035,8 @@ local function search_mail(what)
 end
 
 M.adb_tap_1080x2160 = function (x, y, x1080, y1920, long_tap, random)
-   if not (real_height == 2160 and real_width == 1080 or
-           real_height == 1080 and real_width == 2160) then
+   if not (real_height >= 2160 and real_width == 1080 or
+           real_height == 1080 and real_width >= 2160) then
       x = x1080 or x
       y = y1920 or y
    end
@@ -1301,10 +1301,7 @@ M.qq_open_search = function ()
    local max_qq_try = 5
 
    search_bar_y = 251
-   if real_height == 2160 then
-      search_bar_y = 204
-   end
-   
+
    for qq_try = 1, max_qq_try do
       adb_start_activity(W.qqChatActivity2)
       adb_event"adb-tap 186 1809 sleep .1 adb-tap 186 1809" -- click first tab button, but maybe also click edit
@@ -2029,22 +2026,19 @@ end
 qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
 
-   local first_result_xy = "adb-tap 544 558"
-   if real_height == 2160 then
-      first_result_xy = "adb-tap 415 331"
-   end
-   
    log("qq find friend: %s", friend_name)
    for i = 1, 5 do
       qq_open_search()
       local top_window = wait_input_target_n(5, W.qqChatActivity2, W.qqGroupSearch)
       adb_event("adb-tap 296 1594 adb-tap 522 1842 sleep .1")
-      adb_tap_1080x2160(877, 91, 804, 167) -- click the clear search button "x"
+      adb_tap_1080x2160(857, 91, 804, 167) -- click the clear search button "x"
       adb_event"sleep .1 key scroll_lock sleep .5" -- clear the search first by input "x " and click ⓧ.
       if top_window and top_window:match(W.qqGroupSearch) then
          for click_search_res = 1, 3 do
             log"Found W.qqGroupSearch"
-            adb_event(first_result_xy .. " sleep .2")
+            adb_tap_1080x2160(415, 331, 544, 558)
+            sleep(.2)
+            
             if adb_top_window() ~= W.qqGroupSearch then
                log("Found the qq friend %s", friend_name)
                return
@@ -2081,11 +2075,9 @@ qq_find_group_friend = function(friend_name)
       log("did not get chatSetting: %s", window)
       return
    end
-   local group_list_button = "adb-tap 426 1540"
-   if real_height == 2160 then
-      group_list_button = "adb-tap 404 1167"
-   end
-   adb_event("sleep 1 " .. group_list_button) -- 点击进入群成员列表
+
+   adb_event("sleep 1 ")
+   adb_tap_1080x2160(404, 639, 426, 1540) -- 点击进入群成员列表
    local troopList = "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity"
    window = wait_top_activity(troopList)
    if window ~= troopList then
@@ -2094,7 +2086,7 @@ qq_find_group_friend = function(friend_name)
    end
 
    local troop_list_search = "adb-tap 663 252"
-   if real_height == 2160 then
+   if real_height >= 2160 then
       troop_list_search = "adb-tap 373 212"
    end
    
@@ -2108,7 +2100,7 @@ qq_find_group_friend = function(friend_name)
    end
 
    the_1st_member_click = "adb-tap 326 229"
-   if real_height == 2160 then
+   if real_height >= 2160 then
       the_1st_member_click = "adb-tap 500 204"
    end
    
@@ -2128,7 +2120,7 @@ qq_find_group_friend = function(friend_name)
       end
    end
    local send_msg_button = "adb-tap 857 1800"
-   if real_height == 2160 then
+   if real_height >= 2160 then
       send_msg_button = "adb-tap 894 1872"
    end
    adb_event("sleep " .. .5 * i .. send_msg_button)
@@ -2500,7 +2492,7 @@ wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          post_button = post_button -- empty
       elseif window_type == 'qq-chat' then
          local qq_button_sub = 200
-         if real_height == 2160 then
+         if real_height >= 2160 then
             qq_button_sub = 150
          end
          post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - qq_button_sub)
@@ -2790,7 +2782,7 @@ local function picture_to_weixin_chat(pics, ...)
          "adb-tap 301 1008", "adb-tap 612 996", "adb-tap 1006 992",
       }
 
-      if real_height == 2160 and not M.pic_to_weixin_chat_share_buttons then
+      if real_height >= 2160 and not M.pic_to_weixin_chat_share_buttons then
          pic_share_buttons = {
             ['cols'] = 4, ['rows'] = 3,
             ['first'] = "adb-tap 239 218", -- (1, 1)
@@ -2843,7 +2835,7 @@ local function picture_to_weixin_chat(pics, ...)
 end
 
 M.tap_top_right = function()
-   if real_height == 2160 then
+   if real_height >= 2160 then
       adb_event"adb-tap 1024 99"
    else
       adb_event"adb-tap 1012 151"
@@ -3059,7 +3051,7 @@ local function picture_to_qq_chat(pics, ...)
          "adb-tap 284 989", "adb-tap 621 1024", "adb-tap 988 1019"
       }
 
-      if real_height == 2160 then
+      if real_height >= 2160 then
          pic_share_buttons = {
             "adb-tap 317 218", "adb-tap 656 190", "adb-tap 1009 204",
             "adb-tap 301 516", "adb-tap 681 537", "adb-tap 1015 536",
@@ -3073,7 +3065,7 @@ local function picture_to_qq_chat(pics, ...)
    end
 
    local original_pic_button = 'adb-tap 477 1835'
-   if real_height == 2160 then
+   if real_height >= 2160 then
       original_pic_button = 'adb-tap 522 1859'
    end
 

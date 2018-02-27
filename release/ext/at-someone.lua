@@ -22,7 +22,7 @@ if top_window == "com.tencent.mm/com.tencent.mm.ui.chatting.AtSomeoneUI" then
 end
 
 if top_window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.TroopMemberListActivity" then
-   if real_height == 2160 then
+   if real_height >= 2160 then
       adb_event"adb-tap 384 211"
    else
       adb_event"adb-tap 489 288"
