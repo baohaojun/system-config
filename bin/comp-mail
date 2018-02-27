@@ -53,7 +53,7 @@ if test $# = 1; then
     if [[ "$1" =~ = ]]; then
         query=$1
     else
-        query=$(printf '(|(sAMAccountName=%s*)(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1" "$1")
+        query=$(printf '(|(sAMAccountName=*%s*)(cn=*%s*)(sn=*%s*)(mail=*%s*))' "$1" "$1" "$1" "$1")
     fi
 elif test $# = 2; then
     query='(|'
@@ -61,7 +61,7 @@ elif test $# = 2; then
     for x in $f; do
         for y in $f; do
             test $x = $y && continue;
-            query=$(printf '%s(&(%s=%s*)(%s=%s*))' "$query" $x $1 $y $2)
+            query=$(printf '%s(&(%s=*%s*)(%s=*%s*))' "$query" $x $1 $y $2)
             done
         done
     query=$query')'

@@ -147,7 +147,7 @@ EOF3f6c48da0c2d
 
   if grep . -q ~/src/github/projects/from-mobile.org; then
       cat ~/src/github/projects/from-mobile.org >> ~/src/github/projects/Captures.org
-      rm ~/src/github/projects/from-mobile.org -f
+      emacs-empty-file ~/src/github/projects/from-mobile.org
   fi
 
   check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
@@ -171,7 +171,19 @@ EOF3f6c48da0c2d
       ' -i jwords.org
 
       cat jwords.org >> done/jwords.org
-      echo -n > jwords.org
+      if test "$(wc -l done/jwords.org|pn 1)" -gt 1000; then
+          (
+              n=1
+              while true; do
+                  if test ! -e done/jwords-$n.org; then
+                      mv done/jwords.org done/jwords-$n.org
+                      break
+                  fi
+                  ((n++))
+              done
+          )
+      fi
+      emacs-empty-file jwords.org
       git-interactive-add
 
   ) || true
