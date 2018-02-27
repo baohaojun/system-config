@@ -32,6 +32,7 @@ EOF
     # s:select-dist-word='${SELECT_DIST_WORD:-not-set\!}' '?选中参数的时候，按照与这个参数的字符串距离排序' \
     # m:max-history=-1 '?如果保存历史输入，最多保存几个历史输入，默认是无限' \
     # a:always-selection '?这个参数给出的选项，永远出现在列表里' \
+    # 1hint-1-entry '?只有一个选项的时候，不用选，但要提示' \
     # p:prompt='"Please enter your selection"' '?让用户选择时给的提示' \
     # i:init '?初始输入的匹配字符串，跟它匹配才会列出' \
     # @:dot-sep-init '?用 . 把初始输入切割开' \
@@ -41,13 +42,14 @@ EOF
     # vverbose '?调试选项，打印更多输出'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o oa:i:m:O:p:s:vh \
-               --long ORDERED,always-selection:,dot-sep-init:,exclude:,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-select-from-history-too,no-use-file,no-verbose \
+TEMP=$( getopt -o oa:1i:m:O:p:s:vh \
+               --long ORDERED,always-selection:,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
                -n $(basename -- $0) -- "$@")
 ORDERED=${SELECT_HISTORY_ORDER:-false}
 always_selection=
 dot_sep_init=
 exclude=
+hint_1_entry=false
 init=
 max_history=-1
 order_name=
@@ -79,6 +81,14 @@ while true; do
         --exclude)
             exclude=$2
             shift 2
+            ;;
+        -1|--hint-1-entry|--no-hint-1-entry)
+            if test "$1" = --no-hint-1-entry; then
+                hint_1_entry=false
+            else
+                hint_1_entry=true
+            fi
+            shift
             ;;
         -i|--init)
             init=$2
@@ -145,6 +155,9 @@ while true; do
             printf "%06s" " "
             printf %-24s '--exclude=EXCLUDE'
             echo '不要选中这个参数中给定的选项'
+            printf %06s '-1, '
+            printf %-24s '--[no-]hint-1-entry'
+            echo '只有一个选项的时候，不用选，但要提示'
             printf %06s '-i, '
             printf %-24s '--init=INIT'
             echo '初始输入的匹配字符串，跟它匹配才会列出'
@@ -295,6 +308,12 @@ dood=(
 ) || true
 if test ${#dood[@]} = 0; then
     exit -1
+elif test "${#dood[@]}" = 1; then
+    if test "$hint_1_entry" = true; then
+        hint "只有一个选项： ${dood[0]}" >/dev/tty 2>&1 </dev/tty
+    fi
+    echo "${dood[0]}"
+    exit 0
 fi
 
 n=$(my-select "${dood[@]}")
