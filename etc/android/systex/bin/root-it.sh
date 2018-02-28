@@ -82,6 +82,8 @@ if test -e /system-2/system; then
             fi
         done
         mv /sbin/adbd.bak /sbin/adbd
+        busybox rm -f /sepolicy
+        mv /sepolicy.normal /sepolicy
     )
     if test -L /system; then
         busybox rm -f /system
