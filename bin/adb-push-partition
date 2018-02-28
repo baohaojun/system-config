@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts rroot eedit droot ffastboot
 ## end code-generator
@@ -50,6 +49,7 @@ done
 shift $((OPTIND - 1))
 
 ## end generated code
+set -x
 
 if test $# = 1; then
     set -- "$1" "$(basename "$1"|perl -npe 's/pt-//')"

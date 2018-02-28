@@ -1,59 +1,63 @@
 #+name: script-to-find-patches
 #+BEGIN_SRC sh
-  if test "$DEBUG" = true; then
-      set -x
-  fi
-  if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
-      exit
-  fi
-  TOP=$ANDROID_TOP;
-  log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
-  if [[ $log =~ /\.log$ ]]; then
-      echo "Error for $(ap): can not find repo path"
-      exit 1
-  fi
-  mkdir -p $(dirname $log);
-  if test -z "$to_manifest_xml"; then
-      if test ! "$remote" -a $local_from = false ; then
-          from=$(repo-remote)/$from
-      fi
-      if test ! "$remote" -a $local_to = false ; then
-          to=$(repo-remote)/$to
-      fi
-  else
-      . $to_manifest_xml.env
-      . $from_manifest_xml.env
-      pwd=$(pwd -P)
-      if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
-          from=${from_path_revision_map[$pwd]}
-      else
-          from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
-      fi
-      if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
-          to=${to_path_revision_map[$pwd]}
-      else
-          to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
-      fi
-  fi
+    if test "$DEBUG" = true; then
+        set -x
+    fi
+    if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
+        exit
+    fi
+    TOP=$ANDROID_TOP;
+    log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
+    if [[ $log =~ /\.log$ ]]; then
+        echo "Error for $(ap): can not find repo path"
+        exit 1
+    fi
+    mkdir -p $(dirname $log);
+    if test -z "$to_manifest_xml"; then
+        if test ! "$remote" -a $local_from = false ; then
+            from=$(repo-remote)/$from
+        fi
+        if test ! "$remote" -a $local_to = false ; then
+            to=$(repo-remote)/$to
+        fi
+    else
+        . $to_manifest_xml.env
+        . $from_manifest_xml.env
+        pwd=$(pwd -P)
+        if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+            from=${from_path_revision_map[$pwd]}
+        elif test "$repo_is_mirror" = true; then
+            from=${from_path_revision_map[$pwd]}
+        else
+            from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
+        fi
+        if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+            to=${to_path_revision_map[$pwd]}
+        elif test "$repo_is_mirror" = true; then
+            to=${to_path_revision_map[$pwd]}
+        else
+            to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
+        fi
+    fi
 
-  if test "$from" = / -o "$to" = /; then
-      exit
-  fi
-  echo git-change-id-ffable $from $to in $PWD
-  if ! git log -1 "$from" >/dev/null 2>&1 || ! git log -1 "$to" >/dev/null 2>&1; then
-      if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
-          echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
-          exit
-      else
-          echo need to fetch "$from" or "$to" in $PWD
-          git fetch $(repo-remote) || true
-      fi
-  fi
-  git-change-id-ffable $from $to > $log || true
-  if test $(stat -c %s $log) = 0; then
-      rm $log;
-  fi;
-  pwd
+    if test "$from" = / -o "$to" = /; then
+        exit
+    fi
+    echo git-change-id-ffable $from $to in $PWD
+    if ! git log -1 "$from" >/dev/null 2>&1 || ! git log -1 "$to" >/dev/null 2>&1; then
+        if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
+            echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
+            exit
+        else
+            echo need to fetch "$from" or "$to" in $PWD
+            git fetch $(repo-remote) || true
+        fi
+    fi
+    git-change-id-ffable $from $to > $log || true
+    if test $(stat -c %s $log) = 0; then
+        rm $log;
+    fi;
+    pwd
 
 
 #+END_SRC
@@ -102,6 +106,12 @@
           set -- \
               --xf $(select-output-line -p "From which xml" -o 'cd .repo/manifests; find . -name "*.xml"') \
               --xt $(select-output-line -p "To which xml" -o 'cd .repo/manifests; find . -name "*.xml"')
+          if (
+              cd .repo/manifests
+              test "$(git config repo.mirror)" = true
+          ); then
+              export repo_is_mirror=true
+          fi
 
           if test -d out/diff; then
               rm out/diff -rf
@@ -235,6 +245,35 @@
       fi
       declare -A to_path_map from_path_map
 
+      function handle_xml_lines() {
+          path=${line#*:}
+          remote=${path#*:}
+          revision=${remote#*:}
+          path=${path%%:*}
+          remote=${remote%%:*}
+          name=${line%%:*}
+
+          if test -z "$revision"; then
+              revision=$default_revision
+          fi
+
+          if test -z "$remote"; then
+              remote=$default_remote
+          fi
+
+          if test -z "$path"; then
+              path=$name
+          fi
+
+           if test ! -d "$path/.git" -a -d "$name.git"; then
+               path=$name.git
+           fi
+          if test ! -d "$path"; then
+              continue
+          fi
+          path=$(cd $path; pwd -P)
+      }
+
       (
           xmlstarlet sel -t -m //default -v @remote -o ' ' -v @revision -n $to_manifest_xml
           xmlstarlet sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $to_manifest_xml
@@ -242,28 +281,7 @@
           read default_remote default_revision
           declare -A to_path_remote_map to_path_revision_map
           while read line; do
-              path=${line#*:}
-              remote=${path#*:}
-              revision=${remote#*:}
-              path=${path%%:*}
-              remote=${remote%%:*}
-              name=${line%%:*}
-
-              if test -z "$revision"; then
-                  revision=$default_revision
-              fi
-
-              if test -z "$remote"; then
-                  remote=$default_remote
-              fi
-
-              if test -z "$path"; then
-                  path=$name
-              fi
-              if test ! -d "$path"; then
-                  continue
-              fi
-              path=$(cd $path; pwd -P)
+              handle_xml_lines
               to_path_revision_map[$path]=$revision
               to_path_remote_map[$path]=$remote
           done
@@ -278,28 +296,7 @@
           read default_remote default_revision
           declare -A from_path_remote_map from_path_revision_map
           while read line; do
-              path=${line#*:}
-              remote=${path#*:}
-              revision=${remote#*:}
-              path=${path%%:*}
-              remote=${remote%%:*}
-              name=${line%%:*}
-
-              if test -z "$revision"; then
-                  revision=$default_revision
-              fi
-
-              if test -z "$remote"; then
-                  remote=$default_remote
-              fi
-
-              if test -z "$path"; then
-                  path=$name
-              fi
-              if test ! -d "$path"; then
-                  continue
-              fi
-              path=$(cd $path; pwd -P)
+              handle_xml_lines
               from_path_revision_map[$path]=$revision
               from_path_remote_map[$path]=$remote
           done

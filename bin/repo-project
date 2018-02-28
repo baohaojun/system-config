@@ -4,7 +4,11 @@ if test "$REPO_INFO"; then
     exit
 elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
     (
-        cd $(lookup-file .git/..)
+        if git_dir=$(lookup-file -e .git/..); then
+            cd "$git_dir"
+        elif [[ $PWD =~ \.git($|/) ]]; then
+            cd $(echo "$PWD" | perl -npe 's,\.git($|/.*),.git,')
+        fi
         if test ! "$USING_MY_RFA"; then
             USING_MY_RFA=true my-rfa -d $(ap) repo-project
         fi

@@ -5,10 +5,12 @@ if test "$REPO_REMOTE"; then
     exit
 fi
 
-if test "$(git remote |wc -l)" = 1; then
-    git remote
+git_remotes=$(git remote)
+if test "$(echo "$git_remotes" |wc -l)" = 1; then
+    echo "$git_remotes"
     exit
 fi
+
 if test "$REPO_INFO"; then
     $REPO_INFO remote
 elif lookup-file -e .repo/.. >/dev/null 2>&1; then

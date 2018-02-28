@@ -146,8 +146,10 @@ else
                 if test -d "$x"; then
                     if test -d "$x"/.git; then
                         echo "$x"
+                    elif [[ $x =~ \.git$ ]]; then
+                        echo "$x"
                     else
-                        repo forall "$(ap "$x")" -c 'echo $REPO_PATH'
+                        repo forall "$(ap "$x"|perl -npe 's/\.git$//')" -c 'echo $REPO_PATH'
                     fi
                 elif test -f "$x"; then
                     cat "$x" | pn 1 | sort -u

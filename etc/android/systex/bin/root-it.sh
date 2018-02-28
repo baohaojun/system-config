@@ -46,10 +46,30 @@ if test -e /system-2/system; then
     (
         cd /system-2
         mv /sbin/adbd /sbin/adbd.bak
+        do_not_copy_files="
+            sepolicy
+            plat_file_contexts
+            plat_hwservice_contexts
+            plat_property_contexts
+            plat_seapp_contexts
+            plat_service_contexts
+        "
+        do_not_copy() {
+            local f
+            for f in ${do_not_copy_files}; do
+                if test "$1" = "$f"; then
+                    return 0
+                fi
+            done
+            return 1
+        }
+
         for x in *; do
             if test "$x" = system; then
                 continue
             elif test "$x" = init; then
+                continue
+            elif do_not_copy "$x"; then
                 continue
             else
                 cp "$x" / -av ||
@@ -68,7 +88,9 @@ if test -e /system-2/system; then
         mkdir -p /system
     fi
     mount /system-2/system /system -o bind
-    mount /system-root/etc/selinux/ /system/etc/selinux/ -o bind
+    if test -e /system/etc/selinux/mapping/26.0.cil; then
+        mount /system-root/etc/selinux/ /system/etc/selinux/ -o bind
+    fi
     (
         cd /
         cat default.prop |
@@ -80,6 +102,10 @@ if test -e /system-2/system; then
         busybox rm -f default.prop
         mv default.prop.bak default.prop
         chmod 600 default.prop
+
+        sed -e 's,service adbd /system/bin/adbd,service adbd /sbin/adbd,' -i init.usb.rc
+        cp init.usb.rc init.usb.rc.bak
+        chmod 666 init.usb.rc.bak
     )
 fi
 
