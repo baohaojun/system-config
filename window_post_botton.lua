@@ -108,6 +108,7 @@ map['com.jingdong.app.mall/com.jingdong.app.mall.login.LoginActivity'] = 'manual
 map['com.jingdong.app.mall/com.jingdong.app.mall.WebActivity'] = 'manual-post'
 map['com.jingdong.app.mall/com.jingdong.common.sample.jshop.JshopSearchActivity'] = 'manual-post'
 map['com.matburt.mobileorg/com.matburt.mobileorg.Gui.Capture.EditActivity'] = 'manual-post'
+map['com.MobileTicket/com.alipay.mobile.nebulacore.ui.H5Activity'] = 'manual-post'
 map['com.netease.mail/com.netease.mobimail.activity.InitAddAccountActivity'] = 'manual-post'
 map['com.netease.mail/com.netease.mobimail.activity.MailSearchActivity'] = 'manual-post'
 map['com.netease.mail/com.netease.mobimail.activity.RegisterActivity'] = 'manual-post'
