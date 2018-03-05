@@ -34,10 +34,12 @@ function fix-height() {
 
 while true; do
     cmd=$1
-    if test $cmd = adb-tap; then
+    if test "$cmd" = Wrench-tap; then
         shift
         Wrench "adb_event('adb-tap $1 $2')"
-        # echo -n "input tap $1 $2;"
+    if test $cmd = adb-tap; then
+        shift
+        echo -n "input tap $1 $2;"
     elif test $cmd = adb-tap-2; then
         shift
         echo -n "input tap $1 $2;"
@@ -68,7 +70,7 @@ while true; do
         echo "input touchscreen swipe $(fix-width $1) $(fix-height $2) $(fix-width $3) $(fix-height $4) $ms;"
         break
     elif test "$1"; then
-        Wrench "adb_event('adb-tap $1 $2')" >/dev/null 2>&1
+        echo -n "input tap $1 $2;"
     fi
     shift 2
     if test $# = 0; then
@@ -78,7 +80,12 @@ done | if test "$init" = 1080x1920; then
     cat
 else
     perl -npe 's|input tap (\d+) (\d+)|sprintf "input tap %d %d", $1 * $ENV{width} / 1080, $2 * $ENV{height} / 1920|eg'
-fi | xargs -d \\n adb-quote sh $(
-        if echo $SHELLOPTS | grep -q xtrace; then
-            echo -x
-        fi) -c
+fi | (
+    input=$(cat)
+    if test "$input"; then
+        echo "$input" | xargs -d \\n adb-quote sh $(
+                if echo $SHELLOPTS | grep -q xtrace; then
+                    echo -x
+                fi) -c
+    fi
+)

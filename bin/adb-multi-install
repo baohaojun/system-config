@@ -1,0 +1,159 @@
+#!/bin/bash
+
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -e -p adb_install llock='("" -l)' \
+    # rreplace='("" -r)' \
+    # ttest='("" -t)' \
+    # ssdcard='("" -s)' \
+    # ddowngrade='("" -d)' \
+    # ppartial='("" -p)' \
+    # ggrant='("" -g)' \
+    # j:jobs=5
+## end code-generator
+## start generated code
+TEMP=$( getopt -o dgj:lprsth \
+               --long downgrade,grant,jobs:,lock,partial,replace,sdcard,test,help,no-downgrade,no-grant,no-lock,no-partial,no-replace,no-sdcard,no-test \
+               -n $(basename -- $0) -- "$@")
+adb_install_downgrade=${adb_install_downgrade:-}
+adb_install_grant=${adb_install_grant:-}
+adb_install_jobs=${adb_install_jobs:-5}
+adb_install_lock=${adb_install_lock:-}
+adb_install_partial=${adb_install_partial:-}
+adb_install_replace=${adb_install_replace:-}
+adb_install_sdcard=${adb_install_sdcard:-}
+adb_install_test=${adb_install_test:-}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--downgrade|--no-downgrade)
+            if test "$1" = --no-downgrade; then
+                adb_install_downgrade=
+            else
+                adb_install_downgrade=-d
+            fi
+            shift
+            ;;
+        -g|--grant|--no-grant)
+            if test "$1" = --no-grant; then
+                adb_install_grant=
+            else
+                adb_install_grant=-g
+            fi
+            shift
+            ;;
+        -j|--jobs)
+            adb_install_jobs=$2
+            shift 2
+            ;;
+        -l|--lock|--no-lock)
+            if test "$1" = --no-lock; then
+                adb_install_lock=
+            else
+                adb_install_lock=-l
+            fi
+            shift
+            ;;
+        -p|--partial|--no-partial)
+            if test "$1" = --no-partial; then
+                adb_install_partial=
+            else
+                adb_install_partial=-p
+            fi
+            shift
+            ;;
+        -r|--replace|--no-replace)
+            if test "$1" = --no-replace; then
+                adb_install_replace=
+            else
+                adb_install_replace=-r
+            fi
+            shift
+            ;;
+        -s|--sdcard|--no-sdcard)
+            if test "$1" = --no-sdcard; then
+                adb_install_sdcard=
+            else
+                adb_install_sdcard=-s
+            fi
+            shift
+            ;;
+        -t|--test|--no-test)
+            if test "$1" = --no-test; then
+                adb_install_test=
+            else
+                adb_install_test=-t
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]downgrade'
+            echo
+            printf %06s '-g, '
+            printf %-24s '--[no-]grant'
+            echo
+            printf %06s '-j, '
+            printf %-24s '--jobs=JOBS'
+            echo
+            printf %06s '-l, '
+            printf %-24s '--[no-]lock'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--[no-]partial'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]replace'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]sdcard'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--[no-]test'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+export adb_install_downgrade
+export adb_install_grant
+export adb_install_jobs
+export adb_install_lock
+export adb_install_partial
+export adb_install_replace
+export adb_install_sdcard
+export adb_install_test
+
+## end generated code
+
+function install-1() {
+    if adb push $1 /data/data/com.android.shell/$(basename $1); then
+        (
+            flock 9
+            set -- $(basename $1)
+            my-adb sc-shell bash -e -c "mv /data/data/com.android.shell/$1 /data/local/tmp; pm install $adb_install_test $adb_install_downgrade $adb_install_grant $adb_install_lock $adb_install_partial $adb_install_replace $adb_install_sdcard /data/local/tmp/$1"
+        ) 9> ~/tmp/adb-multi-install.lock
+    else
+        exit 1
+    fi
+}
+
+export -f install-1
+
+xargs -P $adb_install_jobs -n 1 bash -c 'install-1 "$1"' true <<<"$@"

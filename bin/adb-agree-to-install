@@ -1,0 +1,18 @@
+#!/bin/bash
+phone_size=$(adb shell dumpsys window|grep -o 'init=\S+' -P)
+hint phone_size is $phone_size
+
+while true; do
+    sleep 1;
+    adb_top_activity=$(adb-top-activity)
+    if test "$adb_top_activity" = "警告" -o "$adb_top_activity" = "Warning"; then
+        if test "$phone_size" != init=1080x1920; then
+            Wrench "adb_event('adb-tap 804 1140')"
+        else
+            Wrench "adb_event('adb-tap 736 1086')"
+        fi
+    else
+        echo "top activity: $adb_top_activity"
+    fi
+done
+

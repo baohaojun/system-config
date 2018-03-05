@@ -20,3 +20,5 @@
         signOff = true
 [push]
         default = simple
+[ssh]
+	variant = ssh

@@ -12,16 +12,32 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
+my-echo() {
+    builtin echo "$(date): $@" | tee -a $b0.echo
+}
+
+if ! ps.pl "adb-agree-to-install"; then
+    hint "发现你没有在运行 adb-agree-to-install 进程，这样的话在 user 版本上用 adb install apk 的时候，手机会不停的提示警告 apk 来源不可信"
+    hint "这样的话这个脚本基本上是没法使用的，所以请一定要运行 adb-agree-to-install 命令。"
+fi
+
+export -f my-echo
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' x:exclude-regexp="'smartisan|com.android|com.google|^android'"
+        # generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' \
+            # @only-missing=true '?只安装还没有安装的 App，不要重装已安装的 App' \
+            # x:exclude-regexp="'smartisan|com.android|^android'" '?不要装匹配这个正则表达式的包'\
+            # ndry-run '?干跑一下摸个底，不要真跑' \
+            # @:install-only-regexp="'com.google'" '?匹配这个表达式的话，只安装，不同步数据'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o x:f:p:t:h \
-               --long exclude-regexp:,from-adb:,package-regexp:,to-adb:,help \
+               --long exclude-regexp:,from-adb:,install-only-regexp:,only-missing,package-regexp:,to-adb:,help,no-only-missing \
                -n $(basename -- $0) -- "$@")
-exclude_regexp=${exclude_regexp:-'smartisan|com.android|com.google'}
+exclude_regexp=${exclude_regexp:-'smartisan|com.android|^android'}
 from_adb=${from_adb:-}
+install_only_regexp=${install_only_regexp:-'com.google'}
+only_missing=${only_missing:-true}
 package_regexp=${package_regexp:-".*"}
 to_adb=${to_adb:-}
 eval set -- "$TEMP"
@@ -35,6 +51,18 @@ while true; do
         -f|--from-adb)
             from_adb=$2
             shift 2
+            ;;
+        --install-only-regexp)
+            install_only_regexp=$2
+            shift 2
+            ;;
+        --only-missing|--no-only-missing)
+            if test "$1" = --no-only-missing; then
+                only_missing=false
+            else
+                only_missing=true
+            fi
+            shift
             ;;
         -p|--package-regexp)
             package_regexp=$2
@@ -52,9 +80,19 @@ while true; do
             printf %06s '-x, '
             printf %-24s '--exclude-regexp=EXCLUDE_REGEXP'
             echo
+            printf "%30s" ""
+            echo '干跑一下摸个底，不要真跑'
             printf %06s '-f, '
             printf %-24s '--from-adb=FROM_ADB'
             echo
+            printf "%06s" " "
+            printf %-24s '--install-only-regexp=INSTALL_ONLY_REGEXP'
+            echo
+            printf "%30s" ""
+            echo '匹配这个表达式的话，只安装，不同步数据'
+            printf "%06s" " "
+            printf %-24s '--[no-]only-missing'
+            echo '只安装还没有安装的 App，不要重装已安装的 App'
             printf %06s '-p, '
             printf %-24s '--package-regexp=PACKAGE_REGEXP'
             echo
@@ -77,6 +115,8 @@ done
 
 export exclude_regexp
 export from_adb
+export install_only_regexp
+export only_missing
 export package_regexp
 export to_adb
 
@@ -121,6 +161,10 @@ for apk in $to_apk; do
 
 done
 
+if test "$dry_run" = true; then
+    exit 0
+fi
+
 mkdir -p ~/tmp/$b0
 cd ~/tmp/$b0
 
@@ -140,19 +184,28 @@ function do-1-pkg() {
     echo working with $p
 
     f_path=/data/app/${from_packages[$p]}
+    if test -v to_packages[$p] -a "$only_missing" = true; then
+        my-echo "$p already installed, skip" | tee -a install.skip
+        exit 0
+    fi
+
     if test ! -v to_packages[$p]; then
         ANDROID_SERIAL=$from_adb adb pull $f_path $p.apk
         (
-            flock 9
-            echo locked to install $p
-            ANDROID_SERIAL=$to_adb adb install -r $p.apk
-        ) 9< pkgs.info
+            ANDROID_SERIAL=$to_adb adb-multi-install $p.apk
+        ) || {
+            my-echo failed to install $p | tee -a install.err
+            exit 0
+        }
+    fi
 
+    if [[ $p =~ $install_only_regexp ]]; then
+        echo "$p is install only, should skip"
+        exit
     fi
 
     to_uid=$(
-        ANDROID_SERIAL=$to_adb
-        my-adb shell "cat /data/system/packages.list|grep $p" | pn 2
+        ANDROID_SERIAL=$to_adb my-adb shell "cat /data/system/packages.list|grep $p" | pn 2
           )
 
     (

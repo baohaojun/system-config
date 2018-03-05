@@ -93,7 +93,6 @@ function run_the_adb() {
             quote_the_args=false exec_the_adb ${args[@]}
         )
     else
-
         $DO_ADB_EXEC $the_adb "$@"
     fi
 }
@@ -215,7 +214,19 @@ function adb() {
     fi
 
     if test "$1" = remount; then
+
         if test "$#" = 1; then
+            sdk_version=$(
+                my-adb getprop ro.build.version.sdk
+                       )
+            build_type=$(
+                my-adb getprop ro.build.type
+                      )
+            if test "$sdk_version" -gt 25 -a "$build_type" = user; then
+                if test -e ~/src/github/smartcm/sse-helpers/.hack-verity; then
+                    . ~/src/github/smartcm/sse-helpers/.hack-verity
+                fi
+            fi
             if the-true-adb disable-verity 2>&1 |grep -q 'Now reboot your device for settings to take effect'; then
                 hint "刚 disable 了 verity，手机需要重启才可以 remount"
                 the-true-adb reboot
@@ -224,9 +235,15 @@ function adb() {
                 my-adb -r echo root check ok
             fi
             the-true-adb remount
-            command my-adb -r shell sh -c 'mount -o rw,remount /system;
-                                     mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
-                                     mount | grep /system'
+            if ! command my-adb -r shell sh -c 'mount | grep -q "/system .*rw,"'; then
+                echo "adb remount 已运行，但事实上 /system 分区并没有被 remount 成 rw，接下来将尝试直接使用 adb shell mount 命令"
+                if command my-adb -r shell sh -c 'mount -o rw,remount /system;
+                                        mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
+                                                          mount | grep -q "/system .*rw,"'; then
+                    echo "已经将 /system mount 为 rw 模式，注意在 system-config 环境下也可以运行 adb romount 重新 mount 成 read-only:D"
+                fi
+
+            fi
             exit
         elif test "$2" = /; then
             command my-adb -r shell sh -c 'mount -o rw,remount /; mount | grep rootfs'
@@ -235,7 +252,10 @@ function adb() {
     fi
 
     if test "$#" = 1 -a "$1" = 'devices?'; then
-        if the-true-adb devices | grep -v 'List of devices attached' | grep .; then
+        if (
+            the-true-adb devices
+            fastboot devices
+        ) | grep -v 'List of devices attached' | grep .; then
             exit 0
         else
             exit 1
@@ -384,6 +404,7 @@ function adb() {
         exit
     elif test $# -gt 1 -a "$1" = shell; then
         if ! is-tty-io;then
+            set -o pipefail
             if test $myname = adb -o $myname = my-adb; then
                 exec adb-quote "$@" | tr -d '\r'
             elif test $myname = adb-noquote; then

@@ -52,7 +52,7 @@ expect -timeout 150 -re "(\\$|#) $" {
     }
 }
 
-
+exit [lindex [wait] 3]
 
 # Local Variables: #
 # mode: tcl #
