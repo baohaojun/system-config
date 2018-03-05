@@ -254,6 +254,11 @@ function adb() {
         fi
     fi
 
+    if test "$#" = 2 -a "$1" = reboot -a "$2" = fastboot; then
+        adb reboot bootloader
+        exit 0
+    fi
+
     if test "$#" = 1 -a "$1" = 'devices?'; then
         if (
             the-true-adb devices
