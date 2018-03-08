@@ -78,12 +78,6 @@ shift $((OPTIND - 1))
 ## end generated code
 
 
-if test "$is_local" = true; then
-    is_local=declare
-else
-    is_local=
-fi
-
 if [[ $1 =~ ^\? ]]; then
     global_help=${1:1}
     shift
@@ -166,7 +160,7 @@ output-no-long-opts() {
 
 cat <<EOF
 TEMP=\$($(
-            if test "$is_local" -o "$posixly_correct" = true; then
+            if test "$is_local" = true -o "$posixly_correct" = true; then
                 echo POSIXLY_CORRECT=true
             fi
         ) getopt -o $(string-join '' $(for x in "${long_opts_sorted[@]}"; do x="${short_opts_map[$x]}"; if test "$x" -a "$x" != :; then echo $x; fi; done) h) \\
@@ -176,9 +170,9 @@ TEMP=\$($(
 for long in "${long_opts_sorted[@]}"; do
     var=${var_name_map[$long]}
     if test "$export_all" = false; then
-        echo $is_local ${var}=${default_val_map[$long]}
+        echo declare ${var}=${default_val_map[$long]}
     else
-        echo $is_local ${var}=\$\{$var:-${default_val_map[$long]}\}
+        echo declare ${var}=\$\{$var:-${default_val_map[$long]}\}
     fi
 done
   )
