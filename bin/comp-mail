@@ -1,23 +1,60 @@
 #!/bin/bash
 
-TEMP=$(getopt -o u:p:d --long user:pass: -n $(basename $0) -- "$@")
-user=$(get-about-me ldap-user)
+## start code-generator "^\\s *#\\s *"
+    # generate-getopt u:user='$(get-about-me ldap-user)' \
+        # p:pass="$(get-authinfo -h 127.0.0.1 -u $(get-about-me ldap-user))" \
+        # ddecode g:glob='"*"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o dg:p:u:h \
+               --long decode,glob:,pass:,user:,help,no-decode \
+               -n $(basename -- $0) -- "$@")
 decode=false
-pass=$(get-authinfo -h 127.0.0.1 -u $(get-about-me ldap-user))
-
+glob="*"
+pass=S123.abc
+user=$(get-about-me ldap-user)
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -u|--user)
-            user=$2
+
+        -d|--decode|--no-decode)
+            if test "$1" = --no-decode; then
+                decode=false
+            else
+                decode=true
+            fi
+            shift
+            ;;
+        -g|--glob)
+            glob=$2
             shift 2
             ;;
         -p|--pass)
             pass=$2
             shift 2
             ;;
-        -d)
-            decode=true
+        -u|--user)
+            user=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]decode'
+            echo
+            printf %06s '-g, '
+            printf %-24s '--glob=GLOB'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--pass=PASS'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--user=USER'
+            echo
+            exit
             shift
             ;;
         --)
@@ -29,6 +66,10 @@ while true; do
             ;;
     esac
 done
+
+
+## end generated code
+
 
 test $# = 0 && { echo "Usage: $(basename $0) match1 [match2] [[--] disp1 disp2 ... ]"; exit; }
 matches=()
@@ -53,7 +94,7 @@ if test $# = 1; then
     if [[ "$1" =~ = ]]; then
         query=$1
     else
-        query=$(printf '(|(sAMAccountName=*%s*)(cn=*%s*)(sn=*%s*)(mail=*%s*))' "$1" "$1" "$1" "$1")
+        query=$(printf "(|(sAMAccountName=${glob}%s${glob})(cn=${glob}%s${glob})(sn=${glob}%s${glob})(mail=${glob}%s${glob}))" "$1" "$1" "$1" "$1")
     fi
 elif test $# = 2; then
     query='(|'

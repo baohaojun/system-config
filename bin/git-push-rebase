@@ -189,12 +189,12 @@ else
 fi
 EOF
            )
-        git submodule foreach bash -c "$cmd" |
+        git submodule foreach bash -c "$cmd" 2>&1 |
         tee /dev/stderr |
         grep "^hello.*failed$"
     )
 then
-    echo "$output"
+    echo "$PWD failed: $output"
     exit -1
 else
     true

@@ -33,19 +33,21 @@ b0=$(basename $0)
     # t:patch-topic '?要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review' \
     # Rskip-local-review '?提交前不要做 local review（鼓励做 local review！）' \
     # @draft '?提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事' \
+    # @skip-gerrit '?不要提到 gerrit 上 review，直接往 refs/heads/ 上 push' \
     # b:to-branch '?提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支' \
     # @:repo-remote=${REPO_REMOTE} '?提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）' \
     # @do-rebase=true '?要不要先 rebase 到远程服务器分支，默认是要 rebase'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o t:r:Rb:h \
-               --long do-rebase,draft,patch-topic:,push-rev:,repo-remote:,skip-local-review,to-branch:,help,no-do-rebase,no-draft,no-skip-local-review \
+               --long do-rebase,draft,patch-topic:,push-rev:,repo-remote:,skip-gerrit,skip-local-review,to-branch:,help,no-do-rebase,no-draft,no-skip-gerrit,no-skip-local-review \
                -n $(basename -- $0) -- "$@")
 gpr_do_rebase=${gpr_do_rebase:-true}
 gpr_draft=${gpr_draft:-false}
 gpr_patch_topic=${gpr_patch_topic:-}
 gpr_push_rev=${gpr_push_rev:-HEAD}
 gpr_repo_remote=${gpr_repo_remote:-}
+gpr_skip_gerrit=${gpr_skip_gerrit:-false}
 gpr_skip_local_review=${gpr_skip_local_review:-false}
 gpr_to_branch=${gpr_to_branch:-}
 eval set -- "$TEMP"
@@ -79,6 +81,14 @@ while true; do
         --repo-remote)
             gpr_repo_remote=$2
             shift 2
+            ;;
+        --skip-gerrit|--no-skip-gerrit)
+            if test "$1" = --no-skip-gerrit; then
+                gpr_skip_gerrit=false
+            else
+                gpr_skip_gerrit=true
+            fi
+            shift
             ;;
         -R|--skip-local-review|--no-skip-local-review)
             if test "$1" = --no-skip-local-review; then
@@ -119,6 +129,9 @@ while true; do
             echo
             printf "%30s" ""
             echo '提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）'
+            printf "%06s" " "
+            printf %-24s '--[no-]skip-gerrit'
+            echo '不要提到 gerrit 上 review，直接往 refs/heads/ 上 push'
             printf %06s '-R, '
             printf %-24s '--[no-]skip-local-review'
             echo '提交前不要做 local review（鼓励做 local review！）'
@@ -144,6 +157,7 @@ export gpr_draft
 export gpr_patch_topic
 export gpr_push_rev
 export gpr_repo_remote
+export gpr_skip_gerrit
 export gpr_skip_local_review
 export gpr_to_branch
 
@@ -407,6 +421,10 @@ for try in $(seq 1 10); do
             push_where=refs/for
             if test "$gpr_draft" = true; then
                 push_where=refs/drafts
+            fi
+
+            if test "$gpr_skip_gerrit" = true; then
+                push_where=refs/heads
             fi
             if ! git push --no-thin --receive-pack="$(
                 echo -n 'git receive-pack ';
