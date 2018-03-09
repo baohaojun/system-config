@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec 1>&2
+
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt x:x=0 y:y=0 s:s=0 '?size' @:cord-orientation eedit
@@ -148,7 +150,7 @@ fi
 now=`now|perl -npe 's/:/./g'`
 mkdir -p ~/shots
 now=shots/"$now"
-my-adb pull /sdcard/screen.png ~/"$now".png
+adb pull /sdcard/screen.png ~/"$now".png
 if test "$edit" = true; then
     gimp ~/"$now".png&
 else
