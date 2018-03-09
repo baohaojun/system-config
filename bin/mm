@@ -29,17 +29,17 @@ fi
     # nwith-ninja '?使用 ninja，快速调用 out/mm.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编' \
     # qquick '?不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）' \
     # @debug '?调试此脚本' \
-    # @:only-module '?只编这一个模块，不要编当前目录下所有模块'
+    # o:only-module='()' '?只编这一个模块，不要编当前目录下所有模块。可以指定多次，以编译多个模块'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o j:kf:qvnh \
+TEMP=$( getopt -o j:kf:o:qvnh \
                --long debug,jobs:,keep-building,make-flags:,only-module:,quick,verbose,with-ninja,help,no-debug,no-keep-building,no-quick,no-verbose,no-with-ninja \
                -n $(basename -- $0) -- "$@")
 debug=false
 jobs=
 keep_building=$default_keep_building
 make_flags=
-only_module=
+only_module=()
 quick=false
 verbose=
 with_ninja=false
@@ -71,8 +71,8 @@ while true; do
             make_flags=$2
             shift 2
             ;;
-        --only-module)
-            only_module=$2
+        -o|--only-module)
+            only_module=("${only_module[@]}" "$2")
             shift 2
             ;;
         -q|--quick|--no-quick)
@@ -116,11 +116,11 @@ while true; do
             printf %06s '-f, '
             printf %-24s '--make-flags=MAKE_FLAGS'
             echo '其他想要传给 make 命令的标志和参数'
-            printf "%06s" " "
+            printf %06s '-o, '
             printf %-24s '--only-module=ONLY_MODULE'
             echo
             printf "%30s" ""
-            echo '只编这一个模块，不要编当前目录下所有模块'
+            echo '只编这一个模块，不要编当前目录下所有模块。可以指定多次，以编译多个模块'
             printf %06s '-q, '
             printf %-24s '--[no-]quick'
             echo '不要初始化安卓编译环境（. build/envsetup.sh），节省时间（system-config 下编译环境会保存在安卓顶层目录下的 buildspec.mk 文件中）'
@@ -222,23 +222,20 @@ time (
     project=$(ap)
 
     if test "$only_module"; then
-        echo exporting make for $only_module
-        make() {
-            local args=()
-            local x
 
-            for x in "$@"; do
-                if test "$x" = all_modules || [[ $x =~ ^MODULES-IN- ]]; then
-                    true # skip these
-                else
-                    args=(
-                        "${args[@]}" "$x"
-                    )
-                fi
-            done
-            echo running real make: "${args[@]}"
-            command make "${args[@]}"
-        }
+        if ! mk_file=$(lookup-file -e Android.mk); then
+            die "没有找到 Android.mk 文件"
+        fi
+        cd "$(dirname "$mk_file")"
+        mk_dir=$(ap)
+
+        cd $top_dir
+        set -o pipefail
+        extra_arg="$mk_dir:$(string-join , "${only_module[@]}")"
+        echo "在安卓 8.1 上 mm 命令不支持单编某个模块，但是 mmm 命令支持，现在自动统一帮你改成用 mmm 命令（mmm $extra_arg）"
+        mmm -j$jobs $keep_building $make_flags $verbose "$@" "$extra_arg" 2>&1|tee $BHJ_OUT_DIR/$b0.log $BHJ_OUT_DIR/build.log
+        echo "$b0 build is ok"
+        exit
     fi
 
 
@@ -255,7 +252,7 @@ time (
                 type $b0
                 type make
             fi
-            $b0 -j $jobs $verbose $keep_building $make_flags $only_module "$@" &&
+            $b0 -j$jobs $keep_building $make_flags $verbose "$@" &&
                 echo $b0 build is ok
         else
             echo Error: $b0 is not a function\!
