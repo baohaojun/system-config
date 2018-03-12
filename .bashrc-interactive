@@ -223,9 +223,9 @@ lcd()
     elif test "$1" = -; then
         cd_ok -
         return 0
-    elif test "$1" = .beagrep; then
-        cd_beagrep;
-        return 0;
+    elif [[ $1 =~ ^file:// ]]; then
+        lcd "${1#file://}"
+        return $?
     fi
 
     if test "${1:0:3}" = ' \\'; then # copied from mantis webpages, will contain space at start and end

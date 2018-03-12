@@ -47,6 +47,10 @@
  '(edebug-eval-macro-args t)
  '(emojify-emoji-styles (quote (unicode)))
  '(fci-rule-color "#444444")
+ '(fence-edit-blocks
+   (quote
+    (("^[[:blank:]]*\\(?:```\\|~~~\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\(?:[[:space:]]*?\\)$" "^[[:blank:]]*\\(?:```\\|~~~\\)\\s *?$" 1)
+     ("<!\\[CDATA\\[#!/bin/bash" "#!end-of-fence\\]\\]>" sh))))
  '(fill-column 70)
  '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(gc-cons-threshold 3500000)
@@ -115,7 +119,7 @@
     ((agenda habit-down time-up user-defined-up effort-up priority-down)
      (todo priority-down category-up effort-up)
      (tags category-up effort-up)
-     (search category-up))) t)
+     (search category-up))))
  '(org-clock-x11idle-program-name "xprintidle")
  '(org-directory "~/system-config/doc/projects")
  '(org-export-html-coding-system (quote utf-8))

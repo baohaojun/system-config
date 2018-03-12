@@ -384,3 +384,6 @@
 
 (when (file-exists-p "~/src/github/private-config/.emacs")
   (load "~/src/github/private-config/.emacs"))
+
+(require 'fence-edit)
+(global-set-key (kbd "C-c '") 'fence-edit-code-at-point)

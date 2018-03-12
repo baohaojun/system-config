@@ -121,6 +121,10 @@ sawfish_script=$(cat <<EOF
    (bhj-prompt $read_file nil))
 EOF
 )
-sawfish-client -e "$sawfish_script" | perl -npe 's/^"|"$//g' | tr -d '\r\n'|perl -npe 's,\\([0-7]{3}),chr(oct($1)),eg'
+x=$(sawfish-client -e "$sawfish_script" | perl -npe 's/^"|"$//g' | tr -d '\r\n'|perl -npe 's,\\([0-7]{3}),chr(oct($1)),eg')
+if test "$x" = $'\003'; then
+    exit 1
+fi
+echo "$x"
 
 rm $tmpf

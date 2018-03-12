@@ -43,6 +43,9 @@
 ;;                   "\\|")
 ;;        "\\)"
 ;;        thing-at-point-url-path-regexp))
+(eval-after-load 'ob-tangle
+  '(progn
+     (add-hook 'org-babel-pre-tangle-hook (lambda () (setenv "SC_ORG_FILEPATH" (buffer-file-name))))))
 
 (eval-after-load 'org
   '(progn
