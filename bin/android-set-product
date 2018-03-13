@@ -26,7 +26,7 @@ echo "export ANDROID_BUILD_TOP := $PWD" >>buildspec.mk.$$
 echo "export TARGET_PRODUCT" >>buildspec.mk.$$
 echo 'export KERNEL_HELPER_BHJ:=yes' >> buildspec.mk.$$
 
-if diff buildspec.mk.$$ buildspec.mk -q; then
+if diff buildspec.mk.$$ buildspec.mk -q >/dev/null 2>&1; then
     rm buildspec.mk.$$
 else
     mv buildspec.mk.$$ buildspec.mk
