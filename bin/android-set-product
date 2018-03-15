@@ -72,18 +72,4 @@ else
     mv buildspec.mk.$$ buildspec.mk
 fi
 
-for x in $(echo "
-    ANDROID_HOST_OUT
-    ANDROID_PRODUCT_OUT
-    ANDROID_BUILD_TOP
-"
-); do
-    printf "export %s=%s\n" $x "$(eval echo -n \$$x)"
-done | grep -v '=$' > .buildenv.sh.$$
-
-cat <<EOF >> .buildenv.sh.$$
-export PATH=$PATH
-EOF
-
-mv .buildenv.sh.$$ $OUT_DIR/.buildenv.sh
 reset-env

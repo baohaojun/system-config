@@ -214,6 +214,9 @@ time (
         BHJ_OUT_DIR=${OUT%target/*}
     else
         BHJ_OUT_DIR=$(lookup-file .repo/../)/out
+        if test -e "$top_dir"/.buildspec.sc; then
+            . "$top_dir"/.buildspec.sc;
+        fi
     fi
     cd $oldpwd
 
@@ -243,9 +246,6 @@ time (
     (
         echo '# -*- mode: compilation -*-'
         echo "make: Entering directory \`$(lookup-file .repo/..)'"
-        if test -e $BHJ_OUT_DIR/.buildenv.sh; then
-            . $BHJ_OUT_DIR/.buildenv.sh
-        fi
         . ~/system-config/etc/.fix-java-version
         if test "$(type -t $b0)" = function; then
             if test "$debug" = true; then
