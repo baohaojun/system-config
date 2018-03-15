@@ -1,0 +1,7 @@
+#!/bin/bash
+(
+    if mk=$(lookup-file -e buildspec.mk); then
+        cat "$mk"
+    fi
+    echo -e 'ALL:\n\t@echo ${'$1'}\n'
+) | make -f - ALL

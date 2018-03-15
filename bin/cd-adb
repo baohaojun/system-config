@@ -18,3 +18,4 @@ elif ! cd $dir; then
     builtin cd "/mnt/flash/backup/auto-backup/$lunch_config"
     builtin cd *$(bp $dir)/flashing-files/$(echo $dir|perl -npe 's,^.*?/flash,/mnt/flash,')
 fi
+reset-env cdr

@@ -145,8 +145,8 @@ my-lunch () {
         else
             buildspec=$(lookup-file -e buildspec.mk || true)
             if test -e "$buildspec"; then
-                local product=$(cat "$buildspec" | perl -ne 'print $1 if m,^\QTARGET_PRODUCT?=\E(.*),')
-                local variant=$(cat "$buildspec" | perl -ne 'print $1 if m,^\QTARGET_BUILD_VARIANT?=\E(.*),')
+                local product=$(android-var-from-spec TARGET_PRODUCT)$(android-var-from-spec TARGET_PRODUCT_SMARTISAN_EXTRA_ENV)
+                local variant=$(android-var-from-spec TARGET_BUILD_VARIANT)
             fi
             if test "$product" -a "$variant"; then
                 lunch "$product"-"$variant"
@@ -427,8 +427,8 @@ cd_record()
 
     local repo_dir=$(lookup-file -e .repo || true)
     if test "$repo_dir" -a -e "$repo_dir/../buildspec.mk"; then
-        local product=$(cat "$repo_dir/../buildspec.mk"|perl -ne 'print if s/TARGET_PRODUCT.*=//')
-        local variant=$(cat "$repo_dir/../buildspec.mk"|perl -ne 'print if s/TARGET_BUILD_VARIANT.*=//')
+        local product=$(android-var-from-spec TARGET_PRODUCT)$(android-var-from-spec TARGET_PRODUCT_SMARTISAN_EXTRA_ENV)
+        local variant=$(android-var-from-spec TARGET_BUILD_VARIANT)
         if test "$TARGET_PRODUCT" -a "$TARGET_BUILD_VARIANT" && test "$product-$variant" != "$TARGET_PRODUCT-$TARGET_BUILD_VARIANT"; then
             export PROMPT_ANDROID_INFO="[$TARGET_PRODUCT-$TARGET_BUILD_VARIANT?] "
         else

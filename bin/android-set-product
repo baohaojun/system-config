@@ -5,6 +5,29 @@ if test "$SC_DEBUG" = true; then
     set -x
 fi
 cd $(lookup-file .repo/..)
+
+declare -A before_env
+declare -A after_env
+
+function parse-env() {
+    local declare
+    local x
+    local env_val
+    local env
+    local val
+
+    while read declare x env_val; do
+        if test "$declare" != declare -o "$x" != -x; then
+            continue
+        fi
+        env=${env_val%%=*}
+        eval val=\$$env
+        eval "$1[$env]=$(printf %q "$val")"
+    done <<<"$(declare -xp)"
+}
+
+parse-env before_env
+
 if test $# != 0; then
     if test "$1" != "${TARGET_PRODUCT}"-"${TARGET_BUILD_VARIANT}"; then
         . build/envsetup.sh
@@ -18,13 +41,30 @@ else
     config=$product-$variant
     lunch "$config"
 fi
+
+parse-env after_env
+
+declare -xp > .buildspec.sc
+
 ccache -M 100G
 
 . ~/system-config/bin/.android-set-outdir
-for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $OUT_DIR $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do xval=`eval echo \\$$x`; if test "$xval" != ""; then echo $x\?=`eval echo \\$$x`; fi; done >buildspec.mk.$$
-echo "export ANDROID_BUILD_TOP := $PWD" >>buildspec.mk.$$
-echo "export TARGET_PRODUCT" >>buildspec.mk.$$
-echo 'export KERNEL_HELPER_BHJ:=yes' >> buildspec.mk.$$
+
+(
+    env_vars=(
+        TARGET_BUILD_APPS TARGET_BUILD_TYPE OUT_DIR
+        TARGET_BUILD_VARIANT TARGET_PRODUCT TARGET_SIMULATOR
+        TARGET_PRODUCT_SMARTISAN_EXTRA_ENV
+        ANDROID_BUILD_TOP
+    )
+    for x in "${env_vars[@]}"; do
+        if test "${after_env[$x]}"; then
+            echo "export $x := ${after_env[$x]}"
+        fi
+    done
+    echo 'export KERNEL_HELPER_BHJ:=yes' >> buildspec.mk.$$
+) > buildspec.mk.$$
+
 
 if diff buildspec.mk.$$ buildspec.mk -q >/dev/null 2>&1; then
     rm buildspec.mk.$$
