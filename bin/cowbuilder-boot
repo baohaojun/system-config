@@ -48,7 +48,7 @@ for x in 1 2 3; do
     if test ! -d /home/$USER/.profile; then
         $(
             if test $home_dev != $root_dev; then
-                echo mount $(readlink -f $(get-mount-1 /home)) /home
+                echo mount $(get-mount-1 /home) /home
             fi
         )
         if test "\$x" != 1; then
@@ -74,6 +74,8 @@ if test "\${x,,}" = yes -o -z "\$x"; then
     exec /usr/sbin/chroot $cowchroot /bin/bash -c '
         mount / / -o bind
         mount udev /dev -t devtmpfs
+        mount devpts /dev/pts -t devpts
+        mv /sbin/initctl.bak /sbin/initctl
         if test -e "/sbin/init"; then
             exec /sbin/init
         elif test -e "/lib/systemd/systemd"; then
