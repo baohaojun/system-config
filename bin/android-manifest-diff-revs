@@ -23,7 +23,7 @@ sub debug(@) {
 my %path_rev1;
 my %path_rev2;
 
-open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
+open(my $F1, "-|", "repo-xml-sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
 
 while (<$F1>) {
   next unless m/^(.*?)\s*=\s*(.*?)\s*=\s*(.*)\s*$/;
@@ -35,7 +35,7 @@ while (<$F1>) {
 }
 close $F1;
 
-open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
+open(my $F2, "-|", "repo-xml-sel -t -m //project -v \@path -o '=' -v \@name -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
 while (<$F2>) {
     next unless m/^(.*?)\s*=\s*(.*?)\s*=\s*(.*)\s*$/;
     my $path = ($1 or $2);
@@ -52,10 +52,10 @@ for my $path1 (sort {"$a" cmp "$b"} keys %path_rev1) {
     next;
   }
   if (exists($path_rev2{$path1})) {
-      chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@revision $f1));
-      chomp(my $up1 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@upstream $f1));
-      chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@revision $f2));
-      chomp(my $up2 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@upstream $f2));
+      chomp(my $rev1 = qx(repo-xml-sel -t -m //project -i "\@path='$path1'" -v \@revision $f1));
+      chomp(my $up1 = qx(repo-xml-sel -t -m //project -i "\@path='$path1'" -v \@upstream $f1));
+      chomp(my $rev2 = qx(repo-xml-sel -t -m //project -i "\@path='$path1'" -v \@revision $f2));
+      chomp(my $up2 = qx(repo-xml-sel -t -m //project -i "\@path='$path1'" -v \@upstream $f2));
     if ($rev1) {
       $rev1 = "revision=\"$rev1\"";
     }
@@ -65,7 +65,7 @@ for my $path1 (sort {"$a" cmp "$b"} keys %path_rev1) {
     }
       printf('(cd %s; export REV1=%s; export REV2=%s; export UP1=%s; export UP2=%s; %s)' . "\n", $path1, $path_rev1{$path1}, $path_rev2{$path1}, $up1, $up2, $program_to_run) if $path1;
   } else {
-    chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$path1'" -v \@revision $f1));
+    chomp(my $rev1 = qx(repo-xml-sel -t -m //project -i "\@path='$path1'" -v \@revision $f1));
     if ($rev1) {
       $rev1 = " revision=\"$rev1\"";
     }
@@ -75,7 +75,7 @@ for my $path1 (sort {"$a" cmp "$b"} keys %path_rev1) {
 }
 
 for my $path2 (sort {"$a" cmp "$b"} keys %path_rev2) {
-  chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$path2'" -v \@revision $f2));
+  chomp(my $rev2 = qx(repo-xml-sel -t -m //project -i "\@path='$path2'" -v \@revision $f2));
   if ($rev2) {
     $rev2 = "revision=\"$rev2\"";
   }

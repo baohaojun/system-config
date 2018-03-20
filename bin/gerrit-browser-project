@@ -21,7 +21,7 @@ done
 
 host=$(gerrit-review-host $( repo-host 2>/dev/null ))
 if test -z "$host"; then
-    host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
+    host=$(repo-xml-sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
 fi
 
 project=$(basename $(repo-project))

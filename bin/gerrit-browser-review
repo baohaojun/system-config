@@ -10,7 +10,7 @@ test $# = 0 && set -- $(git log -1 HEAD|grep 'change-id:' -i |pn 2)
             id=$(echo "$query_out" | grep -P "^\s*number:" | pn 2 | head -n 1)
             host=$(gerrit-review-host $( repo-host 2>/dev/null ))
             if test -z "$host"; then
-                host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
+                host=$(repo-xml-sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
             fi
 
             url=$(printf %s/%s $host $id)

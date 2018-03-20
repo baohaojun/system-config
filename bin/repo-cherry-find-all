@@ -210,8 +210,8 @@ EOF
     }
 
     (
-        xmlstarlet sel -t -m //default -v @remote -o ' ' -v @revision -n $to_manifest_xml
-        xmlstarlet sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $to_manifest_xml
+        repo-xml-sel -t -m //default -v @remote -o ' ' -v @revision -n $to_manifest_xml
+        repo-xml-sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $to_manifest_xml
     ) | (
         read default_remote default_revision
         declare -A to_path_remote_map to_path_revision_map
@@ -225,8 +225,8 @@ EOF
     )
 
     (
-        xmlstarlet sel -t -m //default -v @remote -o ' ' -v @revision -n $from_manifest_xml
-        xmlstarlet sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $from_manifest_xml
+        repo-xml-sel -t -m //default -v @remote -o ' ' -v @revision -n $from_manifest_xml
+        repo-xml-sel -t -m //project -v @name -o ':' -v @path -o ':' -v @remote -o ':' -v @revision -n $from_manifest_xml
     ) | (
         read default_remote default_revision
         declare -A from_path_remote_map from_path_revision_map

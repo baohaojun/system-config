@@ -14,10 +14,10 @@ if test $# = 0; then
     set -- manifest.xml local_manifests/local_manifist.xml
 fi
 
-xmlstarlet sel -B -t -m //remote \
+repo-xml-sel -B -t -m //remote \
     -o '$remote_map{"' -v @name -o '"} = "' -v @fetch -o '";' -n $1
 
-xmlstarlet sel -B -t -m //default \
+repo-xml-sel -B -t -m //default \
     -o '$default_remote = "'  -v @remote -o '";' -n \
     -o '$default_revision = "' -m //default -v @revision -o '";' -n $1
 
@@ -32,7 +32,7 @@ fi
 
 for x in "$@"; do
     if test -e $x; then
-        xmlstarlet sel -B -t -m //project \
+        repo-xml-sel -B -t -m //project \
             -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"project"} = "' -v @name  -o '";' -n \
             -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"path"} = ("' -v @$path$pathSuffix  -o '" or "' -v @name -o '");' -n \
             -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"branch"} = ("' -v @revision  -o '" or $default_revision);' -n \

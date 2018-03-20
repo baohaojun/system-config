@@ -108,8 +108,8 @@ fi
 f_xml=$1
 t_xml=$2
 
-f_projects=$(xmlstarlet sel -t -m //project -v @name -n $f_xml)
-t_projects=$(xmlstarlet sel -t -m //project -v @name -n $t_xml)
+f_projects=$(repo-xml-sel -t -m //project -v @name -n $f_xml)
+t_projects=$(repo-xml-sel -t -m //project -v @name -n $t_xml)
 
 if test "$(basename "$0")" = repo-released-manifest-diff; then
     echo "These projects are deleted:"
@@ -124,7 +124,7 @@ if test "$(basename "$0")" = repo-released-manifest-diff; then
 fi
 
 (
-    xmlstarlet sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $f_xml | grep .
+    repo-xml-sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $f_xml | grep .
 ) | (
     declare -A from_path_revision_map
     while read name revision path; do
@@ -142,7 +142,7 @@ fi
 )
 
 (
-    xmlstarlet sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $t_xml | grep .
+    repo-xml-sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $t_xml | grep .
 ) |
     (
         . /tmp/f.env.$$

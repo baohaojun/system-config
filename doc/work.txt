@@ -801,7 +801,7 @@ shift + space怎么改掉：
 
 rfa 'set -x; command git checkout -b gingerbread-tegra origin/`tbranch`'
 
-xmlstarlet sel -t -m //project -v @path -n default.xml
+repo-xml-sel -t -m //project -v @path -n default.xml
 
 怎么让Linux底下的acroread能打开nvidia加密的文档：
 

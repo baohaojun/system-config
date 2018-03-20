@@ -131,9 +131,9 @@
 
                   if test $redo_path = true; then
                       if test "$(cd .repo/manifests.git; git config repo.mirror)" != true; then
-                          xmlstarlet sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
+                          repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
                       else
-                          xmlstarlet sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
+                          repo-xml-sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
                       fi | while read dir name; do
                           if test -d "$dir"/.git || test -d "$dir" -a "${dir##*.}" = git; then
                               echo $dir

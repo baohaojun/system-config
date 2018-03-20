@@ -1,0 +1,36 @@
+#!/bin/bash
+
+while true; do
+    if test "$#" = 1; then
+        xml=$(readlink -f "$1")
+        break
+    fi
+
+    opts=(
+        "${opts[@]}" "$1"
+    )
+    shift
+done
+
+if test ! -e "$xml"; then
+    die "Can't find $xml"
+fi
+
+# 注意：我们目前只支持一层 include 文件
+xmls=(
+    "$xml"
+    $(
+        cd "$(dirname  "$xml")"
+        if git_dir=$(lookup-file -e .git/..); then
+            cd "$git_dir"
+            for x in $(xmlstarlet sel -t -m //include -v @name -n "$xml"); do
+                if ! readlink -f "$x"; then
+                    bark include 文件有问题
+                    kill $$
+                fi
+            done
+        fi
+    )
+)
+
+xmlstarlet sel "${opts[@]}" "${xmls[@]}"

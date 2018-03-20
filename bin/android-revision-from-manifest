@@ -4,4 +4,4 @@ adir=$(
     cd $(lookup-file .repo/..) >/dev/null 2>&1
     pwd)/
 
-xmlstarlet sel -t -m //project -i "@path='$(relative-path $(pwd) $adir)'" -v @revision "$1"
+repo-xml-sel -t -m //project -i "@path='$(relative-path $(pwd) $adir)'" -v @revision "$1"

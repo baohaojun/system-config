@@ -115,7 +115,7 @@ EOF
 	add-jira-comment git commit
     fi
 
-    review_host=$(xmlstarlet sel -B -t -m //default -v @review -b \
+    review_host=$(repo-xml-sel -B -t -m //default -v @review -b \
 	$(lookup-file .repo/manifest.xml 2>/dev/null || echo /dev/null) 2>/dev/null |
 	perl -npe 's,^http.?://,,')
 

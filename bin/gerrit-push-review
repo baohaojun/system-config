@@ -36,20 +36,22 @@ b0=$(basename $0)
     # @skip-gerrit '?不要提到 gerrit 上 review，直接往 refs/heads/ 上 push' \
     # b:to-branch '?提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支' \
     # @:repo-remote=${REPO_REMOTE} '?提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）' \
-    # @do-rebase=true '?要不要先 rebase 到远程服务器分支，默认是要 rebase'
+    # @do-rebase=true '?要不要先 rebase 到远程服务器分支，默认是要 rebase' \
+    # @:review-push-url '?使用自己制定的 push url，不要让脚本自动计算（适于用：自动计算结果有误；测试等）'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o t:r:Rb:h \
-               --long do-rebase,draft,patch-topic:,push-rev:,repo-remote:,skip-gerrit,skip-local-review,to-branch:,help,no-do-rebase,no-draft,no-skip-gerrit,no-skip-local-review \
+               --long do-rebase,draft,patch-topic:,push-rev:,repo-remote:,review-push-url:,skip-gerrit,skip-local-review,to-branch:,help,no-do-rebase,no-draft,no-skip-gerrit,no-skip-local-review \
                -n $(basename -- $0) -- "$@")
-gpr_do_rebase=${gpr_do_rebase:-true}
-gpr_draft=${gpr_draft:-false}
-gpr_patch_topic=${gpr_patch_topic:-}
-gpr_push_rev=${gpr_push_rev:-HEAD}
-gpr_repo_remote=${gpr_repo_remote:-}
-gpr_skip_gerrit=${gpr_skip_gerrit:-false}
-gpr_skip_local_review=${gpr_skip_local_review:-false}
-gpr_to_branch=${gpr_to_branch:-}
+declare gpr_do_rebase=${gpr_do_rebase:-true}
+declare gpr_draft=${gpr_draft:-false}
+declare gpr_patch_topic=${gpr_patch_topic:-}
+declare gpr_push_rev=${gpr_push_rev:-HEAD}
+declare gpr_repo_remote=${gpr_repo_remote:-}
+declare gpr_review_push_url=${gpr_review_push_url:-}
+declare gpr_skip_gerrit=${gpr_skip_gerrit:-false}
+declare gpr_skip_local_review=${gpr_skip_local_review:-false}
+declare gpr_to_branch=${gpr_to_branch:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -80,6 +82,10 @@ while true; do
             ;;
         --repo-remote)
             gpr_repo_remote=$2
+            shift 2
+            ;;
+        --review-push-url)
+            gpr_review_push_url=$2
             shift 2
             ;;
         --skip-gerrit|--no-skip-gerrit)
@@ -130,6 +136,11 @@ while true; do
             printf "%30s" ""
             echo '提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）'
             printf "%06s" " "
+            printf %-24s '--review-push-url=REVIEW_PUSH_URL'
+            echo
+            printf "%30s" ""
+            echo '使用自己制定的 push url，不要让脚本自动计算（适于用：自动计算结果有误；测试等）'
+            printf "%06s" " "
             printf %-24s '--[no-]skip-gerrit'
             echo '不要提到 gerrit 上 review，直接往 refs/heads/ 上 push'
             printf %06s '-R, '
@@ -157,6 +168,7 @@ export gpr_draft
 export gpr_patch_topic
 export gpr_push_rev
 export gpr_repo_remote
+export gpr_review_push_url
 export gpr_skip_gerrit
 export gpr_skip_local_review
 export gpr_to_branch
@@ -393,7 +405,9 @@ while test $# -gt 0; do
 done
 
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
-export REMOTE=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
+if test -z "$gpr_review_push_url"; then
+    export gpr_review_push_url=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
+fi
 
 if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别人 review 之前，要不要先自己本地 review 一下（加 -R 参数可以跳过此提示）"; then
     (
@@ -430,7 +444,7 @@ for try in $(seq 1 10); do
                 echo -n 'git receive-pack ';
                 for x in "${reviewers[@]}"; do
                     echo -n "--reviewer=$x "
-                done)" $REMOTE "$gpr_push_rev":$push_where/`repo-branch`$(if test "$gpr_patch_topic"; then echo /"$gpr_patch_topic"; fi) 2>&1; then
+                done)" "$gpr_review_push_url" "$gpr_push_rev":$push_where/`repo-branch`$(if test "$gpr_patch_topic"; then echo /"$gpr_patch_topic"; fi) 2>&1; then
                 exit 1
             fi
             echo

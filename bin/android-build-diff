@@ -7,7 +7,7 @@ my $f2 = shift @ARGV;
 my %f1;
 my %f2;
 
-open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
+open(my $F1, "-|", "repo-xml-sel -t -m //project -v \@path -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
 
 while (<$F1>) {
     next unless m/^(.*?)\s*=\s*(.*)\s*$/;
@@ -15,7 +15,7 @@ while (<$F1>) {
 }
 close $F1;
 
-open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
+open(my $F2, "-|", "repo-xml-sel -t -m //project -v \@path -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
 while (<$F2>) {
     next unless m/^(.*?)\s*=\s*(.*)\s*$/;
     $f2{$1} = $2;
@@ -28,8 +28,8 @@ for my $x1 (keys %f1) {
         next;
     }
     if (exists($f2{$x1})) {
-        chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
-        chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f2));
+        chomp(my $rev1 = qx(repo-xml-sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
+        chomp(my $rev2 = qx(repo-xml-sel -t -m //project -i "\@path='$x1'" -v \@revision $f2));
         if ($rev1) {
             $rev1 = "revision=\"$rev1\"";
         }
@@ -39,7 +39,7 @@ for my $x1 (keys %f1) {
         }
         printf('(cd "%s" && export r1="%s" && export r2="%s" && bash)' . "\n", $x1, $f1{$x1}, $f2{$x1});
     } else {
-        chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
+        chomp(my $rev1 = qx(repo-xml-sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
         if ($rev1) {
             $rev1 = " revision=\"$rev1\"";
         }
@@ -49,7 +49,7 @@ for my $x1 (keys %f1) {
 }
 
 for my $x2 (keys %f2) {
-    chomp(my $rev2 = qx(xmlstarlet sel -t -m //project -i "\@path='$x2'" -v \@revision $f2));
+    chomp(my $rev2 = qx(repo-xml-sel -t -m //project -i "\@path='$x2'" -v \@revision $f2));
     if ($rev2) {
         $rev2 = "revision=\"$rev2\"";
     }

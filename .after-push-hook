@@ -14,6 +14,11 @@ function push-all-projects() {
                 echo ~/src/github/$x
             done
                 )
+        if s_branch=$(cd ~/system-config; git config sc.branch) && test "$s_branch"; then
+            true
+        else
+            s_branch=dev
+        fi
 
         for p in $projects; do
             (
@@ -22,7 +27,7 @@ function push-all-projects() {
                 if ! git remote add s s:baohaojun/$(basename $PWD) >/dev/null 2>&1; then
                     true
                 fi
-                if ! git push s HEAD:refs/heads/dev; then
+                if ! git push s HEAD:refs/heads/$s_branch; then
                     { bhj-notify system-config "$PWD failed to push to s"; sleep 5; } || true
                     (
                         if ! is-inside-tmux-or-screen; then
@@ -32,10 +37,10 @@ function push-all-projects() {
                             hint pull from s at $PWD
                             (
                                 . ~/src/github/smartcm/scm-helpers/git-pull-and-review
-                                git pull s dev
+                                git pull s $s_branch
                             )
                             if yes-or-no-p 'Continue to push to s?'; then
-                                git push s HEAD:refs/heads/dev
+                                git push s HEAD:refs/heads/$s_branch
                                 git push
                             fi
                         "
