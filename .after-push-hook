@@ -91,7 +91,10 @@ function push-all-projects() {
 }
 
 if test -d ~/src/system-config/; then
-    push-all-projects >/dev/null 2>&1&
+    (
+        set -x;
+        push-all-projects > ~/src/system-config/.git/push-all-projects.log 2>&1
+    )
 
     (
         for x in ~/src/github/*/.after-push-hook; do
