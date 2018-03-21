@@ -20,6 +20,29 @@ function push-all-projects() {
             s_branch=dev
         fi
 
+        if test "$s_branch" = dev; then
+            (
+                cd ~/src/system-config/ || exit
+                if test "$(git-tracking-branch)" = master; then
+                    exit
+                fi
+                git reset --hard
+                git clean -xfd
+                git co master
+
+            )
+        else
+            (
+                cd ~/src/system-config/ || exit
+                if test "$(git-tracking-branch)" = unstable; then
+                    exit
+                fi
+                git reset --hard
+                git clean -xfd
+                git co unstable
+            )
+        fi
+
         for p in $projects; do
             (
                 cd $p
