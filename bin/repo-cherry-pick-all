@@ -487,7 +487,7 @@ for diff_file in $diffs; do
                             continue
                         fi
                     fi
-                    if (set -o pipefail; git cherry-pick -x --allow-empty $git_commit_id 2>&1 | tee $diff_file.$git_commit_id.cp ); then
+                    if test "${SMARTCM_DO_CHERRY_PICK:-true}" = false || (set -o pipefail; git cherry-pick -x --allow-empty $git_commit_id 2>&1 | tee $diff_file.$git_commit_id.cp ); then
                         if test "$ok_function"; then
                             "$ok_function" $ap $git_commit_id </dev/null
                         fi
