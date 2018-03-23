@@ -50,6 +50,10 @@ sc 命令可以用于切换 system-config 或非 system-config 环境�
 你也可以在非 system-config 环境下，执行 sc 的时候后面加上 system-config 里的命令，效果相当于在 system-config 环境下直接执行此命令，比如：非 system-config 环境下“sc sse”相当于 system-config 环境下直接执行 sse。但是，这样的操作方法非常浪费能源，为了保护地球，建议直接将 system-config 设置为你的日常开发环境。
 
 EOF
+elif test -x ~/system-config/etc/sc-helper/"$action"; then
+    shift
+    hint "这是一条 System-Config 封装的命令，即将为您执行 ~/system-config/etc/sc-helper/$action $@"
+    exec ~/system-config/etc/sc-helper/"$action" "$@"
 else
     if is-tty-io; then
         hint "即将为您在 system-config 环境下运行 $@"
