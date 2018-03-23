@@ -76,7 +76,7 @@ if test -e DDRCS0.BIN; then
     vmversion=$(echo -n "$vmversion"|urlify|perl -npe 's/ /+/g')
 fi
 
-vmlinux=$(curl -s "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&base_build=$base&utc_date=$utc&ota_version=$ota_version")
+vmlinux=$(curl -s "http://172.16.2.18/cgi-bin/vmlinux-lookup.cgi?version=$vmversion&base_build=${base//\%/\%25}&utc_date=$utc&ota_version=$ota_version")
 if test -z "$find_what"; then
     echo "$vmlinux"
 else
