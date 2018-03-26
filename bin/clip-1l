@@ -1,0 +1,8 @@
+#!/bin/bash
+## this script join the clipboard to 1 line.
+
+## some times, when you are in tmux edit mode, for e.g., you select
+## some text, and they should have been 1 line, but not in real. So
+## this script.
+
+getclip | tr -d "\n" | putclip
