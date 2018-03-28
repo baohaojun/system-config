@@ -364,9 +364,9 @@ if test $gpr_do_rebase = true; then
 fi
 
 if test $gpr_do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/dev/null 2>&1; then
-    if yes-or-no-p -y "远程有提交，需要先 rebase 到远程，自动处理？"; then
+    if yes-or-no-p -y "远程有提交，需要先 rebase 到远程（共需 rebase $(git log $(repo-remote-branch)..HEAD --pretty=%H|wc -l) 个 patch），自动处理？"; then
         git rebase $(repo-remote-branch) ||
-        die "Rebase failed"
+        die "Rebase 失败，请自己手动解决冲突"
     else
         die "Not fast-forward push is not allowed"
     fi

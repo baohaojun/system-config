@@ -36,7 +36,7 @@ if test "$REPO_BRANCH"; then
 fi
 
 if test -z "$(lookup-file -e .repo)" || [[ $PWD =~ /.repo/manifests$ ]]; then
-    branch=$(git symbolic-ref HEAD 2>/dev/null | perl -npe 's,.*/,,')
+    branch=$(git symbolic-ref HEAD 2>/dev/null | perl -npe 's,^refs/heads/,,')
     if test -z "$branch"; then
         echo unknown-bhj
     else

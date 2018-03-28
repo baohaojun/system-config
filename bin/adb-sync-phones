@@ -170,6 +170,10 @@ cd ~/tmp/$b0
 
 declare -p from_packages to_packages > pkgs.info
 
+(
+    ANDROID_SERIAL=$to_adb adb shell mkdir -p /sdcard/MobileOrg
+)&
+
 function do-1-pkg() {
     set -e
     . pkgs.info
