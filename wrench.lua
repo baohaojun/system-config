@@ -163,8 +163,9 @@ reset_input_method = function()
       local command = (
          [[
 cd /data/data/com.android.shell
+PATH=/data/data/com.android.shell/bin:$PATH
 touch not-started.$$
-setsid nohup sh -c 'set -x
+setsid nohup setsid /system/bin/sh -c 'set -x
 rm 'not-started.$$'
 if test "$(cat /sdcard/Wrench/usb_online)" = watching-ime; then
     exit
