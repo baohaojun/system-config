@@ -487,11 +487,11 @@ scd()
             basedir=$(common-path "$PWD" "$dir")
             stem="${dir:${#basedir}+1}"
 
-            dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1 . "'$stem'/",e')
+            dir1=$(pwd | perl -npe 's,(\Q'${basedir//,/\\,}'\E/)(.*?)(/|$),$1 . "'$stem'/",e')
             if test -e  "$dir1"; then
                 cd "$dir1" && break
             else
-                cd "$(pwd | perl -npe 's,('$basedir'/),$1 . "'$stem'/",e')" && break
+                cd "$(pwd | perl -npe 's,(\Q'${basedir//,/\\,}'\E/),$1 . "'$stem'/",e')" && break
             fi
         done
     else

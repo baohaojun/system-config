@@ -1,3 +1,11 @@
 #!/bin/bash
-my-adb mkdir -p /data/.sc-backup/$(today)
-my-adb "mv /data/* /data/.sc-backup/$(today)"
+set -e
+echo stop the phone first
+my-adb stop
+echo wait for some time.
+sleep 3
+
+backup_dir=/data/.sc-backup/$(now.)
+
+my-adb mkdir -p "$backup_dir"
+my-adb "mv /data/* $backup_dir"
