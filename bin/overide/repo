@@ -10,6 +10,14 @@ fi
 
 if test "$1" = init; then
     if is-jenkins; then
+        if test -e .repo/project-objects/repo-too-large; then
+            (
+                mv .repo/project-objects .repo/project-objects.$$ &&
+                    (
+                        rm .repo/project-objects.$$ -rf&
+                    )
+            ) || true
+        fi
         if ! echo "$@" | grep test-account@; then # maybe want to test for other accounts
             set -- "$@" -g all --reference /data/mirror
         fi
@@ -20,27 +28,6 @@ if test "$1" = init; then
     if test -e .repo -a ! -e .repo/manifest.xml; then
         rm -f .repo/manifest.xml
     fi
-    saved_args=()
-    should_cd=false
-    build_dir=
-    while test "$1"; do
-        if [[ "$1" =~ ^\!.*\! ]]; then
-            build_dir=$HOME/jw/$(echo "$1" | perl -npe 's/!(.*)!.*/$1/')
-            should_cd=true
-        fi
-        saved_args=("${saved_args[@]}" "${1#\!*\!}")
-        shift
-    done
-    set -- "${saved_args[@]}"
-    if test "$should_cd" = true; then
-        mkdir -p $build_dir
-        rm -f ./.true_build_dir .repo
-        relative-link $build_dir ./.true_build_dir
-        relative-link $build_dir/.repo ./
-        cd $build_dir
-    fi
-elif test -d ./.true_build_dir; then
-    cd "$(readlink -f ./.true_build_dir)"
 fi
 
 old_manifest_target=
