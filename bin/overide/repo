@@ -8,14 +8,27 @@ if [[ $PWD =~ /\.repo($|/) ]]; then
     cd $(lookup-file .repo)/..
 fi
 
+deltmpdir=.repo/delete-later
+clean-up() {
+    (
+        rmdir=${deltmpdir}.$$
+        mkdir -p "$rmdir"
+        if test "$#" = 0; then
+            set -- * .repo/project-objects .repo/projects
+        fi
+        for x in "$@"; do
+            mv "$x" "$rmdir"/${x//\//%} || true
+        done
+        rm "$rmdir" -rf&
+    )
+}
+
 if test "$1" = init; then
+    rm -rf $deltmpdir.*& # just in case some is left from last time.
     if is-jenkins; then
         if test -e .repo/project-objects/repo-too-large; then
             (
-                mv .repo/project-objects .repo/project-objects.$$ &&
-                    (
-                        rm .repo/project-objects.$$ -rf&
-                    )
+                clean-up
             ) || true
         fi
         if ! echo "$@" | grep test-account@; then # maybe want to test for other accounts
@@ -153,11 +166,8 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                     fi
                 )
                 cd $(lookup-file -e .repo/..)
-                rm * -rf
-                (
-                    cd .repo
-                    rm project-objects/ projects/ -rf
-                )
+                clean-up
+
                 mail-cms "Warn: Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
                 ~/system-config/bin/repo "$@"
             )
@@ -177,11 +187,7 @@ else
                 rm  .repo/project.list -f &&
                 scm -x check-manifests-project-reuse --do-clean || (
                     mail-cms --add-delay 300 "Can't force manifest reuse projects, will force clean"&
-                    sc_tmpdir=.repo/delete.$$
-                    rm -rf $sc_tmpdir # just in case last time it's not deleted.
-                    mkdir -p $sc_tmpdir
-                    mv * .repo/projects $sc_tmpdir || true
-                    rm $sc_tmpdir -rf&
+                    clean-up * .repo/projects
                 )
             (
                 function clean-a-repo() {
