@@ -9,7 +9,7 @@ if is-jenkins; then
         mkdir -p $out_diff/pick-logs/
 
         pick_log=$out_diff/pick-logs/$(ap|perl -npe s,/,%,g).pick.log;
-        echo "$(ap) 相关的 Log 放到了 $out_diff/pick-logs/$(ap|perl -npe s,/,%,g).pick.log;"
+        echo "$(ap) 相关的 Log 放到了 $out_diff/pick-logs/$(ap|perl -npe s,/,%,g).pick.log;"
         exec > "$pick_log" 2>&1
     fi
 fi
@@ -77,8 +77,8 @@ export -f cherry-skip
     # @do-fetch-first=true '?要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true' \
     # @squash-reverts '?自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作' \
     # o:ok-function '?如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理' \
-    # f:fail-function '?指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function' \
-    # S:skip-function '?指定跳过某 Patch 时执行的操作。参考 --ok-function' \
+    # f:fail-function '?指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function' \
+    # S:skip-function '?指定跳过某 Patch 时执行的操作。参考 --ok-function' \
     # @:should-function '?提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch'
 ## end code-generator
 ## start generated code
@@ -156,7 +156,7 @@ while true; do
             printf %-24s '--fail-function=FAIL_FUNCTION'
             echo
             printf "%30s" ""
-            echo '指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function'
+            echo '指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function'
             printf %06s '-o, '
             printf %-24s '--ok-function=OK_FUNCTION'
             echo
@@ -171,7 +171,7 @@ while true; do
             printf %-24s '--skip-function=SKIP_FUNCTION'
             echo
             printf "%30s" ""
-            echo '指定跳过某 Patch 时执行的操作。参考 --ok-function'
+            echo '指定跳过某 Patch 时执行的操作。参考 --ok-function'
             printf "%06s" " "
             printf %-24s '--[no-]squash-reverts'
             echo '自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作'
@@ -377,7 +377,7 @@ for diff_file in $diffs; do
                             should_continue=true
                             while true; do
                                 revert_action=$(
-                                    select-args -p "请选择你要如何处理 $git_commit_id 及其相关 Revert Patches" \
+                                    select-args -p "请选择你要如何处理 $git_commit_id 及其相关 Revert Patches" \
                                                 "Pick （我确认过了，这个 Patch 是要 Cherry-Pick 的，帮我自动 Cherry 试试看吧，没冲突最好，有冲突我再解）" \
                                                 "Skip （跳过此 Patch，我自己确认了，它跟另一个 Patch 互消抵消了，所以不需要它的逻辑了）" \
                                                 "Done （不用处理此 Patch，我自己已经另开一个终端处理了）" \
@@ -427,7 +427,7 @@ for diff_file in $diffs; do
 
                                 if test "$revert_action" = Check; then
                                     if is-perfect-revert "$git_commit_id" "${paired_reverts[$git_commit_id]}"; then
-                                        if yes-or-no-p -y "这两个Patch刚好相互抵消，是否把两个都跳过？"; then
+                                        if yes-or-no-p -y "这两个 Patch 刚好相互抵消，是否把两个都跳过？"; then
                                             revert_action=Skip2
                                         else
                                             continue
@@ -456,7 +456,7 @@ for diff_file in $diffs; do
                             done
 
                             if test "${should_skip_githash[$git_commit_id]}" = true; then
-                                echo "跳过 $git_commit_id: $subject，因为它和另一个 Patch 成对 Revert 并且互相完美抵消了"
+                                echo "跳过 $git_commit_id: $subject，因为它和另一个 Patch 成对 Revert 并且互相完美抵消了"
                                 if test "$skip_function"; then
                                     skip_reason=reverted "$skip_function" $ap $git_commit_id </dev/null
                                 fi
@@ -501,6 +501,12 @@ for diff_file in $diffs; do
                     elif test "$fail_function"; then
                         "$fail_function" $ap $git_commit_id </dev/null
                     elif is-tty-io </dev/stderr ; then
+                        if ! is-jenkins; then
+                            if test "$(type -t "cherry-pick-failed-help")" = function; then
+                                cherry-pick-failed-help
+                            fi
+                        fi
+
                         start_recursive_shell "cherry failed: $git_commit_id" </dev/stderr || ret=$?
                     else
                         exit -1
