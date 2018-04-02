@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/adwaita.css" type="text/css" />
+ <link rel="stylesheet" href="/css/deep-blue.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -176,7 +176,7 @@ for the JavaScript code in this tag.
 </ul>
 
 <p>
-我们在这里使用了一种非常强大的综合策略：即“许愿式思考”。我们还没有提到一个有理数是怎么 <b>表示</b> 的，也还没有提到 <code>numer</code>、<code>denom</code>、<code>make-rat</code> 这三个子程序应该如何实现。但即便如此，如果我们的确已经拥有这三个子程序，那么，我们就可以用以下关系式来进行加、减、乘、除和判断是否相等的操作了（We are using here a powerful strategy of synthesis: wishful thinking. We haven't yet said how a rational number is represented, or how the procedures numer, denom, and make-rat should be implemented. Even so, if we did have these three procedures, we could then add, subtract, multiply, divide, and test equality by using the following relations）：
+我们在这里使用了一种非常强大的综合策略：即“许愿式思考”。我们还没有提到一个有理数是怎么 <b>表示</b> 的，也还没有提到 <code>numer</code>、<code>denom</code>、<code>make-rat</code> 这三个子程序应该如何实现。但即便如此，如果我们的确已经拥有这三个子程序，那么，我们就可以用以下关系式来进行加、减、乘、除和判断是否相等的操作了（We are using here a powerful strategy of synthesis: wishful thinking. We haven't yet said how a rational number is represented, or how the procedures numer, denom, and make-rat should be implemented. Even so, if we did have these three procedures, we could then add, subtract, multiply, divide, and test equality by using the following relations）：
 </p>
 
 
@@ -196,23 +196,23 @@ for the JavaScript code in this tag.
 
 <div class="org-src-container">
 
-<pre class="src src-scheme">(<span class="org-keyword">define</span> (<span class="org-function-name">add-rat</span> x y)
-  (make-rat (+ (* (numer x) (denom y))
-               (* (numer y) (denom x)))
-            (* (denom x) (denom y))))
-(<span class="org-keyword">define</span> (<span class="org-function-name">sub-rat</span> x y)
-  (make-rat (- (* (numer x) (denom y))
-               (* (numer y) (denom x)))
-            (* (denom x) (denom y))))
-(<span class="org-keyword">define</span> (<span class="org-function-name">mul-rat</span> x y)
-  (make-rat (* (numer x) (numer y))
-            (* (denom x) (denom y))))
-(<span class="org-keyword">define</span> (<span class="org-function-name">div-rat</span> x y)
-  (make-rat (* (numer x) (denom y))
-            (* (denom x) (numer y))))
-(<span class="org-keyword">define</span> (<span class="org-function-name">equal-rat?</span> x y)
-  (= (* (numer x) (denom y))
-     (* (numer y) (denom x))))
+<pre class="src src-scheme"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">add-rat</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>+ <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer x<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom y<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+               <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer y<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom x<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+            <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">sub-rat</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>- <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer x<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom y<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+               <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer y<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom x<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+            <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">mul-rat</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>numer y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+            <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">div-rat</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+            <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>numer y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">equal-rat?</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>= <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+     <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer y<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 </blockquote>
@@ -227,15 +227,15 @@ for the JavaScript code in this tag.
 <h2 id="sec-2"><span class="section-number-2">2</span> 自然而然的许愿</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-注意上面引用自 sicp 的文字，是非常自然的，逻辑是非常清晰的。它从我们现有的简单知识出发（1. 有理数可表示为两个整数的比值；2. 我们知道整数的加减乘除规则），直接跳过了有理数的构造函数（<code>make-rat</code>）和取分子（<code>numer</code>）、取分母（<code>denom</code>）函数的定义，直接许了个愿假设我们已经有了这样的函数定义（其实并没有定义，只是有了这么些个函数的名字而已），那么通过这些函数的名字，再加上整数的运算规则，它开始定义有理数的加减乘除运算了！
+注意上面引用自 sicp 的文字，是非常自然的，逻辑是非常清晰的（如果你有不自然的感觉，那肯定是我翻译的不好，强烈推荐你去阅读原书）。它从我们现有的简单知识出发（1. 有理数可表示为两个整数的比值；2. 我们知道整数的加减乘除规则），直接跳过了有理数的构造函数（<code>make-rat</code>）和取分子（<code>numer</code>）、取分母（<code>denom</code>）函数的定义，直接许了个愿假设我们已经有了这样的函数定义（其实并没有定义，只是有了这么些个函数的名字而已），那么通过这些函数的名字，再加上整数的运算规则，它说，来吧，我们开始定义有理数的加减乘除运算吧！
 </p>
 
 <p>
-通过这些运算函数的定义，再回过头去看构造函数、取分子、取分母函数应该怎么定义，或者说，应该定义成什么样儿才能/就能满足我们的需要，就非常直观了。甚至，如果你是一个 TDD（Test Driven Development：测试驱动开发）的信徒的话，通过运算函数的定义，你已经写好了 <code>make-rat</code>、<code>numer</code>、<code>denom</code> 等函数的测试用例！
+通过这些运算函数的定义，再回过头去看构造函数、取分子、取分母函数应该怎么定义，或者说，应该定义成什么样儿才能/就能满足我们的需要，就非常直观了。甚至，如果你是一个 TDD（Test Driven Development：测试驱动开发）的信徒的话，通过运算函数的定义，你已经写好了 <code>make-rat</code>、<code>numer</code>、<code>denom</code> 等函数的测试用例。
 </p>
 
 <p>
-相反，如果一上来就非要把 <code>make-rat</code>、<code>numer</code>、<code>denom</code> 这几个函数全都完整的定义出来，那这个开发的过程就有点儿拧巴了。
+相反，如果一上来就非要把 <code>make-rat</code>、<code>numer</code>、<code>denom</code> 这几个函数全都完整的定义出来，那这个开发的过程就有点儿拧巴了。这几个函数本身一点儿也不有趣。（事实上如果你讨厌数学的话，加减乘除的函数也一点儿都不有趣，但就我们讨论的这个问题来说，他们是最有趣的部分）。
 </p>
 
 <p>
@@ -263,7 +263,7 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-但是上面这些系统都只是学到了文学编程思想的一些皮毛。文学编程思想真正的精髓在于（我理解），它允许你更自由、更自然的去组织你的想法、你的思路，去解决你的问题。
+但是上面这些系统都只是学到了文学编程思想的一些皮毛。文学编程思想真正的精髓在于——根据我的理解——它允许你更自由、更自然的去组织你的想法、你的思路，去解决你的问题。
 </p>
 
 <p>
@@ -276,7 +276,7 @@ for the JavaScript code in this tag.
 <li>在头文件包含指令之后，你要写出所有全局变量的定义、所有内部（static）函数的声明。
 
 <p>
-如果你不写 static 函数的声明也可以，但你一定的确保这个函数的定义出现在所有调用它的函数定义之前。
+如果你不写 static 函数的声明也可以，但你必须确保这个函数的定义出现在所有调用它的函数定义之前。
 </p>
 </li>
 </ul>
@@ -294,11 +294,11 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-以 static 函数为例，在传统 C 语言编程里，你抽象的思考中意识到你需要一个 <code>function_a</code>，你在实现它的时候，需要中断自己的思路去记得做两件事儿：
+以 static 函数为例，在传统 C 语言编程里，你抽象的思考中意识到你需要一个 <code>function_a</code>，你在实现它的时候，需要中断自己的思路去记得做两件事儿：
 </p>
 
 <ol class="org-ol">
-<li>把输入光标移到内部函数声明的位置，写下 <code>function_a</code> 的声明 
+<li>把输入光标移到内部函数声明的位置，写下 <code>function_a</code> 的声明 
 </li>
 
 <li>把输入光标移回到原来的位置
@@ -327,25 +327,25 @@ for the JavaScript code in this tag.
 &#22240;&#20026;&#25105;&#35273;&#24471;&#20808;&#20889;&#23427;&#26368;&#33258;&#28982;&#65292;&#20063;&#21487;&#33021;&#26159;&#22240;&#20026;&#25105;&#35273;&#24471;&#23427;&#26368;&#26377;&#36259;&#12290;&#25105;&#39640;&#20852;&#65281;&#39640;&#20852;&#26159;&#31532;&#19968;
 &#29983;&#20135;&#21147;&#65289;&#12290;
 
-&#65288;&#22914;&#26524;&#26159;&#30452;&#25509;&#20889;&#8201;C&#8201;&#35821;&#35328;&#30340;&#35805;&#65292;&#36825;&#37324;&#25105;&#21487;&#33021;&#23601;&#35201;&#20808;&#20889;&#19968;&#22534; <span class="org-org-verbatim">=#include=</span> &#20043;&#31867;&#30340;
+&#65288;&#22914;&#26524;&#26159;&#30452;&#25509;&#20889;&#8201;C&#8201;&#35821;&#35328;&#30340;&#35805;&#65292;&#36825;&#37324;&#25105;&#21487;&#33021;&#23601;&#35201;&#20808;&#20889;&#19968;&#22534; <span class="org-org-verbatim">#include</span>&#8201;&#20043;&#31867;&#30340;
 &#35821;&#21477;&#20102;&#65292;&#25105;&#19981;&#21916;&#27426;&#36825;&#26679;&#65289;&#12290;
 
 <span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
-<span class="org-keyword"><span class="org-org-block-background">static</span></span><span class="org-org-block-background"> </span><span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">function_a</span></span><span class="org-org-block-background">()
-{
+<span class="org-keyword"><span class="org-org-block-background">static</span></span><span class="org-org-block-background"> </span><span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">function_a</span></span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">()</span></span><span class="org-org-block-background">
+</span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">{</span></span><span class="org-org-block-background">
     </span><span class="org-comment-delimiter"><span class="org-org-block-background">//</span></span><span class="org-comment"><span class="org-org-block-background">...</span></span><span class="org-org-block-background">
-    function_b();
-}
+    function_b</span><span class="org-rainbow-delimiters-depth-2"><span class="org-org-block-background">()</span></span><span class="org-org-block-background">;
+</span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">}</span></span><span class="org-org-block-background">
 
 </span><span class="org-org-block-end-line">#+END_SRC</span>
 
 <span class="org-org-level-2">** &#35201;&#23454;&#29616;&#8201;function_a&#65292;&#25105;&#22909;&#20687;&#36824;&#38656;&#35201;&#19968;&#20010;&#23376;&#31243;&#24207;&#8201;B&#65292;&#23427;&#20250;&#24110;&#25105;&#23454;&#29616;&#20160;&#20040;&#20160;&#20040;&#21151;&#33021;</span>
 
 <span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
-<span class="org-keyword"><span class="org-org-block-background">static</span></span><span class="org-org-block-background"> </span><span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">function_b</span></span><span class="org-org-block-background">()
-{
+<span class="org-keyword"><span class="org-org-block-background">static</span></span><span class="org-org-block-background"> </span><span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">function_b</span></span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">()</span></span><span class="org-org-block-background">
+</span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">{</span></span><span class="org-org-block-background">
     </span><span class="org-comment-delimiter"><span class="org-org-block-background">//</span></span><span class="org-comment"><span class="org-org-block-background">...</span></span><span class="org-org-block-background">
-}
+</span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">}</span></span><span class="org-org-block-background">
 </span><span class="org-org-block-end-line">#+END_SRC</span>
 
 <span class="org-org-level-1">* &#26368;&#21518;&#30340;&#26368;&#21518;</span>
@@ -358,13 +358,13 @@ for the JavaScript code in this tag.
 
 </span><span class="org-org-block-end-line">#+END_SRC</span>
 
-&#22522;&#26412;&#19978;&#23601;&#26159;&#36825;&#26679;&#12290;&#26368;&#21518;&#25105;&#30340; <span class="org-org-verbatim">=main=</span> &#20989;&#25968;&#23601;&#26159;&#31616;&#21333;&#30340;&#35843;&#29992;&#19968;&#19979; <span class="org-org-verbatim">=function_a=</span>&#65306;
+&#22522;&#26412;&#19978;&#23601;&#26159;&#36825;&#26679;&#12290;&#26368;&#21518;&#25105;&#30340;&#8201;<span class="org-org-verbatim">main</span>&#8201;&#20989;&#25968;&#23601;&#26159;&#31616;&#21333;&#30340;&#35843;&#29992;&#19968;&#19979;&#8201;<span class="org-org-verbatim">function_a</span>&#65306;
 
 <span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
-<span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">main</span></span><span class="org-org-block-background">()
-{
-    function_a();
-}
+<span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">main</span></span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">()</span></span><span class="org-org-block-background">
+</span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">{</span></span><span class="org-org-block-background">
+    function_a</span><span class="org-rainbow-delimiters-depth-2"><span class="org-org-block-background">()</span></span><span class="org-org-block-background">;
+</span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">}</span></span><span class="org-org-block-background">
 
 </span><span class="org-org-block-end-line">#+END_SRC</span>
 
@@ -373,7 +373,7 @@ EOF.
 </div>
 
 <p>
-你会发现最后我在用 NoWeb 的 <code>&lt;&lt;&gt;&gt;</code> 表示符号进行引用的时候，我把 <code>function_b</code> 排在了 <code>function_a</code> 前面，最后生成的代码，自然而然的就满足了 C 语言对函数定义必须出现在其被调用的位置之前的要求。
+你会发现最后我在用 NoWeb 的 <code>&lt;&lt;&gt;&gt;</code> 表示符号进行引用的时候，我把 <code>function_b</code> 排在了 <code>function_a</code> 前面，最后生成的代码，自然而然的就满足了 C 语言对函数定义必须出现在其被调用的位置之前的要求。
 </p>
 
 <p>
@@ -395,7 +395,7 @@ GTD 是 Get Things Done 的意思。一种非常有效的提升自己的�
 </p>
 
 <p>
-我在《Coders at Work》这本书里看到 jwz 接受采访被问到自己的编程方法时，他就是这么回答的“我就列一个单子，然后一项项的划掉”。事实上我刚刚又打开了那本电子书看了看，jwz 多次提到了 list、todo-list，都是 GTD 里最重要的术语。
+我在《Coders at Work》这本书里看到 jwz 接受采访被问到自己的编程方法时，他就是这么回答的：“我就列一个单子，然后一项项的划掉”。事实上我刚刚又打开了那本电子书看了看，jwz 多次提到了 list、todo-list，都是 GTD 里最重要的术语。
 </p>
 
 <p>
@@ -407,7 +407,7 @@ GTD 是 Get Things Done 的意思。一种非常有效的提升自己的�
 </p>
 
 <p>
-GTD 的第一步，就是把要办的事情记下来。要不然的话，脑子里装不下太多东西，有很多事情就会忘记。并且因为发现自己忘了什么好像还蛮重要的事情，会让自己进入非常不良的状态，压力山大，撕扯自己的头发。许愿也是这样，许过的愿又忘记了的话，相当于没有愿望，没有愿望就是没有梦想——那和咸鱼还有什么分别？
+GTD 的第一步，就是把要办的事情记下来。要不然的话，脑子里装不下太多东西，有很多事情就会忘记。并且因为发现自己忘了什么好像还蛮重要的事情，会让自己进入非常不良的状态，压力山大，一筹莫展，进一步降低自己的效率——有时候甚至感觉寸步难行，焦头烂额。许愿也是这样，许过的愿又忘记了的话，相当于没有愿望，没有愿望就是没有梦想——那和咸鱼还有什么分别？
 </p>
 
 <p>
@@ -419,12 +419,14 @@ GTD 的第二步、第三步，不好意思，我也还没练好，没有太�
 </p>
 
 <p>
-最后，还是要推荐 Emacs 的 Org Mode，非常完美的支持 GTD！我在用 Literate Programming，同时用 GTD，噢噢噢（有了快感就要叫出来）！在安卓手机上还有 MobileOrg，我可以随时随地把自己的想法记下来，然后回到 Emacs 下去实现它。我收到的邮件，如果我后续想再处理的话，我会点一下“Flag”标签，这样的邮件会自动进入我的 GTD 列表里。有人在公司的 Bug 系统里给我提单子的时候，这个单子也会自动进入到我的 GTD 里。同事在公司的 Gerrit 上给我提 Code Review，最后也会自动进入我的 GTD 列表里！我一天到晚什么也不干，就只要盯牢我的 GTD 列表就好了！跟炒股的大妈们一样，只要盯着大盘的行情就好了&#x2026;
+最后，还是要推荐 Emacs 的 Org Mode，非常完美的支持 GTD！我在用 Literate Programming，同时用 GTD，噢噢噢（有了快感就要叫出来）！在安卓手机上还有 MobileOrg，我可以随时随地把自己的想法记下来，然后回到 Emacs 下去实现它。我收到的邮件，如果我后续想再处理的话，我会点一下“Flag”标签，这样标记过的邮件会自动进入我的 GTD 列表里。有人在公司的 Bug 系统里给我提单子的时候，这个单子也会自动进入到我的 GTD 里。同事在公司的 Gerrit 上给我提 Code Review，最后也会自动进入我的 GTD 列表里！我一天到晚什么也不干，就只要盯牢我的 GTD 列表就好了！跟炒股的大妈们一样，只要盯着大盘的行情就好了&#x2026;
 </p>
 
 <p>
-最后在这里给大家拜个早年，新年快到了，你会许个什么样的愿望呢？不管是什么样的愿望，祝你能实现它！比如“先赚他一个亿”！然后给我一点好不啦。
+最后，在这里给大家拜个早年，新年快到了，你会许个什么样的愿望呢？不管是什么样的愿望，祝你能实现它！比如“先赚他一个亿”！
 </p>
+
+
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
