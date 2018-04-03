@@ -69,7 +69,7 @@ if test -z "$sep"; then
     fi
 fi
 
-if test "$for_cjk"; then
+if test "$for_cjk" = true; then
     set -- $(echo "$@"|perl -npe "$(cat <<'EOF6dc4c4dfe966'
 BEGIN {
     use Encode;

@@ -855,7 +855,7 @@
 (defun keypad-number-off ()
   (load-file "~/system-config/.sawfish/lisp/keypad.jl"))
 
-(bind-both-global&window-keymaps "KP_Enter" '(system "toggle-number-lock&"))
+(bind-both-global&window-keymaps "Super-KP_Enter" '(system "toggle-number-lock&"))
 
 (bind-both-global&window-keymaps "Scroll_Lock" #'emacs-code-reading-toggle)
 (bind-keys s-h-keymap "?"
