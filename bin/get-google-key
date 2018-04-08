@@ -1,0 +1,14 @@
+#!/bin/bash
+(
+    exec > ~/tmp/get-google-key.log 2>&1
+    my-adb am start -n com.google.android.apps.authenticator2/com.google.android.apps.authenticator.AuthenticatorActivity
+
+    Wrench "adb_tap_1080x2160(977, 344)"
+    sleep .5
+    Wrench "adb_tap_1080x2160(977, 344)"
+    sleep .5
+    Wrench "adb_event('adb-long-press-1250 396 340')"
+    sleep 1.5
+)
+
+getclip-android

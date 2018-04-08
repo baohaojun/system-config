@@ -37,7 +37,7 @@ while true; do
     if test "$cmd" = Wrench-tap; then
         shift
         Wrench "adb_event('adb-tap $1 $2')"
-    if test $cmd = adb-tap; then
+    elif test $cmd = adb-tap; then
         shift
         echo -n "input tap $1 $2;"
     elif test $cmd = adb-tap-2; then
