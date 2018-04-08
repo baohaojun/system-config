@@ -84,7 +84,16 @@ if test "$1" = init; then
     ) || true
 fi
 
+
+if is-jenkins; then
+    . ~/src/github/smartcm/scm-helpers/collect-time.help
+fi
+
 if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help "$@")" = --help; then
+    if is-jenkins; then
+        start-record-time "do-repo-sync"
+    fi
+
     if test -d "$(lookup-file -e .repo/manifests)"; then
         (
             cd $(lookup-file .repo/manifests)
@@ -188,11 +197,14 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     if is-jenkins; then
         echo "repo sync completed" >> .repo/grep-errors.txt
         scm check-repo-project-objects
+        end-record-time "do-repo-sync"
     fi
     exit
 else
     if ~/system-config/bin/repo "$@"; then
         if test "$1" = init -a ! -e .repo/using-fast-sync && is-jenkins; then
+            start-record-time "do-repo-init-clean"
+
             repo-external --do-delete &&
                 rm  .repo/project.list -f &&
                 scm -x check-manifests-project-reuse --do-clean || (
@@ -229,6 +241,7 @@ else
                 cd .repo
                 rm repo-paths repo_info.pl -f
             )
+            end-record-time "do-repo-init-clean"
         fi
 
         exit 0
