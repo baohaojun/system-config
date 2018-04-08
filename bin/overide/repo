@@ -95,8 +95,8 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                 if is-jenkins; then
                     die "Can't download source code from $(git-remote-url)"
                 else
-                    hint "你的 repo init 初始化参数使用方法已过时，最新方法需要使用 -u ssh:// 的格式，否则代码同步可能出错"
-                    hint "请使用 repo-switch -p 查看你之前 repo init 时使用的命令，然后改一下 -u 参数，重新 repo init 一遍"
+                    hint "你的 repo init 初始化参数使用方法已过时，最新方法需要使用 -u ssh:// 的格式，否则代码同步可能出错"
+                    hint "请使用 repo-switch -p 查看你之前 repo init 时使用的命令，然后改一下 -u 参数，重新 repo init 一遍"
                 fi
                 fi
         ) || true
@@ -110,7 +110,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
     if (
         set -o pipefail
         if is-jenkins; then
-            time stdbuf -oL -eL ~/system-config/bin/repo "$@" 2>&1| tee $repo_sync_log
+            time stdbuf -oL -eL ~/system-config/bin/repo "$@" 2>&1 | stdbuf -oL -eL tee $repo_sync_log
         else
             touch $repo_sync_log || true
             time ~/system-config/bin/repo "$@"
@@ -141,7 +141,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                       )
                                 if test -d "$rm_dir"; then
                                     rm -rf "$rm_dir";
-                                    mail-cms "Warn: Jenkins repo sync still failing after retry: removed $rm_dir"
+                                    mail-cms "Warn: Jenkins repo sync failed for gc.log: removed $rm_dir"
                                     exit 0
                                 fi
                             fi
@@ -157,6 +157,11 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                         mail-cms "Warn: Jenkins repo sync still failing after retry."
                     fi
                 fi
+
+                if grep "Couldn't find remote ref" $repo_sync_log; then
+                    mail-cms -i -e "你的 manifest 文件可能有问题，有一个分支找不到： $(readlink .repo/manifest.xml)" << $repo_sync_log
+                    exit 1
+                fi
                 (
                     cd $(lookup-file -e .repo/manifests)
                     if test "$(git config repo.mirror)" = true; then
@@ -169,7 +174,12 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                 clean-up
 
                 mail-cms "Warn: Jenkins repo sync failed for $JOB_NAME, will remove all and try again"
-                ~/system-config/bin/repo "$@"
+                if ~/system-config/bin/repo "$@"; then
+                    exit 0
+                fi
+
+                mail-cms -e "Repo sync failed after retry!"
+                exit 1
             )
         else
             exit $ret
