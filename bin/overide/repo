@@ -159,7 +159,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                 fi
 
                 if grep "Couldn't find remote ref" $repo_sync_log; then
-                    mail-cms -i -e "你的 manifest 文件可能有问题，有一个分支找不到： $(readlink .repo/manifest.xml)" <<<"$repo_sync_log"
+                    mail-cms -i -e "你的 manifest 文件可能有问题，有一个分支找不到： $(readlink .repo/manifest.xml)" < "$repo_sync_log"
                     exit 1
                 fi
                 (
