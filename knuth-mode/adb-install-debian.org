@@ -1,0 +1,256 @@
+#+name: prepare-chroot
+#+BEGIN_SRC sh
+    # 这些是在手机上执行的内容
+  function prepare-chroot() {
+      mount -o remount /data # rm the nodev flag
+
+      if [ ! -d /tmp ]; then
+          mount -o rw,remount / && mkdir /tmp && chmod 1777 /tmp && mount -o ro,remount /
+      fi
+      if [ ! -f /tmp/.mounted ] ; then
+          mount -t tmpfs none /tmp && touch /tmp/.mounted
+      fi
+
+      # setup posix shared memory
+      if [ ! -d /dev/shm ] ; then mkdir /dev/shm ; fi
+      chmod 1777 /dev/shm
+      if mount | grep /dev/shm; then
+          true
+      else
+          mount -t tmpfs none /dev/shm/
+      fi
+
+      # configure debian chroot
+      if [ -d /data/debian/proc ] && [ ! -d /data/debian/proc/1 ] ; then
+          mount -o bind /proc /data/debian/proc
+      fi
+
+      if [ -d /data/debian/sys ] && [ ! -d /data/debian/sys/class ] ; then
+          mount -o bind /sys /data/debian/sys
+      fi
+
+      if [ -d /data/debian/sys/kernel/debug ] && [ ! -d /data/debian/sys/kernel/debug/tracing ] ; then
+          mount -o bind /sys/kernel/debug/ /data/debian/sys/kernel/debug
+      fi
+
+      if test ! -e /data/debian/dev/null || test -e /data/debian/dev/.dev-not-mounted -o -f /data/debian/dev/null; then
+          mount -o bind /dev /data/debian/dev
+          mount -o bind /dev/pts /data/debian/dev/pts
+          mount -o bind /dev/shm /data/debian/dev/shm
+          for x in system data cache factory d acct; do
+              if test ! -e /$x; then
+                  continue
+              fi
+              mkdir -p /data/debian/android/$x
+              mount -o bind /$x /data/debian/android/$x
+          done
+      fi
+  }
+
+#+END_SRC
+
+* script to be run on the phone
+
+The following script will be run on the phone. But there are many env vars that are eval'ed when on the PC, for e.g., $USER, so that when on the phone, the correct $USER name can be created as the same $USER name on the PC.
+
+#+name: setup-debian-on-phone
+#+BEGIN_SRC sh
+  export LD_PRELOAD=
+  export PATH=/bin:/usr/bin:/sbin:/usr/sbin:\$PATH
+  export HOME=/root
+  set -x
+  set -e
+  if test -e /debian-ok; then
+      exit
+  fi
+  if test ! -e /second-stage-done; then
+      /debootstrap/debootstrap --second-stage
+      touch /second-stage-done
+  fi
+  echo deb http://ftp.us.debian.org/debian testing main contrib non-free > /etc/apt/sources.list
+  if ! grep 192.168.15.33 /etc/hosts -q; then
+      echo 192.168.15.33 pc >> /etc/hosts
+  fi
+
+  addgroup $USER --gid 1000 || true
+  addgroup --gid 1023 media_rw || true
+  addgroup --gid 1015 android_sdcard_rw || true
+  addgroup --gid 3003 android_inet || true
+
+  addgroup android_inet --gid 3003 || true
+  addgroup android_sdcard_rw --gid 1015 || true
+  adduser --gecos '' --disabled-password $USER --uid 1000 --gid 1000 || true
+  adduser --gecos '' --disabled-password media_rw --uid 1023 --gid 1023 || true
+
+  usermod $USER -a -G android_inet,android_sdcard_rw,media_rw || true
+  usermod -g android_inet _apt || true
+  cd
+  umask 0022
+  mkdir -p ~/.ssh
+  mkdir -p ~$USER/.ssh
+  mkdir -p ~media_rw/.ssh
+  chown $USER\. ~$USER/.ssh -R
+  cat <<EOF > /etc/resolv.conf
+  nameserver $(my-adb getprop net.dns1)
+  EOF
+  ln -sf /android/* /
+  echo en_US.UTF-8 UTF-8 > /etc/locale.gen
+  locale-gen
+  echo LANG=en_US.UTF-8 > /etc/default/locale
+  ln -s /data/media/0 /sdcard
+  apt-get clean
+  touch /debian-ok
+
+
+#+END_SRC
+#+name: local-pc-script
+#+BEGIN_SRC sh
+  local-pc-script() {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt @:arch=arm64 @:mirror=http://deb.debian.org/debian
+      ## end code-generator
+      ## start generated code
+      TEMP=$( getopt -o h \
+                     --long arch:,mirror:,help \
+                     -n $(basename -- $0) -- "$@")
+      arch=arm64
+      mirror=http://deb.debian.org/debian
+      eval set -- "$TEMP"
+      while true; do
+          case "$1" in
+
+              --arch)
+                  arch=$2
+                  shift 2
+                  ;;
+              --mirror)
+                  mirror=$2
+                  shift 2
+                  ;;
+              -h|--help)
+                  set +x
+                  echo -e
+                  echo
+                  echo Options and arguments:
+                  printf "%06s" " "
+                  printf %-24s '--arch=ARCH'
+                  echo
+                  printf "%06s" " "
+                  printf %-24s '--mirror=MIRROR'
+                  echo
+                  exit
+                  shift
+                  ;;
+              --)
+                  shift
+                  break
+                  ;;
+              ,*)
+                  die "internal error"
+                  ;;
+          esac
+      done
+      ## end generated code
+
+      if test ! -d ~/external/debian.$arch; then
+          mkdir -p ~/external/
+          sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch "$arch" --foreign testing ~/external/debian.$arch.$$ "$mirror"
+          mv ~/external/debian.$arch.$$ ~/external/debian.$arch
+          sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/external/debian.$arch/debootstrap/functions
+          sudo perl -npe 's,1/test-dev-null,1/dev/test-dev-null,g' -i ~/external/debian.$arch/debootstrap/functions
+          sudo touch ~/external/debian.$arch/dev/.dev-not-mounted
+      fi
+
+      if test ! -e ~/external/debian.$arch.tgz; then
+
+          (
+              cd ~/external
+              sudo tar czfv debian.$arch.tgz debian.$arch --exclude-vcs
+          )
+      fi
+
+      adb-fix-busybox
+      if ! my-adb "test -d /data/debian.$arch"; then
+          my-adb -r push ~/external/debian.$arch.tgz /data/deb.tgz
+          my-adb sc-shell "cd /data; mv deb.tgz debian.tgz; tar zxvf debian.tgz; rm -f /data/debian; ln -s /data/debian.$arch /data/debian"
+      fi
+
+      my-adb -r push $me /data/$(basename $0) # 把我自己 push 到手机上
+      if ! my-adb sc-shell bash -e -x /data/$(basename $0) 2>&1; then
+          die "Can't run this script's on-phone part, please check the above output"
+      fi
+
+      my-adb sc-shell chroot /data/debian.$arch /bin/bash -c "$(cat <<EOFa3616cfa6b68
+  <<setup-debian-on-phone>>
+  EOFa3616cfa6b68
+  )"
+      my-adb -r stop
+      my-adb shell sync
+      if test ! -e ~/.ssh/authorized_keys; then
+          if test ! -e ~/.ssh/id_rsa.pub; then
+              if yes-or-no-p -y "You don't have authorized_keys and id_rsa.pub, create one now?"; then
+                  mkdir -p ~/.ssh
+                  ssh-keygen -C "$USER" -f ~/.ssh/id_rsa
+              fi
+          fi
+          cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+      fi
+
+      my-adb push ~/.ssh/authorized_keys /data/debian/root/.ssh/authorized_keys
+      my-adb chmod 600 /data/debian/root/.ssh/authorized_keys
+
+      my-adb push ~/.ssh/authorized_keys /data/debian/home/$USER/.ssh/authorized_keys
+      my-adb sc-shell busybox chown -R 1000.1000 /data/debian/home/$USER/.ssh/
+      my-adb chmod 600 /data/debian/home/$USER/.ssh/authorized_keys
+
+      my-adb push ~/.ssh/authorized_keys /data/debian/home/media_rw/.ssh/authorized_keys
+      my-adb sc-shell busybox chown -R 1023.1023 /data/debian/home/media_rw/.ssh/
+      my-adb chmod 600 /data/debian/home/media_rw/.ssh/authorized_keys
+
+      my-adb forward tcp:22222 tcp:22
+  }
+#+END_SRC
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh :noweb yes
+  #!/bin/bash
+
+  set -e
+
+  me=$(readlink -f $0)
+  if test ! -e "$me"; then
+      me=$(readlink -f "$(which $0)")
+      if test ! -e "$me"; then
+          die "Can't find out about me"
+          exit 1
+      fi
+  fi
+  b0=$(basename $0)
+
+  if test ! -e /sbin/adbd; then # 没有 adbd 文件，在 PC 上而不是手机上
+      local-pc-script
+  else # on the phone
+      prepare-chroot
+  fi
+
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/adb-install-debian :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+<<local-pc-script>>
+<<prepare-chroot>>
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
