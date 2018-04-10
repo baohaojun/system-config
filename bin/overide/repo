@@ -222,6 +222,7 @@ else
                         else
                             echo Failed to clean: $PWD
                             rm $PWD -rf
+                            cd ..
                             if git_dir=$(lookup-file -e .git/..); then
                                 cd "$git_dir"
                                 if lookup-file -e .repo/..; then
@@ -229,7 +230,7 @@ else
                                 fi
                                 exit 0
                             else
-                                mail-cms -o "Warn: repo failed to clean: $PWD"
+                                (sleep 30 && mail-cms -o "Warn: repo failed to clean: $PWD")& # this way, there won't be a mail when jenkins task is aborted
                                 exit 1
                             fi
 

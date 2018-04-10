@@ -16,11 +16,6 @@ my-echo() {
     builtin echo "$(date): $@" | tee -a $b0.echo
 }
 
-if ! ps.pl "adb-agree-to-install"; then
-    hint "发现你没有在运行 adb-agree-to-install 进程，这样的话在 user 版本上用 adb install apk 的时候，手机会不停的提示警告 apk 来源不可信"
-    hint "这样的话这个脚本基本上是没法使用的，所以请一定要运行 adb-agree-to-install 命令。"
-fi
-
 export -f my-echo
 
 ## start code-generator "^\\s *#\\s *"
@@ -121,6 +116,11 @@ export package_regexp
 export to_adb
 
 ## end generated code
+
+if ! ps.pl "adb-agree-to-install"; then
+    hint "发现你没有在运行 adb-agree-to-install 进程，这样的话在 user 版本上用 adb install apk 的时候，手机会不停的提示警告 apk 来源不可信"
+    hint "这样的话这个脚本基本上是没法使用的，所以请一定要运行 adb-agree-to-install 命令。"
+fi
 
 from_apk=$(
     export ANDROID_SERIAL=$from_adb
