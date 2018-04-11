@@ -1,10 +1,61 @@
 #!/bin/bash
 set -e
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt @hint
+## end code-generator
+## start generated code
+TEMP=$( getopt -o h \
+               --long hint,help,no-hint \
+               -n $(basename -- $0) -- "$@")
+declare hint=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --hint|--no-hint)
+            if test "$1" = --no-hint; then
+                hint=false
+            else
+                hint=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]hint'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 if test $# = 1; then
     set -- "$1" "$2"
 fi
 if which "$1" >/dev/null 2>&1; then
     true
 else
-    sudo apt-get install -y "$2"
+    if test "$hint" = true; then
+        hint "没有找到 $1 命令，需要先安装 $2 debian 包，可能需要输入 sudo 密码"
+    fi
+    if ! sudo apt-get install -y "$2"; then
+        die "无法安装 $2 debian 包，请参考上面的终端输出，上网查一下这是咋回事"
+    fi
 fi

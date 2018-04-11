@@ -1,15 +1,17 @@
 #!/bin/bash
 
+opts=()
 while true; do
-    if test "$#" = 1; then
+    if test "$#" -gt 1; then
+        # 保存这个参数
+        opts=(
+            "${opts[@]}" "$1"
+        )
+        shift
+    else # 只有一个参数了，它就是 xml
         xml=$(readlink -f "$1")
         break
     fi
-
-    opts=(
-        "${opts[@]}" "$1"
-    )
-    shift
 done
 
 if test ! -e "$xml"; then
@@ -25,7 +27,7 @@ xmls=(
             cd "$git_dir"
             for x in $(xmlstarlet sel -t -m //include -v @name -n "$xml"); do
                 if ! readlink -f "$x"; then
-                    bark include 文件有问题
+                    bark "include 文件有问题"
                     kill $$
                 fi
             done

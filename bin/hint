@@ -53,6 +53,8 @@ if is-recording || test "$EMACS"; then
 请按‘回车’继续.. "
 else
     echo 1>&2
-    read -p "$*.
+    read -p "
+----------------
+$*.
 请按‘回车’继续.. "
 fi || true
