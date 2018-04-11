@@ -157,7 +157,7 @@
 (bind-both-global&window-keymaps "XF86AudioPrev"  '(system "douban prev&"))
 (bind-both-global&window-keymaps "Super-KP_Right"  '(system "douban jump-forth&"))
 (bind-both-global&window-keymaps "Super-KP_Left"  '(system "douban jump-back&"))
-(bind-both-global&window-keymaps "Super-XF86AudioPlay"  '(system "douban info&"))
+(bind-both-global&window-keymaps "Super-XF86AudioPlay"  '(system "do-natural-scrolling&"))
 (bind-both-global&window-keymaps "XF86AudioPlay"  '(system "douban pause&"))
 (bind-both-global&window-keymaps "C-XF86AudioPlay"  '(system "douban lyrics&"))
 
