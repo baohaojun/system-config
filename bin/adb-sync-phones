@@ -21,24 +21,45 @@ export -f my-echo
 ## start code-generator "^\\s *#\\s *"
         # generate-getopt -e f:from-adb t:to-adb p:package-regexp='".*"' \
             # @only-missing=true '?只安装还没有安装的 App，不要重装已安装的 App' \
-            # x:exclude-regexp="'smartisan|com.android|^android'" '?不要装匹配这个正则表达式的包'\
+            # x:exclude-regexp="'smartisan|com.android|^android'" '?不要装匹配这个正则表达式的包' \
             # ndry-run '?干跑一下摸个底，不要真跑' \
+            # @backup-only '?只从源手机上备份下来，不要还原到目标手机上（适用于备份）' \
+            # @recovery-only '?只把之前备份的文件恢复到目标手机上' \
             # @:install-only-regexp="'com.google'" '?匹配这个表达式的话，只安装，不同步数据'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o x:f:p:t:h \
-               --long exclude-regexp:,from-adb:,install-only-regexp:,only-missing,package-regexp:,to-adb:,help,no-only-missing \
+TEMP=$( getopt -o nx:f:p:t:h \
+               --long backup-only,dry-run,exclude-regexp:,from-adb:,install-only-regexp:,only-missing,package-regexp:,recovery-only,to-adb:,help,no-backup-only,no-dry-run,no-only-missing,no-recovery-only \
                -n $(basename -- $0) -- "$@")
-exclude_regexp=${exclude_regexp:-'smartisan|com.android|^android'}
-from_adb=${from_adb:-}
-install_only_regexp=${install_only_regexp:-'com.google'}
-only_missing=${only_missing:-true}
-package_regexp=${package_regexp:-".*"}
-to_adb=${to_adb:-}
+declare backup_only=${backup_only:-false}
+declare dry_run=${dry_run:-false}
+declare exclude_regexp=${exclude_regexp:-'smartisan|com.android|^android|com.qualcomm'}
+declare from_adb=${from_adb:-}
+declare install_only_regexp=${install_only_regexp:-'com.google'}
+declare only_missing=${only_missing:-true}
+declare package_regexp=${package_regexp:-".*"}
+declare recovery_only=${recovery_only:-false}
+declare to_adb=${to_adb:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --backup-only|--no-backup-only)
+            if test "$1" = --no-backup-only; then
+                backup_only=false
+            else
+                backup_only=true
+            fi
+            shift
+            ;;
+        -n|--dry-run|--no-dry-run)
+            if test "$1" = --no-dry-run; then
+                dry_run=false
+            else
+                dry_run=true
+            fi
+            shift
+            ;;
         -x|--exclude-regexp)
             exclude_regexp=$2
             shift 2
@@ -63,6 +84,14 @@ while true; do
             package_regexp=$2
             shift 2
             ;;
+        --recovery-only|--no-recovery-only)
+            if test "$1" = --no-recovery-only; then
+                recovery_only=false
+            else
+                recovery_only=true
+            fi
+            shift
+            ;;
         -t|--to-adb)
             to_adb=$2
             shift 2
@@ -72,11 +101,17 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]backup-only'
+            echo '只从源手机上备份下来，不要还原到目标手机上（适用于备份）'
+            printf %06s '-n, '
+            printf %-24s '--[no-]dry-run'
+            echo '干跑一下摸个底，不要真跑'
             printf %06s '-x, '
             printf %-24s '--exclude-regexp=EXCLUDE_REGEXP'
             echo
             printf "%30s" ""
-            echo '干跑一下摸个底，不要真跑'
+            echo '不要装匹配这个正则表达式的包'
             printf %06s '-f, '
             printf %-24s '--from-adb=FROM_ADB'
             echo
@@ -91,6 +126,9 @@ while true; do
             printf %06s '-p, '
             printf %-24s '--package-regexp=PACKAGE_REGEXP'
             echo
+            printf "%06s" " "
+            printf %-24s '--[no-]recovery-only'
+            echo '只把之前备份的文件恢复到目标手机上'
             printf %06s '-t, '
             printf %-24s '--to-adb=TO_ADB'
             echo
@@ -108,32 +146,47 @@ while true; do
 done
 
 
+export backup_only
+export dry_run
 export exclude_regexp
 export from_adb
 export install_only_regexp
 export only_missing
 export package_regexp
+export recovery_only
 export to_adb
 
 ## end generated code
 
-if ! ps.pl "adb-agree-to-install"; then
-    hint "发现你没有在运行 adb-agree-to-install 进程，这样的话在 user 版本上用 adb install apk 的时候，手机会不停的提示警告 apk 来源不可信"
-    hint "这样的话这个脚本基本上是没法使用的，所以请一定要运行 adb-agree-to-install 命令。"
+if test "$backup_only" = true -a "$to_adb"; then
+    die "Can't set to_adb when backup only"
 fi
 
-from_apk=$(
-    export ANDROID_SERIAL=$from_adb
-    my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
-        )
+if test "$recovery_only" = true -a "$from_adb"; then
+    die "Can't set from_adb when recovery only"
+fi
 
-ANDROID_SERIAL=$from_adb adb-fix-busybox
-ANDROID_SERIAL=$to_adb adb-fix-busybox
+if test "$from_adb"; then
+    ANDROID_SERIAL=$from_adb adb-fix-busybox
+    from_apk=$(
+        export ANDROID_SERIAL=$from_adb
+        my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
+            )
+else
+    from_apk=
+fi
 
-to_apk=$(
-    export ANDROID_SERIAL=$to_adb
-    my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
-      )
+
+if test "$to_adb"; then
+    ANDROID_SERIAL=$to_adb adb-fix-busybox
+
+    to_apk=$(
+        export ANDROID_SERIAL=$to_adb
+        my-adb shell find /data/app -name '*.apk' | perl -npe 's,/data/app/,,'
+          )
+else
+    to_apk=
+fi
 
 declare -A from_packages
 declare -A to_packages
@@ -149,8 +202,19 @@ for apk in $from_apk; do
         echo source phone: $pkg
         from_packages[$pkg]=$apk
     fi
-
 done
+
+if test "$from_adb"; then
+    for app in $(
+                    ANDROID_SERIAL=$from_adb \
+                                  my-adb shell find /data/data -maxdepth 1 -type d | perl -npe 's,/data/data/?,,'
+                ); do
+        if test -z "${from_packages[$app]}" && [[ $app =~ $package_regexp ]]; then
+            echo "should also back data for $app"
+            from_packages[$app]='@'
+        fi
+    done
+fi
 
 for apk in $to_apk; do
     pkg=$(get-pkg-from-apk-path $apk)
@@ -158,7 +222,6 @@ for apk in $to_apk; do
         echo target phone: $pkg
         to_packages[$pkg]=$apk
     fi
-
 done
 
 if test "$dry_run" = true; then
@@ -171,7 +234,9 @@ cd ~/tmp/$b0
 declare -p from_packages to_packages > pkgs.info
 
 (
-    ANDROID_SERIAL=$to_adb adb shell mkdir -p /sdcard/MobileOrg
+    if test "$to_adb"; then
+        ANDROID_SERIAL=$to_adb adb shell mkdir -p /sdcard/MobileOrg
+    fi
 )&
 
 function do-1-pkg() {
@@ -185,18 +250,29 @@ function do-1-pkg() {
         exit
     fi
 
+    if ! [[ $p =~ $package_regexp ]]; then
+        true echo "skip $p, because it does not match package_regexp"
+        exit
+    fi
+
     echo working with $p
 
     f_path=/data/app/${from_packages[$p]}
-    if test -v to_packages[$p] -a "$only_missing" = true; then
+
+    if test -v to_packages[$p] && test "$only_missing" = true; then
         my-echo "$p already installed, skip" | tee -a install.skip
         exit 0
     fi
 
-    if test ! -v to_packages[$p]; then
-        ANDROID_SERIAL=$from_adb adb pull $f_path $p.apk
+    if test "${from_packages[$p]}" != @ -a ! -v to_packages[$p]; then
+        if test "$from_adb"; then
+            ANDROID_SERIAL=$from_adb adb pull $f_path $p.apk
+        fi
         (
-            ANDROID_SERIAL=$to_adb adb-multi-install $p.apk
+            if test "$to_adb" -a -e $p.apk; then
+                ANDROID_SERIAL=$to_adb adb-multi-install $p.apk
+            fi
+
         ) || {
             my-echo failed to install $p | tee -a install.err
             exit 0
@@ -208,21 +284,35 @@ function do-1-pkg() {
         exit
     fi
 
-    to_uid=$(
-        ANDROID_SERIAL=$to_adb my-adb shell "cat /data/system/packages.list|grep $p" | pn 2
-          )
-
     (
-        ANDROID_SERIAL=$from_adb my-adb sc-shell "cd /data/data; tar czf /data/data/$p.tgz $p"
-        ANDROID_SERIAL=$from_adb adb pull /data/data/$p.tgz
-        ANDROID_SERIAL=$from_adb my-adb rm -f /data/data/$p.tgz
-        ANDROID_SERIAL=$to_adb adb push $p.tgz /data/data ;
-        ANDROID_SERIAL=$to_adb my-adb sc-shell "cd /data/data; rm -rf $p; tar xzf $p.tgz; chown -R $to_uid.$to_uid $p; restorecon -D -R -v $p"
+        if test "$from_adb"; then
+            ANDROID_SERIAL=$from_adb my-adb sc-shell "cd /data/data; tar czf /data/data/$p.tgz $p"
+            ANDROID_SERIAL=$from_adb adb pull /data/data/$p.tgz
+            ANDROID_SERIAL=$from_adb my-adb rm -f /data/data/$p.tgz
+        fi
+        if test "$to_adb"; then
+            adb-restore-app-data -t $to_adb -p $p
+        fi
     ) > $p.log 2>&1
 
 }
 
+if test "$to_adb" && ! ps.pl "adb-agree-to-install"; then
+    hint "发现你没有在运行 adb-agree-to-install 进程，这样的话在 user 版本上用 adb install apk 的时候，手机会不停的提示警告 apk 来源不可信，然后你需要不停的手动去点击确认"
+    hint "这样的话这个脚本基本上是没法使用的，所以请一定要运行 adb-agree-to-install 命令，这个命令会帮你自动点击同意安装。"
+fi
+
+
 export -f do-1-pkg
-for x in "${!from_packages[@]}"; do
-    echo "$x"
-done | sort | time xargs -P 5 -n 1 bash -c 'do-1-pkg $1' true
+if test "$from_adb"; then
+    for x in "${!from_packages[@]}"; do
+        echo "$x"
+    done
+else
+    for x in *.tgz *.apk; do
+        x=${x%.*}
+        if [[ $x =~ $package_regexp ]]; then
+            echo ${x}
+        fi
+    done
+fi | sort -u | time xargs -P 5 -n 1 bash -c 'do-1-pkg $1' true

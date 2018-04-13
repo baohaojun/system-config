@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# 这个脚本是给 adb-sync-phones 用的
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt t:to-adb='${ANDROID_SERIAL}' p:p
+## end code-generator
+## start generated code
+TEMP=$( getopt -o p:t:h \
+               --long p:,to-adb:,help \
+               -n $(basename -- $0) -- "$@")
+declare p=
+declare to_adb=${ANDROID_SERIAL}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -p|--p)
+            p=$2
+            shift 2
+            ;;
+        -t|--to-adb)
+            to_adb=$2
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--p=P'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to-adb=TO_ADB'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+to_uid=$(
+    ANDROID_SERIAL=$to_adb my-adb shell "cat /data/system/packages.list|grep '^$p '" | pn 2
+      )
+ANDROID_SERIAL=$to_adb adb push $p.tgz /data/data ;
+ANDROID_SERIAL=$to_adb my-adb sc-shell "cd /data/data; mv $p $p.$(now.) || true; tar xzf $p.tgz; chown -R $to_uid.$to_uid $p; restorecon -D -R -v $p"

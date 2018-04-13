@@ -1,0 +1,72 @@
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P u:unset-vars-re='()' punset-path
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o pu:h \
+                      --long unset-path,unset-vars-re:,help,no-unset-path \
+                      -n $(basename -- $0) -- "$@")
+declare unset_path=false
+declare unset_vars_re=()
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -p|--unset-path|--no-unset-path)
+            if test "$1" = --no-unset-path; then
+                unset_path=false
+            else
+                unset_path=true
+            fi
+            shift
+            ;;
+        -u|--unset-vars-re)
+            unset_vars_re=("${unset_vars_re[@]}" "$2")
+            shift 2
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--[no-]unset-path'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--unset-vars-re=UNSET_VARS_RE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+while read d x var; do
+    var=${var%%=*}
+    for x in "${unset_vars_re[@]}"; do
+        if [[ $var =~ $x ]]; then
+            echo unset $var
+            eval unset $var
+            break
+        fi
+    done
+done <<<"$(declare -x)"
+
+if test "$unset_path" = true; then
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+fi
+
+"$@"

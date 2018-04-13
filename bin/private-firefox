@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rsync ~/.mozilla ~/tmp -av
+HOME=~/tmp firefox --ProfileManager
