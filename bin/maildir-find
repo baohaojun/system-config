@@ -115,9 +115,16 @@ mu find $cc $to $body $subject $from date:$after..$before --fields 'l d f s' | (
         maildir_file_map[$info]=$file
     done
 
+    select_all="All of the above! 老子想批处理一下！"
     saved_selected_info=$(
-        select-args -1 -a "All of the above! 老子想批处理一下！" -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r)" </dev/tty
-                 )
+        select-args -1 -a "$select_all" -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r)" </dev/tty
+                       )
+
+    if test "$saved_selected_info" = "$select_all"; then
+        saved_selected_info=$(
+            for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r
+                           )
+    fi
 
     if test "$saved_selected_info"; then
         handle_all_files=false

@@ -28,10 +28,27 @@ function parse-env() {
 
 parse-env before_env
 
+lunch-without-buildspec() {
+
+    if test -e buildspec.mk; then
+        # 有这个文件在的时候，lunch 是不能正常工作的。这是因为后来我改
+        # 了一下 buildspec.mk，没有继续使用 Makefile 的 ?= 来写
+        # TARGET_PRODUCT 等变量，而是直接使用了 :=
+
+        mv buildspec.mk buildspec.mk.bak.$$
+    fi
+
+    lunch "$1"
+
+    if test -e buildspec.mk.bak.$$; then
+        mv buildspec.mk.bak.$$ buildspec.mk
+    fi
+}
+
 if test $# != 0; then
     if test "$1" != "${TARGET_PRODUCT}"-"${TARGET_BUILD_VARIANT}"; then
         . build/envsetup.sh
-        lunch "$1"
+        lunch-without-buildspec "$1"
     fi
 else
     . build/envsetup.sh >/dev/null 2>&1
@@ -39,7 +56,7 @@ else
     product=$(select-args -p "请选择你要编译的产品" -o -- ${products[@]})
     variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )
     config=$product-$variant
-    lunch "$config"
+    lunch-without-buildspec "$config"
 fi
 
 parse-env after_env
