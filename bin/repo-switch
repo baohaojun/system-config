@@ -17,9 +17,9 @@ fi
 function repo_init_extra_info() {
     (
         cd .repo/manifests || exit
-        if test "$(git config repo.depth)" = 1; then echo --depth 1; fi
+        if test "$(git config repo.depth)" = 1 -o "$(git config repo.force-depth1)" = true; then echo --depth 1; fi
         if test "$(git config manifest.groups)"; then
-            echo -g $(git config manifest.groups)
+            echo -g $(git config manifest.groups | tr , '\n'|sort -u|xargs string-join ,)
         fi
     )
 }
@@ -126,7 +126,7 @@ fi
 if test -z "$repo_reference"; then
     repo_reference=$(
         if test -d .repo/manifests.git; then
-            cd .repo/manifests.git && git config repo.reference
+            cd .repo/manifests.git && git config repo.reference || true
         fi
                   )
     if test "$repo_reference"; then

@@ -412,7 +412,7 @@ fi
 if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别人 review 之前，要不要先自己本地 review 一下（加 -R 参数可以跳过此提示）"; then
     (
         cd $(dirname $(lookup-file -e .git))
-        FOR_REVIEW=true git-interactive-add
+        git-interactive-add -r "$(repo-remote-branch)" -b HEAD
     )
 fi
 
