@@ -4,18 +4,18 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @:jenkins-server
+# generate-getopt j:jenkins-server
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o h \
+TEMP=$( getopt -o j:h \
                --long jenkins-server:,help \
                -n $(basename -- $0) -- "$@")
-jenkins_server=
+declare jenkins_server=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --jenkins-server)
+        -j|--jenkins-server)
             jenkins_server=$2
             shift 2
             ;;
@@ -24,7 +24,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf %06s '-j, '
             printf %-24s '--jenkins-server=JENKINS_SERVER'
             echo
             exit

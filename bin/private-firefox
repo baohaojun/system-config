@@ -1,4 +1,6 @@
 #!/bin/bash
 
-rsync ~/.mozilla ~/tmp -av
+if test ! -d ~/tmp/.mozilla; then
+    rsync ~/.mozilla ~/tmp -av
+fi
 HOME=~/tmp firefox --ProfileManager

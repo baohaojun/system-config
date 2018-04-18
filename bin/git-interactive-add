@@ -26,14 +26,15 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:revision b:review-base
+# generate-getopt r:revision b:review-base sselective-review=true
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o b:r:h \
-              --long review-base:,revision:,help \
-              -n $(basename -- $0) -- "$@")
-review_base=
-revision=
+TEMP=$( getopt -o b:r:sh \
+               --long review-base:,revision:,selective-review,help,no-selective-review \
+               -n $(basename -- $0) -- "$@")
+declare review_base=
+declare revision=
+declare selective_review=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -46,9 +47,17 @@ while true; do
             revision=$2
             shift 2
             ;;
+        -s|--selective-review|--no-selective-review)
+            if test "$1" = --no-selective-review; then
+                selective_review=false
+            else
+                selective_review=true
+            fi
+            shift
+            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-b, '
@@ -56,6 +65,9 @@ while true; do
             echo
             printf %06s '-r, '
             printf %-24s '--revision=REVISION'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]selective-review'
             echo
             exit
             shift
@@ -80,15 +92,6 @@ fi
 function git-diff() {
     clear
 
-    if test "$FOR_REVIEW"; then
-        if git diff -w $(repo-remote-branch) HEAD -- "$@" | grep -q .; then
-            git diff -w $(repo-remote-branch) HEAD -- "$@" || true
-        else
-            read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
-        fi
-        return 0
-    fi
-
     if git status -s "$@" | grep -q -P -e '^\?\?'; then
         read -e -p "$@ seems to be a new file, press Enter to continue...  "
         diff /dev/null "$@" || true
@@ -103,10 +106,6 @@ function git-diff() {
 
 function git-meld() {
     clear
-    if test "$FOR_REVIEW"; then
-        git difftool -t meld -y $(repo-remote-branch) HEAD -- "$@"
-        return 0
-    fi
 
     if git status -s "$@" | grep -q -P -e '^\?\?'; then
         read -e -p "$@ seems to be a new file, press Enter to continue...  "
@@ -117,30 +116,8 @@ function git-meld() {
     fi
 }
 
-IFS=$'\n'
-for x in "$@" $(
-              if test $# == 0; then
-                  if test "$revision" = ""; then
-                      git status -s .|grep '^.\S' -P | cut -b 4-;
-                  else
-                      gitp=$(gitp .)
-                      case "$gitp" in
-                          ./)
-                              gitp=
-                              ;;
-                          *)
-                              gitp=$gitp/
-                              ;;
-                      esac
-                      len=${#gitp}
-                      start=$((9 + len))
-                      git diff --name-status $review_base $revision . | expand | cut -b $start-;
-                  fi
-              fi
-    if test "$FOR_REVIEW"; then
-        git diff $(repo-remote-branch) HEAD --name-status .| perl -npe 's/^\S+\s+//'
-    fi
-); do
+git-interactive-review-1() {
+    local x=$1
     if test "${x:0:1}" = \" && yes-or-no-p -y "Eval $x?"; then
         eval x=\$\'"$x"\'
         x=${x#\"}
@@ -252,7 +229,80 @@ for x in "$@" $(
         fi
         break
     done
-done
+}
+
+IFS=$'\n'
+
+list_of_files=(
+    "$@" $(
+        if test $# == 0; then
+            if test "$revision" = ""; then
+                git status -s .|grep '^.\S' -P | cut -b 4-;
+            else
+                gitp=$(gitp .)
+                case "$gitp" in
+                    ./)
+                        gitp=
+                        ;;
+                    *)
+                        gitp=$gitp/
+                        ;;
+                esac
+                len=${#gitp}
+                start=$((9 + len))
+                git diff --name-status $review_base $revision . | expand | cut -b $start-;
+            fi
+        fi
+        )
+)
+
+if test "$selective_review" = true; then
+    saved_list_of_files=(
+        "${list_of_files[@]}"
+    )
+    while true; do
+        special_menu="其他菜单选项"
+        if test "${#list_of_files[@]}" = 0; then
+            break
+        fi
+        x=$(
+            select-args -a "$special_menu"  -p "请选择要 review 哪个文件" "${list_of_files[@]}"
+         )
+
+        if test "$x" = "$special_menu"; then
+            declare -A special_ops
+            special_ops[quit]="quit：退出 Review"
+            special_ops[all]="show-all：重新显示完整文件列表"
+            x=$(
+                select-args -p "请选择你想要执行的操作" "${special_ops[quit]}" "${special_ops[all]}"
+             )
+            if test "$x" = "${special_ops[all]}"; then
+                list_of_files=(
+                    "${saved_list_of_files[@]}"
+                )
+                continue
+            elif "$x" = "${special_ops[quit]}"; then
+                break
+            fi
+        fi
+
+        list_of_files=(
+            $(
+                for f in "${list_of_files[@]}"; do
+                    if test "$x" = "$f"; then
+                        continue
+                    fi
+                    echo "$f"
+                done
+            )
+        )
+        git-interactive-review-1 "$x"
+    done
+else
+    for x in "${list_of_files[@]}"; do
+        git-interactive-review-1 "$x"
+    done
+fi
 
 if test -e .before-push-hook -a "$before_push_hook" != done; then
     bash .before-push-hook

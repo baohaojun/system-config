@@ -83,10 +83,7 @@ sub found_it($$) {
   my ($entry, $remaining_options) = @_;
 
   if ($ENV{always_selection} eq $entry) {
-    pop @$remaining_options;
-    for (@$remaining_options) {
-      echo $_;
-    }
+    echo $entry;
     exit;
   }
 
