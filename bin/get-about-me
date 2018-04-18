@@ -5,6 +5,15 @@ function die() {
 }
 
 if test $(basename $0) = get-about-me; then
+    if test "$#" = 0; then
+        (
+            cd ~/.config/system-config/about_me/
+            for x in *; do
+                echo $x: $(get-about-me "$x")
+            done
+        )
+        exit
+    fi
 
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt d:default
