@@ -222,11 +222,12 @@ function adb() {
             build_type=$(
                 my-adb getprop ro.build.type
                       )
-            if test "$sdk_version" -gt 25 -a "$build_type" = user; then
+            if test "$sdk_version" -gt 25; then
                 if test -e ~/src/github/smartcm/sse-helpers/.hack-verity; then
                     . ~/src/github/smartcm/sse-helpers/.hack-verity
                 fi
             fi
+
             if the-true-adb disable-verity 2>&1 |grep -q 'Now reboot your device for settings to take effect'; then
                 hint "刚 disable 了 verity，手机需要重启才可以 remount"
                 the-true-adb reboot

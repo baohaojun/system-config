@@ -47,6 +47,11 @@ old_manifest_target=
 if is-jenkins; then
     set -x
     if test "$1" = init; then
+        if test "$SMARTCM_FORCE_MIRROR" = true; then
+            set -- "$@" --reference ~/src/android-mirror
+        else
+            set -- "$@" --reference ~/src/no-such-mirror --depth 1
+        fi
         scm check-df
         if test -e .repo/manifest.xml; then
             old_manifest_target=$(readlink -f .repo/manifest.xml)
@@ -187,7 +192,8 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                     exit 0
                 fi
 
-                mail-cms -e "Repo sync failed after retry!"
+                sleep 30 && # sometimes we are being aborted!
+                    mail-cms -e "Repo sync failed after retry!"
                 exit 1
             )
         else
