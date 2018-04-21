@@ -1,63 +1,94 @@
 #+name: script-to-find-patches
 #+BEGIN_SRC sh
-    if test "$DEBUG" = true; then
-        set -x
-    fi
-    if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
-        exit
-    fi
-    TOP=$ANDROID_TOP;
-    log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
-    if [[ $log =~ /\.log$ ]]; then
-        echo "Error for $(ap): can not find repo path"
-        exit 1
-    fi
-    mkdir -p $(dirname $log);
-    if test -z "$to_manifest_xml"; then
-        if test ! "$remote" -a $local_from = false ; then
-            from=$(repo-remote)/$from
-        fi
-        if test ! "$remote" -a $local_to = false ; then
-            to=$(repo-remote)/$to
-        fi
-    else
-        . $to_manifest_xml.env
-        . $from_manifest_xml.env
-        pwd=$(pwd -P)
-        if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
-            from=${from_path_revision_map[$pwd]}
-        elif test "$repo_is_mirror" = true; then
-            from=${from_path_revision_map[$pwd]}
-        else
-            from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
-        fi
-        if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
-            to=${to_path_revision_map[$pwd]}
-        elif test "$repo_is_mirror" = true; then
-            to=${to_path_revision_map[$pwd]}
-        else
-            to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
-        fi
-    fi
+  if test "$DEBUG" = true; then
+      set -x
+  fi
+  if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
+      exit
+  fi
+  TOP=$ANDROID_TOP;
+  log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
+  if [[ $log =~ /\.log$ ]]; then
+      echo "Error for $(ap): can not find repo path"
+      exit 1
+  fi
+  mkdir -p $(dirname $log);
 
-    if test "$from" = / -o "$to" = /; then
-        exit
-    fi
-    echo git-change-id-ffable $from $to in $PWD
-    if ! git log -1 "$from" >/dev/null 2>&1 || ! git log -1 "$to" >/dev/null 2>&1; then
-        if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
-            echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
-            exit
-        else
-            echo need to fetch "$from" or "$to" in $PWD
-            git fetch $(repo-remote) || true
-        fi
-    fi
-    git-change-id-ffable $from $to > $log || true
-    if test $(stat -c %s $log) = 0; then
-        rm $log;
-    fi;
-    pwd
+  offer-unshallow() {
+      if yes-or-no-p -n "你的当前 git 目录是一个 shallow clone，无法获取完整 git 历史，要不要自动帮你 unshallow（如确认，请输入 yes）？"; then
+          sse unshallow-source-code
+      else
+          die "无法在 shallow clone 下执行此操作，退出"
+      fi
+  }
+
+
+  if test -z "$to_manifest_xml"; then
+      if test ! "$remote" -a $local_from = false ; then
+          from=remotes/$(repo-remote)/$from
+      fi
+      if test ! "$remote" -a $local_to = false ; then
+          to=remotes/$(repo-remote)/$to
+      fi
+
+      if test -e .git/shallow; then
+          if is-jenkins; then
+              export GIT_DIR=~/src/android-mirror/$(repo-project).git
+              export from=${from#remotes/*/}
+              export to=${to#remotes/*/}
+          else
+              offer-unshallow
+          fi
+
+      fi
+  else
+      if test -e .git/shallow; then
+          if is-jenkins; then
+              export GIT_DIR=~/src/android-mirror/$(repo-project).git
+              export repo_is_mirror=true
+          else
+              offer-unshallow
+          fi
+      fi
+
+      . $to_manifest_xml.env
+      . $from_manifest_xml.env
+      pwd=$(pwd -P)
+      if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+          from=${from_path_revision_map[$pwd]}
+      elif test "$repo_is_mirror" = true; then
+          from=${from_path_revision_map[$pwd]}
+      else
+          from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
+      fi
+
+      if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+          to=${to_path_revision_map[$pwd]}
+      elif test "$repo_is_mirror" = true; then
+          to=${to_path_revision_map[$pwd]}
+      else
+          to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
+      fi
+  fi
+
+  if test "$from" = / -o "$to" = /; then
+      exit
+  fi
+  echo git-change-id-ffable $from $to in $PWD
+  if ! git log -1 "$from" >/dev/null 2>&1 || ! git log -1 "$to" >/dev/null 2>&1; then
+      if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
+          echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
+          exit
+      else
+          echo need to fetch "$from" or "$to" in $PWD
+          git fetch $(repo-remote) || true
+      fi
+  fi
+  git-change-id-ffable $from $to > $log || true
+  if test $(stat -c %s $log) = 0; then
+      rm $log;
+  fi;
+  pwd
 
 
 #+END_SRC
@@ -128,46 +159,103 @@
       fi
   fi
 
-  local_from=false
-  local_to=false
-  from_manifest_xml=
-  to_manifest_xml=
-  jobs=5
-  TEMP=$(getopt -o j:TFf:t:r: --long xf:,xt:,from:,to:,remote: -n $(basename $0) -- "$@")
-  remote=
+
+  ## start code-generator "^\\s *#\\s *"
+      # generate-getopt j:jobs=5 \
+          # @:xf '?从哪个 xml 文件挑 patch，自动计算 from 分支' \
+          # @:xt '?往哪个 xml 文件合入 patch，自动计算 to 分支' \
+          # Flocal-from '?把 from 分支当成一个本地分支，不要自动加上 remotes/$(repo-remote)/ 前缀' \
+          # Tlocal-to '?把 to 分支当成一个本地分支，不要自动加上 remotes/$(repo-remote)/ 前缀' \
+          # f:from '?从哪个分支挑 patch' \
+          # t:to '?往哪个分支合入 patch' \
+          # r:remote '?使用哪个 remote'
+  ## end code-generator
+  ## start generated code
+  TEMP=$( getopt -o f:j:FTr:t:h \
+                 --long from:,jobs:,local-from,local-to,remote:,to:,xf:,xt:,help,no-local-from,no-local-to \
+                 -n $(basename -- $0) -- "$@")
+  declare from=
+  declare jobs=5
+  declare local_from=false
+  declare local_to=false
+  declare remote=
+  declare to=
+  declare xf=
+  declare xt=
   eval set -- "$TEMP"
   while true; do
       case "$1" in
-          -j)
+
+          -f|--from)
+              from=$2
+              shift 2
+              ;;
+          -j|--jobs)
               jobs=$2
               shift 2
               ;;
-          --xf)
-              from_manifest_xml=$2
-              shift 2
+          -F|--local-from|--no-local-from)
+              if test "$1" = --no-local-from; then
+                  local_from=false
+              else
+                  local_from=true
+              fi
+              shift
               ;;
-          --xt)
-              to_manifest_xml=$2
-              shift 2
+          -T|--local-to|--no-local-to)
+              if test "$1" = --no-local-to; then
+                  local_to=false
+              else
+                  local_to=true
+              fi
+              shift
               ;;
-          -f|--from)
-              from=$2
+          -r|--remote)
+              remote=$2
               shift 2
               ;;
           -t|--to)
               to=$2
               shift 2
               ;;
-          -r|--remote)
-              remote=$2
+          --xf)
+              xf=$2
               shift 2
               ;;
-          -F)
-              local_from=true;
-              shift
+          --xt)
+              xt=$2
+              shift 2
               ;;
-          -T)
-              local_to=true;
+          -h|--help)
+              set +x
+              echo -e
+              echo
+              echo Options and arguments:
+              printf %06s '-f, '
+              printf %-24s '--from=FROM'
+              echo '从哪个分支挑 patch'
+              printf %06s '-j, '
+              printf %-24s '--jobs=JOBS'
+              echo
+              printf %06s '-F, '
+              printf %-24s '--[no-]local-from'
+              echo '把 from 分支当成一个本地分支，不要自动加上 remotes/$(repo-remote)/ 前缀'
+              printf %06s '-T, '
+              printf %-24s '--[no-]local-to'
+              echo '把 to 分支当成一个本地分支，不要自动加上 remotes/$(repo-remote)/ 前缀'
+              printf %06s '-r, '
+              printf %-24s '--remote=REMOTE'
+              echo '使用哪个 remote'
+              printf %06s '-t, '
+              printf %-24s '--to=TO'
+              echo '往哪个分支合入 patch'
+              printf "%06s" " "
+              printf %-24s '--xf=XF'
+              echo '从哪个 xml 文件挑 patch'
+              printf "%06s" " "
+              printf %-24s '--xt=XT'
+              echo '往哪个 xml 文件合入 patch'
+              exit
               shift
               ;;
           --)
@@ -179,6 +267,13 @@
               ;;
       esac
   done
+
+
+  ## end generated code
+
+  from_manifest_xml=$xf
+  to_manifest_xml=$xt
+
 
   if test -z "$from_manifest_xml" -a -z "$to_manifest_xml"; then
       if test -z "$from" -o -z "$to"; then
@@ -193,11 +288,11 @@
       fi
 
       if test $local_from = false -a "$remote"; then
-          from=$remote/$from
+          from=remotes/$remote/$from
       fi
 
       if test $local_to = false -a "$remote"; then
-          to=$remote/$to
+          to=remotes/$remote/$to
       fi
       export from
       export to

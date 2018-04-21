@@ -37,7 +37,7 @@ function window_text_match() {
     current_window_text=$(sawfish-get-screen-shot)
     last_user_host=$(echo "$current_window_text"|grep @|tail -n 1 || true)
     if echo "$last_user_host"| grep -P -q -e "$search"; then
-        if echo "$current_window_text" | grep -P '\S' | tail -n 1 | grep '^\$$' -P; then
+        if echo "$current_window_text" | grep -P '\S' | tail -n 1 | grep '(^|:.*)\$$' -P; then
             return 0
         elif yes-or-no-p -n "使用当前窗口吗？好像正在运行别的程序呢？"; then
             return 0
@@ -68,12 +68,12 @@ if test "$SC_USE_TMUX" = true; then
                     exit 0
                 elif test $? = 1 && yes-or-no-p -y "Use this window whose name matches?"; then
                     user_at_host=$(
-                        echo "$current_window_text" | grep -o '\S+@\S+' -P | tail -n 1
+                        echo "$current_window_text" | grep -o '\S+@[^ \t:]+[\s:]' -P | tail -n 1
                                 )
 
                     if yes-or-no-p -y "update the regexp: $user_at_host?"; then
                         cat <<EOF > ~/src/github/private-config/.ssssh/search-$host
-regexp='$user_at_host\s'
+regexp='$user_at_host'
 name=$host
 EOF
                     fi
