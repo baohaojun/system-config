@@ -260,7 +260,7 @@ function do-1-pkg() {
     f_path=/data/app/${from_packages[$p]}
 
     if test -v to_packages[$p] && test "$only_missing" = true; then
-        my-echo "$p already installed, skip" | tee -a install.skip
+        my-echo "$p already installed, skip (or use --no-only-missing to force sync)" | tee -a install.skip
         exit 0
     fi
 
