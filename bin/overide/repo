@@ -58,12 +58,6 @@ if is-jenkins; then
         fi
     fi
     if test "$1" = init -a -d .repo/manifests/.git; then
-        (
-            cd .repo/manifests/
-            if test "$(git config repo.depth)" = 1; then
-                die "Can't do repo with depth=1 in jenkins task, will lock up gerrit"
-            fi
-        )
         echo "will now do repo init, but no sync yet." > .repo/grep-errors.txt
         (
             cd .repo/manifests
