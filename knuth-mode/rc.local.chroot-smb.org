@@ -1,0 +1,76 @@
+#+name: expect-kinit
+#+BEGIN_SRC tcl
+  spawn kinit itadmin@SMARTISAN.CN
+  expect -re "Password for itadmin@SMARTISAN.CN: " {
+      send "S123.abc\n"
+  }
+
+  wait
+
+#+END_SRC
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code :noweb yes
+#+BEGIN_SRC sh
+  #!/bin/bash
+
+  set -ex
+
+  for x in $(seq 1 10); do
+      if ! nfs_mounts=$(
+              mount | grep 172.16.2.225:/vol/vol1
+           ); then
+          break
+      fi
+
+      echo "$nfs_mounts" | awk '{print $3}' |xargs -n 1 umount $(if test $x -gt 6; then echo -l; fi) || true
+  done
+
+  mount 172.16.2.225:/vol/vol1/flash /mnt/flash -o ro -t nfs
+  mount 172.16.2.225:/vol/vol1/flash /share/s-flash -o ro -t nfs
+
+  cat > ~root/expect-kinit <<EOF
+  <<expect-kinit>>
+  EOF
+
+  expect -f ~root/expect-kinit
+  klist
+
+  IT_PASS=S123.abc
+
+  net rpc join -S DC.smartisan.cn -U itadmin@SMARTISAN.CN%${IT_PASS}
+  net ads join -S DC.smartisan.cn -U itadmin@SMARTISAN.CN%${IT_PASS}
+
+  sleep 2
+
+  /etc/init.d/winbind restart
+
+  sleep 3
+
+
+  wbinfo -u&
+
+  getent passwd&
+
+  /etc/init.d/nmbd restart
+  /etc/init.d/smbd restart
+
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/src/github/cm-home/by-host/build8/etc/rc.local.chroot-smb :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+

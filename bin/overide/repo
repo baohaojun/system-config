@@ -154,6 +154,18 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                 fi
                             fi
                             exit 1
+                        ) || (
+                            grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log && (
+                                projects=$(
+                                    grep 'error: Cannot fetch' $repo_sync_log | pn 4
+                                        ) &&
+                                    sleep 20 &&
+                                    ~/system-config/bin/repo "$@" $projects &&
+                                    (
+                                        mail-cms "Info: 'found Protocol error:' in jenkins repo sync and fixed" ||
+                                            true
+                                    )
+                            )
                         ); then
                     # this might be temporary
                     sleep 60
