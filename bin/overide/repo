@@ -140,43 +140,48 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
             fi
             export REDO_REPO_SYNC=true
             (
-                if grep "Permission denied (publickey)" $repo_sync_log &&
-                        grep "fatal: Could not read from remote repository" $repo_sync_log || (
-                            if grep 'The last gc run reported the following. Please correct the root cause' $repo_sync_log &&
-                                    grep 'and remove .*\.repo/projects/.*/gc.log' $repo_sync_log; then
-                                rm_dir=$(
-                                    perl -ne 'print $1 if m,and remove .*?(\.repo/projects/.*\.git)/gc.log,' $repo_sync_log
-                                      )
-                                if test -d "$rm_dir"; then
-                                    rm -rf "$rm_dir";
-                                    mail-cms "Warn: Jenkins repo sync failed for gc.log: removed $rm_dir"
-                                    exit 0
+                for temp_retry in $(seq 1 20); do
+                    if grep "Permission denied (publickey)" $repo_sync_log &&
+                            grep "fatal: Could not read from remote repository" $repo_sync_log || (
+                                if grep 'The last gc run reported the following. Please correct the root cause' $repo_sync_log &&
+                                        grep 'and remove .*\.repo/projects/.*/gc.log' $repo_sync_log; then
+                                    rm_dir=$(
+                                        perl -ne 'print $1 if m,and remove .*?(\.repo/projects/.*\.git)/gc.log,' $repo_sync_log
+                                          )
+                                    if test -d "$rm_dir"; then
+                                        rm -rf "$rm_dir";
+                                        mail-cms "Warn: Jenkins repo sync failed for gc.log: removed $rm_dir"
+                                        exit 0
+                                    fi
                                 fi
-                            fi
-                            exit 1
-                        ) || (
-                            grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log && (
-                                projects=$(
-                                    grep 'error: Cannot fetch' $repo_sync_log | pn 4
-                                        ) &&
-                                    sleep 20 &&
-                                    ~/system-config/bin/repo "$@" $projects &&
-                                    (
-                                        mail-cms "Info: 'found Protocol error:' in jenkins repo sync and fixed" ||
-                                            true
-                                    )
-                            )
+                                exit 1
+                            ) || (
+                                grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log && (
+                                    projects=$(
+                                        grep 'error: Cannot fetch' $repo_sync_log | pn 4
+                                            ) &&
+                                        sleep 10 &&
+                                        ~/system-config/bin/repo "$@" -j2 $projects &&
+                                        (
+                                            mail-cms "Info: 'found Protocol error:' in jenkins repo sync and fixed: @$temp_retry" ||
+                                                true
+                                        )
+                                )
+                            ); then
+                        # this might be temporary
+                        sleep 30
+                        if (
+                            set -o pipefail
+                            time stdbuf -oL -eL ~/system-config/bin/repo "$@" 2>&1 | stdbuf -oL -eL tee $repo_sync_log
                         ); then
-                    # this might be temporary
-                    sleep 60
-                    if ~/system-config/bin/repo "$@"; then
-                        mail-cms "Info: Jenkins repo sync repaired after retry."
-                        rm $repo_sync_log
-                        exit 0
-                    else
-                        mail-cms "Warn: Jenkins repo sync still failing after retry."
+                            mail-cms "Info: Jenkins repo sync repaired after retry: $temp_retry."
+                            rm $repo_sync_log
+                            exit 0
+                        else
+                            mail-cms "Warn: Jenkins repo sync still failing after retry."
+                        fi
                     fi
-                fi
+                done
 
                 if grep "Couldn't find remote ref" $repo_sync_log; then
                     mail-cms -i -e "你的 manifest 文件可能有问题，有一个分支找不到： $(readlink .repo/manifest.xml)" < "$repo_sync_log"
