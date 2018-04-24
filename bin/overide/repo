@@ -26,6 +26,7 @@ clean-up() {
 if test "$1" = init; then
     rm -rf $deltmpdir.*& # just in case some is left from last time.
     if is-jenkins; then
+        set -- "$@" --repo-branch=master --no-repo-verify
         if test -e .repo/project-objects/repo-too-large; then
             (
                 clean-up
@@ -163,10 +164,35 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         sleep 10 &&
                                         ~/system-config/bin/repo "$@" -j2 $projects &&
                                         (
-                                            mail-cms "Info: 'found Protocol error:' in jenkins repo sync and fixed: @$temp_retry" ||
+                                            mail-cms -e -o "Info: 'found Protocol error:' in jenkins repo sync and fixed: @$temp_retry" ||
                                                 true
                                         )
                                 )
+                            ) || (
+                                if ! grep 'error.GitError: cannot initialize work tree' $repo_sync_log; then
+                                    exit 1
+                                fi
+                                if ! grep 'error.GitError: cannot initialize work tree: ' $repo_sync_log; then
+                                    (
+                                        cd $(lookup-file .repo/repo)
+                                        git fetch origin master
+                                        git reset --hard origin/master
+                                    )
+                                    exit 0 # next time, let's hope the work tree info will be printed.
+                                fi
+
+                                failed_project=$(
+                                    grep 'error.GitError: cannot initialize work tree: ' $repo_sync_log | perl -npe 's/.*cannot initialize work tree: //'
+                                              )
+
+                                for p in $failed_project; do
+                                    if test -d "$p"; then
+                                        rm -rf "$p"
+                                    fi
+                                done
+                                echo $failed_project | mail-cms -i -e -o "Removed some corrupted work trees for repo sync retry." || true
+                                exit 0
+
                             ); then
                         # this might be temporary
                         sleep 30
@@ -180,6 +206,8 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                         else
                             mail-cms "Warn: Jenkins repo sync still failing after retry."
                         fi
+                    else
+                        break
                     fi
                 done
 
