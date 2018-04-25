@@ -81,7 +81,7 @@ if test -z "$find_what"; then
     echo "$vmlinux"
 else
     flashing_file_dir=$(
-        echo "$vmlinux" | grep 'Flashing binary' -A 1 | perl -ne 'print if s,\s*smb://172.16.2.225,/mnt,'
+        echo "$vmlinux" | grep 'Flashing binary' -A 1 | perl -ne 'print if s,\s*smb://172.16.2.240,/mnt,'
                      )
     if test ! -e "$flashing_file_dir"; then
         # maybe it's been backed up!
