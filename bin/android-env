@@ -32,7 +32,17 @@ if test "$(basename $0)" = android-env; then
         "$@"
     fi
 else
-    $(basename $0) "$@"
+    if ! $(basename $0) "$@"; then
+        echo "$(basename $0)运行失败！"
+        if [[ $(basename $0) =~ mm ]]; then
+            if test -e ~/src/github/smartcm/scm-helpers/warn-mm-or-mma; then
+                ~/src/github/smartcm/scm-helpers/warn-mm-or-mma
+            fi
+        fi
+        exit 1
+    else
+        exit 0
+    fi
 fi
 
 # m mm mmm mma mmma cgrep ggrep jgrep resgrep sgrep

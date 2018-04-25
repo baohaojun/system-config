@@ -75,7 +75,7 @@ if ! is-jenkins; then
 
 你的 $HOME/system-config 目录有修改，可能会导致升级失败。接下来会同步
 system-config git 代码，如果发生冲突，请查看一下是否由你的改动导致。以
-下是有改动的文件列表：$(echo; echo; git diff --name-status HEAD)
+下是（部分）有改动的文件列表：$(echo; echo; git diff --name-status HEAD|head -n 20)
 
 "
 

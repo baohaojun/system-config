@@ -1,40 +1,55 @@
 #!/bin/bash
 set -e
 
-function die() {
-    echo Error: "$@"
-    exit -1
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+rere-help() {
+    cat <<EOF
+
+这个脚本用于一种非常常见的重构操作：重命名。它不仅替换文件内容，还会替
+换文件名、软链接的名字和软链接指向。
+
+比如，你有一个软链接， symlink -> this-file，如果你运行 $b0 symlink
+lnk 的话，结果会变成： lnk -> this-file；如果你运行 $b0 this that 的话，
+结果会变成 symlink -> that-file。
+
+用例如下：
+
+    $b0 hello world # 把所有 hello 替换成 world
+    $b0 -p '\b' -P '\b' hello world # 把所有单独成词的 hello 替换成 world，忽略 helloooo。
+EOF
+
 }
 
-
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt p:prepend P:postpend aask-replacer=true f:change-files='()' @:perl-re=-P ?'by default, use grep -P (perl re), --perl-re="" to overide this'
+    # generate-getopt p:prepend P:postpend aask-replacer=true @use-git=true '?要不要执行 git 检查' \
+        # f:change-files='()' '?要修改哪些文件，默认会自己搜索匹配的文件' \
+        # @:perl-re=-P ?'by default, use grep -P (perl re), --perl-re="" to overide this'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o P:f:ap:h \
-              --long perl-re:,postpend:,change-files:,ask-replacer,prepend:,help,no-ask-replacer \
-              -n $(basename -- $0) -- "$@")
-perl_re=-P
-postpend=
-change_files=()
-ask_replacer=true
-prepend=
+TEMP=$( getopt -o af:P:p:h \
+               --long ask-replacer,change-files:,perl-re:,postpend:,prepend:,use-git,help,no-ask-replacer,no-use-git \
+               -n $(basename -- $0) -- "$@")
+declare ask_replacer=true
+declare change_files=()
+declare perl_re=-P
+declare postpend=
+declare prepend=
+declare use_git=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --perl-re)
-            perl_re=$2
-            shift 2
-            ;;
-        -P|--postpend)
-            postpend=$2
-            shift 2
-            ;;
-        -f|--change-files)
-            change_files=("${change_files[@]}" "$2")
-            shift 2
-            ;;
         -a|--ask-replacer|--no-ask-replacer)
             if test "$1" = --no-ask-replacer; then
                 ask_replacer=false
@@ -43,13 +58,33 @@ while true; do
             fi
             shift
             ;;
+        -f|--change-files)
+            change_files=("${change_files[@]}" "$2")
+            shift 2
+            ;;
+        --perl-re)
+            perl_re=$2
+            shift 2
+            ;;
+        -P|--postpend)
+            postpend=$2
+            shift 2
+            ;;
         -p|--prepend)
             prepend=$2
             shift 2
             ;;
+        --use-git|--no-use-git)
+            if test "$1" = --no-use-git; then
+                use_git=false
+            else
+                use_git=true
+            fi
+            shift
+            ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-a, '
@@ -58,6 +93,8 @@ while true; do
             printf %06s '-f, '
             printf %-24s '--change-files=CHANGE_FILES'
             echo
+            printf "%30s" ""
+            echo '要修改哪些文件，默认会自己搜索匹配的文件'
             printf "%06s" " "
             printf %-24s '--perl-re=PERL_RE'
             echo 'by default, use grep -P (perl re), --perl-re="" to overide this'
@@ -67,6 +104,9 @@ while true; do
             printf %06s '-p, '
             printf %-24s '--prepend=PREPEND'
             echo
+            printf "%06s" " "
+            printf %-24s '--[no-]use-git'
+            echo '要不要执行 git 检查'
             exit
             shift
             ;;
@@ -132,7 +172,7 @@ function get-files-this-dir() {
     fi
 }
 
-if ! git-is-clean .; then
+if test "$use_git" = true && ! git-is-clean .; then
     git-interactive-add
     git-is-clean .
 fi
@@ -236,7 +276,7 @@ function rename-files() {
 }
 
 rename-files . "$@"
-if test "${#change_files[@]}" != 0; then
+if test "$use_git" = true -a "${#change_files[@]}" != 0; then
     git checkout "${change_files[@]}"
 fi
 git-interactive-add
