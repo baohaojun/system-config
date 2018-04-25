@@ -293,11 +293,21 @@ if test -d .repo; then
     exit
 fi
 
-if git status -s | grep -q . && yes-or-no-p -y "你的 git 仓储还有改动，是否要退出？"; then
-    echo
-    echo "以下是尚未提交的改动，请先提交再重试 $0:" "$@"
-    git status -s
-    exit
+if git status -s | grep -q .; then
+    if is-jenkins; then
+        cat <<EOF | mail-cms -i "Gerrit-push-review exited in $PWD @ $(jenkins-info)"
+以下是尚未提交的改动，请先提交再重试 $0:" "$@"
+
+$(git status -s)
+
+EOF
+        exit 1
+    elif yes-or-no-p -y "你的 git 仓储还有改动，是否要退出？"; then
+        echo
+        echo "以下是尚未提交的改动，请先提交再重试 $0:" "$@"
+        git status -s
+        exit
+    fi
 fi
 
 function confirm-with-repo() {
@@ -416,7 +426,7 @@ if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别
     )
 fi
 
-if is-jenkins && test "$molCM"; then
+if is-jenkins; then
     atexit() {
         if test "$?" != 0; then
             cat ~/.cache/system-config/logs/gerrit-review.log.$$ | mail-cms -i "Gerrit-push-review failed in $PWD @ $(jenkins-info)"
