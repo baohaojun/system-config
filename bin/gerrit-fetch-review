@@ -184,7 +184,10 @@ if test $# = 1 -a "${1:0:4}" = http; then
     if echo "$1" |grep -q "#/c/\d+/" -P; then
         set -- "change:"$(echo "$1"|perl -npe 's,.*#/c/(\d+)/.*,$1,')
     else
-        set -- "$(basename "$1")"
+        if ! [[ $(basename $1) =~ ^[0-9]+$ ]]; then
+            die "Basename of $1 is must be a gerrit review number\!"
+        fi
+        set -- "change:$(basename "$1")"
     fi
 fi
 

@@ -4,19 +4,20 @@ declare -A maildir_file_map;
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt s:subject @:after='$(today -7)' @:before='$(today 1)' f:from b:body t:to c:cc
+# generate-getopt s:subject @:after='$(today -7)' @:before='$(today 1)' f:from b:body t:to c:cc pprint-only
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o b:c:f:s:t:h \
-               --long after:,before:,body:,cc:,from:,subject:,to:,help \
+TEMP=$( getopt -o b:c:f:ps:t:h \
+               --long after:,before:,body:,cc:,from:,print-only,subject:,to:,help,no-print-only \
                -n $(basename -- $0) -- "$@")
-after=$(today -7)
-before=$(today 1)
-body=
-cc=
-from=
-subject=
-to=
+declare after=$(today -7)
+declare before=$(today 1)
+declare body=
+declare cc=
+declare from=
+declare print_only=false
+declare subject=
+declare to=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -40,6 +41,14 @@ while true; do
         -f|--from)
             from=$2
             shift 2
+            ;;
+        -p|--print-only|--no-print-only)
+            if test "$1" = --no-print-only; then
+                print_only=false
+            else
+                print_only=true
+            fi
+            shift
             ;;
         -s|--subject)
             subject=$2
@@ -68,6 +77,9 @@ while true; do
             echo
             printf %06s '-f, '
             printf %-24s '--from=FROM'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--[no-]print-only'
             echo
             printf %06s '-s, '
             printf %-24s '--subject=SUBJECT'
@@ -109,8 +121,17 @@ from=$(handle-query-string from $from)
 body=$(handle-query-string body $body)
 to=$(handle-query-string to $to)
 cc=$(handle-query-string cc $cc)
+command_args=(
+    mu find $cc $to $body $subject $from date:$after..$before --fields 'l d f s'
+)
+if test "$print-only"; then
+    for x in "${command_args[@]}"; do
+        printf "%q " "$x"
+    done
+    exit
+fi
 
-mu find $cc $to $body $subject $from date:$after..$before --fields 'l d f s' | (
+"${command_args[@]}"| (
     while read file info; do
         maildir_file_map[$info]=$file
     done
