@@ -214,7 +214,7 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
-if test ! -e /sbin/adbd; then # 没有 adbd 文件，在 PC 上而不是手机上
+if test ! -e /system/bin/getprop; then # 没有 getprop 命令，在 PC 上而不是手机上
     local-pc-script
 else # on the phone
     prepare-chroot
