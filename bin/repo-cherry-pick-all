@@ -2,18 +2,6 @@
 
 set -e
 
-if is-jenkins; then
-    . aterr mail-cms "repo-cherry-pick-all 任务失败，当前目录是 $PWD，请查看相关 Jenkins Log"
-    if test ! -d .repo; then
-        out_diff=$(lookup-file -e out/diff)
-        mkdir -p $out_diff/pick-logs/
-
-        pick_log=$out_diff/pick-logs/$(ap|perl -npe s,/,%,g).pick.log;
-        echo "$(ap) 相关的 Log 放到了 $out_diff/pick-logs/$(ap|perl -npe s,/,%,g).pick.log;"
-        exec > "$pick_log" 2>&1
-    fi
-fi
-
 me=$(readlink -f $0)
 if test ! -e "$me"; then
     me=$(readlink -f "$(which $0)")
