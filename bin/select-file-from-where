@@ -17,7 +17,7 @@ fi
 file=$(select-output-line -i "$(echo $@; cat ~/system-config/etc/no-edit-files)" -p 'Which emacs recentf file do you whant? (Input ! to quit select)' \
                           -- cat $recentf | perl -npe 's/^\s+//; s/.*?"//; s/".*//;')
 
-if test -e "$file"; then
+if test -e "$file" || [[ $file =~ : ]]; then
     echo "$file"
     exit
 fi
