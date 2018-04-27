@@ -124,7 +124,7 @@ cc=$(handle-query-string cc $cc)
 command_args=(
     mu find $cc $to $body $subject $from date:$after..$before --fields 'l d f s'
 )
-if test "$print-only"; then
+if test "$print_only" = true; then
     for x in "${command_args[@]}"; do
         printf "%q " "$x"
     done
