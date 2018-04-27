@@ -169,6 +169,37 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         )
                                 )
                             ) || (
+                                grep 'fatal: expected shallow/unshallow, got ERR internal server error' $repo_sync_log && (
+                                    projects=$(
+                                        grep 'error: Cannot fetch' $repo_sync_log | pn 4
+                                            ) &&
+                                        sleep 30 &&
+                                        (
+                                            for project in $projects; do
+                                                path=$(
+                                                    repo-xml-sel -t -m //project"[@path = '$project' or @name = '$project']" -v @path -n .repo/manifest.xml
+                                                    )
+                                                if test -z "$path"; then
+                                                    path=$project
+                                                fi
+                                                project=$(
+                                                    repo-xml-sel -t -m //project"[@path = '$project' or @name = '$project']" -v @name -n .repo/manifest.xml
+                                                       )
+                                                if test -z "$project"; then
+                                                    project=$path
+                                                fi
+                                                if test -z "$path" -o -z "$project"; then
+                                                    die "Can't decide path and project for $project"
+                                                    exit 1
+                                                fi
+                                                rm $path .repo/projects/$path.git .repo/project-objects/$project.git -rf
+                                            done
+                                        ) && ~/system-config/bin/repo "$@" -j2 $projects && (
+                                            mail-cms -e -o "Info: 'found expected/got error:' in jenkins repo sync and fixed: @$temp_retry" ||
+                                                true
+                                        )
+                                )
+                            ) || (
                                 if ! grep 'error.GitError: cannot initialize work tree' $repo_sync_log; then
                                     exit 1
                                 fi
