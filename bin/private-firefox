@@ -1,6 +1,52 @@
 #!/bin/bash
 
-if test ! -d ~/tmp/.mozilla; then
-    rsync ~/.mozilla ~/tmp -av
+## start code-generator "^\\s *#\\s *"
+# generate-getopt rrsync
+## end code-generator
+## start generated code
+TEMP=$( getopt -o rh \
+               --long rsync,help,no-rsync \
+               -n $(basename -- $0) -- "$@")
+declare rsync=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -r|--rsync|--no-rsync)
+            if test "$1" = --no-rsync; then
+                rsync=false
+            else
+                rsync=true
+            fi
+            shift
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-r, '
+            printf %-24s '--[no-]rsync'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+if test ! -d ~/tmp/.mozilla -o "$rsync" = true; then
+    rsync ~/.mozilla ~/tmp -av --delete
 fi
+mkdir -p /home/bhj/tmp/.cache/system-config/logs/
 HOME=~/tmp firefox --ProfileManager

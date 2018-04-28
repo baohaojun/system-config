@@ -11,15 +11,15 @@ set -e
 TEMP=$( getopt -o H:r:acd:Cmp:h \
                --long GERRIT-HOST:,REPO-REMOTE:,auto,cherry-pick,diff-patch-sets:,do-checkout,do-review,multiple-patches,patch-set:,help,no-auto,no-cherry-pick,no-do-checkout,no-do-review,no-multiple-patches \
                -n $(basename -- $0) -- "$@")
-GERRIT_HOST=${GERRIT_HOST:-}
-REPO_REMOTE=${REPO_REMOTE:-}
-auto=${auto:-false}
-cherry_pick=${cherry_pick:-false}
-diff_patch_sets=${diff_patch_sets:-}
-do_checkout=${do_checkout:-false}
-do_review=${do_review:-false}
-multiple_patches=${multiple_patches:-false}
-patch_set=${patch_set:-}
+declare GERRIT_HOST=${GERRIT_HOST:-}
+declare REPO_REMOTE=${REPO_REMOTE:-}
+declare auto=${auto:-false}
+declare cherry_pick=${cherry_pick:-false}
+declare diff_patch_sets=${diff_patch_sets:-}
+declare do_checkout=${do_checkout:-false}
+declare do_review=${do_review:-false}
+declare multiple_patches=${multiple_patches:-false}
+declare patch_set=${patch_set:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -157,7 +157,7 @@ if test "$do_checkout" = true -a "$cherry_pick" = true; then
 fi
 
 if test -e ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks; then
-    . ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks
+    . ~/src/github/smartcm/scm-helpers/.gerrit-fetch-review.hooks "$1"
 fi
 
 export GERRIT_HOST
