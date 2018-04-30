@@ -215,7 +215,7 @@ if ($list_beagrep) {
 my @beagrep_files;
 my $grep;
 if (!$find_file_only) {
-    open($grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp|cut-long-lines");
+    open($grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp|(cut-long-lines||cat)");
 }
 
 while (<$beagrep_files_pipe>) {
