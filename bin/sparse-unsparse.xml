@@ -8,18 +8,20 @@ fi
 check-perl-module Marpa::R2
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt ?'把高通system_NNN.img等稀疏文件拼成system.img文件，一个可以mount的ext4文件系统' \
-        #p:part?'指定对应哪个分区的稀疏文件，可选system、userdata、cache、persist等' \
-        #o:out?'最终输出文件路径' \
-        #x:xml?'使用哪个unsparse.xml文件中的文件块区域信息。不指定的话会自动查找当前目录下所有相关.xml文件'
+# generate-getopt ?'把高通 system_NNN.img 等稀疏文件拼成 system.img 文件，一个可以 mount 的 ext4 文件系统' \
+    #p:part?'指定对应哪个分区的稀疏文件，可选 system、userdata、cache、persist 等' \
+    #o:out?'最终输出文件路径' \
+    #x:xml?'使用哪个 unsparse.xml 文件中的文件块区域信息。不指定的话会自动查找当前目录下所有相关.xml 文件' \
+    #@padding=true '?在最后补齐文件系统的大小，默认为 true，一般用于 mount；如果为使用 fastboot 而重新拼接此分区文件，可指定 --no-padding，因为后面没有补齐也没事儿'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o o:x:p:h \
-              --long out:,xml:,part:,help \
-              -n $(basename -- $0) -- "$@")
-out=
-xml=
-part=
+TEMP=$( getopt -o o:p:x:h \
+               --long out:,padding,part:,xml:,help,no-padding \
+               -n $(basename -- $0) -- "$@")
+declare out=
+declare padding=true
+declare part=
+declare xml=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -28,28 +30,39 @@ while true; do
             out=$2
             shift 2
             ;;
-        -x|--xml)
-            xml=$2
-            shift 2
+        --padding|--no-padding)
+            if test "$1" = --no-padding; then
+                padding=false
+            else
+                padding=true
+            fi
+            shift
             ;;
         -p|--part)
             part=$2
             shift 2
             ;;
+        -x|--xml)
+            xml=$2
+            shift 2
+            ;;
         -h|--help)
             set +x
-            echo 把高通system_NNN.img等稀疏文件拼成system.img文件，一个可以mount的ext4文件系统
+            echo -e 把高通 system_NNN.img 等稀疏文件拼成 system.img 文件，一个可以 mount 的 ext4 文件系统
             echo
             echo Options and arguments:
             printf %06s '-o, '
             printf %-24s '--out=OUT'
             echo '最终输出文件路径'
+            printf "%06s" " "
+            printf %-24s '--[no-]padding'
+            echo '在最后补齐文件系统的大小，默认为 true，一般用于 mount；如果为使用 fastboot 而重新拼接此分区文件，可指定 --no-padding，因为后面没有补齐也没事儿'
             printf %06s '-p, '
             printf %-24s '--part=PART'
-            echo '指定对应哪个分区的稀疏文件，可选system、userdata、cache、persist等'
+            echo '指定对应哪个分区的稀疏文件，可选 system、userdata、cache、persist 等'
             printf %06s '-x, '
             printf %-24s '--xml=XML'
-            echo '使用哪个unsparse.xml文件中的文件块区域信息。不指定的话会自动查找当前目录下所有相关.xml文件'
+            echo '使用哪个 unsparse.xml 文件中的文件块区域信息。不指定的话会自动查找当前目录下所有相关.xml 文件'
             exit
             shift
             ;;
@@ -103,15 +116,21 @@ bs=$(xmlstarlet sel -B -t -m //program -v @SECTOR_SIZE_IN_BYTES -n $xml|sort -u)
 if test "$(echo "$bs"|wc -l)" != 1; then
     die "block size not decided: $bs"
 fi
-xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -o " " -v @label -n $xml | grep ${part} |
-    tee ~/tmp/sparse-unsparse.xml.out |
-{
+xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -o " " -v @label -n $xml |
+    perl -npe 's/^\s+(\d+)/x $1/' | sort -k 2 -n | tee ~/tmp/sparse-unsparse.xml.out | {
+    seen_part=false
     while read img start label; do
-        if [[ $img =~ ${part%_?}_1\. ]]; then
-            the_start=$start
+        if test "$label" = "${part}" -o "$label" = "${part}"_a; then
+            seen_part=true
+            if [[ $img =~ ${part%_?}_1\. ]]; then
+                the_start=$start
+            fi
+            start=$((start - the_start)) || true
+            dd if=$img of=${out} seek=$start bs=$bs
+        elif test "$seen_part" = true -a "$padding" = true; then
+            # make our best guess at the true size of the system/vendor partition.
+            dd if=/dev/zero of=${out} seek=$((start - the_start - 1)) bs=$bs count=1
+            break
         fi
-        start=$((start - the_start)) || true
-        dd if=$img of=${out} seek=$start bs=$bs
     done
-    dd if=/dev/zero of=${out} seek=$(pretty 1000000+$(stat -c %s ${out})/512|pn 2) count=1 bs=$bs
 }
