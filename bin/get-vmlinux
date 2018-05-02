@@ -109,7 +109,7 @@ else
              )
     elif test "$find_what" = base; then
         echo $prefix$(
-            echo "$vmlinux"|grep 'This is the ota base'|pn 2 :|perl -npe 's,//.*?/,/,'
+            echo "$vmlinux"|grep 'http://.*This is the ota base'|pn 2 :|perl -npe 's,//.*?/,/,'
              )
     else
         die "Don't know this FIND_WHAT parameter: $find_what"
