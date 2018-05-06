@@ -1,7 +1,11 @@
 #!/bin/bash
 (
+    cd ~/tmp
+    nohup Wrench >/dev/null 2>&1&
     exec > ~/tmp/get-google-key.log 2>&1
+    putclip-android "hello"
     my-adb am start -n com.google.android.apps.authenticator2/com.google.android.apps.authenticator.AuthenticatorActivity
+    sleep 1
 
     Wrench "adb_tap_1080x2160(977, 344)"
     sleep .5
@@ -11,4 +15,9 @@
     sleep 1.5
 )
 
-getclip-android
+key=$(getclip-android)
+if test "$key" != hello; then
+    echo "$key"
+else
+    get-google-key
+fi
