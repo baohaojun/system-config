@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[“后来的我们”观后瞎扯]]></title>
+    <link href="http://baohaojun.github.io/blog/2018/05/02/0-after-watching-a-movie.html"/>
+    <updated>2018-16-06T18:05:00+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2018/05/02/0-after-watching-a-movie.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[小扳手使用手册]]></title>
     <link href="http://baohaojun.github.io/blog/2017/07/01/0-Wrench-User-Manual.html"/>
     <updated>2017-07-01T21:50:48+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.html"/>
     <updated>2016-11-03T15:40:33+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/11/02/0-writing-wechat-public-messages-with-org-mode.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[程序员学习日语经验分享]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html"/>
-    <updated>2016-10-30T22:50:09+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/10/30/0-Learning-Japanese-as-a-Chinese-Programmer.html</id>
   </entry>
 </feed>
