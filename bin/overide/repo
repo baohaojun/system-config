@@ -144,34 +144,17 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                 for temp_retry in $(seq 1 20); do
                     if grep "Permission denied (publickey)" $repo_sync_log &&
                             grep "fatal: Could not read from remote repository" $repo_sync_log || (
-                                if grep 'The last gc run reported the following. Please correct the root cause' $repo_sync_log &&
-                                        grep 'and remove .*\.repo/projects/.*/gc.log' $repo_sync_log; then
-                                    rm_dir=$(
-                                        perl -ne 'print $1 if m,and remove .*?(\.repo/projects/.*\.git)/gc.log,' $repo_sync_log
-                                          )
-                                    if test -d "$rm_dir"; then
-                                        rm -rf "$rm_dir";
-                                        mail-cms "Warn: Jenkins repo sync failed for gc.log: removed $rm_dir"
-                                        exit 0
-                                    fi
-                                fi
-                                exit 1
-                            ) || (
-                                grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log && (
-                                    projects=$(
-                                        grep 'error: Cannot fetch' $repo_sync_log | pn 4
-                                            ) &&
-                                        sleep 10 &&
-                                        ~/system-config/bin/repo "$@" -j2 $projects &&
-                                        (
-                                            mail-cms -e -o "Info: 'found Protocol error:' in jenkins repo sync and fixed: @$temp_retry" ||
-                                                true
+                                (
+                                    grep 'fatal: expected shallow/unshallow, got ERR internal server error' $repo_sync_log ||
+                                        grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log ||
+                                        grep 'fatal: remote error: want .* not valid' $repo_sync_log || (
+                                            grep 'error: The last gc run reported the following. Please correct the root cause' $repo_sync_log &&
+                                                grep 'and remove .*\.repo/projects/.*/gc.log' $repo_sync_log
                                         )
-                                )
-                            ) || (
-                                grep 'fatal: expected shallow/unshallow, got ERR internal server error' $repo_sync_log && (
+                                ) && (
                                     projects=$(
                                         grep 'error: Cannot fetch' $repo_sync_log | pn 4
+                                        perl -ne 'print $1 if m,and remove .*?\.repo/projects/(.*)\.git/gc.log,' $repo_sync_log
                                             ) &&
                                         sleep 30 &&
                                         (
@@ -189,6 +172,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                                     project=$path
                                                 fi
                                                 if test -z "$path" -o -z "$project"; then
+                                                    mail-cms -s -e "Can't decide path and project"
                                                     die "Can't decide path and project for $project"
                                                     exit 1
                                                 fi
