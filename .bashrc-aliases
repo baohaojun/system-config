@@ -16,6 +16,7 @@ alias vdir='ls --color=auto --format=long --show-control-chars'
 alias ll='ls -l --show-control-chars'                              # long list
 alias la='ls -A --show-control-chars'                              # all but . and ..
 alias l='ls -CFl --show-control-chars --block-size=1'                              #
+alias minicom='hint "注意：USB 不要插反！有些 USB 转串口线插反就没有 Log！";minicom -w -D /dev/ttyUSB*'
 
 
 jcd() {
