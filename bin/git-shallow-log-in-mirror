@@ -3,11 +3,25 @@
 # 这个脚本用于安卓编译的 CM 脚本系统。它实现 git log 一样的功能。但是，
 # 如果发现当前目录是一个 shallow 的 git 仓库的话，会改成调用 mirror 下
 # 的 git 数据。
-
 if git_log=$(git log "$@"); then
     echo "$git_log"
-else
-    mirror_dir=~/src/android-mirror/$(repo-project).git
-    echo 1>&2 "Switch to use mirror: $mirror_dir"
-    GIT_DIR="$mirror_dir" git log "$@"
+    exit
 fi
+
+mirror_dir=~/src/android-mirror/$(repo-project).git
+echo 1>&2 "Switch to use mirror: $mirror_dir"
+if git_log=$(GIT_DIR="$mirror_dir" git log "$@"); then
+    echo "$git_log"
+    exit
+fi
+
+tmp_git_dir=~/.cache/system-config/git-shallow-log-in-mirror/$(repo-project).git
+git-get -u "$(git-remote-url "$(repo-remote)")" -b "$(repo-branch)" --reference "$mirror_dir" -d "$tmp_git_dir" --clone-args --mirror >/dev/null 2>&1
+
+echo 1>&2 "Switch to use tmp git dir: $tmp_git_dir"
+
+GIT_DIR="$tmp_git_dir" git log "$@"
+
+
+
+

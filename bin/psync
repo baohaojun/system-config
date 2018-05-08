@@ -134,7 +134,7 @@ if is-in-emacs; then
     fi
 
     if test "$#" = 1; then
-        nohup setsid bash -c 'set -x; out-of-emacs bash -x psync "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
+        nohup setsid bash -c 'set -x; CHECK_ORG=true out-of-emacs bash -x psync "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
         exit
     fi
 fi
@@ -201,4 +201,18 @@ if test "$reverse" = true; then
     done
 else
     my-rsync $git_st $follow_symlink $checksum -av "$@" $host:"$target_dir" --exclude .git --exclude .repo --exclude "*#*" --exclude ".#*" $delete $local_exclude --progress
+    if test "$CHECK_ORG" = true && [[ $1 =~ \.org$ ]]; then
+        x=$1
+        (
+            tangle_target=$(grep -o ':tangle\s+\S+\s+' -P "$x" -i |pn 2)
+            tangle_target=$(expand-file-name "$tangle_target")
+            if test -e "$tangle_target" -a "$x" -nt "$tangle_target"; then
+                bhj-notify hello "tangle and sync ${x##*/}"
+                emacsclient -e '(progn (find-file "'"$x"'") (org-babel-tangle))'
+            fi
+            cd "$(dirname "$tangle_target")"
+            psync "$host" "$(bp "$tangle_target")"
+        )
+    fi
+
 fi
