@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# 这个脚本用于安卓编译的 CM 脚本系统。它实现 git log 一样的功能。但是，
+# 如果发现当前目录是一个 shallow 的 git 仓库的话，会改成调用 mirror 下
+# 的 git 数据。
+
+if git_log=$(git log "$@"); then
+    echo "$git_log"
+else
+    mirror_dir=~/src/android-mirror/$(repo-project).git
+    echo 1>&2 "Switch to use mirror: $mirror_dir"
+    GIT_DIR="$mirror_dir" git log "$@"
+fi
