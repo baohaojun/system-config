@@ -8,7 +8,7 @@
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Bao Haojun" />
 <link rel="stylesheet" href="/css/default.css" type="text/css" />
- <link rel="stylesheet" href="/css/wheatgrass.css" type="text/css" />
+ <link rel="stylesheet" href="/css/misterioso.css" type="text/css" />
  <link rel="shortcut icon" href="/poison.png" type="image/png" />
 
     <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
@@ -132,7 +132,7 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-没错，愿望都是非常抽象的，具体实现起来全都是细节，而魔鬼总是藏在细节中。所以如果一开始许错了愿望（比如先赚它一个亿），那实现起来的困难就可想而知了。接下来从几个角度跟大家分享一下我对编程和许愿的看法：
+接下来就跟大家分享一下我对编程和许愿的看法。
 </p>
 
 <div id="table-of-contents">
@@ -154,7 +154,7 @@ for the JavaScript code in this tag.
 <h2 id="sec-1"><span class="section-number-2">1</span> 许愿初体验</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-我是在阅读那本非常经典的“Structure and Interpretation of Computer Programs”的时候，第一次了解到“Programming by wishful thinking”这个概念。在讲到“有理数的运算”的时候（以下为该书相关部分的翻译）：
+许愿式编程，“Programming by wishful thinking”这个概念，我是从那本非常经典的“Structure and Interpretation of Computer Programs”书里了解到的。作者以“有理数的运算”为例，提出了这种方法：
 </p>
 
 <blockquote>
@@ -191,7 +191,7 @@ for the JavaScript code in this tag.
 </div>
 
 <p>
-我们可以用如下子程序来表达上面这些等式：
+我们可以用如下子程序来表达上面这些等式<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>：
 </p>
 
 <div class="org-src-container">
@@ -200,16 +200,20 @@ for the JavaScript code in this tag.
   <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>+ <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer x<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom y<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
                <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer y<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom x<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
             <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
 <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">sub-rat</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
   <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>- <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer x<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom y<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
                <span class="org-rainbow-delimiters-depth-4">(</span>* <span class="org-rainbow-delimiters-depth-5">(</span>numer y<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>denom x<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
             <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
 <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">mul-rat</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
   <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>numer y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
             <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
 <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">div-rat</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
   <span class="org-rainbow-delimiters-depth-2">(</span>make-rat <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
             <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>numer y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
 <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">define</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-function-name">equal-rat?</span> x y<span class="org-rainbow-delimiters-depth-2">)</span>
   <span class="org-rainbow-delimiters-depth-2">(</span>= <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer x<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom y<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
      <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>numer y<span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-rainbow-delimiters-depth-4">(</span>denom x<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
@@ -218,7 +222,7 @@ for the JavaScript code in this tag.
 </blockquote>
 
 <p>
-现在想想，我当初看到这段文字的时候，内心是非常激动的，简直好像给我揭开了一个全新的广阔天地。
+现在想想，我当初看到这段文字的时候，内心非常激动，简直好像给我揭开了一个全新的广阔天地。
 </p>
 </div>
 </div>
@@ -227,7 +231,7 @@ for the JavaScript code in this tag.
 <h2 id="sec-2"><span class="section-number-2">2</span> 自然而然的许愿</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-注意上面引用自 sicp 的文字，是非常自然的，逻辑是非常清晰的（如果你有不自然的感觉，那肯定是我翻译的不好，强烈推荐你去阅读原书）。它从我们现有的简单知识出发（1. 有理数可表示为两个整数的比值；2. 我们知道整数的加减乘除规则），直接跳过了有理数的构造函数（<code>make-rat</code>）和取分子（<code>numer</code>）、取分母（<code>denom</code>）函数的定义，直接许了个愿假设我们已经有了这样的函数定义（其实并没有定义，只是有了这么些个函数的名字而已），那么通过这些函数的名字，再加上整数的运算规则，它说，来吧，我们开始定义有理数的加减乘除运算吧！
+注意上面引用自 sicp 的文字，文笔非常自然，逻辑也十分清晰。它从我们现有的简单知识出发（1. 有理数可表示为两个整数的比值；2. 我们知道整数的加减乘除规则），没有纠结该怎么定义有理数的构造函数（<code>make-rat</code>）和取分子（<code>numer</code>）、取分母（<code>denom</code>）函数，而是直接“许了个愿”，假设我们已经有了这样的函数定义（其实并没有定义，只是假设已经有了这些函数的名字而已）。然后通过这些函数的名字，再加上整数的运算规则，它说，来吧，我们开始定义有理数的加减乘除运算吧！
 </p>
 
 <p>
@@ -360,7 +364,7 @@ for the JavaScript code in this tag.
 
 &#22522;&#26412;&#19978;&#23601;&#26159;&#36825;&#26679;&#12290;&#26368;&#21518;&#25105;&#30340;&#8201;<span class="org-org-verbatim">main</span>&#8201;&#20989;&#25968;&#23601;&#26159;&#31616;&#21333;&#30340;&#35843;&#29992;&#19968;&#19979;&#8201;<span class="org-org-verbatim">function_a</span>&#65306;
 
-<span class="org-org-block-begin-line">#+BEGIN_SRC c</span>
+<span class="org-org-block-begin-line">#+BEGIN_SRC c :tangle ~/tmp/wish.c :noweb yes</span>
 <span class="org-type"><span class="org-org-block-background">int</span></span><span class="org-org-block-background"> </span><span class="org-function-name"><span class="org-org-block-background">main</span></span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">()</span></span><span class="org-org-block-background">
 </span><span class="org-rainbow-delimiters-depth-1"><span class="org-org-block-background">{</span></span><span class="org-org-block-background">
     function_a</span><span class="org-rainbow-delimiters-depth-2"><span class="org-org-block-background">()</span></span><span class="org-org-block-background">;
@@ -427,8 +431,22 @@ GTD 的第二步、第三步，不好意思，我也还没练好，没有太�
 </p>
 
 <p>
-祝你能早日学会许愿！
+哈哈哈，开个玩笑，对很多人，比如像我这样的人来讲，如果许了“先赚他一个亿”的愿望的话，这辈子能实现的概率是微乎其微的。
 </p>
+
+<p>
+不管怎样，祝你能早日学会许愿！
+</p>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+ 这些函数是用一种名为 lisp 的语言写的。
+</p>
+
 <nav>
   <ul id="prev_next_posts">
     <li class="prev_post">
@@ -444,10 +462,11 @@ GTD 的第二步、第三步，不好意思，我也还没练好，没有太�
       </a>
     </li>
   </ul>
-</nav>
+</nav></div>
+
+
 </div>
-</div>
-</div>
+</div></div>
 <!-- {%html-mode%} -->
 
 <div id="disqus_container">
