@@ -190,36 +190,38 @@ for long in "${long_opts_sorted[@]}"; do
     s=${s/:/}
     var=${var_name_map[$long]}
     cat << EOF2
-        $(
-            if test "$s"; then
-                echo -n "-$s|"
-            fi
-            echo -n "--$long";
-            if test "$is_boolean" = true; then
-                echo -n "|--no-$long"
-            fi
-            echo ")"
-        )
-        $(
-            if test $is_boolean = false; then
-                if test "${default_val_map[$long]}" = '()'; then
-                    echo ${var}=\(\"\${${var}[@]}\" \""\$2\""\)
-                    echo shift 2
-                else
-                    echo ${var}=\$2
-                    echo shift 2
-                fi
-            else
-                cat << EOF3
-                if test "\$1" = --no-$long; then
-                    ${var}=${default_val_map[$long-off-]}
-                else
-                    ${var}=${default_val_map[$long-on-]}
-                fi
-                shift
+$(
+    if test "$s"; then
+        echo -n "-$s|"
+    fi
+    echo -n "--$long";
+    if test "$is_boolean" = true; then
+        echo -n "|--no-$long"
+    fi
+    echo ")"
+)
+$(
+    if test $is_boolean = false; then
+        if test "${default_val_map[$long]:0:1}" = '('; then
+            echo ${var}=\(\"\${${var}[@]}\" \""\$2\""\)
+            echo shift 2
+        else
+            echo ${var}=\$2
+            echo shift 2
+        fi
+    else
+        cat << EOF3
+if test "\$1" = --no-$long; then
+    ${var}=${default_val_map[$long-off-]}
+else
+    ${var}=${default_val_map[$long-on-]}
+fi
+shift
+
 EOF3
-            fi
-        )
+    fi
+)
+
 EOF2
     echo ";;"
 done
