@@ -150,11 +150,14 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         grep 'fatal: remote error: want .* not valid' $repo_sync_log || (
                                             grep 'error: The last gc run reported the following. Please correct the root cause' $repo_sync_log &&
                                                 grep 'and remove .*\.repo/projects/.*/gc.log' $repo_sync_log
-                                        )
+                                        ) || grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log
                                 ) && (
                                     projects=$(
-                                        grep 'error: Cannot fetch' $repo_sync_log | pn 4
-                                        perl -ne 'print $1 if m,and remove .*?\.repo/projects/(.*)\.git/gc.log,' $repo_sync_log
+                                        (
+                                            grep 'error: Cannot fetch' $repo_sync_log | pn 4
+                                            perl -ne 'print $1 if m,and remove .*?\.repo/projects/(.*)\.git/gc.log,' $repo_sync_log
+                                            grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log | pn 3
+                                        ) | grep . # make sure there are some projects that match.
                                             ) &&
                                         sleep 30 &&
                                         (
