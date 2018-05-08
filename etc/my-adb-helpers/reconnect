@@ -1,0 +1,6 @@
+#!/bin/bash
+if test $# = 0 && grep : -q ~/.config/system-config/adb-device; then
+    exec the-true-adb connect $(cat ~/.config/system-config/adb-device)
+else
+    exec the-true-adb reconnect "$@"
+fi

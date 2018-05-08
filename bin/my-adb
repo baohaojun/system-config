@@ -141,7 +141,7 @@ function adb() {
         unset ANDROID_SERIAL
         export-android-serial
         exit
-    elif test "$1" != devices -a -z "$ANDROID_SERIAL"; then
+    elif test "$1" != devices -a "$1" != devices? -a -z "$ANDROID_SERIAL"; then
         setsid $the_adb start-server >/dev/null 2>&1 ;
         devices=(
             $($the_adb devices | perl -ne 'print unless 1..1' | pn 1)
@@ -260,38 +260,12 @@ function adb() {
         exit 0
     fi
 
-    if test "$#" = 1 -a "$1" = 'devices?'; then
-        if (
-            the-true-adb devices
-            fastboot devices
-        ) | grep -v 'List of devices attached' | grep .; then
-            exit 0
-        else
-            exit 1
-        fi
-    fi
-
-    if test "$1" = 'start-activity'; then
+    if test -f ~/system-config/etc/my-adb-helpers/"$1"; then
+        adb_helper=$1
         shift
-        adb am start -n "$@"
-        exit 0
-    fi
-    if test "$#" = 1 -a "$1" = romount; then
-        my-adb -r sh -c 'mount -o ro,remount /system; mount | grep /system'
-        exit
+        . ~/system-config/etc/my-adb-helpers/"$adb_helper" "$@"
     fi
 
-    if test $# = 1 -a "$1" = disconnect; then
-        exec the-true-adb disconnect;
-    fi
-
-    if test $# = 1 -a "$1" = reconnect && grep : -q ~/.config/system-config/adb-device; then
-        exec the-true-adb connect $(cat ~/.config/system-config/adb-device)
-    fi
-
-    if test $# = 2 -a "$1" = e; then
-        exec e /adb:$ANDROID_SERIAL:"$2"
-    fi
     if test "$1" = -s; then
         export ANDROID_SERIAL=$2
         shift 2

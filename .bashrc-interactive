@@ -402,11 +402,7 @@ cd_record()
     fi
     export PROMPT_COMMAND="cd_record"
     history -a
-    if test -e ~/.reset-env.$INTERACTIVE_BASH_PID; then
-        . ~/.reset-env.$INTERACTIVE_BASH_PID
-        rm -f ~/.reset-env.$INTERACTIVE_BASH_PID
-    fi
-
+    . reget-env
     if test ~/.config/system-config/ssh-agent -nt /proc/$$/cmdline; then
         . ~/system-config/bin/set-ssh-agent
         touch /proc/$$/cmdline >/dev/null 2>&1
