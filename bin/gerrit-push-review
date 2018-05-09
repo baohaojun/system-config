@@ -363,8 +363,17 @@ elif test -z "$REPO_REMOTE"; then
     export REPO_REMOTE=$gpr_repo_remote
 fi
 
+# git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
+if test -z "$gpr_review_push_url"; then
+    export gpr_review_push_url=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
+fi
+
 if test $gpr_do_rebase = true; then
     echo git fetching remote: $(repo-remote), branch: $(repo-branch)
+    if test "$(git config remote.$(repo-remote).url)" != "$gpr_review_push_url"; then
+        git config remote.$(repo-remote).url "$gpr_review_push_url"
+    fi
+
     if test -z "$(lookup-file -e .repo)" || [[ $PWD =~ /\.repo/manifests ]]; then
         git fetch -n -v $(repo-remote) $(repo-branch)
     else
@@ -403,7 +412,10 @@ if test $# = 0; then
     fi
 fi
 
-. ~/src/github/smartcm/etc/team-map
+if test -e ~/src/github/smartcm/etc/team-map; then
+    . ~/src/github/smartcm/etc/team-map
+fi
+
 while test $# -gt 0; do
     if test "${team_map[$1]}"; then
         tmp_reviewers=${team_map[$1]}
@@ -413,11 +425,6 @@ while test $# -gt 0; do
     reviewers=("${reviewers[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
     shift
 done
-
-# git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
-if test -z "$gpr_review_push_url"; then
-    export gpr_review_push_url=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
-fi
 
 if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别人 review 之前，要不要先自己本地 review 一下（加 -R 参数可以跳过此提示）"; then
     (
