@@ -3,7 +3,7 @@ set -e
 saved_args=("$@")
 notify-error() {
     if is-jenkins; then
-        echo "${saved_args[@]}" | mail-cms -i "git-get failed in $(jenkins-info)"
+        echo "${saved_args[@]}" | mail-cms -e -o -i "git-get failed in $(jenkins-info)"
     fi
 }
 
