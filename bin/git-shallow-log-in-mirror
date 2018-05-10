@@ -16,11 +16,20 @@ if git_log=$(GIT_DIR="$mirror_dir" git log "$@"); then
 fi
 
 tmp_git_dir=~/.cache/system-config/git-shallow-log-in-mirror/$(repo-project).git
+if git_log=$(GIT_DIR="$tmp_git_dir" git log "$@"); then
+    echo "$git_log"
+    exit
+fi
+
 git-get -u "$(git-remote-url "$(repo-remote)")" -b "$(repo-branch)" --reference "$mirror_dir" -d "$tmp_git_dir" --clone-args --mirror >/dev/null 2>&1
 
 echo 1>&2 "Switch to use tmp git dir: $tmp_git_dir"
 
-GIT_DIR="$tmp_git_dir" git log "$@"
+if ! GIT_DIR="$tmp_git_dir" git log "$@"; then
+    if is-jenkins; then
+        mail-cms -e -o "git-shallow-log-in-mirror can not get log"
+    fi
+fi
 
 
 
