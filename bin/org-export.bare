@@ -9,6 +9,7 @@ fi
 emacsclient -e "(advice-remove 'org-html--build-pre/postamble 'ad-Advice-org-html--build-pre/postamble)"
 for x in "$@"; do
     if test -e "$x"; then
+        fix-links.pl "$x"
         org2html "$x"
     fi
 done
