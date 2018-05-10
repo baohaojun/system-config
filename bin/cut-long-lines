@@ -2,10 +2,12 @@
 
 use Encode;
 
+$max_line_length = ($ENV{SC_MAX_LINE_LENGTH} or 200);
+
 while (<>) {
-  if (length $_ > 200) {
+  if (length $_ > $max_line_length) {
         $_ = decode_utf8 $_;
-        $_ = substr($_, 0, 200) . " ...\n";
+        $_ = substr($_, 0, $max_line_length) . " ...\n";
         $_ = encode_utf8 $_;
     }
 
