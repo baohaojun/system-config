@@ -200,6 +200,7 @@ GTD 的第二步、第三步，不好意思，我也还没练好，没有太�
 
 祝你也能早日掌握这些方法。
 
+
 （上面提到的所有方法，Wishful Thinking、Literate Programming、GTD，都是需要练习的。不断的重复练习，慢慢地提高☺）
 
 [fn:hello] 这些函数是用一种名为 lisp 的语言写的。
