@@ -162,7 +162,7 @@
 
   基本上就是这样。最后我的 =main= 函数就是简单的调用一下 =function_a=：
 
-  ,#+BEGIN_SRC c :tangle ~/tmp/wish.c :noweb yes
+  ,#+BEGIN_SRC c
   int main()
   {
       function_a();
@@ -199,7 +199,6 @@ GTD 的第二步、第三步，不好意思，我也还没练好，没有太�
 最后，还是要推荐 Emacs 的 Org Mode，非常完美的支持 GTD！我在用 Literate Programming，同时用 GTD，噢噢噢（有了快感就要叫出来）！在安卓手机上还有 MobileOrg，我可以随时随地把自己的想法记下来，然后回到 Emacs 下去实现它。我收到的邮件，如果我后续想再处理的话，我会点一下“Flag”标签，这样标记过的邮件会自动进入我的 GTD 列表里。有人在公司的 Bug 系统里给我提单子的时候，这个单子也会自动进入到我的 GTD 里。同事在公司的 Gerrit 上给我提 Code Review，最后也会自动进入我的 GTD 列表里！我一天到晚什么也不干，就只要盯牢我的 GTD 列表就好了！跟炒股的大妈们一样，只要盯着大盘的行情就好了...
 
 祝你也能早日掌握这些方法。
-
 
 （上面提到的所有方法，Wishful Thinking、Literate Programming、GTD，都是需要练习的。不断的重复练习，慢慢地提高☺）
 
