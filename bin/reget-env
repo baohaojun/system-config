@@ -1,0 +1,5 @@
+#!/bin/bash
+if test -e ~/.reset-env.$INTERACTIVE_BASH_PID; then
+    . ~/.reset-env.$INTERACTIVE_BASH_PID
+    rm -f ~/.reset-env.$INTERACTIVE_BASH_PID
+fi

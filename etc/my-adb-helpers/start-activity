@@ -1,0 +1,3 @@
+#!/bin/bash
+adb am start -n "$@"
+exit 0

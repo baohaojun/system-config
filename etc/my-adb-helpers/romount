@@ -1,0 +1,4 @@
+#!/bin/bash
+my-adb -r sh -c 'mount -o ro,remount /system; mount | grep /system'
+exit
+

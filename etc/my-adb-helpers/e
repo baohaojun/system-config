@@ -1,0 +1,4 @@
+#!/bin/bash
+if test $# = 1; then
+    exec e /adb:$ANDROID_SERIAL:"$1"
+fi

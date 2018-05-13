@@ -2,4 +2,8 @@
 if test -z "$ANDROID_SERIAL"; then
     export ANDROID_SERIAL=$(select-output-line my-adb devices?|pn 1)
 fi
-reset-env ANDROID_SERIAL $ANDROID_SERIAL
+if test "$ANDROID_SERIAL"; then
+    reset-env ANDROID_SERIAL $ANDROID_SERIAL
+else
+    die "好像没有找到 adb 设备"
+fi

@@ -14,7 +14,7 @@ sub debug(@) {
 my $tty;
 if ($ENV{EMACS}) {
   $tty = "";
-} else {
+} elsif (system("tty -s") == 0) {
   open ($tty, ">", "/dev/tty") or $tty = "";
 }
 
