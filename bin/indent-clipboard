@@ -1,13 +1,67 @@
 #!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -e n:n-spaces=4
+## end code-generator
+## start generated code
+TEMP=$( getopt -o n:h \
+               --long n-spaces:,help \
+               -n $(basename -- $0) -- "$@")
+declare n_spaces=${n_spaces:-4}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -n|--n-spaces)
+            n_spaces=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--n-spaces=N_SPACES'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+export n_spaces
+
+## end generated code
+
+if test "$n_spaces" -gt 0; then
+    do_indent=true
+else
+    do_indent=false
+fi
+
+n_spaces=${n_spaces#-}
+n_spaces=$(perl -e 'print " " x $ENV{n_spaces}')
+
 if test "$1" = - -o "$(basename $0)" = indent-stdin; then
     cat
 else
     getclip
 fi > ~/.cache/system-config/logs/$(basename $0).$$
-if [[ $(basename $0) =~ ^indent ]]; then
-    perl -npe 's/^/    /' -i ~/.cache/system-config/logs/$(basename $0).$$
+if test "$do_indent" = true; then
+    perl -npe 's/^/$ENV{n_spaces}/' -i ~/.cache/system-config/logs/$(basename $0).$$
 else
-    perl -npe 's/^    //' -i ~/.cache/system-config/logs/$(basename $0).$$
+    perl -npe 's/^$ENV{n_spaces}//' -i ~/.cache/system-config/logs/$(basename $0).$$
 fi
 cat ~/.cache/system-config/logs/$(basename $0).$$|
     if test "$1" = - -o "$(basename $0)" = indent-stdin; then

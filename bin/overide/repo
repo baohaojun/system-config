@@ -187,6 +187,23 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         )
                                 )
                             ) || (
+
+                                if grep '^project .repo/manifests/' $repo_sync_log &&
+                                        grep 'fatal: refusing to merge unrelated histories' $repo_sync_log; then
+                                    repo_init_command=$(repo-switch -p)
+                                    rm .repo/manifest.xml .repo/manifests .repo/manifests.git -rf
+                                    $repo_init_command
+                                    mail-cms -e -o "Info: repo manifest need re-init to fix repo sync error"
+
+                                    # 不能自动修复这种错误。万一这是一
+                                    # 个 rebuild 的任务，现在正在重新
+                                    # 同步代码，我们重新 repo init 过
+                                    # 了，是不可以再 repo sync 的。
+
+                                    kill $$
+                                fi
+                                exit 1
+                            ) || (
                                 if ! grep 'error.GitError: cannot initialize work tree' $repo_sync_log; then
                                     exit 1
                                 fi

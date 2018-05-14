@@ -58,14 +58,17 @@ perl -npe "$(cat <<'EOFf0ea35142ce4'
      }
      
      s|class='emoji' src='(.*?)'|class='emoji' src='$png_file_map{$1}'|g;
+     s|(<link rel="stylesheet" href=.)/css/|$1file:///css/|g;
      
 EOFf0ea35142ce4
 )" -i "$html_file"
 
+
+css-inline "$html_file" > "$html_file".$$
+replace-mathjs "$html_file".$$
+mv "$html_file".$$ "$html_file"
+
 if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
-    css-inline "$html_file" > "$html_file".$$
-    replace-mathjs "$html_file".$$
-    mv "$html_file".$$ "$html_file"
     of "$html_file"
 fi
 
