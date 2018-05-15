@@ -1,17 +1,32 @@
 #!/bin/bash
 set -e
 
+help-find-what() {
+    cat <<EOF | indent-stdin -n 30 -s
+要查找什么信息？仅供 CM 在服务器上使用，默认为空--只打印
+http://172.16.2.18/vmlinux.html 网页返回的结果。
+
+第 2 个参数可以是：
+  - flash :: 代表刷机包共享目录地址，只能在服务器上使用
+  - ota :: 代表全包下载地址，只能在服务器上使用
+  - base :: 代表 base 包下载地址，只能在服务器上使用
+  - manifest :: 代表这个版本编译时的代码快照 manifest.xml 的下载地址
+                这个参数可以给所有工程师使用
+
+EOF
+}
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P u:utc b:base o:ota-version @:find-what '?要查找什么信息？仅供 CM 在服务器上使用，默认为空，只打印网页返回的结果。也可以跟 flash 代表刷机包，ota 代表全包，base 代表 base 包'
+# generate-getopt -P u:utc b:base o:ota-version @:find-what '?"$(help-find-what)"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o b:o:u:h \
                       --long base:,find-what:,ota-version:,utc:,help \
                       -n $(basename -- $0) -- "$@")
-base=
-find_what=
-ota_version=
-utc=
+declare base=
+declare find_what=
+declare ota_version=
+declare utc=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -19,18 +34,22 @@ while true; do
         -b|--base)
             base=$2
             shift 2
+
             ;;
         --find-what)
             find_what=$2
             shift 2
+
             ;;
         -o|--ota-version)
             ota_version=$2
             shift 2
+
             ;;
         -u|--utc)
             utc=$2
             shift 2
+
             ;;
         -h|--help)
             set +x
@@ -42,7 +61,7 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--find-what=FIND_WHAT'
-            echo '要查找什么信息？仅供 CM 在服务器上使用，默认为空，只打印网页返回的结果。也可以跟 flash 代表刷机包，ota 代表全包，base 代表 base 包'
+            echo "$(help-find-what)"
             printf %06s '-o, '
             printf %-24s '--ota-version=OTA_VERSION'
             echo
@@ -84,6 +103,10 @@ else
         echo "$vmlinux" | grep 'Flashing binary' -A 1 | perl -ne 'print if s,\s*smb://172.16.2.240,/mnt,'
                      )
     if test ! -e "$flashing_file_dir"; then
+        if test "$find_what" = manifest; then
+            echo http://172.16.2.18/$(echo mnt/flash/.smartcm/released-manifests/${flashing_file_dir}/manifest.xml|perl -npe 's,/+,/,g')
+            exit
+        fi
         # maybe it's been backed up!
         lunch_config=$(scm get-lunch-config-from-flashing-dir $flashing_file_dir)
         backup_dir=$(

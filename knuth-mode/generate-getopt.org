@@ -346,7 +346,7 @@
                     echo echo
                     echo 'printf "%30s" ""'
                 fi
-                echo echo "'${help_map[$long]}'"
+                echo echo "${help_map[$long]}"
             else
                 echo echo
             fi
