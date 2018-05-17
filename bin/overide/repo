@@ -32,8 +32,10 @@ if test "$1" = init; then
                 clean-up
             ) || true
         fi
-        if ! echo "$@" | grep test-account@; then # maybe want to test for other accounts
+        if scm is-cms && ! echo "$@" | grep test-account@; then # maybe want to test for other accounts
             set -- "$@" -g all --reference /data/mirror
+        elif ! scm is-cms && test -e ~/.config/system-config/repo-init.extargs; then
+            set -- "$@" $(cat ~/.config/system-config/repo-init.extargs)
         fi
     fi
     if test -e .repo/manifest.xml; then

@@ -77,7 +77,7 @@ while true; do
                  )
             echo "$print"
             if is-tty-io </dev/stdout && ! is-jenkins; then
-                echo "$print" | putclip
+                echo "$print" | putclip >/dev/null 2>&1 || true
             fi
             exit 0
             ;;

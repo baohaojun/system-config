@@ -200,6 +200,19 @@ if test "$reverse" = true; then
         my-rsync $git_st $follow_symlink $checksum -av $host:"$target_dir"/$x $(dirname $x) --exclude .repo --exclude .git --exclude .gitmodules --exclude "*#*" --exclude ".#*" $local_exclude --progress
     done
 else
+    if lookup-file -e .git >/dev/null 2>&1 && ! lookup-file -e .is-private-git; then
+        for x in "$@"; do
+            if test -d "$x"; then
+                chmod a+rx "$x"
+            elif test -f "$x"; then
+                chmod a+r "$x"
+                if test -x "$x"; then
+                    chmod a+x "$x"
+                fi
+            fi
+        done
+    fi
+
     my-rsync $git_st $follow_symlink $checksum -av "$@" $host:"$target_dir" --exclude .git --exclude .repo --exclude "*#*" --exclude ".#*" $delete $local_exclude --progress
     if test "$CHECK_ORG" = true && [[ $1 =~ \.org$ ]]; then
         x=$1
