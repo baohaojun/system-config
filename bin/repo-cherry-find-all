@@ -3,10 +3,6 @@
 # [[file:~/system-config/knuth-mode/repo-cherry-find-all.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
 set -e
-if is-jenkins; then
-    set -x
-fi
-
 function die() {
     echo Error: "$@"
     exit -1
@@ -376,9 +372,11 @@ else
     fi
 fi
 
-if test "$from" = / -o "$to" = /; then
+if test "$from" = / -o "$to" = / || test "$from" = "$to"; then
     exit
 fi
+
+
 echo git-change-id-ffable $from $to in $PWD
 if ! git-shallow-log-in-mirror -1 "$from" >/dev/null 2>&1 || ! git-shallow-log-in-mirror -1 "$to" >/dev/null 2>&1; then
     if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
@@ -393,6 +391,7 @@ git-change-id-ffable $from $to > $log || true
 if test $(stat -c %s $log) = 0; then
     rm $log;
 fi;
+
 pwd
 
 

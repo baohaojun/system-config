@@ -71,9 +71,11 @@
       fi
   fi
 
-  if test "$from" = / -o "$to" = /; then
+  if test "$from" = / -o "$to" = / || test "$from" = "$to"; then
       exit
   fi
+
+
   echo git-change-id-ffable $from $to in $PWD
   if ! git-shallow-log-in-mirror -1 "$from" >/dev/null 2>&1 || ! git-shallow-log-in-mirror -1 "$to" >/dev/null 2>&1; then
       if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
@@ -88,6 +90,7 @@
   if test $(stat -c %s $log) = 0; then
       rm $log;
   fi;
+
   pwd
 
 
@@ -409,10 +412,6 @@
 #+name: the-ultimate-script
 #+BEGIN_SRC sh :tangle ~/system-config/bin/repo-cherry-find-all :comments link :shebang "#!/bin/bash" :noweb yes
   set -e
-  if is-jenkins; then
-      set -x
-  fi
-
   <<old-code>>
   <<read-only>>
 #+END_SRC
