@@ -380,7 +380,7 @@ if test "$from" = / -o "$to" = /; then
     exit
 fi
 echo git-change-id-ffable $from $to in $PWD
-if ! git log -1 "$from" >/dev/null 2>&1 || ! git log -1 "$to" >/dev/null 2>&1; then
+if ! git-shallow-log-in-mirror -1 "$from" >/dev/null 2>&1 || ! git-shallow-log-in-mirror -1 "$to" >/dev/null 2>&1; then
     if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
         echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
         exit

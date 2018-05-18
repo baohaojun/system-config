@@ -32,16 +32,16 @@ fi
 src=$1
 export dest=$2
 
-commit_in_src=$(git rev-list $src ^$dest 2>/dev/null | reverse)
+commit_in_src=$(git-cmds-in-mirror rev-list $src ^$dest 2>/dev/null | reverse)
 num_commit_in_src=$(echo "$commit_in_src" | wc -l)
-commit_in_dest=$(git rev-list ^$src $dest 2>/dev/null | head -n $((num_commit_in_src * 2)))
+commit_in_dest=$(git-cmds-in-mirror rev-list ^$src $dest 2>/dev/null | head -n $((num_commit_in_src * 2)))
 
 export destlog=/tmp/log_in_dest.$$
-git log $src..$dest > $destlog
+git-cmds-in-mirror log $src..$dest > $destlog
 
 
 export srclog=/tmp/log_in_src.$$
-git log --format="%%commit%% %H %ae(%ai) %ce(%ci) : {{{%s}}}%n%B" $dest..$src > $srclog
+git-cmds-in-mirror log --format="%%commit%% %H %ae(%ai) %ce(%ci) : {{{%s}}}%n%B" $dest..$src > $srclog
 
 need_die=0
 
