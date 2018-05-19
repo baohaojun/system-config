@@ -10,15 +10,23 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
+tmpdir=~/tmp/maildir-icedove-view
+mkdir "$tmpdir" -p
+
 if test ! -e "$1"; then
-    echo "$1" > ~/tmp/x.eml
+    echo "$1" > "$tmpdir"/x.eml
     cd $(dirname $(dirname "$1"))
     set -- "$(find */ -name '*'"$(echo "$1"|tr , \\n|grep ^U=)"'*')"
     if test ! -e "$1"; then
-        bhj-notify $b0 "$(cat ~/tmp/x.eml) not exist"
+        bhj-notify $b0 "$(cat "$tmpdir"/x.eml) not exist"
         exit 1
     fi
 fi
 
-cp "$1" ~/tmp/x.eml
-icedove ~/tmp/x.eml
+eml="$tmpdir/$(bp "$1").eml"
+
+cp "$1" "$eml"
+icedove "$eml"&
+
+find "$tmpdir" -mtime +7 -type f | xargs rm -f
+
