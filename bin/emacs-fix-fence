@@ -1,0 +1,70 @@
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt i:in-mode '?"当前的文件是什么 emacs mode，比如 nxml（jenkins config）"' \
+    # t:to-mode '?"想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o i:t:h \
+               --long in-mode:,to-mode:,help \
+               -n $(basename -- $0) -- "$@")
+declare in_mode=
+declare to_mode=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--in-mode)
+            in_mode=$2
+            shift 2
+
+            ;;
+        -t|--to-mode)
+            to_mode=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--in-mode=IN_MODE'
+            echo "当前的文件是什么 emacs mode，比如 nxml（jenkins config）"
+            printf %06s '-t, '
+            printf %-24s '--to-mode=TO_MODE'
+            echo "想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+declare -A add_at_start
+declare -A add_at_end
+declare -A pipe_map
+
+unescape-html() {
+    xmlstarlet unesc -
+}
+
+add_at_start[nxml-html]='<![CDATA[<!--start html-->'
+add_at_end[nxml-html]='<!--end html-->]]>'
+pipe_map[nxml-html]=unescape-html
+
+echo "${add_at_start[$in_mode-$to_mode]}"
+cat | ${pipe_map[$in_mode-$to_mode]}
+echo "${add_at_end[$in_mode-$to_mode]}"
+
