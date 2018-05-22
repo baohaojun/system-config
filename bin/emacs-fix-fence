@@ -3,13 +3,15 @@
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt i:in-mode '?"当前的文件是什么 emacs mode，比如 nxml（jenkins config）"' \
-    # t:to-mode '?"想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"'
+    # t:to-mode '?"想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"' \
+    # ssimple-fence '?"用更简短的 fence，比如不用“<![CDATA[<!--start html-->”，只用“<![CDATA[”"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o i:t:h \
-               --long in-mode:,to-mode:,help \
+TEMP=$( getopt -o i:st:h \
+               --long in-mode:,simple-fence,to-mode:,help,no-simple-fence \
                -n $(basename -- $0) -- "$@")
 declare in_mode=
+declare simple_fence=false
 declare to_mode=
 eval set -- "$TEMP"
 while true; do
@@ -18,6 +20,15 @@ while true; do
         -i|--in-mode)
             in_mode=$2
             shift 2
+
+            ;;
+        -s|--simple-fence|--no-simple-fence)
+            if test "$1" = --no-simple-fence; then
+                simple_fence=false
+            else
+                simple_fence=true
+            fi
+            shift
 
             ;;
         -t|--to-mode)
@@ -33,6 +44,9 @@ while true; do
             printf %06s '-i, '
             printf %-24s '--in-mode=IN_MODE'
             echo "当前的文件是什么 emacs mode，比如 nxml（jenkins config）"
+            printf %06s '-s, '
+            printf %-24s '--[no-]simple-fence'
+            echo "用更简短的 fence，比如不用“<![CDATA[<!--start html-->”，只用“<![CDATA[”"
             printf %06s '-t, '
             printf %-24s '--to-mode=TO_MODE'
             echo "想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"
@@ -57,14 +71,24 @@ declare -A add_at_end
 declare -A pipe_map
 
 unescape-html() {
-    xmlstarlet unesc -
+    xmlstarlet unesc - | tr -d \\r
 }
 
 add_at_start[nxml-html]='<![CDATA[<!--start html-->'
+add_at_start[nxml-html-simple]='<![CDATA['
+
 add_at_end[nxml-html]='<!--end html-->]]>'
+add_at_end[nxml-html-simple]=']]>'
+
+if test "$simple_fence" = true; then
+    simple=-simple
+    echo_arg=-n
+else
+    simple=
+    echo_arg=
+fi
 pipe_map[nxml-html]=unescape-html
 
-echo "${add_at_start[$in_mode-$to_mode]}"
+echo $echo_arg "${add_at_start[$in_mode-$to_mode$simple]}"
 cat | ${pipe_map[$in_mode-$to_mode]}
-echo "${add_at_end[$in_mode-$to_mode]}"
-
+echo $echo_arg "${add_at_end[$in_mode-$to_mode$simple]}"
