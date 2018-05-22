@@ -58,29 +58,47 @@ export -f cherry-ok
 export -f cherry-fail
 export -f cherry-skip
 
+repo-cherry-pick-all-help() {
+    cat <<EOF
+这个脚本用来打 patch。打那些用 repo-cherry-find-all 命令找出来的 patch。
+
+用法：$b0 [OPTIONS] REGEXP_FOR_AUTHORS_AND_COMMITTERS
+
+此脚本主要用于：
+   1. 新产品 Bring Up
+   2. 上游代码基线升级跟随 Rebase
+   3. 整理 Patch
+
+EOF
+    if test -e ~/src/github/smartcm/etc/repo-cherry-pick-all.help; then
+        cat ~/src/github/smartcm/etc/repo-cherry-pick-all.help
+    fi
+
+}
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt '?"用法：$b0 [OPTIONS] REGEXP_FOR_AUTHORS_AND_COMMITTERS\n本脚本把 repo-cherry-find-all 提出来的 git 提交差异，挨个 Cherry-Pick 到指定的目标分支上\n\n此脚本主要用于：1. 新产品 Bring Up，2. 上游代码基线升级跟随 Rebase，3. 整理 Patch"' \
-    # @do-here '?在当前 Git HEAD 上开始 Cherry-Pick 工作' \
-    # @:target-branch '?提到哪个目标分支上，默认不用指定，会从 repo-cherry-find-all 结果里计算出来' \
-    # @do-fetch-first=true '?要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true' \
-    # @squash-reverts '?自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作' \
-    # o:ok-function '?如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理' \
-    # f:fail-function '?指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function' \
-    # S:skip-function '?指定跳过某 Patch 时执行的操作。参考 --ok-function' \
-    # @:should-function '?提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch'
+# generate-getopt '?"$(repo-cherry-pick-all-help)"' \
+    # @do-here '?"在当前 Git HEAD 上开始 Cherry-Pick 工作"' \
+    # @:target-branch '?"提到哪个目标分支上，默认不用指定，会从 repo-cherry-find-all 结果里计算出来"' \
+    # @do-fetch-first=true '?"要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true"' \
+    # @squash-reverts '?"自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作"' \
+    # o:ok-function '?"如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理"' \
+    # f:fail-function '?"指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function"' \
+    # S:skip-function '?"指定跳过某 Patch 时执行的操作。参考 --ok-function"' \
+    # @:should-function '?"提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o f:o:S:h \
                --long do-fetch-first,do-here,fail-function:,ok-function:,should-function:,skip-function:,squash-reverts,target-branch:,help,no-do-fetch-first,no-do-here,no-squash-reverts \
                -n $(basename -- $0) -- "$@")
-do_fetch_first=true
-do_here=false
-fail_function=
-ok_function=
-should_function=
-skip_function=
-squash_reverts=false
-target_branch=
+declare do_fetch_first=true
+declare do_here=false
+declare fail_function=
+declare ok_function=
+declare should_function=
+declare skip_function=
+declare squash_reverts=false
+declare target_branch=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -92,6 +110,7 @@ while true; do
                 do_fetch_first=true
             fi
             shift
+
             ;;
         --do-here|--no-do-here)
             if test "$1" = --no-do-here; then
@@ -100,22 +119,27 @@ while true; do
                 do_here=true
             fi
             shift
+
             ;;
         -f|--fail-function)
             fail_function=$2
             shift 2
+
             ;;
         -o|--ok-function)
             ok_function=$2
             shift 2
+
             ;;
         --should-function)
             should_function=$2
             shift 2
+
             ;;
         -S|--skip-function)
             skip_function=$2
             shift 2
+
             ;;
         --squash-reverts|--no-squash-reverts)
             if test "$1" = --no-squash-reverts; then
@@ -124,50 +148,52 @@ while true; do
                 squash_reverts=true
             fi
             shift
+
             ;;
         --target-branch)
             target_branch=$2
             shift 2
+
             ;;
         -h|--help)
             set +x
-            echo -e "用法：$b0 [OPTIONS] REGEXP_FOR_AUTHORS_AND_COMMITTERS\n本脚本把 repo-cherry-find-all 提出来的 git 提交差异，挨个 Cherry-Pick 到指定的目标分支上\n\n此脚本主要用于：1. 新产品 Bring Up，2. 上游代码基线升级跟随 Rebase，3. 整理 Patch"
+            echo -e "$(repo-cherry-pick-all-help)"
             echo
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--[no-]do-fetch-first'
-            echo '要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true'
+            echo "要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true"
             printf "%06s" " "
             printf %-24s '--[no-]do-here'
-            echo '在当前 Git HEAD 上开始 Cherry-Pick 工作'
+            echo "在当前 Git HEAD 上开始 Cherry-Pick 工作"
             printf %06s '-f, '
             printf %-24s '--fail-function=FAIL_FUNCTION'
             echo
             printf "%30s" ""
-            echo '指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function'
+            echo "指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function"
             printf %06s '-o, '
             printf %-24s '--ok-function=OK_FUNCTION'
             echo
             printf "%30s" ""
-            echo '如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理'
+            echo "如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理"
             printf "%06s" " "
             printf %-24s '--should-function=SHOULD_FUNCTION'
             echo
             printf "%30s" ""
-            echo '提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch'
+            echo "提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch"
             printf %06s '-S, '
             printf %-24s '--skip-function=SKIP_FUNCTION'
             echo
             printf "%30s" ""
-            echo '指定跳过某 Patch 时执行的操作。参考 --ok-function'
+            echo "指定跳过某 Patch 时执行的操作。参考 --ok-function"
             printf "%06s" " "
             printf %-24s '--[no-]squash-reverts'
-            echo '自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作'
+            echo "自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作"
             printf "%06s" " "
             printf %-24s '--target-branch=TARGET_BRANCH'
             echo
             printf "%30s" ""
-            echo '提到哪个目标分支上，默认不用指定，会从 repo-cherry-find-all 结果里计算出来'
+            echo "提到哪个目标分支上，默认不用指定，会从 repo-cherry-find-all 结果里计算出来"
             exit
             shift
             ;;

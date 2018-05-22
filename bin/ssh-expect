@@ -9,7 +9,7 @@ spawn en_US ssh-passwd -o StrictHostKeyChecking=no $host
 set timeout 60
 
 expect {
-    -re "\\$" {
+    -re "\\$|#" {
         interact
         wait
         exit

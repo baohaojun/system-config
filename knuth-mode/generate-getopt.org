@@ -233,10 +233,14 @@
   #+BEGIN_SRC sh
     for long in "${long_opts_sorted[@]}"; do
         var=${var_name_map[$long]}
+        declare declare_opt=
+        if test "${default_val_map[$long]:0:1}" = '('; then
+            declare_opt=" -a"
+        fi
         if test "$export_all" = false; then
-            echo declare ${var}=${default_val_map[$long]}
+            echo declare${declare_opt} ${var}=${default_val_map[$long]}
         else
-            echo declare ${var}=\$\{$var:-${default_val_map[$long]}\}
+            echo declare${declare_opt} ${var}=\$\{$var:-${default_val_map[$long]}\}
         fi
     done
   #+END_SRC

@@ -1,0 +1,94 @@
+#+name: emacs-append.el
+#+BEGIN_SRC elisp
+  (progn
+    (find-file "$to_file")
+    (goto-char (point-max))
+    (insert-file "$from_file")
+    (save-buffer))
+#+END_SRC
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh
+
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt f:from-file t:to_file
+  ## end code-generator
+  ## start generated code
+  TEMP=$( getopt -o f:t:h \
+                 --long from-file:,to_file:,help \
+                 -n $(basename -- $0) -- "$@")
+  declare from_file=
+  declare to_file=
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+
+          -f|--from-file)
+              from_file=$2
+              shift 2
+
+              ;;
+          -t|--to_file)
+              to_file=$2
+              shift 2
+
+              ;;
+          -h|--help)
+              set +x
+              echo -e
+              echo
+              echo Options and arguments:
+              printf %06s '-f, '
+              printf %-24s '--from-file=FROM_FILE'
+              echo
+              printf %06s '-t, '
+              printf %-24s '--to_file=TO_FILE'
+              echo
+              exit
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          ,*)
+              die "internal error"
+              ;;
+      esac
+  done
+
+
+  ## end generated code
+
+  if test ! -e "$from_file"; then
+      die "FROM-FILE $from_file non-exist"
+  fi
+
+  if test ! -e "$to_file"; then
+      die "TO-FILE $to_file non-exist"
+  fi
+
+  emacsclient -e "$(cat <<EOF16d93b20dc6b
+  <<emacs-append.el>>
+  EOF16d93b20dc6b
+  )"
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/emacs-append-file :comments link :shebang "#!/bin/bash" :noweb yes
+set -e
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
