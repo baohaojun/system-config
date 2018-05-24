@@ -1,6 +1,0 @@
-#!/bin/bash
-
-. force-1 || exit 0
-if which mu >/dev/null 2>&1; then
-    mu index || ps.pl mu.server
-fi
