@@ -7,6 +7,11 @@ set -e
 
 (
     cd ~/src/android
-    repo sync -j4 -f -d -c
+    if ! repo sync -j4 -f -d -c; then
+        repo_command=$(repo-switch -p)
+        rm -rf .repo/manifests*
+        $repo_command
+        repo sync -j4 -f -d -c
+    fi
     repo-changes\?
 )
