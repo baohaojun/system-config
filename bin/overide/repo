@@ -189,9 +189,13 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         )
                                 )
                             ) || (
-
-                                if grep '^project .repo/manifests/' $repo_sync_log &&
-                                        grep 'fatal: refusing to merge unrelated histories' $repo_sync_log; then
+                                # manifest.git error, need run repo init again
+                                if (grep '^project .repo/manifests/' $repo_sync_log &&
+                                        grep 'fatal: refusing to merge unrelated histories' $repo_sync_log) ||
+                                       (
+                                           grep 'manifests rev-list.*error: Could not read' $repo_sync_log &&
+                                               grep 'fatal: revision walk setup failed' $repo_sync_log
+                                       ); then
                                     repo_init_command=$(repo-switch -p)
                                     rm .repo/manifest.xml .repo/manifests .repo/manifests.git -rf
                                     $repo_init_command
