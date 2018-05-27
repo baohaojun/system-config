@@ -1,7 +1,13 @@
 
-# Local Variables: #
-# eval: (read-only-mode 0) #
-# End: #
+#+name: read-only
+#+BEGIN_SRC sh
+  # Local Variables: #
+  # eval: (read-only-mode 1) #
+  # End: #
+
+#+END_SRC
+
+
 
 #+name: sawfish-get-pos-in-window
 #+BEGIN_SRC sawfish
@@ -14,93 +20,100 @@
     (cons (- px wx) (- py wy)))
 #+END_SRC
 
+#+name: old-code
+#+BEGIN_SRC sh :noweb yes
+  set -e
+
+  if echo $SHELLOPTS | grep -q xtrace; then
+      exec 2> ~/tmp/sawfish-window-custom-menu.org.log
+  fi
+
+  #!/bin/bash
+  top_window=${SC_FORCE_TOP_WINDOW:-$(sawfish-top-window)}
+  top_window=${top_window,,}
+
+  declare -A window_operations
+
+  for script in ~/system-config/etc/sawfish-window-custom-menu/$top_window/*; do
+      if test -f "$script"; then
+          window_operations[$top_window-$(basename "$script")]=script
+      elif test -d "$script"; then
+          for script in $script/*; do
+              if test -f "$script"; then
+                  window_operations[$top_window-$(basename "$script")]=$script
+              fi
+          done
+      fi
+  done
+
+  window_operations[kdenlive-fade-effects]="M-i e f"
+  window_operations[kdenlive-blur-effects]="M-i e b"
+
+  window_operations[wrench-send-a-key-to-phone]=function
+  window_operations[*-get-cursor-pos-in-window]=function
+  window_operations[*-get-current-window-size]=function
+  window_operations[*-wernch...]=function
+
+  function wernch...() {
+      SC_FORCE_TOP_WINDOW=wrench sawfish-window-custom-menu
+  }
+
+  function send-a-key-to-phone() {
+      key=$(sawfish-get-key)
+      bhj-notify hello "key is $key"
+      adb-key "$key"
+  }
+
+  function get-current-window-size() {
+      sawfish-client -e '(window-dimensions (input-focus))'
+  }
+
+  function get-cursor-pos-in-window() {
+          sawfish-client -e "$(cat <<'EOFd4088284f710'
+  <<sawfish-get-pos-in-window>>
+  EOFd4088284f710
+  )" | tr -d '().'
+  }
+
+  operations=$(
+      for x in "${!window_operations[@]}"; do
+          if [[ $x =~ ^$top_window- ]]; then
+              echo "${x#$top_window-}"
+          elif [[ $x =~ ^\*- ]]; then
+              echo "${x#\*-}"
+          fi
+      done
+            )
+
+  operation=$(EMACS=t select-args -o -p "What operation do you want for $top_window?" -- $operations)
+
+  func_or_key="${window_operations[$top_window-$operation]}"
+
+  if test "$func_or_key" = function; then
+      $operation
+  elif test "$func_or_key" = script; then
+      bash ~/system-config/etc/sawfish-window-custom-menu/$top_window/$operation
+  elif test -f "$func_or_key" -a "${func_or_key:0:1}" = /; then
+      "$func_or_key"
+  elif test "$func_or_key"; then
+       for x in ${window_operations[$top_window-$operation]}; do
+           sawfish-send-focused-window-event "$x"
+       done
+       exit
+  fi
+
+  if test "${window_operations[*-$operation]}"; then
+      output=$($operation)
+      bhj-notify "$operation" "output is $output"
+  fi
+
+#+END_SRC
 ** 最终的版本：
 
    #+name: the-ultimate-script
    #+BEGIN_SRC sh :tangle ~/system-config/bin/sawfish-window-custom-menu :comments link :shebang "#!/bin/bash" :noweb yes
-     set -e
-
-     if echo $SHELLOPTS | grep -q xtrace; then
-         exec 2> ~/tmp/sawfish-window-custom-menu.org.log
-     fi
-
-     #!/bin/bash
-     top_window=$(sawfish-top-window)
-     top_window=${top_window,,}
-
-     declare -A window_operations
-
-     for script in ~/system-config/etc/sawfish-window-custom-menu/$top_window/*; do
-         if test -f "$script"; then
-             window_operations[$top_window-$(basename "$script")]=script
-         elif test -d "$script"; then
-             for script in $script/*; do
-                 if test -f "$script"; then
-                     window_operations[$top_window-$(basename "$script")]=$script
-                 fi
-             done
-         fi
-     done
-
-     window_operations[kdenlive-fade-effects]="M-i e f"
-     window_operations[kdenlive-blur-effects]="M-i e b"
-
-     window_operations[wrench-send-a-key-to-phone]=function
-
-     window_operations[*-get-cursor-pos-in-window]=function
-     window_operations[*-get-current-window-size]=function
-
-     function send-a-key-to-phone() {
-         key=$(sawfish-get-key)
-         bhj-notify hello "key is $key"
-         adb-key "$key"
-     }
-
-     function get-current-window-size() {
-         sawfish-client -e '(window-dimensions (input-focus))'
-     }
-
-     function get-cursor-pos-in-window() {
-             sawfish-client -e "$(cat <<'EOFd4088284f710'
-     <<sawfish-get-pos-in-window>>
-     EOFd4088284f710
-     )" | tr -d '().'
-     }
-
-     operations=$(
-         for x in "${!window_operations[@]}"; do
-             if [[ $x =~ ^$top_window- ]]; then
-                 echo "${x#$top_window-}"
-             elif [[ $x =~ ^\*- ]]; then
-                 echo "${x#\*-}"
-             fi
-         done
-               )
-
-     operation=$(EMACS=t select-args -o -p "What operation do you want for $top_window?" -- $operations)
-
-     func_or_key="${window_operations[$top_window-$operation]}"
-     if test "$func_or_key" = function; then
-         $operation
-     elif test "$func_or_key" = script; then
-         bash ~/system-config/etc/sawfish-window-custom-menu/$top_window/$operation
-     elif test -f "$func_or_key" -a "${func_or_key:0:1}" = /; then
-         "$func_or_key"
-     elif test "$func_or_key"; then
-          for x in ${window_operations[$top_window-$operation]}; do
-              sawfish-send-focused-window-event "$x"
-          done
-          exit
-     fi
-
-     if test "${window_operations[*-$operation]}"; then
-         output=$($operation)
-         bhj-notify "$operation" "output is $output"
-     fi
-
-     # Local Variables: #
-     # eval: (read-only-mode 1) #
-     # End: #
+     <<old-code>>
+     <<read-only>>
    #+END_SRC
 
    #+results: the-ultimate-script

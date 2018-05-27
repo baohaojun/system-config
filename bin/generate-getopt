@@ -170,10 +170,12 @@ TEMP=\$($(
 for long in "${long_opts_sorted[@]}"; do
     var=${var_name_map[$long]}
     declare declare_opt=
+    declare is_array_var=false
     if test "${default_val_map[$long]:0:1}" = '('; then
         declare_opt=" -a"
+        is_array_var=true
     fi
-    if test "$export_all" = false; then
+    if test "$export_all" = false -o "$is_array_var" = true; then
         echo declare${declare_opt} ${var}=${default_val_map[$long]}
     else
         echo declare${declare_opt} ${var}=\$\{$var:-${default_val_map[$long]}\}

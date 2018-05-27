@@ -189,9 +189,13 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         )
                                 )
                             ) || (
-
-                                if grep '^project .repo/manifests/' $repo_sync_log &&
-                                        grep 'fatal: refusing to merge unrelated histories' $repo_sync_log; then
+                                # manifest.git error, need run repo init again
+                                if (grep '^project .repo/manifests/' $repo_sync_log &&
+                                        grep 'fatal: refusing to merge unrelated histories' $repo_sync_log) ||
+                                       (
+                                           grep 'manifests rev-list.*error: Could not read' $repo_sync_log &&
+                                               grep 'fatal: revision walk setup failed' $repo_sync_log
+                                       ); then
                                     repo_init_command=$(repo-switch -p)
                                     rm .repo/manifest.xml .repo/manifests .repo/manifests.git -rf
                                     $repo_init_command
@@ -249,7 +253,10 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                 done
 
                 if grep "Couldn't find remote ref" $repo_sync_log; then
-                    mail-cms -i -e "你的 manifest 文件可能有问题，有一个分支找不到： $(readlink .repo/manifest.xml)" < "$repo_sync_log"
+                    mail-cms -i -e "你的 manifest 文件可能有问题，有一个分支找不到： $(readlink .repo/manifest.xml)" <<<"$(
+                        echo "请查看下面的log，出错的关键字是：fatal: Couldn't find remote ref"
+                        echo
+                        grep 'find remote ref' -C 10 "$repo_sync_log")"
                     exit 1
                 fi
                 (

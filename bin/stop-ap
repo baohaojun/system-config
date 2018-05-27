@@ -7,5 +7,5 @@ fi
 perl -ne "print unless m/^iface $wlan0 inet manual/" /etc/network/interfaces |sudo tee /tmp/stop-ap.$$
 sudo mv /tmp/stop-ap.$$ /etc/network/interfaces.$$
 sudo mv /etc/network/interfaces.$$ /etc/network/interfaces
-sudo ps-killall hostapd
+sudo $(which ps-killall) hostapd
 sudo /etc/init.d/network-manager restart

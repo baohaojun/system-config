@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. atexit mu-index
+
 me=$(readlink -f $0)
 if test ! -e "$me"; then
     me=$(readlink -f "$(which $0)")

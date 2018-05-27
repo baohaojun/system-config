@@ -69,7 +69,7 @@ if ! grep 'DHCPD_ENABLED="yes"' /etc/default/udhcpd; then
     sudo perl -npe 's/DHCPD_ENABLED="no"/DHCPD_ENABLED="yes"/g' -i /etc/default/udhcpd;
 fi
 sudo /etc/init.d/udhcpd restart
-sudo nat-vbox $eth0 $wlan0
+sudo $(which nat-vbox) $eth0 $wlan0
 if test ! -e /etc/hostapd/hostapd.conf; then
     zcat /usr/share/doc/hostapd/examples/hostapd.conf.gz | sudo tee /etc/hostapd/hostapd.conf
 fi
