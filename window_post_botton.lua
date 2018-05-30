@@ -15,6 +15,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.user.profile.activities.EditP
 map['com.alibaba.android.rimet/com.alibaba.android.user.search.activity.GlobalSearchInputActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'manual-post'
+map['com.alicemap/com.alicemap.ui.activity.RegisterActivity'] = 'manual-post'
 map['com.amazon.kindle/com.amazon.identity.auth.device.AuthPortalUIActivity'] = 'manual-post'
 map['com.amazon.kindle/com.amazon.kcp.library.StandaloneLibraryActivity'] = 'weixin-chat'
 map['com.amazon.kindle/com.amazon.kcp.oob.MainActivity'] = 'manual-post'
