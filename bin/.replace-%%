@@ -1,0 +1,16 @@
+#!/bin/bash
+
+(
+    set -e
+
+    input=$(cat)
+
+    to_replace=$(
+        echo "$input" | perl -ne 's/-/_/g; while (m/\%(.*?)\%/g) {print "$1\n"}' | sort -u
+              )
+
+    for x in $to_replace; do
+        eval declare -x rep_$x=\$$x
+    done
+    echo "$input" | perl -npe 's/\%(.*?)\%/($x = $1) =~ s,-,_,g; $ENV{"rep_$x"}/ge'
+)

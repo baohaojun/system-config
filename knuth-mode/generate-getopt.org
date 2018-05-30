@@ -234,9 +234,12 @@
     for long in "${long_opts_sorted[@]}"; do
         var=${var_name_map[$long]}
         declare declare_opt=
+        if test "$export_all" = true; then
+            declare_opt=" -x"
+        fi
         declare is_array_var=false
         if test "${default_val_map[$long]:0:1}" = '('; then
-            declare_opt=" -a"
+            declare_opt="$declare_opt -a"
             is_array_var=true
         fi
         if test "$export_all" = false -o "$is_array_var" = true; then
@@ -382,16 +385,6 @@
 
 * 输出全部变量
 
-  #+name: maybe-export-all
-  #+BEGIN_SRC sh
-    if test "$export_all" = "true"; then
-        echo
-        for long in "${long_opts_sorted[@]}"; do
-            echo export ${var_name_map[$long]}
-        done
-    fi
-  #+END_SRC
-
 * Read only
 #+name: read-only
 #+BEGIN_SRC sh
@@ -420,7 +413,6 @@
   <<foot>>
   EOF
 
-  <<maybe-export-all>>
   <<read-only>>
 
 #+END_SRC
