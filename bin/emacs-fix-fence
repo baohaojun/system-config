@@ -80,6 +80,9 @@ add_at_start[nxml-html-simple]='<![CDATA['
 add_at_end[nxml-html]='<!--end html-->]]>'
 add_at_end[nxml-html-simple]=']]>'
 
+add_at_start[-nxml]='<!--start nxml-->'
+add_at_end[-nxml]='<!--end nxml-->'
+
 if test "$simple_fence" = true; then
     simple=-simple
     echo_arg=-n
@@ -90,5 +93,5 @@ fi
 pipe_map[nxml-html]=unescape-html
 
 echo $echo_arg "${add_at_start[$in_mode-$to_mode$simple]}"
-cat | ${pipe_map[$in_mode-$to_mode]}
+cat | ${pipe_map[$in_mode-$to_mode]:-cat}
 echo $echo_arg "${add_at_end[$in_mode-$to_mode$simple]}"
