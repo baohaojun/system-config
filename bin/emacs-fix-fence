@@ -2,23 +2,23 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt i:in-mode '?"当前的文件是什么 emacs mode，比如 nxml（jenkins config）"' \
+# generate-getopt f:from-mode '?"当前的文件是什么 emacs mode，比如 nxml（jenkins config）"' \
     # t:to-mode '?"想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"' \
     # ssimple-fence '?"用更简短的 fence，比如不用“<![CDATA[<!--start html-->”，只用“<![CDATA[”"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o i:st:h \
-               --long in-mode:,simple-fence,to-mode:,help,no-simple-fence \
+TEMP=$( getopt -o f:st:h \
+               --long from-mode:,simple-fence,to-mode:,help,no-simple-fence \
                -n $(basename -- $0) -- "$@")
-declare in_mode=
+declare from_mode=
 declare simple_fence=false
 declare to_mode=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -i|--in-mode)
-            in_mode=$2
+        -f|--from-mode)
+            from_mode=$2
             shift 2
 
             ;;
@@ -41,8 +41,8 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-i, '
-            printf %-24s '--in-mode=IN_MODE'
+            printf %06s '-f, '
+            printf %-24s '--from-mode=FROM_MODE'
             echo "当前的文件是什么 emacs mode，比如 nxml（jenkins config）"
             printf %06s '-s, '
             printf %-24s '--[no-]simple-fence'
@@ -74,6 +74,9 @@ unescape-html() {
     xmlstarlet unesc - | tr -d \\r
 }
 
+add_at_start[nxml-bash]='<![CDATA[#!/bin/bash'
+add_at_end[nxml-bash]='#!end-of-fence]]>'
+
 add_at_start[nxml-html]='<![CDATA[<!--start html-->'
 add_at_start[nxml-html-simple]='<![CDATA['
 
@@ -92,6 +95,6 @@ else
 fi
 pipe_map[nxml-html]=unescape-html
 
-echo $echo_arg "${add_at_start[$in_mode-$to_mode$simple]}"
-cat | ${pipe_map[$in_mode-$to_mode]:-cat}
-echo $echo_arg "${add_at_end[$in_mode-$to_mode$simple]}"
+echo $echo_arg "${add_at_start[$from_mode-$to_mode$simple]}"
+cat | ${pipe_map[$from_mode-$to_mode]:-cat}
+echo $echo_arg "${add_at_end[$from_mode-$to_mode$simple]}"
