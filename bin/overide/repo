@@ -149,16 +149,20 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                 (
                                     grep 'fatal: expected shallow/unshallow, got ERR internal server error' $repo_sync_log ||
                                         grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log ||
-                                        grep 'fatal: remote error: want .* not valid' $repo_sync_log || (
+                                        grep 'fatal: remote error: want .* not valid' $repo_sync_log ||
+                                        (
                                             grep 'error: The last gc run reported the following. Please correct the root cause' $repo_sync_log &&
                                                 grep 'and remove .*\.repo/projects/.*/gc.log' $repo_sync_log
-                                        ) || grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log
+                                        ) ||
+                                        grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log ||
+                                        grep -o 'error.GitError: .* rev-list .*: fatal: bad object' $repo_sync_log | grep -v 'manifests rev-list'
                                 ) && (
                                     projects=$(
                                         (
                                             grep 'error: Cannot fetch' $repo_sync_log | pn 4
                                             perl -ne 'print $1 if m,and remove .*?\.repo/projects/(.*)\.git/gc.log,' $repo_sync_log
                                             grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log | pn 3
+                                            grep -o 'error.GitError: .* rev-list .*: fatal: bad object' $repo_sync_log | grep -v 'manifests rev-list' | pn 2
                                         ) | grep . # make sure there are some projects that match.
                                             ) &&
                                         sleep 30 &&
@@ -190,16 +194,19 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                 )
                             ) || (
                                 # manifest.git error, need run repo init again
-                                if (grep '^project .repo/manifests/' $repo_sync_log &&
-                                        grep 'fatal: refusing to merge unrelated histories' $repo_sync_log) ||
-                                       (
-                                           grep 'manifests rev-list.*error: Could not read' $repo_sync_log &&
-                                               grep 'fatal: revision walk setup failed' $repo_sync_log
-                                       ); then
+                                if manifest_error=$(
+                                        (
+                                            grep '^project .repo/manifests/' $repo_sync_log &&
+                                                grep 'fatal: refusing to merge unrelated histories' $repo_sync_log
+                                        ) || (
+                                            grep 'manifests rev-list.*error: Could not read' $repo_sync_log &&
+                                                grep 'fatal: revision walk setup failed' $repo_sync_log
+                                        )
+                                                 ); then
                                     repo_init_command=$(repo-switch -p)
                                     rm .repo/manifest.xml .repo/manifests .repo/manifests.git -rf
                                     $repo_init_command
-                                    mail-cms -e -o "Info: repo manifest need re-init to fix repo sync error"
+                                    echo "$manifest_error" | mail-cms -i -e -o "Info: repo manifest need re-init to fix repo sync error"
 
                                     # 不能自动修复这种错误。万一这是一
                                     # 个 rebuild 的任务，现在正在重新
