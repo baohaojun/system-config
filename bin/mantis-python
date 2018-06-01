@@ -191,10 +191,19 @@ def select_values(purpose, vals):
 
 def add_issue(arg):
     mantis = Client(arg.wsdl).service
+    if arg.project == '':
+        projects = mantis.mc_projects_get_user_accessible(
+            arg.username,
+            arg.password
+        )
+        arg.project = select_values("issue-project", [x.name for x in projects])
+        arg.project = [x.id for x in projects if x.name == arg.project][0]
+        print "project id is", arg.project
+
     users = mantis.mc_project_get_users(
         arg.username,
         arg.password,
-        47,
+        arg.project,
         10
     )
     if arg.handler == -1:
@@ -204,15 +213,6 @@ def add_issue(arg):
         if arg.handler == users[n].name:
             arg.handler = users[n].id
             break
-
-    if arg.project == '':
-        projects = mantis.mc_projects_get_user_accessible(
-            arg.username,
-            arg.password
-        )
-        arg.project = select_values("issue-project", [x.name for x in projects])
-        arg.project = [x.id for x in projects if x.name == arg.project][0]
-        print "project id is", arg.project
 
 
 
