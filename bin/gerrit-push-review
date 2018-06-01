@@ -23,35 +23,47 @@ if test ! -e "$me"; then
 fi
 b0=$(basename $0)
 
+gpr-help() {
+    cat <<EOF | grep -v '^#.*#$'
+# start org #
+使用方法：$b0 [OPTIONS]... REVIEWERS...
+
+这是一个方便往 Gerrit 上 push review 的脚本。功能：
+    - 默认自动计算该往哪条分支上提交；也可自己用 -b 参数指定
+    - 允许全局 push（当前目录下有 .repo 目录） 或单个 git 仓库 push（当前目录下有 .git）
+    - push 的同时允许指定 Reviewers（后面跟一个或多个同事的账号作为参数）
+
+所有功能最后都是调用 git 命令实现，请阅读脚本源码并参考 git 官方文档，比如 git push --help（git push 最简单的调用方法是不带任何参数，git 会自动帮你计算往哪个 remote 服务器、哪条分支上 push 哪个 commit，这是最方便的用法，此脚本就是受此启发而写出来的对 gerrit push review 操作的封装）。
+# end org #
+EOF
+}
+
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -p gpr -e -H '"使用方法：$b0 [OPTIONS]... REVIEWERS...
-# 往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）
-#
-# 如果 push 一个以前已经 push 过的 patch，Gerrit 会拒绝接受（出错信息：no new changes），但如果你有指定 Reviewers 的话，这个命令会把每个 Reviewer 都添加上去。"' \
-    # r:push-rev=HEAD '?要 push 哪个 revision，默认是 HEAD' \
-    # t:patch-topic '?要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review' \
-    # Rskip-local-review '?提交前不要做 local review（鼓励做 local review！）' \
-    # @draft '?提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事' \
-    # @skip-gerrit '?不要提到 gerrit 上 review，直接往 refs/heads/ 上 push' \
-    # b:to-branch '?提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支' \
-    # @:repo-remote=${REPO_REMOTE} '?提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）' \
-    # @do-rebase=true '?要不要先 rebase 到远程服务器分支，默认是要 rebase' \
-    # @:review-push-url '?使用自己制定的 push url，不要让脚本自动计算（适于用：自动计算结果有误；测试等）'
+# generate-getopt -p gpr -e '?"$(gpr-help)"' \
+    # r:push-rev=HEAD '?"要 push 哪个 revision，默认是 HEAD"' \
+    # t:patch-topic '?"要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review"' \
+    # Rskip-local-review '?"提交前不要做 local review（鼓励做 local review！）"' \
+    # @draft '?"提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事"' \
+    # @skip-gerrit '?"不要提到 gerrit 上 review，直接往 refs/heads/ 上 push"' \
+    # b:to-branch '?"提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支"' \
+    # @:repo-remote=${REPO_REMOTE} '?"提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）"' \
+    # @do-rebase=true '?"要不要先 rebase 到远程服务器分支，默认是要 rebase"' \
+    # @:review-push-url '?"使用自己制定的 push url，不要让脚本自动计算（适于用：自动计算结果有误；测试等）"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o t:r:Rb:h \
                --long do-rebase,draft,patch-topic:,push-rev:,repo-remote:,review-push-url:,skip-gerrit,skip-local-review,to-branch:,help,no-do-rebase,no-draft,no-skip-gerrit,no-skip-local-review \
                -n $(basename -- $0) -- "$@")
-declare gpr_do_rebase=${gpr_do_rebase:-true}
-declare gpr_draft=${gpr_draft:-false}
-declare gpr_patch_topic=${gpr_patch_topic:-}
-declare gpr_push_rev=${gpr_push_rev:-HEAD}
-declare gpr_repo_remote=${gpr_repo_remote:-}
-declare gpr_review_push_url=${gpr_review_push_url:-}
-declare gpr_skip_gerrit=${gpr_skip_gerrit:-false}
-declare gpr_skip_local_review=${gpr_skip_local_review:-false}
-declare gpr_to_branch=${gpr_to_branch:-}
+declare -x gpr_do_rebase=${gpr_do_rebase:-true}
+declare -x gpr_draft=${gpr_draft:-false}
+declare -x gpr_patch_topic=${gpr_patch_topic:-}
+declare -x gpr_push_rev=${gpr_push_rev:-HEAD}
+declare -x gpr_repo_remote=${gpr_repo_remote:-}
+declare -x gpr_review_push_url=${gpr_review_push_url:-}
+declare -x gpr_skip_gerrit=${gpr_skip_gerrit:-false}
+declare -x gpr_skip_local_review=${gpr_skip_local_review:-false}
+declare -x gpr_to_branch=${gpr_to_branch:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -63,6 +75,7 @@ while true; do
                 gpr_do_rebase=true
             fi
             shift
+
             ;;
         --draft|--no-draft)
             if test "$1" = --no-draft; then
@@ -71,22 +84,27 @@ while true; do
                 gpr_draft=true
             fi
             shift
+
             ;;
         -t|--patch-topic)
             gpr_patch_topic=$2
             shift 2
+
             ;;
         -r|--push-rev)
             gpr_push_rev=$2
             shift 2
+
             ;;
         --repo-remote)
             gpr_repo_remote=$2
             shift 2
+
             ;;
         --review-push-url)
             gpr_review_push_url=$2
             shift 2
+
             ;;
         --skip-gerrit|--no-skip-gerrit)
             if test "$1" = --no-skip-gerrit; then
@@ -95,6 +113,7 @@ while true; do
                 gpr_skip_gerrit=true
             fi
             shift
+
             ;;
         -R|--skip-local-review|--no-skip-local-review)
             if test "$1" = --no-skip-local-review; then
@@ -103,52 +122,51 @@ while true; do
                 gpr_skip_local_review=true
             fi
             shift
+
             ;;
         -b|--to-branch)
             gpr_to_branch=$2
             shift 2
+
             ;;
         -h|--help)
             set +x
-            echo -e "使用方法：$b0 [OPTIONS]... REVIEWERS...
-往 Gerrit 上 push review。允许全局 push 或单个 git 仓库 push 并同时指定 Reviewers（0 个或多个同事的邮箱前缀）
-
-如果 push 一个以前已经 push 过的 patch，Gerrit 会拒绝接受（出错信息：no new changes），但如果你有指定 Reviewers 的话，这个命令会把每个 Reviewer 都添加上去。"
+            echo -e "$(gpr-help)"
             echo
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--[no-]do-rebase'
-            echo '要不要先 rebase 到远程服务器分支，默认是要 rebase'
+            echo "要不要先 rebase 到远程服务器分支，默认是要 rebase"
             printf "%06s" " "
             printf %-24s '--[no-]draft'
-            echo '提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事'
+            echo "提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事"
             printf %06s '-t, '
             printf %-24s '--patch-topic=PATCH_TOPIC'
             echo
             printf "%30s" ""
-            echo '要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review'
+            echo "要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review"
             printf %06s '-r, '
             printf %-24s '--push-rev=PUSH_REV'
-            echo '要 push 哪个 revision，默认是 HEAD'
+            echo "要 push 哪个 revision，默认是 HEAD"
             printf "%06s" " "
             printf %-24s '--repo-remote=REPO_REMOTE'
             echo
             printf "%30s" ""
-            echo '提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）'
+            echo "提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）"
             printf "%06s" " "
             printf %-24s '--review-push-url=REVIEW_PUSH_URL'
             echo
             printf "%30s" ""
-            echo '使用自己制定的 push url，不要让脚本自动计算（适于用：自动计算结果有误；测试等）'
+            echo "使用自己制定的 push url，不要让脚本自动计算（适于用：自动计算结果有误；测试等）"
             printf "%06s" " "
             printf %-24s '--[no-]skip-gerrit'
-            echo '不要提到 gerrit 上 review，直接往 refs/heads/ 上 push'
+            echo "不要提到 gerrit 上 review，直接往 refs/heads/ 上 push"
             printf %06s '-R, '
             printf %-24s '--[no-]skip-local-review'
-            echo '提交前不要做 local review（鼓励做 local review！）'
+            echo "提交前不要做 local review（鼓励做 local review！）"
             printf %06s '-b, '
             printf %-24s '--to-branch=TO_BRANCH'
-            echo '提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支'
+            echo "提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支"
             exit
             shift
             ;;
@@ -162,16 +180,6 @@ while true; do
     esac
 done
 
-
-export gpr_do_rebase
-export gpr_draft
-export gpr_patch_topic
-export gpr_push_rev
-export gpr_repo_remote
-export gpr_review_push_url
-export gpr_skip_gerrit
-export gpr_skip_local_review
-export gpr_to_branch
 
 ## end generated code
 
@@ -391,16 +399,18 @@ if test $gpr_do_rebase = true && ! git-is-ancestor $(repo-remote-branch) HEAD >/
     fi
 fi
 
-n_commits=$(git log $(repo-remote-branch)..${gpr_push_rev} --pretty=%H|wc -l)
+if test "$gpr_skip_gerrit" = false; then
+    n_commits=$(git log $(repo-remote-branch)..${gpr_push_rev} --pretty=%H|wc -l)
 
-if test "$n_commits" = 0; then
-    echo "你的本地仓储没有改动需要提交到远程服务器。（你当前的 HEAD 跟服务器上对应分支的 HEAD 完全一致，请确认你是不是已经 git commit 过了？）"
-    exit 0
-fi
-if test "$n_commits" != 1; then
-   if ! yes-or-no-p -y "你要一次提交多个（$n_commits 个）patch，确认？"; then
-       die "请确认自己是否要提交多个 patch"
-   fi
+    if test "$n_commits" = 0; then
+        echo "你的本地仓储没有改动需要提交到远程服务器。（你当前的 HEAD 跟服务器上对应分支的 HEAD 完全一致，请确认你是不是已经 git commit 过了？）"
+        exit 0
+    fi
+    if test "$n_commits" != 1; then
+        if ! yes-or-no-p -y "你要一次提交多个（$n_commits 个）patch，确认？"; then
+            die "请确认自己是否要提交多个 patch"
+        fi
+    fi
 fi
 
 reviewers=()
