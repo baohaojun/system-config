@@ -23,6 +23,34 @@ clean-up() {
     )
 }
 
+function clean-a-repo() {
+    if test -d .git; then
+        exec 9> .git/sc-clean-repo.lock
+        flock 9
+        if git reset --hard && git clean -xfd; then
+            echo clean: $PWD
+            exit 0
+        else
+            echo Failed to clean: $PWD
+            rm $PWD -rf
+            cd ..
+            if git_dir=$(lookup-file -e .git/..); then
+                cd "$git_dir"
+                if lookup-file -e .repo/..; then
+                    clean-a-repo
+                fi
+                exit 0
+            else
+                (sleep 30 && mail-cms -o "Warn: repo failed to clean: $PWD")& # this way, there won't be a mail when jenkins task is aborted
+                exit 1
+            fi
+
+        fi
+    fi
+}
+
+export -f clean-a-repo
+
 if test "$1" = init; then
     rm -rf $deltmpdir.*& # just in case some is left from last time.
     if is-jenkins; then
@@ -147,7 +175,8 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                     if grep "Permission denied (publickey)" $repo_sync_log &&
                             grep "fatal: Could not read from remote repository" $repo_sync_log || (
                                 (
-                                    grep 'fatal: expected shallow/unshallow, got ERR internal server error' $repo_sync_log ||
+                                    grep 'error: Cannot remove project ".*":' $repo_sync_log ||
+                                        grep 'fatal: expected shallow/unshallow, got ERR internal server error' $repo_sync_log ||
                                         grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log ||
                                         grep 'fatal: remote error: want .* not valid' $repo_sync_log ||
                                         (
@@ -159,6 +188,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                 ) && (
                                     projects=$(
                                         (
+                                            grep 'error: Cannot remove project ".*?":' $repo_sync_log -o -P | pn 2 \"
                                             grep 'error: Cannot fetch' $repo_sync_log | pn 4
                                             perl -ne 'print $1 if m,and remove .*?\.repo/projects/(.*)\.git/gc.log,' $repo_sync_log
                                             grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log | pn 3
@@ -308,32 +338,6 @@ else
                     clean-up * .repo/projects
                 )
             (
-                function clean-a-repo() {
-                    if test -d .git; then
-                        exec 9> .git/sc-clean-repo.lock
-                        flock 9
-                        if git reset --hard && git clean -xfd; then
-                            echo clean: $PWD
-                            exit 0
-                        else
-                            echo Failed to clean: $PWD
-                            rm $PWD -rf
-                            cd ..
-                            if git_dir=$(lookup-file -e .git/..); then
-                                cd "$git_dir"
-                                if lookup-file -e .repo/..; then
-                                    clean-a-repo
-                                fi
-                                exit 0
-                            else
-                                (sleep 30 && mail-cms -o "Warn: repo failed to clean: $PWD")& # this way, there won't be a mail when jenkins task is aborted
-                                exit 1
-                            fi
-
-                        fi
-                    fi
-                }
-                export -f clean-a-repo
                 my-rfa 'clean-a-repo' || true
                 cd .repo
                 rm repo-paths repo_info.pl -f
@@ -345,6 +349,19 @@ else
     else
         ret=$?
         if test "$1" = init && is-jenkins; then
+            proj_list=.repo/project.list
+            if test -e "$proj_list"; then
+                for x in $(cat $proj_list); do
+                    (
+                        if test -d "$x"; then
+                            (
+                                cd "$x"
+                                clean-a-repo
+                            )
+                        fi
+                    )
+                done
+            fi
             rm -rf .repo/manifest.xml .repo/manifest.xml.old .repo/manifests .repo/manifests.git;
             echo 1>&2 "Deleted .repo files and retry"
             if ~/system-config/bin/repo "$@"; then
