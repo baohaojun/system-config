@@ -66,14 +66,13 @@ mm-o-help() {
     # j:jobs '?"使用多少个线程进行编译（默认是你的机器的 CPU 线程数）"' \
     # kkeep-building='$default_keep_building' '?"即使出错了，也继续编译没有出错的模块"' \
     # f:make-flags '?"其他想要传给 make 命令的标志和参数"' \
-    # nwith-ninja '?"使用 ninja，快速调用 out/mm.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编"' \
     # qquick '?"$(quick-help)"' \
     # @debug '?"调试此脚本"' \
     # o:only-module='()' '?"$(mm-o-help)"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o j:kf:o:qvnh \
-               --long debug,jobs:,keep-building,make-flags:,only-module:,quick,verbose,with-ninja,help,no-debug,no-keep-building,no-quick,no-verbose,no-with-ninja \
+TEMP=$( getopt -o j:kf:o:qvh \
+               --long debug,jobs:,keep-building,make-flags:,only-module:,quick,verbose,help,no-debug,no-keep-building,no-quick,no-verbose \
                -n $(basename -- $0) -- "$@")
 declare debug=false
 declare jobs=
@@ -82,7 +81,6 @@ declare make_flags=
 declare -a only_module=()
 declare quick=false
 declare verbose=
-declare with_ninja=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -138,15 +136,6 @@ while true; do
             shift
 
             ;;
-        -n|--with-ninja|--no-with-ninja)
-            if test "$1" = --no-with-ninja; then
-                with_ninja=false
-            else
-                with_ninja=true
-            fi
-            shift
-
-            ;;
         -h|--help)
             set +x
             echo -e "$(mm-help)"
@@ -175,9 +164,6 @@ while true; do
             printf %06s '-v, '
             printf %-24s '--[no-]verbose'
             echo "编译的时候打印所使用的详细编译命令"
-            printf %06s '-n, '
-            printf %-24s '--[no-]with-ninja'
-            echo "使用 ninja，快速调用 out/mm.log 里记录的上次 mm 编译时使用的 ninja 编译命令进行重编"
             exit
             shift
             ;;
@@ -196,27 +182,6 @@ done
 
 if test "$b0" = mma -a "${only_module}" -a "$quick" = false; then
     die "mma 命令不支持 -o 参数，如果当前目录下有些模块会出错的话，建议使用 -k 参数，确保编译所有 *能够* 成功编译的模块"
-fi
-
-if test "$with_ninja" = true; then
-    (
-        cd $(lookup-file-dir .repo)
-        if test ! -e out/mm.log; then
-            die "你的 out/ 目录下没有 mm.log 文件，因此无法确定如何调用 ninja。请先用 mm -v 编译一次以生成这个文件"
-        fi
-
-        ninja_command=$(
-            grep -P -o '\[prebuilts/build-tools/linux-x86/bin/ninja.*\]' out/mm.log | tr -d '[]'
-                     )
-
-        if test -z "$ninja_command"; then
-            die "无法从 out/mm.log 中找到 ninja 的使用方法，无法用 mm -n 快速编译"
-        fi
-
-        echo -e "重新调用 ninja 快速编译： \n\n    $ninja_command\n\n（如有错误，请自己手动调用——参考 workflow.html#fast-mm）"
-        CCACHE_DISABLE=true time $ninja_command
-    )
-    exit
 fi
 
 if test "$keep_building" = true; then
@@ -310,7 +275,7 @@ time (
             if test -e "${ninja_file}"; then
                 set -o pipefail
                 time wrapped-run -C 'echo "你指定了 --quick 的编译方式，请自己确认这个优化编译是安全的"' \
-                            prebuilts/build-tools/linux-x86/bin/ninja -d keepdepfile "${only_module[@]}" -j $jobs -f "$ninja_file" $verbose -w dupbuild=err |
+                            android-ninja "${only_module[@]}" -j $jobs -f "$ninja_file" $verbose |
                     tee $BHJ_OUT_DIR/$b0.log $BHJ_OUT_DIR/build.log
             else
                 cd "$saved_pwd"

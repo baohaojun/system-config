@@ -6,26 +6,21 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @push-again @list?'list which files are updated in last build'
+    # generate-getopt @push-again \
+        # @list '?"list which files are updated in last build"' \
+        # qquick='("" -q)' '?"是不是使用 mm -q 快速使用 ninja 编译"'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h \
-              --long push-again,list,help,no-push-again,no-list \
-              -n $(basename -- $0) -- "$@")
-push_again=false
-list=false
+TEMP=$( getopt -o qh \
+               --long list,push-again,quick,help,no-list,no-push-again,no-quick \
+               -n $(basename -- $0) -- "$@")
+declare list=false
+declare push_again=false
+declare quick=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --push-again|--no-push-again)
-            if test "$1" = --no-push-again; then
-                push_again=false
-            else
-                push_again=true
-            fi
-            shift
-            ;;
         --list|--no-list)
             if test "$1" = --no-list; then
                 list=false
@@ -33,18 +28,40 @@ while true; do
                 list=true
             fi
             shift
+
+            ;;
+        --push-again|--no-push-again)
+            if test "$1" = --no-push-again; then
+                push_again=false
+            else
+                push_again=true
+            fi
+            shift
+
+            ;;
+        -q|--quick|--no-quick)
+            if test "$1" = --no-quick; then
+                quick=
+            else
+                quick=-q
+            fi
+            shift
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--[no-]list'
-            echo 'list which files are updated in last build'
+            echo "list which files are updated in last build"
             printf "%06s" " "
             printf %-24s '--[no-]push-again'
             echo
+            printf %06s '-q, '
+            printf %-24s '--[no-]quick'
+            echo "是不是使用 mm -q 快速使用 ninja 编译"
             exit
             shift
             ;;
@@ -71,7 +88,7 @@ fi
 if test "$push_again" = false -a "$list" = false; then
     touch $mark_file
     sleep .5
-    mm "$@"
+    mm $quick "$@"
 fi
 
 TARGET_OUT=$repo_dir/../$(android-env get_build_var TARGET_OUT)
@@ -80,7 +97,7 @@ files=$(
      )
 hint "$files
 
-以上是你要push的文件，确认？
+以上是你要 push 的文件，确认？
 "
  echo "$files" |
     if test "$list" = true; then
@@ -95,7 +112,7 @@ hint "$files
             fi
             y=$(echo $x|perl -npe 's,.*/target/product/.*?/,/,')
             if ! adb-push --noremount $x $y </dev/null; then
-                hint "Error: adb push $x $y 失败，请查看原因，然后用 mm-adb --push-again 重新 push。"
+                hint "Error: adb push $x $y 失败，请查看原因，然后用 mm-adb --push-again 重新 push。"
                 exit 1
             fi
         done

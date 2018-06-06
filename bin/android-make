@@ -231,18 +231,23 @@ exec 9> $OUT_DIR/.android-full-build.lock
 
         echo make starts here
         export REALLY_DOING_BUILD=true
+        am_make_cmd=make
+        if test "$quick" = true; then
+            am_make_cmd=android-ninja
+        fi
         if test $# != 0; then
             if test $# = 1 -a -e ~/system-config/etc/android-make/"$1"; then
                 . ~/system-config/etc/android-make/"$1"
             else
-                $do_nice make -j$jobs $keep $* $verbose
+
+                $do_nice $am_make_cmd -j$jobs $keep $* $verbose
             fi
         else
             echo PATH is $PATH
             if test "$make_dir"; then
                 mmma "$(relative-path "$make_dir" .)" -j$jobs $verbose
             else
-                $do_nice make -j$jobs $keep $verbose
+                $do_nice $am_make_cmd -j$jobs $keep $verbose
             fi
 
         fi && result=$result'all ok; ' && echo build is successful || true

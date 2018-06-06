@@ -9,13 +9,19 @@ envsetup_sh=$(
     lookup-file -e build/envsetup.sh
            )
 
+add-java-to-path() {
+    if test "$(which java)" != $1/java; then
+        PATH=$1:$PATH
+    fi
+}
+
 if grep -q 'LEGACY_USE_JAVA7' $main_mk $envsetup_sh; then
-    PATH=/usr/lib/jvm/java-8-openjdk-amd64/bin:$PATH
+    add-java-to-path /usr/lib/jvm/java-8-openjdk-amd64/bin
     echo using java 1.8
 elif grep -q 'required_version := "1.7.x"' $main_mk; then
-    PATH=/usr/lib/jvm/java-7-openjdk-amd64/bin:$PATH
+    add-java-to-path /usr/lib/jvm/java-7-openjdk-amd64/bin
     echo using java 1.7
 else
-    PATH=~/external/bin/Linux/ext/jdk/bin:$PATH
+    add-java-to-path ~/external/bin/Linux/ext/jdk/bin
     echo using java 1.6
 fi

@@ -2,7 +2,6 @@
 
 set -e
 
-. .buildspec.sc
 ## 直接上来就运行 ninja，不再调用 make，作为一种优化，请注意它的问题
 
 ## 如果你跟我在一个公司里工作，请看一下公司 workflow 文档中“加速安卓
@@ -15,10 +14,10 @@ nj-help() {
  makefile 出发，封装了一套 ckati/ninja 的并行编译系统，目前是通过把
 makefile 翻译成 ninja 然后再用它进行编译。
 
-每次做一个代码小改动，如果还是调用以前的 make 命令的话，系统 ninja 是
-否需要更新。即使发现 ninja 文件不需要更新，也会有额外的 30+秒的运行开
-销（如果需要更新 ninja 文件，时间开销就更大了，一般在 2 分钟左右，这还
-是最近刚运行过，.mk 文件还都在缓存里的条件下）。
+每次做一个代码小改动，如果还是调用以前的 make 命令的话，系统都会自动检
+查 .ninja 是否需要更新。即使发现 .ninja 文件不需要更新，也会有额外的
+ 30+ 秒的运行开销（如果需要更新 .ninja 文件，时间开销就更大了，一般在
+ 2 分钟左右，这还是最近刚运行过 make、.mk 文件还都在缓存里的条件下）。
 
 这个脚本希望帮你省下这 30+ 秒的开销。但是请注意，跟任何优化方法一样，
 使用它们都是有条件的，不注意区分的话，可能就掉进坑里半天也爬不出来，爬
@@ -86,21 +85,21 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e
+            echo -e "$(nj-help)"
             echo
             echo Options and arguments:
             printf %06s '-j, '
             printf %-24s '--jobs=JOBS'
-            echo
+            echo "多进程编译，默认为 8 个进程"
             printf %06s '-k, '
             printf %-24s '--[no-]keep-building'
-            echo
+            echo "出错了也继续编译其他模块"
             printf %06s '-f, '
             printf %-24s '--ninja-file=NINJA_FILE'
-            echo
+            echo "使用哪个 ninja 文件，会使用安卓编译系统里默认的那个"
             printf %06s '-v, '
             printf %-24s '--[no-]verbose'
-            echo
+            echo "编译的过程中打印执行的命令"
             exit
             shift
             ;;
@@ -116,6 +115,10 @@ done
 
 
 ## end generated code
+
+. .buildspec.sc
+
+export CCACHE_DISABLE=true
 
 wrapped-run -C 'echo "直接调用 ninja，加快编译速度，但如果有改 .mk、makefiles、相关环境变量或任何问题的话，请直接使用“android-make 官方支持的目标模块名字”来进行编译"' \
             prebuilts/build-tools/linux-x86/bin/ninja -d keepdepfile "${@}" $keep_building -j $jobs -f "$ninja_file" $verbose -w dupbuild=err

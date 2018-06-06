@@ -385,7 +385,9 @@
 (when (file-exists-p "~/src/github/private-config/.emacs")
   (load "~/src/github/private-config/.emacs"))
 
-(load "~/system-config/.emacs_d/lisp/init-mu4e.el")
+(when (file-exists-p "/usr/share/emacs/site-lisp/mu4e/mu4e.el")
+  (load "~/system-config/.emacs_d/lisp/init-mu4e.el"))
+
 
 (require 'fence-edit)
 (global-set-key (kbd "C-c '") 'fence-edit-code-at-point)
