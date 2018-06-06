@@ -40,7 +40,7 @@ EOF
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt '?"$(nj-help)"' vverbose='("" -v)' '?"编译的过程中打印执行的命令"' \
     # j:jobs=8 '?"多进程编译，默认为 8 个进程"' \
-    # f:ninja-file='out/combined-$TARGET_PRODUCT.ninja' '?"使用哪个 ninja 文件，会使用安卓编译系统里默认的那个"' \
+    # f:ninja-file='out/combined-$TARGET_PRODUCT.ninja' '?"使用哪个 ninja 文件，不指定的话会使用安卓编译系统里默认的那个"' \
     # kkeep-building='("" "\"-k 0\"")' '?"出错了也继续编译其他模块"'
 ## end code-generator
 ## start generated code
