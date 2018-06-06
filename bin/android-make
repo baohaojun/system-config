@@ -26,7 +26,7 @@ EOF
 }
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P v:verbose '?"编译的时候打印所有使用的命令"' \
+# generate-getopt -P vverbose='("" showcommands)' '?"编译的时候打印所有使用的命令"' \
     # c:config '?"使用哪个安卓编译配置？比如 aosp_arm-userdebug（参考安卓 lunch 用法）"' \
     # kkeep="('' -k)" '?"keep building：出错之后继续编译，把能编的全编完，方便解决编译错误"' \
     # d:make-dir '?"编译一个单独的目录（参考安卓 mmma 的用法"' \
@@ -34,8 +34,8 @@ EOF
     # qquick '?"$(quick-help)"'
 ## end code-generator
 ## start generated code
-    TEMP=$(POSIXLY_CORRECT=true getopt -o c:j:kd:qv:h \
-                          --long config:,jobs:,keep,make-dir:,quick,verbose:,help,no-keep,no-quick \
+    TEMP=$(POSIXLY_CORRECT=true getopt -o c:j:kd:qvh \
+                          --long config:,jobs:,keep,make-dir:,quick,verbose,help,no-keep,no-quick,no-verbose \
                           -n $(basename -- $0) -- "$@")
     declare config=
     declare jobs=$jobs
@@ -80,9 +80,13 @@ EOF
                 shift
 
                 ;;
-            -v|--verbose)
-                verbose=$2
-                shift 2
+            -v|--verbose|--no-verbose)
+                if test "$1" = --no-verbose; then
+                    verbose=
+                else
+                    verbose=showcommands
+                fi
+                shift
 
                 ;;
             -h|--help)
@@ -106,7 +110,7 @@ EOF
                 printf %-24s '--[no-]quick'
                 echo "$(quick-help)"
                 printf %06s '-v, '
-                printf %-24s '--verbose=VERBOSE'
+                printf %-24s '--[no-]verbose'
                 echo "编译的时候打印所有使用的命令"
                 exit
                 shift
