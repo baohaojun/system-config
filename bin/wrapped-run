@@ -1,0 +1,87 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P B:before A:after C:context
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o A:B:C:h \
+                      --long after:,before:,context:,help \
+                      -n $(basename -- $0) -- "$@")
+declare after=
+declare before=
+declare context=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -A|--after)
+            after=$2
+            shift 2
+
+            ;;
+        -B|--before)
+            before=$2
+            shift 2
+
+            ;;
+        -C|--context)
+            context=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-A, '
+            printf %-24s '--after=AFTER'
+            echo
+            printf %06s '-B, '
+            printf %-24s '--before=BEFORE'
+            echo
+            printf %06s '-C, '
+            printf %-24s '--context=CONTEXT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+function when-exit() {
+    local ret=$?
+    (
+        if test "$context"; then
+            eval "$context"
+        fi
+
+        if test "$after"; then
+            eval "$after"
+        fi
+    )
+    return $ret
+}
+
+. atexit when-exit
+
+if test "$before"; then
+    eval "$before"
+fi
+
+if test "$context"; then
+    eval "$context"
+fi
+
+"$@"

@@ -1,33 +1,6 @@
 #!/bin/bash
 
-cd $(lookup-file .repo/..)
-function die() {
-    echo Error: "$@"
-    exit -1
-}
-
-if ! test -d .repo -a -e build/envsetup.sh; then
-    die "Not an Android repo?"
-fi
-
-top_dir=$(pwd)
-
 set -e
-
-if test -L out -a ! -e out; then
-    rm out -rf # in case it's a dangling symlink.
-fi
-if test "$hourly_build_debug" = true; then
-    if test -e .patch_applied; then
-        echo "Error: pateches applied"
-        exit -1;
-    else
-        echo "Error: patches not applied"
-        exit 0;
-    fi
-fi
-
-test -d .repo -a -e build/envsetup.sh
 
 if test "$ANDROID_MAKE_JOBS"; then
     jobs=$ANDROID_MAKE_JOBS
@@ -36,51 +9,137 @@ else
     jobs=$((jobs * 3 / 2))
 fi
 
-verbose=
-config=
-keep=
-make_dir=
-. ~/system-config/etc/.fix-java-version
-TEMP=$(getopt -o vp:d:kj:c: -n $(basename $0) -- "$@")
+eval "$(cat ~/system-config/bin/mm|perl -ne 'print if m/^quick-help/..m/\}/')"
 
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-        -k)
-            keep=-k
-            shift
-            ;;
-        -c)
-            config=$2
-            shift 2
-            ;;
-        -p)
-            PATH=$(readlink -f $2):$PATH
-            shift 2
-            ;;
-        -d)
-            cd -
-            make_dir=$(readlink -f $2)
-            cd -
-            shift 2
-            ;;
-        -j)
-            jobs=$2
-            shift 2
-            ;;
-        -v)
-            verbose=showcommands
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error"
-            ;;
-    esac
-done
+am-help() {
+    cat <<EOF
+android-make 是对安卓编译“三步曲”（setenv、lunch、make）的一个封装，我个人发现三步曲特别容易出错：
+  1. 容易忘记当前终端下配没配
+  2. 多产品同时开发时，甚至可能会配了 A 产品，然后在同一个终端下去编译 B 产品
+
+所以写了这个脚本。
+
+此脚本还支持一些简单的子模块编译封装，比如 android-make kernel 就能
+（快速）重编 bootimage 等，详情请用 android-make help-sub 命令查看。
+
+EOF
+}
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P v:verbose '?"编译的时候打印所有使用的命令"' \
+    # c:config '?"使用哪个安卓编译配置？比如 aosp_arm-userdebug（参考安卓 lunch 用法）"' \
+    # kkeep="('' -k)" '?"keep building：出错之后继续编译，把能编的全编完，方便解决编译错误"' \
+    # d:make-dir '?"编译一个单独的目录（参考安卓 mmma 的用法"' \
+    # j:jobs='$jobs' '?"指定使用多少个进程来执行并行编译"' \
+    # qquick '?"$(quick-help)"'
+## end code-generator
+## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o c:j:kd:qv:h \
+                          --long config:,jobs:,keep,make-dir:,quick,verbose:,help,no-keep,no-quick \
+                          -n $(basename -- $0) -- "$@")
+    declare config=
+    declare jobs=$jobs
+    declare keep=
+    declare make_dir=
+    declare quick=false
+    declare verbose=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -c|--config)
+                config=$2
+                shift 2
+
+                ;;
+            -j|--jobs)
+                jobs=$2
+                shift 2
+
+                ;;
+            -k|--keep|--no-keep)
+                if test "$1" = --no-keep; then
+                    keep=
+                else
+                    keep=-k
+                fi
+                shift
+
+                ;;
+            -d|--make-dir)
+                make_dir=$2
+                shift 2
+
+                ;;
+            -q|--quick|--no-quick)
+                if test "$1" = --no-quick; then
+                    quick=false
+                else
+                    quick=true
+                fi
+                shift
+
+                ;;
+            -v|--verbose)
+                verbose=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %06s '-c, '
+                printf %-24s '--config=CONFIG'
+                echo "使用哪个安卓编译配置？比如 aosp_arm-userdebug（参考安卓 lunch 用法）"
+                printf %06s '-j, '
+                printf %-24s '--jobs=JOBS'
+                echo "指定使用多少个进程来执行并行编译"
+                printf %06s '-k, '
+                printf %-24s '--[no-]keep'
+                echo "keep building：出错之后继续编译，把能编的全编完，方便解决编译错误"
+                printf %06s '-d, '
+                printf %-24s '--make-dir=MAKE_DIR'
+                echo "编译一个单独的目录（参考安卓 mmma 的用法"
+                printf %06s '-q, '
+                printf %-24s '--[no-]quick'
+                echo "$(quick-help)"
+                printf %06s '-v, '
+                printf %-24s '--verbose=VERBOSE'
+                echo "编译的时候打印所有使用的命令"
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error"
+                ;;
+        esac
+    done
+
+
+## end generated code
+
+if test "$1" = help-sub; then
+    ~/system-config/etc/android-make/help-sub
+    exit
+fi
+
+cd $(lookup-file .repo/..)
+if ! test -d .repo -a -e build/envsetup.sh; then
+    die "Not an Android repo?"
+fi
+
+top_dir=$(pwd)
+
+if test -L out -a ! -e out; then
+    rm out -rf # in case it's a dangling symlink.
+                                   fi
+. ~/system-config/etc/.fix-java-version
 
 unset CLASSPATH
 cd $top_dir || exit
@@ -129,7 +188,11 @@ if test "$DEBUG" = true; then
     set -x;
 fi
 
-test -e buildspec.mk || { echo no buildspec.mk, will exit now; echo please use android-make -c CONFIG, for e.g., aosp_x86-eng; exit; }
+test -e buildspec.mk || {
+    echo no buildspec.mk, will exit now;
+    echo please use android-make -c CONFIG, for e.g., aosp_x86-eng;
+    exit;
+}
 
 do_nice="schedtool -B -n 1 -e ionice -n 1"
 if test "$DONT_DO_NICE" = true; then
@@ -147,10 +210,10 @@ exec 9> $OUT_DIR/.android-full-build.lock
         fi
         echo 'about to lock at '$(date)
         if ! flock -n 9; then
-            echo 你的当前安卓代码下已经有其他android-make进程在运行，不可以再次启动一个编译
-            echo "你可以用 fuser $OUT_DIR/.android-full-build.lock | xargs ps 命令查看相关进程情况"
-            echo "也可以用 fuser -k $OUT_DIR/.android-full-build.lock 命令杀死相关进程"
-            echo "接下来将等待 $OUT_DIR/.android-full-build.lock 文件锁被其他进程释放，你可以按下 Ctrl-C 以退出"
+            echo "你的当前安卓代码下已经有其他 android-make 进程在运行，不可以再次启动一个编译"
+            echo "你可以用 fuser $OUT_DIR/.android-full-build.lock | xargs ps 命令查看相关进程情况"
+            echo "也可以用 fuser -k $OUT_DIR/.android-full-build.lock 命令杀死相关进程"
+            echo "接下来将等待 $OUT_DIR/.android-full-build.lock 文件锁被其他进程释放，你可以按下 Ctrl-C 以退出"
             flock 9
         fi
         echo 'lock success! at '$(date)

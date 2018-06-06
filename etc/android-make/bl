@@ -1,1 +1,38 @@
-lk
+#!/bin/bash
+
+## 编译 bootloader，比如 lk 或 abl（根据代码自动判断）
+(
+    . .buildspec.sc
+    if test -z "$PRODUCT_OUT"; then
+        PRODUCT_OUT=${ANDROID_PRODUCT_OUT#$ANDROID_BUILD_TOP/}
+    fi
+    if test -e "bootable/bootloader/edk2/AndroidBoot.mk"; then
+        (
+
+
+            if test ! -e "$PRODUCT_OUT/abl.elf"; then
+                echo "以前还没有编过 abl.elf，从头编一次"
+                exec make "$PRODUCT_OUT/abl.elf"
+                exit
+            elif test -e out/combined-$TARGET_PRODUCT.ninja; then
+                android-ninja -j $jobs "$PRODUCT_OUT/abl.elf"
+                exit
+            else
+                die "不知道如何编译 abl.elf，请咨询 Team Leader 或 Team 里其他同事，该如何编译 android boot loader"
+            fi
+        )
+    elif test -e bootable/bootloader/lk/AndroidBoot.mk; then
+        (
+            echo mm lk
+            cd build/target/board
+            $do_nice mm --only-module $PRODUCT_OUT/emmc_appsboot.mbn -j$jobs $verbose
+        )
+        (
+            echo mm sec lk
+            if test -d vendor/qcom/proprietary/common/scripts; then
+                cd vendor/qcom/proprietary/common/scripts
+                $do_nice mm --only-module gensecimage_target -j$jobs $verbose
+            fi
+        )
+    fi
+)

@@ -11,14 +11,15 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt  c:cow d:chroot-subdir=chroot
+# generate-getopt  c:cow d:chroot-subdir=chroot m:extra-mount='()'
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o d:c:h \
-              --long chroot-subdir:,cow:,help \
-              -n $(basename -- $0) -- "$@")
-chroot_subdir=chroot
-cow=
+TEMP=$( getopt -o d:c:m:h \
+               --long chroot-subdir:,cow:,extra-mount:,help \
+               -n $(basename -- $0) -- "$@")
+declare chroot_subdir=chroot
+declare cow=
+declare -a extra_mount=()
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -26,14 +27,21 @@ while true; do
         -d|--chroot-subdir)
             chroot_subdir=$2
             shift 2
+
             ;;
         -c|--cow)
             cow=$2
             shift 2
+
+            ;;
+        -m|--extra-mount)
+            extra_mount=("${extra_mount[@]}" "$2")
+            shift 2
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-d, '
@@ -41,6 +49,9 @@ while true; do
             echo
             printf %06s '-c, '
             printf %-24s '--cow=COW'
+            echo
+            printf %06s '-m, '
+            printf %-24s '--extra-mount=EXTRA_MOUNT'
             echo
             exit
             shift
@@ -120,6 +131,10 @@ done
     done&
     sudo cp ~/system-config/bin/cowbuilder-chroot.prepare "$chroot"/root/
     sudo perl -npe "s/\\bbhj\\b/$USER/g; s/adduser/adduser --uid $UIDX/" -i "$chroot"/root/cowbuilder-chroot.prepare
+    for m in "${extra_mount[@]}"; do
+        sudo mkdir -p "$chroot/$m"
+        sudo mount -o bind "$m" "$chroot/$m"
+    done
     sudo mount -o bind ~/src "$chroot"/$HOME/src
     sudo mount -o bind ~/system-config "$chroot"/$HOME/system-config
     sudo mount -o bind ~/external "$chroot"/$HOME/external

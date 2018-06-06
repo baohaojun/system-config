@@ -1,14 +1,37 @@
 #!/bin/bash
+
+## 修改 kernel 代码后快速编译、更新 boot.img
 (
-    PRODUCT_OUTX=$(android-env get_build_var PRODUCT_OUT)
-    if test ! -e "$PRODUCT_OUTX/boot.img"; then
-        hint "你之前还没有编译过boot.img，现在先编一下，用的命令是android-make bootimage"
-        android-make bootimage
+    . buildspec.sc
+
+    if test -z "$PRODUCT_OUT"; then
+        PRODUCT_OUT=${ANDROID_PRODUCT_OUT#$ANDROID_BUILD_TOP/}
+    fi
+
+    if test ! -e "$PRODUCT_OUT/boot.img"; then
+        hint "你之前还没有编译过 boot.img，现在先编一下，用的命令是 android-make bootimage"
+        make bootimage
         exit
     fi
+
+    if test -e "$out/combined-$TARGET_PRODUCT.ninja"; then
+        android-ninja -j $jobs bootimage
+        echo "请注意上面的编译是直接调用了 ninja，快是快了，但正确性一定要你自己确认"
+        exit
+    fi
+
+    function warn() {
+        local ret=$?
+        echo "注意：你在用 mm 的方法编译 kernel（这种方法只能在安卓老版本的产品上使用，出错的话请直接编译 bootimage）"
+        return $ret
+    }
+
+    warn
+    . atexit warn
+
     mkdir -p $OUT_DIR/
     cat <<EOF > $OUT_DIR/Android.mk.$$
-bootimage-nodeps: ${PRODUCT_OUTX}/kernel $(if test -e ${PRODUCT_OUTX}/dt.img; then echo ${PRODUCT_OUTX}/dt.img; fi)
+bootimage-nodeps: ${PRODUCT_OUT}/kernel $(if test -e ${PRODUCT_OUT}/dt.img; then echo ${PRODUCT_OUT}/dt.img; fi)
 
 ifeq (\$(filter \$(TARGET_DEVICE_DIR)/AndroidBoard.mk, \$(MAKEFILE_LIST)),)
 \$(info need to include the AndroidBoard.mk)

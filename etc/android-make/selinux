@@ -1,4 +1,17 @@
 #!/bin/bash
+
+set -e
+## 快速重编跟 selinux 相关的文件（最新安卓版本上已经不支持此脚本）
+
+## 以前我自己整理了一下 selinux 的调试策略，如下：
+##   1. 弄清楚手机系统里哪些文件是跟 selinux 相关的
+##   2. 每次我修改完.se 文件后，就通过这个封装过的编译脚本，更新一下 selinux 相关文件
+##   3. 把更新了的 selinux 文件 push 到手机上（如果是在 boot.img 的 root 文件系统里，就更新 boot 分区）
+##   4. 重启手机，确认新的 sepolicy 是否已经生效
+## 如果你需要调试 sepolicy 的话，请考虑一下有没有更优的策略:D
+
+die "此脚本已经不支持 selinux 单独编译，请向 Team Leader 或其他同事咨询如何调试 selinux"
+
 (
     mkdir .repo/tmp -p
     cat <<'EOF' > .repo/tmp/Android.mk

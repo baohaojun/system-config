@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if test -e out/combined-*-bootimage-nodeps.ninja; then
-    prebuilts/build-tools/linux-x86/bin/ninja -d keepdepfile bootimage-nodeps -j 96 -f out/combined-*-bootimage-nodeps.ninja -v -w dupbuild=err
-else
-    make bootimage-nodeps $verbose -j$jobs
-fi

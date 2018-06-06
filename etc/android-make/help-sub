@@ -1,0 +1,35 @@
+#!/bin/bash
+
+cat <<EOF
+
+以下是一些 android-make 支持的子模块编译命令封装。最初做这些封装的初衷
+是有些子模块编译起来比较不方便，或者速度很慢。比如 kernel，我们做的高
+通的项目，想要单独编译一下 kernel 的话，非常不方便，总是跟 bootimage
+绑定在一起，每次编译都需要读取一遍所有的 Android.mk 文件，所以我封装了
+一下之后，可以用类似于 mm 的编译方法更新 kernel（只需要读取一个
+ Android.mk 了）。
+
+但是这种封装有个严重的缺点，就是经常安卓版本一升级，脚本就不工作了，然
+后后续我支持起来就非常麻烦了。所以这里说明一下，后续碰到这些子模块的编
+译有任何问题的话，请自己改用其他方法进行编译（如有需要，请咨询自己的
+ Team Leader 或 Team 里其他同事）。
+
+以下是 android-make 支持的一些子模块编译命令：
+
+EOF
+
+cd ~/system-config/etc/android-make/
+for x in $(
+              find .  -type f | cut -b 3-
+          ); do
+    if test "$x" = help-sub; then
+        continue
+    fi
+    echo "    $x: $(cat $x|grep '^## '|head -n 1|cut -b 4-)"
+done
+
+for x in $(
+              find . -type l | cut -b 3-
+          ); do
+    echo "    $x: 指向 $(readlink $x) 的别名"
+done

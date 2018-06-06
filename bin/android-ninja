@@ -1,0 +1,121 @@
+#!/bin/bash
+
+set -e
+
+. .buildspec.sc
+## 直接上来就运行 ninja，不再调用 make，作为一种优化，请注意它的问题
+
+## 如果你跟我在一个公司里工作，请看一下公司 workflow 文档中“加速安卓
+## 8.0 工程师编译的方法讨论”里提到的需要注意的问题
+
+nj-help() {
+    cat <<EOF
+
+安卓编译的时候，目前已经不再直接使用 makefile 的机制了，而是从
+ makefile 出发，封装了一套 ckati/ninja 的并行编译系统，目前是通过把
+makefile 翻译成 ninja 然后再用它进行编译。
+
+每次做一个代码小改动，如果还是调用以前的 make 命令的话，系统 ninja 是
+否需要更新。即使发现 ninja 文件不需要更新，也会有额外的 30+秒的运行开
+销（如果需要更新 ninja 文件，时间开销就更大了，一般在 2 分钟左右，这还
+是最近刚运行过，.mk 文件还都在缓存里的条件下）。
+
+这个脚本希望帮你省下这 30+ 秒的开销。但是请注意，跟任何优化方法一样，
+使用它们都是有条件的，不注意区分的话，可能就掉进坑里半天也爬不出来，爬
+出来后可能还要埋怨那个告诉你优化方法的人“是你害得我掉进坑里去的”。
+
+1. 改过任何 makefile 不要用（比如重新同步过代码，也算！）
+2. 改过任何跟编译相关的环境变量不要用
+3. 发现任何问题，怀疑跟使用这个脚本有关的话，不要用
+4. 第一次编译时，没法使用（因为 ninja 文件还没有生成）
+
+用例：
+    # 在安卓顶层目录执行编译 abl 的命令，直接 make 重编要 45 秒左右；用这个脚本 10 秒左右
+    android-ninja out/target/product/XXX/abl.elf
+
+EOF
+}
+
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt '?"$(nj-help)"' vverbose='("" -v)' '?"编译的过程中打印执行的命令"' \
+    # j:jobs=8 '?"多进程编译，默认为 8 个进程"' \
+    # f:ninja-file='out/combined-$TARGET_PRODUCT.ninja' '?"使用哪个 ninja 文件，会使用安卓编译系统里默认的那个"' \
+    # kkeep-building='("" "\"-k 0\"")' '?"出错了也继续编译其他模块"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o j:kf:vh \
+               --long jobs:,keep-building,ninja-file:,verbose,help,no-keep-building,no-verbose \
+               -n $(basename -- $0) -- "$@")
+declare jobs=8
+declare keep_building=
+declare ninja_file=out/combined-$TARGET_PRODUCT.ninja
+declare verbose=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -j|--jobs)
+            jobs=$2
+            shift 2
+
+            ;;
+        -k|--keep-building|--no-keep-building)
+            if test "$1" = --no-keep-building; then
+                keep_building=
+            else
+                keep_building="-k 0"
+            fi
+            shift
+
+            ;;
+        -f|--ninja-file)
+            ninja_file=$2
+            shift 2
+
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=
+            else
+                verbose=-v
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-j, '
+            printf %-24s '--jobs=JOBS'
+            echo
+            printf %06s '-k, '
+            printf %-24s '--[no-]keep-building'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--ninja-file=NINJA_FILE'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+wrapped-run -C 'echo "直接调用 ninja，加快编译速度，但如果有改 .mk、makefiles、相关环境变量或任何问题的话，请直接使用“android-make 官方支持的目标模块名字”来进行编译"' \
+            prebuilts/build-tools/linux-x86/bin/ninja -d keepdepfile "${@}" $keep_building -j $jobs -f "$ninja_file" $verbose -w dupbuild=err
