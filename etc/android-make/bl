@@ -11,7 +11,7 @@
 
 
             if test ! -e "$PRODUCT_OUT/abl.elf"; then
-                echo "以前还没有编过 abl.elf，从头编一次"
+                echo "以前还没有编过 $PRODUCT_OUT/abl.elf，从头编一次"
                 exec make "$PRODUCT_OUT/abl.elf"
                 exit
             elif test -e out/combined-$TARGET_PRODUCT.ninja; then
