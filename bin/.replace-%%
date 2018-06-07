@@ -12,5 +12,5 @@
     for x in $to_replace; do
         eval declare -x rep_$x=\$$x
     done
-    echo "$input" | perl -npe 's/\%(.*?)\%/$y = $1; ($x = $1) =~ s,-,_,g; $ENV{"rep_$x"} or "%$y%"/ge'
+    echo "$input" | perl -npe 's/\%(.*?)\%/($x = $1) =~ s,-,_,g; $ENV{"rep_$x"}/ge'
 )
