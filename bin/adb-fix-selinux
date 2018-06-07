@@ -1,83 +1,8 @@
 #!/bin/bash
 set -e
+cd ~/tmp
+adb pull /sys/fs/selinux/policy
 
-## start code-generator "^\\s *#\\s *"
-# generate-getopt aandroid-env
-## end code-generator
-## start generated code
-TEMP=$( getopt -o ah \
-               --long android-env,help,no-android-env \
-               -n $(basename -- $0) -- "$@")
-android_env=false
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
+check-program audit2allow policycoreutils-python-utils
 
-        -a|--android-env|--no-android-env)
-            if test "$1" = --no-android-env; then
-                android_env=false
-            else
-                android_env=true
-            fi
-            shift
-            ;;
-        -h|--help)
-            set +x
-            echo -e
-            echo
-            echo Options and arguments:
-            printf %06s '-a, '
-            printf %-24s '--[no-]android-env'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error"
-            ;;
-    esac
-done
-
-
-## end generated code
-
-if test "$android_env" = true; then
-    sepolicy_file=out/target/product/$TARGET_DEVICE/root/sepolicy
-else
-    sepolicy_file=sepolicy
-
-    cd ~/tmp
-    my-adb -r pull /sepolicy
-    my-adb pull /data/logs/.kmsg || true
-    my-adb dmesg >> .kmsg
-
-    if test ! -d ~/external/selinux/external/selinux/.git; then
-        mkdir ~/external/selinux/external -p
-        git clone smartisan:qualcomm/platform/external/selinux --reference ~/src/android-mirror/platform/external/selinux.git ~/external/selinux/external/selinux
-        hint "You may need to switch branch for ~/external/selinux/external/selinux\!"
-    fi
-
-    if test ! -d ~/external/selinux/prebuilts/python/linux-x86/2.7.5/.git; then
-        mkdir ~/external/selinux/prebuilts/python/linux-x86/ -p;
-        git clone smartisan:qualcomm/platform/prebuilts/python/linux-x86/2.7.5 --reference ~/src/android-mirror/platform/prebuilts/python/linux-x86/2.7.5.git ~/external/selinux/prebuilts/python/linux-x86/2.7.5;
-    fi
-
-    function audit2allow() {
-        ANDROID_BUILD_TOP=~/external/selinux
-        unamestr=`uname`
-        if [ "$unamestr" = "Linux" -o "$unamestr" = "linux" ]; then
-            export LD_LIBRARY_PATH=$ANDROID_BUILD_TOP/external/selinux/prebuilts/lib
-            export PYTHONPATH=$ANDROID_BUILD_TOP/prebuilts/python/linux-x86/2.7.5/lib/python2.7/site-packages
-            python $ANDROID_BUILD_TOP/external/selinux/policycoreutils/audit2allow/audit2allow "$@"
-        else
-            echo "audit2allow is only supported on linux"
-        fi
-
-    }
-
-fi
-audit2allow -p sepolicy -i .kmsg | tee /dev/tty |putclip
+my-adb dmesg | audit2allow -p policy | tee /dev/tty |putclip
