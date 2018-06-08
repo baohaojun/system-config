@@ -260,7 +260,7 @@ time (
 
             if test "$b0" = mm; then
                 mm_ninja_suffix=$(
-                    echo -n -$TARGET_PRODUCT-$(echo /${MY_ONE_SHOT_MAKEFILE} | perl -npe 's,/,_,g')
+                    echo -n -$TARGET_PRODUCT-$(echo ${MY_ONE_SHOT_MAKEFILE} | perl -npe 's,/,_,g')
                                )
                 if test "${#mm_ninja_suffix}" -gt 64; then
                     mm_ninja_suffix=-$(echo -n "$mm_ninja_suffix"|md5sum | pn 1)
