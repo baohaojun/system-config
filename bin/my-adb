@@ -222,19 +222,32 @@ function adb() {
             build_type=$(
                 my-adb getprop ro.build.type
                       )
-            if test "$sdk_version" -gt 25; then
-                if test -e ~/src/github/smartcm/sse-helpers/.hack-verity; then
-                    . ~/src/github/smartcm/sse-helpers/.hack-verity
-                fi
+            adb_uid=$(
+                my-adb id|pn 1|grep '\d+' -o -P
+                   )
+            if test "$adb_uid" != 0; then
+                die "你没有 root 权限，无法 remount，请先运行 adb root"
             fi
 
-            if the-true-adb disable-verity 2>&1 |grep -q 'Now reboot your device for settings to take effect'; then
-                hint "刚 disable 了 verity，手机需要重启才可以 remount"
-                the-true-adb reboot
-                sleep 5
-                my-adb -W
-                my-adb -r echo root check ok
-            fi
+            (
+                do-disable-verity-reboot() {
+                    hint "刚 disable 了 verity，手机需要重启才可以 remount"
+                    the-true-adb reboot
+                    sleep 5
+                    my-adb -W
+                    my-adb -r echo root check ok
+                }
+
+                if test "$sdk_version" -gt 25 -a "$build_type" = user; then
+                    if test -e ~/src/github/smartcm/sse-helpers/.hack-verity; then
+                        . ~/src/github/smartcm/sse-helpers/.hack-verity
+                    fi
+                fi
+
+                if the-true-adb disable-verity 2>&1 |grep -q 'Now reboot your device for settings to take effect'; then
+                    do-disable-verity-reboot
+                fi
+            )
             the-true-adb remount
             if ! command my-adb -r shell sh -c 'mount | grep -q "/system .*rw,"'; then
                 echo "adb remount 已运行，但事实上 /system 分区并没有被 remount 成 rw，接下来将尝试直接使用 adb shell mount 命令"
