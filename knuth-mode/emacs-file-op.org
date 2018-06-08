@@ -1,3 +1,21 @@
+#+title: 用 emacs 进行一些文件操作
+
+具体的思路是这样的，我自己经常写一些比如：
+#+BEGIN_SRC sh
+cat f1 f2 > f3 # 也可能是 >>，append
+echo x1 x2 > fx
+
+#+END_SRC
+
+这种操作有个问题，就是如果我的 f3、fx 当前是在 emacs 里打开着的，尤其是并且有改动的话，后续就麻烦了，搞不好改动就全丢了。所以希望改成用 emacs 自己来执行这几个操作。
+
+以后，我希望可以这样搞：
+
+#+BEGIN_SRC sh
+emacs-file-op cat f1 f2 '>' f3
+emacs-file-op echo x1 x2 '>' fx
+#+END_SRC
+
 #+name: emacs-append.el
 #+BEGIN_SRC elisp
   (progn
@@ -19,7 +37,7 @@
 #+BEGIN_SRC sh
 
   ## start code-generator "^\\s *#\\s *"
-  # generate-getopt f:from-file t:to_file
+  # generate-getopt f:from-file t:to-file
   ## end code-generator
   ## start generated code
   TEMP=$( getopt -o f:t:h \
@@ -83,7 +101,7 @@
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/emacs-append-file :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/system-config/bin/emacs-file-op :comments link :shebang "#!/bin/bash" :noweb yes
 set -e
 
 <<old-code>>

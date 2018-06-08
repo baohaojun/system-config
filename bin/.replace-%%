@@ -1,16 +1,89 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -p sc_rep -e b:begin='"<%"' e:end='"%>"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o b:e:h \
+               --long begin:,end:,help \
+               -n $(basename -- $0) -- "$@")
+declare -x sc_rep_begin=${sc_rep_begin:-"<%"}
+declare -x sc_rep_end=${sc_rep_end:-"%>"}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -b|--begin)
+            sc_rep_begin=$2
+            shift 2
+
+            ;;
+        -e|--end)
+            sc_rep_end=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--begin=BEGIN'
+            echo
+            printf %06s '-e, '
+            printf %-24s '--end=END'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 (
     set -e
 
     input=$(cat)
 
     to_replace=$(
-        echo "$input" | perl -ne 's/-/_/g; while (m/\%(.*?)\%/g) {print "$1\n"}' | sort -u
+        echo "$input" | perl -ne '
+## start perl ##
+s/-/_/g;
+
+BEGIN {
+    $start = qr(\Q$ENV{sc_rep_begin}\E);
+    $end = qr(\Q$ENV{sc_rep_end}\E);
+}
+while (m/$start(.*?)$end/g) {
+    print "$1\n"
+}
+## end perl ##
+' | sort -u
               )
 
     for x in $to_replace; do
         eval declare -x rep_$x=\$$x
     done
-    echo "$input" | perl -npe 's/\%(.*?)\%/($x = $1) =~ s,-,_,g; $ENV{"rep_$x"}/ge'
+    echo "$input" | perl -npe '
+## start perl ##
+BEGIN {
+    $start = qr(\Q$ENV{sc_rep_begin}\E);
+    $end = qr(\Q$ENV{sc_rep_end}\E);
+}
+
+s/$start(.*?)$end/($x = $1) =~ s,-,_,g; $ENV{"rep_$x"}/ge;
+## end perl ##
+'
 )
