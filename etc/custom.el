@@ -10,8 +10,6 @@
  '(ahk-syntax-directory "~/system-config/doc/ahk/Syntax/")
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(auto-save-file-name-transforms
    (quote
@@ -54,7 +52,8 @@
      ("<!\\[CDATA\\[<!--start html-->" "<!--end html-->\\]\\]>" html)
      ("<!--start nxml-->" "<!--end nxml-->" nxml)
      ("# start org #" "# end org #" org)
-     ("## start perl ##" "## end perl ##" perl))))
+     ("## start perl ##" "## end perl ##" perl)
+     ("{%\\(.*?\\)-mode%}" ".*{%/\\(.*?\\)-mode%}" 1))))
  '(fill-column 70)
  '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(gc-cons-threshold 3500000)
@@ -123,7 +122,7 @@
     ((agenda habit-down time-up user-defined-up effort-up priority-down)
      (todo priority-down category-up effort-up)
      (tags category-up effort-up)
-     (search category-up))))
+     (search category-up))) t)
  '(org-clock-x11idle-program-name "xprintidle")
  '(org-directory "~/system-config/doc/projects")
  '(org-export-html-coding-system (quote utf-8))
@@ -232,8 +231,8 @@
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
  '(tooltip-use-echo-area t)
- '(tramp-syntax (quote ftp))
- '(tramp-verbose 0)
+ '(tramp-syntax (quote ftp) nil (tramp))
+ '(tramp-verbose 0 nil (tramp))
  '(transient-mark-mode t)
  '(twittering-convert-fix-size nil)
  '(user-full-name "Bao Haojun")

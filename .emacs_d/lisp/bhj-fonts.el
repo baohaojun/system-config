@@ -89,7 +89,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
  ((and (boundp '*is-a-win*) *is-a-win*)
   (setq chinese-font-size-scale-alist '((11.5 . 1.25) (16 . 1.25))))
  (t ;; is a linux:-)
-  (setq chinese-font-size-scale-alist '((16 . 1.25)))))
+  (setq chinese-font-size-scale-alist '((12.5 . 1.25) (14 . 1.25) (16 . 1.25) (20 . 1.25)))))
 
 (defvar bhj-english-font-size-steps '(9 10.5 11.5 12.5 14 16 18 20 22))
 (defun bhj-step-frame-font-size (step)
@@ -108,13 +108,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (set-face-attribute 'default nil :font (font-spec))
 
-                                        ; {%org-mode%}
-                                        ; here are 20 hanzi and 40 english chars, see if they are the same width
-                                        ; 你你你你你你你你你你你你你你你你你你你你
-                                        ; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                                        ; /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/
-                                        ; {%/org-mode%}
-
-                                        ; Local Variables:
-                                        ; eval: (mmm-mode 1)
-                                        ; End:
+;; {%org-mode%}
+;; here are 20 hanzi and 40 english chars, see if they are the same width
+;; 你你你你你你你你你你你你你你你你你你你你
+;; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+;; /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/
+;; {%/org-mode%}
