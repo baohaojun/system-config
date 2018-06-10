@@ -81,7 +81,7 @@
 (require 'init-flycheck)
 
 (require 'init-recentf)
-(require 'init-smex)
+;; (require 'init-smex)
 (require 'init-ivy)
 ;;(require 'init-helm)
 (require 'init-hippie-expand)
