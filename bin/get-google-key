@@ -19,6 +19,6 @@ key=$(getclip-android)
 if test "$key" != hello -a "$key" != "_ _ _ _ _ _"; then
     echo "$key"
 elif test "$key" = "_ _ _ _ _ _"; then
-    Wrench "adb_tap_1080x2160(387, 328)"
+    Wrench "adb_tap_1080x2160(979, 396)"
     get-google-key
 fi
