@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# key: lang
+# name: language pragma
+# condition: (= (length "lang") (current-column))
+# contributor: Luke Hoersten <luke@hoersten.org>, John Wiegley
+# --
+{-# LANGUAGE `(progn (require 'purescript-yas) (purescript-yas-complete "Extension: " purescript-yas-ghc-language-pragmas))` #-}
