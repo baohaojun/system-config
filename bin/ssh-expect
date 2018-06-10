@@ -6,7 +6,7 @@ set pass [lindex $argv 1]
 
 spawn en_US ssh-passwd -o StrictHostKeyChecking=no $host
 
-set timeout 60
+set timeout 600
 
 expect {
     -re "\\$|#" {
@@ -14,6 +14,11 @@ expect {
         wait
         exit
     }
+    -re "Are you sure you want to continue connecting (yes/no)" {
+        send "yes\n"
+        exp_continue
+    }
+
     -re "Enter passphrase for.*:" {
         send "$pass\n"
         exp_continue

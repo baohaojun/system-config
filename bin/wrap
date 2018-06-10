@@ -1,12 +1,9 @@
 #!/bin/bash
 function wrap() {
     cat | emacs -nw --batch -Q --insert /dev/stdin --eval '
-  ; {%emacs-lisp%}
 (progn
   (fill-region (point-min) (point-max))
-  (message "%s" (buffer-string)))
-  ; {%/emacs-lisp%}
-  ' 2>&1
+  (message "%s" (buffer-string)))' 2>&1
 }
 
 if is-tty-io; then
