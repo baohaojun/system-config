@@ -174,6 +174,9 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (defvar org-agenda-current-hour 17
   "The current hour, used to decide if show an entry.")
 
+(defvar sc-where-am-i 'home
+  "Simple var to tell if I am at work.")
+
 (defun my-skip-entry? ()
   "My standard if should skip entry."
   ;;When at work, do not show homework until 4:00 pm.
