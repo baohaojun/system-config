@@ -9,21 +9,22 @@
   (after-load 'company
     (diminish 'company-mode "CMP")
     (define-key company-active-map (kbd "C-n") 'company-select-next)
-    (define-key company-active-map (kbd "C-p") 'company-select-previous))
+    (define-key company-active-map (kbd "C-p") 'company-select-previous)
+    (setq-default company-dabbrev-other-buffers 'all
+                  company-tooltip-align-annotations t))
   (global-set-key (kbd "M-C-/") 'company-complete)
   (when (maybe-require-package 'company-quickhelp)
     (add-hook 'after-init-hook 'company-quickhelp-mode))
 
   (defun sanityinc/local-push-company-backend (backend)
     "Add BACKEND to a buffer-local version of `company-backends'."
-    (set (make-local-variable 'company-backends)
-         (append (list backend) company-backends))))
-
+    (make-local-variable 'company-backends)
+    (push backend company-backends)))
 
 ;; Suspend page-break-lines-mode while company menu is active
 ;; (see https://github.com/company-mode/company-mode/issues/416)
 (after-load 'company
-  (after-load 'page-break-lines-mode
+  (after-load 'page-break-lines
     (defvar sanityinc/page-break-lines-on-p nil)
     (make-variable-buffer-local 'sanityinc/page-break-lines-on-p)
 

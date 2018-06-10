@@ -48,3 +48,5 @@ site-lisp/package/
 /.historian
 /.uptimes.el
 /rake.cache
+/plantuml.jar
+/magithub
