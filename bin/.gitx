@@ -62,10 +62,6 @@ function git_svn() {
 
 function git()
 {
-    if test "$#" = 1 -a "$1" = st -a "$WORKING_REV"; then
-        git log -w -p -1 "$WORKING_REV"
-    fi
-
     local using_st=false
 
     if test "$1" = st; then
@@ -203,7 +199,7 @@ print $_ . "\n";
             if is-tty-io && \
                     lookup-file -e .repo/manifest.xml >/dev/null 2>&1 && \
                    test -e ~/src/github/smartcm/sse-helpers/unshallow-source-code && \
-                   yes-or-no-p -y "是否帮你自动运行sse unshallow以获取完整git log？"; then
+                   yes-or-no-p -y "是否帮你自动运行 sse unshallow 以获取完整 git log？"; then
                 sse unshallow-source-code
             fi
         fi
