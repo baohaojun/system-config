@@ -319,6 +319,16 @@ if test "$cherry_pick" = true || is-jenkins; then
             die "Error: Review needed, can't cherry-pick this patch $@:, see above output."
             exit -1
         fi
+        if test -e .git/shallow; then
+            (
+                for x in $(seq 1 3); do
+                    git fetch --unshallow $(repo-remote) || true
+                    if test ! -e .git/shallow; then
+                        exit
+                    fi
+                done
+            )
+        fi
     fi
     if ! git cherry-pick $git_commit_revision --ff $(
             if is-jenkins; then
