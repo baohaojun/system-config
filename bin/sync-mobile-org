@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/sync-mobile-org.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/sync-mobile-org.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
   #!/bin/bash
@@ -146,8 +144,8 @@ EOF3f6c48da0c2d
   }
 
   if grep . -q ~/src/github/projects/from-mobile.org; then
-      cat ~/src/github/projects/from-mobile.org >> ~/src/github/projects/Captures.org
-      emacs-empty-file ~/src/github/projects/from-mobile.org
+      emacs-file-op cat ~/src/github/projects/from-mobile.org '>>' ~/src/github/projects/Captures.org
+      emacs-file-op echo '>' ~/src/github/projects/from-mobile.org
   fi
 
   check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
@@ -168,9 +166,10 @@ EOF3f6c48da0c2d
                   }
               }
               print;
-      ' -i jwords.org
+      ' jwords.org > jwords.org.$$
 
-      cat jwords.org >> done/jwords.org
+      emacs-file-op cat jwords.org.$$ '>>' done/jwords.org
+      rm -rf jwords.org.$$
       if test "$(wc -l done/jwords.org|pn 1)" -gt 1000; then
           (
               n=1
@@ -183,7 +182,7 @@ EOF3f6c48da0c2d
               done
           )
       fi
-      emacs-empty-file jwords.org
+      emacs-file-op echo '>' jwords.org
       git-interactive-add
 
   ) || true
@@ -225,5 +224,4 @@ EOFfb21fb11dd50
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here

@@ -16,10 +16,15 @@ emacs-file-op cat f1 f2 '>' f3
 emacs-file-op echo x1 x2 '>' fx
 #+END_SRC
 
+#+name: delete-all.el
+#+BEGIN_SRC elisp
+  (delete-region (point-min) (point-max))
+#+END_SRC
 #+name: emacs-append.el
 #+BEGIN_SRC elisp
   (progn
     (find-file "$to_file")
+    <%el-delete-old%>
     (goto-char (point-max))
     (insert-file "$from_file")
     (save-buffer))
@@ -34,67 +39,52 @@ emacs-file-op echo x1 x2 '>' fx
 #+END_SRC
 
 #+name: old-code
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :noweb yes
 
-  ## start code-generator "^\\s *#\\s *"
-  # generate-getopt f:from-file t:to-file
-  ## end code-generator
-  ## start generated code
-  TEMP=$( getopt -o f:t:h \
-                 --long from-file:,to_file:,help \
-                 -n $(basename -- $0) -- "$@")
-  declare from_file=
-  declare to_file=
-  eval set -- "$TEMP"
-  while true; do
-      case "$1" in
+  input=~/tmp/emacs-file-op-input.$$
 
-          -f|--from-file)
-              from_file=$2
-              shift 2
+  . atexit rm "$input" -f
+  echo -n > "$input"
 
-              ;;
-          -t|--to_file)
-              to_file=$2
-              shift 2
-
-              ;;
-          -h|--help)
-              set +x
-              echo -e
-              echo
-              echo Options and arguments:
-              printf %06s '-f, '
-              printf %-24s '--from-file=FROM_FILE'
-              echo
-              printf %06s '-t, '
-              printf %-24s '--to_file=TO_FILE'
-              echo
-              exit
-              shift
-              ;;
-          --)
-              shift
-              break
-              ;;
-          ,*)
-              die "internal error"
-              ;;
-      esac
-  done
-
-
-  ## end generated code
-
-  if test ! -e "$from_file"; then
-      die "FROM-FILE $from_file non-exist"
+  op=$1
+  shift
+  if test "$op" = cat; then
+      while test "$1" != '>' -a "$1" != '>>'; do
+          cat "$1" >> "$input"
+          shift
+      done
+  elif test "$op" = echo; then
+      while test "$1" != '>' -a "$1" != '>>'; do
+          if test -s "$input"; then
+              echo -n " " >> "$input"
+          fi
+          echo -n "$1" >> "$input"
+          shift
+      done
+  else
+      die "unknown op: $op"
   fi
 
-  if test ! -e "$to_file"; then
-      die "TO-FILE $to_file non-exist"
+  if test "$1" != '>' -a "$1" != '>>'; then
+      die "Must specify how to edit '$2' with > or >>"
   fi
 
-  emacsclient -e "$(cat <<EOF16d93b20dc6b
+  if test $# != 2; then
+      die "Must end the args with >(or >>) TARGET-FILE"
+  fi
+
+  from_file=$input
+  to_file=$(readlink -m "$2")
+  if test "$1" = '>>'; then
+      el_delete_old=
+  else
+      el_delete_old="$(cat <<'EOF02763f20b5fb'
+  <<delete-all.el>>
+  EOF02763f20b5fb
+  )"
+  fi
+
+  emacsclient -e "$(cat <<EOF16d93b20dc6b | . .replace-%%
   <<emacs-append.el>>
   EOF16d93b20dc6b
   )"
