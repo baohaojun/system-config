@@ -8,8 +8,6 @@
    (quote
     (sc--after-save sanityinc/set-mode-for-new-scripts executable-make-buffer-file-executable-if-script-p)))
  '(ahk-syntax-directory "~/system-config/doc/ahk/Syntax/")
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(auto-save-file-name-transforms
    (quote
@@ -44,7 +42,6 @@
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
  '(emojify-emoji-styles (quote (unicode)))
- '(fci-rule-color "#444444")
  '(fence-edit-blocks
    (quote
     (("^[[:blank:]]*\\(?:```\\|~~~\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\(?:[[:space:]]*?\\)$" "^[[:blank:]]*\\(?:```\\|~~~\\)\\s *?$" 1)
@@ -55,7 +52,6 @@
      ("## start perl ##" "## end perl ##" perl)
      ("{%\\(.*?\\)-mode%}" ".*{%/\\(.*?\\)-mode%}" 1))))
  '(fill-column 70)
- '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(gc-cons-threshold 3500000)
  '(gdb-find-source-frame t)
  '(gdb-many-windows t)
@@ -109,7 +105,8 @@
        (make-local-variable
         (quote ajoke-symbol-chars))
        (setq ajoke-symbol-chars "-A-Za-z0-9_")))))
- '(max-specpdl-size 5000)
+ '(max-lisp-eval-depth 80000)
+ '(max-specpdl-size 50000)
  '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
  '(message-mail-alias-type nil)
  '(mmm-global-mode nil nil (mmm-mode))
@@ -122,7 +119,7 @@
     ((agenda habit-down time-up user-defined-up effort-up priority-down)
      (todo priority-down category-up effort-up)
      (tags category-up effort-up)
-     (search category-up))) t)
+     (search category-up))))
  '(org-clock-x11idle-program-name "xprintidle")
  '(org-directory "~/system-config/doc/projects")
  '(org-export-html-coding-system (quote utf-8))
@@ -236,28 +233,6 @@
  '(transient-mark-mode t)
  '(twittering-convert-fix-size nil)
  '(user-full-name "Bao Haojun")
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#d54e53")
-     (40 . "#e78c45")
-     (60 . "#e7c547")
-     (80 . "#b9ca4a")
-     (100 . "#70c0b1")
-     (120 . "#7aa6da")
-     (140 . "#c397d8")
-     (160 . "#d54e53")
-     (180 . "#e78c45")
-     (200 . "#e7c547")
-     (220 . "#b9ca4a")
-     (240 . "#70c0b1")
-     (260 . "#7aa6da")
-     (280 . "#c397d8")
-     (300 . "#d54e53")
-     (320 . "#e78c45")
-     (340 . "#e7c547")
-     (360 . "#b9ca4a"))))
- '(vc-annotate-very-old-color nil)
  '(vc-follow-symlinks t)
  '(vc-git-diff-switches "-w")
  '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Git Hg)))
