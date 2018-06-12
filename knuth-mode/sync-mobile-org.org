@@ -21,7 +21,7 @@
 #+END_SRC
 
 #+name: old-code
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :noweb yes
     #!/bin/bash
 
     set -e
@@ -162,8 +162,8 @@
     }
 
     if grep . -q ~/src/github/projects/from-mobile.org; then
-        cat ~/src/github/projects/from-mobile.org >> ~/src/github/projects/Captures.org
-        emacs-empty-file ~/src/github/projects/from-mobile.org
+        emacs-file-op cat ~/src/github/projects/from-mobile.org '>>' ~/src/github/projects/Captures.org
+        emacs-file-op echo '>' ~/src/github/projects/from-mobile.org
     fi
 
     check_git_dir ~/system-config/doc/projects "Add all changes from mobile to Emacs"
@@ -184,9 +184,10 @@
                     }
                 }
                 print;
-        ' -i jwords.org
+        ' jwords.org > jwords.org.$$
 
-        cat jwords.org >> done/jwords.org
+        emacs-file-op cat jwords.org.$$ '>>' done/jwords.org
+        rm -rf jwords.org.$$
         if test "$(wc -l done/jwords.org|pn 1)" -gt 1000; then
             (
                 n=1
@@ -199,7 +200,7 @@
                 done
             )
         fi
-        emacs-empty-file jwords.org
+        emacs-file-op echo '>' jwords.org
         git-interactive-add
 
     ) || true

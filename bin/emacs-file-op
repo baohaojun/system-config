@@ -1,0 +1,61 @@
+#!/bin/bash
+# [[file:~/system-config/knuth-mode/emacs-file-op.org::the-ultimate-script][the-ultimate-script]]
+set -e
+
+
+input=~/tmp/emacs-file-op-input.$$
+
+. atexit rm "$input" -f
+echo -n > "$input"
+
+op=$1
+shift
+if test "$op" = cat; then
+    while test "$1" != '>' -a "$1" != '>>'; do
+        cat "$1" >> "$input"
+        shift
+    done
+elif test "$op" = echo; then
+    while test "$1" != '>' -a "$1" != '>>'; do
+        if test -s "$input"; then
+            echo -n " " >> "$input"
+        fi
+        echo -n "$1" >> "$input"
+        shift
+    done
+else
+    die "unknown op: $op"
+fi
+
+if test "$1" != '>' -a "$1" != '>>'; then
+    die "Must specify how to edit '$2' with > or >>"
+fi
+
+if test $# != 2; then
+    die "Must end the args with >(or >>) TARGET-FILE"
+fi
+
+from_file=$input
+to_file=$(readlink -m "$2")
+if test "$1" = '>>'; then
+    el_delete_old=
+else
+    el_delete_old="$(cat <<'EOF02763f20b5fb'
+(delete-region (point-min) (point-max))
+EOF02763f20b5fb
+)"
+fi
+
+emacsclient -e "$(cat <<EOF16d93b20dc6b | . .replace-%%
+(progn
+  (find-file "$to_file")
+  <%el-delete-old%>
+  (goto-char (point-max))
+  (insert-file "$from_file")
+  (save-buffer))
+EOF16d93b20dc6b
+)"
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+# the-ultimate-script ends here

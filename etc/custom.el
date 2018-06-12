@@ -228,8 +228,6 @@
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
  '(tooltip-use-echo-area t)
- '(tramp-syntax (quote ftp) nil (tramp))
- '(tramp-verbose 0 nil (tramp))
  '(transient-mark-mode t)
  '(twittering-convert-fix-size nil)
  '(user-full-name "Bao Haojun")
