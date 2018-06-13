@@ -103,3 +103,8 @@ void DialogGetEntry::setHint(const QString& hint)
 {
     ui->entryFilter->setPlaceholderText(hint);
 }
+
+void DialogGetEntry::on_filteringListView_pressed(const QModelIndex &index)
+{
+
+}
