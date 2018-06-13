@@ -32,9 +32,12 @@ private slots:
     void selectedCurrentEntryNoHistory(const QModelIndex &index);
     void on_entrySelected(const QString& entry);
     void on_currentTextSelected(const QString& text);
- signals:
+    void on_filteringListView_pressed(const QModelIndex &index);
+
+signals:
     void entrySelected(const QString&);
     void entrySelectedWithDisplayText(const QString&, const QString&);
+    void entrySelectedWithRawData(const QString&, const QString&, const QMap<QString, QString>&);
     void selectRawData(const QMap<QString, QString>&);
 
 private:

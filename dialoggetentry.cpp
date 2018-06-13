@@ -64,6 +64,7 @@ void DialogGetEntry::refreshFilter()
     mEntryModel->setFilter(entry);
 }
 
+// Reminder: this is created by qtcreator (go to slot)!
 void DialogGetEntry::on_filteringListView_doubleClicked(const QModelIndex &index)
 {
     int row = index.row();
@@ -106,5 +107,14 @@ void DialogGetEntry::setHint(const QString& hint)
 
 void DialogGetEntry::on_filteringListView_pressed(const QModelIndex &index)
 {
+    Qt::MouseButtons buttons =  QGuiApplication::mouseButtons();
+    if (buttons == Qt::RightButton) {
+        int row = index.row();
+        QString entry = mEntryModel->getSelectedText(row);
+        mEntryModel->on_indexSelected(row);
+        QMap<QString, QString> rawData = mEntryModel->getSelectedRawData(row);
+        QString entryDisplay = mEntryModel->getSelectedDisplayText(row);
 
+        emit entrySelectedWithRawData(entry, entryDisplay, rawData);
+    }
 }
