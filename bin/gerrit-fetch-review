@@ -321,12 +321,15 @@ if test "$cherry_pick" = true || is-jenkins; then
         fi
         if test -e .git/shallow; then
             (
-                for x in $(seq 1 3); do
-                    git fetch --unshallow $(repo-remote) || true
-                    if test ! -e .git/shallow; then
+                for x in $(seq 100 200 10000); do
+                    git fetch --depth $x $(repo-remote) $(git rev-parse HEAD) || true
+                    git fetch --depth $x $git_commit_revision || true
+                    if git merge-base $(git rev-parse HEAD) $git_commit_revision; then
                         exit
                     fi
                 done
+                echo "你的 patch $git_commit_revision 有问题，跟 $(git rev-parse HEAD) 找不到 merge-base，请找 CM 帮你一起查看" | mail-cms -i "执行：gerrit-fetch-review $@ 时出错了"
+                die "The patch seems to not merge-able"
             )
         fi
     fi
