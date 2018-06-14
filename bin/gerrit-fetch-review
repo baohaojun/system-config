@@ -323,7 +323,7 @@ if test "$cherry_pick" = true || is-jenkins; then
             (
                 for x in $(seq 100 200 10000); do
                     git fetch --depth $x $(repo-remote) $(git rev-parse HEAD) || true
-                    git fetch --depth $x $git_commit_revision || true
+                    git fetch --depth $x $(repo-remote) $git_commit_revision || true
                     if git merge-base $(git rev-parse HEAD) $git_commit_revision; then
                         exit
                     fi
