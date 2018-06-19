@@ -115,6 +115,8 @@ void DialogGetEntry::on_filteringListView_pressed(const QModelIndex &index)
         QMap<QString, QString> rawData = mEntryModel->getSelectedRawData(row);
         QString entryDisplay = mEntryModel->getSelectedDisplayText(row);
 
-        emit entrySelectedWithRawData(entry, entryDisplay, rawData);
+        rawData["entry"] = entry;
+        rawData["display"] = entryDisplay;
+        emit entrySelectedWithRawData(rawData);
     }
 }

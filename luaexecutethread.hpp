@@ -22,6 +22,7 @@ public:
     bool isQuit();
     void run();
     QString selectArgs(const QStringList&);
+    void insertText(const QString&);
     void clickNotification(const QStringList&);
     void selectApps();
     void showNotifications();
@@ -43,6 +44,7 @@ signals:
     void gotSomeLog(const QString& key, const QString& val);
     void gotUiTaskSig(const QString&, const QStringList&);
     void selectArgsSig(const QStringList&);
+    void insertTextSig(const QString&);
     void showNotificationsSig();
     void selectAppsSig();
     void sigClickNotification(const QString& key);

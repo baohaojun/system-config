@@ -13,24 +13,40 @@
 
 LuaExecuteThread* that;
 
-static QStringList l_getArgs(lua_State* L)
+static QStringList l_getArgs(lua_State* L, int n_args = 0)
 {
-    int n = luaL_len(L, -1);
     QStringList args;
+    if (! lua_istable(L, -1)) {
+        if (n_args == 0 || ! lua_isstring(L, -1)) {
+            luaL_argerror(L, n_args, "wrong type of args");
+            return args;
+        }
+        for (int i = 1; i <= n_args; i++) {
+            if (! lua_isstring(L, i)) {
+                luaL_argerror(L, n_args, "wrong type of args");
+                return args;
+            }
+            args << QString::fromUtf8(lua_tolstring(L, i, NULL));
+        }
+        return args;
+    }
+    int n = luaL_len(L, -1);
+
     for (int i = 1; i <= n; i++) {
         lua_rawgeti(L, -1, i);
         args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
         lua_settop(L, -2);
+    }
+
+    if (n_args != 0 && args.size() != n_args) {
+        luaL_argerror(L, n_args, qPrintable(QString().sprintf("takes %d args", n_args)));
     }
     return args;
 }
 
 static int l_adb_push(lua_State* L)
 {
-    QStringList args = l_getArgs(L);
-    if (args.size() != 2) {
-        luaL_argerror(L, 2, "takes 2 argument");
-    }
+    QStringList args = l_getArgs(L, 2);
 
     if (!AdbClient::doAdbPush(args[0], args[1])) {
         lua_pushstring(L, "adb push failed");
@@ -41,10 +57,7 @@ static int l_adb_push(lua_State* L)
 
 static int l_adb_pull(lua_State* L)
 {
-    QStringList args = l_getArgs(L);
-    if (args.size() != 2) {
-        luaL_argerror(L, 2, "takes 2 argument");
-    }
+    QStringList args = l_getArgs(L, 2);
 
     qDebug() << "adb pull" << args;
 
@@ -57,10 +70,7 @@ static int l_adb_pull(lua_State* L)
 
 static int l_adb_install(lua_State* L)
 {
-    QStringList args = l_getArgs(L);
-    if (args.size() != 1) {
-        luaL_argerror(L, 1, "takes 1 argument");
-    }
+    QStringList args = l_getArgs(L, 1);
 
     QString apk = args[0];
     QString tmpApk = QString("/data/local/tmp/") + QFileInfo(apk).fileName();
@@ -83,16 +93,33 @@ static int l_adb_install(lua_State* L)
 
 static int l_selectArg(lua_State* L)
 {
-    int n = luaL_len(L, -1);
-    QStringList args;
-    for (int i = 1; i <= n; i++) {
-        lua_rawgeti(L, -1, i);
-        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
-        lua_settop(L, -2);
-    }
+    QStringList args = l_getArgs(L);
+
     QString res = that->selectArgs(args);
     lua_pushstring(L, res.toUtf8().constData());
     return 1;
+}
+
+QString LuaExecuteThread::selectArgs(const QStringList& args)
+{
+    emit selectArgsSig(args);
+    mSelectArgsMutex.lock();
+    mSelectArgsWait.wait(&mSelectArgsMutex);
+    QString res = mSelectedArg;
+    mSelectArgsMutex.unlock();
+    return res;
+}
+
+static int l_insertText(lua_State* L)
+{
+    QStringList args = l_getArgs(L, 1);
+    that->insertText(args[0]);
+    return 0;
+}
+
+void LuaExecuteThread::insertText(const QString& text)
+{
+    emit insertTextSig(text);
 }
 
 static int l_wrench_get_adb_devices(lua_State* L)
@@ -113,10 +140,8 @@ static int l_wrench_get_adb_devices(lua_State* L)
 
 static int l_wrench_get_variable(lua_State* L)
 {
-    QStringList args = l_getArgs(L);
-    if (args.length() != 1) {
-        luaL_argerror(L, 1, "takes 1 argument");
-    }
+    QStringList args = l_getArgs(L, 1);
+
     QString res = that->getVariableLocked(args[0]);
     lua_pushstring(L, res.toUtf8().constData());
     return 1;
@@ -124,10 +149,8 @@ static int l_wrench_get_variable(lua_State* L)
 
 static int l_wrench_get_proc_var(lua_State* L)
 {
-    QStringList args = l_getArgs(L);
-    if (args.length() != 1) {
-        luaL_argerror(L, 1, "takes 1 argument");
-    }
+    QStringList args = l_getArgs(L, 1);
+
     QString res = that->getProcessVarLocked(args[0]);
     lua_pushstring(L, res.toUtf8().constData());
     return 1;
@@ -137,42 +160,23 @@ QHash<QString, QString> LuaExecuteThread::mProcessVarHash;
 
 static int l_clickNotification(lua_State* L)
 {
-    int n = luaL_len(L, -1);
-    QStringList args;
-    for (int i = 1; i <= n; i++) {
-        lua_rawgeti(L, -1, i);
-        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
-        lua_settop(L, -2);
-    }
+    QStringList args = l_getArgs(L);
+
     that->clickNotification(args);
     return 0;
 }
 
 static int l_gotUiTask(lua_State* L)
 {
-    int n = luaL_len(L, -1);
-    QStringList args;
-    for (int i = 1; i <= n; i++) {
-        lua_rawgeti(L, -1, i);
-        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
-        lua_settop(L, -2);
-    }
+    QStringList args = l_getArgs(L);
+
     that->gotUiTask(args);
     return 0;
 }
 
 static int l_lsFiles(lua_State* L)
 {
-    int n = luaL_len(L, -1);
-    QStringList args;
-    for (int i = 1; i <= n; i++) {
-        lua_rawgeti(L, -1, i);
-        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
-        lua_settop(L, -2);
-    }
-    if (args.length() != 2) {
-        luaL_argerror(L, 2, "takes 2 argument: dir, pattern");
-    }
+    QStringList args = l_getArgs(L, 2);
 
     QDir dir(args[0], args[1]);
     QFileInfoList fileInfoList = dir.entryInfoList();
@@ -201,13 +205,7 @@ static int l_showNotifications(lua_State* L)
 
 static int l_qt_adb_pipe(lua_State* L)
 {
-    int n = luaL_len(L, -1);
-    QStringList args;
-    for (int i = 1; i <= n; i++) {
-        lua_rawgeti(L, -1, i);
-        args << (QString::fromUtf8(lua_tolstring(L, -1, NULL)));
-        lua_settop(L, -2);
-    }
+    QStringList args = l_getArgs(L);
 
     QString res = AdbClient::doAdbShell(args);
     lua_pushstring(L, res.toUtf8().constData());
@@ -403,6 +401,9 @@ void LuaExecuteThread::run()
     lua_pushcfunction(L, l_selectApps);
     lua_setglobal(L, "select_apps");
 
+    lua_pushcfunction(L, l_insertText);
+    lua_setglobal(L, "wrench_insert_text");
+
     lua_pushcfunction(L, l_lsFiles);
     lua_setglobal(L, "ls_files");
 
@@ -539,16 +540,6 @@ void LuaExecuteThread::quitLua()
     mQuit = true;
     mMutex.unlock();
     mWait.wakeOne();
-}
-
-QString LuaExecuteThread::selectArgs(const QStringList& args)
-{
-    emit selectArgsSig(args);
-    mSelectArgsMutex.lock();
-    mSelectArgsWait.wait(&mSelectArgsMutex);
-    QString res = mSelectedArg;
-    mSelectArgsMutex.unlock();
-    return res;
 }
 
 void LuaExecuteThread::clickNotification(const QStringList& args)

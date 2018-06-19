@@ -673,6 +673,26 @@ prompt_user = function(fmt, ...)
    end
 end
 
+M.quoteChatMessage = function(...)
+   local t1 = {...}
+   local ki
+   local map = {}
+   local text = ''
+   for ki = 1, #t1, 2 do
+      map[t1[ki]] = t1[ki + 1]
+      if t1[ki] == 'text' then
+         text = t1[ki + 1]
+      end
+   end
+   text = text:gsub('^%[[0-9]+条%]', "")
+   text = ([[
+「 %s 」
+- - - - - - - - - - - - - - -
+
+]]):format(text)
+   wrench_insert_text(text)
+end
+
 M.flatten_table = function(arg1, ...)
    local t1 = {arg1, ...}
    if #t1 == 1 and type(arg1) == 'table' then
@@ -3031,7 +3051,7 @@ local function picture_to_qq_chat(pics, ...)
                   sleep(.5)
                   adb_tap_1080x2160(692, 243)
                   log("注意：QQ 上传图片的功能可能没法用了，因为你要上传的图片在相册列表的第几行、第几张现在是不固定的")
-                  log("小扳手帮你点了最上面的相册里的前 %d 张，但有可能是错误的。有时候你可能要自己把一直占着前几个位置的照片删掉。。。", #pics)
+                  log("小扳手帮你点了最上面的相册里的前 %d 张，但有可能是错误的。有时候你可能要自己把一直占着前几个位置的照片删掉。。。", #pics)
                end
             elseif window == W.qqPhoteList then
                adb_event("adb-tap 171 427")

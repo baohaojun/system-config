@@ -387,9 +387,19 @@ void WrenchMainWindow::onShowNotifications()
     connect(&dialog, SIGNAL(entrySelected(QString)), this, SIGNAL(adbNotificationClicked(QString)));
     connect(&dialog, SIGNAL(selectRawData(QMap<QString, QString>)), this, SLOT(adbNotificationShiftClicked(QMap<QString, QString>)));
     connect(&model, SIGNAL(saveLastDialogClickedNotification(QMap<QString, QString>)), this, SLOT(saveLastDialogClickedNotification(QMap<QString, QString>)));
+    connect(&dialog, SIGNAL(entrySelectedWithRawData(QMap<QString, QString>)), this, SLOT(quoteChatMessage(QMap<QString, QString>)));
     dialog.exec();
     model.disconnect();
     dialog.disconnect();
+}
+
+void WrenchMainWindow::quoteChatMessage(const QMap<QString, QString>& data)
+{
+    QStringList quoteCmdList("quoteChatMessage");
+    foreach (const QString& key, data.keys()) {
+        quoteCmdList << key << data[key];
+    }
+    mLuaThread->addScript(quoteCmdList);
 }
 
 void WrenchMainWindow::saveLastDialogClickedNotification(const QMap<QString, QString>& notification)
@@ -402,6 +412,11 @@ bool WrenchMainWindow::anyShareChecked()
     return  ui->tbWeibo->isChecked() ||
         ui->tbWeixin->isChecked() ||
         ui->tbQq->isChecked();
+}
+
+void WrenchMainWindow::insertText(const QString& text)
+{
+    ui->phoneTextEdit->insertPlainText(text);
 }
 
 void WrenchMainWindow::on_sendItPushButton_clicked()
@@ -531,6 +546,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     connect(mLuaThread.data(), SIGNAL(showNotificationsSig()), this, SLOT(slotShortCutActivated()));
     connect(mLuaThread.data(), SIGNAL(sigClickNotification(QString)), this, SIGNAL(adbNotificationClicked(QString)));
     connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
+    connect(mLuaThread.data(), SIGNAL(insertTextSig(QString)), this, SLOT(insertText(QString)));
     mLuaThread->start();
     if (! is_starting) {
         mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath());

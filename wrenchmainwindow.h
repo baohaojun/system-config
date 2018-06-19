@@ -81,6 +81,7 @@ private slots:
     void onLoadMailHeads(const QString& , const QString& , const QString& , const QString& , const QString&);
     void on_sendItPushButton_clicked();
     void onVncWindowClosed();
+    void insertText(const QString&);
 
     void on_configurePushButton_clicked();
 
@@ -131,6 +132,7 @@ private slots:
     void slotShortCutActivated();
     void adbNotificationShiftClicked(const QMap<QString, QString>& rawData);
     void saveLastDialogClickedNotification(const QMap<QString, QString>&);
+    void quoteChatMessage(const QMap<QString, QString>&);
 
     void on_adbStateIndicator_clicked();
 

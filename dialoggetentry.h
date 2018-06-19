@@ -37,7 +37,7 @@ private slots:
 signals:
     void entrySelected(const QString&);
     void entrySelectedWithDisplayText(const QString&, const QString&);
-    void entrySelectedWithRawData(const QString&, const QString&, const QMap<QString, QString>&);
+    void entrySelectedWithRawData(const QMap<QString, QString>&);
     void selectRawData(const QMap<QString, QString>&);
 
 private:
