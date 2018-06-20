@@ -1863,6 +1863,11 @@ M.wrench_config = function(passedConfigDirPath)
 
    log("androidvncserver is %s", androidvncserver)
 
+   screencap = ("screencap-%s.sdk%s"):format(arm_arch, sdk_version)
+   if file_exists(screencap) then
+      check_file_push_and_renamed(screencap, screencap .. ".md5", "screencap")
+   end
+
    if file_exists(androidvncserver) then
       check_file_push_and_renamed(androidvncserver, androidvncserver ..  ".md5", "androidvncserver")
       wrench_set_variable("using-vnc", "true")

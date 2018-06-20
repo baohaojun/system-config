@@ -3,7 +3,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-    screencap.cpp
+    $(shell if test -e $(LOCAL_PATH)/screencap_sdk$(PLATFORM_SDK_VERSION).cpp; then echo screencap_sdk$(PLATFORM_SDK_VERSION).cpp; else echo screencap.cpp; fi)
 
 LOCAL_SHARED_LIBRARIES := \
     libcutils \

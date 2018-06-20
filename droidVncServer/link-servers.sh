@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd ~/src/github/Wrench/droidVncServer
-for x in androidvncserver-*; do
+for x in androidvncserver-* screencap-*; do
     target=$x
     if [[ $x =~ -arm64 ]]; then
         target=${x/arm64/aarch64}
