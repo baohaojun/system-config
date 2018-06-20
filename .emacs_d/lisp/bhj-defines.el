@@ -286,7 +286,7 @@ might be bad."
         smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/system-config/about_me/conn-type"))
         smtpmail-default-smtp-server (shell-command-to-string "cat ~/.config/system-config/about_me/smtp")
         smtpmail-smtp-server (shell-command-to-string "cat ~/.config/system-config/about_me/smtp")
-        smtpmail-smtp-service (string-to-int (shell-command-to-string "cat ~/.config/system-config/about_me/smtp-port"))))
+        smtpmail-smtp-service (string-to-number (shell-command-to-string "cat ~/.config/system-config/about_me/smtp-port"))))
 
 ;;;###autoload
 (defun bhj-set-reply ()
