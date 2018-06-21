@@ -355,22 +355,9 @@ else
     else
         ret=$?
         if test "$1" = init && is-jenkins; then
-            proj_list=.repo/project.list
-            if test -e "$proj_list"; then
-                for x in $(cat $proj_list); do
-                    (
-                        if test -d "$x"; then
-                            (
-                                cd "$x"
-                                clean-a-repo
-                            )
-                        fi
-                    )
-                done
-            fi
             rm -rf .repo/manifest.xml .repo/manifest.xml.old .repo/manifests .repo/manifests.git;
             echo 1>&2 "Deleted .repo files and retry"
-            if ~/system-config/bin/repo "$@"; then
+            if try-rerun -e REPO-INIT repo "$@"; then
                 exit 0
             fi
         fi

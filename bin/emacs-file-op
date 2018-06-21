@@ -47,12 +47,13 @@ EOF02763f20b5fb
 fi
 
 emacsclient -e "$(cat <<EOF16d93b20dc6b | . .replace-%%
-(progn
-  (find-file "$to_file")
-  <%el-delete-old%>
-  (goto-char (point-max))
-  (insert-file "$from_file")
-  (save-buffer))
+(save-excursion
+  (with-current-buffer
+      (find-file-noselect "$to_file")
+    <%el-delete-old%>
+    (goto-char (point-max))
+    (insert-file "$from_file")
+    (save-buffer)))
 EOF16d93b20dc6b
 )"
 # Local Variables: #

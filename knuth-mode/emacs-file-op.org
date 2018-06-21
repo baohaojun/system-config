@@ -22,12 +22,13 @@ emacs-file-op echo x1 x2 '>' fx
 #+END_SRC
 #+name: emacs-append.el
 #+BEGIN_SRC elisp
-  (progn
-    (find-file "$to_file")
-    <%el-delete-old%>
-    (goto-char (point-max))
-    (insert-file "$from_file")
-    (save-buffer))
+  (save-excursion
+    (with-current-buffer
+        (find-file-noselect "$to_file")
+      <%el-delete-old%>
+      (goto-char (point-max))
+      (insert-file "$from_file")
+      (save-buffer)))
 #+END_SRC
 ** 最终的版本：
 
