@@ -48,10 +48,14 @@
   '(progn
      (add-hook 'org-babel-pre-tangle-hook (lambda () (setenv "SC_ORG_FILEPATH" (buffer-file-name))))))
 
+(defun fix-link-re (link-re)
+  (replace-regexp-in-string "\\[^\\]\\[ \t\n()<>\\]" "[^][  ，（）、。\t\n()<>]" link-re))
+
 (eval-after-load 'org
   '(progn
      (defadvice org-make-link-regexps (after bhj/org-link-tweak activate)
-       (setq org-plain-link-re (replace-regexp-in-string "\\[^ \t\n()<>\\]" "[^]  ，）、。\t\n()<>]" org-plain-link-re)))
+       (setq org-plain-link-re (fix-link-re org-plain-link-re))
+       (setq org-any-link-re (fix-link-re org-any-link-re)))
      (org-defkey org-mode-map [?\e (shift return)] 'org-insert-todo-heading)
      (require 'org-jira)
      (require 'bhj-defines)

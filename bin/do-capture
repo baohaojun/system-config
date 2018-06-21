@@ -1,7 +1,62 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt ashow-all-tasks=unset
+## end code-generator
+## start generated code
+TEMP=$( getopt -o ah \
+               --long show-all-tasks,help,no-show-all-tasks \
+               -n $(basename -- $0) -- "$@")
+declare show_all_tasks=unset
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--show-all-tasks|--no-show-all-tasks)
+            if test "$1" = --no-show-all-tasks; then
+                show_all_tasks=false
+            else
+                show_all_tasks=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--[no-]show-all-tasks'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 if test $(basename $0) = do-capture-darwin; then
     export EMACS=t
+fi
+
+if test "$show_all_tasks" = true; then
+    touch ~/.cache/system-config/do-capture.show-all
+elif test "$show_all_tasks" = false; then
+    rm -f ~/.cache/system-config/do-capture.show-all
+elif test -e ~/.cache/system-config/do-capture.show-all; then
+    show_all_tasks=true
 fi
 
 if test -e ~/external/local/emacs25u/bin/emacs; then
@@ -32,10 +87,25 @@ elif test "$file" = agenda; then
     emacs.client -d -e '(progn
         (org-agenda-remove-restriction-lock)
         (org-agenda nil "d"))'
-    emacsclient -e '(progn
+    emacsclient -e "$(
+  exec <<EOFa3c903e7778a
+  ; {%emacs-lisp-mode%}
+  (progn
     (setq org-agenda-current-hour (string-to-number (format-time-string "%H")))
+    <%reset-current-hour%>
     (org-agenda nil "d")
-    (org-agenda-redo t))'
+    (org-agenda-redo t))
+  ; {%/emacs-lisp-mode%}
+EOFa3c903e7778a
+
+# {%sh-mode%}
+if test "$show_all_tasks" = true; then
+    reset_current_hour='(setq org-agenda-current-hour 18)';
+fi
+. .replace-%%;
+# {%/sh-mode%}
+
+)"
 elif test "$file" = daily; then
     do-daily
 elif [[ "$file" =~ " " ]]; then

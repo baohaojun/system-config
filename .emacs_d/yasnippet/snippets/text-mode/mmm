@@ -2,5 +2,5 @@
 # name: mmm
 # key: mmm
 # --
-${1:#} {%${2:sawfish}%}
-$1 {%/$2%}
+${1:#} {%${2:sawfish}-mode%}
+$1 {%/$2-mode%}
