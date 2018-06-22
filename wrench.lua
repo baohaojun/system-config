@@ -1922,6 +1922,8 @@ M.wrench_config = function(passedConfigDirPath)
 
    phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
    reset_input_method()
+   local android_serial = wrench_get_proc_var{"ANDROID_SERIAL"}
+   system("bash ./check-notification.sh " .. android_serial)
    return ("brand is %s, adb serial is %s"):format(brand, adb_serial)
 end
 
