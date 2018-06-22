@@ -2,17 +2,23 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ashow-all-tasks=unset
+# generate-getopt ashow-all-tasks=unset f:forced-hour
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o ah \
-               --long show-all-tasks,help,no-show-all-tasks \
+TEMP=$( getopt -o f:ah \
+               --long forced-hour:,show-all-tasks,help,no-show-all-tasks \
                -n $(basename -- $0) -- "$@")
+declare forced_hour=
 declare show_all_tasks=unset
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -f|--forced-hour)
+            forced_hour=$2
+            shift 2
+
+            ;;
         -a|--show-all-tasks|--no-show-all-tasks)
             if test "$1" = --no-show-all-tasks; then
                 show_all_tasks=false
@@ -27,6 +33,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--forced-hour=FORCED_HOUR'
+            echo
             printf %06s '-a, '
             printf %-24s '--[no-]show-all-tasks'
             echo
@@ -100,7 +109,7 @@ EOFa3c903e7778a
 
 # {%sh-mode%}
 if test "$show_all_tasks" = true; then
-    reset_current_hour='(setq org-agenda-current-hour 18)';
+    reset_current_hour="(setq org-agenda-current-hour ${forced_hour:-18})";
 fi
 . .replace-%%;
 # {%/sh-mode%}
