@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sleep 2
+
 exec > ~/tmp/check-notification.sh.log 2>&1
 set -x
 if test "$1"; then
@@ -12,7 +14,7 @@ if test "$WRENCH_INSTANCE"; then
     ((notification_port += WRENCH_INSTANCE)) || true
 fi
 
-timeout 2 telnet localhost $notification_port
+expect -c 'spawn timeout 2 telnet localhost 58888; exit [lindex [wait] 3]'
 ret=$?
 
 if test "$ret" = 124; then
