@@ -6,6 +6,8 @@ exec > ~/tmp/check-notification.sh.log 2>&1
 set -x
 if test "$1"; then
     export ANDROID_SERIAL=$1
+else
+    unset ANDROID_SERIAL
 fi
 
 # this script checks if wrench notification is working

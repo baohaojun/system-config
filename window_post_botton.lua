@@ -100,6 +100,7 @@ map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'ma
 map['com.github.shadowsocks/com.github.shadowsocks.Shadowsocks'] = 'manual-post'
 map['com.google.android.apps.inbox/com.google.android.apps.bigtop.activities.InitActivity'] = 'manual-post'
 map['com.google.android.apps.inbox/com.google.android.apps.bigtop.activities.MainActivity'] = 'weibo-confirm'
+map['com.google.android.apps.inbox/com.google.android.apps.bigtop.compose.ComposeMessageActivity'] = 'manual-post'
 map['com.google.android.apps.maps/com.google.android.maps.MapsActivity'] = 'manual-post'
 map['com.google.android.apps.photos/com.google.android.apps.photos.search.SearchActivity'] = 'manual-post'
 map['com.google.android.apps.plus/com.google.android.apps.plus.phone.HostStreamOneUpActivity'] = 'weixin-chat'
