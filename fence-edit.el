@@ -304,6 +304,7 @@ The edit buffer is expected to be the current buffer."
   (fence-edit--guard-edit-buffer)
   (let ((buffer (current-buffer))
         (code (buffer-string))
+        (mod (buffer-modified-p))
         (beg fence-edit-mark-beg)
         (end fence-edit-mark-end)
         (block-indent fence-edit-block-indent)
@@ -316,9 +317,10 @@ The edit buffer is expected to be the current buffer."
     (setq code (replace-regexp-in-string (concat "\n" block-indent "$") "\n" code))
     (with-current-buffer (marker-buffer beg)
       (goto-char beg)
-      (undo-boundary)
-      (delete-region beg end)
-      (insert code))))
+      (when mod
+        (undo-boundary)
+        (delete-region beg end)
+        (insert code)))))
 
 (defun fence-edit-abort ()
   "Conclude editing, discarding the edited text."
