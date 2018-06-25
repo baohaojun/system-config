@@ -4,29 +4,37 @@ function die() {
     exit -1
 }
 
+rd-help() {
+    cat <<EOF
+连接 Windows 远程桌面。
+
+用法：rdesktop -u USER -p PASS HOSTNAME
+EOF
+}
+
 function rdesktop() {
 
     kbd=en-dvp
     display=" connected"
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopts  d:display= k:kbd= u:user p:pass g:geometry
+    # generate-getopts  d:display= k:kbd=en-dvp u:user p:pass g:geometry
     ## end code-generator
     ## start generated code
 
-    pass=
-    kbd=
-    geometry=
     display=
+    geometry=
+    kbd=en-dvp
+    pass=
     user=
     OPTIND=1
-    while getopts "p:k:g:d:u:h" opt; do
+    while getopts "d:g:k:p:u:h" opt; do
         case "$opt" in
 
-            p) pass=$OPTARG ;;
-            k) kbd=$OPTARG ;;
-            g) geometry=$OPTARG ;;
             d) display=$OPTARG ;;
+            g) geometry=$OPTARG ;;
+            k) kbd=$OPTARG ;;
+            p) pass=$OPTARG ;;
             u) user=$OPTARG ;;
             h)
                 echo
@@ -101,5 +109,5 @@ function rdesktop() {
 if echo $SHELLOPTS | grep -q xtrace; then
     rdesktop "$@"
 else
-    rdesktop "$@" >/dev/null 2>&1
+    rdesktop "$@"
 fi

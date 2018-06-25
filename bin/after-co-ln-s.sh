@@ -203,7 +203,7 @@ function symlink-map-files() {
         if test -e "$2"/$x -a "$(readlink -f "$2"/$x)" != "$(readlink -f "$1"/$x)"; then
             echo "Warning: "$2"/$x already exist and it's not softlink to "$1"/$x"
             mv "$2"/$x "$2"/$x.bak
-            ln -sT "$1"/$x "$2"/$x
+            ln -s "$1"/$x "$2"/$x
         elif test ! -e "$2"/$x; then
             mkdir -p "$(dirname "$2"/$x)"
             ln -sf "$1"/$x "$2"/$x
