@@ -114,16 +114,16 @@ Used to strip and replace the indentation upon beginning/completion of editing."
 
 (defvar fence-edit-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") 'fence-edit-exit)
-    (define-key map (kbd "C-c '")   'fence-edit-exit)
-    (define-key map (kbd "C-c C-k") 'fence-edit-abort)
-    (define-key map (kbd "C-x C-s") 'fence-edit-save)
+    (define-key map (kbd "C-c C-c") #'fence-edit-exit)
+    (define-key map (kbd "C-c '")   #'fence-edit-exit)
+    (define-key map (kbd "C-c C-k") #'fence-edit-abort)
+    (define-key map (kbd "C-x C-s") #'fence-edit-save)
     map)
   "The keymap used in ‘fence-edit-mode’.")
 
 (define-minor-mode fence-edit-mode
   "A minor mode used when editing a fence-edit block."
-  nil "Fence-Edit"
+  nil " Fence-Edit"
   fence-edit-mode-map)
 
 (defvar fence-edit-mode-hook nil
@@ -198,6 +198,29 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
           (cdr (assoc lang fence-edit-lang-modes))
         fence-edit-default-mode))))
 
+(defun fence-edit-header-line ()
+  "Supply the `header-line' for fence-edit buffers."
+  (concat
+   ;; left scroll-bar
+   (when (or (eq vertical-scroll-bar 'left)
+             (and (eq vertical-scroll-bar t)
+                  (eq (frame-parameter nil 'vertical-scroll-bars) 'left)))
+     (propertize " " 'display '(space :width scroll-bar)))
+   ;; left margin
+   (when (< 0 (or left-margin-width 0))
+     (propertize " " 'display '(space :width left-margin)))
+   ;; left fringe
+   (when (< 0 (or (and (numberp left-fringe-width)
+                       left-fringe-width)
+             (and (not left-fringe-width)
+                  (frame-parameter nil 'left-fringe))))
+     (propertize " " 'display '(space :width left-fringe)))
+   ;; display line numbers
+   (when display-line-numbers
+     (propertize " " 'display `(space :width ,(ceiling (line-number-display-width 'columns)))))
+   ;; instructions
+   "Press C-c ' (C-c apostrophe) to save, C-c C-k to abort."))
+
 (defun fence-edit-code-region (beg end &optional lang)
   "Edit region (BEG and END) in language LANG."
   (interactive (append
@@ -242,7 +265,7 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
       (fence-edit-set-local 'fence-edit-mark-end end)
       (fence-edit-set-local 'fence-edit-block-indent block-indent)
       (fence-edit-set-local 'fence-edit-overlay ovl)
-      (fence-edit-set-local 'header-line-format "Press C-c ' (C-c apostrophe) to save, C-c C-k to abort.")
+      (fence-edit-set-local 'header-line-format '((:eval (fence-edit-header-line))))
       (goto-char edit-point)
       (set-buffer-modified-p nil))))
 
