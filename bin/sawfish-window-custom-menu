@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/sawfish-window-custom-menu.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/sawfish-window-custom-menu.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
 if echo $SHELLOPTS | grep -q xtrace; then
@@ -90,11 +88,12 @@ fi
 
 if test "${window_operations[*-$operation]}"; then
     output=$($operation)
-    bhj-notify "$operation" "output is $output"
+    if [[ $operation =~ ^get- ]]; then
+        bhj-notify "$operation" "output is $output"
+    fi
 fi
 
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here

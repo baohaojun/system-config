@@ -104,7 +104,9 @@
 
   if test "${window_operations[*-$operation]}"; then
       output=$($operation)
-      bhj-notify "$operation" "output is $output"
+      if [[ $operation =~ ^get- ]]; then
+          bhj-notify "$operation" "output is $output"
+      fi
   fi
 
 #+END_SRC

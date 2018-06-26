@@ -123,9 +123,10 @@ fi
 
 if test "$delay" = true; then
     select=-m
+    edit=true
     bhj-notify screenshot 'Move your mouse to the left edge of the screen after you are ready'
     sawfish-wait-for-start
-    bhj-notify screenshot 'Now capture screen and edit for the pop-up'
+    bhj-notify screenshot
 fi
 
 while true; do
