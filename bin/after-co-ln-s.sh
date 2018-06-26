@@ -335,14 +335,6 @@ fi
 mkdir -p ~/system-config/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 if test -L ~/.git; then rm -f ~/.git; fi
 if test $(uname) = Linux; then
-    if ! grep -q -P -e 'iface\s+usb0\s+inet\s+manual' /etc/network/interfaces; then
-        sudo bash -c 'echo iface usb0 inet manual >> /etc/network/interfaces'
-    fi
-
-    if ! grep -q -P -e 'iface\s+usb1\s+inet\s+manual' /etc/network/interfaces; then
-        sudo bash -c 'echo iface usb1 inet manual >> /etc/network/interfaces'
-    fi
-
     if test $can_sudo = true && grep managed=true /etc/NetworkManager/NetworkManager.conf; then
         sudo perl -npe 's/managed=true/managed=false/' -i /etc/NetworkManager/NetworkManager.conf;
     fi
