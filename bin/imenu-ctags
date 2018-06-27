@@ -33,7 +33,12 @@ sub debug(@) {
 
 debug "working with $filename (mode: $mode, major-mode: $ENV{MAJOR_MODE})";
 
-system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin > ~/.imenu-ctags.$$");
+if ( (lc $mode) eq "man" ) {
+  system("imenu-man $stdin > ~/.imenu-ctags.$$");
+} else {
+  system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin > ~/.imenu-ctags.$$");
+}
+
 
 while (<>) { # that's true, the stdin can be read again, because it is
              # a normal file from emacs
