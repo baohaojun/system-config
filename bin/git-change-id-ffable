@@ -46,29 +46,61 @@ git-cmds-in-mirror log --format="%%commit%% %H %ae(%ai) %ce(%ci) : {{{%s}}}%n%B"
 need_die=0
 
 perl -e '
+# {%perl-mode%}
+     use Text::CSV;
+     my $csv = Text::CSV->new ( { binary => 1, eol => $/ } )
+         or die "Cannot use CSV: ".Text::CSV->error_diag ();
+
      open($destlog, "<", $ENV{destlog});
      while (<$destlog>) {
-         $destcid{$1} = 1 if m/^\s*(?:old-)?Change-Id:\s*(.*)/i;
+         $dest_change_ids{$1} = 1 if m/^\s*(?:old-)?Change-Id:\s*(.*)/i;
      }
      close($destlog);
 
      open($srclog, "<", $ENV{srclog});
+     my ($author, $author_date, $committer, $commit_date, $subject);
+
+     sub parse_commit_info($) {
+         my ($info) = @_;
+         if ($info =~ m/^(\S+?)\((.+?)\) (\S+?)\((.+?)\) : \{\{\{(.*?)\}\}\}$/) {
+             ($author, $author_date, $committer, $commit_date, $subject) = ($1, $2, $3, $4, $5);
+         } else {
+             ($author, $author_date, $committer, $commit_date, $subject) = ("Error: $info");
+         }
+     }
+
+     $last_commit_printed = 1;
      while (<$srclog>) {
          if (m/^%commit% (\S*) (.*)/) {
-             $current_commit=$1;
-             if ($no_cid) {
-                 printf "%s commit %s has no change id %s %s\n", $ENV{PWD}, $no_cid, $ENV{dest}, $commit_info;
+             $current_commit = $1;
+
+             if (not $last_commit_printed) { # it has no change id
+                 parse_commit_info($commit_info);
+                 $csv->print(STDOUT, [$last_commit, "", $ENV{dest}, $author, $author_date, $committer, $commit_date, $subject]);
              }
-             $no_cid = $current_commit;
+
+             $last_commit_printed = 0;
+             $last_commit = $current_commit;
              $commit_info = $2;
          }
          if (m/^\s*Change-Id:\s*(.*)/i) {
-             $no_cid="";
-             if (not $destcid{$1}) {
-                 printf "%s commit %s cid %s not found in %s %s\n", $ENV{PWD}, $current_commit, $1, $ENV{dest}, $commit_info;
+             $last_commit_printed = 1;
+             if (not $dest_change_ids{$1}) {
+                 my $change_id = $1;
+                 parse_commit_info($commit_info);
+                 $csv->print(STDOUT, [$last_commit, $change_id, $ENV{dest}, $author, $author_date, $committer, $commit_date, $subject]);
              }
          }
      }
+
+     if (not $last_commit_printed and $commit_info) {
+         parse_commit_info($commit_info);
+         $csv->print(STDOUT, [$last_commit, "", $ENV{dest}, $author, $author_date, $committer, $commit_date, $subject]);
+         print STDERR "The last commit $last_commit is not printed with a change-id\n";
+     }
+
+     $csv->print(STDOUT, ["Git Commit", "Change-ID", "Target Branch", "Author", "Author Date", "Committer", "Committer Date", "Subject", "Assign To", "Team", "Status" ]);
+# {%/perl-mode%}
 ' | reverse |grep . && need_die=1
 
 rm $destlog $srclog

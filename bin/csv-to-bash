@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# 这个文件会把一个 csv 文件转化成一个 bash 文件
+# 假设：csv 文件的第一行是 header，会给出每一列的名字
+# 输出：每一行 csv 文本，最后都会输出成一行 sh 脚本，如下：
+#     var1=col1; var2=col2; var3=col3
+# 其中 var1、var2、var3 等名字来自于 csv 文件的第一行；col1、col2、col3 等值则来自 csv 文件的当前行。
+# 然后，我在 shell 脚本里 read 到这一行输出之后，我直接 eval 一下它，就可以得到这些变量了
+
+perl -e '
+# {%perl-mode%}
+use Text::CSV;
+use strict;
+use String::ShellQuote;
+
+my $csv = Text::CSV->new ( { binary => 1 } )
+    or die "Cannot use CSV: ".Text::CSV->error_diag ();
+
+my $line = <>;
+my $status  = $csv->parse($line);
+my @title = $csv->fields();
+# {%/perl-mode%}
+'
+

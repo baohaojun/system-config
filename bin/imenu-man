@@ -1,0 +1,47 @@
+#!/usr/bin/env perl
+my $last_indent = -1;
+my $last_line = "";
+my $last_line_num = 1;
+
+my $last_indent_2 = 1;
+my $last_line_2 = "";
+my $last_line_num_2 = 0;
+while (<>) {
+  chomp;
+  if ( $. == 1) {
+    $last_line = $_;
+  }
+  if (m/^(\s*)\S/) {
+    $current_indent = length $1;
+    if ($current_indent == 0) {
+      $last_indent = -1;
+      $last_line = $_;
+      $last_indent_2 = 0;
+      $last_line_num = $.;
+    }
+    if (
+        ($last_indent < $current_indent &&
+         ($last_indent < $last_indent_2 or $last_indent_2 == 0 or $last_line_num == $. - 1)) ||
+        ($last_indent == $current_indent && $last_line =~ m/^\s*\S+$/)
+       ) {
+      if ($last_line =~ m/^\s*(\w+)/) {
+        $last_word = $1;
+        if ( $last_indent <= 0) {
+          $type = "section";
+          $last_section = $last_word;
+        } else {
+          $type = ($last_section or "func");
+        }
+        printf "%s           %s     %d %s %s\n", $last_word, $type, $last_line_num, $ARGV, $last_line;
+
+      }
+    }
+    if ( $_ =~ m/\s*\w+(\s|\S*$)/) {
+      $last_indent_2 = $last_indent;
+      $last_indent = $current_indent;
+      $last_line = $_;
+      $last_line_num = $.;
+      #print STDERR "update to: $last_line_num: $last_line\n";
+    }
+  }
+}

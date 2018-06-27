@@ -4,14 +4,20 @@ wait() {
     local p
     local ret=0
     for p in $(jobs -p); do
-        if ! builtin wait "$p"; then
-            ret=1
+        if builtin wait "$p"; then
+            true
+        else
+            ret=$?
         fi
     done
     return $ret
 }
 
 
-if ! wait; then
-    die "有些后台程序非正常退出了。。。"
+if wait; then
+    exit 0
+else
+    ret=$?
+    echo "有些后台程序非正常退出了。。。"
+    exit $ret
 fi

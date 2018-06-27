@@ -7,8 +7,8 @@
       exit
   fi
   TOP=$ANDROID_TOP;
-  log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
-  if [[ $log =~ /\.log$ ]]; then
+  log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").csv
+  if [[ $log =~ /\.csv$ ]]; then
       echo "Error for $(ap): can not find repo path"
       exit 1
   fi

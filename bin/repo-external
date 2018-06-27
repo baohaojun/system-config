@@ -73,11 +73,18 @@ if test ! -d .repo; then
 fi
 
 my-rfa -j1 pwd | perl -npe 's,$ENV{PWD}/,,' > .repo/my-project.list
+if is-jenkins; then
+    echo "my project.list: $(echo; indent-stdin < .repo/my-project.list)"
+fi
 
 if test -e .repo/project.list; then
     extra_repos=$(arg1-arg2 "$(cat .repo/project.list)" "$(cat .repo/my-project.list)"|sort|
                       while read d; do if test -d "$d"; then echo $d; fi; done)
+    if is-jenkins; then
+        echo "current project.list: $(echo; indent-stdin < .repo/my-project.list)"
+    fi
 else
+    echo "No .repo/project.list, can't decide extra_repos"
     extra_repos=
 fi
 
