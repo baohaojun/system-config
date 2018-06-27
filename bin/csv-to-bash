@@ -16,9 +16,15 @@ use String::ShellQuote;
 my $csv = Text::CSV->new ( { binary => 1 } )
     or die "Cannot use CSV: ".Text::CSV->error_diag ();
 
-my $line = <>;
-my $status  = $csv->parse($line);
-my @title = $csv->fields();
-# {%/perl-mode%}
-'
+my @title = map {s/\W/_/g; $_} @{$csv->getline(*STDIN)};
+$csv->column_names(@title);
 
+while (my $cols = $csv->getline_hr (*STDIN)) {
+    for my $key (keys %{$cols}) {
+        my $val = shell_quote($cols->{$key});
+        print "$key=$val\n"
+    }
+    print "eor\n";
+}
+# {%/perl-mode%}
+' < "$1"

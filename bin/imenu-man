@@ -20,9 +20,18 @@ while (<>) {
       $last_line_num = $.;
     }
     if (
-        ($last_indent < $current_indent &&
-         ($last_indent < $last_indent_2 or $last_indent_2 == 0 or $last_line_num == $. - 1)) ||
-        ($last_indent == $current_indent && $last_line =~ m/^\s*\S+$/)
+        $last_indent < 12 &&
+        (
+         ($last_indent < $current_indent &&
+          (
+           $last_indent < $last_indent_2 or # this is the default case
+           $last_indent_2 == 0 or           # this is
+           (
+            $last_line_num == $. - 1 && # the next line got indented
+            $last_indent > $current_indent - 6 && # but not indented too far
+            m/^\s*\w/ # not start with #, for e.g.
+           ))) ||
+        ($last_indent == $current_indent && $last_line =~ m/^\s*\S+$/))
        ) {
       if ($last_line =~ m/^\s*(\w+)/) {
         $last_word = $1;
@@ -36,12 +45,12 @@ while (<>) {
 
       }
     }
-    if ( $_ =~ m/\s*\w+(\s|\S*$)/) {
+    if ( $_ =~ m/^\s*\w+(\s|\S*$)/) {
       $last_indent_2 = $last_indent;
       $last_indent = $current_indent;
       $last_line = $_;
       $last_line_num = $.;
-      #print STDERR "update to: $last_line_num: $last_line\n";
+      # print "update to: $last_line_num:$last_indent $last_line\n";
     }
   }
 }

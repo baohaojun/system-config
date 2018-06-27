@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# 这个脚本用于一种抽象，比如把一个文件依次备份为 x.1、x.2、x.3...，x.100，然后循环
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt m:max-seq=100 n:seq-name
+## end code-generator
+## start generated code
+TEMP=$( getopt -o m:n:h \
+               --long max-seq:,seq-name:,help \
+               -n $(basename -- $0) -- "$@")
+declare max_seq=100
+declare seq_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -m|--max-seq)
+            max_seq=$2
+            shift 2
+
+            ;;
+        -n|--seq-name)
+            seq_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--max-seq=MAX_SEQ'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--seq-name=SEQ_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
