@@ -4,6 +4,7 @@ wait() {
     local p
     local ret=0
     for p in $(jobs -p); do
+        echo wait for $p
         if builtin wait "$p"; then
             true
         else
@@ -15,7 +16,8 @@ wait() {
 
 
 if wait; then
-    exit 0
+    echo "所有后台进程都正常退出了。。。"
+    true # must not exit!
 else
     ret=$?
     echo "有些后台程序非正常退出了。。。"
