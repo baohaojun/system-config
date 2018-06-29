@@ -4,17 +4,18 @@ memory=$(free | grep ^Mem: | pn 2)
 ulimit -v $((memory / 2))
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ttest kkill 1one-phone ddo-debug xexclusive
+# generate-getopt ttest kkill 1one-phone ddo-debug xexclusive ssystem
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o dxk1th \
-               --long do-debug,exclusive,kill,one-phone,test,help,no-do-debug,no-exclusive,no-kill,no-one-phone,no-test \
+TEMP=$( getopt -o dxk1sth \
+               --long do-debug,exclusive,kill,one-phone,system,test,help,no-do-debug,no-exclusive,no-kill,no-one-phone,no-system,no-test \
                -n $(basename -- $0) -- "$@")
-do_debug=false
-exclusive=false
-kill=false
-one_phone=false
-test=false
+declare do_debug=false
+declare exclusive=false
+declare kill=false
+declare one_phone=false
+declare system=false
+declare test=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -26,6 +27,7 @@ while true; do
                 do_debug=true
             fi
             shift
+
             ;;
         -x|--exclusive|--no-exclusive)
             if test "$1" = --no-exclusive; then
@@ -34,6 +36,7 @@ while true; do
                 exclusive=true
             fi
             shift
+
             ;;
         -k|--kill|--no-kill)
             if test "$1" = --no-kill; then
@@ -42,6 +45,7 @@ while true; do
                 kill=true
             fi
             shift
+
             ;;
         -1|--one-phone|--no-one-phone)
             if test "$1" = --no-one-phone; then
@@ -50,6 +54,16 @@ while true; do
                 one_phone=true
             fi
             shift
+
+            ;;
+        -s|--system|--no-system)
+            if test "$1" = --no-system; then
+                system=false
+            else
+                system=true
+            fi
+            shift
+
             ;;
         -t|--test|--no-test)
             if test "$1" = --no-test; then
@@ -58,6 +72,7 @@ while true; do
                 test=true
             fi
             shift
+
             ;;
         -h|--help)
             set +x
@@ -75,6 +90,9 @@ while true; do
             echo
             printf %06s '-1, '
             printf %-24s '--[no-]one-phone'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]system'
             echo
             printf %06s '-t, '
             printf %-24s '--[no-]test'
@@ -124,6 +142,15 @@ EOF
     fi
     rsync ~/tmp/build-wrench/ ~/tmp/build-wrench.$ANDROID_SERIAL -a --chmod=D0755
     reset-env WRENCH_INSTANCE ${wrench_adb_map[$ANDROID_SERIAL]} PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
+    if test "$system" = true; then
+    sawfish-client -e '
+; {%sawfish-mode%}
+(progn
+  (setenv "WRENCH_INSTANCE" "'$WRENCH_INSTANCE'")
+  (setenv "PATH" "'"$PATH"'"))
+; {%/sawfish-mode%}
+'
+    fi
     . reget-env -k
     nohup Wrench.sh&
     exit
