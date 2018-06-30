@@ -105,7 +105,7 @@
 #+END_SRC
 
 #+name: old-code
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :noweb yes
   function die() {
       echo Error: "$@"
       exit -1

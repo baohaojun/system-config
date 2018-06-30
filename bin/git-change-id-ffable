@@ -99,7 +99,7 @@ perl -e '
          print STDERR "The last commit $last_commit is not printed with a change-id\n";
      }
 
-     $csv->print(STDOUT, ["Git Commit", "Change-ID", "Target Branch", "Author", "Author Date", "Committer", "Committer Date", "Subject", "Assign To", "Team", "Status" ]);
+     $csv->print(STDOUT, ["Git Commit", "Change-ID", "Target Branch", "Author", "Author Date", "Committer", "Commit Date", "Subject", "Assign To", "Team", "Status" ]);
 # {%/perl-mode%}
 ' | reverse |grep . && need_die=1
 

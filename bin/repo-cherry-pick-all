@@ -231,14 +231,14 @@ if test $# != 1; then
 fi
 
 if test -d .repo; then
-    diffs=$(rgrep -l -P -e "$1" out/diff/*.log | sort)
+    diffs=$(rgrep -l -P -e "$1" out/diff/*.csv | sort)
     (
         cd out/diff
         rm *.ok *.fail -f
     )
 else
     prefix=$(lookup-file -e out/diff)/$(ap | perl -npe 's!/!%!g')
-    diffs=$(lookup-file -e $prefix.log || true)
+    diffs=$(lookup-file -e $prefix.csv || true)
     rm $prefix.ok $prefix.fail -f
     if test ! -e "$diffs"; then
         echo "diff file not found"
@@ -255,7 +255,7 @@ fi
 
 for diff_file in $diffs; do
     diff_file=$(readlink -f $diff_file)
-    dir=$(echo $diff_file|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
+    dir=$(echo $diff_file|perl -npe 's!.*/!!; s/.csv$//; s!%!/!g')
     (
         cd $dir || exit 0
         repo_project=$(ap)
@@ -286,7 +286,10 @@ for diff_file in $diffs; do
             if test $do_here = true; then
                 target_branch=HEAD
             else
-                target_branch=$(grep -o 'not found in .*' $diff_file|pn 4|head -n 1)
+                target_branch=$(
+                    eval "$(head -n 2 $diff_file|csv-to-bash |grep Target_Branch=)"
+                    echo $Target_Branch
+                             )
             fi
         fi
 
@@ -349,8 +352,15 @@ for diff_file in $diffs; do
                 check-merged-commit $ap $(cat $diff_file | pn 3)
             fi
             declare -A already_handled_commit_map
-            grep -P -e "$1" $diff_file |
-                while read path 'commit' git_commit_id remaining; do
+            (head -n 1 $diff_file; grep -P -e "$1" $diff_file )|
+                csv-to-bash |
+                while read line; do
+                    if test "$line" != eor; then
+                        eval "$line"
+                        continue
+                    fi
+
+                    git_commit_id=$Git_Commit
                     if test "${already_handled_commit_map[$git_commit_id]}" = 1; then
                         echo $git_commit_id already handled
                         continue
@@ -362,24 +372,26 @@ for diff_file in $diffs; do
                         echo $path $commit $git_commit_id is invalid
                         continue
                     fi
-                    subject=${remaining#*\{\{\{}
-                    subject=${subject%\}\}\}*}
-                    change_id=
 
-                    if [[ $remaining =~ ^'has no change id' ]]; then
-                        read has no change id target_branch remaining <<<$remaining
-                    else
-                        read cid change_id not found in target_branch remaining <<<$remaining
-                    fi
+                    subject=$Subject
+                    change_id=$Change_ID
 
-                    author=${remaining%%\(*}
-                    atime=${remaining#$author\(}
-                    atime=${atime%%\)*}
-                    remaining=${remaining#*\) }
-                    committer=${remaining%%\(*}
-                    ctime=${remaining#$committer\(}
-                    ctime=${ctime%%\)*}
+                    # Status=''
+                    # Assign_To=''
+                    # Subject='BSP-Battery: Modify for store battery cycle count to persist partition'
+                    # Target_Branch=remotes/smartisan/odin-rom
+                    # Team=''
+                    # Committer=sunyouyang@smartisan.com
+                    # Git_Commit=cf33f83a3635b23c5dd1ee199f34a8a691382f44
+                    # Committer_Date='2018-06-04 18:38:56 +0800'
+                    # Author_Date='2018-06-04 18:38:56 +0800'
+                    # Change_ID=I719f13df1394c1cf864a0355ef7f648ae8497303
+                    # Author=sunyouyang@smartisan.com
 
+                    author=$Author
+                    atime=$Author_Date
+                    committer=$Committer
+                    ctime=$Commit_Date
 
                     export WORKING_REV=$git_commit_id
                     ret=0

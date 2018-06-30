@@ -299,7 +299,100 @@ EOF
 fi
 rm -f out >/dev/null 2>&1 || true
 my-rfa -j $jobs "$(cat <<'EOFb4e84b0385f1'
-<<script-to-find-patches>>
+if test "$DEBUG" = true; then
+    set -x
+fi
+if test -e ~/src/github/smartcm/repo-cherry-find-all/$(ap)/.ignore; then
+    exit
+fi
+TOP=$ANDROID_TOP;
+log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").csv
+if [[ $log =~ /\.csv$ ]]; then
+    echo "Error for $(ap): can not find repo path"
+    exit 1
+fi
+mkdir -p $(dirname $log);
+
+offer-unshallow() {
+    if yes-or-no-p -n "你的当前 git 目录是一个 shallow clone，无法获取完整 git 历史，要不要自动帮你 unshallow（如确认，请输入 yes）？"; then
+        sse unshallow-source-code
+    else
+        die "无法在 shallow clone 下执行此操作，退出"
+    fi
+}
+
+
+if test -z "$to_manifest_xml"; then
+    if test ! "$remote" -a $local_from = false ; then
+        from=remotes/$(repo-remote)/$from
+    fi
+    if test ! "$remote" -a $local_to = false ; then
+        to=remotes/$(repo-remote)/$to
+    fi
+
+    if test -e .git/shallow; then
+        if is-jenkins; then
+            export GIT_DIR=~/src/android-mirror/$(repo-project).git
+            export from=${from#remotes/*/}
+            export to=${to#remotes/*/}
+        else
+            offer-unshallow
+        fi
+
+    fi
+else
+    if test -e .git/shallow; then
+        if is-jenkins; then
+            export GIT_DIR=~/src/android-mirror/$(repo-project).git
+            export repo_is_mirror=true
+        else
+            offer-unshallow
+        fi
+    fi
+
+    . $to_manifest_xml.env
+    . $from_manifest_xml.env
+    pwd=$(pwd -P)
+    if [[ ${from_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+        from=${from_path_revision_map[$pwd]}
+    elif test "$repo_is_mirror" = true; then
+        from=${from_path_revision_map[$pwd]}
+    else
+        from=${from_path_remote_map[$pwd]}/${from_path_revision_map[$pwd]}
+    fi
+
+    if [[ ${to_path_revision_map[$pwd]} =~ ^[a-f0-9]{40}$ ]]; then
+        to=${to_path_revision_map[$pwd]}
+    elif test "$repo_is_mirror" = true; then
+        to=${to_path_revision_map[$pwd]}
+    else
+        to=${to_path_remote_map[$pwd]}/${to_path_revision_map[$pwd]}
+    fi
+fi
+
+if test "$from" = / -o "$to" = / || test "$from" = "$to"; then
+    exit
+fi
+
+
+echo git-change-id-ffable $from $to in $PWD
+if ! git-shallow-log-in-mirror -1 "$from" >/dev/null 2>&1 || ! git-shallow-log-in-mirror -1 "$to" >/dev/null 2>&1; then
+    if is-jenkins && [[ $JOB_NAME =~ ^SmartRebaser ]]; then
+        echo no need to fetch "$from" or "$to" in $PWD for SmartRebaser
+        exit
+    else
+        echo need to fetch "$from" or "$to" in $PWD
+        git fetch $(repo-remote) || true
+    fi
+fi
+git-change-id-ffable $from $to > $log || true
+if test $(stat -c %s $log) = 0; then
+    rm $log;
+fi;
+
+pwd
+
+
 EOFb4e84b0385f1
 )"
 # Local Variables: #

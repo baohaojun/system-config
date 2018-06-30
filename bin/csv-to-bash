@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/perl
 
 # 这个文件会把一个 csv 文件转化成一个 bash 文件
 # 假设：csv 文件的第一行是 header，会给出每一列的名字
@@ -7,11 +7,14 @@
 # 其中 var1、var2、var3 等名字来自于 csv 文件的第一行；col1、col2、col3 等值则来自 csv 文件的当前行。
 # 然后，我在 shell 脚本里 read 到这一行输出之后，我直接 eval 一下它，就可以得到这些变量了
 
-perl -e '
+# 输出格式 2：允许一行 csv 对应多行 bash 输出，最后用一个 eor 表示“end of record”
+
+
 # {%perl-mode%}
 use Text::CSV;
 use strict;
 use String::ShellQuote;
+
 
 my $csv = Text::CSV->new ( { binary => 1 } )
     or die "Cannot use CSV: ".Text::CSV->error_diag ();
@@ -26,5 +29,3 @@ while (my $cols = $csv->getline_hr (*STDIN)) {
     }
     print "eor\n";
 }
-# {%/perl-mode%}
-' < "$1"
