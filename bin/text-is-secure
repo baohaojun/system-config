@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+# 此脚本判断文本是否“安全”，可以用 bash 进行解析
+# 1. 包含非 ascii 字符 => 不安全
+# 2. 包含 bash printf %q 会转义的字符 => 不安全
+#    for x in $(ascii); do printf "%q\n" "$x"; done|perl -ne 'while (m/\\./g) {print "$&\n"; }'|sort -u
+# 3. 包含非打印字符 => 不安全
+
+
+if echo "$@" | perl -ne "$(cat <<'EOF52688c179f06'
+# {%perl-mode%}
+exit 22 unless m/^[\x20-\x7e]*$/; # 空格（\x20）是第一个可打印的 ascii 字符，~（\x7e）是最后一个
+exit 22 if $. > 1;
+exit 21 if m/\!|\"|\#|\$|\&|\'|\(|\)|\*|\,|\;|\<|\>|\?|\[|\\|\]|\^|\`|\{|\||\}|\~/;
+# {%/perl-mode%}
+EOF52688c179f06
+)"; then
+    exit 0
+else
+    ret=$?
+    if test "$ret" = 22; then
+        die "你的输入中包含非 ascii 可打印字符（比如中文字符、控制字符、换行符等）"
+    elif test "$ret" = 21; then
+        die "你的输入中包含 shell 脚本特殊字符：$(echo \!\"\#\$\&\'\(\)\,\;\<\>\?\[\\\]\^\`\{\|\}\~)"
+    fi
+fi
+
