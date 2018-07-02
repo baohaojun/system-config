@@ -317,8 +317,8 @@
 
 (setq global-emacs-remap-alist
       '(("C-a" . '((t "Home")))
-        ("C-z" . '((Lxterminal "C-z" "z") (XTerm "C-z" "z") (Gnome-terminal "C-z" "z") (Xfce4-terminal "C-z" "z")))
-        ("Super-z" . '((Lxterminal "C-S-z" "z") (XTerm "C-S-z" "z") (Gnome-terminal "ctrl+shift+z" "z") (Xfce4-terminal "C-z" "z") (t "C-z")))
+        ("C-z" . '((Lxterminal "C-S-z" "z") (XTerm "C-z" "z") (Gnome-terminal "C-S-z" "z") (Xfce4-terminal "C-S-z" "z")))
+        ("Super-z" . '((Lxterminal "C-S-z" "z") (XTerm "C-S-z" "z") (Gnome-terminal "ctrl+shift+z" "z") (Xfce4-terminal "C-S-z" "z") (t "C-z")))
         ("Super-SPC" . '((Special-Notice "Check your ibus hotkey!") (Lxterminal "C-S-z") (XTerm "C-S-z") (Gnome-terminal "ctrl+shift+z") (Xfce4-terminal "C-z") (t "next")))
         ("C-g" . '((t "ESC")))
         ("Next" . '((qpdfview "SPC")))
@@ -601,7 +601,7 @@
                                  "C-r" '("C-r")
                                  "C-x" '("C-x"))))
 
-(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Gucharmap|^libre.*")
+(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Lxterminal|Gucharmap|^libre.*")
 
                                         ; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)

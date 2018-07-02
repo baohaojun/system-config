@@ -13,14 +13,19 @@ fi
 
 if test -e ~/.config/system-config/term-program; then
     ~/.config/system-config/term-program "$@"
-elif which lxterminal >/dev/null 2>&1; then
-    lxterminal -e myscr&
-    sawfish-wait-window -w Lxterminal
-    sawfish-client -e '(maximize-window (input-focus))'
-elif which gnome-terminal >/dev/null 2>&1; then
-    gnome-terminal -e myscr
-elif which konsole >/dev/null 2>&1; then
-    konsole -e myscr
-else
+elif which xterm >/dev/null 2>&1; then
     xterm -e myscr
+else
+    bhj-notify system-config "Can't find a “good” terminal, will try to find one that's “OK”."&
+    if which lxterminal >/dev/null 2>&1; then
+        lxterminal -e myscr&
+        sawfish-wait-window -w Lxterminal
+        sawfish-client -e '(maximize-window (input-focus))'
+    elif which gnome-terminal >/dev/null 2>&1; then
+        gnome-terminal -e myscr
+    elif which konsole >/dev/null 2>&1; then
+        konsole -e myscr
+    else
+        xterm -e myscr
+    fi
 fi
