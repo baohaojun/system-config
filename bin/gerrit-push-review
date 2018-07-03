@@ -438,7 +438,7 @@ done
 
 if is-tty-io && test $gpr_skip_local_review != true && yes-or-no-p -y "在请别人 review 之前，要不要先自己本地 review 一下（加 -R 参数可以跳过此提示）"; then
     (
-        cd $(dirname $(lookup-file -e .git))
+        cd $(lookup-file-dir -P -e .git)
         git-interactive-add -r "$(repo-remote-branch)" -b HEAD
     )
 fi
@@ -526,7 +526,7 @@ fi
 echo push ok.
 
 (
-    cd $(dirname $(lookup-file .git))
+    cd $(lookup-file-dir -P .git)
     set -e
     test -e .git
     if test -e .gerrit-hooks; then
