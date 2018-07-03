@@ -172,10 +172,14 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
             export REDO_REPO_SYNC=true
             (
                 for temp_retry in $(seq 1 20); do
+                    ## should just do retry
                     if grep "Permission denied (publickey)" $repo_sync_log &&
+                            ## should just do retry 2
                             grep "fatal: Could not read from remote repository" $repo_sync_log || (
                                 (
+                                    ## check if some projects failed which can be fixed
                                     grep 'error: Cannot remove project ".*":' $repo_sync_log ||
+                                        grep 'error: Cannot fetch' $repo_sync_log ||
                                         grep 'fatal: expected shallow/unshallow, got ERR internal server error' $repo_sync_log ||
                                         grep 'Disconnecting: Protocol error: expected packet type 31, got 94' $repo_sync_log ||
                                         grep 'fatal: remote error: want .* not valid' $repo_sync_log ||
@@ -186,6 +190,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log ||
                                         grep -o 'error.GitError: .* rev-list .*: ' $repo_sync_log | grep -v 'manifests rev-list'
                                 ) && (
+                                    ## fix failed projects.
                                     projects=$(
                                         (
                                             grep 'error: Cannot remove project ".*?":' $repo_sync_log -o -P | pn 2 \"
@@ -229,7 +234,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         )
                                 )
                             ) || (
-                                # manifest.git error, need run repo init again
+                                ## manifest.git error, need run repo init again
                                 if manifest_error=$(
                                         (
                                             grep '^project .repo/manifests/' $repo_sync_log &&
