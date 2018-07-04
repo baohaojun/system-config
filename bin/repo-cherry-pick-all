@@ -36,7 +36,7 @@ export -f skip-all-remaining-repos
 function cherry-skip() {
     commit=$git_commit_id
     skip_file=$(lookup-file -e out)/diff/${ap//\//%}.skip
-    (echo -n 'skip: '; grep $commit ${skip_file/.skip/.log}|head -n 1) | tee -a $skip_file
+    (echo -n 'skip: '; grep $commit ${skip_file/.skip/.csv}|head -n 1) | tee -a $skip_file
 }
 
 function cherry-ok() {
@@ -44,13 +44,13 @@ function cherry-ok() {
 
     ok_file=$(lookup-file -e out)/diff/${ap//\//%}.ok
 
-    (echo -n 'ok: '; grep $commit ${ok_file/.ok/.log}|head -n 1) | tee -a $ok_file
+    (echo -n 'ok: '; grep $commit ${ok_file/.ok/.csv}|head -n 1) | tee -a $ok_file
 }
 
 function cherry-fail() {
     fail_file=$(lookup-file -e out)/diff/${ap//\//%}.fail
 
-    (echo -n 'failed: '; grep $git_commit_id ${fail_file/.fail/.log}|head -n 1) | tee -a $fail_file
+    (echo -n 'failed: '; grep $git_commit_id ${fail_file/.fail/.csv}|head -n 1) | tee -a $fail_file
     git cherry-pick --abort || true
 }
 
