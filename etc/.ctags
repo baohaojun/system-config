@@ -32,6 +32,7 @@
 --regex-orgmode=/^([ \t]*function[ \t]+)([^ \t]+)/\2/f,function/
 --regex-orgmode=/^(\*+[ \t]+.*)/\1/s,struct/
 --regex-orgmode=/^(-+[ \t]+.*)/\1/s,struct/
+--regex-orgmode=/^[ \t]*:CUSTOM_ID:[ \t]*([^ \t]+)/\1/c,custom-id/
 --regex-orgmode=/^[ \t]*#\+name:[ \t]+([^ \t]+)/\1/n,name/
 --regex-orgmode=/^[ \t]*<<([^<>]*)>>/\1/c,call/
 --regex-orgmode=/^[ \t]*([^ \t()]+)\(\)[ \t]*\{/\1/f,function/
