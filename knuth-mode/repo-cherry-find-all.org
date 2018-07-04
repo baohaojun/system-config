@@ -87,7 +87,8 @@
       fi
   fi
   git-change-id-ffable $from $to > $log || true
-  if test $(stat -c %s $log) = 0; then
+  if test $(wc -l $log | pn 1) -le 1; then
+      # less then or eq to 1 line, the last line is the column names;
       rm $log;
   fi;
 

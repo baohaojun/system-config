@@ -103,7 +103,7 @@ Non-zero argument turns mode on.
 Zero argument turns mode off.
 
 Commands:
-\\{sdim-minor-entry-mode-map}
+\\{sdim-minor-mode-map}
 
 Entry to this mode calls the value of `sdim-minor-mode-hook'."
 

@@ -8,7 +8,8 @@ fi
 
 rm ~/.fonts/monaco-windows.ttf -f
 while true; do
-    python3 ~/system-config/gcode/scim-cs/ime-py/ime-server.py
+    python3 ~/system-config/gcode/scim-cs/ime-py/ime-server.py \
+            >> ~/.cache/system-config/ime-server.log 2>&1
     sleep 2
 done&
 
