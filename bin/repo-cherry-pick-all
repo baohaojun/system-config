@@ -354,7 +354,7 @@ for diff_file in $diffs; do
             declare -A already_handled_commit_map
             (head -n 1 $diff_file; grep -P -e "$1" $diff_file )|
                 csv-to-bash |
-                while read line; do
+                while read -r line; do
                     if test "$line" != eor; then
                         eval "$line"
                         continue

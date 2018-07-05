@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# dump the important info about the phone screen
+    # mOverscanScreen=(0,0) 1080x2242
+    # mRestrictedOverscanScreen=(0,0) 1080x2242
+    # mUnrestrictedScreen=(0,0) 1080x2242
+    # mRestrictedScreen=(0,0) 1080x2242
+    # mStableFullscreen=(0,0)-(1080,2242)
+    # mStable=(0,82)-(1080,2242)
+    # mSystem=(0,0)-(1080,2242)
+    # mCur=(0,82)-(1080,2242)
+    # mContent=(0,82)-(1080,2242)
+    # mVoiceContent=(0,82)-(1080,2242)
+    # mDock=(0,82)-(1080,2242)
+my-adb dumpsys window | grep '(mOverscanScreen|mRestrictedOverscanScreen|mUnrestrictedScreen|mRestrictedScreen|mStableFullscreen|mStable|mSystem|mCur|mContent|mVoiceContent|mDock)'= -P
