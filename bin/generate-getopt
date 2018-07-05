@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/generate-getopt.org::*%E6%9C%80%E7%BB%88%E8%84%9A%E6%9C%AC][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/generate-getopt.org::the-ultimate-script][the-ultimate-script]]
 # All bash scripts should start with ~set -e~ to fail early and loudly.
 set -e
 declare -A short_opts_map
@@ -9,9 +7,10 @@ declare -A long_opts_map
 declare -A help_map
 declare -A default_val_map
 declare -A var_name_map
+declare -A var_type_map
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts p:prefix Pposixly-correct lis-local H:global-help eexport-all
+# generate-getopts s:style=bash p:prefix Pposixly-correct lis-local H:global-help eexport-all
 ## end code-generator
 ## start generated code
 
@@ -20,8 +19,9 @@ global_help=
 is_local=false
 posixly_correct=false
 prefix=
+style=bash
 OPTIND=1
-while getopts "eH:lPp:h" opt; do
+while getopts "eH:lPp:s:h" opt; do
     case "$opt" in
 
         e) export_all=true ;;
@@ -29,6 +29,7 @@ while getopts "eH:lPp:h" opt; do
         l) is_local=true ;;
         P) posixly_correct=true ;;
         p) prefix=$OPTARG ;;
+        s) style=$OPTARG ;;
         h)
             echo
             echo
@@ -46,6 +47,9 @@ while getopts "eH:lPp:h" opt; do
             echo ''
             printf %06s%s '-p ' 'prefix'
             printf %-24s 'PREFIX'
+            echo ''
+            printf %06s%s '-s ' 'style'
+            printf %-24s 'STYLE'
             echo ''
             shift
             exit 0
@@ -67,6 +71,9 @@ while getopts "eH:lPp:h" opt; do
             echo ''
             printf %06s%s '-p ' 'prefix'
             printf %-24s 'PREFIX'
+            echo ''
+            printf %06s%s '-s ' 'style'
+            printf %-24s 'STYLE'
             echo ''
             exit 2
             ;;
@@ -115,30 +122,58 @@ while test "$1"; do
     done
 
     short_opts_map[$long]=$short
-    long_opts_map[$long]=$long
     if [[ $short =~ : ]]; then
+        var_type_map[$long]=string
         long_opts_map[$long]=$long:
-    fi
+        if test "${default:0:1}" = '('; then
+            var_type_map[$long]=array
+        fi
+    else
+        long_opts_map[$long]=$long
+        var_type_map[$long]=boolean
 
-    if ! [[ $short =~ : ]]; then
-        default_val_map[$long-off-]=false
-        default_val_map[$long-on-]=true
+        if test "${style}" = bash; then
+            default_val_map[$long-off-]=false
+            default_val_map[$long-on-]=true
+        elif test "${style}" = perl; then
+            default_val_map[$long-off-]=0
+            default_val_map[$long-on-]=1
+        fi
 
         if [[ $default =~ \( ]]; then
             eval bool_val=$default
-            default_val_map[$long-off-]=${bool_val[0]}
-            default_val_map[$long-on-]=${bool_val[1]}
-            if test ${#bool_val} = 3; then
-                default=${bool_val[2]}
+            if test "${style}" = bash; then
+                add_around=
             else
-                default=${bool_val[0]}
+                add_around=\'
+            fi
+
+            default_val_map[$long-off-]=${add_around}${bool_val[0]}${add_around}
+            default_val_map[$long-on-]=${add_around}${bool_val[1]}${add_around}
+            if test ${#bool_val} = 3; then
+                default=${add_around}${bool_val[2]}${add_around}
+            else
+                default=${add_around}${bool_val[0]}${add_around}
             fi
         elif test -z "$default"; then
-            default=false
+            if test "${style}" = bash; then
+                default=false
+            else
+                default=0
+            fi
         fi
     fi
-
-    default_val_map[$long]=$default
+    if test "$style" = bash; then
+        default_val_map[$long]=$default
+    elif test "$style" = perl; then
+        if test "${var_type_map[$long]}" = boolean; then
+            default_val_map[$long]=$default
+        elif test "${var_type_map[$long]}" = string; then
+            default_val_map[$long]=\'$default\';
+        elif test "${var_type_map[$long]}" = array; then
+            default_val_map[$long]='()'
+        fi
+    fi
     help_map[$long]=$help
     var_name_map[$long]=${long//-/_}
     if test "$prefix"; then
@@ -152,12 +187,14 @@ output-no-long-opts() {
     output_done=false
     for long in "${long_opts_sorted[@]}"; do
         short=${short_opts_map[$long]}
-        if ! [[ $short =~ : ]]; then
+        if test "${var_type_map[$long]}" = boolean; then
             echo -n ,no-$long
         fi
     done
 }
 
+
+if test "$style" = bash; then
 cat <<EOF
 TEMP=\$($(
             if test "$is_local" = true -o "$posixly_correct" = true; then
@@ -192,10 +229,6 @@ while true; do
   $(
 for long in "${long_opts_sorted[@]}"; do
     s=${short_opts_map[$long]}
-    is_boolean=true
-    if [[ $s =~ : ]]; then
-        is_boolean=false
-    fi
     s=${s/:/}
     var=${var_name_map[$long]}
     cat << EOF2
@@ -204,20 +237,18 @@ $(
         echo -n "-$s|"
     fi
     echo -n "--$long";
-    if test "$is_boolean" = true; then
+    if test "${var_type_map[$long]}" = boolean; then
         echo -n "|--no-$long"
     fi
     echo ")"
 )
 $(
-    if test $is_boolean = false; then
-        if test "${default_val_map[$long]:0:1}" = '('; then
-            echo ${var}=\(\"\${${var}[@]}\" \""\$2\""\)
-            echo shift 2
-        else
-            echo ${var}=\$2
-            echo shift 2
-        fi
+    if test "${var_type_map[$long]}" = array; then
+        echo ${var}=\(\"\${${var}[@]}\" \""\$2\""\)
+        echo shift 2
+    elif test "${var_type_map[$long]}" = string; then
+        echo ${var}=\$2
+        echo shift 2
     else
         cat << EOF3
 if test "\$1" = --no-$long; then
@@ -244,10 +275,6 @@ done
         echo echo Options and arguments:
         for long in ${long_opts_sorted[@]}; do
             short=${short_opts_map[$long]}
-            is_boolean=true
-            if [[ $short =~ : ]]; then
-                is_boolean=false
-            fi
             short=${short/:/}
             if test "$short"; then
                 echo printf "%06s" "'-$short, '"
@@ -255,7 +282,7 @@ done
                 echo 'printf "%06s" " "'
             fi
             long_output=$(
-                if test "$is_boolean" = true; then
+                if test "${var_type_map[$long]}" = boolean; then
                     echo -n --[no-]$long
                 else
                     uc_long=$long
@@ -291,9 +318,151 @@ done
 done
 
 EOF
+elif test "$style" = perl; then
+init-perl-var-info() {
+    var_name=${var_name_map[$long]}
+    sigil=\$
+    if test "${var_type_map[$long]}" = array; then
+        sigil=@
+    fi
+
+    v=${sigil}${var_name}
+
+    s=${short_opts_map[$long]}
+    s=${s%:}
+
+    l=${long_opts_map[$long]}
+    l=${l%:}
+
+    t=${var_type_map[$long]}
+
+    if test "$t" = boolean &&
+            test "${default_val_map[$long-off-]}" != 0 -o \
+                 "${default_val_map[$long-on-]}" != 1; then
+        need_handler=true
+        handler_name=handler_${var_name}
+        var_on_value=${default_val_map[$long-on-]}
+        var_off_value=${default_val_map[$long-off-]}
+    else
+        need_handler=false
+    fi
+}
+
+
+declare declare_perl_vars=$(
+    for long in "${long_opts_sorted[@]}"; do
+        init-perl-var-info
+        echo my $v = "${default_val_map[$long]}"\;
+    done
+                 )
+
+declare output_calls_to_GetOptions=$(
+    for long in "${long_opts_sorted[@]}"; do
+        init-perl-var-info
+        declare opt_name_spec=$(
+            echo -n "$l"
+            if test "$s"; then
+                echo -n "|$s"
+            fi
+                     )
+        declare opt_arg_spec=$(
+            if test ${t} = boolean; then
+                echo '!'
+            else
+                echo =s
+            fi
+                       )
+
+        declare opt_target_spec=$(
+            if test "$need_handler" = false; then
+                echo $v
+            else
+                echo \&$handler_name
+            fi
+                       )
+        cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+#'<%opt-name-spec%><%opt-arg-spec%>' => \<%opt-target-spec%>,
+EOF42934b465d64
+    done
+
+    opt_name_spec='help|h'
+    opt_arg_spec='!'
+    opt_target_spec='&handler_help'
+    cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+#'<%opt-name-spec%><%opt-arg-spec%>' => \<%opt-target-spec%>,
+EOF42934b465d64
+                          )
+
+declare output_handlers=$(
+    for long in "${long_opts_sorted[@]}"; do
+        init-perl-var-info
+        if test "${need_handler}" = true; then
+            cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+#sub <%handler-name%> {
+#    my ($opt_name, $opt_value) = @_;
+#    <%v%> = $opt_value ? <%var-on-value%> : <%var-off-value%>;
+#}
+EOF42934b465d64
+        fi
+    done
+        )
+
+declare output_help=$(
+    cat <<'EOFc6000ee724fd' | perl -npe 's/^#//' | . .replace-%%
+#print <%global-help%>;
+#print "\n\n选项和参数：\n";
+EOFc6000ee724fd
+
+    for long in "${long_opts_sorted[@]}"; do
+        init-perl-var-info
+        declare short_opt=
+        if test "$s"; then
+            short_opt="-$s, "
+        fi
+
+        if test "$t" = boolean; then
+            long_opt=--\[no\]$l
+        else
+            long_opt=--$l=${l^^}
+        fi
+
+        declare var_doc=${help_map[$long]}
+
+        cat <<'EOF7f0beacf3665' | perl -npe 's/^#//' | . .replace-%%
+#printf "%6s", '<%short-opt%>';
+#printf "%-24s", '<%long-opt%>';
+#if (length('<%long-opt%>') > 24 and length(<%var-doc%>) > 0) {
+#    print "\n";
+#    printf "%30s", "";
+#}
+#printf "%s", <%var-doc%>;
+#print "\n";
+#
+EOF7f0beacf3665
+    done
+        )
+
+
+cat <<'EOF42934b465d64' | . .replace-%%
+use Getopt::Long;
+
+<%declare-perl-vars%>
+
+GetOptions (
+<%output-calls-to-GetOptions%>
+    );
+
+<%output-handlers%>
+
+sub handler_help {
+    <%output-help%>
+
+    exit(0);
+}
+EOF42934b465d64
+fi
 
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here
