@@ -90,7 +90,6 @@ if test "$prompt"; then
 "$prompt"$(if test $empty_ok = true; then echo "（空白输入 OK）"; fi)
 
 # Local variables:
-# eval: (activate-input-method "sdim")
 # whitespace-cleanup-mode: nil
 # mode : $mode
 # End:
@@ -108,6 +107,13 @@ EOF
 fi
 
 echo -n Edit it... 1>&2
+emacsclient -e "
+; {%emacs-lisp-mode%}
+(progn
+  (find-file \"$tmp\")
+  (activate-input-method \"sdim\"))
+; {%/emacs-lisp-mode%}
+" >/dev/null 2>&1
 edit-wait $tmp >/dev/null 2>&1
 echo " done" 1>&2
 function get-rid-of-comment() {

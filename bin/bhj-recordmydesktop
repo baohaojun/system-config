@@ -6,17 +6,45 @@ touch ~/.config/system-config/is-recording-desktop
 . atexit rm ~/.config/system-config/is-recording-desktop
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt w:window-class
+# generate-getopt w:window-class=Wrench swait-for-start
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o w: --long "window-class:"  -n $(basename $0) -- "$@")
-window_class=
+TEMP=$( getopt -o sw:h \
+               --long wait-for-start,window-class:,help,no-wait-for-start \
+               -n $(basename -- $0) -- "$@")
+declare wait_for_start=false
+declare window_class=Wrench
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
+        -s|--wait-for-start|--no-wait-for-start)
+            if test "$1" = --no-wait-for-start; then
+                wait_for_start=false
+            else
+                wait_for_start=true
+            fi
+            shift
+
+            ;;
         -w|--window-class)
             window_class=$2
             shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-s, '
+            printf %-24s '--[no-]wait-for-start'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--window-class=WINDOW_CLASS'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -28,10 +56,12 @@ while true; do
     esac
 done
 
+
 ## end generated code
 
-if test -z "$window_class"; then
-    window_class=Wrench
+if test "${wait_for_start}" = true; then
+    while true; do sawfish-wait-for-start 2000; bhj-recordmydesktop -w "${window_class}"; done
+    exit
 fi
 
 recordmydesktop "$@" --on-the-fly-encoding $(sawfish-get-window-xy "$window_class" | tr -d \") -o $dir/out-$(now).ogv

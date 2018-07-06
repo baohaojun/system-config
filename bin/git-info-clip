@@ -58,7 +58,7 @@ fi
 
 cd -P .
 git_dir=$(dirname $(lookup-file .git))
-git_proj_http=$(repo-remote-url|perl -npe 's,git\@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
+git_proj_http=$(repo-remote-url|perl -npe 's,(git\@)?github.com:,https://github.com/,; s,git://,http://,; s,\.git$,,')
 
 if test "$blob" = true; then
     where=blob

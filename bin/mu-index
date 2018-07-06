@@ -4,6 +4,6 @@
 if which mu >/dev/null 2>&1; then
     mu index || (
         ps.pl mu.server &&
-            emacsclient -e '(mu4e-update-index)'
+            emacsclient -e '(mu4e-update-mail-and-index t)'
     )
 fi

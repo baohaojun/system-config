@@ -120,7 +120,7 @@ EOF
             rel_next_url=$(relative_url $next_url $curr_url)
             cat "$x"
             cat <<EOF
-#+BEGIN_HTML
+#+BEGIN_EXPORT html
       <nav>
         <ul id="prev_next_posts">
           <li class="prev_post">
@@ -137,7 +137,7 @@ EOF
           </li>
         </ul>
       </nav>
-#+END_HTML
+#+END_EXPORT
 EOF
         ) > $tf.org
 

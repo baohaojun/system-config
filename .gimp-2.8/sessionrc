@@ -48,7 +48,7 @@
                 (aux-info
                     (show-button-bar "true"))))
         (book
-            (position 255)
+            (position 309)
             (current-page 0)
             (dockable "gimp-brush-grid"
                 (tab-style automatic)
