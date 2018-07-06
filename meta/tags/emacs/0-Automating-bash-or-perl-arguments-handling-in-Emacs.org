@@ -1,0 +1,1 @@
+../../../blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.org

@@ -1,0 +1,296 @@
+#+title: Automating bash/perl arguments handling in Emacs
+# bhj-tags: emacs
+Programming is mostly about 3 things:
+
+1. What is your input?
+2. What is your output?
+3. How do you compute from your input to your output?
+
+Now, when writing bash or perl scripts, often you need to get your input from command line arguments, and you need to do complex argument handling if you want it to be flexible and user friendly.
+
+I have boiled it down to a very simple and terse way in Emacs. For e.g., if I want to handle 2 arguments like this: =--[no-]debug --serial 123456=, I need only type =Getopt M-tab ddebug s:serial M-s g=. Here's a screencast of me writing the script:
+
+
+[[./../../../../images/Getopt.gif]]
+
+Here's the detailed steps:
+
+1. Type =Getopt=, which is a yasnippet in my emacs environment.
+
+2. Expand it (typing =M-tab=) with yasnippet to this, where $0 is the point after expansion:
+
+   #+BEGIN_SRC sh
+     ## start code-generator "^\\s *#\\s *"
+     # generate-getopt $0
+     ## end code-generator
+     ## start generated code
+
+     ## end generated code
+
+   #+END_SRC
+
+3. Start inputing the argument spec
+
+   For e.g., if I want these options:
+
+   - A boolean option “debug”, which can be input with =-d= or =--debug= (and toggled with =--no-debug=)
+   - An option “serial” that requires an argument, which can be input with =-s SERIAL= or =--serial SERIAL=
+
+   I need only input =ddebug s:serial=, making it like this:
+
+   #+BEGIN_SRC sh
+     ## start code-generator "^\\s *#\\s *"
+     # generate-getopt ddebug s:serial
+     ## end code-generator
+     ## start generated code
+
+     ## end generated code
+
+   #+END_SRC
+
+4. Type a short cut key =M-s g= (here the 2 keys =s= and =g= means Sourcecode Generation), and ta-da, I suddenly get the complete bash argument handling script (help include!):
+
+   #+BEGIN_SRC sh
+
+     ## start code-generator "^\\s *#\\s *"
+     # generate-getopt ddebug s:serial
+     ## end code-generator
+     ## start generated code
+     TEMP=$( getopt -o ds:h \
+                    --long debug,serial:,help,no-debug \
+                    -n $(basename -- $0) -- "$@")
+     declare debug=false
+     declare serial=
+     eval set -- "$TEMP"
+     while true; do
+         case "$1" in
+
+             -d|--debug|--no-debug)
+                 if test "$1" = --no-debug; then
+                     debug=false
+                 else
+                     debug=true
+                 fi
+                 shift
+
+                 ;;
+             -s|--serial)
+                 serial=$2
+                 shift 2
+
+                 ;;
+             -h|--help)
+                 set +x
+                 echo -e
+                 echo
+                 echo Options and arguments:
+                 printf %06s '-d, '
+                 printf %-24s '--[no-]debug'
+                 echo
+                 printf %06s '-s, '
+                 printf %-24s '--serial=SERIAL'
+                 echo
+                 exit
+                 shift
+                 ;;
+             --)
+                 shift
+                 break
+                 ;;
+             ,*)
+                 die "internal error"
+                 ;;
+         esac
+     done
+
+
+     ## end generated code
+
+   #+END_SRC
+
+If I save the above script in a file named =./test.sh=, I can print the script's usage with =./test.sh -h=:
+
+#+BEGIN_EXAMPLE
+$bash ./test.sh -h
+
+Options and arguments:
+  -d, --[no-]debug
+  -s, --serial=SERIAL
+#+END_EXAMPLE
+
+** Change it to do perl argument handling
+
+I do exactly the same things (=Getopt M-tab ddebug s:serial M-s g=) as above, except this time it's in a perl-mode buffer.
+
+The perl-mode's =Getopt= snippet will expand differently by adding =-s perl=:
+
+#+BEGIN_SRC perl
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt -s perl ddebug s:serial
+  ## end code-generator
+  ## start generated code
+
+  ## end generated code
+
+#+END_SRC
+
+After I press =M-s g= for Sourcecode Generation, I get this wonderful perl argument handling script:
+
+#+BEGIN_SRC perl
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt -s perl ddebug s:serial
+  ## end code-generator
+  ## start generated code
+  use Getopt::Long;
+
+  my $debug = 0;
+  my $serial = '';
+
+  GetOptions (
+      'debug|d!' => \$debug,
+      'serial|s=s' => \$serial,
+      'help|h!' => \&handler_help,
+      );
+
+
+
+  sub handler_help {
+      print ;
+      print "\n\n选项和参数：\n";
+      printf "%6s", '-d, ';
+      printf "%-24s", '--[no]debug';
+      if (length('--[no]debug') > 24 and length() > 0) {
+          print "\n";
+          printf "%30s", "";
+      }
+      printf "%s", ;
+      print "\n";
+      printf "%6s", '-s, ';
+      printf "%-24s", '--serial=SERIAL';
+      if (length('--serial=SERIAL') > 24 and length() > 0) {
+          print "\n";
+          printf "%30s", "";
+      }
+      printf "%s", ;
+      print "\n";
+
+      exit(0);
+  }
+
+  ## end generated code
+
+
+#+END_SRC
+
+And I can save it in a =test.pl= and test it with =perl ./test.pl -h=:
+
+#+BEGIN_EXAMPLE
+$perl test.pl -h
+
+
+选项和参数：
+  -d, --[no]debug
+  -s, --serial=SERIAL
+#+END_EXAMPLE
+
+** Feature list
+
+1. Argument spec is from =man getopt(3)=, where =:= after a character means required argument.
+2. Allow to add default value:
+
+   #+BEGIN_SRC sh
+     generate-getopt s:serial=12345678
+   #+END_SRC
+
+3. Allow to add help for the whole script and each option with '?':
+
+   #+BEGIN_SRC sh
+     generate-getopt \
+         '?"This script makes argument handling piece of cake."' \
+         s:serial=12345678 '?"Specify your serial number."'
+   #+END_SRC
+
+   After code generation, if you test with =--help=, output is like:
+   #+BEGIN_EXAMPLE
+     This script makes argument handling piece of cake.
+
+     Options and arguments:
+       -s, --serial=SERIAL         Specify your serial number.
+
+   #+END_EXAMPLE
+
+4. Allows array type options: simply specify the argument with ~='()'~:
+
+   #+BEGIN_SRC sh
+     generate-getopt \
+         '?"This script makes argument handling piece of cake."' \
+         s:serial='()' '?"Specify your serial number."'
+
+   #+END_SRC
+
+5. By default, the argument variable name come from changing =-= in the spec to =_=:
+
+   =s:serial-number= will allow you to specify ~--serial-numebr=abcxyz~, and in the script, you get a variable =serial_number= whose value is =abcxyz=.
+
+   You can also add a prefix with =-p pre= if you need to avoid variable namespace clash, for e.g., this will get you a variable named =bhj_serial_number= instead of serial_number:
+
+   #+BEGIN_SRC sh
+     generate-getopt -p bhj s:serial-number
+   #+END_SRC
+
+* Implementation
+
+All code is in my [[https://github.com/baohaojun/system-config][system-config]] project and its sub-projects.
+
+But in case you are lost, here's some explanations.
+
+** Getopt is a yasnippet both in my sh-mode and perl-mode:
+
+- This is for sh-mode:
+
+  #+BEGIN_SRC snippet
+    # -*- mode: snippet -*-
+    # key: Getopt
+    # name: Getopt
+    # --
+
+    ## start code-generator "^\\\\s *#\\\\s *"
+    # generate-getopt ${1:ggnu p:phone}
+    ## end code-generator
+    ## start generated code
+
+    ## end generated code
+  #+END_SRC
+
+- This is for perl-mode (only added a =-s perl= from sh-mode):
+
+  #+BEGIN_SRC snippet
+    # -*- mode: snippet -*-
+    # key: Getopt
+    # name: Getopt
+    # --
+
+    ## start code-generator "^\\\\s *#\\\\s *"
+    # generate-getopt -s perl ${1:ggnu p:phone}
+    ## end code-generator
+    ## start generated code
+
+    ## end generated code
+
+  #+END_SRC
+
+** code-generator and generated code
+
+The strange commented text above is for [[https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-defines.el][Emacs lisp command bhj-do-code-generation]].
+
+It works by extracting the “code generator”, discard the extra comment character, run it, play its output into “generated code”, and indent it.
+
+It's kind of like org-mode's inserting “Results of evaluation” back into the current buffer.
+
+** generate-getopt
+
+[[https://github.com/baohaojun/system-config/raw/master/bin/generate-getopt][This script]] is written with [[https://github.com/baohaojun/system-config/raw/master/knuth-mode/generate-getopt.org][literate programming in org-mode]] (it's Chinese😁).
+
+The Bash style getopt is written a long time ago, and the code is quite messy.
+
+The Perl style getopt is added recently, where I tried to use [[https://github.com/baohaojun/system-config/raw/master/bin/.replace-%25%25][a script inspired by ANTLR's string-template]], and the code is a lot better.

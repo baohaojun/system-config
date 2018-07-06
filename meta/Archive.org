@@ -1,5 +1,10 @@
 #+title: Archive
  * 2018
+  - 2018-07
+   * 2018-07-05
+
+     [[../blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.org][Automating bash/perl arguments handling in Emacs]]
+
   - 2018-05
    * 2018-05-02
 
