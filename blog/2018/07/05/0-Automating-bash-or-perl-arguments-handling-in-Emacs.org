@@ -10,7 +10,6 @@ Now, when writing bash or perl scripts, often you need to get your input from co
 
 I have boiled it down to a very simple and terse way in Emacs. For e.g., if I want to handle 2 arguments like this: =--[no-]debug --serial 123456=, I need only type =Getopt M-tab ddebug s:serial M-s g=. Here's a screencast of me writing the script:
 
-
 [[./../../../../images/Getopt.gif]]
 
 Here's the detailed steps:
@@ -293,4 +292,4 @@ It's kind of like org-mode's inserting “Results of evaluation” back into the
 
 The Bash style getopt is written a long time ago, and the code is quite messy.
 
-The Perl style getopt is added recently, where I tried to use [[https://github.com/baohaojun/system-config/raw/master/bin/.replace-%25%25][a script inspired by ANTLR's string-template]], and the code is a lot better.
+The Perl style getopt is added recently, where I tried to use [[https://github.com/baohaojun/system-config/raw/master/bin/.replace-%2525%2525][a script inspired by ANTLR's string-template]], and the code is a lot better.
