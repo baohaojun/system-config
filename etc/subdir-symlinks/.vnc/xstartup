@@ -16,3 +16,16 @@ command renew-xauth ~/.renew-xauth.${DISPLAY##*:}
 
 
 sawfish&
+
+xterm -e myscr bash -c '
+# {%sh-mode%}
+Wrench&
+
+export ANDROID_SERIAL=3affc223
+while ! my-adb devices\? -1; do
+    sleep 1
+done
+
+onmyoji play-2
+# {%/sh-mode%}
+'
