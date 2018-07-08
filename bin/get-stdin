@@ -115,6 +115,14 @@ emacsclient -e "
 ; {%/emacs-lisp-mode%}
 " >/dev/null 2>&1
 edit-wait $tmp >/dev/null 2>&1
+
+emacsclient -e "
+; {%emacs-lisp-mode%}
+(progn
+  (find-file \"$tmp\")
+  (kill-buffer))
+; {%/emacs-lisp-mode%}" >/dev/null 2>&1
+
 echo " done" 1>&2
 function get-rid-of-comment() {
     cat "$@" | perl -ne '
