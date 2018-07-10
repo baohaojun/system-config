@@ -73,6 +73,14 @@ def ali_folder_match(folder, pats):
         return False
     if folder.find("已删除邮件") >= 0:
         return False
+    if folder.find("ignoreinbox") >= 0:
+        return False
+    if folder.find("failinbox") >= 0:
+        return False
+    if folder.find("-inbox") >= 0:
+        return False
+    if folder.find("2014inbox") >= 0:
+        return False
     for pat in pats:
         if pat in folder:
             return True

@@ -3,17 +3,27 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt fforce
+# generate-getopt fforce ndry-run
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o fh \
-              --long force,help,no-force \
-              -n $(basename -- $0) -- "$@")
-force=false
+TEMP=$( getopt -o nfh \
+               --long dry-run,force,help,no-dry-run,no-force \
+               -n $(basename -- $0) -- "$@")
+declare dry_run=false
+declare force=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -n|--dry-run|--no-dry-run)
+            if test "$1" = --no-dry-run; then
+                dry_run=false
+            else
+                dry_run=true
+            fi
+            shift
+
+            ;;
         -f|--force|--no-force)
             if test "$1" = --no-force; then
                 force=false
@@ -21,12 +31,16 @@ while true; do
                 force=true
             fi
             shift
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--[no-]dry-run'
+            echo
             printf %06s '-f, '
             printf %-24s '--[no-]force'
             echo
@@ -66,6 +80,10 @@ if grep '^WARNING:OfflineImap:UID validity problem for folder' "$1" -q; then
         perl -ne 'print if s/WARNING:OfflineImap:UID validity problem for folder (.*?) \(repo Remote-(.*?)\).*/$1 $2/' |
         sort -u |
         while read mailbox repo; do
+            if test "$dry_run" = true; then
+                echo "$mailbox:$repo"
+                continue
+            fi
             account=${repo_to_account[$repo]}
             maildir=~/Maildir/${account_to_maildir[$account]}.$mailbox
             if test ! -d $maildir; then
