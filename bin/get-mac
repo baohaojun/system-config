@@ -7,7 +7,11 @@ fi
 
 case $(uname) in
     Darwin|Linux)
-        ifconfig | grep -B 1 -P -e '^\s+ether\s+'|perl -ne '
+        dev=$(
+            route -n | grep '^\Q0.0.0.0\E' -P | sort -n -k 5|pn 8|head -n 1
+           )
+        ifconfig $dev | grep -B 1 -P -e '^\s+ether\s+'|perl -ne '
+            # {%perl-mode%}
             if (m/^p2p\d+:/) {
                 $p2p = 1;
             } elsif (m/^\w+:/) {
@@ -17,7 +21,9 @@ case $(uname) in
                     print $1;
                     exit 0
                 }
-            } '
+            }
+            # {%/perl-mode%}
+        '
         ;;
     CYGWIN*)
         ifconfig /all | tr -d '\r' | perl -ne 'if (m/eth\d+:\s*$/)

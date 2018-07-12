@@ -21,10 +21,12 @@
      ((list? (car list))
       (all-even*-col
        (car list)
-       (lambda (new-list product)
-         (col (cons new-list (all-even*-col
-                              (cdr list) (lambda (new-list-2 product-2) new-list-2)))
-              (* product (all-even*-col (cdr list) (lambda (new-list-3 product-3) product-3))))))))))
+       (lambda (al ap)
+         (all-even*-col (cdr list)
+                        (lambda (dl dp)
+                          (col
+                           (cons al dl)
+                           (* ap dp))))))))))
 
 (define col (lambda (l p) (cons p l)))
 (all-even*-col '(1 2 3 (2 3 5 2) 5 2) col)
