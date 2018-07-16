@@ -15,8 +15,15 @@ else
 fi
 
 if [[ "$target" =~ \.org$ ]]; then
+    org_target=$target
     target=$(perl -ne 'print $1 if m/:tangle (\S+) /' "$target")
     target=${target/#\~/$HOME}
+    if ! [[ $target =~ ^/ ]]; then
+        target=$(
+            cd $(dirname "$org_target")
+            readlink -m $target
+              )
+    fi
     e $target
     exit
 fi
