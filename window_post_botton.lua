@@ -149,6 +149,7 @@ map['com.reddit.frontpage/com.reddit.frontpage.SubredditSearchActivity'] = 'manu
 map['com.sdu.didi.psnger/com.didi.beatles.im.activity.IMMessageActivity'] = 'manual-post'
 map['com.sdu.didi.psnger/com.didi.one.login.fullpage.FullPageLoginActivity'] = 'manual-post'
 map['com.sdu.didi.psnger/com.didi.sdk.webview.WebActivity'] = 'manual-post'
+map['com.sdu.didi.psnger/com.didi.unifylogin.entrance.OneLoginActivity'] = 'manual-post'
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'weixin-chat'
 map['com.skype.raider/com.microsoft.onlineid.internal.ui.WebFlowActivity'] = 'manual-post'
 map['com.skype.raider/com.skype.android.app.chat.ChatActivity'] = 'weixin-chat'
