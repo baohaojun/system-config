@@ -1,4 +1,26 @@
 #!/bin/bash
+
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+if test "$b0" = screen-is-on; then
+    if test -e ~/.cache/system-config/logs/screen-on; then
+        exit 0
+    else
+        exit 1
+    fi
+fi
+
+set +e
 exec >> ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
 set -x
 date
@@ -8,11 +30,13 @@ if test $(basename $0) = screen-lock-off; then
     xdotool mousemove 20 10
     sleep 1
     xdotool mousemove 1024 10
+    touch ~/.cache/system-config/logs/screen-on
     # if test -e ~/src/github/private-config/.gitconfig.bhj; then
     #     am dvp
     # fi
 else # lock on
     # my-adb key power
+    rm touch ~/.cache/system-config/logs/screen-on -f
     destroy-windows Wrench
     true
 fi
