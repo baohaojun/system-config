@@ -2,13 +2,14 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt aall-dev
+# generate-getopt aall-dev w:window
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o ah \
-               --long all-dev,help,no-all-dev \
+TEMP=$( getopt -o aw:h \
+               --long all-dev,window:,help,no-all-dev \
                -n $(basename -- $0) -- "$@")
-all_dev=false
+declare all_dev=false
+declare window=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -20,6 +21,12 @@ while true; do
                 all_dev=true
             fi
             shift
+
+            ;;
+        -w|--window)
+            window=$2
+            shift 2
+
             ;;
         -h|--help)
             set +x
@@ -28,6 +35,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-a, '
             printf %-24s '--[no-]all-dev'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--window=WINDOW'
             echo
             exit
             shift
@@ -47,7 +57,13 @@ done
 
 if test "$all_dev" = true; then
     for x in $(my-adb devices?|pn 1); do
-        ANDROID_SERIAL=$x adb-lcd "$@"&
+        export ANDROID_SERIAL=$x
+        (
+            if test "$window" && ! adb-top-activity | grep "$window"; then
+                exit
+            fi
+            adb-lcd "$@"
+        )&
     done
     exit
 fi
