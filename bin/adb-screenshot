@@ -1,7 +1,6 @@
 #!/bin/bash
 
-exec 1>&2
-
+exec 1>&2 # must not change this line, because onmyoji depend on it for orientation.
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt x:x=0 y:y=0 s:s=0 '?size' @:cord-orientation eedit @:sticky='${phone_sticky:-0}'
@@ -142,7 +141,12 @@ y=$((y < 0 ? 0 : y))
 
 if test "$x" != 0 -o "$X" != 0; then
     sd_file=$(basename "$1").jpg
-    adb shell /data/data/com.android.shell/screencap -x $x -y $y -X $X -Y $Y -s $sticky /sdcard/$sd_file
+    adb shell /data/data/com.android.shell/screencap \
+        -x $x -y $y -X $X -Y $Y $(
+        if test "$sticky" != 0; then
+            echo -s $sticky;
+        fi
+        ) /sdcard/$sd_file
 else
     adb shell screencap /sdcard/screen.png
     sd_file=screen.png
