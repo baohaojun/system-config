@@ -133,35 +133,39 @@ int main(int argc, char** argv)
     int Y = 0;
     int32_t displayId = DEFAULT_DISPLAY_ID;
     int c;
-    while ((c = getopt(argc, argv, "jphd:x:y:X:Y:")) != -1) {
+    uint32_t sticky_status_bar_height = 0;
+    while ((c = getopt(argc, argv, "jphd:x:y:X:Y:s:")) != -1) {
         switch (c) {
-            case 'p':
-                png = true;
-                break;
+        case 'p':
+            png = true;
+            break;
         case 'j':
             jpg = true;
             break;
 
-            case 'd':
-                displayId = atoi(optarg);
-                break;
-            case 'x':
-                fprintf(stderr, "x = %s\n", optarg);
-                x = atoi(optarg);
-                break;
-            case 'y':
-                y = atoi(optarg);
-                break;
-            case 'X':
-                X = atoi(optarg);
-                break;
-            case 'Y':
-                Y = atoi(optarg);
-                break;
-            case '?':
-            case 'h':
-                usage(pname);
-                return 1;
+        case 'd':
+            displayId = atoi(optarg);
+            break;
+        case 'x':
+            fprintf(stderr, "x = %s\n", optarg);
+            x = atoi(optarg);
+            break;
+        case 'y':
+            y = atoi(optarg);
+            break;
+        case 'X':
+            X = atoi(optarg);
+            break;
+        case 'Y':
+            Y = atoi(optarg);
+            break;
+        case 's':
+            sticky_status_bar_height = atoi(optarg);
+            break;
+        case '?':
+        case 'h':
+            usage(pname);
+            return 1;
         }
     }
     argc -= optind;
@@ -249,6 +253,9 @@ int main(int argc, char** argv)
             y = configs[activeConfig].h - Y;
             X = updateH + x;
             Y = updateW + y;
+        } else {
+            y += sticky_status_bar_height;
+            Y += sticky_status_bar_height;
         }
     }
 
