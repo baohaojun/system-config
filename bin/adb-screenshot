@@ -2,6 +2,8 @@
 
 exec 1>&2 # must not change this line, because onmyoji depend on it for orientation.
 
+# echo phone_sticky=$phone_sticky $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$(echo "$@"|md5sum | cut -b 1-8)&
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt x:x=0 y:y=0 s:s=0 '?size' @:cord-orientation eedit @:sticky='${phone_sticky:-0}'
 ## end code-generator
