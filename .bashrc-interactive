@@ -515,6 +515,6 @@ fi
 . ~/system-config/.bashrc-aliases
 
 export HISTCONTROL="ignoredups"
-export HISTIGNORE="bg:fg:exit"
+export HISTIGNORE="bg:fg:exit:declare[ ]*-x*"
 export HISTSIZE=2000
 export HISTFILESIZE=2000
