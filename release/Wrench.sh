@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if ! [[ $LANG =~ en_US ]]; then
+    exec en_US Wrench.sh "$@"
+fi
+
 memory=$(free | grep ^Mem: | pn 2)
 ulimit -v $((memory / 2))
 
@@ -152,7 +156,7 @@ EOF
 '
     fi
     . reget-env -k
-    nohup Wrench.sh&
+    nohup Wrench.sh -1&
     exit
 fi
 
@@ -163,7 +167,7 @@ fi
 
 if test "$test" = true; then
     unset ANDROID_SERIAL
-elif test "$ANDROID_SERIAL" -a "$one_phone" = true; then
+elif test "$ANDROID_SERIAL" && test "$one_phone" = true -o "$WRENCH_INSTANCE"; then
     true
 else
     export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
@@ -179,10 +183,6 @@ fi
 if test "$do_debug" = true; then
     cd ~/
     exec gdb --args Wrench
-fi
-
-if ! [[ $LANG =~ en_US ]]; then
-    exec en_US Wrench.sh "$@"
 fi
 
 # adb forward --remove tcp:28888
