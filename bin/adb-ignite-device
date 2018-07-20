@@ -9,8 +9,8 @@ if test $(basename $0) = adb-ignite-device -o $(basename $0) = adb-power-on; the
         onmyoji do-raw-scroll  100 1900 100 20 500
         sleep 2
         if test "$activity" = Keyguard -o "$activity" = StatusBar; then
-            if test -e ~/src/github/private-config/doc/onmyoji-unlock-phone; then
-                ~/src/github/private-config/doc/onmyoji-unlock-phone
+            if test -e ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone; then
+                ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone
             fi
         fi
     elif test "$activity" = RecentsPanel; then
