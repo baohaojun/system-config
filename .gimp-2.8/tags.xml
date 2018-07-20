@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <tags>
 
-  <resource identifier="gimp-brush-clipboard" checksum="3395acb0e306e16bd1729d81d36ef8ac">
+  <resource identifier="gimp-brush-clipboard" checksum="bbe75e95a261baed6bd9c01c106e2c14">
   </resource>
 
   <resource identifier="${gimp_data_dir}/brushes/Basic/1-pixel.vbr" checksum="b22c1fec1056f979b1d17e4cc80e9112">
@@ -217,7 +217,7 @@
   <resource identifier="${gimp_data_dir}/dynamics/Velocity-Tapering.gdyn" checksum="(null)">
   </resource>
 
-  <resource identifier="gimp-pattern-clipboard" checksum="59062d82227a1e210c8e3dad424b1d3f">
+  <resource identifier="gimp-pattern-clipboard" checksum="1791cabd326d01c99fdd72a54484e2de">
   </resource>
 
   <resource identifier="${gimp_data_dir}/patterns/3dgreen.pat" checksum="00052731f14a5bc614daece969b368bc">

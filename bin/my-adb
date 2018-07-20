@@ -213,61 +213,6 @@ function adb() {
         done
     fi
 
-    if test "$1" = remount; then
-
-        if test "$#" = 1; then
-            sdk_version=$(
-                my-adb getprop ro.build.version.sdk
-                       )
-            build_type=$(
-                my-adb getprop ro.build.type
-                      )
-            adb_uid=$(
-                my-adb id|pn 1|grep '\d+' -o -P
-                   )
-            if test "$adb_uid" != 0; then
-                die "你没有 root 权限，无法 remount，请先运行 adb root"
-            fi
-
-            (
-                do-disable-verity-reboot() {
-                    hint "刚 disable 了 verity，手机需要重启才可以 remount"
-                    the-true-adb reboot
-                    sleep 5
-                    my-adb -W
-                    my-adb -r echo root check ok
-                }
-
-                if test "$sdk_version" -gt 25 -a "$build_type" = user; then
-                    if test -e ~/src/github/smartcm/sse-helpers/.hack-verity; then
-                        . ~/src/github/smartcm/sse-helpers/.hack-verity
-                    fi
-                fi
-
-                if the-true-adb disable-verity 2>&1 |grep -q 'Now reboot your device for settings to take effect'; then
-                    do-disable-verity-reboot
-                fi
-            )
-            the-true-adb remount
-            if ! command my-adb -r shell sh -c 'mount | grep -q "/system .*rw,"'; then
-                echo "adb remount 已运行，但事实上 /system 分区并没有被 remount 成 rw，接下来将尝试直接使用 adb shell mount 命令"
-                if command my-adb -r shell sh -c 'mount -o rw,remount /system;
-                                        mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
-                                                          mount | grep -q "/system .*rw,"'; then
-                    echo "已经将 /system mount 为 rw 模式，注意在 system-config 环境下也可以运行 adb romount 重新 mount 成 read-only:D"
-                else
-                    echo "好像还是没能把 /system mount 为 rw 模式，注意并不是所有手机都支持 remount 的，按安卓官方的设计，只有 userdebug 才允许 remount。。。"
-                    exit 1
-                fi
-
-            fi
-            exit
-        elif test "$2" = /; then
-            command my-adb -r shell sh -c 'mount -o rw,remount /; mount | grep rootfs'
-            exit
-        fi
-    fi
-
     if test "$#" = 2 -a "$1" = reboot -a "$2" = fastboot; then
         adb reboot bootloader
         exit 0

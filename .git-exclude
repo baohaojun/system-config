@@ -17,3 +17,4 @@ modules.order
 .~lock*
 *.log
 core.*.[0-9]*
+nohup.out

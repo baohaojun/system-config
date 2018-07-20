@@ -11,5 +11,10 @@
     # mCur=(0,82)-(1080,2242)
     # mContent=(0,82)-(1080,2242)
     # mVoiceContent=(0,82)-(1080,2242)
-    # mDock=(0,82)-(1080,2242)
-my-adb dumpsys window | grep '(mOverscanScreen|mRestrictedOverscanScreen|mUnrestrictedScreen|mRestrictedScreen|mStableFullscreen|mStable|mSystem|mCur|mContent|mVoiceContent|mDock)'= -P
+# mDock=(0,82)-(1080,2242)
+my-adb dumpsys window |
+    if test $# = 0; then
+        grep '(mOverscanScreen|mRestrictedOverscanScreen|mUnrestrictedScreen|mRestrictedScreen|mStableFullscreen|mStable|mSystem|mCur|mContent|mVoiceContent|mDock)'= -P
+    else
+        perl -ne "print if m/ Window #\d+ Window.*$1/ ... m/ Window #\d+ Window/"
+    fi

@@ -140,7 +140,7 @@
 
 (bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "F1"  '(system "EMACS=t do-capture&"))
-(bind-keys s-h-keymap "F2"  '(system "find-or-exec 'Wrench V%Wrench' Wrench.sh&"))
+(bind-keys s-h-keymap "F2"  '(system "Wrench.sh&"))
 (bind-keys s-h-keymap "F3"  '(system "find-or-exec gjiten gjiten&"))
 (bind-keys s-h-keymap "S"  '(system "os&"))
 (bind-keys s-h-keymap "n"  '(system "douban next&"))
@@ -164,7 +164,7 @@
 (bind-keys s-h-keymap "p"  '(system "emacs-get-android-clipboard&"))
 (bind-keys s-h-keymap "P"  '(system "emacs-get-android-phone&"))
 (bind-both-global&window-keymaps "XF86Launch5" '(system "EMACS=t do-capture&"))
-(bind-both-global&window-keymaps "XF86Launch6" '(system "find-or-exec 'Wrench V%Wrench' Wrench.sh&"))
+(bind-both-global&window-keymaps "XF86Launch6" '(system "Wrench.sh&"))
 (bind-keys s-h-keymap "XF86Launch6" '(system "Wrench.sh&"))
 (bind-both-global&window-keymaps "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
 (bind-both-global&window-keymaps "XF86Launch8" '(system "custom-command&"))

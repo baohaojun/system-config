@@ -1,0 +1,16 @@
+#!/usr/bin/expect -f
+
+set cmd [lindex $argv 0]
+
+spawn bash
+
+set timeout 60
+
+expect {
+    -re "\\$" {
+        send "$cmd\n"
+    }
+}
+
+interact
+exit [lindex [wait] 3]

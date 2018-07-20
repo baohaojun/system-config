@@ -1,69 +1,113 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts wwait-exit n:window-name s:session-name S:start-cmd ddebug
+# generate-getopt -P wwait-exit n:window-name s:session-name S:start-cmd ddebug ekeep-env @with-tty
 ## end code-generator
 ## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o des:S:wn:h \
+                      --long debug,keep-env,session-name:,start-cmd:,wait-exit,window-name:,with-tty,help,no-debug,no-keep-env,no-wait-exit,no-with-tty \
+                      -n $(basename -- $0) -- "$@")
+declare debug=false
+declare keep_env=false
+declare session_name=
+declare start_cmd=
+declare wait_exit=false
+declare window_name=
+declare with_tty=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-session_name=
-start_cmd=
-wait_exit=false
-debug=false
-window_name=
-OPTIND=1
-while getopts "s:S:wdn:h" opt; do
-    case "$opt" in
-
-        s) session_name=$OPTARG ;;
-        S) start_cmd=$OPTARG ;;
-        w) wait_exit=true ;;
-        d) debug=true ;;
-        n) window_name=$OPTARG ;;
-        h)
-            echo
-            echo
-            printf %06s%s '-d ' 'debug'
-            printf %-24s ''
-            echo ''
-            printf %06s%s '-s ' 'session-name'
-            printf %-24s 'SESSION_NAME'
-            echo ''
-            printf %06s%s '-S ' 'start-cmd'
-            printf %-24s 'START_CMD'
-            echo ''
-            printf %06s%s '-w ' 'wait-exit'
-            printf %-24s ''
-            echo ''
-            printf %06s%s '-n ' 'window-name'
-            printf %-24s 'WINDOW_NAME'
-            echo ''
+        -d|--debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
             shift
-            exit 0
+
+            ;;
+        -e|--keep-env|--no-keep-env)
+            if test "$1" = --no-keep-env; then
+                keep_env=false
+            else
+                keep_env=true
+            fi
+            shift
+
+            ;;
+        -s|--session-name)
+            session_name=$2
+            shift 2
+
+            ;;
+        -S|--start-cmd)
+            start_cmd=$2
+            shift 2
+
+            ;;
+        -w|--wait-exit|--no-wait-exit)
+            if test "$1" = --no-wait-exit; then
+                wait_exit=false
+            else
+                wait_exit=true
+            fi
+            shift
+
+            ;;
+        -n|--window-name)
+            window_name=$2
+            shift 2
+
+            ;;
+        --with-tty|--no-with-tty)
+            if test "$1" = --no-with-tty; then
+                with_tty=false
+            else
+                with_tty=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]debug'
+            echo
+            printf %06s '-e, '
+            printf %-24s '--[no-]keep-env'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--session-name=SESSION_NAME'
+            echo
+            printf %06s '-S, '
+            printf %-24s '--start-cmd=START_CMD'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--[no-]wait-exit'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--window-name=WINDOW_NAME'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]with-tty'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
             ;;
         *)
-            echo
-            echo
-            printf %06s%s '-d ' 'debug'
-            printf %-24s ''
-            echo ''
-            printf %06s%s '-s ' 'session-name'
-            printf %-24s 'SESSION_NAME'
-            echo ''
-            printf %06s%s '-S ' 'start-cmd'
-            printf %-24s 'START_CMD'
-            echo ''
-            printf %06s%s '-w ' 'wait-exit'
-            printf %-24s ''
-            echo ''
-            printf %06s%s '-n ' 'window-name'
-            printf %-24s 'WINDOW_NAME'
-            echo ''
-            exit 2
+            die "internal error"
             ;;
     esac
 done
 
-shift $((OPTIND - 1))
 
 ## end generated code
 
@@ -78,8 +122,9 @@ fi
 
 oldpwd=$PWD
 cd
-
-unset ANDROID_SERIAL
+if test "$keep_env" = false; then
+    unset ANDROID_SERIAL
+fi
 export SCREEN_SESSION_PID=$$
 
 echo shell is $SHELL > ~/.cache/system-config/logs/myscr.log
@@ -141,15 +186,19 @@ if session-exists; then
 
     if test $# != 0; then
         (
+            if test "${keep_env}" = true; then
+                declare -x -p | tee /tmp/screen-env.$$
+                echo
+            fi
             if echo $SHELLOPTS | grep -q xtrace; then
                 echo 'set -x;'
             fi
 
             if test "$debug" = false; then
                 if test "$wait_exit" = true; then
-                    echo . atexit rm -f /tmp/screen-exec.$$
+                    echo . atexit rm -f /tmp/screen-exec.$$ /tmp/screen-env.$$
                 else
-                    echo rm -f /tmp/screen-exec.$$
+                    echo rm -f /tmp/screen-exec.$$ /tmp/screen-env.$$
                 fi
             fi
 
@@ -168,7 +217,11 @@ if session-exists; then
         if using-screen; then
             screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
         else
-            tmux new-window -n "$SCREEN_TITLE" "bash -l -i /tmp/screen-exec.$$"
+            if test "$with_tty" = true; then
+                tmux new-window -n "$SCREEN_TITLE" "bash-tty '. /tmp/screen-env.$$; bash  -l -i /tmp/screen-exec.$$'"
+            else
+                tmux new-window -n "$SCREEN_TITLE" "bash -l -i /tmp/screen-exec.$$"
+            fi
             find-or-exec konsole
         fi
         if test "$wait_exit" = true; then

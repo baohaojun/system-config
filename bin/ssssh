@@ -100,7 +100,13 @@ else
         elif test "$host" = realhome-pc; then
             export extra_env='REMOTEIP=Smartisan-localhost REMOTEPORT=10711 LOCALIP=realhome-pc LOCALPORT=33333'
         fi
-        myscr en_US ssh -X -o RequestTTY=true $host "REMOTEUSER=$USER $extra_env REMOTEPROTOCOL=scp exec bash"
+        if [[ $host =~ -p[0-9]+$ ]]; then
+            port_arg=$(echo $host|perl -npe 's/.*-p/-p/')
+            host=$(echo $host|perl -npe 's/-p\d+$//')
+        else
+            port_arg=
+        fi
+        myscr en_US ssh -X -o RequestTTY=true $host $port_arg "REMOTEUSER=$USER $extra_env REMOTEPROTOCOL=scp exec bash"
     else
         myscr ssh-work $host
     fi
