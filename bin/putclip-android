@@ -39,7 +39,7 @@ if test $(basename $0) = putclip-android; then
                  sleep .1;
                  echo \$x;
              else
-                 exit;
+                 exit 0;
              fi;
          done
         "
