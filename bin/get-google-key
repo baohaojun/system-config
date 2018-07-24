@@ -3,7 +3,8 @@ set -e
 
 (
     cd ~/tmp
-    nohup Wrench >/dev/null 2>&1 || true&
+    nohup Wrench.sh -x >/dev/null 2>&1 || true&
+    . reget-env
     if echo $SHELLOPTS | grep -q xtrace; then
         true
     else
@@ -15,23 +16,32 @@ set -e
     sleep 1
 
     (
-        onmyoji -o eval '
+        onmyoji -o eval "$(cat <<'EOF47aa3fa94e60'
 # {%sh-mode%}
-find-last vpn-refresh &&
-Wrench-tap-xys --px 15 --py 15 vpn-refresh
-# {%/sh-mode%}
-'
-    ) 1>&2
+if find-something vpn-need-refresh; then
+    quickly jump-between-scenes -t 10 \
+            "find-something vpn-need-refresh" \
+            "! find-something vpn-need-refresh" \
+            Wrench-tap-xys --px 15 --py 15 vpn-refresh
 
-    sleep 2
-    Wrench "adb_event('adb-long-press-1250 396 340')"
-    sleep 1.5
+fi
+
+press_x=$(remembered-x vpn-need-refresh)
+press_y=$(remembered-y vpn-need-refresh)
+
+
+Wrench "adb_quick_input{'input touchscreen swipe $press_x $press_y $press_x $press_y 1500'}"
+sleep 2
+# {%/sh-mode%}
+EOF47aa3fa94e60
+)"
+    ) 1>&2
 )
 
-key=$(getclip-android)
-if test "$key" != hello -a "$key" != "_ _ _ _ _ _"; then
+key=$(getclip-android) || true
+if test "$key" && test "$key" != hello -a "$key" != "_ _ _ _ _ _"; then
     echo "$key"
-elif test "$key" = "_ _ _ _ _ _"; then
+else
     Wrench "adb_tap_1080x2160(979, 396)"
     get-google-key
 fi
