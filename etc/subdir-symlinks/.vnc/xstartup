@@ -16,7 +16,7 @@ command renew-xauth ~/.renew-xauth.${DISPLAY##*:}
 
 
 sawfish&
-
+deluge&
 xterm -e myscr bash -c '
 # {%sh-mode%}
 Wrench&

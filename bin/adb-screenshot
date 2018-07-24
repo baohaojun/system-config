@@ -2,7 +2,7 @@
 
 exec 1>&2 # must not change this line, because onmyoji depend on it for orientation.
 
-# echo phone_sticky=$phone_sticky $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$(echo "$@"|md5sum | cut -b 1-8)&
+# echo phone_sticky=$phone_sticky phone_width=$phone_width phone_height=$phone_height $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$ANDROID_SERIAL
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt x:x=0 y:y=0 s:s=0 '?size' @:cord-orientation eedit @:sticky='${phone_sticky:-0}'
@@ -102,7 +102,7 @@ else
     H=$s
 fi
 
-if test "$cord_orientation" = 1; then
+if test "$cord_orientation" = 1 -a "${phone_width}" -a "${phone_height}" && test "${phone_width}" -gt "${phone_height}"; then
     tmp_x=$x
     x=$((1080-$y-$H))
     y=$tmp_x
@@ -117,7 +117,7 @@ Y=$(($y + $H))
 phone_width=${phone_width:-2160}
 phone_height=${phone_height:-1080}
 
-if test "$cord_orientation" = 1; then
+if test "$cord_orientation" = 1 -a "${phone_width}" -a "${phone_height}" && test "${phone_width}" -gt "${phone_height}"; then
     if test "$phone_width" -a "$Y" -gt "$phone_width"; then
         Y=$phone_width
         y=$((Y - H))
