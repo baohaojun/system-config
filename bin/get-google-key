@@ -1,16 +1,29 @@
 #!/bin/bash
+set -e
+
 (
     cd ~/tmp
-    nohup Wrench >/dev/null 2>&1&
-    exec > ~/tmp/get-google-key.log 2>&1
+    nohup Wrench >/dev/null 2>&1 || true&
+    if echo $SHELLOPTS | grep -q xtrace; then
+        true
+    else
+        exec > ~/tmp/get-google-key.log 2>&1
+    fi
+
     putclip-android "hello"
     my-adb am start -n com.google.android.apps.authenticator2/com.google.android.apps.authenticator.AuthenticatorActivity
     sleep 1
 
-    Wrench "adb_tap_1080x2160(977, 344)"
-    sleep .5
-    Wrench "adb_tap_1080x2160(977, 344)"
-    sleep .5
+    (
+        onmyoji -o eval '
+# {%sh-mode%}
+find-last vpn-refresh &&
+Wrench-tap-xys --px 15 --py 15 vpn-refresh
+# {%/sh-mode%}
+'
+    ) 1>&2
+
+    sleep 2
     Wrench "adb_event('adb-long-press-1250 396 340')"
     sleep 1.5
 )
