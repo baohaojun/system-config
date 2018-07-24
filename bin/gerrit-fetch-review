@@ -352,6 +352,9 @@ if test "$cherry_pick" = true || is-jenkins; then
             echo cherry-pick output:;
             cat ~/tmp/gerrit-fetch-review.log.$$
         )"
+    elif is-jenkins && scm is-cms; then
+        git push $(repo-remote) HEAD:refs/patched-build/${JOB_NAME}/${BUILD_NUMBER} ||
+            mail-cms -o "Failed to push patched build"
     fi
 fi
 
