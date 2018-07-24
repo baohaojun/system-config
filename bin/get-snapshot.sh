@@ -5,7 +5,7 @@ set -e
 ## 如果只指定了一个参数，一般必须是一个目录，然后选出其下最新的一个文件或目录
 
 if test "$#" -gt 1; then
-    ls -t -d "$@" | head -n 1
+    command ls -t -d "$@" | head -n 1
     exit
 fi
 
