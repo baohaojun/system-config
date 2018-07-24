@@ -1,24 +1,36 @@
 #!/bin/bash
 
 if test $(basename $0) = adb-ignite-device -o $(basename $0) = adb-power-on; then
-    if my-adb dumpsys power | grep mWakefulness=Asleep; then
-        adb-key 26
-    fi
-    Wrench 'adb_quick_input{"input keyevent HOME"}'&
-    sleep 1
-    activity=$(adb-top-activity)
-    if test "$activity" = Keyguard -o "$activity" = StatusBar; then
-        if test "$activity" = Keyguard -o "$activity" = StatusBar; then
-            if test -e ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone; then
-                ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone
-            fi
-        else
-            onmyoji do-raw-scroll  100 1900 100 20 500
+    for try in $(seq 1 3); do
+        if my-adb dumpsys power | grep mWakefulness=Asleep; then
+            adb-key 26
             sleep 1
         fi
-    elif test "$activity" = RecentsPanel; then
-        adb-key BACK
-    fi
+
+        adb-lcd on
+
+        Wrench 'adb_quick_input{"input keyevent HOME"}'&
+        sleep 1
+        activity=$(adb-top-activity)
+        if test "$activity" = Keyguard -o "$activity" = StatusBar; then
+            if test "$activity" = Keyguard -o "$activity" = StatusBar; then
+                if test -e ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone; then
+                    ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone
+                fi
+            else
+                onmyoji do-raw-scroll  100 1900 100 20 500
+                sleep 1
+            fi
+        elif test "$activity" = RecentsPanel; then
+            adb-key BACK
+        else
+            (
+                sleep 3;
+                adb-lcd off
+            )
+            break
+        fi
+    done
 elif test $(basename $0) = adb-mute; then
     adb-key VOLUME_UP
     adb-tap 778 788

@@ -38,5 +38,6 @@ else # lock on
     # my-adb key power
     rm touch ~/.cache/system-config/logs/screen-on -f
     destroy-windows Wrench
+    adb-lcd -a off
     true
 fi
