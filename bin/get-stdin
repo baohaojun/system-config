@@ -107,21 +107,27 @@ EOF
 fi
 
 echo -n Edit it... 1>&2
-emacsclient -e "
+
+if test -z "${REMOTEIP}"; then
+    emacsclient -e "
 ; {%emacs-lisp-mode%}
 (progn
   (find-file \"$tmp\")
   (activate-input-method \"sdim\"))
 ; {%/emacs-lisp-mode%}
 " >/dev/null 2>&1
+fi
+
 edit-wait $tmp >/dev/null 2>&1
 
-emacsclient -e "
+if test -z "${REMOTEIP}"; then
+    emacsclient -e "
 ; {%emacs-lisp-mode%}
 (progn
   (find-file \"$tmp\")
   (kill-buffer))
 ; {%/emacs-lisp-mode%}" >/dev/null 2>&1
+fi
 
 echo " done" 1>&2
 function get-rid-of-comment() {
