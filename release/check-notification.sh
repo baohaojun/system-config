@@ -16,7 +16,7 @@ if test "$WRENCH_INSTANCE"; then
     ((notification_port += WRENCH_INSTANCE)) || true
 fi
 
-expect -c 'spawn timeout 2 telnet localhost 58888; exit [lindex [wait] 3]'
+expect -c "spawn timeout 2 telnet localhost $notification_port; exit [lindex [wait] 3]"
 ret=$?
 
 if test "$ret" = 124; then

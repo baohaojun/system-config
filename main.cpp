@@ -149,6 +149,8 @@ int main(int argc, char *argv[])
     qDebug() << "config dir is " << gConfigDir;
     gConfigDir.mkpath("ext");
 
+    gAppDir = QDir(appDir);
+
     str = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     gDataDir = QDir(str);
     qDebug() << "data dir is " << gDataDir;
@@ -156,6 +158,7 @@ int main(int argc, char *argv[])
 
     setenv("WRENCH_CONFIG_DIR", qPrintable(gConfigDir.absolutePath()), 1);
     setenv("WRENCH_DATA_DIR", qPrintable(gDataDir.absolutePath()), 1);
+    setenv("WRENCH_APP_DIR", qPrintable(gAppDir.absolutePath()), 1);
 
     WrenchMainWindow w;
     a.setActivationWindow(&w, false);

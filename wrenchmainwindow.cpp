@@ -196,7 +196,7 @@ void WrenchMainWindow::adbStateUpdated(const QString& state)
 
     if (mInputOnline && ui->adbStateLabel->text().toLower() != "online") {
         if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
-            mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath());
+            mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath() << gAppDir.absoluteFilePath());
         } else {
             on_configurePushButton_clicked();
         }

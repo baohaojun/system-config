@@ -1811,10 +1811,17 @@ M.update_screen_size = function()
    end
 end
 
-M.wrench_config = function(passedConfigDirPath)
+M.fill_file_path = function(...)
+   local dirs = {...}
+   return join(package.config:sub(1, 1), dirs)
+end
+
+M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    if passedConfigDirPath then
       configDir = passedConfigDirPath
    end
+
+   M.appDir = passedAppDirPath
    M.configDir = configDir .. package.config:sub(1, 1)
    M.dataDir = os.getenv("WRENCH_DATA_DIR") .. package.config:sub(1, 1)
 
@@ -1923,6 +1930,9 @@ M.wrench_config = function(passedConfigDirPath)
    phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
    reset_input_method()
    local android_serial = wrench_get_proc_var{"ANDROID_SERIAL"}
+   if android_serial == '' then
+      android_serial = os.getenv("ANDROID_SERIAL")
+   end
    system("bash ./check-notification.sh " .. android_serial)
    return ("brand is %s, adb serial is %s"):format(brand, adb_serial)
 end

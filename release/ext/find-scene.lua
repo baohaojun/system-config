@@ -14,5 +14,9 @@ local scene_name
 if M.ext_args then
    scene_name = M.ext_args[1]
 else
-   mode = select_args{"你希望找到那个场景截图？", "blank-1", "blanch-2"}
+   scene_name = select_args{"你希望找到那个场景截图？", "blank-1", "blanch-2"}
+end
+
+local picture_matches = function(screenshot, scene)
+   local scene_file = M.fill_file_path(M.appDir, "release", "scenes", scene_name .. ".png")
 end

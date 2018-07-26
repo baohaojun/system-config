@@ -9,6 +9,8 @@ extern QString prompt_user(const QString &info, QMessageBox::StandardButtons but
 void qSystem(QString str);
 extern QDir gConfigDir;
 extern QDir gDataDir;
+extern QDir gAppDir;
+
 extern VncMainWindow* vncMainWindow;
 extern volatile bool gPhoneScreenSyncOn;
 
