@@ -1,0 +1,60 @@
+//#!/usr/bin/env NODE_PATH=/usr/local/lib/node_modules nodejs
+"use strict";
+const looksSame = require('looks-same');
+const fs = require('fs');
+const fse = require('fs-extra');
+
+function exists(path) {
+  try {
+    fs.accessSync(path);
+  } catch (e) {
+    console.log(e)
+    return 0
+  }
+  return 1;
+}
+
+// looksSame('$status_png', '/home/bhj/src/github/private-config/doc/onmyoji-$1.png', {tolerance: ${2:-$default_tolerance}}, function(err, eq) {if (eq) {console.log('hello' + $$)}});
+const net = require('net');
+const server = net.createServer(
+  (c) => {
+    var command;
+    c.setEncoding('utf8');
+    c.on('data', (data) => {
+      command = data.split(/[ \n]/);
+      if (command.length < 2) {
+        c.end("error: image-1 image-2 [tolerance]");
+        return;
+      }
+
+      let image1 = command[0];
+      let image2 = command[1];
+      let tolerance = (parseInt(command[2]) || 25);
+      if (!exists(image1) || !exists(image2)) {
+        c.end("no! image not exist? " + image1 + " " + image2);
+        return;
+      }
+      looksSame(image1, image2, {tolerance: tolerance}, function(err, eq) {
+        if (eq) {
+          c.end("yes");
+        } else {
+          c.end("no");
+          looksSame(image1, image2, {tolerance: 60}, function(err, eq) {
+            if (eq) {
+              fse.copy(image1, image2 + ".60");
+              console.log('same when 60');
+            } else {
+              console.log('not same even 60');
+            }
+          });
+        }
+      });
+    });
+  }
+);
+
+server.listen('/tmp/look-same.' + (process.env['ANDROID_SERIAL'] || '') + '.' + (process.env['g_onmyoji_location'] || '') + (process.env['onmyoji_parallel'] || ''), () => {
+  console.log('server bound');
+});
+
+server.ref();
