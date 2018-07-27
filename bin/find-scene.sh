@@ -1,0 +1,1 @@
+../../src/github/Wrench/release/bin/find-scene.sh
