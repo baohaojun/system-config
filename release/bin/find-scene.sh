@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+exec 2>> ~/tmp/find-scene.sh.log
 
 function picture-matches() {
     if test ! -e "$1" -o ! -e "$2"; then
@@ -62,8 +64,189 @@ function picture-matches() {
     return 1
 }
 
-function find-scene() {
-
+get-image-size() {
+    local image_size=$(identify "$1" | pn 3)
+    echo "$image_size"
 }
 
-picture-matches "$@"
+function find-scene() {
+
+    local resdir=.
+    if test "${WRENCH_APP_DIR}"; then
+        resdir=${WRENCH_APP_DIR}/res
+    fi
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt d:dir='${WRENCH_DATA_DIR:-~/tmp/}' s:scene @:scene-dir='${resdir}'
+    ## end code-generator
+    ## start generated code
+    TEMP=$( getopt -o d:s:h \
+                   --long dir:,scene:,scene-dir:,help \
+                   -n $(basename -- $0) -- "$@")
+    declare dir=${WRENCH_DATA_DIR:-~/tmp/}
+    declare scene=
+    declare scene_dir=${resdir}
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -d|--dir)
+                dir=$2
+                shift 2
+
+                ;;
+            -s|--scene)
+                scene=$2
+                shift 2
+
+                ;;
+            --scene-dir)
+                scene_dir=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %06s '-d, '
+                printf %-24s '--dir=DIR'
+                echo
+                printf %06s '-s, '
+                printf %-24s '--scene=SCENE'
+                echo
+                printf "%06s" " "
+                printf %-24s '--scene-dir=SCENE_DIR'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    local scene_png=${resdir}/${scene}.png
+
+    if test ! -e "${scene_png}"; then
+        return 1
+    fi
+
+    local full_jpg=${dir}/find-scene.$$.jpg
+
+    adb-screenshot $full_jpg >/dev/null 2>&1
+
+    local matched_xy=$(
+        match_image ${full_jpg} ${scene_png}
+              )
+
+    local matched_x=$(echo $matched_xy | pn 1)
+    local matched_y=$(echo $matched_xy | pn 2)
+
+    convert -crop $(get-image-size ${scene_png})+$matched_x+$matched_y ${full_jpg} ${full_jpg}.png
+
+
+    local ret=1
+    if picture-matches ${scene_png} ${full_jpg}.png ; then
+        ret=0
+    fi
+
+    rm -f ${full_jpg} ${full_jpg}.png
+    if test "${ret}" = 0; then
+        echo ${matched_xy}
+    fi
+    return $ret
+}
+
+is-scene() {
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt x:scene-x=0 y:scene-y=0 s:scene
+    ## end code-generator
+    ## start generated code
+    TEMP=$( getopt -o s:x:y:h \
+                   --long scene:,scene-x:,scene-y:,help \
+                   -n $(basename -- $0) -- "$@")
+    declare scene=
+    declare scene_x=0
+    declare scene_y=0
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -s|--scene)
+                scene=$2
+                shift 2
+
+                ;;
+            -x|--scene-x)
+                scene_x=$2
+                shift 2
+
+                ;;
+            -y|--scene-y)
+                scene_y=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %06s '-s, '
+                printf %-24s '--scene=SCENE'
+                echo
+                printf %06s '-x, '
+                printf %-24s '--scene-x=SCENE_X'
+                echo
+                printf %06s '-y, '
+                printf %-24s '--scene-y=SCENE_Y'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if test -z "$scene"; then
+        (is-scene --help) 1>&2
+        exit 1
+    fi
+
+    local resdir=.
+    if test "${WRENCH_APP_DIR}"; then
+        resdir=${WRENCH_APP_DIR}/res
+    fi
+
+
+    local scene_png=${resdir}/${scene}.png
+    local scene_size=$(get-image-size ${scene_png})
+
+    adb-screenshot -x ${scene_x} -y ${scene_y} -s ${scene_size} ~/tmp/is-scene.$$.png >/dev/null 2>&1
+    if picture-matches ${scene_png} ~/tmp/is-scene.$$.png; then
+        return 0
+    fi
+    return 1
+}
+
+"$@"

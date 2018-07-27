@@ -208,3 +208,4 @@ int main(int argc, char *argv[])
 
 QDir gConfigDir;
 QDir gDataDir;
+QDir gAppDir;

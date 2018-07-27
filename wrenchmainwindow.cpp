@@ -196,7 +196,7 @@ void WrenchMainWindow::adbStateUpdated(const QString& state)
 
     if (mInputOnline && ui->adbStateLabel->text().toLower() != "online") {
         if (!mLuaThread.isNull() && mLuaThread->isRunning()) {
-            mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath() << gAppDir.absoluteFilePath());
+            mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath() << gAppDir.absolutePath());
         } else {
             on_configurePushButton_clicked();
         }
@@ -549,7 +549,7 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     connect(mLuaThread.data(), SIGNAL(insertTextSig(QString)), this, SLOT(insertText(QString)));
     mLuaThread->start();
     if (! is_starting) {
-        mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath());
+        mLuaThread->addScript(QStringList() << "wrench_config" << gConfigDir.absolutePath() << gAppDir.absolutePath());
     }
 }
 
