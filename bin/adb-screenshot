@@ -5,16 +5,17 @@ exec 1>&2 # must not change this line, because onmyoji depend on it for orientat
 # echo phone_sticky=$phone_sticky phone_width=$phone_width phone_height=$phone_height $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$ANDROID_SERIAL
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt x:x=0 y:y=0 s:s=0 '?size' @:cord-orientation eedit @:sticky='${phone_sticky:-0}'
+# generate-getopt x:x=0 y:y=0 s:s=0 '?size' @:cord-orientation eedit @:sticky='${phone_sticky:-0}' @system-screencap
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o es:x:y:h \
-               --long cord-orientation:,edit,s:,sticky:,x:,y:,help,no-edit \
+               --long cord-orientation:,edit,s:,sticky:,system-screencap,x:,y:,help,no-edit,no-system-screencap \
                -n $(basename -- $0) -- "$@")
 declare cord_orientation=
 declare edit=false
 declare s=0
 declare sticky=${phone_sticky:-0}
+declare system_screencap=false
 declare x=0
 declare y=0
 eval set -- "$TEMP"
@@ -45,6 +46,15 @@ while true; do
             shift 2
 
             ;;
+        --system-screencap|--no-system-screencap)
+            if test "$1" = --no-system-screencap; then
+                system_screencap=false
+            else
+                system_screencap=true
+            fi
+            shift
+
+            ;;
         -x|--x)
             x=$2
             shift 2
@@ -71,6 +81,9 @@ while true; do
             echo size
             printf "%06s" " "
             printf %-24s '--sticky=STICKY'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]system-screencap'
             echo
             printf %06s '-x, '
             printf %-24s '--x=X'
@@ -141,7 +154,10 @@ x=$((x < 0 ? 0 : x))
 y=$((y < 0 ? 0 : y))
 
 
-if test "$x" != 0 -o "$X" != 0; then
+if test "${system_screencap}" = true; then
+    adb shell screencap /sdcard/screen.png
+    sd_file=screen.png
+else
     sd_file=$(basename "$1").jpg
     adb shell /data/data/com.android.shell/screencap \
         -x $x -y $y -X $X -Y $Y $(
@@ -149,9 +165,6 @@ if test "$x" != 0 -o "$X" != 0; then
             echo -s $sticky;
         fi
         ) /sdcard/$sd_file
-else
-    adb shell screencap /sdcard/screen.png
-    sd_file=screen.png
 fi
 
 if test "$1"; then
