@@ -61,3 +61,9 @@ function picture-matches() {
     done
     return 1
 }
+
+function find-scene() {
+
+}
+
+picture-matches "$@"
