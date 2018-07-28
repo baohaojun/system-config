@@ -158,6 +158,9 @@ if test "${system_screencap}" = true; then
     adb shell screencap /sdcard/screen.png
     sd_file=screen.png
 else
+    if test -z "$1"; then
+        set -- $(now.).jpg
+    fi
     sd_file=$(basename "$1").jpg
     adb shell /data/data/com.android.shell/screencap \
         -x $x -y $y -X $X -Y $Y $(
@@ -177,16 +180,8 @@ if test "$1"; then
     fi
     $action ~/tmp/$$-$sd_file "$1"
     rm -f ~/tmp/$$-$sd_file
+    if test "${edit}" = true; then
+        gimp "$1"&
+    fi
     exit
 fi
-
-now=`now|perl -npe 's/:/./g'`
-mkdir -p ~/shots
-now=shots/"$now"
-adb pull /sdcard/screen.png ~/"$now".png
-if test "$edit" = true; then
-    gimp ~/"$now".png&
-else
-    of ~/"$now".png
-fi
-mp ~/"$now".png | putclip

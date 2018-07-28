@@ -109,8 +109,9 @@ tmp_content=/tmp/$(basename $0).$$.content
 
 echo -n "$content" | wrap > $tmp_content ||
     (
-        myscr bash -c 'read -p "Your emacs has problem? Please check!"'
-        exit 1
+        myscr bash -c 'read -p "Can not wrap. Your emacs has problem? Please check!"' >/dev/null 2>&1
+        echo -n "${content}" > $tmp_content
+        exit 0
     )
 
 read_content=$(cat <<EOF
