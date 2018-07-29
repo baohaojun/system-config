@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if test "${BHJ_IN_VNC}" = true; then
+    exit 0
+fi
+
 exec > ~/.xsession-errors 2>&1
 . ~/.profile
 set > ~/tmp/sawfish-auto-start.set
