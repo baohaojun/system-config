@@ -136,6 +136,10 @@ else
              )
     elif test "$find_what" = manifest; then
         echo http://172.16.2.18/$(echo mnt/flash/.smartcm/released-manifests/${flashing_file_dir}/manifest.xml|perl -npe 's,/+,/,g')
+    elif test "$find_what" = ota-all; then
+        echo $prefix$(
+           echo "$vmlinux"|grep '\.zip'|grep -v 'This is the ota base'|pn 2 :|perl -npe 's,//.*?/,/mnt/,'
+            )
     else
         die "Don't know this FIND_WHAT parameter: $find_what"
     fi
