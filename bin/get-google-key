@@ -16,6 +16,11 @@ set -e
     sleep 1
 
     (
+        if test -z "${ANDROID_SERIAL}"; then
+            export INTERACTIVE_BASH_PID=$$
+            my-adb -s
+            . reget-env
+        fi
         onmyoji -o eval "$(cat <<'EOF47aa3fa94e60'
 # {%sh-mode%}
 if find-something vpn-need-refresh; then
