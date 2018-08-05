@@ -35,7 +35,7 @@ local wrench_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
 local adb_is_window
 local check_phone
-local debug, get_a_note, emoji_rewrite
+local get_a_note
 local adb_get_last_pic, debugging
 local adb_start_service_and_wait_file_gone
 local adb_am
@@ -206,7 +206,7 @@ else -- windows
 end
 
 
-emoji_rewrite = function(text, which_emojis)
+M.emoji_rewrite = function(text, which_emojis)
    local s = 1
    local replace = ""
    repeat
@@ -258,7 +258,7 @@ end
 
 M.debugging = debugging
 
-debug = function(fmt, ...)
+M.debug = function(fmt, ...)
    print(string.format(fmt, ...))
 end
 
@@ -2395,7 +2395,6 @@ M.split = split
 M.replace_img_with_emoji = replace_img_with_emoji
 M.system = system
 M.sleep = sleep
-M.debugg = debug
 M.get_a_note = get_a_note
 M.wrench_call = wrench_call
 M.wrench_run = wrench_run
