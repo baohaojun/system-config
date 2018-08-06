@@ -40,6 +40,7 @@ M.find_scene = function(scene, times)
    s_x = scene_xy:gsub(" .*", "")
    s_y = scene_xy:gsub(".* ", "")
    if system(("find-scene.sh is-scene -x %s -y %s -s %s"):format(s_x, s_y, scene)) then
+      log("found scene: %s at %s %s", scene, s_x, s_y)
       return true
    else
       return false

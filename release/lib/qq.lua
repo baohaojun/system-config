@@ -5,7 +5,17 @@ M.qq_find_friend = function(friend_name)
    for i = 1, 5 do
       qq_open_search()
       local top_window = wait_input_target_n(5, W.qqChatActivity2, W.qqGroupSearch)
-      adb_event("adb-tap 296 1594 adb-tap 522 1842 sleep .1")
+      adb_event("key comma sleep .1")
+
+      if not scenes_map['qq-close-search'] then
+         find_scene("qq-close-search")
+      end
+
+      if scenes_map['qq-close-search'] then
+         local xy = scenes_map['qq-close-search']
+         xy = split(" ", xy)
+         adb_tap_XY(xy[1], xy[2])
+      end
       adb_tap_1080x2160(857, 91, 804, 167) -- click the clear search button "x"
       adb_event"sleep .1 key scroll_lock sleep .5" -- clear the search first by input "x " and click ⓧ.
       if top_window and top_window:match(W.qqGroupSearch) then

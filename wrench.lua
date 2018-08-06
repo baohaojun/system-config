@@ -13,7 +13,6 @@ M.W = W
 -- functions
 local WrenchExt = {}
 local search_sms
-local adb_input_method_is_null
 local window_post_button_map = {}
 local mail_group_map = {}
 local phone_info_map = {}
@@ -27,20 +26,16 @@ local right_button_x = 984
 local start_or_stop_recording, m_is_recording, current_recording_file
 
 local wrench_call, wrench_run, wrench_adb_mail, wrench_save_mail_heads
-local reset_input_method, adb_shell
+local adb_shell
 local adb_push, adb_pull, adb_install
-local shell_quote, putclip, wrench_post, push_text, wrench_post2
+local shell_quote, putclip, push_text
 local adb_start_activity, launch_apps, on_app_selected
 local wrench_add_mms_receiver
-local adb_get_input_window_dump, adb_top_window
-local adb_is_window
 local check_phone
 local get_a_note
 local adb_get_last_pic, debugging
 local adb_start_service_and_wait_file_gone
 local adb_am
-local wait_input_target, wait_top_activity, wait_top_activity_match
-local wait_input_target_n
 local wrench_eval, log, share_pics_to_app, share_text_to_app
 local check_scroll_lock, prompt_user, yes_or_no_p
 
@@ -78,7 +73,6 @@ local model = "Wrench"
 local sdk_version = 19
 local emojis, img_to_emoji_map, emoji_to_img_map
 local the_true_adb = "./the-true-adb"
-local wrench_send_action
 
 W.sms = "com.android.mms/com.android.mms.ui.ComposeMessageActivity"
 W.weixinPackage = "com.tencent.mm/"
@@ -149,40 +143,6 @@ function spairs(t, order)
             return keys[i], t[keys[i]]
         end
     end
-end
-
-reset_input_method = function()
-   if phone_info_map['user_input_method'] then
-      input_method_id = phone_info_map['user_input_method']
-      local command = (
-         [[
-cd /data/data/com.android.shell
-PATH=/data/data/com.android.shell/bin:$PATH
-touch not-started.$$
-setsid nohup setsid /system/bin/sh -c 'set -x
-rm 'not-started.$$'
-if test "$(cat /sdcard/Wrench/usb_online)" = watching-ime; then
-    exit
-fi
-echo watching-ime > /sdcard/Wrench/usb_online
-ime set com.wrench.inputmethod.pinyin/.PinyinIME
-while test -e /sdcard/Wrench/usb_online; do
-    sleep 5
-done
-ime enable %s
-ime set %s
-killall -INT androidvncserver || busybox killall -INT androidvncserver
-'>nohup.ime 2>&1 & for i in 1 2 3 4 5 $(seq 1 20); do
-   if test -e not-started.$$; then
-      sleep .1 || sleep 1
-   else
-       echo started at i = $i, pid = $$ > nohup.start
-       exit
-   fi
-done
-]]):format(input_method_id, input_method_id)
-      adb_shell(command)
-   end
 end
 
 if package.config:sub(1, 1) == '/' then
@@ -384,10 +344,6 @@ adb_pipe = function(cmds)
    return out:gsub("\r", "")
 end
 
-adb_is_window = function (w)
-   return w == adb_top_window()
-end
-
 adb_start_activity = function(a)
    adb_am("am start -n " .. a)
 end
@@ -421,228 +377,6 @@ M.adjust_y = function(y)
    else
       return y * app_height_ratio
    end
-end
-
-M.adb_set_tap_params = function(pressure, size)
-   if not pressure then
-      pressure = math.random() * 0.1 + 0.1
-   end
-
-   if not size then
-      size = math.random() * 0.1 + 0.10
-   end
-
-   adb_quick_input{("input set-pressure-size %.2f %.2f"):format(pressure, size)};
-end
-
-local function adb_event(events)
-   if type(events) == 'string' then
-      debugging("adb_event %s", events)
-      adb_event(split(" ", events))
-      return
-   end
-   command_str = ''
-   i = 1
-   while true do
-      if not events[i] then
-         if not events[i - 1] then
-            debugging("Error at i = %d, events: %s", i, join(' ', events))
-            error("Error: wrong number of events?")
-         else
-            break
-         end
-      end
-
-      if tonumber(events[i]) then
-         local width_ratio, height_ratio = app_width_ratio, app_height_ratio
-
-         if (events[i - 1] and events[i - 1]:match("no%-virt")) then
-            width_ratio, height_ratio = 1, 1
-         elseif events[i+1] * 2 < default_height then
-            height_ratio = real_height_ratio
-         end
-
-         local action = (events[i - 1] or "adb-tap")
-         if (action:match("%-down$")) then
-            action = "wrench-down"
-         elseif (action:match("%-up$")) then
-            action = "wrench-up"
-         elseif (action:match("%-move$")) then
-            action = "wrench-move"
-         else
-            action = "tap"
-         end
-
-         if (events[i - 1] == 'adb-no-virt-key-tap' or events[i - 1] == 'adb-no-virt-key-up') then
-            if m_is_recording then
-               local record_file = io.open(m_is_recording, "a")
-               local comment = select_args{"你正在录制屏幕，请输入对本次点击的目的描述", "", ""} -- You are recording screen operations, please comment this click
-               top_window = adb_top_window()
-               record_file:write(("wait_top_activity_n_ok(10, [[%s]])\n"):format(top_window))
-               record_file:write(('adb_event"adb-tap %d %d" -- %s\n'):format(events[i], events[i+1], comment))
-               record_file:close()
-            end
-         end
-
-         local x, y
-         x, y = events[i] * width_ratio, events[i+1] * height_ratio
-
-         local add = ('input %s %d %d;'):format(action, x, y)
-         command_str = command_str .. add
-         i = i + 2
-      elseif (events[i]):match('^adb%-long%-press') then
-         ms = 500
-         if (events[i]):match('^adb%-long%-press%-%d+') then
-            ms = (events[i]):sub(#"adb-long-press-" + 1)
-         end
-         if sdk_version < 18 then
-            ms = ""
-         end
-         local add = ('input touchscreen swipe %d %d %d %d %s;'):format(
-            M.adjust_x(events[i+1]), M.adjust_y(events[i+2]),
-            M.adjust_x(events[i+1]), M.adjust_y(events[i+2]), ms)
-         if sdk_version < 17 then
-            add = add:gsub("touchscreen ", "")
-         end
-         command_str = command_str .. add
-
-         if sdk_version < 18 then
-            command_str = command_str .. add
-         end
-         i = i + 3
-      elseif events[i] == 'text' or events[i] == 'adb-text' then
-         command_str = command_str .. ("input text %s;"):format(events[i+1])
-         i = i + 2
-      elseif events[i] == 'key' or events[i] == 'adb-key' then
-         local event = events[i+1]:upper()
-         command_str = command_str .. ('input keyevent %s;'):format(event)
-         if event == "SCROLL_LOCK" then
-            if M.need_wait_putclip then
-               adb_wait_file_gone(M.sdcard_putclip_path)
-               M.need_wait_putclip = false
-            end
-            check_scroll_lock()
-            command_str = command_str .. "sleep .1;"
-         end
-         i = i + 2
-      elseif events[i] == 'sleep' then
-         command_str = command_str .. ('sleep %s || busybox sleep %s;'):format(events[i+1], events[i+1])
-         i = i + 2
-      elseif events[i] == 'swipe' or (events[i]):match('adb%-swipe%-') or (events[i]):match('adb%-no%-virt%-key%-.*swipe') then
-         ms = 500
-         local width_ratio, height_ratio = app_width_ratio, app_height_ratio
-
-         if (events[i]):match('adb%-no%-virt%-key') then
-            width_ratio, height_ratio = real_width_ratio, real_height_ratio
-         end
-
-         if (events[i]):match('adb%-swipe%-') then
-            ms = (events[i]):sub(#'adb-swipe-' + 1)
-         elseif (events[i]):match('adb%-no%-virt%-key%-swipe%-') then
-            ms = (events[i]):sub(#'adb-no-virt-key-swipe-' + 1)
-         end
-         if sdk_version < 18 then
-            ms = ""
-         end
-
-         local action = "swipe"
-         if (events[i]):match('wrench%-swipe') then
-            action = "wrench-swipe"
-         end
-
-         local add = ('input touchscreen %s %d %d %d %d %s;'):format(
-            action,
-            events[i+1] * width_ratio, events[i+2] * height_ratio,
-            events[i+3] * width_ratio, events[i+4] * height_ratio, ms)
-         if sdk_version < 17 then
-            add = add:gsub("touchscreen ", "")
-         end
-         command_str = command_str .. add
-         if sdk_version < 18 then
-            command_str = command_str .. add
-         end
-         i = i + 5
-      elseif events[i] == 'adb-tap' or events[i]:match('adb%-no%-virt%-key%-') then
-         i = i + 1
-      else
-         error(string.format("Error: unknown event: %d: '%s' (%s)", i, events[i], join(' ', events)))
-      end
-   end
-   if adb_quick_input ~= nil then
-      debugging("doing with " .. command_str)
-      local res = adb_quick_input{command_str}
-      if res ~= "input ok\n" then
-         debugging("adb_quick_input not ok: %s, redo using adb sell", res)
-         adb_shell(command_str)
-      end
-   else
-      adb_shell(command_str)
-   end
-end
-
-M.vnc_scroll_a_page = function(how)
-   local x, y, old_x, old_y
-
-   x = real_width / 2
-   old_x = x
-
-   local min_y = 50
-   if how == "up" then
-      old_y = real_height - min_y
-      y = min_y
-   elseif how == "down" then
-      old_y = min_y * 2
-      y = real_height - 1
-   end
-   adb_event(("adb-no-virt-key-wrench-swipe %s %s %s %s"):format(old_x, old_y, x, y))
-end
-
-M.vnc_scroll = function(key, mod)
-   local x, y, old_x, old_y
-   local x_delta = 0
-   local y_delta = 0
-
-   delta = 50
-
-   if mod ~= "" then
-      delta = 400
-   end
-   x = real_width / 2
-   y = real_height / 2
-
-   edge_ratio = 99.0 / 100
-
-   if key == "up" then
-      y_delta = -delta
-   elseif key == "down" then
-      y_delta = delta
-   elseif key == "left" then
-      x_delta = -delta * 4 -- I want to scroll kindle page to the left
-      adb_event(("adb-no-virt-key-tap %d %d"):format(real_width * edge_ratio, real_height / 2))
-      return
-   elseif key == "right" then
-      x_delta = delta * 4 -- I want to scroll to the right
-      adb_event(("adb-no-virt-key-tap %d %d"):format(real_width * (1 - edge_ratio), real_height / 2))
-      return
-   end
-
-   adb_event(("adb-no-virt-key-swipe-180 %s %s %s %s"):format(x, y, x + x_delta, y + y_delta))
-end
-
-M.vnc_page_down = function()
-   M.vnc_scroll_a_page("down")
-end
-
-M.vnc_page_up = function()
-   M.vnc_scroll_a_page("up")
-end
-
-local function adb_tap_bot_left()
-   adb_event{20, 1882}
-end
-
-local function adb_tap_mid_bot()
-   adb_event{560, 1840}
 end
 
 local function sleep(time)
@@ -865,118 +599,7 @@ check_scroll_lock = function()
    end
 end
 
-local wait_top_activity_n = function(n_retry, ...)
-   activities = {...}
-   for i = 1, #activities do
-      debug("wait for top activity: %s", activities[i])
-   end
-
-   local window
-   for i = 1, n_retry do
-      for ai = 1, #activities do
-         local activity = activities[ai]
-         window = adb_top_window()
-         if window == activity then
-            debug("wait ok")
-            return window
-         end
-      end
-      sleep(.1)
-   end
-   return window
-end
-
 M.sdcard_putclip_path = "/sdcard/putclip.txt"
-M.wait_top_activity_n = wait_top_activity_n
-
-M.wait_top_activity_n_ok = function(n_retry, activity)
-   local window = wait_top_activity_n(n_retry, activity)
-   if window == activity then
-      return true
-   end
-end
-
-wait_top_activity = function(...)
-   return wait_top_activity_n(20, ...)
-end
-
-M.wait_top_activity = wait_top_activity
-
-wait_top_activity_match = function(activity)
-   debug("waiting for %s", activity)
-   local window
-   for i = 1, 20 do
-      window = adb_top_window()
-      if window:match(activity) then
-         debug("wait ok")
-         return window
-      end
-      sleep(.1)
-   end
-   if not yes_or_no_p("等了两秒钟也没有等到 %s 窗口，请确认是否放弃此操作（重启 Lua 后台）？", activity) then
-      error("用户取消了小扳手的操作")
-   end
-   return window
-end
-
-M.wait_top_activity_match = wait_top_activity_match
-
-wait_input_target = function(...)
-   return wait_input_target_n(20, ...)
-end
-
-M.wait_input_target = wait_input_target
-M.wait_input_target_n_ok = function(n_loop, activity)
-   return (wait_input_target_n(n_loop, activity)):match(activity)
-end
-
-wait_input_target_n = function(n_loop, ...)
-   activities = {...}
-   for i = 1, #activities do
-      debug("wait for input method for %s", activities[i])
-   end
-   for i = 1, n_loop do
-      local window = adb_top_window()
-      for ai = 1, #activities do
-         local activity = activities[ai]
-         if window:match(activity) or (window:match("^PopupWindow:") and M.m_focused_app:match(activity)) then
-            local adb_window_dump = split("\n", M.m_window_dump)
-            for x = 1, #adb_window_dump do
-               if adb_window_dump[x]:match("mInputMethodTarget.*" .. window) then
-                  local input_method, ime_height, ime_connected = adb_get_input_window_dump()
-                  if ime_connected then
-                     local fields = split(" ", adb_window_dump[x])
-                     local last = fields[#fields]:gsub("}", "")
-                     return last
-                  end
-               end
-            end
-         end
-      end
-      sleep(.1)
-   end
-   return ""
-end
-
-adb_top_window = function()
-   -- dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
-   for i = 1, 50 do
-      update_screen_size()
-      if M.m_focused_window ~= "" then
-         return M.m_focused_window
-      end
-
-      sleep(.1)
-      if i > 20 then
-         log("Can't get a valid top window at %d", i)
-      end
-
-      if i == 50 then
-         error("Error: can't get a valid top window")
-      end
-   end
-   return ""
-end
 
 M.swipe_down = function()
    adb_event"adb-no-virt-key-wrench-swipe 549 483 552 1778 adb-no-virt-key-wrench-swipe 549 483 552 1778 sleep 1"
@@ -995,146 +618,6 @@ local function search_mail(what)
       end
    end
    adb_event"key scroll_lock sleep .5 adb-tap 667 225 sleep .2 adb-tap 841 728"
-end
-
-M.adb_tap_1080x2160 = function (x, y, x1080, y1920, long_tap, random)
-   if not (real_height >= 2160 and real_width == 1080 or
-           real_height == 1080 and real_width >= 2160) then
-      x = x1080 or x
-      y = y1920 or y
-   end
-   local action = "adb-tap "
-   if random then
-      if type(random) ~= 'number' then
-         random = 5
-      end
-      x = x - random + math.floor(random * 2 * math.random())
-      y = y - random + math.floor(random * 2 * math.random())
-      adb_set_tap_params(1.0)
-   end
-
-   if long_tap then
-      if type(long_tap) ~= number then
-         long_tap = 800
-      end
-      action = ("adb-long-press-%d "):format(long_tap)
-   end
-
-   adb_event(action .. x .. " " .. y)
-end
-
-local function get_coffee(what)
-   for i = 1, 5 do
-      if social_need_confirm and not yes_or_no_p("Will now open the Wechat App and goto it's home page") then
-         return
-      end
-      weixin_open_homepage()
-      log("Start to click for the favsearch " .. i)
-      if social_need_confirm and not yes_or_no_p("Will now click my way to the Wechat bookmarks") then
-         return
-      end
-
-      if social_need_confirm and not yes_or_no_p("First, click the “My” page") then
-         return
-      end
-
-      adb_event"sleep .3 adb-tap 927 1830 sleep .1 adb-tap 927 1830 sleep .3"
-
-      if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
-         return
-      end
-
-      adb_tap_1080x2160(272, 633, 337, 782)
-
-      for f_i = 1, 10 do
-         local FavoriteIndexUI = "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavoriteIndexUI"
-         local top_window = wait_top_activity_n(2, FavoriteIndexUI)
-         if top_window ~= FavoriteIndexUI then
-            log("Still not FavoriteIndexUI at %d", f_i)
-            if f_i == 10 then
-               goto open_fav_search_again
-            end
-            if top_window == W.weixinLauncherActivity then
-               log("Need click for fav again")
-               adb_tap_1080x2160(272, 633, 501, 872)
-            elseif top_window and top_window ~= "" then
-               log("Failed to get FavoriteIndexUI, and not in W.weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
-               goto open_fav_search_again
-            end
-         else
-            log("Got FavoriteIndexUI at %d", f_i)
-            break
-         end
-      end
-
-      if social_need_confirm and not yes_or_no_p("Next, click the “Search” button for the “My Favorites”") then
-         return
-      end
-      adb_tap_1080x2160(883, 88, 833, 145)
-
-      for fs_i = 1, 10 do
-         if wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI") ~= "" then
-            log("Got FavSearchUI when fs_i is %d", fs_i)
-            break
-         else
-            log("Still waiting for FavSearchUI at %d", fs_i)
-            adb_tap_1080x2160(883, 88, 833, 145)
-         end
-      end
-      if fs_i ~= 10 then
-         break
-      end
-      :: open_fav_search_again ::
-      log("Need retry " .. i)
-      return
-   end
-   putclip"咕咕机 善良的动物"
-
-   if social_need_confirm and not yes_or_no_p("Will now find the 咕咕机 Wechat App") then
-      return
-   end
-   adb_event"key scroll_lock sleep .1 key enter sleep .5 "
-   if social_need_confirm and not yes_or_no_p("Will now open the 咕咕机 Wechat App") then
-      return
-   end
-   adb_tap_1080x2160(474, 356, 535, 458)
-   if social_need_confirm and not yes_or_no_p("Will now wait for the input ready") then
-      return
-   end
-
-   for i = 1, 80 do
-      local input_target = wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI")
-      if input_target:match"com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI" then
-         break
-      elseif input_target:match"com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI" then
-         adb_tap_1080x2160(474, 356, 535, 458)
-      elseif i < 5 and adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
-         adb_tap_1080x2160(474, 356, 535, 458)
-      end
-      log("Click for coffee input: %s %d", input_target, i)
-
-      adb_event"adb-tap 15 700"
-      sleep(.1)
-   end
-   if what == "" then
-      what = "秦师傅，给我来一杯拿铁，谢谢❤"
-   end
-   putclip(what)
-
-   if social_need_confirm and not yes_or_no_p("Will now input your order for coffee") then
-      return
-   end
-   adb_event"key scroll_lock sleep .5"
-   if yes_or_no_p("Confirm to order coffee from Shifu Qin？") then
-      if social_need_confirm then
-         yes_or_no_p("I will alarm you in 3 minutes for your coffee")
-         return
-      end
-      adb_event"key back sleep .2"
-      adb_tap_1080x2160(534, 1603, 562, 1662)
-      system{'alarm', '3', 'Go get your coffee (take your coffee ticket!)'}
-   end
-
 end
 
 M.string_strip = function(s)
@@ -1204,75 +687,6 @@ local function last(func)
    return x
 end
 
-adb_get_input_window_dump = function()
-   -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]+.*\SInputMethod/i .. m/^\s*mHasSurface/')
-   local dump_str = adb_pipe("dumpsys input_method; dumpsys window policy; dumpsys window windows")
-   local dump = split("\n", dump_str)
-   local current_input_method
-   local input_method_lines = {}
-   local input_method_active = false
-   local looking_at_input_method = false
-   local looking_at_input_method_package = ""
-   for i = 1, #dump do
-      if dump[i]:match("mCurMethodId=") then
-         current_input_method = dump[i]:gsub(".*mCurMethodId=", "")
-         current_input_method = current_input_method:gsub("/.*", "") -- only the package
-      end
-      if not looking_at_input_method
-         and dump[i]:match("^%s*Window #?%d* ?Window{[a-f0-9]+.*%sInputMethod")
-      then
-         looking_at_input_method = true
-         debugging("looking_at_input_method is true")
-      end
-      if looking_at_input_method == true then
-         debugging("got a line: %s", dump[i])
-
-         if dump[i]:match("package=") then
-            looking_at_input_method_package = dump[i]:gsub(".*package=", "")
-            looking_at_input_method_package = looking_at_input_method_package:gsub("%s.*", "")
-            if current_input_method == looking_at_input_method_package then -- only look at the last section
-               input_method_lines = {}
-            end
-         end
-
-         if not current_input_method or current_input_method == looking_at_input_method_package then
-            input_method_lines[#input_method_lines + 1] = dump[i]
-         end
-         if dump[i]:match("^%s*mHasSurface") then
-            looking_at_input_method = false
-         end
-      end
-   end
-   local input_window_dump = join("\n", input_method_lines)
-   input_method_active = string.match(input_window_dump, "mHasSurface=true")
-   local ime_xy = last(string.gmatch(input_window_dump, "Requested w=%d+ h=%d+"))
-   local ime_height = 0
-   if input_method_active and ime_xy:match('Requested w=%d+ h=') then
-      ime_height = ime_app_height * 0.105 * 4
-   end
-   debug("ime_height = %d; real_height = %d; default_height = %d; napp_height = %d",
-         ime_height, real_height, default_height, app_height)
-
-   ime_height = ime_height * default_height / app_height
-   M.ime_height = ime_height
-   M.input_method_active = input_method_active
-
-   local ime_connected = not (
-      dump_str:match("mServedInputConnection=null") or
-         dump_str:match("mStartedInputConnection=null")
-   )
-   return input_method_active, ime_height, ime_connected, current_input_method
-end
-
-adb_input_method_is_null = function ()
-   -- if adb dumpsys input_method | grep mServedInputConnection=null -q; then
-   local dump = adb_pipe{'dumpsys', 'input_method'}
-   if dump:match("mServedInputConnection=null") or dump_str:match("mStartedInputConnection=null") then
-      return true
-   else
-      return false
-   end
-end
 
 check_phone = function()
    if is_exiting and is_exiting() then
@@ -1719,12 +1133,6 @@ adb_get_last_pic = function(which, remove)
    end
 end
 
-wrench_post2 = function(texwrench, text2)
-   putclip(texwrench)
-   adb_event("key scroll_lock key dpad_down")
-   wrench_post(text2)
-end
-
 save_window_types = function()
    local mapfile = io.open(M.configDirFile("window_post_botton.lua"), "w")
    mapfile:write("local map = {}\n")
@@ -1892,232 +1300,6 @@ M.start_app = function(to_start, to_find)
 end
 
 M.M = M
-
-M.ask_for_window_type = function(window)
-   window_type = select_args{'Where is the send button for ' .. window,
-                             'Above the input method, the right end',
-                             'Above the input method, the right end, with a row of buttons in between (like QQ)',
-                             'Above the input method, the right end, confirm before send',
-                             "Top-right corner of phone's screen",
-                             "Top-right corner of phone's screen, confirm before send",
-                             'I will click the send button myself',
-   }
-   if window_type == 'Above the input method, the right end' then
-      window_type = 'weixin-chat'
-   elseif window_type == 'Above the input method, the right end, with a row of buttons in between (like QQ)' then
-      window_type = 'qq-chat'
-   elseif window_type == "Top-right corner of phone's screen" then
-      window_type = 'weibo-share'
-   elseif window_type == 'Above the input method, the right end, confirm before send' then
-      window_type = 'weixin-confirm'
-   elseif window_type == "Top-right corner of phone's screen, confirm before send" then
-      window_type = 'weibo-confirm'
-   else
-      window_type = 'manual-post'
-   end
-   window_post_button_map[window] = window_type
-   save_window_types()
-   return window_type
-end
-
-wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
-   local window = adb_top_window()
-   debug("sharing text: %s for window: %s", text, window)
-   if text and text:match("^@%?") then
-      wrench_post("@", 'manual-post')
-      prompt_user("请选择你要@谁，然后继续")
-      text = text:gsub("^@%?", "")
-      how_to_post = 'manual-post'
-   end
-
-   if text and text:match("@%?$") then
-      text = text:gsub("@%?$", "")
-      wrench_post(text, 'manual-post')
-      wrench_post("@", 'manual-post')
-      return
-   end
-
-   if text then
-      if text:match("@$") and not how_to_post then
-         how_to_post = 'manual-post'
-      end
-
-      if text:match("^​") and text ~= "​" then
-         text = text:sub(string.len("​") + 1)
-         local func = loadstring(text)
-         wrench_eval(func, text)
-         return "executed string"
-      end
-      if text:match("^#!lua") and text ~= "#!lua" then
-         text = text:sub(string.len("#!lua") + 1)
-         local func = loadstring(text)
-         wrench_eval(func, text)
-         return "executed string"
-      end
-
-      if window:match("com.tencent.mobileqq") then
-         putclip(emoji_for_qq(text))
-      elseif window:match("com.tencent.mm/") then
-         -- text = text:gsub("\n", "​\n")
-         putclip(emoji_for_weixin(text))
-      elseif window:match("com.sina.weibo/") then
-         putclip(emoji_for_weibo(text))
-      else
-         putclip(text)
-      end
-   end
-   if window == W.weixinAlbumPreviewActivity or window == W.weiboPicFilterActivity then
-      sleep(.5)
-       window = adb_top_window()
-   end
-
-   if window == "com.sina.weibo/com.sina.weibo.qac.answer.AnswerComposerActivity" then
-      post_weibo_answer(text)
-      return
-   end
-
-   if window then print("window is %s", window) end
-
-   if string.match(window, "^PopupWindow:") then
-      window = M.m_focused_app
-   end
-
-   if window == "com.immomo.momo/com.immomo.momo.android.activity.feed.PublishFeedActivity"
-      or (window:match("^com.sina.weibo/") and not window:match("com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"))
-   then
-      weibo_text_share(window)
-      return
-   elseif window == "com.google.android.gm/com.google.android.gm.ConversationListActivityGmail" then
-      local how = select_args{"请选择回复方法", "单独回复", "群体回复", "手动回复"}
-      if how == "单独回复" then
-         adb_event("key dpad_down key dpad_down key tab key tab key enter sleep 1")
-      elseif how == "群体回复" then
-         adb_event("key dpad_down key tab key dpad_down key enter key enter key tab key tab key enter sleep 1")
-      else
-         adb_event("sleep 1")
-      end
-      wrench_post()
-      return
-   elseif postAfterBackKey(window) then
-      return
-   elseif window == "com.google.android.gm/com.google.android.gm.ComposeActivityGmail" then
-      adb_event("key scroll_lock adb-tap 870 173")
-      return
-   elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQLSActivity" then
-      adb_event("adb-tap 297 884 key scroll_lock adb-tap 923 909")
-   elseif window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI" then
-      weixin_text_share(window, text)
-      return
-   elseif window == "SmsPopupDialog" then
-      wrench_sms(window)
-      return
-   elseif window == "com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity" then
-      wrench_google_plus(window)
-      return
-   elseif window == "com.smartisanos.notes/com.smartisanos.notes.NotesActivity" then
-      wrench_smartisan_notes(window)
-      return
-   elseif window == W.smartisan_mail_compose or
-      window == "com.android.email/com.android.email.activity.Welcome" or
-      window == "com.android.email/com.android.email2.ui.MailActivityEmail" or
-   window == W.emailSmartisanActivity then
-      wrench_mail(window)
-      return
-   else
-      local add, post_button = '', right_button_x .. ' 1850'
-      local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
-      log("input_method is %s, ime_xy is %s, ime_connected is %s", input_method, ime_height, ime_connected)
-      -- debugging("ime_xy is %s", ime_xy)
-
-      if input_method then
-         add = "key BACK"
-      else
-         add = "" -- # add="560 1840 key DEL key BACK"
-      end
-      if input_method then
-         if ime_height ~= 0 then
-            add = ''
-            post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - 80)
-         end
-      else
-         if not ime_connected then
-            if window == W.qqChatActivity2 or window == W.qqChatActivity then
-               adb_event("540 1740")
-            else
-               adb_event("540 1840")
-            end
-            wait_input_target(window)
-            if not adb_top_window():match("^PopupWindow") then
-               adb_event("key back")
-               for n = 1, 5 do
-                  local input_method, ime_height, ime_connected = adb_get_input_window_dump()
-                  -- log("ime_height is %d: %d", ime_height, n)
-                  if ime_height == 0 then
-                     adb_top_window() -- make sure we know that the nav bar is gone.
-                     break
-                  else
-                     sleep(.2 * n)
-                  end
-               end
-            end
-            add = ''
-         end
-      end
-
-      if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
-         post_button = right_button_x .. ' 166'
-      end
-
-      local window_type = (how_to_post or window_post_button_map[window])
-      if not window_type and (
-         window:match("^com.tencent.mm/com.tencent.mm.ui.chatting.") or -- weixin chat with a friend open from group members
-            window:match("^com.tencent.mm/com.tencent.mm.plugin.sns.ui.") -- weixin moments comment
-      ) then
-         window_type = 'weixin-chat'
-      end
-
-      if not window_type then
-         window_type = ask_for_window_type(window)
-      end
-      if window_type == 'weixin-chat' then
-         post_button = post_button -- empty
-      elseif window_type == 'qq-chat' then
-         local qq_button_sub = 200
-         if real_height >= 2160 then
-            qq_button_sub = 150
-         end
-         post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - qq_button_sub)
-         -- log("ime_height is %d, post_button is adb_event'adb-long-press %s'", ime_height, post_button)
-      elseif window_type == 'weixin-confirm' then
-         post_button = post_button
-      elseif window_type == 'weibo-share' or window_type == 'top-right' then
-         post_button = right_button_x .. ' 150'
-      elseif window_type == 'weibo-confirm' then
-         post_button = right_button_x .. ' 150'
-      elseif window_type == 'manual-post' then
-         post_button = 'key enter'
-      end
-
-      debugging("add is %s", add)
-      adb_event(add .. " key scroll_lock")
-      if confirm_before_post and not yes_or_no_p(confirm_before_post) then
-         return ""
-      end
-
-      if window_type:match("confirm") and not yes_or_no_p(("确认发送？（发送按钮位置与 %s 类似）"):format(window_type:gsub("-confirm", ""))) then
-         return ""
-      end
-
-      if post_button ~= "" then
-         adb_event(post_button)
-      end
-   end
-   return "text sent"
-end
-
-wrench_send_action = function()
-   wrench_post('​')
-end
 
 local function upload_pics(...)
    local pics = {...}
@@ -2377,13 +1559,10 @@ end
 
 M.log = log
 M.open_weixin_scan = open_weixin_scan
-M.adb_get_input_window_dump = adb_get_input_window_dump
 M.putclip = putclip
 M.start_weibo_share = start_weibo_share
-M.wrench_post = wrench_post
 M.launch_apps = launch_apps
 M.on_app_selected = on_app_selected
-M.wrench_find_weixin_contact = wrench_find_weixin_contact
 M.adb_shell = adb_shell
 M.adb_pipe = adb_pipe
 M.wrench_picture = wrench_picture
@@ -2401,13 +1580,6 @@ M.wrench_run = wrench_run
 M.wrench_add_mms_receiver = wrench_add_mms_receiver
 M.wrench_adb_mail = wrench_adb_mail
 M.wrench_save_mail_heads = wrench_save_mail_heads
-M.adb_event = adb_event
-M.wrench_send_action = wrench_send_action
-M.wrench_post2 = wrench_post2
-M.wrench_find_qq_contact = wrench_find_qq_contact
-M.wrench_share_to_qq = wrench_share_to_qq
-M.weixin_find_friend = weixin_find_friend
-M.get_coffee = get_coffee
 
 local function be_quiet()
    social_need_confirm = false
@@ -2482,7 +1654,6 @@ M.be_quiet = be_quiet
 M.my_show_notifications = my_show_notifications
 M.yes_or_no_p = yes_or_no_p
 M.start_or_stop_recording = start_or_stop_recording
-M.adb_top_window = adb_top_window
 
 local function do_it()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then

@@ -441,3 +441,117 @@ M.weixin_emojis_remap = {
    ["[街舞]"] = "[Meditate]", ['[笑哭]'] = '😂', ['[斜眼笑]'] = '[奸笑]', ['[doge]'] = '[🙃]',
 }
 
+
+M.get_coffee = function(what)
+   for i = 1, 5 do
+      if social_need_confirm and not yes_or_no_p("Will now open the Wechat App and goto it's home page") then
+         return
+      end
+      weixin_open_homepage()
+      log("Start to click for the favsearch " .. i)
+      if social_need_confirm and not yes_or_no_p("Will now click my way to the Wechat bookmarks") then
+         return
+      end
+
+      if social_need_confirm and not yes_or_no_p("First, click the “My” page") then
+         return
+      end
+
+      adb_event"sleep .3 adb-tap 927 1830 sleep .1 adb-tap 927 1830 sleep .3"
+
+      if social_need_confirm and not yes_or_no_p("Next, click the “My Favorites” button") then
+         return
+      end
+
+      adb_tap_1080x2160(272, 633, 337, 782)
+
+      for f_i = 1, 10 do
+         local FavoriteIndexUI = "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavoriteIndexUI"
+         local top_window = wait_top_activity_n(2, FavoriteIndexUI)
+         if top_window ~= FavoriteIndexUI then
+            log("Still not FavoriteIndexUI at %d", f_i)
+            if f_i == 10 then
+               goto open_fav_search_again
+            end
+            if top_window == W.weixinLauncherActivity then
+               log("Need click for fav again")
+               adb_tap_1080x2160(272, 633, 501, 872)
+            elseif top_window and top_window ~= "" then
+               log("Failed to get FavoriteIndexUI, and not in W.weixinLauncherActivity at f_i = %d, top is %s", f_i, top_window)
+               goto open_fav_search_again
+            end
+         else
+            log("Got FavoriteIndexUI at %d", f_i)
+            break
+         end
+      end
+
+      if social_need_confirm and not yes_or_no_p("Next, click the “Search” button for the “My Favorites”") then
+         return
+      end
+      adb_tap_1080x2160(883, 88, 833, 145)
+
+      for fs_i = 1, 10 do
+         if wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI") ~= "" then
+            log("Got FavSearchUI when fs_i is %d", fs_i)
+            break
+         else
+            log("Still waiting for FavSearchUI at %d", fs_i)
+            adb_tap_1080x2160(883, 88, 833, 145)
+         end
+      end
+      if fs_i ~= 10 then
+         break
+      end
+      :: open_fav_search_again ::
+      log("Need retry " .. i)
+      return
+   end
+   putclip"咕咕机 善良的动物"
+
+   if social_need_confirm and not yes_or_no_p("Will now find the 咕咕机 Wechat App") then
+      return
+   end
+   adb_event"key scroll_lock sleep .1 key enter sleep .5 "
+   if social_need_confirm and not yes_or_no_p("Will now open the 咕咕机 Wechat App") then
+      return
+   end
+   adb_tap_1080x2160(474, 356, 535, 458)
+   if social_need_confirm and not yes_or_no_p("Will now wait for the input ready") then
+      return
+   end
+
+   for i = 1, 80 do
+      local input_target = wait_input_target_n(1, "com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI")
+      if input_target:match"com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI" then
+         break
+      elseif input_target:match"com.tencent.mm/com.tencent.mm.plugin.search.ui.FTSMainUI" then
+         adb_tap_1080x2160(474, 356, 535, 458)
+      elseif i < 5 and adb_top_window() == "com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI" then
+         adb_tap_1080x2160(474, 356, 535, 458)
+      end
+      log("Click for coffee input: %s %d", input_target, i)
+
+      adb_event"adb-tap 15 700"
+      sleep(.1)
+   end
+   if what == "" then
+      what = "秦师傅，给我来一杯拿铁，谢谢❤"
+   end
+   putclip(what)
+
+   if social_need_confirm and not yes_or_no_p("Will now input your order for coffee") then
+      return
+   end
+   adb_event"key scroll_lock sleep .5"
+   if yes_or_no_p("Confirm to order coffee from Shifu Qin？") then
+      if social_need_confirm then
+         yes_or_no_p("I will alarm you in 3 minutes for your coffee")
+         return
+      end
+      adb_event"key back sleep .2"
+      adb_tap_1080x2160(534, 1603, 562, 1662)
+      system{'alarm', '3', 'Go get your coffee (take your coffee ticket!)'}
+   end
+
+end
