@@ -11,43 +11,29 @@ M.is_debugging = false
 M.W = W
 
 -- functions
-local WrenchExt = {}
-local search_sms
-local window_post_button_map = {}
-local mail_group_map = {}
+M.WrenchExt = {}
+M.window_post_button_map = {}
+M.mail_group_map = {}
 M.phone_info_map = {}
-local save_window_types
-local phone_serial = ""
-local configDir = "."
-local last_uploaded_pics = {}
-local file_exists
-local social_need_confirm = false
-local right_button_x = 984
-local start_or_stop_recording, m_is_recording, current_recording_file
+M.phone_serial = ""
+M.configDir = "."
+M.last_uploaded_pics = {}
+M.social_need_confirm = false
+M.right_button_x = 984
+M.m_is_recording = nil
+M.current_recording_file = nil
 
-local wrench_call, wrench_run, wrench_adb_mail, wrench_save_mail_heads
-local adb_shell
-local adb_push, adb_pull, adb_install
-local shell_quote, putclip, push_text
-local adb_start_activity, launch_apps, on_app_selected
-local wrench_add_mms_receiver
-local check_phone
-local get_a_note
-local adb_get_last_pic, debugging
-local adb_start_service_and_wait_file_gone
-local adb_am
-local wrench_eval, log, share_pics_to_app, share_text_to_app
-local check_scroll_lock, prompt_user, yes_or_no_p
+M.debugging = nil
 
 -- variables
-local where_is_dial_key
-local rows_mail_att_finder
-local UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
+M.where_is_dial_key = nil
+M.rows_mail_att_finder = nil
+M.UNAME_CMD = "uname || busybox uname || { echo -n Lin && echo -n ux; }"
 
-local using_adb_root
-local adb_unquoter
-local is_windows = false
-local debug_set_x = ""
+M.using_adb_root = nil
+M.adb_unquoter = nil
+M.is_windows = false
+M.debug_set_x = ""
 M.default_width, M.default_height = 1080, 1920
 M.ref_width, M.ref_height = 1080, 1920
 M.real_width, M.real_height = 1080, 1920
@@ -67,12 +53,14 @@ end
 
 M.update_screen_ratios()
 
-local using_oppo_os = false
-local brand = "smartisan"
-local model = "Wrench"
-local sdk_version = 19
-local emojis, img_to_emoji_map, emoji_to_img_map
-local the_true_adb = "./the-true-adb"
+M.using_oppo_os = false
+M.brand = "smartisan"
+M.model = "Wrench"
+M.sdk_version = 19
+M.emojis = nil
+M.img_to_emoji_map = nil
+M.emoji_to_img_map = nil
+M.the_true_adb = "./the-true-adb"
 
 W.sms = "com.android.mms/com.android.mms.ui.ComposeMessageActivity"
 W.weixinPackage = "com.tencent.mm/"
@@ -118,7 +106,7 @@ end
 
 adb_unquoter = ""
 
-shell_quote = function (str)
+M.shell_quote = function (str)
    return "'" .. string.gsub(str, "'", "'\\''") .. "'"
 end
 
@@ -194,7 +182,7 @@ M.emoji_rewrite = function(text, which_emojis)
    return replace
 end
 
-local function system(cmds)
+M.system = function (cmds)
    if type(cmds) == 'string' then
       return os.execute(cmds)
    elseif type(cmds) == 'table' then
@@ -222,7 +210,7 @@ M.debug = function(fmt, ...)
    print(string.format(fmt, ...))
 end
 
-local function split(pat, str, allow_null)
+M.split = function(pat, str, allow_null)
    local start = 1
    if pat == ' ' then
       pat = "%s+"
@@ -251,7 +239,7 @@ local function split(pat, str, allow_null)
    return list
 end
 
-local function replace_img_with_emoji(text, html)
+M.replace_img_with_emoji = function (text, html)
    debugging("text is %s, html is %s", text, html)
    local texts = split("￼", text, true)
    for k, v in pairs(texts) do
@@ -272,7 +260,7 @@ local function replace_img_with_emoji(text, html)
    return res
 end
 
-local function join(mid, args)
+M.join = function(mid, args)
    text = ''
    for i = 1, #args do
       if i ~= 1 then
@@ -283,7 +271,7 @@ local function join(mid, args)
    return text
 end
 
-local function adb_do(func, cmds)
+M.adb_do = function(func, cmds)
    check_phone()
    if type(cmds) == 'string' then
       return adb_do(func, {"sh", "-c", cmds})
@@ -306,15 +294,14 @@ local function adb_do(func, cmds)
    end
 end
 
-local adb_pipe
-adb_shell = function (cmds)
+M.adb_shell = function (cmds)
    if qt_adb_pipe then
       return adb_pipe(cmds)
    end
    return adb_do(os.execute, cmds)
 end
 
-adb_pipe = function(cmds)
+M.adb_pipe = function(cmds)
    if is_exiting then
       check_phone()
    end
@@ -344,13 +331,11 @@ adb_pipe = function(cmds)
    return out:gsub("\r", "")
 end
 
-adb_start_activity = function(a)
+M.adb_start_activity = function(a)
    adb_am("am start -n " .. a)
 end
 
-M.adb_start_activity = adb_start_activity
-
-adb_am = function(cmd)
+M.adb_am = function(cmd)
    if type(cmd) ~= 'string' then
       cmd = join(' ', cmd)
    end
@@ -365,8 +350,6 @@ adb_am = function(cmd)
    end
 end
 
-M.adb_am = adb_am
-
 M.adjust_x = function(x)
    return x * app_width_ratio
 end
@@ -379,11 +362,11 @@ M.adjust_y = function(y)
    end
 end
 
-local function sleep(time)
+M.sleep = function(time)
    adb_event(("sleep %s"):format(time))
 end
 
-prompt_user = function(fmt, ...)
+M.prompt_user = function(fmt, ...)
    if select_args then
       return select_args{string.format(fmt, ...)}
    end
@@ -535,16 +518,14 @@ M.select_args_with_history = function(history_name, prompt, init_args, ...)
    return ret
 end
 
-M.prompt_user = prompt_user
-
-yes_or_no_p = function(txt, ...)
+M.yes_or_no_p = function(txt, ...)
    if select_args then
       return select_args{string.format(txt, ...)} ~= ""
    end
    return false
 end
 
-check_scroll_lock = function()
+M.check_scroll_lock = function()
    local input_method, ime_height, ime_connected, current_input_method
    local function using_wrench_ime()
       input_method, ime_height, ime_connected, current_input_method = adb_get_input_window_dump()
@@ -605,7 +586,7 @@ M.swipe_down = function()
    adb_event"adb-no-virt-key-wrench-swipe 549 483 552 1778 adb-no-virt-key-wrench-swipe 549 483 552 1778 sleep 1"
 end
 
-local function search_mail(what)
+M.search_mail = function(what)
    putclip_nowait(what)
    for i = 1, 5 do
       M.start_app"com.android.email/com.android.email.activity.Welcome"
@@ -626,7 +607,7 @@ M.string_strip = function(s)
    return s
 end
 
-search_sms = function(what)
+M.search_sms = function(what)
    putclip_nowait(what)
    sms_activity = "com.android.mms/com.android.mms.ui.ConversationList"
    for i = 1, 5 do
@@ -642,22 +623,22 @@ search_sms = function(what)
    adb_event"key scroll_lock key enter"
 end
 
-local function wrench_sms(window)
+M.wrench_sms = function (window)
    adb_event"adb-tap 192 1227 sleep .5 adb-key scroll_lock"
    if yes_or_no_p("确认发送短信？") then
       adb_event"adb-tap 857 1008"
    end
 end
 
-local function wrench_google_plus(window)
+M.wrench_google_plus = function (window)
    adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
 end
 
-local function wrench_smartisan_notes(window)
+M.wrench_smartisan_notes = function (window)
    adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
 end
 
-local function wrench_mail(window)
+M.wrench_mail = function (window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
       wait_input_target(W.smartisan_mail_compose)
@@ -673,11 +654,11 @@ local function wrench_mail(window)
    end
 end
 
-local function wrench_paste()
+M.wrench_paste = function ()
    adb_event{'key', 'scroll_lock'}
 end
 
-local function last(func)
+M.last = function(func)
    local x, y
    y = func()
    while y do
@@ -688,15 +669,13 @@ local function last(func)
 end
 
 
-check_phone = function()
+M.check_phone = function()
    if is_exiting and is_exiting() then
       error("exiting")
    end
 end
 
-M.check_phone = check_phone
-
-adb_wait_file_gone = function(file)
+M.adb_wait_file_gone = function(file)
    adb_shell(
       (
       [[
@@ -710,11 +689,11 @@ adb_wait_file_gone = function(file)
       ]]):format(file))
 end
 
-local function adb_start_service(service_cmd)
+M.adb_start_service = function (service_cmd)
    adb_am("am startservice --user 0 -n " .. service_cmd)
 end
 
-adb_start_service_and_wait_file_gone = function(service_cmd, file)
+M.adb_start_service_and_wait_file_gone = function(service_cmd, file)
    adb_start_service(service_cmd)
    adb_wait_file_gone(file)
 end
@@ -741,7 +720,7 @@ M.adb_start_service_and_wait_file = function(service_cmd, file)
    end
 end
 
-adb_push = function(lpath, rpath)
+M.adb_push = function(lpath, rpath)
    if type(lpath) == 'table' then
       if #lpath ~= 2 then
          error("invalid adb_push call")
@@ -755,7 +734,7 @@ adb_push = function(lpath, rpath)
    end
 end
 
-adb_pull = function(rpath, lpath)
+M.adb_pull = function(rpath, lpath)
    if type(rpath) == 'table' then
       if #rpath ~= 2 then
          error("invalid adb_pull call")
@@ -769,7 +748,7 @@ adb_pull = function(rpath, lpath)
    end
 end
 
-adb_install = function(apk)
+M.adb_install = function(apk)
    if qt_adb_install then
       return qt_adb_install{apk}
    else
@@ -777,7 +756,7 @@ adb_install = function(apk)
    end
 end
 
-push_text = function(text)
+M.push_text = function(text)
    if text then
       text = M.space_cjk_en(text)
    end
@@ -811,7 +790,7 @@ putclip_nowait = function(text)
    M.need_wait_putclip = true
 end
 
-putclip = function(text)
+M.putclip = function(text)
    push_text(text)
    adb_start_service_and_wait_file_gone('com.bhj.setclip/.PutClipService', M.sdcard_putclip_path)
 end
@@ -821,7 +800,7 @@ M.read_phone_file = function(file)
 end
 
 
-local check_file_push_and_renamed = function(file, md5, rename_to)
+M.check_file_push_and_renamed = function(file, md5, rename_to)
    if not rename_to then
       rename_to = file:gsub(".*/", "")
    end
@@ -854,11 +833,11 @@ local check_file_push_and_renamed = function(file, md5, rename_to)
    end
 end
 
-local check_file_pushed = function(file, md5)
+M.check_file_pushed = function(file, md5)
    return check_file_push_and_renamed(file, md5, nil)
 end
 
-local check_apk_installed = function(apk, md5, reason)
+M.check_apk_installed = function(apk, md5, reason)
    local md5_on_phone = adb_pipe("cat /sdcard/" .. md5)
    md5_on_phone = md5_on_phone:gsub("\n", "")
    local md5file = io.open(md5)
@@ -928,7 +907,7 @@ M.configDirFile = function(file)
    return M.configDir .. file
 end
 
-local get_xy_from_dump = function(dump, prefix)
+M.get_xy_from_dump = function(dump, prefix)
    local xy_match = dump:match(prefix .. '=(%d+x%d+)')
    local height = tonumber(xy_match:match('x(%d+)'))
    local width = tonumber(xy_match:match('(%d+)x'))
@@ -1091,7 +1070,7 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    return ("brand is %s, adb serial is %s"):format(brand, adb_serial)
 end
 
-get_a_note = function(text)
+M.get_a_note = function(text)
    if text then
       push_text(text)
    end
@@ -1121,7 +1100,7 @@ get_a_note = function(text)
    adb_get_last_pic('notes', true)
 end
 
-adb_get_last_pic = function(which, remove)
+M.adb_get_last_pic = function(which, remove)
    -- WHICH must be 'notes'
    adb_start_service_and_wait_file("com.bhj.setclip/.PutClipService --ei get-last-note-pic 1", M.sdcard_putclip_path)
    local pic = adb_pipe("cat " .. M.sdcard_putclip_path)
@@ -1133,7 +1112,7 @@ adb_get_last_pic = function(which, remove)
    end
 end
 
-save_window_types = function()
+M.save_window_types = function()
    local mapfile = io.open(M.configDirFile("window_post_botton.lua"), "w")
    mapfile:write("local map = {}\n")
    for k, v in spairs(window_post_button_map) do
@@ -1173,8 +1152,6 @@ M.file_exists = function(name)
    end
 end
 
-file_exists = M.file_exists
-
 M.get_app_table = function()
    apps_file = io.open(M.dataDirFile("apps.info"))
    local apps_txt = apps_file:read("*a")
@@ -1205,14 +1182,14 @@ M.update_apps = function()
    M.get_app_table()
 end
 
-launch_apps = function()
+M.launch_apps = function()
    if not file_exists(M.dataDirFile("apps.info")) then
       M.update_apps()
    end
    select_apps()
 end
 
-on_app_selected = function(app)
+M.on_app_selected = function(app)
    local app_table = M.get_app_table()
    if app ~= "" then
       log("starting: %s", app_table[app])
@@ -1220,19 +1197,19 @@ on_app_selected = function(app)
    end
 end
 
-local dofile_res = nil
+M.dofile_res = nil
 dofile_res, WrenchExt = pcall(dofile, "wrench-ext.lua")
 if not dofile_res then
    WrenchExt = {}
 end
 
-local shouldNotPostActivitys = {
+M.shouldNotPostActivitys = {
    "com.tencent.mobileqq/com.tencent.mobileqq.activity.aio.photo.AIOGalleryActivity",
    "com.tencent.mm/com.tencent.mm.ui.chatting.gallery.ImageGalleryUI",
    "StatusBar",
 }
 
-local function postAfterBackKey(window)
+M.postAfterBackKey = function (window)
    for _, w in ipairs(shouldNotPostActivitys) do
       if window == w then
          adb_event"key back sleep .2"
@@ -1243,7 +1220,7 @@ local function postAfterBackKey(window)
    return false
 end
 
-start_or_stop_recording = function()
+M.start_or_stop_recording = function()
    if not m_is_recording then
       m_is_recording = M.select_args{"请输入你想录制的文件名（例：SearchKindle）?", "", ""}
       if (m_is_recording ~= "") then
@@ -1301,7 +1278,7 @@ end
 
 M.M = M
 
-local function upload_pics(...)
+M.upload_pics = function (...)
    local pics = {...}
    if #pics == 0 then
       return last_uploaded_pics
@@ -1331,7 +1308,7 @@ local function upload_pics(...)
    return targets
 end
 
-share_text_to_app = function(pkg, cls, text)
+M.share_text_to_app = function(pkg, cls, text)
    push_text(text)
 
    if cls:match("^%.") then
@@ -1346,7 +1323,7 @@ share_text_to_app = function(pkg, cls, text)
    }
 end
 
-share_pics_to_app = function(pkg, cls, pics, ...)
+M.share_pics_to_app = function(pkg, cls, pics, ...)
    if type(pics) ~= "table" then
       pics = {pics, ...}
    end
@@ -1447,7 +1424,7 @@ M.close_ime = function()
    return input_method, ime_height
 end
 
-local function click_to_album_wx_chat_style(evenwrench, activity1, ...)
+M.click_to_album_wx_chat_style = function(evenwrench, activity1, ...)
    local input_method, ime_height = close_ime()
    local post_button = ('%d %d'):format(right_button_x, 1920 - 50)
    local old_top_window = adb_top_window()
@@ -1461,7 +1438,7 @@ local function click_to_album_wx_chat_style(evenwrench, activity1, ...)
    return true
 end
 
-wrench_add_mms_receiver = function(number)
+M.wrench_add_mms_receiver = function(number)
    while adb_is_window(W.sms) do
       adb_event("key back sleep .1")
    end
@@ -1483,7 +1460,7 @@ M.send_sms = function(sms, someone)
    adb_event("adb-tap 568 1088 sleep .2 key scroll_lock")
 end
 
-log = function(fmt, ...)
+M.log = function(fmt, ...)
    if log_to_ui then
       log_to_ui(string.format(fmt, ...))
    end
@@ -1493,7 +1470,7 @@ if log_to_ui then
    M.log_to_ui = log_to_ui
 end
 
-wrench_eval = function(f, text)
+M.wrench_eval = function(f, text)
    if not f then
       prompt_user("Empty f: %s", text)
    else
@@ -1501,7 +1478,7 @@ wrench_eval = function(f, text)
    end
 end
 
-wrench_run = function (file, argType)
+M.wrench_run = function (file, argType)
    if argType == 'string' then
       local f = loadstring(file)
       return wrench_eval(f, file)
@@ -1557,39 +1534,15 @@ M.shift_click_notification = function(key, pkg, title, text)
    end
 end
 
-M.log = log
-M.open_weixin_scan = open_weixin_scan
-M.putclip = putclip
-M.start_weibo_share = start_weibo_share
-M.launch_apps = launch_apps
-M.on_app_selected = on_app_selected
-M.adb_shell = adb_shell
-M.adb_pipe = adb_pipe
-M.wrench_picture = wrench_picture
-M.wrench_follow_me = wrench_follow_me
-M.wrench_share_to_weibo = wrench_share_to_weibo
-M.wrench_spread_it = wrench_spread_it
-M.upload_pics = upload_pics
-M.split = split
-M.replace_img_with_emoji = replace_img_with_emoji
-M.system = system
-M.sleep = sleep
-M.get_a_note = get_a_note
-M.wrench_call = wrench_call
-M.wrench_run = wrench_run
-M.wrench_add_mms_receiver = wrench_add_mms_receiver
-M.wrench_adb_mail = wrench_adb_mail
-M.wrench_save_mail_heads = wrench_save_mail_heads
-
-local function be_quiet()
+M.be_quiet = function()
    social_need_confirm = false
 end
 
-local function be_verbose()
+M.be_verbose = function()
    social_need_confirm = true
 end
 
-local should_use_internal_pop = true
+M.should_use_internal_pop = true
 if WrenchExt.should_use_internal_pop and WrenchExt.should_use_internal_pop() ~= 1 then
    should_use_internal_pop = false
 end
@@ -1653,9 +1606,8 @@ M.be_verbose = be_verbose
 M.be_quiet = be_quiet
 M.my_show_notifications = my_show_notifications
 M.yes_or_no_p = yes_or_no_p
-M.start_or_stop_recording = start_or_stop_recording
 
-local function do_it()
+M.do_it = function()
    if arg and type(arg) == 'table' and string.find(arg[0], "wrench.lua") then
       -- wrench_post(join(' ', arg))
       local file = io.open("setclip.apk.md5")
