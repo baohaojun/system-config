@@ -15,7 +15,7 @@ local WrenchExt = {}
 local search_sms
 local window_post_button_map = {}
 local mail_group_map = {}
-local phone_info_map = {}
+M.phone_info_map = {}
 local save_window_types
 local phone_serial = ""
 local configDir = "."
