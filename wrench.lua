@@ -12,7 +12,7 @@ M.W = W
 
 -- functions
 local WrenchExt = {}
-local search_sms, string_strip
+local search_sms
 local adb_input_method_is_null
 local window_post_button_map = {}
 local mail_group_map = {}
@@ -35,7 +35,7 @@ local wrench_add_mms_receiver
 local adb_get_input_window_dump, adb_top_window
 local adb_is_window
 local check_phone
-local debug, get_a_note, emoji_rewrite
+local debug, get_a_note
 local adb_get_last_pic, debugging
 local adb_start_service_and_wait_file_gone
 local adb_am
@@ -206,7 +206,7 @@ else -- windows
 end
 
 
-emoji_rewrite = function(text, which_emojis)
+M.emoji_rewrite = function(text, which_emojis)
    local s = 1
    local replace = ""
    repeat
@@ -1137,7 +1137,7 @@ local function get_coffee(what)
 
 end
 
-string_strip = function(s)
+M.string_strip = function(s)
    s = s:gsub("^%s+", "")
    s = s:gsub("%s+$", "")
    return s
