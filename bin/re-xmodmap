@@ -14,10 +14,9 @@ if test -e ~/.renew-xauth; then
     . ~/.renew-xauth
 fi
 (
-    rm ~/.config/system-config/keyboard-dev-ids
+    rm ~/.config/system-config/keyboard-dev-ids -f
     (
         flock -n 9 || exit
-        do-natural-scrolling&
         e4000_found=false
         for x in $(seq 1 $sleep1); do
             if ! ls /dev/input/by-id/*4000-if01*; then
