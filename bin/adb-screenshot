@@ -159,7 +159,8 @@ if test "${system_screencap}" = true; then
     sd_file=screen.png
 else
     if test -z "$1"; then
-        set -- $(now.).jpg
+        mkdir -p ~/tmp/weekly
+        set -- ~/tmp/weekly/$(now.).jpg
     fi
     sd_file=$(basename "$1").jpg
     adb shell /data/data/com.android.shell/screencap \

@@ -22,7 +22,7 @@ do-dvp() {
     echo am: dvp layout
     setxkbmap -layout us -variant dvp
     re-xmodmap 2>&1|tee
-    do-natural-scrolling
+    do-natural-scrolling 9>/dev/null || true
 }
 
 (
