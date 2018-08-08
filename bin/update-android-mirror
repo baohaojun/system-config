@@ -50,6 +50,13 @@ fi
         git clean -xfd
     ) || true
 
+    (
+        unset http_proxy
+        unset https_proxy
+        repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b master -m default.xml
+        repo sync -j2 -q
+    ) || true
+
     repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml
     if test "$#" != 0; then
         branches=$(
