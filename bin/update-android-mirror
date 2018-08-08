@@ -58,10 +58,12 @@ fi
     else
         branches=$(
             (
-                cd .repo/manifests
-                git branch -a|perl -ne 's,^\s+remotes/origin/,, or next; printf if m,^[^-]+-dev$|-mr[\d.]+-dev$,' | grep -v 'chromium-dev|droiddriver-dev|gradle-dev' -P
                 echo master
-            ) | sort -r | tee .repo/branches.txt
+                (
+                    cd .repo/manifests
+                    git branch -a|perl -ne 's,^\s+remotes/origin/,, or next; printf if m,^[^-]+-dev$|-mr[\d.]+-dev$,' | grep -v 'chromium-dev|droiddriver-dev|gradle-dev' -P
+                ) | sort -ru | head -n 5
+            ) | uniq-even-non-ajacent | tee .repo/branches.txt
                 )
     fi
     git-get -u smartisan:qualcomm/platform/manifest.git -d ~/src/manifests -b sanfrancisco
