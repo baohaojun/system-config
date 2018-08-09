@@ -120,7 +120,7 @@ M.need_confirm = function(fmt, ...)
    end
 end
 
-local function wrench_picture(...)
+M.wrench_picture = function (...)
    local pics = upload_pics(...)
    local window = adb_top_window()
    if window == W.weixinLauncherActivity and yes_or_no_p("发送给当前微信聊天窗口") then
@@ -180,135 +180,8 @@ local function wrench_picture(...)
    return #pics .. " pictures sent"
 end
 
-wrench_save_mail_heads = function(file, subject, to, cc, bcc, attachments)
-   local f = io.open(file, "w")
-   f:write(('wrench_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments))
-   f:close()
-   debugging("hello saving to %s wrench_save_mail_heads", file)
-end
 
-expand_mail_groups = function(contacts)
-   local contact_array = split(",", contacts)
-   local res = ""
-   for i in ipairs(contact_array) do
-      local contact = contact_array[i]
-      if mail_group_map[contact] then
-         res = res .. mail_group_map[contact]
-      else
-         res = res .. contact
-      end
-      res = res .. ","
-   end
-   return res
-end
-
-wrench_adb_mail = function(subject, to, cc, bcc, attachments)
-   if subject ~= "" and file_exists(os.getenv("HOME") .. "/src/github/private-config/bin/wrench-thunderbird") then
-      if yes_or_no_p("Do you want to use thunderbird?") then
-         system{"wrench-thunderbird", subject, to, cc, bcc, attachments}
-         return
-      end
-   end
-
-   to = expand_mail_groups(to)
-   if to ~= "" and subject == "" and cc == "" and bcc == "" and attachments == "" then
-         while adb_top_window() == "com.android.contacts/com.android.contacts.activities.ContactSelectionActivity" do
-             log("Need get rid of contact selection dialog")
-             adb_event"key back sleep 1"
-
-         end
-         putclip(to)
-         adb_event"sleep .5 key scroll_lock sleep .5"
-         return
-   end
-
-   local paste_attachment_only = false
-
-   if attachments ~= "" and subject == "" and cc == "" and bcc == "" and to == "" then
-      paste_attachment_only = true
-   end
-
-   if not paste_attachment_only then
-
-      cc = expand_mail_groups(cc)
-      bcc = expand_mail_groups(bcc)
-
-      adb_am("am start -n " .. W.emailSmartisanActivity .. " mailto:")
-      adb_shell"mkdir -p /sdcard/adb-mail"
-      wait_input_target(W.emailSmartisanActivity)
-
-      adb_tap_1080x2160(364, 246)
-      adb_event("sleep 0.5") -- 展开
-   end
-
-   if attachments:gsub("%s", "") ~= "" then
-      local files = split("\n", attachments)
-      for i in ipairs(files) do
-         local file = files[i]
-         if paste_attachment_only then
-            if yes_or_no_p("Please click on the phone the button for adding attachments") then
-               sleep(.5)
-            else
-               return
-            end
-         else
-            adb_event"adb-tap 1050 810 sleep .5"
-         end
-
-         if not rows_mail_att_finder or rows_mail_att_finder:match"^Manual Click" then
-            rows_mail_att_finder = select_args{"How many lines of Apps are there？", "One", "Two", "Manual Click (OI File Manager is not the first App yet)"}
-         end
-         if rows_mail_att_finder == "One" then
-            adb_event"adb-tap 201 1760"
-         elseif rows_mail_att_finder == "Two" then
-            adb_event"adb-tap 153 1455"
-         else
-            prompt_user("Click OK to dismiss after you clicked OI File Manager manually.")
-         end
-
-
-         local target = file:gsub(".*[\\/]", "")
-         target = "/sdcard/adb-mail/" .. i .. "." .. target
-         adb_push{file, target}
-         target = "../../../../../.." .. target
-         putclip(target)
-
-         wait_input_target(W.oiFileChooseActivity)
-         local window = adb_top_window()
-         if window ~= W.oiFileChooseActivity then
-            window = window:gsub("/.*", "")
-            error("Must install and use OI File Manager, you are using: " .. window)
-         end
-         adb_event"sleep .5 key back key scroll_lock sleep .5"
-         adb_event"adb-tap 959 1876 sleep 1"
-      end
-   end
-
-   if paste_attachment_only then
-      return
-   end
-
-   local insert_text = function(contact)
-      if contact ~= "" then
-         putclip(contact)
-         adb_event"sleep .8 key scroll_lock sleep .5"
-      end
-      adb_event"key enter sleep .5"
-   end
-
-   adb_event"key enter sleep 1.5"
-   insert_text(subject)
-
-   adb_tap_1080x2160(415, 357)
-   adb_tap_1080x2160(370, 252)
-   insert_text(to)
-   insert_text(cc)
-   insert_text(bcc)
-
-   adb_event"key DPAD_DOWN key DPAD_DOWN"
-end
-
-local press_dial_key = function()
+M.press_dial_key = function()
    if not where_is_dial_key then
       where_is_dial_key = phone_info_map[phone_serial .. ":拨号键位置"]
       if not where_is_dial_key then
@@ -331,7 +204,7 @@ local press_dial_key = function()
    end
 end
 
-wrench_call = function(number)
+M.wrench_call = function(number)
    if number:match("@@") then
       number = string_strip(number)
       local names = split("@@", number, true)

@@ -91,11 +91,6 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     createTrayIcon();
     this->setAcceptDrops(true);
     ui->phoneTextEdit->installEventFilter(this);
-    ui->ptMailSubject->installEventFilter(this);
-    ui->ptMailTo->installEventFilter(this);
-    ui->ptMailCc->installEventFilter(this);
-    ui->ptMailBcc->installEventFilter(this);
-    ui->ptMailAttachments->installEventFilter(this);
     QList<QToolButton*> tbs = findChildren<QToolButton*>(QRegularExpression(".*"));
     foreach(QToolButton* tb, tbs) {
         tb->installEventFilter(this);
@@ -545,7 +540,6 @@ void WrenchMainWindow::on_configurePushButton_clicked()
     connect(mLuaThread.data(), SIGNAL(selectAppsSig()), this, SLOT(onSelectApps()));
     connect(mLuaThread.data(), SIGNAL(showNotificationsSig()), this, SLOT(slotShortCutActivated()));
     connect(mLuaThread.data(), SIGNAL(sigClickNotification(QString)), this, SIGNAL(adbNotificationClicked(QString)));
-    connect(mLuaThread.data(), SIGNAL(load_mail_heads_sig(QString, QString, QString, QString, QString)), this, SLOT(onLoadMailHeads(QString, QString, QString, QString, QString)));
     connect(mLuaThread.data(), SIGNAL(insertTextSig(QString)), this, SLOT(insertText(QString)));
     mLuaThread->start();
     if (! is_starting) {
@@ -929,105 +923,6 @@ void WrenchMainWindow::dropEvent(QDropEvent *event)
 void WrenchMainWindow::on_appSelected(const QString& app)
 {
     mLuaThread->addScript(QStringList() << "on_app_selected" << app);
-}
-
-void WrenchMainWindow::on_tbMailAddTo_clicked()
-{
-    initContactDialog(true);
-    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailTo(QString)));
-    afterUsingContactDialog();
-}
-
-static void addMailContact(const QString& contact, QPlainTextEdit* where)
-{
-    QString text = where->toPlainText();
-    if (text.startsWith(contact + ",") || text.contains("," + contact + ",")) {
-        return;
-    }
-    where->setPlainText(text + contact + ",");
-}
-
-void WrenchMainWindow::on_MailTo(const QString& to)
-{
-    addMailContact(to, ui->ptMailTo);
-}
-
-void WrenchMainWindow::on_tbMailAddCc_clicked()
-{
-    initContactDialog(true);
-    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailCc(QString)));
-    afterUsingContactDialog();
-}
-
-void WrenchMainWindow::on_MailCc(const QString& to)
-{
-    addMailContact(to, ui->ptMailCc);
-}
-
-void WrenchMainWindow::on_tbMailAddBcc_clicked()
-{
-    initContactDialog(true);
-    connect(mContactDialog.data(), SIGNAL(entrySelected(QString)), this, SLOT(on_MailBcc(QString)));
-    afterUsingContactDialog();
-}
-
-void WrenchMainWindow::on_MailBcc(const QString& to)
-{
-    addMailContact(to, ui->ptMailBcc);
-}
-
-void WrenchMainWindow::on_tbMailAddAttachment_clicked()
-{
-    QStringList fns = QFileDialog::getOpenFileNames(this, tr("选择附件"), QString(), tr("All Files(*)"));
-    if (fns.isEmpty()) {
-        return;
-    }
-    foreach (const QString& file, fns) {
-        ui->ptMailAttachments->setPlainText(ui->ptMailAttachments->toPlainText() + file + "\n");
-    }
-}
-
-static QStringList getMailHeads(Ui::WrenchMainWindow* ui)
-{
-    return QStringList() << ui->ptMailSubject->toPlainText()
-                         << ui->ptMailTo->toPlainText()
-                         << ui->ptMailCc->toPlainText()
-                         << ui->ptMailBcc->toPlainText()
-                         << ui->ptMailAttachments->toPlainText();
-}
-
-void WrenchMainWindow::on_tbMailDone_clicked()
-{
-    ui->tabWidget->setCurrentIndex(0);
-    ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
-    mLuaThread->addScript((QStringList() << "wrench_adb_mail") + getMailHeads(ui));
-}
-
-void WrenchMainWindow::on_tbMailLoad_clicked()
-{
-    QString file = QFileDialog::getOpenFileName(0, "请选择打开哪个邮件小扳手脚本文件", QString(), "小扳手脚本文件(*.twa)");
-    mLuaThread->addScript(QStringList() << "wrench_run" << file);
-}
-
-void WrenchMainWindow::on_tbMailSave_clicked()
-{
-    QString file = QFileDialog::getSaveFileName(0, "请选择保存常用联系方式到哪个文件", QString(), "小扳手脚本文件(*.twa)");
-    mLuaThread->addScript((QStringList() << "wrench_save_mail_heads" << file) + getMailHeads(ui));
-}
-
-void WrenchMainWindow::on_tbMailClear_clicked()
-{
-    onLoadMailHeads("", "", "", "", "");
-}
-
-void WrenchMainWindow::onLoadMailHeads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
-{
-    ui->ptMailSubject->setPlainText(subject);
-    ui->ptMailTo->setPlainText(to);
-    ui->ptMailCc->setPlainText(cc);
-    ui->ptMailBcc->setPlainText(bcc);
-    ui->ptMailAttachments->setPlainText(attachments);
-    ui->tabWidget->setCurrentIndex(1);
 }
 
 void WrenchMainWindow::moveVncMainWinWhenMoving()
