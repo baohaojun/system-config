@@ -18,6 +18,18 @@ if not dofile_res then
    M.scenes_map = {}
 end
 
+M.forget_scene = function(scene)
+   M.scenes_map[scene] = nil
+end
+
+M.refind_scene = function(scene)
+   if not find_scene(scene) then
+      forget_scene(scene)
+      return find_scene(scene)
+   end
+   return true
+end
+
 M.find_scene = function(scene, times)
    if not times then
       times = 5
@@ -46,3 +58,15 @@ M.find_scene = function(scene, times)
       return false
    end
 end
+
+M.click_scene = function (scene)
+   log("Click scene: %s", scene)
+   if not refind_scene(scene) then
+      log("Can't find scene: %s (tried 2 times)", scene)
+      return
+   end
+   local xy = scenes_map[scene]
+   xy = split(" ", xy)
+   adb_tap_XY(xy[1], xy[2])
+end
+

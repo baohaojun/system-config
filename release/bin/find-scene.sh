@@ -45,9 +45,8 @@ function picture-matches() {
     done
 
     local x
-    ONMYOJI_RESDIR=$(dirname "$1")
     for x in $(seq 1 100); do
-        x_png=${ONMYOJI_RESDIR}/${1%.png}.$x.png
+        x_png=${1%.png}.$x.png
         if test ! -e "${x_png}"; then
             if test -L "$1"; then
                 if picture-matches "$(readlink -f "$1")" "$2"; then
@@ -141,7 +140,7 @@ function find-scene() {
         return 1
     fi
 
-    local full_jpg=${dir}/find-scene.$$.jpg
+    local full_jpg=${dir}/find-scene.${ANDROID_SERIAL}.jpg
 
     adb-screenshot $full_jpg >/dev/null 2>&1
 
@@ -160,7 +159,7 @@ function find-scene() {
         ret=0
     fi
 
-    rm -f ${full_jpg} ${full_jpg}.png
+    # rm -f ${full_jpg} ${full_jpg}.png
     if test "${ret}" = 0; then
         echo ${matched_xy}
     fi
@@ -242,8 +241,9 @@ is-scene() {
     local scene_png=${resdir}/${scene}.png
     local scene_size=$(get-image-size ${scene_png})
 
-    adb-screenshot -x ${scene_x} -y ${scene_y} -s ${scene_size} ~/tmp/is-scene.$$.png >/dev/null 2>&1
-    if picture-matches ${scene_png} ~/tmp/is-scene.$$.png; then
+    tmp_png=~/tmp/is-scene.${ANDROID_SERIAL}.png
+    adb-screenshot -x ${scene_x} -y ${scene_y} -s ${scene_size} ${tmp_png} >/dev/null 2>&1
+    if picture-matches ${scene_png} ${tmp_png}; then
         return 0
     fi
     return 1
