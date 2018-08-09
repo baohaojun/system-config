@@ -1,3 +1,15 @@
+M.click_scene = function (scene)
+   if not scenes_map[scene] then
+      find_scene(scene)
+   end
+
+   if scenes_map[scene] then
+      local xy = scenes_map[scene]
+      xy = split(" ", xy)
+      adb_tap_XY(xy[1], xy[2])
+   end
+end
+
 M.qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
 
@@ -7,15 +19,7 @@ M.qq_find_friend = function(friend_name)
       local top_window = wait_input_target_n(5, W.qqChatActivity2, W.qqGroupSearch)
       adb_event("key comma sleep .1")
 
-      if not scenes_map['qq-close-search'] then
-         find_scene("qq-close-search")
-      end
-
-      if scenes_map['qq-close-search'] then
-         local xy = scenes_map['qq-close-search']
-         xy = split(" ", xy)
-         adb_tap_XY(xy[1], xy[2])
-      end
+      click_scene('qq-close-search')
       adb_tap_1080x2160(857, 91, 804, 167) -- click the clear search button "x"
       adb_event"sleep .1 key scroll_lock sleep .5" -- clear the search first by input "x " and click ⓧ.
       if top_window and top_window:match(W.qqGroupSearch) then
