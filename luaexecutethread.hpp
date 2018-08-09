@@ -48,7 +48,6 @@ signals:
     void showNotificationsSig();
     void selectAppsSig();
     void sigClickNotification(const QString& key);
-    void load_mail_heads_sig(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments);
 signals:
     void requestSyncScreen();
 private:

@@ -350,19 +350,6 @@ QString LuaExecuteThread::getProcessVarLocked(const QString& name, const QString
     return res;
 }
 
-//f:write(('wrench_load_mail_heads([[%s]], [[%s]], [[%s]], [[%s]], [[%s]])'):format(subject, to, cc, bcc, attachments));
-static int l_wrench_load_mail_heads(lua_State* L)
-{
-    QString subject = QString::fromUtf8(lua_tolstring(L, 1, NULL));
-    QString to = QString::fromUtf8(lua_tolstring(L, 2, NULL));
-    QString cc = QString::fromUtf8(lua_tolstring(L, 3, NULL));
-    QString bcc = QString::fromUtf8(lua_tolstring(L, 4, NULL));
-    QString attachments = QString::fromUtf8(lua_tolstring(L, 5, NULL));
-
-    that->load_mail_heads(subject, to, cc, bcc, attachments);
-    return 0;
-}
-
 static int l_wrench_set_variable(lua_State* L)
 {
     QString name = QString::fromUtf8(lua_tolstring(L, 1, NULL));
@@ -436,9 +423,6 @@ void LuaExecuteThread::run()
 
     lua_pushcfunction(L, l_is_exiting);
     lua_setglobal(L, "is_exiting");
-
-    lua_pushcfunction(L, l_wrench_load_mail_heads);
-    lua_setglobal(L, "wrench_load_mail_heads");
 
     lua_pushcfunction(L, l_wrench_set_variable);
     lua_setglobal(L, "wrench_set_variable");
@@ -574,11 +558,6 @@ void LuaExecuteThread::on_argSelected(const QString& arg)
     mSelectedArg = arg;
     mSelectArgsMutex.unlock();
     mSelectArgsWait.wakeOne();
-}
-
-void LuaExecuteThread::load_mail_heads(const QString& subject, const QString& to, const QString& cc, const QString& bcc, const QString& attachments)
-{
-    emit load_mail_heads_sig(subject, to, cc, bcc, attachments);
 }
 
 void LuaExecuteThread::logToUI(const char *log)

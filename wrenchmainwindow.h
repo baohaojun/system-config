@@ -78,7 +78,6 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void slotHandleCaptureScreen(const QPixmap &);
     void onAdbNotificationArrived(const QString& , const QString& , const QString& , const QString&, const QString&);
-    void onLoadMailHeads(const QString& , const QString& , const QString& , const QString& , const QString&);
     void on_sendItPushButton_clicked();
     void onVncWindowClosed();
     void insertText(const QString&);
@@ -103,27 +102,8 @@ private slots:
     void on_tbMms_clicked();
 
     void on_Dial(const QString&);
-    void on_MailTo(const QString&);
-    void on_MailCc(const QString&);
-    void on_MailBcc(const QString&);
     void on_addMmsReceiver(const QString&, const QString&);
     void quitMyself();
-
-    void on_tbMailAddTo_clicked();
-
-    void on_tbMailAddCc_clicked();
-
-    void on_tbMailAddBcc_clicked();
-
-    void on_tbMailAddAttachment_clicked();
-
-    void on_tbMailDone_clicked();
-
-    void on_tbMailLoad_clicked();
-
-    void on_tbMailSave_clicked();
-
-    void on_tbMailClear_clicked();
 
     void on_tbPhoneScreen_toggled(bool checked);
 
