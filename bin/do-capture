@@ -101,6 +101,8 @@ EOFa3c903e7778a
 # {%sh-mode%}
 if test "$show_all_tasks" = true; then
     reset_current_hour="(setq org-agenda-current-hour 18)";
+elif test "${show_all_tasks}" = false; then
+     reset_current_hour="(setq org-agenda-current-hour 10)";
 fi
 . .replace-%%;
 # {%/sh-mode%}

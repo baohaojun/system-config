@@ -24,10 +24,7 @@ if test $(basename $0) = adb-ignite-device -o $(basename $0) = adb-power-on; the
         elif test "$activity" = RecentsPanel; then
             adb-key BACK
         else
-            (
-                sleep 3;
-                adb-lcd off
-            )
+            sleep 3
             break
         fi
     done
