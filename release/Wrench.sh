@@ -147,6 +147,13 @@ EOF
     rsync ~/tmp/build-wrench/ ~/tmp/build-wrench.$ANDROID_SERIAL -a --chmod=D0755
     reset-env WRENCH_INSTANCE ${wrench_adb_map[$ANDROID_SERIAL]} PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
     if test "$system" = true; then
+        (
+            for x in $(ps.pl Wrench|pn 1); do
+                if test "$(readlink -f /proc/$x/exe)" = ~/tmp/build-wrench/Wrench; then
+                    kill $x
+                fi
+            done
+        ) || true
     sawfish-client -e '
 ; {%sawfish-mode%}
 (progn
