@@ -12,11 +12,9 @@ if test $(basename $0) = adb-ignite-device -o $(basename $0) = adb-power-on; the
         Wrench 'adb_quick_input{"input keyevent HOME"}'&
         sleep 1
         activity=$(adb-top-activity)
-        if test "$activity" = Keyguard -o "$activity" = StatusBar; then
-            if test "$activity" = Keyguard -o "$activity" = StatusBar; then
-                if test -e ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone; then
-                    ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone
-                fi
+        if test "$activity" = Keyguard -o "$activity" = StatusBar -o "${activity}" = PopUpStatusBar; then
+            if test -e ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone; then
+                ~/src/github/private-config/onmyoji-bin/onmyoji-unlock-phone
             else
                 onmyoji do-raw-scroll  100 1900 100 20 500
                 sleep 1
