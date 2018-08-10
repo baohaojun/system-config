@@ -3,6 +3,10 @@ export LANG=C
 export LC_ALL=C
 export LANGUAGE=C
 
+function ssh() {
+    command ssh -o PreferredAuthentications=publickey "$@"
+}
+
 if test -e ~/src/github/private-config/etc/abc-x; then
     . ~/src/github/private-config/etc/abc-x
 fi
