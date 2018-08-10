@@ -1,15 +1,3 @@
-M.click_scene = function (scene)
-   if not scenes_map[scene] then
-      find_scene(scene)
-   end
-
-   if scenes_map[scene] then
-      local xy = scenes_map[scene]
-      xy = split(" ", xy)
-      adb_tap_XY(xy[1], xy[2])
-   end
-end
-
 M.qq_find_friend = function(friend_name)
    putclip_nowait(friend_name)
 
