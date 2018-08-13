@@ -62,6 +62,8 @@ tNFA_STATUS \w+ = NFA_STATUS_FAILED;
 :\d+:\++ (grep 'Out of memory error' out/build.log|grep 'Communication error with Jack server' out/build.log|smartcm-android-build-failed|.*last-build-failed|build-failed out/build.log|mail-devs-for-build-failed|failed_times=|.*failed_times\+\+)
 grep 'Communication error with Jack server' out/build.log
 smartcm-android-build-failed
+depmod: WARNING: could not open .*obj/PACKAGING/depmod_vendor_intermediates/lib/modules/0.0/modules.order: No such file or directory
+Unable to open '/system/framework/core-libart.jar': No such file or directory
 EOF
 
     if test -e flashing-files/.scripts/false-build-error-filter; then

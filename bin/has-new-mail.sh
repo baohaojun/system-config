@@ -55,7 +55,7 @@ function got-mail() {
                 if ! flock -n 9; then
                     echo "Can not lock the offlineimap lock"
                 else
-                    sync_nnmaildir -g
+                    true sync_nnmaildir -g
                 fi
                 need_recheck=true;
                 break
