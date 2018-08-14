@@ -130,6 +130,7 @@
         # mv mobileorg.org2 mobileorg.org
     fi
 
+    gtd-ideapills
     find-or-exec emacs emacs.bhj
     emacsclient -e "$(cat <<'EOF3f6c48da0c2d'
   <<org-pull>>

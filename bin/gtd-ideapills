@@ -8,49 +8,61 @@ set -e
 
 my-adb devices? -1 >/dev/null 2>&1
 
-t_dir=${HOME}/tmp/gtd-ideapills.${ANDROID_SERIAL}
+t_dir=~/src/github/projects/ideapills.${ANDROID_SERIAL}
 
 mkdir -p ${t_dir}
 cd ${t_dir}
 
-adb pull /data/data/com.smartisanos.ideapills/databases/ideapills.db .
+adb pull /data/data/com.smartisanos.ideapills/databases/ideapills.db . >/dev/null 2>&1
 
 perl -e "$(
 cat <<'EOF593e59f62027'
 # {%perl-mode%}
 use DBI;
+use DateTime;
 my $dbh = DBI->connect("dbi:SQLite:dbname=ideapills.db","","");
 
-my $last_id = 0;
-if (-e "last.id") {
-    $last_id = qx(cat last.id);
-    if ($last_id <= 0) {
-        $last_id = 0;
-    }
-}
+my $last_id = qx(
+    cat ../idea-pills.org | grep "^\\s+:IDEAPILLS_ID:\\s+\\d+" -P | tail -n 1|pn 2
+    ) + 0;
 
-$sth = $dbh->prepare("SELECT _id, uri, text, time_stamp FROM bubble WHERE _id > (? + 0)");
+$sth = $dbh->prepare("SELECT _id, uri, text, time_stamp FROM bubble WHERE _id > (? + 0) ORDER by _id ASC");
 $sth->execute($last_id);
 
-open(my $org, ">>$ENV{HOME}/src/github/projects/idea-pills.org")
+open(my $org, ">>$ENV{HOME}/src/github/projects/idea-pills.org.$$")
     or die "Can't open idea-pills.org";
-
 
 while (my $row = $sth->fetch) {
     my $id = $row->[0];
+    $last_id = $id;
     my $uri = $row->[1];
     my $text = $row->[2];
     my $time_stamp = $row->[3];
 
+    $uri =~ s,content://com.smartisanos.sara/wav/,ideapills.$ENV{ANDROID_SERIAL}/,;
+    my $dt = DateTime->from_epoch(epoch => int($time_stamp / 1000));
+
+    my $time_string = sprintf("%s %s", $dt->ymd, $dt->hms);
+
     my $format = <<EOF;
 * TODO %s
+  :PROPERTIES:
+  :URI: %s
+  :CAPTURED_TS: %s
+  :IDEAPILLS_ID: %s
+  :END:
 
 EOF
-
-    printf $org <<EOF, $id, $uri, $text, $time_stamp;
+    printf $org $format, $text, $uri, $time_string, $id;
 }
 
+close $org;
+
+system("emacs-file-op cat ~/src/github/projects/idea-pills.org.$$ '>>' ~/src/github/projects/idea-pills.org; rm -f ~/src/github/projects/idea-pills.org.$$") if -s "$ENV{HOME}/src/github/projects/idea-pills.org.$$";
+exit 0;
 # {%/perl-mode%}
 EOF593e59f62027
 
 )"
+
+adb-sync -R /data/data/com.smartisanos.sara/files/wav/ . >/dev/null 2>&1 &

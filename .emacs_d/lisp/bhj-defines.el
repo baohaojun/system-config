@@ -1444,19 +1444,26 @@ criteria can be provided via the optional match-string argument "
   (interactive)
   (let ((go-back-to-agenda nil)
         (mail nil)
+        (uri nil)
         (message-id nil))
     (when (eq major-mode 'org-agenda-mode)
       (setq go-back-to-agenda t)
       (org-agenda-goto))
     (ajoke--push-marker-ring)
     (setq mail (org-entry-get (point) "FROM")
+          uri (org-entry-get (point) "URI")
           message-id (org-entry-get (point) "MESSAGE_ID"))
-    (if message-id
-        (mu4e-view-message-with-msgid message-id)
+    (cond
+     (message-id
+      (mu4e-view-message-with-msgid message-id))
+     (mail
       (setq mail (shell-quote-argument mail))
-      (shell-command-to-string (format "of %s >/dev/null 2>&1&" mail))
-      (when go-back-to-agenda
-        (switch-window)))))
+      (shell-command-to-string (format "of %s >/dev/null 2>&1&" mail)))
+     (uri
+      (setq uri (shell-quote-argument uri))
+      (shell-command-to-string (format "(killall -STOP mplayer; mplayer.exp %s; killall -CONT mplayer) >/dev/null 2>&1 &" uri))))
+    (when go-back-to-agenda
+      (switch-window))))
 
 (defun bhj-todo-copy-id ()
   (interactive)
