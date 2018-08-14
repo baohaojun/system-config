@@ -120,5 +120,11 @@ done
 
 export CCACHE_DISABLE=true
 
+ninja_exe=prebuilts/build-tools/linux-x86/bin/ninja
+
+if test ! -e "${ninja_exe}" -a -e prebuilts/ninja/linux-x86/ninja; then
+    die "Don't know how to do ninja build on old android versions, require sdk >= 27"
+fi
+
 wrapped-run -C 'echo "直接调用 ninja，加快编译速度，但如果有改 .mk、makefiles、相关环境变量或任何问题的话，请直接使用“android-make 官方支持的目标模块名字”来进行编译"' \
-            prebuilts/build-tools/linux-x86/bin/ninja -d keepdepfile "${@}" $keep_building -j $jobs -f "$ninja_file" $verbose -w dupbuild=err
+            ${ninja_exe} -d keepdepfile "${@}" $keep_building -j $jobs -f "$ninja_file" $verbose -w dupbuild=err

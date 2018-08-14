@@ -14,7 +14,7 @@ cd $top_dir || exit
 
 . build/envsetup.sh >/dev/null 2>&1
 
-if test ! -e buildspec.mk -a -z "$TARGET_PRODUCT"; then
+if test ! -e out || test ! -e buildspec.mk -a -z "$TARGET_PRODUCT"; then
     hint "你未曾设置过安卓编译配置，现在为你设置"
     android-set-product
 fi

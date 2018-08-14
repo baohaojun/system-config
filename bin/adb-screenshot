@@ -115,40 +115,8 @@ else
     H=$s
 fi
 
-if test "$cord_orientation" = 1 -a "${phone_width}" -a "${phone_height}" && test "${phone_width}" -gt "${phone_height}"; then
-    tmp_x=$x
-    x=$((1080-$y-$H))
-    y=$tmp_x
-    tmp_w=$W
-    W=$H
-    H=$tmp_w
-fi
-
 X=$(($x + $W))
 Y=$(($y + $H))
-
-phone_width=${phone_width:-2160}
-phone_height=${phone_height:-1080}
-
-if test "$cord_orientation" = 1 -a "${phone_width}" -a "${phone_height}" && test "${phone_width}" -gt "${phone_height}"; then
-    if test "$phone_width" -a "$Y" -gt "$phone_width"; then
-        Y=$phone_width
-        y=$((Y - H))
-    fi
-
-    if test "$phone_height" -a "$X" -gt "$phone_height"; then
-        X=$phone_height
-        x=$((X - H))
-    fi
-else
-    if test "$phone_width" -a "$X" -gt "$phone_width"; then
-        X=$phone_width
-    fi
-
-    if test "$phone_height" -a "$Y" -gt "$phone_height"; then
-        Y=$phone_height
-    fi
-fi
 
 x=$((x < 0 ? 0 : x))
 y=$((y < 0 ? 0 : y))
