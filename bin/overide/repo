@@ -248,7 +248,16 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                     repo_init_command=$(repo-switch -p)
                                     rm .repo/manifest.xml .repo/manifests .repo/manifests.git -rf
                                     $repo_init_command
-                                    echo "$manifest_error" | mail-cms -i -e -o "Info: repo manifest need re-init to fix repo sync error"
+                                    (
+                                        cat <<EOF
+在 repo sync 的时候发现 manifest 仓库无法同步，出错信息如下：
+
+"$(echo "$manifest_error"|indent-stdin)"
+
+因为重新 repo init 之后无法确保 manifest、revision 相同（考虑到有 rebuild 的情况），因此接下来会终止当前 job，请 CM 帮忙重启一下。
+EOF
+
+                                    )| mail-cms -i -e -o "Info: repo manifest need re-init to fix repo sync error"
 
                                     # 不能自动修复这种错误。万一这是一
                                     # 个 rebuild 的任务，现在正在重新
@@ -303,7 +312,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
 
                 if grep "Couldn't find remote ref" $repo_sync_log; then
                     mail-cms -i -e "你的 manifest 文件可能有问题，有一个分支找不到： $(readlink .repo/manifest.xml)" <<<"$(
-                        echo "请查看下面的log，出错的关键字是：fatal: Couldn't find remote ref"
+                        echo "请查看下面的 log，出错的关键字是：fatal: Couldn't find remote ref"
                         echo
                         grep 'find remote ref' -C 10 "$repo_sync_log")"
                     exit 1

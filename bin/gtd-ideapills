@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# 这个脚本把锤子科技的 ideapills 里的条目输出成一个 org-mode 文本文件
+
+# 此脚本运行时需要用 adb 连接手机，并且要求 adb shell 登录后有 root 权限
+
+set -e
+
+my-adb devices? -1 >/dev/null 2>&1
+
+t_dir=${HOME}/tmp/gtd-ideapills.${ANDROID_SERIAL}
+
+mkdir -p ${t_dir}
+cd ${t_dir}
+
+adb pull /data/data/com.smartisanos.ideapills/databases/ideapills.db .
+
+perl -e "$(
+cat <<'EOF593e59f62027'
+# {%perl-mode%}
+use DBI;
+my $dbh = DBI->connect("dbi:SQLite:dbname=ideapills.db","","");
+
+my $last_id = 0;
+if (-e "last.id") {
+    $last_id = qx(cat last.id);
+    if ($last_id <= 0) {
+        $last_id = 0;
+    }
+}
+
+$sth = $dbh->prepare("SELECT _id, uri, text, time_stamp FROM bubble WHERE _id > (? + 0)");
+$sth->execute($last_id);
+
+open(my $org, ">>$ENV{HOME}/src/github/projects/idea-pills.org")
+    or die "Can't open idea-pills.org";
+
+
+while (my $row = $sth->fetch) {
+    my $id = $row->[0];
+    my $uri = $row->[1];
+    my $text = $row->[2];
+    my $time_stamp = $row->[3];
+
+    my $format = <<EOF;
+* TODO %s
+
+EOF
+
+    printf $org <<EOF, $id, $uri, $text, $time_stamp;
+}
+
+# {%/perl-mode%}
+EOF593e59f62027
+
+)"
