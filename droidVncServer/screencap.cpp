@@ -90,6 +90,14 @@ static status_t notifyMediaScanner(const char* fileName) {
     return NO_ERROR;
 }
 
+template <typename T> void bhj_swap(T& a, T& b)
+{
+    T t;
+    t = a;
+    a = b;
+    b = t;
+}
+
 int main(int argc, char** argv)
 {
     ProcessState::self()->startThreadPool();
@@ -210,20 +218,26 @@ int main(int argc, char** argv)
     uint8_t displayOrientation = configs[activeConfig].orientation;
     uint32_t captureOrientation = ORIENTATION_MAP[displayOrientation];
 
+    uint32_t phone_w = configs[activeConfig].w;
+    uint32_t phone_h = configs[activeConfig].h;
+
     uint32_t updateW = X - x;
     uint32_t updateH = Y - y;
 
     if (displayOrientation % 2 == 1) {
-        uint32_t t = updateW;
-        updateW = updateH;
-        updateH = t;
-
-        if (displayOrientation == 3) {
-            x = configs[activeConfig].w - X;
-            y = configs[activeConfig].h - Y;
-            X = updateH + x;
-            Y = updateW + y;
+        if (displayOrientation == 1) {
+            y = phone_w - y;
+            Y = phone_w -Y;
+            bhj_swap(y, Y);
         } else {
+            x = phone_h - x;
+            X = phone_h - X;
+            bhj_swap(x, X);
+        }
+        bhj_swap(x, y);
+        bhj_swap(X, Y);
+
+        if (displayOrientation == 1) {
             y += sticky_status_bar_height;
             Y += sticky_status_bar_height;
         }

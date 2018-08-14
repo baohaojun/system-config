@@ -30,6 +30,7 @@ M.weixin_find_friend = function(friend_name, depth)
             prompt_user("Can't get out of weixinSearchActivity")
          end
       else
+
          break
       end
    end
@@ -91,7 +92,7 @@ M.weixin_open_search = function(depth)
          if top_window == W.weixinSearchActivity then
             if wait_input_target_n_ok(1, W.weixinSearchActivity) then
                adb_event("key space sleep .1")
-               tap_top_right() -- clear search text
+               click_scene('wx-close-search', 10)
                adb_event"sleep .1"
                if wait_input_target_n_ok(5, W.weixinSearchActivity) then
                   return

@@ -1,6 +1,9 @@
 #!/bin/bash
-set -x
-exec 2>> ~/tmp/find-scene.sh.log
+
+if test -z "$WRENCH_APP_DIR"; then
+    set -x
+    exec 2>> ~/tmp/find-scene.sh.log
+fi
 
 function picture-matches() {
     if test ! -e "$1" -o ! -e "$2"; then

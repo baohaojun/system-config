@@ -22,12 +22,20 @@ M.forget_scene = function(scene)
    M.scenes_map[scene] = nil
 end
 
-M.refind_scene = function(scene)
-   if not find_scene(scene) then
-      forget_scene(scene)
-      return find_scene(scene)
+M.refind_scene = function(scene, retry)
+   if not retry or retry < 1 then
+      retry = 1
    end
-   return true
+
+   for i = 1, retry do
+      if find_scene(scene) then
+         return true
+      end
+      sleep(.1)
+   end
+
+   forget_scene(scene)
+   return find_scene(scene)
 end
 
 M.find_scene = function(scene, times)
@@ -59,10 +67,10 @@ M.find_scene = function(scene, times)
    end
 end
 
-M.click_scene = function (scene)
+M.click_scene = function (scene, retry)
    log("Click scene: %s", scene)
-   if not refind_scene(scene) then
-      log("Can't find scene: %s (tried 2 times)", scene)
+   if not refind_scene(scene, retry) then
+      log("Can't find scene: %s for click (after retry)", scene)
       return
    end
    local xy = scenes_map[scene]
