@@ -23,7 +23,7 @@ use DateTime;
 my $dbh = DBI->connect("dbi:SQLite:dbname=ideapills.db","","");
 
 my $last_id = qx(
-    cat ../idea-pills.org | grep "^\\s+:IDEAPILLS_ID:\\s+\\d+" -P | tail -n 1|pn 2
+    if test -e last.id; then cat last.id; fi
     ) + 0;
 
 $sth = $dbh->prepare("SELECT _id, uri, text, time_stamp FROM bubble WHERE _id > (? + 0) ORDER by _id ASC");
@@ -57,6 +57,12 @@ EOF
 }
 
 close $org;
+
+open(my $id_f, ">last.id")
+    or die "Can't open last.id";
+
+print $id_f "$last_id";
+close $id_f;
 
 system("emacs-file-op cat ~/src/github/projects/idea-pills.org.$$ '>>' ~/src/github/projects/idea-pills.org; rm -f ~/src/github/projects/idea-pills.org.$$") if -s "$ENV{HOME}/src/github/projects/idea-pills.org.$$";
 exit 0;
