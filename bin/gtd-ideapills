@@ -71,4 +71,4 @@ EOF593e59f62027
 
 )"
 
-adb-sync -R /data/data/com.smartisanos.sara/files/wav/ . >/dev/null 2>&1 &
+adb-sync --exclude '*.wave' --exclude '*.pcm' -R /data/data/com.smartisanos.sara/files/wav/ . >/dev/null 2>&1 &
