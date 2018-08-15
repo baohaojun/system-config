@@ -117,6 +117,8 @@ M.weixin_find_friend = function(friend_name, depth)
             if find_scene("wx-open-keyboard") then
                click_scene("wx-open-keyboard")
                return
+            elseif find_scene("wx-open-microphone") then
+               return
             elseif wait_input_target_n_ok(1, "^com.tencent.mm/") then
                return
             end
@@ -573,5 +575,4 @@ M.get_coffee = function(what)
       adb_tap_1080x2160(534, 1603, 562, 1662)
       system{'alarm', '3', 'Go get your coffee (take your coffee ticket!)'}
    end
-
 end
