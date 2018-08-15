@@ -25,6 +25,8 @@ end
 M.refind_scene = function(scene, retry)
    if not retry or retry < 1 then
       retry = 1
+   else
+      retry = retry + 1
    end
 
    for i = 1, retry do
@@ -34,13 +36,17 @@ M.refind_scene = function(scene, retry)
       sleep(.1)
    end
 
+   if retry == 1 then
+      return false
+   end
+
    forget_scene(scene)
    return find_scene(scene)
 end
 
 M.find_scene = function(scene, times)
    if not times then
-      times = 5
+      times = 1
    end
    if not M.scenes_map[scene] then
       for i = 1, times do
@@ -70,7 +76,7 @@ end
 M.click_scene = function (scene, retry)
    log("Click scene: %s", scene)
    if not refind_scene(scene, retry) then
-      log("Can't find scene: %s for click (after retry)", scene)
+      log("Can't find scene: %s for click (retry: %s)", scene, retry)
       return
    end
    local xy = scenes_map[scene]

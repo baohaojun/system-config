@@ -1,3 +1,5 @@
+W.weiboShareActivity = "com.sina.weibo/com.sina.weibo.composerinde.OriginalComposerActivity"
+
 M.find_weibo_friend = function(friend_name)
    if friend_name == "" then
       friend_name = string_strip(M.select_args_with_history("weibo-friends", "请输入想找的微博联系人名字", "", " ")):gsub("@@wb$", "")

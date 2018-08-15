@@ -1,74 +1,10 @@
-M.weixin_find_friend = function(friend_name, depth)
-   if not depth then depth = 0 end
-   if friend_name == "" then
-      friend_name = string_strip(M.select_args_with_history("weixin-friends", "请输入想找的微信联系人名字", "", " ")):gsub("@@wx$", "")
-      if friend_name == "" then
-         prompt_user("没有输入你想查找的微信联系人，无法查找")
-         return
-      end
-   end
-
-   local need_confirm
-   if friend_name:match("%?$") then
-      friend_name = friend_name:gsub("%?$", "")
-      need_confirm = true
-   end
-
-   putclip_nowait(friend_name)
-
-   weixin_open_search()
-   adb_event"sleep .2 key scroll_lock sleep .5"
-   if need_confirm then
-      prompt_user("请确认哪个是你要找的联系人")
-      return
-   end
-   for i = 1, 10 do
-      adb_event"adb-tap 245 382 sleep .2"
-      if adb_top_window() == W.weixinSearchActivity then
-         log("still at weixin search at %d", i)
-         if i == 10 then
-            prompt_user("Can't get out of weixinSearchActivity")
-         end
-      else
-
-         break
-      end
-   end
-end
-
-M.adb_start_weixin_share = function(text_or_image)
-   if using_adb_root then
-      if text_or_image == 'text' then
-         adb_am("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI --ei sns_comment_type 1")
-      elseif text_or_image == 'image' then
-         adb_am("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
-      else
-         error("Can only do image or text")
-      end
-      return
-   end
-
-   local click = "adb-tap"
-   if text_or_image == 'text' then
-      click = "adb-long-press-800"
-   elseif text_or_image ~= 'image' then
-      error("Can only do image or text")
-   end
-
-   weixin_open_homepage()
-   adb_event("adb-tap 654 1850 sleep .5 adb-tap 332 358")
-   if (wait_top_activity_match("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")):match"com.tencent.mm/com.tencent.mm.plugin.sns.ui." then
-      adb_event("sleep 1 " .. click .. " 977 132")
-   else
-      log("Can't switch to the Friend Zone page.")
-   end
-   if text_or_image == 'image' then
-      adb_event("adb-tap 213 929") -- choose picture
-   end
-   adb_event("adb-tap 143 264")
-   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")
-   log("start weixin share complete")
-end
+W.weixinPackage = "com.tencent.mm/"
+W.weixinAlbumPreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
+W.weixinChatActivity = "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI"
+W.weixinLauncherActivity = "com.tencent.mm/com.tencent.mm.ui.LauncherUI"
+W.weixinSearchActivity = "com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSMainUI"
+W.weixinSnsUploadActivity = "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI"
+W.weixinImagePreviewActivity = "com.tencent.mm/com.tencent.mm.plugin.gallery.ui.ImagePreviewUI"
 
 M.weixin_open_homepage = function()
    weixin_open_search()
@@ -139,6 +75,78 @@ M.weixin_open_search = function(depth)
       adb_event"88 125 sleep .1 88 125 sleep .1"
       sleep(.1)
    end
+end
+
+M.weixin_find_friend = function(friend_name, depth)
+   if not depth then depth = 0 end
+   if friend_name == "" then
+      friend_name = string_strip(M.select_args_with_history("weixin-friends", "请输入想找的微信联系人名字", "", " ")):gsub("@@wx$", "")
+      if friend_name == "" then
+         prompt_user("没有输入你想查找的微信联系人，无法查找")
+         return
+      end
+   end
+
+   local need_confirm
+   if friend_name:match("%?$") then
+      friend_name = friend_name:gsub("%?$", "")
+      need_confirm = true
+   end
+
+   putclip_nowait(friend_name)
+
+   weixin_open_search()
+   adb_event"sleep .2 key scroll_lock sleep .5"
+   if need_confirm then
+      prompt_user("请确认哪个是你要找的联系人")
+      return
+   end
+   for i = 1, 10 do
+      adb_event"adb-tap 245 382 sleep .2"
+      if adb_top_window() == W.weixinSearchActivity then
+         log("still at weixin search at %d", i)
+         if i == 10 then
+            prompt_user("Can't get out of weixinSearchActivity")
+         end
+      else
+
+         break
+      end
+   end
+end
+
+M.adb_start_weixin_share = function(text_or_image)
+   if using_adb_root then
+      if text_or_image == 'text' then
+         adb_am("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI --ei sns_comment_type 1")
+      elseif text_or_image == 'image' then
+         adb_am("am start -n com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI")
+      else
+         error("Can only do image or text")
+      end
+      return
+   end
+
+   local click = "adb-tap"
+   if text_or_image == 'text' then
+      click = "adb-long-press-800"
+   elseif text_or_image ~= 'image' then
+      error("Can only do image or text")
+   end
+
+   weixin_open_homepage()
+   adb_event("adb-tap 654 1850 sleep .5 adb-tap 332 358")
+   if (wait_top_activity_match("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")):match"com.tencent.mm/com.tencent.mm.plugin.sns.ui." then
+      adb_event("sleep 1 " .. click .. " 977 132")
+   else
+      log("Can't switch to the Friend Zone page.")
+   end
+   if text_or_image == 'image' then
+      adb_event("adb-tap 213 929") -- choose picture
+   end
+   adb_event("adb-tap 143 264")
+   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")
+   log("start weixin share complete")
 end
 
 M.picture_to_weixin_scan = function(pics, ...)

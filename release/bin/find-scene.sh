@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test -z "$WRENCH_APP_DIR"; then
+if test "$WRENCH_APP_DIR"; then
     set -x
     exec 2>> ~/tmp/find-scene.sh.log
 fi
@@ -11,7 +11,7 @@ function picture-matches() {
     fi
 
     set -- "$(readlink -f "$1")" "$(readlink -f "$2")"
-    default_tolerance=25
+    default_tolerance=15
 
     export g_onmyoji_location=Wrench
     export onmyoji_parallel=0
