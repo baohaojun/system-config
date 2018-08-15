@@ -13,13 +13,19 @@ if ! my-adb devices?; then
 fi
 
 if my-adb devices | grep : -q && yes-or-no-p -y my-adb disconnect?; then
+    adb usb
     my-adb disconnect
+    exit
 fi
 
-my-adb -S
-my-adb -w tcpip ${1:-34872};
-sleep 1
-my-adb -w shell echo hello
+my-adb devices? -1
+my-adb tcpip ${1:-34872};
+
+while ! my-adb devices? -1; do
+    sleep 1
+    echo waiting for adb back online
+done
+
 wifi_ip=$(adb-get-wifi-ip)
 echo wifi is $wifi_ip
 echo my-adb connect "$wifi_ip":${1:-34872} > ~/.cache/system-config/logs/adb-over-tcp
