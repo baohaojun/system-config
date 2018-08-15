@@ -923,6 +923,7 @@ M.update_screen_size = function()
 
       local displays = adb_pipe"dumpsys window displays"
       real_width, real_height = get_xy_from_dump(displays, "cur")
+      log("M.real_height is %d", M.real_height)
       ime_app_width, ime_app_height = get_xy_from_dump(displays, "app")
 
       update_screen_ratios()

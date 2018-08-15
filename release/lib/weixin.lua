@@ -109,8 +109,19 @@ M.weixin_find_friend = function(friend_name, depth)
             prompt_user("Can't get out of weixinSearchActivity")
          end
       else
-
-         break
+         for i = 1, 10 do
+            sleep(.5)
+            if i > 3 then
+               log("still waiting for input after jump from search @%d", i)
+            end
+            if find_scene("wx-open-keyboard") then
+               click_scene("wx-open-keyboard")
+               return
+            elseif wait_input_target_n_ok(1, "^com.tencent.mm/") then
+               return
+            end
+         end
+         return
       end
    end
 end

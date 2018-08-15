@@ -1,8 +1,6 @@
 M.scenes_map={}
-local smap_file = M.configDirFile(("scenes-map-%dx%d.lua"):format(M.real_width, M.real_height))
-
-local save_scenes = function()
-   local mapfile = io.open(smap_file, "w")
+M.save_scenes = function()
+   local mapfile = io.open(scene_map_file, "w")
    mapfile:write("local map = {}\n")
    for k, v in spairs(scenes_map) do
       if k ~= "" then
@@ -13,9 +11,14 @@ local save_scenes = function()
    mapfile:close()
 end
 
-dofile_res, M.scenes_map = pcall(dofile, smap_file)
-if not dofile_res then
-   M.scenes_map = {}
+M.load_scene_map = function()
+   if not M.scene_map_file then
+      M.scene_map_file = M.configDirFile(("scenes-map-%dx%d.lua"):format(M.real_width, M.real_height))
+      dofile_res, M.scenes_map = pcall(dofile, scene_map_file)
+      if not dofile_res then
+         M.scenes_map = {}
+      end
+   end
 end
 
 M.forget_scene = function(scene)
@@ -45,6 +48,7 @@ M.refind_scene = function(scene, retry)
 end
 
 M.find_scene = function(scene, times)
+   load_scene_map()
    if not times then
       times = 1
    end
