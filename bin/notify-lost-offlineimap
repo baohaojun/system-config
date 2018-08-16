@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 . ~/.renew-xauth
 if test -d ~/Maildir/ -a -e ~/.offlineimaprc; then
