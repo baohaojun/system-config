@@ -1,5 +1,14 @@
 #!/bin/bash
+set -e
 
+function mu-index() {
+    echo ret is $?
+    if test ! -e ~/.cache/system-config/logs/get-mails.done; then
+        mail-bhj -s "Get-mails didn't finish, please check"
+    fi
+    commando mu-index
+
+}
 . atexit mu-index
 
 me=$(readlink -f $0)
@@ -11,21 +20,23 @@ if test ! -e "$me"; then
     fi
 fi
 b0=$(basename $0)
-exec 9> ~/.cache/system-config/logs/$b0.lock
 
-flock -n 9 || exit 0
+set -x
+. force-1 get-mails
+
 
 if (
-    set -e
-    version=$(offlineimap --version | perl -npe 's/\.//g')
+    version=$(offlineimap --version)
     if version-lower-than $version 6.5.5; then
         exit 1
     fi
     (
+        rm -f ~/.cache/system-config/logs/get-mails.done
         offlineimap -a Smartisan || true
         offlineimap -a SmartCM || true
         offlineimap -a Gmail || true
-        tsocks offlineimap -a Gmail
+        tsocks offlineimap -a Gmail || true
+        touch ~/.cache/system-config/logs/get-mails.done
     ) 2>&1 | tee ~/.cache/system-config/logs/$b0.log
 ); then
     fail=false
