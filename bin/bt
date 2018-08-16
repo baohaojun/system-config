@@ -1,0 +1,10 @@
+#!/bin/bash
+bt() {
+    (
+        for i in $(seq 0 $((${#FUNCNAME[@]} - 1))); do
+            echo "${FUNCNAME[$i]}@${BASH_SOURCE[$i+1]}:${BASH_LINENO[$i]}"
+        done
+
+        echo
+    )
+}

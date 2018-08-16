@@ -1,8 +1,9 @@
 #!/bin/bash
 
 set -e
+set -o errtrace
 if test "$#" = 0; then
-    trap - 0
+    trap - ERR
     return
 fi
 
@@ -62,7 +63,7 @@ function setup-aterr() {
         return $aterr_ret
     }
 
-    trap aterr 0
+    trap aterr ERR
 }
 
 setup-aterr "$@"
