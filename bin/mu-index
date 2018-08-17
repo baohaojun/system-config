@@ -45,6 +45,6 @@ done
 
 . force-1 || exit 0
 if which mu >/dev/null 2>&1; then
-    mu index --muhome ${mu_dir} || true
+    time mu index --muhome ${mu_dir} || true
     emacsclient -e '(mu4e-update-mail-and-index t)' || true
 fi
