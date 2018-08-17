@@ -58,7 +58,7 @@ M.find_scene = function(scene, times)
          scene_xy = qx("find-scene.sh find-scene -s " .. scene .. " --scene-dir " .. M.resDir)
          if scene_xy ~= "" then
             break
-         elseif i == 3 then
+         elseif i == times then
             return nil
          end
       end
