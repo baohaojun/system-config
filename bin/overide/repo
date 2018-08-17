@@ -221,7 +221,19 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                                     die "Can't decide path and project for $project"
                                                     exit 1
                                                 fi
-                                                rm $path .repo/projects/$path.git .repo/project-objects/$project.git -rf
+                                                (
+                                                    # 这样做的原因是有一次发生在 packages/apps/SoundRecorder 这个仓库，
+                                                    # 它在 manifest 里有两行跟它对应，一行是 aosp 的，一行是我司自己的，
+                                                    # 如果按以前的写法，就删不掉出错的仓库，导致最后不得不全部重新下载。
+                                                    for path in $path $project; do
+                                                        rm $path .repo/projects/$path.git
+                                                    done
+                                                )
+                                                (
+                                                    for project in $path $project; do
+                                                        rm .repo/project-objects/$project.git -rf
+                                                    done
+                                                )
                                             done
                                         ) && (
                                             for x in $(seq 1 3); do

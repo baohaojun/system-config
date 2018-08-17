@@ -6,7 +6,7 @@ function mu-index() {
     if test ! -e ~/.cache/system-config/logs/get-mails.done; then
         mail-bhj -s "Get-mails didn't finish, please check"
     fi
-    commando mu-index
+    command mu-index
 
 }
 . atexit mu-index
