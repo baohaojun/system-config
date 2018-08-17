@@ -41,16 +41,14 @@ while (<>) {
         } else {
           $type = ($last_section or "func");
         }
-        printf "%s           %s     %d %s %s\n", $last_word, $type, $last_line_num, $ARGV, $last_line;
+        printf "%s           %s     %d %s %s\n", $last_word, "$type-$last_indent", $last_line_num, $ARGV, $last_line unless $last_line =~ m/[({]$/;
 
       }
     }
-    if ( $_ =~ m/^\s*\w+(\s|\S*$)/) {
-      $last_indent_2 = $last_indent;
-      $last_indent = $current_indent;
-      $last_line = $_;
-      $last_line_num = $.;
-      # print "update to: $last_line_num:$last_indent $last_line\n";
-    }
+    $last_indent_2 = $last_indent;
+    $last_indent = $current_indent;
+    $last_line = $_;
+    $last_line_num = $.;
+    # print "update to: $last_line_num:$last_indent:$last_indent_2 $last_line\n";
   }
 }

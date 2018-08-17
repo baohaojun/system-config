@@ -145,7 +145,7 @@ while test "$1"; do
             if test "${style}" = bash; then
                 add_around=
             else
-                add_around=\'
+                add_around=\"
             fi
 
             default_val_map[$long-off-]=${add_around}${bool_val[0]}${add_around}
@@ -169,7 +169,7 @@ while test "$1"; do
         if test "${var_type_map[$long]}" = boolean; then
             default_val_map[$long]=$default
         elif test "${var_type_map[$long]}" = string; then
-            default_val_map[$long]=\'$default\';
+            default_val_map[$long]=\"$default\";
         elif test "${var_type_map[$long]}" = array; then
             default_val_map[$long]='()'
         fi
