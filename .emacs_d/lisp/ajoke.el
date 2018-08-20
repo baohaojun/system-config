@@ -306,7 +306,10 @@ is set, call FUNC with the start and end of the matched region."
         result-alist)
     (save-excursion
       (save-restriction
-        (widen)
+        (unless (or
+                 (eq major-mode 'Info-mode) ; should not do the whole info page.
+                 )
+          (widen))
         (save-window-excursion
           (shell-command-on-region
            (point-min)
