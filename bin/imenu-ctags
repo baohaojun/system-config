@@ -32,9 +32,12 @@ sub debug(@) {
 }
 
 debug "working with $filename (mode: $mode, major-mode: $ENV{MAJOR_MODE})";
+my $lc_mode = lc $mode;
 
-if ( (lc $mode) eq "man" ) {
+if ( $lc_mode eq "man" ) {
   system("imenu-man $stdin > ~/.imenu-ctags.$$");
+} elsif (-x "$ENV{HOME}/system-config/etc/imenu/$lc_mode") {
+  system("$ENV{HOME}/system-config/etc/imenu/$lc_mode $stdin > ~/.imenu-ctags.$$");
 } else {
   system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin > ~/.imenu-ctags.$$");
 }
