@@ -1,4 +1,4 @@
-M.scenes_map={}
+M.scenes_map = {}
 M.save_scenes = function()
    local mapfile = io.open(scene_map_file, "w")
    mapfile:write("local map = {}\n")
