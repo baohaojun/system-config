@@ -2,8 +2,51 @@
 
 set -e
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt t:lock-time=3600
+## end code-generator
+## start generated code
+TEMP=$( getopt -o t:h \
+               --long lock-time:,help \
+               -n $(basename -- $0) -- "$@")
+declare lock_time=3600
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -t|--lock-time)
+            lock_time=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-t, '
+            printf %-24s '--lock-time=LOCK_TIME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
-    die "We can't be executed"
+    die "We can't be executed, please use =source=."
 else
     if test "$1"; then
         lock=~/.cache/system-config/force-1/$1
@@ -11,7 +54,22 @@ else
         lock=~/.cache/system-config/force-1/$(readlink -f $0)
     fi
     mkdir -p $(dirname "$lock")
-    exec 9> "$lock"
-    flock -n 9 || die "Can't lock $lock"
-fi
 
+    if test ! -e "${lock}"; then
+        touch "${lock}"
+    fi
+
+    exec 9< "$lock"
+
+    if flock -n 9; then
+        touch "$lock"
+    else
+        locked_time=$(lock=$lock perl -e 'print int(-M("$ENV{lock}") * (3600 * 24))')
+        echo "Can't lock $lock, it's been $locked_time seconds"
+        if test "${locked_time}" -gt $lock_time; then
+            exit 1
+        else
+            exit 0
+        fi
+    fi
+fi

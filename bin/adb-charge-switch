@@ -1,6 +1,9 @@
 #!/bin/bash
+if test $# = 0; then
+    set -- $(my-adb devices? | pn 1)
+fi
 
-for adb_s in $(my-adb devices? |pn 1); do
+for adb_s in "$@"; do
     (
         . force-1 adb-charge-switch.$adb_s
         (
