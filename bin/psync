@@ -130,7 +130,12 @@ fi
 
 if is-in-emacs; then
     if test $# = 0; then
-        set -- cmdev
+        psync_host=$(get-about-me psync-host)
+        if test "${psync_host}"  = unknown; then
+            set -- cmdev
+        else
+            set -- "${psync_host}"
+        fi
     fi
 
     if test "$#" = 1; then
