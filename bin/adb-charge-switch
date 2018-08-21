@@ -22,13 +22,15 @@ for adb_s in "$@"; do
                 if test "${input_suspend}" = 0; then
                     exit
                 fi
-                while test "${capa}" -gt 5; do
+                while test "${capa}" -gt 5 -a "${capa}" -lt 25; do
                     sleep 30
                     capa=$(adb shell cat /sys/class/power_supply/battery/capacity)
                     echo $capa $(date) >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
                 done
-                echo turn on charging for $adb_s
-                my-adb 'echo 0 > /sys/class/power_supply/battery/input_suspend'
+                if test "${capa}" -lt 5; then
+                    echo turn on charging for $adb_s
+                    my-adb 'echo 0 > /sys/class/power_supply/battery/input_suspend'
+                fi
             fi
         ) 9>/dev/null
     )

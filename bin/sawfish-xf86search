@@ -1,5 +1,8 @@
 #!/bin/bash
 
+s-dicts "$(getclip-android)"
+exit
+
 top_window=$(sawfish-top-window)
 
 
