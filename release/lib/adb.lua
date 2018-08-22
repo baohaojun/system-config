@@ -695,3 +695,15 @@ M.adb_is_window = function (w)
    return w == adb_top_window()
 end
 
+M.save_window_types = function()
+   local mapfile = io.open(M.configDirFile("window_post_botton.lua"), "w")
+   mapfile:write("local map = {}\n")
+   for k, v in spairs(window_post_button_map) do
+      if k ~= "" then
+         mapfile:write(("map['%s'] = '%s'\n"):format(k, v))
+      end
+   end
+   mapfile:write("return map\n")
+   mapfile:close()
+end
+
