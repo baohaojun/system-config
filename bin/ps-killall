@@ -2,11 +2,11 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P -e @kill-group e:kill-withenv
+# generate-getopt -P -p kill -e @group e:withenv
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o e:h \
-                      --long kill-group,kill-withenv:,help,no-kill-group \
+                      --long group,withenv:,help,no-group \
                       -n $(basename -- $0) -- "$@")
 declare -x kill_group=${kill_group:-false}
 declare -x kill_withenv=${kill_withenv:-}
@@ -14,8 +14,8 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --kill-group|--no-kill-group)
-            if test "$1" = --no-kill-group; then
+        --group|--no-group)
+            if test "$1" = --no-group; then
                 kill_group=false
             else
                 kill_group=true
@@ -23,7 +23,7 @@ while true; do
             shift
 
             ;;
-        -e|--kill-withenv)
+        -e|--withenv)
             kill_withenv=$2
             shift 2
 
@@ -34,10 +34,10 @@ while true; do
             echo
             echo Options and arguments:
             printf "%06s" " "
-            printf %-24s '--[no-]kill-group'
+            printf %-24s '--[no-]group'
             echo
             printf %06s '-e, '
-            printf %-24s '--kill-withenv=KILL_WITHENV'
+            printf %-24s '--withenv=WITHENV'
             echo
             exit
             shift

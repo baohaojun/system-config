@@ -198,11 +198,6 @@ test -e buildspec.mk || {
     exit;
 }
 
-do_nice="schedtool -B -n 1 -e ionice -n 1"
-if test "$DONT_DO_NICE" = true; then
-    do_nice=
-fi
-
 exec 9> $OUT_DIR/.android-full-build.lock
 (
     time (
@@ -243,15 +238,14 @@ exec 9> $OUT_DIR/.android-full-build.lock
             if test $# = 1 -a -e ~/system-config/etc/android-make/"$1"; then
                 . ~/system-config/etc/android-make/"$1"
             else
-
-                $do_nice $am_make_cmd -j$jobs $keep $* $verbose
+                $am_make_cmd -j$jobs $keep $* $verbose
             fi
         else
             echo PATH is $PATH
             if test "$make_dir"; then
                 mmma "$(relative-path "$make_dir" .)" -j$jobs $verbose
             else
-                $do_nice $am_make_cmd -j$jobs $keep $verbose
+                $am_make_cmd -j$jobs $keep $verbose
             fi
 
         fi && result=$result'all ok; ' && echo build is successful || true

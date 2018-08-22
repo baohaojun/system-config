@@ -1,0 +1,82 @@
+
+这个脚本尝试用 bash 的 =bind -x= 功能完成自定义的补齐功能。
+
+主要解决的痛点是在 bash 有很多补齐候选项的时候，我可以自己定义如何进行这些选项的选择。目前市面上已有的做法是：
+
+1. bash，先提示你一下，有很多候选项，你要不要全部显示？然后你选 Yes，显示全部候选项之后，再接着打字或改成用鼠标选中、拷贝、粘贴。
+
+2. zsh，我自己没有用过，但之前有个同事给我演示过，允许把所有选项列出来，然后你可以用方向键上下左右移动高亮某选项，然后回车选中它。
+
+我希望把它改成这样子：我按一个键后，马上调用我的 =my-select= （或 =select-args= 等）脚本，把所有选项列出来让我选，选完了之后直接上屏。
+
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh
+  function sc-complete() {
+      declare -x COMP_LINE=$READLINE_LINE
+      declare -x COMP_POINT=$READLINE_POINT
+
+      declare sc_line_before_point=${READLINE_LINE:0:$READLINE_POINT}
+      declare sc_line_after_point=${READLINE_LINE:$READLINE_POINT}
+
+      declare OLDIFS=$IFS
+      IFS=$COMP_WORDBREAKS
+      declare sc_comp_words_before_point=(
+          $sc_line_before_point
+      )
+
+      declare sc_comp_words_after_point=(
+          $sc_line_after_point
+      )
+
+      IFS=$OLDIFS
+
+      declare sc_last_word_before_point
+
+      if test ${#sc_comp_words_before_point[@]} -gt 0; then
+          sc_last_word_before_point=${sc_comp_words_before_point[${#sc_comp_words_before_point[@]} - 1]}
+      else
+          sc_last_word_before_point=""
+      fi
+
+
+      if test "${sc_line_before_point:${#sc_line_before_point}-${#sc_last_word_before_point}}" != "${sc_last_word_before_point}"; then
+          # There are other ``blank'' chars before the point, so there should be an empty WORD
+          sc_comp_words_before_point=(
+              "${sc_comp_words_before_point[@]}"
+              ""
+          )
+      fi
+
+      declare -x COMP_WORDS=(
+          "${sc_comp_words_before_point[@]}"
+          "${sc_line_after_point[@]}"
+      )
+
+      declare -x COMP_CWORD=$((${#sc_comp_words_before_point[@]} - 1)) || true
+      declare -x COMP_KEY=9
+      declare -x COMP_TYPE=9
+      _cd
+      debug-args "${COMPREPLY[@]}"
+  }
+
+  bind -x '"\eOP": sc-complete'
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/sc-complete :comments link :shebang "#!/bin/bash" :noweb yes
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+

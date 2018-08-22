@@ -1,0 +1,55 @@
+#!/bin/bash
+# [[file:~/system-config/knuth-mode/sc-complete.org::the-ultimate-script][the-ultimate-script]]
+function sc-complete() {
+    declare -x COMP_LINE=$READLINE_LINE
+    declare -x COMP_POINT=$READLINE_POINT
+
+    declare sc_line_before_point=${READLINE_LINE:0:$READLINE_POINT}
+    declare sc_line_after_point=${READLINE_LINE:$READLINE_POINT}
+
+    declare OLDIFS=$IFS
+    IFS=$COMP_WORDBREAKS
+    declare sc_comp_words_before_point=(
+        $sc_line_before_point
+    )
+
+    declare sc_comp_words_after_point=(
+        $sc_line_after_point
+    )
+
+    IFS=$OLDIFS
+
+    declare sc_last_word_before_point
+
+    if test ${#sc_comp_words_before_point[@]} -gt 0; then
+        sc_last_word_before_point=${sc_comp_words_before_point[${#sc_comp_words_before_point[@]} - 1]}
+    else
+        sc_last_word_before_point=""
+    fi
+
+
+    if test "${sc_line_before_point:${#sc_line_before_point}-${#sc_last_word_before_point}}" != "${sc_last_word_before_point}"; then
+        # There are other ``blank'' chars before the point, so there should be an empty WORD
+        sc_comp_words_before_point=(
+            "${sc_comp_words_before_point[@]}"
+            ""
+        )
+    fi
+
+    declare -x COMP_WORDS=(
+        "${sc_comp_words_before_point[@]}"
+        "${sc_line_after_point[@]}"
+    )
+
+    declare -x COMP_CWORD=$((${#sc_comp_words_before_point[@]} - 1)) || true
+    declare -x COMP_KEY=9
+    declare -x COMP_TYPE=9
+    _cd
+    debug-args "${COMPREPLY[@]}"
+}
+
+bind -x '"\eOP": sc-complete'
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+# the-ultimate-script ends here
