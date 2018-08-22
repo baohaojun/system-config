@@ -13,21 +13,21 @@ for adb_s in "$@"; do
             fi
 
             capa=$(adb shell cat /sys/class/power_supply/battery/capacity)
-            echo $capa $(date) >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
+            input_suspend=$(adb shell cat /sys/class/power_supply/battery/input_suspend)
+            echo capa:$capa, input_suspend:$input_suspend $(date) >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
             if test "$capa" -gt 95; then
                 echo turn off charging for $adb_s
                 my-adb 'echo 1 > /sys/class/power_supply/battery/input_suspend'
             elif test "$capa" -lt 15; then
-                input_suspend=$(adb shell cat /sys/class/power_supply/battery/input_suspend)
                 if test "${input_suspend}" = 0; then
                     exit
                 fi
                 while test "${capa}" -gt 5 -a "${capa}" -lt 25; do
                     sleep 30
                     capa=$(adb shell cat /sys/class/power_supply/battery/capacity)
-                    echo $capa $(date) >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
+                    echo capa:$capa, input:$input_suspend $(date) >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
                 done
-                if test "${capa}" -lt 5; then
+                if test "${capa}" -le 5; then
                     echo turn on charging for $adb_s
                     my-adb 'echo 0 > /sys/class/power_supply/battery/input_suspend'
                 fi

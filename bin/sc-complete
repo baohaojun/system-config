@@ -44,8 +44,33 @@ function sc-complete() {
     declare -x COMP_CWORD=$((${#sc_comp_words_before_point[@]} - 1)) || true
     declare -x COMP_KEY=9
     declare -x COMP_TYPE=9
-    _cd
-    debug-args "${COMPREPLY[@]}"
+
+    declare first_word=${COMP_WORDS[0]}
+    declare complete_spec=$(complete -p ${first_word} || true)
+
+    declare complete_action
+    if echo "$complete_spec" | grep -P -q -e " -[FC] "; then
+        complete_action=$(echo "${complete_spec}" | perl -ne 'print $1 if m/ (?:-F|-C) (\w+)/')
+    else
+        complete_action=$(echo "${complete_spec% ${first_word}}"|perl -pe 's,^complete ,compgen ,')
+    fi
+
+    declare -a COMPREPLY
+    local IFS=$'\n'
+
+    if test "$(type -t "${complete_action}")" = function; then
+        ${complete_action} 2>/dev/null
+    else
+        COMPREPLY=(
+            $( eval ${complete_action} 2>/dev/null)
+        )
+    fi
+    echo 1>&2
+    declare comp_ans=$(. atexit stty -echo; stty echo; select-args -p "请选择你要哪个补齐？" -- "${COMPREPLY[@]}")
+    declare current_word=${COMP_WORDS[$COMP_CWORD]}
+    READLINE_LINE=${sc_line_before_point%${current_word}}${comp_ans}
+    READLINE_POINT=${#READLINE_LINE}
+    READLINE_LINE=${READLINE_LINE}${sc_line_after_point}
 }
 
 bind -x '"\eOP": sc-complete'
