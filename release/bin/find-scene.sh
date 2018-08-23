@@ -244,7 +244,7 @@ is-scene() {
     local scene_png=${resdir}/${scene}.png
     local scene_size=$(get-image-size ${scene_png})
 
-    tmp_png=~/tmp/is-scene.${ANDROID_SERIAL}.png
+    tmp_png=~/tmp/is-scene.${ANDROID_SERIAL}.${scene}.png
     adb-screenshot -x ${scene_x} -y ${scene_y} -s ${scene_size} ${tmp_png} >/dev/null 2>&1
     if picture-matches ${scene_png} ${tmp_png}; then
         return 0

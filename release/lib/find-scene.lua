@@ -77,14 +77,18 @@ M.find_scene = function(scene, times)
    end
 end
 
-M.click_scene = function (scene, retry)
+M.click_scene = function (scene, retry, xy_tab)
    log("Click scene: %s", scene)
+   if not xy_tab then
+      xy_tab = { }
+   end
+
    if not refind_scene(scene, retry) then
       log("Can't find scene: %s for click (retry: %s)", scene, retry)
       return
    end
    local xy = scenes_map[scene]
    xy = split(" ", xy)
-   adb_tap_XY(xy[1], xy[2])
+   adb_tap_XY(xy[1] + (xy_tab.x or 0), xy[2] + (xy_tab.y or 0))
 end
 

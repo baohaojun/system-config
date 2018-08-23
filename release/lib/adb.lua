@@ -75,6 +75,7 @@ M.adb_set_tap_params = function(pressure, size)
 end
 
 M.adb_tap_XY = function(x, y) -- do not modify x and y
+   -- log("adb_tap_XY(%d, %d)", x, y)
    adb_quick_input{("input tap %d %d"):format(x, y)}
 end
 
@@ -707,3 +708,11 @@ M.save_window_types = function()
    mapfile:close()
 end
 
+M.top_activity_match = function(regexp)
+   local top_window = adb_top_window()
+   if top_window and top_window:match(regexp) then
+      return true
+   else
+      return false
+   end
+end

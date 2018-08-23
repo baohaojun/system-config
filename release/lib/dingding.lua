@@ -213,6 +213,8 @@ M.wrench_call = function(number)
          wrench_find_qq_contact(who)
       elseif where == "wx" then
          wrench_find_weixin_contact(who)
+      elseif where == "zd" then
+         find_zidanduanxin_friend(who)
       elseif where == "dd" then
          wrench_find_dingding_contact(who)
       elseif where == "coffee" then

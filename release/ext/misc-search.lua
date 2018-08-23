@@ -1,5 +1,5 @@
 #!/usr/bin/env Wrench
--- 各种搜索功能（搜微信联系人、QQ联系人、QQ群里的用户、微博用户、邮件（按发信人搜）等等）
+-- 各种搜索功能（搜微信联系人、QQ 联系人、QQ 群里的用户、微博用户、邮件（按发信人搜）等等）
 
 if M.ext_args then
    what = M.ext_args[1]
@@ -7,24 +7,34 @@ if M.ext_args then
 end
 
 if not where then
-   where = select_args_with_history('misc-search', "请选择你想在哪个App里搜索（也可直接输入比如 baohaojun@@wx，如果我在你的微信好友里的话）？", "微信（用户名@@wx）", "QQ联系人（用户名@@qq）", "QQ群里的用户（用户名@群名@@qq）", "微博用户（用户名@@wb）", "邮件（用户名@@mail）", "帮助")
+   where = select_args_with_history(
+      'misc-search',
+      "请选择你想在哪个 App 里搜索（也可直接输入比如 baohaojun@@wx，如果我在你的微信好友里的话）？",
+      "微信（用户名@@wx）",
+      "QQ 联系人（用户名@@qq）",
+      "QQ 群里的用户（用户名@群名@@qq）",
+      "子弹短信用户（用户名@@zd）",
+      "微博用户（用户名@@wb）",
+      "邮件（用户名@@mail）",
+      "帮助"
+   )
 end
 
 search_string = nil
 
 if where == "微信（用户名@@wx）" then
    postfix = "@@wx"
-elseif where == "QQ联系人（用户名@@qq）" then
+elseif where == "QQ 联系人（用户名@@qq）" then
    postfix = "@@qq"
-elseif where == "QQ群里的用户（用户名@群名@@qq）" then
-   local group = select_args{"请输入你想搜索哪个QQ群？", "", " "}
+elseif where == "QQ 群里的用户（用户名@群名@@qq）" then
+   local group = select_args{"请输入你想搜索哪个 QQ 群？", "", " "}
    postfix = "@" .. group .. "@@qq"
 elseif where == "微博用户（用户名@@wb）" then
    postfix = "@@wb"
 elseif where == "邮件（用户名@@mail）" then
    postfix = "@@mail"
 elseif where == "帮助" then
-   prompt_user"也可以按小扳手的电话按扭，然后直接输入比如 baohaojun@@wx"
+   prompt_user"也可以按小扳手的电话按扭，然后直接输入比如 baohaojun@@wx"
    return
 elseif where:match"@@" then
    search_string = where
