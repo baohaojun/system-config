@@ -66,6 +66,7 @@ map['com.bullet.messenger/com.netease.nim.uikit.business.session.activity.TeamMe
 map['com.bullet.messenger/com.smartisan.flashim.contact.wizard.BaseInfoSettingActivity'] = 'manual-post'
 map['com.bullet.messenger/com.smartisan.flashim.login.AccountRegisterActivity'] = 'manual-post'
 map['com.bullet.messenger/com.smartisan.flashim.login.AccountSetPasswordActivity'] = 'manual-post'
+map['com.bullet.messenger/com.smartisan.flashim.main.activity.MainActivity'] = 'manual-post'
 map['com.bullet.messenger/com.smartisan.flashim.main.activity.PersonalAccountSettingsActivity'] = 'manual-post'
 map['com.cebbank.mobile.cemb/com.cebbank.mobile.cemb.ui.activity.account.forgetpwd.ForgetAddAccountActivity'] = 'manual-post'
 map['com.cebbank.mobile.cemb/com.cebbank.mobile.cemb.ui.activity.account.forgetpwd.ForgetCustomInfoActivity'] = 'manual-post'

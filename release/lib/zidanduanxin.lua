@@ -18,7 +18,11 @@ M.open_zidanduanxin = function()
             return
          end
       else
-         return
+         if not find_scene("zidanduanxin-search-button") then
+            adb_event("key back")
+         else
+            return
+         end
       end
    end
    error("Can't open zidanduanxin")
@@ -26,6 +30,7 @@ end
 
 M.open_zidanduanxin_search = function()
    open_zidanduanxin()
+
    click_scene("zidanduanxin-search-button", nil, {x = 500, y = 20})
 
    if not wait_input_target_n_ok(3, "com.bullet.messenger/com.smartisan.flashim.main.activity.MainActivity") then

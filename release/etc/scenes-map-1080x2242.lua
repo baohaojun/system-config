@@ -10,4 +10,5 @@ map['wx-search-by-voice'] = '975 117'
 map['zidanduanxin-duihua'] = '57 2103'
 map['zidanduanxin-duihua-grey'] = '77 2152'
 map['zidanduanxin-search-button'] = '42 272'
+map['zidanduanxin-search-qunliao'] = '156 234'
 return map
