@@ -1,7 +1,13 @@
 #!/bin/bash
+
+if is-cron; then
+    set -x
+fi
+
 if test $# = 0; then
     set -- $(my-adb devices? | pn 1)
 fi
+
 
 for adb_s in "$@"; do
     (
@@ -32,6 +38,8 @@ for adb_s in "$@"; do
                     my-adb 'echo 0 > /sys/class/power_supply/battery/input_suspend'
                 fi
             fi
+            input_suspend_2=$(adb shell cat /sys/class/power_supply/battery/input_suspend)
+            echo "capa:$capa, input_suspend:$input_suspend->$input_suspend_2 $(date)" >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
         ) 9>/dev/null
     )
 done
