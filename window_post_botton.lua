@@ -64,6 +64,7 @@ map['com.baidu.tieba_mini/com.baidu.tieba.write.write.WriteActivity'] = 'manual-
 map['com.booking/com.booking.activity.UserLoginWithFacebookActivity'] = 'manual-post'
 map['com.bullet.messenger/com.netease.nim.uikit.business.session.activity.P2PMessageActivity'] = 'weixin-chat'
 map['com.bullet.messenger/com.netease.nim.uikit.business.session.activity.TeamMessageActivity'] = 'weixin-chat'
+map['com.bullet.messenger/com.netease.nim.uikit.business.team.activity.TeamDetailInfoActivity'] = 'weixin-chat'
 map['com.bullet.messenger/com.smartisan.flashim.contact.activity.AddFriendActivity'] = 'manual-post'
 map['com.bullet.messenger/com.smartisan.flashim.contact.wizard.BaseInfoSettingActivity'] = 'manual-post'
 map['com.bullet.messenger/com.smartisan.flashim.login.AccountRegisterActivity'] = 'manual-post'
