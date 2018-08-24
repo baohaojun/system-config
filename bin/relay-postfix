@@ -13,10 +13,10 @@ set -e
 TEMP=$( getopt -o h:P:p:u:h \
                --long host:,password:,port:,user:,help \
                -n $(basename -- $0) -- "$@")
-host=
-password=()
-port=
-user=()
+declare host=
+declare -a password=()
+declare port=
+declare -a user=()
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -24,18 +24,22 @@ while true; do
         -h|--host)
             host=$2
             shift 2
+
             ;;
         -P|--password)
             password=("${password[@]}" "$2")
             shift 2
+
             ;;
         -p|--port)
             port=$2
             shift 2
+
             ;;
         -u|--user)
             user=("${user[@]}" "$2")
             shift 2
+
             ;;
         -h|--help)
             set +x
@@ -44,16 +48,16 @@ while true; do
             echo Options and arguments:
             printf %06s '-h, '
             printf %-24s '--host=HOST'
-            echo '第三方邮件服务器主机名'
+            echo 第三方邮件服务器主机名
             printf %06s '-P, '
             printf %-24s '--password=PASSWORD'
-            echo '第三方邮件服务器登录密码'
+            echo 第三方邮件服务器登录密码
             printf %06s '-p, '
             printf %-24s '--port=PORT'
-            echo '第三方邮件服务器端口'
+            echo 第三方邮件服务器端口
             printf %06s '-u, '
             printf %-24s '--user=USER'
-            echo '第三方邮件服务器登录用户'
+            echo 第三方邮件服务器登录用户
             exit
             shift
             ;;
