@@ -29,11 +29,11 @@
 
       declare OLDIFS=$IFS
       IFS=$COMP_WORDBREAKS
-      declare sc_comp_words_before_point=(
+      declare -a sc_comp_words_before_point=(
           $sc_line_before_point
       )
 
-      declare sc_comp_words_after_point=(
+      declare -a sc_comp_words_after_point=(
           $sc_line_after_point
       )
 
@@ -58,10 +58,12 @@
 
       declare -x COMP_WORDS=(
           "${sc_comp_words_before_point[@]}"
-          "${sc_line_after_point[@]}"
+          "${sc_comp_words_after_point[@]}"
       )
 
       declare -x COMP_CWORD=$((${#sc_comp_words_before_point[@]} - 1)) || true
+      COMP_CWORD=$((COMP_CWORD < 0 ? 0 : COMP_CWORD))
+      declare current_word=${COMP_WORDS[$COMP_CWORD]}
       declare -x COMP_KEY=9
       declare -x COMP_TYPE=9
 
@@ -74,51 +76,59 @@
           "${COMP_WORDS[$cword_minus_1]}"
       )
 
-      declare complete_spec=$(complete -p ${first_word} 2>/dev/null)
-      if test -z "${complete_spec}"; then
-          declare default_loader=$(complete -p -D | perl -ne 'print $1 if m/ (?:-F|-C) (\w+)/')
-          if test "${default_loader}"; then
-              ${default_loader} "${comp_call_args[@]}"
-          fi
-          complete_spec=$(complete -p ${first_word} 2>/dev/null)
-      fi
 
-      local IFS=$'\n'
+
+      declare complete_spec=
       declare -a COMPREPLY
-
+      local IFS=$'\n'
       declare -A sc_comp_options
 
-      if test "${complete_spec}"; then
-          compopt() {
-              while test $# != 0; do
-                  if test $1 = -o; then
-                      sc_comp_options[${2:-unknown}]=1
-                      shift 2
-                  else
-                      shift 1
-                  fi
-              done
-          }
-
-          declare complete_action
-          if echo "$complete_spec" | grep -P -q -e " -[FC] "; then
-              complete_action=$(echo "${complete_spec}" | perl -ne 'print $1 if m/ (?:-F|-C) (\w+)/')
-          else
-              complete_action=$(echo "${complete_spec% ${first_word}}"|perl -pe 's,^complete ,compgen ,')
+      if test "${#COMP_WORDS[@]}" -lt 1; then
+          COMPREPLY=(
+              $(compgen -c "$first_word")
+          )
+      else
+          complete_spec=$(complete -p ${first_word} 2>/dev/null)
+          if test -z "${complete_spec}"; then
+              declare default_loader=$(complete -p -D | perl -ne 'print $1 if m/ (?:-F|-C) (\w+)/')
+              if test "${default_loader}"; then
+                  ${default_loader} "${comp_call_args[@]}"
+              fi
+              complete_spec=$(complete -p ${first_word} 2>/dev/null)
           fi
 
-          if test "$(type -t "${complete_action}")" = function; then
-              ${complete_action} 2>/dev/null
-          else
-              COMPREPLY=(
-                  $( eval ${complete_action} 2>/dev/null)
-              )
+          if test "${complete_spec}"; then
+              compopt() {
+                  while test $# != 0; do
+                      if test $1 = -o; then
+                          sc_comp_options[${2:-unknown}]=1
+                          shift 2
+                      else
+                          shift 1
+                      fi
+                  done
+              }
+
+              declare complete_action
+              if echo "$complete_spec" | grep -P -q -e " -[FC] "; then
+                  complete_action=$(echo "${complete_spec}" | perl -ne 'print $1 if m/ (?:-F|-C) (\w+)/')
+              else
+                  complete_action=$(echo "${complete_spec% ${first_word}}"|perl -pe 's,^complete ,compgen ,')
+              fi
+
+              if test "$(type -t "${complete_action}")" = function; then
+                  ${complete_action} 2>/dev/null
+              else
+                  COMPREPLY=(
+                      $( eval ${complete_action} 2>/dev/null)
+                  )
+              fi
+              unset -f compopt
           fi
-          unset -f compopt
       fi
 
-      if test -z "${complete_spec}" || (
-              test "${#COMPREPLY[@]}" = 0 &&
+      if test "${#COMPREPLY[@]}" = 0 && (
+              test -z "${complete_spec}" ||
                   [[ $complete_spec =~ '-o default' ]]
           ); then
           COMPREPLY=(
@@ -141,7 +151,6 @@
           fi
           comp_ans=$(printf %q "$comp_ans")
       fi
-      declare current_word=${COMP_WORDS[$COMP_CWORD]}
       READLINE_LINE=${sc_line_before_point%${current_word}}${comp_ans}
       READLINE_POINT=${#READLINE_LINE}
       READLINE_LINE=${READLINE_LINE}${sc_line_after_point}
