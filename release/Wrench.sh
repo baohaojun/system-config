@@ -168,7 +168,7 @@ EOF
 fi
 
 if test "$kill" = true; then
-    kill-env RUNNING_WRENCH true
+    ps-killall Wrench -e ANDROID_SERIAL=${ANDROID_SERIAL}
     exit
 fi
 
