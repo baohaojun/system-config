@@ -226,12 +226,12 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                                     # 它在 manifest 里有两行跟它对应，一行是 aosp 的，一行是我司自己的，
                                                     # 如果按以前的写法，就删不掉出错的仓库，导致最后不得不全部重新下载。
                                                     for path in $path $project; do
-                                                        rm $path .repo/projects/$path.git
+                                                        rm -rf $path .repo/projects/$path.git
                                                     done
                                                 )
                                                 (
                                                     for project in $path $project; do
-                                                        rm .repo/project-objects/$project.git -rf
+                                                        rm -rf .repo/project-objects/$project.git
                                                     done
                                                 )
                                             done

@@ -380,7 +380,7 @@ declare output_calls_to_GetOptions=$(
                 echo \&$handler_name
             fi
                        )
-        cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+        cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%% --
 #'<%opt-name-spec%><%opt-arg-spec%>' => \<%opt-target-spec%>,
 EOF42934b465d64
     done
@@ -388,7 +388,7 @@ EOF42934b465d64
     opt_name_spec='help|h'
     opt_arg_spec='!'
     opt_target_spec='&handler_help'
-    cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+    cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%% --
 #'<%opt-name-spec%><%opt-arg-spec%>' => \<%opt-target-spec%>,
 EOF42934b465d64
                           )
@@ -397,7 +397,7 @@ declare output_handlers=$(
     for long in "${long_opts_sorted[@]}"; do
         init-perl-var-info
         if test "${need_handler}" = true; then
-            cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+            cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%% --
 #sub <%handler-name%> {
 #    my ($opt_name, $opt_value) = @_;
 #    <%v%> = $opt_value ? <%var-on-value%> : <%var-off-value%>;
@@ -408,7 +408,7 @@ EOF42934b465d64
         )
 
 declare output_help=$(
-    cat <<'EOFc6000ee724fd' | perl -npe 's/^#//' | . .replace-%%
+    cat <<'EOFc6000ee724fd' | perl -npe 's/^#//' | . .replace-%% --
 #print <%global-help%>;
 #print "\n\n选项和参数：\n";
 EOFc6000ee724fd
@@ -428,7 +428,7 @@ EOFc6000ee724fd
 
         declare var_doc=${help_map[$long]}
 
-        cat <<'EOF7f0beacf3665' | perl -npe 's/^#//' | . .replace-%%
+        cat <<'EOF7f0beacf3665' | perl -npe 's/^#//' | . .replace-%% --
 #printf "%6s", '<%short-opt%>';
 #printf "%-24s", '<%long-opt%>';
 #if (length('<%long-opt%>') > 24 and length(<%var-doc%>) > 0) {
@@ -443,7 +443,7 @@ EOF7f0beacf3665
         )
 
 
-cat <<'EOF42934b465d64' | . .replace-%%
+cat <<'EOF42934b465d64' | . .replace-%% --
 use Getopt::Long;
 
 <%declare-perl-vars%>

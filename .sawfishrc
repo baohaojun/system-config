@@ -229,8 +229,8 @@
    ("C-."              "hello world no such thing" "firefox push")
    ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox --new-window")
    ("Super-t"          (lambda (w) (and
-                               (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
-                               (not (string= "emacs" (window-name w))))) "konsole.bhj")
+                                    (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
+                                    (not (string= "emacs" (window-name w))))) "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
@@ -289,9 +289,9 @@
     (setq mapped-list
           (remove-if
            (lambda (e) (or
-                   (eq (car e) 'Firefox)
-                   (eq (car e) 'Firefox-esr)
-                   (eq (car e) 'Iceweasel)))
+                        (eq (car e) 'Firefox)
+                        (eq (car e) 'Firefox-esr)
+                        (eq (car e) 'Iceweasel)))
            mapped-list))
     (setq mapped-list (nconc `((Firefox . ,firefox-keys)
                                (Firefox-esr . ,firefox-keys)
@@ -715,8 +715,8 @@
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards
   (lambda () (filter-windows
-         (lambda (x) (string-match im-class (bhj-window-class x)))
-         (stacking-order))))
+              (lambda (x) (string-match im-class (bhj-window-class x)))
+              (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-br-window 'cycle-br-window-backwards
@@ -903,17 +903,17 @@
         (X 0)
         (Y 0))
     (mapcar (lambda (w) (let* ((wx (+ (car (window-position w))))
-                               (wy (+ (cdr (window-position w))))
-                               (wX (+ wx (car (window-frame-dimensions w))))
-                               (wY (+ wy (cdr (window-frame-dimensions w)))))
-                          (when (> x wx)
-                            (setq x wx))
-                          (when (> y wy)
-                            (setq y wy))
-                          (when (< X wX)
-                            (setq X wX))
-                          (when (< Y wY)
-                            (setq Y wY))))
+                          (wy (+ (cdr (window-position w))))
+                          (wX (+ wx (car (window-frame-dimensions w))))
+                          (wY (+ wy (cdr (window-frame-dimensions w)))))
+                     (when (> x wx)
+                       (setq x wx))
+                     (when (> y wy)
+                       (setq y wy))
+                     (when (< X wX)
+                       (setq X wX))
+                     (when (< Y wY)
+                       (setq Y wY))))
             (filter (lambda (w) (string-equal class (bhj-window-class w))) (managed-windows)))
     (format nil "-x %d -y %d --width %d --height %d" x y (- X x) (- Y y))))
 
@@ -923,11 +923,11 @@
                (unless (equal (bhj-window-class window) "Xfce4-panel")
                  (delete-window-safely window)))))
 
-(bind-keys window-keymap "Super-Q"
-           (lambda ()
-             (let* ((window (input-focus))
-                    (class (bhj-window-class window)))
-               (unless (equal class "Xfce4-panel")
-                 (delete-window-class-safely class)))))
+(bind-both-global&window-keymaps "Super-Q"
+                                 (lambda ()
+                                   (let* ((window (input-focus))
+                                          (class (bhj-window-class window)))
+                                     (unless (equal class "Xfce4-panel")
+                                       (delete-window-class-safely class)))))
 
 (bind-both-global&window-keymaps "Super-h" s-h-keymap)

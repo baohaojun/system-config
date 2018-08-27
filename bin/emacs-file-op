@@ -46,7 +46,7 @@ EOF02763f20b5fb
 )"
 fi
 
-emacsclient -e "$(cat <<EOF16d93b20dc6b | . .replace-%%
+emacsclient -e "$(cat <<EOF16d93b20dc6b | . .replace-%% --
 (save-excursion
   (with-current-buffer
       (find-file-noselect "$to_file")

@@ -70,6 +70,8 @@ else
     setx=
 fi
 
+export kill_withenv
+
 ps.pl -o pgid $match | grep -v $(basename $0) | tee /dev/stderr |
     if test "$kill_group" = true; then
         pn 4 | sort -u | perl -npe 's/^/-/'
@@ -77,7 +79,7 @@ ps.pl -o pgid $match | grep -v $(basename $0) | tee /dev/stderr |
         pn 1
     fi |
     xargs bash $setx -c "$(
-cat <<'EOF9edc59e6cef8' | . .replace-%%
+cat <<'EOF9edc59e6cef8' | . .replace-%% --
 # {%sh-mode%}
 for x in $@; do
     if is-ppid $x $$; then

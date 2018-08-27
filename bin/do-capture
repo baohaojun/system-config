@@ -104,7 +104,7 @@ if test "$show_all_tasks" = true; then
 elif test "${show_all_tasks}" = false; then
      reset_current_hour="(setq org-agenda-current-hour 10)";
 fi
-. .replace-%%;
+. .replace-%% --;
 # {%/sh-mode%}
 
 )"

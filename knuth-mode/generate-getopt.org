@@ -535,7 +535,7 @@
                   echo \&$handler_name
               fi
                          )
-          cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+          cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%% --
   #<<perl-getopt-template>>
   EOF42934b465d64
       done
@@ -543,7 +543,7 @@
       opt_name_spec='help|h'
       opt_arg_spec='!'
       opt_target_spec='&handler_help'
-      cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+      cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%% --
   #<<perl-getopt-template>>
   EOF42934b465d64
                             )
@@ -552,7 +552,7 @@
       for long in "${long_opts_sorted[@]}"; do
           init-perl-var-info
           if test "${need_handler}" = true; then
-              cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%%
+              cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%% --
   #<<perl-handler-template>>
   EOF42934b465d64
           fi
@@ -560,7 +560,7 @@
           )
 
   declare output_help=$(
-      cat <<'EOFc6000ee724fd' | perl -npe 's/^#//' | . .replace-%%
+      cat <<'EOFc6000ee724fd' | perl -npe 's/^#//' | . .replace-%% --
   #<<perl-global-help-template>>
   EOFc6000ee724fd
 
@@ -579,14 +579,14 @@
 
           declare var_doc=${help_map[$long]}
 
-          cat <<'EOF7f0beacf3665' | perl -npe 's/^#//' | . .replace-%%
+          cat <<'EOF7f0beacf3665' | perl -npe 's/^#//' | . .replace-%% --
   #<<perl-var-help-template>>
   EOF7f0beacf3665
       done
           )
 
 
-  cat <<'EOF42934b465d64' | . .replace-%%
+  cat <<'EOF42934b465d64' | . .replace-%% --
   <<perl-template>>
   EOF42934b465d64
 #+END_SRC

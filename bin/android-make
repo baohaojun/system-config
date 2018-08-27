@@ -134,6 +134,13 @@ if test "$1" = help-sub; then
 fi
 
 cd $(lookup-file .repo/..)
+if test -d kernel && ! test -e .repo/kernel; then
+    # 以下是为了绕过某 CPU 厂商改出来的编译兼容性问题。本来安卓编译的
+    # 一个设计目标是允许任意指定编译输出目录，而非硬编码为 out 的，但
+    # 该厂商的工程师修改编译脚本时强行假设了输出目录就是 out。。。
+    ln -sf ../kernel .repo/
+fi
+
 if ! test -d .repo -a -e build/envsetup.sh; then
     die "Not an Android repo?"
 fi

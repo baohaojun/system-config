@@ -85,7 +85,7 @@ emacs-file-op echo x1 x2 '>' fx
   )"
   fi
 
-  emacsclient -e "$(cat <<EOF16d93b20dc6b | . .replace-%%
+  emacsclient -e "$(cat <<EOF16d93b20dc6b | . .replace-%% --
   <<emacs-append.el>>
   EOF16d93b20dc6b
   )"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# [[file:~/system-config/knuth-mode/sc-complete.org::the-ultimate-script][the-ultimate-script]]
+# [[file:~/src/github/baohaojun.github.com/blog/2018/08/27/sc-complete.org::the-ultimate-script][the-ultimate-script]]
 function sc-complete() {
     declare -x COMP_LINE=$READLINE_LINE
     declare -x COMP_POINT=$READLINE_POINT
@@ -63,7 +63,7 @@ function sc-complete() {
     local IFS=$'\n'
     declare -A sc_comp_options
 
-    if test "${#COMP_WORDS[@]}" -lt 1; then
+    if test "${#sc_comp_words_before_point[@]}" -le 1; then
         COMPREPLY=(
             $(compgen -c "$first_word")
         )
