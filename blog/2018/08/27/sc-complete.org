@@ -1,0 +1,232 @@
+#+TITLE: sc-complete
+
+* 牛逼的 zsh 补齐机制
+
+有一天有个同事过来告诉我，他用的是 zsh，这个 shell 下的补齐有个非常友好的机制，允许你用方向键在各个候选项之间上下左右移动，然后问我 system-config 下能不能也加一个这样的功能。
+
+拖了几个月之后，我终于写了一个类似的机制，并且自己认为是更友好、用起来更舒服的机制。
+
+先看一下 zsh 的补齐是什么样的：
+
+[[./../../../../images/zsh-completion.gif]]
+
+* 我的解决方案
+
+跟它相比，bash 自带的补齐候选词选择机制有点太弱了，这里就不提了，直接给大家看一下我改出来的补齐的方法：
+
+[[./../../../../images/sc-complete.gif]]
+
+这里解释一下我执行的操作：
+
+1. 输入 =“git ”=，然后按了一下 =F1= 快捷键
+
+   补齐脚本提示了所有 git 的常用子命令供我选择，
+
+2. 我输入了“br<回车>”，脚本进一步缩小了匹配的常用 git 子命令的范围
+
+3. 我按下回车，直接选中第一个匹配的候选项，=branch=
+
+4. 我输入了 “--”，然后又按了一下 =F1=，脚本列出所有 =git branch= 命令允许的参数选项，我又输入了 =mer<回车>=，细化了一下匹配项，然后直接回车，选中了 =--merged=。
+
+5. 我直接按了一下 =F1=，脚本调用 bash 的自定义补齐机制，计算出此处应该提供的补齐是当前仓库的所有分支，于是列出这些分支让我选择
+
+6. 我输入了 =ema<回车>= 极大地细化了一下候选项，然后输入 =2<回车>= 选中了第 2 个选项。
+
+跟 zsh 的机制比起来，我的脚本在有巨多的候选项的情况下，允许进一步过滤细分、然后用序号选中；如果是 zsh 的话，即使用上下左右的移动，也还是要找很久，并且不存在进一步优化操作的可能性。
+
+当然，缺点也有很多：
+
+1. 界面比较简陋
+2. 毕竟不是 bash 内置的功能，在处理所有带空格等特殊字符的目录名补齐的时候，只能补齐一次，后面就无法正确的分词了。
+
+   比如在我的 =${HOME}= 目录下，有一个名为 =VirtualBox VMs= 的目录，我如果输入 =cd vir= 然后按 F1 补齐的话，它能给我正确的补上 =cd VirtualBox\ VMs/=，连空格前的反斜杠都给加上了，但你再按 F1 的话，虽然下面还有一个 Debian 目录，但因为分词的问题，我的脚本只能用 VMs 去算下一步的补齐，结果就补不出来了。如果按 Tab 的话，bash 自己的分词会用整个 =VirtualBox\ VMs/= 去补齐，结果就是正确的。
+
+   不过这个问题其实也没什么，因为在处理特殊字符的时候，bash 自己也是问题很多的。比如你可以试试输入 =echo $(git br= 然后按 Tab 键，bash 会出错的。后续我计划让我的脚本能处理这种补齐。
+
+* 用法
+
+1. 升级一下 system-config（用 git push 同步一下代码）
+2. 新开一个终端窗口，直接按一下 F1 键，会列出系统 =$PATH= 路径里所有命令（包括 bash 的内置命令、alias 别名以及函数）
+
+   如果你希望使用其他快捷键（有些系统下 F1 可能已经有其他用途），比如 F2，请在你的 =~/.bashrc= 的最后添加如下一行：
+
+   #+BEGIN_SRC sh
+   bind -x '"\eOQ": sc-complete'
+   #+END_SRC
+
+   这里 =\eOQ= 是通过 bash 终端读出来的 =F2= 的终端编码，你可以在 bash 下通过先按一下 =C-v=，然后再按一下 F2 来读到这个代码，bash 会显示你输入了 =^[OQ=，其中 =^[= 是一个特殊字符，其实就是 Escape 键的意思，在 bash bind 命令里用 =\e= 表示，你可以通过按 Escape 键输入它，也可以用 =Ctrl-[= 键输入。基本上所有的功能键 =F1~F12= 都有一个对应的终端编码，比如在我的系统上，在终端里按 =F1= 的效果，和按 =Escape、O、P= 这三个键的效果是完全一样的。
+
+
+* 开发手记
+
+里面最坑的地方是我使用的 select-args 这个脚本，是 system-config 里很久以前就有的，这次在被用于补齐选择的时候，发现我输入的文字不会被回显。我像个瞎子一样摸索了很久，最后发现是 tty 终端的设置的问题，bash在输入命令的过程中关闭了回显（所谓回显是指比如你按了个c的话，终端就会显示一个c；关闭终端回显一般用于输入密码的情况下；bash输入命令时你输入了一个c，确实终端上也会显示一个c，但是这个c是bash显示的，不是通过终端回显机制显示的！）
+
+** Org-mode Literate Programming
+
+主要解决的痛点是在 bash 有很多补齐候选项的时候，我可以自己定义如何进行这些选项的选择。目前市面上已有的做法是：
+
+1. bash，先提示你一下，有很多候选项，你要不要全部显示？然后你选 Yes，显示全部候选项之后，再接着打字或改成用鼠标选中、拷贝、粘贴。
+
+2. zsh，我自己没有用过，但之前有个同事给我演示过，允许把所有选项列出来，然后你可以用方向键上下左右移动高亮某选项，然后回车选中它。
+
+我希望把它改成这样子：我按一个键后，马上调用我的 =my-select= （或 =select-args= 等）脚本，把所有选项列出来让我选，选完了之后直接上屏。
+
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh
+  function sc-complete() {
+      declare -x COMP_LINE=$READLINE_LINE
+      declare -x COMP_POINT=$READLINE_POINT
+
+      declare sc_line_before_point=${READLINE_LINE:0:$READLINE_POINT}
+      declare sc_line_after_point=${READLINE_LINE:$READLINE_POINT}
+
+      declare OLDIFS=$IFS
+      IFS=$COMP_WORDBREAKS
+      declare -a sc_comp_words_before_point=(
+          $sc_line_before_point
+      )
+
+      declare -a sc_comp_words_after_point=(
+          $sc_line_after_point
+      )
+
+      IFS=$OLDIFS
+
+      declare sc_last_word_before_point
+
+      if test ${#sc_comp_words_before_point[@]} -gt 0; then
+          sc_last_word_before_point=${sc_comp_words_before_point[${#sc_comp_words_before_point[@]} - 1]}
+      else
+          sc_last_word_before_point=""
+      fi
+
+
+      if test "${sc_line_before_point:${#sc_line_before_point}-${#sc_last_word_before_point}}" != "${sc_last_word_before_point}"; then
+          # There are other ``blank'' chars before the point, so there should be an empty WORD
+          sc_comp_words_before_point=(
+              "${sc_comp_words_before_point[@]}"
+              ""
+          )
+      fi
+
+      declare -x COMP_WORDS=(
+          "${sc_comp_words_before_point[@]}"
+          "${sc_comp_words_after_point[@]}"
+      )
+
+      declare -x COMP_CWORD=$((${#sc_comp_words_before_point[@]} - 1)) || true
+      COMP_CWORD=$((COMP_CWORD < 0 ? 0 : COMP_CWORD))
+      declare current_word=${COMP_WORDS[$COMP_CWORD]}
+      declare -x COMP_KEY=9
+      declare -x COMP_TYPE=9
+
+      declare first_word=${COMP_WORDS[0]}
+      declare cword_minus_1=$((COMP_CWORD > 0 ? COMP_CWORD - 1 : 0))
+
+      declare comp_call_args=(
+          "$first_word"
+          "${COMP_WORDS[$COMP_CWORD]}"
+          "${COMP_WORDS[$cword_minus_1]}"
+      )
+
+
+
+      declare complete_spec=
+      declare -a COMPREPLY
+      local IFS=$'\n'
+      declare -A sc_comp_options
+
+      if test "${#sc_comp_words_before_point[@]}" -le 1; then
+          COMPREPLY=(
+              $(compgen -c "$first_word")
+          )
+      else
+          complete_spec=$(complete -p ${first_word} 2>/dev/null)
+          if test -z "${complete_spec}"; then
+              declare default_loader=$(complete -p -D | perl -ne 'print $1 if m/ (?:-F|-C) (\w+)/')
+              if test "${default_loader}"; then
+                  ${default_loader} "${comp_call_args[@]}"
+              fi
+              complete_spec=$(complete -p ${first_word} 2>/dev/null)
+          fi
+
+          if test "${complete_spec}"; then
+              compopt() {
+                  while test $# != 0; do
+                      if test $1 = -o; then
+                          sc_comp_options[${2:-unknown}]=1
+                          shift 2
+                      else
+                          shift 1
+                      fi
+                  done
+              }
+
+              declare complete_action
+              if echo "$complete_spec" | grep -P -q -e " -[FC] "; then
+                  complete_action=$(echo "${complete_spec}" | perl -ne 'print $1 if m/ (?:-F|-C) (\w+)/')
+              else
+                  complete_action=$(echo "${complete_spec% ${first_word}}"|perl -pe 's,^complete ,compgen ,')
+              fi
+
+              if test "$(type -t "${complete_action}")" = function; then
+                  ${complete_action} 2>/dev/null
+              else
+                  COMPREPLY=(
+                      $( eval ${complete_action} 2>/dev/null)
+                  )
+              fi
+              unset -f compopt
+          fi
+      fi
+
+      if test "${#COMPREPLY[@]}" = 0 && (
+              test -z "${complete_spec}" ||
+                  [[ $complete_spec =~ '-o default' ]]
+          ); then
+          COMPREPLY=(
+              $(
+                  for x in "${COMP_WORDS[$COMP_CWORD]}"*; do
+                      if test "${x}" != "${COMP_WORDS[$COMP_CWORD]}"\*; then
+                          echo "${x}"
+                      fi
+                  done
+              )
+          )
+      fi
+      if test "${#COMPREPLY[@]}" = 0; then
+          return
+      fi
+      declare comp_ans=$(. atexit stty -echo; stty echo; select-args -p "请选择你要哪个补齐？" -- "${COMPREPLY[@]}")
+      if test "${sc_comp_options[filenames]}"; then
+          if test -d "${comp_ans}"; then
+              comp_ans=$comp_ans/
+          fi
+          comp_ans=$(printf %q "$comp_ans")
+      fi
+      READLINE_LINE=${sc_line_before_point%${current_word}}${comp_ans}
+      READLINE_POINT=${#READLINE_LINE}
+      READLINE_LINE=${READLINE_LINE}${sc_line_after_point}
+  }
+
+  bind -x '"\eOP": sc-complete'
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/sc-complete :comments link :shebang "#!/bin/bash" :noweb yes
+
+<<old-code>>
+<<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
