@@ -3,7 +3,7 @@
   - 2018-08
    * 2018-08-27
 
-     [[../blog/2018/08/27/sc-complete.org][sc-complete]]
+     [[../blog/2018/08/27/sc-complete.org][bash 下更方便的补齐选择方法]]
 
   - 2018-07
    * 2018-07-05
