@@ -2455,6 +2455,11 @@ body {
     background-color: #696969;
 }
 
+p {
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
 body {
   margin:0;
   padding:40px 20px;
