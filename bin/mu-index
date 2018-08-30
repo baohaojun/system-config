@@ -46,5 +46,14 @@ done
 . force-1 || exit 0
 if which mu >/dev/null 2>&1; then
     time mu index --muhome ${mu_dir} || true
-    emacsclient -e '(mu4e-update-mail-and-index t)' || true
+    emacsclient -e "$(
+cat <<'EOFba23472b1552'
+; {%emacs-lisp-mode%}
+(progn
+  (mu4e-update-mail-and-index t)
+  (mu4e~request-contacts))
+; {%/emacs-lisp-mode%}
+EOFba23472b1552
+
+)" || true
 fi
