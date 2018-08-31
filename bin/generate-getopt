@@ -150,7 +150,7 @@ while test "$1"; do
 
             default_val_map[$long-off-]=${add_around}${bool_val[0]}${add_around}
             default_val_map[$long-on-]=${add_around}${bool_val[1]}${add_around}
-            if test ${#bool_val} = 3; then
+            if test ${#bool_val[@]} = 3; then
                 default=${add_around}${bool_val[2]}${add_around}
             else
                 default=${add_around}${bool_val[0]}${add_around}
@@ -288,6 +288,9 @@ done
                     uc_long=$long
                     uc_long=${uc_long^^}
                     echo -n --$long=${uc_long//-/_}
+                    if [[ ${default_val_map[$long]} =~ \( ]]; then
+                        echo -n ...
+                    fi
                 fi
                        )
             opt_chars=$(( ${#long_output} + 6))

@@ -32,16 +32,16 @@ EOF
 }
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt p:prepend P:postpend aask-replacer=true @use-git=true '?要不要执行 git 检查' \
-        # f:change-files='()' '?要修改哪些文件，默认会自己搜索匹配的文件' \
-        # @:perl-re=-P ?'by default, use grep -P (perl re), --perl-re="" to overide this'
+    # generate-getopt p:prepend P:postpend aask-replacer=true @use-git=true '?"要不要执行 git 检查"' \
+        # f:change-files='()' '?"要修改哪些文件，可一次指定多个或指定多次（但不能混用），默认会自己搜索匹配的文件"' \
+        # @perl-re='("" -P -P)' '?"by default, use grep -P (perl regexp)"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o af:P:p:h \
-               --long ask-replacer,change-files:,perl-re:,postpend:,prepend:,use-git,help,no-ask-replacer,no-use-git \
+               --long ask-replacer,change-files:,perl-re,postpend:,prepend:,use-git,help,no-ask-replacer,no-perl-re,no-use-git \
                -n $(basename -- $0) -- "$@")
 declare ask_replacer=true
-declare change_files=()
+declare -a change_files=()
 declare perl_re=-P
 declare postpend=
 declare prepend=
@@ -57,22 +57,31 @@ while true; do
                 ask_replacer=true
             fi
             shift
+
             ;;
         -f|--change-files)
             change_files=("${change_files[@]}" "$2")
             shift 2
+
             ;;
-        --perl-re)
-            perl_re=$2
-            shift 2
+        --perl-re|--no-perl-re)
+            if test "$1" = --no-perl-re; then
+                perl_re=
+            else
+                perl_re=-P
+            fi
+            shift
+
             ;;
         -P|--postpend)
             postpend=$2
             shift 2
+
             ;;
         -p|--prepend)
             prepend=$2
             shift 2
+
             ;;
         --use-git|--no-use-git)
             if test "$1" = --no-use-git; then
@@ -81,6 +90,7 @@ while true; do
                 use_git=true
             fi
             shift
+
             ;;
         -h|--help)
             set +x
@@ -91,13 +101,13 @@ while true; do
             printf %-24s '--[no-]ask-replacer'
             echo
             printf %06s '-f, '
-            printf %-24s '--change-files=CHANGE_FILES'
+            printf %-24s '--change-files=CHANGE_FILES...'
             echo
             printf "%30s" ""
-            echo '要修改哪些文件，默认会自己搜索匹配的文件'
+            echo "要修改哪些文件，可一次指定多个或指定多次（但不能混用），默认会自己搜索匹配的文件"
             printf "%06s" " "
-            printf %-24s '--perl-re=PERL_RE'
-            echo 'by default, use grep -P (perl re), --perl-re="" to overide this'
+            printf %-24s '--[no-]perl-re'
+            echo "by default, use grep -P (perl regexp)"
             printf %06s '-P, '
             printf %-24s '--postpend=POSTPEND'
             echo
@@ -106,7 +116,7 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--[no-]use-git'
-            echo '要不要执行 git 检查'
+            echo "要不要执行 git 检查"
             exit
             shift
             ;;
@@ -126,6 +136,12 @@ done
 export ask_replacer
 export prepend
 export postpend
+
+if test "${change_files}" -a ! -e "${change_files}"; then
+    change_files=(
+        $change_files
+    )
+fi
 
 if test -z "$prepend" -a -z "$postpend" && [[ "$1" =~ ^\\b.*\\b$ ]]; then
     prepend="\b"
