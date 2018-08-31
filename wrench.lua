@@ -15,7 +15,7 @@ M.WrenchExt = {}
 M.window_post_button_map = {}
 M.mail_group_map = {}
 M.phone_info_map = {}
-M.phone_serial = ""
+M.android_serial = ""
 M.configDir = "."
 M.last_uploaded_pics = {}
 M.social_need_confirm = false
@@ -983,7 +983,6 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
 
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
-   adb_serial = adb_pipe("getprop ro.serialno")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
    arm_arch = adb_pipe("/data/data/com.android.shell/busybox uname -m 2>/dev/null || uname -m")
    androidvncserver = ("androidvncserver-%s.sdk%s"):format(arm_arch, sdk_version)
@@ -1053,14 +1052,10 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
       save_phone_info()
    end
 
-   phone_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
+   android_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
    reset_input_method()
-   local android_serial = wrench_get_proc_var{"ANDROID_SERIAL"}
-   if android_serial == '' then
-      android_serial = os.getenv("ANDROID_SERIAL")
-   end
    system("bash ./check-notification.sh " .. android_serial)
-   return ("brand is %s, adb serial is %s"):format(brand, adb_serial)
+   return ("brand is %s, adb serial is %s"):format(brand, android_serial)
 end
 
 M.get_a_note = function(text)

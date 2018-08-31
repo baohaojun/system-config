@@ -183,10 +183,10 @@ end
 
 M.press_dial_key = function()
    if not where_is_dial_key then
-      where_is_dial_key = phone_info_map[phone_serial .. ":拨号键位置"]
+      where_is_dial_key = phone_info_map[android_serial .. ":拨号键位置"]
       if not where_is_dial_key then
          where_is_dial_key = select_args{"Where is the dial button？", "Middle", "First from left", "Second from left"}
-         phone_info_map[phone_serial .. ":拨号键位置"] = where_is_dial_key
+         phone_info_map[android_serial .. ":拨号键位置"] = where_is_dial_key
          save_phone_info()
       end
    end

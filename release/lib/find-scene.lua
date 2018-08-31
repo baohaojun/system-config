@@ -13,7 +13,7 @@ end
 
 M.load_scene_map = function()
    if not M.scene_map_file then
-      M.scene_map_file = M.configDirFile(("scenes-map-%dx%d.lua"):format(M.real_width, M.real_height))
+      M.scene_map_file = M.configDirFile(("scenes-map-%dx%d@%s.lua"):format(M.real_width, M.real_height, android_serial))
       dofile_res, M.scenes_map = pcall(dofile, scene_map_file)
       if not dofile_res then
          M.scenes_map = {}

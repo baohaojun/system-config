@@ -20,6 +20,10 @@ M.open_zidanduanxin = function()
       else
          if not find_scene("zidanduanxin-search-button") then
             adb_event("key back")
+            sleep(.3)
+            if find_scene("zidanduanxin-search-button") then
+               return
+            end
          else
             return
          end
@@ -51,5 +55,9 @@ M.find_zidanduanxin_friend = function(who)
       prompt_user("请确认你要查找的是哪个用户")
    else
       click_scene("zidanduanxin-search-qunliao", nil, {x = 500, y = 200 })
+      sleep(.5)
+      if find_scene("zd-fasongxiaoxi") then
+         click_scene("zd-fasongxiaoxi")
+      end
    end
 end
