@@ -1,0 +1,49 @@
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt f:for
+## end code-generator
+## start generated code
+TEMP=$( getopt -o f:h \
+               --long for:,help \
+               -n $(basename -- $0) -- "$@")
+declare for=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--for)
+            for=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--for=FOR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+for x in ~/system-config/etc/cpan-modules/${for}/*; do
+    if test -f "$x" -a -x "$x"; then
+        echo running: $x
+        "$x"
+    fi
+done

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if ! perl -e 'use Text::CSV qw(csv); csv(in => "/dev/null")'; then
+    cpan -i Text::CSV_XS Text::CSV
+fi
