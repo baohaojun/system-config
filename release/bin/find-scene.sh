@@ -29,6 +29,8 @@ function picture-matches() {
                 return 0;
             elif test "${nodejs_ret}" -a "${nodejs_ret}" != no; then
                 echo "nodejs_ret: $nodejs_ret" 1>&2
+            elif test "${nodejs_ret}" = no; then
+                cp "$2" "$(dirname "$1")"/failed-"$(bp "$1")" || true
             fi
             break
         else
