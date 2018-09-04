@@ -14,4 +14,6 @@ export ANDROID_NDK_HOME=${ANDROID_NDK_HOME:-~/external/bin/Linux/ext/ndk}
 if test -e ~/src/github/private-config/.bashrc; then
     . ~/src/github/private-config/.bashrc
 fi
-. sc-complete
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+

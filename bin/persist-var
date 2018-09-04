@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt d:var-dir='~/.cache/system-config/persist-var'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o d:h \
+               --long var-dir:,help \
+               -n $(basename -- $0) -- "$@")
+declare var_dir=~/.cache/system-config/persist-var
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--var-dir)
+            var_dir=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--var-dir=VAR_DIR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+set-var() {
+    var=$1
+    val=$2
+    mkdir -p ${var_dir}
+    cd ${var_dir}
+    if test -z "${val}"; then
+        rm -f "${var}"
+    else
+        echo "${val}" > "${var}"
+    fi
+}
+
+get-var() {
+    var=$1
+    if test -e "${var_dir}"/${var}; then
+        cat "${var_dir}"/${var}
+    fi
+}
+
+action=$1
+shift
+
+$action-var "$@"

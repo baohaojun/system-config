@@ -266,10 +266,12 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
 
 "$(echo "$manifest_error"|indent-stdin)"
 
-因为重新 repo init 之后无法确保 manifest、revision 相同（考虑到有 rebuild 的情况），因此接下来会终止当前 job，请 CM 帮忙重启一下。
+因为重新 repo init 之后无法确保 manifest、revision 相同（考虑到有 rebuild 的情况），因此接下来会自动重启当前 job，请 CM 关注一下（比如是否反复重启）。
 EOF
 
-                                    )| mail-cms -i -e -o "Info: repo manifest need re-init to fix repo sync error"
+                                    ) | mail-cms -i -e -o "Info: repo manifest need re-init to fix repo sync error"
+
+                                    scm jc-rebuild --do-sleep 15 --rebuild-reason 'RepoSyncManifestError'
 
                                     # 不能自动修复这种错误。万一这是一
                                     # 个 rebuild 的任务，现在正在重新
@@ -277,8 +279,10 @@ EOF
                                     # 了，是不可以再 repo sync 的。
 
                                     kill $$
+                                else
+                                    sc jc-rebuild --rebuild-reason 'RepoSyncManifestError' --clear-rebuild
                                 fi
-                                exit 1
+                                exit 1 # 不是这种错误，下方的“||”会继续查错
                             ) || (
                                 if ! grep 'error.GitError: cannot initialize work tree' $repo_sync_log; then
                                     exit 1
