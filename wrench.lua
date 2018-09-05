@@ -970,7 +970,8 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    local uname = adb_pipe(UNAME_CMD)
 
    if not uname:match("Linux") then
-      error("Phone uname is not Linux")
+      log("Error: Phone uname is not Linux")
+      return
    end
 
    if not file_exists(M.dataDirFile("apps.info")) then
@@ -1055,6 +1056,7 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    android_serial = adb_pipe("getprop ro.serialno"):gsub("\n", "")
    reset_input_method()
    system("bash ./check-notification.sh " .. android_serial)
+   adb_quick_input{"input keyevent UNKNOWN"}
    return ("brand is %s, adb serial is %s"):format(brand, android_serial)
 end
 

@@ -292,10 +292,6 @@ void WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
         }
     } else if (key == "") {
         // do nothing.
-    } else if (key == "start task") {
-        ui->adbStateLabel->setText(QString().sprintf("Tasks: %d", ++nTasks));
-    } else if (key == "end task") {
-        ui->adbStateLabel->setText(QString().sprintf("Tasks: %d", --nTasks));
     } else {
         static int lines = 0;
         if (lines > 1000) {
@@ -312,11 +308,15 @@ void WrenchMainWindow::onInfoUpdate(const QString& key, const QString& val)
         }
 
         if (lastKey == key && lastVal == val) {
-
+            ui->cmdOutputEdit->insertPlainText(".");
         } else {
-            ui->cmdOutputEdit->insertPlainText(key + ": " + v + "\n");
+            if (lines != 0) {
+                ui->cmdOutputEdit->insertPlainText("\n");
+            }
+            ui->cmdOutputEdit->insertPlainText(key + ": " + v);
         }
 
+        ui->cmdOutputEdit->moveCursor(QTextCursor::End);
         lastKey = key;
         lastVal = val;
         lines++;

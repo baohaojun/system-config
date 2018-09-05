@@ -8,16 +8,23 @@ memory=$(free | grep ^Mem: | pn 2)
 ulimit -v $((memory / 2))
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ttest kkill 1one-phone ddo-debug xexclusive ssystem
+# generate-getopt ttest \
+    # kkill '?"干掉当前 adb device 对应的 Wrench 进程"' \
+    # 1one-phone '?"此参数仅供内部使用"' \
+    # ddo-debug '?"调试选项"' \
+    # xexclusive '?"只给当前这一个 adb device 用，不要连接其他 adb device"' \
+    # ssystem '?"设置 Sawfish 桌面系统和 Emacs 的 PATH 环境变量，全局使用这个 Wrench"' \
+    # @silent '?"静默模式，不要显示窗口"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o dxk1sth \
-               --long do-debug,exclusive,kill,one-phone,system,test,help,no-do-debug,no-exclusive,no-kill,no-one-phone,no-system,no-test \
+               --long do-debug,exclusive,kill,one-phone,silent,system,test,help,no-do-debug,no-exclusive,no-kill,no-one-phone,no-silent,no-system,no-test \
                -n $(basename -- $0) -- "$@")
 declare do_debug=false
 declare exclusive=false
 declare kill=false
 declare one_phone=false
+declare silent=false
 declare system=false
 declare test=false
 eval set -- "$TEMP"
@@ -60,6 +67,15 @@ while true; do
             shift
 
             ;;
+        --silent|--no-silent)
+            if test "$1" = --no-silent; then
+                silent=false
+            else
+                silent=true
+            fi
+            shift
+
+            ;;
         -s|--system|--no-system)
             if test "$1" = --no-system; then
                 system=false
@@ -85,19 +101,22 @@ while true; do
             echo Options and arguments:
             printf %06s '-d, '
             printf %-24s '--[no-]do-debug'
-            echo
+            echo "调试选项"
             printf %06s '-x, '
             printf %-24s '--[no-]exclusive'
-            echo
+            echo "只给当前这一个 adb device 用，不要连接其他 adb device"
             printf %06s '-k, '
             printf %-24s '--[no-]kill'
-            echo
+            echo "干掉当前 adb device 对应的 Wrench 进程"
             printf %06s '-1, '
             printf %-24s '--[no-]one-phone'
-            echo
+            echo "此参数仅供内部使用"
+            printf "%06s" " "
+            printf %-24s '--[no-]silent'
+            echo "静默模式，不要显示窗口"
             printf %06s '-s, '
             printf %-24s '--[no-]system'
-            echo
+            echo "设置 Sawfish 桌面系统和 Emacs 的 PATH 环境变量，全局使用这个 Wrench"
             printf %06s '-t, '
             printf %-24s '--[no-]test'
             echo
@@ -116,6 +135,10 @@ done
 
 
 ## end generated code
+
+if test "${silent}" = true; then
+    set -- 'adb_quick_input{"input keyevent UNKNOWN"}'
+fi
 
 if test "$(lsb_release -cs)" = trusty -a -e ~/src/github/smartcm/etc/Wrench.config; then
     . ~/src/github/smartcm/etc/Wrench.config
@@ -163,7 +186,7 @@ EOF
 '
     fi
     . reget-env -k
-    nohup Wrench.sh -1&
+    nohup Wrench.sh -1 "$@"&
     exit
 fi
 
@@ -205,7 +228,7 @@ if test "$#" = 1 -a ! -e "$1"; then
 fi
 
 if test "$what_to_do" -a "$what_to_do" != Wrench; then
-    if [[ $what_to_do =~ \( ]]; then
+    if [[ $what_to_do =~ [\(\{] ]]; then
         format=%s
     else
         format='wrench_call([==[%s]==])'

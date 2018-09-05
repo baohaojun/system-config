@@ -504,7 +504,7 @@ void LuaExecuteThread::addScript(QStringList script)
         if (ignoreOkScripts.contains(script[0])) {
             // do nothing
         } else {
-            prompt_user("后台已停止运行，无法执行此动作，请连接手机或点一下设置按钮: " + script.join(", "));
+            emit gotSomeLog("Error", (QStringList() << "Can't run script:" << script).join(" "));
         }
         return;
     }
