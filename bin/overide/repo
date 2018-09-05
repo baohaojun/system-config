@@ -390,6 +390,8 @@ else
             echo 1>&2 "Deleted .repo files and retry"
             if try-rerun -e REPO-INIT repo "$@"; then
                 exit 0
+            else
+                mail-cms -e "Repo init 多次失败, 请检查一下 log，确认 manifest 有没有问题"
             fi
         fi
         if test "$1" = init && find .repo/local_manifests -type f | grep . -q; then

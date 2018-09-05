@@ -39,7 +39,8 @@ fi
     fi
 
     cd ~/src/android-mirror.google/.repo/.. || exit 0
-
+    find . -name '*.git' -type d -exec echo '{}'/git-push.txt \; -prune |
+        xargs rm -f
 
     day=$(today +%d|perl -npe 's/^0*//')
     weekday=$(today +%w)

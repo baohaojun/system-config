@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if test $# = 0; then
-   net=$(select-output-line "ifconfig | grep -P '^\S' | pn 1|grep -v '^lo:?$' -P|tr -d :")
+    net=$(route -n | grep '^\Q0.0.0.0\E' -P|sort -n -k 6|head -n 1 |pn 8)
 else
     net=$1
 fi

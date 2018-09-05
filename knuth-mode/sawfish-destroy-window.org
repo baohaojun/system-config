@@ -2,14 +2,14 @@
 
    #+name: sawfish-script
    #+BEGIN_SRC sawfish
-     (let ((skip-top %skip-top%)
+     (let ((skip-top <%skip-top%>)
            (n-killed 0))
        (mapcar
         (lambda (w)
-          (when (string-equal (bhj-window-class w) "%arg%")
+          (when (string-equal (bhj-window-class w) "<%window-class%>")
             (unless (and skip-top (= n-killed 0))
               (message (format nil "?window: %s; name: %s; class: %s" w (window-name w) (bhj-window-class w)))
-              (%cmd% w))
+              (<%sawfish-command%> w))
             (setq n-killed (1+ n-killed))))
         (if skip-top
             (reverse (managed-windows))
@@ -24,8 +24,7 @@
 #+END_SRC
 
 #+name: old-code
-#+BEGIN_SRC sh
-  #!/bin/bash
+#+BEGIN_SRC sh :noweb yes
 
   ## start code-generator "^\\s *#\\s *"
   # generate-getopt @:skip-top=nil
@@ -80,8 +79,9 @@
   b0=$(basename $0)
 
   sawfish_command=${b0#sawfish-}
+  window_class=$1
 
-  sawfish-client -e "$(cat <<'EOF2dca9b6e46e5' | perl -npe "s:%arg%:$1:g; s:%cmd%:$sawfish_command:g; s:%skip-top%:$skip_top:g"
+  sawfish-client -e "$(cat <<'EOF2dca9b6e46e5' | . .replace-%% --
       <<sawfish-script>>
   EOF2dca9b6e46e5
   )"

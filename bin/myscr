@@ -1,12 +1,15 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P wwait-exit n:window-name s:session-name S:start-cmd ddebug ekeep-env @with-tty
+# generate-getopt -P wwait-exit n:window-name s:session-name S:start-cmd ddebug ekeep-env \
+    # @with-tty \
+    # @bg='("" -d)' '?"把新的窗口放在“后台”"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o des:S:wn:h \
-                      --long debug,keep-env,session-name:,start-cmd:,wait-exit,window-name:,with-tty,help,no-debug,no-keep-env,no-wait-exit,no-with-tty \
+                      --long bg,debug,keep-env,session-name:,start-cmd:,wait-exit,window-name:,with-tty,help,no-bg,no-debug,no-keep-env,no-wait-exit,no-with-tty \
                       -n $(basename -- $0) -- "$@")
+declare bg=
 declare debug=false
 declare keep_env=false
 declare session_name=
@@ -18,6 +21,15 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --bg|--no-bg)
+            if test "$1" = --no-bg; then
+                bg=
+            else
+                bg=-d
+            fi
+            shift
+
+            ;;
         -d|--debug|--no-debug)
             if test "$1" = --no-debug; then
                 debug=false
@@ -74,6 +86,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]bg'
+            echo "把新的窗口放在“后台”"
             printf %06s '-d, '
             printf %-24s '--[no-]debug'
             echo
@@ -218,9 +233,9 @@ if session-exists; then
             screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
         else
             if test "$with_tty" = true; then
-                tmux new-window -n "$SCREEN_TITLE" "bash-tty '. /tmp/screen-env.$$; bash /tmp/screen-exec.$$'"
+                tmux new-window $bg -n "$SCREEN_TITLE" "bash-tty '. /tmp/screen-env.$$; bash /tmp/screen-exec.$$'"
             else
-                tmux new-window -n "$SCREEN_TITLE" "bash -l -i /tmp/screen-exec.$$"
+                tmux new-window $bg -n "$SCREEN_TITLE" "bash -l -i /tmp/screen-exec.$$"
             fi
             find-or-exec konsole
         fi
