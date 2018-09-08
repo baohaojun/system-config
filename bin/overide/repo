@@ -280,7 +280,7 @@ EOF
 
                                     kill $$
                                 else
-                                    sc jc-rebuild --rebuild-reason 'RepoSyncManifestError' --clear-rebuild
+                                    scm jc-rebuild --rebuild-reason 'RepoSyncManifestError' --clear-rebuild
                                 fi
                                 exit 1 # 不是这种错误，下方的“||”会继续查错
                             ) || (

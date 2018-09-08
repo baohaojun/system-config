@@ -253,6 +253,10 @@ else
     fi
 fi
 
+if test "$(type -t ${should_function}.prepare)"; then
+    ${should_function}.prepare
+fi
+
 for diff_file in $diffs; do
     diff_file=$(readlink -f $diff_file)
     dir=$(echo $diff_file|perl -npe 's!.*/!!; s/.csv$//; s!%!/!g')
@@ -543,7 +547,7 @@ for diff_file in $diffs; do
                         echo cherry-failed: $WORKING_REV in $ap |tee -a ~/tmp/repo-cherry-pick-all.txt
                         break
                     fi
-                                            done
-                                    fi
-                                )
-                            done
+                done
+        fi
+    )
+done
