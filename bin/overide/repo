@@ -271,13 +271,10 @@ EOF
 
                                     ) | mail-cms -i -e -o "Info: repo manifest need re-init to fix repo sync error"
 
+                                    # 不能自动修复这种错误。万一这是一个重编某版本的任务，现在正在重新
+                                    # 同步代码，我们重新 repo init 过了，是不可以再 repo sync 的，必须重启任务
                                     scm jc-rebuild --do-sleep 15 --rebuild-reason 'RepoSyncManifestError'
-
-                                    # 不能自动修复这种错误。万一这是一
-                                    # 个 rebuild 的任务，现在正在重新
-                                    # 同步代码，我们重新 repo init 过
-                                    # 了，是不可以再 repo sync 的。
-
+                                    scm jc-abort
                                     kill $$
                                 else
                                     scm jc-rebuild --rebuild-reason 'RepoSyncManifestError' --clear-rebuild

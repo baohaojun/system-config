@@ -5,13 +5,12 @@ exec 1>&2 # must not change this line, because onmyoji depend on it for orientat
 # echo phone_sticky=$phone_sticky phone_width=$phone_width phone_height=$phone_height $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$ANDROID_SERIAL
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt x:x=0 y:y=0 s:s=0 '?size' @:cord-orientation eedit @:sticky='${phone_sticky:-0}' @system-screencap
+# generate-getopt x:x=0 y:y=0 s:s=0 '?size' eedit @:sticky='${phone_sticky:-0}' @system-screencap
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o es:x:y:h \
-               --long cord-orientation:,edit,s:,sticky:,system-screencap,x:,y:,help,no-edit,no-system-screencap \
+               --long edit,s:,sticky:,system-screencap,x:,y:,help,no-edit,no-system-screencap \
                -n $(basename -- $0) -- "$@")
-declare cord_orientation=
 declare edit=false
 declare s=0
 declare sticky=${phone_sticky:-0}
@@ -22,11 +21,6 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --cord-orientation)
-            cord_orientation=$2
-            shift 2
-
-            ;;
         -e|--edit|--no-edit)
             if test "$1" = --no-edit; then
                 edit=false
@@ -70,9 +64,6 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
-            printf %-24s '--cord-orientation=CORD_ORIENTATION'
-            echo
             printf %06s '-e, '
             printf %-24s '--[no-]edit'
             echo
