@@ -1,0 +1,56 @@
+#!/usr/bin/env escript
+
+usage() ->
+    io:format("usage: parse-record record\n"),
+    halt(1).
+
+parse_type({type,_,union,List}) ->
+    TypeUnion = lists:foldl(fun(T,Acc) -> io_lib:format("~ts ~ts", [Acc, parse_type(T)]) end, "", List),
+    io_lib:format("(~ts)", [TypeUnion]);
+parse_type({type,_,record,[{_,_,Name}]}) ->
+    io_lib:format("\"#~ts{}\"",[Name]);
+parse_type({type,_,Name,_}) ->
+    io_lib:format("\"~ts()\"",[Name]);
+parse_type({atom,_,undefined}) ->
+    "";
+parse_type({atom,_,Atom}) ->
+    io_lib:format("\"~ts\"", [Atom]);
+parse_type({remote_type,_,[{atom,_,Module},{atom,_,Type},[]]}) ->
+    io_lib:format("\"~ts:~ts()\"",[Module, Type]);
+parse_type({user_type,_,Name,[]}) ->
+    io_lib:format("\"~ts()\"",[Name]);
+parse_type({integer, _, Num}) ->
+    io_lib:format("\"~p\"", [Num]);
+parse_type(Type) ->
+    io:format("Can't parse type: ~p~n",[Type]),
+    halt(1).
+
+parse_field({record_field,_,{_,_,Name}}, Acc) ->
+    io_lib:format("(\"~ts\") ~ts", [Name, Acc]);
+parse_field({record_field,_,{_,_,Name},_}, Acc) ->
+    io_lib:format("(\"~ts\") ~ts", [Name, Acc]);
+parse_field({typed_record_field,{record_field,_,{_,_,Name},_}, Type}, Acc) ->
+    io_lib:format("(\"~ts\" ~ts) ~ts", [Name, parse_type(Type), Acc]);
+parse_field({typed_record_field, {record_field,_,{_,_,Name}}, Type}, Acc) ->
+    io_lib:format("(\"~ts\" ~ts) ~ts", [Name, parse_type(Type), Acc]);
+parse_field(Field,_) ->
+    io:format("Can't parse field: ~p~n",[Field]),
+    halt(1).
+
+parse_fields(List) ->
+    lists:foldl(fun(F,Acc) -> parse_field(F,Acc) end,"",List).
+
+main([String]) ->
+    try
+        {ok, Tokens, _} = erl_scan:string(String),
+        {ok,{attribute,_,record,
+             {RecordName, FieldList}}} = erl_parse:parse(Tokens),
+        io:format("(\"~tp\" ~ts)", [RecordName, unicode:characters_to_list(parse_fields(FieldList))])
+    catch
+        _:E ->
+            io:format("~tp~n",[E]),
+            usage()
+    end;
+main(_) ->
+    usage().
+

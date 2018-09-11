@@ -1,0 +1,19 @@
+Index: lib/Support/MemoryBuffer.cpp
+===================================================================
+--- lib/Support/MemoryBuffer.cpp	(revision 285547)
++++ lib/Support/MemoryBuffer.cpp	(working copy)
+@@ -286,3 +286,6 @@
++#if 1
++  return false;
++#else
+   // mmap may leave the buffer without null terminator if the file size changed
+   // by the time the last page is mapped in, so avoid it if the file size is
+   // likely to change.
+@@ -333,6 +336,7 @@
+ #endif
+ 
+   return true;
++#endif
+ }
+ 
+ static ErrorOr<std::unique_ptr<MemoryBuffer>>

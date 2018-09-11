@@ -1,0 +1,61 @@
+# -*- mode: org ; coding: utf-8-unix -*-
+# last updated : 2018/04/27.10:23:38
+
+
+#+TITLE:     clang-server Changes Log
+#+AUTHOR:    yaruopooner
+#+EMAIL:     [https://github.com/yaruopooner]
+#+OPTIONS:   author:nil timestamp:t |:t \n:t ^:nil
+
+
+* 2.1.1
+  - Refactoring
+
+* 2.1.0
+  - Clang-6.0.0 support.
+
+* 2.0.0
+  - Clang-5.0.0 support.
+  - Many IPC features were added.
+    - Transaction-Id for Command.
+    - Packet encode/decode format S-Expression and Json.
+    - Performance Profiler.
+    - Supported Brief Comment
+  - Bugfix
+
+* 1.7.1
+  - Supported new flags of CXTranslationUnit.
+
+* 1.7.0
+  - Clang-4.0.0 support.
+
+* 1.6.0
+  - Clang-3.9.0 support.
+
+* 1.5.0
+  - Clang-3.8.0 support.
+  - Supported symlink of llvm library in CMakeLists.txt.
+  - Detox build shell scripts.
+
+* 1.4.0
+  - Clang-3.7.0 support.
+
+* 1.3.0
+  - Added new feature. Jump to inclusion file. return from jumped location.
+  - Bugfix.
+
+* 1.2.1
+  - Fix compile error in clang.
+
+* 1.2.0
+  - Access specifier of completion candidate support.
+
+* 1.1.1
+  - Clang-3.6.1 support.
+  - Bugfix
+
+* 1.1.0
+  - Clang-3.6.0 support.
+
+* 1.0.0
+  - Clang-3.5.0 support.

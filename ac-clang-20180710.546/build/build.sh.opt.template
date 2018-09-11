@@ -1,0 +1,11 @@
+# -*- mode: shell-script ; coding: utf-8-unix -*-
+
+LLVM_BUILD_SHELLS_PATH="${HOME}/work/llvm-build-shells"
+TARGET_LLVM_VERSION="600"
+TARGET_CONFIG=Release
+# INSTALL_PREFIX="${HOME}/work/test"
+# CMAKE_TARGET=INSTALL
+# CMAKE_TARGET=ALL_BUILD
+
+
+

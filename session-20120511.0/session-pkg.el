@@ -1,0 +1,2 @@
+;;; -*- no-byte-compile: t -*-
+(define-package "session" "20120511.0" "use variables, registers and buffer places across sessions" 'nil :commit "19ea0806873daac3539a4b956e15655e99e3dd6c" :keywords '("session" "session management" "desktop" "data" "tools") :authors '(("Christoph Wedler" . "wedler@users.sourceforge.net")) :maintainer '("Christoph Wedler" . "wedler@users.sourceforge.net") :url "http://emacs-session.sourceforge.net/")

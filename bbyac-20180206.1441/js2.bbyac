@@ -1,0 +1,41 @@
+String.{parseInt("5")}
+String.{charAt()}
+String.{charCodeAt()}
+String.{concat()}
+String.{endsWith()}
+String.{fromCharCode()}
+String.{includes()}
+String.{indexOf()}
+String.{lastIndexOf()}
+String.{localeCompare()}
+String.{match()}
+String.{repeat()}
+String.{replace()}
+String.{search()}
+String.{slice()}
+String.{split()}
+String.{startsWith()}
+String.{substr()}(start[, length])
+String.{substring()}(indexStart[, indexEnd])
+String.{toLocaleLowerCase()}
+String.{toLocaleUpperCase()}
+String.{toLowerCase()}
+String.{toString()}
+String.{toUpperCase()}
+String.{trim()}
+String.{valueOf()}
+
+Element.{document.getElementById("myForm")}
+Attributes{.addClass()} Adds the specified class(es) to each element in the set of matched elements.
+
+Attributes{.attr()} Get the value of an attribute for the first element in the set of matched elements or set one or more attributes for every matched element.
+Attributes{.hasClass()} Determine whether any of the matched elements are assigned the given class.
+Attributes{.html()} Get the HTML contents of the first element in the set of matched elements or set the HTML contents of every matched element.
+Attributes{.prop()} Get the value of a property for the first element in the set of matched elements or set one or more properties for every matched element.
+Attributes{.removeAttr()} Remove an attribute from each element in the set of matched elements.
+Attributes{.removeClass()} Remove a single class, multiple classes, or all classes from each element in the set of matched elements.
+Attributes{.removeProp()} Remove a property for the set of matched elements.
+Attributes{.toggleClass()} Add or remove one or more classes from each element in the set of matched elements, depending on either the class’s presence or the value of the state argument.
+Attributes{.val()} Get the current value of the first element in the set of matched elements or set the value of every matched element.
+
+

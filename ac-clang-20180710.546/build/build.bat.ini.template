@@ -1,0 +1,10 @@
+[build-options]
+CMAKE_PATH=c:/cygwin64/tmp/llvm-build-shells/ps1/tools-latest-version/cmake-3.10.2-win64-x64/bin
+LLVM_BUILD_SHELLS_PATH=c:/cygwin64/tmp/llvm-build-shells
+HOST_VS_VERSION=2017
+TARGET_LLVM_VERSION=600
+TARGET_ARCH=64
+TARGET_CONFIG=Release
+INSTALL_PREFIX=c:/cygwin64/usr/local/bin/
+CMAKE_TARGET=INSTALL
+;CMAKE_TARGET=ALL_BUILD

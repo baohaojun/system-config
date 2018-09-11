@@ -1,0 +1,3 @@
+{String names[]; names = new String[] {"Ankit","Bohra","Xyz"}; # array init}
+
+{String names[] = {"Ankit","Bohra","Xyz"}; # array init}

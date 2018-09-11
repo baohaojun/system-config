@@ -1,0 +1,2 @@
+;;; -*- no-byte-compile: t -*-
+(define-package "concurrent" "20161229.330" "Concurrent utility functions for emacs lisp" '((emacs "24.3") (deferred "0.5.0")) :commit "2239671d94b38d92e9b28d4e12fd79814cfb9c16" :keywords '("deferred" "async" "concurrent") :authors '(("SAKURAI Masashi <m.sakurai at kiwanami.net>")) :maintainer '("SAKURAI Masashi <m.sakurai at kiwanami.net>") :url "https://github.com/kiwanami/emacs-deferred/blob/master/README-concurrent.markdown")
