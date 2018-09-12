@@ -23,6 +23,41 @@ clean-up() {
     )
 }
 
+function delete-1-project() {
+    project=$1
+    path=$(
+        repo-xml-sel -t -m //project"[@path = '$project' or @name = '$project']" -v @path -n .repo/manifest.xml
+        )
+    if test -z "$path"; then
+        path=$project
+    fi
+    project=$(
+        repo-xml-sel -t -m //project"[@path = '$project' or @name = '$project']" -v @name -n .repo/manifest.xml
+           )
+    if test -z "$project"; then
+        project=$path
+    fi
+    if test -z "$path" -o -z "$project"; then
+        mail-cms -s -e "Can't decide path and project"
+        die "Can't decide path and project for $project"
+        exit 1
+    fi
+    (
+        # 这样做的原因是有一次发生在 packages/apps/SoundRecorder 这个仓库，
+        # 它在 manifest 里有两行跟它对应，一行是 aosp 的，一行是我司自己的，
+        # 如果按以前的写法，就删不掉出错的仓库，导致最后不得不全部重新下载。
+        for path in $path $project; do
+            rm -rf $path .repo/projects/$path.git
+        done
+    )
+    (
+        for project in $path $project; do
+            rm -rf .repo/project-objects/$project.git
+        done
+    )
+
+}
+
 function clean-a-repo() {
     if test -d .git; then
         exec 9> .git/sc-clean-repo.lock
@@ -192,53 +227,32 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                         grep -o 'error.GitError: .* rev-list .*: ' $repo_sync_log | grep -v 'manifests rev-list'
                                 ) && (
                                     ## fix failed projects.
+                                    remove_projects=$(
+                                        grep 'error: Cannot remove project ".*?":' $repo_sync_log -o -P | pn 2 \" |
+                                            grep . # make sure there are some projects that match.
+                                                  ) ||
                                     projects=$(
                                         (
-                                            grep 'error: Cannot remove project ".*?":' $repo_sync_log -o -P | pn 2 \"
                                             grep 'error: Cannot fetch' $repo_sync_log | pn 4
                                             perl -ne 'print $1 if m,and remove .*?\.repo/projects/(.*)\.git/gc.log,' $repo_sync_log
                                             grep 'error: .*: .* checkout [0-9a-f]{40}' -P $repo_sync_log | pn 3
                                             grep -o 'error.GitError: .* rev-list .*: ' $repo_sync_log | grep -v 'manifests rev-list' | pn 2
                                         ) | grep . # make sure there are some projects that match.
                                             ) &&
-                                        sleep 30 &&
                                         (
-                                            for project in $projects; do
-                                                path=$(
-                                                    repo-xml-sel -t -m //project"[@path = '$project' or @name = '$project']" -v @path -n .repo/manifest.xml
-                                                    )
-                                                if test -z "$path"; then
-                                                    path=$project
-                                                fi
-                                                project=$(
-                                                    repo-xml-sel -t -m //project"[@path = '$project' or @name = '$project']" -v @name -n .repo/manifest.xml
-                                                       )
-                                                if test -z "$project"; then
-                                                    project=$path
-                                                fi
-                                                if test -z "$path" -o -z "$project"; then
-                                                    mail-cms -s -e "Can't decide path and project"
-                                                    die "Can't decide path and project for $project"
-                                                    exit 1
-                                                fi
-                                                (
-                                                    # 这样做的原因是有一次发生在 packages/apps/SoundRecorder 这个仓库，
-                                                    # 它在 manifest 里有两行跟它对应，一行是 aosp 的，一行是我司自己的，
-                                                    # 如果按以前的写法，就删不掉出错的仓库，导致最后不得不全部重新下载。
-                                                    for path in $path $project; do
-                                                        rm -rf $path .repo/projects/$path.git
-                                                    done
-                                                )
-                                                (
-                                                    for project in $path $project; do
-                                                        rm -rf .repo/project-objects/$project.git
-                                                    done
-                                                )
+                                            for project in $projects $remove_projects; do
+                                                delete-1-project $project
                                             done
+                                            if test "${remove_projects}"; then
+                                                repo "$@" # retry sync after removed a useless project
+                                            fi
                                         ) && (
+                                            if test -z "${projects}"; then
+                                                exit 0
+                                            fi
                                             for x in $(seq 1 3); do
-                                                ~/system-config/bin/repo "$@" -j2 $projects && exit 0
                                                 sleep 30
+                                                ~/system-config/bin/repo "$@" -j2 $projects && exit 0 || echo failed to re-run@$x: repo "$@" -j2 $projects
                                             done
                                             exit 1
                                         ) && (
