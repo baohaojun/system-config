@@ -376,6 +376,9 @@ EOF
     exit
 else
     if ~/system-config/bin/repo "$@"; then
+        if test -d .repo && is-jenkins; then
+            declare -x -p > .repo/jenkins.info
+        fi
         if test "$1" = init -a ! -e .repo/using-fast-sync && is-jenkins; then
             start-record-time "do-repo-init-clean"
 
