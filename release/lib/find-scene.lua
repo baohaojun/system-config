@@ -1,6 +1,6 @@
-M.scenes_map = {}
+M.scene_map_file = nil
 M.save_scenes = function()
-   local mapfile = io.open(scene_map_file, "w")
+   local mapfile = io.open(M.scene_map_file, "w")
    mapfile:write("local map = {}\n")
    for k, v in spairs(scenes_map) do
       if k ~= "" then
@@ -13,15 +13,18 @@ end
 
 M.load_scene_map = function()
    if not M.scene_map_file then
-      M.scene_map_file = M.configDirFile(("scenes-map-%dx%d@%s.lua"):format(M.real_width, M.real_height, android_serial))
-      dofile_res, M.scenes_map = pcall(dofile, scene_map_file)
+      local tmp_scene_map_file = M.configDirFile(("scenes-map-%dx%d@%s.lua"):format(M.real_width, M.real_height, android_serial))
+      dofile_res, M.scenes_map = pcall(dofile, tmp_scene_map_file)
       if not dofile_res then
          M.scenes_map = {}
+      else
+         M.scene_map_file = tmp_scene_map_file
       end
    end
 end
 
 M.forget_scene = function(scene)
+   log("Forget scene: %s", scene)
    M.scenes_map[scene] = nil
 end
 
