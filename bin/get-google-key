@@ -3,7 +3,7 @@ set -e
 
 (
     cd ~/tmp
-    nohup Wrench.sh -x >/dev/null 2>&1 || true&
+    nohup Wrench.sh --silent -x -s >/dev/null 2>&1 || true&
     . reget-env
     if echo $SHELLOPTS | grep -q xtrace; then
         true
@@ -34,8 +34,7 @@ fi
 press_x=$(remembered-x vpn-need-refresh)
 press_y=$(remembered-y vpn-need-refresh)
 
-
-Wrench "adb_quick_input{'input touchscreen swipe $press_x $press_y $press_x $press_y 1500'}"
+Wrench "adb_quick_input{'input touchscreen swipe $press_x $press_y $press_x $press_y 2500'}"
 sleep 2
 # {%/sh-mode%}
 EOF47aa3fa94e60

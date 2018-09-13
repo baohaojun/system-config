@@ -4,13 +4,14 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt eerror-exit
+# generate-getopt eerror-exit @:window-id
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o eh \
-              --long error-exit,help,no-error-exit \
-              -n $(basename -- $0) -- "$@")
-error_exit=false
+TEMP=$( getopt -o eh \
+               --long error-exit,window-id:,help,no-error-exit \
+               -n $(basename -- $0) -- "$@")
+declare error_exit=false
+declare window_id=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -22,14 +23,23 @@ while true; do
                 error_exit=true
             fi
             shift
+
+            ;;
+        --window-id)
+            window_id=$2
+            shift 2
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-e, '
             printf %-24s '--[no-]error-exit'
+            echo
+            printf "%06s" " "
+            printf %-24s '--window-id=WINDOW_ID'
             echo
             exit
             shift
@@ -55,7 +65,7 @@ else
     exec >/dev/null 2>&1
 fi
 
-if test $# = 0; then
+if test $# = 0 -a -z "${window_id}"; then
     die "Error: Usage $(basename $0) window_class [program_to_exec]"
 fi
 
@@ -92,7 +102,19 @@ fi
 if test "$error_exit" = true; then
     window_not_found_command="${2:-touch ~/tmp/find-or-exec-failed.$$}"
 fi
-if test "$1" = konsole; then
+
+if test "${window_id}"; then
+    sawfish_exp=$(
+        cat <<'EOF0b05412d4d3b' | . .replace-%% --
+; {%sawfish-mode%}
+(find-window-or-exec
+ (lambda (w) (= (window-id w) <%window-id%>))
+ "<%window_not_found_command%>")
+; {%/sawfish-mode%}
+EOF0b05412d4d3b
+               )
+
+elif test "$1" = konsole; then
     sawfish_exp=$(printf '(find-window-or-exec %s "%s")' \
                          '(lambda (w) (and
                                         (string-match "'"$to_match"'" (bhj-window-class w) 0 t)
