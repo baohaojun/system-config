@@ -202,6 +202,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.chatroom.ui.ModRemarkRoomNameUI'] = 'm
 map['com.tencent.mm/com.tencent.mm.plugin.chatroom.ui.SeeRoomMemberUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.collect.ui.CollectCreateQRCodeUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.favorite.ui.FavSearchUI'] = 'manual-post'
+map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSChattingConvUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.label.ui.ContactLabelUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyPrepareUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.ContactInfoUI'] = 'manual-post'
