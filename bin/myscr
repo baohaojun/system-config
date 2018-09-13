@@ -155,7 +155,9 @@ if test -x /opt/local/bin/bash; then
     export SHELL=/opt/local/bin/bash;
 fi
 
-. ~/system-config/.profile
+if test "$keep_env" = false; then
+    . ~/system-config/.profile
+fi
 #. /etc/bash_completion
 
 if test -z "$session_name"; then
@@ -180,6 +182,12 @@ using-screen() {
 
 using-tmux() {
     test "$SC_USE_TMUX" = true
+}
+
+find-or-exec() {
+    if test -z "${bg}"; then
+        command find-or-exec "$@"
+    fi
 }
 
 if using-screen; then

@@ -106,6 +106,8 @@ grep 'Communication error with Jack server' out/build.log
 smartcm-android-build-failed
 depmod: WARNING: could not open .*obj/PACKAGING/depmod_vendor_intermediates/lib/modules/0.0/modules.order: No such file or directory
 Unable to open '/system/framework/core-libart.jar': No such file or directory
+out/host/linux-x86/bin/apicheck.*-error.*-error
+if \(ret == \(uint64_t\)MAP_FAILED\) \{
 EOF
 
     if test -e flashing-files/.scripts/false-build-error-filter; then

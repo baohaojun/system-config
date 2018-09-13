@@ -173,11 +173,12 @@
 
 (bind-both-global&window-keymaps "Super-XF86KbdBrightnessUp"  '(system "switch-touchpad enable&")) ; for mac
 (bind-both-global&window-keymaps "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
-(bind-keys s-h-keymap "Super-i" '(read-event (format nil "Window is %s;\n\n WM_CLASS is: %s;\n\n and Window class is: %s\n\n and Window name is %s\n\nPress any key to continue..."
+(bind-keys s-h-keymap "Super-i" '(read-event (format nil "Window: %s\nWM_CLASS: %s\nWindow class: %s\nWindow name:%s\nWindow pid:%s\n\nPress any key to continue..."
                                                      (input-focus)
                                                      (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
                                                      (bhj-window-class (input-focus))
-                                                     (window-name (input-focus)))))
+                                                     (window-name (input-focus))
+                                                     (window-pid (input-focus)))))
 (bind-keys s-h-keymap "i" '(system "indent-clipboard&"))
 (bind-keys s-h-keymap "I" '(system "deindent-clipboard&"))
 (bind-keys s-h-keymap "Insert" '(system "sync-x-clip&"))
