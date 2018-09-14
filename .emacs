@@ -29,18 +29,9 @@
 (defconst *is-a-mac* (eq system-type 'darwin))
 (defconst *is-a-win* (eq system-type 'windows-nt))
 
-(when (and (file-exists-p "/etc/emacs/site-start.d/00debian-vars.el")
-           (not (fboundp 'debian-file->string)))
+(when (file-exists-p "/usr/share/emacs/site-lisp/debian-startup.el")
   (load "/usr/share/emacs/site-lisp/debian-startup.el")
-  (setq debian-emacs-flavor
-        (intern
-         (concat "emacs" (replace-regexp-in-string "\\..*" "" emacs-version))))
-  (let ((flavor 'emacs))
-    (mapc (lambda (file)
-            (condition-case nil
-                (load file)
-              (error nil)))
-          (directory-files "/etc/emacs/site-start.d/" t ".*.el"))))
+  (debian-startup 'emacs))
 
 (when (file-exists-p (expand-file-name "~/.emacs-path.el"))
   (load-file (expand-file-name "~/.emacs-path.el")))

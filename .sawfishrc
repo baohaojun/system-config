@@ -694,7 +694,7 @@
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
       br-class "iceweasel|Navigator|firefox|epiphany-browser|chromium|Download|Google-chrome" ;; br = browser
-      dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|AcroRd32.exe|acroread|evince|Gnumeric|mupdf" ;; dc = doc
+      dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|Okular|AcroRd32.exe|kindle.exe|acroread|evince|Gnumeric|mupdf" ;; dc = doc
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager
       bhj-cycle-groups (list im-class
