@@ -1,5 +1,6 @@
 #!/bin/bash
 top_window=$(sawfish-top-window)
+top_window_id=$(sawfish-client -e '(window-id (input-focus))')
 
 next_file=~/src/github/edit-with-emacs/$(get-next-file -p "emacs-edit-%d.org")
 
@@ -15,12 +16,6 @@ else
         sawfish-events-delayed .1 "C-c"
     else
         sawfish-events-delayed .1 "C-Home" "C-S-End"
-        top_window=$(
-            sawfish-top-window
-                  )
-        if [[ $top_window =~ ^Firefox ]]; then
-            sawfish-events-delayed .1 "C-q"
-        fi
         sawfish-events-delayed .1 "C-c"
     fi
     getclip > $next_file
@@ -32,8 +27,11 @@ else
         git push&
     )
     cat $next_file| putclip
-    find-or-exec $top_window
-    exec sawfish-events-delayed .1 "S-Insert"
+    if find-or-exec -e --window-id $top_window_id; then
+        exec sawfish-events-delayed .1 "S-Insert"
+    else
+        bhj-notify qtcreator-edit-with-emacs "Failed to find old window (id: $top_window_id; class: ${top_window})"
+    fi
 fi
 
 exec find-or-exec QtCreator
