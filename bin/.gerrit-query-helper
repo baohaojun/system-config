@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if jq --version | grep '^jq-1\.[34]' -P -q; then
+    jq() {
+        ~/src/github/smartcm/jq "$@"
+    }
+fi
+
 if test -z "${GERRIT_HOST}" -a ! -d .git && ! lookup-file -e .repo/.. >/dev/null 2>&1; then
     export GERRIT_HOST=$(echo "$1"| perl -ne 'print $1 if m,https?://(.*)?(:\d+)/,')
 fi
@@ -45,7 +51,7 @@ EOFc1b1403ff656
 }
 
 function gerrit-json-extract() {
-    echo "${gerrit_query_result}" | jq -r "$(combine-args-to-jq "$@")" | grep -v '^null$' || true
+    echo "${gerrit_query_result}" | jq -r "$(combine-args-to-jq "$@")" | grep -v '^(null|\[\])$' -P || true
 }
 
 function gerrit-json-print() {
