@@ -165,75 +165,28 @@ export REPO_REMOTE
 
 . atexit bash -c "rm ~/tmp/gerrit-fetch-review*.$$ -f || true"
 
-tmpf=~/tmp/$(basename $0).$$
+. .gerrit-query-helper
 
-if is-jenkins; then
-    if test $# != 1 -o "${1:0:4}" != http || ! echo "$1" | grep -q '/\d+/?$' -P; then
-        mail-cms -i "Can't gerrit-fetch-review $@" <<EOF
-无法 Gerrit Fetch 不安全的 Patch 参数： $@
-
-用法：gerrit-fetch-review GERRIT-URL （比如：https://review.smartisan.cn:8080/#/c/266798/）
-
-一般来说，从 Gerrit 网页上打开一个 Review 页面，直接把网址拷下来就可以。
-EOF
-    fi
-fi
-
-
-if test $# = 1 -a "${1:0:4}" = http; then
-    if echo "$1" |grep -q "#/c/\d+/" -P; then
-        set -- "change:"$(echo "$1"|perl -npe 's,.*#/c/(\d+)/.*,$1,')
-    else
-        if ! [[ $(basename $1) =~ ^[0-9]+$ ]]; then
-            die "Basename of $1 is must be a gerrit review number\!"
-        fi
-        set -- "change:$(basename "$1")"
-    fi
-fi
-
-gerrit query "$@" --current-patch-set --format json > $tmpf
-
-combine-args-to-jq() {
-    perl -e "$(
-cat <<'EOFc1b1403ff656'
-# {%perl-mode%}
-@ARGV = map {$_ = "..|.$_?"} @ARGV;
-print join('|', @ARGV);
-# {%/perl-mode%}
-EOFc1b1403ff656
-)" "$@"
-
-}
-
-function json-extract() {
-    cat "$tmpf" | jq -r "$(combine-args-to-jq "$@")" | grep -v '^null$' || true
-}
-
-function die() {
-    echo "$@"
-    exit -1
-}
-
-if json-extract approvals value|grep ^-; then
+if gerrit-json-extract approvals value|grep ^-; then
     all_review_ok=false
 else
     all_review_ok=true
 fi
 
-if json-extract approvals value | grep ^2; then
+if gerrit-json-extract approvals value | grep ^2; then
     approved_review=true
 else
     approved_review=false
 fi
 
-git_commit_revision=$(json-extract revision)
+git_commit_revision=$(gerrit-json-extract revision)
 
 if ! [[ "$git_commit_revision" =~ ^[0-9a-f]{40}$ ]]; then
     die "Invaled git commit: $git_commit_revision"
 fi
 
-export PROJECT=$(json-extract project)
-branch=$(json-extract branch)
+export PROJECT=$(gerrit-json-extract project)
+branch=$(gerrit-json-extract branch)
 
 if ! lookup-file -e .repo >/dev/null 2>&1 &&
        ! lookup-file -e .git >/dev/null 2>&1 &&
@@ -285,7 +238,7 @@ if test -n "$git_dir"; then
     cd $git_dir || die "$git_dir: cd failed"
 fi
 
-ref=$(json-extract ref|tail -n 1)
+ref=$(gerrit-json-extract ref|tail -n 1)
 
 if test "$patch_set"; then
     if test "$patch_set" = '*'; then
@@ -328,10 +281,10 @@ fi
 if test "$cherry_pick" = true || is-jenkins; then
     if is-jenkins; then
         if test "$all_review_ok" != true -o "$approved_review" != true; then
-            cat $tmpf | jq . |
+            gerrit-json-print |
                 mail-cms -i "Patch need review: $@, must has +2 +1, and no -1 -2."
-            json-extract value
-            json-extract description
+            gerrit-json-extract value
+            gerrit-json-extract description
             die "Error: Review needed, can't cherry-pick this patch $@:, see above output."
             exit -1
         fi
@@ -358,7 +311,7 @@ if test "$cherry_pick" = true || is-jenkins; then
             (
                 git diff HEAD || true
                 cat ~/tmp/gerrit-fetch-review.log.$$
-                cat $tmpf | jq .
+                gerrit-json-print
             ) | mail-cms -s -i "你的 Patch 有冲突，无法 cherry-pick，请修复后重试: $@"
         fi
 

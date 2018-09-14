@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if test -z "${GERRIT_HOST}" -a ! -d .git && ! lookup-file -e .repo/.. >/dev/null 2>&1; then
+    export GERRIT_HOST=$(echo "$1"| perl -ne 'print $1 if m,https?://(.*)?(:\d+)/,')
+fi
+
+if is-jenkins; then
+    if test $# != 1 -o "${1:0:4}" != http || ! echo "$1" | grep -q '/\d+/?$' -P; then
+        mail-cms -i "Can't gerrit-fetch-review $@" <<EOF
+无法 Gerrit Fetch 不安全的 Patch 参数： $@
+
+用法： .gerrit-query-helper GERRIT-URL （比如：https://review.smartisan.cn:8080/#/c/266798/）
+
+一般来说，从 Gerrit 网页上打开一个 Review 页面，直接把网址拷下来就可以。
+EOF
+    fi
+fi
+
+if test $# = 1 -a "${1:0:4}" = http; then
+    if echo "$1" |grep -q "#/c/\d+/" -P; then
+        set -- "change:"$(echo "$1"|perl -npe 's,.*#/c/(\d+)/.*,$1,')
+    else
+        if ! [[ $(basename $1) =~ ^[0-9]+$ ]]; then
+            die "Basename of $1 is must be a gerrit review number\!"
+        fi
+        set -- "change:$(basename "$1")"
+    fi
+fi
+
+gerrit_query_result=$(
+    gerrit query "$@" --current-patch-set --format json
+                   )
+
+
+combine-args-to-jq() {
+    perl -e "$(
+cat <<'EOFc1b1403ff656'
+# {%perl-mode%}
+@ARGV = map {$_ = "..|.$_?"} @ARGV;
+print join('|', @ARGV);
+# {%/perl-mode%}
+EOFc1b1403ff656
+)" "$@"
+
+}
+
+function gerrit-json-extract() {
+    echo "${gerrit_query_result}" | jq -r "$(combine-args-to-jq "$@")" | grep -v '^null$' || true
+}
+
+function gerrit-json-print() {
+    echo "${gerrit_query_result}" | jq .
+}
