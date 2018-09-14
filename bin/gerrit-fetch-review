@@ -191,34 +191,49 @@ if test $# = 1 -a "${1:0:4}" = http; then
     fi
 fi
 
-gerrit query "$@" --current-patch-set > $tmpf
+gerrit query "$@" --current-patch-set --format json > $tmpf
+
+combine-args-to-jq() {
+    perl -e "$(
+cat <<'EOFc1b1403ff656'
+# {%perl-mode%}
+@ARGV = map {$_ = "..|.$_?"} @ARGV;
+print join('|', @ARGV);
+# {%/perl-mode%}
+EOFc1b1403ff656
+)" "$@"
+
+}
+
+function json-extract() {
+    cat "$tmpf" | jq -r "$(combine-args-to-jq "$@")" | grep -v '^null$' || true
+}
 
 function die() {
     echo "$@"
     exit -1
 }
 
-if grep 'value:\s+-' -P -q $tmpf; then
+if json-extract approvals value|grep ^-; then
     all_review_ok=false
 else
     all_review_ok=true
 fi
 
-if grep 'value:\s+2' -P -q $tmpf; then
+if json-extract approvals value | grep ^2; then
     approved_review=true
 else
     approved_review=false
 fi
 
-git_commit_revision=$(
-    cat $tmpf | grep revision: | pn 2
-                   )
+git_commit_revision=$(json-extract revision)
+
 if ! [[ "$git_commit_revision" =~ ^[0-9a-f]{40}$ ]]; then
     die "Invaled git commit: $git_commit_revision"
 fi
 
-export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
-branch=$(cat $tmpf | grep 'branch: '|pn 2)
+export PROJECT=$(json-extract project)
+branch=$(json-extract branch)
 
 if ! lookup-file -e .repo >/dev/null 2>&1 &&
        ! lookup-file -e .git >/dev/null 2>&1 &&
@@ -270,7 +285,7 @@ if test -n "$git_dir"; then
     cd $git_dir || die "$git_dir: cd failed"
 fi
 
-ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
+ref=$(json-extract ref|tail -n 1)
 
 if test "$patch_set"; then
     if test "$patch_set" = '*'; then
@@ -313,9 +328,10 @@ fi
 if test "$cherry_pick" = true || is-jenkins; then
     if is-jenkins; then
         if test "$all_review_ok" != true -o "$approved_review" != true; then
-            cat $tmpf |
+            cat $tmpf | jq . |
                 mail-cms -i "Patch need review: $@, must has +2 +1, and no -1 -2."
-            cat $tmpf | grep 'value:|description:' -P
+            json-extract value
+            json-extract description
             die "Error: Review needed, can't cherry-pick this patch $@:, see above output."
             exit -1
         fi
@@ -341,7 +357,8 @@ if test "$cherry_pick" = true || is-jenkins; then
         if is-jenkins; then
             (
                 git diff HEAD || true
-                cat ~/tmp/gerrit-fetch-review.log.$$ $tmpf
+                cat ~/tmp/gerrit-fetch-review.log.$$
+                cat $tmpf | jq .
             ) | mail-cms -s -i "你的 Patch 有冲突，无法 cherry-pick，请修复后重试: $@"
         fi
 
