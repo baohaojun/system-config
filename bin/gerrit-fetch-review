@@ -5,21 +5,22 @@ set -e
 # generate-getopt -e mmultiple-patches r:REPO-REMOTE H:GERRIT-HOST \
     # aauto ccherry-pick p:patch-set \
     # @do-review d:diff-patch-sets?'-d "1 2" to diff patch-set 1 and patch-set 2' \
-    # Cdo-checkout
+    # Cdo-checkout @ff='("" --ff --ff)'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o H:r:acd:Cmp:h \
-               --long GERRIT-HOST:,REPO-REMOTE:,auto,cherry-pick,diff-patch-sets:,do-checkout,do-review,multiple-patches,patch-set:,help,no-auto,no-cherry-pick,no-do-checkout,no-do-review,no-multiple-patches \
+               --long GERRIT-HOST:,REPO-REMOTE:,auto,cherry-pick,diff-patch-sets:,do-checkout,do-review,ff,multiple-patches,patch-set:,help,no-auto,no-cherry-pick,no-do-checkout,no-do-review,no-ff,no-multiple-patches \
                -n $(basename -- $0) -- "$@")
-declare GERRIT_HOST=${GERRIT_HOST:-}
-declare REPO_REMOTE=${REPO_REMOTE:-}
-declare auto=${auto:-false}
-declare cherry_pick=${cherry_pick:-false}
-declare diff_patch_sets=${diff_patch_sets:-}
-declare do_checkout=${do_checkout:-false}
-declare do_review=${do_review:-false}
-declare multiple_patches=${multiple_patches:-false}
-declare patch_set=${patch_set:-}
+declare -x GERRIT_HOST=${GERRIT_HOST:-}
+declare -x REPO_REMOTE=${REPO_REMOTE:-}
+declare -x auto=${auto:-false}
+declare -x cherry_pick=${cherry_pick:-false}
+declare -x diff_patch_sets=${diff_patch_sets:-}
+declare -x do_checkout=${do_checkout:-false}
+declare -x do_review=${do_review:-false}
+declare -x ff=${ff:---ff}
+declare -x multiple_patches=${multiple_patches:-false}
+declare -x patch_set=${patch_set:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -27,10 +28,12 @@ while true; do
         -H|--GERRIT-HOST)
             GERRIT_HOST=$2
             shift 2
+
             ;;
         -r|--REPO-REMOTE)
             REPO_REMOTE=$2
             shift 2
+
             ;;
         -a|--auto|--no-auto)
             if test "$1" = --no-auto; then
@@ -39,6 +42,7 @@ while true; do
                 auto=true
             fi
             shift
+
             ;;
         -c|--cherry-pick|--no-cherry-pick)
             if test "$1" = --no-cherry-pick; then
@@ -47,10 +51,12 @@ while true; do
                 cherry_pick=true
             fi
             shift
+
             ;;
         -d|--diff-patch-sets)
             diff_patch_sets=$2
             shift 2
+
             ;;
         -C|--do-checkout|--no-do-checkout)
             if test "$1" = --no-do-checkout; then
@@ -59,6 +65,7 @@ while true; do
                 do_checkout=true
             fi
             shift
+
             ;;
         --do-review|--no-do-review)
             if test "$1" = --no-do-review; then
@@ -67,6 +74,16 @@ while true; do
                 do_review=true
             fi
             shift
+
+            ;;
+        --ff|--no-ff)
+            if test "$1" = --no-ff; then
+                ff=
+            else
+                ff=--ff
+            fi
+            shift
+
             ;;
         -m|--multiple-patches|--no-multiple-patches)
             if test "$1" = --no-multiple-patches; then
@@ -75,10 +92,12 @@ while true; do
                 multiple_patches=true
             fi
             shift
+
             ;;
         -p|--patch-set)
             patch_set=$2
             shift 2
+
             ;;
         -h|--help)
             set +x
@@ -101,12 +120,15 @@ while true; do
             printf %-24s '--diff-patch-sets=DIFF_PATCH_SETS'
             echo
             printf "%30s" ""
-            echo '-d "1 2" to diff patch-set 1 and patch-set 2'
+            echo -d "1 2" to diff patch-set 1 and patch-set 2
             printf %06s '-C, '
             printf %-24s '--[no-]do-checkout'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]do-review'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]ff'
             echo
             printf %06s '-m, '
             printf %-24s '--[no-]multiple-patches'
@@ -127,16 +149,6 @@ while true; do
     esac
 done
 
-
-export GERRIT_HOST
-export REPO_REMOTE
-export auto
-export cherry_pick
-export diff_patch_sets
-export do_checkout
-export do_review
-export multiple_patches
-export patch_set
 
 ## end generated code
 
@@ -302,7 +314,7 @@ if test "$cherry_pick" = true || is-jenkins; then
             )
         fi
     fi
-    if ! git cherry-pick $git_commit_revision --ff $(
+    if ! git cherry-pick $git_commit_revision $ff $(
             if is-jenkins; then
                 echo --allow-empty --keep-redundant-commits
             fi
