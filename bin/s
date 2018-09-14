@@ -17,7 +17,11 @@ fi
 use_clip=false
 if test $# = 1 -a "$1" = '' || test $# = 0; then
     use_clip=true
-    set -- "$(xclip -o)"
+    if [[ $(sawfish-top-window) =~ kindle.exe ]]; then
+        set -- $(getclip|perl -ne 'print $line_2; $line_2 = $line_1; $line_1 = $_;'|tr -d ' ')
+    else
+        set -- "$(xclip -o)"
+    fi
 fi
 
 double_click=false
@@ -42,7 +46,7 @@ if is-sawfish; then
         for x in $(seq 1 $max_try ); do
             start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
             if test "$x" = 1 && [[ ${start_event,,} =~ button1 ]] && test "$use_clip" = true; then
-                s-dicts
+                s-dicts "$*"
                 exit
             fi
             if [[ ${start_event/-Off/-Click} =~ -Click[0-9] ]]; then # double click

@@ -136,7 +136,10 @@
       class))))
 
 (defun bhj-window-class (window)
-  (or (window-class window) ""))
+  (let ((class (or (window-class window) "")))
+    (if (string= class "Wine")
+        (translate-string (substring (caddr (get-x-property window (quote WM_CLASS))) 0) ":")
+      class)))
 
 (bind-keys s-h-keymap "s"  '(system "EMACS=t s&"))
 (bind-keys s-h-keymap "F1"  '(system "EMACS=t do-capture&"))
@@ -175,7 +178,7 @@
 (bind-both-global&window-keymaps "Super-XF86KbdBrightnessDown"  '(system "switch-touchpad enable&")) ; for mac
 (bind-keys s-h-keymap "Super-i" '(read-event (format nil "Window: %s\nWM_CLASS: %s\nWindow class: %s\nWindow name:%s\nWindow pid:%s\n\nPress any key to continue..."
                                                      (input-focus)
-                                                     (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) "|")
+                                                     (translate-string (substring (caddr (get-x-property (input-focus) (quote WM_CLASS))) 0) ":")
                                                      (bhj-window-class (input-focus))
                                                      (window-name (input-focus))
                                                      (window-pid (input-focus)))))
@@ -883,7 +886,7 @@
 (bind-keys print-keymap "e" '(system "e-screen-exchange&"))
 (bind-keys print-keymap "t" '(system "edit-terminal-capture&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
-(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular'&"))
+(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular|kindle'&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))

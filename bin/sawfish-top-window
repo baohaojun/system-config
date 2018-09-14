@@ -2,6 +2,6 @@
 if test $(basename $0) = sawfish-top-window-name; then
     function=window-name
 else
-    function=window-class
+    function=bhj-window-class
 fi
 sawfish-client -e "($function (input-focus))"|perl -npe 's/"//g'|tr -d '\n'
