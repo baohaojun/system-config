@@ -383,7 +383,12 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
                                       sdim-cands-str)))
                  (keyseq (if key
                              (prog1 (vector key) (setq key nil))
-                           (read-key-sequence-vector prompt)))
+                           (let ((inhibit-quit t)
+                                 keyseq?)
+                             (setq keyseq? (read-key-sequence-vector prompt))
+                             (if quit-flag
+                                 (setq quit-flag nil keyseq? [7])
+                               keyseq?))))
                  (keyed-str (format "keyed %s %s\n"
                                     (sdim-key-modifier (aref keyseq 0))
                                     (sdim-key-base (aref keyseq 0)))))
