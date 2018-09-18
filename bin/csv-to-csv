@@ -58,17 +58,9 @@ sub handler_help {
 ## end generated code
 
 
-
-my $csv = csv (in => "$input_csv", out => ($output_csv or "$input_csv.$$"))
+my @hdr;
+my $csv = csv (in => csv(in => "$input_csv", keep_headers => @hdr),
+               out => ($output_csv or "$input_csv"),
+               headers => \@hdr
+              )
     or die "Cannot use CSV: ".Text::CSV->error_diag ();
-
-my @title = map {s/\W/_/g; $_} @{$csv->getline(*STDIN)};
-$csv->column_names(@title);
-
-while (my $cols = $csv->getline_hr (*STDIN)) {
-    for my $key (keys %{$cols}) {
-        my $val = shell_quote($cols->{$key});
-        print "$key=$val\n"
-    }
-    print "eor\n";
-}

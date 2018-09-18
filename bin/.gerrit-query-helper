@@ -6,8 +6,17 @@ if jq --version | grep '^jq-1\.[34]' -P -q; then
     }
 fi
 
+declare -A gerrit_ip_host_map
+if test -e ~/src/github/smartcm/etc/gerrit-ip-host.map; then
+    . ~/src/github/smartcm/etc/gerrit-ip-host.map
+fi
+
 if test -z "${GERRIT_HOST}" -a ! -d .git && ! lookup-file -e .repo/.. >/dev/null 2>&1; then
     export GERRIT_HOST=$(echo "$1"| perl -ne 'print $1 if m,https?://(.*)?(:\d+)/,')
+fi
+
+if test "${gerrit_ip_host_map[$GERRIT_HOST]}"; then
+    GERRIT_HOST=${gerrit_ip_host_map[$GERRIT_HOST]}
 fi
 
 if is-jenkins; then
@@ -33,9 +42,12 @@ if test $# = 1 -a "${1:0:4}" = http; then
     fi
 fi
 
-gerrit_query_result=$(
-    gerrit query "$@" --current-patch-set --format json
-                   )
+if ! gerrit_query_result=$(
+        gerrit query "$@" --current-patch-set --format json
+     ); then
+    mail-cms -s "无法帮你查到 $* 对应的 Gerrit Review 信息，请确认自己输入的参数无误"
+    exit 1
+fi
 
 
 combine-args-to-jq() {
