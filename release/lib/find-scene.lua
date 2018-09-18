@@ -76,6 +76,7 @@ M.find_scene = function(scene, times)
       log("found scene: %s at %s %s", scene, s_x, s_y)
       return true
    else
+      log("! found scene: %s at %s %s", scene, s_x, s_y)
       return false
    end
 end
