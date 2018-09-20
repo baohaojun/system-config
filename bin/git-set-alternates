@@ -3,7 +3,10 @@
 set -e
 
 if test $# != 1; then
-    die "Error: Usage $(basename $0) MIRROR"
+    set -- ~/src/android-mirror/$(repo-abs-path).git
+    if test -e .git/shallow; then
+        mv .git/shallow .git/shallow.$$
+    fi
 fi
 
 if test ! -d "$1/.git" && ! [[ ${1%/} =~ \.git$ ]]; then
