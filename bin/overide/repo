@@ -97,7 +97,7 @@ if test "$1" = init; then
             ) || true
         fi
         if scm is-cms && ! echo "$@" | grep test-account@; then # maybe want to test for other accounts
-            set -- "$@" -g all --reference /data/mirror
+            set -- "$@" -g all,-build-err --reference /data/mirror
         elif ! scm is-cms && test -e ~/.config/system-config/repo-init.extargs; then
             set -- "$@" $(cat ~/.config/system-config/repo-init.extargs)
         fi
