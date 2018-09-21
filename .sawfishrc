@@ -694,7 +694,7 @@
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
       br-class "iceweasel|Navigator|firefox|epiphany-browser|chromium|Download|Google-chrome" ;; br = browser
-      dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|Okular|AcroRd32.exe|kindle.exe|acroread|evince|Gnumeric|mupdf" ;; dc = doc
+      dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|Okular|AcroRd32.exe|kindle.exe|Display-|acroread|evince|Gnumeric|mupdf" ;; dc = doc
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager
       bhj-cycle-groups (list im-class
@@ -886,7 +886,7 @@
 (bind-keys print-keymap "e" '(system "e-screen-exchange&"))
 (bind-keys print-keymap "t" '(system "edit-terminal-capture&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
-(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular|kindle'&"))
+(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular|kindle|Display-'&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))

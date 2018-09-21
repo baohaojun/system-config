@@ -166,31 +166,23 @@ if test -z "$config" -a ! -e buildspec.mk; then
         variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )
     fi
     config=$product-$variant
-fi
+elif test buildspec.mk; then
+    saved_config=$(android-var-from-spec config)
+    if test -z "${config}"; then
+        config=${saved_config}
+    fi
 
-if test -z "$config"; then
-    config=$(
-        cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_PRODUCT\s*.?=\s*(.*?)\s*$/')-$(
-        cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_BUILD_VARIANT\s*.?=\s*(.*?)\s*$/')
-    echo set the build for "$config"
+    if test "${config}" != "${saved_config}"; then
+        hint -t 5 "之前设置的编译选项是 ${saved_config}，现在要改成 ${config}" || true
+    fi
 fi
 
 variant=${config##*-}
 
-if test "$variant" = user -o "$variant" = userdebug -o "$variant" = eng && lunch "$config"; then
-    true
-else
-    config=$(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)
-    echo using old config $config
-    lunch $config
-fi
-
-. ~/system-config/bin/.android-set-outdir
+. android-set-product "${config}"
 
 export CCACHE_DIR=$PWD/.repo/.ccache
 rm ~/.ccache >/dev/null 2>&1 || true
-
-android-set-product $TARGET_PRODUCT-$TARGET_BUILD_VARIANT # this is for mm to use
 
 export TARGET_PRODUCT=$TARGET_PRODUCT
 export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT

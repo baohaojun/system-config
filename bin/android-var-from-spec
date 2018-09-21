@@ -1,4 +1,10 @@
 #!/bin/bash
+if test "$1" = config; then
+    exec echo $(android-var-from-spec TARGET_PRODUCT)$(
+        android-var-from-spec TARGET_PRODUCT_SMARTISAN_EXTRA_ENV)-$(
+        android-var-from-spec TARGET_BUILD_VARIANT)
+fi
+
 (
     if mk=$(lookup-file -e buildspec.mk); then
         cat "$mk"

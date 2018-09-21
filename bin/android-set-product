@@ -35,6 +35,9 @@ lunch-without-buildspec() {
         # 了一下 buildspec.mk，没有继续使用 Makefile 的 ?= 来写
         # TARGET_PRODUCT 等变量，而是直接使用了 :=
 
+        # 另外，不能随便删除这个文件，万一设置并没有变化，重新生成一遍
+        # 这个文件的话，会导致安卓重新生成一遍 ninja，那速度就慢多了
+
         mv buildspec.mk buildspec.mk.bak.$$
     fi
 

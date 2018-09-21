@@ -20,7 +20,7 @@ if test ! -e out || test ! -e buildspec.mk -a -z "$TARGET_PRODUCT"; then
 fi
 
 if test -z "$TARGET_PRODUCT"; then
-    lunch $(cat buildspec.mk|grep TARGET_PRODUCT|pn 2 =|tr -d ' \t')-$(cat buildspec.mk|grep TARGET_BUILD_VARIANT|pn 2 =|tr -d ' \t') >/dev/null 2>&1
+    lunch $(android-var-from-spec config) >/dev/null 2>&1
 fi
 
 cd "$oldpwd"
