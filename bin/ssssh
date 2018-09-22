@@ -3,6 +3,9 @@ host=$1
 
 if test -z "$host"; then
     host=$(select-output-line -o 'for x in ~/src/github/private-config/.ssssh/search-*; do echo ${x##*/search-}; done')
+    if test -z "${host}"; then
+        exit 0
+    fi
 fi
 
 if test ! -e ~/src/github/private-config/.ssssh/search-$host; then

@@ -2,6 +2,12 @@
 
 set -e
 
+if test ! -d "./.git" && ! [[ "${PWD}" =~ \.git$ ]]; then
+    git_dir=$(lookup-file -e .git/..) ||
+        die "$PWD not a git repo?"
+    cd $git_dir
+fi
+
 if test $# != 1; then
     set -- ~/src/android-mirror/$(repo-abs-path).git
     if test -e .git/shallow; then

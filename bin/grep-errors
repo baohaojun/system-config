@@ -19,17 +19,23 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt m:max-line-length=1000
+# generate-getopt m:max-line-length=1000 d:complition-dir
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o m:h \
-               --long max-line-length:,help \
+TEMP=$( getopt -o d:m:h \
+               --long complition-dir:,max-line-length:,help \
                -n $(basename -- $0) -- "$@")
+declare complition_dir=
 declare max_line_length=1000
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -d|--complition-dir)
+            complition_dir=$2
+            shift 2
+
+            ;;
         -m|--max-line-length)
             max_line_length=$2
             shift 2
@@ -40,6 +46,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--complition-dir=COMPLITION_DIR'
+            echo
             printf %06s '-m, '
             printf %-24s '--max-line-length=MAX_LINE_LENGTH'
             echo
@@ -115,5 +124,14 @@ EOF
 
                )
 
-cut -b 1-${max_line_length} "$@" | grep -i -H -n $pcre -e "$pat" --label="$*" | grep -v "$(echo -n "$false_positives" | rm-last-nl | tr \\n \|)" -P -i
+cut -b 1-${max_line_length} "$@" | grep -i -H -n $pcre -e "$pat" --label="$*" | grep -v "$(echo -n "$false_positives" | rm-last-nl | tr \\n \|)" -P -i |
+    if test -z "${complition_dir}"; then
+        cat
+    else
+        (
+            echo "# -*- mode: compilation -*-"
+            echo "make: Entering directory \`${complition_dir}'"
+            perl -pe 's,.*?:\d+:,,'
+        )
+    fi
 true
