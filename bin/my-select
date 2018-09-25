@@ -56,7 +56,7 @@ sub read_ans {
     my @accrue_prompt = split("\n", $accrue_prompt);
     if (@accrue_prompt > 20) {
       my $n_items = @accrue_prompt - 1;
-      @accrue_prompt = (@accrue_prompt[0..19], "... ($n_items total)", $accrue_prompt[-1]);
+      @accrue_prompt = (@accrue_prompt[0..19], "... （共有 $n_items 个选项，请输入*回车查看所有，或输入?回车查看帮助）", $accrue_prompt[-1]);
     }
     my $sawfish_prompt = join("\n", @accrue_prompt);
     use String::ShellQuote;
@@ -119,7 +119,7 @@ sub my_select($) {
       foreach (@$remaining_options) {
         tty "$count) $_\n";
         if ($count > 40 and @$remaining_options > $count) {
-          tty "... (" . scalar(@$remaining_options) . " total)\n";
+          tty sprintf("... （共有 %d 个选项，请输入*回车查看所有，或输入?回车查看帮助）\n", scalar(@$remaining_options));
           last;
         }
         $count++;

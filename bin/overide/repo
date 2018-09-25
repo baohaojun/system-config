@@ -330,7 +330,7 @@ EOF
                             rm $repo_sync_log
                             exit 0
                         else
-                            mail-cms "Warn: Jenkins repo sync still failing after retry."
+                            continue
                         fi
                     else
                         break
