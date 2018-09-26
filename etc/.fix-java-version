@@ -1,8 +1,12 @@
 # -*- mode: sh -*-
-
 main_mk=$(lookup-file -e build/core/main.mk || true)
 if test ! -e "$main_mk"; then
     die build/core/main.mk not found, not in android project?
+fi
+
+if lookup-file -e prebuilts/jdk/jdk9 >/dev/null 2>&1; then
+    # android is working with its own jdk
+    return
 fi
 
 envsetup_sh=$(

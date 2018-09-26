@@ -141,51 +141,60 @@ if test -d kernel && ! test -e .repo/kernel; then
     ln -sf ../kernel .repo/
 fi
 
+export CCACHE_DIR=$PWD/.repo/.ccache
+rm ~/.ccache >/dev/null 2>&1 || true
+unset CLASSPATH
+
 if ! test -d .repo -a -e build/envsetup.sh; then
     die "Not an Android repo?"
 fi
 
 top_dir=$(pwd)
 
-if test -L out -a ! -e out; then
-    rm out -rf # in case it's a dangling symlink.
-                                   fi
-. ~/system-config/etc/.fix-java-version
-
-unset CLASSPATH
-cd $top_dir || exit
-. build/envsetup.sh >/dev/null 2>&1
-
-if test -z "$config" -a ! -e buildspec.mk; then
-    if test "$TARGET_PRODUCT" -a "$TARGET_BUILD_VARIANT"; then
-        product=$TARGET_PRODUCT
-        variant=$TARGET_BUILD_VARIANT
-    else
-        products=$(for x in "${LUNCH_MENU_CHOICES[@]}"; do echo ${x%-*}; done)
-        product=$(select-args -p "请选择你要编译的产品" -o -- ${products[@]})
-        variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )
+do-lunch() {
+    if test -L out -a ! -e out; then
+        rm out -rf # in case it is a dangling symlink.
     fi
-    config=$product-$variant
-elif test buildspec.mk; then
-    saved_config=$(android-var-from-spec config)
-    if test -z "${config}"; then
-        config=${saved_config}
+    . ~/system-config/etc/.fix-java-version
+
+    cd $top_dir || exit
+    . build/envsetup.sh >/dev/null 2>&1
+
+    if test -z "$config" -a ! -e buildspec.mk; then
+        if test "$TARGET_PRODUCT" -a "$TARGET_BUILD_VARIANT"; then
+            product=$TARGET_PRODUCT
+            variant=$TARGET_BUILD_VARIANT
+        else
+            products=$(for x in "${LUNCH_MENU_CHOICES[@]}"; do echo ${x%-*}; done)
+            product=$(select-args -p "请选择你要编译的产品" -o -- ${products[@]})
+            variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )
+        fi
+        config=$product-$variant
+    elif test buildspec.mk; then
+        saved_config=$(android-var-from-spec config)
+        if test -z "${config}"; then
+            config=${saved_config}
+        fi
+
+        if test "${config}" != "${saved_config}"; then
+            hint -t 5 "之前设置的编译选项是 ${saved_config}，现在要改成 ${config}" || true
+        fi
     fi
 
-    if test "${config}" != "${saved_config}"; then
-        hint -t 5 "之前设置的编译选项是 ${saved_config}，现在要改成 ${config}" || true
-    fi
+    variant=${config##*-}
+
+    . android-set-product "${config}"
+
+    export TARGET_PRODUCT=$TARGET_PRODUCT
+    export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT
+
+}
+
+if test "${quick}" = true; then
+    . .buildspec.sc || die "Can't import env from .buildspec"
+else
+    do-lunch
 fi
-
-variant=${config##*-}
-
-. android-set-product "${config}"
-
-export CCACHE_DIR=$PWD/.repo/.ccache
-rm ~/.ccache >/dev/null 2>&1 || true
-
-export TARGET_PRODUCT=$TARGET_PRODUCT
-export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT
 
 if test "$DEBUG" = true; then
     set -x;
@@ -217,7 +226,6 @@ exec 9> $OUT_DIR/.android-full-build.lock
         echo 'lock success! at '$(date)
 
         result=''
-        export PATH=$PWD/$OUT_DIR/host/linux-x86/bin/:$PATH
         echo CLASSPATH is \'$CLASSPATH\'
 
         if test -e vendor/qcom/proprietary/mm-still/ipl/Android.mk; then
@@ -228,10 +236,10 @@ exec 9> $OUT_DIR/.android-full-build.lock
         . ~/system-config/etc/.fix-java-version
 
         echo make starts here
-        export REALLY_DOING_BUILD=true
         am_make_cmd=make
         if test "$quick" = true; then
             am_make_cmd=android-ninja
+            verbose=${verbose:+-v}
         fi
         if test $# != 0; then
             if test $# = 1 -a -e ~/system-config/etc/android-make/"$1"; then

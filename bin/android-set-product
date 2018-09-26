@@ -1,6 +1,10 @@
 #!/bin/bash
 
 set -e
+
+unset CLASSPATH
+unset PROMPT_RET
+
 if test "$SC_DEBUG" = true; then
     set -x
 fi
@@ -64,12 +68,11 @@ fi
 
 parse-env after_env
 
-declare -xp > .buildspec.sc
-
 ccache -M 100G
 
 . ~/system-config/bin/.android-set-outdir
 
+declare -xp > .buildspec.sc
 (
     env_vars=(
         TARGET_BUILD_APPS TARGET_BUILD_TYPE OUT_DIR

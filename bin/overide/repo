@@ -58,6 +58,12 @@ function delete-1-project() {
 
 }
 
+wait-a-while() {
+    sleep ${1:-30.12345678} || true
+}
+
+export -f wait-a-while
+
 function clean-a-repo() {
     if test -d .git; then
         exec 9> .git/sc-clean-repo.lock
@@ -76,7 +82,7 @@ function clean-a-repo() {
                 fi
                 exit 0
             else
-                (sleep 30 && mail-cms -o "Warn: repo failed to clean: $PWD")& # this way, there won't be a mail when jenkins task is aborted
+                (wait-a-while && mail-cms -o "Warn: repo failed to clean: $PWD")& # this way, there won't be a mail when jenkins task is aborted
                 exit 1
             fi
 
@@ -251,7 +257,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
                                                 exit 0
                                             fi
                                             for x in $(seq 1 3); do
-                                                sleep 30
+                                                wait-a-while
                                                 ~/system-config/bin/repo "$@" -j2 $projects && exit 0 || echo failed to re-run@$x: repo "$@" -j2 $projects
                                             done
                                             exit 1
@@ -321,7 +327,7 @@ EOF
 
                             ); then
                         # this might be temporary
-                        sleep 30
+                        wait-a-while
                         if (
                             set -o pipefail
                             time stdbuf -oL -eL ~/system-config/bin/repo "$@" 2>&1 | stdbuf -oL -eL tee $repo_sync_log
@@ -360,7 +366,7 @@ EOF
                     exit 0
                 fi
 
-                sleep 30 && # sometimes we are being aborted!
+                wait-a-while && # sometimes we are being aborted!
                     mail-cms -e "Repo sync failed after retry!"
                 exit 1
             )

@@ -2,6 +2,7 @@
 
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent || true
+. ~/.renew-xauth || true
 run_dir=$(basename $1)
 
 export USER=$(whoami) #in cron daemon, this env variable is not set by default.
