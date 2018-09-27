@@ -20,16 +20,41 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
         search-dict "$text"
     else
         if ! grep -q "$text" /usr/share/gjiten/dics/*; then
+            if [[ $text =~ れて ]]; then
+                text=${text%れて}
+            elif [[ $text =~ って|った ]]; then
+                saved_text=$text
+                for x in る う; do
+                    text=${saved_text%っ*}$x
+                    if grep -q "$text" /usr/share/gjiten/dics/*; then
+                        break
+                    fi
+                done
+            elif [[ $text =~ な$ ]] && grep -q "${text%な}" /usr/share/gjiten/dics/*; then
+                text=${text%な}
+            fi
+        fi
+
+        if ! grep -q "$text" /usr/share/gjiten/dics/*; then
             case "$text" in
                 *ん)
                     text=${text}だ
+                    ;;
+                *んだ|*んで)
+                    saved_text=$text
+                    for x in ぶ む; do
+                        text=${saved_text%ん*}$x
+                        if grep -q "$text" /usr/share/gjiten/dics/*; then
+                            break
+                        fi
+                    done
                     ;;
                 *っ|*い|*し)
                     text=${text}た
                     ;;
                 ## start code-generator "^\\s *#"
                 # # {%sh-mode%}
-                # : map [あ]=う [か]=く [き]=く [く]=い [なかった]=ない [さ]=す [た]=つ [な]=ぬ
+                # : map [あ]=う [か]=く [が]=ぐ [き]=く [く]=い [なかった]=ない [さ]=す [た]=つ [な]=ぬ
                 # : map [は]=ふ [ば]=ぶ [ま]=む [み]=む [や]=ゆ [ら]=る [り]=る [わ]=う
                 # cat ~/system-config/bin/s-dicts | grep ': map' |
                 #     perl -ne 'while (m/\[(.*?)\]=(.*?) /g) {print "$1 $2\n"}' |
@@ -49,6 +74,9 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
                     ;;
                 *か)
                     text=${text%か}く
+                    ;;
+                *が)
+                    text=${text%が}ぐ
                     ;;
                 *き)
                     text=${text%き}く

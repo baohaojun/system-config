@@ -11,38 +11,57 @@ fi
 start_charge_level=15
 start_watching_level=20
 
+check-and-switch() {
+    if test -e "${ANDROID_SERIAL}".off; then
+        my-adb 'echo 1 > /sys/class/power_supply/battery/input_suspend'
+    elif test -e "${ANDROID_SERIAL}".on; then
+        my-adb 'echo 0 > /sys/class/power_supply/battery/input_suspend'
+    fi
+}
+
+log() {
+    echo "$*" >> $ANDROID_SERIAL.log
+}
 
 for adb_s in "$@"; do
     (
         . force-1 adb-charge-switch.$adb_s
         (
             export ANDROID_SERIAL=$adb_s
+
             if ! adb shell test -e /data/data/com.android.shell/etc/charge-switch; then
                 exit
             fi
+            mkdir -p ~/tmp/adb-charge-switch
+            cd ~/tmp/adb-charge-switch
 
             capa=$(adb shell cat /sys/class/power_supply/battery/capacity)
             input_suspend=$(adb shell cat /sys/class/power_supply/battery/input_suspend)
-            echo capa:$capa, input_suspend:$input_suspend $(date) >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
+            log capa:$capa, input_suspend:$input_suspend $(date)
             if test "$capa" -gt 95; then
-                echo turn off charging for $adb_s
-                my-adb 'echo 1 > /sys/class/power_supply/battery/input_suspend'
-            elif test "$capa" -lt ${start_watching_level}; then
-                if test "${input_suspend}" = 0; then
-                    exit
-                fi
-                while test "${capa}" -gt ${start_charge_level} -a "${capa}" -lt 25; do
+                log turn off charging for $adb_s
+                touch $ANDROID_SERIAL.off
+                rm $ANDROID_SERIAL.on -f
+            fi
+
+            check-and-switch
+
+            if test "$capa" -lt ${start_watching_level}; then
+                while test "${capa}" -gt ${start_charge_level} -a "${capa}" -lt $((start_watching_level + 5)); do
                     sleep 30
                     capa=$(adb shell cat /sys/class/power_supply/battery/capacity)
-                    echo capa:$capa, input:$input_suspend $(date) >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
+                    log capa:$capa, input:$input_suspend $(date)
                 done
                 if test "${capa}" -le ${start_charge_level}; then
                     echo turn on charging for $adb_s
-                    my-adb 'echo 0 > /sys/class/power_supply/battery/input_suspend'
+                    touch $ANDROID_SERIAL.on
+                    rm $ANDROID_SERIAL.off -f
                 fi
             fi
+
+            check-and-switch
             input_suspend_2=$(adb shell cat /sys/class/power_supply/battery/input_suspend)
-            echo "capa:$capa, input_suspend:$input_suspend->$input_suspend_2 $(date)" >> ~/tmp/adb-charge-switch.$ANDROID_SERIAL
+            log "capa:$capa, input_suspend:$input_suspend->$input_suspend_2 $(date)"
         ) 9>/dev/null
     )
 done
