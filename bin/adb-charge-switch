@@ -9,7 +9,7 @@ if test $# = 0; then
 fi
 
 start_charge_level=15
-start_watching_level=20
+start_watching_level=30
 
 check-and-switch() {
     if test -e "${ANDROID_SERIAL}".off; then
@@ -21,6 +21,20 @@ check-and-switch() {
 
 log() {
     echo "$*" >> $ANDROID_SERIAL.log
+}
+
+adb() {
+    (
+        exec 9>/dev/null
+        command adb "$@"
+    )
+}
+
+my-adb() {
+    (
+        exec 9>/dev/null
+        command my-adb "$@"
+    )
 }
 
 for adb_s in "$@"; do
