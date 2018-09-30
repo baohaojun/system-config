@@ -1,4 +1,0 @@
-#!/bin/bash
-# this script is for debug, check what envs do we have
-
-declare -p -x

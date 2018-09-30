@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts rroot eedit droot ffastboot
 ## end code-generator

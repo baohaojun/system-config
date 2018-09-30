@@ -110,6 +110,7 @@
  '(mmm-global-mode nil nil (mmm-mode))
  '(mmm-submode-decoration-level 2)
  '(mouse-wheel-scroll-amount (quote (1 ((shift) . 1) ((control)))))
+ '(mu4e-compose-forward-as-attachment t)
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(org-clock-x11idle-program-name "xprintidle")
