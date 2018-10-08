@@ -2,17 +2,28 @@
 
 exec 1>&2 # must not change this line, because onmyoji depend on it for orientation.
 
+if test -z "${phone_width}"; then
+    init-data() {
+        true
+    }
+    init-is-functions() {
+        true
+    }
+    . ~/src/github/private-config/knuth-mode/onmyoji-scripts/.init-size; init-size
+fi
+
+
 # echo phone_sticky=$phone_sticky phone_width=$phone_width phone_height=$phone_height $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$ANDROID_SERIAL
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt x:x=0 y:y=0 s:s=0 '?size' eedit @:sticky='${phone_sticky:-0}' @system-screencap
+# generate-getopt x:x=0 y:y=0 s:s='${phone_width:-0}x${phone_height:-0}' '?size' eedit @:sticky='${phone_sticky:-0}' @system-screencap
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o es:x:y:h \
                --long edit,s:,sticky:,system-screencap,x:,y:,help,no-edit,no-system-screencap \
                -n $(basename -- $0) -- "$@")
 declare edit=false
-declare s=0
+declare s=${phone_width}x${phone_height}
 declare sticky=${phone_sticky:-0}
 declare system_screencap=false
 declare x=0
