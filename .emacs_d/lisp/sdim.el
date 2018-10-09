@@ -227,9 +227,13 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
             unread-command-events '(7)))))
 
 (defun sdim-accept (input-str repeat)
-  (if (eq major-mode 'term-mode)
-      (term-send-raw-string input-str)
-    (insert input-str))
+  (cond ((eq major-mode 'term-mode)
+         (term-send-raw-string input-str))
+        ((eq (get-text-property (point) 'keymap) 'table-cell-map)
+         (let ((kill-ring (list input-str)))
+           (*table--cell-yank)))
+        (t
+         (insert input-str)))
   (when (and (window-minibuffer-p)
              (= repeat 1))
     (run-hooks 'post-command-hook)))
