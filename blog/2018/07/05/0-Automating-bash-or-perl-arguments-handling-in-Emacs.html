@@ -96,14 +96,14 @@ for the JavaScript code in this tag.
 <h1 id="blog-title" style="margin: 5px 5px 0; padding: 20px 20px 0.25em; border: 1px solid #eee; border-width: 1px 1px 0; font-size: 160%; line-height: 1.2em; font-weight: normal; letter-spacing: 0.2em; text-decoration: none">
 <a href="http://baohaojun.github.io/blog/2011/12/23/index.html" style="color: #3a5fcd; text-decoration: underline">包昊军的博客</a>
 </h1>
-<p id="description" style='margin: 0 5px 5px; padding: 0 20px 20px; border: 1px solid #eee; border-width: 0 1px 1px; font: 78%/1.4em "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; text-transform: uppercase; letter-spacing: 0.2em'>What you don't know, won't hurt you.</p>
+<p id="description" style='margin-top: 10px; margin-bottom: 10px; margin: 0 5px 5px; padding: 0 20px 20px; border: 1px solid #eee; border-width: 0 1px 1px; font: 78%/1.4em "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; text-transform: uppercase; letter-spacing: 0.2em'>What you don't know, won't hurt you.</p>
 </div>
 </div>
 <div id="bhj_article">
 <div id="bhj_leftpane">
 <div id="content" style="font-size: 11pt; line-height: 1.6em">
 <h1 class="title" style="text-align: center; font-size: 160%; color: #191970; font-weight: bold">Automating bash/perl arguments handling in Emacs</h1>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 Programming is mostly about 3 things:
 </p>
 <ol class="org-ol">
@@ -111,112 +111,112 @@ Programming is mostly about 3 things:
 <li>What is your output?</li>
 <li>How do you compute from your input to your output?</li>
 </ol>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 Now, when writing bash or perl scripts, often you need to get your input from command line arguments, and you need to do complex argument handling if you want it to be flexible and user friendly.
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 I have boiled it down to a very simple and terse way in Emacs. For e.g., if I want to handle 2 arguments like this: <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>--[no-]debug --serial 123456</code>, I need only type <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>Getopt M-tab ddebug s:serial M-s g</code>. Here's a screencast of me writing the script:
 </p>
 <div class="figure" style="padding: 0.5em">
-<p style="text-align: center"><img alt="Getopt.gif" src="./../../../../images/Getopt.gif" style="max-width: 100%"/>
+<p style="margin-top: 10px; margin-bottom: 10px; text-align: center"><img alt="Getopt.gif" src="./../../../../images/Getopt.gif" style="max-width: 100%"/>
 </p>
 </div>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 Here's the detailed steps:
 </p>
 <ol class="org-ol">
 <li>Type <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>Getopt</code>, which is a yasnippet in my emacs environment.</li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 Expand it (typing <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>M-tab</code>) with yasnippet to this, where $0 is the point after expansion:
 </p>
 <div class="org-src-container">
 <pre class="src src-sh" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start code-generator "^\\s *#\\s *"</span><br/><span class="org-comment-delimiter" style="color: #ff7f50"># </span><span class="org-comment" style="color: #fa8072">generate-getopt $0</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end code-generator</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start generated code</span><br/><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end generated code</span><br/><br/></pre>
 </div></li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 Start inputing the argument spec
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 For e.g., if I want these options:
 </p>
 <ul class="org-ul">
 <li>A boolean option “debug”, which can be input with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>-d</code> or <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>--debug</code> (and toggled with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>--no-debug</code>)</li>
 <li>An option “serial” that requires an argument, which can be input with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>-s SERIAL</code> or <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>--serial SERIAL</code></li>
 </ul>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 I need only input <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>ddebug s:serial</code>, making it like this:
 </p>
 <div class="org-src-container">
 <pre class="src src-sh" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start code-generator "^\\s *#\\s *"</span><br/><span class="org-comment-delimiter" style="color: #ff7f50"># </span><span class="org-comment" style="color: #fa8072">generate-getopt ddebug s:serial</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end code-generator</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start generated code</span><br/><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end generated code</span><br/><br/></pre>
 </div></li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 Type a short cut key <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>M-s g</code> (here the 2 keys <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>s</code> and <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>g</code> means Sourcecode Generation), and ta-da, I suddenly get the complete bash argument handling script (help include!):
 </p>
 <div class="org-src-container">
-<pre class="src src-sh" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start code-generator "^\\s *#\\s *"</span><br/><span class="org-comment-delimiter" style="color: #ff7f50"># </span><span class="org-comment" style="color: #fa8072">generate-getopt ddebug s:serial</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end code-generator</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start generated code</span><br/><span class="org-variable-name" style="color: #ff69b4">TEMP</span>=$<span class="org-rainbow-delimiters-depth-1" style="color: #707183">(</span> getopt -o ds:h <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>               --long debug,serial:,help,no-debug <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>               -n $<span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">(</span><span class="org-sh-quoted-exec" style="color: #fa8072">basename</span> -- $<span class="org-variable-name" style="color: #ff69b4">0</span><span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">)</span> -- <span class="org-string" style="color: #db7093">"$@"</span><span class="org-rainbow-delimiters-depth-1" style="color: #707183">)</span><br/><span class="org-builtin" style="color: #da70d6">declare</span> <span class="org-variable-name" style="color: #ff69b4">debug</span>=false<br/><span class="org-builtin" style="color: #da70d6">declare</span> <span class="org-variable-name" style="color: #ff69b4">serial</span>=<br/><span class="org-builtin" style="color: #da70d6">eval</span> set -- <span class="org-string" style="color: #db7093">"$TEMP"</span><br/><span class="org-keyword" style="font-weight: bold; color: #a020f0">while</span> true; <span class="org-keyword" style="font-weight: bold; color: #a020f0">do</span><br/>    <span class="org-keyword" style="font-weight: bold; color: #a020f0">case</span> <span class="org-string" style="color: #db7093">"$1"</span><span class="org-keyword" style="font-weight: bold; color: #a020f0"> in</span><br/><br/>        -d|--debug|--no-debug)<br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">if </span><span class="org-builtin" style="color: #da70d6">test</span> <span class="org-string" style="color: #db7093">"$1"</span> = --no-debug; <span class="org-keyword" style="font-weight: bold; color: #a020f0">then</span><br/>                <span class="org-variable-name" style="color: #ff69b4">debug</span>=false<br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">else</span><br/>                <span class="org-variable-name" style="color: #ff69b4">debug</span>=true<br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">fi</span><br/>            <span class="org-builtin" style="color: #da70d6">shift</span><br/><br/>            ;;<br/>        -s|--serial)<br/>            <span class="org-variable-name" style="color: #ff69b4">serial</span>=$<span class="org-variable-name" style="color: #ff69b4">2</span><br/>            <span class="org-builtin" style="color: #da70d6">shift</span> 2<br/><br/>            ;;<br/>        -h|--help)<br/>            <span class="org-builtin" style="color: #da70d6">set</span> +x<br/>            <span class="org-builtin" style="color: #da70d6">echo</span> -e<br/>            <span class="org-builtin" style="color: #da70d6">echo</span><br/>            <span class="org-builtin" style="color: #da70d6">echo</span> Options and arguments:<br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %06s <span class="org-string" style="color: #db7093">'-d, '</span><br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %-24s <span class="org-string" style="color: #db7093">'--[no-]debug'</span><br/>            <span class="org-builtin" style="color: #da70d6">echo</span><br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %06s <span class="org-string" style="color: #db7093">'-s, '</span><br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %-24s <span class="org-string" style="color: #db7093">'--serial=SERIAL'</span><br/>            <span class="org-builtin" style="color: #da70d6">echo</span><br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">exit</span><br/>            <span class="org-builtin" style="color: #da70d6">shift</span><br/>            ;;<br/>        --)<br/>            <span class="org-builtin" style="color: #da70d6">shift</span><br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">break</span><br/>            ;;<br/>        *)<br/>            die <span class="org-string" style="color: #db7093">"internal error"</span><br/>            ;;<br/>    <span class="org-keyword" style="font-weight: bold; color: #a020f0">esac</span><br/><span class="org-keyword" style="font-weight: bold; color: #a020f0">done</span><br/><br/><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end generated code</span><br/><br/></pre>
+<pre class="src src-sh" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start code-generator "^\\s *#\\s *"</span><br/><span class="org-comment-delimiter" style="color: #ff7f50"># </span><span class="org-comment" style="color: #fa8072">generate-getopt ddebug s:serial</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end code-generator</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start generated code</span><br/><span class="org-variable-name" style="color: #ff69b4">TEMP</span>=$<span class="org-rainbow-delimiters-depth-1" style="color: #707183">(</span> getopt -o ds:h <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>               --long debug,serial:,help,no-debug <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>               -n $<span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">(</span><span class="org-sh-quoted-exec" style="color: #fa8072">basename</span> -- $<span class="org-variable-name" style="color: #ff69b4">0</span><span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">)</span> -- <span class="org-string" style="color: #db7093">"$@"</span><span class="org-rainbow-delimiters-depth-1" style="color: #707183">)</span><br/><span class="org-builtin" style="color: #da70d6">declare</span> <span class="org-variable-name" style="color: #ff69b4">debug</span>=false<br/><span class="org-builtin" style="color: #da70d6">declare</span> <span class="org-variable-name" style="color: #ff69b4">serial</span>=<br/><span class="org-builtin" style="color: #da70d6">eval</span> set -- <span class="org-string" style="color: #db7093">"$TEMP"</span><br/><span class="org-keyword" style="font-weight: bold; color: #a020f0">while</span> true; <span class="org-keyword" style="font-weight: bold; color: #a020f0">do</span><br/>    <span class="org-keyword" style="font-weight: bold; color: #a020f0">case</span> <span class="org-string" style="color: #db7093">"$1"</span><span class="org-keyword" style="font-weight: bold; color: #a020f0"> in</span><br/><br/>        -d|--debug|--no-debug)<br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">if </span><span class="org-builtin" style="color: #da70d6">test</span> <span class="org-string" style="color: #db7093">"$1"</span> = --no-debug; <span class="org-keyword" style="font-weight: bold; color: #a020f0">then</span><br/>                <span class="org-variable-name" style="color: #ff69b4">debug</span>=false<br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">else</span><br/>                <span class="org-variable-name" style="color: #ff69b4">debug</span>=true<br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">fi</span><br/>            <span class="org-builtin" style="color: #da70d6">shift</span><br/><br/>            ;;<br/>        -s|--serial)<br/>            <span class="org-variable-name" style="color: #ff69b4">serial</span>=$<span class="org-variable-name" style="color: #ff69b4">2</span><br/>            <span class="org-builtin" style="color: #da70d6">shift</span> 2<br/><br/>            ;;<br/>        -h|--help)<br/>            <span class="org-builtin" style="color: #da70d6">set</span> +x<br/>            <span class="org-builtin" style="color: #da70d6">echo</span> -e<br/>            <span class="org-builtin" style="color: #da70d6">echo</span><br/>            <span class="org-builtin" style="color: #da70d6">echo</span> Options and arguments:<br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %06s <span class="org-string" style="color: #db7093">'-d, '</span><br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %-24s <span class="org-string" style="color: #db7093">'--[no-]debug'</span><br/>            <span class="org-builtin" style="color: #da70d6">echo</span><br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %06s <span class="org-string" style="color: #db7093">'-s, '</span><br/>            <span class="org-builtin" style="color: #da70d6">printf</span> %-24s <span class="org-string" style="color: #db7093">'--serial=SERIAL'</span><br/>            <span class="org-builtin" style="color: #da70d6">echo</span><br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">exit</span><br/>            <span class="org-builtin" style="color: #da70d6">shift</span><br/>            ;;<br/>        --)<br/>            <span class="org-builtin" style="color: #da70d6">shift</span><br/>            <span class="org-keyword" style="font-weight: bold; color: #a020f0">break</span><br/>            ;;<br/>        *)<br/>            die <span class="org-string" style="color: #db7093">"internal error: $(</span><span class="org-sh-quoted-exec" style="color: #fa8072">.</span><span class="org-string" style="color: #db7093"> bt; echo; bt | indent-stdin)"</span><br/>            ;;<br/>    <span class="org-keyword" style="font-weight: bold; color: #a020f0">esac</span><br/><span class="org-keyword" style="font-weight: bold; color: #a020f0">done</span><br/><br/><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end generated code</span><br/><br/></pre>
 </div></li>
 </ol>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 If I save the above script in a file named <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>./test.sh</code>, I can print the script's usage with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>./test.sh -h</code>:
 </p>
 <pre class="example" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto; color: #7f7f7f'><br/>$bash ./test.sh -h<br/><br/>Options and arguments:<br/>  -d, --[no-]debug<br/>  -s, --serial=SERIAL<br/></pre>
-<div class="outline-3" id="outline-container-orgf1d7743">
-<h3 id="orgf1d7743" style="color: #ff69b4"><span class="section-number-3">0.1</span> Change it to do perl argument handling</h3>
+<div class="outline-3" id="outline-container-orgf7d691e">
+<h3 id="orgf7d691e" style="color: #ff69b4"><span class="section-number-3">0.1</span> Change it to do perl argument handling</h3>
 <div class="outline-text-3" id="text-0-1">
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 I do exactly the same things (<code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>Getopt M-tab ddebug s:serial M-s g</code>) as above, except this time it's in a perl-mode buffer.
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 The perl-mode's <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>Getopt</code> snippet will expand differently by adding <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>-s perl</code>:
 </p>
 <div class="org-src-container">
 <pre class="src src-perl" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start code-generator "^\\s *#\\s *"</span><br/><span class="org-comment-delimiter" style="color: #ff7f50"># </span><span class="org-comment" style="color: #fa8072">generate-getopt -s perl ddebug s:serial</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end code-generator</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start generated code</span><br/><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end generated code</span><br/><br/></pre>
 </div>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 After I press <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>M-s g</code> for Sourcecode Generation, I get this wonderful perl argument handling script:
 </p>
 <div class="org-src-container">
 <pre class="src src-perl" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start code-generator "^\\s *#\\s *"</span><br/><span class="org-comment-delimiter" style="color: #ff7f50"># </span><span class="org-comment" style="color: #fa8072">generate-getopt -s perl ddebug s:serial</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end code-generator</span><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">start generated code</span><br/><span class="org-keyword" style="font-weight: bold; color: #a020f0">use</span> <span class="org-constant" style="color: #da70d6">Getopt</span>::Long;<br/><br/><span class="org-type" style="font-weight: bold; color: #8470ff">my</span> $<span class="org-variable-name" style="color: #ff69b4">debug</span> = 0;<br/><span class="org-type" style="font-weight: bold; color: #8470ff">my</span> $<span class="org-variable-name" style="color: #ff69b4">serial</span> = <span class="org-string" style="color: #db7093">''</span>;<br/><br/>GetOptions <span class="org-rainbow-delimiters-depth-1" style="color: #707183">(</span><br/>    <span class="org-string" style="color: #db7093">'debug|d!'</span> =&gt; \$<span class="org-variable-name" style="color: #ff69b4">debug</span>,<br/>    <span class="org-string" style="color: #db7093">'serial|s=s'</span> =&gt; \$<span class="org-variable-name" style="color: #ff69b4">serial</span>,<br/>    <span class="org-string" style="color: #db7093">'help|h!'</span> =&gt; \&amp;<span class="org-function-name" style="color: #ff1493">handler_help</span>,<br/>    <span class="org-rainbow-delimiters-depth-1" style="color: #707183">)</span>;<br/><br/><br/><br/><span class="org-keyword" style="font-weight: bold; color: #a020f0">sub</span> <span class="org-function-name" style="color: #ff1493">handler_help</span> <span class="org-rainbow-delimiters-depth-1" style="color: #707183">{</span><br/>    print ;<br/>    print <span class="org-string" style="color: #db7093">"\n\n&#36873;&#39033;&#21644;&#21442;&#25968;&#65306;\n"</span>;<br/>    printf <span class="org-string" style="color: #db7093">"%6s"</span>, <span class="org-string" style="color: #db7093">'-d, '</span>;<br/>    printf <span class="org-string" style="color: #db7093">"%-24s"</span>, <span class="org-string" style="color: #db7093">'--[no]debug'</span>;<br/>    <span class="org-keyword" style="font-weight: bold; color: #a020f0">if</span> <span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">(</span>length<span class="org-rainbow-delimiters-depth-3" style="color: #909183">(</span><span class="org-string" style="color: #db7093">'--[no]debug'</span><span class="org-rainbow-delimiters-depth-3" style="color: #909183">)</span> &gt; 24 and length<span class="org-rainbow-delimiters-depth-3" style="color: #909183">()</span> &gt; 0<span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">)</span> <span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">{</span><br/>        print <span class="org-string" style="color: #db7093">"\n"</span>;<br/>        printf <span class="org-string" style="color: #db7093">"%30s"</span>, <span class="org-string" style="color: #db7093">""</span>;<br/>    <span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">}</span><br/>    printf <span class="org-string" style="color: #db7093">"%s"</span>, ;<br/>    print <span class="org-string" style="color: #db7093">"\n"</span>;<br/>    printf <span class="org-string" style="color: #db7093">"%6s"</span>, <span class="org-string" style="color: #db7093">'-s, '</span>;<br/>    printf <span class="org-string" style="color: #db7093">"%-24s"</span>, <span class="org-string" style="color: #db7093">'--serial=SERIAL'</span>;<br/>    <span class="org-keyword" style="font-weight: bold; color: #a020f0">if</span> <span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">(</span>length<span class="org-rainbow-delimiters-depth-3" style="color: #909183">(</span><span class="org-string" style="color: #db7093">'--serial=SERIAL'</span><span class="org-rainbow-delimiters-depth-3" style="color: #909183">)</span> &gt; 24 and length<span class="org-rainbow-delimiters-depth-3" style="color: #909183">()</span> &gt; 0<span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">)</span> <span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">{</span><br/>        print <span class="org-string" style="color: #db7093">"\n"</span>;<br/>        printf <span class="org-string" style="color: #db7093">"%30s"</span>, <span class="org-string" style="color: #db7093">""</span>;<br/>    <span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">}</span><br/>    printf <span class="org-string" style="color: #db7093">"%s"</span>, ;<br/>    print <span class="org-string" style="color: #db7093">"\n"</span>;<br/><br/>    <span class="org-keyword" style="font-weight: bold; color: #a020f0">exit</span><span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">(</span>0<span class="org-rainbow-delimiters-depth-2" style="color: #7388d6">)</span>;<br/><span class="org-rainbow-delimiters-depth-1" style="color: #707183">}</span><br/><br/><span class="org-comment-delimiter" style="color: #ff7f50">## </span><span class="org-comment" style="color: #fa8072">end generated code</span><br/><br/><br/></pre>
 </div>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 And I can save it in a <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>test.pl</code> and test it with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>perl ./test.pl -h</code>:
 </p>
 <pre class="example" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto; color: #7f7f7f'><br/>$perl test.pl -h<br/><br/><br/>选项和参数：<br/>  -d, --[no]debug<br/>  -s, --serial=SERIAL<br/></pre>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org1b762c9">
-<h3 id="org1b762c9" style="color: #ff69b4"><span class="section-number-3">0.2</span> Feature list</h3>
+<div class="outline-3" id="outline-container-org4bee02d">
+<h3 id="org4bee02d" style="color: #ff69b4"><span class="section-number-3">0.2</span> Feature list</h3>
 <div class="outline-text-3" id="text-0-2">
 <ol class="org-ol">
 <li>Argument spec is from <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>man getopt(3)</code>, where <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>:</code> after a character means required argument.</li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 Allow to add default value:
 </p>
 <div class="org-src-container">
 <pre class="src src-sh" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'>generate-getopt s:<span class="org-variable-name" style="color: #ff69b4">serial</span>=12345678<br/></pre>
 </div></li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 Allow to add help for the whole script and each option with '?':
 </p>
 <div class="org-src-container">
 <pre class="src src-sh" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'>generate-getopt <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>    <span class="org-string" style="color: #db7093">'?"This script makes argument handling piece of cake."'</span> <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>    s:<span class="org-variable-name" style="color: #ff69b4">serial</span>=12345678 <span class="org-string" style="color: #db7093">'?"Specify your serial number."'</span><br/></pre>
 </div>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 After code generation, if you test with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>--help</code>, output is like:
 </p>
 <pre class="example" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto; color: #7f7f7f'><br/>This script makes argument handling piece of cake.<br/><br/>Options and arguments:<br/>  -s, --serial=SERIAL         Specify your serial number.<br/><br/></pre></li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 Allows array type options: simply specify the argument with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>='()'</code>:
 </p>
 <div class="org-src-container">
 <pre class="src src-sh" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'>generate-getopt <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>    <span class="org-string" style="color: #db7093">'?"This script makes argument handling piece of cake."'</span> <span class="org-sh-escaped-newline" style="color: #95e454">\</span><br/>    s:<span class="org-variable-name" style="color: #ff69b4">serial</span>=<span class="org-string" style="color: #db7093">'()'</span> <span class="org-string" style="color: #db7093">'?"Specify your serial number."'</span><br/><br/></pre>
 </div></li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 By default, the argument variable name come from changing <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>-</code> in the spec to <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>_</code>:
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>s:serial-number</code> will allow you to specify <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>--serial-numebr=abcxyz</code>, and in the script, you get a variable <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>serial_number</code> whose value is <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>abcxyz</code>.
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 You can also add a prefix with <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>-p pre</code> if you need to avoid variable namespace clash, for e.g., this will get you a variable named <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>bhj_serial_number</code> instead of serial_number:
 </p>
 <div class="org-src-container">
@@ -225,59 +225,59 @@ You can also add a prefix with <code style='font-family: "Bitstream Vera Sans Mo
 </ol>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org8967412">
-<h2 id="org8967412" style='margin: 1.5em 0 0.75em; font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; color: #ff1493'><span class="section-number-2">1</span> Implementation</h2>
+<div class="outline-2" id="outline-container-org0324abe">
+<h2 id="org0324abe" style='margin: 1.5em 0 0.75em; font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; color: #ff1493'><span class="section-number-2">1</span> Implementation</h2>
 <div class="outline-text-2" id="text-1">
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 All code is in my <a href="https://github.com/baohaojun/system-config" style="color: #3a5fcd; text-decoration: underline">system-config</a> project and its sub-projects.
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 But in case you are lost, here's some explanations.
 </p>
 </div>
-<div class="outline-3" id="outline-container-orgfeb9802">
-<h3 id="orgfeb9802" style="color: #ff69b4"><span class="section-number-3">1.1</span> Getopt is a yasnippet both in my sh-mode and perl-mode:</h3>
+<div class="outline-3" id="outline-container-org98cdddf">
+<h3 id="org98cdddf" style="color: #ff69b4"><span class="section-number-3">1.1</span> Getopt is a yasnippet both in my sh-mode and perl-mode:</h3>
 <div class="outline-text-3" id="text-1-1">
 <ul class="org-ul">
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 This is for sh-mode:
 </p>
 <div class="org-src-container">
-<pre class="src src-snippet" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment" style="color: #fa8072"># -*- mode: snippet -*-</span><br/><span class="org-comment" style="color: #fa8072"># key: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># name: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># --</span><br/><br/><span class="org-comment" style="color: #fa8072">## start code-generator "^\\\\s *#\\\\s *"</span><br/><span class="org-comment" style="color: #fa8072"># generate-getopt ${</span><span class="org-warning" style="color: #ff8c00; font-weight: bold">1</span><span class="org-comment" style="color: #fa8072">:ggnu p:phone}</span><br/><span class="org-comment" style="color: #fa8072">## end code-generator</span><br/><span class="org-comment" style="color: #fa8072">## start generated code</span><br/><br/><span class="org-comment" style="color: #fa8072">## end generated code</span><br/></pre>
+<pre class="src src-snippet" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment" style="color: #fa8072"># -*- mode: snippet -*-</span><br/><span class="org-comment" style="color: #fa8072"># key: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># name: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># --</span><br/><br/>## start code-generator <span class="org-string" style="color: #db7093">"^\\\\s *#\\\\s *"</span><br/><span class="org-comment" style="color: #fa8072"># generate-getopt $</span><span class="org-comment" style="color: #fa8072"><span class="org-rainbow-delimiters-depth-1" style="color: #707183">{</span></span><span class="org-warning" style="color: #ff8c00; font-weight: bold">1</span><span class="org-comment" style="color: #fa8072">:ggnu p:phone</span><span class="org-comment" style="color: #fa8072"><span class="org-rainbow-delimiters-depth-1" style="color: #707183">}</span></span><br/><span class="org-comment" style="color: #fa8072">## end code-generator</span><br/><span class="org-comment" style="color: #fa8072">## start generated code</span><br/><br/><span class="org-comment" style="color: #fa8072">## end generated code</span><br/></pre>
 </div></li>
-<li><p>
+<li><p style="margin-top: 10px; margin-bottom: 10px">
 This is for perl-mode (only added a <code style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: #7f7f7f'>-s perl</code> from sh-mode):
 </p>
 <div class="org-src-container">
-<pre class="src src-snippet" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment" style="color: #fa8072"># -*- mode: snippet -*-</span><br/><span class="org-comment" style="color: #fa8072"># key: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># name: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># --</span><br/><br/><span class="org-comment" style="color: #fa8072">## start code-generator "^\\\\s *#\\\\s *"</span><br/><span class="org-comment" style="color: #fa8072"># generate-getopt -s perl ${</span><span class="org-warning" style="color: #ff8c00; font-weight: bold">1</span><span class="org-comment" style="color: #fa8072">:ggnu p:phone}</span><br/><span class="org-comment" style="color: #fa8072">## end code-generator</span><br/><span class="org-comment" style="color: #fa8072">## start generated code</span><br/><br/><span class="org-comment" style="color: #fa8072">## end generated code</span><br/><br/></pre>
+<pre class="src src-snippet" style='font-family: "Bitstream Vera Sans Mono", Menlo, "DejaVu Sans Mono", monaco, "Courier New", Courier, monospace; background: transparent; color: inherit; border: 2pt solid #7E0D0C; font-size: 10pt; padding: 5pt; overflow: auto'><span class="org-comment" style="color: #fa8072"># -*- mode: snippet -*-</span><br/><span class="org-comment" style="color: #fa8072"># key: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># name: Getopt</span><br/><span class="org-comment" style="color: #fa8072"># --</span><br/><br/>## start code-generator <span class="org-string" style="color: #db7093">"^\\\\s *#\\\\s *"</span><br/><span class="org-comment" style="color: #fa8072"># generate-getopt -s perl $</span><span class="org-comment" style="color: #fa8072"><span class="org-rainbow-delimiters-depth-1" style="color: #707183">{</span></span><span class="org-warning" style="color: #ff8c00; font-weight: bold">1</span><span class="org-comment" style="color: #fa8072">:ggnu p:phone</span><span class="org-comment" style="color: #fa8072"><span class="org-rainbow-delimiters-depth-1" style="color: #707183">}</span></span><br/><span class="org-comment" style="color: #fa8072">## end code-generator</span><br/><span class="org-comment" style="color: #fa8072">## start generated code</span><br/><br/><span class="org-comment" style="color: #fa8072">## end generated code</span><br/><br/></pre>
 </div></li>
 </ul>
 </div>
 </div>
-<div class="outline-3" id="outline-container-orgeb32884">
-<h3 id="orgeb32884" style="color: #ff69b4"><span class="section-number-3">1.2</span> code-generator and generated code</h3>
+<div class="outline-3" id="outline-container-org7df579a">
+<h3 id="org7df579a" style="color: #ff69b4"><span class="section-number-3">1.2</span> code-generator and generated code</h3>
 <div class="outline-text-3" id="text-1-2">
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 The strange commented text above is for <a href="https://github.com/baohaojun/system-config/raw/master/.emacs_d/lisp/bhj-defines.el" style="color: #3a5fcd; text-decoration: underline">Emacs lisp command bhj-do-code-generation</a>.
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 It works by extracting the “code generator”, discard the extra comment character, run it, play its output into “generated code”, and indent it.
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 It's kind of like org-mode's inserting “Results of evaluation” back into the current buffer.
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org407e4f5">
-<h3 id="org407e4f5" style="color: #ff69b4"><span class="section-number-3">1.3</span> generate-getopt</h3>
+<div class="outline-3" id="outline-container-org8b6e64f">
+<h3 id="org8b6e64f" style="color: #ff69b4"><span class="section-number-3">1.3</span> generate-getopt</h3>
 <div class="outline-text-3" id="text-1-3">
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 <a href="https://github.com/baohaojun/system-config/raw/master/bin/generate-getopt" style="color: #3a5fcd; text-decoration: underline">This script</a> is written with <a href="https://github.com/baohaojun/system-config/raw/master/knuth-mode/generate-getopt.org" style="color: #3a5fcd; text-decoration: underline">literate programming in org-mode</a> (it's Chinese<img class="emoji" src="emojis/GRINNING_FACE_WITH_SMILING_EYES.png" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>).
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 The Bash style getopt is written a long time ago, and the code is quite messy.
 </p>
-<p>
+<p style="margin-top: 10px; margin-bottom: 10px">
 The Perl style getopt is added recently, where I tried to use <a href="https://github.com/baohaojun/system-config/raw/master/bin/.replace-%25%25" style="color: #3a5fcd; text-decoration: underline">a script inspired by ANTLR's string-template</a>, and the code is a lot better.
 </p>
 <nav>
@@ -290,7 +290,7 @@ The Perl style getopt is added recently, where I tried to use <a href="https://g
 </li>
 <li class="next_post" style="float: right; width: 50%; text-align: right;">
 <a href="../../08/27/sc-complete.html" style="color: #3a5fcd; text-decoration: underline"> <!-- next-url -->
-        sc-complete <!-- next-title -->
+        bash 下更方便的补齐选择方法 <!-- next-title -->
 <i class="icon-chevron-right">》</i>
 </a>
 </li>
@@ -323,7 +323,7 @@ The Perl style getopt is added recently, where I tried to use <a href="https://g
 <dl class="profile-datablock" style="margin: 0.5em 0 0.5em"><dt class="profile-img" style="font-weight: bold; display: inline"><a "="" href="/images/bhj.png" style="color: #3a5fcd; text-decoration: underline"><img alt="My Photo" height="58" src="/images/bhj-thumb.png" style="max-width: 100%; border-width: 0; float: left; padding: 4px; border: 1px solid #ddd; margin: 0 8px 3px 0" width="80"/></a></dt>
 <dd class="profile-data" style='margin: 0; font: bold 78%/1.6em "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; text-transform: uppercase; letter-spacing: 0.1em'><strong style="display: none">Name:</strong> <a href="https://www.github.com/baohaojun" rel="author" style="color: #3a5fcd; text-decoration: underline"> Bao Haojun </a></dd>
 <dd class="profile-data" style='margin: 0; font: bold 78%/1.6em "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; text-transform: uppercase; letter-spacing: 0.1em'><strong style="display: none">Location:</strong>  Beijing, China </dd></dl>
-<p class="profile-link" style='margin: 0; font: 78%/1.4em "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1.5em'><a href="/blog/2011/12/23/index.html" rel="author" style="color: #3a5fcd; text-decoration: underline">View my complete profile</a></p></div>
+<p class="profile-link" style='margin-top: 10px; margin-bottom: 10px; margin: 0; font: 78%/1.4em "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; text-transform: uppercase; letter-spacing: 0.1em; line-height: 1.5em'><a href="/blog/2011/12/23/index.html" rel="author" style="color: #3a5fcd; text-decoration: underline">View my complete profile</a></p></div>
 <h2 class="sidebar-title" style='margin: 1.5em 0 0.75em; font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; color: #ff1493'>Like my blog?</h2>
 <a href="https://pledgie.com/campaigns/33066" style="color: #3a5fcd; text-decoration: underline"><img alt="Click here to lend your support to: Well done, Mr. Bao Haojun. and make a donation at pledgie.com !" border="0" src="https://pledgie.com/campaigns/33066.png?skin_name=chrome" style="max-width: 100%; border-width: 0"/></a>
 <!-- End #profile -->
