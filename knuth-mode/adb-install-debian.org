@@ -146,7 +146,7 @@ The following script will be run on the phone. But there are many env vars that 
                   break
                   ;;
               ,*)
-                  die "internal error"
+                  die "internal error: $(. bt; echo; bt | indent-stdin)"
                   ;;
           esac
       done

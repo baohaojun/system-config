@@ -293,7 +293,7 @@ function adb() {
                     break
                     ;;
                 *)
-                    die "internal error"
+                    die "internal error: $(. bt; echo; bt | indent-stdin)"
                     ;;
             esac
         done
@@ -441,7 +441,7 @@ function gdbserver() {
                 break
                 ;;
             *)
-                die "internal error"
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
                 ;;
         esac
     done

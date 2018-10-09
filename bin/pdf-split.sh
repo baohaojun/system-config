@@ -26,7 +26,7 @@ while true; do
             break
             ;;
         *)
-            die "internal error"
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
             ;;
     esac
 done
