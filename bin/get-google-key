@@ -3,8 +3,12 @@ set -e
 
 (
     cd ~/tmp
-    nohup Wrench.sh --silent -x -s >/dev/null 2>&1 || true&
+    my-adb devices? -s -1
     . reget-env
+
+    Wrench.sh --silent -x -s >/dev/null 2>&1 || true
+    . reget-env
+
     if echo $SHELLOPTS | grep -q xtrace; then
         true
     else
