@@ -6,50 +6,62 @@ echo Entering directory \`$PWD\'
 # generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/tmp/build-wrench ddo-debug
 ## end code-generator
 ## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o b:dr:h \
+                      --long build-dir:,do-debug,release_dir:,help,no-do-debug \
+                      -n $(basename -- $0) -- "$@")
+declare build_dir=~/tmp/build-wrench
+declare do_debug=false
+declare release_dir=Wrench-debian
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-do_debug=false
-build_dir=~/tmp/build-wrench
-release_dir=Wrench-debian
-OPTIND=1
-while getopts "db:r:h" opt; do
-    case "$opt" in
+        -b|--build-dir)
+            build_dir=$2
+            shift 2
 
-        d) do_debug=true ;;
-        b) build_dir=$OPTARG ;;
-        r) release_dir=$OPTARG ;;
-        h)
-            echo
-            echo
-            printf %06s%s '-b ' 'build-dir'
-            printf %-24s 'BUILD_DIR'
-            echo ''
-            printf %06s%s '-d ' 'do-debug'
-            printf %-24s ''
-            echo ''
-            printf %06s%s '-r ' 'release_dir'
-            printf %-24s 'RELEASE_DIR'
-            echo ''
+            ;;
+        -d|--do-debug|--no-do-debug)
+            if test "$1" = --no-do-debug; then
+                do_debug=false
+            else
+                do_debug=true
+            fi
             shift
-            exit 0
+
+            ;;
+        -r|--release_dir)
+            release_dir=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--build-dir=BUILD_DIR'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--[no-]do-debug'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--release_dir=RELEASE_DIR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
             ;;
         *)
-            echo
-            echo
-            printf %06s%s '-b ' 'build-dir'
-            printf %-24s 'BUILD_DIR'
-            echo ''
-            printf %06s%s '-d ' 'do-debug'
-            printf %-24s ''
-            echo ''
-            printf %06s%s '-r ' 'release_dir'
-            printf %-24s 'RELEASE_DIR'
-            echo ''
-            exit 2
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
             ;;
     esac
 done
 
-shift $((OPTIND - 1))
 
 ## end generated code
 

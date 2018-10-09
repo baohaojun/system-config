@@ -131,7 +131,7 @@ function find-scene() {
                 break
                 ;;
             *)
-                die "internal error"
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
                 ;;
         esac
     done
@@ -224,7 +224,7 @@ is-scene() {
                 break
                 ;;
             *)
-                die "internal error"
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
                 ;;
         esac
     done
