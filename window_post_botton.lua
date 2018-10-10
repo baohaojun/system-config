@@ -264,6 +264,7 @@ map['com.tencent.mobileqq/com.tencent.mobileqq.search.activity.UniteSearchActivi
 map['com.tencent.mobileqq/cooperation.qzone.QzoneGPUPluginProxyActivity'] = 'manual-post'
 map['com.tencent.mobileqq/cooperation.qzone.QzonePublishMoodProxyActivity'] = 'manual-post'
 map['com.tencent.qqmusic/com.tencent.qqmusic.activity.AppStarterActivity'] = 'manual-post'
+map['com.termux/com.termux.app.TermuxActivity'] = 'manual-post'
 map['com.ting.mp3.android/com.baidu.music.ui.UIMain'] = 'manual-post'
 map['com.tplink.cloudrouter/com.tplink.cloudrouter.activity.applicationmanage.PluginWebViewActivity'] = 'manual-post'
 map['com.tplink.cloudrouter/com.tplink.cloudrouter.activity.entrysection.LoginCloudActivity'] = 'manual-post'
