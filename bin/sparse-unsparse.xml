@@ -94,6 +94,9 @@ fi
 if test -z "$xml"; then
     die "Can't find xml for $part"
 else
+    if [[ $xml =~ /emmc/ ]] && [[ $xml =~ /ufs/ ]]; then
+        xml=$(echo "$xml" | grep -v /ufs/)
+    fi
     echo "xml: $xml"
 fi
 

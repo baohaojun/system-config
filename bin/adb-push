@@ -21,7 +21,7 @@ GetOptions(
            "remount!" => \$should_remount,
           );
 
-my $mount_cmd = "my-adb remount";
+my $mount_cmd = "my-adb -r remount";
 map {s,/*$,,} @ARGV;
 map {s,^smb://,$ENV{HOME}/smb/,} @ARGV;
 if (@ARGV == 0) {
@@ -30,10 +30,10 @@ if (@ARGV == 0) {
 if (@ARGV == 1) {
   my $dest = $ARGV[0];
   $dest =~ s!(.*)/.*!$1!;
-  if ($dest =~ s!.*(/system/.*|/data/.*)!$1!) {
+  if ($dest =~ s!.*(/system/.*|/data/.*|/vendor/.*)!$1!) {
     push @ARGV, $1;
     debug "using $1 as dest dir";
-    if ($should_remount and $1 =~ m,^/system/,) {
+    if ($should_remount and $1 =~ m,^(/system/|/vendor/),) {
       system($mount_cmd);
       system("my-adb", "mkdir", "-p", "$ARGV[1]")
     }
@@ -151,7 +151,7 @@ for (@ARGV) {
 }
 
 $mount_cmd = "echo my-adb shell mount -o remount,ro /system; exec >/dev/null 2>&1; my-adb shell sync; my-adb shell mount -o remount,ro /system";
-if ($dest =~ m,^/data\b,) {
+if ($dest =~ m,^(/data\b|/sdcard\b),) {
 } elsif ($should_remount) {
   system($mount_cmd);
 }

@@ -37,10 +37,10 @@ if test "$#" = 0; then
         echo "adb remount 已运行，但事实上 /system 分区并没有被 remount 成 rw，接下来将尝试直接使用 adb shell mount 命令"
         if command my-adb -r shell sh -c 'mount -o rw,remount /system;
 mount -o remount,rw /system /data/debian/android/system >/dev/null 2>&1
-mount | grep -q "/system .*rw,"'; then
-            echo "已经将 /system mount 为 rw 模式，注意在 system-config 环境下也可以运行 adb romount 重新 mount 成 read-only:D"
+mount' | grep -P -q -e "on /(system)? .*rw,"; then
+            echo "已经将手机 mount 为 rw 模式"
         else
-            echo "好像还是没能把 /system mount 为 rw 模式，注意并不是所有手机都支持 remount 的，按安卓官方的设计，只有 userdebug 才允许 remount。。。"
+            echo "好像还是没能把手机 mount 为 rw 模式，注意并不是所有手机都支持 remount 的，按安卓官方的设计，只有 userdebug 才允许 remount"
             exit 1
         fi
 
