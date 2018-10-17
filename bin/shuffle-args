@@ -1,0 +1,15 @@
+#!/bin/bash
+
+declare -A args_map
+
+total_n=$#
+for x in $(seq 1 $#); do
+    args_map[$((x - 1))]=$1
+    shift
+done
+
+for x in $(seq $total_n -1 1); do
+    n=$(random $x)
+    echo ${args_map[$n]}
+    args_map[$n]=${args_map[$((x - 1))]}
+done
