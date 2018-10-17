@@ -12,4 +12,16 @@ if test ! -e "\$me"; then
         exit 1
     fi
 fi
+
+abs0=\$0
+if ! [[ \$abs0 =~ ^/ ]]; then
+    if [[ \$abs0 =~ / ]] && test -e \$PWD/\$abs0; then
+        abs0=\$PWD/\$abs0
+    elif test -e "\$(which \$0)"; then
+        abs0=\$(which \$0)
+    else
+        die "Can't find abs path for \$0"
+    fi
+fi
+
 b0=\$(basename \$0)

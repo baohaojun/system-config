@@ -1,0 +1,101 @@
+#!/bin/bash
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$0
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $0)"; then
+        abs0=$(which $0)
+    else
+        die "Can't find abs path for $0"
+    fi
+fi
+
+b0=$(basename $0)
+
+## start code-generator "^\\s *#\\s *"
+    # generate-getopt o:ota-file '?"想重新生成的 ota base 文件对应的 ota 包"' \
+        # f:flashing-dir '?"对应的刷机包目录"' \
+        # @:ref-base-file '?"供参考用的 ota base 包（方便计算一些参数，比如 system.img 的大小等）"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o f:o:h \
+               --long flashing-dir:,ota-file:,ref-base-file:,help \
+               -n $(basename -- $0) -- "$@")
+declare flashing_dir=
+declare ota_file=
+declare ref_base_file=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--flashing-dir)
+            flashing_dir=$2
+            shift 2
+
+            ;;
+        -o|--ota-file)
+            ota_file=$2
+            shift 2
+
+            ;;
+        --ref-base-file)
+            ref_base_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--flashing-dir=FLASHING_DIR'
+            echo
+            printf "%30s" ""
+            echo "对应的刷机包目录"
+            printf %06s '-o, '
+            printf %-24s '--ota-file=OTA_FILE'
+            echo "想重新生成的 ota base 文件对应的 ota 包"
+            printf "%06s" " "
+            printf %-24s '--ref-base-file=REF_BASE_FILE'
+            echo
+            printf "%30s" ""
+            echo "供参考用的 ota base 包（方便计算一些参数，比如 system.img 的大小等）"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+ota_file=$(readlink -f "${ota_file}")
+flashing_dir=$(readlink -f "${flashing_dir}")
+
+mkdir ~/tmp/$b0.$$
+cd ~/tmp/$b0.$$
+
+(
+    cd "${flashing_dir}"
+    sparse-unsparse.xml -p system -o $OLDPWD/system.ext4
+    sparse-unsparse.xml -p vendor -o $OLDPWD/vendor.ext4
+)
