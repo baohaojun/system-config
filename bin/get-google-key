@@ -1,55 +1,52 @@
 #!/bin/bash
 set -e
 
-(
-    cd ~/tmp
-    my-adb devices? -s -1
-    . reget-env
+. onmyoji -o true
 
-    Wrench.sh --silent -x -s >/dev/null 2>&1 || true
-    . reget-env
+function get-google-key() {
+    (
+        cd ~/tmp
+        my-adb devices? -s -1 >/dev/null 2>&1
+        . reget-env
 
-    if echo $SHELLOPTS | grep -q xtrace; then
-        true
+        Wrench.sh --silent -x -s >/dev/null 2>&1 || true
+        . reget-env
+
+        if echo $SHELLOPTS | grep -q xtrace; then
+            true
+        else
+            exec > ~/tmp/get-google-key.log
+        fi
+
+        putclip-android "hello"
+        while test "$(adb-top-activity)" != com.google.android.apps.authenticator2/com.google.android.apps.authenticator.AuthenticatorActivity; do
+            my-adb am start -n com.google.android.apps.authenticator2/com.google.android.apps.authenticator.AuthenticatorActivity
+            sleep .3
+        done
+
+        (
+            # find-something vpn-need-refresh
+            # find-something vpn-refresh
+
+            press_x=$(remembered-x vpn-need-refresh)
+            press_y=$(remembered-y vpn-need-refresh)
+
+            Wrench-tap-xys --py 400 vpn-refresh
+            Wrench-tap-xys --px 15 --py 15 vpn-refresh
+            sleep .1
+            Wrench "adb_quick_input{'input touchscreen swipe $press_x $press_y $press_x $press_y 800'}"
+            sleep 1
+        ) 1>&2
+    )
+
+    key=$(getclip-android) || true
+    if test "$key" && test "$key" != hello -a "$key" != "_ _ _ _ _ _"; then
+        echo "$key"
     else
-        exec > ~/tmp/get-google-key.log 2>&1
+        Wrench "adb_tap_1080x2160(979, 396)"
+        get-google-key
     fi
 
-    putclip-android "hello"
-    my-adb am start -n com.google.android.apps.authenticator2/com.google.android.apps.authenticator.AuthenticatorActivity
-    sleep 1
+}
 
-    (
-        if test -z "${ANDROID_SERIAL}"; then
-            export INTERACTIVE_BASH_PID=$$
-            my-adb -s
-            . reget-env
-        fi
-        onmyoji -o eval "$(cat <<'EOF47aa3fa94e60'
-# {%sh-mode%}
-if find-something vpn-need-refresh; then
-    quickly jump-between-scenes -t 10 \
-            "find-something vpn-need-refresh" \
-            "! find-something vpn-need-refresh" \
-            Wrench-tap-xys --px 15 --py 15 vpn-refresh
-
-fi
-
-press_x=$(remembered-x vpn-need-refresh)
-press_y=$(remembered-y vpn-need-refresh)
-
-Wrench "adb_quick_input{'input touchscreen swipe $press_x $press_y $press_x $press_y 2500'}"
-sleep 2
-# {%/sh-mode%}
-EOF47aa3fa94e60
-)"
-    ) 1>&2
-)
-
-key=$(getclip-android) || true
-if test "$key" && test "$key" != hello -a "$key" != "_ _ _ _ _ _"; then
-    echo "$key"
-else
-    Wrench "adb_tap_1080x2160(979, 396)"
-    get-google-key
-fi
+get-google-key
