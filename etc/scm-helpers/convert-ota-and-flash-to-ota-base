@@ -26,15 +26,17 @@ b0=$(basename $0)
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt o:ota-file '?"想重新生成的 ota base 文件对应的 ota 包"' \
         # f:flashing-dir '?"对应的刷机包目录"' \
-        # @:ref-base-file '?"供参考用的 ota base 包（方便计算一些参数，比如 system.img 的大小等）"'
+        # r:ref-base-file '?"供参考用的 ota base 包（方便计算一些参数，比如 system.img 的大小等）"' \
+        # guse-get-vmlinux '?"允许用刷机包目录计算ota相关文件（因为指定刷机包目录更方便）"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o f:o:h \
-               --long flashing-dir:,ota-file:,ref-base-file:,help \
+TEMP=$( getopt -o f:o:r:gh \
+               --long flashing-dir:,ota-file:,ref-base-file:,use-get-vmlinux,help,no-use-get-vmlinux \
                -n $(basename -- $0) -- "$@")
 declare flashing_dir=
 declare ota_file=
 declare ref_base_file=
+declare use_get_vmlinux=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -49,9 +51,18 @@ while true; do
             shift 2
 
             ;;
-        --ref-base-file)
+        -r|--ref-base-file)
             ref_base_file=$2
             shift 2
+
+            ;;
+        -g|--use-get-vmlinux|--no-use-get-vmlinux)
+            if test "$1" = --no-use-get-vmlinux; then
+                use_get_vmlinux=false
+            else
+                use_get_vmlinux=true
+            fi
+            shift
 
             ;;
         -h|--help)
@@ -67,11 +78,14 @@ while true; do
             printf %06s '-o, '
             printf %-24s '--ota-file=OTA_FILE'
             echo "想重新生成的 ota base 文件对应的 ota 包"
-            printf "%06s" " "
+            printf %06s '-r, '
             printf %-24s '--ref-base-file=REF_BASE_FILE'
             echo
             printf "%30s" ""
             echo "供参考用的 ota base 包（方便计算一些参数，比如 system.img 的大小等）"
+            printf %06s '-g, '
+            printf %-24s '--[no-]use-get-vmlinux'
+            echo "允许用刷机包目录计算ota相关文件（因为指定刷机包目录更方便）"
             exit
             shift
             ;;
@@ -88,14 +102,116 @@ done
 
 ## end generated code
 
+if test -z "$ota_file" -a "$use_get_vmlinux" = true; then
+    ota_file=$(get-vmlinux -b $(basename ${flashing_dir}) --find-what ota)
+fi
+
+if test -d "${ref_base_file}" -o ! -e "${ref_base_file}"; then
+    ref_base_file=$(get-vmlinux -b $(basename ${ref_base_file}) --find-what base)
+fi
+
 ota_file=$(readlink -f "${ota_file}")
 flashing_dir=$(readlink -f "${flashing_dir}")
+ref_base_file=$(readlink -f "${ref_base_file}")
 
-mkdir ~/tmp/$b0.$$
+mkdir -p ~/tmp/$b0.$$/ref
+
 cd ~/tmp/$b0.$$
-
 (
-    cd "${flashing_dir}"
-    sparse-unsparse.xml -p system -o $OLDPWD/system.ext4
-    sparse-unsparse.xml -p vendor -o $OLDPWD/vendor.ext4
+
+    for x in system vendor; do
+        (
+            cd "${flashing_dir}"
+            sparse-unsparse.xml -p $x -o $OLDPWD/$x.ext4
+        )
+        unzip -d ref $ref_base_file IMAGES/$x.img
+        simg2img ref/IMAGES/$x.img ref/$x.ext4
+        size=$(stat -c %s ref/$x.ext4)
+        truncate -s "$size" $x.ext4
+        img2simg $x.ext4 $x.img
+    done
 )
+
+sudo-x ()
+{
+    ( unset PROMPT_COMMAND;
+    exec sudo -E env PATH="$PATH" "$@" )
+}
+
+mkdir ota-base -p
+(
+    cd ota-base
+    for x in BOOT DATA IMAGES META OTA PREBUILT_IMAGES RADIO RECOVERY SYSTEM VENDOR; do
+        mkdir -p $x
+    done
+)
+
+for x in system vendor; do
+    mkdir -p $x.mount
+    mv $x.img ota-base/IMAGES
+    sudo mount -o loop,ro $x.ext4 $x.mount
+    sudo find $x.mount/ -type f \( -size 0 -prune -o -print \) | sudo-x xargs -n 1 fs-blocklist | sort | perl -npe 's,^(\w+)\.mount,/$1,' | tee ota-base/IMAGES/$x.map
+    mkdir -p ota-base/${x^^}
+    (
+        cd $x.mount
+        sudo cp . ../ota-base/${x^^} -av
+        cd ../ota-base/${x^^}
+        sudo rm lost+found -rf
+        sudo chown $USER\. . -R
+        find . -type f | xargs chmod 644 || true
+        find . -type d | xargs chomd 700 || true
+    )
+done
+
+image_files=$(
+    unzip -l $ref_base_file | grep "IMAGES/\S" -P | pn 2 /
+           )
+for i in $image_files; do
+    if test -e "${flashing_dir}"/$i; then
+        cp "${flashing_dir}"/$i ota-base/IMAGES
+    else
+        echo warning: image $i not found | tee -a w.log
+    fi
+done
+
+radio_files=$(
+    unzip -l $ref_base_file | grep "RADIO/\S" -P | pn 2 /
+           )
+
+unzip -o -d ref $ref_base_file RADIO/radio-files-partition.map
+. ref/RADIO/radio-files-partition.map
+
+for i in $radio_files; do
+    for y in "${!radio_files_partition_map[@]}" $i; do
+        if test ${radio_files_partition_map[$y]} = ${i%.img}; then
+            break
+        fi
+    done
+    if test -e "${flashing_dir}"/$y; then
+        rm -f ota-base/RADIO/$y
+        cp "${flashing_dir}"/$y ota-base/RADIO/$i -v
+    else
+        echo warning: image $i not found | tee -a w.log
+        unzip -o -d ota-base ${ref_base_file} RADIO/$i
+    fi
+done
+
+################ META/ ################
+unzip -o -d ota-base $ref_base_file 'META/*'
+unzip -o -d ota-base/META $ota_file file_contexts.bin
+
+unzip -o -d ota-base $ref_base_file 'DATA/*' 'OTA/*'
+unzip -o -d ota-base $ref_base_file 'IMAGES/userdata.img' IMAGES/cache.img
+
+for x in boot recovery; do
+    unzip -o -d ota-base $ref_base_file "${x^^}/*"
+    for f in kernel RAMDISK; do
+        rm ota-base/"${x^^}"/$f -rf
+    done
+
+    abootimg -x ota-base/IMAGES/$x.img
+    rm -rf ramdisk
+    abootimg-unpack-initrd initrd.img
+    mv zImage ota-base/"${x^^}"/kernel
+    mv ramdisk ota-base/"${x^^}"/RAMDISK
+done

@@ -1,15 +1,16 @@
 #!/bin/bash
 
-if test "$BASH_SOURCE" != $0; then
-    # we are being sourced
-    true
-elif test "$(basename $0)" != lang; then
-    set -- $(basename $0) "$@"
+set-lang() {
+    export LANG=$1.UTF-8
+    export LC_ALL=$1.UTF-8
+    export LANGUAGE=$1:en
+}
+
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
+    set-lang $(basename $0)
+else
+    set-lang $(basename "${BASH_SOURCE}")
+    return 0
 fi
 
-
-export LANG=$1.UTF-8
-export LC_ALL=$1.UTF-8
-export LANGUAGE=$1:en
-shift
 exec "$@"
