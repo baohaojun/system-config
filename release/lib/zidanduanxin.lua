@@ -16,6 +16,8 @@ M.open_zidanduanxin = function()
          sleep(.2)
          if find_scene("zidanduanxin-duihua") then
             return
+         else
+            adb_event("key back")
          end
       else
          if not find_scene("zidanduanxin-search-button") and
