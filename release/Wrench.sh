@@ -181,6 +181,7 @@ EOF
 ; {%sawfish-mode%}
 (progn
   (setenv "WRENCH_INSTANCE" "'$WRENCH_INSTANCE'")
+  (setenv "ANDROID_SERIAL" "'$ANDROID_SERIAL'")
   (setenv "PATH" "'"$PATH"'"))
 ; {%/sawfish-mode%}
 '
