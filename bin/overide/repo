@@ -163,9 +163,9 @@ export -f clean-a-repo
 
 if test "$1" = init; then
     rm -rf $deltmpdir.*& # just in case some is left from last time.
+    set -- "$@" --repo-branch=master --no-repo-verify
     if is-jenkins; then
         scm repo-init-check-df
-        set -- "$@" --repo-branch=master --no-repo-verify
         if test -e .repo/project-objects/repo-too-large; then
             (
                 clean-up

@@ -1,0 +1,1 @@
+This program generate a system.map for system.ext4 for use with ota.
