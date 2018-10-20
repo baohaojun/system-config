@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/my-rfa.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/my-rfa.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
 #!/bin/bash
@@ -98,10 +96,18 @@ done
 export my_rfa_verbose
 
 if test ! -e "$(lookup-file -e .repo/manifest.xml)"; then
+    if test "$PWD" = ${HOME}; then
+        cd ~/system-config/
+    fi
     cd $(dirname $(lookup-file -e .git))
     export cmds=("$@")
     export ANDROID_TOP=$(readlink -f ..)
-    echo $PWD | parallel-xargs
+
+    (
+        . .gitx
+        echo $PWD
+        git submodule foreach 'pwd'
+    ) | parallel-xargs
     exit
 fi
 
@@ -181,5 +187,4 @@ exit
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here

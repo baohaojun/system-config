@@ -23,6 +23,75 @@ clean-up() {
     )
 }
 
+repo-clean-after-init() {
+    # 这部分的逻辑是这样的，因为我们服务器有限，必须复用工作空间。
+    # 在复用工作空间的过程中，会发生这样的一种现象：
+    #
+    # 1. A 项目较新，它有一个 X/Y/Z 目录，它是一个 git 仓库，同时 X/Y 目录也是一个 git 仓库
+    # 2. B 项目较老，它只有一个 X/Y 目录是 git 仓库，没有 Z 子目录。
+    #
+    # 这种情况下，如果我们先编译过 A、再编译 B 的时候，该怎么确保 Z 子目录被正确删除呢？
+    #
+    # 注意，只在每个 git 仓库下做 git reset --hard; git clean -xfd 是
+    # 不够的，如果一个子目录是一个 git 仓库的话，在上层 git 仓库目录
+    #  clean 也不会删掉这个子目录。（而且从某种角度来讲，我们其实不希
+    # 望每次都删除子目录 git 仓库，因为还要考虑到上一次编 A，下一次还
+    # 编 A 的情况，这时每次都删掉 Z 子目录的话，就会导致不得不重新下载
+    # 这个仓库）
+    #
+    # 我们也考虑过使用 repo 命令自带的 project.list 文件，里面给出了所有
+    # git 仓库的列表，我们把这个列表里不属于本项目的仓库全部删掉就可以
+    # 了。
+    #
+    # 但是！有一种情况下，这个 project.list 文件是错误的，那就是先编了
+    #  B（project.list 是 B 项目的），再编 A，但是 A 在代码同步到一半
+    # 的时候，就被 abort 掉了。然后 X/Y/Z 目录已经存在，但是
+    #  project.list 还没有更新成 A 的，还是 B 的，下次再编 B 的时候，
+    # 我们就不知道 X/Y/Z 的存在，让它参与了编译，最后导致编译出错。
+    #
+    # 解决的方案是每次代码在 repo init 结束的时候，就生成一个
+    # project.list-from-init，但在生成之前，要把上一次的
+    # project.list-from-init -- 如果有的话 -- 重命名为
+    # project.list-last-init。
+    #
+    # 后续在清理的时候，要把 project.list-last-init 也当成一个仓库列表
+    # 跟 project.list 一起使用（事实上应该仅使用
+    # project.list-last-init 一个就够，但这里选择一起使用）。如果没有
+    # project.list-last-init 文件的话，直接删掉所有 =.repo/..= 下的非
+    # 隐藏子目录（为了安全考虑，这样的代码树可能是老的初始化方法遗留下
+    # 来的，说不定已经存在 X/Y/Z 这样的问题仓库了，这个仓库可能会导致
+    # 编译一直失败，如果一直分配到这个工作空间下编译 B 项目的话）。
+
+    start-record-time "do-repo-init-clean"
+
+    if test ! -e .repo/project.list-from-init; then
+        mkdir -p ${deltmpdir}.$$
+        mv * ${deltmpdir}.$$
+        rm -rf ${deltmpdir}.*& # just in case some is left from last time.
+        touch .repo/project.list-from-init # make sure the next mv command is ok:D
+    fi
+
+    mv .repo/project.list-from-init .repo/project.list-last-init
+    repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml |
+        while read path name; do
+            echo $path
+        done > .repo/project.list-from-init
+
+    # in repo-external, we will handle .repo/project.list-last-init.
+    repo-external --do-delete &&
+        rm  .repo/project.list -f &&
+        scm -x check-manifests-project-reuse --do-clean || (
+            mail-cms --add-delay 300 "Can't force manifest reuse projects, will force clean"&
+            clean-up * .repo/projects
+        )
+    (
+        my-rfa 'clean-a-repo' || true
+        cd .repo
+        rm repo-paths repo_info.pl -f
+    )
+    end-record-time "do-repo-init-clean"
+}
+
 function delete-1-project() {
     project=$1
     path=$(
@@ -386,20 +455,7 @@ else
             declare -x -p > .repo/jenkins.info
         fi
         if test "$1" = init -a ! -e .repo/using-fast-sync && is-jenkins; then
-            start-record-time "do-repo-init-clean"
-
-            repo-external --do-delete &&
-                rm  .repo/project.list -f &&
-                scm -x check-manifests-project-reuse --do-clean || (
-                    mail-cms --add-delay 300 "Can't force manifest reuse projects, will force clean"&
-                    clean-up * .repo/projects
-                )
-            (
-                my-rfa 'clean-a-repo' || true
-                cd .repo
-                rm repo-paths repo_info.pl -f
-            )
-            end-record-time "do-repo-init-clean"
+            repo-clean-after-init
         fi
 
         exit 0

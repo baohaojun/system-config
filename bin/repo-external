@@ -77,9 +77,26 @@ if is-jenkins; then
     echo "my project.list: $(echo; indent-stdin < .repo/my-project.list)"
 fi
 
+if test -e .repo/project.list -o -e .repo/project.list-last-init; then
+    extra_repos=$(
+        arg1-arg2 "$(
+# {%sh-mode%}
 if test -e .repo/project.list; then
-    extra_repos=$(arg1-arg2 "$(cat .repo/project.list)" "$(cat .repo/my-project.list)"|sort|
-                      while read d; do if test -d "$d"; then echo $d; fi; done)
+    cat .repo/project.list
+fi
+
+if test -e .repo/project.list-last-init; then
+    cat .repo/project.list-last-init
+fi
+# {%/sh-mode%}
+            )" "$(cat .repo/my-project.list)" | sort |
+            while read d; do
+                if test -d "$d"; then
+                    echo $d;
+                fi;
+            done
+               )
+
     if is-jenkins; then
         echo "current project.list: $(echo; indent-stdin < .repo/my-project.list)"
     fi
