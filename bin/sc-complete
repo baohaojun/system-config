@@ -1,5 +1,15 @@
 #!/bin/bash
 # [[file:~/src/github/baohaojun.github.com/blog/2018/08/27/sc-complete.org::the-ultimate-script][the-ultimate-script]]
+emacs-complete() {
+    txt=~/.cache/system-config/ec.txt
+    tmux capture-pane -p > $txt
+    echo "$READLINE_LINE" >> $txt
+    ew $txt:$(wc -l $txt | pn 1):$((READLINE_POINT + 1)) >/dev/null 2>&1
+    find-or-exec konsole >/dev/null 2>&1
+
+    READLINE_LINE=$(cat $txt|tail -n 1)
+    READLINE_POINT=${#READLINE_LINE}
+}
 function sc-complete() {
     declare -x COMP_LINE=$READLINE_LINE
     declare -x COMP_POINT=$READLINE_POINT
@@ -137,6 +147,7 @@ function sc-complete() {
 }
 
 bind -x '"\eOP": sc-complete'
+bind -x '"\eOQ": emacs-complete'
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
