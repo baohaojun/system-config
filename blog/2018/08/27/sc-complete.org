@@ -228,12 +228,28 @@
   }
 
   bind -x '"\eOP": sc-complete'
+  bind -x '"\eOQ": emacs-complete'
 #+END_SRC
 
 代码是用 Emacs org-mode 的 Literate Programming 写的（跟这篇博客在同一个．ｏｒｇ文件里）。可执行脚本的位置在 https://github.com/baohaojun/system-config/raw/master/bin/sc-complete。
+
+#+name: emacs-complete
+#+BEGIN_SRC sh
+  emacs-complete() {
+      txt=~/.cache/system-config/ec.txt
+      tmux capture-pane -p > $txt
+      echo "$READLINE_LINE" >> $txt
+      ew $txt:$(wc -l $txt | pn 1):$((READLINE_POINT + 1)) >/dev/null 2>&1
+      find-or-exec konsole >/dev/null 2>&1
+
+      READLINE_LINE=$(cat $txt|tail -n 1)
+      READLINE_POINT=${#READLINE_LINE}
+  }
+#+END_SRC
 #+name: the-ultimate-script
 #+BEGIN_SRC sh :tangle ~/system-config/bin/sc-complete :comments link :shebang "#!/bin/bash" :noweb yes
 
+<<emacs-complete>>
 <<old-code>>
 <<read-only>>
 #+END_SRC
