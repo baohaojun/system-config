@@ -6,6 +6,30 @@ if jq --version | grep '^jq-1\.[34]' -P -q; then
     }
 fi
 
+combine-args-to-jq() {
+    perl -e "$(
+cat <<'EOFc1b1403ff656'
+# {%perl-mode%}
+@ARGV = map {$_ = "..|.$_?"} @ARGV;
+print join('|', @ARGV);
+# {%/perl-mode%}
+EOFc1b1403ff656
+)" "$@"
+
+}
+
+function gerrit-json-extract() {
+    echo "${gerrit_query_result}" | jq -r "$(combine-args-to-jq "$@")" | grep -v '^(null|\[\])$' -P || true
+}
+
+function gerrit-json-print() {
+    echo "${gerrit_query_result}" | jq .
+}
+
+if test "$import_gerrit_json_funcs_only" = true; then
+    return 0
+fi
+
 declare -A gerrit_ip_host_map
 if test -e ~/src/github/smartcm/etc/gerrit-ip-host.map; then
     . ~/src/github/smartcm/etc/gerrit-ip-host.map
@@ -50,22 +74,3 @@ if ! gerrit_query_result=$(
 fi
 
 
-combine-args-to-jq() {
-    perl -e "$(
-cat <<'EOFc1b1403ff656'
-# {%perl-mode%}
-@ARGV = map {$_ = "..|.$_?"} @ARGV;
-print join('|', @ARGV);
-# {%/perl-mode%}
-EOFc1b1403ff656
-)" "$@"
-
-}
-
-function gerrit-json-extract() {
-    echo "${gerrit_query_result}" | jq -r "$(combine-args-to-jq "$@")" | grep -v '^(null|\[\])$' -P || true
-}
-
-function gerrit-json-print() {
-    echo "${gerrit_query_result}" | jq .
-}

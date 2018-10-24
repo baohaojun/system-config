@@ -1,0 +1,145 @@
+#!/bin/bash
+set -e
+
+function repo-info-from-manifest() {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt m:manifest-xml u:manifest-project
+    ## end code-generator
+    ## start generated code
+    TEMP=$( getopt -o u:m:h \
+                   --long manifest-project:,manifest-xml:,help \
+                   -n $(basename -- $0) -- "$@")
+    declare manifest_project=
+    declare manifest_xml=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -u|--manifest-project)
+                manifest_project=$2
+                shift 2
+
+                ;;
+            -m|--manifest-xml)
+                manifest_xml=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %06s '-u, '
+                printf %-24s '--manifest-project=MANIFEST_PROJECT'
+                echo
+                printf %06s '-m, '
+                printf %-24s '--manifest-xml=MANIFEST_XML'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+
+    project_attrs=(
+        name path remote revision upstream
+    )
+
+    clear-all() {
+        for x in ${project_attrs[@]}; do
+            unset $x
+        done
+    }
+
+    (
+        echo declare -A repo_xml_remote_fetch_map repo_xml_project_info_map
+
+        repo-xml-sel sel -t -m /manifest/remote -o "repo_xml_remote_fetch_map[" -v @name -o "]='" -v @fetch -o \' -n "${manifest_xml}"
+        repo-xml-sel sel -t -m /manifest/default -o repo_xml_default_remote= -v @remote -n -o repo_xml_default_revision= -v @revision -n "${manifest_xml}"
+
+        echo "EOH"
+
+        repo-xml-sel sel -t -m "/manifest/project" \
+                     $(
+            for x in ${project_attrs[@]}; do
+                printf -- '-o %s= -v @%s -n ' $x $x
+            done
+                     ) \
+                         -o "EOR" -n "${manifest_xml}"
+    ) | (
+        clear-all
+        while read -r line; do
+            if test "$line" != EOH; then
+                eval "${line}"
+            else
+                break
+            fi
+        done
+
+        for r in "${!repo_xml_remote_fetch_map[@]}"; do
+            if !  [[ ${repo_xml_remote_fetch_map[$r]} =~ ^(\.\./)?\.\./?$ ]]; then
+                die "We can't handle remote fetch other than .. or ../.."
+            fi
+        done
+
+        while read -r line; do
+            if test "${line}" != EOR; then
+                eval "${line}"
+            else
+                if test -z "$path"; then
+                    path=$name
+                elif test -z "$name"; then
+                    name=$path
+                fi
+
+                if test -z "${revision}"; then
+                    revision=${repo_xml_default_revision}
+                elif [[ $revision =~ [0-9a-f]{40} ]]; then
+                    revision=${upstream:-${repo_xml_default_revision}}
+                fi
+
+                if test -z "${remote}"; then
+                    remote=${repo_xml_default_remote}
+                fi
+                # echo remote is $remote for $path: ${repo_xml_remote_fetch_map[$remote]} 1>&2
+
+                if test -z "${repo_xml_remote_fetch_map[$remote]}"; then
+                    die "Can't find fetch setting for remote $remote"
+                fi
+
+                if test "${repo_xml_remote_fetch_map[$remote]%/}" = ..; then
+                    repo_xml_project_info_map[@project-$path]=qualcomm/$name
+                else
+                    repo_xml_project_info_map[@project-$path]=$name
+                fi
+
+                repo_xml_project_info_map[@branch-$path]=$revision
+                clear-all
+            fi
+        done
+        declare -p repo_xml_project_info_map
+    )
+
+}
+
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which "$0" 2>/dev/null)" )"; then
+    "$(basename $0)" "$@"
+else
+    # we are being sourced.
+    repo-info-from-manifest "$@" > /tmp/repo-info.$$
+    . /tmp/repo-info.$$
+    rm -f /tmp/repo-info.$$
+    return 0
+fi
