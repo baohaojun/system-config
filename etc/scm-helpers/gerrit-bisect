@@ -78,7 +78,6 @@ done
 
 ## end generated code
 
-. ~/system-config/etc/scm-helpers/repo-info-from-manifest -m "${manifest_xml}"
 import_gerrit_json_funcs_only=true . ~/system-config/bin/.gerrit-query-helper
 
 tmp_csv=/tmp/gerrit-bisect-$$.csv
@@ -101,11 +100,8 @@ csv-to-bash < ${patches_csv} |
             ctime=$Commit_Date
             path=${Project_Path}
 
-            project=${repo_xml_project_info_map[@project-$path]}
-            branch=${repo_xml_project_info_map[@branch-$path]}
-
             gerrit_query_result=$(
-                gerrit -h ${gerrit_host} query --format json ${git_commit_id} branch:${branch}
+                gerrit -h ${gerrit_host} query --format json commit:${git_commit_id}
                                )
 
             submit_date=$(

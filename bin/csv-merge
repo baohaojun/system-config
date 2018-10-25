@@ -16,20 +16,26 @@
 
 use Text::CSV qw(csv);
 use strict;
+use warnings;
+use Carp;
 use String::ShellQuote;
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl i:input-csv o:output-csv
+# generate-getopt -s perl 1:input1-csv 2:input2-csv c:common-column o:output-csv
 ## end code-generator
 ## start generated code
 use Getopt::Long;
 
-my $input_csv = "";
+my $common_column = "";
+my $input1_csv = "";
+my $input2_csv = "";
 my $output_csv = "";
 
 GetOptions (
-            'input-csv|i=s' => \$input_csv,
+            'common-column|c=s' => \$common_column,
+            'input1-csv|1=s' => \$input1_csv,
+            'input2-csv|2=s' => \$input2_csv,
             'output-csv|o=s' => \$output_csv,
             'help|h!' => \&handler_help,
            );
@@ -39,9 +45,25 @@ GetOptions (
 sub handler_help {
   print ;
   print "\n\n选项和参数：\n";
-  printf "%6s", '-i, ';
-  printf "%-24s", '--input-csv=INPUT-CSV';
-  if (length('--input-csv=INPUT-CSV') > 24 and length() > 0) {
+  printf "%6s", '-c, ';
+  printf "%-24s", '--common-column=COMMON-COLUMN';
+  if (length('--common-column=COMMON-COLUMN') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-1, ';
+  printf "%-24s", '--input1-csv=INPUT1-CSV';
+  if (length('--input1-csv=INPUT1-CSV') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-2, ';
+  printf "%-24s", '--input2-csv=INPUT2-CSV';
+  if (length('--input2-csv=INPUT2-CSV') > 24 and length() > 0) {
     print "\n";
     printf "%30s", "";
   }
@@ -62,9 +84,34 @@ sub handler_help {
 ## end generated code
 
 
-my @hdr;
-my $csv = csv (in => csv(in => "$input_csv", keep_headers => @hdr),
-               out => ($output_csv or "$input_csv"),
-               headers => \@hdr
-              )
-    or die "Cannot use CSV: ".Text::CSV->error_diag ();
+my (@hdr1, @hdr2);
+my $aoh1 = csv(in => "$input1_csv", keep_headers => \@hdr1);
+my $aoh2 = csv(in => "$input2_csv", keep_headers => \@hdr2);
+
+my %column_array_index_map1;
+my %column_array_index_map2;
+
+for (@$aoh1) {
+  my $common_column_val = $_->{$common_column};
+  $column_array_index_map1{$common_column_val} = $_;
+}
+
+for (@$aoh2) {
+  my $common_column_val = $_->{$common_column};
+  my $h1 = $column_array_index_map1{$common_column_val};
+  my $h2 = $_;
+  for (@hdr2) {
+    $h1->{$_} = $h2->{$_};
+  }
+}
+
+@hdr2 = grep {$_ ne $common_column} @hdr2;
+
+push @hdr1, @hdr2;
+
+my $csv = csv (
+    in => $aoh1,
+    out => ($output_csv or "$input1_csv"),
+    headers => \@hdr1
+    )
+  or die "Cannot use CSV: ".Text::CSV->error_diag ();
