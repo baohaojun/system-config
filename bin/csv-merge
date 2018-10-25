@@ -111,7 +111,7 @@ push @hdr1, @hdr2;
 
 my $csv = csv (
     in => $aoh1,
-    out => ($output_csv or "$input1_csv"),
+    out => ($output_csv or "/dev/stdout"),
     headers => \@hdr1
     )
   or die "Cannot use CSV: ".Text::CSV->error_diag ();

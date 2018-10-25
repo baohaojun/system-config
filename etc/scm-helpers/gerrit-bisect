@@ -3,16 +3,14 @@ set -e
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt p:patches-csv '?"patches.csv 文件，可以通过我的 repo-cherry-find-all 命令生成"' \
-    # m:manifest-xml '?"仓目对应的 repo manifest.xml，可能需要从中获取仓库、分支对应关系等信息"' \
     # H:gerrit-host '?"Gerrit 服务器主机名，应允许通过 ssh HOST gerrit query 命令查询 patch 信息"' \
     # o:output-csv=/dev/stdout '?"指定输出到某个 csv 文件，默认打印到终端上"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o H:m:o:p:h \
-               --long gerrit-host:,manifest-xml:,output-csv:,patches-csv:,help \
+TEMP=$( getopt -o H:o:p:h \
+               --long gerrit-host:,output-csv:,patches-csv:,help \
                -n $(basename -- $0) -- "$@")
 declare gerrit_host=
-declare manifest_xml=
 declare output_csv=/dev/stdout
 declare patches_csv=
 eval set -- "$TEMP"
@@ -21,11 +19,6 @@ while true; do
 
         -H|--gerrit-host)
             gerrit_host=$2
-            shift 2
-
-            ;;
-        -m|--manifest-xml)
-            manifest_xml=$2
             shift 2
 
             ;;
@@ -49,11 +42,6 @@ while true; do
             echo
             printf "%30s" ""
             echo "Gerrit 服务器主机名，应允许通过 ssh HOST gerrit query 命令查询 patch 信息"
-            printf %06s '-m, '
-            printf %-24s '--manifest-xml=MANIFEST_XML'
-            echo
-            printf "%30s" ""
-            echo "仓目对应的 repo manifest.xml，可能需要从中获取仓库、分支对应关系等信息"
             printf %06s '-o, '
             printf %-24s '--output-csv=OUTPUT_CSV'
             echo "指定输出到某个 csv 文件，默认打印到终端上"
@@ -100,8 +88,9 @@ csv-to-bash < ${patches_csv} |
             ctime=$Commit_Date
             path=${Project_Path}
 
+            echo querying ${git_commit_id} 1>&2
             gerrit_query_result=$(
-                gerrit -h ${gerrit_host} query --format json commit:${git_commit_id}
+                gerrit -h ${gerrit_host} query --all-approvals --format json commit:${git_commit_id} </dev/null
                                )
 
             submit_date=$(
@@ -109,7 +98,7 @@ csv-to-bash < ${patches_csv} |
                        )
 
             url=$(
-                echo "${gerrit_query_result}" | jq -r '.url?'|grep -v '^null$'
+                echo "${gerrit_query_result}" | jq -r '.url?'|grep -v '^null$' || echo unknown
                )
 
             if [[ $submit_date =~ ^[0-9]{10}$ ]]; then
@@ -122,4 +111,6 @@ csv-to-bash < ${patches_csv} |
         done
     ) > "${tmp_csv}"
 
-csv-merge -c "Git Commit" "${patches_csv}" "${tmp_csv}" > "${output_csv}"
+csv-merge -c "Git Commit" -1 "${patches_csv}" -2 "${tmp_csv}" > "${output_csv}"
+mv ${tmp_csv} ${output_csv}.time
+
