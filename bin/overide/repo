@@ -66,7 +66,7 @@ repo-clean-after-init() {
 
     if test ! -e .repo/project.list-from-init; then
         mkdir -p ${deltmpdir}.$$
-        mv * ${deltmpdir}.$$
+        mv * ${deltmpdir}.$$ || true
         rm -rf ${deltmpdir}.*& # just in case some is left from last time.
         touch .repo/project.list-from-init # make sure the next mv command is ok:D
     fi
