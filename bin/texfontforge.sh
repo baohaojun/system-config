@@ -1,14 +1,27 @@
 #!/bin/bash
 
 set -e
-if test "$(readlink -f ~/.texlive2016/texmf-var)" != "$(readlink -f ~/.texmf-var)"; then
-    rm -rf ~/.texlive2016
-    mkdir ~/.texlive2016
-    ln -s ~/.texmf-var ~/.texlive2016/texmf-var
-    ln -s ~/.texmf-config ~/.texlive2016/texmf-config
-fi
 this_script=$(readlink -f $0)
+
+tex_config=/usr/share/texlive/texmf-dist/web2c/texmf.cnf
+tex_dir=$(cat /usr/share/texlive/texmf-dist/web2c/texmf.cnf | grep '^TEXMFVAR\s*=' -P|perl -npe 's/.*=\s*//; s,^~/,$ENV{HOME}/,; s,(.*)/.*,$1,')
+
+if test "$(readlink -f "${tex_dir}"/texmf-var)" != "$(readlink -f ~/.texmf-var)"; then
+    rm -rfv "${tex_dir}"
+    mkdir "${tex_dir}"
+    ln -s ~/.texmf-var "${tex_dir}"/texmf-var
+    ln -s ~/.texmf-config "${tex_dir}"/texmf-config
+    mkdir -p ~/.texmf-config
+fi
+
 TMPD=tmp.$$
+
+if test $# = 0; then
+    cd ~/.fonts
+    texfontforge.sh simsun
+    texfontforge.sh simhei
+    exit
+fi
 #this script will generate unicode font for pdflatex usage
 (
     mkdir -p ~/.texmf-var/fonts/truetype/;
@@ -68,7 +81,7 @@ End
 
     texhash
     mktexlsr
-    updmap --enable Map $1.map
+    updmap-user --enable Map $1.map
 )
 
 echo 'OK!'

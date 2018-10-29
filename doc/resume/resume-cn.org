@@ -140,7 +140,7 @@
 
 * 技术技能
 
-*** 编程语言 \& 库
+*** 编程语言 & 库
     - 熟练 :: Perl，Python，Bash，Emacs Lisp，C，C++，Java，Lua，Qt
 
     - 用过 :: ObjC，C#，PHP，Ruby

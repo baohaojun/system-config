@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 if test "$#" = 0; then
     sdk_version=$(
         my-adb getprop ro.build.version.sdk
@@ -49,5 +51,11 @@ mount' | grep -P -q -e "on /(system)? .*rw,"; then
 elif test "$1" = /; then
     command my-adb -r shell sh -c 'mount -o rw,remount /; mount | grep rootfs'
     exit
+fi
+
+if my-adb "echo true > /system/sc-remount.ok" >/dev/null 2>&1; then
+    echo "Remount 成功"
+else
+    echo "Remount 好像失败了，无法在 /system/ 目录下写入 sc-remount.ok 标志文件"
 fi
 

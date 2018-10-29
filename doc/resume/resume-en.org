@@ -126,7 +126,7 @@
 
 * Technical Skills
 
-*** Languages \& Libraries
+*** Languages & Libraries
     - Proficient :: Perl, Python, Bash, Emacs Lisp, C, C++, Java, Lua, Qt
 
     - Used :: ObjC, C#, PHP, Ruby
@@ -141,9 +141,9 @@
 * Education
 
 *** 1997 - 2001
-    Bachelor, Control Theory \& Engineering, Zhejiang University
+    Bachelor, Control Theory & Engineering, Zhejiang University
 *** 2001 - 2004
-    Master, Control Theory \& Engineering, Institute of Automation,
+    Master, Control Theory & Engineering, Institute of Automation,
     Chinese Academy of Science
 
 * Personal Information
