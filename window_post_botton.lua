@@ -31,6 +31,7 @@ map['com.amazon.mShop.android.shopping/com.amazon.mShop.search.RetailSearchActiv
 map['com.android.browser/com.android.browser.BrowserActivity'] = 'manual-post'
 map['com.android.browser/com.uc.browser.InnerUCMobile'] = 'manual-post'
 map['com.android.browser/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'manual-post'
+map['com.android.chrome/com.google.android.apps.chrome.Main'] = 'manual-post'
 map['com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactEditorActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.activities.ContactSelectionActivity'] = 'manual-post'
