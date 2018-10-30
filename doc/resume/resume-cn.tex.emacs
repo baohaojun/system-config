@@ -32,16 +32,15 @@
  pdfcreator={Emacs 26.1 (Org mode 9.1.9)},
  pdflang={English}}
 \begin{document}
-\begin{CJK*}{UTF8}{simsun}
 
 \maketitle
 
 \section{工作经历}
 \label{sec:orgd4746ed}
-\subsubsection{2014\thinspace 年\thinspace 3\thinspace 月 - 现在}
+\subsubsection{2014 年 3 月 - 现在}
 \label{sec:org7c7ac81}
 \begin{itemize}
-\item \textbf{CM\thinspace 架构师}，锤子科技，北京
+\item \textbf{CM 架构师}，锤子科技，北京
 \begin{itemize}
 \item 设计、实现配置管理系统，并在运维过程中不断改进
 
@@ -51,14 +50,14 @@
 
 \item 设计并实现安卓手机编译的持续集成
 
-\item 设计并实现\thinspace SmartBuilder\thinspace 系统，方便项目经理和工程师自助编译版本
+\item 设计并实现 SmartBuilder 系统，方便项目经理和工程师自助编译版本
 
 \item 编写开发流程文档，建立软件开发流程并不断改进
 
-\item 结合个人的\thinspace \href{https://github.com/baohaojun/system-config}{system-config}\thinspace 开源项目，统一配置工程师的开发环境
+\item 结合个人的 \href{https://github.com/baohaojun/system-config}{system-config} 开源项目，统一配置工程师的开发环境
 
 \begin{itemize}
-\item 其中包含我自己开发的各种工具，比如用于快速全局搜索海量代码的\thinspace \href{https://github.com/baohaojun/beagrep}{beagrep}，我在服务器上创建了索引并开放给工程师，让所有人搜索代码的速度都得到数量级的提升
+\item 其中包含我自己开发的各种工具，比如用于快速全局搜索海量代码的 \href{https://github.com/baohaojun/beagrep}{beagrep}，我在服务器上创建了索引并开放给工程师，让所有人搜索代码的速度都得到数量级的提升
 \end{itemize}
 
 \item 对工程师工作中碰到的各种疑难杂症提供支持
@@ -66,60 +65,60 @@
 \item 对工程师提供开发工具、编程语言等培训
 
 \begin{itemize}
-\item 拍摄了两小时长的\thinspace Linux\thinspace 系统工具使用技巧视频，在\thinspace \href{https://www.youtube.com/watch?v\%3Dqp2b3-Guej0}{YouTube}\thinspace 和\thinspace \href{https://www.bilibili.com/video/av3376647/}{bilibili}\thinspace 上
+\item 拍摄了两小时长的 Linux 系统工具使用技巧视频，在 \href{https://www.youtube.com/watch?v\%3Dqp2b3-Guej0}{YouTube} 和 \href{https://www.bilibili.com/video/av3376647/}{bilibili} 上
 \end{itemize}
 
-\item 对\thinspace CM\thinspace 团队其他同事的技术培训和支持
+\item 对 CM 团队其他同事的技术培训和支持
 \end{itemize}
 
 \item \textbf{工具架构师}，锤子科技，北京
 
 \begin{itemize}
 \item 负责部分工厂生产测试工具、工程师开发工具的设计、实现等
-\item 设计、实现\thinspace PC\thinspace 端操作手机的开源软件\thinspace \href{https://github.com/SmartisanTech/Wrench}{小扳手}
+\item 设计、实现 PC 端操作手机的开源软件 \href{https://github.com/SmartisanTech/Wrench}{小扳手}
 \item 调试并解决手机过热问题
 \end{itemize}
 \end{itemize}
 
-\subsubsection{2013\thinspace 年\thinspace 9\thinspace 月 - 2014\thinspace 年\thinspace 3\thinspace 月}
+\subsubsection{2013 年 9 月 - 2014 年 3 月}
 \label{sec:org4b3d426}
 \begin{itemize}
 \item \textbf{技术专家}，技术质量部测试工具组，Alibaba，北京
 \begin{itemize}
-\item 负责\thinspace SMART(软件测量分析报告工具）安卓客户端开发
+\item 负责 SMART(软件测量分析报告工具）安卓客户端开发
 \end{itemize}
 \end{itemize}
 
-\subsubsection{2011\thinspace 年\thinspace 11\thinspace 月 - 2013\thinspace 年\thinspace 9\thinspace 月}
+\subsubsection{2011 年 11 月 - 2013 年 9 月}
 \label{sec:orgc9ca768}
 \begin{itemize}
 \item \textbf{Staff Engineer}，\href{http://marvell.com}{Marvell}，北京
 
 \begin{itemize}
-\item 在\thinspace Tools\thinspace 团队担任架构师的职务，负责\thinspace Marvell\thinspace 手机整体解决方案中工厂生产工具的设计与实现
-\item 在\thinspace BSP\thinspace 团队负责与工具相关的功能模块的设计与实现，包括\thinspace Uboot，Kernel\thinspace 接口，工厂分区等
+\item 在 Tools 团队担任架构师的职务，负责 Marvell 手机整体解决方案中工厂生产工具的设计与实现
+\item 在 BSP 团队负责与工具相关的功能模块的设计与实现，包括 Uboot，Kernel 接口，工厂分区等
 \end{itemize}
 \end{itemize}
-\subsubsection{2010\thinspace 年\thinspace 3\thinspace 月 - 2011\thinspace 年\thinspace 10\thinspace 月}
+\subsubsection{2010 年 3 月 - 2011 年 10 月}
 \label{sec:org2672f9f}
 \begin{itemize}
 \item \textbf{Staff Engineer}，RayzerLink/Letou
 \begin{itemize}
-\item 负责基于\thinspace Nvidia Tegra2\thinspace 芯片的平板电脑底层软件开发，包括\thinspace Linux Kernel bring-up，驱动（Touch、LCD、Sensors），Hal（硬件抽象层）的开发等工作
+\item 负责基于 Nvidia Tegra2 芯片的平板电脑底层软件开发，包括 Linux Kernel bring-up，驱动（Touch、LCD、Sensors），Hal（硬件抽象层）的开发等工作
 \end{itemize}
 \end{itemize}
-\subsubsection{2008\thinspace 年\thinspace 11\thinspace 月 - 2010\thinspace 年\thinspace 3\thinspace 月}
+\subsubsection{2008 年 11 月 - 2010 年 3 月}
 \label{sec:org443b7aa}
 \begin{itemize}
 \item \textbf{Senior Engineer}，\href{http://www.borqs.com}{播思通讯}
 
 \begin{itemize}
-\item 在\thinspace Tools\thinspace 组工作， 设计并实现手机开发、测试、生产以及售后等各个环节需要用到的一系列工具
+\item 在 Tools 组工作， 设计并实现手机开发、测试、生产以及售后等各个环节需要用到的一系列工具
 \end{itemize}
 \end{itemize}
 
 
-\subsubsection{2005\thinspace 年\thinspace 9\thinspace 月 - 2008\thinspace 年\thinspace 9\thinspace 月}
+\subsubsection{2005 年 9 月 - 2008 年 9 月}
 \label{sec:org180d4fe}
 \begin{itemize}
 \item \textbf{Software Engineer}，\href{http://motorola.com}{摩托罗拉}， MD/GSG
@@ -129,7 +128,7 @@
 \end{itemize}
 \end{itemize}
 
-\subsubsection{2004\thinspace 年\thinspace 10\thinspace 月 - 2005\thinspace 年\thinspace 9\thinspace 月}
+\subsubsection{2004 年 10 月 - 2005 年 9 月}
 \label{sec:org9cc2c3c}
 \begin{itemize}
 \item \textbf{Software Engineer}，麒麟软件
@@ -146,37 +145,37 @@
 \label{sec:orgacc6743}
 
 \begin{description}
-\item[{\href{http://github.com/baohaojun/bbyac}{bbyac.el}}] Emacs\thinspace 下的补齐工具
-\item[{\href{https://github.com/baohaojun/org-jira}{org-jira.el}}] Emacs\thinspace 下用\thinspace org-mode\thinspace 来进行\thinspace Jira\thinspace 开发流程管理的工具
-\item[{\href{https://github.com/baohaojun/ajoke}{Ajoke.el}}] 一个\thinspace Emacs\thinspace 下的\thinspace Java/Android\thinspace 集成开发环境
+\item[{\href{http://github.com/baohaojun/bbyac}{bbyac.el}}] Emacs 下的补齐工具
+\item[{\href{https://github.com/baohaojun/org-jira}{org-jira.el}}] Emacs 下用 org-mode 来进行 Jira 开发流程管理的工具
+\item[{\href{https://github.com/baohaojun/ajoke}{Ajoke.el}}] 一个 Emacs 下的 Java/Android 集成开发环境
 \end{description}
 
 \subsubsection{Android}
 \label{sec:orge6ff6c0}
 \begin{description}
-\item[{\href{https://github.com/baohaojun/BTAndroidWebViewSelection}{CrossDict}}] Android\thinspace 下的英文字典软件
-\item[{\href{https://github.com/SmartisanTech/Wrench}{Wrench}}] 用\thinspace PC\thinspace 连接、控制手机的工具软件
+\item[{\href{https://github.com/baohaojun/BTAndroidWebViewSelection}{CrossDict}}] Android 下的英文字典软件
+\item[{\href{https://github.com/SmartisanTech/Wrench}{Wrench}}] 用 PC 连接、控制手机的工具软件
 \begin{itemize}
 \item 允许流畅同步显示手机屏幕
-\item 用\thinspace Lua\thinspace 编程语言录制屏幕操作脚本
-\item 在\thinspace PC\thinspace 端显示、处理手机端通知消息
-\item 用\thinspace Qt + Lua\thinspace 开发，支持所有主流操作系统
+\item 用 Lua 编程语言录制屏幕操作脚本
+\item 在 PC 端显示、处理手机端通知消息
+\item 用 Qt + Lua 开发，支持所有主流操作系统
 \end{itemize}
 \end{description}
 
 \subsubsection{Input Method}
 \label{sec:orgfdbc51c}
 \begin{description}
-\item[{\href{https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py}{sdim}}] 跨所有主流平台（Win32/Linux/Mac OS\thinspace 甚至\thinspace Emacs）的输入法（研发中使用的编程语言包括\thinspace Python，C++，ObjC，Emacs-lisp）
+\item[{\href{https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py}{sdim}}] 跨所有主流平台（Win32/Linux/Mac OS 甚至 Emacs）的输入法（研发中使用的编程语言包括 Python，C++，ObjC，Emacs-lisp）
 
-\item[{\href{https://github.com/scim-im/scim-fcitx}{scim-fcitx}}] GNU/Linux\thinspace 下的输入法，基于\thinspace scim\thinspace 和\thinspace fcitx\thinspace 移植
+\item[{\href{https://github.com/scim-im/scim-fcitx}{scim-fcitx}}] GNU/Linux 下的输入法，基于 scim 和 fcitx 移植
 \end{description}
 
 \subsubsection{System Software}
 \label{sec:orgcc1b05b}
 \begin{description}
-\item[{\href{https://github.com/baohaojun/beagrep}{beagrep}}] 结合搜索引擎的源代码\thinspace grep\thinspace 工具，0.23\thinspace 秒\thinspace grep\thinspace 两\thinspace G\thinspace 代码
-\item[{\href{https://github.com/baohaojun/system-config}{system-config}}] 其他一些较小的脚本/程序，均放在\thinspace \href{https://github.com/baohaojun}{github}\thinspace 上用\thinspace git\thinspace 管理
+\item[{\href{https://github.com/baohaojun/beagrep}{beagrep}}] 结合搜索引擎的源代码 grep 工具，0.23 秒 grep 两 G 代码
+\item[{\href{https://github.com/baohaojun/system-config}{system-config}}] 其他一些较小的脚本/程序，均放在 \href{https://github.com/baohaojun}{github} 上用 git 管理
 \end{description}
 
 \section{技术技能}
@@ -198,7 +197,7 @@
 Git \& Gerrit
 \subsubsection{系统管理}
 \label{sec:orgd8da182}
-基于\thinspace Debian\thinspace 的\thinspace Linux\thinspace 发行版系统管理、Bash\thinspace 脚本编程
+基于 Debian 的 Linux 发行版系统管理、Bash 脚本编程
 
 \section{教育}
 \label{sec:org95fe1f6}
@@ -214,7 +213,7 @@ Git \& Gerrit
 \label{sec:org3e0e95e}
 \subsubsection{出生日期}
 \label{sec:org11c6fa5}
-1980\thinspace 年\thinspace 3\thinspace 月\thinspace 10\thinspace 日
+1980 年 3 月 10 日
 \subsubsection{手机}
 \label{sec:orgbf13505}
 18610314439
@@ -227,13 +226,12 @@ Git \& Gerrit
 \item[{博客}] \url{http://baohaojun.github.io}
 \item[{代码}] \url{https://github.com/baohaojun}
 \item[{System-config}] \url{https://github.com/baohaojun/system-config}
-\item[{System-config\thinspace 使用视频}] \url{https://www.youtube.com/watch?v=qp2b3-Guej0}
+\item[{System-config 使用视频}] \url{https://www.youtube.com/watch?v=qp2b3-Guej0}
 \item[{Wrench}] \url{https://github.com/SmartisanTech/Wrench}
-\item[{Wrench\thinspace 视频}] \url{https://v.qq.com/x/page/h0519beib91.html}
+\item[{Wrench 视频}] \url{https://v.qq.com/x/page/h0519beib91.html}
 \item[{Bbyac}] \url{http://github.com/baohaojun/bbyac}
 \item[{Org-jira}] \url{https://github.com/baohaojun/org-jira}
 \item[{Ajoke}] \url{https://github.com/baohaojun/ajoke}
 \item[{Beagrep}] \url{https://github.com/baohaojun/beagrep}
 \end{description}
-\end{CJK*}
 \end{document}

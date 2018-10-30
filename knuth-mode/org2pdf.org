@@ -36,52 +36,19 @@
 参考 =org2pdf-emojify= elisp 命令
 #+name: org2pdf-emojify
 #+BEGIN_SRC emacs-lisp
-  (with-temp-buffer
-    (insert-file "%file%")
+  (progn
+    (find-file "<%tex-file%>")
     (org2pdf-emojify)
     (goto-char (point-min))
     (search-forward "\\usepackage{graphicx}")
     (insert "\n\\usepackage[export]{adjustbox}")
     (insert "\n\\usepackage{lmodern}")
-    (write-file "%file%"))
+    (save-buffer))
 #+END_SRC
 #+name: handle-tex
 #+BEGIN_SRC perl
-
-BEGIN {
-    sub print_saved_lines() {
-        for (@saved_lines) {
-            print STDERR "got $_";
-            print;
-        }
-        @saved_lines = ();
-    }
-    $end_cjk = "\\end{CJK*}\n";
-}
-
-if (m/\\\Qbegin{document}/) {
-     print_saved_lines;
-     print q(\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}) . "\n";
-     print;
-} elsif (m/\\\Qbegin{CJK\E/) {
-     print;
-     print_saved_lines;
-} elsif (m/\\\Qend{document}\E/) {
-      print_saved_lines;
-      print $end_cjk;
-      print;
-} elsif (m/\\\Qend{CJK\E/) {
-      $end_cjk = $_;
-} else {
-      push @saved_lines, $_;
-      if (m/^\\documentclass/) {
-          push @saved_lines, "\\usepackage{CJKutf8}\n";
-      }
-}
-END {
-    print_saved_lines;
-}
-
+s,(\\\Qbegin{document}\E),$1\n\\begin{CJK*}{UTF8}{simsun},;
+s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
 #+END_SRC
 ** 最终的版本：
 
@@ -208,19 +175,25 @@ END {
          if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
              exp_func=org-beamer-export-to-latex
          fi
-         eval_arg=$(cat <<EOF
+         eval_arg=$(cat <<EOF | . .replace-%% --
+     ; {%emacs-lisp-mode%}
      (progn
        (package-initialize)
        (require 'ox-latex)
        (require 'emojis)
        (setq org-latex-listings 'minted)
        (add-to-list 'org-latex-packages-alist '("" "minted"))
-       (find-file "${1/%.tex/.org}") ($exp_func))
+       (find-file "${1/%.tex/.org}")
+       (<%exp-func%>))
+     ; {%/emacs-lisp-mode%}
      EOF
                  )
          emacsclient -e "$eval_arg"
 
-         emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1/%.org/.tex},g"
+         tex_file=${1/%.org/.tex}
+         emacs-close "${tex_file}"
+
+         emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
      <<org2pdf-emojify>>
      EOF6405e5bce1d2
      )"
@@ -231,18 +204,20 @@ END {
          rm ${1/%.tex/.$x} -f
      done
 
+     cp "$1" "$1".emacs
+     emacs-close "$1"
+
      perl -npe "$(cat <<'EOFf0ea35142ce4'
      <<replace-pngs-with-pdfs>>
      EOFf0ea35142ce4
      )" -i "$1"
 
-     perl -ne "$(cat <<'EOF1f8ab604aea3'
+     if grep -q "usepackage.*CJKutf8" "$1"; then
+         perl -pe "$(cat <<'EOF1f8ab604aea3'
      <<handle-tex>>
      EOF1f8ab604aea3
      )" -i $1
-
-     perl -npe 's/\QCJKbookmarks]\E/dvipdfmx,CJKbookmarks]/;
-     s/\Q\documentclass[11pt]{article}\E/\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}/' -i $1
+     fi
 
      perl -npe "s,\\\\usetheme\\{\\w+\\},\\\\usetheme{$style}," -i "$1"
      if test "$color" != default; then

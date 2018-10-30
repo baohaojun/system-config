@@ -1,10 +1,11 @@
 #+OPTIONS: toc:nil H:10
 
 #+LaTeX_HEADER: \usepackage{mycv}
-#+BEGIN_LaTeX
+#+BEGIN_EXPORT latex
 \AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
 \begin{CJK*}{UTF8}{simsun}
-#+END_LaTeX
+
+#+END_EXPORT
 
 
 #+MACRO: first  Haojun
@@ -167,6 +168,6 @@
 
 
 
-#+BEGIN_LaTeX
+#+BEGIN_EXPORT latex
 \end{CJK*}
-#+END_LaTeX
+#+END_EXPORT

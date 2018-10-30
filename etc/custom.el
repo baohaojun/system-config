@@ -159,6 +159,38 @@
  '(org-jira-default-jql
    "(reporter = currentUser() or assignee = currentUser()) and resolution = unresolved
    ORDER BY priority DESC, created ASC")
+ '(org-latex-classes
+   (quote
+    (("中文文章" "\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}
+\\usepackage{CJKutf8}
+\\usepackage{atbegshi}
+\\AtBeginShipoutFirst{\\special{pdf:tounicode UTF8-UTF16}} % for UTF-8
+ [DEFAULT-PACKAGES]
+ [PACKAGES]
+ [EXTRA]"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+     ("article" "\\documentclass[11pt]{article}"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+     ("report" "\\documentclass[11pt]{report}"
+      ("\\part{%s}" . "\\part*{%s}")
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+     ("book" "\\documentclass[11pt]{book}"
+      ("\\part{%s}" . "\\part*{%s}")
+      ("\\chapter{%s}" . "\\chapter*{%s}")
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
  '(org-mobile-directory "~/today/MobileOrg")
  '(org-mobile-inbox-for-pull "~/system-config/doc/projects/from-mobile.org")
  '(org-modules

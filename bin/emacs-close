@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+filename=$(readlink -f "$1")
+emacsclient -e "$(
+cat <<'EOFdf636ed79c26' | . .replace-%% -- | grep -v '^%'
+% {%emacs-lisp-mode%}
+(progn
+  (find-file "<%filename%>")
+  (kill-buffer))
+% {%/emacs-lisp-mode%}
+EOFdf636ed79c26
+)"

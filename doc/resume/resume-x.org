@@ -1,0 +1,19 @@
+# -*- bhj-latex-chinese-font: simsun -*-
+#+OPTIONS: toc:nil H:10
+
+#+latex_class: 中文文章
+#+LaTeX_HEADER: \usepackage{mycv}
+
+
+#+MACRO: first 昊军
+#+MACRO: last 包
+#+MACRO: full {{{last}}}{{{first}}}
+#+MACRO: phone  18610314439
+
+#+TITLEX: hello
+
+#+TITLE: 包昊军的个人简历
+
+
+
+* 工作经历

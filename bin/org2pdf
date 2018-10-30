@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/org2pdf.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/org2pdf.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
 
@@ -123,27 +121,33 @@ if test $org_file = true || yes-or-no-p -y "Export from .org"; then
     if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
         exp_func=org-beamer-export-to-latex
     fi
-    eval_arg=$(cat <<EOF
+    eval_arg=$(cat <<EOF | . .replace-%% --
+; {%emacs-lisp-mode%}
 (progn
   (package-initialize)
   (require 'ox-latex)
   (require 'emojis)
   (setq org-latex-listings 'minted)
   (add-to-list 'org-latex-packages-alist '("" "minted"))
-  (find-file "${1/%.tex/.org}") ($exp_func))
+  (find-file "${1/%.tex/.org}")
+  (<%exp-func%>))
+; {%/emacs-lisp-mode%}
 EOF
             )
     emacsclient -e "$eval_arg"
 
-    emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1/%.org/.tex},g"
-(with-temp-buffer
-  (insert-file "%file%")
+    tex_file=${1/%.org/.tex}
+    emacs-close "${tex_file}"
+
+    emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
+(progn
+  (find-file "<%tex-file%>")
   (org2pdf-emojify)
   (goto-char (point-min))
   (search-forward "\\usepackage{graphicx}")
   (insert "\n\\usepackage[export]{adjustbox}")
   (insert "\n\\usepackage{lmodern}")
-  (write-file "%file%"))
+  (save-buffer))
 EOF6405e5bce1d2
 )"
     set -- "${1/%.org/.tex}"
@@ -152,6 +156,9 @@ fi
 for x in aux log out dvi; do
     rm ${1/%.tex/.$x} -f
 done
+
+cp "$1" "$1".emacs
+emacs-close "$1"
 
 perl -npe "$(cat <<'EOFf0ea35142ce4'
 
@@ -186,47 +193,13 @@ END {
 EOFf0ea35142ce4
 )" -i "$1"
 
-perl -ne "$(cat <<'EOF1f8ab604aea3'
-
-BEGIN {
-    sub print_saved_lines() {
-        for (@saved_lines) {
-            print STDERR "got $_";
-            print;
-        }
-        @saved_lines = ();
-    }
-    $end_cjk = "\\end{CJK*}\n";
-}
-
-if (m/\\\Qbegin{document}/) {
-     print_saved_lines;
-     print q(\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}) . "\n";
-     print;
-} elsif (m/\\\Qbegin{CJK\E/) {
-     print;
-     print_saved_lines;
-} elsif (m/\\\Qend{document}\E/) {
-      print_saved_lines;
-      print $end_cjk;
-      print;
-} elsif (m/\\\Qend{CJK\E/) {
-      $end_cjk = $_;
-} else {
-      push @saved_lines, $_;
-      if (m/^\\documentclass/) {
-          push @saved_lines, "\\usepackage{CJKutf8}\n";
-      }
-}
-END {
-    print_saved_lines;
-}
-
+if grep -q "usepackage.*CJKutf8" "$1"; then
+    perl -pe "$(cat <<'EOF1f8ab604aea3'
+s,(\\\Qbegin{document}\E),$1\n\\begin{CJK*}{UTF8}{simsun},;
+s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
 EOF1f8ab604aea3
 )" -i $1
-
-perl -npe 's/\QCJKbookmarks]\E/dvipdfmx,CJKbookmarks]/;
-s/\Q\documentclass[11pt]{article}\E/\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}/' -i $1
+fi
 
 perl -npe "s,\\\\usetheme\\{\\w+\\},\\\\usetheme{$style}," -i "$1"
 if test "$color" != default; then
@@ -245,5 +218,4 @@ qpdfview-resize
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here
