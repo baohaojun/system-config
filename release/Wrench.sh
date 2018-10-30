@@ -242,7 +242,6 @@ $(printf "$format" "$what_to_do")
 -- {%/lua%}
 EOF
     Wrench ~/.cache/system-config/wrench-$$.twa
-    mv ~/.cache/system-config/wrench-$$.twa ~/tmp/wrench.twa
 else
     exec Wrench
 fi

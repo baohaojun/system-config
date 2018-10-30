@@ -1466,6 +1466,9 @@ M.wrench_run = function (file, argType)
       return "Can not run this script, must be a .twa file"
    end
    local f = loadfile(file)
+   if file:match("/.cache/system%-config/wrench%-.*.twa") then
+      system{"rm", file}
+   end
    return wrench_eval(f, file)
 end
 
