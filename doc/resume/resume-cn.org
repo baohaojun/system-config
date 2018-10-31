@@ -12,7 +12,7 @@
 
 * 工作经历
 *** 2014 年 3 月 - 现在
-    * *CM 架构师*，锤子科技，北京
+    * *CM 架构师，总监*，锤子科技，北京
       - 设计、实现配置管理系统，并在运维过程中不断改进
 
         * 此系统支持了锤子科技所有手机产品的日常版本编译和正式版本发布
@@ -32,8 +32,6 @@
       - 对工程师提供开发工具、编程语言等培训
 
         * 拍摄了两小时长的 Linux 系统工具使用技巧视频，在 [[https://www.youtube.com/watch?v%3Dqp2b3-Guej0][YouTube]] 和 [[https://www.bilibili.com/video/av3376647/][bilibili]] 上
-
-      - 对 CM 团队其他同事的技术培训和支持
 
     * *工具架构师*，锤子科技，北京
 
@@ -57,8 +55,6 @@
   * *Senior Engineer*，[[http://www.borqs.com][播思通讯]]
 
     - 在 Tools 组工作， 设计并实现手机开发、测试、生产以及售后等各个环节需要用到的一系列工具
-
-
 *** 2005 年 9 月 - 2008 年 9 月
   * *Software Engineer*，[[http://motorola.com][摩托罗拉]]， MD/GSG
 
@@ -66,13 +62,11 @@
 
 *** 2004 年 10 月 - 2005 年 9 月
   * *Software Engineer*，麒麟软件
-
     - 企业集成应用软件测试
 
 * 自由软件项目
 
 *** Emacs
-
   - [[http://github.com/baohaojun/bbyac][bbyac.el]] ::  Emacs 下的补齐工具
   - [[https://github.com/baohaojun/org-jira][org-jira.el]] :: Emacs 下用 org-mode 来进行 Jira 开发流程管理的工具
   - [[https://github.com/baohaojun/ajoke][Ajoke.el]] :: 一个 Emacs 下的 Java/Android 集成开发环境
@@ -86,8 +80,7 @@
     * 用 Qt + Lua 开发，支持所有主流操作系统
 
 *** Input Method
-  - [[https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py][sdim]] :: 跨所有主流平台（Win32/Linux/Mac OS 甚至 Emacs）的输入法（研发中使用的编程语言包括 Python，C++，ObjC，Emacs-lisp）
-
+  - [[https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py][sdim]] :: 跨平台（Win32/Linux/Mac OS/Emacs）的输入法（研发中使用的编程语言包括 Python，C++，ObjC，Emacs-lisp）
   - [[https://github.com/scim-im/scim-fcitx][scim-fcitx]] :: GNU/Linux 下的输入法，基于 scim 和 fcitx 移植
 
 *** System Software

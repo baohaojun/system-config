@@ -1,4 +1,4 @@
-% Created 2018-10-30 火 15:58
+% Created 2018-10-31 水 10:32
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt,dvipdfmx,CJKbookmarks]{article}
 \usepackage{CJKutf8}
@@ -36,11 +36,11 @@
 \maketitle
 
 \section{工作经历}
-\label{sec:orgd4746ed}
+\label{sec:orge8c17e5}
 \subsubsection{2014 年 3 月 - 现在}
-\label{sec:org7c7ac81}
+\label{sec:org10e52f9}
 \begin{itemize}
-\item \textbf{CM 架构师}，锤子科技，北京
+\item \textbf{CM 架构师，总监}，锤子科技，北京
 \begin{itemize}
 \item 设计、实现配置管理系统，并在运维过程中不断改进
 
@@ -67,8 +67,6 @@
 \begin{itemize}
 \item 拍摄了两小时长的 Linux 系统工具使用技巧视频，在 \href{https://www.youtube.com/watch?v\%3Dqp2b3-Guej0}{YouTube} 和 \href{https://www.bilibili.com/video/av3376647/}{bilibili} 上
 \end{itemize}
-
-\item 对 CM 团队其他同事的技术培训和支持
 \end{itemize}
 
 \item \textbf{工具架构师}，锤子科技，北京
@@ -81,7 +79,7 @@
 \end{itemize}
 
 \subsubsection{2013 年 9 月 - 2014 年 3 月}
-\label{sec:org4b3d426}
+\label{sec:org7f22c87}
 \begin{itemize}
 \item \textbf{技术专家}，技术质量部测试工具组，Alibaba，北京
 \begin{itemize}
@@ -90,7 +88,7 @@
 \end{itemize}
 
 \subsubsection{2011 年 11 月 - 2013 年 9 月}
-\label{sec:orgc9ca768}
+\label{sec:org9415787}
 \begin{itemize}
 \item \textbf{Staff Engineer}，\href{http://marvell.com}{Marvell}，北京
 
@@ -100,7 +98,7 @@
 \end{itemize}
 \end{itemize}
 \subsubsection{2010 年 3 月 - 2011 年 10 月}
-\label{sec:org2672f9f}
+\label{sec:org6ff852e}
 \begin{itemize}
 \item \textbf{Staff Engineer}，RayzerLink/Letou
 \begin{itemize}
@@ -108,7 +106,7 @@
 \end{itemize}
 \end{itemize}
 \subsubsection{2008 年 11 月 - 2010 年 3 月}
-\label{sec:org443b7aa}
+\label{sec:orgc4d7621}
 \begin{itemize}
 \item \textbf{Senior Engineer}，\href{http://www.borqs.com}{播思通讯}
 
@@ -116,10 +114,8 @@
 \item 在 Tools 组工作， 设计并实现手机开发、测试、生产以及售后等各个环节需要用到的一系列工具
 \end{itemize}
 \end{itemize}
-
-
 \subsubsection{2005 年 9 月 - 2008 年 9 月}
-\label{sec:org180d4fe}
+\label{sec:org89ca168}
 \begin{itemize}
 \item \textbf{Software Engineer}，\href{http://motorola.com}{摩托罗拉}， MD/GSG
 
@@ -129,21 +125,19 @@
 \end{itemize}
 
 \subsubsection{2004 年 10 月 - 2005 年 9 月}
-\label{sec:org9cc2c3c}
+\label{sec:org45f78b6}
 \begin{itemize}
 \item \textbf{Software Engineer}，麒麟软件
-
 \begin{itemize}
 \item 企业集成应用软件测试
 \end{itemize}
 \end{itemize}
 
 \section{自由软件项目}
-\label{sec:orga70fd85}
+\label{sec:orgdd88403}
 
 \subsubsection{Emacs}
-\label{sec:orgacc6743}
-
+\label{sec:org95e859b}
 \begin{description}
 \item[{\href{http://github.com/baohaojun/bbyac}{bbyac.el}}] Emacs 下的补齐工具
 \item[{\href{https://github.com/baohaojun/org-jira}{org-jira.el}}] Emacs 下用 org-mode 来进行 Jira 开发流程管理的工具
@@ -151,7 +145,7 @@
 \end{description}
 
 \subsubsection{Android}
-\label{sec:orge6ff6c0}
+\label{sec:org2074d2c}
 \begin{description}
 \item[{\href{https://github.com/baohaojun/BTAndroidWebViewSelection}{CrossDict}}] Android 下的英文字典软件
 \item[{\href{https://github.com/SmartisanTech/Wrench}{Wrench}}] 用 PC 连接、控制手机的工具软件
@@ -164,64 +158,63 @@
 \end{description}
 
 \subsubsection{Input Method}
-\label{sec:orgfdbc51c}
+\label{sec:org8b07b7e}
 \begin{description}
-\item[{\href{https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py}{sdim}}] 跨所有主流平台（Win32/Linux/Mac OS 甚至 Emacs）的输入法（研发中使用的编程语言包括 Python，C++，ObjC，Emacs-lisp）
-
+\item[{\href{https://github.com/baohaojun/system-config/tree/master/gcode/scim-cs/ime-py}{sdim}}] 跨平台（Win32/Linux/Mac OS/Emacs）的输入法（研发中使用的编程语言包括 Python，C++，ObjC，Emacs-lisp）
 \item[{\href{https://github.com/scim-im/scim-fcitx}{scim-fcitx}}] GNU/Linux 下的输入法，基于 scim 和 fcitx 移植
 \end{description}
 
 \subsubsection{System Software}
-\label{sec:orgcc1b05b}
+\label{sec:org6dd0b91}
 \begin{description}
 \item[{\href{https://github.com/baohaojun/beagrep}{beagrep}}] 结合搜索引擎的源代码 grep 工具，0.23 秒 grep 两 G 代码
 \item[{\href{https://github.com/baohaojun/system-config}{system-config}}] 其他一些较小的脚本/程序，均放在 \href{https://github.com/baohaojun}{github} 上用 git 管理
 \end{description}
 
 \section{技术技能}
-\label{sec:org858fc14}
+\label{sec:org700cd5e}
 
 \subsubsection{编程语言 \& 库}
-\label{sec:org9f57a16}
+\label{sec:orged949c3}
 \begin{description}
 \item[{熟练}] Perl，Python，Bash，Emacs Lisp，C，C++，Java，Lua，Qt
 \item[{用过}] ObjC，C\#，PHP，Ruby
 \end{description}
 \subsubsection{写作}
-\label{sec:org04ced47}
+\label{sec:orga25cc0c}
 \begin{description}
 \item[{文本}] Org-mode，Emacs
 \end{description}
 \subsubsection{版本管理}
-\label{sec:org7af6a4e}
+\label{sec:orgcded668}
 Git \& Gerrit
 \subsubsection{系统管理}
-\label{sec:orgd8da182}
+\label{sec:orgbdef7b8}
 基于 Debian 的 Linux 发行版系统管理、Bash 脚本编程
 
 \section{教育}
-\label{sec:org95fe1f6}
+\label{sec:orgc86d002}
 
 \subsubsection{1997 - 2001}
-\label{sec:orgb570396}
+\label{sec:org59613e3}
 本科，竺可桢学院、控制科学与工程学院，浙江大学
 \subsubsection{2001 - 2004}
-\label{sec:orge0bdf1e}
+\label{sec:org33efaa3}
 硕士，中科院自动化所
 
 \section{个人信息}
-\label{sec:org3e0e95e}
+\label{sec:org9b378f6}
 \subsubsection{出生日期}
-\label{sec:org11c6fa5}
+\label{sec:org4a94583}
 1980 年 3 月 10 日
 \subsubsection{手机}
-\label{sec:orgbf13505}
+\label{sec:org7133008}
 18610314439
 \subsubsection{E-mail}
-\label{sec:org9cc84d8}
+\label{sec:org4a06874}
 \href{mailto:baohaojun@gmail.com}{baohaojun@gmail.com}
 \subsubsection{网址}
-\label{sec:org50f4546}
+\label{sec:orgce54321}
 \begin{description}
 \item[{博客}] \url{http://baohaojun.github.io}
 \item[{代码}] \url{https://github.com/baohaojun}

@@ -39,14 +39,6 @@ const server = net.createServer(
           c.end("yes");
         } else {
           c.end("no");
-          looksSame(image1, image2, {tolerance: 60}, function(err, eq) {
-            if (eq) {
-              fse.copy(image1, image2 + ".60");
-              console.log('same when 60');
-            } else {
-              console.log('not same even 60');
-            }
-          });
         }
       });
     });
