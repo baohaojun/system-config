@@ -168,7 +168,9 @@ EOF
         mv ~/.config/system-config/Wrench-adb.map.$$ ~/.config/system-config/Wrench-adb.map
     fi
     rsync ~/tmp/build-wrench/ ~/tmp/build-wrench.$ANDROID_SERIAL -a --chmod=D0755
-    reset-env WRENCH_INSTANCE ${wrench_adb_map[$ANDROID_SERIAL]} PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
+    . reset-env WRENCH_INSTANCE ${wrench_adb_map[$ANDROID_SERIAL]} PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
+
+
     if test "$system" = true; then
         (
             for x in $(ps.pl Wrench|pn 1); do
@@ -186,7 +188,6 @@ EOF
 ; {%/sawfish-mode%}
 '
     fi
-    . reget-env -k
     set-about-me adb-serial $ANDROID_SERIAL || true
     nohup Wrench.sh -1 "$@"&
     exit
