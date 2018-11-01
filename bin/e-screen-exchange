@@ -1,4 +1,5 @@
 #!/bin/bash
-
-tmux save-buffer /tmp/screen-exchange
-e /tmp/screen-exchange
+tmux capture-pane -S - -E -
+tmux save-buffer /tmp/screen-exchange.$$
+ew /tmp/screen-exchange.$$
+rm /tmp/screen-exchange.$$

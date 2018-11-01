@@ -64,11 +64,11 @@ else
 
     exec 9< "$lock"
 
-    if flock -n 9; then
+    if timeout 60 flock 9; then
         touch "$lock"
     else
         locked_time=$(lock=$lock perl -e 'print int(-M("$ENV{lock}") * (3600 * 24))')
-        echo "Can't lock $lock, it's been $locked_time seconds"
+        echo "Can't lock $lock, it's been $locked_time seconds" 1>&2
         if test "${locked_time}" -gt $lock_time; then
             exit 1
         else
