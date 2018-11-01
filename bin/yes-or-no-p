@@ -89,7 +89,7 @@ elif (echo -n >/dev/tty) >/dev/null 2>&1; then
         if test "$timeout"; then
             timeout="-t $timeout"
         fi
-        read $timeout -e -p "$user_prompt $prompt: " >/dev/tty 2>&1
+        read $timeout -e -p $'\n'"$user_prompt $prompt: " >/dev/tty 2>&1
 fi
 
 if test -z "$REPLY" -a $default = yes; then
