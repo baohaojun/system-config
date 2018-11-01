@@ -3,15 +3,31 @@
 # this script set env for parent shell. so maybe the better name is
 # set-parent-shell-env...
 
+if test "$BASH_SOURCE" != $0; then
+    # we are being sourced
+    do_eval=true
+else
+    do_eval=false
+fi
+
 echo -n > ~/.reset-env.$$
 if test $# == 0; then
     echo BHJ_PWD= > ~/.reset-env.$$
 else
     while true; do
         if test "$#" -ge 2; then
-            printf "export %q=%q\n" "$1" "$2" >> ~/.reset-env.$$
+            str=$(
+                printf "export %q=%q\n" "$1" "$2"
+               )
+            if test "${do_eval}" = true; then
+                eval "$str"
+            fi
+            echo "$str" >> ~/.reset-env.$$
             shift 2
         elif test "$#" = 1; then
+            if test "${do_eval}" = true; then
+                eval "$1"
+            fi
             echo "$1" >> ~/.reset-env.$$
             shift
         else
