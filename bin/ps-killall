@@ -2,13 +2,14 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P -p kill -e @group e:withenv
+# generate-getopt -P -p kill -e @group e:withenv p:path-to-exe
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o e:h \
-                      --long group,withenv:,help,no-group \
+TEMP=$(POSIXLY_CORRECT=true getopt -o p:e:h \
+                      --long group,path-to-exe:,withenv:,help,no-group \
                       -n $(basename -- $0) -- "$@")
 declare -x kill_group=${kill_group:-false}
+declare -x kill_path_to_exe=${kill_path_to_exe:-}
 declare -x kill_withenv=${kill_withenv:-}
 eval set -- "$TEMP"
 while true; do
@@ -23,6 +24,11 @@ while true; do
             shift
 
             ;;
+        -p|--path-to-exe)
+            kill_path_to_exe=$2
+            shift 2
+
+            ;;
         -e|--withenv)
             kill_withenv=$2
             shift 2
@@ -35,6 +41,9 @@ while true; do
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--[no-]group'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--path-to-exe=PATH_TO_EXE'
             echo
             printf %06s '-e, '
             printf %-24s '--withenv=WITHENV'
@@ -89,6 +98,12 @@ for x in $@; do
     if test "<%kill-withenv%>"; then
         if ! cat /proc/$x/environ | tr '\0' '\n' | grep '\Q<%kill-withenv%>\E' -q -P; then
             echo "should not kill $x, env not match: <%kill-withenv%>" 1>&2
+            continue
+        fi
+    fi
+    if test "<%kill-path-to-exe%>"; then
+        if test "$(readlink -f /proc/$x/exe)" != "<%kill-path-to-exe%>"; then
+            echo "Should not kill $x, because path not match"
             continue
         fi
     fi
