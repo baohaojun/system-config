@@ -162,7 +162,7 @@ done
         ln -s $(which the-true-adb) . -f
     ) || true
 
-    ps-killall -e BUILDING_WRENCH=true Wrench.sh || true
+    ps-killall -p "$build_dir"/Wrench Wrench || true
     if test $# = 1 && [[ "$1" =~ debug ]]; then
         ps-killall gdb.Wrench
         myscr bash -c 'LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu gdb ./Wrench'

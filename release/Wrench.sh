@@ -194,7 +194,7 @@ EOF
 fi
 
 if test "$kill" = true; then
-    ps-killall Wrench -e ANDROID_SERIAL=${ANDROID_SERIAL}
+    ps-killall -e ANDROID_SERIAL=${ANDROID_SERIAL} Wrench
     exit
 fi
 
