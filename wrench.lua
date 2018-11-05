@@ -41,6 +41,9 @@ M.app_width, M.app_height = 1080, 1920
 M.ime_app_width, M.ime_app_height = 1080, 1920
 M.mCurrentRotation = 0
 
+M.adb_top_window = function() -- 确保小扳手第一次启动不会出错
+end
+
 M.update_screen_ratios = function()
    M.default_width, M.default_height = M.ref_width, M.ref_height
    if M.mCurrentRotation % 2 == 1 then
