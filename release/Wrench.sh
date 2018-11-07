@@ -168,8 +168,13 @@ EOF
         mv ~/.config/system-config/Wrench-adb.map.$$ ~/.config/system-config/Wrench-adb.map
     fi
     rsync ~/tmp/build-wrench/ ~/tmp/build-wrench.$ANDROID_SERIAL -a --chmod=D0755
-    . reset-env WRENCH_INSTANCE ${wrench_adb_map[$ANDROID_SERIAL]} PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
-
+    path_args=(
+        PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
+    )
+    if test "$(which Wrench)" = ~/tmp/build-wrench.$ANDROID_SERIAL/Wrench; then
+        path_args=()
+    fi
+    . reset-env WRENCH_INSTANCE ${wrench_adb_map[$ANDROID_SERIAL]} "${path_args[@]}"
 
     if test "$system" = true; then
         (
