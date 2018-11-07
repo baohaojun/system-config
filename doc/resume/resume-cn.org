@@ -38,6 +38,10 @@
       - 负责部分工厂生产测试工具、工程师开发工具的设计、实现等
       - 设计、实现 PC 端操作手机的开源软件 [[https://github.com/SmartisanTech/Wrench][小扳手]]
       - 调试并解决手机过热问题
+      - 帮其他研发同事调试、解决疑难问题，其中包括给谷歌安卓 aosp 项目提交了两个补丁（均被接受）：
+
+        * https://android.googlesource.com/platform/system/core/+/cdb1b1b
+        * https://android.googlesource.com/platform/frameworks/av/+/5225ba0
 
 *** 2013 年 9 月 - 2014 年 3 月
     * *技术专家*，技术质量部测试工具组，Alibaba，北京
