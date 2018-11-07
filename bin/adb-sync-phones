@@ -265,7 +265,7 @@ function do-1-pkg() {
     fi
 
     if test "${from_packages[$p]}" != @ -a ! -v to_packages[$p]; then
-        if test "$from_adb"; then
+        if test "$from_adb" -a "${backup_only}" != true; then
             ANDROID_SERIAL=$from_adb adb pull $f_path $p.apk
         fi
         (
@@ -297,7 +297,7 @@ function do-1-pkg() {
 
 }
 
-if test "$to_adb" && ! ps.pl "adb-agree-to-install"; then
+if test "$to_adb" -a "${recovery_only}" != true && ! ps.pl "adb-agree-to-install"; then
     hint "发现你没有在运行 adb-agree-to-install 进程，这样的话在 user 版本上用 adb install apk 的时候，手机会不停的提示警告 apk 来源不可信，然后你需要不停的手动去点击确认"
     hint "这样的话这个脚本基本上是没法使用的，所以请一定要运行 adb-agree-to-install 命令，这个命令会帮你自动点击同意安装。"
 fi
