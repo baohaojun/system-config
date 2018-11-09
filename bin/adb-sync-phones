@@ -205,9 +205,15 @@ for apk in $from_apk; do
 done
 
 if test "$from_adb"; then
+    if extra_backups=$(
+        ANDROID_SERIAL=$from_adb \
+                      my-adb shell find /data/data -maxdepth 1 -type d | grep -P '\d{4}(-\d{2}){3}(\.\d{2}){2}'
+                 ) && yes-or-no-p "Remove these extra backups? $extra_backups"; then
+        my-adb shell rm -rf $extra_backups
+    fi
     for app in $(
                     ANDROID_SERIAL=$from_adb \
-                                  my-adb shell find /data/data -maxdepth 1 -type d | perl -npe 's,/data/data/?,,'
+                                  my-adb shell find /data/data -maxdepth 1 -type d | grep -P '\d{4}(-\d{2}){3}(\.\d{2}){2}' -v | perl -npe 's,/data/data/?,,'
                 ); do
         if test -z "${from_packages[$app]}" && [[ $app =~ $package_regexp ]]; then
             echo "should also back data for $app"
