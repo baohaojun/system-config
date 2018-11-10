@@ -70,15 +70,17 @@ fi
 
 
 lcd_dev=$(
-    my-adb "find 2>&1 /sys -name '*bright*'"|grep "lcd|panel" -P|grep -v "max_bright|peak-brightness|actual_brightness|brightness_max" -P
+    adb-quote "readlink /data/data/com.android.shell/lcd-dev || find 2>&1 /sys -name '*bright*'"|grep "lcd|panel" -P|grep -v "max_bright|peak-brightness|actual_brightness|brightness_max" -P
        )
 
 if test -z "$lcd_dev" -o "$(echo "$lcd_dev" | tr ' ' '\n'|wc -l)" != 1; then
     die "Can't find lcd dev: '$lcd_dev'"
 fi
 
+adb shell "ln -sf $lcd_dev /data/data/com.android.shell/lcd-dev"
+
 if test -z "$1"; then
-    my-adb "
+    adb-quote "
         if test \"\$(cat $lcd_dev)\" = 0; then
             echo 128 > $lcd_dev
         else
@@ -86,9 +88,9 @@ if test -z "$1"; then
         fi
     "
 elif test "$1" = off; then
-    my-adb "echo 0 > $lcd_dev"
+    adb-quote "echo 0 > $lcd_dev"
 elif test "$1" = on; then
-    my-adb "echo 128 > $lcd_dev"
+    adb-quote "echo 128 > $lcd_dev"
 else
-    my-adb "echo $1 > $lcd_dev"
+    adb-quote "echo $1 > $lcd_dev"
 fi </dev/null
