@@ -34,7 +34,7 @@ fi
             done
         )
         cd ~/src/android-mirror.google
-        repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml --mirror
+        repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b master -m default.xml --mirror
         exit 0
     fi
 
@@ -58,7 +58,7 @@ fi
         repo sync -j2 -q
     ) || true
 
-    repo init -u https://android.googlesource.com/platform/manifest -b master -m default.xml
+    repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b master -m default.xml
     if test "$#" != 0; then
         branches=$(
             echo "$@"
