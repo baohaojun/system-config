@@ -191,6 +191,8 @@ if is-jenkins; then
     if test "$1" = init; then
         if test "$SMARTCM_FORCE_MIRROR" = true; then
             set -- "$@" --reference ~/src/android-mirror
+        elif test "$SMARTCM_FORCE_MIRROR" = NO; then
+            true # do nothing
         else
             set -- "$@" --reference ~/src/no-such-mirror --depth 1
         fi

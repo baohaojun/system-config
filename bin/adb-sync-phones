@@ -322,3 +322,5 @@ else
         fi
     done
 fi | sort -u | time xargs -P 5 -n 1 bash -c 'do-1-pkg $1' true
+
+ps-killall -e "ANDROID_SERIAL=$to_adb" adb-agree-to-install || true
