@@ -14,12 +14,12 @@ end
 M.load_scene_map = function()
    if not M.scene_map_file then
       local tmp_scene_map_file = M.configDirFile(("scenes-map-%dx%d@%s.lua"):format(M.real_width, M.real_height, android_serial))
+      log("tmp scene_map_file is %s", tmp_scene_map_file)
       dofile_res, M.scenes_map = pcall(dofile, tmp_scene_map_file)
       if not dofile_res then
          M.scenes_map = {}
-      else
-         M.scene_map_file = tmp_scene_map_file
       end
+      M.scene_map_file = tmp_scene_map_file
    end
 end
 
@@ -96,7 +96,7 @@ M.find_scene = function(scene, times)
    if not M.scenes_map[scene] then
       for i = 1, times do
          sleep(1)
-         scene_xy = qx("g_find_scene_debug=" .. M.g_find_scene_debug .. " find-scene.sh find-scene -s " .. scene .. " --scene-dir " .. M.resDir)
+         scene_xy = qx("find-scene.sh find-scene -s " .. scene .. " --scene-dir " .. M.resDir)
          if scene_xy ~= "" then
             break
          elseif i == times then
