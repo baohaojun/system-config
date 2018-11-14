@@ -93,6 +93,10 @@
         download-today
         cd -P ~/today/MobileOrg;
 
+        if adb-quote test ! -e /sdcard/MobileOrg/checksums.dat; then
+            adb push $PWD /sdcard
+        fi
+
         sync-phone-files
 
         git init
@@ -108,10 +112,10 @@
         git add .
     fi
     function sync-on-phone() {
-        my-adb touch /sdcard/MobileOrg/mobileorg.org.bak
-        my-adb am startservice -a com.matburt.mobileorg.SYNC_SERVICE
+        adb-quote touch /sdcard/MobileOrg/mobileorg.org.bak
+        adb-quote am startservice -a com.matburt.mobileorg.SYNC_SERVICE
         for x in $(seq 1 10); do
-            if my-adb 'if test -e /sdcard/MobileOrg/mobileorg.org.bak; then echo yes; fi' | grep -q yes; then
+            if adb-quote test -e /sdcard/MobileOrg/mobileorg.org.bak; then
                 sleep .5
             else
                 break
