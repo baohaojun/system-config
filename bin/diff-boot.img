@@ -6,15 +6,8 @@ boot_img1=$(readlink -f $1)
 boot_img2=$(readlink -f $2)
 
 function exit-cleanup() {
-    if test "$?" = 0; then
-        if yes-or-no-p -y "check ~/tmp/del/diff-boot-img.$$?"; then
-            cd ~/tmp/del/diff-boot-img.$$
-            start_recursive_shell diff-boot.img
-        fi
+    if yes-or-no-p -y "Remove ~/tmp/del/diff-boot-img.$$?"; then
         rm ~/tmp/del/diff-boot-img.$$ -rf
-    else
-        echo "failed\! please check ~/tmp/del/diff-boot-img.$$"
-        exit 1
     fi
 }
 . atexit exit-cleanup
