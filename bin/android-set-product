@@ -10,6 +10,29 @@ if test "$SC_DEBUG" = true; then
 fi
 cd $(lookup-file .repo/..)
 
+if test -d out -a ! -L out; then
+    if test -e ~/src/github/smartcm/scm-helpers/.check-out-is-real-dir; then
+        . ~/src/github/smartcm/scm-helpers/.check-out-is-real-dir || true
+    fi
+fi
+
+# 任何情况下都要删掉 out，主要有这 3 种情况：
+# 1. out 是一个真实的目录，我们的脚本里不会使用真实目录，必须把它整个删除
+
+# 2. out 是一个合法的软链接（指向的目录真实存在），这种情况下因为我们
+# 没有加“/”，所以不会删除真正的目录下的文件
+
+# （也就是说，千万不能写成“rm -rf out/”！）
+
+# 3. out 是一个非法的软链接（指向的目录已经被删除）
+rm -rf out
+
+(
+    # make sure android lunch script will not run mkdir out.
+    mkdir -p .repo/out.tmp
+    ln -s .repo/out.tmp out
+)
+
 declare -A before_env
 declare -A after_env
 
