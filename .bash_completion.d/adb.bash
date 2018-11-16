@@ -107,13 +107,13 @@ _adb() {
                         _adb_cmd_uninstall "$serial" $i
                         ;;
                     stop|start|restart|sstat)
-                        COMPREPLY=( $(compgen -W "$(my-adb getprop|grep 'init\.svc\.'|pn 1|sort -u|perl -npe 's/.*\.//; s/\].*//')" -- "${COMP_WORDS[i]}") )
+                        COMPREPLY=( $(compgen -W "$(adb-quote getprop|grep 'init\.svc\.'|pn 1|sort -u|perl -npe 's/.*\.//; s/\].*//')" -- "${COMP_WORDS[i]}") )
                         ;;
                     getprop|setprop)
-                        COMPREPLY=( $(compgen -W "$(my-adb getprop|pn 1|sort -u|perl -npe 's/.*\[//; s/\].*//')" -- "${COMP_WORDS[i]}") )
+                        COMPREPLY=( $(compgen -W "$(adb-quote getprop|pn 1|sort -u|perl -npe 's/.*\[//; s/\].*//')" -- "${COMP_WORDS[i]}") )
                         ;;
                     dumpsys)
-                        COMPREPLY=( $(compgen -W "$(my-adb dumpsys -l)" -- "${COMP_WORDS[i]}") )
+                        COMPREPLY=( $(compgen -W "$(adb-quote dumpsys -l)" -- "${COMP_WORDS[i]}") )
                         ;;
                     *)
                         _adb_cmd_shell "$serial" $((i+1))
@@ -329,7 +329,7 @@ _adb_util_list_files() {
     toks=( ${toks[@]-} $(
                my_command="find 2> /dev/null ${file%/*}/ -maxdepth 1 -iname ${file##*/}\* -print0|xargs -0 /system/bin/ls -dF 2>/dev/null"
                ls_append=$(
-                   if my-adb ${args[@]} shell sh -c 'ls --help'|grep 'append /dir' -q; then
+                   if adb-quote ${args[@]} shell sh -c 'ls --help'|grep 'append /dir' -q; then
                        echo true
                    else
                        echo false
