@@ -124,15 +124,19 @@ else
     if test "$beagrep_dir/../$md5file" -nt "$beagrep_dir"/FileAttributesStore.db; then
         cat "$beagrep_dir/../$md5file"
     else
+        . aterr rm -f "$beagrep_dir/../$md5file.$$"
+        set -o pipefail
         beagrep-static-query \
             --add-static-backend "$(wlp "$beagrep_dir")" \
             --backend none --max-hits 100000 "$tokens" |
             beagrep-unurl-and-filter.pl|grep -v '#' |
             sort -u | (
-                mkdir -p "$beagrep_dir/../$md5dir";
-                tee "$beagrep_dir/../$md5file.$$";
-                mv "$beagrep_dir/../$md5file.$$" "$beagrep_dir/../$md5file"
-            )
+            mkdir -p "$beagrep_dir/../$md5dir";
+            tee "$beagrep_dir/../$md5file.$$";
+        )
+
+        mv "$beagrep_dir/../$md5file.$$" "$beagrep_dir/../$md5file"
+
     fi
 fi | if test "$short" = true; then
          perl -npe "s,^$source_dir/,,"
