@@ -370,6 +370,13 @@ if [[ "$(repo-remote-url $origin)" =~ github.com.baohaojun ]]; then
     git merge $origin/$branch
 fi
 (
+    if test -e ~/src/github/private-config/etc/personal-projects; then
+        export BHJ_GIT_ALL_IN_ONE=true
+    . ~/src/github/private-config/etc/personal-projects
+    fi
+)
+
+(
     set -o pipefail
     for try in $(seq 1 3); do
         if timeout $((10 * try)) git push $origin HEAD:refs/heads/$branch 2>&1 | tee .git/sc-git-push.log; then

@@ -450,8 +450,16 @@ start_recursive_shell()
         bash
     )
 }
-
 export -f start_recursive_shell
+
+sudo() {
+    (
+        umask 0022
+        command sudo "$@"
+    )
+}
+
+export -f sudo
 alias start-recursive-shell=start_recursive_shell
 
 if which python3 >/dev/null 2>&1; then

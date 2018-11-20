@@ -4,6 +4,8 @@
 . ~/system-config/.bashrc
 touch ~/.cache/system-config/.where ~/.cache/system-config/.where.lock
 
+umask 0022
+
 if test $(whoami) = bhj; then
     sudo perl -npe 's/^XKBVARIANT=.*/XKBVARIANT="dvp"/;' -i /etc/default/keyboard
     cat <<EOF | sudo tee /etc/locale.gen
