@@ -27,6 +27,9 @@ make -j8
 sudo make install
 (
     cd /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules
+    for x in /usr/local/mkspecs/modules/qt_Libsnore*; do
+        test -e "$x" || die "Can't open $x?"
+    done
     sudo ln -s /usr/local/mkspecs/modules/qt_Libsnore* .
 )
 
