@@ -21,3 +21,4 @@ fi
 
 export SUDO_ASKPASS=/usr/bin/ssh-askpass
 export SC_USE_TMUX=true
+export NODE_PATH=~/.node/node_modules
