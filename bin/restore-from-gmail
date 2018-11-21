@@ -1,0 +1,56 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt w:which-backup
+## end code-generator
+## start generated code
+TEMP=$( getopt -o w:h \
+               --long which-backup:,help \
+               -n $(basename -- $0) -- "$@")
+declare which_backup=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -w|--which-backup)
+            which_backup=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-w, '
+            printf %-24s '--which-backup=WHICH_BACKUP'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+cd ~/src/github/private-config/back-to-gmail/$which_backup
+for x in $(find . -maxdepth 1); do
+    if test "$x" = .; then
+        continue
+    fi
+
+    y=$(
+        cd ~/system-config/etc/back-to-gmail
+        readlink -m $x
+     )
+    mkdir -p $(dirname $y)
+    cp-with-dir-struct "$(dirname "$y")" $x
+done
