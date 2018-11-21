@@ -1,5 +1,29 @@
 #!/bin/bash
 
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$0
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $0)"; then
+        abs0=$(which $0)
+    else
+        die "Can't find abs path for $0"
+    fi
+fi
+
+b0=$(basename $0)
+
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt r:res v:vga @:hdmi
@@ -77,13 +101,32 @@ if echo "$xrandr_out" | grep '^VGA\S* disconnected' -P || test -z "$vga"; then
     vga=$hdmi
 fi
 
+declare -A display_size_map
+while read -r display connected setting; do
+    size=$(echo $setting | perl -ne 'print if s/.*?(\d+mm x \d+mm)$/$1/')
+    display_size_map[$display]=$size
+done <<<"$(echo "$xrandr_out" | grep connected)"
+
 if test $(basename $0) = switch-to-vga; then
     xrandr --output $lvds --auto --below $vga
     xrandr --output $vga --auto
 elif test $(basename $0) = switch-to-vga-alone; then
-    xrandr --output $lvds --off
-    xrandr --output $hdmi --off
+    if test "$1"; then
+        vga=$1
+    else
+        vga=$(
+            for x in ${!display_size_map[@]}; do
+                echo $x ${display_size_map[$x]}
+            done | sort -n -k 2 -r | head -n 1 |pn 1
+           )
+    fi
     xrandr --output $vga --auto
+    for x in ${!display_size_map[@]}; do
+        if test "${x}" = ${vga}; then
+            continue
+        fi
+        xrandr --output $x --off
+    done
 elif test $(basename $0) = switch-to-hdmi-and-laptop; then
     touch /tmp/bhj-notify-not-working
     xrandr --output $lvds --auto --below $hdmi
