@@ -18,6 +18,7 @@ github_projects=(
     ibus-sdim
     adb-sync
     Wrench
+    ext-local
 )
 
 smartcm_projects=(

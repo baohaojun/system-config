@@ -106,14 +106,20 @@ if test -d ~/src/system-config/; then
     rsync . ~/src/system-config/ --exclude .git/ -a --delete --exclude src
     mkdir -p ~/src/system-config/src/github
     (
-        cd ~/src/github/
+        cd ~/src/system-config/
         . ~/system-config/etc/github-projects
-        for x in ${github_projects[*]} ${smartcm_projects[*]}; do
+        for x in ${github_projects[*]}; do
             (
-                cd $x
-                mkdir ~/src/system-config/src/github/$x/ -p
-                rsync . ~/src/system-config/src/github/$x/ --exclude .git/ -a --delete
-            )&
+                if test ! -d src/github/${x}; then
+                    git subtree add --prefix=src/github/${x} ~/src/github/${x}/ HEAD
+                else
+                    HEAD=$(
+                        cd ~/src/github/${x}
+                        git rev-parse HEAD
+                        )
+                    git subtree pull --prefix=src/github/${x} ~/src/github/${x} HEAD -m "Merge from ~/src/github/${x} ${HEAD}"
+                fi
+            )
         done
         wait
     )
