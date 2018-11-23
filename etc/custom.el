@@ -173,6 +173,13 @@
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
       ("\\paragraph{%s}" . "\\paragraph*{%s}")
       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+     ("中文演示" "\\documentclass[presentation,dvipdfmx,CJKbookmarks]{beamer}
+\\usepackage{CJKutf8}
+\\usepackage{atbegshi}
+\\AtBeginShipoutFirst{\\special{pdf:tounicode UTF8-UTF16}} % for UTF-8
+ [DEFAULT-PACKAGES]
+ [PACKAGES]
+ [EXTRA]")
      ("article" "\\documentclass[11pt]{article}"
       ("\\section{%s}" . "\\section*{%s}")
       ("\\subsection{%s}" . "\\subsection*{%s}")
