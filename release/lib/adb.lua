@@ -439,6 +439,8 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          if not ime_connected then
             if window == W.qqChatActivity2 or window == W.qqChatActivity then
                adb_event("540 1740")
+            elseif window and window:match("com.bullet.messenger/") then
+               adb_event("440 1840")
             else
                adb_event("540 1840")
             end
