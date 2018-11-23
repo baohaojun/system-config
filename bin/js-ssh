@@ -1,0 +1,12 @@
+#!/usr/bin/expect
+
+spawn ssh -o ControlMaster=auto -o ControlPath='tramp.%C' -o ControlPersist=no -e none js;
+expect "Opt>" {
+    send "162\n";
+    expect -re "\\$" {
+        send "exec bash\n"
+    }
+}
+
+interact;
+wait

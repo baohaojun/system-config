@@ -1,13 +1,19 @@
 #!/bin/bash
+if ps.pl pulseaudio >/dev/null 2>&1; then
+    pulse_audio="-D pulse"
+else
+    pulse_audio=
+fi
 
 function amixer() {
+
     if test "$PULSE_SERVER"; then
         ssh "$PULSE_SERVER" amixer "$@"
     else
-        if grep "card 1" ~/.asoundrc; then
-            command amixer -c 1 "$@"
+        if grep "card 1" ~/.asoundrc -q >/dev/null 2>&1; then
+            command amixer ${pulse_audio} -c 1 "$@"
         else
-            command amixer "$@"
+            command amixer ${pulse_audio} "$@"
         fi
     fi
 }
