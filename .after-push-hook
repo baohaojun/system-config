@@ -100,23 +100,14 @@ if test -d ~/src/system-config/; then
     )
 
     cd ~/src/system-config/
-    rm -f .gitmodules
     if git-any-changes >/dev/null 2>&1; then
         git add .
         git commit -m "auto commit from system-config:$(cd ~/system-config; git log --pretty=%H -1)"
     fi
-    if ! git push -f; then
+    if ! git push; then
         bhj-notify $PWD "push to s failed"
     fi
-    if ! git push -f github HEAD:system-config >/dev/null 2>&1; then
+    if ! git push github HEAD:system-config >/dev/null 2>&1; then
         bhj-notify system-config "Failed to push system-config to github"
-    fi&
-    if test -d ~/external/local/.git/; then
-        (
-            cd ~/external/local
-            if ! git push s:baohaojun/ext-local HEAD:master >/dev/null 2>&1; then
-                bhj-notify $PWD "$PWD push failed"
-            fi
-        )
     fi&
 fi
