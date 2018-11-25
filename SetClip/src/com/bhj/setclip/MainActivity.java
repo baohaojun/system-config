@@ -1,12 +1,15 @@
 package com.bhj.setclip;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
+    ClipboardManager mClipboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +18,9 @@ public class MainActivity extends Activity {
         
         Uri data = getIntent().getData();
         if (data != null) {
-            Toast.makeText(MainActivity.this, String.format("hello world %s", data.getPath()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, String.format("You want to open: %s", data.getPath()), Toast.LENGTH_SHORT).show();
+            mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+            mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", data.getPath()));
         }
     }
 
