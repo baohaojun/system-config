@@ -161,7 +161,11 @@
    ORDER BY priority DESC, created ASC")
  '(org-latex-classes
    (quote
-    (("中文文章" "\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}
+    (("beamer" "\\documentclass[presentation]{beamer}"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+     ("中文文章" "\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}
 \\usepackage{CJKutf8}
 \\usepackage{atbegshi}
 \\AtBeginShipoutFirst{\\special{pdf:tounicode UTF8-UTF16}} % for UTF-8
@@ -179,7 +183,10 @@
 \\AtBeginShipoutFirst{\\special{pdf:tounicode UTF8-UTF16}} % for UTF-8
  [DEFAULT-PACKAGES]
  [PACKAGES]
- [EXTRA]")
+ [EXTRA]"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
      ("article" "\\documentclass[11pt]{article}"
       ("\\section{%s}" . "\\section*{%s}")
       ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -214,7 +221,8 @@
  '(require-final-newline t)
  '(safe-local-variable-values
    (quote
-    ((company-clang-arguments "-D__PIC__" "-std=c++11" "-stdlib=libc++" "-I/usr/lib/llvm-3.8/include" "-I/usr/lib/llvm-3.8/lib/clang/3.8.1/include" "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent" "-I/home/bhj/src/github/Wrench/qt-solutions/qtsingleapplication/src/" "-I/usr/include/x86_64-linux-gnu/qt5/QtCore" "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus" "-I/usr/include/x86_64-linux-gnu/qt5/QtGui" "-I/usr/include/x86_64-linux-gnu/qt5/QtNetwork" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions" "-I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtSql" "-I/usr/include/x86_64-linux-gnu/qt5/QtTest" "-I/usr/include/x86_64-linux-gnu/qt5/QtWidgets" "-I/usr/include/x86_64-linux-gnu/qt5/QtXml" "-I/usr/include/x86_64-linux-gnu/qt5" "-I/usr/include" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include/lua5.2" "-I/usr/include/x86_64-linux-gnu/c++/6" "-I/usr/include/c++/6" "-I/home/bhj/tmp/build-wrench" "-I/usr/local/include" "-I/home/bhj/src/github/Wrench/QHotKey/QHotkey" "-I.")
+    ((eval org-shifttab 2)
+     (company-clang-arguments "-D__PIC__" "-std=c++11" "-stdlib=libc++" "-I/usr/lib/llvm-3.8/include" "-I/usr/lib/llvm-3.8/lib/clang/3.8.1/include" "-I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent" "-I/home/bhj/src/github/Wrench/qt-solutions/qtsingleapplication/src/" "-I/usr/include/x86_64-linux-gnu/qt5/QtCore" "-I/usr/include/x86_64-linux-gnu/qt5/QtDBus" "-I/usr/include/x86_64-linux-gnu/qt5/QtGui" "-I/usr/include/x86_64-linux-gnu/qt5/QtNetwork" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL" "-I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions" "-I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport" "-I/usr/include/x86_64-linux-gnu/qt5/QtSql" "-I/usr/include/x86_64-linux-gnu/qt5/QtTest" "-I/usr/include/x86_64-linux-gnu/qt5/QtWidgets" "-I/usr/include/x86_64-linux-gnu/qt5/QtXml" "-I/usr/include/x86_64-linux-gnu/qt5" "-I/usr/include" "-I/usr/include/x86_64-linux-gnu" "-I/usr/include/lua5.2" "-I/usr/include/x86_64-linux-gnu/c++/6" "-I/usr/include/c++/6" "-I/home/bhj/tmp/build-wrench" "-I/usr/local/include" "-I/home/bhj/src/github/Wrench/QHotKey/QHotkey" "-I.")
      (emojify-mode . 1)
      (read-only-mode . t)
      (view-mode . t)

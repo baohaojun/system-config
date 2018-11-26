@@ -219,7 +219,9 @@ s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
      )" -i $1
      fi
 
-     perl -npe "s,\\\\usetheme\\{\\w+\\},\\\\usetheme{$style}," -i "$1"
+     if test "${style}" != default; then
+         perl -npe "s,\\\\usetheme\\{\\w+\\},\\\\usetheme{$style}," -i "$1"
+     fi
      if test "$color" != default; then
          perl -npe "s,(\\\\usetheme\\{\\w+\\}),\$1 \\\\usecolortheme{$color}," -i "$1"
      fi
