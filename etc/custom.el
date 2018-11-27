@@ -86,7 +86,6 @@
  '(ispell-program-name "aspell")
  '(jira-host "localhost.18888")
  '(jira-url "http://localhost:18888/rpc/xmlrpc")
- '(jiralib-url "http://localhost:8081/")
  '(keyboard-coding-system (quote cp936))
  '(linum-format " %7i ")
  '(lisp-mode-hook
@@ -156,9 +155,11 @@
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" . default)
      ("\\.pdf\\'" . "of %s"))))
+ '(org-jira-coding-system (quote utf-8))
  '(org-jira-default-jql
    "(reporter = currentUser() or assignee = currentUser()) and resolution = unresolved
    ORDER BY priority DESC, created ASC")
+ '(org-jira-done-states (quote ("Closed" "Resolved" "Done" "完成")))
  '(org-latex-classes
    (quote
     (("beamer" "\\documentclass[presentation]{beamer}"
@@ -215,7 +216,7 @@
  '(org2blog/wp-use-tags-as-categories t)
  '(package-selected-packages
    (quote
-    (ghub go-mode web-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized company-shell company-statistics helm-company ivy ivy-bibtex ivy-dired-history ivy-erlang-complete ivy-gitlab ivy-hydra ivy-pages ivy-pass ivy-purpose ivy-rich ivy-rtags ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode emojify jedi org tabbar evil helm ddskk flycheck-clojure flycheck yari whole-line-or-region tidy smarty-mode session rinari redshank project-local-variables org-fstree mwe-log-commands lively keydef js-comint ipretty ibuffer-vc htmlize hl-sexp hippie-expand-slime highlight-quoted highlight-escape-sequences hi2 hayoo guide-key gitignore-mode github-clone gitconfig-mode git-messenger git-gutter-fringe git-blame ghci-completion fullframe fill-column-indicator f expand-region exec-path-from-shell erlang elisp-slime-nav elein dts-mode dsvn dired-sort dired+ diminish diff-hl default-text-scale darcsum csv-nav csv-mode csharp-mode crontab-mode coffee-mode clojure-test-mode cljsbuild-mode cl-lib-highlight bug-reference-github bbyac bbdb-vcard auto-complete-clang auto-compile anzu aggressive-indent ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
+    (confluence ghub go-mode web-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized company-shell company-statistics helm-company ivy ivy-bibtex ivy-dired-history ivy-erlang-complete ivy-gitlab ivy-hydra ivy-pages ivy-pass ivy-purpose ivy-rich ivy-rtags ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode emojify jedi org tabbar evil helm ddskk flycheck-clojure flycheck yari whole-line-or-region tidy smarty-mode session rinari redshank project-local-variables org-fstree mwe-log-commands lively keydef js-comint ipretty ibuffer-vc htmlize hl-sexp hippie-expand-slime highlight-quoted highlight-escape-sequences hi2 hayoo guide-key gitignore-mode github-clone gitconfig-mode git-messenger git-gutter-fringe git-blame ghci-completion fullframe fill-column-indicator f expand-region exec-path-from-shell erlang elisp-slime-nav elein dts-mode dsvn dired-sort dired+ diminish diff-hl default-text-scale darcsum csv-nav csv-mode csharp-mode crontab-mode coffee-mode clojure-test-mode cljsbuild-mode cl-lib-highlight bug-reference-github bbyac bbdb-vcard auto-complete-clang auto-compile anzu aggressive-indent ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
  '(rainbow-identifiers-cie-l*a*b*-lightness 70)
  '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(require-final-newline t)
