@@ -593,7 +593,7 @@ be populated."
                            (when (boundp 'buffer-file-coding-system)
                              buffer-file-coding-system 'utf-8))))
     (decode-coding-string
-     (string-make-unibyte (cl-coerce data 'string)) coding-system)))
+     (cl-coerce data 'string) coding-system)))
 
 (defun org-jira-insert (&rest args)
   "Set coding to text provide by `ARGS' when insert in buffer."
@@ -921,12 +921,11 @@ See`org-jira-get-issue-list'"
              (unless (looking-at "^")
                (insert "\n"))
              (insert "** "))
-           (let ((status (org-jira-decode status)))
-             (org-jira-insert
-              (concat (org-jira-get-org-keyword-from-status status)
-                      " "
-                      (org-jira-get-org-priority-cookie-from-issue priority)
-                      headline)))
+           (org-jira-insert
+            (concat (org-jira-get-org-keyword-from-status status)
+                    " "
+                    (org-jira-get-org-priority-cookie-from-issue priority)
+                    headline))
            (save-excursion
              (unless (search-forward "\n" (point-max) 1)
                (insert "\n")))
@@ -953,31 +952,31 @@ See`org-jira-get-issue-list'"
            (mapc
             (lambda (heading-entry)
               (ensure-on-issue-id
-               issue-id
-               (let* ((entry-heading
-                       (concat (symbol-name heading-entry)
-                               (format ": [[%s][%s]]"
-                                       (concat jiralib-url "/browse/" issue-id) issue-id))))
-                 (setq p (org-find-exact-headline-in-buffer entry-heading))
-                 (if (and p (>= p (point-min))
-                          (<= p (point-max)))
-                     (progn
-                       (goto-char p)
-                       (org-narrow-to-subtree)
-                       (goto-char (point-min))
-                       (forward-line 1)
-                       (delete-region (point) (point-max)))
-                   (if (org-goto-first-child)
-                       (org-insert-heading)
-                     (goto-char (point-max))
-                     (org-insert-subheading t))
-                   (org-jira-insert entry-heading "\n"))
+                  issue-id
+                (let* ((entry-heading
+                        (concat (symbol-name heading-entry)
+                                (format ": [[%s][%s]]"
+                                        (concat jiralib-url "/browse/" issue-id) issue-id))))
+                  (setq p (org-find-exact-headline-in-buffer entry-heading))
+                  (if (and p (>= p (point-min))
+                           (<= p (point-max)))
+                      (progn
+                        (goto-char p)
+                        (org-narrow-to-subtree)
+                        (goto-char (point-min))
+                        (forward-line 1)
+                        (delete-region (point) (point-max)))
+                    (if (org-goto-first-child)
+                        (org-insert-heading)
+                      (goto-char (point-max))
+                      (org-insert-subheading t))
+                    (org-jira-insert entry-heading "\n"))
 
-                 ;;  Insert 2 spaces of indentation so Jira markup won't cause org-markup
-                 (org-jira-insert
-                  (replace-regexp-in-string
-                   "^" "  "
-                   (format "%s" (slot-value Issue heading-entry)))))))
+                  ;;  Insert 2 spaces of indentation so Jira markup won't cause org-markup
+                  (org-jira-insert
+                   (replace-regexp-in-string
+                    "^" "  "
+                    (format "%s" (slot-value Issue heading-entry)))))))
             '(description))
 
            (org-jira-update-comments-for-issue issue-id)
