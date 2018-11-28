@@ -2,6 +2,7 @@
 set -e
 touch ~/.authinfo ~/.netrc
 chmod og-rwx ~/.authinfo ~/.netrc
+umask 0022
 
 my_uname=$(uname)
 my_uname=${uname%-*}
