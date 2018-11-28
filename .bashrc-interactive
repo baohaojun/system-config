@@ -48,7 +48,7 @@ function fcd()
         echo 'Error: no such file or directory'
         return 1
     elif test ${#dirs[@]} = 1; then
-        cd_bhj ${dirs[0]}
+        cd_bhj "${dirs[0]}"
     else
         NUM=`my-select "${dirs[@]}"`
         ((NUM--))
@@ -253,10 +253,10 @@ lcd()
 
         if test ! -e "$smb_mount"; then
             smb_mount="/mnt/.smb/smb-share:server=$smb_server,share=$smb_share"
-            if test ! -d $smb_mount || ! get-mount-1 "$smb_mount" | grep ^// -q; then
+            if test ! -d "$smb_mount" || ! get-mount-1 "$smb_mount" | grep ^// -q; then
                 hint "你还没有打开过 smb://$smb_server/$smb_share"
                 if test -e ~/src/github/smartcm/scm-helpers/.smb_mount &&
-                        ~/src/github/smartcm/scm-helpers/.smb_mount $smb_server $smb_share
+                        ~/src/github/smartcm/scm-helpers/.smb_mount $smb_server "$smb_share"
                 then
                     true
                 else

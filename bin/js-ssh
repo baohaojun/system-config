@@ -1,8 +1,14 @@
 #!/usr/bin/expect
 
+if {[info exists env(JS_TARGET)]} {
+    set js_target $env(JS_TARGET); #
+} else {
+    set js_target 162
+}
+
 spawn ssh -o ControlMaster=auto -o ControlPath='tramp.%C' -o ControlPersist=no -e none js;
 expect "Opt>" {
-    send "162\n";
+    send "$js_target\n";
     expect -re "\\$" {
         send "exec bash\n"
     }
