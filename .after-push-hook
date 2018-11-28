@@ -74,7 +74,7 @@ if test -d ~/src/system-config/; then
         done
     ) >/dev/null 2>&1
     (
-        cd ~/system-config
+        cd ~/src/system-config
         HEAD=$(git rev-parse HEAD)
         git pull ~/system-config --no-edit
     )
