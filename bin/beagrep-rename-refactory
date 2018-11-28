@@ -1,0 +1,84 @@
+#!/bin/bash
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt f:from t:to @rgrep
+## end code-generator
+## start generated code
+TEMP=$( getopt -o f:t:h \
+               --long from:,rgrep,to:,help,no-rgrep \
+               -n $(basename -- $0) -- "$@")
+declare from=
+declare rgrep=false
+declare to=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--from)
+            from=$2
+            shift 2
+
+            ;;
+        --rgrep|--no-rgrep)
+            if test "$1" = --no-rgrep; then
+                rgrep=false
+            else
+                rgrep=true
+            fi
+            shift
+
+            ;;
+        -t|--to)
+            to=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--from=FROM'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]rgrep'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to=TO'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "$from" -o -z "${to}"; then
+    if test "$#" = 2; then
+        from=$1
+        to=$2
+    else
+        die "From and To must not be empty!"
+    fi
+fi
+
+rename-refactory -f "$(
+# {%sh-mode%}
+ if test "${rgrep}" = true; then
+     rgrep -e "$from" -i -l
+ else
+     beagrep -e "$from" -i --grep -l |tr : ' '|pn 1
+ fi
+# {%/sh-mode%}
+)" --no-use-git "$from" "$to"
+for-code-reading >/dev/null 2>&1&

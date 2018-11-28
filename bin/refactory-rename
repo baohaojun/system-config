@@ -282,7 +282,7 @@ function rename-files() {
                     if test "${#change_files[@]}" = 0; then
                         git mv "$x" "$y"
                     else
-                        cp "$x" "$y"
+                        mv "$x" "$y"
                     fi
                 fi
 
