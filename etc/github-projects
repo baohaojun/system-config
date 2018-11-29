@@ -19,15 +19,10 @@ github_projects=(
     adb-sync
     Wrench
     ext-local
-    smartcm
 )
 
 smartcm_projects=(
-    gapps-lp
-    gapps-6.0
-    gapps-t1
-    Wrench-ubuntu-14.04
-    android-documents
+    smartcm
 )
 
 declare -A project_repo_url
