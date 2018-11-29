@@ -2,13 +2,13 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt w:which-backup
+# generate-getopt w:which-backup='$(get-mac)'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o w:h \
                --long which-backup:,help \
                -n $(basename -- $0) -- "$@")
-declare which_backup=
+declare which_backup=$(get-mac)
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -24,7 +24,7 @@ while true; do
             echo
             echo Options and arguments:
             printf %06s '-w, '
-            printf %-24s '--which-backup=WHICH_BACKUP'
+            printf %-24s '--which-backup=WHICH_BACKUP...'
             echo
             exit
             shift
