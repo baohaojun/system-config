@@ -1,6 +1,28 @@
 #!/bin/bash
 set -e
 
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$0
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $0)"; then
+        abs0=$(which $0)
+    else
+        die "Can't find abs path for $0"
+    fi
+fi
+
+b0=$(basename $0)
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt rreverse @follow-symlink Sgit-st \
     # t:target-dir-alias='$(up .)' '?另一种指定 --target-dir 的方法' \
@@ -139,7 +161,7 @@ if is-in-emacs; then
     fi
 
     if test "$#" = 1; then
-        nohup setsid bash -c 'set -x; CHECK_ORG=true out-of-emacs bash -x psync "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
+        nohup setsid bash -c 'set -x; CHECK_ORG=true out-of-emacs bash -x '${b0}' "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
         exit
     fi
 fi
@@ -186,7 +208,26 @@ fi
 host=$1
 shift
 
-ssh $host mkdir -p "$target_dir"
+if test "${b0}" = psync; then
+    ssh $host mkdir -p "$target_dir"
+elif test "${b0}" = jsync; then
+    emacs_target_dir=${target_dir#\~/}
+    emacs_target_dir=$(eval echo "${emacs_target_dir}")
+    emacs_target_dir=$(emacs-quote-string "${emacs_target_dir}")
+
+    target_dir=$(emacs-quote-string "${target_dir}")
+
+    emacsclient -e "$(
+cat <<'EOFda3074d5015b' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(let ((default-directory "/jssh:<%host%>:"))
+  (shell-command-to-string (format "(set -x; mkdir -p %s) 2>&1" "<%target_dir%>")))
+; {%/emacs-lisp-mode%}
+EOFda3074d5015b
+
+)"
+fi
+
 if test -e psync-exclude.rc -a -z "$delete"; then
     local_exclude="--exclude-from $PWD/psync-exclude.rc"
 else
@@ -218,7 +259,28 @@ else
         done
     fi
 
-    my-rsync $git_st $follow_symlink $checksum -av "$@" $host:"$target_dir" --exclude .git --exclude .repo --exclude "*#*" --exclude ".#*" $delete $local_exclude --progress
+    if test "${b0}" = psync; then
+        my-rsync $git_st $follow_symlink $checksum -av "$@" $host:"$target_dir" --exclude .git --exclude .repo --exclude "*#*" --exclude ".#*" $delete $local_exclude --progress
+    elif test "${b0}" = jsync; then
+        for x in "${@}"; do
+            if test -f "${x}"; then
+                source_file=$(emacs-quote-string "$(readlink -f "${x}")")
+                target_file="${emacs_target_dir}"/"${source_file##*/}"
+                emacsclient -e "$(
+cat <<'EOF0ecb2235bec3' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(let ((before-save-hook))
+  (find-file "/jssh:<%host%>:<%target-file%>")
+  (insert-file-contents "<%source-file%>")
+  (save-buffer)
+  (kill-buffer))
+; {%/emacs-lisp-mode%}
+EOF0ecb2235bec3
+
+)"
+            fi
+        done
+    fi
     if test "$CHECK_ORG" = true && [[ $1 =~ \.org$ ]]; then
         x=$1
         (
@@ -229,7 +291,7 @@ else
                 emacsclient -e '(progn (find-file "'"$x"'") (org-babel-tangle))'
             fi
             cd "$(dirname "$tangle_target")"
-            psync "$host" "$(bp "$tangle_target")"
+            $b0 "$host" "$(bp "$tangle_target")"
         )
     fi
 

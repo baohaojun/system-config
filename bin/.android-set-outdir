@@ -1,5 +1,5 @@
 #!/bin/bash
-export OUT_DIR_LONG=.repo/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+export OUT_DIR_LONG=$(lookup-file .repo)/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 (
     if test -d out -a -d out/target -a ! -L out; then
         hint -t 5 "

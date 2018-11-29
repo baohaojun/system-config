@@ -8,7 +8,10 @@ unset PROMPT_RET
 if test "$SC_DEBUG" = true; then
     set -x
 fi
-cd $(lookup-file .repo/..)
+repo_dir=$(lookup-file -e .repo)
+android_dir=$(lookup-file-dir -e bionic)
+
+cd ${android_dir}
 
 if test -d out -a ! -L out; then
     if test -e ~/src/github/smartcm/scm-helpers/.check-out-is-real-dir; then
@@ -29,8 +32,8 @@ rm -rf out
 
 (
     # make sure android lunch script will not run mkdir out.
-    mkdir -p .repo/out.tmp
-    ln -s .repo/out.tmp out
+    mkdir -p ${repo_dir}/out.tmp
+    ln -s ${repo_dir}/out.tmp out
 )
 
 declare -A before_env

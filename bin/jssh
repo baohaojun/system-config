@@ -1,0 +1,11 @@
+#!/bin/bash
+
+host=$(
+    while test $# != 0; do
+        host=$1
+        shift
+    done
+    echo $host
+    )
+
+JS_TARGET=${host##*.} exec js-ssh

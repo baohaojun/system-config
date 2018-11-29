@@ -291,3 +291,22 @@ passed via standard input." t nil)
             (make-variable-buffer-local 'mmm-global-mode)
             (setq mmm-global-mode nil)
             (mmm-mode -1)))
+(eval-after-load 'tramp
+  '(setq tramp-methods
+         (cons
+          '("jssh"
+            (tramp-login-program "jssh")
+            (tramp-login-args
+             (("-l" "%u")
+              ("-p" "%p")
+              ("%c")
+              ("-e" "none")
+              ("%h")))
+            (tramp-async-args
+             (("-q")))
+            (tramp-remote-shell "/bin/sh")
+            (tramp-remote-shell-login
+             ("-l"))
+            (tramp-remote-shell-args
+             ("-c")))
+          tramp-methods)))
