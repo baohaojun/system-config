@@ -1,8 +1,7 @@
 #!/bin/bash
-
 set -e
 
-set -e
+umask 0022
 
 me=$(readlink -f $0)
 if test ! -e "$me"; then
