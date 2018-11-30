@@ -184,7 +184,8 @@ EOF
                 fi
             done
         ) || true
-    sawfish-client -e '
+        for client in emacsclient sawfish-client; do
+            ${client} -e '
 ; {%sawfish-mode%}
 (progn
   (setenv "WRENCH_INSTANCE" "'$WRENCH_INSTANCE'")
@@ -192,6 +193,7 @@ EOF
   (setenv "PATH" "'"$PATH"'"))
 ; {%/sawfish-mode%}
 '
+        done
     fi
     set-about-me adb-serial $ANDROID_SERIAL || true
     nohup Wrench.sh -1 "$@"&
