@@ -151,6 +151,11 @@ if test -z "$target_dir" -a "$target_dir_alias"; then
 fi
 
 if is-in-emacs; then
+
+    if test "${b0}" = Wsync; then
+        nohup setsid bash -c 'set -x; Wrench.sh "wrench_post($(lua-quote-string "$(emacs-current-text)"))"' </dev/null > ~/tmp/psync.log 2>&1&
+        exit
+    fi
     if test $# = 0; then
         psync_host=$(get-about-me psync-host)
         if test "${psync_host}"  = unknown; then
@@ -271,6 +276,7 @@ cat <<'EOF0ecb2235bec3' | . .replace-%% --
 ; {%emacs-lisp-mode%}
 (let ((before-save-hook))
   (find-file "/jssh:<%host%>:<%target-file%>")
+  (delete-region (point-min) (point-max))
   (insert-file-contents "<%source-file%>")
   (save-buffer)
   (kill-buffer))

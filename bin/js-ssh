@@ -5,12 +5,20 @@ if {[info exists env(JS_TARGET)]} {
 } else {
     set js_target 162
 }
+proc qx cmd {
+    set fh [open "|$cmd"]
+    set res [read $fh]
+    close $fh
+    return $res
+}
+
+set local_ip [qx get-my-ip]
 
 spawn ssh -o ControlMaster=auto -o ControlPath='tramp.%C' -o ControlPersist=no -e none js;
 expect "Opt>" {
     send "$js_target\n";
     expect -re "\\$" {
-        send "exec bash\n"
+        send "REMOTEPROTOCOL=jssh REMOTEIP=$local_ip REMOTEUSER=$env(USER) REMOTE_EXTRA_SSH_ARGS=\"-i \${HOME}/.ssh/id_rsa_remote_edit\" exec bash\n"
     }
 }
 
