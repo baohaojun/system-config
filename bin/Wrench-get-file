@@ -1,0 +1,6 @@
+#!/bin/bash
+
+file=$(getclip-android)
+
+adb pull "${file}" ~/tmp/"$(bp "$file")"
+of ~/tmp/"$(bp "$file")"

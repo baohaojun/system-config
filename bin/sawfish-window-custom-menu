@@ -31,6 +31,11 @@ window_operations[wrench-send-a-key-to-phone]=function
 window_operations[*-get-cursor-pos-in-window]=function
 window_operations[*-get-current-window-size]=function
 window_operations[*-wrench...]=function
+window_operations[*-get-phone-file]=function
+
+function get-phone-file() {
+    Wrench-get-file
+}
 
 function wrench...() {
     SC_FORCE_TOP_WINDOW=wrench sawfish-window-custom-menu

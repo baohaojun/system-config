@@ -3,13 +3,13 @@ use String::ShellQuote;
 use strict;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl ddebug-mode p:protocol='$ENV{REMOTEPROTOCOL}'
+# generate-getopt -s perl ddebug-mode p:protocol='$ENV{REMOTEPROTOCOL}" || "ssh'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
 
 my $debug_mode = 0;
-my $protocol = "$ENV{REMOTEPROTOCOL}";
+my $protocol = "$ENV{REMOTEPROTOCOL}" || "ssh";
 
 GetOptions (
             'debug-mode|d!' => \$debug_mode,
