@@ -23,18 +23,22 @@ fi
 set +e
 exec >> ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
 set -x
-date
-if test $(basename $0) = screen-lock-off; then
-    sawfish-client -e '(system "Wrench.sh&")'
+
+if test $(basename $0) = screen-lock-off; then # lock off, screen on
+    if test -e ~/src/github/private-config/.gitconfig.bhj; then
+        (
+            set -x
+            . wait-keys-clear
+            am dvp
+        ) > ~/.cache/system-config/logs/screen-on.log 2>&1&
+    fi
     find-or-exec emacs emacs.bhj
     xdotool mousemove 20 10
     sleep 1
     xdotool mousemove 1024 10
     touch ~/.cache/system-config/logs/screen-on
-    # if test -e ~/src/github/private-config/.gitconfig.bhj; then
-    #     am dvp
-    # fi
-else # lock on
+
+else # lock on, screen off
     # my-adb key power
     rm touch ~/.cache/system-config/logs/screen-on -f
     destroy-windows Wrench

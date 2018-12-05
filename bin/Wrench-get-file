@@ -2,5 +2,9 @@
 
 file=$(getclip-android)
 
-adb pull "${file}" ~/tmp/"$(bp "$file")"
-of ~/tmp/"$(bp "$file")"
+to_file=~/tmp/"$(bp "$file")"
+adb pull "${file}" "${to_file}"
+putclip "${to_file}"
+if EMACS=t yes-or-no-p -y "use emacs to open it?"; then
+    e "${to_file}"
+fi

@@ -50,7 +50,12 @@ if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / |
 else
     if test "$1"; then
         if [[ $1 =~ / ]]; then
-            die "Can't use / in force-1, it's dangerous"
+            if test -e "$1"; then
+                set -- "$(bp "$1")"
+            else
+                set -- "$(echo $* | md5sum |pn 1)"
+                set -- ${1:0:2}/${1:2}
+            fi
         fi
         lock=~/.cache/system-config/force-1/$1
     else

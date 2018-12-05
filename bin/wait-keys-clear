@@ -1,7 +1,23 @@
 #!/bin/bash
 
-while query-keyboard-state | grep -P '\Qkey[46]=down\E' >/dev/null 2>&1; do
-    sleep .01;
+. force-1 $BASH_SOURCE
+
+for i in $(seq 1 50); do
+    if query-keyboard-state >/dev/null 2>&1; then
+        sleep .1;
+        if test $i = 50; then
+            bhj-notify keyboad 'It is always pressed'
+            exit
+        fi
+        continue
+    else
+        break
+    fi
 done
 
-"$@"
+if test "$BASH_SOURCE" = "$0"; then
+    "$@"
+else
+    # we are being sourced.
+    return 0
+fi

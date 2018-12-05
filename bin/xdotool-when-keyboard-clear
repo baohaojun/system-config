@@ -1,20 +1,6 @@
 #!/bin/bash
 
-exec 9> ~/.cache/system-config/logs/$(basename $0).lock
-flock 9
-
-for i in $(seq 1 50); do
-    if query-keyboard-state >/dev/null 2>&1; then
-        sleep .1;
-        if test $i = 50; then
-            bhj-notify xdotool 'keyboard is always pressed'
-            exit
-        fi
-        continue
-    else
-        break
-    fi
-done
+. wait-keys-clear --
 
 current_window=$(sawfish-client -e "(window-id (input-focus))")
 if test "$xdotool_window" -a "$xdotool_window" != "$current_window"; then

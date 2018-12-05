@@ -25,20 +25,18 @@ b0=$(basename $0)
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt rreverse @follow-symlink Sgit-st \
-    # t:target-dir-alias='$(up .)' '?另一种指定 --target-dir 的方法' \
-    # d:target-dir @delete cchecksum
+    # t:target-dir @delete cchecksum
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o cSrd:t:h \
-               --long checksum,delete,follow-symlink,git-st,reverse,target-dir:,target-dir-alias:,help,no-checksum,no-delete,no-follow-symlink,no-git-st,no-reverse \
+TEMP=$( getopt -o cSrt:h \
+               --long checksum,delete,follow-symlink,git-st,reverse,target-dir:,help,no-checksum,no-delete,no-follow-symlink,no-git-st,no-reverse \
                -n $(basename -- $0) -- "$@")
-checksum=false
-delete=false
-follow_symlink=false
-git_st=false
-reverse=false
-target_dir=
-target_dir_alias=$(up .)
+declare checksum=false
+declare delete=false
+declare follow_symlink=false
+declare git_st=false
+declare reverse=false
+declare target_dir=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -50,6 +48,7 @@ while true; do
                 checksum=true
             fi
             shift
+
             ;;
         --delete|--no-delete)
             if test "$1" = --no-delete; then
@@ -58,6 +57,7 @@ while true; do
                 delete=true
             fi
             shift
+
             ;;
         --follow-symlink|--no-follow-symlink)
             if test "$1" = --no-follow-symlink; then
@@ -66,6 +66,7 @@ while true; do
                 follow_symlink=true
             fi
             shift
+
             ;;
         -S|--git-st|--no-git-st)
             if test "$1" = --no-git-st; then
@@ -74,6 +75,7 @@ while true; do
                 git_st=true
             fi
             shift
+
             ;;
         -r|--reverse|--no-reverse)
             if test "$1" = --no-reverse; then
@@ -82,14 +84,12 @@ while true; do
                 reverse=true
             fi
             shift
+
             ;;
-        -d|--target-dir)
+        -t|--target-dir)
             target_dir=$2
             shift 2
-            ;;
-        -t|--target-dir-alias)
-            target_dir_alias=$2
-            shift 2
+
             ;;
         -h|--help)
             set +x
@@ -111,14 +111,9 @@ while true; do
             printf %06s '-r, '
             printf %-24s '--[no-]reverse'
             echo
-            printf %06s '-d, '
+            printf %06s '-t, '
             printf %-24s '--target-dir=TARGET_DIR'
             echo
-            printf %06s '-t, '
-            printf %-24s '--target-dir-alias=TARGET_DIR_ALIAS'
-            echo
-            printf "%30s" ""
-            echo '另一种指定 --target-dir 的方法'
             exit
             shift
             ;;
@@ -140,14 +135,16 @@ done
 . .set-true-val git_st --files-from=-
 . .set-true-val delete --delete
 
+saved_target_dir=${target_dir}
+
+if test -z "${target_dir}"; then
+    target_dir=$(up .)
+fi
+
 if [[ "$target_dir" =~ $HOME/ ]]; then
     target_dir=\~/${target_dir#$HOME/}
 elif test "$target_dir" = "$HOME"; then
     target_dir=\~
-fi
-
-if test -z "$target_dir" -a "$target_dir_alias"; then
-    target_dir=$target_dir_alias
 fi
 
 if is-in-emacs; then
@@ -166,7 +163,7 @@ if is-in-emacs; then
     fi
 
     if test "$#" = 1; then
-        nohup setsid bash -c 'set -x; CHECK_ORG=true out-of-emacs bash -x '${b0}' "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
+        nohup setsid bash -c 'set -x; CHECK_ORG=true out-of-emacs bash -x '${b0}' -t "'${saved_target_dir}'" "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
         exit
     fi
 fi

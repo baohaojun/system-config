@@ -4,13 +4,15 @@
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt f:from-mode '?"当前的文件是什么 emacs mode，比如 nxml（jenkins config）"' \
     # t:to-mode '?"想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"' \
+    # p:pipe-cmd '?"使用什么 pipe 命令（cat 或 cdata，后者会使用 xmlstarlet unesc -，默认根据 to-mode 配置是否匹配 cdata 自动计算）"' \
     # ssimple-fence '?"用更简短的 fence，比如不用“<![CDATA[<!--start html-->”，只用“<![CDATA[”"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o f:st:h \
-               --long from-mode:,simple-fence,to-mode:,help,no-simple-fence \
+TEMP=$( getopt -o f:p:st:h \
+               --long from-mode:,pipe-cmd:,simple-fence,to-mode:,help,no-simple-fence \
                -n $(basename -- $0) -- "$@")
 declare from_mode=
+declare pipe_cmd=
 declare simple_fence=false
 declare to_mode=
 eval set -- "$TEMP"
@@ -19,6 +21,11 @@ while true; do
 
         -f|--from-mode)
             from_mode=$2
+            shift 2
+
+            ;;
+        -p|--pipe-cmd)
+            pipe_cmd=$2
             shift 2
 
             ;;
@@ -44,6 +51,9 @@ while true; do
             printf %06s '-f, '
             printf %-24s '--from-mode=FROM_MODE'
             echo "当前的文件是什么 emacs mode，比如 nxml（jenkins config）"
+            printf %06s '-p, '
+            printf %-24s '--pipe-cmd=PIPE_CMD'
+            echo "cdata"
             printf %06s '-s, '
             printf %-24s '--[no-]simple-fence'
             echo "用更简短的 fence，比如不用“<![CDATA[<!--start html-->”，只用“<![CDATA[”"
@@ -77,6 +87,9 @@ unescape-html() {
 add_at_start[nxml-bash]='<![CDATA[#!/bin/bash'
 add_at_end[nxml-bash]='#!end-of-fence]]>'
 
+add_at_start[nxml-sh]='<![CDATA[#!/bin/bash'
+add_at_end[nxml-sh]='#!end-of-fence]]>'
+
 add_at_start[nxml-html]='<![CDATA[<!--start html-->'
 add_at_start[nxml-html-simple]='<![CDATA['
 
@@ -95,6 +108,18 @@ else
 fi
 pipe_map[nxml-html]=unescape-html
 
+if test -z "${pipe_cmd}"; then
+    pipe_cmd=${pipe_map[$from_mode-$to_mode]}
+
+    if test -z "${pipe_cmd}"; then
+        if [[ "${add_at_start[$from_mode-$to_mode]}" =~ CDATA ]]; then
+            pipe_cmd=unescape-html
+        else
+            pipe_cmd=cat
+        fi
+    fi
+fi
+
 echo $echo_arg "${add_at_start[$from_mode-$to_mode$simple]}"
-cat | ${pipe_map[$from_mode-$to_mode]:-cat}
+cat | ${pipe_cmd}
 echo $echo_arg "${add_at_end[$from_mode-$to_mode$simple]}"

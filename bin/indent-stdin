@@ -1,1 +1,77 @@
-indent-clipboard
+#!/bin/bash
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -e n:n-spaces=4 sskip-line-1
+## end code-generator
+## start generated code
+TEMP=$( getopt -o n:sh \
+               --long n-spaces:,skip-line-1,help,no-skip-line-1 \
+               -n $(basename -- $0) -- "$@")
+declare n_spaces=${n_spaces:-4}
+declare skip_line_1=${skip_line_1:-false}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -n|--n-spaces)
+            n_spaces=$2
+            shift 2
+
+            ;;
+        -s|--skip-line-1|--no-skip-line-1)
+            if test "$1" = --no-skip-line-1; then
+                skip_line_1=false
+            else
+                skip_line_1=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--n-spaces=N_SPACES'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]skip-line-1'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+export n_spaces
+export skip_line_1
+
+## end generated code
+
+if test "$n_spaces" -gt 0; then
+    do_indent=true
+else
+    do_indent=false
+fi
+
+n_spaces=${n_spaces#-}
+n_spaces=$(perl -e 'print " " x $ENV{n_spaces}')
+
+cat > ~/.cache/system-config/logs/$(basename $0).$$
+if test "$do_indent" = true; then
+    perl -npe 's/^/$ENV{n_spaces}/ unless (1..1 and ($ENV{skip_line_1} eq "true"))' -i ~/.cache/system-config/logs/$(basename $0).$$
+else
+    perl -npe 's/^$ENV{n_spaces}// unless (1..1 and ($ENV{skip_line_1} eq "true"))' -i ~/.cache/system-config/logs/$(basename $0).$$
+fi
+cat ~/.cache/system-config/logs/$(basename $0).$$
+rm ~/.cache/system-config/logs/$(basename $0).$$

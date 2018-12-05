@@ -97,7 +97,7 @@ if test "$command"; then
 elif test "$host" = localhost; then
     myscr bash
 else
-    if test ! -e ~/.config/system-config/is-realhome; then
+    if test ! -e ~/.config/system-config/is-realhome && ! [[ $host =~ js ]]; then
         if test "$host" = Smartisan; then
             host='-D 9090 Smartisan'
         elif test "$host" = realhome-pc; then
@@ -109,7 +109,7 @@ else
         else
             port_arg=
         fi
-        myscr en_US ssh -X -o RequestTTY=true $host $port_arg "REMOTEUSER=$USER $extra_env REMOTEPROTOCOL=scp exec bash"
+        myscr en_US ssh -X -o RequestTTY=true $host $port_arg "REMOTEUSER=$USER LOCALIP=${host#*@} $extra_env REMOTEPROTOCOL=ssh REMOTE_EXTRA_SSH_ARGS=\"-i \${HOME}/.ssh/id_rsa_remote_edit\" exec bash"
     else
         myscr ssh-work $host
     fi

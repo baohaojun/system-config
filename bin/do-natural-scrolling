@@ -5,7 +5,6 @@ set -e
 base0=$(basename $0)
 
 if test "$base0" = do-natural-scrolling; then
-    bhj-notify sc "you are doing natural scrolling"&
     xmodmap -e 'pointer = 1 2 3 5 4 6 7 8 9 10'
     symbol=-
     natural_enabled=1
@@ -15,6 +14,9 @@ else
     natural_enabled=0
 fi
 
+# FIXME： 这后面的脚本有点复杂，我希望自己搞清楚到底哪些窗口需要做这些
+# 额外的设置并记录下来。
+exit 0
 
 devices=$(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/')
 if xinput list-props $devices | grep -q 'libinput Natural Scrolling Enabled'; then
