@@ -333,7 +333,10 @@ if ! diff >/dev/null 2>&1 -q ~/system-config/etc/rc.local /etc/rc.local; then
         sudo cp ~/system-config/etc/rc.local /etc >/dev/null 2>&1 || true # no sudo on win32
     fi
 fi
-mkdir -p ~/system-config/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
+
+mkdir -p ~/system-config/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/ >/dev/null 2>&1 ||
+    true # error when system-config is not at ~/
+
 if test -L ~/.git; then rm -f ~/.git; fi
 if test $(uname) = Linux; then
     if test $can_sudo = true && grep managed=true /etc/NetworkManager/NetworkManager.conf; then
