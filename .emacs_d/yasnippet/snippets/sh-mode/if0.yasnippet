@@ -2,7 +2,8 @@
 # key: if0
 # name: if0
 # --
-if test "\$(readlink -f "\$BASH_SOURCE")" = "\$(readlink -f "\$(echo "\$0" | grep / || which "\$0" 2>/dev/null)" )"; then
+if test "\$BASH_SOURCE" = "\$0"; then
+    # we are being run
     ${1:"\$(basename \$0)" "$@"}
 else
     # we are being sourced.

@@ -45,7 +45,15 @@ if test ! -e ~/.config/system-config/.bashrc-path; then
                 builtin cd ~/system-config/etc/path/$(uname|sed -e 's/_.*//')
             (
                 for x in $(for d in *; do echo $d; done|sort -n); do
-                    readlink -m -- $x;
+                    if test ! -d "${x}" && (
+                            t=$(readlink "$x")
+                            [[ $t =~ ^(\.\./){4} ]] &&
+                                echo ~/${t#../../../../}
+                        ); then
+                        true
+                    else
+                        readlink -m -- $x;
+                    fi
                 done
                 echo $PATH | tr ':' '\n'
             ) | tr '\n' ':'

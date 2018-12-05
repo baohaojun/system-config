@@ -93,8 +93,10 @@ function git-diff() {
     clear
 
     if git status -s "$@" | grep -q -P -e '^\?\?'; then
-        read -e -p "$@ seems to be a new file, press Enter to continue...  "
-        diff /dev/null "$@" || true
+        if test -f "$1"; then
+            read -e -p "$@ seems to be a new file, press Enter to continue...  "
+            diff /dev/null "$@" || true
+        fi
     else
         if git diff -w $review_base $revision -- "$@" | grep -q .; then
             git diff -w $review_base $revision -- "$@" || true
@@ -214,7 +216,7 @@ git-interactive-review-1() {
                         git-interactive-add "$x"
                     fi
                 )
-            elif grep -q '^# sc-after-save-hook: ' "$x"; then
+            elif test -f "$x" && grep -q '^# sc-after-save-hook: ' "$x"; then
                 (
                     bash_command=$(perl -ne 'print $1 if m/^# sc-after-save-hook: (.*)/' "$x");
                     if yes-or-no-p -n "run: '$bash_command' ? "; then
