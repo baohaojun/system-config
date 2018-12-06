@@ -421,6 +421,10 @@ mkdir -p ~/.cache # just in case the following command will create
 (
     set +e
     if test -d ~/system-config/src/github/; then
+        mkdir -p ~/src/github
+        for x in ~/system-config/src/github/*; do
+            ln -s "$x" ~/src/github/
+        done
         exit
     fi
     (

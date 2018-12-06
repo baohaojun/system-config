@@ -1,13 +1,13 @@
 #!/bin/bash
 
-set -e
-set -o errtrace
 if test "$#" = 0; then
     trap - ERR
     return
 fi
 
 function setup-aterr() {
+    set -e
+    set -o errtrace
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -P i:ignored-errno=0
     ## end code-generator
@@ -66,4 +66,4 @@ function setup-aterr() {
     trap aterr ERR
 }
 
-setup-aterr "$@"
+setup-aterr "$@" >/dev/null 2>&1

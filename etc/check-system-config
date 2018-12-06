@@ -2,7 +2,8 @@
 alias sc=~/system-config/bin/sc
 
 if test "$FORCE_SYSTEM_CONFIG" != true -a -e ~/.config/system-config/no-system-config ||
-        test "$FORCE_NO_SYSTEM_CONFIG" = true; then
+        test "$FORCE_NO_SYSTEM_CONFIG" = true ||
+   test "$FORCE_SYSTEM_CONFIG" != true -a -L ~/system-config; then
     return 1;
 else
     return 0

@@ -7,5 +7,6 @@ host=$(
     done
     echo $host
     )
+export JS_TARGET=$(echo ${host} | perl -npe 's/.*?(\d+)$/$1/')
 
-JS_TARGET=${host##*.} exec js-ssh
+exec js-ssh
