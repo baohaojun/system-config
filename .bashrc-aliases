@@ -22,8 +22,16 @@ alias minicom='hint "注意：USB 不要插反！有些 USB 转串口线�
 jcd() {
     # http://build1:8080/job/Daily-surabaya-dev-colombo-Vuserdebug-Onone/6/console
     local task=$(echo "$1"|perl -npe 's,.*/job/(.*?)/.*,$1,')
-    local build=$(echo "$1"|perl -npe "s,.*/\Q$task\E/(\d+|lastFailedBuild).*,\$1,")
-    cd /var/lib/jenkins/jobs/$task/builds/$build
+    if echo "$1" | grep -P "\Q$task\E/([^/]*=[^/]*)/(\d+|lastFailedBuild)" -q; then
+        config=$(echo "$1" | perl -ne "print \$1 if m,\Q$task\E/([^/]*=[^/]*)/(\d+|lastFailedBuild),");
+        build=$(echo "$1"|perl -npe "s[.*/\Q$task/$config\E/(\d+|lastFailedBuild).*][\$1]");
+        cd jobs
+        cd $task/configurations/$(for x in $(echo $config | tr ',' ' '); do echo -n axis-${x%=*}/${x#*=}/; done)/builds/$build
+    else
+        local build=$(echo "$1"|perl -npe "s,.*/\Q$task\E/(\d+|lastFailedBuild).*,\$1,")
+        cd jobs
+        cd $task/builds/$build
+    fi
 }
 
 mount() {

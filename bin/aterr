@@ -66,4 +66,4 @@ function setup-aterr() {
     trap aterr ERR
 }
 
-setup-aterr "$@" >/dev/null 2>&1
+setup-aterr "$@"
