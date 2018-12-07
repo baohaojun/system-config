@@ -165,6 +165,8 @@ map['com.reddit.frontpage/com.reddit.frontpage.redditauth_private.ui.AuthActivit
 map['com.reddit.frontpage/com.reddit.frontpage.SearchActivity'] = 'manual-post'
 map['com.reddit.frontpage/com.reddit.frontpage.SubmitActivity'] = 'manual-post'
 map['com.reddit.frontpage/com.reddit.frontpage.SubredditSearchActivity'] = 'manual-post'
+map['com.sangfor.vpn.client.phone/com.sangfor.vpn.client.phone.AuthActivity'] = 'manual-post'
+map['com.sangfor.vpn.client.phone/com.sangfor.vpn.client.phone.ConnectActivity'] = 'manual-post'
 map['com.sdu.didi.psnger/com.didi.beatles.im.activity.IMMessageActivity'] = 'manual-post'
 map['com.sdu.didi.psnger/com.didi.one.login.fullpage.FullPageLoginActivity'] = 'manual-post'
 map['com.sdu.didi.psnger/com.didi.sdk.webview.WebActivity'] = 'manual-post'
