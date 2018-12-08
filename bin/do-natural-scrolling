@@ -16,7 +16,6 @@ fi
 
 # FIXME： 这后面的脚本有点复杂，我希望自己搞清楚到底哪些窗口需要做这些
 # 额外的设置并记录下来。
-exit 0
 
 devices=$(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/')
 if xinput list-props $devices | grep -q 'libinput Natural Scrolling Enabled'; then
