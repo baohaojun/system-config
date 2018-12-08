@@ -49,7 +49,7 @@ done
 
 if test "$force" = true || system-config-should-fetch; then
     (
-        cd ~/src/github/private-config
+        cd ~/.local-config
         tsocks git fetch $(repo-remote) || git fetch $(repo-remote)
     )
     if nice git-pull-mac --fetch-only; then

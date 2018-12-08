@@ -41,7 +41,7 @@ done
 
 
 ## end generated code
-cd ~/src/github/private-config/back-to-gmail/$which_backup
+cd ~/.local-config/back-to-gmail/$which_backup
 for x in $(find . -maxdepth 1); do
     if test "$x" = .; then
         continue

@@ -292,7 +292,7 @@
  '(yas-prompt-functions (quote (yas-completing-prompt)))
  '(yas-snippet-dirs
    (quote
-    ("~/src/github/private-config/etc/yasnippet" "~/system-config/.emacs_d/yasnippet/snippets" "~/system-config/.emacs_d/yasnippet-snippets")))
+    ("~/.local-config/etc/yasnippet" "~/system-config/.emacs_d/yasnippet/snippets" "~/system-config/.emacs_d/yasnippet-snippets")))
  '(yas-trigger-key "M-TAB"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

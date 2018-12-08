@@ -2,16 +2,16 @@
 host=$1
 
 if test -z "$host"; then
-    host=$(select-output-line -o 'for x in ~/src/github/private-config/.ssssh/search-*; do echo ${x##*/search-}; done')
+    host=$(select-output-line -o 'for x in ~/.local-config/.ssssh/search-*; do echo ${x##*/search-}; done')
     if test -z "${host}"; then
         exit 0
     fi
 fi
 
-if test ! -e ~/src/github/private-config/.ssssh/search-$host; then
+if test ! -e ~/.local-config/.ssssh/search-$host; then
     bhj-notify hello "host $host not found in .ssssh"
-    if EMACS=t yes-or-no-p -n "Add $host to ~/src/github/private-config/.ssssh?"; then
-        cat <<EOF > ~/src/github/private-config/.ssssh/search-$host
+    if EMACS=t yes-or-no-p -n "Add $host to ~/.local-config/.ssssh?"; then
+        cat <<EOF > ~/.local-config/.ssssh/search-$host
 regexp='bhj@$host\s'
 name=$host
 EOF
@@ -24,7 +24,7 @@ regexp=
 name=
 command=
 
-. ~/src/github/private-config/.ssssh/search-$host
+. ~/.local-config/.ssssh/search-$host
 search=$regexp
 if test "$host" = localhost; then
     search=$USER@$HOSTNAME
@@ -75,7 +75,7 @@ if test "$SC_USE_TMUX" = true; then
                                 )
 
                     if yes-or-no-p -y "update the regexp: $user_at_host?"; then
-                        cat <<EOF > ~/src/github/private-config/.ssssh/search-$host
+                        cat <<EOF > ~/.local-config/.ssssh/search-$host
 regexp='$user_at_host'
 name=$host
 EOF

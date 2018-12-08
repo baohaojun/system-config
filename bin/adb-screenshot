@@ -9,7 +9,7 @@ if test -z "${phone_width}"; then
     init-is-functions() {
         true
     }
-    . ~/src/github/private-config/knuth-mode/onmyoji-scripts/.init-size; init-size
+    . ~/.local-config/knuth-mode/onmyoji-scripts/.init-size; init-size
 fi
 
 

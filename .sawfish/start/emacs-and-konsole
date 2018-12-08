@@ -29,7 +29,7 @@ hint "$check_program 安装完成，请按回车键关闭此窗口"
 
 
 
-if test -e ~/src/github/private-config/etc/baohaojun; then
+if test -e ~/.local-config/etc/baohaojun; then
     konsole.bhj bbs-robot --use-current-screen-window
 else
     konsole.bhj

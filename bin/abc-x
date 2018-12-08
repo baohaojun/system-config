@@ -7,8 +7,8 @@ function ssh() {
     command ssh -o PreferredAuthentications=publickey "$@"
 }
 
-if test -e ~/src/github/private-config/etc/abc-x; then
-    . ~/src/github/private-config/etc/abc-x
+if test -e ~/.local-config/etc/abc-x; then
+    . ~/.local-config/etc/abc-x
 fi
 
 if test $PWD = ~/src/linux; then

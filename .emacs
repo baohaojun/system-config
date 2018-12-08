@@ -373,8 +373,8 @@
 (when (file-exists-p "~/.config/system-config/.emacs")
   (load "~/.config/system-config/.emacs"))
 
-(when (file-exists-p "~/src/github/private-config/.emacs")
-  (load "~/src/github/private-config/.emacs"))
+(when (file-exists-p "~/.local-config/.emacs")
+  (load "~/.local-config/.emacs"))
 
 (when (file-exists-p "/usr/share/emacs/site-lisp/mu4e/mu4e.el")
   (load "~/system-config/.emacs_d/lisp/init-mu4e.el"))

@@ -370,9 +370,9 @@ if [[ "$(repo-remote-url $origin)" =~ github.com.baohaojun ]]; then
     git merge $origin/$branch
 fi
 (
-    if test -e ~/src/github/private-config/etc/personal-projects; then
+    if test -e ~/.local-config/etc/personal-projects; then
         export BHJ_GIT_ALL_IN_ONE=true
-    . ~/src/github/private-config/etc/personal-projects
+    . ~/.local-config/etc/personal-projects
     fi
 )
 
@@ -406,13 +406,13 @@ if test -e .after-push-hook; then
     bash .after-push-hook
 fi
 
-if test -e ~/src/github/private-config/bin/system-config-git-merged; then
+if test -e ~/.local-config/bin/system-config-git-merged; then
     system-config-git-merged
 fi
 
 if test $(pwd) = ~/system-config; then
     (
-        cd ~/src/github/private-config/bin
+        cd ~/.local-config/bin
         git pull
     ) >/dev/null 2>&1&
 fi

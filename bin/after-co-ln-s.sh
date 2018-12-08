@@ -376,8 +376,8 @@ if test -e ~/src/github/ahd/ -a ! -e ~/src/ahd; then
     ln -s ~/src/github/ahd/ ~/src/ahd
 fi
 
-if test -e ~/src/github/private-config/.bbdb; then
-    ln -s ~/src/github/private-config/.bbdb ~/ -f
+if test -e ~/.local-config/.bbdb; then
+    ln -s ~/.local-config/.bbdb ~/ -f
 fi
 
 if test ! -d ~/.config/system-config/about_me; then
@@ -394,8 +394,8 @@ if test ! -d ~/.config/system-config/about_me && yes-or-no-p "You want to config
     after-co-settings.sh
 fi
 
-if test -x ~/src/github/private-config/bin/bhj-after-co.sh; then
-    ~/src/github/private-config/bin/bhj-after-co.sh
+if test -x ~/.local-config/bin/bhj-after-co.sh; then
+    ~/.local-config/bin/bhj-after-co.sh
 fi
 
 

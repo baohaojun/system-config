@@ -88,7 +88,7 @@ fi
 
 if test -z "$RECURSIVE_SHELL"; then
     . ~/.config/system-config/.bashrc-path
-    if test ! -e ~/src/github/private-config/etc/baohaojun; then
+    if test ! -e ~/.local-config/etc/baohaojun; then
         PATH=$PATH:$OLD_PATH
     fi
 fi

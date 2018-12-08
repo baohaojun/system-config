@@ -25,7 +25,7 @@ exec >> ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
 set -x
 
 if test $(basename $0) = screen-lock-off; then # lock off, screen on
-    if test -e ~/src/github/private-config/.gitconfig.bhj; then
+    if test -e ~/.local-config/.gitconfig.bhj; then
         (
             set -x
             . wait-keys-clear
