@@ -42,7 +42,7 @@ if Wrench.file_exists(Wrench.dataDirFile("apps.info")) then
       io.stderr:write("working with " .. name .. "\n")
       emojis_el:write(
          (
-            [[ ("［%s］" "~/src/github/private-config/Wrench-cache/%s.png" "apps %s %s")]] .. "\n"
+            [[ ("［%s］" "~/.local-config/Wrench-cache/%s.png" "apps %s %s")]] .. "\n"
          ):format(
             name,
             activity,
