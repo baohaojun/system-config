@@ -22,6 +22,10 @@ alias minicom='hint "注意：USB 不要插反！有些 USB 转串口线�
 jcd() {
     # http://build1:8080/job/Daily-surabaya-dev-colombo-Vuserdebug-Onone/6/console
     local task=$(echo "$1"|perl -npe 's,.*/job/(.*?)/.*,$1,')
+    if echo "$1" | grep -P "\Q$task\E/(\d+|lastFailedBuild)/([^/]*=[^/]*)" -q; then
+        set -- "$(echo "$1" | perl -pe "s[(\Q$task\E)/(\d+|lastFailedBuild)/([^/]*=[^/]*)]["'$1/$3/$2]')"
+    fi
+
     if echo "$1" | grep -P "\Q$task\E/([^/]*=[^/]*)/(\d+|lastFailedBuild)" -q; then
         config=$(echo "$1" | perl -ne "print \$1 if m,\Q$task\E/([^/]*=[^/]*)/(\d+|lastFailedBuild),");
         build=$(echo "$1"|perl -npe "s[.*/\Q$task/$config\E/(\d+|lastFailedBuild).*][\$1]");
