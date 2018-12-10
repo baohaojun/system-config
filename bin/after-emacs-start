@@ -1,6 +1,6 @@
 #!/bin/bash
 
 keep-phone-lighted&
-if test -e ~/src/github/private-config/bin/after-emacs-start; then
-    ~/src/github/private-config/bin/after-emacs-start
+if test -e ~/.local-config/bin/after-emacs-start; then
+    ~/.local-config/bin/after-emacs-start
 fi

@@ -5,7 +5,7 @@ if test "$USER" != bhj; then
     exit 0
 fi
 
-target_dir=~/src/github/private-config/back-to-gmail/$(get-mac|pn 1|head -n 1)
+target_dir=~/.local-config/back-to-gmail/$(get-mac|pn 1|head -n 1)
 mkdir -p "$target_dir"
 
 cd ~/system-config/etc/back-to-gmail

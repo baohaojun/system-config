@@ -105,8 +105,8 @@ cmReleaseDir=$(readlink -f "$cmReleaseDir")
     (
         cd system/xbin
         sudo rm -f su
-        if test -e ~/src/github/private-config/etc/su.exe; then
-            sudo cp ~/src/github/private-config/etc/su.exe ./
+        if test -e ~/.local-config/etc/su.exe; then
+            sudo cp ~/.local-config/etc/su.exe ./
         fi
     )
     sudo chown $USER\. -R system
@@ -209,7 +209,7 @@ EOF
     mv RADIO/splash.img RADIO/splash.bin
 
     mkdir -p DATA
-    if test $fullSystem != true -o -e ~/src/github/private-config/etc/adbd; then
+    if test $fullSystem != true -o -e ~/.local-config/etc/adbd; then
         (
             cd BOOTABLE_IMAGES
             if test -e "$ANDROID_BOOT_IMG"; then

@@ -1,8 +1,8 @@
 (require 'ajoke)
 (require 'gnus-sum)
 (require 'qmake-mode "qmake.el")
-(when (file-exists-p "~/src/github/private-config/.emacs_d/bhj-emacs.el")
-  (load "~/src/github/private-config/.emacs_d/bhj-emacs.el"))
+(when (file-exists-p "~/.local-config/.emacs_d/bhj-emacs.el")
+  (load "~/.local-config/.emacs_d/bhj-emacs.el"))
 
 ;;;###autoload
 (defun cleanup-buffer-safe ()

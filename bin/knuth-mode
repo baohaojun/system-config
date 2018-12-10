@@ -32,7 +32,7 @@ org_target=$(
     if [[ $target =~ /smartcm/ ]]; then
         knuth_repo=~/src/github/smartcm
     elif [[ $target =~ /private-config/ ]]; then
-        knuth_repo=~/src/github/private-config/
+        knuth_repo=~/.local-config/
     else
         knuth_repo=~/system-config
     fi
@@ -48,7 +48,7 @@ if test -e "$org_target"; then
     die "Can't do knuth-mode when $org_target exists"
 fi
 
-mkdir -p ~/src/github/private-config/knuth-mode
+mkdir -p ~/.local-config/knuth-mode
 cat <<EOF > $org_target
 ** 最终的版本：
 

@@ -6,7 +6,7 @@ if test "$default_terminal"; then
     exit
 fi
 
-if test -e ~/src/github/private-config/etc/baohaojun; then
+if test -e ~/.local-config/etc/baohaojun; then
     xterm -e myscr "$@" &
     exit
 fi

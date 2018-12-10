@@ -13,8 +13,8 @@ done
 
 rm ~/.renew-xauth -f
 if test "$USER" = bhj; then
-    if test -e ~/src/github/private-config/bin/ugly; then
-        ~/src/github/private-config/bin/ugly
+    if test -e ~/.local-config/bin/ugly; then
+        ~/.local-config/bin/ugly
     fi
 fi
 . ~/system-config/bin/set-ssh-agent

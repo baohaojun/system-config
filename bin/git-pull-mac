@@ -101,7 +101,7 @@ if test "$do_fetch" = true; then
         . atexit mark-merged
 
         extra_fetch_args=
-        if [[ $PWD =~ $HOME/src/github/ ]] && test "$PWD" != ~/src/github/private-config; then
+        if [[ $PWD =~ $HOME/src/github/ ]] && test "$PWD" != ~/.local-config; then
             extra_fetch_args=$(repo-remote-branch|perl -npe 's,.*?/,,')
         fi
 

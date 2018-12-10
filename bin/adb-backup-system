@@ -75,7 +75,7 @@ elif test $(basename $0) = adb-restore-data-no-sdcard; then
     done
     my-adb restorecon -D -R -v -F /data || true
 elif test $(basename $0) = adb-backup-su; then
-    gapp_dir=~/src/github/private-config/bin/gapps-system
+    gapp_dir=~/.local-config/bin/gapps-system
     lib_dir=lib
     if [[ $(my-adb getprop ro.build.version.release) =~ ^5 ]]; then
         gapp_dir=~/src/github/gapps-lp/system

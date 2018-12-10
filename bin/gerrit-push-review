@@ -537,6 +537,6 @@ echo push ok.
 
 mv ~/.cache/system-config/logs/gerrit-review.log.$$ ~/.cache/system-config/logs/gerrit-review.log
 
-if test -e ~/src/github/private-config/etc/after-gerrit-push-review; then
-    . ~/src/github/private-config/etc/after-gerrit-push-review
+if test -e ~/.local-config/etc/after-gerrit-push-review; then
+    . ~/.local-config/etc/after-gerrit-push-review
 fi

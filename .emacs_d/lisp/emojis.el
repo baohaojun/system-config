@@ -11,11 +11,11 @@
   (setq emoji-hash-table (make-hash-table :test 'equal)
         emoji-names nil)
   (let* ((wrench-emojis-file "~/src/github/Wrench/release/emojis/emojis.el")
-         (wrench-emojis-file-x "~/src/github/private-config/etc/emojis.el"))
+         (wrench-emojis-file-x "~/.local-config/etc/emojis.el"))
     (if (file-exists-p wrench-emojis-file-x)
         (progn
           (load wrench-emojis-file-x)
-          (load "~/src/github/private-config/etc/wrench-icons.el"))
+          (load "~/.local-config/etc/wrench-icons.el"))
       (load wrench-emojis-file)))
   (setq emoji-alist emojis-string-list)
   (setq emoji-regexp nil)

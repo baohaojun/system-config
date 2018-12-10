@@ -74,8 +74,8 @@ done
 
 ## end generated code
 
-if test -e ~/src/github/private-config/etc/relay-postfix.rc; then
-    . ~/src/github/private-config/etc/relay-postfix.rc
+if test -e ~/.local-config/etc/relay-postfix.rc; then
+    . ~/.local-config/etc/relay-postfix.rc
 fi
 
 arg-not-empty host "$host"

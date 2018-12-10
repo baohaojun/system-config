@@ -8,8 +8,8 @@ set -ex
 if test "$REMOTEIP"; then
     export http_proxy=http://$REMOTEIP:19999
     export https_proxy=$http_proxy
-elif test -e ~/src/github/private-config/etc/update-android-mirror; then
-    . ~/src/github/private-config/etc/update-android-mirror "$@"
+elif test -e ~/.local-config/etc/update-android-mirror; then
+    . ~/.local-config/etc/update-android-mirror "$@"
 else
     export ALL_PROXY=socks5://127.0.0.1:3080
 fi
