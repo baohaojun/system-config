@@ -1,0 +1,31 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        applicationId "com.bhj.setclip"
+
+        ndk {
+            moduleName "wrench-jni"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            // Tells Gradle to find the root ndk-build script in the same
+            // directory as the module's build.gradle file. Gradle requires this
+            // build script to add your ndk-build project as a build dependency and
+            // pull your native sources into your Android project.
+            path "src/main/jni/Android.mk"
+        }
+    }
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">レンチ</string>
+    <string name="hello_world">詳細については、https://github.com/SmartisanTech/Wrenchをご覧ください。</string>
+    <string name="title_activity_main">レンチ</string>
+</resources>

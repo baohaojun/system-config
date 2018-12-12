@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">小扳手</string>
+    <string name="hello_world">请访问 https://github.com/SmartisanTech/Wrench 获取更多详情。</string>
+    <string name="title_activity_main">小扳手</string>
+</resources>
