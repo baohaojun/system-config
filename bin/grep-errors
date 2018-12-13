@@ -69,11 +69,45 @@ done
 ## end generated code
 
 pcre=-P
-pat=$(perl -ne 'print if m/defun bhj-occur-make-errors/..m/let.*bhj-occur-regexp/' ~/system-config/.emacs_d/lisp/bhj-defines.el|
-          tail -n 1 |
-          perl -npe 's/.*(".*").*/$1/; s/\\\\\|/|/g; s/(?<!\\)\(/\\(/g'
+
+error_patterns=(
+    '\*\*\*.*stop'
+    'acp: partial write to'
+    'method does not override or implement'
+    'syntax error'
+    'invalid argument'
+    'no such '
+    'circular.*dropped'
+    'no rule to'
+    'failed'
+    '[0-9]elapsed '
+    'cannot find symbol'
+    'error [0-9]'
+    ' : error '
+    'because of errors'
+    '[0-9] error\b'
+    'error:'
+    'command not found'
+    'error while loading shared libraries'
+    'undefined symbol'
+    'undefined reference to'
+    'permission denied'
+    'test.*unary operator expected'
+    'No space left on device'
+    'Traceback \(most recent call last'
+    'javac: file not found:'
+    'illegal start of type'
+    'error, forbidden warning: '
+    'Out of memory error'
+    'Multiple same specifications'
+    'Communication error with Jack server'
+    'te:[0-9]*:ERROR .unknown type'
+    'fatal: cannot obtain manifest'
+)
+
+pat=$(
+    string-join "|" "${error_patterns[@]}"
    )
-eval pat="${pat}"
 
 if ! test "$#" = 1 -a -e "$1"; then
     die "Can only run with 1 BUILD.LOG file"
@@ -121,10 +155,11 @@ EOF
     if test -e flashing-files/.scripts/false-build-error-filter; then
         cat flashing-files/.scripts/false-build-error-filter |grep .
     fi
-
                )
 
-cut -b 1-${max_line_length} "$@" | grep -i -H -n $pcre -e "$pat" --label="$*" | grep -v "$(echo -n "$false_positives" | rm-last-nl | tr \\n \|)" -P -i |
+cut -b 1-${max_line_length} "$@" |
+    grep -i -H -n $pcre -e "$pat" --label="$*" |
+    grep -v "$(echo -n "$false_positives" | rm-last-nl | tr \\n \|)" -P -i |
     if test -z "${complition_dir}"; then
         cat
     else

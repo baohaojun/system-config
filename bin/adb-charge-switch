@@ -42,12 +42,17 @@ for adb_s in "$@"; do
         . force-1 adb-charge-switch.$adb_s
         (
             export ANDROID_SERIAL=$adb_s
+            mkdir -p ~/tmp/adb-charge-switch
+            cd ~/tmp/adb-charge-switch
+
+            if test -e ~/.config/system-config/adb-charge-switch/no-${ANDROID_SERIAL}; then
+                log no charge switch for ${ANDROID_SERIAL}
+                exit
+            fi
 
             if ! adb shell test -e /data/data/com.android.shell/etc/charge-switch; then
                 exit
             fi
-            mkdir -p ~/tmp/adb-charge-switch
-            cd ~/tmp/adb-charge-switch
 
             capa=$(adb shell cat /sys/class/power_supply/battery/capacity)
             input_suspend=$(adb shell cat /sys/class/power_supply/battery/input_suspend)
