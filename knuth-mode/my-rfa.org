@@ -184,7 +184,16 @@
 
   export ANDROID_TOP=$(pwd)
 
-  (cd .repo; make -f ~/system-config/etc/generate-repo-info.mk) >/dev/null 2>&1
+  (
+      cd .repo;
+
+      if test -e "${scm_etcdir}"/generate-repo-info.mk; then
+          mk_file=${scm_etcdir}/generate-repo-info.mk
+      else
+          mk_file=~/system-config/etc/generate-repo-info.mk
+      fi
+      make -f $mk_file
+  ) >/dev/null 2>&1
   export REPO_INFO=$(pwd)/.repo/repo_info.pl
 
   mkdir -p ~/.cache/system-config/logs/my-rfa-locks

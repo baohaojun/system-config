@@ -259,6 +259,7 @@
  '(scalable-fonts-allowed t)
  '(select-enable-primary t)
  '(senator-minor-mode-hook (quote (ignore)))
+ '(send-mail-function (quote smtpmail-send-it))
  '(session-initialize (quote (de-saveplace session places keys menus)))
  '(session-use-package t nil (session))
  '(shell-file-name "/bin/bash")

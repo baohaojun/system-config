@@ -1,13 +1,6 @@
 #!/bin/bash
 
-if test "$UNSHARE" != true; then
-    if echo $SHELLOPTS | grep -q xtrace; then
-        bashx='bash -x'
-    fi
-
-    sudo unshare -m -- env PATH=$PATH HOME=$HOME USER=$USER UIDX=$UID bash -c "UNSHARE=true $bashx $0 $*"
-    exit
-fi
+saved_args=("$@")
 
 
 ## start code-generator "^\\s *#\\s *"
@@ -68,6 +61,15 @@ done
 
 
 ## end generated code
+
+if test "$UNSHARE" != true; then
+    if echo $SHELLOPTS | grep -q xtrace; then
+        bashx='bash -x'
+    fi
+
+    sudo unshare -m -- env PATH=$PATH HOME=$HOME USER=$USER UIDX=$UID bash -c "UNSHARE=true $bashx $0 ${saved_args[*]}"
+    exit
+fi
 
 if test -z "$cow"; then
     cow=$(select-output-line -o -- find ~/external/cowbuilder/ -maxdepth 1 -type d -name '*-*')

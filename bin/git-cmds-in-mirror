@@ -32,7 +32,7 @@ echo 1>&2 "Switch to use tmp git dir: $tmp_git_dir"
 
 if ! git --git-dir "$tmp_git_dir" --work-tree "$PWD" "$@"; then
     if is-jenkins; then
-        mail-cms -e -o "git-cmds-in-mirror failed"
+        mail-cms -e -o -s "git-cmds-in-mirror failed"
     fi
     exit 1
 fi

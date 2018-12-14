@@ -35,7 +35,7 @@ shift $((OPTIND - 1))
 ## end generated code
 
 if test "$mail_cms" = true && is-jenkins; then
-    mail-cms "die: $*"
+    mail-cms -s "die: $*"
 fi || true
 
 if is-recording; then
