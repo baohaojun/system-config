@@ -278,7 +278,11 @@ elif test $b0 = mailx; then
         STARTTLS="-S smtp-use-starttls=on"
     fi
 
-    auth=$(get-authinfo $(get-about-me smtp) $(get-about-me mail))
+    if test "$(get-about-me smtp)" = localhost; then
+        auth=N/A
+    else
+        auth=$(get-authinfo $(get-about-me smtp) $(get-about-me mail))
+    fi
 
     (
         if test -e /etc/postfix/sasl_passwd; then

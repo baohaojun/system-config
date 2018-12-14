@@ -283,7 +283,7 @@ might be bad."
 
         message-send-mail-function 'smtpmail-send-it
         user-mail-address (shell-command-to-string "cat ~/.config/system-config/about_me/mail")
-        smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/system-config/about_me/conn-type"))
+        smtpmail-stream-type (intern (shell-command-to-string "cat ~/.config/system-config/about_me/smtp-type"))
         smtpmail-default-smtp-server (shell-command-to-string "cat ~/.config/system-config/about_me/smtp")
         smtpmail-smtp-server (shell-command-to-string "cat ~/.config/system-config/about_me/smtp")
         smtpmail-smtp-service (string-to-number (shell-command-to-string "cat ~/.config/system-config/about_me/smtp-port"))))

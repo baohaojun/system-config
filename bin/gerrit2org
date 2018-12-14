@@ -6,7 +6,7 @@ sub debug(@) {
     print STDERR "@_\n";
 }
 
-if (system("timeout 1 ping -c 1 172.16.0.9") != 0) {
+if (system("is-at-work") != 0) {
     exit 0;
 }
 

@@ -2,17 +2,29 @@
 
 if test "$#" = 0; then
     hint "You need to specify the key to fix, such as C-w"
-    set -- C-w
+    set -- $(for k in {a..z}; do echo C-$k; done)
 fi
 
-if test $# = 1; then
-    set -- "$1" "$1"
-fi
+unbind_statements=$(
+    for k in "$@"; do
+        for m in global-keymap window-keymap; do
+            cat <<EOF
+; {%sawfish-mode%}
+(unbind-keys $m "$k")
+; {%/sawfish-mode%}
+EOF
+        done
+    done | grep -v 'sawfish-mode%'
+                 )
 
-sawfish_cmd=$(cat <<EOF
+
+
+sawfish_cmd=$(cat <<EOF | . .replace-%% --
+; {%sawfish-mode%}
 (progn
-  (bind-keys global-keymap "$1" '(synthesize-event-gnome? "$2" (input-focus)))
-  (bind-keys window-keymap "$1" '(synthesize-event-gnome? "$2" (input-focus))))
+  <%unbind-statements%>
+  )
+; {%/sawfish-mode%}
 EOF
               )
 sawfish-client -e "$sawfish_cmd"

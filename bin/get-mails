@@ -32,9 +32,11 @@ if (
     fi
     (
         rm -f ~/.cache/system-config/logs/get-mails.done
-        offlineimap -a Smartisan || true
-        offlineimap -a SmartCM || true
-        offlineimap -a Gmail || true
+        for x in $(
+                      grep '^accounts.*=' ~/.offlineimaprc | pn 2 = | tr ',' ' '
+                  ); do
+            offlineimap -a $x || true
+        done
         tsocks offlineimap -a Gmail || true
         touch ~/.cache/system-config/logs/get-mails.done
     ) 2>&1 | tee ~/.cache/system-config/logs/$b0.log
