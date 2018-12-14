@@ -156,9 +156,6 @@
      ("\\.x?html?\\'" . default)
      ("\\.pdf\\'" . "of %s"))))
  '(org-jira-coding-system (quote utf-8))
- '(org-jira-default-jql
-   "(reporter = currentUser() or assignee = currentUser()) and resolution = unresolved
-   ORDER BY priority DESC, created ASC")
  '(org-jira-done-states (quote ("Closed" "Resolved" "Done" "完成")))
  '(org-latex-classes
    (quote
