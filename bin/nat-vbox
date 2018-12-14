@@ -1,18 +1,71 @@
 #!/bin/sh
 
 set -e
-eth0=${1:-eth0}
-vboxnet0=${2:-vboxnet0}
-if ! which sudo >/dev/null 2>&1; then
-    sudo() {
-        "$@"
-    }
-fi
-if ! sudo iptables-save | grep -e "-A FORWARD -i $eth0 -o $vboxnet0"; then
-    sudo sh -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
-    sudo iptables -t nat -A POSTROUTING -o $eth0 -j MASQUERADE
-    sudo iptables -A FORWARD -i $eth0 -o $vboxnet0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-    sudo iptables -A FORWARD -i $vboxnet0 -o $eth0 -j ACCEPT
-else
-    echo iptables already set up correctly.
-fi
+function nat-vbox() {
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt i:input-dev=vboxnet0 o:output-dev=eth0 '?"外网"'
+    ## end code-generator
+    ## start generated code
+    TEMP=$( getopt -o i:o:h \
+                   --long input-dev:,output-dev:,help \
+                   -n $(basename -- $0) -- "$@")
+    declare input_dev=vboxnet0
+    declare output_dev=eth0
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -i|--input-dev)
+                input_dev=$2
+                shift 2
+
+                ;;
+            -o|--output-dev)
+                output_dev=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %06s '-i, '
+                printf %-24s '--input-dev=INPUT_DEV'
+                echo
+                printf %06s '-o, '
+                printf %-24s '--output-dev=OUTPUT_DEV'
+                echo "外网"
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if ! which sudo >/dev/null 2>&1; then
+        sudo() {
+            "$@"
+        }
+    fi
+    if ! sudo iptables-save | grep -e "-A FORWARD -i $output_dev -o $input_dev"; then
+        sudo sh -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+        sudo iptables -t nat -A POSTROUTING -o $output_dev -j MASQUERADE
+        sudo iptables -A FORWARD -i $output_dev -o $input_dev -m state --state RELATED,ESTABLISHED -j ACCEPT
+        sudo iptables -A FORWARD -i $input_dev -o $output_dev -j ACCEPT
+    else
+        echo iptables already set up correctly.
+    fi
+}
+
+nat-vbox "$@"
