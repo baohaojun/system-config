@@ -849,6 +849,8 @@
     (window-put w 'code-reading nil))
   (unload-keys-in-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl")
   (bind-both-global&window-keymaps "F23" '(system "do-natural-scrolling&"))
+  (bind-both-global&window-keymaps "XF86ScrollUp" '(system "am dvp&"))
+  (bind-both-global&window-keymaps "XF86ScrollDown" '(system "am dvp&"))
   (bind-both-global&window-keymaps "F24" '(system "do-natural-scrolling&&"))
   (bind-both-global&window-keymaps "XF86Back" '(system "xdotool click 1&"))
   (system "switch-caps-led off&"))
