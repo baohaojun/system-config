@@ -25,16 +25,18 @@ b0=$(basename $0)
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt rreverse @follow-symlink Sgit-st \
-    # t:target-dir @delete cchecksum
+    # t:target-dir @delete cchecksum \
+    # @gitp='("" --gitp)'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o cSrt:h \
-               --long checksum,delete,follow-symlink,git-st,reverse,target-dir:,help,no-checksum,no-delete,no-follow-symlink,no-git-st,no-reverse \
+               --long checksum,delete,follow-symlink,git-st,gitp,reverse,target-dir:,help,no-checksum,no-delete,no-follow-symlink,no-git-st,no-gitp,no-reverse \
                -n $(basename -- $0) -- "$@")
 declare checksum=false
 declare delete=false
 declare follow_symlink=false
 declare git_st=false
+declare gitp=
 declare reverse=false
 declare target_dir=
 eval set -- "$TEMP"
@@ -77,6 +79,15 @@ while true; do
             shift
 
             ;;
+        --gitp|--no-gitp)
+            if test "$1" = --no-gitp; then
+                gitp=
+            else
+                gitp=--gitp
+            fi
+            shift
+
+            ;;
         -r|--reverse|--no-reverse)
             if test "$1" = --no-reverse; then
                 reverse=false
@@ -107,6 +118,9 @@ while true; do
             echo
             printf %06s '-S, '
             printf %-24s '--[no-]git-st'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]gitp'
             echo
             printf %06s '-r, '
             printf %-24s '--[no-]reverse'
@@ -163,7 +177,23 @@ if is-in-emacs; then
     fi
 
     if test "$#" = 1; then
-        nohup setsid bash -c 'set -x; CHECK_ORG=true out-of-emacs bash -x '${b0}' -t "'${saved_target_dir}'" "$@" "$(emacs-current-file)"' true "$@" </dev/null > ~/tmp/psync.log 2>&1&
+        nohup setsid bash -c "$(
+cat <<'EOFb52d0b099efd' | . .replace-%% --
+# {%sh-mode%}
+set -x;
+emacs_current_file=$(emacs-current-file)
+
+extra_dir=
+if test "<%gitp%>"; then
+    extra_dir=/$(cd ${emacs_current_file%/*}; gitp .)
+fi
+
+CHECK_ORG=true out-of-emacs bash -x "<%b0%>" \
+         -t "<%saved_target_dir%>"${extra_dir} "$@" "$(emacs-current-file)"
+# {%/sh-mode%}
+EOFb52d0b099efd
+
+)" true "$@" </dev/null > ~/tmp/psync.log 2>&1&
         exit
     fi
 fi
