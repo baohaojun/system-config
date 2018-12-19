@@ -107,20 +107,23 @@ s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
 
      if test "$style" = '?' -o "$style" = 's'; then
          styles=$(
-             cd /usr/share/texlive/texmf-dist/tex/latex/beamer/themes/theme/
-             for x in *; do
-                 echo ${x%.*}
-             done|perl -npe 's/beamertheme//'
+             cd /usr/share/texlive/texmf-dist/tex/latex/beamer/ || (
+                 echo "Can't get to beamer"
+                 kill $$
+             )
+             find . -type f|
+                 perl -ne 's,.*/,,; s/\.sty//; print if s/beamertheme//;'
                );
          if test "$style" = '?'; then
              for style in $styles; do
+                 git add .
                  if timeout 15 org2pdf "$@" -s $style -c $color; then
                      touch "$style.work"
                  fi
                  git add .
                  pdf=${1%.org}.pdf
                  if test -e "$pdf"; then
-                     mv "$pdf" $style-$pdf
+                     mv "$pdf" $style-work.$pdf
                  fi
              done
              exit
