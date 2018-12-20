@@ -209,6 +209,7 @@ map['com.taobao.taobao/com.taobao.search.searchdoor.SearchDoorActivity'] = 'manu
 map['com.taobao.taobao/com.taobao.tao.purchase.activity.PurchaseActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.tao.rate.ui.commit.MainRateActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.wangxin.activity.ChatActivity'] = 'weixin-chat'
+map['com.taobao.taobao/com.taobao.weex.WXActivity'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.chatroom.ui.ChatroomInfoUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.LoginPasswordUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.MobileInputUI'] = 'manual-post'
