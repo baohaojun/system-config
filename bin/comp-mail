@@ -160,13 +160,26 @@ if (m/^dn: /) { # restart
 ' "${disps[@]}"
 }
 
-ldapsearch -LLL -b "$(get-about-me ldap-dc)" \
-    -P 3 \
-    -H "$(get-about-me ldap-url)" \
-    -D "$user" \
-    -w "$pass" "$query" |
+function maybe-decode() {
     if test $decode = true; then
         decode-ldap-output
     else
         cat
     fi
+}
+
+function maybe-filter() {
+    if test -x ~/.local-config/bin/comp-mail-filter; then
+        ~/.local-config/bin/comp-mail-filter
+    else
+        cat
+    fi
+}
+
+ldapsearch -LLL -b "$(get-about-me ldap-dc)" \
+    -P 3 \
+    -H "$(get-about-me ldap-url)" \
+    -D "$user" \
+    -w "$pass" "$query" |
+    maybe-decode |
+    maybe-filter

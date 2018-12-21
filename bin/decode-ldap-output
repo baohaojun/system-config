@@ -32,17 +32,9 @@
 
 use strict;
 
-my %to_decode = (
-                 dn => 1,
-                 cn => 1,
-                 sn => 1,
-                 givenName => 1,
-                 distinguishedName => 1,
-                 displayName => 1,
-                 memberOf => 1,
-                 name => 1,
-                 member => 1,
-                 description => 1,
+my %skip_decode = (
+                 objectGUID => 1,
+                 objectSid => 1,
                 );
 
 my $last_line;
@@ -57,29 +49,17 @@ while (<>) {
     s/^\s+//;
     $last_line .= $_;
   } else {
-    $last_line =~ m/^(\w+)(:*\s*)(\S*)/;
-    if ($to_decode{$1}) {
+    if ($last_line =~ m/^(\w+)(::+\s*)(\S*)/ and not $skip_decode{$1}) {
       my ($s1, $s2) = ($1, $2);
       my $text = $3;
       if ($text =~ m,^[a-z0-9+=/]*$,i) {
         $text = $cb->decode($text);
       }
       print "$s1$s2$text\n";
-
     } else {
-      $last_line =~ m/^(\w+)(::+\s*)(\S*)/;
-      if ($to_decode{$1}) {
-        print "$1$2" . $cb->decode($3) . "\n";
-      } else {
-        print "$last_line\n" if $last_line;
-      }
-      if (m/^(lastLogonTimestamp:)\s+(\d+)/) {
-        my $timestamp = int ($2 / 10000) - 11644473600000;
-        print "$1 " . `epoch2date $timestamp`;
-        $_ = "";
-      }
-      $last_line = $_;
+      print "$last_line\n";
     }
+
     $last_line = $_;
   }
 }
