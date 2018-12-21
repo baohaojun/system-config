@@ -46,7 +46,6 @@ while (<$gerrit_pipe>) {
     }
 }
 
-my $ignore_dir = "$ENV{HOME}/.config/system-config/ignored-gerrit-id";
 for $gerrit_url (sort keys %gerrit_map) {
 
     $gerrit_subject = $gerrit_map{$gerrit_url};
@@ -56,8 +55,6 @@ for $gerrit_url (sort keys %gerrit_map) {
         print STDERR "$gerrit_url last reviewer is baohaojun, continue\n";
         next;
     }
-
-    next if -e "$ignore_dir/$gerrit_id";
 
     if (not $gerrit_org) {
         open($gerrit_org, ">>", glob("~/src/github/projects/gerrit.org"))
