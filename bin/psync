@@ -303,6 +303,7 @@ cat <<'EOF0ecb2235bec3' | . .replace-%% --
 ; {%emacs-lisp-mode%}
 (let ((before-save-hook))
   (find-file "/jssh:<%host%>:<%target-file%>")
+  (read-only-mode -1)
   (delete-region (point-min) (point-max))
   (insert-file-contents "<%source-file%>")
   (save-buffer)

@@ -29,17 +29,29 @@ function rsync() {
         if test "${x:0:${#scp}}" = /scp:; then
             x=${x#/scp:}
         fi
+
+        if [[ $x =~ \#[0-9]+: ]]; then
+            ssh_port=$(echo "${x}"|perl -ne 'm/#(\d+):/; print $1')
+            x=$(echo "${x}" | perl -pe 's/#\d+:/:/')
+        else
+            ssh_port=22
+        fi
         args=("${args[@]}" "${x}")
     done
-    set -- "${args[@]}"
+    set -- -e "ssh -p ${ssh_port}" "${args[@]}"
     command rsync "$@"
 }
 
-if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(echo "$0" | grep / || which -- "$0" 2>/dev/null)" )"; then
+if test "$BASH_SOURCE" = "$0"; then
+    # we are being run
+
     if [[ $1 =~ ^smb:// ]]; then
         x=~/smb/${1#smb://}
         shift
         set -- "$x" "$@"
     fi
     rsync "$@"
+else
+    # we are being sourced.
+    return 0
 fi

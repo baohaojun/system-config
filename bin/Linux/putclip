@@ -2,15 +2,58 @@
 if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
-if test $# != 0; then
-    exec <<EOF
+
+set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+if test "${b0}" = putclip; then
+    if test $# != 0; then
+        exec <<EOF
 $@
 EOF
+    fi
+fi
+
+if test "${b0}" = putfile; then
+    if test -z "${REMOTEIP}"; then
+        die "This command ($b0) can only be used with REMOTEIP set"
+    fi
+
+    if test $# != 1 -o ! -e "$1"; then
+        die "This command ($b0) can only be used to put a file onto remote host ${REMOTEIP}"
+    fi
 fi
 
 if test "$EMACS" = t -o "$REMOTEIP"; then
-    rm-last-nl > /tmp/$$.putclip
-    export FILE=/tmp/$$.putclip
+    if test "${b0}" = putclip; then
+        rm-last-nl > /tmp/$$.putclip
+        export FILE=/tmp/$$.putclip
+        input_file=/dev/null
+    else
+        export FILE=$1
+        input_file=$1
+    fi
     (
         if test "$REMOTEIP" = ""; then
             prefix=""
@@ -27,8 +70,15 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
                 identity_file=~/.ssh/id_rsa_remote_edit
             fi
 
-            ssh -i $identity_file -o StrictHostKeyChecking=no ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port \
-                "remote-putclip $(whoami)@$LOCALIP$portarg:$FILE"
+            file_arg="/${REMOTEPROTOCOL:-scp}:$(whoami)@$LOCALIP$portarg:$FILE"
+
+            cat ${input_file} |
+                ssh -i $identity_file -o StrictHostKeyChecking=no ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port \
+                    "remote-${b0} ${file_arg}"
+
+            if test "${b0}" = putfile; then
+                putclip "~/tmp/remote-putfile/${file_arg}"
+            fi
             exit 0
         fi
 
@@ -39,7 +89,7 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
 (View-quit))"
         $prefix rm $FILE
         xclip -o -selection clipboard|xclip -i
-    ) >~/.cache/system-config/logs/putclip.log 2>&1&
+    ) >~/.cache/system-config/logs/${b0}.log 2>&1&
 else
     rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
     xclip -o -selection clipboard|xclip -i >/dev/null 2>&1

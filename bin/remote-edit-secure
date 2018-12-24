@@ -1,9 +1,14 @@
 #!/bin/bash
-. ~/.config/system-config/.bashrc-path
+. ~/.config/system-config/.bashrc-path </dev/null
 echo running: ${SSH_ORIGINAL_COMMAND} 1>&2
-if test "${SSH_ORIGINAL_COMMAND/#remote-putclip */remote-putclip}" = remote-putclip; then
+
+
+if [[ ${SSH_ORIGINAL_COMMAND} =~ ^remote-putclip\ * ]]; then
     SSH_ORIGINAL_COMMAND=$(echo "${SSH_ORIGINAL_COMMAND}" | grep ^remote-putclip|head -n 1)
     remote-putclip "${SSH_ORIGINAL_COMMAND#remote-putclip }"
+    exit 0
+elif [[ ${SSH_ORIGINAL_COMMAND} =~ ^remote-putfile\ * ]]; then
+    cat | remote-putfile "${SSH_ORIGINAL_COMMAND#remote-putfile }"
     exit 0
 fi
 file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacs\.client '|tail -n 1|perl -npe 's/^emacs\.client +(-n +)?(\+1 +)?//;')
