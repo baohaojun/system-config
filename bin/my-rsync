@@ -31,14 +31,14 @@ function rsync() {
         fi
 
         if [[ $x =~ \#[0-9]+: ]]; then
-            ssh_port=$(echo "${x}"|perl -ne 'm/#(\d+):/; print $1')
+            ssh_port_args="ssh -p $(echo "${x}"|perl -ne 'm/#(\d+):/; print $1')"
             x=$(echo "${x}" | perl -pe 's/#\d+:/:/')
         else
-            ssh_port=22
+            ssh_port_args=ssh
         fi
         args=("${args[@]}" "${x}")
     done
-    set -- -e "ssh -p ${ssh_port}" "${args[@]}"
+    set -- -e "${ssh_port_args}" "${args[@]}"
     command rsync "$@"
 }
 
