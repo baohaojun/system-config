@@ -1,93 +1,35 @@
 #!/bin/bash
-set -e
-function die() {
-    echo Error: "$@"
-    exit -1
+
+show-changes() {
+    local path=$1
+    local f_rev=$2
+    local t_rev=$3
+
+    echo "$path: old: $f_rev, new: $t_rev"
+    echo
+    if test -z "$f_rev"; then
+        echo "old revision is blank, will not show git log"
+    elif test ! -d "$path"; then
+        echo "$path not exist, will not show git log"
+    else
+        (
+            cd $path
+            echo "branch: $(repo-branch)"
+            echo
+        )
+        echo "git log -1000 $f_rev..$t_rev"
+        echo
+        (
+            cd $path
+            (
+                if ! git-cmds-in-mirror log -1000 --name-status $git_log_arguments $f_rev..$t_rev; then
+                    echo "Error: can't get git log -1000 --name-status $git_log_arguments $f_rev..$t_rev"
+                fi
+            ) | indent-clipboard -
+        )
+    fi | indent-clipboard -
+    sep
 }
-
-me=$(readlink -f $0)
-if test ! -e "$me"; then
-    me=$(readlink -f "$(which $0)")
-    if test ! -e "$me"; then
-        die "Can't find out about me"
-        exit 1
-    fi
-fi
-
-## start code-generator "^\\s *#\\s *"
-# generate-getopt e:execute-command a:git-log-arguments
-## end code-generator
-## start generated code
-TEMP=$(getopt -o a:e:h \
-              --long git-log-arguments:,execute-command:,help \
-              -n $(basename -- $0) -- "$@")
-git_log_arguments=
-execute_command=
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-
-        -a|--git-log-arguments)
-            git_log_arguments=$2
-            shift 2
-            ;;
-        -e|--execute-command)
-            execute_command=$2
-            shift 2
-            ;;
-        -h|--help)
-            set +x
-            echo
-            echo
-            echo Options and arguments:
-            printf %06s '-e, '
-            printf %-24s '--execute-command=EXECUTE_COMMAND'
-            echo
-            printf %06s '-a, '
-            printf %-24s '--git-log-arguments=GIT_LOG_ARGUMENTS'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
-
-
-## end generated code
-
-
-default_command() {
-    (
-        if test -e .git/shallow; then
-            export GIT_DIR=~/src/android-mirror/$(repo-project).git
-        fi
-        if ! git log -1000 --name-status $git_log_arguments $1..$2; then
-            scm jenkins-err "Error: can't get git log -1000 --name-status $git_log_arguments $1..$2"
-        fi
-    ) | indent-clipboard -
-}
-
-if test -z "$execute_command"; then
-    execute_command=default_command
-fi
-
-if test "$(basename "$0")" = repo-good-bad-command; then
-
-    echo() {
-        true;
-    }
-
-    indent-clipboard() {
-        cat
-    }
-fi
 
 sep() {
     echo
@@ -95,97 +37,15 @@ sep() {
     echo
 }
 
-check-rev-and-path() {
-    if ! [[ $revision =~ ^[0-9a-f]{40}$ ]]; then
-        die "invalid revision $revision for $name"
-    fi
+export -f show-changes
+export -f sep
 
-    if test -z "$path"; then
-        if test -z "$name"; then
-            die "both name and path not set for mystic project"
-        fi
-        path=$name
-    fi
-}
+echo "These projects are deleted:"
+repo-released-manifest-actions -f "$1" -t "$2" -a show-deleted | indent-clipboard -
+sep
 
-if test $# != 2; then
-    die "usage: $0 from_xml to_xml"
-fi
+echo "These projects are added:"
+repo-released-manifest-actions -f "$1" -t "$2" -a show-added| indent-clipboard -
+sep
 
-f_xml=$1
-t_xml=$2
-
-f_projects=$(repo-xml-sel -t -m //project -v @name -n $f_xml)
-t_projects=$(repo-xml-sel -t -m //project -v @name -n $t_xml)
-
-if test "$(basename "$0")" = repo-released-manifest-diff; then
-    echo "These projects are deleted:"
-    arg1-arg2 "$f_projects" "$t_projects" | indent-clipboard -
-
-    sep
-
-    echo "These projects are added:"
-    arg1-arg2 "$t_projects" "$f_projects" | indent-clipboard -
-
-    sep
-fi
-
-(
-    repo-xml-sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $f_xml | grep .
-) | (
-    declare -A from_path_revision_map
-    while read name revision path; do
-        check-rev-and-path
-        if test -z "$path"; then
-            path=$name
-        fi
-        if test -z "$path"; then
-            die "both name and path not set"
-        fi
-        from_path_revision_map[$path]=$revision
-    done
-    export from_path_revision_map
-    export -p |grep -P -e 'declare -Ax (from_path_revision_map)' > /tmp/f.env.$$
-)
-
-(
-    repo-xml-sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $t_xml | grep .
-) |
-    (
-        . /tmp/f.env.$$
-        if yes-or-no-p -t 5 -y "Remove tmp file /tmp/f.env.$$?"; then
-            rm /tmp/f.env.$$
-        fi
-        while read name revision path; do
-            if test -z "$path"; then
-                path=$name
-            fi
-            if test -z "$path"; then
-                die "both name and path not set"
-            fi
-            check-rev-and-path
-            f_rev=${from_path_revision_map[$path]}
-            if test "$f_rev" != "$revision"; then
-                echo "$path: old: $f_rev, new: $revision"
-                echo
-                if test -z "$f_rev"; then
-                    echo "old revision is blank, will not show git log"
-                elif test ! -d "$path"; then
-                    echo "$path not exist, will not show git log"
-                else
-                    (
-                        cd $path
-                        echo "branch: $(repo-branch)"
-                        echo
-                    )
-                    echo "git log -1000 $f_rev..$revision"
-                    echo
-                    (
-                        cd $path
-                        eval "$execute_command" $f_rev $revision
-                    )
-                fi | indent-clipboard -
-                sep
-            fi
-        done
-    )
+repo-released-manifest-actions -f "$1" -t "$2" -a foreach -e show-changes

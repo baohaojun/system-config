@@ -17,6 +17,10 @@ export -f locked-echo
 function parallel-xargs() {
     xargs -d \\n -P $my_rfa_jobs -I %N bash -c "$(cat <<'EOFf67e6c9ccf75'
 if test -d "%N"; then
+    TMP_REPO_PATH="%N"
+    if [[ $TMP_REPO_PATH =~ ^${ANDROID_TOP}/ ]]; then
+        export REPO_PATH=${TMP_REPO_PATH#${ANDROID_TOP}/}
+    fi
     cd "%N"
 else
     exit 0
@@ -115,30 +119,18 @@ if test "${#my_rfa_dirs[@]}" = 0; then
     my_rfa_dirs=(
         $(
             if test -d .repo; then
-                redo_path=false;
-                if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
-                    redo_path=true;
-                fi
-                if test -e .repo/repo-paths && grep ' ' -q .repo/repo-paths; then
-                    redo_path=true;
-                fi
-                if test -e .repo/repo-paths && test $(stat -c %s .repo/repo-paths) = 0; then
-                    redo_path=true
-                fi
-
-                if test $redo_path = true; then
-                    if test "$(cd .repo/manifests.git; git config repo.mirror)" != true; then
-                        repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
-                    else
-                        repo-xml-sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
-                    fi | while read dir name; do
-                        if test -d "$dir"/.git || test -d "$dir" -a "${dir##*.}" = git; then
-                            echo $dir
-                        fi
-                    done > .repo/repo-paths.$$
+                if test "$(cd .repo/manifests.git; git config repo.mirror)" != true; then
+                    repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
+                else
+                    repo-xml-sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
+                fi | while read dir name; do
+                    if test -d "$dir"/.git || test -d "$dir" -a "${dir##*.}" = git; then
+                        echo $dir
+                    fi
+                done | sort -u | (
+                    tee .repo/repo-paths.$$
                     mv .repo/repo-paths.$$ .repo/repo-paths
-                fi
-                cat .repo/repo-paths | sort -u
+                )
             else
                 pwd
             fi

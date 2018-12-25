@@ -1,0 +1,179 @@
+#!/bin/bash
+
+set -e
+saved_args=("$@")
+
+## start code-generator "^\\s *#\\s *"
+    # generate-getopt vverbose '?"调试选项，verbose 打印输出"' \
+        # o:old-version '?"旧版本的 git revision"' \
+        # n:new-version '?"新版本的 git revision"' \
+        # @del-dup-change-ids=true '?"删除在旧版本上已经存在的 change-ids"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o n:o:vh \
+               --long del-dup-change-ids,new-version:,old-version:,verbose,help,no-del-dup-change-ids,no-verbose \
+               -n $(basename -- $0) -- "$@")
+declare del_dup_change_ids=true
+declare new_version=
+declare old_version=
+declare verbose=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --del-dup-change-ids|--no-del-dup-change-ids)
+            if test "$1" = --no-del-dup-change-ids; then
+                del_dup_change_ids=false
+            else
+                del_dup_change_ids=true
+            fi
+            shift
+
+            ;;
+        -n|--new-version)
+            new_version=$2
+            shift 2
+
+            ;;
+        -o|--old-version)
+            old_version=$2
+            shift 2
+
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=false
+            else
+                verbose=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]del-dup-change-ids'
+            echo
+            printf "%30s" ""
+            echo "删除在旧版本上已经存在的 change-ids"
+            printf %06s '-n, '
+            printf %-24s '--new-version=NEW_VERSION'
+            echo
+            printf "%30s" ""
+            echo "新版本的 git revision"
+            printf %06s '-o, '
+            printf %-24s '--old-version=OLD_VERSION'
+            echo
+            printf "%30s" ""
+            echo "旧版本的 git revision"
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo "调试选项，verbose 打印输出"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "${old_version}" -o -z "${new_version}"; then
+    git-patch-list-csv --help
+    die "Error: must specify 2 versions with -o and -n: ${saved_args[*]} in $PWD"
+else
+    log "git-patch-list-csv ${saved_args[*]} in $PWD"
+fi
+
+export project_path=$(ap)
+src=$new_version
+export dest=$old_version
+
+commit_in_src=$(git-cmds-in-mirror rev-list $src ^$dest 2>/dev/null | reverse)
+num_commit_in_src=$(echo "$commit_in_src" | wc -l)
+commit_in_dest=$(git-cmds-in-mirror rev-list ^$src $dest 2>/dev/null | head -n $((num_commit_in_src * 2)))
+
+export destlog=/tmp/log_in_dest.$$
+
+if test "${del_dup_change_ids}" = true; then
+    git-cmds-in-mirror log $src..$dest > $destlog
+else
+    echo > $destlog
+fi
+
+
+export srclog=/tmp/log_in_src.$$
+git-cmds-in-mirror log --format="%n%B%n%%commit%% %H %ae(%ai) %ce(%ci) : {{{%s}}}" $dest..$src > $srclog
+
+need_die=0
+
+perl -e '
+# {%perl-mode%}
+     use Text::CSV;
+     my $csv = Text::CSV->new ( { binary => 1, eol => $/ } )
+         or die "Cannot use CSV: ".Text::CSV->error_diag ();
+
+     open($destlog, "<", $ENV{destlog});
+     while (<$destlog>) {
+         $dest_change_ids{$1} = 1 if m/^\s*(?:old-)?Change-Id:\s*(.*)/i;
+     }
+     close($destlog);
+
+     open($srclog, "<", $ENV{srclog});
+     my ($author, $author_date, $committer, $commit_date, $subject);
+
+     my $project_path = $ENV{project_path};
+
+     sub parse_commit_info($) {
+
+         my ($info) = @_;
+         if ($info =~ m/^(\S+?)\((.+?)\) (\S+?)\((.+?)\) : \{\{\{(.*?)\}\}\}$/) {
+             ($author, $author_date, $committer, $commit_date, $subject) = ($1, $2, $3, $4, $5);
+         } else {
+             ($author, $author_date, $committer, $commit_date, $subject) = ("Error: $info");
+         }
+     }
+
+     my $change_id = "";
+     my $issue_id = "";
+     my $git_commit_hash = "";
+
+     sub print_1_change() {
+
+         $csv->print(STDOUT, [$project_path, $git_commit_hash, $change_id, $issue_id, $ENV{dest}, $author, $author_date, $committer, $commit_date, $subject]);
+         $change_id = "";
+         $issue_id = "";
+     }
+
+     while (<$srclog>) {
+         if (m/^%commit% (\S*) (.*)/) {
+             $git_commit_hash = $1;
+             parse_commit_info($2);
+             print_1_change();
+         }
+
+         if (m/^\s*Issue-Id:\s*(.*)/i) {
+             $issue_id = $1;
+         }
+         if (m/^\s*Change-Id:\s*(.*)/i) {
+             if (not $dest_change_ids{$1}) {
+                 $change_id = $1;
+             }
+         }
+     }
+
+     $csv->print(STDOUT, ["Project Path", "Git Commit", "Change-ID", "Issue-ID", "Target Branch", "Author", "Author Date", "Committer", "Commit Date", "Subject", "Assign To", "Team", "Status", "Comment"]);
+# {%/perl-mode%}
+' | reverse
+
+rm $destlog $srclog

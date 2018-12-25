@@ -8,27 +8,25 @@ set -e
 
 if ! lookup-file -e .git/shallow >/dev/null 2>&1 && git_log=$(git "$@"); then
     echo "$git_log"
-    exit
+    exit 0
 fi
 
 cd $(lookup-file-dir .git)
 
 mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-project).git
-echo 1>&2 "Switch to use mirror: $mirror_dir"
+
 if git_log=$(git --git-dir "$mirror_dir" --work-tree "$PWD" "$@"); then
     echo "$git_log"
-    exit
+    exit 0
 fi
 
 tmp_git_dir=~/.cache/system-config/git-shallow-log-in-mirror/$(repo-project).git
 if git_log=$(git --git-dir "$tmp_git_dir" --work-tree "$PWD"  "$@"); then
     echo "$git_log"
-    exit
+    exit 0
 fi
 
 git-get -u "$(git-remote-url "$(repo-remote)")" -b "$(repo-branch)" --reference "$mirror_dir" -d "$tmp_git_dir" --mirror 1>&2
-
-echo 1>&2 "Switch to use tmp git dir: $tmp_git_dir"
 
 if ! git --git-dir "$tmp_git_dir" --work-tree "$PWD" "$@"; then
     if is-jenkins; then

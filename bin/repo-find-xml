@@ -1,0 +1,15 @@
+#!/bin/bash
+
+xml=$1
+
+if test -e "${xml}"; then
+    echo "$xml"
+    exit
+fi
+
+if test -e .repo/manifests/"${xml}"; then
+    echo .repo/manifests/"${xml}"
+    exit
+fi
+
+die "Can't find xml: $xml"

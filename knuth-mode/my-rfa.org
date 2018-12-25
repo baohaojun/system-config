@@ -1,6 +1,10 @@
 #+name: single-dir-script
 #+BEGIN_SRC sh
   if test -d "%N"; then
+      TMP_REPO_PATH="%N"
+      if [[ $TMP_REPO_PATH =~ ^${ANDROID_TOP}/ ]]; then
+          export REPO_PATH=${TMP_REPO_PATH#${ANDROID_TOP}/}
+      fi
       cd "%N"
   else
       exit 0
@@ -126,30 +130,18 @@
       my_rfa_dirs=(
           $(
               if test -d .repo; then
-                  redo_path=false;
-                  if test ! -e .repo/repo-paths -o .repo/manifest.xml -nt .repo/repo-paths; then
-                      redo_path=true;
-                  fi
-                  if test -e .repo/repo-paths && grep ' ' -q .repo/repo-paths; then
-                      redo_path=true;
-                  fi
-                  if test -e .repo/repo-paths && test $(stat -c %s .repo/repo-paths) = 0; then
-                      redo_path=true
-                  fi
-
-                  if test $redo_path = true; then
-                      if test "$(cd .repo/manifests.git; git config repo.mirror)" != true; then
-                          repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
-                      else
-                          repo-xml-sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
-                      fi | while read dir name; do
-                          if test -d "$dir"/.git || test -d "$dir" -a "${dir##*.}" = git; then
-                              echo $dir
-                          fi
-                      done > .repo/repo-paths.$$
+                  if test "$(cd .repo/manifests.git; git config repo.mirror)" != true; then
+                      repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
+                  else
+                      repo-xml-sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
+                  fi | while read dir name; do
+                      if test -d "$dir"/.git || test -d "$dir" -a "${dir##*.}" = git; then
+                          echo $dir
+                      fi
+                  done | sort -u | (
+                      tee .repo/repo-paths.$$
                       mv .repo/repo-paths.$$ .repo/repo-paths
-                  fi
-                  cat .repo/repo-paths | sort -u
+                  )
               else
                   pwd
               fi
@@ -180,22 +172,16 @@
   job=0
 
   cd $(lookup-file .repo/..)
-  test -d .repo
-
-  export ANDROID_TOP=$(pwd)
+  mkdir -p .repo/repo-info
 
   (
-      cd .repo;
+      cd .repo
+      repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
+      repo-xml-sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
+  )
 
-      if test -e "${scm_etcdir}"/generate-repo-info.mk; then
-          mk_file=${scm_etcdir}/generate-repo-info.mk
-      else
-          mk_file=~/system-config/etc/generate-repo-info.mk
-      fi
-      make -f $mk_file
-  ) >/dev/null 2>&1
-  export REPO_INFO=$(pwd)/.repo/repo_info.pl
-
+  export ANDROID_TOP=$(pwd)
+  export REPO_MANIFEST=$PWD/.repo/manifest.xml
   mkdir -p ~/.cache/system-config/logs/my-rfa-locks
 
   export cmds=("$@")

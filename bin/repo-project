@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if test "$REPO_INFO"; then
     $REPO_INFO project
     exit

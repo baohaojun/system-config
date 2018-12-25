@@ -42,6 +42,6 @@ if is-recording; then
     sawfish-ask-for-input -p "$*
 请按回车继续"
 else
-    echo "$@"
+    echo "$@" 1>&2
 fi
 exit 1

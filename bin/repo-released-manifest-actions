@@ -1,0 +1,169 @@
+#!/bin/bash
+set -e
+
+. bt
+. aterr bt
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt \
+    # a:action '?"可以取 3 个值，分别是 show-added（显示增加的仓库），show-deleted（显示删除的仓库），foreach（在有差异的仓库里运行－ｅ参数指定的命令）"' \
+    # e:execute-command '?"在每一个前后版本有差异的仓库里运行一条命令，运行时会传 3 个命令行参数，分别是仓库的路径、前后两个版本的 git commit sha1 值"' \
+    # f:from-xml '?"前一个发布版本的 manifest 快照"' \
+    # t:to-xml '?"后一个发布版本的 manifest 快照"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o a:e:f:t:h \
+               --long action:,execute-command:,from-xml:,to-xml:,help \
+               -n $(basename -- $0) -- "$@")
+declare action=
+declare execute_command=
+declare from_xml=
+declare to_xml=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--action)
+            action=$2
+            shift 2
+
+            ;;
+        -e|--execute-command)
+            execute_command=$2
+            shift 2
+
+            ;;
+        -f|--from-xml)
+            from_xml=$2
+            shift 2
+
+            ;;
+        -t|--to-xml)
+            to_xml=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--action=ACTION'
+            echo "可以取 3 个值，分别是 show-added（显示增加的仓库），show-deleted（显示删除的仓库），foreach（在有差异的仓库里运行－ｅ参数指定的命令）"
+            printf %06s '-e, '
+            printf %-24s '--execute-command=EXECUTE_COMMAND'
+            echo
+            printf "%30s" ""
+            echo "在每一个前后版本有差异的 repo 里运行一条命令，运行时会传两个命令行参数，分别是前后两个版本的 git commit sha1 值"
+            printf %06s '-f, '
+            printf %-24s '--from-xml=FROM_XML'
+            echo "前一个发布版本的 manifest 快照"
+            printf %06s '-t, '
+            printf %-24s '--to-xml=TO_XML'
+            echo "后一个发布版本的 manifest 快照"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "${from_xml}" -o -z "${to_xml}"; then
+    $0 --help
+    die "You must specify FROM_XML and TO_XML"
+    exit 1
+fi
+
+from_xml=$(
+    repo-find-xml "${from_xml}"
+        )
+
+to_xml=$(
+    repo-find-xml "${to_xml}"
+      )
+
+from_projects=$(repo-xml-sel -t -m //project -v @name -n $from_xml)
+to_projects=$(repo-xml-sel -t -m //project -v @name -n $to_xml)
+
+if test "${action}" = show-added; then
+    arg1-arg2 "$to_projects" "$from_projects"
+    exit 0
+elif test "${action}" = show-deleted; then
+    arg1-arg2 "$from_projects" "$to_projects"
+    exit 0
+elif test "${action}" != foreach; then
+    die "Invalid action ${action} specified. Must be 1 of (show-added, show-deleted, foreach)"
+fi
+
+
+if test -z "$execute_command"; then
+    die "For foreach action, must specify what command to execute"
+fi
+
+check-rev-and-path() {
+    if ! [[ $revision =~ ^[0-9a-f]{40}$ ]]; then
+        die "invalid revision $revision for $name"
+    fi
+
+    if test -z "$path"; then
+        if test -z "$name"; then
+            die "both name and path not set for mystic project"
+        fi
+        path=$name
+    fi
+}
+
+declare -A from_path_revision_map
+while read name revision path; do
+    check-rev-and-path
+    if test -z "$path"; then
+        path=$name
+    fi
+    if test -z "$path"; then
+        die "both name and path not set"
+    fi
+    from_path_revision_map[$path]=$revision
+done <<<"$(
+    repo-xml-sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $from_xml | grep .
+)"
+
+while read name revision path; do
+    if test -z "$path"; then
+        path=$name
+    fi
+    if test -z "$path"; then
+        die "both name and path not set"
+    fi
+    check-rev-and-path
+    f_rev=${from_path_revision_map[$path]}
+    t_rev=${revision}
+
+    if test "${f_rev}" = "${t_rev}" -o -z "${f_rev}" -o -z "${t_rev}"; then
+        continue
+    fi
+
+    command_list=()
+    if type "${execute_command}" >/dev/null 2>&1; then
+        command_list=(
+            "${execute_command}"
+        )
+    else
+        command_list=(
+            bash -c "${execute_command}" complex-script
+        )
+    fi
+
+    "${command_list[@]}" "$path" "$f_rev" "$t_rev" < /dev/null # make sure that you
+done <<<"$(
+    repo-xml-sel -t -m //project -v @name -o ' ' -v @revision -o ' ' -v @path -n $to_xml | grep .
+)"

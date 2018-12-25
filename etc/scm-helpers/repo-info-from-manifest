@@ -52,6 +52,25 @@ function repo-info-from-manifest() {
 
     ## end generated code
 
+    if test -z "${manifest_xml}"; then
+        manifest_xml=.repo/manifest.xml
+    fi
+
+    if test ! -e ${manifest_xml}; then
+        if test -e .repo/manifests/${manifest_xml}; then
+            manifest_xml=.repo/manifests/${manifest_xml}
+        else
+            die "Can't find manifest.xml"
+        fi
+    fi
+
+    if test -z "${manifest_project}"; then
+        manifest_project=$(
+            cd .repo/manifests
+            git-remote-url | perl -pe 's,.*?//.*?/,,'
+                        )
+    fi
+
 
     project_attrs=(
         name path remote revision upstream
@@ -94,6 +113,32 @@ function repo-info-from-manifest() {
             fi
         done
 
+        declare -A remote_prefix_map
+        get-project-prefix-for-remote() {
+            local remote_fetch=$1
+            if test -v remote_prefix_map[$remote_fetch]; then
+                echo -n ${remote_prefix_map[$remote_fetch]}
+                return 0
+            fi
+
+            project_prefix=$(
+                tmpdir=/tmp/repo-info-from-manifest.$$
+                mkdir -p ${tmpdir}
+                cd ${tmpdir}
+                mkdir -p ${manifest_project}
+                cd ${manifest_project}
+                cd .. # it's relative to the parent of the manifest project
+                cd ${remote_fetch}
+                if [[ ${PWD} =~ ^${tmpdir} ]]; then
+                    echo ${PWD#${tmpdir}}|perl -pe 's,^/,,'
+                else
+                    die "Can't find project prefix for ${remote_fetch}"
+                fi
+                          )
+            remote_prefix_map[$remote_fetch]=${project_prefix}
+            echo ${project_prefix}
+        }
+
         while read -r line; do
             if test "${line}" != EOR; then
                 eval "${line}"
@@ -107,8 +152,11 @@ function repo-info-from-manifest() {
                 if test -z "${revision}"; then
                     revision=${repo_xml_default_revision}
                 elif [[ $revision =~ [0-9a-f]{40} ]]; then
+                    repo_xml_project_info_map[@revision-$path]=$revision
                     revision=${upstream:-${repo_xml_default_revision}}
                 fi
+
+                repo_xml_project_info_map[@upstream-$path]=$upstream
 
                 if test -z "${remote}"; then
                     remote=${repo_xml_default_remote}
@@ -119,11 +167,9 @@ function repo-info-from-manifest() {
                     die "Can't find fetch setting for remote $remote"
                 fi
 
-                if test "${repo_xml_remote_fetch_map[$remote]%/}" = ..; then
-                    repo_xml_project_info_map[@project-$path]=qualcomm/$name
-                else
-                    repo_xml_project_info_map[@project-$path]=$name
-                fi
+                repo_xml_project_info_map[@project-$path]=$(
+                    get-project-prefix-for-remote "${repo_xml_remote_fetch_map[$remote]%/}"
+                                         )$name
 
                 repo_xml_project_info_map[@branch-$path]=$revision
                 clear-all
