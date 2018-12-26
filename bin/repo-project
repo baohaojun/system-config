@@ -1,25 +1,39 @@
 #!/bin/bash
 
-if test "$REPO_INFO"; then
-    $REPO_INFO project
-    exit
-elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
-    (
-        if git_dir=$(lookup-file -e .git/..); then
-            cd "$git_dir"
-        elif [[ $PWD =~ \.git($|/) ]]; then
-            cd $(echo "$PWD" | perl -npe 's,\.git($|/.*),.git,')
-        fi
-        if test ! "$USING_MY_RFA"; then
-            USING_MY_RFA=true my-rfa -d $(ap) repo-project
-        fi
-    )
+
+
+if test -e .git/repo-project &&
+        (
+            ! manifest_xml=$(lookup-file -e .repo/manifest.xml) ||
+                test .git/repo-project -nt "$manifest_xml"
+        ); then
+    cat .git/repo-project
     exit
 fi
 
-branch=$(git-tracking-branch)
-if test "$branch"; then
-    remote=$(git config branch.$branch.remote)
-    url=$(git config remote.$remote.url)
-    echo ${url#*:}
-fi
+repo_project=$(
+    if test "$REPO_INFO"; then
+        $REPO_INFO project
+        exit
+    elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
+        (
+            if git_dir=$(lookup-file -e .git/..); then
+                cd "$git_dir"
+            elif [[ $PWD =~ \.git($|/) ]]; then
+                cd $(echo "$PWD" | perl -npe 's,\.git($|/.*),.git,')
+            fi
+            if test ! "$USING_MY_RFA"; then
+                USING_MY_RFA=true my-rfa -d $(ap) repo-project
+            fi
+        )
+        exit
+    fi
+
+    branch=$(git-tracking-branch)
+    if test "$branch"; then
+        remote=$(git config branch.$branch.remote)
+        url=$(git config remote.$remote.url)
+        echo ${url#*:}
+    fi
+            )
+echo ${repo_project} | tee .git/repo-project

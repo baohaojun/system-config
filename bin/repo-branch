@@ -1,1 +1,21 @@
-repo-refname
+#!/bin/bash
+
+if test "$REPO_BRANCH"; then
+    echo "$REPO_BRANCH"
+    exit
+fi
+
+if test -z "$(lookup-file -e .repo)" || [[ $PWD =~ /.repo/manifests$ ]]; then
+    branch=$(git symbolic-ref HEAD 2>/dev/null | perl -npe 's,^refs/heads/,,')
+    if test -z "$branch"; then
+        echo unknown-bhj
+    else
+        echo $branch|perl -npe 's,^refs/heads/,,'
+    fi
+    exit 0
+fi
+if test "$REPO_INFO"; then
+    $REPO_INFO branch
+else
+    repo forall $(repo-project) -c 'echo $REPO_RREV'
+fi
