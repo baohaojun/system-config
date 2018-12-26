@@ -95,7 +95,8 @@ else
     log "git-patch-list-csv ${saved_args[*]} in $PWD"
 fi
 
-export project_path=$(ap)
+export repo_path=$(ap)
+export repo_project=$(repo-project)
 src=$new_version
 export dest=$old_version
 
@@ -132,7 +133,8 @@ perl -e '
      open($srclog, "<", $ENV{srclog});
      my ($author, $author_date, $committer, $commit_date, $subject);
 
-     my $project_path = $ENV{project_path};
+     my $repo_path = $ENV{repo_path};
+     my $repo_project = $ENV{repo_project};
 
      sub parse_commit_info($) {
 
@@ -150,7 +152,7 @@ perl -e '
 
      sub print_1_change() {
 
-         $csv->print(STDOUT, [$project_path, $git_commit_hash, $change_id, $issue_id, $ENV{dest}, $author, $author_date, $committer, $commit_date, $subject]);
+         $csv->print(STDOUT, [$repo_project, $repo_path, $git_commit_hash, $change_id, $issue_id, $ENV{dest}, $author, $author_date, $committer, $commit_date, $subject]);
          $change_id = "";
          $issue_id = "";
      }
@@ -172,7 +174,7 @@ perl -e '
          }
      }
 
-     $csv->print(STDOUT, ["Project Path", "Git Commit", "Change-ID", "Issue-ID", "Target Branch", "Author", "Author Date", "Committer", "Commit Date", "Subject", "Assign To", "Team", "Status", "Comment"]);
+     $csv->print(STDOUT, ["Project Name", "Project Path", "Git Commit", "Change-ID", "Issue-ID", "Target Branch", "Author", "Author Date", "Committer", "Commit Date", "Subject", "Assign To", "Team", "Status", "Comment"]);
 # {%/perl-mode%}
 ' | reverse
 
