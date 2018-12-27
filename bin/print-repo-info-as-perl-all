@@ -1,45 +1,71 @@
 #!/bin/bash
 
-# repo_path=$(echo /$REPO_PATH | perl -npe 's,/+,/,; s,/$,,')
-# printf '$repo_info{$android_path . "%s"}{"remote"} = "%s";\n' $repo_path "$REPO_REMOTE"
-# printf '$repo_info{$android_path . "%s"}{"branch"} = "%s";\n' $repo_path "$REPO_RREV"
-# printf '$repo_info{$android_path . "%s"}{"path"} = "%s";\n' $repo_path "$REPO_PATH"
-# printf '$repo_info{$android_path . "%s"}{"project"} = "%s";\n' $repo_path "$REPO_PROJECT"
+set -e
 
-echo '#!/usr/bin/perl'
-echo '$android_path = $0;'
-echo '$android_path =~ s,/.repo/repo_info.pl,,;'
+cat <<'EOF' | grep -v "sh-mode%\}" -P
+# {%sh-mode%}
+#!/bin/bash
+set -e
 
-if test $# = 0; then
-    set -- manifest.xml local_manifests/local_manifist.xml
-fi
-
-repo-xml-sel -B -t -m //remote \
-    -o '$remote_map{"' -v @name -o '"} = "' -v @fetch -o '";' -n $1
-
-repo-xml-sel -B -t -m //default \
-    -o '$default_remote = "'  -v @remote -o '";' -n \
-    -o '$default_revision = "' -m //default -v @revision -o '";' -n $1
-
-name=name
-path=path
-pathSuffix=
-if test -d ../platform/build.git; then
-    name=path
-    path=name
-    pathSuffix=.git
-fi
-
-for x in "$@"; do
-    if test -e $x; then
-        repo-xml-sel -B -t -m //project \
-            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"project"} = "' -v @name  -o '";' -n \
-            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"path"} = ("' -v @$path$pathSuffix  -o '" or "' -v @name -o '");' -n \
-            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"branch"} = ("' -v @revision  -o '" or $default_revision);' -n \
-            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"upstream"} = ("' -v @upstream  -o '" or "' -v @revision -o '" or $default_revision);' -n \
-            -o '$repo_info{$android_path . ("/' -v @$path -o $pathSuffix'" or "/' -v @$name -o $pathSuffix'")}{"remote"} = ("' -v @remote  -o '" or $default_remote);' -n \
-            $x
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
     fi
-done | perl -npe 's,/+,/,g; s,/",",g'
+fi
 
-echo 'foreach (@ARGV) { print $repo_info{$ENV{"PWD"}}{$_} . "\n"; }'
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+repo_info_keys=(
+    project path branch upstream remote revision
+)
+
+declare -A repo_info_keys_map
+for x in ${repo_info_keys[@]}; do
+    repo_info_keys_map[$x]=1
+done
+
+if test $# != 1; then
+    die "Can only take 1 arg from: ${repo_info_keys[@]}"
+elif test ! -v repo_info_keys_map[$1]; then
+    die "arg $1 must be in ${repo_info_keys[@]}"
+fi
+
+repo_info_line=$(
+    grep -P "^repo_dir=\Q$PWD\E;" $abs0
+              )
+
+eval "${repo_info_line}"
+eval echo \$repo_$1
+exit
+# {%/sh-mode%}
+EOF
+
+repo_top_dir=$(lookup-file -e .repo/..)
+cd ${repo_top_dir}
+
+. repo-info-from-manifest
+
+for repo_path in ${!repo_project_paths[@]}; do
+    (
+        echo "repo_dir=$PWD/${repo_path};"
+        echo "repo_path=${repo_path};"
+        for attr in branch revision upstream project remote; do
+            echo "repo_$attr='${repo_xml_project_info_map[@$attr-$repo_path]}';"
+        done
+    ) | tr -d '\n'
+    echo
+done

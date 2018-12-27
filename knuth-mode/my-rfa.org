@@ -172,14 +172,17 @@
   job=0
 
   cd $(lookup-file .repo/..)
-  mkdir -p .repo/repo-info
-
   (
-      cd .repo
-      repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
-      repo-xml-sel -t -m //project -v @name -o '.git' -o ' ' -v @name -o '.git' -n .repo/manifest.xml
-  )
+      cd .repo;
 
+      if test -e "${scm_common_etcdir}"/generate-repo-info.mk; then
+          mk_file=${scm_common_etcdir}/generate-repo-info.mk
+      else
+          mk_file=~/system-config/etc/generate-repo-info.mk
+      fi
+      make -f $mk_file
+  ) >/dev/null 2>&1
+  export REPO_INFO=$(pwd)/.repo/repo_info.sh
   export ANDROID_TOP=$(pwd)
   export REPO_MANIFEST=$PWD/.repo/manifest.xml
   mkdir -p ~/.cache/system-config/logs/my-rfa-locks

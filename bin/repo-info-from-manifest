@@ -72,12 +72,12 @@ function repo-info-from-manifest() {
     fi
 
 
-    project_attrs=(
+    repo_project_attrs=(
         name path remote revision upstream
     )
 
     clear-all() {
-        for x in ${project_attrs[@]}; do
+        for x in ${repo_project_attrs[@]}; do
             unset $x
         done
     }
@@ -92,12 +92,16 @@ function repo-info-from-manifest() {
 
         repo-xml-sel sel -t -m "/manifest/project" \
                      $(
-            for x in ${project_attrs[@]}; do
+            for x in ${repo_project_attrs[@]}; do
                 printf -- '-o %s= -v @%s -n ' $x $x
             done
                      ) \
                          -o "EOR" -n "${manifest_xml}"
     ) | (
+        is_mirror=$(
+            cd .repo/manifests
+            git config repo.mirror || true
+                 )
         clear-all
         while read -r line; do
             if test "$line" != EOH; then
@@ -123,6 +127,7 @@ function repo-info-from-manifest() {
 
             project_prefix=$(
                 tmpdir=/tmp/repo-info-from-manifest.$$
+                . atexit rm -rf $tmpdir
                 mkdir -p ${tmpdir}
                 cd ${tmpdir}
                 mkdir -p ${manifest_project}
@@ -139,6 +144,7 @@ function repo-info-from-manifest() {
             echo ${project_prefix}
         }
 
+        declare -A repo_project_paths
         while read -r line; do
             if test "${line}" != EOR; then
                 eval "${line}"
@@ -148,6 +154,12 @@ function repo-info-from-manifest() {
                 elif test -z "$name"; then
                     name=$path
                 fi
+
+                if test "${is_mirror}" = true; then
+                    path=$name.git
+                fi
+
+                repo_project_paths[$path]=1
 
                 if test -z "${revision}"; then
                     revision=${repo_xml_default_revision}
@@ -163,6 +175,8 @@ function repo-info-from-manifest() {
                 fi
                 # echo remote is $remote for $path: ${repo_xml_remote_fetch_map[$remote]} 1>&2
 
+                repo_xml_project_info_map[@remote-$path]=$remote
+
                 if test -z "${repo_xml_remote_fetch_map[$remote]}"; then
                     die "Can't find fetch setting for remote $remote"
                 fi
@@ -176,6 +190,7 @@ function repo-info-from-manifest() {
             fi
         done
         declare -p repo_xml_project_info_map
+        declare -p repo_project_paths
     )
 
 }
