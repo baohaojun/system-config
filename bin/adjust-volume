@@ -1,6 +1,22 @@
 #!/bin/bash
+
+set -e
+
+. aterr bhj-notify adjust-volume "Failed to run adjust-volume"
+
+echo $$ >> ~/.cache/system-config/logs/adjust-volume.log
+
 if ps.pl pulseaudio >/dev/null 2>&1; then
     pulse_audio="-D pulse"
+    if headphone_output=$(
+            pactl list sinks | grep "Headphones.*available"
+                       ) &&
+            ! [[ $headphone_output =~ 'not available' ]]; then
+        headphone_output=$(
+            echo ${headphone_output}|pn 1 : |pn 1
+                        )
+        pactl set-sink-port 0 ${headphone_output}
+    fi
 else
     pulse_audio=
 fi
@@ -19,10 +35,10 @@ function amixer() {
 }
 
 function tune-100() {
-    amixer -q sset 'Headphone',0 unmute
-    amixer -q sset 'Headphone+LO',0 100%
-    amixer -q sset PCM,0 100%
-    amixer -q sset 'Speaker',0 unmute
+    amixer -q sset 'Headphone',0 unmute || true
+    amixer -q sset 'Headphone+LO',0 100% || true
+    amixer -q sset PCM,0 100% || true
+    amixer -q sset 'Speaker',0 unmute || true
 }
 
 if test "$(basename $0)" = sound-off; then
@@ -36,7 +52,7 @@ fi
 
 
 
-sound-on
+sound-on || true
 if test "$#" = 1; then
     amixer -q sset Master,0 "${1%%%}"%
     exit
