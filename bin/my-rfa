@@ -169,6 +169,14 @@ cd $(lookup-file .repo/..)
     else
         mk_file=~/system-config/etc/generate-repo-info.mk
     fi
+
+    if test -e manifest.xml -a -e repo_info.sh; then
+        manifest_mtime=$(stat -c %Y manifest.xml)
+        repo_info_mtime=$(stat -c %Y repo_info.sh)
+        if test ${repo_info_mtime} -lt ${manifest_mtime}; then
+            touch manifest.xml
+        fi
+    fi
     make -f $mk_file
 ) >/dev/null 2>&1
 export REPO_INFO=$(pwd)/.repo/repo_info.sh
