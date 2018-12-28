@@ -170,6 +170,10 @@ cd $(lookup-file .repo/..)
         mk_file=~/system-config/etc/generate-repo-info.mk
     fi
 
+    touch .repo_info.lock
+    exec 9< .repo_info.lock
+    flock 9
+
     if test -e manifest.xml -a -e repo_info.sh; then
         manifest_mtime=$(stat -c %Y manifest.xml)
         repo_info_mtime=$(stat -c %Y repo_info.sh)
@@ -177,8 +181,8 @@ cd $(lookup-file .repo/..)
             touch manifest.xml
         fi
     fi
-    make -f $mk_file
-) >/dev/null 2>&1
+    make -f $mk_file >/dev/null 2>&1
+)
 export REPO_INFO=$(pwd)/.repo/repo_info.sh
 export ANDROID_TOP=$(pwd)
 export REPO_MANIFEST=$PWD/.repo/manifest.xml

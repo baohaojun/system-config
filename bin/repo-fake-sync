@@ -1,0 +1,97 @@
+#!/bin/bash
+set -e
+
+if test ! -d .repo; then
+    die "This script requires repo init to be run first"
+fi
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt m:manifest-xml=.repo/manifest.xml '?"使用哪个 manifest.xml 文件"' \
+    # @clear-all=true '?"删除所有文件或目录（i.e., rm -rf ./*）"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o m:h \
+               --long clear-all,manifest-xml:,help,no-clear-all \
+               -n $(basename -- $0) -- "$@")
+declare clear_all=true
+declare manifest_xml=.repo/manifest.xml
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --clear-all|--no-clear-all)
+            if test "$1" = --no-clear-all; then
+                clear_all=false
+            else
+                clear_all=true
+            fi
+            shift
+
+            ;;
+        -m|--manifest-xml)
+            manifest_xml=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]clear-all'
+            echo "删除所有文件或目录（i.e., rm -rf ./*）"
+            printf %06s '-m, '
+            printf %-24s '--manifest-xml=MANIFEST_XML'
+            echo
+            printf "%30s" ""
+            echo "使用哪个 manifest.xml 文件"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test ! -e ${manifest_xml}; then
+    if test -e .repo/manifests/${manifest_xml}; then
+        manifest_xml=.repo/manifests/${manifest_xml}
+    else
+        die "Can't find manifest.xml: ${manifest_xml}, file not exist"
+    fi
+fi
+
+# clean up all dirs.
+
+if test "${clear_all}" = true; then
+    mkdir -p .xx$$
+    mv * .xx$$ >/dev/null 2>&1|| true
+    rm -rf .xx$$&
+fi
+
+(
+    if test $# = 0; then
+
+        # use the fastest way to “init” every git repo, since we are using
+        # mirrors anyway.
+        repo-xml-sel -t -m //project -v @path -o ' ' -v @name -n .repo/manifest.xml
+    else
+        for x in "$@"; do
+            echo $x
+        done
+    fi
+) |
+    while read path name; do
+        gitdir=$path/.git
+        mkdir -p $gitdir
+        touch $gitdir/shallow
+    done
