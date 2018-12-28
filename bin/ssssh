@@ -25,6 +25,10 @@ name=
 command=
 
 . ~/.local-config/.ssssh/search-$host
+if test -e ~/.local-config/.ssssh/exec-$host; then
+    . ~/.local-config/.ssssh/exec-$host
+fi
+
 search=$regexp
 if test "$host" = localhost; then
     search=$USER@$HOSTNAME
@@ -109,8 +113,12 @@ else
         else
             port_arg=
         fi
-        myscr en_US ssh -X -o RequestTTY=true $host $port_arg "REMOTEUSER=$USER LOCALIP=${host#*@} $extra_env REMOTEPROTOCOL=ssh REMOTE_EXTRA_SSH_ARGS=\"-i \${HOME}/.ssh/id_rsa_remote_edit\" exec bash"
+        if test -z "${ssss_exec}"; then
+            ssss_exec="exec bash"
+        fi
+        myscr en_US ssh -X -o RequestTTY=true $host $port_arg "REMOTEUSER=$USER LOCALIP=${host#*@} $extra_env REMOTEPROTOCOL=ssh $ssss_exec"
     else
-        myscr ssh-work $host
+        # 默认的机器都是运行这个路径
+        myscr ssh-work $host $ssss_exec
     fi
 fi
