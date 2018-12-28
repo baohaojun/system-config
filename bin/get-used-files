@@ -1,6 +1,8 @@
 #!/bin/bash
 
 tmpf=/tmp/$(basename $0).$$
+. atexit rm -f $tmpf $tmpf.*
+
 set -e
 mkdir -p ~/tmp
 (
@@ -8,13 +10,9 @@ mkdir -p ~/tmp
     strace -e trace=open,execve -f -q -o $tmpf "$@" 2>&1 | tee $tmpf.out
 )
 
-cat $tmpf
+perl -npe '@x = split(/"/); $_ = $x[1] . "\n"' $tmpf > $tmpf.splited
 
-perl -npe '@x = split(/"/); $_ = $x[1] . "\n"' -i $tmpf
-
-
-sort -u $tmpf | xargs -d '\n' bash -c 'for x in "$@"; do if test -f $x; then x=$(readlink -f $x); md5sum $x; else echo $x; fi; done' true |tee $tmpf.bak
+sort -u $tmpf.splited | xargs -d '\n' bash -c 'for x in "$@"; do if test -f $x; then md5sum $x; else echo $x; fi; done' true |tee $tmpf.edit
 # perl -ne 'if (m/^[0-9a-f]{32}  (.*)/) {system("readlink", "-f", "$1")}' -i $tmpf.bak
-mv $tmpf.bak $tmpf
-edit-wait $tmpf
-test $(whoami) = root || rm $tmpf
+edit-wait $tmpf.edit
+
