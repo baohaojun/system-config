@@ -2,13 +2,24 @@
 . ~/.config/system-config/.bashrc-path </dev/null
 echo running: ${SSH_ORIGINAL_COMMAND} 1>&2
 
+unset REMOTEIP
+export EMACS=t
+. ~/system-config/bin/set-ssh-agent >/dev/null 2>&1
 
 if [[ ${SSH_ORIGINAL_COMMAND} =~ ^remote-putclip\ * ]]; then
-    SSH_ORIGINAL_COMMAND=$(echo "${SSH_ORIGINAL_COMMAND}" | grep ^remote-putclip|head -n 1)
-    remote-putclip "${SSH_ORIGINAL_COMMAND#remote-putclip }"
+    text=$(cat)
+    if test ${#text} -gt 102400; then
+        text=${text:0:102400}...
+    fi
+    putclip "${text}"
     exit 0
 elif [[ ${SSH_ORIGINAL_COMMAND} =~ ^remote-putfile\ * ]]; then
     cat | remote-putfile "${SSH_ORIGINAL_COMMAND#remote-putfile }"
+    exit 0
+elif [[ ${SSH_ORIGINAL_COMMAND} =~ ^remote-putalarm\ * ]]; then
+    alarm_text=$(cat)
+    . ~/.renew-xauth
+    alarm 0m "${alarm_text}"
     exit 0
 fi
 file=$(echo "$SSH_ORIGINAL_COMMAND" | grep '^emacs\.client '|tail -n 1|perl -npe 's/^emacs\.client +(-n +)?(\+1 +)?//;')

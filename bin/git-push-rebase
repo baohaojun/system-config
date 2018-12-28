@@ -140,6 +140,10 @@ fi
 test "$(pwd)" = $HOME && cd ~/system-config
 cd "$(dirname "$(lookup-file -e .git)")"
 
+if ! [[ $PWD =~ /system-config(/|$)|/src/github/ ]]; then
+    die "Can only use it in ~/system-config or ~/src/github/ repos"
+fi
+
 if test "$force_even_if_merged" = false &&
         test ! -e .git/sc-not-merged &&
         ! git submodule foreach 'if test -e .git/sc-not-merged; then echo yes.hello.world; fi' | grep yes.hello.world -q; then

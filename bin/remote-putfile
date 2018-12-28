@@ -1,1 +1,18 @@
-remote-putclip
+#!/bin/bash
+
+set -xe
+unset REMOTEIP
+EMACS=t
+. ~/system-config/bin/set-ssh-agent
+
+
+file=~/tmp/remote-putfile/"$1"
+
+mkdir -p $(dirname "$file")
+
+if ! [[ "$(readlink -m "${file}")" =~ ~/tmp/remote-putfile/ ]]; then
+    die "Can't putfile $1, it's too dangerous to write files out of ~/tmp/remote-putfile/"
+fi
+
+cat > "${file}"
+

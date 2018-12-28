@@ -29,7 +29,7 @@ expect "Opt>" {
             }
             send "\n";
         } else {
-            send "REMOTEPROTOCOL=jssh REMOTEIP=$local_ip REMOTEUSER=$env(USER) REMOTE_EXTRA_SSH_ARGS=\"-i \${HOME}/.ssh/id_rsa_remote_edit\" exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
+            send "REMOTEPROTOCOL=jssh REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
         }
 
     }

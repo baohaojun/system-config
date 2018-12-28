@@ -27,7 +27,7 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
-if test "${b0}" = putclip; then
+if test "${b0}" != putfile; then
     if test $# != 0; then
         exec <<EOF
 $@
@@ -41,19 +41,17 @@ if test "${b0}" = putfile; then
     fi
 
     if test $# != 1 -o ! -e "$1"; then
-        die "This command ($b0) can only be used to put a file onto remote host ${REMOTEIP}"
+        die "This command ($b0) can only take 1 argument (a file) onto remote host ${REMOTEIP}"
     fi
 fi
 
 if test "$EMACS" = t -o "$REMOTEIP"; then
-    if test "${b0}" = putclip; then
+    if test "${b0}" != putfile; then
         rm-last-nl > /tmp/$$.putclip
-        export FILE=/tmp/$$.putclip
-        input_file=/dev/null
-    else
-        export FILE=$1
-        input_file=$1
+        set -- /tmp/$$.putclip
     fi
+    export FILE=$1
+    input_file=$1
     (
         if test "$REMOTEIP" = ""; then
             prefix=""
