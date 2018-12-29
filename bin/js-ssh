@@ -35,5 +35,9 @@ expect "Opt>" {
     }
 }
 
-interact;
+interact {
+    timeout 1750 {
+        exit
+    }
+};
 wait
