@@ -6,12 +6,6 @@ fi
 set -e
 
 set -o pipefail
-function die() {
-    echo "$@"
-    exit -1
-}
-
-set -e
 
 me=$(readlink -f $0)
 if test ! -e "$me"; then
