@@ -14,11 +14,10 @@ apt-get()
 
 . ~/system-config/bin/wp
 
-function renew-xauth() { # so that in the saved gnu screen session, I can reset the xauth
+function read-xauth() { # so that in the saved gnu screen session, I can reset the xauth
     if test -z "$SSH_CLIENT"; then
-        vnc=$(sawfish-client -e '(window-name (input-focus))' | grep -o -P -e 'vnc://localhost:\d+')
-        if test "$vnc"; then
-            . ~/.renew-xauth.${vnc##*:}
+        if test "${BHJ_IN_VNC}" = true; then
+            . ~/.renew-xauth.${DISPLAY#:}
         else
             . ~/.renew-xauth
         fi

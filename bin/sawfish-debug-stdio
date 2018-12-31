@@ -1,6 +1,6 @@
 #!/bin/bash
 sawfish-client -e "(system \"debug-fds&\")"
-myscr first bash -c 'cat ~/.cache/system-config/logs/debug-fds;
+myscr bash -c 'cat ~/.cache/system-config/logs/debug-fds;
     if cat ~/.cache/system-config/logs/debug-fds|grep -q "not ok" && yes-or-no-p -y "fix stdio?"; then
         sawfish-fix-stdio;
     else

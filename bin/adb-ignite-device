@@ -7,7 +7,7 @@ if test $(basename $0) = adb-ignite-device -o $(basename $0) = adb-power-on; the
             sleep 1
         fi
 
-        adb-lcd on
+        adb-lcd off
 
         Wrench 'adb_quick_input{"input keyevent HOME"}'&
         sleep 1

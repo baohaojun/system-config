@@ -1,18 +1,22 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P wwait-exit n:window-name s:session-name S:start-cmd ddebug ekeep-env \
+# generate-getopt -P wwait-exit n:window-name \
+    # s:session-name='${MYSCR_SESSION}' \
+    # S:start-cmd ddebug ekeep-env \
+    # @:socket='${MYSCR_SOCKET:-default}' \
     # @with-tty \
     # @bg='("" -d)' '?"把新的窗口放在“后台”"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o des:S:wn:h \
-                      --long bg,debug,keep-env,session-name:,start-cmd:,wait-exit,window-name:,with-tty,help,no-bg,no-debug,no-keep-env,no-wait-exit,no-with-tty \
+                      --long bg,debug,keep-env,session-name:,socket:,start-cmd:,wait-exit,window-name:,with-tty,help,no-bg,no-debug,no-keep-env,no-wait-exit,no-with-tty \
                       -n $(basename -- $0) -- "$@")
 declare bg=
 declare debug=false
 declare keep_env=false
-declare session_name=
+declare session_name=${MYSCR_SESSION}
+declare socket=${MYSCR_SOCKET:-default}
 declare start_cmd=
 declare wait_exit=false
 declare window_name=
@@ -50,6 +54,11 @@ while true; do
             ;;
         -s|--session-name)
             session_name=$2
+            shift 2
+
+            ;;
+        --socket)
+            socket=$2
             shift 2
 
             ;;
@@ -98,6 +107,9 @@ while true; do
             printf %06s '-s, '
             printf %-24s '--session-name=SESSION_NAME'
             echo
+            printf "%06s" " "
+            printf %-24s '--socket=SOCKET'
+            echo
             printf %06s '-S, '
             printf %-24s '--start-cmd=START_CMD'
             echo
@@ -130,7 +142,6 @@ if echo $SHELLOPTS | grep -q xtrace; then
     debug=true
 fi
 
-
 if test "$window_name"; then
     export SCREEN_TITLE=$window_name
 fi
@@ -161,16 +172,15 @@ fi
 #. /etc/bash_completion
 
 if test -z "$session_name"; then
-    if test "$1" != first; then
-        set -- first "$@"
+    session_name=first
+    if test "$1" = first; then
+        shift
     fi
-    session_name=$1
-    shift
 fi
 
 session-exists() {
     if test "$SC_USE_TMUX" = true; then
-        tmux list-sessions | grep "$session_name"
+        tmux -L ${socket} list-sessions | grep "$session_name"
     else
         screen -list|grep "$session_name"
     fi
@@ -241,9 +251,9 @@ if session-exists; then
             screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
         else
             if test "$with_tty" = true; then
-                tmux new-window $bg -n "$SCREEN_TITLE" "bash-tty '. /tmp/screen-env.$$; bash /tmp/screen-exec.$$'"
+                tmux -L ${socket} new-window $bg -n "$SCREEN_TITLE" "bash-tty '. /tmp/screen-env.$$; bash /tmp/screen-exec.$$'"
             else
-                tmux new-window $bg -n "$SCREEN_TITLE" "bash -l -i /tmp/screen-exec.$$"
+                tmux -L ${socket} new-window $bg -n "$SCREEN_TITLE" "bash -l -i /tmp/screen-exec.$$"
             fi
             find-or-exec konsole
         fi
@@ -259,12 +269,12 @@ if session-exists; then
     if using-screen; then
         exec screen -x -r $session_name -t $session_name -s $SHELL $start_cmd "$@"
     else
-        exec tmux attach
+        exec tmux -L ${socket} attach
     fi
 else # session not exist
     if using-screen; then
         exec screen -S $session_name -t $session_name -s $SHELL $start_cmd "$@"
     else
-        exec tmux new-session -s $session_name -n $session_name "$tmux_start_cmd"
+        exec tmux -L ${socket} new-session -s $session_name -n $session_name "$tmux_start_cmd"
     fi
 fi

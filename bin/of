@@ -103,6 +103,9 @@ elif test $# = 1; then
             set -- "$res"
         fi
     fi
+elif test -e "$1" && [[ $1 =~ \.(png|jpg)$ ]]; then
+    convert "$@" -append ~/tmp/of.png
+    exec of ~/tmp/of.png
 else
     set -- "$(f "$@")"
 fi

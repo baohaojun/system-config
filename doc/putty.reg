@@ -198,6 +198,6 @@ Windows Registry Editor Version 5.00
 "SerialStopHalfbits"=dword:00000002
 "SerialParity"=dword:00000000
 "SerialFlowControl"=dword:00000001
-"CygtermCommand"="bash -c \"myscr first\""
+"CygtermCommand"="bash -c \"myscr \""
 "CygtermAutoPath"=dword:00000001
 
