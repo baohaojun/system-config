@@ -21,7 +21,7 @@ function read-xauth() { # so that in the saved gnu screen session, I can reset t
         else
             . ~/.renew-xauth
         fi
-        . set-ssh-agent
+        . ~/system-config/bin/set-ssh-agent
     elif test true = false; then
         if test `ps -o comm=  -o pid= -A|grep gnome-terminal|wc -l` != 1; then
             echo 'you have more that 1 gnome-terminal running, can not renew xauth!'
