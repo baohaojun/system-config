@@ -150,12 +150,14 @@ if test "$exclusive" = true; then
     if test -z "$ANDROID_SERIAL"; then
         export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
     fi
+
+    postfix=${ANDROID_SERIAL}${DISPLAY//:/.}
     if test ! -e ~/.config/system-config/Wrench-adb.map; then
         echo -e "declare -A wrench_adb_map\nwrench_adb_map[max]=1" > ~/.config/system-config/Wrench-adb.map
     fi
     . ~/.config/system-config/Wrench-adb.map
-    if test -z "${wrench_adb_map[$ANDROID_SERIAL]}"; then
-        wrench_adb_map[$ANDROID_SERIAL]=${wrench_adb_map[max]}
+    if test -z "${wrench_adb_map[${postfix}]}"; then
+        wrench_adb_map[${postfix}]=${wrench_adb_map[max]}
         ((wrench_adb_map[max]++)) || true
         cat <<EOF > ~/.config/system-config/Wrench-adb.map.$$
 declare -A wrench_adb_map
@@ -167,14 +169,14 @@ $(
 EOF
         mv ~/.config/system-config/Wrench-adb.map.$$ ~/.config/system-config/Wrench-adb.map
     fi
-    rsync ~/tmp/build-wrench/ ~/tmp/build-wrench.$ANDROID_SERIAL -a --chmod=D0755
+    rsync ~/tmp/build-wrench/ ~/tmp/build-wrench.$postfix -a --chmod=D0755
     path_args=(
-        PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$ANDROID_SERIAL:"$PATH"
+        PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$postfix:"$PATH"
     )
-    if test "$(which Wrench)" = ~/tmp/build-wrench.$ANDROID_SERIAL/Wrench; then
+    if test "$(which Wrench)" = ~/tmp/build-wrench.$postfix/Wrench; then
         path_args=()
     fi
-    . reset-env WRENCH_INSTANCE ${wrench_adb_map[$ANDROID_SERIAL]} "${path_args[@]}"
+    . reset-env WRENCH_INSTANCE ${wrench_adb_map[$postfix]} "${path_args[@]}"
 
     if test "$system" = true; then
         (
