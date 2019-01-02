@@ -41,7 +41,7 @@ interact {
         if { $current_hour > 18 || $current_hour < 9 } {
             exit
         } else {
-            send -- \000;
+            send " \010";
         }
     }
 };

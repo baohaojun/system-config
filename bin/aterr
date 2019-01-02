@@ -9,19 +9,30 @@ fi
 
 function setup-aterr() {
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P i:ignored-errno=0
+        # generate-getopt -p aterr -P i:ignored-errno=0 '?"设置某些错误代码不处理"' \
+            # @die=true '?"允许用 --no-die 设置不要抛出异常"'
     ## end code-generator
     ## start generated code
     TEMP=$(POSIXLY_CORRECT=true getopt -o i:h \
-                          --long ignored-errno:,help \
+                          --long die,ignored-errno:,help,no-die \
                           -n $(basename -- $0) -- "$@")
-    declare ignored_errno=0
+    declare aterr_die=true
+    declare aterr_ignored_errno=0
     eval set -- "$TEMP"
     while true; do
         case "$1" in
 
+            --die|--no-die)
+                if test "$1" = --no-die; then
+                    aterr_die=false
+                else
+                    aterr_die=true
+                fi
+                shift
+
+                ;;
             -i|--ignored-errno)
-                ignored_errno=$2
+                aterr_ignored_errno=$2
                 shift 2
 
                 ;;
@@ -30,9 +41,14 @@ function setup-aterr() {
                 echo -e
                 echo
                 echo Options and arguments:
+                printf "%06s" " "
+                printf %-24s '--[no-]die'
+                echo "允许用 --no-die 设置不要抛出异常"
                 printf %06s '-i, '
                 printf %-24s '--ignored-errno=IGNORED_ERRNO'
                 echo
+                printf "%30s" ""
+                echo "设置某些错误代码不处理"
                 exit
                 shift
                 ;;
@@ -54,13 +70,18 @@ function setup-aterr() {
         "$@"
     )
 
-    export aterr_ignored_errno=$ignored_errno
+    export aterr_ignored_errno
+    export aterr_die
     function aterr() {
         local aterr_ret=$?
         if test "$aterr_ret" != 0 -a "$aterr_ret" != "$aterr_ignored_errno"; then
             ("${aterr_args[@]}") # so that we don't change aterr_ret
         fi
-        return $aterr_ret
+        if test "${aterr_die}" = true; then
+            return $aterr_ret
+        else
+            exit 0
+        fi
     }
 
     trap aterr ERR
