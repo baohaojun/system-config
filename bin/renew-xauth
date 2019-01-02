@@ -5,15 +5,21 @@ rm -f $file.$$
 
 . set-ssh-agent
 
-cat <<EOF  > $file.$$
-export DESKTOP_SESSION=$DESKTOP_SESSION
-export XAUTHORITY=$XAUTHORITY
-export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
-export DISPLAY=$DISPLAY
-export GNOME_KEYRING_CONTROL=$GNOME_KEYRING_CONTROL
-export GNOME_KEYRING_PID=$GNOME_KEYRING_PID
-export SSH_AUTH_SOCK=$SSH_AUTH_SOCK
-export GPG_AGENT_INFO=$GPG_AGENT_INFO
-EOF
+X_VARS=(
+    DESKTOP_SESSION
+    XAUTHORITY
+    DBUS_SESSION_BUS_ADDRESS
+    DISPLAY
+    GNOME_KEYRING_CONTROL
+    GNOME_KEYRING_PID
+    SSH_AUTH_SOCK
+    GPG_AGENT_INFO
+)
+
+for x in "${X_VARS[@]}"; do
+    if eval test "\$$x"; then
+        eval echo export $x=\$$x
+    fi
+done > $file.$$
 
 mv $file.$$ $file
