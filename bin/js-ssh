@@ -37,7 +37,12 @@ expect "Opt>" {
 
 interact {
     timeout 1750 {
-        exit
+        set current_hour [clock format [clock seconds] -format %k]
+        if { $current_hour > 18 || $current_hour < 9 } {
+            exit
+        } else {
+            send -- \000;
+        }
     }
 };
 wait
