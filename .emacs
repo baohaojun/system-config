@@ -22,6 +22,10 @@
 (let ((warning-minimum-level :error))
   (server-start))
 
+(setq custom-file (expand-file-name "custom.el" "~/system-config/etc/"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 ;;; Code:
 (when (file-exists-p (format "~/system-config/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type)))
   (load (format "~/system-config/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type))))
@@ -354,9 +358,6 @@
 ;;----------------------------------------------------------------------------
 ;; Variables configured via the interactive 'customize' interface
 ;;----------------------------------------------------------------------------
-(setq custom-file (expand-file-name "custom.el" "~/system-config/etc/"))
-(when (file-exists-p custom-file)
-  (load custom-file))
 (when (file-exists-p (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs"))
   (load (concat "~/system-config/.by-user/" (getenv "USER") "/.emacs")))
 (when (file-exists-p "~/.config/system-config/vim-is-evil")
@@ -368,7 +369,7 @@
   (tabbar-mode 1)
   (setq-default initial-scratch-message
                 (concat initial-scratch-message
-                        "请访问此网页查看Emacs作弊手册： http://baohaojun.github.io/emacs-cheat-sheet.html")))
+                        "请访问此网页查看 Emacs 作弊手册： http://baohaojun.github.io/emacs-cheat-sheet.html")))
 
 (when (file-exists-p "~/.config/system-config/.emacs")
   (load "~/.config/system-config/.emacs"))
