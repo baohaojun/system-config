@@ -25,6 +25,6 @@ export MYSCR_SESSION=onmyoji
 xterm -e myscr bash -c '
 # {%sh-mode%}
 oplay -a xbs onmyoji simple-play
-oplay -a kk onmyoji simple-play
+oplay -a hxy onmyoji simple-play
 # {%/sh-mode%}
 '
