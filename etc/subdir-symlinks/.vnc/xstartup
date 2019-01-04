@@ -18,13 +18,18 @@ sawfish&
 deluge&
 lxpanel&
 
-
 sleep 3
 export MYSCR_SOCKET=onmyoji
 export MYSCR_SESSION=onmyoji
 xterm -e myscr bash -c '
 # {%sh-mode%}
-oplay -a xbs onmyoji simple-play
-oplay -a hxy onmyoji simple-play
+exec 9< ~/system-config/etc/subdir-symlinks/.vnc/xstartup
+flock -n 9 || exit
+(
+    exec 9> /dev/null
+    oplay -a xbs onmyoji simple-play
+    oplay -a hxy onmyoji simple-play
+)
+while true; do adb-lcd -a off; date; sleep 60; done
 # {%/sh-mode%}
 '
