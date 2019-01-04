@@ -75,7 +75,10 @@ function setup-aterr() {
     function aterr() {
         local aterr_ret=$?
         if test "$aterr_ret" != 0 -a "$aterr_ret" != "$aterr_ignored_errno"; then
-            ("${aterr_args[@]}") # so that we don't change aterr_ret
+            ( # use () so that we don't change aterr_ret
+                "${aterr_args[@]}" ||
+                    true # we don't want it to exit early, especially if --no-die is true
+            ) 1>&2
         fi
         if test "${aterr_die}" = true; then
             return $aterr_ret

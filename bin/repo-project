@@ -2,7 +2,8 @@
 
 
 if test "$REPO_INFO"; then
-    $REPO_INFO project
+    $REPO_INFO project | grep . ||
+        ap
     exit
 elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
     (
