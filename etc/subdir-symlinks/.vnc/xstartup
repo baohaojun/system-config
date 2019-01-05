@@ -30,6 +30,12 @@ flock -n 9 || exit
     oplay -a xbs onmyoji simple-play
     oplay -a hxy onmyoji simple-play
 )
-while true; do adb-lcd -a off; date; sleep 60; done
+while true; do
+    if ! screen-is-on; then
+        adb-lcd -a off;
+    fi
+    date;
+    sleep 60;
+done
 # {%/sh-mode%}
 '
