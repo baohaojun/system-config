@@ -8,6 +8,10 @@
    (quote
     (sc--after-save sanityinc/set-mode-for-new-scripts executable-make-buffer-file-executable-if-script-p)))
  '(ahk-syntax-directory "~/system-config/doc/ahk/Syntax/")
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   (vector "#424242" "#d54e53" "#b9ca4a" "#e7c547" "#7aa6da" "#c397d8" "#70c0b1" "#eaeaea"))
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(auto-save-file-name-transforms
    (quote
@@ -15,6 +19,7 @@
      (".*" "~/.emacs.d/tmp" t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bbyac-max-chars 80)
+ '(beacon-color "#d54e53")
  '(before-save-hook
    (quote
     (confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
@@ -22,7 +27,7 @@
  '(case-fold-search t)
  '(company-idle-delay nil)
  '(compilation-message-face (quote default))
- '(custom-enabled-themes (quote (sanityinc-tomorrow-bright)))
+ '(custom-enabled-themes (quote (deeper-blue)))
  '(custom-safe-themes
    (quote
     ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
@@ -42,6 +47,7 @@
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
  '(emojify-emoji-styles (quote (unicode)))
+ '(fci-rule-color "#424242")
  '(fence-edit-blocks
    (quote
     (("^[[:blank:]]*\\(?:```\\|~~~\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\(?:[[:space:]]*?\\)$" "^[[:blank:]]*\\(?:```\\|~~~\\)\\s *?$" 1)
@@ -50,6 +56,8 @@
      ("<!--start nxml-->" "<!--end nxml-->" nxml)
      ("{%\\(.*?\\)-mode%}" ".*{%/\\(.*?\\)-mode%}" 1))))
  '(fill-column 70)
+ '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
+ '(frame-background-mode (quote dark))
  '(gc-cons-threshold 3500000)
  '(gdb-find-source-frame t)
  '(gdb-many-windows t)
@@ -270,6 +278,28 @@
  '(transient-mark-mode t)
  '(twittering-convert-fix-size nil)
  '(user-full-name "Bao Haojun")
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#d54e53")
+     (40 . "#e78c45")
+     (60 . "#e7c547")
+     (80 . "#b9ca4a")
+     (100 . "#70c0b1")
+     (120 . "#7aa6da")
+     (140 . "#c397d8")
+     (160 . "#d54e53")
+     (180 . "#e78c45")
+     (200 . "#e7c547")
+     (220 . "#b9ca4a")
+     (240 . "#70c0b1")
+     (260 . "#7aa6da")
+     (280 . "#c397d8")
+     (300 . "#d54e53")
+     (320 . "#e78c45")
+     (340 . "#e7c547")
+     (360 . "#b9ca4a"))))
+ '(vc-annotate-very-old-color nil)
  '(vc-follow-symlinks t)
  '(vc-git-diff-switches "-w")
  '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Git Hg)))
@@ -284,6 +314,7 @@
      ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(weechat-color-list
    (unspecified "#272822" "#49483E" "#A20C41" "#F92672" "#67930F" "#A6E22E" "#968B26" "#E6DB74" "#21889B" "#66D9EF" "#A41F99" "#FD5FF0" "#349B8D" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
+ '(whitespace-action (quote (auto-cleanup)))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(yas-also-auto-indent-first-line t)
