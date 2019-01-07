@@ -140,10 +140,6 @@ if test "${silent}" = true; then
     set -- 'adb_quick_input{"input keyevent UNKNOWN"}'
 fi
 
-if test "$(lsb_release -cs)" = trusty -a -e ~/src/github/smartcm/etc/Wrench.config; then
-    . ~/src/github/smartcm/etc/Wrench.config
-fi
-
 export EMACS=t
 
 if test "$exclusive" = true; then
