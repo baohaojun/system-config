@@ -1,19 +1,26 @@
 #!/bin/bash
 set -e
-if test "$(uname)" = Darwin; then
-    extra_path=(
-        /usr/local/Cellar/coreutils/8.30/libexec/gnubin
-        /usr/local/Cellar/gnu-getopt/1.1.6/bin
-        /usr/local/Cellar/bash/4.4.23/bin
-        /usr/local/Cellar/bash/4.4.23/bin
-        /usr/local/opt/grep/libexec/gnubin
-    )
-    PATH=$(
-        for x in "${extra_path[@]}"; do
-            echo -n $x:
-        done
-        )$PATH
-fi
+
+function sc-check-darwin() {
+    if test "$(uname)" = Darwin; then
+        extra_path=(
+            /usr/local/Cellar/coreutils/8.30/libexec/gnubin
+            /usr/local/Cellar/gnu-getopt/1.1.6/bin
+            /usr/local/Cellar/bash/4.4.23/bin
+            /usr/local/opt/grep/libexec/gnubin
+        )
+        export SC_PATH_PREFIX=$(
+            for x in "${extra_path[@]}"; do
+                echo -n $x:
+            done
+               )
+        if test "$(which grep)" != /usr/local/opt/grep/libexec/gnubin/grep; then
+            PATH=${SC_PATH_PREFIX}${PATH}
+        fi
+    fi
+}
+
+sc-check-darwin
 
 me=$(readlink -f $BASH_SOURCE)
 if test ! -e "$me"; then
@@ -45,6 +52,8 @@ fi
 . ~/system-config/etc/force-system-config
 . ~/system-config/.profile
 . ~/system-config/.bashrc
+
+sc-check-darwin
 
 if test -z "$1"; then
     set -- "$(select-args -p "您想进行什么 system-config 操作？" \
