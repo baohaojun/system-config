@@ -1,6 +1,19 @@
 #!/bin/bash
-
 set -e
+if test "$(uname)" = Darwin; then
+    extra_path=(
+        /usr/local/Cellar/coreutils/8.30/libexec/gnubin
+        /usr/local/Cellar/gnu-getopt/1.1.6/bin
+        /usr/local/Cellar/bash/4.4.23/bin
+        /usr/local/Cellar/bash/4.4.23/bin
+        /usr/local/opt/grep/libexec/gnubin
+    )
+    PATH=$(
+        for x in "${extra_path[@]}"; do
+            echo -n $x:
+        done
+        )$PATH
+fi
 
 me=$(readlink -f $BASH_SOURCE)
 if test ! -e "$me"; then
