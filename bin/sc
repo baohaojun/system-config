@@ -8,6 +8,7 @@ function sc-check-darwin() {
             /usr/local/Cellar/gnu-getopt/1.1.6/bin
             /usr/local/Cellar/bash/4.4.23/bin
             /usr/local/opt/grep/libexec/gnubin
+            /usr/local/opt/findutils/libexec/gnubin
         )
         export SC_PATH_PREFIX=$(
             for x in "${extra_path[@]}"; do
