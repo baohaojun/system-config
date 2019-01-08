@@ -91,6 +91,10 @@ if test -z "$RECURSIVE_SHELL"; then
     if test ! -e ~/.local-config/etc/baohaojun; then
         PATH=$PATH:$OLD_PATH
     fi
+    if test "${SC_PATH_PREFIX}"; then
+        PATH=${SC_PATH_PREFIX}${PATH}
+    fi
+
 fi
 
 if test ! "$EMACS"; then

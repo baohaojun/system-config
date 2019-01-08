@@ -7,71 +7,70 @@ if test "$#" = 0; then
     return
 fi
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -p aterr -P i:ignored-errno=0 '?"设置某些错误代码不处理"' \
+    # @die=true '?"允许用 --no-die 设置不要抛出异常"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o i:h \
+                      --long die,ignored-errno:,help,no-die \
+                      -n $(basename -- $0) -- "$@")
+declare aterr_die=true
+declare aterr_ignored_errno=0
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --die|--no-die)
+            if test "$1" = --no-die; then
+                aterr_die=false
+            else
+                aterr_die=true
+            fi
+            shift
+
+            ;;
+        -i|--ignored-errno)
+            aterr_ignored_errno=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]die'
+            echo "允许用 --no-die 设置不要抛出异常"
+            printf %06s '-i, '
+            printf %-24s '--ignored-errno=IGNORED_ERRNO'
+            echo
+            printf "%30s" ""
+            echo "设置某些错误代码不处理"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+export aterr_ignored_errno
+export aterr_die
+
 function setup-aterr() {
-    ## start code-generator "^\\s *#\\s *"
-        # generate-getopt -p aterr -P i:ignored-errno=0 '?"设置某些错误代码不处理"' \
-            # @die=true '?"允许用 --no-die 设置不要抛出异常"'
-    ## end code-generator
-    ## start generated code
-    TEMP=$(POSIXLY_CORRECT=true getopt -o i:h \
-                          --long die,ignored-errno:,help,no-die \
-                          -n $(basename -- $0) -- "$@")
-    declare aterr_die=true
-    declare aterr_ignored_errno=0
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-
-            --die|--no-die)
-                if test "$1" = --no-die; then
-                    aterr_die=false
-                else
-                    aterr_die=true
-                fi
-                shift
-
-                ;;
-            -i|--ignored-errno)
-                aterr_ignored_errno=$2
-                shift 2
-
-                ;;
-            -h|--help)
-                set +x
-                echo -e
-                echo
-                echo Options and arguments:
-                printf "%06s" " "
-                printf %-24s '--[no-]die'
-                echo "允许用 --no-die 设置不要抛出异常"
-                printf %06s '-i, '
-                printf %-24s '--ignored-errno=IGNORED_ERRNO'
-                echo
-                printf "%30s" ""
-                echo "设置某些错误代码不处理"
-                exit
-                shift
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error: $(. bt; echo; bt | indent-stdin)"
-                ;;
-        esac
-    done
-
-
-    ## end generated code
-
-
     aterr_args=(
         "$@"
     )
 
-    export aterr_ignored_errno
-    export aterr_die
     function aterr() {
         local aterr_ret=$?
         if test "$aterr_ret" != 0 -a "$aterr_ret" != "$aterr_ignored_errno"; then
