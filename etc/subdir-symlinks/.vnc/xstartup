@@ -30,6 +30,8 @@ flock -n 9 || exit
     oplay -a xbs onmyoji simple-play
     oplay -a hxy onmyoji simple-play
 )
+
+screen-lock-on&
 while true; do
     if ! screen-is-on; then
         adb-lcd -a off;
