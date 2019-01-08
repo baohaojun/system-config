@@ -1,2 +1,2 @@
 #!/bin/bash
-timeout 3 xclip -o -selection clipboard
+timeout 3 xclip -o -selection clipboard | tr -d '\r'
