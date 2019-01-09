@@ -1,0 +1,55 @@
+#+title: Jenkins Mac Slave 的 Keychain 配置方法
+# bhj-tags: system-config
+
+* 动机
+
+最近在给 Mac 系统做 Jenkins 的持续集成，需要用 Mac 编译、打包一个 ios app，中间碰到很多问题，试了很久才解决，在此记录一下。
+
+其中最关键的问题是 Mac 系统的 Keychain 导致的问题。因为我之前没有怎么接触过 Mac，所以完全不了解什么是 Keychain。其实很简单，从 wikipedia 上查一下就明白了，基本就是一个密码、证书等安全信息的统一管理软件，跟 Linux 下的 Gnome Keyring 是很类似的。
+
+* 步骤
+
+理解了这一点之后，很多问题就都很好解决了（注意！建议继续阅读之前，一定要先阅读 wikipedia 上的 [[https://en.wikipedia.org/wiki/Keychain_(software)][keychain 条目]]，否则可能很难理解下面的内容）：
+
+1. 一定要先用图形界面的 xcode 编译验证一遍
+
+   在这一步，需要先通过 xcode 的 =Preferrences...= -> =Accounts= 对话框标签页里添加开发所使用的 Apple ID，然后执行下载 Manual Profiles、管理并下载开发证书等操作。
+
+   这些操作最后会把开发账号的安全证书信息添加到当前的 Keychain 里。
+
+2. 在图形界面的命令行上用 xcodebuild 再编译验证一遍
+
+   在这一步，编译打包的过程中，如果用到了 codesign 的话，系统会弹出一个对话框让你输入密码并问你是否允许/永远允许，这里一定要选永远允许。
+
+   这里需要输入的是当前默认的 keychain 密码。因为默认使用的是 login 的 keychain，而 login keychain 的密码默认就是用户登录的密码，所以这里只需要输入用户登入的密码即可。
+
+3. 通过 ssh 远程连接到 Mac 系统上，再在 ssh 的终端上通过 xcodebuild 命令进行编译，这里编译会报证书、安全相关的错误，上网查一下就能查到问题原因及解决方案。原因是 ssh 登录上去之后，keychain 没有被解锁；解决方案是用 =security unlock-keychain= 命令将证书解锁。解锁过程中需要输入 keychain 的密码（默认是 login keychain，login keychain 的密码默认是用户的登录密码）。
+
+   注意如果 2 和 3 的顺序弄错，没有执行过步骤 2 直接运行步骤 3 的话，即使解锁了 keychain，也会继续报另一个安全证书相关的错误，并且从网上很难查到相关的信息。其原因是 ssh 登录的终端，不会像图形登录的终端那样，弹出一个对话框给你选择“永远允许”，而是直接报一个晦涩难懂的错误就退出了。所以先执行步骤 2 非常重要！因为选了“永远允许”，所以在 ssh 远程终端里用到安全证书时也被允许了，不会因为证书访问被拒绝而出错。
+
+   （我在这一点上浪费了很多时间［衰］，一开始就用 ssh 登录去编，怎么也编不过，网上说要解锁 keychain，解锁了也还是编不过，后来好不容易想起来在图形的终端上先试一下。。。）
+
+   做完这一步之后，因为通过 ssh 已经可以编译，所以把 Mac 用 ssh 的方式添加到 Jenkins 上，编译也是没有问题的。唯一剩下的问题就是我们不应该在 Jenkins 任务里用 Mac 用户登录的密码去解锁 Keychain，所以我们需要换一个新的ｋｅｙｃｈａｉｎ及其配套密码（这个密码不同于 Mac 用户登录密码，并且安全上的重要程度也相应更低一些——万一泄露的话造成的危害远远不如 Mac 登录密码泄露造成的危害）。
+
+4. 更换 keychain 的方法
+
+   - 在 keychain 应用里添加一个新的 keychain（过程中需要输入新的 keychain 密码，之后就用这个新密码来解锁这个新 keychain）。
+
+   - 临时把这个新 keychain 设为默认 keychain，把上面的 1、2、3 几个步骤重新执行一遍，其中执行 1 之前，可能需要在 xcode 里先删除已有的 Apple ID 再重新添加。
+
+     因为把新的 keychain 设成了默认，所有安全证书相关的操作就都会使用这个新 keychain。
+
+     所以重做了这几个步骤之后，编译相关的安全证书信息被添加到了这个新的 keychain 里。之后我们就可以用这个新 keychain 来进行 ios 项目的编译、打包、签名了。
+
+   - 操作完成后，记得把系统默认 keychain 设置回原来的 login.keychain。
+
+5. 在 Jenkins 任务里通过在编译脚本开始位置添加 =security default-keychain ...=、=security unlock-keychain ...= 等命令，设置编译任务默认 keychain 为上述新 keychain 并将其解锁，这样编译打包签名就不会因为证书问题而出错了。
+
+* 其他问题
+
+注意在上面配置完成之后，当前的 Mac 用户就无法登录之后直接使用 xcode 进行编译了。因为默认的 login.keychain 里没有 ios 开发所需的账号安全证书（添加新 keychain 时被删掉了）。
+
+这个问题不算很严重，因为作为 Jenkins 集成的 Mac 服务器，平时不会有用户图形登录上去执行编译操作。如果真的需要解决这个问题的话，以下是可能的两种方案：
+
+- 研究一下怎么把 xcode 的 apple id account 同时添加到两个 keychain 里
+- 利用 Mac 的多用户特性，创建一个专门的 Jenkins 账号和一个工程师登录账号

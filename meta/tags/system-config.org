@@ -1,4 +1,10 @@
 #+title: My system-config github project
+ * 2019
+  - 2019-01
+   * 2019-01-09
+
+     [[../../blog/2019/01/09/0-Jenkins-Mac-Keychain.org][Jenkins Mac Slave 的 Keychain 配置方法]]
+
  * 2013
   - 2013-07
    * 2013-07-16

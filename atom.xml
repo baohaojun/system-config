@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Jenkins Mac Slave 的 Keychain 配置方法]]></title>
+    <link href="http://baohaojun.github.io/blog/2019/01/09/0-Jenkins-Mac-Keychain.html"/>
+    <updated>2019-06-09T11:01:12+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2019/01/09/0-Jenkins-Mac-Keychain.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Automating bash/perl arguments handling in Emacs]]></title>
     <link href="http://baohaojun.github.io/blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html"/>
     <updated>2018-07-06T18:01:02+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html"/>
     <updated>2016-12-10T16:16:14+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[编程和许愿]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html"/>
-    <updated>2016-11-13T23:23:30+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html</id>
   </entry>
 </feed>

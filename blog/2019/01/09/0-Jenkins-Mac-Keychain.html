@@ -146,7 +146,7 @@ for the JavaScript code in this tag.
 注意如果 2 和 3 的顺序弄错，没有执行过步骤 2 直接运行步骤 3 的话，即使解锁了 keychain，也会继续报另一个安全证书相关的错误，并且从网上很难查到相关的信息。其原因是 ssh 登录的终端，不会像图形登录的终端那样，弹出一个对话框给你选择“永远允许”，而是直接报一个晦涩难懂的错误就退出了。所以先执行步骤 2 非常重要！因为选了“永远允许”，所以在 ssh 远程终端里用到安全证书时也被允许了，不会因为证书访问被拒绝而出错。
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px">
-（我在这一点上浪费了很多时间<img class="emoji" src="blog/2019/01/09/emojis/smiley_36.png" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>，一开始就用 ssh 登录去编，怎么也编不过，网上说要解锁 keychain，解锁了也还是编不过，后来好不容易想起来在图形的终端上先试一下。。。）
+（我在这一点上浪费了很多时间<img class="emoji" src="emojis/smiley_36.png" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>，一开始就用 ssh 登录去编，怎么也编不过，网上说要解锁 keychain，解锁了也还是编不过，后来好不容易想起来在图形的终端上先试一下。。。）
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px">
 做完这一步之后，因为通过 ssh 已经可以编译，所以把 Mac 用 ssh 的方式添加到 Jenkins 上，编译也是没有问题的。唯一剩下的问题就是我们不应该在 Jenkins 任务里用 Mac 用户登录的密码去解锁 Keychain，所以我们需要换一个新的ｋｅｙｃｈａｉｎ及其配套密码（这个密码不同于 Mac 用户登录密码，并且安全上的重要程度也相应更低一些——万一泄露的话造成的危害远远不如 Mac 登录密码泄露造成的危害）。
@@ -186,13 +186,13 @@ for the JavaScript code in this tag.
 <nav>
 <ul id="prev_next_posts" style="list-style: none; padding: 0">
 <li class="prev_post" style="float: left; width: 50%">
-<a href="blog/2018/08/27/sc-complete.html" style="color: #3a5fcd; text-decoration: underline"> <!-- prev-url -->
+<a href="../../../2018/08/27/sc-complete.html" style="color: #3a5fcd; text-decoration: underline"> <!-- prev-url -->
 <i class="icon-chevron-left">《</i>
         bash 下更方便的补齐选择方法 <!-- prev-title -->
 </a>
 </li>
 <li class="next_post" style="float: right; width: 50%; text-align: right;">
-<a href="meta/Archive.html" style="color: #3a5fcd; text-decoration: underline"> <!-- next-url -->
+<a href="../../../../meta/Archive.html" style="color: #3a5fcd; text-decoration: underline"> <!-- next-url -->
         Archive <!-- next-title -->
 <i class="icon-chevron-right">》</i>
 </a>
@@ -244,20 +244,20 @@ for the JavaScript code in this tag.
 </dl>
 <h2 style='margin: 1.5em 0 0.75em; font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; color: #ff1493'>Tags</h2>
 <ul style="margin: 0 0 1.5em; padding: 0 0 1.5em; border-bottom: 1px dotted #ccc; list-style: none">
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="meta/tags/system-config.html" style="color: #3a5fcd; text-decoration: underline" title="My system-config github project">system-config</a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../../meta/tags/system-config.html" style="color: #3a5fcd; text-decoration: underline" title="My system-config github project">system-config</a></li>
 </ul>
 <h2 class="sidebar-title" style='margin: 1.5em 0 0.75em; font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; color: #ff1493'>Previous Posts</h2>
 <ul id="recently" style="margin: 0 0 1.5em; padding: 0 0 1.5em; border-bottom: 1px dotted #ccc; list-style: none">
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2018/08/27/sc-complete.html" style="color: #3a5fcd; text-decoration: underline"> bash 下更方便的补齐选择方法 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html" style="color: #3a5fcd; text-decoration: underline"> Automating bash/perl arguments handling in Emacs </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2018/05/02/0-after-watching-a-movie.html" style="color: #3a5fcd; text-decoration: underline"> “后来的我们”观后瞎扯 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2017/07/01/0-Wrench-User-Manual.html" style="color: #3a5fcd; text-decoration: underline"> 小扳手使用手册 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2017/06/29/0-One-Wrench-To-Screw-Them-All.html" style="color: #3a5fcd; text-decoration: underline"> 小扳手的野望 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2017/02/16/0-wrap-lines-with-emacs.html" style="color: #3a5fcd; text-decoration: underline"> 刚刚学到一招：简便 Emacs 折行 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html" style="color: #3a5fcd; text-decoration: underline"> 江湖救急：Emacs org mode 下怎么排版中文 pdf 文档 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html" style="color: #3a5fcd; text-decoration: underline"> 偶像重出江湖了 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html" style="color: #3a5fcd; text-decoration: underline"> 各种编程语言之间的对比学习 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html" style="color: #3a5fcd; text-decoration: underline"> Please support me if you like my work </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2018/08/27/sc-complete.html" style="color: #3a5fcd; text-decoration: underline"> bash 下更方便的补齐选择方法 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html" style="color: #3a5fcd; text-decoration: underline"> Automating bash/perl arguments handling in Emacs </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2018/05/02/0-after-watching-a-movie.html" style="color: #3a5fcd; text-decoration: underline"> “后来的我们”观后瞎扯 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2017/07/01/0-Wrench-User-Manual.html" style="color: #3a5fcd; text-decoration: underline"> 小扳手使用手册 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2017/06/29/0-One-Wrench-To-Screw-Them-All.html" style="color: #3a5fcd; text-decoration: underline"> 小扳手的野望 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2017/02/16/0-wrap-lines-with-emacs.html" style="color: #3a5fcd; text-decoration: underline"> 刚刚学到一招：简便 Emacs 折行 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html" style="color: #3a5fcd; text-decoration: underline"> 江湖救急：Emacs org mode 下怎么排版中文 pdf 文档 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html" style="color: #3a5fcd; text-decoration: underline"> 偶像重出江湖了 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2016/12/10/1-Learning-Programming-Languages-by-Comparing.html" style="color: #3a5fcd; text-decoration: underline"> 各种编程语言之间的对比学习 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2016/12/10/0-Please-support-me-if-you-like-my-work.html" style="color: #3a5fcd; text-decoration: underline"> Please support me if you like my work </a></li>
 </ul>
 <h2 class="sidebar-title" style='margin: 1.5em 0 0.75em; font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; color: #ff1493'>Archive</h2>
 <ul id="archives" style="margin: 0 0 1.5em; padding: 0 0 1.5em; border-bottom: 1px dotted #ccc; list-style: none">
