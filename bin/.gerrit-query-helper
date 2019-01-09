@@ -39,7 +39,7 @@ if test -z "${GERRIT_HOST}" -a ! -d .git && ! lookup-file -e .repo/.. >/dev/null
     export GERRIT_HOST=$(echo "$1"| perl -ne 'print $1 if m,https?://(.*)?(:\d+)/,')
 fi
 
-if test "${gerrit_ip_host_map[$GERRIT_HOST]}"; then
+if test "${GERRIT_HOST}" && test "${gerrit_ip_host_map[$GERRIT_HOST]}"; then
     GERRIT_HOST=${gerrit_ip_host_map[$GERRIT_HOST]}
 fi
 
