@@ -1,48 +1,96 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts h:host
+# generate-getopts h:host='${GERRIT_HOST}' p:port u:user
 ## end code-generator
 ## start generated code
-host=
-OPTIND=1
-while getopts 'h:' opt; do
-    case "$opt" in
-        h)    host=$OPTARG;;
-        *)    echo Usage Error; exit 2;;
+TEMP=$(POSIXLY_CORRECT=true getopt -o h:p:u:h \
+                      --long host:,port:,user:,help \
+                      -n $(basename -- $0) -- "$@")
+declare host=${GERRIT_HOST}
+declare port=
+declare user=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -h|--host)
+            host=$2
+            shift 2
+
+            ;;
+        -p|--port)
+            port=$2
+            shift 2
+
+            ;;
+        -u|--user)
+            user=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-h, '
+            printf %-24s '--host=HOST'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--port=PORT'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--user=USER'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
     esac
 done
-shift $(($OPTIND - 1))
+
 
 ## end generated code
 
-if test "$GERRIT_HOST"; then
-    host=$GERRIT_HOST
-fi
+repo_push_url=$(repo-push-url 2>/dev/null || true)
+
 
 if test -z "$host"; then
-    host=$(repo-host)
-fi
-
-if test -z "$host"; then
-    host=$(repo-xml-sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,')
-fi
-if test -z "$host"; then
-    host=$(cat ~/.cache/system-config/last-gerrit-host 2>/dev/null)
-    if test -d ~/src/android/bionic/; then
-        host=$(
-            cd ~/src/android/bionic
-            repo-xml-sel -B -t -m //default -v @review -n -b $(lookup-file .repo/manifest.xml) | perl -npe 's,.*://,,'
-            )
+    host=$(
+        echo "${repo_push_url}" | perl -ne '
+s,^\w+://,,; # remove url scheme
+s,^[^@]*@,,; # remove USER@
+print $1 if m,^(.*?)[:/],
+' | grep . ||
+            echo ${scm_gerrit_server}
+        )
+    if test -z "$host"; then
+        die "Can't find gerrit host"
     fi
-    host=${host:-smartisan}
-else
-    echo $host > ~/.cache/system-config/last-gerrit-host
 fi
 
-if test "$1" = clone; then
-    shift
-    git clone $host:$@
-else
-    ssh $host gerrit "$@"
+
+if test -z "${port}"; then
+    port=$(
+        echo ${repo_push_url} | perl -ne 'print $1 if m,ssh://.*?:(\d+)/' | grep . ||
+            echo 29418
+        )
 fi
+
+if test "${user}"; then
+    user=${user}@
+else # -z ${user}
+    user=$(
+        echo ${repo_push_url} | perl -ne 'print $1 if m,^ssh://(.*)\@,' | grep . ||
+            git config --global user.email | perl -pe 's,\@.*,,'
+        )@
+fi
+
+ssh ${user}$host -p ${port} gerrit "$@"

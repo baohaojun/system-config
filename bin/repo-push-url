@@ -1,0 +1,12 @@
+#!/bin/bash
+
+remote=${1:-$(repo-remote)}
+
+while read r_name r_url r_type; do
+    if test "${r_name}" = ${remote} -a "${r_type}" = '(push)'; then
+        echo $r_url
+        exit
+    fi
+done <<<"$(git remote -v)"
+
+git-remote-url "$remote"

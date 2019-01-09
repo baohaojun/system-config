@@ -2,7 +2,10 @@
 
 file=$(getclip-android)
 
-to_file=~/tmp/"$(bp "$file")"
+tmpdir=~/tmp/Wrench-get-file
+mkdir -p ${tmpdir}
+
+to_file=${tmpdir}/"$(bp "$file")"
 adb pull "${file}" "${to_file}"
 putclip "${to_file}"
 if EMACS=t yes-or-no-p -y "use emacs to open ${to_file}?"; then
