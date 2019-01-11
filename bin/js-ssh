@@ -31,7 +31,9 @@ expect "Opt>" {
         } else {
             send "REMOTEPROTOCOL=jssh REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
         }
-
+    } -re " Would you like to update? \[Y/n\]:" {
+        send "n\n"
+        exp_continue
     }
 }
 
