@@ -110,10 +110,6 @@ else
     mkdir -p ~/external/etc/at
 fi
 
-if test $can_sudo = true && test $(uname)  = Linux -a ! -e ~/.config/system-config/offline-is-unstable; then
-    (sudo apt-get install -y -t unstable offlineimap >/dev/null 2>&1 && touch ~/.config/system-config/offline-is-unstable) || true
-fi
-
 touch ~/.cache/system-config/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir -p ~/tmp
@@ -317,26 +313,6 @@ fi
 if test -e ~/system-config/.gitconfig.$USER &&
         test "$(readlink -f ~/system-config/.gitconfig.$USER)" != "$(readlink -f ~/.gitconfig)"; then
     ln -sf ~/system-config/.gitconfig.$USER ~/.gitconfig
-elif test ! -e ~/system-config/.gitconfig.$USER &&
-        test ! -e ~/.gitconfig; then
-    cp ~/system-config/.gitconfig.bhj ~/.gitconfig || true
-    name=$(finger $USER 2>/dev/null | grep Name: | perl -npe 's/.*Name: //')
-    if test "$name"; then
-        git config --global user.name "$name"
-    else
-        git config --global user.name "$USER"
-    fi
-    if read -p "What is your email address (nobody@example.com)? " email; then
-        true
-    else
-        true
-    fi
-    git config --global user.email "${email:-nobody@example.com}"
-    ln -sf ~/.gitconfig ~/.gitconfig.$USER
-
-    if test "$(compare-version "$(git version | awk '{print $3}')" 2)" = '<'; then
-        git config --unset --global push.default
-    fi
 fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
