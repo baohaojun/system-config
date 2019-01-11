@@ -261,7 +261,8 @@ function symlink-map() {
 
 }
 
-if grep -q "# hooked up for system-config" ~/.bashrc || test "$(readlink -f ~/.bashrc)" = "$(readlink -f ~/system-config/.bashrc)"; then
+if grep -q "# hooked up for system-config" ~/.bashrc >/dev/null 2>&1 ||
+       test "$(readlink -f ~/.bashrc)" = "$(readlink -f ~/system-config/.bashrc)"; then
     true
 else
     cat <<EOF >> ~/.profile
