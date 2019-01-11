@@ -97,12 +97,12 @@ fi
 if test ! -d ~/system-config; then
     ln -s ${abs0%/bin/sc} ~/
     ~/system-config/bin/after-co-ln-s.sh || true
-    ln -s "$(eval echo ~${USER})"/.* ~/ >/dev/null 2>&1
+    ln -s "$(eval echo ~${USER})"/.* ~/ >/dev/null 2>&1 || true
 fi
 
-. ~/system-config/etc/force-system-config
-. ~/system-config/.profile
-. ~/system-config/.bashrc
+. ${sc_home}/system-config/etc/force-system-config
+. ${sc_home}/system-config/.profile
+. ${sc_home}/system-config/.bashrc
 
 sc-check-darwin
 

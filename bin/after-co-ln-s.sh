@@ -34,7 +34,7 @@ umask 0022
 my_uname=$(uname)
 my_uname=${uname%-*}
 
-export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:$PATH:/bin:/usr/bin
+export PATH=/opt/local/libexec/gnubin:~/system-config/bin/Linux:~/system-config/bin:~/src/github/ajoke/bin:$PATH:/bin:/usr/bin
 PATH=~/system-config/bin/$my_uname:$PATH
 
 if test ! -d ~/system-config/.git && test -d ~/system-config/; then
