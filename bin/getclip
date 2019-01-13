@@ -3,5 +3,5 @@ if test $# = 0; then
     xclip -o -selection clipboard
 else
     xclip -o -selection primary
-fi
+fi | tr -d '\r'
 

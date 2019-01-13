@@ -16,7 +16,7 @@ function do_review()
     export GERRIT_HOST=bibler; git fetch $(repo-remote)
     rev=${1-HEAD}
     head=$(git rev-parse $rev)
-    
+
     for branch in $(gerrit-hook-branches); do
         git reset --hard $head
         export REPO_BRANCH=$branch
@@ -48,7 +48,7 @@ function do_review()
             exit 1
             break
         fi
-        if ! git push $(repo-review-url) HEAD:refs/for/$branch; then
+        if ! git push $(repo-push-url) HEAD:refs/for/$branch; then
             git reset --hard $head
             echo push to $(repo-remote)/$branch has failed
             break
@@ -67,10 +67,10 @@ function do_review()
 
         if ! git diff --quiet $head FETCH_HEAD; then
             git reset --hard $head
-            
+
             die "remote branch $branch ($(git rev-parse FETCH_HEAD)) is not same as the master ($head): $(echo; echo git diff --quiet $head FETCH_HEAD; git diff --name-status $head FETCH_HEAD))"
         fi
-        
+
     done || true
     git reset --hard $head
 }
@@ -81,5 +81,3 @@ if test "$1" = do-review; then
     do_review "$@"
     exit
 fi
-
-    

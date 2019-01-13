@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "$(debug-args "$@")" > ~/.cache/system-config/logs/s-dicts.log
+
 if test "$#" != 0; then
     text=$(echo $*)
 else
@@ -22,6 +24,8 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
         if ! grep -q "$text" /usr/share/gjiten/dics/*; then
             if [[ $text =~ れて ]]; then
                 text=${text%れて}
+            elif [[ $text =~ かっ(| )た ]] && grep -q "${text%かっ*}い" /usr/share/gjiten/dics/*; then
+                text=${text%かっ*}い
             elif [[ $text =~ って|った ]]; then
                 saved_text=$text
                 for x in る う; do
@@ -37,10 +41,10 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
 
         if ! grep -q "$text" /usr/share/gjiten/dics/*; then
             case "$text" in
-                *ん)
-                    text=${text}だ
+                *、)
+                    text=${text%、}
                     ;;
-                *んだ|*んで)
+                *ん|*んだ|*んで)
                     saved_text=$text
                     for x in ぶ む; do
                         text=${saved_text%ん*}$x
@@ -54,10 +58,10 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
                     ;;
                 ## start code-generator "^\\s *#"
                 # # {%sh-mode%}
-                # : map [あ]=う [か]=く [が]=ぐ [き]=く [く]=い [なかった]=ない [さ]=す [た]=つ [な]=ぬ
+                # : map [あ]=う [か]=く [が]=ぐ [き]=く [く]=い [なかった]=ない [なかっ?た]=ない [さ]=す [た]=つ [な]=ぬ
                 # : map [は]=ふ [ば]=ぶ [ま]=む [み]=む [や]=ゆ [ら]=る [り]=る [わ]=う
                 # cat ~/system-config/bin/s-dicts | grep ': map' |
-                #     perl -ne 'while (m/\[(.*?)\]=(.*?) /g) {print "$1 $2\n"}' |
+                #     perl -ne 'while (m/\[(.*?)\]=(.*?)( |$)/g) {print "$1 $2\n"}' |
                 #     while read from to; do
                 # cat <<EOF
                 # *$from)
@@ -87,11 +91,17 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
                 *なかった)
                     text=${text%なかった}ない
                     ;;
+                *なかっ?た)
+                    text=${text%なかっ?た}ない
+                    ;;
                 *さ)
                     text=${text%さ}す
                     ;;
                 *た)
                     text=${text%た}つ
+                    ;;
+                *な)
+                    text=${text%な}ぬ
                     ;;
                 *は)
                     text=${text%は}ふ
@@ -113,6 +123,9 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
                     ;;
                 *り)
                     text=${text%り}る
+                    ;;
+                *わ)
+                    text=${text%わ}う
                     ;;
 
                 ## end generated code

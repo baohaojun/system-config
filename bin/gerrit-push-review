@@ -367,7 +367,7 @@ fi
 
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 if test -z "$gpr_review_push_url"; then
-    export gpr_review_push_url=$( (repo-review-url|perl -npe 's!:8080/r/!:/!') )
+    export gpr_review_push_url=$( (repo-push-url|perl -npe 's!:8080/r/!:/!') )
 fi
 
 if test $gpr_do_rebase = true; then

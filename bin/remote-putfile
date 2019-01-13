@@ -16,3 +16,6 @@ fi
 
 cat > "${file}"
 
+putclip "$(up "${file}")"
+bhj-notify remote-putfile "You received a file ${file}"
+

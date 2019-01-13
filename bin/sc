@@ -8,6 +8,7 @@ function sc-check-darwin() {
             /usr/local/Cellar/gnu-getopt/1.1.6/bin
             /usr/local/Cellar/bash/4.4.23/bin
             /usr/local/opt/grep/libexec/gnubin
+            /usr/local/opt/findutils/libexec/gnubin
         )
         export SC_PATH_PREFIX=$(
             for x in "${extra_path[@]}"; do
@@ -44,14 +45,64 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -p sc @:home='${HOME}' '?"指定使用哪个目录作为临时的 HOME 目录（绿色安装，不要影响用户默认环境）"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o h \
+               --long home:,help \
+               -n $(basename -- $0) -- "$@")
+declare sc_home=${HOME}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --home)
+            sc_home=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--home=HOME'
+            echo "指定使用哪个目录作为临时的 HOME 目录（绿色安装，不要影响用户默认环境）"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${sc_home}" != "${HOME}"; then
+    export HOME=${sc_home}
+    export SC_HOME_PROMPT="（HOME=${sc_home}）"
+
+    mkdir -p ~
+fi
+
 if test ! -d ~/system-config; then
     ln -s ${abs0%/bin/sc} ~/
     ~/system-config/bin/after-co-ln-s.sh || true
+    ln -s "$(eval echo ~${USER})"/.* ~/ >/dev/null 2>&1 || true
 fi
 
-. ~/system-config/etc/force-system-config
-. ~/system-config/.profile
-. ~/system-config/.bashrc
+. ${sc_home}/system-config/etc/force-system-config
+. ${sc_home}/system-config/.profile
+. ${sc_home}/system-config/.bashrc
 
 sc-check-darwin
 
