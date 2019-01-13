@@ -91,6 +91,7 @@ elif test "$1" = off; then
     adb-quote "echo 0 > $lcd_dev"
 elif test "$1" = on; then
     adb-quote "echo 128 > $lcd_dev"
+    touch ~/.cache/system-config/logs/screen-on
 else
     adb-quote "echo $1 > $lcd_dev"
 fi </dev/null
