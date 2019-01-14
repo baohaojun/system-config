@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+exec > ~/tmp/am.log 2>&1
 if [[ "$(tty)" =~ /dev/tty ]]; then
     if test "$(cat ~/.config/system-config/am-keyboard)" = en; then
         sudo setupcon dvp
