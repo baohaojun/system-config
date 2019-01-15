@@ -7,7 +7,7 @@ set -e
 mkdir -p ~/tmp
 (
     trap 'echo shit' SIGINT;
-    strace -e trace=open,execve -f -q -o $tmpf "$@" 2>&1 | tee $tmpf.out
+    strace -e trace=open,execve,openat -f -q -o $tmpf "$@" 2>&1 | tee $tmpf.out
 )
 
 perl -npe '@x = split(/"/); $_ = $x[1] . "\n"' $tmpf > $tmpf.splited
