@@ -71,9 +71,22 @@ tmp_err=/tmp/run-with-retry.err.$$
         cat "$tmp_out"
         cat "$tmp_err" 1>&2
     }
-    if "$@" > "$tmp_out" 2> "$tmp_err"; then
-        redo-output
-        exit
-    fi
 
+    for retry in $(seq 1 "${times}"); do
+        if "$@" > "$tmp_out" 2> "$tmp_err"; then
+            redo-output
+            exit
+        else
+            ret=$?
+            if grep -q -P -e "${errout_regexp}" "$tmp_out" "$tmp_err"; then
+                log need retry $*, output matched pattern: "${errout_regexp}"
+                redo-output
+                continue
+            else
+                log should not retry $*, output not matched pattern: "${errout_regexp}"
+                redo-output
+                exit $ret
+            fi
+        fi
+    done
 )
