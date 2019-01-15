@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @:times=3 @:wait-secs=60 @:errout-regexp
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long errout-regexp:,times:,wait-secs:,help \
+                      -n $(basename -- $0) -- "$@")
+declare errout_regexp=
+declare times=3
+declare wait_secs=60
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --errout-regexp)
+            errout_regexp=$2
+            shift 2
+
+            ;;
+        --times)
+            times=$2
+            shift 2
+
+            ;;
+        --wait-secs)
+            wait_secs=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--errout-regexp=ERROUT_REGEXP'
+            echo
+            printf "%06s" " "
+            printf %-24s '--times=TIMES'
+            echo
+            printf "%06s" " "
+            printf %-24s '--wait-secs=WAIT_SECS'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+set -o pipefail
+tmp_out=/tmp/run-with-retry.out.$$
+tmp_err=/tmp/run-with-retry.err.$$
+
+{ . atexit rm -f "$tmp_out" "$tmp_err"; } >/dev/null 2>&1
+
+(
+    redo-output() {
+        cat "$tmp_out"
+        cat "$tmp_err" 1>&2
+    }
+    if "$@" > "$tmp_out" 2> "$tmp_err"; then
+        redo-output
+        exit
+    fi
+
+)
