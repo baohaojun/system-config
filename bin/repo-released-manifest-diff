@@ -25,9 +25,9 @@ show-changes() {
                 if ! git-cmds-in-mirror log -1000 --name-status $git_log_arguments $f_rev..$t_rev; then
                     echo "Error: can't get git log -1000 --name-status $git_log_arguments $f_rev..$t_rev"
                 fi
-            ) | indent-clipboard -
+            ) | indent-stdin
         )
-    fi | indent-clipboard -
+    fi | indent-stdin
     sep
 }
 
@@ -41,11 +41,11 @@ export -f show-changes
 export -f sep
 
 echo "These projects are deleted:"
-repo-released-manifest-actions -f "$1" -t "$2" -a show-deleted | indent-clipboard -
+repo-released-manifest-actions -f "$1" -t "$2" -a show-deleted | indent-stdin
 sep
 
 echo "These projects are added:"
-repo-released-manifest-actions -f "$1" -t "$2" -a show-added| indent-clipboard -
+repo-released-manifest-actions -f "$1" -t "$2" -a show-added| indent-stdin
 sep
 
 repo-released-manifest-actions -f "$1" -t "$2" -a foreach -e show-changes
