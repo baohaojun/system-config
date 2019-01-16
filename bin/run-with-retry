@@ -73,7 +73,7 @@ tmp_err=/tmp/run-with-retry.err.$$
     }
 
     for retry in $(seq 1 "${times}"); do
-        if "$@" > "$tmp_out" 2> "$tmp_err"; then
+        if ("$@") > "$tmp_out" 2> "$tmp_err"; then
             redo-output
             exit
         else
@@ -89,4 +89,5 @@ tmp_err=/tmp/run-with-retry.err.$$
             fi
         fi
     done
+    exit $ret
 )

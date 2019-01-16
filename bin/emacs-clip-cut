@@ -2,7 +2,7 @@
 exec > ~/.cache/system-config/logs/emacs-clip-cut.log 2>&1
 set -x
 set -e
-cat > /tmp/emacs-clip-cut.$$
+timeout 5 cat > /tmp/emacs-clip-cut.$$
 
 (
     cat /tmp/emacs-clip-cut.$$ | setsid xclip -i

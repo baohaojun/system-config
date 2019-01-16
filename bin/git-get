@@ -145,9 +145,24 @@ if test ! -d $dir; then
         . aterr rm -rf "$dir"
         mkdir -p $dir
         cd $dir
-        if ! git clone $clone_args $mirror --single-branch -b $branch $url . $(if test -d "$reference"; then echo --reference "$reference"; fi) && # --single-branch fails for s:git-repo
-                ! git clone $clone_args $mirror -b $branch $url . $(if test -d "$reference"; then echo --reference "$reference"; fi); then
 
+        function do-clone() {
+            (
+                for single_branch_arg in --single-branch ''; do # s:git-repo don't allow --single-branch
+                    if git clone $clone_args $mirror ${single_branch_arg} -b $branch $url . $(if test -d "$reference"; then echo --reference "$reference"; fi); then
+                        exit 0
+                    fi
+                done
+
+                exit 1
+            )
+        }
+
+        if ! (
+                . run-with-retry \
+                  --errout-regexp 'git fetch_pack: expected ACK/NAK, got.*ERR want.* not valid' \
+                  do-clone
+           ); then
             if test "$create" = true; then
                 git init .
                 git commit -m 'init commit' --allow-empty --author 'qualcomm <someone@qualcomm.com>'
