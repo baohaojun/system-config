@@ -88,7 +88,7 @@ done
 
 ## end generated code
 
-if test "${sc_home}" = "${HOME}" -a -e "${me_home}" = ~/.try-sc; then
+if test "${sc_home}" = "${HOME}" -a "${me_home}" = ~/.try-sc; then
     sc_home=~/.try-sc
 fi
 
