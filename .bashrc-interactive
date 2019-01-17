@@ -127,9 +127,6 @@ function cds() {
     fi
 }
 
-. ~/system-config/bin/my-rsync
-. ~/system-config/bin/.gitx
-
 unalias lunch >/dev/null 2>&1 || true
 my-lunch () {
     alias lunch=my-lunch
@@ -528,3 +525,7 @@ export HISTSIZE=2000
 export HISTFILESIZE=2000
 
 bind -x '"\eOP": sc-complete'
+
+if test -e ~/.local-config/.bashrc-interactive; then
+    . ~/.local-config/.bashrc-interactive
+fi
