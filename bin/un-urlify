@@ -1,1 +1,3 @@
-urlify
+#!/bin/bash
+
+urlify -u

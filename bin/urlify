@@ -1,13 +1,91 @@
 #!/bin/bash
-b0=$(basename $0)
+set -e
+## start code-generator "^\\s *#\\s *"
+    # generate-getopt uun-urlify \
+        # @uc '?"Use up case: %XX instead of %xx"' \
+        # e:extra-chars=: '?"其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"'
+## end code-generator
+## start generated code
+TEMP=$( getopt -o e:uh \
+               --long extra-chars:,uc,un-urlify,help,no-uc,no-un-urlify \
+               -n $(basename -- $0) -- "$@")
+declare extra_chars=:
+declare uc=false
+declare un_urlify=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-if test ${b0,,} = urlify; then
-    if test "$b0" = Urlify; then
-        case=uc
-    else
-        case=lc
-    fi
-    rm-last-nl | perl -npe 's#([^-/=_0-9a-zA-Z. ])#'"$case "'sprintf("%%%02x", ord($1))#seg;'
-else
-    perl -npe 'chomp; s#%([0-9a-f]{2})#pack("C", hex("0x$1"))#egi'
+        -e|--extra-chars)
+            extra_chars=$2
+            shift 2
+
+            ;;
+        --uc|--no-uc)
+            if test "$1" = --no-uc; then
+                uc=false
+            else
+                uc=true
+            fi
+            shift
+
+            ;;
+        -u|--un-urlify|--no-un-urlify)
+            if test "$1" = --no-un-urlify; then
+                un_urlify=false
+            else
+                un_urlify=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-e, '
+            printf %-24s '--extra-chars=EXTRA_CHARS'
+            echo
+            printf "%30s" ""
+            echo "其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"
+            printf "%06s" " "
+            printf %-24s '--[no-]uc'
+            echo "Use up case: %XX instead of %xx"
+            printf %06s '-u, '
+            printf %-24s '--[no-]un-urlify'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+if test "${un_urlify}" = true; then
+    exec perl -npe 'chomp; s#%([0-9a-f]{2})#pack("C", hex("0x$1"))#egi'
 fi
+
+if test "${uc}" = true; then
+    case=uc
+else
+    case=lc
+fi
+
+rm-last-nl | perl -npe "$(
+cat <<'EOFac2c09ecde21' | . .replace-%% --
+# {%perl-mode%}
+s#([^-/=_0-9a-zA-Z. ]|[<%extra-chars%>])#<%case%> sprintf("%%%02x", ord($1))#seg;
+# {%/perl-mode%}
+EOFac2c09ecde21
+)"

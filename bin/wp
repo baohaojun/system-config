@@ -3,6 +3,16 @@
 
 if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are being executed
 
+    function gerrit-url-p() {
+        echo http://${scm_gerrit_server}:8080/a/projects/"$(
+            repo-abs-path | perl -pe 's,^/*,,' | urlify -e / # project
+             )"/branches/"$(
+            repo-branch | urlify -e / # branch
+             )"/files/"$(
+            gitp "$1" | urlify -e / # file
+             )"/content
+    }
+
     function _cygwin_share_path() {
         FILE=$1
         host=$(echo "$FILE" | perl -npe 's/.*?:server=(.*?),.*/$1/')
@@ -212,7 +222,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo "$out" | putclip
     fi
 else # we are being sourced
-    for x in swp sup gitp wp ap up rp mp tmp realp filep urlp orgp ipp bp homep; do
+    for x in gerrit-url-p swp sup gitp wp ap up rp mp tmp realp filep urlp orgp ipp bp homep; do
         eval 'function '$x'() {
             command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             if test "$NO_PUTCLIP" = true; then

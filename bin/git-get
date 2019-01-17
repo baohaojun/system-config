@@ -148,8 +148,21 @@ if test ! -d $dir; then
 
         function do-clone() {
             (
-                for single_branch_arg in --single-branch ''; do # s:git-repo don't allow --single-branch
-                    if git clone $clone_args $mirror ${single_branch_arg} -b $branch $url . $(if test -d "$reference"; then echo --reference "$reference"; fi); then
+                if test "${single_branch}" = true; then
+                    # some git repos can't be cloned with
+                    # --single-branch, such as this will fail:
+
+                    #   git clone --single-branch https://gerrit.googlesource.com/git-repo/
+
+                    # so we must try twice.
+                    single_branch_trys=(--single-branch '')
+                else
+                    single_branch_trys=('')
+                fi
+
+                for single_branch_arg in "${single_branch_trys[@]}"; do
+                    if git clone $clone_args $mirror ${single_branch_arg} -b $branch $url . \
+                           $(if test -d "$reference"; then echo --reference "$reference"; fi); then
                         exit 0
                     fi
                 done
