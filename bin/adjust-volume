@@ -22,31 +22,40 @@ else
 fi
 
 function amixer() {
-
-    if test "$PULSE_SERVER"; then
-        ssh "$PULSE_SERVER" amixer "$@"
+    if grep "card 1" ~/.asoundrc -q >/dev/null 2>&1; then
+        command amixer ${pulse_audio} -c 1 "$@"
     else
-        if grep "card 1" ~/.asoundrc -q >/dev/null 2>&1; then
-            command amixer ${pulse_audio} -c 1 "$@"
-        else
-            command amixer ${pulse_audio} "$@"
-        fi
+        command amixer ${pulse_audio} "$@"
     fi
 }
 
 function tune-100() {
-    amixer -q sset 'Headphone',0 unmute || true
-    amixer -q sset 'Headphone+LO',0 100% || true
+    amixer -q sset Headphone,0 unmute || true
+    amixer -q sset Headphone+LO,0 100% || true
     amixer -q sset PCM,0 100% || true
-    amixer -q sset 'Speaker',0 unmute || true
+    amixer -q sset Speaker,0 unmute || true
 }
 
 if test "$(basename $0)" = sound-off; then
     amixer -q sset Master,0 mute
+    amixer -q sset Headphone,0 mune || true
     exit
 elif test "$(basename $0)" = sound-on; then
     amixer -q sset Master,0 unmute
+    amixer -q sset Headphone,0 unmune || true
     tune-100
+    exit
+elif test "$(basename $0)" = sound-toggle; then
+    current=$(
+        amixer sget Master,0 | grep '\Q[off]\E' -o -P | sort -u
+           )
+    if test "${current}" = '[off]'; then
+        sound-on
+        bhj-notify sound on
+    else
+        sound-off
+        bhj-notify sound off
+    fi
     exit
 fi
 
