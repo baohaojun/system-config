@@ -88,8 +88,8 @@ done
 
 ## end generated code
 
-if test "${sc_home}" = "${HOME}" -a "${me_home}" = ~/.try-sc; then
-    sc_home=~/.try-sc
+if test "${sc_home}" = "${HOME}" || [[ "${me_home}" =~ ${HOME}/\. ]]; then
+    sc_home=${me_home}
 fi
 
 if test "${sc_home}" != "${HOME}"; then
