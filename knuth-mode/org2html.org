@@ -35,6 +35,7 @@
       (when custom-enabled-themes
         (dolist (theme custom-enabled-themes)
           (disable-theme theme)))
+      (load-theme 'adwaita)
       (find-file org-file)
       (org-html-export-to-html)
       (when my-loaded-themes

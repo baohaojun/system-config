@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/org2html.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/org2html.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
 cd "$(dirname "$1")"
@@ -29,6 +27,7 @@ emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
     (when custom-enabled-themes
       (dolist (theme custom-enabled-themes)
         (disable-theme theme)))
+    (load-theme 'adwaita)
     (find-file org-file)
     (org-html-export-to-html)
     (when my-loaded-themes
@@ -75,5 +74,4 @@ fi
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here
