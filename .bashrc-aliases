@@ -7,7 +7,6 @@ alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
 alias aptitude='sudo aptitude'
 alias umount='command sudo umount'
 alias mplayer='mplayer -heartbeat-cmd "xscreensaver-command -deactivate"'
-alias adb=my-adb
 alias mplayer=mplayer.x
 alias svngdiff='svn diff --diff-cmd ~/system-config/bin/svntkdiff'
 alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
@@ -45,6 +44,10 @@ mount() {
         sudo mount "$@"
     fi
 }
+
+if test -e ~/.local-config/.bashrc-aliases; then
+    . ~/.local-config/.bashrc-aliases
+fi
 
 if test -e ~/.config/system-config/vim-is-evil; then
     alias vi=e
