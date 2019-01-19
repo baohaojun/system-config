@@ -163,8 +163,6 @@ my-lunch () {
     fi
 }
 
-alias lunch=my-lunch
-
 alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
 alias bcd=cd_beagrep

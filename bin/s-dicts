@@ -53,7 +53,23 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
                         fi
                     done
                     ;;
-                *っ|*い|*し)
+                *いで)
+                    saved_text=$text
+                    for x in く ぐ; do
+                        text=${saved_text%いで}$x
+                        if grep -q "$text" /usr/share/gjiten/dics/*; then
+                            break
+                        fi
+                    done
+                    ;;
+                *し)
+                    if grep -q "${text%し}"す /usr/share/gjiten/dics/*; then
+                        text=${text%し}す
+                    else
+                        text=${text}た
+                    fi
+                    ;;
+                *っ|*い)
                     text=${text}た
                     ;;
                 ## start code-generator "^\\s *#"
