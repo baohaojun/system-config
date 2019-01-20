@@ -28,7 +28,7 @@ if test "$PWD" = ~/system-config; then
 
             if test $need_copy = false; then
                 echo no need to update $x
-                break
+                exit
             fi
             updated_file=$(select-output-line 'for x in *; do
                             (
