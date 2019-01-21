@@ -127,60 +127,98 @@ if ! is-jenkins; then
     fi
 fi || true
 
-function setup-ext-local() {
-    true
-}
+if test "${scm_gerrit_server}"; then # a quick hack for system-config update.
+    (
+        cd ~/system-config/
 
-if test "$SYSTEM_CONFIG_UPDATE_SLAVE" = true; then
-    true # do not do it on a slave
+        if git status -s | grep . -q; then
+            die "你的 $PWD 目录下有改动，请先提交：$(echo; echo; git status) "
+        fi
+
+        if ! git pull --rebase; then
+            die "在 $PWD 目录下运行 git pull --rebase 命令失败了，无法更新 system-config"
+        fi
+    )
 else
-    setup-ext-local
-
-    cd ~/external/local
-
-    function update-git() {
-        (
-
-            if test ! -d "$1"; then
-                git-get -u smartisan:baohaojun/$(basename $1) -d "$1" -b dev
-            fi
-            cd "$1"
-
-            if is-jenkins; then
-                git reset --hard
-                command git clean -xfd
-                if ! git remote get-url s || test "$(git config remote.s.url)" != smartisan:baohaojun/${PWD##*/}; then
-                    git remote remove s || true
-                    git remote add s smartisan:baohaojun/${PWD##*/}
-                    git fetch s
-                    git checkout -B dev s/dev
+    function setup-ext-local() {
+        if test ! -d ~/external/local/.git; then
+            hint "即将从 gerrit 服务器获取 ~/external/local"
+            rmdir ~/external/local >/dev/null 2>&1 || true
+            git clone smartisan:baohaojun/ext-local ~/external/local
+        else
+            (
+                if test ! -w ~/external/local/.git; then
+                    exit 0
                 fi
-            else
-                if git status -s | grep . -q; then
-                    die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
-                fi
-            fi
-            git pull --rebase
-        )
+                cd ~/external/local
+                git pull
+            )
+        fi
+
+
+
+        if is-jenkins; then
+            return;
+        fi
+
+        if test "$(readlink -f ~/external/local)" != "$(readlink -f /home/bhj/external/local)" -a ! -d /home/bhj/external/local; then
+            hint "即将为你配置 ~/external/local，可能会需要输入你的 sudo 密码"
+            # 必须保证能在 /home/bhj 目录下找到我的库文件。
+            sudo ln -sf ~ /home/bhj
+        fi
     }
 
-    git_projects=(
-        $(
-            if test ! -d ~/system-config/src/github; then
-                . ~/system-config/etc/github-projects
-                for p in ${github_projects[@]} ${smartcm_projects[@]}; do
-                    echo ~/src/github/"$p"
-                done
-            fi
+    if test "$SYSTEM_CONFIG_UPDATE_SLAVE" = true; then
+        true # do not do it on a slave
+    else
+        setup-ext-local
+
+        cd ~/external/local
+
+        function update-git() {
+            (
+
+                if test ! -d "$1"; then
+                    git-get -u smartisan:baohaojun/$(basename $1) -d "$1" -b dev
+                fi
+                cd "$1"
+
+                if is-jenkins; then
+                    git reset --hard
+                    command git clean -xfd
+                    if ! git remote get-url s || test "$(git config remote.s.url)" != smartisan:baohaojun/${PWD##*/}; then
+                        git remote remove s || true
+                        git remote add s smartisan:baohaojun/${PWD##*/}
+                        git fetch s
+                        git checkout -B dev s/dev
+                    fi
+                else
+                    if git status -s | grep . -q; then
+                        die "Your $PWD git repo is not clean, please commit first: $(echo; echo; git status) "
+                    fi
+                fi
+                git pull --rebase
+            )
+        }
+
+        git_projects=(
+            $(
+                if test ! -d ~/system-config/src/github; then
+                    . ~/system-config/etc/github-projects
+                    for p in ${github_projects[@]} ${smartcm_projects[@]}; do
+                        echo ~/src/github/"$p"
+                    done
+                fi
+            )
         )
-    )
 
-    for p in "${git_projects[@]}"; do
-        echo update $p
-        update-git $p
-    done
+        for p in "${git_projects[@]}"; do
+            echo update $p
+            update-git $p
+        done
 
-    git-get -u smartisan:tools/jdk6 -d ~/external/bin/Linux/ext/jdk
+        git-get -u smartisan:tools/jdk6 -d ~/external/bin/Linux/ext/jdk
+    fi
 fi
 
 ~/system-config/bin/after-co-ln-s.sh >/dev/null 2>&1 </dev/null &
