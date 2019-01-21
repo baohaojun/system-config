@@ -128,31 +128,7 @@ if ! is-jenkins; then
 fi || true
 
 function setup-ext-local() {
-    if test ! -d ~/external/local/.git; then
-        hint "即将从 gerrit 服务器获取 ~/external/local"
-        rmdir ~/external/local >/dev/null 2>&1 || true
-        git clone smartisan:baohaojun/ext-local ~/external/local
-    else
-        (
-            if test ! -w ~/external/local/.git; then
-                exit 0
-            fi
-            cd ~/external/local
-            git pull
-        )
-    fi
-
-
-
-    if is-jenkins; then
-        return;
-    fi
-
-    if test "$(readlink -f ~/external/local)" != "$(readlink -f /home/bhj/external/local)" -a ! -d /home/bhj/external/local; then
-        hint "即将为你配置 ~/external/local，可能会需要输入你的 sudo 密码"
-        # 必须保证能在 /home/bhj 目录下找到我的库文件。
-        sudo ln -sf ~ /home/bhj
-    fi
+    true
 }
 
 if test "$SYSTEM_CONFIG_UPDATE_SLAVE" = true; then
