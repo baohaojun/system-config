@@ -53,3 +53,13 @@
 
 - 研究一下怎么把 xcode 的 apple id account 同时添加到两个 keychain 里
 - 利用 Mac 的多用户特性，创建一个专门的 Jenkins 账号和一个工程师登录账号
+
+* 更新
+
+** 2019-01-23 keychain 的 timeout auto lock 机制
+
+keychain 默认设置在一段时间后（300 秒，5 分钟），会自动从 unlock 变回 lock 状态。
+
+这个机制会导致 Jenkins CI 非常不稳定，有时候一个 Job 在网络下载任务上卡的时间稍久，导致 keychain timeout 超时，就会自动加锁，然后导致 codesign 的时候出错。
+
+可以使用 =security set-keychain-settings KEYCHAIN_NAME= 命令强制禁止此功能（具体可能需要再上网确认一下）。
