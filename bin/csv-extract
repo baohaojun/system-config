@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+
+use strict;
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl c:columns='()' i:input-csv
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+my @columns = ();
+my $input_csv = "";
+
+GetOptions (
+            'columns|c=s' => \@columns,
+            'input-csv|i=s' => \$input_csv,
+            'help|h!' => \&handler_help,
+           );
+
+
+
+sub handler_help {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-c, ';
+  printf "%-24s", '--columns=COLUMNS';
+  if (length('--columns=COLUMNS') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-i, ';
+  printf "%-24s", '--input-csv=INPUT-CSV';
+  if (length('--input-csv=INPUT-CSV') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+}
+
+## end generated code
+
+use Text::CSV qw(csv);
+my @hdr1;
+my $aoh1 = csv(in => "$input_csv", keep_headers => \@hdr1);
+
+$, = "\n";
+for my $hash (@$aoh1) {
+  print @$hash{@columns}, "\n";
+}
+
