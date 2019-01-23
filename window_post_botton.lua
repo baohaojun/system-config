@@ -12,6 +12,7 @@ map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailComposeActiv
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailDetailActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailSearchActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'weixin-chat'
+map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.PicViewActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.contact.activities.OrgContactActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.contact.organization.friendcontact.FriendActivity'] = 'manual-post'
