@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Uncomment the following two lines for normal desktop:
 # unset SESSION_MANAGER
@@ -19,8 +19,11 @@ deluge&
 lxpanel&
 
 sleep 3
-export MYSCR_SOCKET=onmyoji
-export MYSCR_SESSION=onmyoji
+export MYSCR_SOCKET=onmyoji${DISPLAY##*:}
+export MYSCR_SESSION=onmyoji${DISPLAY##*:}
+xterm -e myscr&
+
+sleep 3
 xterm -e myscr bash -c '
 # {%sh-mode%}
 exec 9< ~/system-config/etc/subdir-symlinks/.vnc/xstartup
