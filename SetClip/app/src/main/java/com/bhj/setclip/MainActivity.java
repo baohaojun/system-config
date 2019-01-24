@@ -80,10 +80,10 @@ public class MainActivity extends Activity {
                 bis = new BufferedInputStream(resolver.openInputStream(fileUri));
                 bos = new BufferedOutputStream(new FileOutputStream(copiedFileFile, false));
                 byte[] buf = new byte[1024];
-                bis.read(buf);
-                do {
-                    bos.write(buf);
-                } while(bis.read(buf) != -1);
+                int n;
+                while ((n = bis.read(buf)) != -1) {
+                    bos.write(buf, 0, n);
+                }
                 return copiedFileFile.getAbsolutePath();
             } catch (IOException e) {
                 Log.e("bhj", String.format("%s:%d: ", "MainActivity.java", 87), e);
