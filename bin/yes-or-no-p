@@ -84,6 +84,7 @@ fi
 if test "$EMACS"; then
     REPLY=$(ask-for-input-with-sawfish -p "$user_prompt $prompt:")
 elif ! tty >/dev/null 2>&1; then
+    log "$user_prompt $prompt:"
     REPLY=
 elif (echo -n >/dev/tty) >/dev/null 2>&1; then
         if test "$timeout"; then
