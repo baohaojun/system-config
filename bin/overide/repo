@@ -241,9 +241,7 @@ if test "$1" = sync -a "$(arg1-arg2 -- -h "$@")" = -h -a "$(arg1-arg2 -- --help 
         (
             cd $(lookup-file .repo/manifests)
             git_remote_url=$(git-remote-url || true)
-            if [[ $git_remote_url =~ ^smartisan: ]]; then
-                git config remote.origin.url ssh://gerrit.smartisan.cn/${git_remote_url#smartisan:}
-            elif ! git-remote-url | grep :// -q; then
+            if ! git-remote-url | grep :// -q; then
                 if is-jenkins; then
                     die "Can't download source code from $(git-remote-url)"
                 else
