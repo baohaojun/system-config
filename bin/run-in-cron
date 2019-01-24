@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+if test -z "$RUNNING_RUN_IN_CRON"; then
+    exec env -i RUNNING_RUN_IN_CRON=true $abs0 "$@"
+fi
+
+if test -e ~/.config/system-config/cron.env; then
+    . ~/.config/system-config/cron.env
+else
+    declare -x HOME="/home/bhj"
+    declare -x LANG="en_US.UTF-8"
+    declare -x LOGNAME="bhj"
+    declare -x OLDPWD
+    declare -x PATH="/home/bhj/external/bin/Linux/ext/debug:/home/bhj/system-config/bin/overide:/home/bhj/src/github/guilt:/home/bhj/.rvm/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin:/home/bhj/external/bin/Linux/ext/x86_64:/home/bhj/external/bin/Linux/ext:/home/bhj/system-config/bin/Linux:/home/bhj/src/github/private-config/bin:/home/bhj/src/github/ajoke/bin:/home/bhj/system-config/bin:/home/bhj/testbed/bin:/home/bhj/external/eclipse:/usr/local/bin:/home/bhj/external/bin/Linux/ext/android-sdk-linux/tools/ndk/android-ndk-r4b:/home/bhj/external/bin/Linux/ext/ndk:/bin:/home/bhj/.linuxbrew/bin:/usr/bin:/usr/local/games:/usr/games:/home/bhj/external/bin/Linux/ext/arm-eabi-4.4.0/bin:/home/bhj/external/bin/Linux/ext/arm-2010q1/bin:/home/bhj/external/bin/Linux/ext/arm-linux-4.1.1/bin:/home/bhj/external/bin/Linux/ext/android-sdk-linux/tools:/home/bhj/external/bin/Linux/ext/android-sdk-linux/platform-tools:/sbin:/usr/sbin:/usr/local/sbin:/home/bhj/src/android/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin:/home/bhj/src/github/smartcm:/home/bhj/src/github/private-config/tests:/home/bhj/system-config/bin/Linux/missing:/home/bhj/src/github/ext-local/bin:/home/bhj/src/github/ext-local/sbin:/home/bhj/system-config/bin/windows:/home/bhj/external/local/bin:/home/bhj/external/local/sbin:/home/bhj/perl5/bin"
+    declare -x PWD="/home/bhj"
+    declare -x SHELL="/bin/sh"
+    declare -x SHLVL="1"
+fi
+
+. ~/.config/system-config/.bashrc-path
+
+"$@"
