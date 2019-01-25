@@ -1,46 +1,31 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/string-join.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/string-join.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
 #!/bin/bash
 
-export POSIXLY_CORRECT=true
-
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @for-cjk @:sep
+# generate-getopt -P @:sep
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h \
-              --long for-cjk,sep:,help,no-for-cjk \
-              -n $(basename -- $0) -- "$@")
-for_cjk=false
-sep=
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long sep:,help \
+                      -n $(basename -- $0) -- "$@")
+declare sep=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --for-cjk|--no-for-cjk)
-            if test "$1" = --no-for-cjk; then
-                for_cjk=false
-            else
-                for_cjk=true
-            fi
-            shift
-            ;;
         --sep)
             sep=$2
             shift 2
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
-            printf %-24s '--[no-]for-cjk'
-            echo
             printf "%06s" " "
             printf %-24s '--sep=SEP'
             echo
@@ -57,33 +42,13 @@ while true; do
     esac
 done
 
-
 ## end generated code
 
 if test -z "$sep"; then
-    if test "$for_cjk" = true; then
-        sep="♥"
-    else
-        sep=$1
-        shift
-    fi
+    sep=$1
+    shift
 fi
 
-if test "$for_cjk" = true; then
-    set -- $(echo "$@"|perl -npe "$(cat <<'EOF6dc4c4dfe966'
-BEGIN {
-    use Encode;
-}
-
-$_ = decode_utf8($_);
-
-$_ =~ s,(\p{CJK}), $1 ,g;
-$_ = encode_utf8($_);
-
-EOF6dc4c4dfe966
-)"
-        )
-fi
 echo -n "$1"
 shift
 while test $# != 0; do
@@ -93,5 +58,4 @@ done
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here
