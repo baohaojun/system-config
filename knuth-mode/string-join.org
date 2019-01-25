@@ -21,8 +21,6 @@
 
 #+name: old-code
 #+BEGIN_SRC sh
-  #!/bin/bash
-
   ## start code-generator "^\\s *#\\s *"
   # generate-getopt -P @:sep
   ## end code-generator

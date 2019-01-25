@@ -2,8 +2,6 @@
 # [[file:~/system-config/knuth-mode/string-join.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
-#!/bin/bash
-
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P @:sep
 ## end code-generator
