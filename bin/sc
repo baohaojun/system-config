@@ -88,7 +88,7 @@ done
 
 ## end generated code
 
-if test "${sc_home}" = "${HOME}" || [[ "${me_home}" =~ ${HOME}/\. ]]; then
+if test "${sc_home}" = "${HOME}" && [[ "${me_home}" =~ ${HOME}/\. ]]; then
     sc_home=${me_home}
 fi
 
