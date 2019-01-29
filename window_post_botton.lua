@@ -212,6 +212,8 @@ map['com.sonelli.juicessh/com.sonelli.juicessh.activities.TerminalEmulatorActivi
 map['com.starbucks.cn/com.fs.starbucks.activity.LoginActivity'] = 'manual-post'
 map['com.taobao.taobao/com.ali.user.mobile.login.ui.UserLoginActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.android.address.wrapper.activity.AddressEditorWrapperActivity_'] = 'manual-post'
+map['com.taobao.taobao/com.taobao.message.activity.ChatActivity'] = 'weixin-chat'
+map['com.taobao.taobao/com.taobao.message.activity.LiteChatActivity'] = 'weixin-chat'
 map['com.taobao.taobao/com.taobao.search.common.searchdoor.SearchDoorActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.search.searchdoor.SearchDoorActivity'] = 'manual-post'
 map['com.taobao.taobao/com.taobao.tao.purchase.activity.PurchaseActivity'] = 'manual-post'
