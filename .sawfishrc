@@ -581,8 +581,8 @@
     (progn
       (setq super-key-window-remap
             (update-all-firefox-keys super-key-window-remap
-                                     "f" '("C-l" "ISO_Left_Tab" "ISO_Left_Tab" "Right" "ISO_Left_Tab")
-                                     "b" '("C-l" "ISO_Left_Tab" "ISO_Left_Tab" "Left" "ISO_Left_Tab"))))
+                                     "f" '("C-Next")
+                                     "b" '("C-Prior"))))
   (setq emacs-style-window-class-re (concat "firefox|" emacs-style-window-class-re))
   (setq super-key-window-remap
         (update-all-firefox-keys super-key-window-remap
