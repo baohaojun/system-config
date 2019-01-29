@@ -128,6 +128,7 @@ fi
 for cust in ~/src/github/smartcm/.bashrc-cust \
                 ~/system-config/.by-user/$USER/.bashrc-cust \
                 ~/.config/system-config/.bashrc-cust \
+                ~/system-config/.git/sc-custom/.bashrc \
                 ~/.bashrc-cust;
 do
     if test -e $cust; then
