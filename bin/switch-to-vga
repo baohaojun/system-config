@@ -24,6 +24,11 @@ fi
 
 b0=$(basename $0)
 
+xrandr() {
+    log xrandr "$@"
+    command xrandr "$@"
+}
+
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt r:res v:vga @:hdmi
@@ -111,6 +116,7 @@ if test $(basename $0) = switch-to-vga; then
     xrandr --output $lvds --auto --below $vga
     xrandr --output $vga --auto
 elif test $(basename $0) = switch-to-vga-alone; then
+
     if test "$1"; then
         vga=$1
     else
@@ -120,13 +126,16 @@ elif test $(basename $0) = switch-to-vga-alone; then
             done | sort -n -k 2 -r | head -n 1 |pn 1
            )
     fi
-    xrandr --output $vga --auto
+    log vga is $vga
     for x in ${!display_size_map[@]}; do
         if test "${x}" = ${vga}; then
             continue
         fi
+        log off you go: $x
         xrandr --output $x --off
     done
+     xset dpms force off || true
+     xrandr --output $vga --auto
 elif test $(basename $0) = switch-to-hdmi-and-laptop; then
     touch /tmp/bhj-notify-not-working
     xrandr --output $lvds --auto --below $hdmi
