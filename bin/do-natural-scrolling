@@ -16,7 +16,6 @@ else
     symbol=
     natural_enabled=0
     if test "${USER}" = bhj; then
-        alarm 0m "You are trying to do unnatural scrolling"
         bhj-notify mouse "you specified unnatural scrolling"
     fi
 fi
