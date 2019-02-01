@@ -86,9 +86,15 @@ else
 
     rm -f app/build/outputs/apk/release/app-release-aligned.apk "${apk}"
 
-    zipalign -v -p 4 \
+    zipalign -v 4 \
              app/build/outputs/apk/release/app-release-unsigned.apk \
              app/build/outputs/apk/release/app-release-aligned.apk
+
+    for x in ${ANDROID_HOME}/build-tools/*; do
+        if test -d $x; then
+            PATH=$x:$PATH
+        fi
+    done
 
     apksigner sign --ks ~/.keystore/bhj.keystore --out \
               ${apk} \
