@@ -3,19 +3,83 @@ use strict;
 
 sub debug(@) {
     print STDERR "@_\n";
+  }
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl h:host \
+# p:port \
+# u:user \
+# o:output='password' \
+# P:Prompt="Password: "
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+my $Prompt = "Password: ";
+my $host = "";
+my $output = "password";
+my $port = "";
+my $user = "";
+
+GetOptions (
+            'Prompt|P=s' => \$Prompt,
+            'host|h=s' => \$host,
+            'output|o=s' => \$output,
+            'port|p=s' => \$port,
+            'user|u=s' => \$user,
+            'help|h!' => \&handler_help,
+           );
+
+
+
+sub handler_help {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-P, ';
+  printf "%-24s", '--Prompt=PROMPT';
+  if (length('--Prompt=PROMPT') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-h, ';
+  printf "%-24s", '--host=HOST';
+  if (length('--host=HOST') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-o, ';
+  printf "%-24s", '--output=OUTPUT';
+  if (length('--output=OUTPUT') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-p, ';
+  printf "%-24s", '--port=PORT';
+  if (length('--port=PORT') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-u, ';
+  printf "%-24s", '--user=USER';
+  if (length('--user=USER') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
 }
 
-use Getopt::Long;
-my $host;
-my $user;
-my $port;
-my $Prompt = "Password: ";
-GetOptions(
-    "h=s" => \$host,
-    "u=s" => \$user,
-    "p=s" => \$port,
-    "P=s" => \$Prompt,
-    );
+## end generated code
 
 if (not $host and @ARGV) {
     $host = shift @ARGV;

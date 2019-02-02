@@ -125,8 +125,9 @@ elif test $(basename $0) = switch-to-vga-alone; then
                 echo $x ${display_size_map[$x]}
             done | sort -n -k 2 -r | head -n 1 |pn 1
            )
+        log "vga is $vga, specify it as an extra arg if incorrect."
     fi
-    log vga is $vga
+
     for x in ${!display_size_map[@]}; do
         if test "${x}" = ${vga}; then
             continue

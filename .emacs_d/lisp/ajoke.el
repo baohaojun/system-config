@@ -457,16 +457,10 @@ referencing."
 
 (defun shell-command-on-region-to-string (command &optional start end )
   "Execute string COMMAND in inferior shell with region from START to END as input."
-  (let ((my-start (or start (point-min)))
-        (my-end (or end (point-max)))
-        (my-buffer (current-buffer))
-        my-temp-buffer)
-    (with-temp-buffer
-      (setq my-temp-buffer (current-buffer))
-      (switch-to-buffer my-buffer)
-      (shell-command-on-region my-start my-end command my-temp-buffer)
-      (switch-to-buffer my-temp-buffer)
-      (buffer-substring-no-properties (point-min) (point-max)))))
+  (let ((my-start (or start (and (use-region-p) (region-beginning)) (point-min)))
+        (my-end (or end (and (use-region-p) (region-end)) (point-max))))
+    (with-output-to-string
+      (shell-command-on-region my-start my-end command standard-output))))
 
 ;;;###autoload
 (defun ajoke-complete-method (id)

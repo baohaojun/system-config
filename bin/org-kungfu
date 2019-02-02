@@ -1,0 +1,277 @@
+#!/bin/bash
+# [[file:~/system-config/knuth-mode/org-kungfu.org::the-ultimate-script][the-ultimate-script]]
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt p:page-id u:wiki-url
+## end code-generator
+## start generated code
+TEMP=$( getopt -o p:u:h \
+               --long page-id:,wiki-url:,help \
+               -n $(basename -- $0) -- "$@")
+declare page_id=
+declare wiki_url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -p|--page-id)
+            page_id=$2
+            shift 2
+
+            ;;
+        -u|--wiki-url)
+            wiki_url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--page-id=PAGE_ID'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--wiki-url=WIKI_URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -e ~/.config/system-config/org-kungfu.rc; then
+    . ~/.config/system-config/org-kungfu.rc
+fi
+
+if test -z "${KUNGFU_TOPDIR}"; then
+    KUNGFU_TOPDIR=~/src/github/kungfu-edit
+fi
+
+mkdir -p "${KUNGFU_TOPDIR}"
+cd "${KUNGFU_TOPDIR}";
+
+perl -e "$(
+cat <<'EOF72c7bbe2c0f8' | . .replace-%% --
+use v5.10;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+use JSON;
+use File::Path qw(make_path);
+use File::Basename;
+
+sub kungfu_url_for_api($) {
+    (my $api_path = $_[0]) =~ s,^/,,;
+
+    my $auth_str = sprintf "%s:%s@", $ENV{KUNGFU_USERNAME}, $ENV{KUNGFU_PASSWORD};
+    (my $scm_confluence_site = $ENV{scm_confluence_site}) =~ s,(https?://),$1$auth_str,;
+    return "${scm_confluence_site}/${api_path}";
+}
+
+sub get($) {
+    my $ua = LWP::UserAgent->new;
+    my $api = $_[0];
+    my $url = kungfu_url_for_api($api);
+    my $response = $ua->request(GET $url);
+    if ($response->code != 200) {
+        die "Can't get $api: code is " . $response->code;
+    }
+
+    return $response;
+}
+
+sub save_to_file($$) {
+    my ($file, $content) = @_;
+    open($f, ">$file")
+        or die "Can't open $file for write";
+    print $f $content;
+    close($f);
+}
+
+sub download_1_page($) {
+    my ($page_id) = @_;
+    my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,ancestors";
+
+    my $response = get($page_api);
+    my $page_object = decode_json $response->content;
+
+    my @dirs = (".");
+    my $path = "";
+    for my $ancestor (@{$page_object->{ancestors}}) {
+        (my $dir = $ancestor->{title}) =~ s,/,%,g;
+        push @dirs, $dir;
+    }
+
+    (my $title = $page_object->{title}) =~ s,/,%,g;
+    push @dirs, ${title};
+    $path = join('/', @dirs);
+
+    make_path($path);
+    chdir($path)
+        or die "Can't chdir $path";
+
+    save_to_file("content.html", $page_object->{body}{editor}{value});
+    save_to_file("version.txt", $page_object->{version}{number});
+    download_all_attachments($page_id);
+    rewrite_html_after_download();
+}
+
+sub download_1_file($) {
+    my ($download_path) = @_;
+
+    (my $filename = $download_path) =~ s/\?.*//;
+    $filename = "./$filename";
+    make_path("./" . dirname($filename));
+    if (-e $filename) {
+        return;
+    }
+    my $response = get($download_path);
+    save_to_file("$filename", $response->content);
+}
+
+sub download_all_attachments($) {
+    my ($page_id) = @_;
+    my ($api_path) = "rest/api/content/${page_id}/child/attachment";
+    my $response = get($api_path);
+    my $object = decode_json $response->content;
+
+    for my $attachment (@{$object->{results}}) {
+        my $download_path = $attachment->{_links}{download};
+        download_1_file($download_path);
+    }
+}
+
+use Mojo::DOM;
+sub rewrite_html_after_download() {
+    open(my $html, "<content.html")
+        or die "Can't open content.html for read";
+
+    my $html_str = join "", <$html>;
+    close($html);
+
+    my $dom = Mojo::DOM->new($html_str);
+    $dom->find('img')->each(
+        sub {
+            my $src = $_->{src};
+            if ($src =~ m,^/download/,) {
+                $src =~ s,\?.*,,;
+                if (not -e ".$src") {
+                    download_1_file($src);
+                }
+                $src = ".$src";
+                $_->{src} = $src;
+            }
+        });
+    save_to_file("content.html", $dom);
+}
+
+sub rewrite_html_for_update() {
+    open(my $html, "<content.html")
+        or die "Can't open content.html for read";
+    my $html_str = join "", <$html>;
+    close($html);
+
+    my $dom = Mojo::DOM->new->xml(1)->parse($html_str);
+    $dom->find('img')->each(
+        sub {
+            my $src = $_->{src};
+            if ($src =~ m,^\./download/,) {
+                $src =~ s/^\.//;
+            }
+            $_->{src} = $src;
+        }
+        );
+    save_to_file("content.html", $dom);
+}
+
+sub read_file($) {
+    my $file = $_[0];
+    open(my $f, "<$file")
+        or die "Can't open $file for reading";
+
+    my $str = join "", <$f>;
+    close($f);
+    return $str;
+}
+
+sub update_1_page($) {
+    my ($page_id) = @_;
+    my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,title";
+
+    my $response = get($page_api);
+    my $page_object = decode_json $response->content;
+
+    $page_object->{body}{editor}{value} = read_file("content.html");
+    $page_object->{version}{number}++;
+
+    my $ua = LWP::UserAgent->new;
+    my $request = PUT kungfu_url_for_api("rest/api/content/${page_id}"), 'Content-Type' => 'application/json', Content => encode_json $page_object;
+
+    my $response = $ua->request($request);
+    say "PUT response code:" . $response->code;
+}
+sub e($) {
+    my ($url) = @_;
+    my $page_id;
+    if ($url =~ m/pageid=(\d+)/i) {
+        $page_id = $1;
+    } else {
+        die "Can't get page id from $url";
+    }
+
+    download_1_page($page_id);
+    system("pandoc -f html -t org content.html > content.org");
+    system("ew content.org");
+
+    my $emacs_script = <<~'EOF64f308bc1e9a';
+        ; {%emacs-lisp-mode%}
+        (progn
+          (defun org-kungfu--orgtext-to-html (orgtext)
+            (with-temp-buffer
+              (insert orgtext)
+              (let ((org-export-show-temporary-export-buffer t))
+                (org-html-export-as-html nil nil nil t)
+                (prog1
+                    (buffer-substring-no-properties (point-min) (point-max))
+                  (kill-buffer)))))
+          
+          (defun org-kungfu--export-to-html (file)
+            (with-temp-buffer
+              (insert-file file)
+              (org-mode)
+              (let ((html_str (org-kungfu--orgtext-to-html (buffer-substring-no-properties (point-min) (point-max))))
+                    (html_file (replace-regexp-in-string "\\.org" ".html" file)))
+                (delete-region (point-min) (point-max))
+                (fundamental-mode)
+                (insert html_str)
+                (write-file html_file))))
+          
+          (org-kungfu--export-to-html "content.org"))
+        ; {%/emacs-lisp-mode%}
+
+        EOF64f308bc1e9a
+
+    system("emacsclient", "-e", $emacs_script);
+    rewrite_html_for_update();
+    update_1_page($page_id);
+}
+e("<%wiki_url%>")
+EOF72c7bbe2c0f8
+)"
+
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+# the-ultimate-script ends here
