@@ -72,9 +72,6 @@ sub System(@) {
     }
 }
 
-sub encode_json_utf8($) {
-    return encode_utf8 encode_json $_[0];
-}
 use v5.10;
 use HTTP::Request::Common;
 use LWP::UserAgent;
@@ -89,12 +86,6 @@ sub kungfu_url_for_api($) {
     my $auth_str = sprintf "%s:%s@", $ENV{KUNGFU_USERNAME}, $ENV{KUNGFU_PASSWORD};
     (my $scm_confluence_site = $ENV{scm_confluence_site}) =~ s,(https?://),$1$auth_str,;
     return "${scm_confluence_site}/${api_path}";
-}
-
-sub decode_json_utf8($) {
-    my $str = $_[0];
-    print STDERR $str;
-    return decode_json $str;
 }
 
 sub get($) {
@@ -122,7 +113,7 @@ sub download_1_page($) {
     my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,ancestors";
 
     my $response = get($page_api);
-    my $page_object = decode_json_utf8 $response->content;
+    my $page_object = decode_json $response->content;
 
     my @dirs = (".");
     my $path = "";
@@ -162,7 +153,7 @@ sub download_all_attachments($) {
     my ($page_id) = @_;
     my ($api_path) = "rest/api/content/${page_id}/child/attachment";
     my $response = get($api_path);
-    my $object = decode_json_utf8 $response->content;
+    my $object = decode_json $response->content;
 
     for my $attachment (@{$object->{results}}) {
         my $download_path = $attachment->{_links}{download};
@@ -178,7 +169,8 @@ sub rewrite_html_after_download() {
     my $html_str = join "", <$html>;
     $html_str = decode_utf8 $html_str;
     close($html);
-    system("cp content.html content-before-mojo-\$(now.).html");
+
+    save_to_file("content-after-download.html", $html_str);
 
     my $dom = Mojo::DOM->new($html_str);
     $dom->find('img')->each(
@@ -202,6 +194,7 @@ sub rewrite_html_for_update() {
     my $html_str = join "", <$html>;
     close($html);
 
+    $html_str = decode_utf8 $html_str;
     my $dom = Mojo::DOM->new->xml(1)->parse($html_str);
     $dom->find('img')->each(
         sub {
@@ -212,7 +205,7 @@ sub rewrite_html_for_update() {
             $_->{src} = $src;
         }
         );
-    save_to_file("content.html", $dom);
+    save_to_file("content.html", encode_utf8 $dom);
 }
 
 sub read_file($) {
@@ -230,13 +223,13 @@ sub update_1_page($) {
     my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,title";
 
     my $response = get($page_api);
-    my $page_object = decode_json_utf8 $response->content;
+    my $page_object = decode_json $response->content;
 
     $page_object->{body}{editor}{value} = read_file("content.html");
     $page_object->{version}{number}++;
 
     my $ua = LWP::UserAgent->new;
-    my $request = PUT kungfu_url_for_api("rest/api/content/${page_id}"), 'Content-Type' => 'application/json', Content => encode_json_utf8 $page_object;
+    my $request = PUT kungfu_url_for_api("rest/api/content/${page_id}"), 'Content-Type' => 'application/json', Content => encode_json $page_object;
 
     my $response = $ua->request($request);
     say "PUT response code:" . $response->code;
