@@ -65,6 +65,13 @@ cd "${KUNGFU_TOPDIR}";
 
 perl -e "$(
 cat <<'EOF72c7bbe2c0f8' | . .replace-%% --
+sub System(@) {
+    my $ret = system(@_);
+    if ($ret != 0) {
+        die "Failed to run: @_";
+    }
+}
+
 use v5.10;
 use HTTP::Request::Common;
 use LWP::UserAgent;
@@ -232,8 +239,8 @@ sub e($) {
     }
 
     download_1_page($page_id);
-    system("pandoc -f html -t org content.html > content.org");
-    system("ew content.org");
+    System("pandoc -f html -t org content.html > content.org");
+    System("ew content.org");
 
     my $emacs_script = <<~'EOF64f308bc1e9a';
         ; {%emacs-lisp-mode%}
@@ -263,7 +270,7 @@ sub e($) {
 
         EOF64f308bc1e9a
 
-    system("emacsclient", "-e", $emacs_script);
+    System("emacsclient", "-e", $emacs_script);
     rewrite_html_for_update();
     update_1_page($page_id);
 }

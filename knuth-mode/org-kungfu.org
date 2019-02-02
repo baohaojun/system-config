@@ -20,6 +20,7 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
   use JSON;
   use File::Path qw(make_path);
   use File::Basename;
+  use Encode;
 
   sub kungfu_url_for_api($) {
       (my $api_path = $_[0]) =~ s,^/,,;
@@ -27,6 +28,11 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
       my $auth_str = sprintf "%s:%s@", $ENV{KUNGFU_USERNAME}, $ENV{KUNGFU_PASSWORD};
       (my $scm_confluence_site = $ENV{scm_confluence_site}) =~ s,(https?://),$1$auth_str,;
       return "${scm_confluence_site}/${api_path}";
+  }
+
+  sub decode_json_utf8($) {
+      my $str = decode_utf8($_[0]);
+      print $str;
   }
 
   sub get($) {
@@ -219,8 +225,8 @@ Now, this emacs-lisp script first.
       }
 
       download_1_page($page_id);
-      system("pandoc -f html -t org content.html > content.org");
-      system("ew content.org");
+      System("pandoc -f html -t org content.html > content.org");
+      System("ew content.org");
 
       my $emacs_script = <<~'EOF64f308bc1e9a';
           ; {%emacs-lisp-mode%}
@@ -231,10 +237,21 @@ Now, this emacs-lisp script first.
 
           EOF64f308bc1e9a
 
-      system("emacsclient", "-e", $emacs_script);
+      System("emacsclient", "-e", $emacs_script);
       rewrite_html_for_update();
       update_1_page($page_id);
   }
+#+END_SRC
+
+#+name: perl-lib-funcs
+#+BEGIN_SRC perl
+  sub System(@) {
+      my $ret = system(@_);
+      if ($ret != 0) {
+          die "Failed to run: @_";
+      }
+  }
+
 #+END_SRC
 
 ** 最终的版本：
@@ -320,6 +337,7 @@ Now, this emacs-lisp script first.
 
   perl -e "$(
   cat <<'EOF72c7bbe2c0f8' | . .replace-%% --
+  <<perl-lib-funcs>>
   <<download-a-page>>
   <<e>>
   e("<%wiki_url%>")
