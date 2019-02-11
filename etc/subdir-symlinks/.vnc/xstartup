@@ -18,6 +18,20 @@ sawfish&
 deluge&
 lxpanel&
 
+for x in $(seq 1 15); do
+    if ifconfig | grep 192.168.2.80 -q; then
+        break
+    else
+        sleep 2
+    fi
+done
+
+sudo ntpdate-debian || true
+sudo hwclock --set --date "$(today) $(date +%H:%M:%S)" || true
+if test $(date +%H) -ge 17; then
+    prepare-for-auto-boot --boot-real 06:05 || true
+fi
+
 sleep 3
 export MYSCR_SOCKET=onmyoji${DISPLAY##*:}
 export MYSCR_SESSION=onmyoji${DISPLAY##*:}
