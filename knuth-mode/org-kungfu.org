@@ -1,12 +1,31 @@
-#+title: 一个用命令行＋Ｅｍａｃｓ来编辑 confluence page 的脚本
+#+title: A script to use org-mode for editing confluence pages
 
-只要给定一个参数，就是 page 的 url，然后这个脚本就会把这个 page 的 html 给下载下来，把它转化成 org-mode，然后开始编辑。最后只要一保存，就会把这个 org 再转成 html 更新到相应的 page 上。
+The browser editing features are so bad, I can't stand using it for editing confluence pages, even though it is WYSIWYG.
 
-注意：这里还需要提供 username、password，这里假设它们被保存在了环境变量 KUNGFU_USERNAME 和 KUNGFU_PASSWORD 里。
+I must use org-mode, it sounds crazy, I know.
+
+There are already many confluence CLI tools, such as [[https://github.com/RaymiiOrg/confluence-python-cli][this one]] (search for [[https://github.com/search?q=confluence+cli][confluence in github]], and you will find a lot of projects).
+
+My script will make it easy for using org-mode to edit confluence pages.
+
+This script is work in progress, I will be constantly updating it.
+
+* Sub Commands
+
+I will mimic the CLI interface of [[https://github.com/RaymiiOrg/confluence-python-cli][confluence-python-cli]], i.e., provide many sub-commands that do different basic things, and also some sub-commands that do more advanced things, such as “editing a page with org-mode”.
+
+The most needed sub-commands are these, I think:
+
+- Download a page as html
+- Convert a html page to org-mode (using pandoc)
+- Edit the page in org-mode
+- Convert the org-mode page back to html
+- Upload the html to update the page
+- Handle images in the page (automatically download/upload them as attachments)
 
 * Download a Page
 
-This script will download a page, including it's content（using the confluence =body.editor=, as I find it to be the simplest format to deal with), and all attachment.
+This script will download a page, including it's content（using the confluence =body.editor=, as I find it to be closest to real html and thus the simplest to deal with), and all attachment.
 
 It will download the page into a directory that is arranged according to it's “Ancestors”, i.e., its path in the wiki spaces.
 
@@ -25,8 +44,8 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
   sub kungfu_url_for_api($) {
       (my $api_path = $_[0]) =~ s,^/,,;
 
-      my $auth_str = sprintf "%s:%s@", $ENV{KUNGFU_USERNAME}, $ENV{KUNGFU_PASSWORD};
-      (my $scm_confluence_site = $ENV{scm_confluence_site}) =~ s,(https?://),$1$auth_str,;
+      my $auth_str = sprintf "%s:%s@", $ok_username, $ok_password;
+      (my $scm_confluence_site = $ok_wikiurl) =~ s,(https?://),$1$auth_str,;
       return "${scm_confluence_site}/${api_path}";
   }
 
@@ -44,14 +63,47 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
 
   sub save_to_file($$) {
       my ($file, $content) = @_;
-      open($f, ">$file")
+      open(my $f, ">$file")
           or die "Can't open $file for write";
       print $f $content;
       close($f);
   }
 
-  sub download_1_page($) {
-      my ($page_id) = @_;
+  sub ok_get1page(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l -P p:page-id
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("posix_default");
+
+      local @ARGV = @_;
+
+      my $page_id = "";
+
+      GetOptions (
+          'page-id|p=s' => \$page_id,
+          'help|h!' => \&handler_help,
+          );
+
+      sub handler_help {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--page-id=PAGE-ID';
+          if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      }
+
+      ## end generated code
+
       my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,ancestors";
 
       my $response = get($page_api);
@@ -253,7 +305,83 @@ Now, this emacs-lisp script first.
 
 #+END_SRC
 
-** 最终的版本：
+* Which sub command to call?
+
+This is simple using Perl's “reflection”.
+  #+name: which-to-call
+  #+BEGIN_SRC perl
+    my $sub_command = "ok_" . shift;
+
+    if (not defined &$sub_command) {
+        say "Can't find sub-command: $sub_command";
+        &$handler_help();
+    }
+
+    $sub_command = \&{$sub_command};
+    &$sub_command(@ARGV);
+
+  #+END_SRC
+** help for sub commands
+   #+name: subcmd-helps
+   #+BEGIN_SRC perl
+     sub subcmd_help() {
+         my $top_help_str = <<~'EOF';
+             Usage: org-kungfu [GLOBAL_OPTIONS]... SUB_COMMAND SUBCMD_ARGS...
+             Here's the list of sub-commands:
+             EOF
+
+         my @subcmd_help_strs;
+         my %subcmd_helpstr_map = (
+             addpage => "Add a page",
+             copypage => "Copy a page",
+             updatepage => "Update a page",
+             listpages => "List pages in one or all spaces",
+             removepage => "Remove a page",
+             getpagecontent => "Get page content",
+             getpagesummary => "Get page summary",
+             listspaces => "List all spaces",
+             addspace => "Add a space",
+             removespace => "Remove a space",
+             adduser => "Add a user",
+             removeuser => "Remove a user",
+             deactivateuser => "Deactivate a user",
+             reactivateuser => "Reactivate a user",
+             changeuserpassword => "Change user password",
+             addgroup => "Add a goup",
+             removegroup => "Remove a goup",
+             listgroups => "List all goup",
+             listusers => "List all users",
+             getallpages => "Save all pages to local files.",
+             addusertogroup => "Add user to a group",
+             removeusergromgroup => "Remove user from a group",
+             listusergroups => "List groups user is in",
+             );
+
+         my %help_printed_map;
+
+         for my $subcmd ((sort {$a cmp $b} grep {m/^ok_/} keys %::), (sort {$a cmp $b} keys %subcmd_helpstr_map)) {
+             (my $raw_subcmd = $subcmd) =~ s,^ok_,,;
+             $subcmd = "ok_$raw_subcmd";
+             if ($help_printed_map{$raw_subcmd}) {
+                 next;
+             } else {
+                 $help_printed_map{$raw_subcmd} = 1;
+             }
+
+             my $subcmd_help_str = $subcmd_helpstr_map{$raw_subcmd} ||
+                 "NO DESCRIPTION.";
+
+             if (not defined &$subcmd) {
+                 $subcmd_help_str .= " (NO DEFINITION)"
+             }
+
+             push @subcmd_help_strs, sprintf("    %s\n\t%s", $raw_subcmd, $subcmd_help_str);
+         }
+
+         return join "\n", $top_help_str, @subcmd_help_strs;
+     }
+   #+END_SRC
+** The final script
 
 #+name: read-only
 #+BEGIN_SRC sh
@@ -269,80 +397,137 @@ Now, this emacs-lisp script first.
   # Given a page, I will edit this
 #+END_SRC
 
-#+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/org-kungfu :comments link :shebang "#!/bin/bash" :noweb yes
-  set -e
+#+name: global-args
+#+BEGIN_SRC perl
+  use strict;
 
   ## start code-generator "^\\s *#\\s *"
-  # generate-getopt p:page-id u:wiki-url
+  # generate-getopt -P -s perl -p ok \
+  # '?subcmd_help()' \
+  # u:username '?"Login Username"' \
+  # p:password '?"Login Password"' \
+  # w:wikiurl '?"Wiki URL (only FQDN, no / and such)"' \
+  # vverbose '?"Verbose debug output"'
   ## end code-generator
   ## start generated code
-  TEMP=$( getopt -o p:u:h \
-                 --long page-id:,wiki-url:,help \
-                 -n $(basename -- $0) -- "$@")
-  declare page_id=
-  declare wiki_url=
-  eval set -- "$TEMP"
-  while true; do
-      case "$1" in
+  use Getopt::Long;
 
-          -p|--page-id)
-              page_id=$2
-              shift 2
+  Getopt::Long::Configure("posix_default");
 
-              ;;
-          -u|--wiki-url)
-              wiki_url=$2
-              shift 2
 
-              ;;
-          -h|--help)
-              set +x
-              echo -e
-              echo
-              echo Options and arguments:
-              printf %06s '-p, '
-              printf %-24s '--page-id=PAGE_ID'
-              echo
-              printf %06s '-u, '
-              printf %-24s '--wiki-url=WIKI_URL'
-              echo
-              exit
-              shift
-              ;;
-          --)
-              shift
-              break
-              ;;
-          ,*)
-              die "internal error: $(. bt; echo; bt | indent-stdin)"
-              ;;
-      esac
-  done
+
+  my $ok_password = "";
+  my $ok_username = "";
+  my $ok_verbose = 0;
+  my $ok_wikiurl = "";
+
+  my $handler_help = sub {
+      print subcmd_help();
+      print "\n\n选项和参数：\n";
+      printf "%6s", '-p, ';
+      printf "%-24s", '--password=PASSWORD';
+      if (length('--password=PASSWORD') > 24 and length("Login Password") > 0) {
+          print "\n";
+          printf "%30s", "";
+      }
+      printf "%s", "Login Password";
+      print "\n";
+      printf "%6s", '-u, ';
+      printf "%-24s", '--username=USERNAME';
+      if (length('--username=USERNAME') > 24 and length("Login Username") > 0) {
+          print "\n";
+          printf "%30s", "";
+      }
+      printf "%s", "Login Username";
+      print "\n";
+      printf "%6s", '-v, ';
+      printf "%-24s", '--[no]verbose';
+      if (length('--[no]verbose') > 24 and length("Verbose debug output") > 0) {
+          print "\n";
+          printf "%30s", "";
+      }
+      printf "%s", "Verbose debug output";
+      print "\n";
+      printf "%6s", '-w, ';
+      printf "%-24s", '--wikiurl=WIKIURL';
+      if (length('--wikiurl=WIKIURL') > 24 and length("Wiki URL (only FQDN, no / and such)") > 0) {
+          print "\n";
+          printf "%30s", "";
+      }
+      printf "%s", "Wiki URL (only FQDN, no / and such)";
+      print "\n";
+
+      exit(0);
+  };
+
+  GetOptions (
+      'password|p=s' => \$ok_password,
+      'username|u=s' => \$ok_username,
+      'verbose|v!' => \$ok_verbose,
+      'wikiurl|w=s' => \$ok_wikiurl,
+      'help|h!' => \&$handler_help,
+      );
 
 
   ## end generated code
+  use v5.10;
 
-  if test -e ~/.config/system-config/org-kungfu.rc; then
-      . ~/.config/system-config/org-kungfu.rc
-  fi
+  my %file_config;
+  use Config::Simple;
 
-  if test -z "${KUNGFU_TOPDIR}"; then
-      KUNGFU_TOPDIR=~/src/github/kungfu-edit
-  fi
+  my ($config_file) = glob "~/.local-config/etc/org-kungfu.rc";
 
-  mkdir -p "${KUNGFU_TOPDIR}"
-  cd "${KUNGFU_TOPDIR}";
+  if (-e $config_file) {
+      Config::Simple->import_from($config_file, \%file_config);
+  }
 
-  perl -e "$(
-  cat <<'EOF72c7bbe2c0f8' | . .replace-%% --
+  if (not $ok_password) {
+      $ok_password = $file_config{"ok.password"};
+  }
+
+  if (not $ok_password) {
+      say "Must specify the wiki password";
+      &$handler_help(1)
+  }
+
+  if (not $ok_username) {
+      $ok_username = $file_config{"ok.username"};
+  }
+
+  if (not $ok_username) {
+      say "Must specify the wiki username";
+      &$handler_help(1);
+  }
+
+  if (not $ok_wikiurl) {
+      $ok_wikiurl = $file_config{"ok.wikiurl"};
+  }
+
+  if (not $ok_wikiurl) {
+      say "Must specify the wiki url";
+      &$handler_help(1);
+  }
+
+  my $ok_topdir = $file_config{"ok.topdir"};
+  if (not $ok_topdir) {
+      $ok_topdir = glob("~/src/github/kungfu-edit");
+  }
+
+  use File::Path;
+  make_path($ok_topdir);
+  chdir($ok_topdir)
+      or die "Can't chdir: $ok_topdir";
+
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC perl :tangle ~/system-config/bin/org-kungfu :comments link :shebang "#!/usr/bin/perl" :noweb yes
+  <<global-args>>
   <<perl-lib-funcs>>
   <<download-a-page>>
   <<e>>
-  e("<%wiki_url%>")
-  EOF72c7bbe2c0f8
-  )"
-
+  <<subcmd-helps>>
+  <<which-to-call>>
   <<read-only>>
 #+END_SRC
 
