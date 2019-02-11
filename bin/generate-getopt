@@ -351,6 +351,21 @@ init-perl-var-info() {
     fi
 }
 
+declare declare_perl_posix=$(
+    if test "${posixly_correct}" = true; then
+        echo 'Getopt::Long::Configure("posix_default");'
+    else
+        echo 'Getopt::Long::Configure("default");'
+    fi
+        )
+
+declare declare_perl_local=$(
+    if test "${is_local}" = true; then
+        echo 'local @ARGV = @_;'
+    else
+        echo ""
+    fi
+        )
 
 declare declare_perl_vars=$(
     for long in "${long_opts_sorted[@]}"; do
@@ -390,7 +405,7 @@ EOF42934b465d64
 
     opt_name_spec='help|h'
     opt_arg_spec='!'
-    opt_target_spec='&handler_help'
+    opt_target_spec='&$handler_help'
     cat <<'EOF42934b465d64' | perl -npe 's/^#//' | . .replace-%% --
 #'<%opt-name-spec%><%opt-arg-spec%>' => \<%opt-target-spec%>,
 EOF42934b465d64
@@ -449,19 +464,23 @@ EOF7f0beacf3665
 cat <<'EOF42934b465d64' | . .replace-%% --
 use Getopt::Long;
 
+<%declare-perl-posix%>
+
+<%declare_perl_local%>
+
 <%declare-perl-vars%>
+
+my $handler_help = sub {
+    <%output-help%>
+
+    exit(0);
+};
 
 GetOptions (
 <%output-calls-to-GetOptions%>
     );
-
 <%output-handlers%>
 
-sub handler_help {
-    <%output-help%>
-
-    exit(0);
-}
 EOF42934b465d64
 fi
 
