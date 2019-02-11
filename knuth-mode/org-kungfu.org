@@ -8,11 +8,43 @@ There are already many confluence CLI tools, such as [[https://github.com/Raymii
 
 My script will make it easy for using org-mode to edit confluence pages.
 
-This script is work in progress, I will be constantly updating it.
+This script is work in progress, I will be constantly updating it. Patches are welcome!
 
-* Sub Commands
+* Usage
 
-I will mimic the CLI interface of [[https://github.com/RaymiiOrg/confluence-python-cli][confluence-python-cli]], i.e., provide many sub-commands that do different basic things, and also some sub-commands that do more advanced things, such as “editing a page with org-mode”.
+The most useful (currently also the only useful) way of using org-kungfu is:
+
+=org-kungfu -w WIKIURL -u USERNAME -p PASSWORD e -p PAGE_ID=
+
+Here,
+
+- =-w WIKIURL=, =-u USERNAME=, =-p PASSWORD= are global options (that affect every sub-command -- see below).
+
+  You can use =org-kungfu --help= to see what global options it takes.
+
+- =e= is a sub-command.
+
+  You can use =org-kungfu --help= to see what sub-commands it supports.
+
+- =-p PAGE_ID= is =e='s local options.
+
+  You can use =org-kungfu e --help= to see what local options =e= takes.
+
+If you can save some configuration in your =~/.config/org-kungfu/config.ini=, then you can further simplify the above usage:
+
+=org-kungfu e -p PAGE_ID=
+
+Here's how to config your settings (supposing you have installed =git=):
+#+BEGIN_SRC sh
+mkdir -p ~/.config/org-kungfu
+git config -f ~/.config/org-kungfu/config.ini ok.wikiurl YOUR_WIKI_URL
+git config -f ~/.config/org-kungfu/config.ini ok.username YOUR_WIKI_USERNAME
+git config -f ~/.config/org-kungfu/config.ini ok.username YOUR_WIKI_PASSWORD
+#+END_SRC
+
+** Sub Commands
+
+I decide to mimic the CLI interface of [[https://github.com/RaymiiOrg/confluence-python-cli][confluence-python-cli]], i.e., provide many sub-commands that do different basic things, and also some higher-level sub-commands that do more advanced things, such as “editing a page with org-mode”.
 
 The most needed sub-commands are these, I think:
 
@@ -22,6 +54,10 @@ The most needed sub-commands are these, I think:
 - Convert the org-mode page back to html
 - Upload the html to update the page
 - Handle images in the page (automatically download/upload them as attachments)
+
+I will be using confluence's REST api to do the job.
+
+I am using Perl to write the script, and all sub commands are each implemented as a Perl subroutine, whose name is derived by prefixing =ok_= to the sub-command name (sub-command =e= <=> subroutine =ok_e=).
 
 * Download a Page
 
@@ -212,8 +248,42 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
       return $str;
   }
 
-  sub update_1_page($) {
-      my ($page_id) = @_;
+  sub ok_update1page(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l -P p:page-id
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("posix_default");
+
+      local @ARGV = @_;
+
+      my $page_id = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--page-id=PAGE-ID';
+          if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'page-id|p=s' => \$page_id,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
       my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,title";
 
       my $response = get($page_api);
@@ -266,16 +336,66 @@ Now, this emacs-lisp script first.
 
 #+name: e
 #+BEGIN_SRC perl :noweb yes
-  sub e($) {
-      my ($url) = @_;
-      my $page_id;
+  sub ok_e($) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l -P u:url '?"copy and paste the whole wiki page url to calculate page_id, make UX easier than copy-and-pasting page_id only"' \
+      # p:page-id
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("posix_default");
+
+      local @ARGV = @_;
+
+      my $page_id = "";
+      my $url = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--page-id=PAGE-ID';
+          if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '-u, ';
+          printf "%-24s", '--url=URL';
+          if (length('--url=URL') > 24 and length("copy and paste the whole wiki page url to calculate page_id, make UX easier than copy-and-pasting page_id only") > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", "copy and paste the whole wiki page url to calculate page_id, make UX easier than copy-and-pasting page_id only";
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'page-id|p=s' => \$page_id,
+          'url|u=s' => \$url,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
       if ($url =~ m/pageid=(\d+)/i) {
-          $page_id = $1;
-      } else {
-          die "Can't get page id from $url";
+          if (not $page_id) {
+              $page_id = $1;
+          } else {
+              die "Please specify only 1 of --url and --page-id";
+          }
       }
 
-      download_1_page($page_id);
+      if (not $page_id) {
+          die "Must specify the page_id"
+      }
+
+      ok_get1page("-p", $page_id);
       System("pandoc -f html -t org content.html > content.org");
       System("ew content.org");
 
@@ -290,7 +410,7 @@ Now, this emacs-lisp script first.
 
       System("emacsclient", "-e", $emacs_script);
       rewrite_html_for_update();
-      update_1_page($page_id);
+      ok_update1page("-p", $page_id);
   }
 #+END_SRC
 
@@ -332,29 +452,9 @@ This is simple using Perl's “reflection”.
 
          my @subcmd_help_strs;
          my %subcmd_helpstr_map = (
-             addpage => "Add a page",
-             copypage => "Copy a page",
-             updatepage => "Update a page",
-             listpages => "List pages in one or all spaces",
-             removepage => "Remove a page",
-             getpagecontent => "Get page content",
-             getpagesummary => "Get page summary",
-             listspaces => "List all spaces",
-             addspace => "Add a space",
-             removespace => "Remove a space",
-             adduser => "Add a user",
-             removeuser => "Remove a user",
-             deactivateuser => "Deactivate a user",
-             reactivateuser => "Reactivate a user",
-             changeuserpassword => "Change user password",
-             addgroup => "Add a goup",
-             removegroup => "Remove a goup",
-             listgroups => "List all goup",
-             listusers => "List all users",
-             getallpages => "Save all pages to local files.",
-             addusertogroup => "Add user to a group",
-             removeusergromgroup => "Remove user from a group",
-             listusergroups => "List groups user is in",
+             update1page => "Update 1 page (html text and all images -- automatically upload as page attachments)",
+             get1page => "Get 1 page (html text and all image attachments)",
+             e => "Edit 1 page in emacs org-mode, download/edit/upload",
              );
 
          my %help_printed_map;
@@ -475,7 +575,7 @@ This is simple using Perl's “reflection”.
   my %file_config;
   use Config::Simple;
 
-  my ($config_file) = glob "~/.local-config/etc/org-kungfu.rc";
+  my ($config_file) = glob "~/.config/org-kungfu/config.ini";
 
   if (-e $config_file) {
       Config::Simple->import_from($config_file, \%file_config);
