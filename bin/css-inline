@@ -4,10 +4,19 @@ import sys
 import os
 import re
 
-markdown_css = open(os.path.expanduser("~/system-config/etc/markdown-here.css")).read()
+markdown_css = open(os.path.expanduser("~/src/github/baohaojun.github.com/css/adwaita.css")).read()
 str = open(sys.argv[1]).read()
 
-str = str.replace(".footpara:nth-child(2) { display: inline; }", markdown_css)
+if str.find(".footpara:nth-child(2) { display: inline; }") >= 0:
+    str = str.replace(".footpara:nth-child(2) { display: inline; }", markdown_css)
+else:
+    str = """<style type="text/css">
+                      <!--/*--><![CDATA[/*><!--*/
+                      """ + markdown_css + """
+                      /*]]>*/-->
+                      </style>
+                      """ + str
+
 str = pynliner.fromString(str).encode('utf-8')
 
 in_pre = 0
