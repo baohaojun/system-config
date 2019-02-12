@@ -28,7 +28,7 @@ M.weixin_open_search = function(depth)
          if top_window == W.weixinSearchActivity then
             if wait_input_target_n_ok(1, W.weixinSearchActivity) then
                adb_event("key space sleep .1")
-               click_scene('wx-close-search', 10)
+               click_scene('wx-close-search', {retry = 10})
                adb_event"sleep .1"
                if wait_input_target_n_ok(5, W.weixinSearchActivity) then
                   return

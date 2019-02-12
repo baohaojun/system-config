@@ -80,12 +80,13 @@ function find-scene() {
     fi
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt d:dir='${WRENCH_DATA_DIR:-~/tmp/}' s:scene @:scene-dir='${resdir}'
+    # generate-getopt d:dir='${WRENCH_DATA_DIR:-~/tmp/}' s:scene @:scene-dir='${resdir}' @:at-xy
     ## end code-generator
     ## start generated code
     TEMP=$( getopt -o d:s:h \
-                   --long dir:,scene:,scene-dir:,help \
+                   --long at-xy:,dir:,scene:,scene-dir:,help \
                    -n $(basename -- $0) -- "$@")
+    declare at_xy=
     declare dir=${WRENCH_DATA_DIR:-~/tmp/}
     declare scene=
     declare scene_dir=${resdir}
@@ -93,6 +94,11 @@ function find-scene() {
     while true; do
         case "$1" in
 
+            --at-xy)
+                at_xy=$2
+                shift 2
+
+                ;;
             -d|--dir)
                 dir=$2
                 shift 2
@@ -113,6 +119,9 @@ function find-scene() {
                 echo -e
                 echo
                 echo Options and arguments:
+                printf "%06s" " "
+                printf %-24s '--at-xy=AT_XY'
+                echo
                 printf %06s '-d, '
                 printf %-24s '--dir=DIR'
                 echo
@@ -148,9 +157,15 @@ function find-scene() {
 
     adb-screenshot $full_jpg >/dev/null 2>&1
 
-    local matched_xy=$(
-        match_image ${full_jpg} ${scene_png}
-              )
+    local matched_xy
+
+    if test "${at_xy}"; then
+        matched_xy=${at_xy}
+    else
+        matched_xy=$(
+            match_image ${full_jpg} ${scene_png}
+                  )
+    fi
 
     local matched_x=$(echo $matched_xy | pn 1)
     local matched_y=$(echo $matched_xy | pn 2)

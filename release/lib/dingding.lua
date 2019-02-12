@@ -1,11 +1,36 @@
-M.wrench_find_dingding_contact = function(friend_name)
-   dingding_open_homepage()
-   adb_event"adb-tap 770 105"
-   putclip(friend_name)
-   wait_input_target("com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchInputActivity")
-   adb_event"sleep .2 key scroll_lock key enter sleep .8"
+M.dd_pkg = "com.alibaba.android.rimet/"
+M.dd_activity = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.activity.HomeActivity"
 
-   adb_event"adb-tap 276 354 sleep .8 adb-tap 154 663"
+M.open_dd = function()
+   local top_window, i
+   for i = 1, 5 do
+      if not top_activity_match(M.dd_pkg) then
+         adb_start_app(M.dd_activity)
+      end
+      sleep(.3)
+
+      local found_grey = find_scene("dd-xiaoxi-weixuanzhong")
+      local found_duihua = find_scene("dd-xiaoxi-xuanzhong")
+      if not found_grey and not found_duihua then
+         adb_event("key back")
+         sleep(.2)
+      elseif found_grey then
+         jump_from_to("dd-xiaoxi-weixuanzhong", "dd-xiaoxi-xuanzhong")
+         found_duihua = 1
+      end
+
+      if found_duihua then
+         jump_from_to("dd-xiaoxi-dd-biaoti", "dd-xiaoxi-sousuo", {click_times = 2})
+         return
+      end
+   end
+end
+
+M.wrench_find_dingding_contact = function(friend_name)
+   putclip_nowait(friend_name)
+   open_dd()
+   jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
+   adb_event"key scroll_lock key enter sleep .8"
 end
 
 M.dingding_open_homepage = function()

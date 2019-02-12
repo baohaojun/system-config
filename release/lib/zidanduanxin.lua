@@ -12,13 +12,7 @@ M.open_zidanduanxin = function()
          adb_event("key back")
          sleep(.2)
       elseif found_grey then
-         click_scene("zidanduanxin-duihua-grey")
-         sleep(.2)
-         if find_scene("zidanduanxin-duihua") then
-            return
-         else
-            adb_event("key back")
-         end
+         jump_from_to("zidanduanxin-duihua-grey", "zidanduanxin-duihua")
       else
          if not find_scene("zidanduanxin-search-button") and
          find_scene("zidanduanxin-search-button@top") then
@@ -38,7 +32,7 @@ end
 M.open_zidanduanxin_search = function()
    open_zidanduanxin()
 
-   click_scene("zidanduanxin-search-button", nil, {x = 500, y = 20})
+   click_scene("zidanduanxin-search-button", {x = 500, y = 20})
 
    if not wait_input_target_n_ok(3, "com.bullet.messenger/com.smartisan.flashim.main.activity.MainActivity") then
       error("Can't open zidanduanxin search")
@@ -57,7 +51,7 @@ M.find_zidanduanxin_friend = function(who)
    if confirm then
       prompt_user("请确认你要查找的是哪个用户")
    else
-      click_scene("zidanduanxin-search-qunliao", nil, {x = 500, y = 200 })
+      click_scene("zidanduanxin-search-qunliao", {x = 500, y = 200 })
       sleep(.5)
       if find_scene("zd-fasongxiaoxi") then
          click_scene("zd-fasongxiaoxi")

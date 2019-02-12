@@ -148,18 +148,49 @@ M.find_scene = function(scene, times)
    end
 end
 
-M.click_scene = function (scene, retry, xy_tab)
+M.click_scene = function (scene, settings)
    log("Click scene: %s", scene)
-   if not xy_tab then
-      xy_tab = { }
-   end
+   settings = settings or {}
 
-   if not refind_scene(scene, retry) then
-      log("Can't find scene: %s for click (retry: %s)", scene, retry)
+   x_plus = settings.x or 0
+   y_plus = settings.y or 0
+   click_times = settings.click_times or 1
+
+   if not settings.skip_refind and not refind_scene(scene, settings.retry) then
+      log("Can't find scene: %s for click (retry: %s)", scene, settings.retry)
       return
    end
    local xy = scenes_map[scene]
    xy = split(" ", xy)
-   adb_tap_XY(xy[1] + (xy_tab.x or 0), xy[2] + (xy_tab.y or 0))
+   for n = 1, click_times do
+      log("click %s @%d", scene, n)
+      adb_tap_XY(xy[1] + x_plus, xy[2] + y_plus)
+      if n < click_times then
+         sleep(.1)
+      end
+   end
 end
 
+M.jump_from_to = function(from_scene, to_scene, settings)
+   settings = settings or {}
+   times = settings.times or 1
+   sleep_time = settings.sleep_time or .2
+
+   for t = 1, times do
+      if find_scene(to_scene) then
+         log("jumped from %s to %s", from_scene, to_scene)
+         return
+      end
+
+      if find_scene(from_scene) then
+         settings.skip_refind = 1
+         click_scene(from_scene, settings)
+         sleep(sleep_time)
+         if t == times and find_scene(to_scene) then
+            log("jumped from %s to %s", from_scene, to_scene)
+            return
+         end
+      end
+   end
+   error("Can't jump from " .. from_scene .. " to " .. to_scene)
+end

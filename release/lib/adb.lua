@@ -62,6 +62,10 @@ M.wait_input_target_n = function(n_loop, ...)
    return ""
 end
 
+M.adb_start_app = function(app_activity)
+   adb_am("am start -n " .. app_activity)
+end
+
 M.adb_set_tap_params = function(pressure, size)
    if not pressure then
       pressure = math.random() * 0.1 + 0.1
