@@ -67,6 +67,8 @@ It will download the page into a directory that is arranged according to it's �
 
 For e.g., if there's a wiki space named Hello, and there's a page named World under space Hello, then World will be downloaded into ${KUNGFU_TOPDIR}/Hello/World/content.html.
 
+First, some helper functions.
+
 #+name: download-a-page
 #+BEGIN_SRC perl
   use v5.10;
@@ -105,6 +107,12 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
       close($f);
   }
 
+#+END_SRC
+
+And this is the real get1page subroutine.
+
+#+name: download-a-page
+#+BEGIN_SRC perl
   sub ok_get1page(@) {
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl -l -P p:page-id
@@ -299,6 +307,79 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
       say "PUT response code:" . $response->code;
   }
 #+END_SRC
+
+* Upload page attachments
+
+Here's the script to upload page attachment. Only allow to upload 1 file at a time, and will exit if you upload the same file a second time (confluence will refuse to accept the file).
+
+  #+name: upload-page-attachment
+  #+BEGIN_SRC perl
+      sub ok_upload1attachment(@) {
+          ## start code-generator "^\\s *#\\s *"
+          # generate-getopt -s perl -l -P p:page-id f:filename
+          ## end code-generator
+          ## start generated code
+          use Getopt::Long;
+
+          Getopt::Long::Configure("posix_default");
+
+          local @ARGV = @_;
+
+          my $filename = "";
+          my $page_id = "";
+
+          my $handler_help = sub {
+              print ;
+              print "\n\n选项和参数：\n";
+              printf "%6s", '-f, ';
+              printf "%-24s", '--filename=FILENAME';
+              if (length('--filename=FILENAME') > 24 and length() > 0) {
+                  print "\n";
+                  printf "%30s", "";
+              }
+              printf "%s", ;
+              print "\n";
+              printf "%6s", '-p, ';
+              printf "%-24s", '--page-id=PAGE-ID';
+              if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+                  print "\n";
+                  printf "%30s", "";
+              }
+              printf "%s", ;
+              print "\n";
+
+              exit(0);
+          };
+
+          GetOptions (
+              'filename|f=s' => \$filename,
+              'page-id|p=s' => \$page_id,
+              'help|h!' => \&$handler_help,
+              );
+
+
+          ## end generated code
+
+          my $ua = LWP::UserAgent->new;
+          my $api = sprintf "rest/api/content/%d/child/attachment", $page_id;
+
+          my $request = POST kungfu_url_for_api($api),
+              "X-Atlassian-Token" => "nocheck",
+              Content_Type => 'form-data',
+              Content => [
+                  file => ["$filename"],
+              ];
+
+          my $response = $ua->request($request);
+          say "POST response code:" . $response->code;
+          if ($response->code != 200) {
+              die "Can't get $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+          }
+
+          return $response;
+      }
+
+  #+END_SRC
 
 * e
 
@@ -625,6 +706,7 @@ This is simple using Perl's “reflection”.
   <<global-args>>
   <<perl-lib-funcs>>
   <<download-a-page>>
+  <<upload-page-attachment>>
   <<e>>
   <<subcmd-helps>>
   <<which-to-call>>
@@ -634,5 +716,64 @@ This is simple using Perl's “reflection”.
 #+results: the-ultimate-script
 
 
-** TODO when downloading an attachment, should pay respect to the modificationDate.
+* GTD
+
+In this part, I will use GTD method to get things done.
+
+** TODO [#C] when downloading an attachment, should pay respect to the modificationDate.
 Currently, I will not download an attachment file again if it already exist. Later, we should re-download it if it has been updated on the server side.
+
+** TODO [#A] When updating a page, I should also upload all images as attachments
+** TODO [#A] When updating a page, I should be able to upload the emojis, and make emojis look the same size with the text
+** TODO [#A] It should be easy to copy a page to another place.
+** TODO [#A] It should be easy to create a page.
+
+** Chinese GTD
+
+*** TODO [#A] 解决通过 org-mode 写 wiki 的问题
+  :PROPERTIES:
+  :ID:       55e0a834-d680-49af-9e5b-fd77065ab6f8
+  :END:
+
+注意：这里说的 wiki，都是指 confluence。
+
+**** 写一个 elisp 函数，能把 org-mode 转换成 html
+
+这样调用就好：=(org-html-export-as-html nil nil nil t)=。
+
+但是，注要不要把 toc（table of contents）给弄进来。
+
+**** 写一个 elisp 函数，能把 org-html 给上传到某 wiki 页面。
+
+对 wiki 页面的操作：
+
+1. 创建某 wiki 页面
+2. 更新某 wiki 页面
+3. 查找某 wiki 页面
+4. 方便的在 wiki 的 api 里查找关于 wiki 页面的文档
+
+***** 最理想的情况应该是，我跟本不需要再去打开 wiki 网页，直接就可以在本地浏览 wiki 上的目录结构
+
+如果要做到这样的话，我可能需要：
+
+1. 设计一个本地目录结构与 wiki 网页目录结构的对应关系。
+
+   - 假设我在编辑本地文件：A/B/C.org，我点一下发布，这个文件就被 push 到 wiki/A/B/C.html
+   - 假设我指定要把 wiki 上的一个页面拉回来编辑，我只要指定这个页面的 url（因为从 browser 里拷 url 最方便），它就自动帮我保存到正确的 A/B/C.org。
+
+2. 但是，我最需要的、最关键的 elisp 函数，应该是 (ok-upload-html-to-page html pageid)
+
+   这个函数应该是我最先写出来，因为它是最有价值的。
+
+**** 写一个 elisp 函数，能把 wiki 页面更新到我的某个 org 文件里来
+
+**** 处理 org 中的图片，让它们能够自动上传到 wiki 里
+
+**** 处理 org 转成 html 之后的 css，让它们上传到 wiki 里之后，看上去尽量与直接在浏览器里打开时一致。
+
+
+**** 以下是草稿，测试用的文本、数据等，不要看。
+
+***** 测试 Org-mode
+
+

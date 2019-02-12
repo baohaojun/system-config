@@ -44,6 +44,7 @@ if id | grep 'uid=0\b' -P; then
             ) >/dev/null 2>&1&
         done
     /etc/init.d/dbus restart || true
+    /etc/init.d/gdm3 restart || true
 else
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt wwait

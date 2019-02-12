@@ -21,7 +21,7 @@ fi
 
 export SUDO_ASKPASS=/usr/bin/ssh-askpass
 export SC_USE_TMUX=true
-export NODE_PATH=~/.node/node_modules
+export NODE_PATH=${HOME}/.node/node_modules
 
 if test -e ~/src/github/smartcm/etc/settings.rc; then
     . ~/src/github/smartcm/etc/settings.rc
