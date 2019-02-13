@@ -80,9 +80,14 @@
 	 ((:keywords "async")
 	  (:url . "http://elpa.gnu.org/packages/async.html"))])
  (auctex .
-	 [(12 1 1)
-	  nil "Integrated environment for *TeX*" tar
-	  ((:url . "http://www.gnu.org/software/auctex/"))])
+	 [(12 1 2)
+	  ((emacs
+	    (24 1))
+	   (cl-lib
+	    (0 5)))
+	  "Integrated environment for *TeX*" tar
+	  ((:keywords "tex" "latex" "texinfo" "context" "doctex" "preview-latex")
+	   (:url . "http://www.gnu.org/software/auctex/"))])
  (aumix-mode .
 	     [(7)
 	      nil "run the aumix program in a buffer" single
@@ -233,15 +238,6 @@
 		    "Highlight by scope" tar
 		    ((:keywords "convenience" "faces" "tools")
 		     (:url . "https://github.com/jacksonrayhamilton/context-coloring"))])
- (counsel-ebdb .
-	       [(1)
-		((ivy
-		  (0 8 0))
-		 (ebdb
-		  (0 2)))
-		"Counsel integration for EBDB" single
-		((:url . "http://elpa.gnu.org/packages/counsel-ebdb.html")
-		 (:keywords))])
  (crisp .
 	[(1 3 6)
 	 nil "CRiSP/Brief Emacs emulator" single
@@ -355,7 +351,7 @@
 	     ((:keywords "killing" "convenience")
 	      (:url . "https://github.com/leoliu/easy-kill"))])
  (ebdb .
-       [(0 6 2)
+       [(0 6 5)
 	((emacs
 	  (25 1))
 	 (cl-lib
@@ -400,7 +396,7 @@
 	 ((:keywords "convenience" "languages")
 	  (:url . "https://github.com/joaotavora/eglot"))])
  (el-search .
-	    [(1 9 1)
+	    [(1 9 7)
 	     ((emacs
 	       (25))
 	      (stream
@@ -459,7 +455,7 @@
 	       ((:keywords "calendar")
 		(:url . "http://elpa.gnu.org/packages/excorporate.html"))])
  (exwm .
-       [(0 21)
+       [(0 22)
 	((xelb
 	  (0 16)))
 	"Emacs X Window Manager" tar
@@ -487,14 +483,14 @@
 	   ((:url . "http://elpa.gnu.org/packages/flylisp.html")
 	    (:keywords))])
  (flymake .
-	  [(1 0 3)
+	  [(1 0 5)
 	   ((emacs
 	     (26 1)))
 	   "A universal on-the-fly syntax checker" single
 	   ((:url . "http://elpa.gnu.org/packages/flymake.html")
 	    (:keywords "c" "languages" "tools"))])
  (fountain-mode .
-		[(2 6 1)
+		[(2 6 2)
 		 ((emacs
 		   (24 5)))
 		 "Major mode for screenwriting in Fountain markup" single
@@ -573,6 +569,13 @@
 	   "Integrates GPaste with the kill-ring" single
 	   ((:url . "https://gitlab.petton.fr/DamienCassou/desktop-environment")
 	    (:keywords "tools"))])
+ (greader .
+	  [(0 1)
+	   ((emacs
+	     (25)))
+	   "gnamù reader, a reader with espeak tts" tar
+	   ((:keywords "tools" "accessibility")
+	    (:url . "http://elpa.gnu.org/packages/greader.html"))])
  (heap .
        [(0 5)
 	nil "Heap (a.k.a. priority queue) data structure" single
@@ -629,7 +632,7 @@
        ((:keywords "matching")
 	(:url . "https://github.com/abo-abo/swiper"))])
  (ivy-explorer .
-	       [(0 1 2)
+	       [(0 2 0)
 		((emacs
 		  (25))
 		 (ivy
@@ -638,7 +641,7 @@
 		((:url . "https://github.com/clemera/ivy-explorer")
 		 (:keywords "convenience" "files" "matching"))])
  (javaimp .
-	  [(0 6)
+	  [(0 6 1)
 	   nil "Add and reorder Java import statements in Maven projects" tar
 	   ((:keywords "java" "maven" "programming")
 	    (:url . "http://elpa.gnu.org/packages/javaimp.html"))])
@@ -871,7 +874,7 @@
 	  ((:url . "http://elpa.gnu.org/packages/oauth2.html")
 	   (:keywords "comm"))])
  (objed .
-	[(0 2 0)
+	[(0 5 1)
 	 ((emacs
 	   (25))
 	  (cl-lib
@@ -892,12 +895,12 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(9 2)
+      [(9 2 1)
        nil "Outline-based notes management and organizer" tar
        ((:keywords "outlines" "hypermedia" "calendar" "wp")
 	(:url . "http://elpa.gnu.org/packages/org.html"))])
  (org-edna .
-	   [(1 0 1)
+	   [(1 0 2)
 	    ((emacs
 	      (25 1))
 	     (seq
@@ -1106,9 +1109,11 @@
 	       ((:keywords "soap" "web-services" "comm" "hypermedia")
 		(:url . "http://elpa.gnu.org/packages/soap-client.html"))])
  (sokoban .
-	  [(1 4 6)
+	  [(1 4 7)
 	   ((emacs
-	     (23 1)))
+	     (23 1))
+	    (cl-lib
+	     (0 5)))
 	   "Implementation of Sokoban for Emacs." tar
 	   ((:keywords "games")
 	    (:url . "http://elpa.gnu.org/packages/sokoban.html"))])
@@ -1345,7 +1350,7 @@
 	 ((:url . "http://elpa.gnu.org/packages/xclip.html")
 	  (:keywords "convenience" "tools"))])
  (xelb .
-       [(0 16)
+       [(0 17)
 	((emacs
 	  (24 4))
 	 (cl-generic
@@ -1358,6 +1363,11 @@
        nil "edit XPM images" tar
        ((:keywords "multimedia" "xpm")
 	(:url . "http://www.gnuvola.org/software/xpm/"))])
+ (xr .
+     [(1 0)
+      nil "Convert string regexp to rx notation" single
+      ((:url . "http://elpa.gnu.org/packages/xr.html")
+       (:keywords "lisp" "maint" "regexps"))])
  (yasnippet .
 	    [(0 13 0)
 	     ((cl-lib
