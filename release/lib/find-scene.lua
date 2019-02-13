@@ -69,6 +69,7 @@ M.debug_scene_actions = {
    "用 failed-XXX.png 进行替换", -- 3
    "我手动操作一下手机，然后你在原来的位置重新比较一遍", -- 4
    "我手动操作一下手机，然后你忘记原来的位置，重新查找一遍", -- 5
+   "关闭场景查找功能的调试开关", -- 6
 }
 
 M.get_debug_action = function(desc)
@@ -76,6 +77,28 @@ M.get_debug_action = function(desc)
    local ans = select_args(M.debug_scene_actions)
    log("your choice: %s", ans)
    return ans
+end
+
+M.debug_find_scene = function(desc, scene)
+   local should_ret = nil
+   local ret_val = nil
+   if M.g_find_scene_debug then
+      show_scene_for_dbg(scene)
+      local action = M.get_debug_action(desc)
+      if action == M.debug_scene_actions[3] then
+         update_scene(scene);
+      elseif action == M.debug_scene_actions[4] then
+         ret_val = find_scene(scene)
+         should_ret = 1
+      elseif action == M.debug_scene_actions[5] then
+         forget_scene(scene)
+         ret_val = find_scene(scene)
+         should_ret = 1
+      elseif action == M.debug_scene_actions[6] then
+         M.g_find_scene_debug = nil
+      end
+   end
+   return ret_val, should_ret
 end
 
 M.find_scene = function(scene, times)
@@ -92,16 +115,10 @@ M.find_scene = function(scene, times)
          if scene_xy ~= "" then
             break
          elseif i == times then
-            if M.g_find_scene_debug then
-               show_scene_for_dbg(scene)
-               local action = M.get_debug_action(("无法找到新的场景：%s，要不要将 failed-%s.png 替换为 %s.png（如果选否，会重新查找，请确认）？"):format(scene, scene, scene))
-               if action == M.debug_scene_actions[3] then
-                  update_scene(scene);
-               elseif action == M.debug_scene_actions[4] then
-                  return find_scene(scene)
-               elseif action == M.debug_scene_actions[5] then
-                  return find_scene(scene)
-               end
+            debug_desc = ("无法找到新的场景：%s，要不要将 failed-%s.png 替换为 %s.png（如果选否，会重新查找，请确认）？"):format(scene, scene, scene)
+            ret_val, should_ret = debug_find_scene(debug_desc, scene)
+            if should_ret then
+               return ret_val
             end
             return nil
          end
@@ -116,31 +133,18 @@ M.find_scene = function(scene, times)
 
    if system(("find-scene.sh is-scene -x %s -y %s -s %s"):format(s_x, s_y, scene)) then
       log("found scene: %s at %s %s", scene, s_x, s_y)
-      if M.g_find_scene_debug then
-         show_scene_for_dbg(scene)
-         local action = M.get_debug_action(("已找到场景：%s，要不要将 failed-%s.png 替换为 %s.png？"):format(scene, scene, scene))
-         if M.action == M.debug_scene_actions[3] then
-            update_scene(scene);
-         elseif action == M.debug_scene_actions[4] then
-            return find_scene(scene)
-         elseif action == M.debug_scene_actions[5] then
-            return find_scene(scene)
-         end
+      debug_desc = ("已找到场景：%s，要不要将 failed-%s.png 替换为 %s.png？"):format(scene, scene, scene)
+      ret_val, should_ret = debug_find_scene(debug_desc, scene)
+      if should_ret then
+         return ret_val
       end
       return true
    else
       log("! found scene: %s at %s %s", scene, s_x, s_y)
-      if M.g_find_scene_debug then
-         show_scene_for_dbg(scene)
-         local action = M.get_debug_action(("无法找到旧的场景：%s，要不要将 failed-%s.png 替换为 %s.png（如果选否，会忘掉它，当成新场景处理，请手动切换到此场景）？"):format(scene, scene, scene))
-         if action == M.debug_scene_actions[3] then
-            update_scene(scene);
-         elseif action == M.debug_scene_actions[4] then
-            return find_scene(scene)
-         elseif action == M.debug_scene_actions[5] then
-            forget_scene(scene);
-            return find_scene(scene)
-         end
+      debug_desc = ("无法找到旧的场景：%s，要不要将 failed-%s.png 替换为 %s.png（如果选否，会忘掉它，当成新场景处理，请手动切换到此场景）？"):format(scene, scene, scene)
+      ret_val, should_ret = debug_find_scene(debug_desc, scene)
+      if should_ret then
+         return ret_val
       end
       return false
    end
