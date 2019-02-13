@@ -164,6 +164,7 @@
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" . default)
      ("\\.pdf\\'" . "of %s"))))
+ '(org-html-htmlize-output-type (quote css))
  '(org-jira-coding-system (quote utf-8))
  '(org-jira-done-states (quote ("Closed" "Resolved" "Done" "完成")))
  '(org-latex-classes

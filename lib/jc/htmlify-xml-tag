@@ -1,0 +1,71 @@
+#!/bin/bash
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt t:tag-name=description f:xml-file
+## end code-generator
+## start generated code
+TEMP=$( getopt -o t:f:h \
+               --long tag-name:,xml-file:,help \
+               -n $(basename -- $0) -- "$@")
+declare tag_name=description
+declare xml_file=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -t|--tag-name)
+            tag_name=$2
+            shift 2
+
+            ;;
+        -f|--xml-file)
+            xml_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-t, '
+            printf %-24s '--tag-name=TAG_NAME'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--xml-file=XML_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+emacs_script=$(
+            cat <<'EOFf2988e9b7e03' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(let ((beg_tag_text) (end_tag_text))
+  (with-temp-buffer)
+  (insert-file "<%xml_file%>")
+  (goto-char (point-min))
+  (while (search-forward "<<%tag_name%>>" nil t)
+    (setq beg_tag_text (point))
+    (when (search-forward "</<%tag_name%>>" nil t)
+      (search-backward "</<%tag_name%>>" nil t)
+      (setq end_tag_text (point))
+      (shell-command-on-region beg_tag_text end_tag_text "emacs-fix-fence -f nxml -t html" nil t)
+      (goto-char beg_tag_text)))
+  (write-file "<%xml_file%>"))
+; {%/emacs-lisp-mode%}
+EOFf2988e9b7e03
+                                        )
+emacsclient -e "${emacs_script}"

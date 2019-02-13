@@ -24,22 +24,64 @@ fi
 
 b0=$(basename $0)
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt b:save-to-buffer=nil
+## end code-generator
+## start generated code
+TEMP=$( getopt -o b:h \
+               --long save-to-buffer:,help \
+               -n $(basename -- $0) -- "$@")
+declare save_to_buffer=nil
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -b|--save-to-buffer)
+            save_to_buffer=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--save-to-buffer=SAVE_TO_BUFFER'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 emacsclient -e "$(
 cat <<'EOF16e1379802c6' | . .replace-%%
 ; {%emacs-lisp-mode%}
 ;;;;  real script start here
 (let ((buffers (buffer-list))
       buf)
-  (while buffers
-    (setq buf (car buffers)
-          buffers (cdr buffers))
-    (when (or (and
-               (string= "<%b0%>" "emacs-current-file")
-               (buffer-file-name buf))
-              (and
-               (string= "<%b0%>" "emacs-current-text")
-               (not (string= (buffer-name buf) " *server*"))))
-      (setq buffers nil)))
+  (if (string= "<%b0%>" "emacs-current-file")
+      (while buffers
+        (setq buf (car buffers)
+              buffers (cdr buffers))
+        (when (buffer-file-name buf)
+          (setq buffers nil)))
+    (setq buf (window-buffer (selected-window))))
+  (when (not (null '<%save_to_buffer%>))
+    (setq <%save_to_buffer%> buf))
   (message "current-file %s" (buffer-name buf))
   (or (and
        (string= "<%b0%>" "emacs-current-file")
@@ -52,4 +94,3 @@ cat <<'EOF16e1379802c6' | . .replace-%%
 EOF16e1379802c6
 
 )" | tr -d '\\'
-

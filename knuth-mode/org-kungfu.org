@@ -432,10 +432,88 @@ Now, this emacs-lisp script first.
         (insert html_str)
         (write-file html_file))))
 
+  (defun org-kungfu--export-to-buffer (file buffer)
+    (with-temp-buffer
+      (insert-file file)
+      (org-mode)
+      (let ((html_str (org-kungfu--orgtext-to-html (buffer-substring-no-properties (point-min) (point-max)))))
+        (with-current-buffer buffer
+          (delete-region (point-min) (point-max))
+          (insert html_str)))))
 #+END_SRC
 
 #+name: e
 #+BEGIN_SRC perl :noweb yes
+  sub ok_ehwo(@) {
+      ok_edit_html_with_org(@_);
+  }
+
+  sub ok_edit_html_with_org(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l -P ecalled-for-emacs '?"Get the html from current emacs buffer, SC ONLY"'
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("posix_default");
+
+      local @ARGV = @_;
+
+      my $called_for_emacs = 0;
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-e, ';
+          printf "%-24s", '--[no]called-for-emacs';
+          if (length('--[no]called-for-emacs') > 24 and length("Get the html from current emacs buffer, SC ONLY") > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", "Get the html from current emacs buffer, SC ONLY";
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'called-for-emacs|e!' => \$called_for_emacs,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
+      if ($called_for_emacs) {
+          chdir("$ENV{HOME}/tmp");
+          System("emacs-current-text -b buffer-ehwo-$$ > content.html");
+      }
+
+      System("(echo '#+OPTIONS: toc:nil num:nil'; pandoc --wrap=none -f html -t org content.html | perl -pe 's,\\\\_,_,g') > content.org");
+      System("ew content.org");
+
+      my $emacs_script = <<~'EOF64f308bc1e9a';
+            ; {%emacs-lisp-mode%}
+      (progn
+       <<emacs-kungfu-export>>
+       <%how-to-export%>)
+                  ; {%/emacs-lisp-mode%}
+
+      EOF64f308bc1e9a
+
+      if ($called_for_emacs) {
+          $emacs_script =~ s,<%how-to-export%>,
+              (org-kungfu--export-to-buffer "content.org" buffer-ehwo-$$)
+              (switch-to-buffer 'buffer-ehwo-$$)
+              (unintern 'buffer-ehwo-$$),x;
+      } else {
+          $emacs_script =~ s,<%how-to-export%>,(org-kungfu--export-to-html "content.org"),;
+      }
+
+      System("emacsclient", "-e", $emacs_script);
+
+  }
+
   sub ok_e($) {
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl -l -P u:url '?"copy and paste the whole wiki page url to calculate page_id, make UX easier than copy-and-pasting page_id only"' \
@@ -496,19 +574,7 @@ Now, this emacs-lisp script first.
       }
 
       ok_get1page("-p", $page_id);
-      System("(echo '#+OPTIONS: toc:nil num:nil'; pandoc --wrap=none -f html -t org content.html | perl -pe 's,\\\\_,_,g') > content.org");
-      System("ew content.org");
-
-      my $emacs_script = <<~'EOF64f308bc1e9a';
-          ; {%emacs-lisp-mode%}
-          (progn
-            <<emacs-kungfu-export>>
-            (org-kungfu--export-to-html "content.org"))
-          ; {%/emacs-lisp-mode%}
-
-          EOF64f308bc1e9a
-
-      System("emacsclient", "-e", $emacs_script);
+      ok_edit_html_with_org();
       rewrite_html_for_update();
       ok_update1page("-p", $page_id);
   }
@@ -798,5 +864,3 @@ Currently, I will not download an attachment file again if it already exist. Lat
 **** 以下是草稿，测试用的文本、数据等，不要看。
 
 ***** 测试 Org-mode
-
-
