@@ -110,14 +110,15 @@ M.weixin_find_friend = function(friend_name, depth)
          end
       else
          for i = 1, 10 do
-            sleep(.5)
-            if i > 3 then
+            sleep(.2)
+            if i > 5 then
                log("still waiting for input after jump from search @%d", i)
+            end
+            if find_scene("wx-open-microphone") then
+               return
             end
             if find_scene("wx-open-keyboard") then
                click_scene("wx-open-keyboard")
-               return
-            elseif find_scene("wx-open-microphone") then
                return
             elseif wait_input_target_n_ok(1, "^com.tencent.mm/") then
                return

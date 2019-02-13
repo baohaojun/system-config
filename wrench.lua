@@ -177,20 +177,25 @@ M.emoji_rewrite = function(text, which_emojis)
    return replace
 end
 
-M.system = function (cmds)
-   if type(cmds) == 'string' then
-      return os.execute(cmds)
-   elseif type(cmds) == 'table' then
+M.cmd_and_args_join = function (cmd_and_args)
+   if type (cmd_and_args) == 'string' then
+      return cmd_and_args
+   elseif type (cmd_and_args) == 'table' then
       command_str = ''
-      for i = 1, #cmds do
+      for i = 1, #cmd_and_args do
          if i == 1 and is_windows then
-            command_str = command_str .. cmds[i] .. ' '
+            command_str = command_str .. cmd_and_args[i] .. ' '
          else
-            command_str = command_str .. shell_quote(cmds[i]) .. ' '
+            command_str = command_str .. shell_quote(cmd_and_args[i]) .. ' '
          end
       end
-      return os.execute(debug_set_x .. command_str)
+      return command_str
    end
+end
+
+M.system = function (cmds)
+   cmds = cmd_and_args_join(cmds)
+   return os.execute(cmds)
 end
 
 debugging = function(fmt, ...)
@@ -882,7 +887,7 @@ M.space_cjk_en = function(text)
 end
 
 M.qx = function(command)
-   local p = io.popen(command)
+   local p = io.popen(cmd_and_args_join(command))
    local v = p:read("*a")
    if v then
       v = v:gsub("\r", "")

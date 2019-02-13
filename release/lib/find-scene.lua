@@ -64,35 +64,27 @@ M.update_scene = function(scene)
 end
 
 M.debug_scene_actions = {
-   "XXX", "确认此现象是正常的（啥也不做）",
-   "用 failed-XXX.png 进行替换",
-   "我手动操作一下手机，然后你重新查找一遍",
+   "XXX", -- will be replaced as the prompt
+   "确认此现象是正常的（啥也不做）", -- 2
+   "用 failed-XXX.png 进行替换", -- 3
+   "我手动操作一下手机，然后你在原来的位置重新比较一遍", -- 4
+   "我手动操作一下手机，然后你忘记原来的位置，重新查找一遍", -- 5
 }
 
 M.get_debug_action = function(desc)
    M.debug_scene_actions[1] = desc
    local ans = select_args(M.debug_scene_actions)
-   if ans == M.debug_scene_actions[2] then
-      log("2: %s", M.debug_scene_actions[2])
-   elseif ans == M.debug_scene_actions[3] then
-      log("3: %s", M.debug_scene_actions[3])
-   elseif ans == M.debug_scene_actions[1] then
-      log("1: %s", ans)
-   else
-      log("!: %s", ans)
-   end
+   log("your choice: %s", ans)
    return ans
 end
 
 M.find_scene = function(scene, times)
-
    load_scene_map()
-   if not times then
-      times = 1
-   end
+   times = times or 1
    if M.g_find_scene_debug then
       system(("rm %s/failed-%s.png -f; killall display"):format(M.resDir, scene))
    end
+   saved_scene_xy = M.scenes_map[scene]
    if not M.scenes_map[scene] then
       for i = 1, times do
          sleep(1)
@@ -106,6 +98,8 @@ M.find_scene = function(scene, times)
                if action == M.debug_scene_actions[3] then
                   update_scene(scene);
                elseif action == M.debug_scene_actions[4] then
+                  return find_scene(scene)
+               elseif action == M.debug_scene_actions[5] then
                   return find_scene(scene)
                end
             end
@@ -129,6 +123,8 @@ M.find_scene = function(scene, times)
             update_scene(scene);
          elseif action == M.debug_scene_actions[4] then
             return find_scene(scene)
+         elseif action == M.debug_scene_actions[5] then
+            return find_scene(scene)
          end
       end
       return true
@@ -140,6 +136,8 @@ M.find_scene = function(scene, times)
          if action == M.debug_scene_actions[3] then
             update_scene(scene);
          elseif action == M.debug_scene_actions[4] then
+            return find_scene(scene)
+         elseif action == M.debug_scene_actions[5] then
             forget_scene(scene);
             return find_scene(scene)
          end
