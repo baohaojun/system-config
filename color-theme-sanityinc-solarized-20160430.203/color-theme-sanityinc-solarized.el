@@ -241,7 +241,7 @@ names to which it refers are bound."
       (gui-element (:background ,alt-background :foreground ,normal))
       (mode-line (:foreground nil :background ,alt-background :weight normal
                               :box (:line-width 1 :color ,normal)))
-      (mode-line-buffer-id (:foreground ,magenta :background nil))
+      (mode-line-buffer-id (:foreground ,magenta :background ,background))
       (mode-line-inactive (:inherit mode-line
                                     :foreground ,faintest
                                     :background ,alt-background :weight normal
