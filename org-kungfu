@@ -439,8 +439,47 @@ sub ok_upload1attachment(@) {
     return $response;
 }
 
-sub ok_ehwo(@) {
+sub ok_ehwo(@) { # edit html as org-mode, requires system-config
     ok_edit_html_with_org(@_);
+}
+
+sub ok_erwo(@) { # edit region (comments) with org-mode, requires system-config
+    chdir "$ENV{HOME}/tmp"
+        or die "Can't chdir to ~/tmp";
+
+    my $selected_text = qx(emacs-current-selection -b buffer-erwo-$$);
+    my @selected_lines = split("\n", $selected_text);
+    my $first_prefix;
+    for (@selected_lines) {
+        if (m/^(\s*\S+\s*)/) {
+            $first_prefix = $1;
+            last;
+        }
+    }
+
+    my $first_prefix_re = qr(\Q${first_prefix}\E);
+    $selected_text =~ s,^$first_prefix_re,,gm;
+    save_to_file("erwo-$$.org", $selected_text);
+    System("emacsclient erwo-$$.org");
+    my $edited_text = read_file("erwo-$$.org");
+    $edited_text =~ s,^,$first_prefix,gm;
+    save_to_file("erwo-$$.org", $edited_text);
+
+    my $emacs_script = <<~'EOF20924b0d836e';
+    ; {%emacs-lisp-mode%}
+    (progn
+      (switch-to-buffer buffer-erwo-<%pid%>)
+      (delete-region (point) (mark))
+      (insert-file "<%pwd%>/erwo-<%pid%>.org"))
+    ; {%/emacs-lisp-mode%}
+    EOF20924b0d836e
+
+    use Cwd;
+    my $cwd = getcwd();
+    $emacs_script =~ s,<%pid%>,$$,g;
+    $emacs_script =~ s,<%pwd%>,$cwd,g;
+
+    System("emacsclient", "-e", $emacs_script);
 }
 
 sub ok_edit_html_with_org(@) {
@@ -485,7 +524,7 @@ sub ok_edit_html_with_org(@) {
     }
 
     System("(echo '#+OPTIONS: toc:nil num:nil'; pandoc --wrap=none -f html -t org content.html | perl -pe 's,\\\\_,_,g') > content.org");
-    System("ew content.org");
+    System("emacsclient content.org");
 
     my $emacs_script = <<~'EOF64f308bc1e9a';
           ; {%emacs-lisp-mode%}
