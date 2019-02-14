@@ -444,8 +444,8 @@ Now, this emacs-lisp script first.
 
 #+name: e
 #+BEGIN_SRC perl :noweb yes
-  sub ok_ehwo(@) { # edit html as org-mode, requires system-config
-      ok_edit_html_with_org(@_);
+  sub ok_ehwo() { # edit html as org-mode, requires system-config
+      ok_edit_html_with_org("-e");
   }
 
   sub ok_erwo(@) { # edit region (comments) with org-mode, requires system-config
