@@ -120,6 +120,26 @@ if test -z "${pipe_cmd}"; then
     fi
 fi
 
-echo $echo_arg "${add_at_start[$from_mode-$to_mode$simple]}"
-cat | ${pipe_cmd}
-echo $echo_arg "${add_at_end[$from_mode-$to_mode$simple]}"
+old_text=$(
+    cat | ${pipe_cmd}
+        )
+
+if [[ $old_text =~ '<!--start html-->' ]]; then
+    simple=-simple
+    echo_arg=-n
+fi
+
+prefix="${add_at_start[$from_mode-$to_mode$simple]}"
+postfix="${add_at_end[$from_mode-$to_mode$simple]}"
+if [[ $old_text =~ '<![CDATA[' ]] && [[ $prefix =~ '<![CDATA[' ]]; then
+    true
+else
+    echo $echo_arg "$prefix"
+fi
+echo "${old_text}"
+
+if [[ $old_text =~ '<![CDATA[' ]] && [[ $prefix =~ '<![CDATA[' ]]; then
+    true
+else
+    echo $echo_arg "$postfix"
+fi

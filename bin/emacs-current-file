@@ -89,7 +89,11 @@ cat <<'EOF16e1379802c6' | . .replace-%%
       (and
        (string= "<%b0%>" "emacs-current-text")
        (with-current-buffer buf
-         (intern (buffer-substring-no-properties (point-min) (point-max)))))))
+         (intern (buffer-substring-no-properties (point-min) (point-max)))))
+      (and
+       (string= "<%b0%>" "emacs-current-selection")
+       (with-current-buffer buf
+         (intern (buffer-substring-no-properties (point) (mark)))))))
 ; {%/emacs-lisp-mode%}
 EOF16e1379802c6
 
