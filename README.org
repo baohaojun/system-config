@@ -17,9 +17,21 @@ I started out attempting to write this tool in pure Emacs Lisp, but I have faile
 
 In the end, I wrote it in Perl, Org-mode (for Literate Programming), and a little bit Emacs Lisp.
 
+* Usage
+
 Here's how to use it (see the Usage section in org-kongfu.org):
 
 =./org-kungfu -w WIKIURL -u USERNAME -p PASSWORD e -p PAGE_ID=
+
+** Required Perl packages
+
+Before you can use this script, you need make sure you have the following Perl packages installed:
+
+- Config::Simple
+- HTTP::Request::Common
+- LWP::UserAgent
+- JSON
+- Mojo::DOM
 
 * Known Bugs
 
