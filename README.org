@@ -1,0 +1,32 @@
+Org-Kungfu is for using org-mode with Confluence.
+
+Here's how does it work, it's very simple:
+
+#+BEGIN_SRC dot :file images/org-kungfu.png :exports results :cmdline -Kdot -Tpng
+  digraph {
+          OrgMode -> HTML [ label = " export  " ]
+          HTML -> Confluence [ label = " REST API  " ]
+          Confluence -> HTML [ label = " REST API  " ]
+          HTML -> OrgMode [ label = " pandoc  " ]
+  }
+#+END_SRC
+
+[[./images/org-kungfu.png]]
+
+I started out attempting to write this tool in pure Emacs Lisp, but I have failed. As the original author of [[https://github.com/ahungry/org-jira][Org-Jira]], I thought this should be easy, since both Jira and Confluence are from the same company, but it turns out I was wrong.
+
+In the end, I wrote it in Perl, Org-mode (for Literate Programming), and a little bit Emacs Lisp.
+
+Here's how to use it (see the Usage section in org-kongfu.org):
+
+=./org-kungfu -w WIKIURL -u USERNAME -p PASSWORD e -p PAGE_ID=
+
+* Known Bugs
+
+This tool is part of my [[https://github.com/baohaojun/system-config][system-config]] project, it's not stand alone, some features may require the system-config scripts installed.
+
+And, I have not tested it out of system-config😅.
+
+It's also still work in progress, some desired features have not been worked out yet, for e.g., automatically uploading images in Org-mode to Confluence.
+
+Your help is welcome!
