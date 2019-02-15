@@ -383,3 +383,4 @@
 
 (require 'fence-edit)
 (global-set-key (kbd "C-c '") 'fence-edit-code-at-point)
+(load "move-by-indentation.el")
