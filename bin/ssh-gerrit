@@ -89,7 +89,9 @@ if test "${user}"; then
 else # -z ${user}
     user=$(
         echo ${repo_push_url} | perl -ne 'print $1 if m,^ssh://(.*)\@,' | grep . ||
-            echo ${scm_gerrit_user} | grep .
+            echo ${scm_gerrit_user} | grep . ||
+            git config --global user.email | perl -pe 's,\@.*,,' | grep . ||
+            echo $USER
         )@
 fi
 
