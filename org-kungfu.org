@@ -845,12 +845,27 @@ This is simple using Perl's “reflection”.
 In this part, I will use GTD method to get things done.
 
 ** TODO [#C] when downloading an attachment, should pay respect to the modificationDate.
+   :PROPERTIES:
+   :ID:       c8d58d67-b9bf-4aae-b064-675c155bf2c4
+   :END:
 Currently, I will not download an attachment file again if it already exist. Later, we should re-download it if it has been updated on the server side.
 
-** TODO [#A] When updating a page, I should also upload all images as attachments
-** TODO [#A] When updating a page, I should be able to upload the emojis, and make emojis look the same size with the text
-** TODO [#A] It should be easy to copy a page to another place.
-** TODO [#A] It should be easy to create a page.
+** TODO [#B] When updating a page, I should also upload all images as attachments
+   :PROPERTIES:
+   :ID:       55470d14-4c42-436f-b77f-2bf3c3902277
+   :END:
+** TODO [#B] When updating a page, I should be able to upload the emojis, and make emojis look the same size with the text
+   :PROPERTIES:
+   :ID:       73dc3d06-2f21-41a7-926c-5fc84100f750
+   :END:
+** TODO [#B] It should be easy to copy a page to another place.
+   :PROPERTIES:
+   :ID:       86e67d79-654f-4d79-9e6e-7d5e82176b8c
+   :END:
+** TODO [#B] It should be easy to create a page.
+   :PROPERTIES:
+   :ID:       1816ca54-3f7e-42a3-a7de-5c947354c1e2
+   :END:
 
 ** Chinese GTD
 
