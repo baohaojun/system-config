@@ -4,7 +4,8 @@ import sys
 import os
 import re
 
-markdown_css = open(os.path.expanduser("~/src/github/baohaojun.github.com/css/adwaita.css")).read()
+markdown_css = open(os.path.expanduser("~/system-config/etc/markdown-here.css")).read() + \
+    open(os.path.expanduser("~/src/github/baohaojun.github.com/css/adwaita.css")).read()
 str = open(sys.argv[1]).read()
 
 if str.find(".footpara:nth-child(2) { display: inline; }") >= 0:
