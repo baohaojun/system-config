@@ -37,7 +37,8 @@ if (
                   ); do
             offlineimap -a $x || true
         done
-        tsocks offlineimap -a Gmail || true
+        offlineimap -a Gmail ||
+            tsocks offlineimap -a Gmail || true
         touch ~/.cache/system-config/logs/get-mails.done
     ) 2>&1 | tee ~/.cache/system-config/logs/$b0.log
 ); then

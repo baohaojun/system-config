@@ -73,7 +73,8 @@ else
         touch "$lock"
     else
         locked_time=$(lock=$lock perl -e 'print int(-M("$ENV{lock}") * (3600 * 24))')
-        echo "Can't lock $lock, it's been $locked_time seconds" 1>&2
+        echo "Can't lock $lock, it's been $locked_time seconds by $(echo; fuser $lock | xargs ps | indent-stdin)" 1>&2
+
         if test "${locked_time}" -gt $lock_time; then
             exit 1
         else
