@@ -45,7 +45,8 @@ flock -n 9 || exit
 (
     exec 9> /dev/null
     oplay -a xbs onmyoji simple-play
-    oplay -a kitty onmyoji simple-play
+    . ~/src/github/private-config/knuth-mode/onmyoji-scripts/leader
+    oplay -a ${THE_OTHER_LEADER} onmyoji simple-play
 )
 
 screen-lock-on&
