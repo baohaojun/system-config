@@ -95,6 +95,8 @@ map['com.cebbank.mobile.cemb/com.cebbank.mobile.cemb.ui.activity.account.Registe
 map['com.cebbank.mobile.cemb/com.cebbank.mobile.cemb.ui.activity.account.RegisterConfirmActivity'] = 'manual-post'
 map['com.cebbank.mobile.cemb/com.cebbank.mobile.cemb.ui.activity.account.SetReservedActivity'] = 'manual-post'
 map['com.cebbank.mobile.cemb/.ui.activity.account.RegisterActivity'] = 'manual-post'
+map['com.chehejia.oc.m01/com.chehejia.oc.m01.view.gui.user.login.inputphone.InputPhoneActivity'] = 'manual-post'
+map['com.chehejia.oc.m01/com.chehejia.oc.m01.view.gui.user.login.securitycode.shortmsg.ShortMsgCodeActivity'] = 'manual-post'
 map['com.cisco.anyconnect.vpn.android.avf/com.cisco.anyconnect.vpn.android.ui.ConnectionEditorActivity'] = 'manual-post'
 map['com.cisco.anyconnect.vpn.android.avf/com.cisco.anyconnect.vpn.android.ui.CredentialActivity'] = 'manual-post'
 map['com.demon.weism/com.demon.weism.activity.InfoBoxesActivity'] = 'weixin-chat'
