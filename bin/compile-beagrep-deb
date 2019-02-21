@@ -2,8 +2,55 @@
 
 set -e
 
-cd ~/system-config/gcode
-version=$(cat beagrep/debian/changelog|head -n 1|perl -npe 's!beagrep \(([\d.]*)-.*!$1!')
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt i:install-first
+## end code-generator
+## start generated code
+TEMP=$( getopt -o i:h \
+               --long install-first:,help \
+               -n $(basename -- $0) -- "$@")
+declare install_first=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--install-first)
+            install_first=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--install-first=INSTALL_FIRST'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+cd ~/src/github/beagrep
+
+if test "${install_first}" = true; then
+    apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+fi
+
+version=$(cat debian/changelog|head -n 1|perl -npe 's!beagrep \(([\d.]*)-.*!$1!')
 tar czfv ~/tmp/beagrep_${version}.orig.tar.gz beagrep --exclude-vcs
 cd ~/tmp
 rm beagrep -rf
