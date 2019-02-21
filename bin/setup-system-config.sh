@@ -1,1 +1,1 @@
-../../src/github/smartcm/setup-system-config.sh
+../../src/github/smartcm/bin/setup-system-config.sh

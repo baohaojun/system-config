@@ -1,1 +1,1 @@
-../../src/github/smartcm/qcom-copy-manifest.sh
+../../src/github/smartcm/bin/qcom-copy-manifest.sh
