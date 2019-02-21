@@ -217,11 +217,14 @@ sub ok_get1page(@) {
     chdir($path)
         or die "Can't chdir $path";
 
+    system("git add .; git commit -m 'save to git before download from confluence'");
+
     save_to_file("content.html", $page_object->{body}{editor}{value});
     save_to_file("version.txt", $page_object->{version}{number});
     save_to_file("page-id.txt", $page_id);
     download_all_attachments($page_id);
     rewrite_html_after_download();
+    system("git add .; git commit -m 'save to git after rewrite'");
 }
 
 sub download_1_file($) {
@@ -373,6 +376,7 @@ sub ok_update1page(@) {
     my $response = $ua->request($request);
     say "PUT response code:" . $response->code;
     System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
+    system("git add .; git commit -m 'save to git after upload to confluence'");
 }
 sub ok_upload1attachment(@) {
     ## start code-generator "^\\s *#\\s *"

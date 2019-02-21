@@ -168,11 +168,14 @@ And this is the real get1page subroutine.
       chdir($path)
           or die "Can't chdir $path";
 
+      system("git add .; git commit -m 'save to git before download from confluence'");
+
       save_to_file("content.html", $page_object->{body}{editor}{value});
       save_to_file("version.txt", $page_object->{version}{number});
       save_to_file("page-id.txt", $page_id);
       download_all_attachments($page_id);
       rewrite_html_after_download();
+      system("git add .; git commit -m 'save to git after rewrite'");
   }
 
   sub download_1_file($) {
@@ -324,6 +327,7 @@ And this is the real get1page subroutine.
       my $response = $ua->request($request);
       say "PUT response code:" . $response->code;
       System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
+      system("git add .; git commit -m 'save to git after upload to confluence'");
   }
 #+END_SRC
 
@@ -871,13 +875,13 @@ Currently, I will not download an attachment file again if it already exist. Lat
 
 The following are GTD that I wrote earler in Chinese, they help me to think more clear, but you, please don't read it.
 
-*** DONE [#A] 解决通过 org-mode 写 wiki 的问题
-    CLOSED: [2019-02-12 火 17:31]
+*** DONE [#A] 解决通过 org-mode 写 wiki 的问题
+    CLOSED: [2019-02-12 火 17:31]
   :PROPERTIES:
   :ID:       55e0a834-d680-49af-9e5b-fd77065ab6f8
   :END:
   :LOGBOOK:
-  - State "DONE"       from "TODO"       [2019-02-12 火 17:31]
+  - State "DONE"       from "TODO"       [2019-02-12 火 17:31]
   :END:
 
 注意：这里说的 wiki，都是指 confluence。
