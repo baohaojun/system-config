@@ -35,9 +35,15 @@ fi
 sleep 3
 export MYSCR_SOCKET=onmyoji${DISPLAY##*:}
 export MYSCR_SESSION=onmyoji${DISPLAY##*:}
+export MYSCR_SKIP_SSH_AGENT=true
 xterm -e myscr&
 
 sleep 3
+
+if test "${DISPLAY##*:}" != 1; then
+    exit 0
+fi
+
 xterm -e myscr bash -c '
 # {%sh-mode%}
 exec 9< ~/system-config/etc/subdir-symlinks/.vnc/xstartup
