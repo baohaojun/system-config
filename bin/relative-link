@@ -153,7 +153,8 @@ if [[ "$target_dir" =~ /$ ]] && test ! -d "$target_dir"; then
 fi
 
 if test $# = 2; then
-    if test -L "$target_dir" -a -d "$target_dir" && yes-or-no-p -y "should rm dir-symlink $target_dir first?"; then
+    if test -L "$target_dir" -a -d "$target_dir" &&
+            yes-or-no-p -y "Should rm dir-symlink $target_dir first (to replace the symlink, instead of creating in it)?"; then
         rm "$target_dir"
     fi
 
