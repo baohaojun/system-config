@@ -576,7 +576,7 @@
                 (Gimp-2.8 . ("C-M-s"))
                 (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))))
-
+(setenv "SC_FIREFOX_57" "true")
 (if (string= (getenv "SC_FIREFOX_57") "true")
     (progn
       (setq super-key-window-remap
