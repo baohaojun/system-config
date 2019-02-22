@@ -10,6 +10,8 @@ My script will make it easy for using org-mode to edit confluence pages.
 
 This script is work in progress, I will be constantly updating it. Patches are welcome!
 
+Henceforth, the word wiki will be used as a synonym of confluence pages.
+
 * Usage
 
 The most useful (currently also the only useful) way of using org-kungfu is:
@@ -870,6 +872,106 @@ Currently, I will not download an attachment file again if it already exist. Lat
    :PROPERTIES:
    :ID:       1816ca54-3f7e-42a3-a7de-5c947354c1e2
    :END:
+
+When I want to create a page, I would like to create it at the following locations:
+
+- As a sibling of a recent page that I contributed
+- As the child of a recent page that I contributed
+
+When I want to create a page, I will be asked the title of the page.
+
+It should be easy for me to find that Recently contributed Page, using query, or allow me to just input a wiki page's Url.
+
+*** TODO Should be easy to query the pages that I contributed recently.
+
+1. Use cql to query the pages
+2. Check if query allows sorting (by date, so that most recently contributed got to the first)
+
+Here, I should be learning a little bit of cql, than, I should find out how to write cql as Shell argument (quoting ' ' as %20, stuff like that)? No, that is unnecessary, because I won't be using too much Curl + Shell, I'm using Perl.
+
+Still, it will be great if I can test using Curl, and it would be great if I can write pure cql and don't need to worry about Shell Quoting.
+
+Here's how to use the following tool: =./cql 'title ~ "集成" and type = page'=.
+
+Please note the double quotes around ~集成~, they are required, there will be an error if the string =集成= is unquoted.
+
+#+name: cql
+#+BEGIN_SRC sh :tangle ./cql :comments link :shebang "#!/bin/bash" :noweb yes
+  set -e
+  get-config() {
+      git config -f ~/.config/org-kungfu/config.ini "$@"
+  }
+
+  user=$(get-config ok.username)
+  pass=$(get-config ok.password)
+  wikiurl=$(get-config ok.wikiurl)
+
+  cql_str=$(
+      urlify "$@"
+         )
+
+  curl -u "${user}:${pass}" "${wikiurl}/rest/api/search?cql=$cql_str"
+#+END_SRC
+
+
+*** TODO How to ask for input
+
+When I want to create a page, I need to ask the user, where do you want to create the page? With the following 3 questions:
+
+1. Use cql to find a page
+2. Input the page url (maybe with a copy&paste from the browser)
+
+#+name: create1page
+#+BEGIN_SRC perl
+  sub create1page(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l p:page-id t:title
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("default");
+
+      local @ARGV = @_;
+
+      my $page_id = "";
+      my $title = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--page-id=PAGE-ID';
+          if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '-t, ';
+          printf "%-24s", '--title=TITLE';
+          if (length('--title=TITLE') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'page-id|p=s' => \$page_id,
+          'title|t=s' => \$title,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
+
+  }
+#+END_SRC
 
 ** Chinese GTD
 
