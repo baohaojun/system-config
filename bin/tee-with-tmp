@@ -1,4 +1,13 @@
 #!/bin/bash
+set -e
+
 tee /tmp/tee-with-tmp.$$
-cat /tmp/tee-with-tmp.$$ | tee "$@"
-rm /tmp/tee-with-tmp.$$ -f
+if test $# = 1; then
+    if test -L "$1"; then
+        mv /tmp/tee-with-tmp.$$ "$(readlink -f "$1")"
+    else
+        mv /tmp/tee-with-tmp.$$ "$1"
+    fi
+else
+    die "Can't tee with more than 1 file"
+fi
