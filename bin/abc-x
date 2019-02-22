@@ -113,7 +113,7 @@ croot() {
 }
 
 abc-base-build() {
-    . ~/src/github/smartcm/smartcm-setup.sh
+    . ~/src/github/smartcm/bin/smartcm-setup.sh
     my_base=$(
         if test "$base_build"; then
             echo $base_build
