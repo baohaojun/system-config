@@ -6,7 +6,7 @@ fi
 
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt u:user='$(get-about-me ldap-user)' \
-        # p:pass='$(get-authinfo -p "请输入 ldap 管理员账号密码" -h 127.0.0.1 -u $(get-about-me ldap-user))' \
+        # p:pass='$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))' \
         # ddecode g:glob='"*"'
 ## end code-generator
 ## start generated code
@@ -15,7 +15,7 @@ TEMP=$( getopt -o dg:p:u:h \
                -n $(basename -- $0) -- "$@")
 declare decode=false
 declare glob="*"
-declare pass=$(get-authinfo -p "请输入 ldap 管理员账号密码" -h 127.0.0.1 -u $(get-about-me ldap-user))
+declare pass=$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))
 declare user=$(get-about-me ldap-user)
 eval set -- "$TEMP"
 while true; do

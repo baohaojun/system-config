@@ -6,44 +6,29 @@ sub debug(@) {
   }
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl h:host \
-# p:port \
+# generate-getopt -s perl @:host \
+# @:port \
 # u:user \
 # o:output='password' \
-# P:Prompt="Password: "
+# p:prompt="Password: "
 ## end code-generator
 ## start generated code
 use Getopt::Long;
 
-my $Prompt = "Password: ";
+Getopt::Long::Configure("default");
+
+
+
 my $host = "";
 my $output = "password";
 my $port = "";
+my $prompt = "Password: ";
 my $user = "";
 
-GetOptions (
-            'Prompt|P=s' => \$Prompt,
-            'host|h=s' => \$host,
-            'output|o=s' => \$output,
-            'port|p=s' => \$port,
-            'user|u=s' => \$user,
-            'help|h!' => \&handler_help,
-           );
-
-
-
-sub handler_help {
+my $handler_help = sub {
   print ;
   print "\n\n选项和参数：\n";
-  printf "%6s", '-P, ';
-  printf "%-24s", '--Prompt=PROMPT';
-  if (length('--Prompt=PROMPT') > 24 and length() > 0) {
-    print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '-h, ';
+  printf "%6s", '';
   printf "%-24s", '--host=HOST';
   if (length('--host=HOST') > 24 and length() > 0) {
     print "\n";
@@ -59,9 +44,17 @@ sub handler_help {
   }
   printf "%s", ;
   print "\n";
-  printf "%6s", '-p, ';
+  printf "%6s", '';
   printf "%-24s", '--port=PORT';
   if (length('--port=PORT') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-p, ';
+  printf "%-24s", '--prompt=PROMPT';
+  if (length('--prompt=PROMPT') > 24 and length() > 0) {
     print "\n";
     printf "%30s", "";
   }
@@ -77,7 +70,17 @@ sub handler_help {
   print "\n";
 
   exit(0);
-}
+};
+
+GetOptions (
+            'host=s' => \$host,
+            'output|o=s' => \$output,
+            'port=s' => \$port,
+            'prompt|p=s' => \$prompt,
+            'user|u=s' => \$user,
+            'help|h!' => \&$handler_help,
+           );
+
 
 ## end generated code
 
@@ -114,6 +117,6 @@ while (<$auth>) {
 
 if (not $got_pass and $user ne '?') {
     use String::ShellQuote;
-    $Prompt = shell_quote($Prompt);
-  system("ask-for-input -s -p $Prompt");
+    $prompt = shell_quote($prompt);
+  system("ask-for-input -s -p $prompt");
 }

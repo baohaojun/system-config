@@ -82,10 +82,16 @@ else
     case=lc
 fi
 
-rm-last-nl | perl -npe "$(
+if test $# -gt 0; then
+    echo "$@"
+else
+    cat
+fi |
+    rm-last-nl | perl -npe "$(
 cat <<'EOFac2c09ecde21' | . .replace-%% --
 # {%perl-mode%}
 s#([^-/=_0-9a-zA-Z. ]|[<%extra-chars%>])#<%case%> sprintf("%%%02x", ord($1))#seg;
+s/ /+/g;
 # {%/perl-mode%}
 EOFac2c09ecde21
 )"
