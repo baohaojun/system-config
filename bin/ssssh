@@ -1,4 +1,50 @@
 #!/bin/bash
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt ddebug
+## end code-generator
+## start generated code
+TEMP=$( getopt -o dh \
+               --long debug,help,no-debug \
+               -n $(basename -- $0) -- "$@")
+declare debug=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]debug'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 host=$1
 
 if test -z "$host"; then
@@ -95,11 +141,16 @@ fi
 echo "$current_window_text" > ~/tmp/1.txt
 bhj-notify "hello" "$search not found"
 
+myscr=myscr
+if test "$debug" = true; then
+    myscr=
+fi
+
 export SCREEN_TITLE=$name
 if test "$command"; then
-    myscr $command
+    $myscr $command
 elif test "$host" = localhost; then
-    myscr bash
+    $myscr bash
 else
     if test ! -e ~/.config/system-config/is-realhome && ! [[ $host =~ js ]]; then
         if test "$host" = Smartisan; then
@@ -116,7 +167,7 @@ else
         if test -z "${ssss_exec}"; then
             ssss_exec="exec bash"
         fi
-        myscr en_US ssh -X -o RequestTTY=true $host $port_arg "REMOTEUSER=$USER LOCALIP=${host#*@} $extra_env REMOTEPROTOCOL=ssh $ssss_exec"
+        $myscr en_US ssh -X -o RequestTTY=true $host $port_arg "REMOTEUSER=$USER LOCALIP=${host#*@} $extra_env REMOTEPROTOCOL=ssh $ssss_exec"
     else
         # 默认的机器都是运行这个路径
         myscr ssh-work $host $ssss_exec
