@@ -466,7 +466,8 @@ M.save_history = function()
          history_file:write(("\nmap[ %s ] = {\n"):format(M.quote_string(k)))
          local saved_vals = {}
          local length = 0
-         for _, val in pairs(v) do
+         for s_i = #v, 1, -1 do
+            val = v[s_i]
             if not saved_vals[val] and length < 100 then
                saved_vals[val] = 1
                history_file:write(("    %s,\n"):format(M.quote_string(val)))
@@ -505,7 +506,7 @@ M.select_args_with_history = function(history_name, prompt, init_args, ...)
       M.history_map[history_name] = {}
    end
 
-   for i = 1, #M.history_map[history_name] do
+   for i = #M.history_map[history_name], 1, -1 do
       if not M.member(M.history_map[history_name][i], args) then
          args[#args + 1] = M.history_map[history_name][i]
       end
