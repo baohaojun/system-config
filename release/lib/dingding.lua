@@ -31,6 +31,9 @@ M.wrench_find_dingding_contact = function(friend_name)
    open_dd()
    jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
    adb_event"key scroll_lock key enter sleep .8"
+   if yes_or_no_p("第一个人就是你要找的人吗？") then
+      click_scene("dd-NiKeNengXiangZhao", {y = 200, x = 100})
+   end
 end
 
 M.dingding_open_homepage = function()

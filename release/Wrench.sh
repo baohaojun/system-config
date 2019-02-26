@@ -11,7 +11,7 @@ ulimit -v $((memory / 2))
 # generate-getopt ttest \
     # kkill '?"干掉当前 adb device 对应的 Wrench 进程"' \
     # 1one-phone '?"此参数仅供内部使用"' \
-    # ddo-debug '?"调试选项"' \
+    # ddo-debug='${do_debug:-false}' '?"调试选项"' \
     # xexclusive '?"只给当前这一个 adb device 用，不要连接其他 adb device"' \
     # ssystem '?"设置 Sawfish 桌面系统和 Emacs 的 PATH 环境变量，全局使用这个 Wrench"' \
     # @silent '?"静默模式，不要显示窗口"'
@@ -20,7 +20,7 @@ ulimit -v $((memory / 2))
 TEMP=$( getopt -o dxk1sth \
                --long do-debug,exclusive,kill,one-phone,silent,system,test,help,no-do-debug,no-exclusive,no-kill,no-one-phone,no-silent,no-system,no-test \
                -n $(basename -- $0) -- "$@")
-declare do_debug=false
+declare do_debug=${do_debug:-false}
 declare exclusive=false
 declare kill=false
 declare one_phone=false
@@ -136,6 +136,8 @@ done
 
 ## end generated code
 
+export do_debug
+
 if test "${silent}" = true; then
     set -- 'adb_quick_input{"input keyevent UNKNOWN"}'
 fi
@@ -165,7 +167,12 @@ $(
 EOF
         mv ~/.config/system-config/Wrench-adb.map.$$ ~/.config/system-config/Wrench-adb.map
     fi
-    rsync ~/tmp/build-wrench/ ~/tmp/build-wrench.$postfix -a --chmod=D0755
+
+    wrench_dir=~/tmp/build-wrench/
+    if test "${do_debug}" = true; then
+        wrench_dir=~/tmp/build-wrench-debug/
+    fi
+    rsync ${wrench_dir} ~/tmp/build-wrench.$postfix -a --chmod=D0755
     path_args=(
         PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$postfix:"$PATH"
     )
@@ -220,7 +227,8 @@ fi
 
 if test "$do_debug" = true; then
     cd ~/
-    exec gdb --args Wrench
+    myscr gdb -ex "handle SIGPIPE nostop noprint pass" -ex run --args $(which Wrench.sh|perl -pe 's,\.sh,,')
+    exit 0
 fi
 
 # adb forward --remove tcp:28888
