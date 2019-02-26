@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P f:io-file
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:h \
+                      --long io-file:,help \
+                      -n $(basename -- $0) -- "$@")
+declare io_file=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--io-file)
+            io_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--io-file=IO_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test ! -r "${io_file}"; then
+    die "Can't read from ${io_file}"
+fi
+
+if test ! -w "${io_file}"; then
+    die "Can't write to ${io_file}"
+fi
+
+"$@" < "${io_file}" | tee-with-tmp "${io_file}"

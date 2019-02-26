@@ -1,18 +1,12 @@
 #!/bin/bash
 set -e
 
-if test "$JENKINS_SERVER_COOKIE" -o "$HUDSON_COOKIE"; then
+if is-jenkins; then
     set -x
 fi
 
 repo_dir=$(lookup-file -e .repo)
 cd $(dirname $repo_dir)
-if test "$#" = 0 && yes-or-no-p -y "先更新 .repo/manifests ？"; then
-    (
-        cd .repo/manifests
-        git pull
-    )
-fi
 
 function repo_init_extra_info() {
     (
@@ -28,80 +22,102 @@ function repo_init_extra_info() {
     )
 }
 
-repo_init_url=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git-remote-url)
-repo_init_branch=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge)
-repo_init_manifest=
-repo_url=
-repo_reference=
 
-TEMP=$(getopt -o esu:b:m:r:ipc --long reference:,repo-url: -n $(basename $0) -- "$@")
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -p repo_init u:url='$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git-remote-url)' \
+    # b:branch='$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge)' \
+    # m:manifest \
+    # @:repo-url \
+    # @:reference \
+    # pprint-info \
+    # eedit-xml
+## end code-generator
+## start generated code
+TEMP=$( getopt -o b:em:pu:h \
+               --long branch:,edit-xml,manifest:,print-info,reference:,repo-url:,url:,help,no-edit-xml,no-print-info \
+               -n $(basename -- $0) -- "$@")
+declare repo_init_branch=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge)
+declare repo_init_edit_xml=false
+declare repo_init_manifest=
+declare repo_init_print_info=false
+declare repo_init_reference=
+declare repo_init_repo_url=
+declare repo_init_url=$(cd "$repo_dir"/manifests >/dev/null 2>&1 && git-remote-url)
 eval set -- "$TEMP"
-interactive=0
-config_name=
 while true; do
     case "$1" in
-        -u)
-            repo_init_url=$2
-            echo "$2" > ~/.repoconfig/.repo_manifest_url
-            shift 2
-            ;;
-        -b)
+
+        -b|--branch)
             repo_init_branch=$2
-            echo "$2" > ~/.repoconfig/.repo_branch
             shift 2
+
             ;;
-        -m)
+        -e|--edit-xml|--no-edit-xml)
+            if test "$1" = --no-edit-xml; then
+                repo_init_edit_xml=false
+            else
+                repo_init_edit_xml=true
+            fi
+            shift
+
+            ;;
+        -m|--manifest)
             repo_init_manifest=$2
             shift 2
+
+            ;;
+        -p|--print-info|--no-print-info)
+            if test "$1" = --no-print-info; then
+                repo_init_print_info=false
+            else
+                repo_init_print_info=true
+            fi
+            shift
+
             ;;
         --reference)
-            repo_reference="--reference $2"
+            repo_init_reference=$2
             shift 2
+
             ;;
-        -r|--repo-url)
-            repo_url=$2
+        --repo-url)
+            repo_init_repo_url=$2
             shift 2
+
             ;;
-        -i)
-            interactive=1
+        -u|--url)
+            repo_init_url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--branch=BRANCH...'
+            echo
+            printf %06s '-e, '
+            printf %-24s '--[no-]edit-xml'
+            echo
+            printf %06s '-m, '
+            printf %-24s '--manifest=MANIFEST'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--[no-]print-info'
+            echo
+            printf "%06s" " "
+            printf %-24s '--reference=REFERENCE'
+            echo
+            printf "%06s" " "
+            printf %-24s '--repo-url=REPO_URL'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--url=URL...'
+            echo
+            exit
             shift
-            ;;
-        -p)
-            print=$(
-                echo repo init $(repo_init_extra_info) -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
-                     -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url) $(
-                    ref=$(cd .repo/manifests.git; git config repo.reference || true)
-                    if test "$ref"; then
-                        if test "$(readlink -f ~/src/android-mirror)" = "$(readlink -f "$ref")"; then
-                            ref=~/src/android-mirror
-                        fi
-                        echo --reference $(up $ref)
-                    fi
-                     ) | perl -npe 's,ssh://172.16.0.9:29418/|scode:,smartisan:,g; s,smartisan:/,smartisan:,g; s,-b refs/heads/,-b ,'
-                 )
-            echo "$print"
-            if is-tty-io </dev/stdout && ! is-jenkins; then
-                echo "$print" | putclip >/dev/null 2>&1 || true
-            fi
-            exit 0
-            ;;
-        -e)
-            edit .repo/manifest.xml
-            exit 0
-            ;;
-        -c)
-            config_name=--config-name
-            shift
-            ;;
-        -s)
-            output="$(select-output-line -- bash -c 'for x in .repo/repo-switch*; do
-                                                      cat $x 2>/dev/null
-                                                      echo
-                                                  done|uniq-even-non-ajacent')"
-            if test "$output"; then
-                echo "$output" > .repo/repo-switch
-            fi
-            exit 0
             ;;
         --)
             shift
@@ -113,11 +129,38 @@ while true; do
     esac
 done
 
+
+## end generated code
+
+
+if test "${repo_init_print_info}" = true; then
+    print=$(
+        echo repo init $(repo_init_extra_info) -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
+             -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url) $(
+            ref=$(cd .repo/manifests.git; git config repo.reference || true)
+            if test "$ref"; then
+                if test "$(readlink -f ~/src/android-mirror)" = "$(readlink -f "$ref")"; then
+                    ref=~/src/android-mirror
+                fi
+                echo --reference $(up $ref)
+            fi
+             ) | perl -npe 's,ssh://172.16.0.9:29418/|scode:,smartisan:,g; s,smartisan:/,smartisan:,g; s,-b refs/heads/,-b ,'
+         )
+    echo "$print"
+    if is-tty-io </dev/stdout && ! is-jenkins; then
+        echo "$print" | putclip >/dev/null 2>&1 || true
+    fi
+    exit 0
+fi
+
+if test "${repo_init_edit_xml}" = true; then
+    e .repo/manifest.xml
+    exit 0
+fi
+
 if test $# != 0; then
     die "extra args not recognized: $@"
 fi
-
-repodir=$(lookup-file -e .repo)
 
 if test "$repo_init_branch" = :; then
     (
@@ -127,14 +170,14 @@ if test "$repo_init_branch" = :; then
     repo_init_branch=$(cd .repo/manifests; select-output-line "git branch -a |perl -npe  'print if s,^\s*remotes/origin/,,'")
 fi
 
-if test -z "$repo_reference"; then
-    repo_reference=$(
+if test -z "$repo_init_repo_reference"; then
+    repo_init_repo_reference=$(
         if test -d .repo/manifests.git; then
             cd .repo/manifests.git && git config repo.reference || true
         fi
                   )
-    if test "$repo_reference"; then
-        repo_reference="--reference $repo_reference"
+    if test "$repo_init_repo_reference"; then
+        repo_init_repo_reference="--reference $repo_init_repo_reference"
     fi
 fi
 
@@ -149,7 +192,7 @@ if test -e "$repodir"/repo-switch && grep '^export' -q "$repodir"/repo-switch; t
     old_repo_init_url=$(cd "$repodir"/manifests; git-remote-url)
     old_repo_init_branch=
     old_repo_init_manifest=
-    old_repo_url=
+    old_repo_init_repo_url=
 
     TEMP=$(getopt -o u:b:m:r: -n $(basename $0) -- "${repo_init_args[@]}")
     eval set -- "$TEMP"
@@ -168,9 +211,9 @@ if test -e "$repodir"/repo-switch && grep '^export' -q "$repodir"/repo-switch; t
                 shift 2
                 ;;
             -r)
-                old_repo_url=$2
-                if test "$old_repo_url" = --; then
-                    old_repo_url=
+                old_repo_init_repo_url=$2
+                if test "$old_repo_init_repo_url" = --; then
+                    old_repo_init_repo_url=
                 fi
                 shift 2
                 ;;
@@ -225,12 +268,12 @@ if test -z "$repo_init_manifest" || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; the
     fi
 fi
 
-if test -z "$repo_url"; then
+if test -z "$repo_init_repo_url"; then
     if test $interactive = 1; then
         echo The repo url to use:
-        repo_url=$(select-output-line -- bash -c "(echo $old_repo_url; cat ~/.repo_urls 2>/dev/null)|uniq-even-non-ajacent")
+        repo_init_repo_url=$(select-output-line -- bash -c "(echo $old_repo_init_repo_url; cat ~/.repo_init_repo_urls 2>/dev/null)|uniq-even-non-ajacent")
     else
-        repo_url=${old_repo_url}
+        repo_init_repo_url=${old_repo_init_repo_url}
     fi
 fi
 
@@ -239,10 +282,10 @@ mv ~/.repoconfig/repo_init_urls.bak ~/.repoconfig/repo_init_urls
 
 
 (
-    echo $repo_url;
-    cat ~/.repo_urls 2>/dev/null
-) |uniq-even-non-ajacent > ~/.repo_urls.$$
-mv ~/.repo_urls.$$ ~/.repo_urls
+    echo $repo_init_repo_url;
+    cat ~/.repo_init_repo_urls 2>/dev/null
+) |uniq-even-non-ajacent > ~/.repo_init_repo_urls.$$
+mv ~/.repo_init_repo_urls.$$ ~/.repo_init_repo_urls
 
 cd "$repodir"
 test -d manifests
@@ -269,12 +312,12 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
     set -x;
     (
         cd $(lookup-file .repo/repo)
-        git config remote.origin.url $repo_url
+        git config remote.origin.url $repo_init_repo_url
     )
     (
         cd $(lookup-file -e .repo/..)
-        repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@" $config_name \
-             $(if test "$repo_reference"; then echo "$repo_reference"; fi) $(repo_init_extra_info)
+        repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_init_repo_url -p auto "$@" $config_name \
+             $(if test "$repo_init_repo_reference"; then echo "$repo_init_repo_reference"; fi) $(repo_init_extra_info)
     )
 
     (
@@ -295,7 +338,7 @@ fi
 
 (
     printf 'export repo_init_args=('
-    for x in -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest -r $repo_url -- "$@"; do
+    for x in -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest -r $repo_init_repo_url -- "$@"; do
         printf ' %q' "$x";
     done
     printf ')'
@@ -310,30 +353,3 @@ fi
     fi
     echo repo-switch
 )
-
-if ! diff -q manifest.xml manifest.xml.old; then
-    touch .need_rebuild
-fi
-
-cd $(lookup-file .repo/repo)
-(
-
-    if grep -P -e '\Qnodes.append(self._ParseManifestXml(local_file, self.repodir))\E' manifest_xml.py; then
-    patch -p1 <<EOF
-diff --git a/manifest_xml.py b/manifest_xml.py
-index 0664eff..46c91f4 100644
---- a/manifest_xml.py
-+++ b/manifest_xml.py
-@@ -346,7 +346,7 @@ class XmlManifest(object):
-         for local_file in sorted(os.listdir(local_dir)):
-           if local_file.endswith('.xml'):
-             try:
--              nodes.append(self._ParseManifestXml(local_file, self.repodir))
-+              nodes.append(self._ParseManifestXml(os.path.join(self.repodir, LOCAL_MANIFESTS_DIR_NAME, local_file), self.repodir))
-             except ManifestParseError as e:
-               print('%s' % str(e), file=sys.stderr)
-       except OSError:
-EOF
-fi
-) || true
-echo ok.
