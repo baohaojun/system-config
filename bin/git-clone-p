@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "git clone $(git-remote-url) -b $(git-tracking-branch) --single-branch --depth=1"|putclip -p

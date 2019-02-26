@@ -1,0 +1,11 @@
+#!/bin/bash
+mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-project).git
+
+command=(
+    git --git-dir "$mirror_dir" --work-tree "$PWD" "$@"
+)
+
+log running: "${command[@]}"
+
+"${command[@]}"
+
