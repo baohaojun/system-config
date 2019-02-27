@@ -1,12 +1,13 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts h:host='${GERRIT_HOST}' p:port u:user
+# generate-getopts h:host='${GERRIT_HOST}' p:port u:user @admin
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h:p:u:h \
-                      --long host:,port:,user:,help \
+                      --long admin,host:,port:,user:,help,no-admin \
                       -n $(basename -- $0) -- "$@")
+declare admin=false
 declare host=${GERRIT_HOST}
 declare port=
 declare user=
@@ -14,6 +15,15 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --admin|--no-admin)
+            if test "$1" = --no-admin; then
+                admin=false
+            else
+                admin=true
+            fi
+            shift
+
+            ;;
         -h|--host)
             host=$2
             shift 2
@@ -34,6 +44,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]admin'
+            echo
             printf %06s '-h, '
             printf %-24s '--host=HOST'
             echo
@@ -86,6 +99,8 @@ fi
 
 if test "${user}"; then
     user=${user}@
+elif test "${admin}" = true; then
+    user=${scm_gerrit_admin_user}@
 else # -z ${user}
     user=$(
         echo ${repo_push_url} | perl -ne 'print $1 if m,^ssh://(.*)\@,' | grep . ||
