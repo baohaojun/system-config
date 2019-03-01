@@ -1,3 +1,9 @@
 #!/bin/bash
 
-echo "git clone $(git-remote-url) -b $(git-tracking-branch) --single-branch --depth=1"|putclip -p
+echo "git clone $(git-remote-url) -b $(git-tracking-branch) --single-branch --depth=1" |
+    if test -e ~/.local-config/bin/git-url-rewrite; then
+        git-url-rewrite
+    else
+        cat
+    fi |
+    putclip -p

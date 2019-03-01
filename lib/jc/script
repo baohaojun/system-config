@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if test $# = 0 || ! [[ $1 =~ script$ ]]; then
+    set -- script "$@"
+fi
+
+script_url=$1
+shift
+if test $# != 0; then
+    script="$*"
+else
+    script=$(cat)
+fi
+
+jc post "$script_url" -d "script=$(urlify "${script}")" |
+    perl -mMojo::DOM -e "$(
+cat <<'EOF4a30a91950ad'
+# {%perl-mode%}
+$html = join "", <>;
+$dom = Mojo::DOM->new->parse($html);
+$pres = $dom->find("pre");
+print $pres->[$pres->size - 1]->text;
+# {%/perl-mode%}
+EOF4a30a91950ad
+
+)"

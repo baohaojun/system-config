@@ -10,11 +10,19 @@ notify-error() {
 . aterr notify-error
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt d:dir u:url b:branch r:reference c:create @:clone-args @single-branch @mirror='("" --mirror)' @:depth
+# generate-getopt \
+    # d:dir \
+    # u:url \
+    # b:branch \
+    # r:reference \
+    # c:create \
+    # @:clone-args @single-branch @mirror='("" --mirror)' \
+    # @:retry-regexp="'.'" \
+    # @:depth
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o b:c:d:r:u:h \
-               --long branch:,clone-args:,create:,depth:,dir:,mirror,reference:,single-branch,url:,help,no-mirror,no-single-branch \
+               --long branch:,clone-args:,create:,depth:,dir:,mirror,reference:,retry-regexp:,single-branch,url:,help,no-mirror,no-single-branch \
                -n $(basename -- $0) -- "$@")
 declare branch=
 declare clone_args=
@@ -23,6 +31,7 @@ declare depth=
 declare dir=
 declare mirror=
 declare reference=
+declare retry_regexp='.'
 declare single_branch=false
 declare url=
 eval set -- "$TEMP"
@@ -68,6 +77,11 @@ while true; do
             shift 2
 
             ;;
+        --retry-regexp)
+            retry_regexp=$2
+            shift 2
+
+            ;;
         --single-branch|--no-single-branch)
             if test "$1" = --no-single-branch; then
                 single_branch=false
@@ -107,6 +121,9 @@ while true; do
             echo
             printf %06s '-r, '
             printf %-24s '--reference=REFERENCE'
+            echo
+            printf "%06s" " "
+            printf %-24s '--retry-regexp=RETRY_REGEXP'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]single-branch'
@@ -191,7 +208,7 @@ if test ! -d $dir; then
 
         if ! (
                 . run-with-retry \
-                  --errout-regexp 'git fetch_pack: expected ACK/NAK, got.*ERR want.* not valid' \
+                  --errout-regexp "${retry_regexp}" \
                   do-clone
            ); then
             if test "$create" = true; then
@@ -228,6 +245,12 @@ else
                 git checkout -B $branch origin/$branch
             fi
         ); then
-        die "从 $url 更新代码到 $dir 目录失败，请检查一下 1. $dir 目录是否已损坏，删除试试？ 2. 是否拥有 $url 仓库代码权限"
+        die "从 $url 更新代码到 $dir 目录失败，请检查一下 1. $dir 目录是否已损坏，删除试试？ 2. 是否拥有 $url 仓库代码权限"
     fi
 fi
+
+(
+    cd $dir
+    log "Your git @$PWD has been updated, here's some details:"
+    log "$(git log -1)"
+) || true
