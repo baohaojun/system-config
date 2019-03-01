@@ -1,0 +1,17 @@
+#!/bin/bash
+# [[file:~/src/github/org-kungfu/org-kungfu.org::jql][jql]]
+set -e
+get-config() {
+    git config -f ~/.config/org-kungfu/config.ini "$@"
+}
+
+user=$(get-config ok.username)
+pass=$(get-config ok.password)
+jiraurl=$(get-config ok.jiraurl)
+
+jql_str=$(
+    urlify "$@"
+       )
+
+curl -s -u "${user}:${pass}" "${jiraurl}/rest/api/2/search?jql=$jql_str"
+# jql ends here

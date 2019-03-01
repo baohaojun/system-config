@@ -913,6 +913,26 @@ Please note the double quotes around ~集成~, they are required, there will be 
   curl -u "${user}:${pass}" "${wikiurl}/rest/api/search?cql=$cql_str"
 #+END_SRC
 
+*** TODO BTW, I also want a simple script for working with jira
+
+#+name: jql
+#+BEGIN_SRC sh :tangle ./jql :comments link :shebang "#!/bin/bash" :noweb yes
+  set -e
+  get-config() {
+      git config -f ~/.config/org-kungfu/config.ini "$@"
+  }
+
+  user=$(get-config ok.username)
+  pass=$(get-config ok.password)
+  jiraurl=$(get-config ok.jiraurl)
+
+  jql_str=$(
+      urlify "$@"
+         )
+
+  curl -s -u "${user}:${pass}" "${jiraurl}/rest/api/2/search?jql=$jql_str"
+#+END_SRC
+
 
 *** TODO How to ask for input
 
