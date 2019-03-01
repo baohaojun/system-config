@@ -559,6 +559,22 @@ Now, this emacs-lisp script first.
 
   }
 
+  sub get_page_id_maybe_from_url($$) {
+      my ($page_id, $url) = @_;
+      if ($url =~ m/pageid=(\d+)/i) {
+          if (not $page_id) {
+              $page_id = $1;
+          } else {
+              die "Please specify only 1 of --url and --page-id";
+          }
+      }
+
+      if (not $page_id) {
+          die "Must specify the page_id"
+      }
+      return $page_id;
+  }
+
   sub ok_e($) {
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl -l -P u:url '?"copy and paste the whole wiki page url to calculate page_id, make UX easier than copy-and-pasting page_id only"' \
@@ -606,17 +622,7 @@ Now, this emacs-lisp script first.
 
       ## end generated code
 
-      if ($url =~ m/pageid=(\d+)/i) {
-          if (not $page_id) {
-              $page_id = $1;
-          } else {
-              die "Please specify only 1 of --url and --page-id";
-          }
-      }
-
-      if (not $page_id) {
-          die "Must specify the page_id"
-      }
+      $page_id = get_page_id_maybe_from_url($page_id, $url);
 
       ok_get1page("-p", $page_id);
       ok_edit_html_with_org();
@@ -906,11 +912,66 @@ Please note the double quotes around ~集成~, they are required, there will be 
   pass=$(get-config ok.password)
   wikiurl=$(get-config ok.wikiurl)
 
+
+  ## start code-generator "^\\s *#\\s *"
+  # generate-getopt q:cql-str e:extra-args
+  ## end code-generator
+  ## start generated code
+  TEMP=$( getopt -o q:e:h \
+                 --long cql-str:,extra-args:,help \
+                 -n $(basename -- $0) -- "$@")
+  declare cql_str=
+  declare extra_args=
+  eval set -- "$TEMP"
+  while true; do
+      case "$1" in
+
+          -q|--cql-str)
+              cql_str=$2
+              shift 2
+
+              ;;
+          -e|--extra-args)
+              extra_args=$2
+              shift 2
+
+              ;;
+          -h|--help)
+              set +x
+              echo -e
+              echo
+              echo Options and arguments:
+              printf %06s '-q, '
+              printf %-24s '--cql-str=CQL_STR'
+              echo
+              printf %06s '-e, '
+              printf %-24s '--extra-args=EXTRA_ARGS'
+              echo
+              exit
+              shift
+              ;;
+          --)
+              shift
+              break
+              ;;
+          ,*)
+              die "internal error: $(. bt; echo; bt | indent-stdin)"
+              ;;
+      esac
+  done
+
+
+  ## end generated code
+
+  if test -z "${cql_str}"; then
+      cql_str="$*"
+  fi
+
   cql_str=$(
-      urlify "$@"
+      urlify "$cql_str"
          )
 
-  curl -u "${user}:${pass}" "${wikiurl}/rest/api/search?cql=$cql_str"
+  curl -u "${user}:${pass}" "${wikiurl}/rest/api/search?cql=$cql_str${extra_args}"
 #+END_SRC
 
 *** TODO BTW, I also want a simple script for working with jira
@@ -940,6 +1001,90 @@ When I want to create a page, I need to ask the user, where do you want to creat
 
 1. Use cql to find a page
 2. Input the page url (maybe with a copy&paste from the browser)
+3. List a list of the recent pages that you contributed, and allow you to select one
+
+The specified page will be used as the container of the new page.
+
+Here, I will be using system-config's select-args to ask for input, because it provides a very easy to use interface.
+
+#+name: np
+
+#+BEGIN_SRC perl
+  use String::ShellQuote;
+  use URI::Encode qw(uri_encode uri_decode);
+  sub np(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l -P p:page-id u:url
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("posix_default");
+
+      local @ARGV = @_;
+
+      my $page_id = "";
+      my $url = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--page-id=PAGE-ID';
+          if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '-u, ';
+          printf "%-24s", '--url=URL';
+          if (length('--url=URL') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'page-id|p=s' => \$page_id,
+          'url|u=s' => \$url,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
+      if (not $page_id and not $url) {
+          my @command = (
+              "select-args", "-p", "Which recent page do you want to create a new page under?",
+              );
+
+          my $cql_str = uri_encode("contributor in ($ok_username) and type = page");
+          my $page_api = "rest/api/search?cql=$cql_str&expand=content.container";
+
+          my $response = get($page_api);
+
+          my $cql_object = decode_json $response->content;
+
+          my %id_title_map;
+          for my $result (@{$page_object->{results}}) {
+              (my $dir = $ancestor->{title}) =~ s,/,%,g;
+              push @dirs, $dir;
+          }
+
+
+
+          my $user_sel = qx()
+      } else {
+          $page_id = get_page_id_maybe_from_url($page_id, $url);
+      }
+
+  }
+#+END_SRC
 
 #+name: create1page
 #+BEGIN_SRC perl

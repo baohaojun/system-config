@@ -579,6 +579,22 @@ sub ok_edit_html_with_org(@) {
 
 }
 
+sub get_page_id_maybe_from_url($$) {
+    my ($page_id, $url) = @_;
+    if ($url =~ m/pageid=(\d+)/i) {
+        if (not $page_id) {
+            $page_id = $1;
+        } else {
+            die "Please specify only 1 of --url and --page-id";
+        }
+    }
+
+    if (not $page_id) {
+        die "Must specify the page_id"
+    }
+    return $page_id;
+}
+
 sub ok_e($) {
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -s perl -l -P u:url '?"copy and paste the whole wiki page url to calculate page_id, make UX easier than copy-and-pasting page_id only"' \
@@ -626,17 +642,7 @@ sub ok_e($) {
 
     ## end generated code
 
-    if ($url =~ m/pageid=(\d+)/i) {
-        if (not $page_id) {
-            $page_id = $1;
-        } else {
-            die "Please specify only 1 of --url and --page-id";
-        }
-    }
-
-    if (not $page_id) {
-        die "Must specify the page_id"
-    }
+    $page_id = get_page_id_maybe_from_url($page_id, $url);
 
     ok_get1page("-p", $page_id);
     ok_edit_html_with_org();
