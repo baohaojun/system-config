@@ -70,6 +70,7 @@ map['com.android.vending/com.google.android.finsky.activities.RateReviewActivity
 map['com.android.wifiauthorize/com.android.wifiauthorize.WifiAuthorizeActivity'] = 'manual-post'
 map['com.autonavi.minimap/com.autonavi.map.activity.NewMapActivity'] = 'manual-post'
 map['com.baidu.netdisk/com.baidu.netdisk.ui.account.LoginRegisterActivity'] = 'manual-post'
+map['com.baidu.netdisk/com.baidu.netdisk.ui.localfile.selectpath.SelectFolderActivity'] = 'manual-post'
 map['com.baidu.netdisk/com.baidu.sapi2.activity.LoginActivity'] = 'manual-post'
 map['com.baidu.tieba_mini/com.baidu.tieba.imMessageCenter.im.chat.PersonalChatActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.mention.SingleMentionActivity'] = 'weixin-chat'
