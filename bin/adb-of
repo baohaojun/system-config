@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 if test "$#" = 0; then
-    set -- "$(getclip)"
+    if test "${EMACS}"; then
+        exec nohup setsid adb-of "$(cat)" >/dev/null 2>&1
+    else
+        set -- "$(getclip)"
+    fi
 fi
 if test ! -e "$1"; then
     perl -e '$_ = $ARGV[0];
