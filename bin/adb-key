@@ -4,5 +4,5 @@ for x in "$@"; do
         shift
         continue
     fi
-    my-adb shell input keyevent "${x^^}"
+    adb shell input keyevent "${x^^}"
 done
