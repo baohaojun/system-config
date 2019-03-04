@@ -43,6 +43,30 @@ On non debian systems, or if you don't have sudo permission, you can try to use 
       )
 #+END_SRC
 
+* How to update
+
+System-config come's with a script named =system-config-update=, you can run it to update to the latest version.
+
+* How to remove
+
+If you tried system-config and don't like it, you can run the following command to stop it:
+
+=sc stop=
+
+Next time, if you want to try again, you can simply run:
+
+=sc start=
+
+** How to completely remove system-config
+
+Unfortunately, there is no clean way to remove system-config and change everything back to the way it was before you installed system-config.
+
+You may run: =rm -rf ~/system-config ~/src/github=, and reboot to see if everything works the old way.
+
+If not, you may need to re-build your HOME directory or even re-install your Liunx.
+
+See [[#disclaimer][disclaimer]].
+
 * How to use
 
 You should be able to use system-config just like using any Linux distribution.
@@ -58,10 +82,15 @@ Please refer to my [[http://baohaojun.github.io/][github blog]], there are quite
 Especially this article: [[http://baohaojun.github.io/blog/2016/04/13/0-system-config-how-does-it-work-and-how-to-use-it.html][How does it work and how to use it]].
 
 * Disclaimer
+  :PROPERTIES:
+  :CUSTOM_ID: disclaimer
+  :END:
 
 System-config started out as a very personal project. If you decided to use it, please do so at your own risk, there is absolutely no warranty of any kind😅.
 
 If you have your own customization, it would be a good idea that you back them up before you try system-config. It's a good idea that you too put your own customization into a git repo, if you have not done so already.
+
+THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * Contribute
 
