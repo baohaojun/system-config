@@ -11,7 +11,7 @@ cd $(dirname $repo_dir)
 function repo_init_extra_info() {
     (
         cd .repo/manifests || exit
-        if test "$(git config repo.depth)" -ge 1; then
+        if test "$(git config repo.depth)"; then
             echo --depth $(git config repo.depth);
         elif test "$(git config repo.force-depth1)" = true; then
             echo --depth 1

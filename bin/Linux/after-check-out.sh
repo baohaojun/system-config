@@ -56,10 +56,6 @@ sudo ln -s ~/system-config/doc/bash.info.gz /usr/local/share/info/ -f
     sudo ginstall-info bash.info.gz /usr/local/share/info/dir
 )
 
-sudo postconf -e "home_mailbox = Maildir/$(whoami).localhost/"
-sudo postconf -e "mailbox_command = "
-sudo  /etc/init.d/postfix restart
-
 (mozroots --import --sync&)
 #编译一些软件
 do_compile

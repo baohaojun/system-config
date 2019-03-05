@@ -51,7 +51,7 @@
    (quote
     (("^[[:blank:]]*\\(?:```\\|~~~\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\(?:[[:space:]]*?\\)$" "^[[:blank:]]*\\(?:```\\|~~~\\)\\s *?$" 1)
      ("<!\\[CDATA\\[#!.*/bin/bash" "#!end-of-fence" sh)
-     ("<!\\[CDATA\\[<!--start html-->" "<!--end html-->\\]\\]>" html)
+     ("<!\\[CDATA\\[<!--start html-->" "<!--end html-->" html)
      ("<!--start nxml-->" "<!--end nxml-->" nxml)
      ("{%\\(.*?\\)-mode%}" ".*{%/\\(.*?\\)-mode%}" 1))))
  '(fill-column 70)
