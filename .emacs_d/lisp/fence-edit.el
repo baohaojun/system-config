@@ -251,7 +251,7 @@ The edit buffer is expected to be the current buffer."
       (set-buffer-modified-p nil))
     (kill-buffer buffer)))
 
-(defun fence-edit-save () 
+(defun fence-edit-save ()
   "Save the original buffer with the new text."
   (interactive)
   (fence-edit--guard-edit-buffer)
@@ -259,7 +259,9 @@ The edit buffer is expected to be the current buffer."
     (fence-edit-replace)
     (set-buffer-modified-p nil)
     (with-current-buffer (marker-buffer beg)
-      (save-buffer))))
+      (cond
+       ((buffer-file-name) (save-buffer))
+       (fence-edit-mark-beg (fence-edit-save))))))
 
 (defun fence-edit-exit ()
   "Conclude editing, replacing the original text."

@@ -14,7 +14,7 @@ might be bad."
   ;; for making .wiki table treated as org table for editing, and
   ;; convert back to .wiki format (with spaces removed). invented when
   ;; supporting mtop test.
-  (when (and (string-match ".*/java/.*\\.wiki$" (buffer-file-name))
+  (when (and (string-match ".*/java/.*\\.wiki$" (or (buffer-file-name) ""))
              (eq major-mode 'org-mode))
     (save-excursion
       (goto-char (point-min))
@@ -42,7 +42,7 @@ might be bad."
 ;;;###autoload
 (defun confirm-risky-remote-edit ()
   (let ((filename (buffer-file-name)))
-    (when (and (file-remote-p filename) (string-match "/system-config/" filename))
+    (when (and filename (file-remote-p filename) (string-match "/system-config/" filename))
       (yes-or-no-p "Are you sure it's alright to save this remote file when you have a local copy?"))))
 
 ;;;###autoload

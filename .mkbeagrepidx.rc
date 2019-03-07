@@ -1,2 +1,25 @@
 #!/bin/bash
-BEAGREP_IGNORE_DIR_PATTERNS="$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/${x%/},; fi; done)$PWD/out,*/.repo,*/po,*/.git,$PWD/development/ndk/platforms/android-*,$PWD/prebuilts/ndk,$PWD/external/kernel-headers,$PWD/bionic/libc/kernel/common/linux"
+
+IFS=$'\n'
+ignored_patterns=(
+    $(
+    for x in */; do
+        if test -d "$x"/.ccache; then
+            echo -n "$PWD/${x%/}"
+        fi
+    done
+    )
+    "$PWD/out"
+    "*/.repo"
+    "*/po"
+    "*/.git"
+    "$PWD/development/ndk/platforms/android-*"
+    "$PWD/prebuilts/ndk"
+    "$PWD/external/kernel-headers"
+    "$PWD/bionic/libc/kernel/common/linux"
+    "$PWD/Wrench-ubuntu-*"
+    "$PWD/ext-local"
+    "$PWD/onmyoji-res"
+)
+
+BEAGREP_IGNORE_DIR_PATTERNS=$(string-join , "${ignored_patterns[@]}")
