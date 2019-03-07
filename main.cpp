@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
         }
         return 0;
     }
+    a.setQuitOnLastWindowClosed(false);
 
 #ifdef Q_OS_DARWIN
     FileOpenFilter fof(NULL);
