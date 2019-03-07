@@ -437,16 +437,6 @@ M.member = function(elt, array)
   return false
 end
 
-M.load_history = function()
-   local dofile_res, history_map = pcall(dofile, M.configDirFile("history.lua"))
-   if dofile_res then
-      M.history_map = history_map
-   else
-      M.history_map = {}
-   end
-   M.history_loaded = true
-end
-
 M.quote_string = function(str)
    local equals = ""
    while true do
@@ -458,29 +448,6 @@ M.quote_string = function(str)
    end
 end
 
-M.save_history = function()
-   local history_file = io.open(M.configDirFile("history.lua"), "w")
-   history_file:write("local map = {}\n")
-   for k, v in spairs(M.history_map) do
-      if k ~= "" then
-         history_file:write(("\nmap[ %s ] = {\n"):format(M.quote_string(k)))
-         local saved_vals = {}
-         local length = 0
-         for s_i = #v, 1, -1 do
-            val = v[s_i]
-            if not saved_vals[val] and length < 100 then
-               saved_vals[val] = 1
-               history_file:write(("    %s,\n"):format(M.quote_string(val)))
-               length = length + 1
-            end
-         end
-         history_file:write(("}\n"))
-      end
-   end
-   history_file:write("return map\n")
-   history_file:close()
-end
-
 function table.slice(tbl, first, last, step)
   local sliced = {}
 
@@ -489,34 +456,6 @@ function table.slice(tbl, first, last, step)
   end
 
   return sliced
-end
-
-M.select_args_with_history = function(history_name, prompt, init_args, ...)
-   if not M.history_loaded then
-      M.load_history()
-   end
-
-   local args= {prompt, init_args, ...}
-
-   if type(history_name) == 'table' and prompt == nil then
-      history_name, args = history_name[1], table.slice(history_name, 2)
-   end
-
-   if not M.history_map[history_name] then
-      M.history_map[history_name] = {}
-   end
-
-   for i = #M.history_map[history_name], 1, -1 do
-      if not M.member(M.history_map[history_name][i], args) then
-         args[#args + 1] = M.history_map[history_name][i]
-      end
-   end
-
-   local ret = M.select_args(args)
-
-   M.history_map[history_name][#M.history_map[history_name] + 1] = ret
-   M.save_history()
-   return ret
 end
 
 M.yes_or_no_p = function(txt, ...)
