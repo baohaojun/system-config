@@ -595,7 +595,7 @@ sub get_page_id_maybe_from_url($$) {
     return $page_id;
 }
 
-sub ok_e($) {
+sub ok_e(@) {
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -s perl -l -P u:url '?"copy and paste the whole wiki page url to calculate page_id, make UX easier than copy-and-pasting page_id only"' \
     # p:page-id
@@ -648,6 +648,129 @@ sub ok_e($) {
     ok_edit_html_with_org();
     rewrite_html_for_update();
     ok_update1page("-p", $page_id);
+}
+use String::ShellQuote;
+use URI::Encode qw(uri_encode uri_decode);
+sub ok_np(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l -P p:page-id u:url
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("posix_default");
+
+    local @ARGV = @_;
+
+    my $page_id = "";
+    my $url = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--page-id=PAGE-ID';
+        if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-u, ';
+        printf "%-24s", '--url=URL';
+        if (length('--url=URL') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'page-id|p=s' => \$page_id,
+        'url|u=s' => \$url,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    if (not $page_id and not $url) {
+        my @command = (
+            "select-args", "-p", "Which recent page do you want to create a new page under?",
+            );
+
+        my $cql_str = uri_encode("contributor in ($ok_username) and type = page");
+        my $page_api = "rest/api/search?cql=$cql_str&expand=content.ancestors";
+
+        my $response = get($page_api);
+
+        my $cql_object = decode_json $response->content;
+
+        my %id_path_map;
+        my %path_id_map;
+        for my $result (@{$cql_object->{results}}) {
+            # my @dirs = (".");
+            # my $path = "";
+            # for my $ancestor (@{$page_object->{ancestors}}) {
+            #     (my $dir = $ancestor->{title}) =~ s,/,%,g;
+            #     push @dirs, $dir;
+            # }
+
+            # (my $title = $page_object->{title}) =~ s,/,%,g;
+            # push @dirs, ${title};
+            # $path = join('/', @dirs);
+
+            my $path = encode_utf8
+                join("/",
+                     map {
+                         s,/,%,g; $_;
+                     }
+                     (
+                      map {
+                          $_->{title}
+                      } @{$result->{content}{ancestors}}
+                     ),
+                     $result->{title}
+                );
+            $id_path_map{$result->{content}{id}} = $path;
+            $path_id_map{$path} = $result->{content}{id};
+        }
+
+        my @select_command = (
+            "select-args", "-p", "Please select which page you want to edit",
+            "-O", "ok-select-page",
+            sort keys %path_id_map
+            );
+
+        my $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
+        my $path_sel = qx($select_command);
+
+        my %actions_desc_name_map = (
+            "edit it" => "edit-me",
+            "create a child page" => "edit-baby",
+            "create a sibling page" => "edit-bro"
+            );
+
+        @select_command = (
+            "select-args", "-p", "Please select what do you want do with this page",
+            keys %actions_desc_name_map
+            );
+
+        $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
+        my $action_desc = qx($select_command);
+
+        if ($actions_desc_name_map{$action_desc} eq "edit-me") {
+            ok_e("-p", $path_id_map{$path_sel});
+        } else {
+            say "your action is $action_desc";
+        }
+    } else {
+        $page_id = get_page_id_maybe_from_url($page_id, $url);
+    }
+
 }
 sub subcmd_help() {
     my $top_help_str = <<~'EOF';
