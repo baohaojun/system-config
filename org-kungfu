@@ -279,6 +279,10 @@ sub rewrite_html_after_download() {
     save_to_file("content.html", encode_utf8 $dom);
 }
 
+sub ok_rhfu() {
+    rewrite_html_for_update();
+}
+
 sub rewrite_html_for_update() {
     open(my $html, "<content.html")
         or die "Can't open content.html for read";
@@ -297,9 +301,11 @@ sub rewrite_html_for_update() {
         }
         );
     save_to_file("content.html", encode_utf8 $dom);
+    System("cp content.html after-fix-img.html");
     if ($ENV{SYSTEM_CONFIG_INITED} eq 'true') {
         System("css-inline content.html | tee-with-tmp content.html");
     }
+    System("cp content.html after-css-inline.html");
 }
 
 sub read_file($) {
@@ -576,6 +582,9 @@ sub ok_edit_html_with_org(@) {
     }
 
     System("emacsclient", "-e", $emacs_script);
+    if (not $called_for_emacs) {
+        System("cp content.html content-after-export.html");
+    }
 
 }
 
