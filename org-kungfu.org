@@ -452,6 +452,17 @@ Now, this emacs-lisp script first.
         (with-current-buffer buffer
           (delete-region (point-min) (point-max))
           (insert html_str)))))
+
+  (defun org-kungfu-get-section-anchor ()
+    (interactive)
+    (let* ((page-title (shell-command-to-string "cat page-title.txt"))
+           (page-id (shell-command-to-string "cat page-id.txt"))
+           (heading (org-get-heading t t t t))
+           (wiki-url (shell-command-to-string "git config -f ~/.config/org-kungfu/config.ini ok.wikiurl | tr -d '\\n'"))
+           (anchor (replace-regexp-in-string "\\s +" "" (concat page-title "-" heading))))
+      (with-temp-buffer
+        (insert wiki-url "/pages/viewpage.action?pageId=" page-id "#" anchor)
+        (kill-region (point-min) (point-max)))))
 #+END_SRC
 
 #+name: e
