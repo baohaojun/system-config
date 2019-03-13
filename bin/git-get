@@ -198,6 +198,12 @@ if test ! -d $dir; then
                     if git clone $clone_args $mirror ${single_branch_arg} -b $branch $url . \
                            $(if test -d "$reference"; then echo --reference "$reference"; fi) \
                            $(if test "${depth}"; then echo --depth ${depth}; fi); then
+
+                        if test "${scm_gerrit_server}" && [[ "$url" =~ "${scm_gerrit_server}" ]]; then
+                            gitdir=$(git rev-parse --git-dir);
+                            scp -p -P ${scm_gerrit_port} ${scm_gerrit_user}@${scm_gerrit_server}:hooks/commit-msg ${gitdir}/hooks/
+                        fi || true
+
                         exit 0
                     fi
                 done
