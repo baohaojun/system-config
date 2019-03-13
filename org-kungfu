@@ -154,6 +154,15 @@ sub get($) {
     return $response;
 }
 
+sub get_page_info($$) {
+    my ($page_id, $expand) = @_;
+    my $page_api = "rest/api/content/${page_id}?expand=${expand}";
+
+    my $response = get($page_api);
+    my $page_object = decode_json $response->content;
+    return $page_object;
+}
+
 sub save_to_file($$) {
     my ($file, $content) = @_;
     open(my $f, ">$file")
@@ -611,7 +620,7 @@ sub get_page_id_maybe_from_url($$) {
     }
 
     if (not $page_id) {
-        die "Must specify the page_id"
+        die "Must specify the page_id: @_"
     }
     return $page_id;
 }
@@ -669,6 +678,153 @@ sub ok_e(@) {
     ok_edit_html_with_org();
     rewrite_html_for_update();
     ok_update1page("-p", $page_id);
+}
+sub ok_create1page(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l p:page-id t:title
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $page_id = "";
+    my $title = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--page-id=PAGE-ID';
+        if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-t, ';
+        printf "%-24s", '--title=TITLE';
+        if (length('--title=TITLE') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'page-id|p=s' => \$page_id,
+        'title|t=s' => \$title,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my $parent_page_obj = get_page_info($page_id, "");
+    (my $space = $parent_page_obj->{_expandable}{space}) =~ s,.*/,,;
+
+    my $create_page_json_str = <<~'EOF';
+          # {%json-mode%}
+          {
+            "title": "",
+            "type": "page",
+            "space": {
+              "key": ""
+            },
+            "status": "current",
+            "ancestors": [
+              {
+                "id": ""
+              }
+            ],
+            "body": {
+              "view": {
+                "value": ""
+              }
+            }
+          }
+          # {%/json-mode%}
+    EOF
+
+    $create_page_json_str =~ s,^\s*#.*,,mg;
+    my $create_page_json_obj = decode_json $create_page_json_str;
+
+    $create_page_json_obj->{title} = $title;
+    $create_page_json_obj->{space}{key} = $space;
+    $create_page_json_obj->{ancestors}[0]{id} = $page_id;
+
+    my $ua = LWP::UserAgent->new;
+    my $api = "rest/api/content";
+
+    my $request = POST kungfu_url_for_api($api),
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        "charset" => "utf-8",
+        Content => encode_json $create_page_json_obj;
+
+    my $response = $ua->request($request);
+    say "POST response code:" . $response->code;
+    if ($response->code != 200) {
+        die "Can't get $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+    }
+    my $created_obj = decode_json $response->content;
+    ok_e("-p", $created_obj->{id});
+}
+
+sub ok_create_sibling_page(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l t:title p:page-id
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $page_id = "";
+    my $title = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--page-id=PAGE-ID';
+        if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-t, ';
+        printf "%-24s", '--title=TITLE';
+        if (length('--title=TITLE') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'page-id|p=s' => \$page_id,
+        'title|t=s' => \$title,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my $current_page_obj = get_page_info($page_id, "ancestors");
+    my $parent_page_id = $current_page_obj->{ancestors}[-1]{id};
+    ok_create1page("-t", $title, "-p", $parent_page_id);
 }
 use String::ShellQuote;
 use URI::Encode qw(uri_encode uri_decode);
@@ -776,17 +932,22 @@ sub ok_np(@) {
             );
 
         @select_command = (
-            "select-args", "-p", "Please select what do you want do with this page",
+            "select-args", "-o", "-p", "Please select what do you want do with this page",
             keys %actions_desc_name_map
             );
 
         $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
         my $action_desc = qx($select_command);
-
+        my $page_id = $path_id_map{$path_sel};
         if ($actions_desc_name_map{$action_desc} eq "edit-me") {
-            ok_e("-p", $path_id_map{$path_sel});
+            ok_e("-p", $page_id);
         } else {
-            say "your action is $action_desc";
+            my $page_title = qx(ask-for-input -t -p 'Please input your new page title');
+            if ($actions_desc_name_map{$action_desc} eq "edit-baby") {
+                ok_create1page("-p", $page_id, "-t", $page_title);
+            } elsif ($actions_desc_name_map{$action_desc} eq "edit-bro") {
+                ok_create_sibling_page("-p", $page_id, "-t", $page_title);
+            }
         }
     } else {
         $page_id = get_page_id_maybe_from_url($page_id, $url);
