@@ -6,7 +6,12 @@ set -e
 
 echo $$ >> ~/.cache/system-config/logs/adjust-volume.log
 
-if ps.pl pulseaudio >/dev/null 2>&1; then
+amixer_version=$(
+    amixer --version | pn 3
+              )
+
+if ! version-lower-than "${amixer_version}" 1.1.8 &&
+        ps.pl pulseaudio >/dev/null 2>&1; then
     pulse_audio="-D pulse"
     if headphone_output=$(
             pactl list sinks | grep "Headphones.*available"
