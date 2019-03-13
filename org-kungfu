@@ -596,7 +596,7 @@ sub ok_edit_html_with_org(@) {
     if ($called_for_emacs) {
         $emacs_script =~ s,<%how-to-export%>,
             (org-kungfu--export-to-buffer "content.org" buffer-ehwo-$$)
-            (switch-to-buffer 'buffer-ehwo-$$)
+            (pop-to-buffer buffer-ehwo-$$)
             (unintern 'buffer-ehwo-$$),x;
     } else {
         $emacs_script =~ s,<%how-to-export%>,(org-kungfu--export-to-html "content.org"),;
@@ -620,7 +620,7 @@ sub get_page_id_maybe_from_url($$) {
     }
 
     if (not $page_id) {
-        die "Must specify the page_id: @_"
+        die "Must specify the page_id"
     }
     return $page_id;
 }
