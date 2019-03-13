@@ -81,7 +81,11 @@ if (not $pat and @ARGV == 1) {
 }
 
 if (@ARGV) {
-  die "Don't know how to handle extra args: @ARGV";
+  if ($ARGV[0] eq "/dev/null" && scalar(@ARGV) == 1) {
+    shift;
+  } else {
+    die "Don't know how to handle extra args: @ARGV";
+  }
 }
 
 if ($replace_with) {
