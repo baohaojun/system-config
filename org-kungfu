@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # [[file:~/src/github/org-kungfu/org-kungfu.org::the-ultimate-script][the-ultimate-script]]
 use strict;
 
@@ -222,6 +222,7 @@ sub ok_get1page(@) {
     save_to_file("content.html", $page_object->{body}{editor}{value});
     save_to_file("version.txt", $page_object->{version}{number});
     save_to_file("page-id.txt", $page_id);
+    save_to_file("page-title.txt", $page_object->{title});
     download_all_attachments($page_id);
     rewrite_html_after_download();
     system("git add .; git commit -m 'save to git after rewrite'");
@@ -567,6 +568,17 @@ sub ok_edit_html_with_org(@) {
            (with-current-buffer buffer
              (delete-region (point-min) (point-max))
              (insert html_str)))))
+     
+     (defun org-kungfu-get-section-anchor ()
+       (interactive)
+       (let* ((page-title (shell-command-to-string "cat page-title.txt"))
+              (page-id (shell-command-to-string "cat page-id.txt"))
+              (heading (org-get-heading t t t t))
+              (wiki-url (shell-command-to-string "git config -f ~/.config/org-kungfu/config.ini ok.wikiurl | tr -d '\\n'"))
+              (anchor (replace-regexp-in-string "\\s +" "" (concat page-title "-" heading))))
+         (with-temp-buffer
+           (insert wiki-url "/pages/viewpage.action?pageId=" page-id "#" anchor)
+           (kill-region (point-min) (point-max)))))
      <%how-to-export%>)
                 ; {%/emacs-lisp-mode%}
 

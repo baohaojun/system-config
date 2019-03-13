@@ -175,6 +175,7 @@ And this is the real get1page subroutine.
       save_to_file("content.html", $page_object->{body}{editor}{value});
       save_to_file("version.txt", $page_object->{version}{number});
       save_to_file("page-id.txt", $page_id);
+      save_to_file("page-title.txt", $page_object->{title});
       download_all_attachments($page_id);
       rewrite_html_after_download();
       system("git add .; git commit -m 'save to git after rewrite'");
@@ -858,7 +859,7 @@ This is simple using Perl's “reflection”.
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC perl :tangle ./org-kungfu :comments link :shebang "#!/usr/bin/perl" :noweb yes
+#+BEGIN_SRC perl :tangle ./org-kungfu :comments link :shebang "#!/usr/bin/env perl" :noweb yes
   <<global-args>>
   <<perl-lib-funcs>>
   <<download-a-page>>
