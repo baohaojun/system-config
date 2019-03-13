@@ -8,10 +8,6 @@
    (quote
     (sc--after-save sanityinc/set-mode-for-new-scripts executable-make-buffer-file-executable-if-script-p)))
  '(ahk-syntax-directory "~/system-config/doc/ahk/Syntax/")
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector
-   (vector "#424242" "#d54e53" "#b9ca4a" "#e7c547" "#7aa6da" "#c397d8" "#70c0b1" "#eaeaea"))
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(auto-save-file-name-transforms
    (quote
@@ -19,7 +15,6 @@
      (".*" "~/.emacs.d/tmp" t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bbyac-max-chars 80)
- '(beacon-color "#d54e53")
  '(before-save-hook
    (quote
     (confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
@@ -30,7 +25,6 @@
  '(custom-safe-themes
    (quote
     ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
- '(debug-on-error nil)
  '(debug-on-quit nil)
  '(default-input-method "sdim")
  '(delete-old-versions t)
@@ -46,7 +40,6 @@
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
  '(emojify-emoji-styles (quote (unicode)))
- '(fci-rule-color "#424242")
  '(fence-edit-blocks
    (quote
     (("^[[:blank:]]*\\(?:```\\|~~~\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\(?:[[:space:]]*?\\)$" "^[[:blank:]]*\\(?:```\\|~~~\\)\\s *?$" 1)
@@ -55,9 +48,7 @@
      ("<!--start nxml-->" "<!--end nxml-->" nxml)
      ("{%\\(.*?\\)-mode%}" ".*{%/\\(.*?\\)-mode%}" 1))))
  '(fill-column 70)
- '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(flycheck-shellcheck-excluded-warnings (quote ("2034")))
- '(frame-background-mode (quote dark))
  '(gc-cons-threshold 3500000)
  '(gdb-find-source-frame t)
  '(gdb-many-windows t)
@@ -69,7 +60,6 @@
  '(gnus-group-name-charset-group-alist (quote (("ali\\..*" . utf-8) (".*" . chinese-iso-8bit))))
  '(gnus-ignored-newsgroups "")
  '(gnus-propagate-marks t)
- '(grep-use-null-device nil)
  '(gui-select-enable-clipboard t)
  '(helm-company-fuzzy-match nil)
  '(helm-idle-delay 0.1)
