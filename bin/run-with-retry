@@ -2,7 +2,7 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P @:times=3 @:wait-secs=60 @:errout-regexp
+# generate-getopt -P @:times=3 @:wait-secs=60 @:errout-regexp '?"stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
@@ -38,6 +38,8 @@ while true; do
             printf "%06s" " "
             printf %-24s '--errout-regexp=ERROUT_REGEXP'
             echo
+            printf "%30s" ""
+            echo "stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"
             printf "%06s" " "
             printf %-24s '--times=TIMES'
             echo
@@ -75,6 +77,9 @@ tmp_err=/tmp/run-with-retry.err.$$
     for retry in $(seq 1 "${times}"); do
         if ("$@") > "$tmp_out" 2> "$tmp_err"; then
             redo-output
+            if test "${retry}" -gt 1; then
+                mail-cms -o -e -s "Retried to run $* and OK@${retry}" || true
+            fi
             exit
         else
             ret=$?

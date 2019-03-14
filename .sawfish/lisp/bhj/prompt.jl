@@ -544,7 +544,7 @@ displayed. See the `display-message' function for more details.")
              "Super-Button1-Click" bhj-prompt-accept
              "Super-Button2-Click" bhj-prompt-accept
              "Super-Button3-Click" bhj-prompt-accept
-             "Super-RET" bhj-prompt-accept
+             "Any-RET" bhj-prompt-accept
              "C-g" bhj-prompt-exit
              "C-u" bhj-prompt-clear
              "BS" bhj-prompt-backspace
