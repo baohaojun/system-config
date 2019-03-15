@@ -927,6 +927,8 @@ sub ok_np(@) {
 
         my %actions_desc_name_map = (
             "edit it" => "edit-me",
+            "open it" => "open-it",
+            "putclip url (copy the url in the clipboard)" => "putclip-url",
             "create a child page" => "edit-baby",
             "create a sibling page" => "edit-bro"
             );
@@ -941,7 +943,11 @@ sub ok_np(@) {
         my $page_id = $path_id_map{$path_sel};
         if ($actions_desc_name_map{$action_desc} eq "edit-me") {
             ok_e("-p", $page_id);
-        } else {
+        } elsif ($actions_desc_name_map{$action_desc} eq "open-it") {
+            System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
+        } elsif ($actions_desc_name_map{$action_desc} eq "putclip-url") {
+            System("putclip ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
+        }else {
             my $page_title = qx(ask-for-input -t -p 'Please input your new page title');
             if ($actions_desc_name_map{$action_desc} eq "edit-baby") {
                 ok_create1page("-p", $page_id, "-t", $page_title);
