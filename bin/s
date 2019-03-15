@@ -17,8 +17,12 @@ fi
 use_clip=false
 if test $# = 1 -a "$1" = '' || test $# = 0; then
     use_clip=true
-    if [[ $(sawfish-top-window) =~ kindle.exe ]]; then
-        set -- $(getclip|perl -ne 'print $line_2; $line_2 = $line_1; $line_1 = $_;'|tr -d ' ')
+    if sawfish-top-window |grep -qi kindle.exe; then
+        set -- $(getclip |
+                     # print except the last line
+                     perl -ne 'print $line_2; $line_2 = $line_1; $line_1 = $_;' |
+                     tr -d ' '
+            )
     else
         set -- "$(xclip -o)"
     fi
