@@ -182,12 +182,24 @@ And this is the real get1page subroutine.
       system("git add .; git commit -m 'save to git before download from confluence'");
 
       save_to_file("content.html", $page_object->{body}{editor}{value});
-      save_to_file("version.txt", $page_object->{version}{number});
-      save_to_file("page-id.txt", $page_id);
-      save_to_file("page-title.txt", $page_object->{title});
-      download_all_attachments($page_id);
-      rewrite_html_after_download();
+
+      my $current_version = 0;
+      if (-e "version.txt") {
+          $current_version = qx(cat version.txt);
+      }
+
+      my $need_update_org = 0;
+      if ($current_version < $page_object->{version}{number}) {
+          save_to_file("page-id.txt", $page_id);
+          save_to_file("page-title.txt", $page_object->{title});
+          download_all_attachments($page_id);
+          rewrite_html_after_download();
+          $need_update_org = 1;
+      }
       system("git add .; git commit -m 'save to git after rewrite'");
+      save_to_file("version.txt", $page_object->{version}{number});
+
+      return $need_update_org;
   }
 
   sub download_1_file($) {
@@ -350,6 +362,8 @@ And this is the real get1page subroutine.
       $page_object->{version}{number}++;
       $page_object->{version}{message} = "Edit with org-mode";
 
+      save_to_file("version.txt", $page_object->{version}{number});
+
       my $ua = LWP::UserAgent->new;
       my $request = PUT kungfu_url_for_api("rest/api/content/${page_id}"),
           'Content-Type' => 'application/json',
@@ -360,6 +374,7 @@ And this is the real get1page subroutine.
       if ($response->code != 200) {
           say "PUT response code:" . $response->code;
           say "response content:" . $response->content;
+          exit 1;
       }
 
       if (not $quietly) {
@@ -542,7 +557,8 @@ Now, this emacs-lisp script first.
 
   sub ok_edit_html_with_org(@) {
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l -P ecalled-for-emacs '?"Get the html from current emacs buffer, SC ONLY"'
+      # generate-getopt -s perl -l -P ecalled-for-emacs '?"Get the html from current emacs buffer, SC ONLY"' \
+      # u:update-org=1 '?"Update the .org file from the .html file"'
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -552,6 +568,7 @@ Now, this emacs-lisp script first.
       local @ARGV = @_;
 
       my $called_for_emacs = 0;
+      my $update_org = "1";
 
       my $handler_help = sub {
           print ;
@@ -564,12 +581,21 @@ Now, this emacs-lisp script first.
           }
           printf "%s", "Get the html from current emacs buffer, SC ONLY";
           print "\n";
+          printf "%6s", '-u, ';
+          printf "%-24s", '--update-org=UPDATE-ORG';
+          if (length('--update-org=UPDATE-ORG') > 24 and length("Update the .org file from the .html file") > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", "Update the .org file from the .html file";
+          print "\n";
 
           exit(0);
       };
 
       GetOptions (
           'called-for-emacs|e!' => \$called_for_emacs,
+          'update-org|u=s' => \$update_org,
           'help|h!' => \&$handler_help,
           );
 
@@ -581,7 +607,12 @@ Now, this emacs-lisp script first.
           System("emacs-current-text -b buffer-ehwo-$$ > content.html");
       }
 
-      System("(echo '#+OPTIONS: toc:nil num:nil'; pandoc --wrap=none -f html -t org content.html | perl -pe 's,\\\\_,_,g') > content.org");
+      if ($update_org) {
+          System("(echo '#+OPTIONS: toc:nil num:nil'; pandoc --wrap=none -f html -t org content.html | perl -pe 's,\\\\_,_,g') > content.org");
+      } else {
+          system("bhj-notify 'ok' 'No need to update the org file'");
+      }
+
       System("emacsclient content.org");
 
       my $emacs_script = <<~'EOF64f308bc1e9a';
@@ -674,8 +705,9 @@ Now, this emacs-lisp script first.
 
       $page_id = get_page_id_maybe_from_url($page_id, $url);
 
-      ok_get1page("-p", $page_id);
-      ok_edit_html_with_org();
+      my $need_update_org = ok_get1page("-p", $page_id);
+      ok_edit_html_with_org("-u", "$need_update_org");
+
       rewrite_html_for_update();
       ok_update1page("-p", $page_id);
   }
