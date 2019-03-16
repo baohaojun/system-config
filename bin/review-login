@@ -8,7 +8,7 @@ if sawfish-window-exists 'Firefox|Iceweasel'; then
     sawfish-browser-input C-M-a
 fi
 
-firefox -current-tab "https://review.smartisan.cn:8080/#/dashboard/self"&
+firefox "https://review.smartisan.cn:8080/#/dashboard/self"&
 
 for x in $(seq 1 25); do
     sleep 1

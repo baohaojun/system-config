@@ -230,12 +230,10 @@
  '(
    ("Super-m"          "Emacs" "emacs.bhj")
    ("v"                "adjust-volume" "adjust-volume")
-   ("C-,"              "hello world no such thing" "firefox pop")
-   ("C-."              "hello world no such thing" "firefox push")
    ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox --new-window")
    ("Super-t"          (lambda (w) (and
-                                    (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
-                                    (not (string= "emacs" (window-name w))))) "konsole.bhj")
+                               (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
+                               (not (string= "emacs" (window-name w))))) "konsole.bhj")
    ("d"                "hello world no such thing" "my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")

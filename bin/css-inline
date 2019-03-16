@@ -18,6 +18,7 @@ else:
                       </style>
                       """ + str
 
+str = str.decode('utf-8')
 str = pynliner.fromString(str).encode('utf-8')
 
 in_pre = 0

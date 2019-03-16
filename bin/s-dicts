@@ -17,7 +17,7 @@ text=$(echo -n "$text"|perl -npe 's/(……」|』、『|、|……。|。|！|�
 (
     text=$(echo -n "$text" | perl -npe 's/^\s*//; s/\s*$//')
     if [[ $text =~ ^https?:// ]]; then
-      firefox -current-tab "$text"
+      firefox -new-tab "$text"
     elif echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
         search-dict "$text"
     else
