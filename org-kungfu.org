@@ -283,7 +283,7 @@ And this is the real get1page subroutine.
 
   sub ok_update1page(@) {
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l -P p:page-id f:html-file=content.html
+      # generate-getopt -s perl -l -P p:page-id f:html-file=content.html @quietly
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -294,6 +294,7 @@ And this is the real get1page subroutine.
 
       my $html_file = "content.html";
       my $page_id = "";
+      my $quietly = 0;
 
       my $handler_help = sub {
           print ;
@@ -314,6 +315,14 @@ And this is the real get1page subroutine.
           }
           printf "%s", ;
           print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--[no]quietly';
+          if (length('--[no]quietly') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
 
           exit(0);
       };
@@ -321,18 +330,23 @@ And this is the real get1page subroutine.
       GetOptions (
           'html-file|f=s' => \$html_file,
           'page-id|p=s' => \$page_id,
+          'quietly!' => \$quietly,
           'help|h!' => \&$handler_help,
           );
 
 
       ## end generated code
 
+      if (@ARGV) {
+          die "Can't parse these extra args: @ARGV";
+      }
+
       my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,title";
 
       my $response = get($page_api);
       my $page_object = decode_json $response->content;
 
-      $page_object->{body}{editor}{value} = decode_utf8 read_file("content.html");
+      $page_object->{body}{editor}{value} = decode_utf8 read_file($html_file);
       $page_object->{version}{number}++;
       $page_object->{version}{message} = "Edit with org-mode";
 
@@ -343,9 +357,15 @@ And this is the real get1page subroutine.
           Content => encode_json $page_object;
 
       my $response = $ua->request($request);
-      say "PUT response code:" . $response->code;
-      System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
-      system("git add .; git commit -m 'save to git after upload to confluence'");
+      if ($response->code != 200) {
+          say "PUT response code:" . $response->code;
+          say "response content:" . $response->content;
+      }
+
+      if (not $quietly) {
+          System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
+          system("git add .; git commit -m 'save to git after upload to confluence'");
+      }
   }
 #+END_SRC
 
@@ -1163,7 +1183,7 @@ Here, I will be using system-config's select-args to ask for input, because it p
           } elsif ($actions_desc_name_map{$action_desc} eq "putclip-url") {
               System("putclip ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
           }else {
-              my $page_title = qx(ask-for-input -t -p 'Please input your new page title');
+              my $page_title = qx(ask-for-input-with-emacs -p 'Please input your new page title');
               if ($actions_desc_name_map{$action_desc} eq "edit-baby") {
                   ok_create1page("-p", $page_id, "-t", $page_title);
               } elsif ($actions_desc_name_map{$action_desc} eq "edit-bro") {
@@ -1180,6 +1200,7 @@ Here, I will be using system-config's select-args to ask for input, because it p
 #+name: create1page
 #+BEGIN_SRC perl
   sub ok_create1page(@) {
+      say "create page: ", join(" ", @_);
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl -l p:page-id t:title
       ## end code-generator
@@ -1254,7 +1275,7 @@ Here, I will be using system-config's select-args to ask for input, because it p
       $create_page_json_str =~ s,^\s*#.*,,mg;
       my $create_page_json_obj = decode_json $create_page_json_str;
 
-      $create_page_json_obj->{title} = $title;
+      $create_page_json_obj->{title} = decode_utf8 $title;
       $create_page_json_obj->{space}{key} = $space;
       $create_page_json_obj->{ancestors}[0]{id} = $page_id;
 
