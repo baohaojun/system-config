@@ -2,6 +2,56 @@
 
 set -x
 exec > ~/tmp/am.log 2>&1
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @udev
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long udev,help,no-udev \
+                      -n $(basename -- $0) -- "$@")
+declare udev=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --udev|--no-udev)
+            if test "$1" = --no-udev; then
+                udev=false
+            else
+                udev=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]udev'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+## end generated code
+
+if test "$udev" = true; then
+    at now <<<'myscr --bg bash -c "sleep 2; am dvp"'
+    exit
+fi
+
 if [[ "$(tty)" =~ /dev/tty ]]; then
     if test "$(cat ~/.config/system-config/am-keyboard)" = en; then
         sudo setupcon dvp
