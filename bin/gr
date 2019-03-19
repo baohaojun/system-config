@@ -63,8 +63,6 @@ elif test -z "${username}"; then
     password=${scm_gerrit_password}
 fi
 
-gerrit_url=${scm_gerrit_url}
-
 gr-delete-patch() {
 
     ## start code-generator "^\\s *#\\s *"
@@ -108,7 +106,7 @@ gr-delete-patch() {
 
     ## end generated code
 
-    curl -X DELETE -u "${username}:${password}" ${gerrit_url}/a/changes/${change}
+    curl -X DELETE -u "${username}:${password}" ${scm_gerrit_url}/a/changes/${change}
 }
 
 _curl() {
@@ -167,7 +165,7 @@ gr-set-topic() {
 
     ## end generated code
 
-   _curl -X PUT ${gerrit_url}/a/changes/${change}/topic -H "Content-Type: application/json" -H "charset=UTF-8" --data "$(
+   _curl -X PUT ${scm_gerrit_url}/a/changes/${change}/topic -H "Content-Type: application/json" -H "charset=UTF-8" --data "$(
 cat <<EOF3dc33dfa770d | grep -v '^#'
 # {%json-mode%}
   {
