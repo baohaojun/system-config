@@ -1,0 +1,53 @@
+#!/bin/bash
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @:stat @:case
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long case:,stat:,help \
+                      -n $(basename -- $0) -- "$@")
+declare case=
+declare stat=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --case)
+            case=$2
+            shift 2
+
+            ;;
+        --stat)
+            stat=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--case=CASE'
+            echo
+            printf "%06s" " "
+            printf %-24s '--stat=STAT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+log "TestReport: case: ${case} stat is ${stat}"

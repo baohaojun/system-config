@@ -40,7 +40,8 @@ if test $(basename $0) = screen-lock-off; then # lock off, screen on
 
 else # lock on, screen off
     # my-adb key power
-    rm touch ~/.cache/system-config/logs/screen-on -f
+    rm ~/.cache/system-config/logs/screen-on -f
+    am dvp
     destroy-windows Wrench
     adb-lcd -a off
     true

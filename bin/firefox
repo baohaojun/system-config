@@ -1,5 +1,10 @@
 #!/bin/bash
 
+set -x
+exec >> ~/tmp/firefox.log 2>&1
+
+declare -x -p > ~/tmp/firefox.env
+
 if test -e ~/external/the-firefox; then
     the_firefox=$(readlink -f ~/external/the-firefox)
 elif test -e ~/system-config/bin/the-firefox; then
@@ -12,5 +17,5 @@ else
 fi
 
 find-or-exec firefox $the_firefox
-$the_firefox "$@"&
+exec $the_firefox "$@"
 

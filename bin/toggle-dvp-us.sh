@@ -48,7 +48,42 @@ done
 ## end generated code
 
 if test "$udev" = true; then
-    at now <<<'myscr --bg bash -c "sleep 2; am dvp"'
+    at now <<<'myscr --bg bash -c "$(
+cat <<'\''EOF2a3e34760a92'\''
+# {%sh-mode%}
+set -x
+exec > ~/tmp/am-udev.log 2>&1
+for x in $(seq 1 25); do
+    if setxkbmap -print|grep -q us:2; then
+        (
+            for x in $(seq 1 10); do
+                am dvp;
+                if (
+                    exit_val=0
+                    for x in $(seq 1 5); do
+                        sleep .2
+                        if setxkbmap -print | grep -q us:2 ||
+                                test "$(cat ~/.local-config/etc/xmodmap.$(get-mac))" != "$(xmodmap)"; then
+                            exit_val=1
+                            break
+                        fi
+                    done
+                    exit ${exit_val}
+                ); then
+                    exit 0
+                fi
+                sleep .3
+            done
+        )
+       exit
+    fi
+    sleep .2
+done
+# {%/sh-mode%}
+
+EOF2a3e34760a92
+
+)"'
     exit
 fi
 

@@ -1,18 +1,11 @@
 #!/bin/bash
 
-function die() {
-    echo Error: "$@"
-    exit -1
-}
-
 clip_save=$(getclip)
 function reset_clip() {
     echo "$clip_save" | putclip
 }
 
-trap reset_clip 0
-
-
+. atexit reset_clip
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt eexact @special=true
@@ -131,19 +124,25 @@ if sawfish-client -e '(window-name (input-focus))'| grep -q -i 'mozilla firefox'
     in_firefox=true
 fi
 
+new_tab=-new-tab
 if test $in_firefox = true -a "${current_url:0-8}" = 'file:///' || current_url_matches "$exact" "$current_url" "$pattern"; then
-    new_tab=-current-tab
+    new_tab=
 elif firefox-search-for-tab $exact "$pattern"; then
-    new_tab=-current-tab
+    new_tab=
 else
     sawfish-browser-input "M-$WHICH_TAB" "C-TAB"
-    new_tab=-current-tab
+    new_tab=
 fi
 
 if test "$exact"; then
-    if test "$new_tab" = "-current-tab"; then
+    if test -z "$new_tab"; then
         exit 0;
     fi
 fi
-sawfish-browser-input ISO_Left_Tab ISO_Left_Tab ISO_Left_Tab&
-firefox $new_tab "$url"&
+
+if test -z "${new_tab}" -a "${special}" = true; then
+    putclip "$url"
+    sawfish-browser-input "C-l" "S-Insert" "RET"
+else
+    firefox $new_tab "$url"
+fi
