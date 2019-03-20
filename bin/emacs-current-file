@@ -85,16 +85,30 @@ cat <<'EOF16e1379802c6' | . .replace-%%
   (message "current-file %s" (buffer-name buf))
   (or (and
        (string= "<%b0%>" "emacs-current-file")
-       (intern (buffer-file-name buf)))
+       (buffer-file-name buf))
       (and
        (string= "<%b0%>" "emacs-current-text")
        (with-current-buffer buf
-         (intern (buffer-substring-no-properties (point-min) (point-max)))))
+         (buffer-substring-no-properties (point-min) (point-max))))
       (and
        (string= "<%b0%>" "emacs-current-selection")
        (with-current-buffer buf
-         (intern (buffer-substring-no-properties (point) (mark)))))))
+         (buffer-substring-no-properties (point) (mark))))))
 ; {%/emacs-lisp-mode%}
 EOF16e1379802c6
 
-)" | tr -d '\\'
+)" | (
+    perl -e "$(
+cat <<'EOFd6b86c634928'
+# {%perl-mode%}
+$_ = join("", <>);
+s,^"|"$,,g;
+s,\\n,\n,g;
+s,\\f,\f,g;
+s,\\(["\\]),$1,g;
+print;
+# {%/perl-mode%}
+EOFd6b86c634928
+
+)"
+)

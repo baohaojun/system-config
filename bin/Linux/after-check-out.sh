@@ -49,13 +49,6 @@ if test ! -d /usr/local/share/info; then
     sudo mkdir -p /usr/local/share/info
 fi
 
-sudo ln -s ~/system-config/doc/bash.info.gz /usr/local/share/info/ -f
-
-(
-    cd /usr/local/share/info/
-    sudo ginstall-info bash.info.gz /usr/local/share/info/dir
-)
-
 (mozroots --import --sync&)
 #编译一些软件
 do_compile

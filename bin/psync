@@ -23,6 +23,8 @@ fi
 
 b0=$(basename $0)
 
+sync_saved_args=("$@")
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt rreverse @follow-symlink Sgit-st \
     # t:target-dir @delete cchecksum \
@@ -183,17 +185,12 @@ cat <<'EOFb52d0b099efd' | . .replace-%% --
 set -x;
 emacs_current_file=$(emacs-current-file)
 
-extra_dir=
-if test "<%gitp%>"; then
-    extra_dir=/$(cd ${emacs_current_file%/*}; gitp .)
-fi
-
 CHECK_ORG=true out-of-emacs bash -x "<%b0%>" \
-         -t "<%saved_target_dir%>"${extra_dir} "$@" "$(emacs-current-file)"
+         "$@" "$(emacs-current-file)"
 # {%/sh-mode%}
 EOFb52d0b099efd
 
-)" true "$@" </dev/null > ~/tmp/psync.log 2>&1&
+)" rsync "${sync_saved_args[@]}" </dev/null > ~/tmp/psync.log 2>&1&
         exit
     fi
 fi
@@ -246,7 +243,6 @@ elif test "${b0}" = jsync; then
     emacs_target_dir=${target_dir#\~/}
     emacs_target_dir=$(eval echo "${emacs_target_dir}")
     emacs_target_dir=$(emacs-quote-string "${emacs_target_dir}")
-
     target_dir=$(emacs-quote-string "${target_dir}")
 
     emacsclient -e "$(
@@ -267,7 +263,7 @@ else
 fi
 
 if test "$git_st"; then
-    cd $(dirname $(lookup-file -e .git))
+    cd "$(dirname "$(lookup-file -e .git)")"
 fi
 if test "$git_st"; then
     . .gitx
@@ -296,8 +292,16 @@ else
     elif test "${b0}" = jsync; then
         for x in "${@}"; do
             if test -f "${x}"; then
+                if test "$gitp"; then
+                    extra_dir=$(
+                        emacs-quote-string \
+                            /"$(cd "$(dirname "$x")"; gitp .)"
+                             )
+                else
+                    extra_dir=""
+                fi
                 source_file=$(emacs-quote-string "$(readlink -f "${x}")")
-                target_file="${emacs_target_dir}"/"${source_file##*/}"
+                target_file="${emacs_target_dir}${extra_dir}"/"${source_file##*/}"
                 emacsclient -e "$(
 cat <<'EOF0ecb2235bec3' | . .replace-%% --
 ; {%emacs-lisp-mode%}
@@ -318,15 +322,16 @@ EOF0ecb2235bec3
     if test "$CHECK_ORG" = true && [[ $1 =~ \.org$ ]]; then
         x=$1
         (
-            tangle_target=$(grep -o ':tangle\s+\S+\s+' -P "$x" -i |pn 2)
-            tangle_target=$(expand-file-name "$tangle_target")
-            if test -e "$tangle_target" -a "$x" -nt "$tangle_target"; then
-                bhj-notify hello "tangle and sync ${x##*/}"
-                emacsclient -e '(progn (find-file "'"$x"'") (org-babel-tangle))'
-            fi
-            cd "$(dirname "$tangle_target")"
-            $b0 "$host" "$(bp "$tangle_target")"
+            for tangle_target in $(grep -o ':tangle\s+\S+\s+' -P "$x" -i |pn 2); do
+                tangle_target=$(expand-file-name "$tangle_target")
+                if test -e "$tangle_target" -a "$x" -nt "$tangle_target"; then
+                    bhj-notify hello "tangle and sync ${x##*/}"
+                    emacsclient -e '(progn (find-file "'"$x"'") (org-babel-tangle))'
+                fi
+                cd "$(dirname "$tangle_target")"
+                $b0 "${sync_saved_args[@]:0:${#sync_saved_args[@]}-2}" "$host" "$(bp "$tangle_target")"
+                bhj-notify "$b0" "finished to sync: ${tangle_target}"
+            done
         )
     fi
-
 fi
