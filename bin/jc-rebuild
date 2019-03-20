@@ -1,0 +1,43 @@
+#!/usr/bin/env perl
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P u:build_url
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $build_url = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--build_url=BUILD_URL';
+    if (length('--build_url=BUILD_URL') > 24 and length() > 0) {
+           print "\n";
+           printf "%30s", "";
+       }
+       printf "%s", ;
+       print "\n";
+
+       exit(0);
+};
+
+GetOptions (
+    'build_url|u=s' => \$build_url,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use Mojo::DOM;
+
+$html_str = qx(jc curl ${build_url}/rebuild/parameterized);
+@parameters;
+@values;
