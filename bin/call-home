@@ -1,6 +1,5 @@
 #! /bin/bash
 
-exit
 . ensure-at-work
 for home in realhome home realhome-pc; do
     (
