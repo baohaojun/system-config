@@ -954,13 +954,21 @@ Currently, I will not download an attachment file again if it already exist. Lat
    :PROPERTIES:
    :ID:       73dc3d06-2f21-41a7-926c-5fc84100f750
    :END:
-** TODO [#B] It should be easy to copy a page to another place.
+** CANCELLED [#B] It should be easy to copy a page to another place.
+   CLOSED: [2019-03-20 水 08:28]
    :PROPERTIES:
    :ID:       86e67d79-654f-4d79-9e6e-7d5e82176b8c
    :END:
-** TODO [#B] It should be easy to create a page.
+   :LOGBOOK:
+   - State "CANCELLED"  from "TODO"       [2019-03-20 水 08:28]
+   :END:
+** DONE [#B] It should be easy to create a page.
+   CLOSED: [2019-03-20 水 08:28]
    :PROPERTIES:
    :ID:       1816ca54-3f7e-42a3-a7de-5c947354c1e2
+   :END:
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2019-03-20 水 08:28]
    :END:
 
 When I want to create a page, I would like to create it at the following locations:
@@ -972,7 +980,11 @@ When I want to create a page, I will be asked the title of the page.
 
 It should be easy for me to find that Recently contributed Page, using query, or allow me to just input a wiki page's Url.
 
-*** TODO Should be easy to query the pages that I contributed recently.
+*** DONE Should be easy to query the pages that I contributed recently.
+    CLOSED: [2019-03-20 水 08:28]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2019-03-20 水 08:28]
+    :END:
 
 1. Use cql to query the pages
 2. Check if query allows sorting (by date, so that most recently contributed got to the first)
