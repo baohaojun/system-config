@@ -20,20 +20,6 @@ if git_log=$(git --git-dir "$mirror_dir" --work-tree "$PWD" "$@"); then
     exit 0
 fi
 
-tmp_git_dir=~/.cache/system-config/git-shallow-log-in-mirror/$(repo-project).git
-if git_log=$(git --git-dir "$tmp_git_dir" --work-tree "$PWD"  "$@"); then
-    echo "$git_log"
-    exit 0
-fi
+exit 1
 
-git-get -u "$(git-remote-url "$(repo-remote)")" -b "$(repo-branch)" --reference "$mirror_dir" -d "$tmp_git_dir" --mirror 1>&2
-
-if ! git --git-dir "$tmp_git_dir" --work-tree "$PWD" "$@"; then
-    if is-jenkins; then
-        mail-cms -e -o -s "git-cmds-in-mirror failed"
-    fi
-    exit 1
-fi
-
-exit 0
 
