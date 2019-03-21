@@ -103,6 +103,7 @@ map['com.cisco.anyconnect.vpn.android.avf/com.cisco.anyconnect.vpn.android.ui.Cr
 map['com.demon.weism/com.demon.weism.activity.InfoBoxesActivity'] = 'weixin-chat'
 map['com.demon.weism/com.demon.weism.activity.LoginActivity'] = 'manual-post'
 map['com.demon.weism/com.demon.weism.activity.NewMainActivity'] = 'weixin-chat'
+map['com.dianping.v1/com.dianping.search.suggest.SuggestAgentActivity'] = 'manual-post'
 map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.AnswerProblemWithCodeActivity'] = 'manual-post'
 map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.LoginActivity'] = 'weixin-chat'
 map['com.ecitic.bank.mobile/com.citicbank.mobilebank.activity.login.unified.user.UnifiedUserLoginActivity'] = 'manual-post'
