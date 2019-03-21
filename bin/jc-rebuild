@@ -2,7 +2,7 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P u:build_url
+# generate-getopt -s perl -P -p jc u:build-url
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -11,33 +11,104 @@ Getopt::Long::Configure("posix_default");
 
 
 
-my $build_url = "";
+my $jc_build_url = "";
 
 my $handler_help = sub {
-    print ;
-    print "\n\n选项和参数：\n";
-    printf "%6s", '-u, ';
-    printf "%-24s", '--build_url=BUILD_URL';
-    if (length('--build_url=BUILD_URL') > 24 and length() > 0) {
-           print "\n";
-           printf "%30s", "";
-       }
-       printf "%s", ;
-       print "\n";
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-u, ';
+  printf "%-24s", '--build-url=BUILD-URL';
+  if (length('--build-url=BUILD-URL') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
 
-       exit(0);
+  exit(0);
 };
 
 GetOptions (
-    'build_url|u=s' => \$build_url,
-    'help|h!' => \&$handler_help,
-);
+            'build-url|u=s' => \$jc_build_url,
+            'help|h!' => \&$handler_help,
+           );
 
 
 ## end generated code
 
+# name=CI
+# value=2bded966f16eefbd7fc9ec93c1a779652cdb1093
+# name=RE
+# value=%2B1
+# name=VN
+# value=Build-Verified
+# Jenkins-Crumb=XXX
+# Submit=Rebuild
+
+my $exsample_json = <<~'EOF0dd108dc7891';
+# {%json-mode%}
+{
+  "parameter": [
+    {
+      "name": "CI",
+      "value": "2bded966f16eefbd7fc9ec93c1a779652cdb1093"
+    },
+    {
+      "name": "RE",
+      "value": "+1"
+    },
+    {
+      "name": "VN",
+      "value": "Build-Verified"
+    }
+  ],
+  "Jenkins-Crumb": "a7f19707ff6aecc7635ff1cc9517383b"
+}
+# {%/json-mode%}
+EOF0dd108dc7891
+
 use Mojo::DOM;
 
-$html_str = qx(jc curl ${build_url}/rebuild/parameterized);
-@parameters;
-@values;
+$html_str = qx(jc curl ${jc_build_url}/rebuild/parameterized);
+
+$dom = Mojo::DOM->new->parse($html_str);
+
+my @parameters;
+my @values;
+
+
+my $sep_regex = qr/separator-[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/;
+$dom->find('input')
+  ->each(
+         sub {
+           if ($_->{name} eq "name" && $_->{type} eq "hidden" && not $_->{value} =~ m/$sep_regex/) {
+             push @parameters, $_->{value};
+             print "got parameter: ", $_->{value}, scalar(@parameters), "\n"
+           }
+           if ($_->{class} =~ m/setting-input/) {
+             push @values, $_->{value};
+             print "got value: ", $_->{value}, scalar(@values), "\n"
+           }
+         }
+        );
+
+use JSON;
+use v5.10;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+use URI::Escape;
+
+$jc_build_url =~ s,/*$,/,;
+
+system("jc", "curl", "${jc_build_url}rebuild/configSubmit", "-X", "POST", "--data-urlencode", "json=" . encode_json {
+                parameters =>
+                  [
+                   map {
+                     $_ = {
+                           name => $parameters[$_],
+                           value => $values[$_],
+                          };
+                   } 0 .. (@parameters -1)
+                  ]
+                }, "-v"
+      );
