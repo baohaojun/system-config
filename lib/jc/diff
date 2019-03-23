@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P u:url
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o u:h \
+                      --long url:,help \
+                      -n $(basename -- $0) -- "$@")
+declare url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -u|--url)
+            url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-u, '
+            printf %-24s '--url=URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+# diff url is something like this
+# ${scm_jenkins_url}job/test.bhj/jobConfigHistory/showDiffFiles?timestamp1=2019-03-12_15-13-42&timestamp2=2019-03-20_08-47-03
+
+# raw xml url is like this
+# ${scm_jenkins_url}job/test.bhj/jobConfigHistory/configOutput?type=raw&timestamp=2019-03-20_08-47-03
+
+x1_timestamp=$(echo "$url"|perl -pe 's/.*(timestamp1=.*)&.*/$1/; s/1=/=/')
+x2_timestamp=$(echo "$url"|perl -pe 's/.*&(timestamp2=.*)/$1/; s/2=/=/')
+
+x1_url="${url%/showDiffFiles*}/configOutput?type=raw&${x1_timestamp}"
+x2_url="${url%/showDiffFiles*}/configOutput?type=raw&${x2_timestamp}"
+
+jc curl "${x1_url}" > ~/tmp/x1.xml
+jc curl "${x2_url}" > ~/tmp/x2.xml
+
+perl -e "$(
+cat <<'EOF613328c640cf'
+# {%perl-mode%}
+use Mojo::DOM;
+use File::Slurp;
+
+for my $xml_file (@ARGV) {
+    $str = read_file($xml_file);
+    $dom = Mojo::DOM->new->parse($str);
+    write_file($xml_file, $dom);
+}
+# {%/perl-mode%}
+EOF613328c640cf
+
+)" ~/tmp/x{1,2}.xml
+
+meld ~/tmp/x{1,2}.xml
