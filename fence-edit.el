@@ -147,6 +147,16 @@ don't work well in the snippet view.")
   "Make an edit buffer name from BASE-BUFFER-NAME and LANG."
   (concat "*Narrowed Edit " base-buffer-name "[" lang "]*"))
 
+(defun fence-edit--line-beginning-position-at-pos (pos)
+  "Return the position of the beginning of the line at POS.
+
+Used to find the position at which the code to edit begins. The
+beginning of the line is needed to handle indentation."
+  (interactive)
+  (save-excursion
+    (goto-char pos)
+    (line-beginning-position)))
+
 (defun fence-edit--next-line-beginning-position-at-pos (pos)
   "Return the position of the beginning of the line after the line at POS.
 
@@ -168,24 +178,31 @@ Return nil if no block is found."
     (beginning-of-line)
     (let ((pos (point))
           (blocks fence-edit-blocks)
-          block re-start re-end lang-id start end lang)
+          block re-start re-end lang-id start end lang include-ends)
       (catch 'exit
         (while (setq block (pop blocks))
           (save-excursion
             (setq re-start (car block)
                   re-end (nth 1 block)
-                  lang-id (nth 2 block))
-            (if (or (looking-at re-start)
-                    (re-search-backward re-start nil t))
-                (progn
-                  (setq start (fence-edit--next-line-beginning-position-at-pos (match-end 0))
-                        lang (if (integerp lang-id)
-                                 (match-string lang-id)
-                               (symbol-name lang-id)))
-                  (if (and (and (goto-char (match-end 0))
-                                (re-search-forward re-end nil t))
-                           (>= (match-beginning 0) pos))
-                      (throw 'exit `(,start ,(match-beginning 0) ,lang)))))))))))
+                  lang-id (nth 2 block)
+                  include-ends (nth 3 block))
+            (when (or (looking-at re-start)
+                      (re-search-backward re-start nil t))
+              (setq start
+                    (if include-ends
+                        (fence-edit--line-beginning-position-at-pos (match-beginning 0))
+                      (fence-edit--next-line-beginning-position-at-pos (match-end 0)))
+                    lang (if (integerp lang-id)
+                             (match-string lang-id)
+                           (symbol-name lang-id))
+                    end
+                    (when (and (goto-char (match-end 0))
+                               (re-search-forward re-end nil t))
+                      (if include-ends
+                          (match-end 0)
+                        (match-beginning 0))))
+              (when (>= end pos)
+                (throw 'exit `(,start ,end ,lang))))))))))
 
 (defun fence-edit--get-mode-for-lang (lang)
   "Try to get a mode function from language name LANG.
