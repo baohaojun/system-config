@@ -504,7 +504,7 @@ M.check_scroll_lock = function()
       end
       reset_input_method()
 
-      adb_shell"ime enable com.wrench.inputmethod.pinyin/.PinyinIME; ime set com.wrench.inputmethod.pinyin/.PinyinIME; sleep 1;"
+      adb_shell"cd /sdcard/; nohup ime enable com.wrench.inputmethod.pinyin/.PinyinIME; nohup ime set com.wrench.inputmethod.pinyin/.PinyinIME; sleep 1;"
       if using_wrench_ime() then
          break
       end
