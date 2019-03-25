@@ -20,7 +20,11 @@ else
 SUBSYSTEM=="usb", ATTR{idVendor}=="$vid", OWNER="${USER}"
 EOF
     fi
-
 fi
-perl -npe "s,/home/bhj,${HOME},g; s,bhj,${USER},g" ~/system-config/etc/udev/rules.d/90-bhj-personal.rules | sudo tee /etc/udev/rules.d/90-$USER-personal.rules
+
+perl -npe "s,/home/bhj,${HOME},g; s,bhj,${USER},g" ~/system-config/etc/udev/rules.d/90-bhj-personal.rules |
+    sort -u |
+    tee-with-tmp ~/system-config/etc/udev/rules.d/90-bhj-personal.rules |
+    sudo tee /etc/udev/rules.d/90-$USER-personal.rules
+
 sudo /etc/init.d/udev restart
