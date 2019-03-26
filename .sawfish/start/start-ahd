@@ -4,7 +4,7 @@
     while true; do
         cd ~/system-config/gcode/offline.wikipedia/mywiki
         test -e ../en.py -o -e ~/src/github/ahd || exit
-        python ~/system-config/gcode/offline.wikipedia/mywiki/manage.py runserver 0.0.0.0:34567 --noreload >>~/.cache/system-config/logs/offline-wiki.log 2>&1
+        /usr/bin/python ~/system-config/gcode/offline.wikipedia/mywiki/manage.py runserver 0.0.0.0:34567 --noreload >>~/.cache/system-config/logs/offline-wiki.log 2>&1
         sleep 2;
     done
 ) 5< ~/system-config/gcode/offline.wikipedia/mywiki/manage.py &
