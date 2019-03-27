@@ -119,7 +119,14 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
 
             file_arg="/${REMOTEPROTOCOL:-scp}:$(whoami)@$LOCALIP$portarg:$FILE"
 
-            cat ${input_file} |
+            if test "${b0}" = putfile; then
+                (
+                    cd "$(dirname "${input_file}")"
+                    tar c "$(basename "${input_file}")"
+                )
+            else
+                cat ${input_file}
+            fi |
                 ssh -i $identity_file -o StrictHostKeyChecking=no ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port \
                     "remote-${b0} ${file_arg}"
 
