@@ -95,6 +95,7 @@
 うごk /動/[く/動/]/
 あしかk /足掛/[か/足掛/]/
 ;; okuri-nasi entries.
+memory /メモリー/
 なみだ /涙/
 しぎ /思議/
 ふ /不/
@@ -517,3 +518,7 @@ drawing /ドローイング/
 しょうぼうしゃ /消防車/
 しょうぼう /消防/
 strike /ストライキ/
+
+;; Local Variables:
+;; coding: euc-jis-2004-unix
+;; End:

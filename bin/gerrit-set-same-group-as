@@ -2,51 +2,11 @@
 
 set -e
 
-## start code-generator "^\\s *#\\s *"
-# generate-getopt h:host=s
-## end code-generator
-## start generated code
-TEMP=$( getopt -o h:h \
-               --long host:,help \
-               -n $(basename -- $0) -- "$@")
-host=s
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-
-        -h|--host)
-            host=$2
-            shift 2
-            ;;
-        -h|--help)
-            set +x
-            echo -e
-            echo
-            echo Options and arguments:
-            printf %06s '-h, '
-            printf %-24s '--host=HOST'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
-
-
-## end generated code
-
 change_user=$1
 template_user=$2
 export IFS=$'\n'
 current_groups=$(
-    gerrit -h $host ls-groups --user "$change_user"
+    ssh-gerrit --admin ls-groups --user "$change_user"
               )
 
 if [[ "$template_user" =~ ^- ]]; then
@@ -57,7 +17,7 @@ elif [[ $template_user =~ ^\+ ]]; then
     remove_groups=
 else
     to_groups=$(
-        gerrit -h $host ls-groups --user "$template_user" | grep -v -P -e 'Registered Users|userid/|user/|Anonymous Users|ldap/' ||
+        ssh-gerrit --admin ls-groups --user "$template_user" | grep -v -P -e 'Registered Users|userid/|user/|Anonymous Users|ldap/' ||
             echo "$template_user"
              )
 
@@ -79,12 +39,11 @@ for x in $remove_groups; do
 done
 
 if yes-or-no-p "确认把 $change_user 的 gerrit 分组设成跟 $template_user 一样（add：$add_groups；del：$remove_groups）？"; then
-
     for x in $add_groups; do
-        gerrit -h $host set-members "'$x'" -a "$change_user"
+        ssh-gerrit --admin set-members "'$x'" -a "$change_user"
     done
 
     for x in $remove_groups; do
-        gerrit -h $host set-members "'$x'" -r "$change_user"
+        ssh-gerrit --admin set-members "'$x'" -r "$change_user"
     done
 fi

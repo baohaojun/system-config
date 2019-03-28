@@ -51,7 +51,6 @@ function jc-create-job() {
 
     if cat $xml | jc update-job $(basename $task_name) >/dev/null 2>&1; then
         (
-            . ~/src/github/smartcm/etc/settings.rc
             of ${scm_jenkins_url}job/$(basename ${task_name}) >/dev/null 2>&1
         )&
         exit
