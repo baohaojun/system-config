@@ -23,7 +23,15 @@ Here's how to use it (see the Usage section in org-kongfu.org):
 
 =./org-kungfu -w WIKIURL -u USERNAME -p PASSWORD e -p PAGE_ID=
 
-** Required Perl packages
+** Required Software and Version
+
+*** Pandoc
+
+Pandoc 2.7 is highly recommended. Pandoc 1.17.2 on Debian Stable can't output as neat org-mode text when converting html to org-mode.
+
+*** Perl
+
+Perl version v5.28 is recommended (at least v5.24 won't work, as I recently found out on Debian Stable: it does not support this operator syntax: =<<~=).
 
 Before you can use this script, you need make sure you have the following Perl packages installed:
 
