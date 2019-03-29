@@ -35,32 +35,39 @@ fi
 
 
 function jc-create-job() {
-    task_name=${1%.xml}
+    cd "$(dirname "$1")"
 
-    if [[ $task_name =~ jobs/.*/config$ ]]; then
-        task_name=$(basename $(dirname "$task_name"))
+    local task=${1%.xml}
+    task=$(basename "$task")
+
+
+    if ! jc get-job-for-edit -t $task -o $task.before-update.xml 2>&1; then
+        bhj-notify jc "Can't get-job: $task"
+        exit 1
     fi
 
-    if test -e $task_name.xml; then
-        xml=$task_name.xml
-    elif test -e jobs/$task_name/config.xml; then
-        xml=jobs/$task_name/config.xml
-    else
-        die "can't find $task_name.xml"
+    if ! diff $task.before-update.xml $task.before-edit.xml; then
+        meld $task.before-update.xml $task.before-edit.xml
+        if EMACS=t yes-or-no-p "Do you want to merge with meld?"; then
+            meld $task.xml $task.before-update.xml
+            if ! EMACS=t yes-or-no-p "Is the xml correctly updated?"; then
+                bhj-notify jc "Can't update the xml, please retry"
+                exit 1
+            fi
+        fi
     fi
 
-    if cat $xml | jc update-job $(basename $task_name) >/dev/null 2>&1; then
-        (
-            of ${scm_jenkins_url}job/$(basename ${task_name}) >/dev/null 2>&1
-        )&
-        exit
-    else
-        for n in $(seq 1 10); do
-            cat $xml | jc create-job $(basename $task_name) && exit || true
-            cat $xml | jc update-job $(basename $task_name) && exit || true
-            sleep 1
-        done
-    fi
+    (
+        if cat $task.xml | jc update-job $task >/dev/null 2>&1; then
+            exit
+        else
+            cat $task.xml | jc create-job $task
+        fi
+    )
+    (
+        of ${scm_jenkins_url}job/${task} >/dev/null 2>&1
+    )&
+    jc get-job-for-edit -t "$task" --extra-save "$task.before-edit.xml"
 }
 echo jc-create-or-update "$1"
 jc-create-job "$1"

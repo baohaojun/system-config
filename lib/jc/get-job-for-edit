@@ -1,0 +1,90 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P t:task o:output-file @:extra-save
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o o:t:h \
+                      --long extra-save:,output-file:,task:,help \
+                      -n $(basename -- $0) -- "$@")
+declare extra_save=
+declare output_file=
+declare task=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --extra-save)
+            extra_save=$2
+            shift 2
+
+            ;;
+        -o|--output-file)
+            output_file=$2
+            shift 2
+
+            ;;
+        -t|--task)
+            task=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--extra-save=EXTRA_SAVE'
+            echo
+            printf %06s '-o, '
+            printf %-24s '--output-file=OUTPUT_FILE'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--task=TASK'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "${output_file}"; then
+    output_file=$task.xml
+fi
+
+jc get-job "$task" > "${task}.from-jc.xml"
+xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${task}.from-jc.xml" 2>/dev/null)
+if [[ $xml_command =~ '#!end-of-fence' ]]; then
+    export cdata_command='<![CDATA['"$xml_command]]>"
+else
+    export cdata_command='<![CDATA[#!/bin/bash'"
+${xml_command}
+#!end-of-fence]]>"
+fi
+xmlstarlet ed -u //command -v "%%hello-command%%" "${task}.from-jc.xml" |
+    perl -npe 's,%%hello-command%%,$ENV{cdata_command},;s,&#13;\n,&#xd;\n,' > "$task-$$.xml"
+
+. atexit rm -f $task-$$.xml
+jc htmlify-xml-tag -t description -f $task-$$.xml
+
+if test "${extra_save}"; then
+    cp $task-$$.xml "${extra_save}"
+fi
+
+if ! diff "${output_file}" $task-$$.xml > ${output_file}.diff; then
+    bhj-notify jc "Got diff between ${output_file} and $task-$$.xml"&
+    emacs-file-op cat $task-$$.xml '>' "${output_file}"
+fi
+

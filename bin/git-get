@@ -18,7 +18,7 @@ notify-error() {
     # c:create \
     # @:clone-args @single-branch @mirror='("" --mirror)' \
     # @:retry-regexp="'.'" \
-    # @:depth
+    # @:depth '?"默认下载全部历史记当，如果指定的话，只下载深度为 DEPTH 个历史提交"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o b:c:d:r:u:h \
@@ -112,7 +112,7 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--depth=DEPTH'
-            echo
+            echo "默认下载全部历史记当，如果指定的话，只下载深度为 DEPTH 个历史提交"
             printf %06s '-d, '
             printf %-24s '--dir=DIR'
             echo
@@ -174,6 +174,17 @@ if ! valid-git-dir "$dir"; then
     rm -rf "$dir"
 fi
 
+extra_clone_args=()
+extra_fetch_args=()
+if test "$depth"; then
+    extra_clone_args+=(--depth $depth)
+    extra_fetch_args+=(--depth $depth)
+fi
+
+if test "$reference"; then
+    extra_clone_args+=(--reference "$reference")
+fi
+
 if test ! -d $dir; then
     (
         . aterr rm -rf "$dir"
@@ -182,7 +193,7 @@ if test ! -d $dir; then
 
         function do-clone() {
             (
-                if test "${single_branch}" = true; then
+                if test "${single_branch}" = true -o "${depth}"; then
                     # some git repos can't be cloned with
                     # --single-branch, such as this will fail:
 
@@ -195,21 +206,27 @@ if test ! -d $dir; then
                 fi
 
                 for single_branch_arg in "${single_branch_trys[@]}"; do
+                    if [[ $branch =~ [0-9a-f]{40} ]] ||
+                       echo $branch | grep -q -P -e '^refs/(?!heads/|tags/)'; then
+                        git init .
+                        git remote add origin $url
+                        git fetch origin $branch "${extra_fetch_args[@]}"
+                        git reset --hard FETCH_HEAD
+                        exit 0
+                    fi
                     if git clone $clone_args $mirror ${single_branch_arg} -b $branch $url . \
-                           $(if test -d "$reference"; then echo --reference "$reference"; fi) \
-                           $(if test "${depth}"; then echo --depth ${depth}; fi); then
-
-                        if test "${scm_gerrit_server}" && [[ "$url" =~ "${scm_gerrit_server}" ]]; then
-                            gitdir=$(git rev-parse --git-dir);
-                            scp -p -P ${scm_gerrit_port} ${scm_gerrit_user}@${scm_gerrit_server}:hooks/commit-msg ${gitdir}/hooks/
-                        fi || true
-
+                           "${extra_clone_args[@]}"; then
                         exit 0
                     fi
                 done
 
                 exit 1
             )
+
+            if test "${scm_gerrit_server}" && [[ "$url" =~ ${scm_gerrit_server} ]]; then
+                gitdir=$(git rev-parse --git-dir);
+                scp -p -P ${scm_gerrit_port} ${scm_gerrit_user}@${scm_gerrit_server}:hooks/commit-msg ${gitdir}/hooks/
+            fi || true
         }
 
         if ! (

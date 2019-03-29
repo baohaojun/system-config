@@ -1,11 +1,7 @@
 #!/bin/bash
 . ~/.profile
 . ~/system-config/bin/set-ssh-agent
-if test -e ~/.bashrc-cust; then
-    . ~/.bashrc-cust
-fi
-
-. ~/src/github/smartcm/.bashrc-cust
+. ~/system-config/.bashrc
 
 EMACS=emacs
 
