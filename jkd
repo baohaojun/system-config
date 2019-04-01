@@ -1,0 +1,286 @@
+#!/usr/bin/env perl
+# [[file:~/src/github/org-kungfu/jkd.org::the-ultimate-script][the-ultimate-script]]
+use strict;
+use String::ShellQuote;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P -s perl -p jkd \
+# '?subcmd_help()' \
+# u:username '?"Login Username"' \
+# p:password '?"Login Password"' \
+# j:jiraurl '?"Jira URL (only FQDN, no / and such)"' \
+# vverbose '?"Verbose debug output"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $jkd_jiraurl = "";
+my $jkd_password = "";
+my $jkd_username = "";
+my $jkd_verbose = 0;
+
+my $handler_help = sub {
+    print subcmd_help();
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--jiraurl=JIRAURL';
+    if (length('--jiraurl=JIRAURL') > 24 and length("Jira URL (only FQDN, no / and such)") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "Jira URL (only FQDN, no / and such)";
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--password=PASSWORD';
+    if (length('--password=PASSWORD') > 24 and length("Login Password") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "Login Password";
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--username=USERNAME';
+    if (length('--username=USERNAME') > 24 and length("Login Username") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "Login Username";
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length("Verbose debug output") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "Verbose debug output";
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'jiraurl|j=s' => \$jkd_jiraurl,
+    'password|p=s' => \$jkd_password,
+    'username|u=s' => \$jkd_username,
+    'verbose|v!' => \$jkd_verbose,
+    'help|h!' => \&$handler_help,
+    );
+
+
+## end generated code
+use v5.10;
+
+my %file_config;
+use Config::Simple;
+
+my ($config_file) = glob "~/.config/org-kungfu/config.ini";
+
+if (-e $config_file) {
+    Config::Simple->import_from($config_file, \%file_config);
+}
+
+if (not $jkd_password) {
+    $jkd_password = $file_config{"jkd.password"};
+}
+
+if (not $jkd_password) {
+    say "Must specify the wiki password";
+    &$handler_help(1)
+}
+
+if (not $jkd_username) {
+    $jkd_username = $file_config{"jkd.username"};
+}
+
+if (not $jkd_username) {
+    say "Must specify the wiki username";
+    &$handler_help(1);
+}
+
+if (not $jkd_jiraurl) {
+    $jkd_jiraurl = $file_config{"jkd.jiraurl"};
+    say "jira url is $jkd_jiraurl";
+}
+
+if (not $jkd_jiraurl) {
+    say "Must specify the wiki url";
+    &$handler_help(1);
+}
+
+my $jkd_topdir = $file_config{"jkd.topdir"};
+if (not $jkd_topdir) {
+    $jkd_topdir = glob("~/src/github/jkd-doujyou"); # doujyou is japanese for 道場
+}
+
+use File::Path;
+make_path($jkd_topdir);
+chdir($jkd_topdir)
+    or die "Can't chdir: $jkd_topdir";
+
+use v5.10;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+use JSON;
+use File::Path qw(make_path);
+use File::Basename;
+use Encode;
+
+sub jkd_url_for_api($) {
+    (my $api_path = $_[0]) =~ s,^/,,;
+
+    my $auth_str = sprintf "%s:%s@", $jkd_username, $jkd_password;
+    (my $scm_jira_site = $jkd_jiraurl) =~ s,(https?://),$1$auth_str,;
+    return "${scm_jira_site}/${api_path}";
+}
+
+sub get($) {
+    my $ua = LWP::UserAgent->new;
+    my $api = $_[0];
+    my $url = jkd_url_for_api($api);
+    my $response = $ua->request(GET $url);
+    if ($response->code != 200) {
+        die "Can't get $api: code is " . $response->code . ", url is $url";
+    }
+
+    return $response;
+}
+
+sub select_args(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l -P p:prompt O:order-name
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("posix_default");
+
+    local @ARGV = @_;
+
+    my $order_name = "";
+    my $prompt = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-O, ';
+        printf "%-24s", '--order-name=ORDER-NAME';
+        if (length('--order-name=ORDER-NAME') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--prompt=PROMPT';
+        if (length('--prompt=PROMPT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'order-name|O=s' => \$order_name,
+        'prompt|p=s' => \$prompt,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my @command = (
+        "select-args", "-p", "$prompt",
+        "-O", "$order_name",
+        @ARGV
+        );
+
+    my $command = join(" ", shell_quote(@command));
+    my $res = qx($command);
+
+    return $res;
+}
+
+sub jkd_select_project(@) {
+    my $projects_resp = get("rest/api/2/project/");
+
+    my %project_key_name_map;
+    my $projects_object = decode_json $projects_resp->content;
+
+    for my $project (@{$projects_object}) {
+        $project_key_name_map{$project->{key}} = $project->{name};
+    }
+
+    print select_args("-p", "Which project do you want to use?",
+                "-O", "select-jira-project",
+                sort {$a cmp $b} map {sprintf "%s: %s", $_, $project_key_name_map{$_}} keys %project_key_name_map
+        );
+
+
+
+}
+
+
+sub jkd_c(@) {
+
+}
+
+sub subcmd_help() {
+    my $top_help_str = <<~'EOF';
+        Usage: jkd [GLOBAL_OPTIONS]... SUB_COMMAND SUBCMD_ARGS...
+        Here's the list of sub-commands:
+        EOF
+
+    my @subcmd_help_strs;
+    my %subcmd_helpstr_map = (
+        update1page => "Update 1 page (html text and all images -- automatically upload as page attachments)",
+        get1page => "Get 1 page (html text and all image attachments)",
+        e => "Edit 1 page in emacs org-mode, download/edit/upload",
+        );
+
+    my %help_printed_map;
+
+    for my $subcmd ((sort {$a cmp $b} grep {m/^jkd_/} keys %::), (sort {$a cmp $b} keys %subcmd_helpstr_map)) {
+        (my $raw_subcmd = $subcmd) =~ s,^jkd_,,;
+        $subcmd = "jkd_$raw_subcmd";
+        if ($help_printed_map{$raw_subcmd}) {
+            next;
+        } else {
+            $help_printed_map{$raw_subcmd} = 1;
+        }
+
+        my $subcmd_help_str = $subcmd_helpstr_map{$raw_subcmd} ||
+            "NO DESCRIPTION.";
+
+        if (not defined &$subcmd) {
+            $subcmd_help_str .= " (NO DEFINITION)"
+        }
+
+        push @subcmd_help_strs, sprintf("    %s\n\t%s", $raw_subcmd, $subcmd_help_str);
+    }
+
+    return join "\n", $top_help_str, @subcmd_help_strs;
+}
+my $sub_command = "jkd_" . shift;
+
+if (not defined &$sub_command) {
+    say "Can't find sub-command: $sub_command";
+    &$handler_help();
+}
+
+$sub_command = \&{$sub_command};
+&$sub_command(@ARGV);
+
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+# the-ultimate-script ends here
