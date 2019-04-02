@@ -103,7 +103,6 @@ if (not $jkd_username) {
 
 if (not $jkd_jiraurl) {
     $jkd_jiraurl = $file_config{"jkd.jiraurl"};
-    say "jira url is $jkd_jiraurl";
 }
 
 if (not $jkd_jiraurl) {
@@ -208,7 +207,7 @@ sub select_args(@) {
 }
 
 sub jkd_select_project(@) {
-    my $projects_resp = get("rest/api/2/project/");
+    my $projects_resp = get("/rest/api/2/project/");
 
     my %project_key_name_map;
     my $projects_object = decode_json $projects_resp->content;
@@ -221,14 +220,227 @@ sub jkd_select_project(@) {
                 "-O", "select-jira-project",
                 sort {$a cmp $b} map {sprintf "%s: %s", $_, $project_key_name_map{$_}} keys %project_key_name_map
         );
+}
+
+sub jkd_get_issue_types(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l p:project ttest-it
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $project = "";
+    my $test_it = 0;
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--project=PROJECT';
+        if (length('--project=PROJECT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-t, ';
+        printf "%-24s", '--[no]test-it';
+        if (length('--[no]test-it') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'project|p=s' => \$project,
+        'test-it|t!' => \$test_it,
+        'help|h!' => \&$handler_help,
+        );
 
 
+    ## end generated code
 
+    my $project_meta_resp = get("/rest/api/2/issue/createmeta?projectKeys=$project");
+    my %jkd_project_issue_types_name_id_map;
+
+    my $project_meta_obj = decode_json $project_meta_resp->content;
+    for my $project (@{$project_meta_obj->{projects}}) {
+        for my $issuetype (@{$project->{issuetypes}}) {
+            my $name = $issuetype->{name};
+            my $id = $issuetype->{id};
+            $jkd_project_issue_types_name_id_map{$name} = $id;
+        }
+    }
+
+    if ($test_it) {
+        print join("\n",
+                   map
+                   {sprintf "%s: %s", $_, $jkd_project_issue_types_name_id_map{$_}}
+                   keys %jkd_project_issue_types_name_id_map
+            );
+    }
+    return %jkd_project_issue_types_name_id_map;
+}
+
+sub jkd_get_issue_fields(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l p:project i:issue-type
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $issue_type = "";
+    my $project = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--issue-type=ISSUE-TYPE';
+        if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--project=PROJECT';
+        if (length('--project=PROJECT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'issue-type|i=s' => \$issue_type,
+        'project|p=s' => \$project,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my $issue_fields_resp = get("/rest/api/2/issue/createmeta?projectKeys=${project}&issuetypeIds=${issue_type}&expand=projects.issuetypes.fields");
+
+    return decode_json $issue_fields_resp->content;
 }
 
 
-sub jkd_c(@) {
+sub jkd_c(@) { # create issue
 
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l p:project i:issue-type
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $issue_type = "";
+    my $project = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--issue-type=ISSUE-TYPE';
+        if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--project=PROJECT';
+        if (length('--project=PROJECT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'issue-type|i=s' => \$issue_type,
+        'project|p=s' => \$project,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    if (not $project) {
+        ($project = jkd_select_project()) =~ s/:.*//;
+    }
+
+    if (not $issue_type) {
+        my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
+        my $issue_type_name = select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
+        $issue_type = $jkd_project_issue_types_name_id_map{$issue_type_name};
+    }
+
+    my $issue_fields_obj = jkd_get_issue_fields("-p", "$project", "-i", "$issue_type");
+
+    my %required_fields;
+    for my $project (@{$issue_fields_obj->{projects}}) {
+        for my $issue_type (@{$project->{issuetypes}}) {
+            for my $field_name (keys %{$issue_type->{fields}}) {
+                if ($issue_type->{fields}{$field_name}{required}) {
+                    if ($field_name eq 'project' || $field_name eq 'issuetype') {
+                        next;
+                    }
+                    if ($issue_type->{fields}{$field_name}{schema}{type} eq 'string') {
+                        my @command = (
+                            "ask-for-input-with-emacs", "-p", "Please input the $field_name."
+                            );
+                        my $command = join(" ", shell_quote(@command));
+                        $required_fields{$field_name} = qx($command);
+                    }
+                }
+
+            }
+        }
+    }
+
+    $required_fields{project} = {
+        id => $project,
+    };
+
+    $required_fields{issuetype} = {
+        id => $issue_type,
+    };
+
+    my $ua = LWP::UserAgent->new;
+
+    my $request = POST jkd_url_for_api("/rest/api/2/issue"),
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        "charset" => "utf-8",
+        Content => encode_json {
+            fields => \%required_fields,
+    };
+    my $response = $ua->request($request);
+    say "POST response code:" . $response->code, "result: ", $response->content;
 }
 
 sub subcmd_help() {
