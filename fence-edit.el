@@ -228,9 +228,9 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
      (propertize " " 'display '(space :width left-margin)))
    ;; left fringe
    (when (< 0 (or (and (numberp left-fringe-width)
-                       left-fringe-width)
+                       left-fringe-width))
              (and (not left-fringe-width)
-                  (frame-parameter nil 'left-fringe))))
+                  (frame-parameter nil 'left-fringe)))
      (propertize " " 'display '(space :width left-fringe)))
    ;; display line numbers
    (when display-line-numbers
@@ -238,6 +238,18 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
    ;; instructions
    "Press C-c ' (C-c apostrophe) to save, C-c C-k to abort."))
 
+(defun fence-edit--list-major-modes ()
+  "Return a list of all major modes which are associated with a
+  magic string or file extension.
+
+This will not produce an exhaustive list of major modes but it
+will hopefully list all the major modes that a user would want to
+pick."
+  (delete-dups (mapcar #'cdr (append magic-mode-alist
+                                     auto-mode-alist
+                                     magic-fallback-mode-alist))))
+
+;;;###autoload
 (defun fence-edit-code-region (beg end &optional lang)
   "Edit region (BEG and END) in language LANG."
   (interactive (append
@@ -245,7 +257,9 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
                     (list (region-beginning) (region-end))
                   (list (point-min) (point-max)))
                 (when current-prefix-arg
-                  (list (read-string "Edit language: ")))))
+                  (list (string-trim-right
+                         (completing-read "Edit Language: " (fence-edit--list-major-modes))
+                         "-mode")))))
   (let* ((beg (copy-marker beg))
          (end (copy-marker end t))
          (pos (point))
@@ -286,6 +300,14 @@ The assumption is that language `LANG' has a mode `LANG-mode'."
       (goto-char edit-point)
       (set-buffer-modified-p nil))))
 
+;;;###autoload
+(defun fence-edit-code-region-with-mode ()
+  "Same as `fence-edit-code-region' but always prompt for the mode."
+  (interactive)
+  (setq current-prefix-arg '(4))
+  (call-interactively #'fence-edit-code-region))
+
+;;;###autoload
 (defun fence-edit-code-at-point ()
   "Look for a code block at point and, if found, edit it."
   (interactive)
