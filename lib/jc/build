@@ -1,0 +1,77 @@
+#!/usr/bin/env perl
+
+use autodie qw(:all);
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P p:params='()' '?"可以指定多个，格式为 name=value，目前不支持文件格式参数"' \
+    # j:job-or-url '?"如果是 job，则应使用 job 名字，如果是 url，则格式为正则：${scm_jenkins_url}job/JOB_NAME/"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $job_or_url = "";
+my @params = ();
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-j, ';
+  printf "%-24s", '--job-or-url=JOB-OR-URL';
+  if (length('--job-or-url=JOB-OR-URL') > 24 and length("如果是 job，则应使用 job 名字，如果是 url，则格式为正则：${scm_jenkins_url}job/JOB_NAME/") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "如果是 job，则应使用 job 名字，如果是 url，则格式为正则：${scm_jenkins_url}job/JOB_NAME/";
+  print "\n";
+  printf "%6s", '-p, ';
+  printf "%-24s", '--params=PARAMS';
+  if (length('--params=PARAMS') > 24 and length("可以指定多个，格式为 name=value，目前不支持文件格式参数") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "可以指定多个，格式为 name=value，目前不支持文件格式参数";
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'job-or-url|j=s' => \$job_or_url,
+            'params|p=s' => \@params,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+use JSON;
+
+
+# curl -X POST JENKINS_URL/job/JOB_NAME/build \
+#   --user USER:TOKEN \
+#   --data-urlencode json='{"parameter": [{"name":"id", "value":"123"}, {"name":"verbosity", "value":"high"}]}'
+
+@params = map {
+  my ($name, $value) = split "=", $_;
+  {name => $name, value => $value}
+} @params;
+
+my $json_arg = encode_json {
+  parameter => \@params
+};
+
+if ($job_or_url !~ m,/,) {
+  $job_or_url = "$ENV{scm_jenkins_url}job/${job_or_url}/";
+}
+
+$job_or_url =~ s,/*$,/build,;
+
+$ret = system("jc", "curl", "$job_or_url", "-X", "POST", "--data-urlencode", "json=" . $json_arg);
+
+if ($ret != 0) {
+  die sprintf "Failed to run jc build? system ret is 0x%04x", $ret;
+}
