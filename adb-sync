@@ -17,6 +17,10 @@
 """Sync files from/to an Android device."""
 
 from __future__ import unicode_literals
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 import argparse
 import glob
 import locale
