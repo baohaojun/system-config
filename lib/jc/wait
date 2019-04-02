@@ -1,0 +1,5 @@
+#!/bin/bash
+
+while jc is-running "$1"; do
+    sleep 3
+done

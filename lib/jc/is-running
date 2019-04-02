@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+jc curl "${1%/}"/api/xml'?depth=1&xpath=*/building' | grep -q '<building>true</building>'

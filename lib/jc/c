@@ -1,0 +1,3 @@
+#!/bin/bash
+cat | jc create-job "$1"
+jc ojob "$1"
