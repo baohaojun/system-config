@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# 这个脚本：输入参数是一个 build_url，输出是一个 build_dir（在 jenkins master 上名为类似“jobs/JOB_NAME/build/NNN”的一个目录）
+
+# We will change the jenkins url
+#
+#     ${scm_jenkins_url}job/Daily-apk-matrix-build.test/APP_NAME=hupowercontrol,SOURCE_BRANCH=O-M01-MASTER,label_exp=app_build/1
+#
+# into a build dir:
+#
+#      ${scm_jenkins_jobs_dir}/Daily-apk-matrix-build.test/configurations/axis-APP_NAME/hupowercontrol/axis-SOURCE_BRANCH/O-M01-MASTER/axis-label_exp/app_build/builds/1
+#
+# Or this url:
+#     ${scm_jenkins_url}job/test.bhj/113
+#
+# into this dir:
+#     ${scm_jenkins_jobs_dir}/test.bhj/builds/113
+
+build_url=$1
+
+job_name=$(echo "${build_url}" | perl -pe 's,.*?/job/,,; s,/.*,,')
+build_number=$(echo "${build_url}" | perl -pe 's,.*?/(\d+)/?$,$1,')
+
+if echo "$build_url" | grep -q -P '/job/.*/.*=.*'; then
+    config_dir=configurations/$(
+        echo -n "${build_url}" | perl -pe "$(cat <<'EOF5f2741a5cb71'
+# {%perl-mode%}
+s,.*?/job/.*?/,,;
+s,/.*,,;
+s#(.*?)=(.*?)(,|$)#axis-$1/$2/#g;
+# {%/perl-mode%}
+EOF5f2741a5cb71
+)"
+              )
+else
+    config_dir=
+fi
+
+echo "${scm_jenkins_jobs_dir%/}/${job_name}/${config_dir}builds/${build_number}"
