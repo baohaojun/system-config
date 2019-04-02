@@ -201,7 +201,7 @@ Return nil if no block is found."
                       (if include-ends
                           (match-end 0)
                         (match-beginning 0))))
-              (when (>= end pos)
+              (when (and end (>= end pos))
                 (throw 'exit `(,start ,end ,lang))))))))))
 
 (defun fence-edit--get-mode-for-lang (lang)
@@ -317,6 +317,17 @@ pick."
          (lang (nth 2 block)))
     (when block
       (fence-edit-code-region beg end lang))))
+
+;;;###autoload
+(defun fence-edit-dwim ()
+  "Try to be smart about which fence-edit function to call.
+
+If no region is active, call `fence-edit-code-at-point'.
+If the region is active, call `fence-edit-code-region-with-mode'."
+  (interactive)
+  (if (region-active-p)
+      (call-interactively #'fence-edit-code-region-with-mode)
+    (call-interactively #'fence-edit-code-at-point)))
 
 (defun fence-edit--guard-edit-buffer ()
   "Throw an error if current buffer doesn't look like an edit buffer."
