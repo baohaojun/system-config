@@ -669,9 +669,7 @@ Argument LST: play this song from LST."
                                         (format "Artist: %s  Album: %s" artist album)))
           (if lyric lyric (setq lyric "纯音乐"))
           (insert lyric)
-          (goto-char (point-min)))))
-    (switch-to-buffer "netease-music-playing")
-    ))
+          (goto-char (point-min)))))))
 
 (defun move-to-current-song ()
   "Move to current playing song's position."
