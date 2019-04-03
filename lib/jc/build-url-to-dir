@@ -16,6 +16,53 @@
 # into this dir:
 #     ${scm_jenkins_jobs_dir}/test.bhj/builds/113
 
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @job-and-build-number-only
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long job-and-build-number-only,help,no-job-and-build-number-only \
+                      -n $(basename -- $0) -- "$@")
+declare job_and_build_number_only=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --job-and-build-number-only|--no-job-and-build-number-only)
+            if test "$1" = --no-job-and-build-number-only; then
+                job_and_build_number_only=false
+            else
+                job_and_build_number_only=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]job-and-build-number-only'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 build_url=$1
 
 job_name=$(echo "${build_url}" | perl -pe 's,.*?/job/,,; s,/.*,,')
@@ -36,4 +83,8 @@ else
     config_dir=
 fi
 
-echo "${scm_jenkins_jobs_dir%/}/${job_name}/${config_dir}builds/${build_number}"
+if test "${job_and_build_number_only}" = true; then
+    echo "${job_name}/${build_number}"
+else
+    echo "${scm_jenkins_jobs_dir%/}/${job_name}/${config_dir}builds/${build_number}"
+fi
