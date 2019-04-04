@@ -448,6 +448,10 @@ M.sayThankYouForLuckyMoney = function(say_it_directly)
    end
 end
 
+M.sayThankYouForLuckyMoney = function(say_it_directly)
+   return true
+end
+
 M.wrench_find_weixin_contact = function(number)
    if not number:match("^[0-9]+$") then
       return weixin_find_friend(number)
