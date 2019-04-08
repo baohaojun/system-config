@@ -109,6 +109,7 @@
  '(mmm-submode-decoration-level 2)
  '(mouse-wheel-scroll-amount (quote (1 ((shift) . 1) ((control)))))
  '(mu4e-compose-forward-as-attachment t)
+ '(netease-music-user-id 395205956)
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(org-clock-x11idle-program-name "xprintidle")
@@ -229,7 +230,7 @@
  '(org2blog/wp-use-tags-as-categories t)
  '(package-selected-packages
    (quote
-    (graphviz-dot-mode confluence ghub go-mode web-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized company-shell company-statistics helm-company ivy ivy-bibtex ivy-dired-history ivy-erlang-complete ivy-gitlab ivy-hydra ivy-pages ivy-pass ivy-purpose ivy-rich ivy-rtags ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode emojify jedi org tabbar evil helm ddskk flycheck-clojure flycheck yari whole-line-or-region tidy smarty-mode session rinari redshank project-local-variables org-fstree mwe-log-commands lively keydef js-comint ipretty ibuffer-vc htmlize hl-sexp hippie-expand-slime highlight-quoted highlight-escape-sequences hi2 hayoo guide-key gitignore-mode github-clone gitconfig-mode git-messenger git-gutter-fringe git-blame ghci-completion fullframe fill-column-indicator f expand-region exec-path-from-shell erlang elisp-slime-nav elein dts-mode dsvn dired-sort dired+ diminish diff-hl default-text-scale darcsum csv-nav csv-mode csharp-mode crontab-mode coffee-mode clojure-test-mode cljsbuild-mode cl-lib-highlight bug-reference-github bbyac bbdb-vcard auto-complete-clang auto-compile anzu aggressive-indent ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
+    (netease-music lyrics graphviz-dot-mode confluence ghub go-mode web-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized company-shell company-statistics helm-company ivy ivy-bibtex ivy-dired-history ivy-erlang-complete ivy-gitlab ivy-hydra ivy-pages ivy-pass ivy-purpose ivy-rich ivy-rtags ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode emojify jedi org tabbar evil helm ddskk flycheck-clojure flycheck yari whole-line-or-region tidy smarty-mode session rinari redshank project-local-variables org-fstree mwe-log-commands lively keydef js-comint ipretty ibuffer-vc htmlize hl-sexp hippie-expand-slime highlight-quoted highlight-escape-sequences hi2 hayoo guide-key gitignore-mode github-clone gitconfig-mode git-messenger git-gutter-fringe git-blame ghci-completion fullframe fill-column-indicator f expand-region exec-path-from-shell erlang elisp-slime-nav elein dts-mode dsvn dired-sort dired+ diminish diff-hl default-text-scale darcsum csv-nav csv-mode csharp-mode crontab-mode coffee-mode clojure-test-mode cljsbuild-mode cl-lib-highlight bug-reference-github bbyac bbdb-vcard auto-complete-clang auto-compile anzu aggressive-indent ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
  '(rainbow-identifiers-cie-l*a*b*-lightness 70)
  '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(require-final-newline t)

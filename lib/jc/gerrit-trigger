@@ -1,0 +1,155 @@
+#!/usr/bin/env perl
+# [[file:~/src/github/kungfu-edit/%E5%8C%85%E6%98%8A%E5%86%9B%E2%80%99s%20Home/Literate%20Programming/%E9%87%8D%E6%96%B0%E8%A7%A6%E5%8F%91%E6%9F%90%E4%B8%AA%E2%80%89Gerrit%E2%80%89%E6%8F%90%E4%BA%A4%E7%9A%84%E8%87%AA%E5%8A%A8%E7%BC%96%E8%AF%91%E9%AA%8C%E8%AF%81/content.org::*%E8%84%9A%E6%9C%AC][脚本:1]]
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl u:gerrit-url \
+# s:gerrit-server-in-jenkins-config \
+# j:jenkins-server-url='$ENV{scm_jenkins_url}'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $gerrit_server_in_jenkins_config = "";
+my $gerrit_url = "";
+my $jenkins_server_url = $ENV{scm_jenkins_url};
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--gerrit-server-in-jenkins-config=GERRIT-SERVER-IN-JENKINS-CONFIG';
+    if (length('--gerrit-server-in-jenkins-config=GERRIT-SERVER-IN-JENKINS-CONFIG') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--gerrit-url=GERRIT-URL';
+    if (length('--gerrit-url=GERRIT-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--jenkins-server-url=JENKINS-SERVER-URL';
+    if (length('--jenkins-server-url=JENKINS-SERVER-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'gerrit-server-in-jenkins-config|s=s' => \$gerrit_server_in_jenkins_config,
+    'gerrit-url|u=s' => \$gerrit_url,
+    'jenkins-server-url|j=s' => \$jenkins_server_url,
+    'help|h!' => \&$handler_help,
+    );
+
+
+## end generated code
+
+use String::ShellQuote;
+
+$gerrit_url = shell_quote($gerrit_url);
+
+chomp (my $gerrit_change = qx(gerrit-query-for-repo-download -u $gerrit_url --fields change));
+
+my $cookie_file = "/tmp/gerrit_manual_trigger.$$.cookie";
+
+END {
+    unlink $cookie_file;
+}
+
+my @jc_curl_post_args = (
+    "jc", "curl", "${jenkins_server_url}gerrit_manual_trigger/gerritSearch",
+    "-X", "POST",
+    "-c", $cookie_file,
+    "-b", $cookie_file,
+    );
+
+my @gerrit_search_command_args = (
+    @jc_curl_post_args,
+    "--data-urlencode", "selectedServer=${gerrit_server_in_jenkins_config}",
+    "--data-urlencode", "queryString=change:$gerrit_change",
+    "--data-urlencode", 'Submit=Search',
+    "-L"
+    );
+
+my $gerrit_search_command = join(" ", shell_quote(@gerrit_search_command_args));
+my $html_search_str = qx($gerrit_search_command);
+
+use File::Slurp;
+
+use Mojo::DOM;
+
+my $dom = Mojo::DOM->new->parse($html_search_str);
+
+my @change_rows;
+
+$dom->find('input[type=checkbox][name=selectedRow]')->each(
+    sub {
+        push @change_rows, $_->{value};
+    }
+    );
+
+if (@change_rows != 1) {
+    die "Can't deal with more than 1 change_rows: " . join(" ", @change_rows);
+}
+
+my $change_row = $change_rows[0];
+
+@jc_curl_post_args = map {s,/gerritSearch$,/build,; $_} @jc_curl_post_args;
+my @gerrit_build_command_args = (
+    @jc_curl_post_args,
+    "--data-urlencode", "selectedIds=${change_row}",
+    "--data-urlencode", "Submit=Trigger Selected"
+    );
+
+my $gerrit_build_command = join(" ", shell_quote(@gerrit_build_command_args));
+system($gerrit_build_command);
+
+my %build_urls;
+my $html_refresh_str;
+for (1 .. 3) {
+    sleep 1;
+    @jc_curl_post_args = map {s,/build$,/,; $_} @jc_curl_post_args;
+    my @gerrit_refresh_command_args = (
+        @jc_curl_post_args, "-X", "GET"
+        );
+    my $gerrit_refresh_command = join(" ", shell_quote(@gerrit_refresh_command_args));
+    $html_refresh_str = qx($gerrit_refresh_command);
+
+    $dom = Mojo::DOM->new->parse($html_refresh_str);
+    $dom->find('a[href*=/job/]')->each(
+        sub {
+            (my $href = $_->{href}) =~ s,^/,,;
+            if ($href =~ m,/\d+/$,) {
+                $build_urls{$href} = "${jenkins_server_url}${href}";
+            }
+        }
+        );
+    if (%build_urls) {
+        for (sort keys %build_urls) {
+            print "building \@ $build_urls{$_}\n";
+        }
+        last;
+    }
+}
+
+write_file("refresh.html", $html_refresh_str);
+
+if (not %build_urls) {
+    print "Seems no build has been started by your request, check the following html: refresh.html";
+}
+# 脚本:1 ends here

@@ -46,7 +46,7 @@ function jc-create-job() {
         exit 1
     fi
 
-    if ! diff $task.before-update.xml $task.before-edit.xml; then
+    if ! diff -w $task.before-update.xml $task.before-edit.xml; then
         meld $task.before-update.xml $task.before-edit.xml
         if EMACS=t yes-or-no-p "Do you want to merge with meld?"; then
             meld $task.xml $task.before-update.xml
@@ -65,7 +65,7 @@ function jc-create-job() {
         fi
     )
     (
-        of ${scm_jenkins_url}job/${task} >/dev/null 2>&1
+        nohup firefox ${scm_jenkins_url}job/${task} >/dev/null 2>&1
     )&
     jc get-job-for-edit -t "$task" --extra-save "$task.before-edit.xml"
 }

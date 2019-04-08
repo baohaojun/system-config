@@ -2,11 +2,34 @@
 
 host=$(
     while test $# != 0; do
+        if test "${1}" = --execute; then
+            break
+        fi
         host=$1
         shift
     done
     echo $host
     )
+
+export JS_EXECUTE=$(
+    while test $# != 0; do
+
+        if test "$1" = --execute; then
+            shift
+            break
+        else
+            shift
+        fi
+    done
+
+    if test "$#" = 1 && [[ $1 =~ " " ]]; then
+        set -- bash -c "$1"
+    fi
+
+    for x in "$@"; do
+        printf "%q " "$x"
+    done
+       )
 export JS_TARGET=$(echo ${host} | perl -npe 's/.*?(\d+)$/$1/')
 
 exec js-ssh

@@ -171,7 +171,14 @@ valid-git-dir() {
 }
 
 if ! valid-git-dir "$dir"; then
-    rm -rf "$dir"
+    mkdir -p "$dir"
+    if test "$(find "$dir" -maxdepth 1 | wc -l)" != 1; then
+        die "Can't clone into current folder, it's not empty!"
+    fi
+    (
+        cd "$dir"
+        git init .
+    )
 fi
 
 extra_clone_args=()
@@ -179,6 +186,7 @@ extra_fetch_args=()
 if test "$depth"; then
     extra_clone_args+=(--depth $depth)
     extra_fetch_args+=(--depth $depth)
+    single_branch=true
 fi
 
 if test "$reference"; then
@@ -249,7 +257,7 @@ else
     if ! (
             cd $dir
             if test "$(git config remote.origin.url)" != "$url"; then
-                git remote remove origin || true
+                git remote remove origin >/dev/null 2>&1 || true
                 git remote add origin $url
             fi
             if test "$mirror"; then
@@ -257,15 +265,16 @@ else
             else
                 git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
             fi
-            if test "$single_branch" = true; then
-                git fetch -v origin $branch
-            else
+            if test "$single_branch" != true; then
                 git fetch -v origin
             fi
+
+            git fetch -v origin $branch
             if test -z "$mirror"; then
-                git reset --hard || true
                 git clean -xfd || true
-                git checkout -B $branch origin/$branch
+
+                git reset --hard FETCH_HEAD
+                git checkout -B $branch origin/$branch >/dev/null 2>&1 || true
             fi
         ); then
         die "从 $url 更新代码到 $dir 目录失败，请检查一下 1. $dir 目录是否已损坏，删除试试？ 2. 是否拥有 $url 仓库代码权限"

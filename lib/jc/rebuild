@@ -2,7 +2,7 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P -p jc u:build-url
+# generate-getopt -s perl -P -p jc u:build-url j:switch-to-job
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -12,6 +12,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $jc_build_url = "";
+my $jc_switch_to_job = "";
 
 my $handler_help = sub {
   print ;
@@ -24,12 +25,21 @@ my $handler_help = sub {
   }
   printf "%s", ;
   print "\n";
+  printf "%6s", '-j, ';
+  printf "%-24s", '--switch-to-job=SWITCH-TO-JOB';
+  if (length('--switch-to-job=SWITCH-TO-JOB') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
 
   exit(0);
 };
 
 GetOptions (
             'build-url|u=s' => \$jc_build_url,
+            'switch-to-job|j=s' => \$jc_switch_to_job,
             'help|h!' => \&$handler_help,
            );
 
@@ -100,8 +110,20 @@ use URI::Escape;
 
 $jc_build_url =~ s,/*$,/,;
 
-system("jc", "curl", "${jc_build_url}rebuild/configSubmit", "-X", "POST", "--data-urlencode", "json=" . encode_json {
-                parameters =>
+my $rebuild_url = "${jc_build_url}rebuild/configSubmit";
+
+my $parameter = "parameters";
+
+if ($jc_switch_to_job) {
+  (my $scm_jenkins_url = $rebuild_url) =~ s,(.*?//.*?/).*,$1,;
+  $rebuild_url = "${scm_jenkins_url}job/${jc_switch_to_job}/build";
+  $parameter = "parameter";
+}
+
+
+
+system("jc", "curl", $rebuild_url, "-X", "POST", "--data-urlencode", "json=" . encode_json {
+                $parameter =>
                   [
                    map {
                      $_ = {

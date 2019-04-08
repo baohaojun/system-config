@@ -6,6 +6,12 @@ if {[info exists env(JS_TARGET)]} {
     set js_target 162
 }
 
+if {[info exists env(JS_EXECUTE)]} {
+    set js_execute $env(JS_EXECUTE);
+} else {
+    set js_execute {}
+}
+
 if [regexp {^\d+$} $js_target] {
     set js_target -$js_target
 }
@@ -30,6 +36,19 @@ expect "Opt>" {
             send "\n";
         } else {
             send "REMOTEPROTOCOL=jssh REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
+            if { $js_execute ne {} } {
+                expect -re "\\$" {
+                    send "exec $js_execute\n";
+                    expect {
+                        -re "Opt>" {
+                            send "exit\n";
+                        }
+                        timeout {
+                            exp_continue;
+                        }
+                    }
+                }
+            }
         }
     } -re " Would you like to update? \[Y/n\]:" {
         send "n\n"

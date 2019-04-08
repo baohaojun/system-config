@@ -4,7 +4,9 @@ use autodie qw(:all);
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P p:params='()' '?"可以指定多个，格式为 name=value，目前不支持文件格式参数"' \
-    # j:job-or-url '?"如果是 job，则应使用 job 名字，如果是 url，则格式为正则：${scm_jenkins_url}job/JOB_NAME/"'
+# j:job-or-url '?"如果是 job，则应使用 job 名字，如果是 url，则格式为正则：${scm_jenkins_url}job/JOB_NAME/"' \
+# @:extra-environ-params '?"额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值"' \
+# @:extra-environ-params-regexp '?"参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -13,12 +15,30 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $extra_environ_params = "";
+my $extra_environ_params_regexp = "";
 my $job_or_url = "";
 my @params = ();
 
 my $handler_help = sub {
   print ;
   print "\n\n选项和参数：\n";
+  printf "%6s", '';
+  printf "%-24s", '--extra-environ-params=EXTRA-ENVIRON-PARAMS';
+  if (length('--extra-environ-params=EXTRA-ENVIRON-PARAMS') > 24 and length("额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP';
+  if (length('--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP') > 24 and length("参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入";
+  print "\n";
   printf "%6s", '-j, ';
   printf "%-24s", '--job-or-url=JOB-OR-URL';
   if (length('--job-or-url=JOB-OR-URL') > 24 and length("如果是 job，则应使用 job 名字，如果是 url，则格式为正则：${scm_jenkins_url}job/JOB_NAME/") > 0) {
@@ -40,6 +60,8 @@ my $handler_help = sub {
 };
 
 GetOptions (
+            'extra-environ-params=s' => \$extra_environ_params,
+            'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
             'job-or-url|j=s' => \$job_or_url,
             'params|p=s' => \@params,
             'help|h!' => \&$handler_help,
@@ -60,6 +82,24 @@ use JSON;
   {name => $name, value => $value}
 } @params;
 
+if ($extra_environ_params) {
+  @params = (
+             @params, map {
+               my ($name, $value) = ($_, $ENV{$_});
+               {name => $name, value => $value}
+             } split(" ", $extra_environ_params)
+            );
+}
+
+if ($extra_environ_params_regexp) {
+  $extra_environ_params_regexp = qr($extra_environ_params_regexp);
+  @params = (
+             @params, map {
+               my ($name, $value) = ($_, $ENV{$_});
+               {name => $name, value => $value}
+             } grep { m/$extra_environ_params_regexp/ } keys %ENV
+            );
+}
 my $json_arg = encode_json {
   parameter => \@params
 };

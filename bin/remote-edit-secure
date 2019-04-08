@@ -1,6 +1,6 @@
 #!/bin/bash
 . ~/.config/system-config/.bashrc-path </dev/null
-echo running: ${SSH_ORIGINAL_COMMAND} 1>&2
+echo running remote-edit-secure: ${SSH_ORIGINAL_COMMAND} 1>&2
 
 unset REMOTEIP
 export EMACS=t

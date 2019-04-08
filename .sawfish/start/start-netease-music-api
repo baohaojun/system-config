@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if test -d ~/src/github/NeteaseCloudMusicApi; then
+    cd ~/src/github/NeteaseCloudMusicApi
+    while true; do
+        node app.js
+        sleep 5
+    done
+fi
