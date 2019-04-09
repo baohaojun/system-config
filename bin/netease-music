@@ -144,7 +144,6 @@ EOFbf1c70f6d443
     fi
 }
 
-#!/bin/bash
 
 set -e
 case "$1" in
@@ -182,6 +181,13 @@ EOF759c8785e7c0
             bhj-notify netease-music "Not looping"
         else
             bhj-notify netease-music "Looping"
+        fi
+        ;;
+    pause)
+        if ps.pl -o stat mplayer | pn 4 | grep T; then
+            killall -CONT mplayer
+        else
+            killall -STOP mplayer
         fi
         ;;
     *)
