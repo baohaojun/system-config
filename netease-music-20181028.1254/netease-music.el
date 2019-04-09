@@ -80,9 +80,9 @@
   "Your netease music username."
   :type 'string)
 
-(defcustom password nil
+(defvar password nil
   "Your netease music password."
-  :type 'string)
+  )
 
 (defcustom user-id nil
   "Your netease music user id."

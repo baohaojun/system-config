@@ -1,0 +1,3830 @@
+This is emms.info, produced by makeinfo version 6.5 from emms.texinfo.
+
+(C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016
+Free Software Foundation, Inc.
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts.  A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* Emms: (emms).           The Emacs Multimedia System
+END-INFO-DIR-ENTRY
+
+
+File: emms.info,  Node: Top,  Next: Introduction,  Prev: (dir),  Up: (dir)
+
+Emms Manual
+***********
+
+This is the Manual for the Emacs Multimedia System.
+
+   (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016
+Free Software Foundation, Inc.
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts.  A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+
+* Menu:
+
+Starting out
+* Introduction::        Introduction to Emms.
+* Quickstart Guide::    First steps with Emms for new users.
+* Installation::        How to install Emms on your System.
+* Setup::               How to setup Emms.
+* Configuration::       More detailed setup and configuration.
+* Getting Help::        Where to get help with Emms and make suggestions.
+* Formats and Freedom:: File formats without restrictions.
+
+Emms basics
+* Basic Commands::      How to control Emms with ease.
+* The Core File::       The inner core of Emms.
+* Sources::             Sources for playlists-creation.
+* Simple Players::      Some simple players.
+* Playlists::           How Emms organizes media.
+
+Advanced Features
+* Track Information::        More narrative track descriptions.
+* Interactive Playlists::    Interactive Playlists.
+* Markable Playlists::       Allow tracks to be marked.
+* Extending Emms::       How to define new players and modules.
+
+Modules and Extensions
+* The Browser::          Advanced metadata browsing.
+* Sorting Playlists::    Sorting the order of the tracks.
+* Persistent Playlists:: Restoring playlists on emacs startup.
+* Editing Tracks::       Editing track information from within Emms.
+* Emms Mode Line::       Emms information on the mode line.
+* Limiting::             Derive a new playlist from the current.
+* Music Player Daemon::  Interface to Music Player Daemon.
+* Lyrics::               Displaying lyrics synchronously.
+* Volume::               Changing the volume.
+* Streaming Audio::      Interface to streaming audio.
+* APE / FLAC Commands::  How to play next or previous track in these files.
+* Bookmarks::            Saving a place in a media file.
+* Managing Playlists::   Managing multiple playlists.
+* GNU FM::               Connect to music community websites.
+
+Copying and license
+* Copying::             The GNU General Public License gives you permission to
+                            redistribute Emms on certain terms; it also explains
+                            that there is no warranty.
+* The GNU FDL::         The license for this documentation.
+
+Indices
+* Concept Index::
+* Function Index::
+* Variable Index::
+* Keybinding Index::
+
+-- The Detailed Node Listing --
+
+Here are some other nodes which are really inferiors of the ones
+already listed, mentioned here so you can get to them in one step:
+
+Installation
+* Compiling Emms::      Compiling Emms into Byte-Code.
+
+The Core File
+* User Variables::     Variables for the user to tweak.
+* Hooks::              Hooks for important Emms functions.
+* Core Functions::     Providing the basic functionality of Emms.
+
+Track Information
+* Using TagLib::        TagLib for track information.
+* Defining Info Methods::    Defining new info methods.
+
+Extending Emms
+* New Player::               How to define a new player.
+* Simple Player for `play':: Example player using 'play'.
+* More Complex Player::      Example of a complex player using 'mpg321'.
+
+
+File: emms.info,  Node: Introduction,  Next: Quickstart Guide,  Up: Top
+
+1 Introduction
+**************
+
+Emms is the Emacs Multi-Media System.  It tries to be a clean and small
+application to play multimedia files from Emacs using external players.
+Many of its ideas are derived from MpthreePlayer
+(http://www.nongnu.org/mp3player), but it tries to be more general and
+more clean.
+
+   This manual tries to be the definitive source of information about
+Emms, an online version of the manual is available at:
+<http://www.gnu.org/software/emms/manual/>.
+
+   The basic functionality of Emms consists of three parts: The core,
+the sources, and the players.
+
+   The core resides in 'emms.el', and provides a simple playlist and the
+basic functionality to use all the other features of Emms.  It provides
+the common user commands and interfaces for other parts.  It thinks in
+tracks, where a track is the combination of a type and a name - e.g.
+the track type 'file has a name that is the file name.  Other track
+types are possible.
+
+   To get to tracks, the core needs sources.  The file
+'emms-source-file.el' provides simple sources to interact with the file
+system.
+
+   When Emms finally has the sources in the playlist, it needs a player
+to play them.  'emms-player-simple.el' defines a few useful players, and
+allows you to define your own in a very simple way.
+
+   The Emms core comes with many additional features to extend its
+functionality.
+
+   The way Emms works is easy to customize with your own code or by
+using 'M-x customize' or by changing the variables directly.
+
+
+File: emms.info,  Node: Quickstart Guide,  Next: Installation,  Prev: Introduction,  Up: Top
+
+2 Quickstart Guide
+******************
+
+This chapter demonstrates how to setup Emms so that you can start
+listening to your music without having to read all of the documentation
+first.  This is the tl;dr version of the manual.
+
+   The first thing you have to do is telling Emacs where Emms is
+located.  Let's say you have it in '~/elisp/emms/'.  So add this line to
+your '.emacs':
+
+     (add-to-list 'load-path "~/elisp/emms/lisp/")
+
+   More detailed information about installing Emms can be found in the
+installation chapter, *Note Installation::.
+
+   You'll then want to load Emms into Emacs.  To achieve this you invoke
+the 'emms-all' setup function by adding the following three lines to
+your '.emacs'.
+
+     (require 'emms-setup)
+     (emms-all)
+     (emms-default-players)
+
+   The function 'emms-default-players' in the last line sets up the list
+of default players.  The list contains lightweight specialized players
+like ogg123 or mpg321 and we-play-everything-players such as mplayer,
+mpv, vlc, etc..  To be sure that emms can play all your music you should
+check that your preferred players are installed on the machine.
+
+   More detail about setting up Emms can be found in the setup chapter,
+*Note Setup::.
+
+   Emms tries to display the tags (the name of the song, as opposed to
+the name of the file) of the music you listen to.  Emms can use libtag,
+see *Note Using TagLib::, or a combination of other software such as
+'mp3info', 'ogginfo' and 'opusinfo' (make sure that they are installed
+if you want Emms to use them.)
+
+   The last thing to do is to tell Emms where your music is; the root
+directory of our music collection.  Let's say all your music is in
+'~/Music' or in subdirectories thereof.
+
+     (setq emms-source-file-default-directory "~/Music/")
+
+   OK, now we've set up Emms.  Reload your '.emacs' or restart Emacs to
+let the changes have an effect.
+
+   Now we will add all our music to a playlist by invoking 'M-x
+emms-add-directory-tree RET ~/Music/ RET'.  We do this because then Emms
+will read the tags of all your music files and caches them (this is also
+required for the Emms browser, *Note The Browser::.)
+
+   To switch to the playlist buffer, invoke 'M-x emms-playlist-mode-go'
+or simply 'M-x emms'.  You may see that some tracks are displayed with
+their file name, but as Emms populates its tag cahe, track by track, the
+filenames get replaced with the artist and track name of the file's tag.
+
+   Go ahead and navigate to a track and hit 'RET' on it to start
+playback.
+
+   Now you can start exploring Emms.  It's probably best to begin with
+the basic commands (*note Basic Commands::), the interactive playlists
+(*note Interactive Playlists::), and the browser (*note The Browser::).
+
+
+File: emms.info,  Node: Installation,  Next: Setup,  Prev: Quickstart Guide,  Up: Top
+
+3 Installation
+**************
+
+You need to put all the .el files of emms in a directory in your
+load-path.  For example, if you put all those files into ~/elisp/emms/,
+then in your ~/.emacs, you should do:
+
+     (add-to-list 'load-path "~/elisp/emms/lisp/")
+
+* Menu:
+
+* Compiling Emms::      Compiling Emms into Byte-Code.
+
+
+File: emms.info,  Node: Compiling Emms,  Up: Installation
+
+3.1 Compiling Emms
+==================
+
+If you are using XEmacs, you will need to edit 'Makefile' as follows
+before continuing.
+
+     EMACS=xemacs
+     SITEFLAG=-no-site-file
+
+   You can byte-compile Emms by first entering the directory containing
+the Emms source code, followed by invoking:
+
+   'make'
+
+   Which will byte compile Emms.  You can then invoke:
+
+   'make install'
+
+   Which will install Emms into your Emacs directories (provided you
+have the appropriate permissions to do so on your system).
+
+   Note that Emms is a light-weight and agile program, you can therefore
+run Emms just fine without byte compiling it.
+
+
+File: emms.info,  Node: Setup,  Next: Configuration,  Prev: Installation,  Up: Top
+
+4 Setup
+*******
+
+The 'emms-setup' feature is provided by the file 'emms-setup.el'.  It is
+essentially a collection of shortcuts for loading different Emms
+features quickly, but everything you can do with 'emms-setup' can also
+be done manually.
+
+   We use 'emms-setup' by calling one of the setup functions.
+
+ -- Function: emms-minimalistic
+     An Emms setup script.  Playlists and all the basics for playing
+     media, but nothing else.
+
+ -- Function: emms-all
+     An Emms setup script.  Loads all the stable features which come
+     with the Emms distribution.
+
+   'emms-setup' also comes with a convenience function to set a default
+list of media players.
+
+ -- Function: emms-default-players
+     Set EMMS-PLAYER-LIST to EMMS-SETUP-DEFAULT-PLAYER-LIST.
+
+   You can of course write your own Emms setup functions like the above
+by looking at the existing function definitions in 'emms-setup.el'.
+
+
+File: emms.info,  Node: Configuration,  Next: Getting Help,  Prev: Setup,  Up: Top
+
+5 Configuration
+***************
+
+This chapter discusses the configuration of Emms in more detail.
+
+   The following code fragment provides a minimal Emms setup without
+using the layer of 'emms-setup'.  It can maybe be used to better
+understand the internals of Emms.  You can see how Emms needs to know
+about players (these are defined in 'emms-player-simple') and about
+sources for tracks (trivial file system based sources, such as this
+'emms-directory-tree', are defined in 'emms-source-file').
+
+     (require 'emms-player-simple)
+     (require 'emms-source-file)
+     (require 'emms-source-playlist)
+     (setq emms-player-list '(emms-player-mpg321
+                              emms-player-ogg123
+                              emms-player-mplayer))
+
+   For a discussion on how to define additional players, see *Note
+Simple Players::.
+
+   Much of the behaviour of Emms can be changed by setting variables.
+For example:
+
+     (setq emms-info-asynchronously nil)
+     (setq emms-playlist-buffer-name "*Music*")
+
+   The first 'setq' turns off the asynchronous updating of info tags.
+The second sets the default name of the Emms playlist buffer.
+
+   Another way to change Emms variables is to use the M-x 'customize'
+mechanism provided by Emacs.
+
+* Menu:
+
+* Finding files and speed::     Finding files quickly or portably.
+
+
+File: emms.info,  Node: Finding files and speed,  Up: Configuration
+
+5.1 Finding files and speed
+===========================
+
+Emms needs to traverse directories in order to find playable media.  The
+default method Emms uses to achive this is
+'emms-source-file-directory-tree-internal' as defined in
+'emms-source-file.el'.  The above method is written portably and will
+always work, but might be too slow if we want to load several hundred
+tracks (or more).
+
+   'emms-source-file.el' defines another method for finding files,
+'emms-source-file-directory-tree-find' which uses GNU/find.
+'emms-source-file-directory-tree-find' is usually an order of magnitude
+faster, but of course will not work if you do not have GNU/find
+installed.
+
+   The method Emms will use is defined in the customisable variable
+EMMS-SOURCE-FILE-DIRECTORY-TREE-FUNCTION.
+
+
+File: emms.info,  Node: Getting Help,  Next: Formats and Freedom,  Prev: Configuration,  Up: Top
+
+6 Getting Help
+**************
+
+If you have a bug to report, need help, or wish to suggest a feature,
+please feel free to use the Emms mailing list.  The address of the list
+is emms-help@gnu.org.  To subscribe to it, visit
+<http://lists.gnu.org/mailman/listinfo/emms-help>.
+
+   If you are familiar with the Gmane service, there is a Gmane
+newsgroup which mirrors this mailing address at gmane.emacs.emms.user.
+
+   Emms also has a website at <http://www.gnu.org/software/emms/>.
+
+
+File: emms.info,  Node: Formats and Freedom,  Next: Basic Commands,  Prev: Getting Help,  Up: Top
+
+7 Formats and Freedom
+*********************
+
+Emms is free software, but some of the file formats it can play carry
+restrictions, they are proprietary file formats.  Proprietary software
+companies are pushing out audio and video formats which restrict when,
+where and how you can play them, and restrict developers from writing
+free software which interacts with them.
+
+   Restrictive file formats put the corporate bottom-line before the
+public interest.
+
+   Fortunately there are alternatives like Ogg.  Ogg is a professional
+grade multimedia format.  Ogg Vorbis is the compressed audio format
+(like MP3), and Ogg Theora is the video format.  For more information,
+go to <http://www.xiph.org/>.
+
+   If you want to transcode audio into a lossless format, you can try
+FLAC (Free Lossless Audio Codec).  FLAC stands out as the fastest and
+most widely supported lossless audio codec, and the only one that at
+once is non-proprietary, is unencumbered by patents and has the source
+code for a reference implementation freely available.  For more
+information about FLAC, go to <http://flac.sourceforge.net/>.
+
+
+File: emms.info,  Node: Basic Commands,  Next: The Core File,  Prev: Formats and Freedom,  Up: Top
+
+8 Basic Commands
+****************
+
+Before you can use the interface commands, you need a playlist to start
+with.  The following commands allow you to add to the current playlist
+from different sources:
+
+   Note that the commands with the "emms-add-" prefix add the source to
+the playlist but do not start playing it immediately.  Conversely, the
+commands with the "emms-play-" prefix begin playing the track
+immediately.
+
+ -- Function: emms-play-file file
+     A source for a single file - either FILE, or queried from the user.
+     If called with a prefix the file will be added like
+     'emms-add-file'.
+ -- Function: emms-add-file file
+     A source for a single file - either FILE, or queried from the user.
+     If called with a prefix the file will be played like
+     'emms-play-file'.
+ -- Function: emms-play-directory dir
+     A source for a whole directory tree - either DIR, or queried from
+     the user.
+ -- Function: emms-add-directory dir
+     A source for a whole directory tree - either DIR, or queried from
+     the user.
+ -- Function: emms-play-directory-tree dir
+     A source for multiple directory trees - either DIR, or the value of
+     EMMS-SOURCE-FILE-DEFAULT-DIRECTORY.
+ -- Function: emms-add-directory-tree dir
+     A source for multiple directory trees - either DIR, or the value of
+     EMMS-SOURCE-FILE-DEFAULT-DIRECTORY.
+ -- Function: emms-play-url url
+     A source for an URL - for example, for streaming.
+ -- Function: emms-add-url url
+     A source for an URL - for example, for streaming.
+ -- Function: emms-play-playlist playlist
+     A source for the M3u or PLS playlist format from the file PLAYLIST.
+ -- Function: emms-add-playlist playlist
+     A source for the M3u or PLS playlist format from the file PLAYLIST.
+ -- Function: emms-play-find dir regexp
+     A source that will find files in DIR or
+     EMMS-SOURCE-FILE-DEFAULT-DIRECTORY which match REGEXP.
+ -- Function: emms-add-find dir regexp
+     A source that will find files in DIR or
+     EMMS-SOURCE-FILE-DEFAULT-DIRECTORY which match REGEXP.
+
+   The basic functionality of Emms is just to play music without being
+noticed.  It provides a few commands to skip the current track and such,
+but other than that it doesn't show up.  Emms provides the following
+basic user commands (which you might want to bind to keystrokes):
+
+ -- Function: emms-start
+     Start playing the current playlist
+ -- Function: emms-stop
+     Stop playing
+ -- Function: emms-next
+     Start playing the next track in the playlist
+ -- Function: emms-previous
+     Start playing previous track in the playlist
+ -- Function: emms-shuffle
+     Shuffle the current playlist.  This uses
+     EMMS-PLAYLIST-SHUFFLE-FUNCTION.
+ -- Function: emms-sort
+     Sort the current playlist.  This uses EMMS-PLAYLIST-SORT-FUNCTION.
+ -- Function: emms-show &optional insertp
+     Describe the current Emms track in the minibuffer.  If INSERTP is
+     non-nil, insert the description into the current buffer instead.
+     This function uses EMMS-SHOW-FORMAT to format the current track.
+
+   The command 'emms-show-all' will pop up a window with the complete
+information about the track being played.  'emms-show-all' is provided
+by 'emms-show-all.el', which is included in the 'emms-all' setup level.
+See *Note Setup::.
+
+
+File: emms.info,  Node: The Core File,  Next: Sources,  Prev: Basic Commands,  Up: Top
+
+9 The Core File
+***************
+
+The core file 'emms.el' provides the all basic functions for playing
+music, generating playlists and defining players.
+
+* Menu:
+
+* User Variables::     Variables for the user to tweak.
+* Hooks::              Hooks for important Emms functions.
+* Core Functions::     Providing the basic functionality of Emms.
+
+
+File: emms.info,  Node: User Variables,  Next: Hooks,  Up: The Core File
+
+9.1 User Variables
+==================
+
+The core file defines a number of user variables.
+
+ -- User Option: emms-player-list
+     A list of players Emms can use.  You need to set this in order to
+     use Emms to play media.
+ -- User Option: emms-show-format
+     The format to use for 'emms-show'.  Any "%s" is replaced by what
+     EMMS-TRACK-DESCRIPTION-FUNCTION returns for the currently playing
+     track.
+ -- User Option: emms-repeat-playlist
+     Non-nil if the Emms playlist should automatically repeat the
+     playlist.  If nil, playback will stop when the last track finishes
+     playing.
+ -- User Option: emms-track-description-function
+     Function for describing an Emms track in a user-friendly way.
+ -- User Option: emms-sort-lessp-function
+     A function that compares two tracks, and returns non-nil if the
+     first track should be sorted before the second (see also 'sort').
+
+
+File: emms.info,  Node: Hooks,  Next: Core Functions,  Prev: User Variables,  Up: The Core File
+
+9.2 Hooks
+=========
+
+The core file provides hook variables for the basic functionality of
+Emms.
+
+ -- User Option: emms-player-started-hook
+     A hook run when an Emms player started playing.
+ -- User Option: emms-player-stopped-hook
+     A hook run when an Emms player stopped playing.  See also
+     EMMS-PLAYER-FINISHED-HOOK.
+ -- User Option: emms-playlist-source-inserted-hook
+     Hook run when a source got inserted into the playlist.  The buffer
+     is narrowed to the new tracks.
+ -- User Option: emms-playlist-selection-changed-hook
+     Hook run after another track is selected in the Emms playlist.
+ -- User Option: emms-playlist-cleared-hook
+     Hook run after the current Emms playlist is cleared.  This happens
+     both when the playlist is cleared and when a new buffer is created
+     for it.
+ -- User Option: emms-player-finished-hook
+     Hook run when an Emms player finishes playing a track.  Please pay
+     attention to the differences between EMMS-PLAYER-FINISHED-HOOK and
+     EMMS-PLAYER-STOPPED-HOOK.  The former is called only when the
+     player is stopped interactively; the latter, only when the player
+     actually finishes playing a track.
+ -- User Option: emms-player-paused-hook
+     Hook run when a player is paused or resumed.  Use
+     EMMS-PLAYER-PAUSED-P to find the current state.
+
+
+File: emms.info,  Node: Core Functions,  Prev: Hooks,  Up: The Core File
+
+9.3 Core Functions
+==================
+
+The core file also defines all the functions important to the basic use
+of Emms.
+
+   There are functions which deal with movement in the playlist.
+
+ -- Function: emms-next-noerror
+     Start playing the next track in the Emms playlist.  Unlike
+     'emms-next', this function doesn't signal an error when called at
+     the end of the playlist.  This function should only be called when
+     no player is playing.  This is a good function to put in
+     'emms-player-finished-hook'.
+ -- Function: emms-playlist-next
+     Move to the previous track in the current buffer.
+ -- Function: emms-playlist-previous
+     Move to the previous track in the current buffer.
+ -- Function: emms-random
+     Jump to a random track.
+ -- Function: emms-toggle-repeat-playlist
+     Toggle whether emms repeats the playlist after it is done.  See
+     EMMS-REPEAT-PLAYLIST.
+ -- Function: emms-toggle-repeat-track
+     Toggle whether emms repeats the current track.  See
+     EMMS-REPEAT-TRACK.
+ -- Function: emms-toggle-random-playlist
+     Toggle whether emms plays the tracks randomly or sequentially.  See
+   EMMS-RANDOM-PLAYLIST.
+
+   Some functions deal with the getting and setting track information.
+
+ -- Function: emms-track type name
+     Create a track with type TYPE and name NAME.
+ -- Function: emms-track-type track
+     Return the type of TRACK.
+ -- Function: emms-track-name track
+     Return the name of TRACK.
+ -- Function: emms-track-get name track &optional inexistent
+     Return the value of NAME for TRACK.  If there is no value, return
+     DEFAULT (or nil, if not given).
+ -- Function: emms-track-set track name value
+     Set the value of NAME for TRACK to VALUE.
+ -- Function: emms-track-description track
+     Return a description of TRACK.  This function uses
+     EMMS-TRACK-DESCRIPTION-FUNCTION.
+ -- Function: emms-player-for track
+     Return an Emms player capable of playing TRACK.  This will be the
+     first player whose PLAYABLEP function returns non-nil, or nil if no
+     such player exists.
+ -- Function: emms-playlist-current-selected-track
+     Return the currently selected track in the current playlist.
+
+   There are also functions which deal with the playing itself.
+
+ -- Function: emms-player-start track
+     Start playing TRACK.
+ -- Function: emms-player-stop
+     Stop the currently playing player.
+ -- Function: emms-player-stopped
+     Declare that the current Emms player is finished.  This should only
+     be done by the current player itself.
+ -- Function: emms-seek seconds
+     Seek the current player SECONDS seconds.  This can be a floating
+     point number for sub-second fractions.  It can also be negative to
+     seek backwards.
+ -- Function: emms-seek-forward
+     Seek ten seconds forward.
+ -- Function: emms-seek-backward
+     Seek ten seconds backward.
+
+   For more basic commands defined in the core file see *Note Basic
+Commands::.
+
+
+File: emms.info,  Node: Sources,  Next: Simple Players,  Prev: The Core File,  Up: Top
+
+10 Sources
+**********
+
+Sources allow Emms to add and play tracks.  Emms comes with a number of
+sources of its own.  Sources are designed so that creating new ones will
+be easy.
+
+   For examples of Emms sources for files and directories see
+'emms-source-file.el'.
+
+ -- User Option: emms-source-file-default-directory
+     The default directory to look for media files.
+ -- Function: emms-play-find
+     Play all files in EMMS-SOURCE-FILE-DEFAULT-DIRECTORY that match a
+     specific regular expression.
+ -- Function: emms-source-file &optional file
+     An Emms source for a single file - either FILE, or queried from the
+     user.
+ -- Function: emms-source-files files
+     An Emms source for a list of FILES.
+ -- Function: emms-source-directory &optional dir
+     An Emms source for a whole directory tree - either DIR, or queried
+     from the user
+ -- Function: emms-source-directory-tree & optional dir
+     An Emms source for multiple directory trees - either DIR, or the
+     value of EMMS-SOURCE-FILE-DEFAULT-DIRECTORY.
+ -- Function: emms-source-playlist file
+     An Emms source for playlists.  See EMMS-SOURCE-PLAYLIST-FORMATS for
+     a list of supported formats.
+ -- Function: emms-source-playlist-native file
+     An Emms source for a native Emms playlist file.
+ -- Function: emms-source-playlist-m3u file
+     An Emms source for an m3u playlist file.
+ -- Function: emms-source-playlist-pls file
+     An Emms source for a pls playlist file.
+ -- Function: emms-source-find &optional dir regex
+     An Emms source that will find files in DIR or
+     EMMS-SOURCE-FILE-DEFAULT-DIRECTORY that match REGEXP.
+ -- Function: emms-source-file-directory-tree &optional dir
+     Return a list of all files under DIR which match REGEX.
+ -- Function: emms-source-dired
+     Play all marked files of a dired buffer
+ -- Function: emms-source-file-regex
+     Return a regexp that matches everything any player (that supports
+     files) can play.
+ -- Function: emms-locate regexp
+     Search for REGEXP and display the results in a locate buffer
+
+
+File: emms.info,  Node: Simple Players,  Next: Playlists,  Prev: Sources,  Up: Top
+
+11 Simple Players
+*****************
+
+ -- Macro: define-emms-simple-player name types regex command &rest args
+     Define a simple player with the use of 'emms-define-player'.  NAME
+     is used to construct the name of the function like
+     emms-player-NAME.  TYPES is a list of track types understood by
+     this player.  REGEX must be a regexp that matches the filenames the
+     player can play.  COMMAND specifies the command line argument to
+     call the player and ARGS are the command line arguments.
+
+   For a discussion on how to define new players see *Note New Player::.
+
+ -- Function: emms-player-simple-stop
+     Stop the currently playing process, if indeed there is one.
+ -- Function: emms-player-simple-start filename cmdname params
+     Starts a process playing FILENAME using the specified CMDNAME with
+     the specified PARAMS.
+ -- Function: emms-player-simple-sentinel proc str
+     Sentinel for determining the end of process for the process PROC
+     and the sentinel string STR.
+
+
+File: emms.info,  Node: Playlists,  Next: Track Information,  Prev: Simple Players,  Up: Top
+
+12 Playlists
+************
+
+Emms uses Emacs buffers to store the media tracks for playing.  We call
+one such buffer a "playlist buffer" or an "Emms playlist buffer".  Emms
+then proceeds to play the media tracks in the buffer from top to bottom
+until the end of the playlist.
+
+   The name of the playlist buffer is defined in the variable
+EMMS-PLAYLIST-BUFFER-NAME and is set to be an invisible Emacs buffer by
+default.  You can change to any name you want.  For an example
+configuration see *Note Configuration::.
+
+   You can create any number of playlist buffers you wish.  At any time
+Emms has a single "current" buffer through which it proceeds track by
+track.
+
+ -- Function: emms-playlist-new &optional name
+     Create a new playlist buffer.  The buffer is named NAME, but made
+     unique.  NAME defaults to 'emms-playlist-buffer-name'.  If called
+     interactively, the new buffer is also selected.
+
+ -- Function: emms-playlist-save &optional format file
+     Store the current playlist to FILE as the type FORMAT. The default
+     format is specified by EMMS-SOURCE-PLAYLIST-DEFAULT-FORMAT.
+
+   The current Emms playlist buffer is stored in the variable
+EMMS-PLAYLIST-BUFFER.
+
+
+File: emms.info,  Node: Track Information,  Next: Interactive Playlists,  Prev: Playlists,  Up: Top
+
+13 Track Information
+********************
+
+Emms is distributed with multiple predefined methods for retrieving
+info, provided by modules such as 'emms-info-mp3info.el',
+'emms-info-ogginfo.el', 'emms-info-opusinfo.el', 'emms-cue.el' and
+'emms-info-libtag.el'.  The first three packages are front-ends for
+command-line tools.  Ogg track information is retrieved using the
+ogginfo (http://directory.fsf.org/audio/ogg/vorbistools.html) and the
+<https://www.opus-codec.org/ opusinfo> software.  Likewise, mp3 track
+information is available using mp3info
+(http://www.ibiblio.org/mp3info/).  'emms-cue.el' retrieves tracks
+information for ape/flac files by parsing a cue sheet file, which is
+plain text.  Finally, 'emms-info-libtag.el' uses a tiny C shim (included
+in the src/ directory) program to take advantage of TagLib
+(http://taglib.github.io/).
+
+   Automatic track information retrieval is enabled by default in the
+'emms-all' setup level provided by 'emms-setup.el'.  For more
+information about 'emms-setup.el' see *Note Setup::.
+
+   If you would like to know how Emms track retreival works and how we
+can define new methods for track retrieval see *Note Defining Info
+Methods::.
+
+   There are a number of user variables which control the behaviour of
+'emms-info'.
+
+ -- User Option: emms-info-auto-update
+     Non-nil when Emms should update track information if the file
+     changes.  This will cause hard drive activity on track loading.  If
+     this is too annoying for you, set this variable to nil.
+ -- User Option: emms-info-asynchronously
+     Non-nil when track information should be loaded asynchronously.
+     This requires the feature 'later-do' which is provided by the file
+     'later-do.el', which comes with Emms.  See LATER-DO-BATCH for
+     performance tweaking.
+ -- User Option: emms-info-functions
+     Functions which add information to tracks.  Each is called with a
+     track as argument.
+
+* Menu:
+
+* Using TagLib::        TagLib for track information.
+* Defining Info Methods::    Defining new info methods.
+
+
+File: emms.info,  Node: Using TagLib,  Next: Defining Info Methods,  Up: Track Information
+
+13.1 Using TagLib
+=================
+
+The communication with the TagLib library is done via a tiny program
+written in C++ 'emms-print-metadata.cpp'.  To compile
+'emms-print-metadata' invoke:
+
+   'make emms-print-metadata'
+
+   The resultant binary will be installed when you invoke:
+
+   'make install' as in *Note Compiling Emms::.
+
+   It is of course also possible to install only the
+'emms-print-metadata' binary where your system can find and execute it
+without installing all of Emms via the make command.
+
+   Once the binary is available load 'emms-info-libtag' and make it the
+_only_ info function with (note that if you have caching enabled you may
+have to delete the existing cache and repopulate it in order to see the
+TagLib data):
+
+     (require 'emms-info-libtag)
+     (setq emms-info-functions '(emms-info-libtag))
+
+
+File: emms.info,  Node: Defining Info Methods,  Prev: Using TagLib,  Up: Track Information
+
+13.2 Defining Info Methods
+==========================
+
+An info method essentially consists of a function which given an Emms
+track returns the appropriate info for that track.
+
+   We can for example look at the predefined method for retrieving
+information about audio tracks in the Ogg format.
+
+   The function 'emms-info-ogginfo' provided by 'emms-info-ogginfo.el'
+accepts an Emms track as a single argument and returns the appropriate
+information string.
+
+   We then register our info function with Emms by adding it to the
+EMMS-INFO-FUNCTIONS list.  The function will then be called at the right
+time to provide track info.
+
+     (add-to-list 'emms-info-functions 'emms-info-ogginfo)
+
+
+File: emms.info,  Node: Interactive Playlists,  Next: Markable Playlists,  Prev: Track Information,  Up: Top
+
+14 Interactive Playlists
+************************
+
+Emms provides a visual, interactive playlist mode as well as the ability
+to use playlists without ever looking at then.  This visual, interactive
+mode is called the 'emms-playlist-mode' and is defined in
+'emms-playlist-mode.el'.
+
+   The interactive playlist mode is enabled by default in the 'emms-all'
+setup level.  For more information about Emms setup levels see *Note
+Setup::.
+
+ -- Function: emms-playlist-mode-go
+     Switch to the current emms-playlist buffer and use
+     emms-playlist-mode.
+
+   If you wish to make this the default Emms playlist mode, add the
+following to your '.emacs'.
+
+     (setq emms-playlist-default-major-mode 'emms-playlist-mode)
+
+   The interactive playlist buffer shows the tracks in the current Emms
+playlist in the order in which they will be played.  The current track
+will be highlighted.
+
+   When in the interactive playlist mode we can perform different
+actions on the current playlist.
+
+'a'
+     Add files in the playlist at point to the current playlist buffer.
+     If we are in the current playlist, make a new playlist buffer and
+     set it as current.
+'b'
+     Set the current playlist buffer.
+'n'
+     Start playing the next track in the playlist.
+'p'
+     Start playing the previous track in the playlist.
+'s'
+     Stop playing.
+'P'
+     Pause.
+'>'
+     Seek ten seconds forward.
+'<'
+     Seek ten seconds backward.
+'f'
+     Describe the currently playing track in the minibuffer.
+'c'
+     Display the current track in the center of the screen.
+'RET'
+     Start playing the track under point.  Note that this is also
+     available with '<mouse-2>'.
+'SPC'
+     Scroll up a near full page.
+'M-<'
+     Go to the first track in the playlist.
+'M->'
+     Go to the last track in the playlist.
+'r'
+     Go to a randomly selected track in the playlist.
+'q'
+     Put the interactive playlist buffer at the end of the list of all
+     buffers.
+'C-x C-s'
+     Save the current playlist buffer to a file.  By default, Emms will
+     ask you for confirmation before overwriting an existing playlist.
+     You can silently overwrite existing playlist by setting
+     EMMS-SOURCE-PLAYLIST-ASK-BEFORE-OVERWRITE to nil.
+'?'
+     Describe the mode.
+
+   We can also edit the playlist using familiar GNU/Emacs commands:
+
+'C-k'
+     Remove the track under point from the playlist buffer.  Also
+     available using the 'd' key.
+'C-y'
+     See the command 'yank'
+'C-w'
+     See the command 'kill-region'
+'M-y'
+     See the command 'yank-pop'.
+'C-j'
+     Insert a newline at point.
+
+   We can use the regular GNU/Emacs killing and yanking commands to move
+and copy tracks in between playlist buffers.  We can use the same
+commands to insert arbitrary text into the playlist buffers together
+with the playlist tracks.  Text which is not a track is ignored by the
+program and can therefore be used to include titles and annotations
+within the playlist.
+
+
+File: emms.info,  Node: Markable Playlists,  Next: Extending Emms,  Prev: Interactive Playlists,  Up: Top
+
+15 Markable Playlists
+*********************
+
+The Markable Playlists provided by the file 'emms-mark.el' are an
+alternative to the default interactive playlists, *Note Interactive
+Playlists::.  They allow marking tracks with keybindings familiar to
+users of dired.
+
+   To enable the Markable Playlists you have to add
+
+     (require 'emms-mark)
+
+   to your '.emacs'.  Then you can activate 'emms-mark-mode' by
+executing 'M-x emms-mark-mode' in a playlist buffer.  You can return to
+the default interactive playlist mode with 'M-x emms-mark-mode-disable'.
+
+   If you wish to make this the default Emms playlist mode, add the
+following to your '.emacs'.
+
+     (setq emms-playlist-default-major-mode 'emms-mark-mode)
+
+'m'
+     Marks the current track and sets point one line forward.  If a
+     prefix argument ARG is given, it will mark the next ARG tracks and
+     set point accordingly.  A negative argument marks backward.
+'U'
+     Unmarks all tracks in the playlist.
+'t'
+     Toggles mark on the current track.
+'u'
+     Unmarks same way as 'emms-mark-forward' marks.
+'% m'
+     Marks all tracks in the playlist matching the given regular
+     expression.  A prefix argument means to unmark them instead.
+
+   When tracks are marked you can operate on them:
+
+'D'
+     Deletes the marked tracks from the playlist.
+'K'
+     Deletes the marked tracks from the playlist and places them in the
+     kill-ring, so that you can 'yank' in into another playlist.
+'W'
+     Adds the marked tracks to the kill-ring, so that you can 'yank'
+     them into another playlist.
+
+   emms-mark is also intent to provide a way for user to select tracks
+for other command to operate on them.  Currently, 'emms-tag-editor.el'
+uses the emms-mark to edit the tags of selected tracks.  Two functions
+are useful for the elisp programer to handle marked tracks.
+
+ -- Function: emms-mark-do-with-marked-track
+     This function take a function to perform on all marked tracks.  A
+     optional argument 'move-flag' to tell the function to move forward
+     line after calling given function.  If the given function didn't
+     change position, the second argument should set to non-nil.
+
+ -- Function: emms-mark-mapcar-marked-track
+     This function is very similar to 'emms-mark-do-with-marked-track'
+     except it collects result of given function (that's why named with
+     'mapcar').
+
+
+File: emms.info,  Node: Extending Emms,  Next: The Browser,  Prev: Markable Playlists,  Up: Top
+
+16 Extending Emms
+*****************
+
+Emms introduces a high abstraction layer for playing music so you can
+customise it to your needs.
+
+* Menu:
+
+* New Player::               How to define a new player.
+* Simple Player for `play':: An example player using 'play'.
+* More Complex Player::      Example of a complex player using 'mpg321'.
+
+
+File: emms.info,  Node: New Player,  Next: Simple Player for `play',  Up: Extending Emms
+
+16.1 New Player
+===============
+
+The file 'emms-player-simple.el' defines some easy players to start
+with, but it shouldn't be hard to provide a function for your favourite
+player.  We will start with an easy example that shows how we can use
+the 'play' command under Unix to play our WAV files.
+
+
+File: emms.info,  Node: Simple Player for `play',  Next: More Complex Player,  Prev: New Player,  Up: Extending Emms
+
+16.2 Simple Player for 'play'
+=============================
+
+Play is a very easy command line player for various format.  If you want
+your emms to play WAV files just put the following lines in you
+'.emacs':
+
+     (require 'emms-player-simple)
+     (define-emms-simple-player play '(file) "\\.wav$" "play")
+
+   Huh!  Wasn't that easy?
+
+   The macro function 'define-emms-simple-player' takes a minimum of
+three arguments.  The first argument (_play_ in our example) defines the
+name of the player.  It's used to name the player functions.  The second
+is a regexp, that defines which files to play with our player.
+_\\.wav$_ matches any filename ending with a dot and the string wav.
+The last argument is the actual command line command we use to play our
+files.  You can also add the path but we just assume that the command is
+in your path.  All arguments you add to these three are optional.  They
+define the command line arguments you want to add to your argument.  If
+you want to hear the wav file of your favourite artist in the most
+possible volume use the following line:
+
+     (require 'emms-player-simple)
+
+     (define-emms-simple-player play
+                                '(file)
+                                "\\artist-*.wav$"
+                                "play"
+                                "--volume=100")
+
+   Please notice that you have to add the arguments as strings!
+
+   The command line tool you use for 'define-emms-simple-player' has to
+take one song as argument and stop after playing that particular song.
+For any other concept you will need to customise emms a bit more...
+
+
+File: emms.info,  Node: More Complex Player,  Prev: Simple Player for `play',  Up: Extending Emms
+
+16.3 More Complex Player
+========================
+
+The most players you use will be simple players so you don't need to
+read this chapter.  But if you are curious how you can use (almost)
+every player in emms read further...
+
+   In this chapter we will use mpg321 to construct a player that
+actually can pause a track, restart it and show rest time.  We won't
+implement all of that, but after that chapter you will know how to
+define it.
+
+   The command 'define-emms-simple-player' is just a abstraction layer
+for 'define-emms-player', which is a little bit more complicated but
+much more powerful!
+
+     (define-emms-player "emms-mpg321-remote"
+       :start 'emms-mpg321-remote-start
+       :stop 'emms-mpg321-remote-stop
+       :playablep 'emms-mpg321-remote-playable-p)
+
+   So, that is almost all!  'define-emms-player' takes a minimum of
+three arguments.  The first is the name of the player.  The rest are
+methods with functions to call.  Three methods are required: start, stop
+and playable.  Start says Emms how to start a track (sic!), stop how to
+stop a player and playablep should return non-nil if the player can play
+the track.
+
+   So we just need these three functions to get our mpg321-remote:
+
+   First we code the start function.  We will check if there's a open
+process and start one otherwise.  Then we send a string to the process
+with the filename and set a filter.
+
+     (defun emms-mpg321-remote-start ()
+       (unless (get-process ``mpg321-remote'')
+         (setq emms-mpg321-remote-process
+               (start-process "mpg321-remote-process"
+                              "*mpg321*" "mpg321" "-R" "abc"))
+       (process-send-string "mpg321-remote-process"
+                            (concat "l " (emms-track-name track)))
+       (set-process-filter emms-mpg321-remote-process 'emms-mpg321-remote-filter)))
+
+   We need the filter, as mpg321-remote won't quit after playing the
+track as the simple player do.  We wait until the process sends the
+output "(at-sign)P 0" (the signal of mpg321 that the song ended) to the
+filter and call emms-mpg321-remote-stop.
+
+     (defun emms-mpg321-remote-filter (process output)
+       (when (string-match "(at-sign)P 0" output)
+         (emms-mpg321-remote-stop)))
+
+   'emms-mpg321-remote-stop' won't do anything interesting.  It just
+test if there are other files to play and close the process otherwise.
+
+     (defun emms-mpg321-remote-stop ()
+       (unless emms-playlist
+         (process-send-string "mpg321-remote-process" "Q\n"))
+
+   And to make that a playable example I also added
+'emms-mpg321-remote-playablep', which I really just steal from
+'emms-player-simple.el'
+
+     (defun emms-mpg321-remote-playablep (track)
+            "Return non-nil when we can play this track."
+            (and (eq 'file (emms-track-type track))
+
+   Now we have a ready player and we could add commands like
+'emms-mpg321-remote-pause' for example.
+
+
+File: emms.info,  Node: The Browser,  Next: Sorting Playlists,  Prev: Extending Emms,  Up: Top
+
+17 The Browser
+**************
+
+The Browser allows you to browse the metadata cache and add tracks to
+your playlist.  It includes a powerful interactive mode.
+
+   The Browser is defined in 'emms-browser.el' and is included in the
+'emms-all' setup level.  For more information about Emms setup levels
+see *Note Setup::.
+
+   You can also manually add the Browser to your Emms setup by loading
+it explicitly with:
+
+     (require 'emms-browser)
+
+   To be properly useful, you should do M-x 'emms-add-directory-tree' to
+all the files you own at least once so that the cache is fully
+populated.
+
+* Menu:
+
+* Browser Interface::     The interactive browser interface.
+* Filtering Tracks::      Displaying a subset of the tracks.
+* Displaying Covers::     Displaying album covers in the browser interface.
+* Changing Looks::        Changing the tree structure, display format and faces.
+
+
+File: emms.info,  Node: Browser Interface,  Next: Filtering Tracks,  Up: The Browser
+
+17.1 Browser Interface
+======================
+
+The browser interface allows you to display and interact with your
+tracks in many different ways.  There are a number of ways to start the
+browser.
+
+ -- Function: emms-smart-browse
+     Display browser and playlist.  Toggle between selecting browser,
+     playlist or hiding both.  Tries to behave sanely if the user has
+     manually changed the window configuration.
+
+ -- Function: emms-browse-by-artist
+     Display the browser and order the tracks by artist.
+
+ -- Function: emms-browse-by-album
+     Display the browser and order the tracks by album.
+
+ -- Function: emms-browse-by-genre
+     Display the browser and order the tracks by genre.
+
+ -- Function: emms-browse-by-year
+     Display the browser and order the tracks by year.
+
+   Once the Browser is displayed you can use it to managed your track
+collection and playlists.  The Browser is interactive and has its own
+keybindings.
+
+'C-j'
+     Add all tracks at point, and play the first added track.
+
+'RET'
+     Add all tracks at point.
+
+'SPC'
+     Show or hide (kill) subitems under the current line.
+
+'1'
+     Collapse everything.
+
+'2'
+     Expand all top level items one level.
+
+'3'
+     Expand all top level items two levels.
+
+'4'
+     Expand all top level items three levels.
+
+'C'
+     Clear the playlist.
+
+'E'
+     Expand everything.
+
+'d'
+     View the current directory in dired.
+
+'q'
+     Bury the browser buffer.
+
+'r'
+     Jump to a random track.
+
+'/'
+     Isearch through the buffer.
+
+'<'
+     Redisplay with the previous filter.
+
+'>'
+     Redisplay with the next filter.
+
+'?'
+     See the Emacs documentation for the function.
+
+'C-/'
+     Undo the previous playlist action.
+
+'<C-return>'
+     Add all tracks at point, and play the first added track.
+
+'<backtab>'
+     Jump to the previous non-track element.
+
+'<tab>'
+     Jump to the next non-track element.
+
+'s A'
+     Search the collection by album.
+
+'s a'
+     Search the collection by artist.
+
+'s s'
+     Search the collection by names.
+
+'s t'
+     Search the collection by title.
+
+'b 1'
+     Browse the collection by artist.
+
+'b 2'
+     Browse the collection by album.
+
+'b 3'
+     Browse the collection by genre.
+
+'b 4'
+     Browse the collection by year.
+
+'W a p'
+     Lookup the album using Pitchfork.
+
+'W a w'
+     Lookup the album using Wikipedia.
+
+
+File: emms.info,  Node: Filtering Tracks,  Next: Displaying Covers,  Prev: Browser Interface,  Up: The Browser
+
+17.2 Filtering Tracks
+=====================
+
+If you want to display a subset of your collection (such as a directory
+of 80s music, only avi files, etc.)  then you can extend the Browser by
+defining "filters".
+
+   Show everything:
+
+     (emms-browser-make-filter "all" 'ignore)
+
+   Set "all" as the default filter:
+
+     (emms-browser-set-filter (assoc "all" emms-browser-filters))
+
+   Show all files (no streamlists, etc):
+
+     (emms-browser-make-filter
+      "all-files" (emms-browser-filter-only-type 'file))
+
+   Show only tracks in one folder:
+
+     (emms-browser-make-filter
+      "80s" (emms-browser-filter-only-dir "~/Mp3s/80s"))
+
+   Show all tracks played in the last month:
+
+     (emms-browser-make-filter
+      "last-month" (emms-browser-filter-only-recent 30))
+
+   After executing the above commands, you can use M-x
+emms-browser-show-all, emms-browser-show-80s, etc to toggle between
+different collections.  Alternatively you can use '<' and '>' to cycle
+through the available filters.
+
+   The second argument to make-filter is a function which returns t if a
+single track should be filtered.  You can write your own filter
+functions to check the type of a file, etc.
+
+   Show only tracks not played in the last year:
+
+     (emms-browser-make-filter "not-played"
+      (lambda (track)
+       (not (funcall (emms-browser-filter-only-recent 365) track))))
+
+   Show all files that are not in the pending directory:
+
+     (emms-browser-make-filter
+      "all"
+      (lambda (track)
+        (or
+         (funcall (emms-browser-filter-only-type 'file) track)
+         (not (funcall
+               (emms-browser-filter-only-dir "~/Media/pending") track)))))
+
+
+File: emms.info,  Node: Displaying Covers,  Next: Changing Looks,  Prev: Filtering Tracks,  Up: The Browser
+
+17.3 Displaying Covers
+======================
+
+The browser will attempt to display cover images if they're available.
+
+   Customize EMMS-BROWSER-COVERS to configure how EMMS should retrieve
+the covers.
+
+   By default it looks for images 'cover_small.jpg', 'cover_med.jpg',
+etc.  Note that you'll probably want to resize your existing covers to
+particular sizes.  Suggested sizes are 100x100 for small, and 200x200
+for medium.
+
+   The above behaviour demands manual processing on behalf of the user.
+Instead, you might prefer to automate the process by setting
+EMMS-BROWSER-COVERS to 'emms-browser-cache-thumbnail': covers matching
+'emms-browser-thumbnail-filter' will be automatically resized if
+necessary and cached to EMMS-BROWSER-THUMBNAIL-DIRECTORY.  The cache
+gets automatically updated upon change in the source folder.
+
+   Customize EMMS-BROWSER-COVERS-FILE-EXTENSIONS to include or exclude
+specific extensions.
+
+   'emms-browser-cache-thumbnail' might be everytime a cover is queried,
+so to help with performance you can also set EMMS-BROWSER-COVERS to
+'emms-browser-cache-thumbnail-async'.  The latter is like the former
+except that it caches queries: every subsequent query will be much
+faster.  The drawback is that it won't see changes made to covers after
+the first query.  To force-refresh the thumbnail cache, you can run
+'emms-browser-clear-cache-hash'.
+
+   Also, Emacs by default will jump around a lot when scrolling a buffer
+with images.  In order to prevent that, you can set
+SCROLL-UP-AGGRESSIVELY and SCROLL-DOWN-AGGRESSIVELY to the number "0.0".
+
+   To show a 'no cover' image for albums which don't have a cover, add
+the following code to your .emacs:
+
+     (setq emms-browser-default-covers
+       (list "/path/to/cover_small.jpg" nil nil)
+
+   The medium and large images can be set as well.
+
+   You can download an example 'no cover' image
+(http://repose.cx/cover_small.jpg).
+
+
+File: emms.info,  Node: Changing Looks,  Prev: Displaying Covers,  Up: The Browser
+
+17.4 Changing Looks
+===================
+
+The Browser's look can be customised.  You can change the way the tree
+structure looks, the display format and display faces.
+
+Changing Tree Structure
+-----------------------
+
+You can change the way the tree is displayed by modifying the function
+'emms-browser-next-mapping-type'.
+
+   The following code displays artist->track instead of
+artist->album->track when you switch to the 'singles' filter:
+
+     (defadvice emms-browser-next-mapping-type
+                                     (after no-album (current-mapping))
+       (when (eq ad-return-value 'info-album)
+         (setq ad-return-value 'info-title)))
+
+     (defun toggle-album-display ()
+       (if (string= emms-browser-current-filter-name "singles")
+           (ad-activate 'emms-browser-next-mapping-type)
+         (ad-deactivate 'emms-browser-next-mapping-type)))
+
+     (add-hook 'emms-browser-filter-changed-hook 'toggle-album-display)
+
+   Furthermore, you can customize EMMS-BROWSER-GET-TRACK-FIELD-FUNCTION
+to choose which the metadata fields used for the different tree nodes
+(''info-artist', 'info-year', etc.).  For instance, you can choose
+whether to organize the tree by artist, album artist or performer.
+
+Changing Display Format
+-----------------------
+
+Format strings govern the way items are displayed in the browser and
+playlist.  You can customize these if you wish.
+
+   EMMS-BROWSER-DEFAULT-FORMAT controls the format to use when no other
+format has been explicitly defined.  By default, only track and albums
+deviate from the default.
+
+   To customise the format of a particular type, find the name of the
+field you want to use (eg 'info-artist', 'info-title', etc), and insert
+that into emms-browser-<type>-format or
+emms-browser-playlist-<type>-format.  For example, if you wanted to
+remove track numbers from tracks in both the browser and playlist, you
+could do:
+
+     (defvar emms-browser-info-title-format "%i%n")
+     (defvar emms-browser-playlist-info-title-format
+       emms-browser-info-title-format)
+
+   The format specifiers available include:
+
+     %i indent relative to the current level
+     %n the value of the item - eg -info-artist might be "pink floyd"
+     %y the album year
+     %A the album name
+     %a the artist name of the track
+     %t the title of the track
+     %T the track number
+     %cS a small album cover
+     %cM a medium album cover
+     %cL a big album cover
+
+   Note that if you use track-related items like %t, it will take the
+data from the first track.
+
+Changing Display Faces
+----------------------
+
+The faces used to display the various fields are also customizable.
+They are in the format emms-browser-<type>-face, where type is one of
+"year/genre", "artist", "album" or "track".  Note that faces lack the
+initial "info-" part.  For example, to change the artist face, type M-x
+'customize-face' 'emms-browser-artist-face'.
+
+
+File: emms.info,  Node: Sorting Playlists,  Next: Persistent Playlists,  Prev: The Browser,  Up: Top
+
+18 Sorting Playlists
+********************
+
+The 'emms-playlist-sort' module, defined in the 'emms-playlist-sort.el'
+package provides functions for sorting Emms playlists, as well as
+keyboard shortcuts for invoking the functions in the playlist buffer.
+Most of the functions will sort in reverse order if the command is
+preceded by a prefix.  'emms-playlist-sort' can be loaded by invoking:
+
+     (require 'emms-playlist-sort)
+
+ -- Function: emms-playlist-sort-by-info-artist
+     Sort by artist name.
+
+ -- Function: emms-playlist-sort-by-play-count
+     Sort by number of times the track has been played.
+
+ -- Function: emms-playlist-sort-by-info-album
+     Sort by album name.
+
+ -- Function: emms-playlist-sort-by-last-played
+     Sort by time the track was played last.
+
+ -- Function: emms-playlist-sort-by-info-title
+     Sort by track title.
+
+ -- Function: emms-playlist-sort-by-file-extension
+     Sort by filename extension.
+
+ -- Function: emms-playlist-sort-by-info-performer
+     Sort by performer name.
+
+ -- Function: emms-playlist-sort-by-info-year
+     Sort by year.
+
+ -- Function: emms-playlist-sort-by-info-note
+     Sort by track notes.
+
+ -- Function: emms-playlist-sort-by-info-composer
+     Sort by composer.
+
+ -- Function: emms-playlist-sort-by-name
+     Sort by track name.
+
+ -- Function: emms-playlist-sort-by-file-mtime
+     Sort by file mtime.
+
+
+File: emms.info,  Node: Persistent Playlists,  Next: Editing Tracks,  Prev: Sorting Playlists,  Up: Top
+
+19 Persistent Playlists
+***********************
+
+The Emms module 'emms-history.el' makes playlists persistent over emacs
+sessions.  To make use of this feature put this into your ~/.emacs.
+
+     (require 'emms-history)
+
+   When you kill emacs all playlists will be saved in the file given by
+the variable:
+
+ -- User Option: emms-history-file
+     The file to save playlists in.  It defaults to
+     "~/.emacs.d/emms-history".
+
+   After you started up emacs again, you can restore all saved playlists
+with this function.
+
+ -- Function: emms-history-load
+     Restore all playlists in 'emms-history-file'.
+
+   If that should be done automatically on each startup, put these lines
+into your ~/.emacs.
+
+     (require 'emms-history)
+     (emms-history-load)
+
+   Normally 'emms-history' only restores playlists.  If you want it to
+start playback afterwards, you can tweak this variable.
+
+ -- User Option: emms-history-start-playing
+     If non-nil emms starts playing the current track after
+     'emms-history-load' was invoked.  The default value is nil.
+
+
+File: emms.info,  Node: Editing Tracks,  Next: Emms Mode Line,  Prev: Persistent Playlists,  Up: Top
+
+20 Editing Tracks
+*****************
+
+Using 'emms-tag-editor.el', emms can set tag informations of tracks and
+write them back to the file with the help of external programs, such as
+'mid3v2' and 'vorbiscomment'.
+
+   Use the keybinding 'E' to edit the tags of track under point in the
+playlist or all marked tracks (*note Markable Playlists:: for how to
+mark tracks).  The track's tag informations are listed in a special
+buffer '*Emms-TAGS*' in text format.  Field names are marked in bold
+face and are not editable.  Any tag information is placed behind an
+equal sign and is changable.  A special field 'name' is the track's file
+name.  If any change is made in this field, the track's file will be
+renamed to the new name.  When you finished editing the tag infos use
+'C-c C-c' (which calls 'emms-tag-editor-submit-and-exit') to submit the
+changes and close the '*Emms-TAGS*' buffer.
+
+   There are a few commands to perform changes on all tracks.
+
+ -- Function: emms-tag-editor-set-all tag value
+     Set TAG to VALUE in all tracks.
+
+     If transient-mark-mode is turned on, you can apply the command to a
+     selected region.
+
+     If 'transient-mark-mode' is on and the mark is active, the changes
+     will only take effect on the tracks in the region.
+
+ -- Function: emms-tag-editor-replace-in-tag tag from to
+     Query and replace text in selected TAG.
+
+     For example, if the info-title tag is selected, then only perform
+     replacement in title tags.
+
+     If 'transient-mark-mode' is on and the mark is active, the changes
+     will only take effect on the tracks in the region.
+
+ -- Function: emms-tag-editor-transpose-tag tag1 tag2
+     Transpose value of TAG1 and TAG2.
+
+     If 'transient-mark-mode' is on and the mark is active, the changes
+     will only take effect on the tracks in the region.
+
+ -- Function: emms-tag-editor-submit arg
+     Make modified tags take affect.
+
+     With prefix argument, bury the tag edit buffer.
+
+   If you want to extend the tag editor to work with file formats other
+than 'mp3' and 'ogg', have a look at these variables.
+
+ -- Variable: emms-tag-editor-formats
+     This variable determine how to insert track fields to
+     'emms-tag-editor-edit-buffer'.  Emms tag info editable fields is
+     usually determined by the extension of track name.  The variable
+     'emms-tag-editor-tags' contains all tags that emms track may have.
+     A single charactar is assigned to the tag to make the
+     'emms-tag-editor-formats' easier to generate.
+
+ -- Variable: emms-tag-editor-tagfile-functions
+     To write tags to track file, an extern program should specified in
+     this variable.
+
+Renaming Files
+==============
+
+The tag editor is also capable to rename the file of the track at point
+or all files of the marked tracks according to the value this variable.
+
+ -- User Option: emms-tag-editor-rename-format
+     When 'emms-tag-editor-rename' is invoked the track's file will be
+     renamed according this format specification.  The file extension
+     will be added automatically.
+
+     It uses the format specs defined in 'emms-tag-editor-tags'.
+
+     The default value is "%a - %l - %n - %t", so that files are named
+
+     <Artist> - <Album> - <Tracknumber> - <Title>.<extension>
+
+     after renaming.
+
+   To perform the renaming put point on the track you want to rename or
+mark some tracks.  Then hit 'R' which calls this function:
+
+ -- Function: emms-tag-editor-rename
+     Rename the file corresponding to track at point or all marked
+     tracks according to the value of 'emms-tag-editor-rename-format'.
+
+
+File: emms.info,  Node: Emms Mode Line,  Next: Limiting,  Prev: Editing Tracks,  Up: Top
+
+21 Emms Mode Line
+*****************
+
+We can display information about the currenty playing track on the Emacs
+mode line using the package 'emms-mode-line' which is provided by the
+file 'emms-mode-line.el'.
+
+   To activate this feature invoke:
+
+     (require 'emms-mode-line)
+     (emms-mode-line 1)
+
+   It is also possible to display the amount of time a track has been
+playing.  This feature is defined in the 'emms-playing-time' package
+which is provided by the file 'emms-playing-time.el'.
+
+   To use this feature invoke:
+
+     (require 'emms-playing-time)
+     (emms-playing-time 1)
+
+   Note: '(emms-playing-time -1)' will disable emms-playing-time module
+completely, and is not recommended.  (since some other emms modules may
+rely on it)
+
+   Instead, to toggle displaying playing time on mode line, one could
+call 'emms-playing-time-enable-display' and
+'emms-playing-time-disable-display'."
+
+ -- Function: emms-playing-time-enable-display
+     Display playing time on mode line.
+
+ -- Function: emms-playing-time-disable-display
+     Remove playing time from mode line.
+
+
+File: emms.info,  Node: Limiting,  Next: Music Player Daemon,  Prev: Emms Mode Line,  Up: Top
+
+22 Limiting
+***********
+
+The package 'emms-playlist-limit', provided by 'emms-playlist-limit.el',
+allows creating a new playlist derived from the playlist in the current
+buffer.  For instance, it is possible to create a new playlist
+containing only a certain artist or genre from the playlist in the
+current buffer.
+
+   If the playlist in the current buffer is the emms current playlist
+then the derived playlist becomes current.
+
+'/ a'
+     Create a new playlist buffer and populate it with tracks whose
+     artist info field matches the given regular expression (default:
+     the artist info field of the track at point).
+
+'/ b'
+     Create a new playlist buffer and populate it with tracks whose
+     album info field matches the given regular expression (default: the
+     album info field of the track at point).
+
+'/ c'
+     Create a new playlist buffer and populate it with tracks whose
+     composer info field matches the given regular expression (default:
+     the composer info field of the track at point).
+
+'/ d'
+     Create a new playlist buffer and populate it with tracks whose
+     track description matches the given regular expression (default:
+     the track description of the track at point).
+
+'/ g'
+     Create a new playlist buffer and populate it with tracks whose
+     genre info field matches the given regular expression (default: the
+     genre info field of the track at point).
+
+'/ n'
+     Create a new playlist buffer and populate it with tracks whose name
+     matches the given regular expression (default: the name of the
+     track at point).
+
+'/ p'
+     Create a new playlist buffer and populate it with tracks whose
+     performer info field matches the given regular expression (default:
+     the performer info field of the track at point).
+
+'/ t'
+     Create a new playlist buffer and populate it with tracks whose
+     title info field matches the given regular expression (default: the
+     title info field of the track at point).
+
+'/ y'
+     Create a new playlist buffer and populate it with tracks whose year
+     info field matches the given regular expression (default: the year
+     info field of the track at point).
+
+'/ /'
+     Switch to the original playlist buffer (if it still exists).
+
+
+File: emms.info,  Node: Music Player Daemon,  Next: Lyrics,  Prev: Limiting,  Up: Top
+
+23 Music Player Daemon
+**********************
+
+Emms provides an interface to the Music Player Daemon
+(http://www.musicpd.org/)(MusicPD) software.  The package is called
+'emms-player-mpd' and is provided by the file 'emms-player-mpd.el'.
+
+   The advantages of using MusicPD as an Emms backend include the
+following.
+
+   * minimal CPU usage
+   * fast access of track information
+   * optional crossfade
+
+Setup
+-----
+
+To load 'emms-player-mpd' invoke:
+
+     (require 'emms-player-mpd)
+
+   Set the variables EMMS-PLAYER-MPD-SERVER-NAME and
+EMMS-PLAYER-MPD-SERVER-PORT to the location and port (respectively) of
+your MusicPD server.  For example:
+
+     (setq emms-player-mpd-server-name "localhost")
+     (setq emms-player-mpd-server-port "6600")
+
+   If your MusicPD setup requires a password, you will to set
+EMMS-PLAYER-MPD-SERVER-PASSWORD as follows.
+
+     (setq emms-player-mpd-server-password "mypassword")
+
+   To get track information from MusicPD, invoke the following:
+
+     (add-to-list 'emms-info-functions 'emms-info-mpd)
+
+   Adding 'emms-player-mpd' to your Emms player list is accomplished by
+invoking:
+
+     (add-to-list 'emms-player-list 'emms-player-mpd)
+
+   Unless your MusicPD is configured to use absolute file names, you
+must set the emms-player-mpd-music-directory variable to the value of
+'music_directory' in your MusicPD configuration.  There are additional
+options available as well, but the defaults should be sufficient for
+most uses.
+
+   Once you've done the above, run the 'M-x emms-cache-set-from-mpd-all'
+command to fill the Emms cache with the contents of your MusicPD
+database.  The music in your MusicPD database should then be accessible
+via the Emms browser.
+
+   You can set EMMS-PLAYER-MPD-SYNC-PLAYLIST to nil if your master Emms
+playlist contains only stored playlists.
+
+Commands provided
+-----------------
+
+ -- Function: emms-player-mpd-connect
+     Connect to MusicPD and retrieve its current playlist.  Afterward,
+     the status of MusicPD will be tracked.
+
+ -- Function: emms-player-mpd-disconnect
+     Terminate the MusicPD client process and disconnect from MusicPD.
+
+ -- Function: emms-player-mpd-show &optional insertp
+     Describe the current Emms track in the minibuffer.  If INSERTP is
+     non-nil, insert the description into the current buffer instead.
+     This function uses EMMS-SHOW-FORMAT to format the current track.
+     It differs from 'emms-show' in that it asks MusicPD for the current
+     track, rather than Emms.
+
+Updating the MusicPD database
+.............................
+
+ -- Function: emms-player-mpd-update-directory dir
+     Cause the tracks in DIR to be updated in the MusicPD database.
+
+ -- Function: emms-player-mpd-update-all
+     Cause all tracks in the MusicPD music directory to be updated in
+     the MusicPD database.
+
+emms-cache.el integration
+.........................
+
+ -- Function: emms-cache-set-from-mpd-directory dir
+     Dump all MusicPD data from DIR into the Emms cache.  This is useful
+     to do when you have recently acquired new music.
+
+ -- Function: emms-cache-set-from-mpd-all
+     Dump all MusicPD data into the Emms cache.  This is useful to do
+     once, just before using emms-browser.el, in order to prime the
+     cache.
+
+emms-volume.el integration
+..........................
+
+To activate this, add the following to your .emacs.
+
+     (require 'emms-volume)
+     (setq emms-volume-change-function 'emms-volume-mpd-change)
+
+
+File: emms.info,  Node: Lyrics,  Next: Volume,  Prev: Music Player Daemon,  Up: Top
+
+24 Lyrics
+*********
+
+We can display the lyrics of a song in time with the music using the
+'emms-lyrics' package provided by the file 'emms-lyrics.el'.
+
+   The lyrics files should have the extention ".lrc", and can be placed
+under either the same directory as the music files or EMMS-LYRICS-DIR.
+
+   To add this feature we invoke:
+
+     (require 'emms-lyrics)
+     (emms-lyrics 1)
+
+   There are a number of variables we can set to define the way that
+'emms-lyrics' behaves, we can set these directly or by using the
+Customize feature in Emacs.
+
+ -- User Option: emms-lyrics-display-on-minibuffer
+     If non-nil, display lyrics on minibuffer.
+
+ -- User Option: emms-lyrics-display-on-modeline
+     If non-nil, display lyrics on modeline.
+
+ -- User Option: emms-lyrics-dir
+     Local lyrics repository.  'emms-lyrics-find-lyric' will look for
+     lyrics in current directory(i.e., same as the music file) and this
+     directory.
+
+ -- User Option: emms-lyrics-display-format
+     Format for displaying lyrics.  "%s" will be replaced by the lyrics
+     string.
+
+ -- User Option: emms-lyrics-coding-system
+     Coding system used in the output of lyrics.
+
+ -- User Option: emms-lyrics-scroll-p
+     Non-nil value will enable lyrics scrolling.
+
+ -- User Option: emms-lyrics-scroll-timer-interval
+     Interval between scroller timers.  The shorter, the faster.
+
+   We can control 'emms-lyrics' with the help of the following
+functions:
+
+ -- Function: emms-lyrics-start
+     Start displaying lyrics.
+
+ -- Function: emms-lyrics-stop
+     Stop displaying lyrics.
+
+ -- Function: emms-lyrics-toggle-display-on-minibuffer
+     Toggle display lyrics on minibufer.
+
+ -- Function: emms-lyrics-toggle-display-on-modeline
+     Toggle display lyrics on mode line.
+
+ -- Function: emms-lyrics-enable
+     Enable displaying Emms lyrics.
+
+ -- Function: emms-lyrics-disable
+     Disable displaying Emms lyrics.
+
+ -- Function: emms-lyrics-toggle
+     Toggle displaying Emms lyrics.
+
+
+File: emms.info,  Node: Volume,  Next: Streaming Audio,  Prev: Lyrics,  Up: Top
+
+25 Volume
+*********
+
+We can use the 'emms-volume' package, as provided by the
+'emms-volume.el' file, to manipulate the volume.
+
+ -- User Option: emms-volume-change-amount
+     The amount to use when raising or lowering the volume using the
+     emms-volume interface.
+
+     This should be a positive integer.
+
+ -- Function: emms-volume-raise
+     Increase the volume.
+
+ -- Function: emms-volume-lower
+     Decrease the volume.
+
+   If you feel like binding those two functions to global keys -- don't
+do it or you'll miss the convenience of 'emms-volume-minor-mode'.
+Instead, bind the following two commands to some keys that you like.
+
+ -- Function: emms-volume-mode-plus
+     Raise volume and enable or extend the 'emms-volume-minor-mode'
+     timeout.
+
+ -- Function: emms-volume-mode-minus
+     Lower volume and enable or extend the 'emms-volume-minor-mode'
+     timeout.
+
+   Example:
+
+     (global-set-key (kbd "C-c +") 'emms-volume-mode-plus)
+     (global-set-key (kbd "C-c -") 'emms-volume-mode-minus)
+
+   Whenever you use one of these keys or call these functions with
+'M-x', Emms will be put into 'emms-volume-minor-mode' for a short period
+defined by 'emms-volume-mode-timeout'.
+
+ -- User Option: emms-volume-mode-timeout
+     The timeout in amount of seconds used by 'emms-volume-minor-mode'.
+
+   In this interval you can raise/lower the volume simply by pressing
+'+' or '-', which will also reset the timer to its initial value.  So
+instead of pressing 'C-c +' six times to increase volume by six steps of
+'emms-volume-change-amount', you would simply type 'C-c + + + + + +'.
+
+   Emms can change volume with amixer, mpd, PulseAudio out of the box,
+see EMMS-VOLUME-CHANGE-FUNCTION.
+
+
+File: emms.info,  Node: Streaming Audio,  Next: APE / FLAC Commands,  Prev: Volume,  Up: Top
+
+26 Streaming Audio
+******************
+
+Emms provides a friendly interface for managing and playing streaming
+audio in addition to the Emms playlist interface.  The interface is
+defined in the 'emms-streams.el' package and can be loaded by invoking:
+
+     (require 'emms-streams)
+
+   Querying the streams for track information is provided by the
+'emms-stream-info.el' package and can be loaded with:
+
+     (require 'emms-stream-info)
+
+   The Emms interface for streaming audio, and the stream query
+capabilites are enabled by default in the 'emms-all' setup level.  For
+more information about Emms setup levels see *Note Setup::.
+
+   'emms-stream-info' calls a backend program to query the stream for
+information.  The preferred program needs to be specified by setting the
+variable EMMS-STREAM-INFO-BACKEND either 'mplayer', 'mpv' or 'vlc'.  For
+instance:
+
+     (setq emms-stream-info-backend 'vlc)
+
+   Obviously, the corresponding program needs to be installed and
+available for Emms to invoke.
+
+   Enter the emms-streams interface by invoking 'M-x' 'emms-streams'.
+The emms-streams interface comes with a built-in, eclectic list of
+streaming audio channels from throughout the Web.  Emms can of-course
+play other streams than the ones listed by default, you are free to
+remove any or all of them and add your own.(1)
+
+   The following is a list of the key-bindings for the emms-streams
+interface:
+
+'RET'
+     Perform the default action when you press RET in the Emms Stream
+     interface.  Can be either "add" or "play".  The default is "add",
+     which adds the station under point to the Emms playlist.  When
+     EMMS-STREAM-DEFAULT-ACTION is "play" then Emms will play the
+     streaming audio channel under point.
+'q'
+     Quit the emms-streams interface.
+'a'
+     Add a bookmark to a streaming audio URL to the list.
+'d'
+     Remove a bookmark to a streaming audio URL from the list.
+'e'
+     Edit the details of the bookmark under point.
+'h'
+     Describe the emms-streams mode.
+'n'
+     Move to the next line in the emms-streams buffer (same as C-n).
+'p'
+     Move to the previous line in the emms-streams buffer (same as C-p).
+'s'
+     Save the bookmarks in the emms-streams interface to disk.  The
+     bookmarks will be to the location designated in the variable
+     EMMS-STREAM-BOOKMARKS-FILE.
+'i'
+     Return information about the streaming audio at the URL of the
+     bookmark under point.  Note that this will only work if the
+     'emms-stream-info' has already been loaded.
+
+   ---------- Footnotes ----------
+
+   (1) If you enjoy a particular streaming audio station on the Web and
+think that it belongs in the default list, please send us a link and we
+will gladly add it!
+
+
+File: emms.info,  Node: APE / FLAC Commands,  Next: Bookmarks,  Prev: Streaming Audio,  Up: Top
+
+27 APE / FLAC Commands
+**********************
+
+Often, a single APE or FLAC file contains a complete ablum.  We can
+still play next or previous track in the ablum with the help of
+'emms-cue.el' package, provided there is a corresponding cue sheet file.
+This package also defines 'emms-info-cueinfo' for retreiving the track
+information for APE / FLAC itself.
+
+   To load 'emms-cue.el':
+
+     (require 'emms-cue)
+     (add-to-list 'emms-info-functions 'emms-info-cueinfo)
+
+ -- Function: emms-cue-next
+     Play next track from .cue file
+ -- Function: emms-cue-previous
+     Play previous track from .cue file
+
+
+File: emms.info,  Node: Bookmarks,  Next: Managing Playlists,  Prev: APE / FLAC Commands,  Up: Top
+
+28 Bookmarks
+************
+
+Emms can save a "temporal bookmark" in a media file via emms-bookmarks.
+The file 'emms-bookmarks.el' provides the package emms-bookmarks.
+
+   While some media is playing, invoking 'M-x emms-bookmarks-add' will
+first pause the playback and then prompt for a name describing the
+bookmark.  Tracks can have multiple bookmarks associated with them.
+
+   To jump to the next and previous bookmarks in the current track
+invoke 'M-x emms-bookmarks-next' and 'M-x emms-bookmarks-prev'
+respectively.
+
+   To clear all of the bookmarks for the current track invoke 'M-x
+emms-bookmarks-clear'.
+
+
+File: emms.info,  Node: Managing Playlists,  Next: GNU FM,  Prev: Bookmarks,  Up: Top
+
+29 Managing Playlists
+*********************
+
+Emms can have multiple playlists, since a playlist is just another
+buffer with a list of tracks.  You can manage multiple playlists using
+'emms-metaplaylist-mode', provided by the file 'emms-metaplaylist-mode'.
+
+   Start the playlist manager with 'M-x emms-metaplaylist-mode-go'.  The
+playlist manager will list the playlists and mark the current one.  The
+following commands are available:
+
+'RET'
+     Make the buffer at point the Emms playlist buffer and switch to it.
+
+'SPC'
+     Make the buffer at point the Emms playlist buffer (but do not
+     switch to it).
+
+'n'
+     Move point to the next playlist.
+
+'p'
+     Move point to the previous playlist.
+
+'g'
+     Update the playlist manager buffer.
+
+'C'
+     Create a new Emms playlist buffer.
+
+'C-k'
+     Kill the Emms playlist buffer at point.
+
+'c'
+     Move point to the current playlist buffer.
+
+'q'
+     Kill the playlist manager.
+
+
+File: emms.info,  Node: GNU FM,  Next: Copying,  Prev: Managing Playlists,  Up: Top
+
+30 GNU FM
+*********
+
+GNU FM (https://www.gnu.org/software/gnufm/) is free software for
+running music community websites.  It was created for the music
+community site, Libre.fm (http://libre.fm/).
+
+   Emms can send track information, and stream music from GNU FM servers
+using 'emms-librefm-scrobbler.el' and 'emms-librefm-stream.el',
+respectively.
+
+   Emms is configured by default to use Libre.fm (http://libre.fm/), but
+can work with any GNU FM server by configuring the variable
+EMMS-LIBREFM-SCROBBLER-HANDSHAKE-URL to the URL of the GNU FM server.
+
+   The recommended way of providing your credentials to the GNU FM
+server is by using an authinfo file.  Add authentication to your
+auth-info file, typically '~/.authinfo.gpg', as:
+     machine libre.fm login USERNAME password PASSWORD
+   If you are using some other server than libre.fm, change "'libre.fm'"
+to match EMMS-LIBREFM-SCROBBLER-HANDSHAKE-URL.
+
+   Alternatively, you can save the password in plaintext in your
+init-file by setting these variables:
+
+     (setq emms-librefm-scrobbler-username "USERNAME"
+           emms-librefm-scrobbler-password "PASSWORD")
+
+* Menu:
+
+* Uploading Track Information:: How to submit listened track information.
+* GNU FM Streaming:: Streaming music from a GNU FM server.
+
+
+File: emms.info,  Node: Uploading Track Information,  Next: GNU FM Streaming,  Up: GNU FM
+
+30.1 Uploading Track Information
+================================
+
+GNU FM servers, such as Libre.fm can optionally store a user's listening
+habits using information sent to the website's server from the Emms.  By
+utilizing the records of users' listening habits, the website aims to be
+able to recommend music to users by analyzing their musical taste.
+
+   Load the feature into Emms with:
+
+     (require 'emms-librefm-scrobbler)
+
+   This feature can also be enabled via *Note Setup::, in the 'emms-all'
+setup level.
+
+   Enable uploading the details of the tracks Emms plays to the GNU FM
+server with 'emms-librefm-scrobbler-enable'.  The track's details will
+be uploaded to the server when the track's playback ends.  You can
+disable this behavior with 'emms-librefm-scrobbler-disable'.
+
+
+File: emms.info,  Node: GNU FM Streaming,  Prev: Uploading Track Information,  Up: GNU FM
+
+30.2 GNU FM Streaming
+=====================
+
+If the GNU FM server provides a streaming music service you can take
+advantage of it by loading:
+
+     (require 'emms-librefm-stream)
+
+   This feature can also be enabled via *Note Setup::, in the 'emms-all'
+setup level.
+
+   Then invoke 'emms-librefm-stream' and enter the URL of the station
+you wish to listen to, for example "librefm://globaltags/Classical".
+
+
+File: emms.info,  Node: Copying,  Next: The GNU FDL,  Prev: Extending Emms,  Up: Top
+
+GNU General Public License
+**************************
+
+                        Version 3, 29 June 2007
+
+     Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+
+     Everyone is permitted to copy and distribute verbatim copies of this
+     license document, but changing it is not allowed.
+
+Preamble
+========
+
+The GNU General Public License is a free, copyleft license for software
+and other kinds of works.
+
+   The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program-to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
+
+   When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+   To protect your rights, we need to prevent others from denying you
+these rights or asking you to surrender the rights.  Therefore, you have
+certain responsibilities if you distribute copies of the software, or if
+you modify it: responsibilities to respect the freedom of others.
+
+   For example, if you distribute copies of such a program, whether
+gratis or for a fee, you must pass on to the recipients the same
+freedoms that you received.  You must make sure that they, too, receive
+or can get the source code.  And you must show them these terms so they
+know their rights.
+
+   Developers that use the GNU GPL protect your rights with two steps:
+(1) assert copyright on the software, and (2) offer you this License
+giving you legal permission to copy, distribute and/or modify it.
+
+   For the developers' and authors' protection, the GPL clearly explains
+that there is no warranty for this free software.  For both users' and
+authors' sake, the GPL requires that modified versions be marked as
+changed, so that their problems will not be attributed erroneously to
+authors of previous versions.
+
+   Some devices are designed to deny users access to install or run
+modified versions of the software inside them, although the manufacturer
+can do so.  This is fundamentally incompatible with the aim of
+protecting users' freedom to change the software.  The systematic
+pattern of such abuse occurs in the area of products for individuals to
+use, which is precisely where it is most unacceptable.  Therefore, we
+have designed this version of the GPL to prohibit the practice for those
+products.  If such problems arise substantially in other domains, we
+stand ready to extend this provision to those domains in future versions
+of the GPL, as needed to protect the freedom of users.
+
+   Finally, every program is threatened constantly by software patents.
+States should not allow patents to restrict development and use of
+software on general-purpose computers, but in those that do, we wish to
+avoid the special danger that patents applied to a free program could
+make it effectively proprietary.  To prevent this, the GPL assures that
+patents cannot be used to render the program non-free.
+
+   The precise terms and conditions for copying, distribution and
+modification follow.
+
+                         TERMS AND CONDITIONS
+
+  0. Definitions.
+
+     "This License" refers to version 3 of the GNU General Public
+     License.
+
+     "Copyright" also means copyright-like laws that apply to other
+     kinds of works, such as semiconductor masks.
+
+     "The Program" refers to any copyrightable work licensed under this
+     License.  Each licensee is addressed as "you".  "Licensees" and
+     "recipients" may be individuals or organizations.
+
+     To "modify" a work means to copy from or adapt all or part of the
+     work in a fashion requiring copyright permission, other than the
+     making of an exact copy.  The resulting work is called a "modified
+     version" of the earlier work or a work "based on" the earlier work.
+
+     A "covered work" means either the unmodified Program or a work
+     based on the Program.
+
+     To "propagate" a work means to do anything with it that, without
+     permission, would make you directly or secondarily liable for
+     infringement under applicable copyright law, except executing it on
+     a computer or modifying a private copy.  Propagation includes
+     copying, distribution (with or without modification), making
+     available to the public, and in some countries other activities as
+     well.
+
+     To "convey" a work means any kind of propagation that enables other
+     parties to make or receive copies.  Mere interaction with a user
+     through a computer network, with no transfer of a copy, is not
+     conveying.
+
+     An interactive user interface displays "Appropriate Legal Notices"
+     to the extent that it includes a convenient and prominently visible
+     feature that (1) displays an appropriate copyright notice, and (2)
+     tells the user that there is no warranty for the work (except to
+     the extent that warranties are provided), that licensees may convey
+     the work under this License, and how to view a copy of this
+     License.  If the interface presents a list of user commands or
+     options, such as a menu, a prominent item in the list meets this
+     criterion.
+
+  1. Source Code.
+
+     The "source code" for a work means the preferred form of the work
+     for making modifications to it.  "Object code" means any non-source
+     form of a work.
+
+     A "Standard Interface" means an interface that either is an
+     official standard defined by a recognized standards body, or, in
+     the case of interfaces specified for a particular programming
+     language, one that is widely used among developers working in that
+     language.
+
+     The "System Libraries" of an executable work include anything,
+     other than the work as a whole, that (a) is included in the normal
+     form of packaging a Major Component, but which is not part of that
+     Major Component, and (b) serves only to enable use of the work with
+     that Major Component, or to implement a Standard Interface for
+     which an implementation is available to the public in source code
+     form.  A "Major Component", in this context, means a major
+     essential component (kernel, window system, and so on) of the
+     specific operating system (if any) on which the executable work
+     runs, or a compiler used to produce the work, or an object code
+     interpreter used to run it.
+
+     The "Corresponding Source" for a work in object code form means all
+     the source code needed to generate, install, and (for an executable
+     work) run the object code and to modify the work, including scripts
+     to control those activities.  However, it does not include the
+     work's System Libraries, or general-purpose tools or generally
+     available free programs which are used unmodified in performing
+     those activities but which are not part of the work.  For example,
+     Corresponding Source includes interface definition files associated
+     with source files for the work, and the source code for shared
+     libraries and dynamically linked subprograms that the work is
+     specifically designed to require, such as by intimate data
+     communication or control flow between those subprograms and other
+     parts of the work.
+
+     The Corresponding Source need not include anything that users can
+     regenerate automatically from other parts of the Corresponding
+     Source.
+
+     The Corresponding Source for a work in source code form is that
+     same work.
+
+  2. Basic Permissions.
+
+     All rights granted under this License are granted for the term of
+     copyright on the Program, and are irrevocable provided the stated
+     conditions are met.  This License explicitly affirms your unlimited
+     permission to run the unmodified Program.  The output from running
+     a covered work is covered by this License only if the output, given
+     its content, constitutes a covered work.  This License acknowledges
+     your rights of fair use or other equivalent, as provided by
+     copyright law.
+
+     You may make, run and propagate covered works that you do not
+     convey, without conditions so long as your license otherwise
+     remains in force.  You may convey covered works to others for the
+     sole purpose of having them make modifications exclusively for you,
+     or provide you with facilities for running those works, provided
+     that you comply with the terms of this License in conveying all
+     material for which you do not control copyright.  Those thus making
+     or running the covered works for you must do so exclusively on your
+     behalf, under your direction and control, on terms that prohibit
+     them from making any copies of your copyrighted material outside
+     their relationship with you.
+
+     Conveying under any other circumstances is permitted solely under
+     the conditions stated below.  Sublicensing is not allowed; section
+     10 makes it unnecessary.
+
+  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+
+     No covered work shall be deemed part of an effective technological
+     measure under any applicable law fulfilling obligations under
+     article 11 of the WIPO copyright treaty adopted on 20 December
+     1996, or similar laws prohibiting or restricting circumvention of
+     such measures.
+
+     When you convey a covered work, you waive any legal power to forbid
+     circumvention of technological measures to the extent such
+     circumvention is effected by exercising rights under this License
+     with respect to the covered work, and you disclaim any intention to
+     limit operation or modification of the work as a means of
+     enforcing, against the work's users, your or third parties' legal
+     rights to forbid circumvention of technological measures.
+
+  4. Conveying Verbatim Copies.
+
+     You may convey verbatim copies of the Program's source code as you
+     receive it, in any medium, provided that you conspicuously and
+     appropriately publish on each copy an appropriate copyright notice;
+     keep intact all notices stating that this License and any
+     non-permissive terms added in accord with section 7 apply to the
+     code; keep intact all notices of the absence of any warranty; and
+     give all recipients a copy of this License along with the Program.
+
+     You may charge any price or no price for each copy that you convey,
+     and you may offer support or warranty protection for a fee.
+
+  5. Conveying Modified Source Versions.
+
+     You may convey a work based on the Program, or the modifications to
+     produce it from the Program, in the form of source code under the
+     terms of section 4, provided that you also meet all of these
+     conditions:
+
+       a. The work must carry prominent notices stating that you
+          modified it, and giving a relevant date.
+
+       b. The work must carry prominent notices stating that it is
+          released under this License and any conditions added under
+          section 7.  This requirement modifies the requirement in
+          section 4 to "keep intact all notices".
+
+       c. You must license the entire work, as a whole, under this
+          License to anyone who comes into possession of a copy.  This
+          License will therefore apply, along with any applicable
+          section 7 additional terms, to the whole of the work, and all
+          its parts, regardless of how they are packaged.  This License
+          gives no permission to license the work in any other way, but
+          it does not invalidate such permission if you have separately
+          received it.
+
+       d. If the work has interactive user interfaces, each must display
+          Appropriate Legal Notices; however, if the Program has
+          interactive interfaces that do not display Appropriate Legal
+          Notices, your work need not make them do so.
+
+     A compilation of a covered work with other separate and independent
+     works, which are not by their nature extensions of the covered
+     work, and which are not combined with it such as to form a larger
+     program, in or on a volume of a storage or distribution medium, is
+     called an "aggregate" if the compilation and its resulting
+     copyright are not used to limit the access or legal rights of the
+     compilation's users beyond what the individual works permit.
+     Inclusion of a covered work in an aggregate does not cause this
+     License to apply to the other parts of the aggregate.
+
+  6. Conveying Non-Source Forms.
+
+     You may convey a covered work in object code form under the terms
+     of sections 4 and 5, provided that you also convey the
+     machine-readable Corresponding Source under the terms of this
+     License, in one of these ways:
+
+       a. Convey the object code in, or embodied in, a physical product
+          (including a physical distribution medium), accompanied by the
+          Corresponding Source fixed on a durable physical medium
+          customarily used for software interchange.
+
+       b. Convey the object code in, or embodied in, a physical product
+          (including a physical distribution medium), accompanied by a
+          written offer, valid for at least three years and valid for as
+          long as you offer spare parts or customer support for that
+          product model, to give anyone who possesses the object code
+          either (1) a copy of the Corresponding Source for all the
+          software in the product that is covered by this License, on a
+          durable physical medium customarily used for software
+          interchange, for a price no more than your reasonable cost of
+          physically performing this conveying of source, or (2) access
+          to copy the Corresponding Source from a network server at no
+          charge.
+
+       c. Convey individual copies of the object code with a copy of the
+          written offer to provide the Corresponding Source.  This
+          alternative is allowed only occasionally and noncommercially,
+          and only if you received the object code with such an offer,
+          in accord with subsection 6b.
+
+       d. Convey the object code by offering access from a designated
+          place (gratis or for a charge), and offer equivalent access to
+          the Corresponding Source in the same way through the same
+          place at no further charge.  You need not require recipients
+          to copy the Corresponding Source along with the object code.
+          If the place to copy the object code is a network server, the
+          Corresponding Source may be on a different server (operated by
+          you or a third party) that supports equivalent copying
+          facilities, provided you maintain clear directions next to the
+          object code saying where to find the Corresponding Source.
+          Regardless of what server hosts the Corresponding Source, you
+          remain obligated to ensure that it is available for as long as
+          needed to satisfy these requirements.
+
+       e. Convey the object code using peer-to-peer transmission,
+          provided you inform other peers where the object code and
+          Corresponding Source of the work are being offered to the
+          general public at no charge under subsection 6d.
+
+     A separable portion of the object code, whose source code is
+     excluded from the Corresponding Source as a System Library, need
+     not be included in conveying the object code work.
+
+     A "User Product" is either (1) a "consumer product", which means
+     any tangible personal property which is normally used for personal,
+     family, or household purposes, or (2) anything designed or sold for
+     incorporation into a dwelling.  In determining whether a product is
+     a consumer product, doubtful cases shall be resolved in favor of
+     coverage.  For a particular product received by a particular user,
+     "normally used" refers to a typical or common use of that class of
+     product, regardless of the status of the particular user or of the
+     way in which the particular user actually uses, or expects or is
+     expected to use, the product.  A product is a consumer product
+     regardless of whether the product has substantial commercial,
+     industrial or non-consumer uses, unless such uses represent the
+     only significant mode of use of the product.
+
+     "Installation Information" for a User Product means any methods,
+     procedures, authorization keys, or other information required to
+     install and execute modified versions of a covered work in that
+     User Product from a modified version of its Corresponding Source.
+     The information must suffice to ensure that the continued
+     functioning of the modified object code is in no case prevented or
+     interfered with solely because modification has been made.
+
+     If you convey an object code work under this section in, or with,
+     or specifically for use in, a User Product, and the conveying
+     occurs as part of a transaction in which the right of possession
+     and use of the User Product is transferred to the recipient in
+     perpetuity or for a fixed term (regardless of how the transaction
+     is characterized), the Corresponding Source conveyed under this
+     section must be accompanied by the Installation Information.  But
+     this requirement does not apply if neither you nor any third party
+     retains the ability to install modified object code on the User
+     Product (for example, the work has been installed in ROM).
+
+     The requirement to provide Installation Information does not
+     include a requirement to continue to provide support service,
+     warranty, or updates for a work that has been modified or installed
+     by the recipient, or for the User Product in which it has been
+     modified or installed.  Access to a network may be denied when the
+     modification itself materially and adversely affects the operation
+     of the network or violates the rules and protocols for
+     communication across the network.
+
+     Corresponding Source conveyed, and Installation Information
+     provided, in accord with this section must be in a format that is
+     publicly documented (and with an implementation available to the
+     public in source code form), and must require no special password
+     or key for unpacking, reading or copying.
+
+  7. Additional Terms.
+
+     "Additional permissions" are terms that supplement the terms of
+     this License by making exceptions from one or more of its
+     conditions.  Additional permissions that are applicable to the
+     entire Program shall be treated as though they were included in
+     this License, to the extent that they are valid under applicable
+     law.  If additional permissions apply only to part of the Program,
+     that part may be used separately under those permissions, but the
+     entire Program remains governed by this License without regard to
+     the additional permissions.
+
+     When you convey a copy of a covered work, you may at your option
+     remove any additional permissions from that copy, or from any part
+     of it.  (Additional permissions may be written to require their own
+     removal in certain cases when you modify the work.)  You may place
+     additional permissions on material, added by you to a covered work,
+     for which you have or can give appropriate copyright permission.
+
+     Notwithstanding any other provision of this License, for material
+     you add to a covered work, you may (if authorized by the copyright
+     holders of that material) supplement the terms of this License with
+     terms:
+
+       a. Disclaiming warranty or limiting liability differently from
+          the terms of sections 15 and 16 of this License; or
+
+       b. Requiring preservation of specified reasonable legal notices
+          or author attributions in that material or in the Appropriate
+          Legal Notices displayed by works containing it; or
+
+       c. Prohibiting misrepresentation of the origin of that material,
+          or requiring that modified versions of such material be marked
+          in reasonable ways as different from the original version; or
+
+       d. Limiting the use for publicity purposes of names of licensors
+          or authors of the material; or
+
+       e. Declining to grant rights under trademark law for use of some
+          trade names, trademarks, or service marks; or
+
+       f. Requiring indemnification of licensors and authors of that
+          material by anyone who conveys the material (or modified
+          versions of it) with contractual assumptions of liability to
+          the recipient, for any liability that these contractual
+          assumptions directly impose on those licensors and authors.
+
+     All other non-permissive additional terms are considered "further
+     restrictions" within the meaning of section 10.  If the Program as
+     you received it, or any part of it, contains a notice stating that
+     it is governed by this License along with a term that is a further
+     restriction, you may remove that term.  If a license document
+     contains a further restriction but permits relicensing or conveying
+     under this License, you may add to a covered work material governed
+     by the terms of that license document, provided that the further
+     restriction does not survive such relicensing or conveying.
+
+     If you add terms to a covered work in accord with this section, you
+     must place, in the relevant source files, a statement of the
+     additional terms that apply to those files, or a notice indicating
+     where to find the applicable terms.
+
+     Additional terms, permissive or non-permissive, may be stated in
+     the form of a separately written license, or stated as exceptions;
+     the above requirements apply either way.
+
+  8. Termination.
+
+     You may not propagate or modify a covered work except as expressly
+     provided under this License.  Any attempt otherwise to propagate or
+     modify it is void, and will automatically terminate your rights
+     under this License (including any patent licenses granted under the
+     third paragraph of section 11).
+
+     However, if you cease all violation of this License, then your
+     license from a particular copyright holder is reinstated (a)
+     provisionally, unless and until the copyright holder explicitly and
+     finally terminates your license, and (b) permanently, if the
+     copyright holder fails to notify you of the violation by some
+     reasonable means prior to 60 days after the cessation.
+
+     Moreover, your license from a particular copyright holder is
+     reinstated permanently if the copyright holder notifies you of the
+     violation by some reasonable means, this is the first time you have
+     received notice of violation of this License (for any work) from
+     that copyright holder, and you cure the violation prior to 30 days
+     after your receipt of the notice.
+
+     Termination of your rights under this section does not terminate
+     the licenses of parties who have received copies or rights from you
+     under this License.  If your rights have been terminated and not
+     permanently reinstated, you do not qualify to receive new licenses
+     for the same material under section 10.
+
+  9. Acceptance Not Required for Having Copies.
+
+     You are not required to accept this License in order to receive or
+     run a copy of the Program.  Ancillary propagation of a covered work
+     occurring solely as a consequence of using peer-to-peer
+     transmission to receive a copy likewise does not require
+     acceptance.  However, nothing other than this License grants you
+     permission to propagate or modify any covered work.  These actions
+     infringe copyright if you do not accept this License.  Therefore,
+     by modifying or propagating a covered work, you indicate your
+     acceptance of this License to do so.
+
+  10. Automatic Licensing of Downstream Recipients.
+
+     Each time you convey a covered work, the recipient automatically
+     receives a license from the original licensors, to run, modify and
+     propagate that work, subject to this License.  You are not
+     responsible for enforcing compliance by third parties with this
+     License.
+
+     An "entity transaction" is a transaction transferring control of an
+     organization, or substantially all assets of one, or subdividing an
+     organization, or merging organizations.  If propagation of a
+     covered work results from an entity transaction, each party to that
+     transaction who receives a copy of the work also receives whatever
+     licenses to the work the party's predecessor in interest had or
+     could give under the previous paragraph, plus a right to possession
+     of the Corresponding Source of the work from the predecessor in
+     interest, if the predecessor has it or can get it with reasonable
+     efforts.
+
+     You may not impose any further restrictions on the exercise of the
+     rights granted or affirmed under this License.  For example, you
+     may not impose a license fee, royalty, or other charge for exercise
+     of rights granted under this License, and you may not initiate
+     litigation (including a cross-claim or counterclaim in a lawsuit)
+     alleging that any patent claim is infringed by making, using,
+     selling, offering for sale, or importing the Program or any portion
+     of it.
+
+  11. Patents.
+
+     A "contributor" is a copyright holder who authorizes use under this
+     License of the Program or a work on which the Program is based.
+     The work thus licensed is called the contributor's "contributor
+     version".
+
+     A contributor's "essential patent claims" are all patent claims
+     owned or controlled by the contributor, whether already acquired or
+     hereafter acquired, that would be infringed by some manner,
+     permitted by this License, of making, using, or selling its
+     contributor version, but do not include claims that would be
+     infringed only as a consequence of further modification of the
+     contributor version.  For purposes of this definition, "control"
+     includes the right to grant patent sublicenses in a manner
+     consistent with the requirements of this License.
+
+     Each contributor grants you a non-exclusive, worldwide,
+     royalty-free patent license under the contributor's essential
+     patent claims, to make, use, sell, offer for sale, import and
+     otherwise run, modify and propagate the contents of its contributor
+     version.
+
+     In the following three paragraphs, a "patent license" is any
+     express agreement or commitment, however denominated, not to
+     enforce a patent (such as an express permission to practice a
+     patent or covenant not to sue for patent infringement).  To "grant"
+     such a patent license to a party means to make such an agreement or
+     commitment not to enforce a patent against the party.
+
+     If you convey a covered work, knowingly relying on a patent
+     license, and the Corresponding Source of the work is not available
+     for anyone to copy, free of charge and under the terms of this
+     License, through a publicly available network server or other
+     readily accessible means, then you must either (1) cause the
+     Corresponding Source to be so available, or (2) arrange to deprive
+     yourself of the benefit of the patent license for this particular
+     work, or (3) arrange, in a manner consistent with the requirements
+     of this License, to extend the patent license to downstream
+     recipients.  "Knowingly relying" means you have actual knowledge
+     that, but for the patent license, your conveying the covered work
+     in a country, or your recipient's use of the covered work in a
+     country, would infringe one or more identifiable patents in that
+     country that you have reason to believe are valid.
+
+     If, pursuant to or in connection with a single transaction or
+     arrangement, you convey, or propagate by procuring conveyance of, a
+     covered work, and grant a patent license to some of the parties
+     receiving the covered work authorizing them to use, propagate,
+     modify or convey a specific copy of the covered work, then the
+     patent license you grant is automatically extended to all
+     recipients of the covered work and works based on it.
+
+     A patent license is "discriminatory" if it does not include within
+     the scope of its coverage, prohibits the exercise of, or is
+     conditioned on the non-exercise of one or more of the rights that
+     are specifically granted under this License.  You may not convey a
+     covered work if you are a party to an arrangement with a third
+     party that is in the business of distributing software, under which
+     you make payment to the third party based on the extent of your
+     activity of conveying the work, and under which the third party
+     grants, to any of the parties who would receive the covered work
+     from you, a discriminatory patent license (a) in connection with
+     copies of the covered work conveyed by you (or copies made from
+     those copies), or (b) primarily for and in connection with specific
+     products or compilations that contain the covered work, unless you
+     entered into that arrangement, or that patent license was granted,
+     prior to 28 March 2007.
+
+     Nothing in this License shall be construed as excluding or limiting
+     any implied license or other defenses to infringement that may
+     otherwise be available to you under applicable patent law.
+
+  12. No Surrender of Others' Freedom.
+
+     If conditions are imposed on you (whether by court order, agreement
+     or otherwise) that contradict the conditions of this License, they
+     do not excuse you from the conditions of this License.  If you
+     cannot convey a covered work so as to satisfy simultaneously your
+     obligations under this License and any other pertinent obligations,
+     then as a consequence you may not convey it at all.  For example,
+     if you agree to terms that obligate you to collect a royalty for
+     further conveying from those to whom you convey the Program, the
+     only way you could satisfy both those terms and this License would
+     be to refrain entirely from conveying the Program.
+
+  13. Use with the GNU Affero General Public License.
+
+     Notwithstanding any other provision of this License, you have
+     permission to link or combine any covered work with a work licensed
+     under version 3 of the GNU Affero General Public License into a
+     single combined work, and to convey the resulting work.  The terms
+     of this License will continue to apply to the part which is the
+     covered work, but the special requirements of the GNU Affero
+     General Public License, section 13, concerning interaction through
+     a network will apply to the combination as such.
+
+  14. Revised Versions of this License.
+
+     The Free Software Foundation may publish revised and/or new
+     versions of the GNU General Public License from time to time.  Such
+     new versions will be similar in spirit to the present version, but
+     may differ in detail to address new problems or concerns.
+
+     Each version is given a distinguishing version number.  If the
+     Program specifies that a certain numbered version of the GNU
+     General Public License "or any later version" applies to it, you
+     have the option of following the terms and conditions either of
+     that numbered version or of any later version published by the Free
+     Software Foundation.  If the Program does not specify a version
+     number of the GNU General Public License, you may choose any
+     version ever published by the Free Software Foundation.
+
+     If the Program specifies that a proxy can decide which future
+     versions of the GNU General Public License can be used, that
+     proxy's public statement of acceptance of a version permanently
+     authorizes you to choose that version for the Program.
+
+     Later license versions may give you additional or different
+     permissions.  However, no additional obligations are imposed on any
+     author or copyright holder as a result of your choosing to follow a
+     later version.
+
+  15. Disclaimer of Warranty.
+
+     THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+     APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE
+     COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS"
+     WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+     INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE
+     RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.
+     SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+     NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+  16. Limitation of Liability.
+
+     IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN
+     WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES
+     AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR
+     DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR
+     CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+     THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA
+     BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+     PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
+     PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF
+     THE POSSIBILITY OF SUCH DAMAGES.
+
+  17. Interpretation of Sections 15 and 16.
+
+     If the disclaimer of warranty and limitation of liability provided
+     above cannot be given local legal effect according to their terms,
+     reviewing courts shall apply local law that most closely
+     approximates an absolute waiver of all civil liability in
+     connection with the Program, unless a warranty or assumption of
+     liability accompanies a copy of the Program in return for a fee.
+
+                      END OF TERMS AND CONDITIONS
+
+How to Apply These Terms to Your New Programs
+=============================================
+
+If you develop a new program, and you want it to be of the greatest
+possible use to the public, the best way to achieve this is to make it
+free software which everyone can redistribute and change under these
+terms.
+
+   To do so, attach the following notices to the program.  It is safest
+to attach them to the start of each source file to most effectively
+state the exclusion of warranty; and each file should have at least the
+"copyright" line and a pointer to where the full notice is found.
+     ONE LINE TO GIVE THE PROGRAM'S NAME AND A BRIEF IDEA OF WHAT IT DOES.
+     Copyright (C) YEAR NAME OF AUTHOR
+
+     This program is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or (at
+     your option) any later version.
+
+     This program is distributed in the hope that it will be useful, but
+     WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+   Also add information on how to contact you by electronic and paper
+mail.
+
+   If the program does terminal interaction, make it output a short
+notice like this when it starts in an interactive mode:
+
+     PROGRAM Copyright (C) YEAR NAME OF AUTHOR
+     This program comes with ABSOLUTELY NO WARRANTY; for details type 'show w'.
+     This is free software, and you are welcome to redistribute it under certain conditions; type 'show c' for details.
+
+   The hypothetical commands 'show w' and 'show c' should show the
+appropriate parts of the General Public License.  Of course, your
+program's commands might be different; for a GUI interface, you would
+use an "about box".
+
+   You should also get your employer (if you work as a programmer) or
+school, if any, to sign a "copyright disclaimer" for the program, if
+necessary.  For more information on this, and how to apply and follow
+the GNU GPL, see <http://www.gnu.org/licenses/>.
+
+   The GNU General Public License does not permit incorporating your
+program into proprietary programs.  If your program is a subroutine
+library, you may consider it more useful to permit linking proprietary
+applications with the library.  If this is what you want to do, use the
+GNU Lesser General Public License instead of this License.  But first,
+please read <http://www.gnu.org/philosophy/why-not-lgpl.html>.
+
+
+File: emms.info,  Node: The GNU FDL,  Next: Concept Index,  Prev: Copying,  Up: Top
+
+31 GNU Free Documentation License
+*********************************
+
+                      Version 1.2, November 2002
+
+     Copyright (C) 2000,2001,2002 Free Software Foundation, Inc.
+     51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA
+
+     Everyone is permitted to copy and distribute verbatim copies
+     of this license document, but changing it is not allowed.
+
+  0. PREAMBLE
+
+     The purpose of this License is to make a manual, textbook, or other
+     functional and useful document "free" in the sense of freedom: to
+     assure everyone the effective freedom to copy and redistribute it,
+     with or without modifying it, either commercially or
+     noncommercially.  Secondarily, this License preserves for the
+     author and publisher a way to get credit for their work, while not
+     being considered responsible for modifications made by others.
+
+     This License is a kind of "copyleft", which means that derivative
+     works of the document must themselves be free in the same sense.
+     It complements the GNU General Public License, which is a copyleft
+     license designed for free software.
+
+     We have designed this License in order to use it for manuals for
+     free software, because free software needs free documentation: a
+     free program should come with manuals providing the same freedoms
+     that the software does.  But this License is not limited to
+     software manuals; it can be used for any textual work, regardless
+     of subject matter or whether it is published as a printed book.  We
+     recommend this License principally for works whose purpose is
+     instruction or reference.
+
+  1. APPLICABILITY AND DEFINITIONS
+
+     This License applies to any manual or other work, in any medium,
+     that contains a notice placed by the copyright holder saying it can
+     be distributed under the terms of this License.  Such a notice
+     grants a world-wide, royalty-free license, unlimited in duration,
+     to use that work under the conditions stated herein.  The
+     "Document", below, refers to any such manual or work.  Any member
+     of the public is a licensee, and is addressed as "you".  You accept
+     the license if you copy, modify or distribute the work in a way
+     requiring permission under copyright law.
+
+     A "Modified Version" of the Document means any work containing the
+     Document or a portion of it, either copied verbatim, or with
+     modifications and/or translated into another language.
+
+     A "Secondary Section" is a named appendix or a front-matter section
+     of the Document that deals exclusively with the relationship of the
+     publishers or authors of the Document to the Document's overall
+     subject (or to related matters) and contains nothing that could
+     fall directly within that overall subject.  (Thus, if the Document
+     is in part a textbook of mathematics, a Secondary Section may not
+     explain any mathematics.)  The relationship could be a matter of
+     historical connection with the subject or with related matters, or
+     of legal, commercial, philosophical, ethical or political position
+     regarding them.
+
+     The "Invariant Sections" are certain Secondary Sections whose
+     titles are designated, as being those of Invariant Sections, in the
+     notice that says that the Document is released under this License.
+     If a section does not fit the above definition of Secondary then it
+     is not allowed to be designated as Invariant.  The Document may
+     contain zero Invariant Sections.  If the Document does not identify
+     any Invariant Sections then there are none.
+
+     The "Cover Texts" are certain short passages of text that are
+     listed, as Front-Cover Texts or Back-Cover Texts, in the notice
+     that says that the Document is released under this License.  A
+     Front-Cover Text may be at most 5 words, and a Back-Cover Text may
+     be at most 25 words.
+
+     A "Transparent" copy of the Document means a machine-readable copy,
+     represented in a format whose specification is available to the
+     general public, that is suitable for revising the document
+     straightforwardly with generic text editors or (for images composed
+     of pixels) generic paint programs or (for drawings) some widely
+     available drawing editor, and that is suitable for input to text
+     formatters or for automatic translation to a variety of formats
+     suitable for input to text formatters.  A copy made in an otherwise
+     Transparent file format whose markup, or absence of markup, has
+     been arranged to thwart or discourage subsequent modification by
+     readers is not Transparent.  An image format is not Transparent if
+     used for any substantial amount of text.  A copy that is not
+     "Transparent" is called "Opaque".
+
+     Examples of suitable formats for Transparent copies include plain
+     ASCII without markup, Texinfo input format, LaTeX input format,
+     SGML or XML using a publicly available DTD, and standard-conforming
+     simple HTML, PostScript or PDF designed for human modification.
+     Examples of transparent image formats include PNG, XCF and JPG.
+     Opaque formats include proprietary formats that can be read and
+     edited only by proprietary word processors, SGML or XML for which
+     the DTD and/or processing tools are not generally available, and
+     the machine-generated HTML, PostScript or PDF produced by some word
+     processors for output purposes only.
+
+     The "Title Page" means, for a printed book, the title page itself,
+     plus such following pages as are needed to hold, legibly, the
+     material this License requires to appear in the title page.  For
+     works in formats which do not have any title page as such, "Title
+     Page" means the text near the most prominent appearance of the
+     work's title, preceding the beginning of the body of the text.
+
+     A section "Entitled XYZ" means a named subunit of the Document
+     whose title either is precisely XYZ or contains XYZ in parentheses
+     following text that translates XYZ in another language.  (Here XYZ
+     stands for a specific section name mentioned below, such as
+     "Acknowledgements", "Dedications", "Endorsements", or "History".)
+     To "Preserve the Title" of such a section when you modify the
+     Document means that it remains a section "Entitled XYZ" according
+     to this definition.
+
+     The Document may include Warranty Disclaimers next to the notice
+     which states that this License applies to the Document.  These
+     Warranty Disclaimers are considered to be included by reference in
+     this License, but only as regards disclaiming warranties: any other
+     implication that these Warranty Disclaimers may have is void and
+     has no effect on the meaning of this License.
+
+  2. VERBATIM COPYING
+
+     You may copy and distribute the Document in any medium, either
+     commercially or noncommercially, provided that this License, the
+     copyright notices, and the license notice saying this License
+     applies to the Document are reproduced in all copies, and that you
+     add no other conditions whatsoever to those of this License.  You
+     may not use technical measures to obstruct or control the reading
+     or further copying of the copies you make or distribute.  However,
+     you may accept compensation in exchange for copies.  If you
+     distribute a large enough number of copies you must also follow the
+     conditions in section 3.
+
+     You may also lend copies, under the same conditions stated above,
+     and you may publicly display copies.
+
+  3. COPYING IN QUANTITY
+
+     If you publish printed copies (or copies in media that commonly
+     have printed covers) of the Document, numbering more than 100, and
+     the Document's license notice requires Cover Texts, you must
+     enclose the copies in covers that carry, clearly and legibly, all
+     these Cover Texts: Front-Cover Texts on the front cover, and
+     Back-Cover Texts on the back cover.  Both covers must also clearly
+     and legibly identify you as the publisher of these copies.  The
+     front cover must present the full title with all words of the title
+     equally prominent and visible.  You may add other material on the
+     covers in addition.  Copying with changes limited to the covers, as
+     long as they preserve the title of the Document and satisfy these
+     conditions, can be treated as verbatim copying in other respects.
+
+     If the required texts for either cover are too voluminous to fit
+     legibly, you should put the first ones listed (as many as fit
+     reasonably) on the actual cover, and continue the rest onto
+     adjacent pages.
+
+     If you publish or distribute Opaque copies of the Document
+     numbering more than 100, you must either include a machine-readable
+     Transparent copy along with each Opaque copy, or state in or with
+     each Opaque copy a computer-network location from which the general
+     network-using public has access to download using public-standard
+     network protocols a complete Transparent copy of the Document, free
+     of added material.  If you use the latter option, you must take
+     reasonably prudent steps, when you begin distribution of Opaque
+     copies in quantity, to ensure that this Transparent copy will
+     remain thus accessible at the stated location until at least one
+     year after the last time you distribute an Opaque copy (directly or
+     through your agents or retailers) of that edition to the public.
+
+     It is requested, but not required, that you contact the authors of
+     the Document well before redistributing any large number of copies,
+     to give them a chance to provide you with an updated version of the
+     Document.
+
+  4. MODIFICATIONS
+
+     You may copy and distribute a Modified Version of the Document
+     under the conditions of sections 2 and 3 above, provided that you
+     release the Modified Version under precisely this License, with the
+     Modified Version filling the role of the Document, thus licensing
+     distribution and modification of the Modified Version to whoever
+     possesses a copy of it.  In addition, you must do these things in
+     the Modified Version:
+
+       A. Use in the Title Page (and on the covers, if any) a title
+          distinct from that of the Document, and from those of previous
+          versions (which should, if there were any, be listed in the
+          History section of the Document).  You may use the same title
+          as a previous version if the original publisher of that
+          version gives permission.
+
+       B. List on the Title Page, as authors, one or more persons or
+          entities responsible for authorship of the modifications in
+          the Modified Version, together with at least five of the
+          principal authors of the Document (all of its principal
+          authors, if it has fewer than five), unless they release you
+          from this requirement.
+
+       C. State on the Title page the name of the publisher of the
+          Modified Version, as the publisher.
+
+       D. Preserve all the copyright notices of the Document.
+
+       E. Add an appropriate copyright notice for your modifications
+          adjacent to the other copyright notices.
+
+       F. Include, immediately after the copyright notices, a license
+          notice giving the public permission to use the Modified
+          Version under the terms of this License, in the form shown in
+          the Addendum below.
+
+       G. Preserve in that license notice the full lists of Invariant
+          Sections and required Cover Texts given in the Document's
+          license notice.
+
+       H. Include an unaltered copy of this License.
+
+       I. Preserve the section Entitled "History", Preserve its Title,
+          and add to it an item stating at least the title, year, new
+          authors, and publisher of the Modified Version as given on the
+          Title Page.  If there is no section Entitled "History" in the
+          Document, create one stating the title, year, authors, and
+          publisher of the Document as given on its Title Page, then add
+          an item describing the Modified Version as stated in the
+          previous sentence.
+
+       J. Preserve the network location, if any, given in the Document
+          for public access to a Transparent copy of the Document, and
+          likewise the network locations given in the Document for
+          previous versions it was based on.  These may be placed in the
+          "History" section.  You may omit a network location for a work
+          that was published at least four years before the Document
+          itself, or if the original publisher of the version it refers
+          to gives permission.
+
+       K. For any section Entitled "Acknowledgements" or "Dedications",
+          Preserve the Title of the section, and preserve in the section
+          all the substance and tone of each of the contributor
+          acknowledgements and/or dedications given therein.
+
+       L. Preserve all the Invariant Sections of the Document, unaltered
+          in their text and in their titles.  Section numbers or the
+          equivalent are not considered part of the section titles.
+
+       M. Delete any section Entitled "Endorsements".  Such a section
+          may not be included in the Modified Version.
+
+       N. Do not retitle any existing section to be Entitled
+          "Endorsements" or to conflict in title with any Invariant
+          Section.
+
+       O. Preserve any Warranty Disclaimers.
+
+     If the Modified Version includes new front-matter sections or
+     appendices that qualify as Secondary Sections and contain no
+     material copied from the Document, you may at your option designate
+     some or all of these sections as invariant.  To do this, add their
+     titles to the list of Invariant Sections in the Modified Version's
+     license notice.  These titles must be distinct from any other
+     section titles.
+
+     You may add a section Entitled "Endorsements", provided it contains
+     nothing but endorsements of your Modified Version by various
+     parties--for example, statements of peer review or that the text
+     has been approved by an organization as the authoritative
+     definition of a standard.
+
+     You may add a passage of up to five words as a Front-Cover Text,
+     and a passage of up to 25 words as a Back-Cover Text, to the end of
+     the list of Cover Texts in the Modified Version.  Only one passage
+     of Front-Cover Text and one of Back-Cover Text may be added by (or
+     through arrangements made by) any one entity.  If the Document
+     already includes a cover text for the same cover, previously added
+     by you or by arrangement made by the same entity you are acting on
+     behalf of, you may not add another; but you may replace the old
+     one, on explicit permission from the previous publisher that added
+     the old one.
+
+     The author(s) and publisher(s) of the Document do not by this
+     License give permission to use their names for publicity for or to
+     assert or imply endorsement of any Modified Version.
+
+  5. COMBINING DOCUMENTS
+
+     You may combine the Document with other documents released under
+     this License, under the terms defined in section 4 above for
+     modified versions, provided that you include in the combination all
+     of the Invariant Sections of all of the original documents,
+     unmodified, and list them all as Invariant Sections of your
+     combined work in its license notice, and that you preserve all
+     their Warranty Disclaimers.
+
+     The combined work need only contain one copy of this License, and
+     multiple identical Invariant Sections may be replaced with a single
+     copy.  If there are multiple Invariant Sections with the same name
+     but different contents, make the title of each such section unique
+     by adding at the end of it, in parentheses, the name of the
+     original author or publisher of that section if known, or else a
+     unique number.  Make the same adjustment to the section titles in
+     the list of Invariant Sections in the license notice of the
+     combined work.
+
+     In the combination, you must combine any sections Entitled
+     "History" in the various original documents, forming one section
+     Entitled "History"; likewise combine any sections Entitled
+     "Acknowledgements", and any sections Entitled "Dedications".  You
+     must delete all sections Entitled "Endorsements."
+
+  6. COLLECTIONS OF DOCUMENTS
+
+     You may make a collection consisting of the Document and other
+     documents released under this License, and replace the individual
+     copies of this License in the various documents with a single copy
+     that is included in the collection, provided that you follow the
+     rules of this License for verbatim copying of each of the documents
+     in all other respects.
+
+     You may extract a single document from such a collection, and
+     distribute it individually under this License, provided you insert
+     a copy of this License into the extracted document, and follow this
+     License in all other respects regarding verbatim copying of that
+     document.
+
+  7. AGGREGATION WITH INDEPENDENT WORKS
+
+     A compilation of the Document or its derivatives with other
+     separate and independent documents or works, in or on a volume of a
+     storage or distribution medium, is called an "aggregate" if the
+     copyright resulting from the compilation is not used to limit the
+     legal rights of the compilation's users beyond what the individual
+     works permit.  When the Document is included in an aggregate, this
+     License does not apply to the other works in the aggregate which
+     are not themselves derivative works of the Document.
+
+     If the Cover Text requirement of section 3 is applicable to these
+     copies of the Document, then if the Document is less than one half
+     of the entire aggregate, the Document's Cover Texts may be placed
+     on covers that bracket the Document within the aggregate, or the
+     electronic equivalent of covers if the Document is in electronic
+     form.  Otherwise they must appear on printed covers that bracket
+     the whole aggregate.
+
+  8. TRANSLATION
+
+     Translation is considered a kind of modification, so you may
+     distribute translations of the Document under the terms of section
+     4.  Replacing Invariant Sections with translations requires special
+     permission from their copyright holders, but you may include
+     translations of some or all Invariant Sections in addition to the
+     original versions of these Invariant Sections.  You may include a
+     translation of this License, and all the license notices in the
+     Document, and any Warranty Disclaimers, provided that you also
+     include the original English version of this License and the
+     original versions of those notices and disclaimers.  In case of a
+     disagreement between the translation and the original version of
+     this License or a notice or disclaimer, the original version will
+     prevail.
+
+     If a section in the Document is Entitled "Acknowledgements",
+     "Dedications", or "History", the requirement (section 4) to
+     Preserve its Title (section 1) will typically require changing the
+     actual title.
+
+  9. TERMINATION
+
+     You may not copy, modify, sublicense, or distribute the Document
+     except as expressly provided for under this License.  Any other
+     attempt to copy, modify, sublicense or distribute the Document is
+     void, and will automatically terminate your rights under this
+     License.  However, parties who have received copies, or rights,
+     from you under this License will not have their licenses terminated
+     so long as such parties remain in full compliance.
+
+  10. FUTURE REVISIONS OF THIS LICENSE
+
+     The Free Software Foundation may publish new, revised versions of
+     the GNU Free Documentation License from time to time.  Such new
+     versions will be similar in spirit to the present version, but may
+     differ in detail to address new problems or concerns.  See
+     <http://www.gnu.org/copyleft/>.
+
+     Each version of the License is given a distinguishing version
+     number.  If the Document specifies that a particular numbered
+     version of this License "or any later version" applies to it, you
+     have the option of following the terms and conditions either of
+     that specified version or of any later version that has been
+     published (not as a draft) by the Free Software Foundation.  If the
+     Document does not specify a version number of this License, you may
+     choose any version ever published (not as a draft) by the Free
+     Software Foundation.
+
+31.1 ADDENDUM: How to use this License for your documents
+=========================================================
+
+To use this License in a document you have written, include a copy of
+the License in the document and put the following copyright and license
+notices just after the title page:
+
+       Copyright (C)  YEAR  YOUR NAME.
+       Permission is granted to copy, distribute and/or modify this document
+       under the terms of the GNU Free Documentation License, Version 1.2
+       or any later version published by the Free Software Foundation;
+       with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+       Texts.  A copy of the license is included in the section entitled ``GNU
+       Free Documentation License''.
+
+   If you have Invariant Sections, Front-Cover Texts and Back-Cover
+Texts, replace the "with...Texts."  line with this:
+
+         with the Invariant Sections being LIST THEIR TITLES, with
+         the Front-Cover Texts being LIST, and with the Back-Cover Texts
+         being LIST.
+
+   If you have Invariant Sections without Cover Texts, or some other
+combination of the three, merge those two alternatives to suit the
+situation.
+
+   If your document contains nontrivial examples of program code, we
+recommend releasing these examples in parallel under your choice of free
+software license, such as the GNU General Public License, to permit
+their use in free software.
+
+
+File: emms.info,  Node: Concept Index,  Next: Function Index,  Prev: The GNU FDL,  Up: Top
+
+Concept Index
+*************
+
+ [index ]
+* Menu:
+
+* adding functionality:                  Hooks.                 (line 6)
+* advanced player:                       More Complex Player.   (line 6)
+* basic commands:                        Basic Commands.        (line 6)
+* basic functions:                       Core Functions.        (line 6)
+* basic player:                          Simple Player for `play'.
+                                                                (line 6)
+* commands, basic:                       Basic Commands.        (line 6)
+* compiling:                             Compiling Emms.        (line 6)
+* complex player:                        More Complex Player.   (line 6)
+* Configuration:                         Configuration.         (line 6)
+* core file:                             The Core File.         (line 6)
+* core functions:                        Core Functions.        (line 6)
+* defining info methods:                 Defining Info Methods. (line 6)
+* defining new players:                  New Player.            (line 6)
+* defining players:                      Extending Emms.        (line 6)
+* display emms information:              Emms Mode Line.        (line 6)
+* FDL, GNU Free Documentation License:   The GNU FDL.           (line 6)
+* files:                                 Finding files and speed.
+                                                                (line 6)
+* format:                                Formats and Freedom.   (line 6)
+* freedom:                               Formats and Freedom.   (line 6)
+* GNU FM:                                GNU FM.                (line 6)
+* heart of Emms:                         The Core File.         (line 6)
+* hooks:                                 Hooks.                 (line 6)
+* info tags:                             Track Information.     (line 6)
+* installation:                          Installation.          (line 6)
+* Interactive Playlists:                 Interactive Playlists. (line 6)
+* internet radio:                        Streaming Audio.       (line 6)
+* introduction:                          Introduction.          (line 6)
+* limiting:                              Limiting.              (line 6)
+* lyrics:                                Lyrics.                (line 6)
+* mailing list:                          Getting Help.          (line 6)
+* Markable Playlists:                    Markable Playlists.    (line 6)
+* mode line:                             Emms Mode Line.        (line 6)
+* mpd:                                   Music Player Daemon.   (line 6)
+* music player daemon:                   Music Player Daemon.   (line 6)
+* new player:                            New Player.            (line 6)
+* new players:                           Extending Emms.        (line 6)
+* new players, defining:                 Extending Emms.        (line 6)
+* options:                               User Variables.        (line 6)
+* organizing tracks and media:           Playlists.             (line 6)
+* players, simple:                       Simple Players.        (line 6)
+* playlist:                              Limiting.              (line 6)
+* primitive functions:                   The Core File.         (line 6)
+* primitive player:                      Simple Player for `play'.
+                                                                (line 6)
+* quick setup:                           Setup.                 (line 6)
+* remote interface:                      Music Player Daemon.   (line 6)
+* setting up Emms:                       Setup.                 (line 6)
+* setup:                                 Setup.                 (line 6)
+* simple player:                         Simple Player for `play'.
+                                                                (line 6)
+* sort:                                  Sorting Playlists.     (line 6)
+* Sources:                               Sources.               (line 6)
+* speed:                                 Finding files and speed.
+                                                                (line 6)
+* streaming audio:                       Streaming Audio.       (line 6)
+* track editor:                          Editing Tracks.        (line 6)
+* track information:                     Track Information.     (line 6)
+* track order:                           Sorting Playlists.     (line 6)
+* user variables:                        User Variables.        (line 6)
+* using taglib:                          Using TagLib.          (line 6)
+* volume:                                Volume.                (line 6)
+* website:                               Getting Help.          (line 6)
+
+
+File: emms.info,  Node: Function Index,  Next: Variable Index,  Prev: Concept Index,  Up: Top
+
+Function Index
+**************
+
+ [index ]
+* Menu:
+
+* bury-buffer:                           Interactive Playlists.
+                                                              (line  65)
+* define-emms-simple-player:             Simple Players.      (line   6)
+* describe-mode:                         Interactive Playlists.
+                                                              (line  73)
+* describe-mode <1>:                     Browser Interface.   (line  77)
+* describe-mode <2>:                     Streaming Audio.     (line  55)
+* emms-add-directory:                    Basic Commands.      (line  26)
+* emms-add-directory-tree:               Basic Commands.      (line  32)
+* emms-add-file:                         Basic Commands.      (line  19)
+* emms-add-find:                         Basic Commands.      (line  46)
+* emms-add-playlist:                     Basic Commands.      (line  41)
+* emms-add-url:                          Basic Commands.      (line  37)
+* emms-all:                              Setup.               (line  17)
+* emms-browse-by-album:                  Browser Interface.   (line  18)
+* emms-browse-by-album <1>:              Browser Interface.   (line 107)
+* emms-browse-by-artist:                 Browser Interface.   (line  15)
+* emms-browse-by-artist <1>:             Browser Interface.   (line 104)
+* emms-browse-by-genre:                  Browser Interface.   (line  21)
+* emms-browse-by-genre <1>:              Browser Interface.   (line 110)
+* emms-browse-by-year:                   Browser Interface.   (line  24)
+* emms-browse-by-year <1>:               Browser Interface.   (line 113)
+* emms-browser-add-tracks:               Browser Interface.   (line  35)
+* emms-browser-add-tracks-and-play:      Browser Interface.   (line  32)
+* emms-browser-add-tracks-and-play <1>:  Browser Interface.   (line  83)
+* emms-browser-bury-buffer:              Browser Interface.   (line  62)
+* emms-browser-clear-playlist:           Browser Interface.   (line  53)
+* emms-browser-collapse-all:             Browser Interface.   (line  41)
+* emms-browser-expand-all:               Browser Interface.   (line  56)
+* emms-browser-expand-to-level-2:        Browser Interface.   (line  44)
+* emms-browser-expand-to-level-3:        Browser Interface.   (line  47)
+* emms-browser-expand-to-level-4:        Browser Interface.   (line  50)
+* emms-browser-goto-random:              Browser Interface.   (line  65)
+* emms-browser-lookup-album-on-pitchfork: Browser Interface.  (line 116)
+* emms-browser-lookup-album-on-wikipedia: Browser Interface.  (line 119)
+* emms-browser-next-filter:              Browser Interface.   (line  74)
+* emms-browser-next-non-track:           Browser Interface.   (line  89)
+* emms-browser-prev-non-track:           Browser Interface.   (line  86)
+* emms-browser-previous-filter:          Browser Interface.   (line  71)
+* emms-browser-search-by-album:          Browser Interface.   (line  92)
+* emms-browser-search-by-artist:         Browser Interface.   (line  95)
+* emms-browser-search-by-names:          Browser Interface.   (line  98)
+* emms-browser-search-by-title:          Browser Interface.   (line 101)
+* emms-browser-toggle-subitems:          Browser Interface.   (line  38)
+* emms-browser-view-in-dired:            Browser Interface.   (line  59)
+* emms-cache-set-from-mpd-all:           Music Player Daemon. (line  93)
+* emms-cache-set-from-mpd-directory:     Music Player Daemon. (line  89)
+* emms-cue-next:                         APE / FLAC Commands. (line  17)
+* emms-cue-previous:                     APE / FLAC Commands. (line  19)
+* emms-default-players:                  Setup.               (line  24)
+* emms-history-load:                     Persistent Playlists.
+                                                              (line  21)
+* emms-isearch-buffer:                   Browser Interface.   (line  68)
+* emms-locate:                           Sources.             (line  48)
+* emms-lyrics-disable:                   Lyrics.              (line  63)
+* emms-lyrics-enable:                    Lyrics.              (line  60)
+* emms-lyrics-start:                     Lyrics.              (line  48)
+* emms-lyrics-stop:                      Lyrics.              (line  51)
+* emms-lyrics-toggle:                    Lyrics.              (line  66)
+* emms-lyrics-toggle-display-on-minibuffer: Lyrics.           (line  54)
+* emms-lyrics-toggle-display-on-modeline: Lyrics.             (line  57)
+* emms-mark-copy-marked-tracks:          Markable Playlists.  (line  46)
+* emms-mark-delete-marked-tracks:        Markable Playlists.  (line  41)
+* emms-mark-do-with-marked-track:        Markable Playlists.  (line  54)
+* emms-mark-forward:                     Markable Playlists.  (line  25)
+* emms-mark-kill-marked-tracks:          Markable Playlists.  (line  43)
+* emms-mark-mapcar-marked-track:         Markable Playlists.  (line  60)
+* emms-mark-regexp:                      Markable Playlists.  (line  35)
+* emms-mark-toggle:                      Markable Playlists.  (line  31)
+* emms-mark-unmark-all:                  Markable Playlists.  (line  29)
+* emms-mark-unmark-forward:              Markable Playlists.  (line  33)
+* emms-metaplaylist-mode-center-current: Managing Playlists.  (line  37)
+* emms-metaplaylist-mode-goto-current:   Managing Playlists.  (line  15)
+* emms-metaplaylist-mode-kill-buffer:    Managing Playlists.  (line  34)
+* emms-metaplaylist-mode-new-buffer:     Managing Playlists.  (line  31)
+* emms-metaplaylist-mode-set-active:     Managing Playlists.  (line  18)
+* emms-metaplaylist-mode-update:         Managing Playlists.  (line  28)
+* emms-minimalistic:                     Setup.               (line  13)
+* emms-next:                             Basic Commands.      (line  59)
+* emms-next <1>:                         Interactive Playlists.
+                                                              (line  38)
+* emms-next <2>:                         Interactive Playlists.
+                                                              (line  40)
+* emms-next-noerror:                     Core Functions.      (line  11)
+* emms-pause:                            Interactive Playlists.
+                                                              (line  44)
+* emms-play-directory:                   Basic Commands.      (line  23)
+* emms-play-directory-tree:              Basic Commands.      (line  29)
+* emms-play-file:                        Basic Commands.      (line  15)
+* emms-play-find:                        Basic Commands.      (line  43)
+* emms-play-find <1>:                    Sources.             (line  15)
+* emms-play-playlist:                    Basic Commands.      (line  39)
+* emms-play-url:                         Basic Commands.      (line  35)
+* emms-player-for:                       Core Functions.      (line  49)
+* emms-player-mpd-connect:               Music Player Daemon. (line  62)
+* emms-player-mpd-disconnect:            Music Player Daemon. (line  66)
+* emms-player-mpd-show:                  Music Player Daemon. (line  69)
+* emms-player-mpd-update-all:            Music Player Daemon. (line  82)
+* emms-player-mpd-update-directory:      Music Player Daemon. (line  79)
+* emms-player-simple-sentinel:           Simple Players.      (line  21)
+* emms-player-simple-start:              Simple Players.      (line  18)
+* emms-player-simple-stop:               Simple Players.      (line  16)
+* emms-player-start:                     Core Functions.      (line  58)
+* emms-player-stop:                      Core Functions.      (line  60)
+* emms-player-stopped:                   Core Functions.      (line  62)
+* emms-playing-time-disable-display:     Emms Mode Line.      (line  35)
+* emms-playing-time-enable-display:      Emms Mode Line.      (line  32)
+* emms-playlist-current-selected-track:  Core Functions.      (line  53)
+* emms-playlist-limit-to-all:            Limiting.            (line  61)
+* emms-playlist-limit-to-description:    Limiting.            (line  31)
+* emms-playlist-limit-to-info-album:     Limiting.            (line  21)
+* emms-playlist-limit-to-info-artist:    Limiting.            (line  16)
+* emms-playlist-limit-to-info-composer:  Limiting.            (line  26)
+* emms-playlist-limit-to-info-genre:     Limiting.            (line  36)
+* emms-playlist-limit-to-info-performer: Limiting.            (line  46)
+* emms-playlist-limit-to-info-title:     Limiting.            (line  51)
+* emms-playlist-limit-to-info-year:      Limiting.            (line  56)
+* emms-playlist-limit-to-name:           Limiting.            (line  41)
+* emms-playlist-mode-add-contents:       Interactive Playlists.
+                                                              (line  32)
+* emms-playlist-mode-center-current:     Interactive Playlists.
+                                                              (line  52)
+* emms-playlist-mode-first:              Interactive Playlists.
+                                                              (line  59)
+* emms-playlist-mode-go:                 Interactive Playlists.
+                                                              (line  15)
+* emms-playlist-mode-insert-newline:     Interactive Playlists.
+                                                              (line  87)
+* emms-playlist-mode-kill:               Interactive Playlists.
+                                                              (line  83)
+* emms-playlist-mode-kill-track:         Interactive Playlists.
+                                                              (line  78)
+* emms-playlist-mode-last:               Interactive Playlists.
+                                                              (line  61)
+* emms-playlist-mode-play-current-track: Interactive Playlists.
+                                                              (line  54)
+* emms-playlist-mode-undo:               Browser Interface.   (line  80)
+* emms-playlist-mode-yank:               Interactive Playlists.
+                                                              (line  81)
+* emms-playlist-mode-yank-pop:           Interactive Playlists.
+                                                              (line  85)
+* emms-playlist-new:                     Playlists.           (line  20)
+* emms-playlist-next:                    Core Functions.      (line  17)
+* emms-playlist-previous:                Core Functions.      (line  19)
+* emms-playlist-save:                    Playlists.           (line  25)
+* emms-playlist-save <1>:                Interactive Playlists.
+                                                              (line  68)
+* emms-playlist-set-playlist-buffer:     Interactive Playlists.
+                                                              (line  36)
+* emms-playlist-sort-by-file-extension:  Sorting Playlists.   (line  29)
+* emms-playlist-sort-by-file-mtime:      Sorting Playlists.   (line  47)
+* emms-playlist-sort-by-info-album:      Sorting Playlists.   (line  20)
+* emms-playlist-sort-by-info-artist:     Sorting Playlists.   (line  14)
+* emms-playlist-sort-by-info-composer:   Sorting Playlists.   (line  41)
+* emms-playlist-sort-by-info-note:       Sorting Playlists.   (line  38)
+* emms-playlist-sort-by-info-performer:  Sorting Playlists.   (line  32)
+* emms-playlist-sort-by-info-title:      Sorting Playlists.   (line  26)
+* emms-playlist-sort-by-info-year:       Sorting Playlists.   (line  35)
+* emms-playlist-sort-by-last-played:     Sorting Playlists.   (line  23)
+* emms-playlist-sort-by-name:            Sorting Playlists.   (line  44)
+* emms-playlist-sort-by-play-count:      Sorting Playlists.   (line  17)
+* emms-previous:                         Basic Commands.      (line  61)
+* emms-random:                           Core Functions.      (line  21)
+* emms-random <1>:                       Interactive Playlists.
+                                                              (line  63)
+* emms-seek:                             Core Functions.      (line  65)
+* emms-seek-backward:                    Core Functions.      (line  71)
+* emms-seek-backward <1>:                Interactive Playlists.
+                                                              (line  48)
+* emms-seek-forward:                     Core Functions.      (line  69)
+* emms-seek-forward <1>:                 Interactive Playlists.
+                                                              (line  46)
+* emms-show:                             Basic Commands.      (line  68)
+* emms-show <1>:                         Interactive Playlists.
+                                                              (line  50)
+* emms-shuffle:                          Basic Commands.      (line  63)
+* emms-smart-browse:                     Browser Interface.   (line  10)
+* emms-sort:                             Basic Commands.      (line  66)
+* emms-source-directory:                 Sources.             (line  23)
+* emms-source-directory-tree:            Sources.             (line  26)
+* emms-source-dired:                     Sources.             (line  43)
+* emms-source-file:                      Sources.             (line  18)
+* emms-source-file-directory-tree:       Sources.             (line  41)
+* emms-source-file-regex:                Sources.             (line  45)
+* emms-source-files:                     Sources.             (line  21)
+* emms-source-find:                      Sources.             (line  38)
+* emms-source-playlist:                  Sources.             (line  29)
+* emms-source-playlist-m3u:              Sources.             (line  34)
+* emms-source-playlist-native:           Sources.             (line  32)
+* emms-source-playlist-pls:              Sources.             (line  36)
+* emms-start:                            Basic Commands.      (line  55)
+* emms-stop:                             Basic Commands.      (line  57)
+* emms-stop <1>:                         Interactive Playlists.
+                                                              (line  42)
+* emms-stream-add-bookmark:              Streaming Audio.     (line  49)
+* emms-stream-delete-bookmark:           Streaming Audio.     (line  51)
+* emms-stream-edit-bookmark:             Streaming Audio.     (line  53)
+* emms-stream-info-bookmark:             Streaming Audio.     (line  65)
+* emms-stream-next-line:                 Streaming Audio.     (line  57)
+* emms-stream-previous-line:             Streaming Audio.     (line  59)
+* emms-stream-quit:                      Streaming Audio.     (line  47)
+* emms-stream-save-bookmarks-file:       Streaming Audio.     (line  61)
+* emms-tag-editor-rename:                Editing Tracks.      (line  89)
+* emms-tag-editor-replace-in-tag:        Editing Tracks.      (line  32)
+* emms-tag-editor-set-all:               Editing Tracks.      (line  23)
+* emms-tag-editor-submit:                Editing Tracks.      (line  47)
+* emms-tag-editor-transpose-tag:         Editing Tracks.      (line  41)
+* emms-toggle-random-playlist:           Core Functions.      (line  29)
+* emms-toggle-repeat-playlist:           Core Functions.      (line  23)
+* emms-toggle-repeat-track:              Core Functions.      (line  26)
+* emms-track:                            Core Functions.      (line  35)
+* emms-track-description:                Core Functions.      (line  46)
+* emms-track-get:                        Core Functions.      (line  41)
+* emms-track-name:                       Core Functions.      (line  39)
+* emms-track-set:                        Core Functions.      (line  44)
+* emms-track-type:                       Core Functions.      (line  37)
+* emms-volume-lower:                     Volume.              (line  18)
+* emms-volume-mode-minus:                Volume.              (line  29)
+* emms-volume-mode-plus:                 Volume.              (line  25)
+* emms-volume-raise:                     Volume.              (line  15)
+* kill-this-buffer:                      Managing Playlists.  (line  40)
+* next-line:                             Managing Playlists.  (line  22)
+* previous-line:                         Managing Playlists.  (line  25)
+* scroll-up:                             Interactive Playlists.
+                                                              (line  57)
+
+
+File: emms.info,  Node: Variable Index,  Next: Keybinding Index,  Prev: Function Index,  Up: Top
+
+Variable Index
+**************
+
+ [index ]
+* Menu:
+
+* emms-history-file:                     Persistent Playlists. (line 14)
+* emms-history-start-playing:            Persistent Playlists. (line 33)
+* emms-info-asynchronously:              Track Information.    (line 35)
+* emms-info-auto-update:                 Track Information.    (line 31)
+* emms-info-functions:                   Track Information.    (line 40)
+* emms-lyrics-coding-system:             Lyrics.               (line 36)
+* emms-lyrics-dir:                       Lyrics.               (line 27)
+* emms-lyrics-display-format:            Lyrics.               (line 32)
+* emms-lyrics-display-on-minibuffer:     Lyrics.               (line 21)
+* emms-lyrics-display-on-modeline:       Lyrics.               (line 24)
+* emms-lyrics-scroll-p:                  Lyrics.               (line 39)
+* emms-lyrics-scroll-timer-interval:     Lyrics.               (line 42)
+* emms-player-finished-hook:             Hooks.                (line 23)
+* emms-player-list:                      User Variables.       (line  8)
+* emms-player-paused-hook:               Hooks.                (line 29)
+* emms-player-started-hook:              Hooks.                (line  9)
+* emms-player-stopped-hook:              Hooks.                (line 11)
+* emms-playlist-cleared-hook:            Hooks.                (line 19)
+* emms-playlist-selection-changed-hook:  Hooks.                (line 17)
+* emms-playlist-source-inserted-hook:    Hooks.                (line 14)
+* emms-repeat-playlist:                  User Variables.       (line 15)
+* emms-show-format:                      User Variables.       (line 11)
+* emms-sort-lessp-function:              User Variables.       (line 21)
+* emms-source-file-default-directory:    Sources.              (line 13)
+* emms-stream-default-action:            Streaming Audio.      (line 41)
+* emms-tag-editor-formats:               Editing Tracks.       (line 55)
+* emms-tag-editor-rename-format:         Editing Tracks.       (line 73)
+* emms-tag-editor-tagfile-functions:     Editing Tracks.       (line 63)
+* emms-track-description-function:       User Variables.       (line 19)
+* emms-volume-change-amount:             Volume.               (line  9)
+* emms-volume-mode-timeout:              Volume.               (line 42)
+
+
+File: emms.info,  Node: Keybinding Index,  Prev: Variable Index,  Up: Top
+
+Keybinding Index
+****************
+
+ [index ]
+* Menu:
+
+* / (emms-browser):                      Browser Interface.   (line  68)
+* / /:                                   Limiting.            (line  61)
+* / a:                                   Limiting.            (line  16)
+* / b:                                   Limiting.            (line  21)
+* / c:                                   Limiting.            (line  26)
+* / d:                                   Limiting.            (line  31)
+* / g:                                   Limiting.            (line  36)
+* / n:                                   Limiting.            (line  41)
+* / p:                                   Limiting.            (line  46)
+* / t:                                   Limiting.            (line  51)
+* / y:                                   Limiting.            (line  56)
+* 1 (emms-browser):                      Browser Interface.   (line  41)
+* 2 (emms-browser):                      Browser Interface.   (line  44)
+* 3 (emms-browser):                      Browser Interface.   (line  47)
+* 4 (emms-browser):                      Browser Interface.   (line  50)
+* < (emms-browser):                      Browser Interface.   (line  71)
+* <backtab> (emms-browser):              Browser Interface.   (line  86)
+* <C-return> (emms-browser):             Browser Interface.   (line  83)
+* <tab> (emms-browser):                  Browser Interface.   (line  89)
+* > (emms-browser):                      Browser Interface.   (line  74)
+* ? (emms-browser):                      Browser Interface.   (line  77)
+* a (emms-streams):                      Streaming Audio.     (line  49)
+* b 1 (emms-browser):                    Browser Interface.   (line 104)
+* b 2 (emms-browser):                    Browser Interface.   (line 107)
+* b 3 (emms-browser):                    Browser Interface.   (line 110)
+* b 4 (emms-browser):                    Browser Interface.   (line 113)
+* C:                                     Managing Playlists.  (line  31)
+* c:                                     Managing Playlists.  (line  37)
+* C (emms-browser):                      Browser Interface.   (line  53)
+* C-/ (emms-browser):                    Browser Interface.   (line  80)
+* C-j (emms-browser):                    Browser Interface.   (line  32)
+* C-k:                                   Managing Playlists.  (line  34)
+* d (emms-browser):                      Browser Interface.   (line  59)
+* d (emms-streams):                      Streaming Audio.     (line  51)
+* E (emms-browser):                      Browser Interface.   (line  56)
+* e (emms-streams):                      Streaming Audio.     (line  53)
+* g:                                     Managing Playlists.  (line  28)
+* h (emms-streams):                      Streaming Audio.     (line  55)
+* i (emms-streams):                      Streaming Audio.     (line  65)
+* n:                                     Managing Playlists.  (line  22)
+* n (emms-streams):                      Streaming Audio.     (line  57)
+* p:                                     Managing Playlists.  (line  25)
+* p (emms-streams):                      Streaming Audio.     (line  59)
+* q:                                     Managing Playlists.  (line  40)
+* q (emms-browser):                      Browser Interface.   (line  62)
+* q (emms-streams):                      Streaming Audio.     (line  47)
+* r (emms-browser):                      Browser Interface.   (line  65)
+* RET:                                   Managing Playlists.  (line  15)
+* RET (emms-browser):                    Browser Interface.   (line  35)
+* RET (emms-streams):                    Streaming Audio.     (line  41)
+* s (emms-streams):                      Streaming Audio.     (line  61)
+* s A (emms-browser):                    Browser Interface.   (line  92)
+* s a (emms-browser):                    Browser Interface.   (line  95)
+* s s (emms-browser):                    Browser Interface.   (line  98)
+* s t (emms-browser):                    Browser Interface.   (line 101)
+* SPC:                                   Managing Playlists.  (line  18)
+* SPC (emms-browser):                    Browser Interface.   (line  38)
+* W a p (emms-browser):                  Browser Interface.   (line 116)
+* W a w (emms-browser):                  Browser Interface.   (line 119)
+
+
+
+Tag Table:
+Node: Top689
+Node: Introduction4304
+Node: Quickstart Guide5879
+Node: Installation8696
+Node: Compiling Emms9109
+Node: Setup9797
+Node: Configuration10783
+Node: Finding files and speed12194
+Node: Getting Help13040
+Node: Formats and Freedom13618
+Node: Basic Commands14823
+Node: The Core File18204
+Node: User Variables18638
+Node: Hooks19614
+Node: Core Functions21040
+Node: Sources24040
+Node: Simple Players26173
+Node: Playlists27267
+Node: Track Information28548
+Node: Using TagLib30688
+Node: Defining Info Methods31609
+Node: Interactive Playlists32391
+Node: Markable Playlists35433
+Node: Extending Emms37904
+Node: New Player38340
+Node: Simple Player for `play'38729
+Node: More Complex Player40457
+Node: The Browser43464
+Node: Browser Interface44440
+Node: Filtering Tracks46854
+Node: Displaying Covers48632
+Node: Changing Looks50646
+Node: Sorting Playlists53624
+Node: Persistent Playlists55093
+Node: Editing Tracks56252
+Node: Emms Mode Line59926
+Node: Limiting61094
+Node: Music Player Daemon63433
+Node: Lyrics66946
+Node: Volume68994
+Node: Streaming Audio70769
+Ref: Streaming Audio-Footnote-173399
+Node: APE / FLAC Commands73564
+Node: Bookmarks74271
+Node: Managing Playlists74982
+Node: GNU FM76005
+Node: Uploading Track Information77359
+Node: GNU FM Streaming78241
+Node: Copying78741
+Node: The GNU FDL116258
+Node: Concept Index138646
+Node: Function Index143431
+Node: Variable Index159780
+Node: Keybinding Index162196
+
+End Tag Table
