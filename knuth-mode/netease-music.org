@@ -1,0 +1,228 @@
+#+name: info_el
+#+BEGIN_SRC elisp
+  (progn
+    (switch-to-buffer "netease-music-playing")
+    (goto-char (point-min))
+    (org-next-link))
+#+END_SRC
+
+#+name: loop_el
+#+BEGIN_SRC elisp
+  (setq netease-music-play-loop-flag (not netease-music-play-loop-flag))
+#+END_SRC
+
+#+name: nm-decode-md5-pl
+#+BEGIN_SRC perl
+  use JSON;
+  use File::Slurp;
+
+  $json_str = read_file("/dev/stdin");
+  $json_obj = decode_json $json_str;
+  print $json_obj->{data}[0]{md5};
+
+#+END_SRC
+
+#+name: nm-download
+#+BEGIN_SRC sh :noweb yes
+  nm-download() {
+
+      saved_args=("$@")
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -P @:album @:artist @:song-name @:song-id @:url
+      ## end code-generator
+      ## start generated code
+      TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                            --long album:,artist:,song-id:,song-name:,url:,help \
+                            -n $(basename -- $0) -- "$@")
+      declare album=
+      declare artist=
+      declare song_id=
+      declare song_name=
+      declare url=
+      eval set -- "$TEMP"
+      while true; do
+          case "$1" in
+
+              --album)
+                  album=$2
+                  shift 2
+
+                  ;;
+              --artist)
+                  artist=$2
+                  shift 2
+
+                  ;;
+              --song-id)
+                  song_id=$2
+                  shift 2
+
+                  ;;
+              --song-name)
+                  song_name=$2
+                  shift 2
+
+                  ;;
+              --url)
+                  url=$2
+                  shift 2
+
+                  ;;
+              -h|--help)
+                  set +x
+                  echo -e
+                  echo
+                  echo Options and arguments:
+                  printf "%06s" " "
+                  printf %-24s '--album=ALBUM'
+                  echo
+                  printf "%06s" " "
+                  printf %-24s '--artist=ARTIST'
+                  echo
+                  printf "%06s" " "
+                  printf %-24s '--song-id=SONG_ID'
+                  echo
+                  printf "%06s" " "
+                  printf %-24s '--song-name=SONG_NAME'
+                  echo
+                  printf "%06s" " "
+                  printf %-24s '--url=URL'
+                  echo
+                  exit
+                  shift
+                  ;;
+              --)
+                  shift
+                  break
+                  ;;
+              ,*)
+                  die "internal error: $(. bt; echo; bt | indent-stdin)"
+                  ;;
+          esac
+      done
+
+
+      ## end generated code
+
+      save_to_file=~/"Music/${album}/${artist}/${song_name}.mp3"
+      if test -e "${save_to_file}"; then
+          echo -n "${save_to_file}"
+          exit
+      fi
+
+      if test "${DOWNLOAD_IN_BACKGROUND}" != true; then
+          export DOWNLOAD_IN_BACKGROUND=true
+          nohup netease-music download "${saved_args[@]}" &> ~/tmp/netease-music-download.log &
+          exit
+      fi
+
+      exec 9< $me
+      flock 9
+
+      mkdir -p "${save_to_file%/*}"
+
+      . atexit rm -f "${save_to_file}".tmp
+
+      curl -f -s "$url" -o "${save_to_file}".tmp
+      md5sum_from_nm=$(
+          curl -s "http://localhost:3000/song/url?id=${song_id}" | perl -e "
+  $(
+      cat <<'EOFbf1c70f6d443'
+  <<nm-decode-md5-pl>>
+  EOFbf1c70f6d443
+  )
+  "
+            )
+      if test "$(md5sum "${save_to_file}".tmp | pn 1)" = "$md5sum_from_nm"; then
+          mv "${save_to_file}".tmp "${save_to_file}"
+      fi
+  }
+
+#+END_SRC
+** 最终的版本：
+
+#+name: read-only
+#+BEGIN_SRC sh
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+#+END_SRC
+
+#+name: old-code
+#+BEGIN_SRC sh :noweb yes
+  #!/bin/bash
+
+  set -e
+  case "$1" in
+      next)
+          emacsclient -e "(netease-music-play-next 1)"
+          ;;
+      prev)
+          emacsclient -e "(netease-music-play-prev 1)"
+          ;;
+      replay)
+          emacsclient -e "(netease-music-play-start)"
+          ;;
+      download)
+          shift
+          nm-download "$@"
+          ;;
+      info)
+          emacsclient -e "$(
+            cat <<'EOFa5321befeb4a'
+  <<info_el>>
+  EOFa5321befeb4a
+  )"
+          ;;
+      loop)
+          emacsclient -e "$(
+  cat <<'EOF759c8785e7c0'
+  <<loop_el>>
+  EOF759c8785e7c0
+
+  )"
+          if test "$(emacsclient -e netease-music-play-loop-flag)" = nil; then
+              bhj-notify netease-music "Not looping"
+          else
+              bhj-notify netease-music "Looping"
+          fi
+          ;;
+      ,*)
+          bhj-notify netease-music "$* not implemented yet"
+          ;;
+  esac
+#+END_SRC
+
+#+name: the-ultimate-script
+#+BEGIN_SRC sh :tangle ~/system-config/bin/netease-music :comments link :shebang "#!/bin/bash" :noweb yes
+  set -e
+
+  me=$(readlink -f $BASH_SOURCE)
+  if test ! -e "$me"; then
+      me=$(readlink -f "$(which $BASH_SOURCE)")
+      if test ! -e "$me"; then
+          die "Can't find out about me"
+          exit 1
+      fi
+  fi
+
+  abs0=$BASH_SOURCE
+  if ! [[ $abs0 =~ ^/ ]]; then
+      if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+          abs0=$PWD/$abs0
+      elif test -e "$(which $BASH_SOURCE)"; then
+          abs0=$(which $BASH_SOURCE)
+      else
+          die "Can't find abs path for $BASH_SOURCE"
+      fi
+  fi
+
+  b0=$(basename $BASH_SOURCE)
+
+  <<nm-download>>
+  <<old-code>>
+  <<read-only>>
+#+END_SRC
+
+#+results: the-ultimate-script
+
