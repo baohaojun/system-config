@@ -19,6 +19,6 @@ fi
 
 tar xv
 
-putclip "$(up "${file}")"
+putclip "$(up "${file%%/*}")"
 bhj-notify remote-putfile "You received a file ${file}"
 
