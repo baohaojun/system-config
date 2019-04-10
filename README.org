@@ -79,7 +79,7 @@ fi
 #+END_SRC
 
 #+BEGIN_SRC sh
-~/system-config/bin/Darwin/after-check-out.sh
+PATH-TO-HOMEBREWS-VERSION-OF-BASH ~/system-config/bin/Darwin/after-check-out.sh # The Mac's /bin/bash's version is too low.
 #+END_SRC
 
 There's some difference between Mac and Windows/Linux, because Mac is a kind of Unix by itself, and it comes with traditional versions of Unix tools, for e.g., Mac's native =readlink(1)= command does not support the =-f= flag, and you must switch to the HomeBrew version. To make it worse, HomeBrew won't by default replace some important system tools, it will only remind you to make that decision yourself (and it will tell you how-to ONLY ONCE if you really want to replace, so watch the HomeBrew installation output carefully).
