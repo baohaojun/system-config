@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+use utf8;
+
 use autodie qw(:all);
 
 ## start code-generator "^\\s *#\\s *"
@@ -71,7 +73,7 @@ GetOptions (
 ## end generated code
 
 use JSON;
-
+use Encode;
 
 # curl -X POST JENKINS_URL/job/JOB_NAME/build \
 #   --user USER:TOKEN \
@@ -100,7 +102,7 @@ if ($extra_environ_params_regexp) {
              } grep { m/$extra_environ_params_regexp/ } keys %ENV
             );
 }
-my $json_arg = encode_json {
+my $json_arg = decode_utf8 decode_utf8 encode_json {
   parameter => \@params
 };
 

@@ -1,71 +1,76 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env perl
+use strict;
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt t:tag-name=description f:xml-file
+# generate-getopt -s perl t:tag-name='"description"' f:xml-file @:to-mode='"html"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o t:f:h \
-               --long tag-name:,xml-file:,help \
-               -n $(basename -- $0) -- "$@")
-declare tag_name=description
-declare xml_file=
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
+use Getopt::Long;
 
-        -t|--tag-name)
-            tag_name=$2
-            shift 2
+Getopt::Long::Configure("default");
 
-            ;;
-        -f|--xml-file)
-            xml_file=$2
-            shift 2
 
-            ;;
-        -h|--help)
-            set +x
-            echo -e
-            echo
-            echo Options and arguments:
-            printf %06s '-t, '
-            printf %-24s '--tag-name=TAG_NAME'
-            echo
-            printf %06s '-f, '
-            printf %-24s '--xml-file=XML_FILE'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
+
+my $tag_name = "description";
+my $to_mode = "html";
+my $xml_file = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-t, ';
+  printf "%-24s", '--tag-name=TAG-NAME';
+  if (length('--tag-name=TAG-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--to-mode=TO-MODE';
+  if (length('--to-mode=TO-MODE') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-f, ';
+  printf "%-24s", '--xml-file=XML-FILE';
+  if (length('--xml-file=XML-FILE') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'tag-name|t=s' => \$tag_name,
+            'to-mode=s' => \$to_mode,
+            'xml-file|f=s' => \$xml_file,
+            'help|h!' => \&$handler_help,
+           );
 
 
 ## end generated code
 
-emacs_script=$(
-            cat <<'EOFf2988e9b7e03' | . .replace-%% --
-; {%emacs-lisp-mode%}
-(let ((beg_tag_text) (end_tag_text))
-  (with-temp-buffer)
-  (insert-file "<%xml_file%>")
-  (goto-char (point-min))
-  (while (search-forward "<<%tag_name%>>" nil t)
-    (setq beg_tag_text (point))
-    (when (search-forward "</<%tag_name%>>" nil t)
-      (search-backward "</<%tag_name%>>" nil t)
-      (setq end_tag_text (point))
-      (shell-command-on-region beg_tag_text end_tag_text "emacs-fix-fence -f nxml -t html" nil t)
-      (goto-char beg_tag_text)))
-  (write-file "<%xml_file%>"))
-; {%/emacs-lisp-mode%}
-EOFf2988e9b7e03
-                                        )
-emacsclient -e "${emacs_script}"
+use File::Slurp;
+use Mojo::DOM;
+use String::ShellQuote;
+
+my $xml_str = read_file($xml_file);
+my $dom = Mojo::DOM->new->parse($xml_str);
+$dom->find($tag_name)->
+  each(
+       sub {
+         my $text = $_->text;
+         my @command = shell_quote("emacs-fix-fence", "--text", $text, "-f", "nxml", "-t", "$to_mode", "-p", "cat");
+         my $command = join(" ", @command);
+         my $fenced_text = qx($command);
+
+         $_->content(Mojo::DOM->new->parse($fenced_text));
+       });
+
+write_file("$xml_file", $dom);

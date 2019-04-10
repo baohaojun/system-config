@@ -65,22 +65,13 @@ if test -z "${output_file}"; then
 fi
 
 jc get-job "$task" > "${task}.from-jc.xml"
-if xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${task}.from-jc.xml" 2>/dev/null); then
-    if [[ $xml_command =~ '#!end-of-fence' ]]; then
-        export cdata_command='<![CDATA['"$xml_command]]>"
-    else
-        export cdata_command='<![CDATA[#!/bin/bash'"
-${xml_command}
-#!end-of-fence]]>"
-    fi
-    xmlstarlet ed -u //command -v "%%hello-command%%" "${task}.from-jc.xml" |
-        perl -npe 's,%%hello-command%%,$ENV{cdata_command},;s,&#13;\n,&#xd;\n,' > "$task-$$.xml"
+cp "${task}.from-jc.xml" "$task-$$.xml"
+. atexit rm -f $task-$$.xml
 
-else
-    cp "${task}.from-jc.xml" "$task-$$.xml"
+if xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${task}.from-jc.xml" 2>/dev/null); then
+    jc htmlify-xml-tag -t command -f $task-$$.xml --to-mode bash
 fi
 
-. atexit rm -f $task-$$.xml
 jc htmlify-xml-tag -t description -f $task-$$.xml
 
 if test "${extra_save}"; then
@@ -93,4 +84,3 @@ if ! diff -w "${output_file}" $task-$$.xml > ${output_file}.diff; then
     fi
     emacs-file-op cat $task-$$.xml '>' "${output_file}"
 fi
-

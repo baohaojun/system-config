@@ -43,6 +43,46 @@ On non debian systems, or if you don't have sudo permission, you can try to use 
       )
 #+END_SRC
 
+** Install Under Mac/Windows
+
+First, please note that installation under Mac/Windows is not as complete as under Linux.
+
+To install under Windows, you need install Cygwin first, then run this command, and fix the errors that might happen (in most cases, they can be fixed by installing additional cygwin packages).
+#+BEGIN_SRC sh
+~/system-config/bin/windows/after-check-out.sh
+#+END_SRC
+
+To install under Mac, you need install HomeBrew first, then run this command, and fix the errors that might happen (in most cases, they can be fixed by: 1. installing additional HomeBrew packages and 2. Changing the PATH environment variable, so that the default command can be forced to use HomeBrew's version).
+
+For your reference, I have used the following setup in my Mac (you may or may not copy&paste it, since the version numbers might change):
+
+#+BEGIN_SRC sh
+if test "$(uname)" = Darwin; then
+    extra_path=(
+        /usr/local/Cellar/coreutils/8.30/libexec/gnubin
+        /usr/local/Cellar/gnu-getopt/1.1.6/bin
+        /usr/local/Cellar/bash/4.4.23/bin
+        /usr/local/opt/grep/libexec/gnubin
+        /usr/local/opt/findutils/libexec/gnubin
+        /usr/local/bin
+    )
+    export SC_PATH_PREFIX=$(
+        for x in "${extra_path[@]}"; do
+            echo -n $x:
+        done
+           )
+    if test "$(which grep)" != /usr/local/opt/grep/libexec/gnubin/grep; then
+        PATH=${SC_PATH_PREFIX}${PATH}
+    fi
+fi
+
+#+END_SRC
+
+#+BEGIN_SRC sh
+~/system-config/bin/Darwin/after-check-out.sh
+#+END_SRC
+
+There's some difference between Mac and Windows/Linux, because Mac is a kind of Unix by itself, and it comes with traditional versions of Unix tools, for e.g., Mac's native =readlink(1)= command does not support the =-f= flag, and you must switch to the HomeBrew version. To make it worse, HomeBrew won't by default replace some important system tools, it will only remind you to make that decision yourself (and it will tell you how-to ONLY ONCE if you really want to replace, so watch the HomeBrew installation output carefully).
 * How to update
 
 System-config come's with a script named =system-config-update=, you can run it to update to the latest version.
