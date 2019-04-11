@@ -161,7 +161,7 @@ case "$1" in
         nm-download "$@"
         ;;
     info)
-        emacsclient -e "$(
+        emacs.client -d -e "$(
           cat <<'EOFa5321befeb4a'
 (progn
   (switch-to-buffer "netease-music-playing")

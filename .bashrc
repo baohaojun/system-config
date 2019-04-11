@@ -19,6 +19,26 @@ else
     . ~/system-config/.bashrc-linux
 fi
 
+if test "${uname}" = Darwin; then
+    # use the HomeBrew version of Gnu Tools
+    extra_path=(
+        /usr/local/Cellar/coreutils/*/libexec/gnubin
+        /usr/local/Cellar/gnu-getopt/*/bin
+        /usr/local/Cellar/bash/*/bin
+        /usr/local/opt/grep/libexec/gnubin
+        /usr/local/opt/findutils/libexec/gnubin
+        /usr/local/bin
+    )
+    export SC_PATH_PREFIX=$(
+        for x in "${extra_path[@]}"; do
+            echo -n $x:
+        done
+           )
+    if test "$(which grep)" != /usr/local/opt/grep/libexec/gnubin/grep; then
+        PATH=${SC_PATH_PREFIX}${PATH}
+    fi
+fi
+
 if test -e ~/system-config/.bashrc-$uname; then
     . ~/system-config/.bashrc-$uname
 fi
@@ -60,9 +80,7 @@ if test ! -e ~/.config/system-config/.bashrc-path; then
                )
         export PATH=$(
             echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|
-                if test "$USER" = bhj ||
-                        (which uniq-even-non-ajacent && which rm-last-nl) >/dev/null 2>&1;
-                then
+                if (which uniq-even-non-ajacent && which rm-last-nl) >/dev/null 2>&1; then
                     uniq-even-non-ajacent|rm-last-nl
                 else
                     cat

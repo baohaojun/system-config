@@ -167,7 +167,7 @@
           nm-download "$@"
           ;;
       info)
-          emacsclient -e "$(
+          emacs.client -d -e "$(
             cat <<'EOFa5321befeb4a'
   <<info_el>>
   EOFa5321befeb4a
