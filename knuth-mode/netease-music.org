@@ -22,6 +22,17 @@
 
 #+END_SRC
 
+#+name: nm-get-lyric
+#+BEGIN_SRC perl
+  use JSON;
+  use File::Slurp;
+
+  $json_str = read_file("/dev/stdin");
+  $json_obj = decode_json $json_str;
+  print $json_obj->{lrc}{lyric};
+
+#+END_SRC
+
 #+name: nm-download
 #+BEGIN_SRC sh :noweb yes
   nm-download() {
@@ -105,7 +116,7 @@
       ## end generated code
 
       save_to_file=~/"Music/${album}/${artist}/${song_name}.mp3"
-      if test -e "${save_to_file}"; then
+      if test -e "${save_to_file}" -a -e "${save_to_file/%.mp3/.lrc}"; then
           echo -n "${save_to_file}"
           exit
       fi
@@ -136,6 +147,13 @@
       if test "$(md5sum "${save_to_file}".tmp | pn 1)" = "$md5sum_from_nm"; then
           mv "${save_to_file}".tmp "${save_to_file}"
       fi
+
+      curl -s "http://localhost:3000/lyric?id=${song_id}" | perl -e "
+  $(cat <<'EOF76654b92f17c'
+  <<nm-get-lyric>>
+  EOF76654b92f17c
+  )" > "${save_to_file/%.mp3/.lrc}.$$"
+      mv "${save_to_file/%.mp3/.lrc}.$$" "${save_to_file/%.mp3/.lrc}"
   }
 
 #+END_SRC

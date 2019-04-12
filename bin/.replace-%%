@@ -2,14 +2,14 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -p sc_rep -e b:begin='"<%"' e:end='"%>"'
+# generate-getopt -p sc_rep -e b:begin='"[<[]%"' e:end='"%[]>]"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o b:e:h \
                --long begin:,end:,help \
                -n $(basename -- $0) -- "$@")
-declare -x sc_rep_begin=${sc_rep_begin:-"<%"}
-declare -x sc_rep_end=${sc_rep_end:-"%>"}
+declare -x sc_rep_begin=${sc_rep_begin:-"[<[]%"}
+declare -x sc_rep_end=${sc_rep_end:-"%[]>]"}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -63,8 +63,8 @@ done
 s/-/_/g;
 
 BEGIN {
-    $start = qr(\Q$ENV{sc_rep_begin}\E);
-    $end = qr(\Q$ENV{sc_rep_end}\E);
+    $start = qr($ENV{sc_rep_begin});
+    $end = qr($ENV{sc_rep_end});
 }
 while (m/$start(.*?)$end/g) {
     print "$1\n"
@@ -79,8 +79,8 @@ while (m/$start(.*?)$end/g) {
     echo "$input" | perl -npe '
 ## start perl ##
 BEGIN {
-    $start = qr(\Q$ENV{sc_rep_begin}\E);
-    $end = qr(\Q$ENV{sc_rep_end}\E);
+    $start = qr($ENV{sc_rep_begin});
+    $end = qr($ENV{sc_rep_end});
 }
 
 s/$start(.*?)$end/($x = $1) =~ s,-,_,g; $ENV{"rep_$x"}/ge;

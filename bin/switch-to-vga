@@ -88,6 +88,7 @@ done
 
 
 xrandr_out=$(xrandr | grep -v ' disconnected ')
+
 lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
 if test -z "$lvds"; then
     lvds=$(echo "$xrandr_out" | grep -P '^eDP-?1' | pn 1)
@@ -99,9 +100,11 @@ fi
 if test -z "$hdmi"; then
     hdmi=$(echo "$xrandr_out" | grep '^HDMI' | pn 1)
 fi
+
 if test -z "$hdmi"; then
     hdmi=$(echo "$xrandr_out" | grep '^DP-?1' -P | pn 1)
 fi
+
 if echo "$xrandr_out" | grep '^VGA\S* disconnected' -P || test -z "$vga"; then
     vga=$hdmi
 fi
@@ -145,39 +148,51 @@ elif test $(basename $0) = switch-to-hdmi-and-laptop; then
     xrandr --output $hdmi --auto
 elif test $(basename $0) = switch-to-hdmi; then
     xrandr --output $lvds --off
-    xrandr --output $vga --off
+    if test "${vga}" != "${hdmi}"; then
+        xrandr --output $vga --off
+    fi
     xrandr --output $hdmi --auto
 elif test $(basename $0) = switch-to-laptop; then
     xrandr --output $lvds --auto
     xrandr --output $hdmi --off
     xrandr --output $vga --off
 else # both display
-
+    log add new mode of 1360 768, for using it on my TV
     (
         set +x
-        newmode=$(cvt 1360 768 | perl -ne 's/"//g; print $'\'' if m/^Modeline /')
-        xrandr --newmode $newmode
-        xrandr --addmode "$hdmi" ${newmode%% *}
-        xrandr --addmode "$vga" ${newmode%% *}
-    )
+        newmode=$(cvt 1360 768 | perl -ne 's/"//g; print $'\'' if m/^Modeline /') &&
+            xrandr --newmode $newmode
+
+        if ! xrandr --addmode "$vga" ${newmode%% *} >/dev/null 2>&1; then
+            log Failed to add newmode ${newmode%% *} for $vga
+        fi
+    ) || true
 
     res=$(
-        xrandr |
-            pn 1 |
-            uniq |
-            grep -P '^\d'|
-            sort -n  -r |
-            perl -e '
-            @x = <>;
-            $last = 0;
-            for $res (@x) {
-                $res =~ s/_.*//;
-                if ($res eq $last) {
-                    print $last;
-                    last;
-                }
-                $last = $res
-            }'
+        echo "${xrandr_out}" | perl -ne "
+$(
+cat <<'EOF37006bec88ab' | . .replace-%% --
+# {%perl-mode%}
+if (m/^(\S+)\s+connected/) {
+    $dev = $1;
+}
+
+if (m/^\s+(\d+x\d+)/) {
+    $dev_res_map{$dev}{$1} = 1;
+}
+
+END {
+    for $vga_res (sort {$b <=> $a} keys %{$dev_res_map{"<%vga%>"}}) {
+        if ($dev_res_map{"<%lvds%>"}{$vga_res}) {
+            print "$vga_res";
+            exit
+        }
+    }
+}
+# {%/perl-mode%}
+EOF37006bec88ab
+
+)"
        )
 
     xrandr --output $lvds --mode $(xrandr |perl -ne "print if m/\Q$lvds\E.*connected/ .. (m/connected/ and not m/\Q$lvds\E/)" |pn 1 | grep $res|head -n 1) --same-as $vga
