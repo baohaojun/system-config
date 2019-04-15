@@ -23,8 +23,6 @@
   (server-start))
 
 (setq custom-file (expand-file-name "custom.el" "~/system-config/etc/"))
-(when (file-exists-p custom-file)
-  (load custom-file))
 
 ;;; Code:
 (when (file-exists-p (format "~/system-config/.emacs_d/lisp/bhj-%s.el" (symbol-name system-type)))
@@ -387,3 +385,5 @@
 
 (require 'netease-music)
 (setq netease-music-api "http://localhost:3000")
+(when (file-exists-p custom-file)
+  (load custom-file))
