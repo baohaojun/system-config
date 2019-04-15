@@ -838,7 +838,7 @@
          (event "")
          (line ""))
     (while (setq line (read-line file))
-      (when (string-match "bind-keys\\s+global-keymap\\s+\"(.*?)\"" line)
+      (when (string-match "bind-both-global&window-keymaps\\s+\"(.*?)\"" line)
         (setq event (expand-last-match "\\1"))
         (unbind-both-global&window-keymaps event)))
     (close-file file)))
@@ -856,10 +856,11 @@
   (system "switch-caps-led off&"))
 
 (defun keypad-number-on ()
-  (unload-keys-in-file "~/system-config/.sawfish/lisp/keypad.jl"))
+  (unload-keys-in-file "~/system-config/.sawfish/lisp/keypad-music.jl")
+  (load-file "~/system-config/.sawfish/lisp/keypad.jl"))
 
 (defun keypad-number-off ()
-  (load-file "~/system-config/.sawfish/lisp/keypad.jl"))
+  (load-file "~/system-config/.sawfish/lisp/keypad-music.jl"))
 
 (bind-both-global&window-keymaps "Super-KP_Enter" '(system "toggle-number-lock&"))
 

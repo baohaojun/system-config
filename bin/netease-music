@@ -203,6 +203,12 @@ EOF759c8785e7c0
             killall -STOP mplayer
         fi
         ;;
+    back)
+        emacsclient -e '(netease-music-seek-back 5)'
+        ;;
+    forward)
+        emacsclient -e '(netease-music-seek-forward 5)'
+        ;;
     *)
         bhj-notify netease-music "$* not implemented yet"
         ;;

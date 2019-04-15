@@ -124,4 +124,5 @@
 (global-set-key [(f5)] 'evil-mode)
 (define-key global-map (kbd "<S-escape>") esc-map)
 (define-key global-map (kbd "<XF86Search>") 's-dicts)
+(define-key global-map (kbd "<C-M-mouse-1>") 'netease-music-jump-into)
 

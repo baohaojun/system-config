@@ -3,44 +3,59 @@ set -e
 # debug-args $(basename "$0") "$@" > ~/.cache/system-config/logs/$(basename $0).log 2>&1
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt i:icon h:headline c:content s:shell @:info
+# generate-getopt i:icon h:headline c:content s:shell @:info @wrap
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h:i:s:c:h \
-              --long headline:,icon:,shell:,content:,info:,help \
-              -n $(basename -- $0) -- "$@")
-headline=
-icon=
-shell=
-content=
-info=
+TEMP=$( getopt -o c:h:i:s:h \
+               --long content:,headline:,icon:,info:,shell:,wrap,help,no-wrap \
+               -n $(basename -- $0) -- "$@")
+declare content=
+declare headline=
+declare icon=
+declare info=
+declare shell=
+declare wrap=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -c|--content)
+            content=$2
+            shift 2
+
+            ;;
         -h|--headline)
             headline=$2
             shift 2
+
             ;;
         -i|--icon)
             icon=$2
             shift 2
-            ;;
-        -s|--shell)
-            shell=$2
-            shift 2
-            ;;
-        -c|--content)
-            content=$2
-            shift 2
+
             ;;
         --info)
             info=$2
             shift 2
+
+            ;;
+        -s|--shell)
+            shell=$2
+            shift 2
+
+            ;;
+        --wrap|--no-wrap)
+            if test "$1" = --no-wrap; then
+                wrap=false
+            else
+                wrap=true
+            fi
+            shift
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-c, '
@@ -57,6 +72,9 @@ while true; do
             echo
             printf %06s '-s, '
             printf %-24s '--shell=SHELL'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]wrap'
             echo
             exit
             shift
@@ -75,11 +93,12 @@ done
 ## end generated code
 
 if test -z "$headline"; then
-    if test "$#" != 1 -a $# != 2; then
+    if test "$#" = 0; then
         die "Usage: $(basename $0) [-i icon] headline [content]"
     fi
     headline=$1
-    content=$2
+    shift
+    content="$*"
 fi
 
 exec >/dev/null 2>&1
@@ -107,12 +126,14 @@ fi
 
 tmp_content=/tmp/$(basename $0).$$.content
 
-echo -n "$content" | wrap > $tmp_content ||
+if test "${wrap}" = true; then
+    content=$(echo -n "$content" | wrap) ||
     (
-        myscr bash -c 'read -p "Can not wrap. Your emacs has problem? Please check!"' >/dev/null 2>&1
-        echo -n "${content}" > $tmp_content
-        exit 0
+        myscr bash -c 'read -p "Can not wrap. Your emacs has problem? Please check!"' >/dev/null 2>&1 || true
     )
+fi
+
+echo -n "${content}" > $tmp_content
 
 read_content=$(cat <<EOF
 (progn

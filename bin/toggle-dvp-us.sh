@@ -113,7 +113,12 @@ do-dvp() {
 }
 
 (
-    flock 9
+    if ! flock -n 9; then
+        (
+            bhj-notify dvp "$(fuser ~/.cache/system-config/logs/$(basename $0).lock | xargs ps)"
+        ) 9>/dev/null
+        exit 0
+    fi
     if test "$1" = am -o "$1" = dvp; then
         do-dvp
     elif test "$1" = ma || setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
