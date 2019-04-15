@@ -16,6 +16,11 @@ if test "$USER" = bhj; then
     unset GTK_IM_MODULE XMODIFIERS XIM
 fi
 
+emacs_version=$(emacs --version | head -n 1 | pn 3)
+if test ! -e ~/.emacs.d/elpa-${emacs_version}; then
+    relative-link ~/src/github/elpa ~/.emacs.d/elpa-${emacs_version}
+fi
+
 $EMACS -mm "$@" >>~/.cache/system-config/logs/emacs.log 2>&1 &
 
 while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do

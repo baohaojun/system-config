@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PATH=$(
+    echo "$PATH" | tr : '\n' |
+        grep -v .linuxbrew |
+        xargs -d '\n' string-join :
+)
+
+"$@"
