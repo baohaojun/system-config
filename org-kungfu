@@ -104,6 +104,8 @@ if (not $ok_wikiurl) {
     $ok_wikiurl = $file_config{"ok.wikiurl"};
 }
 
+$ok_wikiurl =~ s,/*$,/,;
+
 if (not $ok_wikiurl) {
     say "Must specify the wiki url";
     &$handler_help(1);
@@ -139,7 +141,7 @@ sub kungfu_url_for_api($) {
 
     my $auth_str = sprintf "%s:%s@", $ok_username, $ok_password;
     (my $scm_confluence_site = $ok_wikiurl) =~ s,(https?://),$1$auth_str,;
-    return "${scm_confluence_site}/${api_path}";
+    return "${scm_confluence_site}${api_path}";
 }
 
 sub get($) {
@@ -634,10 +636,10 @@ sub ok_edit_html_with_org(@) {
        (let* ((page-title (shell-command-to-string "cat page-title.txt"))
               (page-id (shell-command-to-string "cat page-id.txt"))
               (heading (org-get-heading t t t t))
-              (wiki-url (shell-command-to-string "git config -f ~/.config/org-kungfu/config.ini ok.wikiurl | tr -d '\\n'"))
+              (wiki-url (replace-regexp-in-string "/*$" "/" (shell-command-to-string "git config -f ~/.config/org-kungfu/config.ini ok.wikiurl | tr -d '\\n'")))
               (anchor (replace-regexp-in-string "\\s +" "" (concat page-title "-" heading))))
          (with-temp-buffer
-           (insert wiki-url "/pages/viewpage.action?pageId=" page-id "#" anchor)
+           (insert wiki-url "pages/viewpage.action?pageId=" page-id "#" anchor)
            (kill-region (point-min) (point-max)))))
      <%how-to-export%>)
                 ; {%/emacs-lisp-mode%}
@@ -997,9 +999,9 @@ sub ok_np(@) {
         if ($actions_desc_name_map{$action_desc} eq "edit-me") {
             ok_e("-p", $page_id);
         } elsif ($actions_desc_name_map{$action_desc} eq "open-it") {
-            System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
+            System("of ${ok_wikiurl}pages/viewpage.action?pageId=${page_id}");
         } elsif ($actions_desc_name_map{$action_desc} eq "putclip-url") {
-            System("putclip ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
+            System("putclip ${ok_wikiurl}pages/viewpage.action?pageId=${page_id}");
         }else {
             my $page_title = qx(ask-for-input-with-emacs -p 'Please input your new page title');
             if ($actions_desc_name_map{$action_desc} eq "edit-baby") {

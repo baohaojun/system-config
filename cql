@@ -68,5 +68,5 @@ cql_str=$(
     urlify "$cql_str"
        )
 
-curl -u "${user}:${pass}" "${wikiurl}/rest/api/search?cql=$cql_str${extra_args}"
+curl -u "${user}:${pass}" "${wikiurl}rest/api/search?cql=$cql_str${extra_args}"
 # cql ends here
