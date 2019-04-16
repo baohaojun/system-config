@@ -11,6 +11,7 @@ map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.CMailSignatureDe
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailComposeActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailDetailActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailSearchActivity'] = 'manual-post'
+map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.AddRobotActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'weixin-chat'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConfirmCreatingConversationActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConversationSettingsActivity'] = 'manual-post'
