@@ -50,7 +50,10 @@ expect "Opt>" {
                 }
             }
         }
-    } -re " Would you like to update? \[Y/n\]:" {
+    } -re " Would you like to update.*:" {
+        send "n\n"
+        exp_continue
+    } -re " Would you like to check for updates.*:" {
         send "n\n"
         exp_continue
     }
