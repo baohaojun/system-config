@@ -2,10 +2,90 @@
 
 set -e
 
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"$b0 FILE PROGRAM or $b0 -f FILE -p PROGRAM"' \
+    # f:file p:program
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:p:h \
+                      --long file:,program:,help \
+                      -n $(basename -- $0) -- "$@")
+declare file=
+declare program=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--file)
+            file=$2
+            shift 2
+
+            ;;
+        -p|--program)
+            program=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "$b0 FILE PROGRAM or $b0 -f FILE -p PROGRAM"
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--file=FILE'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--program=PROGRAM'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+set -e
+
 (
     grep -v wine-ext ~/.local/share/applications/mimeinfo.cache > ~/.local/share/applications/mimeinfo.cache.$$
     mv ~/.local/share/applications/mimeinfo.cache.$$ ~/.local/share/applications/mimeinfo.cache
 ) || true
+
+if test $# = 0; then
+    set -- "$file" "$program"
+fi
 
 if test $# != 2; then
     die "Error: Usage $(basename $0) ext program"
@@ -16,6 +96,8 @@ if test -e "$1"; then
 else
     mime=$(cd /tmp; touch $$.$1; xdg-mime query filetype $$.$1; rm $$.$1)
 fi
+
+log mime is $mime
 
 if grep -P -e "^\Q$mime\E=" ~/.config/mimeapps.list; then
     perl -npe "s#$mime=.*#$mime=bhj-custom-$2.desktop#" -i ~/.config/mimeapps.list

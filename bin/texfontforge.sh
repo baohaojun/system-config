@@ -14,7 +14,6 @@ mkdir -p ${var_dir} ${config_dir}
 TMPD=tmp.$$
 
 if test $# = 0; then
-    cd ~/.fonts
     (texfontforge.sh -n simsun -f ~/.fonts/msyh.ttf)
     (texfontforge.sh -n simhei -f ~/.fonts/msyhbd.ttf)
     exit
@@ -126,7 +125,12 @@ End
 
     texhash
     mktexlsr
-    updmap-user --enable Map ${font_name}.map
+    if type updmap-user >/dev/null 2>&1; then
+        updmap=updmap-user
+    else
+        updmap=updmap
+    fi
+    $updmap --enable Map ${font_name}.map
 )
 
 echo 'OK!'

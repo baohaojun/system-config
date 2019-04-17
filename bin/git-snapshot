@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+commit_id=$(git stash create)
+git stash store -m "snapshot @$(now)" "$commit_id"
+
+git stash list
