@@ -1,11 +1,16 @@
 #!/bin/bash
+set -e
+
 url=$(firefox-get-tab-url)
 
 sawfish-browser-input TAB TAB
 host=$(echo "$url" | perl -npe 's!^http.*?://!!; s!/.*!!')
 echo $host
 
-user=$(get-authinfo -h $host -u \?)
+user=$(get-authinfo --host $host -u \?)
+
+
+log "user is $user";
 
 declare -A search_for_map
 declare -A n_stab_map

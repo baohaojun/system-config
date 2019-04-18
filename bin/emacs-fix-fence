@@ -106,21 +106,22 @@ for t in sh sh-simple; do
     add_at_end[$t]=${add_at_end[nxml-ba$t]}
 done
 
-add_at_start[nxml-html]='<![CDATA[<!--start html-->'
+add_at_start[nxml-html]='<![CDATA[<!--start html-->
+'
 add_at_start[nxml-html-simple]='<![CDATA['
 
-add_at_end[nxml-html]='<!--end html-->]]>'
+add_at_end[nxml-html]="<!--end html-->
+]]>"
 add_at_end[nxml-html-simple]=']]>'
 
 add_at_start[-nxml]='<!--start nxml-->'
 add_at_end[-nxml]='<!--end nxml-->'
 
+echo_arg=-n
 if test "$simple_fence" = true; then
     simple=-simple
-    echo_arg=-n
 else
     simple=
-    echo_arg=
 fi
 pipe_map[nxml-html]=unescape-html
 
@@ -146,10 +147,8 @@ old_text=$(
 
 if [[ $to_mode =~ html ]] && [[ $old_text =~ '<!--start html-->' ]]; then
     simple=-simple
-    echo_arg=-n
 elif [[ $to_mode =~ sh ]] && [[ ${old_text%%$'\n'*} =~ '#!/bin/bash' ]]; then
     simple=-simple
-    echo_arg=-n
 fi
 
 prefix="${add_at_start[$from_mode-$to_mode$simple]}"

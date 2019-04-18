@@ -54,8 +54,17 @@ x2_timestamp=$(echo "$url"|perl -pe 's/.*&(timestamp2=.*)/$1/; s/2=/=/')
 x1_url="${url%/showDiffFiles*}/configOutput?type=raw&${x1_timestamp}"
 x2_url="${url%/showDiffFiles*}/configOutput?type=raw&${x2_timestamp}"
 
-jc curl "${x1_url}" > ~/tmp/x1.xml
-jc curl "${x2_url}" > ~/tmp/x2.xml
+(
+    cd ~/tmp
+
+    jc curl "${x1_url}" > ~/tmp/x1.xml
+    jc curl "${x2_url}" > ~/tmp/x2.xml
+
+    for f in ~/tmp/x1.xml ~/tmp/x2.xml; do
+        jc htmlify-xml-tag -t command -f $f --to-mode bash
+        jc htmlify-xml-tag -t description -f $f
+    done
+)
 
 perl -e "$(
 cat <<'EOF613328c640cf'

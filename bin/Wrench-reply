@@ -1,0 +1,8 @@
+#!/bin/bash
+
+putclip ":「 $(getclip-android) 」
+- - - - - - - - - - - - - - -
+
+"
+
+sawfish-client -e '(call-command (lookup-event-binding (lookup-event "Super-v")))'
