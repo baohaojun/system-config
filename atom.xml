@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[OKR 减肥记]]></title>
+    <link href="http://baohaojun.github.io/blog/2019/04/17/0-After-Reading-OKR.html"/>
+    <updated>2019-46-18T09:04:18+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2019/04/17/0-After-Reading-OKR.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Jenkins Mac Slave 的 Keychain 配置方法]]></title>
     <link href="http://baohaojun.github.io/blog/2019/01/09/0-Jenkins-Mac-Keychain.html"/>
-    <updated>2019-06-09T11:01:12+08:00</updated>
+    <updated>2019-01-09T11:10:40+08:00</updated>
     <id>http://baohaojun.github.io/blog/2019/01/09/0-Jenkins-Mac-Keychain.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html"/>
     <updated>2016-12-11T15:26:49+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Please support me if you like my work]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html"/>
-    <updated>2016-12-10T16:16:14+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/12/10/0-Please-support-me-if-you-like-my-work.html</id>
   </entry>
 </feed>
