@@ -46,7 +46,7 @@ my $handler_help = sub {
     printf "%s", ;
     print "\n";
 
-    exit(0);
+    exit($_[0] or 0);
 };
 
 GetOptions (
@@ -58,6 +58,12 @@ GetOptions (
 
 
 ## end generated code
+
+use v5.10;
+if (not $gerrit_server_in_jenkins_config) {
+  say "You must specify gerrit server in jenkins config!";
+  &$handler_help(1);
+}
 
 use String::ShellQuote;
 
@@ -103,8 +109,11 @@ $dom->find('input[type=checkbox][name=selectedRow]')->each(
     }
     );
 
+use v5.10;
 if (@change_rows != 1) {
-    die "Can't deal with more than 1 change_rows: " . join(" ", @change_rows);
+  say "Can only deal with 1 change, you have ", scalar(@change_rows) . " change_rows:\n" . join(" ", @change_rows);
+  write_file("/tmp/search.html", $html_search_str);
+  die "Please check /tmp/search.html";
 }
 
 my $change_row = $change_rows[0];
@@ -147,9 +156,9 @@ for (1 .. 3) {
     }
 }
 
-write_file("refresh.html", $html_refresh_str);
+write_file("/tmp/refresh.html", $html_refresh_str);
 
 if (not %build_urls) {
-    print "Seems no build has been started by your request, check the following html: refresh.html";
+    print "Seems no build has been started by your request, check the following html: /tmp/refresh.html";
 }
 # 脚本:1 ends here
