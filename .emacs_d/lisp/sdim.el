@@ -193,6 +193,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 (defun sdim-inactivate ()
   (interactive)
   (sdim-minor-mode 0)
+  (setq-default input-method-function nil)
   (mapc 'kill-local-variable sdim-local-variable-list))
 
 ;;;_ , Core function of input method (stole from quail)
@@ -315,9 +316,9 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
           (progn
             (sdim-start-translation key)
             nil) ; must make sure the sdim-input-method got translated
-                 ; events, in this case, we don't have any generated
-                 ; events, the buffer is already modified by us using
-                 ; insert directly.
+                                        ; events, in this case, we don't have any generated
+                                        ; events, the buffer is already modified by us using
+                                        ; insert directly.
         (unless unwind-indicator
           (message "sdim translation failed")
           (unless (process-live-p sdim-ime-connection)

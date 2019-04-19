@@ -312,7 +312,7 @@ elif test "${#dood[@]}" = 1 -a -z "${always_selection}"; then
     if test "$hint_1_entry" = true; then
         hint "只有一个选项： ${dood[0]}" >/dev/tty 2>&1 </dev/tty
     fi
-    echo "${dood[0]}"
+    echo -n "${dood[0]}"
     exit 0
 fi
 

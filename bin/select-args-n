@@ -1,0 +1,90 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P p:prompt e:extra-sa-args='()'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o e:p:h \
+                      --long extra-sa-args:,prompt:,help \
+                      -n $(basename -- $0) -- "$@")
+declare -a extra_sa_args=()
+declare prompt=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -e|--extra-sa-args)
+            extra_sa_args=("${extra_sa_args[@]}" "$2")
+            shift 2
+
+            ;;
+        -p|--prompt)
+            prompt=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-e, '
+            printf %-24s '--extra-sa-args=EXTRA_SA_ARGS...'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--prompt=PROMPT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+IFS=$'\n'
+
+no_more_selections="这是一个多项选择，如果没有更多要选的，请选此选项以结束"
+
+declare -A selected_answers
+
+while true; do
+    currently_selected="当前已选：$(string-join ", " "${!selected_answers[@]}" || true)"
+    ans=$(
+        select-args "${extra_sa_args[@]}" -p "$prompt" "$@" "$no_more_selections" "$currently_selected"
+       )
+
+    if test "$ans" = "$no_more_selections"; then
+        break
+    elif test "$ans" = "$currently_selected"; then
+        if yes-or-no-p -y "你要取消当前的所有选择么？"; then
+            unset selected_answers
+            declare -A selected_answers
+        else
+            hint "好的，下次想从头开始的话再选这个选项，这次就算了"
+        fi
+        continue
+    fi
+
+    if test -v selected_answers[$ans] && yes-or-no-p -y "你已经选过 $ans，现在要取消选它么？"; then
+        unset selected_answers[$ans]
+    else
+        selected_answers[$ans]=1
+    fi
+
+    clear 1>&2
+done
+
+for x in "${!selected_answers[@]}"; do
+    echo "$x"
+done
+

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# open node
+
+node=$(select-output-line -i "$*" -p "请选择要打开哪个 node" jc list-nodes)
+firefox ${scm_jenkins_url}computer/${node}

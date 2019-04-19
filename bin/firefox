@@ -11,6 +11,9 @@ else
     exit 1
 fi
 
-find-or-exec firefox $the_firefox
+if test $# = 1 -a "$1" = -h; then
+    true
+else
+    find-or-exec firefox true
+fi
 exec $the_firefox "$@"
-

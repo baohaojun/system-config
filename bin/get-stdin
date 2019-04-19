@@ -160,7 +160,7 @@ if test $empty_ok = false -a "`get-rid-of-comment $tmp | perl -npe 's/\s//g' | w
         exec get-stdin $tmp
     fi
 fi
-get-rid-of-comment $tmp
+get-rid-of-comment $tmp | rm-last-nl
 if test "$USE_BUFFER_NAME"; then
     (
         cd /tmp
