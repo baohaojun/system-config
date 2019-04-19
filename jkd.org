@@ -238,17 +238,21 @@ This is simple using Perl's “reflection”.
 
       my $auth_str = sprintf "%s:%s@", $jkd_username, $jkd_password;
       (my $scm_jira_site = $jkd_jiraurl) =~ s,(https?://),$1$auth_str,;
-      return "${scm_jira_site}/${api_path}";
+      my $url = "${scm_jira_site}${api_path}";
+      say STDERR "api: $url";
+      return "$url";
   }
 
   sub get($) {
       my $ua = LWP::UserAgent->new;
       my $api = $_[0];
       my $url = jkd_url_for_api($api);
+
       my $response = $ua->request(GET $url);
       if ($response->code != 200) {
           die "Can't get $api: code is " . $response->code . ", url is $url";
       }
+
 
       return $response;
   }
@@ -312,7 +316,7 @@ This is simple using Perl's “reflection”.
   }
 
   sub jkd_select_project(@) {
-      my $projects_resp = get("/rest/api/2/project/");
+      my $projects_resp = get("rest/api/2/project/");
 
       my %project_key_name_map;
       my $projects_object = decode_json $projects_resp->content;
@@ -321,7 +325,7 @@ This is simple using Perl's “reflection”.
           $project_key_name_map{$project->{key}} = $project->{name};
       }
 
-      print select_args("-p", "Which project do you want to use?",
+      return select_args("-p", "Which project do you want to use?",
                   "-O", "select-jira-project",
                   sort {$a cmp $b} map {sprintf "%s: %s", $_, $project_key_name_map{$_}} keys %project_key_name_map
           );
@@ -373,7 +377,7 @@ This is simple using Perl's “reflection”.
 
       ## end generated code
 
-      my $project_meta_resp = get("/rest/api/2/issue/createmeta?projectKeys=$project");
+      my $project_meta_resp = get("rest/api/2/issue/createmeta?projectKeys=$project");
       my %jkd_project_issue_types_name_id_map;
 
       my $project_meta_obj = decode_json $project_meta_resp->content;
@@ -382,6 +386,7 @@ This is simple using Perl's “reflection”.
               my $name = $issuetype->{name};
               my $id = $issuetype->{id};
               $jkd_project_issue_types_name_id_map{$name} = $id;
+              say "Got issue type: $name => $id";
           }
       }
 
@@ -441,7 +446,7 @@ This is simple using Perl's “reflection”.
 
       ## end generated code
 
-      my $issue_fields_resp = get("/rest/api/2/issue/createmeta?projectKeys=${project}&issuetypeIds=${issue_type}&expand=projects.issuetypes.fields");
+      my $issue_fields_resp = get("rest/api/2/issue/createmeta?projectKeys=${project}&issuetypeIds=${issue_type}&expand=projects.issuetypes.fields");
 
       return decode_json $issue_fields_resp->content;
   }
@@ -450,7 +455,7 @@ This is simple using Perl's “reflection”.
   sub jkd_c(@) { # create issue
 
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l p:project i:issue-type
+      # generate-getopt -s perl -l p:project i:issue-type-id
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -459,15 +464,15 @@ This is simple using Perl's “reflection”.
 
       local @ARGV = @_;
 
-      my $issue_type = "";
+      my $issue_type_id = "";
       my $project = "";
 
       my $handler_help = sub {
           print ;
           print "\n\n选项和参数：\n";
           printf "%6s", '-i, ';
-          printf "%-24s", '--issue-type=ISSUE-TYPE';
-          if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
+          printf "%-24s", '--issue-type-id=ISSUE-TYPE-ID';
+          if (length('--issue-type-id=ISSUE-TYPE-ID') > 24 and length() > 0) {
               print "\n";
               printf "%30s", "";
           }
@@ -486,7 +491,7 @@ This is simple using Perl's “reflection”.
       };
 
       GetOptions (
-          'issue-type|i=s' => \$issue_type,
+          'issue-type-id|i=s' => \$issue_type_id,
           'project|p=s' => \$project,
           'help|h!' => \&$handler_help,
           );
@@ -498,28 +503,50 @@ This is simple using Perl's “reflection”.
           ($project = jkd_select_project()) =~ s/:.*//;
       }
 
-      if (not $issue_type) {
+      if (not $issue_type_id) {
           my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
-          my $issue_type_name = select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
-          $issue_type = $jkd_project_issue_types_name_id_map{$issue_type_name};
+          my $issue_type_name = decode_utf8 select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
+          $issue_type_id = $jkd_project_issue_types_name_id_map{$issue_type_name};
+          say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
       }
 
-      my $issue_fields_obj = jkd_get_issue_fields("-p", "$project", "-i", "$issue_type");
+      my $issue_fields_obj = jkd_get_issue_fields("-p", "$project", "-i", "$issue_type_id");
 
       my %required_fields;
       for my $project (@{$issue_fields_obj->{projects}}) {
-          for my $issue_type (@{$project->{issuetypes}}) {
-              for my $field_name (keys %{$issue_type->{fields}}) {
-                  if ($issue_type->{fields}{$field_name}{required}) {
-                      if ($field_name eq 'project' || $field_name eq 'issuetype') {
+          for my $it (@{$project->{issuetypes}}) {
+              if ($it->{id} != $issue_type_id) {
+                  next;
+              }
+              for my $field_key (keys %{$it->{fields}}) {
+                  if ($it->{fields}{$field_key}{required}) {
+                      if ($field_key eq 'project' || $field_key eq 'issuetype') {
                           next;
                       }
-                      if ($issue_type->{fields}{$field_name}{schema}{type} eq 'string') {
+                      if ($it->{fields}{$field_key}{schema}{type} eq 'string') {
                           my @command = (
-                              "ask-for-input-with-emacs", "-p", "Please input the $field_name."
+                              "ask-for-input-with-emacs", "-p", sprintf("Please input the %s", ($it->{fields}{$field_key}{name} or "$field_key (field has no name)"))
                               );
                           my $command = join(" ", shell_quote(@command));
-                          $required_fields{$field_name} = qx($command);
+                          $required_fields{$field_key} = qx($command);
+                      } elsif ($it->{fields}{$field_key}{schema}{type} eq 'array' and
+                               $it->{fields}{$field_key}{schema}{custom} eq "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") {
+                          my $field_name = $it->{fields}{$field_key}{name};
+                          my %allowed_values_map;
+                          map { $allowed_values_map{$_->{value}} = $_->{id}} @{$it->{fields}{$field_key}{allowedValues}};
+                          my @command = (
+                              "select-args-n", "-p", decode_utf8("请输入你想要选择的 ") . "$field_name",
+                              keys %allowed_values_map
+                              );
+                          my $command = join(" ", shell_quote @command);
+                          my $values = decode_utf8 qx($command);
+                          $required_fields{$field_key} = [];
+                          for (split " ", $values) {
+                              say "Working for $field_name: $_";
+                              push @{$required_fields{$field_key}}, {id => $allowed_values_map{$_}} if ${allowed_values_map{$_}};
+                          }
+                      } else {
+                          say $it->{fields}{$field_key}{name}, " scheme is ", $it->{fields}{$field_key}{schema}{type}, ", don't know how to deal";
                       }
                   }
 
@@ -528,16 +555,17 @@ This is simple using Perl's “reflection”.
       }
 
       $required_fields{project} = {
-          id => $project,
+          key => $project,
       };
 
       $required_fields{issuetype} = {
-          id => $issue_type,
+          id => $issue_type_id,
       };
 
       my $ua = LWP::UserAgent->new;
+      say "json is ", encode_json { fields => \%required_fields };
 
-      my $request = POST jkd_url_for_api("/rest/api/2/issue"),
+      my $request = POST jkd_url_for_api("rest/api/2/issue"),
           'Content-Type' => 'application/json',
           'Accept' => 'application/json',
           "charset" => "utf-8",
@@ -545,6 +573,7 @@ This is simple using Perl's “reflection”.
               fields => \%required_fields,
       };
       my $response = $ua->request($request);
+
       say "POST response code:" . $response->code, "result: ", $response->content;
   }
 
