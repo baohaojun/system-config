@@ -88,7 +88,6 @@ sub ACTION_info {
 
 sub ACTION_disthtml {
     my $self = shift;
-    $self->depends_on('muse');
     my $html = 'lisp/doc/pde.html';
     my $htmldir = 'lisp/doc/pde'; 
     my $texi = "lisp/doc/pde.texi";
@@ -100,28 +99,6 @@ sub ACTION_disthtml {
     }
     else {
         print "html documents is updated to date.\n";
-    }
-    return;
-}
-
-sub ACTION_muse {
-    my $self = shift;
-    my @muse = ('misc/QuickStart.muse', 'misc/QuickStartEn.muse');
-    my @otherlib = (
-        '/home/ywb/.emacs.d/site-lisp/mycontrib/dot-emacs-helper.el',
-        "/home/ywb/.emacs.d/config/muse-init.el",
-        "/home/ywb/proj/darcs/pde/misc/muse-myhtml.el"
-    );
-    foreach my $muse ( @muse ) {
-        (my $html = 'lisp/doc/'.basename($muse)) =~ s/\.muse/.html/;
-        if ( !-e $html || stat($muse)->mtime > stat($muse)->mtime ) {
-            system("emacs", "-q", "-batch",
-                   (map { +"-l" => $_ } @otherlib),
-                   "-f", "muse-project-batch-publish", "PDE");
-        }
-        else {
-            print "$html is updated to date.\n";
-        }
     }
     return;
 }

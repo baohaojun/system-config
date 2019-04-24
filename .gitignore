@@ -1,1 +1,13 @@
 lisp/tools/perldoc-cache.el
+*.elc
+Build
+*.gz
+META.yml
+MYMETA.yml
+META.json
+MYMETA.json
+MANIFEST.SKIP
+MANIFEST.bak
+MANIFEST
+Makefile.PL
+pde.info
