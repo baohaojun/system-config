@@ -6,10 +6,10 @@ use String::ShellQuote;
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P -s perl -p jkd \
 # '?subcmd_help()' \
-# u:username '?"Login Username"' \
-# p:password '?"Login Password"' \
-# j:jiraurl '?"Jira URL (only FQDN, no / and such)"' \
-# vverbose '?"Verbose debug output"'
+# u:username='"$ENV{scm_jira_user}"' '?"Login Username"' \
+# p:password='"$ENV{scm_jira_password}"' '?"Login Password"' \
+# j:jiraurl='"$ENV{scm_jira_url}"' '?"Jira URL (only FQDN, no / and such)"' \
+# vverbose='"$ENV{jkd_verbose}"' '?"Verbose debug output"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -18,10 +18,10 @@ Getopt::Long::Configure("posix_default");
 
 
 
-my $jkd_jiraurl = "";
-my $jkd_password = "";
-my $jkd_username = "";
-my $jkd_verbose = 0;
+my $jkd_jiraurl = "$ENV{scm_jira_url}";
+my $jkd_password = "$ENV{scm_jira_password}";
+my $jkd_username = "$ENV{scm_jira_user}";
+my $jkd_verbose = "$ENV{jkd_verbose}";
 
 my $handler_help = sub {
     print subcmd_help();
@@ -73,6 +73,11 @@ GetOptions (
 
 ## end generated code
 use v5.10;
+use String::ShellQuote;
+
+if ($jkd_verbose) {
+    say "jkd", shell_quote(@ARGV);
+}
 
 my %file_config;
 use Config::Simple;
@@ -88,7 +93,7 @@ if (not $jkd_password) {
 }
 
 if (not $jkd_password) {
-    say "Must specify the wiki password";
+    say "Must specify the jira password";
     &$handler_help(1)
 }
 
@@ -97,7 +102,7 @@ if (not $jkd_username) {
 }
 
 if (not $jkd_username) {
-    say "Must specify the wiki username";
+    say "Must specify the jira username";
     &$handler_help(1);
 }
 
@@ -106,13 +111,13 @@ if (not $jkd_jiraurl) {
 }
 
 if (not $jkd_jiraurl) {
-    say "Must specify the wiki url";
+    say "Must specify the jira url";
     &$handler_help(1);
 }
 
 my $jkd_topdir = $file_config{"jkd.topdir"};
 if (not $jkd_topdir) {
-    $jkd_topdir = glob("~/src/github/jkd-doujyou"); # doujyou is japanese for 道場
+    $jkd_topdir = glob("~/src/github/jkd-doujyou"); # doujyou is japanese for 道場
 }
 
 use File::Path;
@@ -134,7 +139,10 @@ sub jkd_url_for_api($) {
     my $auth_str = sprintf "%s:%s@", $jkd_username, $jkd_password;
     (my $scm_jira_site = $jkd_jiraurl) =~ s,(https?://),$1$auth_str,;
     my $url = "${scm_jira_site}${api_path}";
-    say STDERR "api: $url";
+    if ($jkd_verbose) {
+        say STDERR "api: $url";
+    }
+
     return "$url";
 }
 
@@ -153,8 +161,11 @@ sub get($) {
 }
 
 sub select_args(@) {
+    if ($jkd_verbose) {
+        say STDERR "select-args ", join(" ", shell_quote(@_));
+    }
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl -l -P p:prompt O:order-name
+    # generate-getopt -s perl -l -P p:prompt O:order-name i:init-input
     ## end code-generator
     ## start generated code
     use Getopt::Long;
@@ -163,12 +174,21 @@ sub select_args(@) {
 
     local @ARGV = @_;
 
+    my $init_input = "";
     my $order_name = "";
     my $prompt = "";
 
     my $handler_help = sub {
         print ;
         print "\n\n选项和参数：\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--init-input=INIT-INPUT';
+        if (length('--init-input=INIT-INPUT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
         printf "%6s", '-O, ';
         printf "%-24s", '--order-name=ORDER-NAME';
         if (length('--order-name=ORDER-NAME') > 24 and length() > 0) {
@@ -190,6 +210,7 @@ sub select_args(@) {
     };
 
     GetOptions (
+        'init-input|i=s' => \$init_input,
         'order-name|O=s' => \$order_name,
         'prompt|p=s' => \$prompt,
         'help|h!' => \&$handler_help,
@@ -199,7 +220,7 @@ sub select_args(@) {
     ## end generated code
 
     my @command = (
-        "select-args", "-p", "$prompt",
+        "select-args", "-p", "$prompt", "-i", "$init_input",
         "-O", "$order_name",
         @ARGV
         );
@@ -472,6 +493,218 @@ sub jkd_c(@) { # create issue
     say "POST response code:" . $response->code, "result: ", $response->content;
 }
 
+sub jkd_comment(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -l -s perl i:issue c:comment
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $comment = "";
+    my $issue = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-c, ';
+        printf "%-24s", '--comment=COMMENT';
+        if (length('--comment=COMMENT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--issue=ISSUE';
+        if (length('--issue=ISSUE') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'comment|c=s' => \$comment,
+        'issue|i=s' => \$issue,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my $ua = LWP::UserAgent->new;
+
+    my $request = PUT jkd_url_for_api("rest/api/2/issue/${issue}"),
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        "charset" => "utf-8",
+        Content => encode_json {
+            update => {
+                comment => [
+                    {
+                        add =>
+                        {
+                            body => decode_utf8 $comment
+                        }
+                    }
+                    ]
+            }
+    };
+    my $response = $ua->request($request);
+
+    say "PUT response code:" . $response->code, "result: ", $response->content;
+
+}
+sub jkd_assign(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l i:issue-id a:assign-to
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $assign_to = "";
+    my $issue_id = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-a, ';
+        printf "%-24s", '--assign-to=ASSIGN-TO';
+        if (length('--assign-to=ASSIGN-TO') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--issue-id=ISSUE-ID';
+        if (length('--issue-id=ISSUE-ID') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'assign-to|a=s' => \$assign_to,
+        'issue-id|i=s' => \$issue_id,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my $ua = LWP::UserAgent->new;
+
+    my $request = PUT jkd_url_for_api("rest/api/2/issue/${issue_id}/assignee"),
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        "charset" => "utf-8",
+        Content => encode_json {
+            name => $assign_to
+    };
+
+    my $response = $ua->request($request);
+
+    if ($response->code < 200 || $response->code >= 300) {
+        use HTTP::Status;
+        say sprintf("PUT error! response code: %d (meaning: %s), content: %s", $response->code, status_message($response->code), $response->content);
+    }
+}
+
+use v5.10;
+
+sub jkd_tri(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -l -s perl i:issue t:transition
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+    local @ARGV = @_;
+
+    my $issue = "";
+    my $transition = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--issue=ISSUE';
+        if (length('--issue=ISSUE') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-t, ';
+        printf "%-24s", '--transition=TRANSITION';
+        if (length('--transition=TRANSITION') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'issue|i=s' => \$issue,
+        'transition|t=s' => \$transition,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    if (not $issue) {
+        say "must specify the issue";
+        &$handler_help();
+    }
+
+    unless ($transition =~ m/^\d+$/) {
+        my $response = get("rest/api/2/issue/${issue}/transitions?expand=transitions.fields");
+        my $json_obj = decode_json $response->content;
+        $transition = select_args("-p", "如何变更当前 issue：${issue}", "-i", "$transition", map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
+        say "transition is $transition";
+        $transition =~ s,^id=(\d+):.*,$1, or
+            die "Invalid transision $transition";
+    }
+
+    my $ua = LWP::UserAgent->new;
+
+    my $request = POST jkd_url_for_api("rest/api/2/issue/${issue}/transitions"),
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        "charset" => "utf-8",
+        Content => encode_json {
+            transition => {
+                id => $transition
+            }
+    };
+    say "my request's content: ", $request->content;
+    my $response = $ua->request($request);
+
+    say "PUT response code:" . $response->code, "result: ", $response->content;
+
+}
 sub subcmd_help() {
     my $top_help_str = <<~'EOF';
         Usage: jkd [GLOBAL_OPTIONS]... SUB_COMMAND SUBCMD_ARGS...
@@ -483,6 +716,7 @@ sub subcmd_help() {
         update1page => "Update 1 page (html text and all images -- automatically upload as page attachments)",
         get1page => "Get 1 page (html text and all image attachments)",
         e => "Edit 1 page in emacs org-mode, download/edit/upload",
+        tri => "Transition of an issue",
         );
 
     my %help_printed_map;
