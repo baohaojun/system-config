@@ -250,6 +250,8 @@
 
 (bind-both-global&window-keymaps "XF86AudioRaiseVolume"  '(system "adjust-volume&"))
 (bind-both-global&window-keymaps "XF86AudioLowerVolume"  '(system "adjust-volume&"))
+(bind-keys s-h-keymap "N" '(system "private-firefox -i 1&"))
+(bind-keys s-h-keymap "Super-N" '(system "private-firefox -i 2&"))
 
 (defun classed-key-synthesize (from to)
   (when (eq (car to) 'quote)

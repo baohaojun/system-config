@@ -1,17 +1,23 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt rrsync
+# generate-getopt rrsync i:private-instance=1
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o rh \
-               --long rsync,help,no-rsync \
+TEMP=$( getopt -o i:rh \
+               --long private-instance:,rsync,help,no-rsync \
                -n $(basename -- $0) -- "$@")
+declare private_instance=1
 declare rsync=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -i|--private-instance)
+            private_instance=$2
+            shift 2
+
+            ;;
         -r|--rsync|--no-rsync)
             if test "$1" = --no-rsync; then
                 rsync=false
@@ -19,12 +25,16 @@ while true; do
                 rsync=true
             fi
             shift
+
             ;;
         -h|--help)
             set +x
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--private-instance=PRIVATE_INSTANCE'
+            echo
             printf %06s '-r, '
             printf %-24s '--[no-]rsync'
             echo
@@ -44,9 +54,52 @@ done
 
 ## end generated code
 
+private_dir=~/.cache/private-firefox-${private_instance}
+mkdir -p ${private_dir} ${private_dir}/.cache/system-config/logs/ ${private_dir}/external
 
-if test ! -d ~/tmp/.mozilla -o "$rsync" = true; then
-    rsync ~/.mozilla ~/tmp -av --delete
+if test ! -d ${private_dir}/.mozilla -o "$rsync" = true; then
+    rsync ~/.mozilla ${private_dir} -av --delete
+    rsync ~/external/firefox ${private_dir}/external -av --delete
 fi
-mkdir -p /home/bhj/tmp/.cache/system-config/logs/
-HOME=~/tmp firefox --ProfileManager
+
+for pid in $(
+                sawfish-client -e "$(
+cat <<'EOF9cacf490bebf'
+; {%sawfish-mode%}
+(mapcar
+ (lambda (w)
+   (let ((class (bhj-window-class w)))
+     (when (or (string-equal class "Firefox")
+               (string-equal class "Firefox-esr"))
+       (window-pid w))))
+ (managed-windows))
+; {%/sawfish-mode%}
+EOF9cacf490bebf
+
+)" | tr -d '()' | tr ' ' '\n' | sort -u
+
+            ); do
+    log "checking $pid"
+    if [[ $pid =~ ^[0-9]+$ ]] && cat /proc/$pid/environ|tr '\0' '\n' | grep "^HOME=${private_dir}" -q; then
+        wanted_pid=$pid
+        log "We want to activate $wanted_pid"
+        sawfish-client -e "$(
+cat <<'EOFd56e460f1481' | . .replace-%% --
+; {%sawfish-mode%}
+(let ((first nil))
+  (mapc
+   (lambda (w)
+     (when (and (not first)
+                (= (window-pid w) [%wanted-pid%]))
+       (bhj-activate-window w)
+       (setq first t)))
+   (managed-windows)))
+; {%/sawfish-mode%}
+EOFd56e460f1481
+
+)"
+        exit
+    fi
+done
+
+HOME=${private_dir} firefox --ProfileManager -new-instance&

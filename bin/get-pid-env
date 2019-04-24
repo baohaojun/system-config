@@ -1,5 +1,57 @@
 #!/bin/bash
-
 set -e
-cd /proc/$1/ >/dev/null 2>&1 || cd /proc/$(ps.pl "$1"|pn 1)/
-cat environ | tr '\000' '\n' | grep -P -e "^\Q$2\E="
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P p:pid v:variable
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o p:v:h \
+                      --long pid:,variable:,help \
+                      -n $(basename -- $0) -- "$@")
+declare pid=
+declare variable=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -p|--pid)
+            pid=$2
+            shift 2
+
+            ;;
+        -v|--variable)
+            variable=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--pid=PID'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--variable=VARIABLE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+
+cd /proc/$pid/ >/dev/null 2>&1 || cd /proc/$(ps.pl "$1"|pn 1)/
+
+cat environ | tr '\000' '\n' | grep -P -e "^\Q${variable}\E="

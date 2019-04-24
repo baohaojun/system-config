@@ -2,6 +2,8 @@
 
 if test -e ~/external/the-firefox; then
     the_firefox=$(readlink -f ~/external/the-firefox)
+elif test -e ~/external/firefox/firefox; then
+    the_firefox=~/external/firefox/firefox
 elif test -e ~/system-config/bin/the-firefox; then
     the_firefox=$(readlink -f ~/system-config/bin/the-firefox)
 elif test -x /usr/bin/firefox; then

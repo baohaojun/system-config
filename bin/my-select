@@ -102,7 +102,7 @@ sub my_select($);
 sub my_select($) {
   my ($remaining_options) = @_;
 
-  if (@$remaining_options == 1) {
+  if (@$remaining_options == 1 and $ENV{ORIGINAL_MATCHER} eq "") {
     found_it($$remaining_options[0], $remaining_options);
     return;
   }

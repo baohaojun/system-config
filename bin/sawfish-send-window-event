@@ -21,7 +21,7 @@ else
            done
        )
        (throw 'TAG)))
-   (managed-windows)))
+   (stacking-order)))
 EOF
           )
 fi
