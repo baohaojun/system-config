@@ -87,6 +87,7 @@ WrenchMainWindow::WrenchMainWindow(QWidget *parent) :
     connect(ui->phoneTextEdit, SIGNAL(phoneCallShortcutPressed()), this, SLOT(on_tbPhoneCall_clicked()));
     connect(ui->phoneTextEdit, SIGNAL(imageDropEvent(QDropEvent)), this, SLOT(imageDropped(QDropEvent)));
     ui->phoneTextEdit->setFocus(Qt::OtherFocusReason);
+    ui->phoneTextEdit->setAcceptRichText(false);
     mLastRadioButton = NULL;
     createTrayIcon();
     this->setAcceptDrops(true);
