@@ -9,7 +9,7 @@ if test ! -d "./.git" && ! [[ "${PWD}" =~ \.git$ ]]; then
 fi
 
 if test $# != 1; then
-    set -- ~/src/android-mirror/$(repo-abs-path).git
+    set -- ${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-abs-path).git
     if test -e .git/shallow; then
         mv .git/shallow .git/shallow.$$
     fi

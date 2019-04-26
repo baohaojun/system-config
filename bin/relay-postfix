@@ -113,6 +113,9 @@ relayhost = [$host]:$port
 smtp_use_tls = yes
 smtp_sender_dependent_authentication = yes
 
+smtp_tls_wrappermode = yes
+smtp_tls_security_level = encrypt
+
 EOF
 fi
 
