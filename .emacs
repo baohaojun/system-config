@@ -5,15 +5,16 @@
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
-; (package-initialize)
+(package-initialize)
+(setq clipmon--autoinsert nil)
 
 (setq org-emphasis-regexp-components
       '(
-        "！？；：，。、  \t('\"{（“" ;pre
+        "！？；：，。、  \t('\"{（“"              ;pre
         "- —；：，。、 \t.!,:!?？;！'\")}（）\\”" ;post
-        " \t\r\n," ;border *forbidden*
-        "." ;body-regexp
-        1 ; newline
+        " \t\r\n,"                                ;border *forbidden*
+        "."                                       ;body-regexp
+        1                                         ; newline
         ))
 
 (when (file-exists-p "~/.config/system-config/vim-is-evil")
@@ -385,5 +386,3 @@
 
 (require 'netease-music)
 (setq netease-music-api "http://localhost:3000")
-(when (file-exists-p custom-file)
-  (load custom-file))
