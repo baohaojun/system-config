@@ -108,7 +108,7 @@ fi
 url=${url:-http://$host$dot$domain$fill}
 
 if test $host = gerrit; then
-    url=$(printf "https://review.smartisan.cn:8080/#/q/%s,n,z" "$fill")
+    url=$(printf "${scm_gerrit_url}#/q/%s,n,z" "$fill")
 fi
 
 if test $prog = search-google; then
