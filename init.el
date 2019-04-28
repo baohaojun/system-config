@@ -38,6 +38,8 @@
 ;; Allow users to provide an optional "init-preload-local.el"
 ;;----------------------------------------------------------------------------
 (require 'init-preload-local nil t)
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 ;;----------------------------------------------------------------------------
 ;; Load configs for specific features and modes
