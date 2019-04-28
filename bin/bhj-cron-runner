@@ -37,11 +37,11 @@ for dir in ~/system-config/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; d
         if test "$x" != "${x%.stackdump}" -o -d "$x" || [[ $x =~ \# ]]; then
             continue
         fi
-        test -e $x || continue
+        test -x $x || continue
         ld=$logdir/$x/$(date +%A)/
         mkdir -p $ld
         touch $ld
         time=$(date +%H:%M)
-        (nice $x || mail-bhj -s "cron-runner $x failed@$time: errno $?") > $ld/$time 2>&1 &
+        (nice $x || mail-bhj -s "bhj-cron-runner $x failed@$time: errno $?") > $ld/$time 2>&1 &
     done
 done&
