@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if test $# = 1; then
+    set -- "${1%%=*}" "${1#*=}"
+fi
+
+eval export "$1"="$2"
+
+for client in sawfish-client emacsclient; do
+    $client -e '(setenv "'$1'''" "'$2'")';
+done

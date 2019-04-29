@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# [[file:~/src/github/kungfu-edit/%E5%8C%85%E6%98%8A%E5%86%9B%E2%80%99s%20Home/Literate%20Programming/%E9%87%8D%E6%9E%84%E2%80%89Jenkins%20Kill%20Old%20Jobs%E2%80%89%E7%9A%84%E8%84%9A%E6%9C%AC/content.org::*%E8%84%9A%E6%9C%AC%E4%BB%A3%E7%A0%81][脚本代码:1]]
+import jenkins
+import os, sys
+
+server = jenkins.Jenkins(
+    os.environ['scm_jenkins_url'],
+    username = os.environ['scm_jenkins_user'],
+    password = os.environ['scm_jenkins_password']
+)
+
+def get_all_running_builds(job_name):
+    builds = server.get_running_builds()
+    return [b for b in builds if b['name'] == job_name]
+
+import click
+@click.command()
+@click.option('-j', '--job-name', envvar='JOB_NAME')
+def jenkins_kill_old_builds(job_name):
+    print get_all_running_builds(job_name)
+
+if __name__ == '__main__':
+    jenkins_kill_old_builds()
+# 脚本代码:1 ends here
