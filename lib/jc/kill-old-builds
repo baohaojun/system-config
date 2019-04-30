@@ -47,6 +47,8 @@ class TopicChanges:
 
 def build_matches_same_change(job_name, build_number, gerrit_topic_changes):
     build_envvars = server.get_build_env_vars(job_name, build_number)['envMap']
+    for var in u"GERRIT_CHANGE_NUMBER" u"GERRIT_TOPIC":
+        build_envvars.setdefault(var, "")
     if build_envvars[u"GERRIT_CHANGE_NUMBER"] in gerrit_topic_changes:
         return True
     elif build_envvars[u"GERRIT_TOPIC"] in gerrit_topic_changes:
@@ -70,7 +72,8 @@ import click
 @click.option('--dry-run/--no-dry-run', default=True)
 def jenkins_kill_old_builds(job_name, build_number, dry_run):
     build_envvars = server.get_build_env_vars(job_name, build_number)['envMap']
-
+    for var in u"GERRIT_CHANGE_NUMBER" u"GERRIT_TOPIC":
+        build_envvars.setdefault(var, "")
 
     print ('build_envvars is {}'.format(build_envvars))
 
