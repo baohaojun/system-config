@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# nec stands for "no emacs copy", stop emacs from messing with the clipboard (when I want to copy richtext).
+
+emacsclient -e "(clipmon-mode -1)"
+sleep 60
+emacsclient -e "(clipmon-mode 1)"

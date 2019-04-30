@@ -102,7 +102,7 @@ if test $# = 1; then
     if [[ "$1" =~ = ]]; then
         query=$1
     else
-        query=$(printf "(|(sAMAccountName=${glob}%s${glob})(cn=${glob}%s${glob})(sn=${glob}%s${glob})(mail=${glob}%s${glob}))" "$1" "$1" "$1" "$1")
+        query=$(printf "(|(sAMAccountName=${glob}%s${glob})(cn=${glob}%s${glob})(sn=${glob}%s${glob})(mail=${glob}%s${glob})(displayName=${glob}%s${glob}))" "$1" "$1" "$1" "$1" "$1")
     fi
 elif test $# = 2; then
     query='(|'

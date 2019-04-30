@@ -1,7 +1,40 @@
 #!/bin/bash
+set -x
+exec 2>~/tmp/emacs-get-android-clipboard.log
 if test $(basename $0) = emacs-get-android-clipboard; then
     getclip-android|putclip
 else
     putclip "$(getphone-android|perl -npe 's/\+86//')"
 fi
+
+if [[ "$(sawfish-top-window)" =~ Firefox ]]; then
+    old_text=$(getclip)
+    urls=$(
+        perl -e "$(
+cat <<'EOF63aa0d87444c'
+# {%perl-mode%}
+use URI::Find;
+use strict;
+use File::Slurp;
+
+my $text = join(" ", @ARGV);
+my $finder = URI::Find->new( sub { print $_[1] . "\n" } );
+$finder->find(\$text );
+# {%/perl-mode%}
+EOF63aa0d87444c
+
+)" "$old_text"
+        )
+
+    if test "${urls}" -a "${urls}" != "${old_text}"; then
+        IFS=$'\n'
+        text_to_post=$(
+            EMACS=t select-args -p "Which text do you want to post?" $urls "The old text"
+                    )
+        if test "${text_to_post}" != "The old text"; then
+            putclip "${text_to_post}"
+        fi
+    fi
+fi
+
 sawfish-client -e '(call-command (lookup-event-binding (lookup-event "Super-v")))'

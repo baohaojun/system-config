@@ -77,8 +77,6 @@ def ali_folder_match(folder, pats):
         return False
     if folder.find("failinbox") >= 0:
         return False
-    if folder.find("-inbox") >= 0:
-        return False
     if folder.find("2014inbox") >= 0:
         return False
     for pat in pats:

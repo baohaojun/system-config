@@ -1,5 +1,51 @@
 #!/bin/bash
 set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P ssilent
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o sh \
+                      --long silent,help,no-silent \
+                      -n $(basename -- $0) -- "$@")
+declare silent=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -s|--silent|--no-silent)
+            if test "$1" = --no-silent; then
+                silent=false
+            else
+                silent=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-s, '
+            printf %-24s '--[no-]silent'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 cd $(lookup-file .git/hooks)
 if grep -q add_ChangeId commit-msg; then
     echo seems you have already added gerrit commit hooks, do nothing 1>&2
@@ -12,6 +58,9 @@ elif test -e ~/src/github/smartcm/scm-helpers/gerrit-fix-hooks; then
     ~/src/github/smartcm/scm-helpers/gerrit-fix-hooks
 fi
 
+if test "${silent}" = true; then
+    exit 0
+fi
 hint -t 1 "已经帮你把当前的 git 仓库修改了 commit-msg 的 hooks，请考虑 git commit --amend 一下，确保当前的 git 提交有 Change-Id。
 
 注意如果在用 git commit --fixup 的话，gerrit 的 hook 脚本被谷歌升过级之后，fixup 的 Patch 不给生成 change-id 了，想解决这个问题的话，必须自己 amend 两次，第一次把 fixup 去掉（比如在前面加个 x），然后第二次再把它加回来。"
