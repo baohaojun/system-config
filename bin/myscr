@@ -224,7 +224,10 @@ if session-exists; then
     if test $# != 0; then
         (
             if test "${keep_env}" = true; then
-                declare -x -p | tee /tmp/screen-env.$$
+                (
+                    echo export HISTIGNORE=\*
+                    declare -x -p
+                ) | tee /tmp/screen-env.$$
                 echo
             fi
             if echo $SHELLOPTS | grep -q xtrace; then

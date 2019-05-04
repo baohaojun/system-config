@@ -5,11 +5,26 @@ if test "$#" = 0; then
     return
 fi
 
-atexit_args=(
+sc_atexit_number=${sc_atexit_number:-0}
+((sc_atexit_number++)) || true
+
+eval "$(
+cat <<'EOF26ed439643f8' | . .replace-%% --
+# {%sh-mode%}
+sc_atexit_args_[%sc_atexit_number%]=(
     "$@"
 )
-function atexit() {
-    "${atexit_args[@]}"
+
+function sc_atexit_[%sc_atexit_number%]() {
+    "${sc_atexit_args_[%sc_atexit_number%][@]}"
+    local sc_n=[%sc_atexit_number%]
+    if test "${sc_n}" -gt 1; then
+        ((sc_n--)) || true
+        eval sc_atexit_${sc_n}
+    fi
 }
 
-trap atexit 0
+trap sc_atexit_[%sc_atexit_number%] 0
+# {%/sh-mode%}
+EOF26ed439643f8
+)"
