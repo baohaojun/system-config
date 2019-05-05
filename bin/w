@@ -1,0 +1,17 @@
+#!/bin/bash
+
+exec > ~/tmp/w.log 2>&1
+set -x
+. ~/.profile
+if [[ $(sawfish-top-window) =~ Firefox ]]; then
+    url=$(get-firefox-tab-url)
+    if [[ $url =~ /job/.*/[0-9]+(/|$) ]]; then
+        bhj-notify jc "Waiting for $url"
+        global-x jc wait "$url"
+        alarm 0m "$url has completed"
+        mail-bhj -s "gtd: $url has completed"
+        exit 0
+    fi
+fi
+
+bhj-notify w "Don't know what to do"

@@ -1,0 +1,24 @@
+#!/bin/bash
+setenvs=$(declare -x -p | perl -pe "$(
+cat <<'EOF3ca1586eb1f1'
+# {%perl-mode%}
+s,^declare -x ,(setenv ",;
+s,=," ,;
+s,$,),;
+# {%/perl-mode%}
+EOF3ca1586eb1f1
+
+)")
+
+lisp=$(
+    cat <<'EOF2f77bccb9b66' |. .replace-%% --
+; {%emacs-lisp-mode%}
+(progn
+  [%setenvs%])
+; {%/emacs-lisp-mode%}
+EOF2f77bccb9b66
+
+)
+
+emacsclient -e "${lisp}"
+sawfish-client -e "${lisp}"
