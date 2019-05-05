@@ -142,7 +142,10 @@ if test "${silent}" = true; then
     set -- 'adb_quick_input{"input keyevent UNKNOWN"}'
 fi
 
-export EMACS=t
+select-output-line() {
+    EMACS=t command select-output-line "$@"
+}
+
 
 if test "$exclusive" = true; then
     if test -z "$ANDROID_SERIAL"; then
