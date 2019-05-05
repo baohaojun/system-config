@@ -37,9 +37,11 @@ if test $(basename $0) = screen-lock-off; then # lock off, screen on
     sleep 1
     xdotool mousemove 1024 10
     touch ~/.cache/system-config/logs/screen-on
-
+    setsid run-dir-once ~/system-config/etc/screen-lock-off.d&
+    setsid run-dir-once ~/.config/etc/screen-lock-off.d&
 else # lock on, screen off
     # my-adb key power
+
     rm ~/.cache/system-config/logs/screen-on -f
     am dvp
     destroy-windows Wrench
