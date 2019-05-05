@@ -1153,7 +1153,11 @@ Please note the double quotes around ~集成~, they are required, there will be 
 #+END_SRC
 
 
-*** TODO How to ask for input
+*** DONE How to ask for input
+    CLOSED: [2019-05-05 日 08:57]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2019-05-05 日 08:57]
+    :END:
 
 When I want to create a page, I need to ask the user, where do you want to create the page? With the following 3 questions:
 
