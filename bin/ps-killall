@@ -2,14 +2,15 @@
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P -p kill -e @group e:withenv p:path-to-exe
+# generate-getopt -P -p kill -e @group e:withenv p:path-to-exe s:signal
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o p:e:h \
-                      --long group,path-to-exe:,withenv:,help,no-group \
+TEMP=$(POSIXLY_CORRECT=true getopt -o p:s:e:h \
+                      --long group,path-to-exe:,signal:,withenv:,help,no-group \
                       -n $(basename -- $0) -- "$@")
 declare -x kill_group=${kill_group:-false}
 declare -x kill_path_to_exe=${kill_path_to_exe:-}
+declare -x kill_signal=${kill_signal:-}
 declare -x kill_withenv=${kill_withenv:-}
 eval set -- "$TEMP"
 while true; do
@@ -29,6 +30,11 @@ while true; do
             shift 2
 
             ;;
+        -s|--signal)
+            kill_signal=$2
+            shift 2
+
+            ;;
         -e|--withenv)
             kill_withenv=$2
             shift 2
@@ -44,6 +50,9 @@ while true; do
             echo
             printf %06s '-p, '
             printf %-24s '--path-to-exe=PATH_TO_EXE'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--signal=SIGNAL'
             echo
             printf %06s '-e, '
             printf %-24s '--withenv=WITHENV'
@@ -64,11 +73,14 @@ done
 
 ## end generated code
 
-
 export sig=-9
 if test "${1:0:1}" = -; then
     sig=$1
     shift
+fi
+
+if test "${kill_signal}"; then
+    sig=-${kill_signal#-}
 fi
 
 match=${1:-xxxxxyyy}
