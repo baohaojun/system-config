@@ -885,7 +885,7 @@ use String::ShellQuote;
 use URI::Encode qw(uri_encode uri_decode);
 sub ok_np(@) {
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl -l -P p:page-id u:url
+    # generate-getopt -s perl -l -P p:page-id u:url t:title-pattern
     ## end code-generator
     ## start generated code
     use Getopt::Long;
@@ -895,6 +895,7 @@ sub ok_np(@) {
     local @ARGV = @_;
 
     my $page_id = "";
+    my $title_pattern = "";
     my $url = "";
 
     my $handler_help = sub {
@@ -903,6 +904,14 @@ sub ok_np(@) {
         printf "%6s", '-p, ';
         printf "%-24s", '--page-id=PAGE-ID';
         if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-t, ';
+        printf "%-24s", '--title-pattern=TITLE-PATTERN';
+        if (length('--title-pattern=TITLE-PATTERN') > 24 and length() > 0) {
             print "\n";
             printf "%30s", "";
         }
@@ -922,6 +931,7 @@ sub ok_np(@) {
 
     GetOptions (
         'page-id|p=s' => \$page_id,
+        'title-pattern|t=s' => \$title_pattern,
         'url|u=s' => \$url,
         'help|h!' => \&$handler_help,
         );
@@ -934,7 +944,12 @@ sub ok_np(@) {
             "select-args", "-p", "Which recent page do you want to create a new page under?",
             );
 
-        my $cql_str = uri_encode("contributor in ($ok_username) and type = page");
+
+        my $cql_str = "contributor in ($ok_username) and type = page";
+        if ($title_pattern) {
+            $cql_str .= " and title ~ \"${title_pattern}\"";
+        }
+        $cql_str = uri_encode($cql_str);
         my $page_api = "rest/api/search?cql=$cql_str&expand=content.ancestors";
 
         my $response = get($page_api);
