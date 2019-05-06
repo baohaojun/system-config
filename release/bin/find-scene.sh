@@ -1,5 +1,7 @@
 #!/bin/bash
 
+unset EMACS
+
 if test "$WRENCH_APP_DIR"; then
     set -x
     exec 2>> ~/tmp/find-scene.sh.log
