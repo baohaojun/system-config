@@ -5,6 +5,13 @@ set -x
 . ~/.profile
 if [[ $(sawfish-top-window) =~ Firefox ]]; then
     url=$(get-firefox-tab-url)
+    url=${url%/}/
+    if [[ $url =~ /job/[^/]*/?$ ]]; then
+        id=$(
+            jc curl ${url}lastBuild/api/json|jq .id -r
+          )
+        url=${url}${id}
+    fi
     if [[ $url =~ /job/.*/[0-9]+(/|$) ]]; then
         bhj-notify jc "Waiting for $url"
         global-x jc wait "$url"
