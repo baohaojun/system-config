@@ -13,6 +13,7 @@ if [[ $(sawfish-top-window) =~ Firefox ]]; then
         url=${url}${id}
     fi
     if [[ $url =~ /job/.*/[0-9]+(/|$) ]]; then
+        url=$(echo $url | perl -pe 's,(/job/.*/[0-9]+(/|$)).*,$1,')
         bhj-notify jc "Waiting for $url"
         global-x jc wait "$url"
         alarm 0m "$url has completed"

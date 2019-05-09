@@ -1,5 +1,33 @@
 #!/bin/bash
+exec &> ~/tmp/input-main-passwd.log
+set -x
 
-putclip "$(get-authinfo localhost $USER 22)"
-xdotool-when-keyboard-clear key "shift+Insert"
-putclip ""
+window_class=$(sawfish-top-window-class)
+window_name=$(sawfish-top-window-name)
+
+window_class=${window_class,,}
+window_name=${window_name,,}
+
+IFS=$'\n'
+passwords=$(
+    cd ~/.password-store/
+    find "${window_class}/${window_name}" -type f|perl -pe 's,\.gpg$,,'
+         )
+
+declare -A password_map
+for password in ${passwords}; do
+    password_map[$password]=1
+done
+
+which_password=$(EMACS=t select-args -p "Which password do you want to use?" $passwords "Add a new password by inputing 'NEW-PASSWORD-NAME!<return>'")
+
+if test "${password_map[$which_password]}" != 1; then
+    which_password="${window_class}/${window_name}/${which_password}"
+    pass edit $which_password
+fi
+
+password=$(
+    pass "${which_password}"
+        )
+
+xdotool-when-keyboard-clear type "${password}"
