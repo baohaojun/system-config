@@ -1,7 +1,4 @@
 #!/bin/bash
-exec &> ~/tmp/input-main-passwd.log
-set -x
-
 window_class=$(sawfish-top-window-class)
 window_name=$(sawfish-top-window-name)
 
