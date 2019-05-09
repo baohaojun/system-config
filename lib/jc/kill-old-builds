@@ -3,8 +3,9 @@
 # [[file:~/src/github/kungfu-edit/%E5%8C%85%E6%98%8A%E5%86%9B%E2%80%99s%20Home/Literate%20Programming/%E9%87%8D%E6%9E%84%E2%80%89Jenkins%20Kill%20Old%20Jobs%E2%80%89%E7%9A%84%E8%84%9A%E6%9C%AC/content.org::*%E8%84%9A%E6%9C%AC%E4%BB%A3%E7%A0%81][脚本代码:1]]
 # -*- coding: utf-8 -*-
 import jenkins
-import os, sys
+import os
 import re
+import click
 
 try:  # py3
     from shlex import quote
@@ -13,9 +14,10 @@ except ImportError:  # py2
 
 server = jenkins.Jenkins(
     os.environ['scm_jenkins_url'],
-    username = os.environ['scm_jenkins_user'],
-    password = os.environ['scm_jenkins_password']
+    username=os.environ['scm_jenkins_user'],
+    password=os.environ['scm_jenkins_password']
 )
+
 
 def get_all_running_builds(job_name):
     builds = server.get_running_builds()
@@ -24,16 +26,26 @@ def get_all_running_builds(job_name):
     else:
         return builds
 
-class TopicChanges:
-    """Given a change and/or a topic, fetch back all the related changes from gerrit.
 
-    Later, other changes will be judged if it's included by this change/topic.
+class TopicChanges:
+
+    """Given a change and/or a topic, fetch back all the related changes
+from gerrit.
+
+    Later, other changes will be judged if it's included by this
+    change/topic.
+
     """
+
     def __init__(self, gerrit_change, gerrit_topic):
         self.gerrit_topic = gerrit_topic
         self.changes = [gerrit_change]
         if re.match(r'^[\w-]+$', gerrit_topic):
-            query_results = os.popen("gerrit-query-for-repo-download -q 'status:open topic:{}'".format(gerrit_topic)).read()
+            query_template = \
+                "gerrit-query-for-repo-download -q 'status:open topic:{}'"
+            query_results = os.popen(
+                query_template.format(
+                    gerrit_topic)).read()
             for line in query_results.split('\n'):
                 if " " in line:
                     project, change, patchset, commit_id = line.split(" ")
@@ -44,6 +56,7 @@ class TopicChanges:
         if str(c) == "":
             return False
         return str(c) in self.changes or str(c) == self.gerrit_topic
+
 
 def build_matches_same_change(job_name, build_number, gerrit_topic_changes):
     build_envvars = server.get_build_env_vars(job_name, build_number)['envMap']
@@ -56,6 +69,7 @@ def build_matches_same_change(job_name, build_number, gerrit_topic_changes):
     else:
         return False
 
+
 def kill_this_build(job_name, build_number, dry_run, this_build_number):
     if dry_run:
         print("We need to kill {} {}".format(job_name, build_number))
@@ -63,9 +77,15 @@ def kill_this_build(job_name, build_number, dry_run, this_build_number):
         command = "jc stop-build -j {} -n {}".format(job_name, build_number)
         os.system(command)
 
-        os.system("jc build-description -j {} -n {} -d {}".format(job_name, build_number, quote("跟 #{} 编译的是相同的 change，因此将其取消".format(this_build_number))))
+        os.system(
+            "jc build-description -j {} -n {} -d {}".format(
+                job_name,
+                build_number,
+                quote(
+                    "跟 #{} 编译的是相同的 change，因此将其取消".format(
+                        this_build_number))))
 
-import click
+
 @click.command()
 @click.option('-j', '--job-name', envvar='JOB_NAME')
 @click.option('-n', '--build-number', default=0, envvar='BUILD_NUMBER')
@@ -75,19 +95,31 @@ def jenkins_kill_old_builds(job_name, build_number, dry_run):
     for var in u"GERRIT_CHANGE_NUMBER" u"GERRIT_TOPIC":
         build_envvars.setdefault(var, "")
 
-    print ('build_envvars is {}'.format(build_envvars))
+    print('build_envvars is {}'.format(build_envvars))
 
-    my_topic_changes = TopicChanges(build_envvars[u"GERRIT_CHANGE_NUMBER"], build_envvars[u"GERRIT_TOPIC"])
+    my_topic_changes = TopicChanges(
+        build_envvars[u"GERRIT_CHANGE_NUMBER"],
+        build_envvars[u"GERRIT_TOPIC"])
 
     for build in get_all_running_builds(job_name):
         print('build is {}'.format(build))
-        if build['number'] != build_number and build_matches_same_change(job_name, build["number"], my_topic_changes):
-            if build["number"] < build_number:
-                kill_this_build(job_name, build["number"], dry_run, build_number)
-            else:
-                # exit with error, to notify that we should exit as we found a newer build for the current change.
-                print("已经有一个更新的 build：{} 在编译相同的 patch 了，终止当前 build")
-                exit(1)
+        if build['number'] == build_number:
+            continue
+
+        if not build_matches_same_change(
+                job_name, build["number"], my_topic_changes):
+            continue
+        if build["number"] < build_number:
+            kill_this_build(
+                job_name, build["number"], dry_run, build_number)
+        else:
+            # exit with error, to notify that we should exit as we
+            # found a newer build for the current change.
+            print("已经有一个更新的 build：{} 在编译相同的 patch 了，"
+                  "终止当前 build".format(
+                      build['number']))
+            exit(1)
+
 
 if __name__ == '__main__':
     jenkins_kill_old_builds()
