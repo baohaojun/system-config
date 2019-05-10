@@ -1,12 +1,11 @@
 #!/bin/bash
 
-exec 2> ~/tmp/get-firefox-tab-url.log
-set -x
+# exec 2> ~/tmp/get-firefox-tab-url.log
+# set -x
 
 export SAWFISH_BROWSER_INPUT_SLEEP=${SAWFISH_BROWSER_INPUT_SLEEP:-.05}
 current_clipboard=$(getclip)
 . atexit putclip "${current_clipboard}"
-. atexit bhj-notify get-firefox-tab-url "finished"
 
 empty_clipboard=@empty@
 

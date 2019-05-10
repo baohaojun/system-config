@@ -22,3 +22,14 @@
 (bind-both-global&window-keymaps "XF86Back" '(system "netease-music back&"))
 (bind-both-global&window-keymaps "XF86Forward" '(system "netease-music forward&"))
 (bind-both-global&window-keymaps "KP_Enter" '(system "emacsclient -e '(with-current-buffer (window-buffer (selected-window))(netease-music-jump-into))'&"))
+
+(bind-both-global&window-keymaps "F1" '(system "qtcreator-edit-with-emacs&"))
+(bind-both-global&window-keymaps "F2" '(system "sawfish-xf86search&"))
+(bind-both-global&window-keymaps "F3" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
+(bind-both-global&window-keymaps "F4" '(system "EMACS=t do-capture&"))
+(bind-both-global&window-keymaps "F5" '(system "Wrench.sh&"))
+(bind-both-global&window-keymaps "F6" '(system "find-or-exec gjiten gjiten&"))
+(bind-both-global&window-keymaps "F7" '(system "custom-command&"))
+(bind-both-global&window-keymaps "F8" '(system "EMACS=t ssssh&"))
+(bind-both-global&window-keymaps "F9" '(system "wrench-show-notifications.sh&"))
+
