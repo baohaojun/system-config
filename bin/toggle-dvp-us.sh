@@ -125,6 +125,7 @@ do-dvp() {
         echo am: normal layout
         setxkbmap -layout us
         xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
+        xmodmap ~/system-config/etc/hardware-mach/always/.Xmodmap
         do-unnatural-scrolling
         if test -e ~/.config/system-config/using-fcitx; then
             (
