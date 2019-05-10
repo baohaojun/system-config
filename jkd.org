@@ -553,7 +553,7 @@ This is simple using Perl's “reflection”.
                               "ask-for-input-with-emacs", "-p", sprintf("Please input the %s", ($it->{fields}{$field_key}{name} or "$field_key (field has no name)"))
                               );
                           my $command = join(" ", shell_quote(@command));
-                          $required_fields{$field_key} = qx($command);
+                          $required_fields{$field_key} = decode_utf8 qx($command);
                       } elsif ($it->{fields}{$field_key}{schema}{type} eq 'array' and
                                $it->{fields}{$field_key}{schema}{custom} eq "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") {
                           my $field_name = $it->{fields}{$field_key}{name};
@@ -833,3 +833,5 @@ This is simple using Perl's “reflection”.
   }
 
 #+END_SRC
+
+* TODO it can't do chinese
