@@ -3,6 +3,7 @@
 // @namespace     http://github.com/baohaojun/system-config
 // @description   Script for using keys like in emacs
 // @include       *
+// @grant         GM.setClipboard
 // ==/UserScript==
 
 
@@ -80,6 +81,10 @@
       if (ev.key !== "Escape") {
         ev.stopPropagation();
       }
+    }
+
+    if (ev.type == "keydown" && ev.key == "F22") {
+      GM.setClipboard(document.location);
     }
   }
 
