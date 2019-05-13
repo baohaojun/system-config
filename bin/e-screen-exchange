@@ -1,5 +1,6 @@
 #!/bin/bash
 tmux capture-pane -S - -E -
 tmux save-buffer /tmp/screen-exchange.$$
+tmux delete-buffer
 ew /tmp/screen-exchange.$$
 rm /tmp/screen-exchange.$$

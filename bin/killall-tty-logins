@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ps.pl -o tty bash.tty | while read pid ppid elapsed tt command; do
+    if [[ $tt =~ ^tty ]]; then
+        bhj-notify kill-$pid $command
+        kill $pid
+    fi
+done
