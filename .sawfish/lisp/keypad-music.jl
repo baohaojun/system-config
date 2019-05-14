@@ -32,4 +32,5 @@
 (bind-both-global&window-keymaps "F7" '(system "custom-command&"))
 (bind-both-global&window-keymaps "F8" '(system "EMACS=t ssssh&"))
 (bind-both-global&window-keymaps "F9" '(system "wrench-show-notifications.sh&"))
+(bind-both-global&window-keymaps "F10" '(system "sawfish-window-custom-menu&"))
 
