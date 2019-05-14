@@ -544,16 +544,14 @@ Otherwise check autoinsert idle timer and stop if it's been idle a while."
          ;; bound in the mac port, but it doesn't work right
          (ignore-errors (funcall interprogram-paste-function)))
         ((fboundp 'gui-get-selection) ; emacs25
-         ; better to (setq selection-coding-system 'utf-8) to handle chinese,
-         ; which is the default value for gui-get-selection etc
-         ; because windows needs STRING. same below.
-         ; (ignore-errors (gui-get-selection 'CLIPBOARD 'UTF8_STRING)))
-         (ignore-errors (gui-get-selection 'CLIPBOARD))) ; for windows needs STRING
+         (or
+          (ignore-errors (gui-get-selection 'CLIPBOARD 'UTF8_STRING))
+          (ignore-errors (gui-get-selection 'CLIPBOARD)))) ; for windows needs STRING
         ((eq window-system 'w32) ; windows/emacs24
          ;; Note: (x-get-selection 'CLIPBOARD) doesn't work on Windows.
          (ignore-errors (x-get-selection-value))) ; can be nil
         (t ; linux+osx/emacs24
-         ; (ignore-errors (x-get-selection 'CLIPBOARD 'UTF8_STRING)))))
+                                        ; (ignore-errors (x-get-selection 'CLIPBOARD 'UTF8_STRING)))))
          (ignore-errors (x-get-selection 'CLIPBOARD)))))
 
 
