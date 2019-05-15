@@ -881,7 +881,6 @@
 
 (bind-both-global&window-keymaps "Super-KP_Enter" '(system "toggle-number-lock&"))
 
-(bind-both-global&window-keymaps "Scroll_Lock" #'emacs-code-reading-toggle)
 (bind-keys s-h-keymap "?"
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))
 

@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @:build-url='${BUILD_URL}'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long build-url:,help \
+                      -n $(basename -- $0) -- "$@")
+declare build_url=${BUILD_URL}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --build-url)
+            build_url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--build-url=BUILD_URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "$(jc curl "${build_url%/}/api/json"|jq .keepLog -r)" = true; then
+    exit
+fi
+
+jc curl "${build_url%/}/toggleLogKeep" -X POST
+

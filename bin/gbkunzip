@@ -3,12 +3,7 @@ set -e
 
 [[ "$1" =~ .zip$ ]]
 FILE=`readlink -f "$1"`
-DIR=${FILE}
-if test "$2"; then
-    DIR=$(readlink -m "$2")
-else
-    DIR=$(readlink -f "$(dirname "$DIR")")/$(basename "$DIR").$$
-fi
+DIR=${FILE##*/}.$$
 
 mkdir -p "$DIR"
 
@@ -20,8 +15,8 @@ mkdir $TD
 
     check-program 7za p7zip
 
-    LANG=C LC_ALL=C 7za x "$FILE" >/dev/null 2>&1
-    convmv -f gbk -t utf8 -r --notest -- * >/dev/null 2>&1
+    7za x "$FILE" &>/dev/null
+    convmv -f gbk -t utf8 -r --notest -- * &>/dev/null
 )
 mv $TD/* "$DIR" -v
 rmdir $TD
