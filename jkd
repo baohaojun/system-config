@@ -231,6 +231,18 @@ sub select_args(@) {
     return $res;
 }
 
+sub jkd_q(@) {
+    use URI::Escape;
+    my $jql = uri_escape(join(" ", @ARGV));
+    my $jql_ret = decode_json get("rest/api/2/search?jql=$jql")->content;
+    my @issues;
+    for my $issue (@{$jql_ret->{issues}}) {
+        push @issues, sprintf "%s: %s", $issue->{key}, $issue->{fields}{summary};
+    }
+    my $selected_issue = select_args("-p", "which issue do you want?", @issues);
+    system("putclip", $selected_issue);
+}
+
 sub jkd_select_project(@) {
     my $projects_resp = get("rest/api/2/project/");
 
