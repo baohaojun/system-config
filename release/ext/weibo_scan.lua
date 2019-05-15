@@ -6,9 +6,9 @@ if real_height == 2160 then
 end
 
 for i = 1, 20 do
-   start_app("com.sina.weibo")
+   start_app("com.sina.weibo", {restart = 1})
    wait_top_activity_n(5, [[com.sina.weibo/com.sina.weibo.MainTabActivity]])
-   adb_event"adb-tap 1028 145" -- 
+   adb_event"adb-tap 1028 145" --
    wait_top_activity_n(5, [[com.sina.weibo/com.sina.weibo.feed.HomeActivity]])
 
    adb_event("sleep .5 " .. qr_button) -- click qr code

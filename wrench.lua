@@ -40,6 +40,7 @@ M.real_width, M.real_height = 1080, 1920
 M.app_width, M.app_height = 1080, 1920
 M.ime_app_width, M.ime_app_height = 1080, 1920
 M.mCurrentRotation = 0
+M.app_table = nil
 
 M.adb_top_window = function() -- 确保小扳手第一次启动不会出错
 end
@@ -529,7 +530,7 @@ end
 M.search_mail = function(what)
    putclip_nowait(what)
    for i = 1, 5 do
-      M.start_app"com.android.email/com.android.email.activity.Welcome"
+      M.start_app("com.android.email/com.android.email.activity.Welcome", {restart = 1})
       adb_event"adb-no-virt-key-wrench-swipe 549 483 552 778 sleep 1 adb-tap 595 324"
       if M.wait_input_target_n_ok(5, "^com.android.email/") then
          break
@@ -876,7 +877,7 @@ M.update_screen_size = function()
 
       update_screen_ratios()
    end
-   
+
 
    if app_width ~= default_width then
       right_button_x = default_width - 80 * default_width / app_width
@@ -1057,7 +1058,7 @@ M.save_phone_info = function()
    local tkeys = {}
    for k in pairs(phone_info_map) do table.insert(tkeys, k) end
    table.sort(tkeys)
-   for _, k in ipairs(tkeys) do 
+   for _, k in ipairs(tkeys) do
       infofile:write(("map['%s'] = '%s'\n"):format(k, phone_info_map[k]))
    end
    infofile:write("return map\n")
@@ -1096,6 +1097,7 @@ M.get_app_table = function()
       end
    end
    apps_file.close()
+   M.app_table = app_table
    return app_table
 end
 
@@ -1185,21 +1187,21 @@ M.set_ext_args = function(...)
    M.ext_args = {...}
 end
 
-M.start_app = function(to_start, to_find)
-   
+M.start_app = function(to_start, keyed_args)
    if not to_start:match("/") then
       pkg = to_start
-      local app_table = M.get_app_table()
+      local app_table = M.app_table or M.get_app_table()
       if app_table[pkg] then
          to_start = app_table[pkg]
       end
    end
 
    pkg = to_start:gsub("/.*", "")
-   adb_am{'am', 'force-stop', pkg}
+   if keyed_args and keyed_args.restart then
+      adb_am{'am', 'force-stop', pkg}
+   end
    adb_start_activity(to_start)
    wait_top_activity_match("^" .. pkg)
-   sleep(.5)
 end
 
 M.M = M
@@ -1496,7 +1498,7 @@ M.notification_arrived = function(key, pkg, title, text)
       end
    end
    -- log("got %s(%s): %s(%s)", key, pkg, title, text)
-   
+
    if pkg == "com.tencent.mm" and text:match('%[微信红包%]') then
       clickNotification{key}
       if WrenchExt.should_not_pick_money(key, pkg, title, text) == 1 then

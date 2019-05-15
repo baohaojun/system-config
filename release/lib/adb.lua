@@ -62,8 +62,18 @@ M.wait_input_target_n = function(n_loop, ...)
    return ""
 end
 
-M.adb_start_app = function(app_activity)
-   adb_am("am start -n " .. app_activity)
+M.adb_back_from_activity = function()
+   top_activity = adb_top_window()
+
+   adb_event"key back"
+
+   for i = 1, 10 do
+      sleep(.1)
+      new_top_activity = adb_top_window()
+      if new_top_activity ~= "" and new_top_activity ~= top_activity then
+         return
+      end
+   end
 end
 
 M.adb_set_tap_params = function(pressure, size)

@@ -1,19 +1,28 @@
 M.dd_pkg = "com.alibaba.android.rimet/"
 M.dd_activity = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.activity.HomeActivity"
+M.dd_search_activity = "com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchActivity"
 
-M.open_dd = function()
+
+M.open_dd_search = function()
    local top_window, i
    for i = 1, 5 do
       if not top_activity_match(M.dd_pkg) then
-         adb_start_app(M.dd_activity)
+         start_app("com.alibaba.android.rimet")
       end
-      sleep(.3)
+
+      if M.m_focused_window == M.dd_search_activity then
+         log("found dd search window")
+         if find_scene("dd-sousuo-shanchu") then
+            jump_out_of("dd-sousuo-shanchu")
+            return
+         end
+         log("not found dd search window: %s", M.m_focused_window)
+      end
 
       local found_grey = find_scene("dd-xiaoxi-weixuanzhong")
       local found_duihua = find_scene("dd-xiaoxi-xuanzhong")
       if not found_grey and not found_duihua then
-         adb_event("key back")
-         sleep(.2)
+         adb_back_from_activity()
       elseif found_grey then
          jump_from_to("dd-xiaoxi-weixuanzhong", "dd-xiaoxi-xuanzhong")
          found_duihua = 1
@@ -21,6 +30,7 @@ M.open_dd = function()
 
       if found_duihua then
          jump_from_to("dd-xiaoxi-dd-biaoti", "dd-xiaoxi-sousuo", {click_times = 2})
+         jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
          return
       end
    end
@@ -28,8 +38,7 @@ end
 
 M.wrench_find_dingding_contact = function(friend_name)
    putclip_nowait(friend_name)
-   open_dd()
-   jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
+   open_dd_search()
    adb_event"key scroll_lock key enter sleep .8"
    if yes_or_no_p("第一个人就是你要找的人吗？") then
       click_scene("dd-NiKeNengXiangZhao", {y = 200, x = 100})
