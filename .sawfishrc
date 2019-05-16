@@ -880,6 +880,7 @@
   (load-file "~/system-config/.sawfish/lisp/keypad-music.jl"))
 
 (bind-both-global&window-keymaps "Super-KP_Enter" '(system "toggle-number-lock&"))
+(bind-both-global&window-keymaps "Super-DEL" '(system "toggle-number-lock&"))
 
 (bind-keys s-h-keymap "?"
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))

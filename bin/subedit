@@ -1,16 +1,109 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # this is a script to fix the subtitle
 
-# With only 1 argument, it's like mplayer's -subdelay, the subtitle
-# will be delayed (advanced if negative). It can be a float.
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl \
+# @:delay '?"how many secs to delay the subtitle, if not specified, calculate from (OLD|NEW)-(T1|T2)"' \
+# @:old-t1 '?"old timestamp 1 (to be changed to new timestamp 1)"' \
+# @:old-t2 '?"old timestamp 2"' \
+# @:new-t1 '?"new timestamp 1"' \
+# @:new-t2 '?"new timestamp 2"' \
+# @:ratio=1 '?"The ratio (make the subtitles to go slower or faster if != 1)"' \
+# i:srt-file '?"Which srt file to edit"'
+## end code-generator
+## start generated code
+use Getopt::Long;
 
-# With 4 arguments, the first 2 are the starting time tags of the old
-# and the new subtitle, the last 2 are the ending time tags of the old
-# and the new subtitle. The new subtitle is linearly generated using
-# these infomation.
+Getopt::Long::Configure("default");
 
-# y = a * x + b
+
+
+my $delay = "";
+my $new_t1 = "";
+my $new_t2 = "";
+my $old_t1 = "";
+my $old_t2 = "";
+my $ratio = 1;
+my $srt_file = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '';
+  printf "%-24s", '--delay=DELAY';
+  if (length('--delay=DELAY') > 24 and length("how many secs to delay the subtitle") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "how many secs to delay the subtitle";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--new-t1=NEW-T1';
+  if (length('--new-t1=NEW-T1') > 24 and length("new timestamp 1") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "new timestamp 1";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--new-t2=NEW-T2';
+  if (length('--new-t2=NEW-T2') > 24 and length("new timestamp 2") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "new timestamp 2";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--old-t1=OLD-T1';
+  if (length('--old-t1=OLD-T1') > 24 and length("old timestamp 1 (to be changed to new timestamp 1)") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "old timestamp 1 (to be changed to new timestamp 1)";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--old-t2=OLD-T2';
+  if (length('--old-t2=OLD-T2') > 24 and length("old timestamp 2") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "old timestamp 2";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--ratio=RATIO';
+  if (length('--ratio=RATIO') > 24 and length("The ratio (make the subtitles to go slower or faster if != 1)") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "The ratio (make the subtitles to go slower or faster if != 1)";
+  print "\n";
+  printf "%6s", '-i, ';
+  printf "%-24s", '--srt-file=SRT-FILE';
+  if (length('--srt-file=SRT-FILE') > 24 and length("Which srt file to edit") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "Which srt file to edit";
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'delay=s' => \$delay,
+            'new-t1=s' => \$new_t1,
+            'new-t2=s' => \$new_t2,
+            'old-t1=s' => \$old_t1,
+            'old-t2=s' => \$old_t2,
+            'ratio=s' => \$ratio,
+            'srt-file|i=s' => \$srt_file,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
 
 use strict;
 
@@ -48,32 +141,26 @@ sub timetag_sec_to_human($)
     return sprintf "%02d:%02d:%02d,%03d", $hour, $min, $sec, $subsec;
 }
 
-my $a, $b;
-if (@ARGV == 1) {
-    $a = 1;
-    $b = timetag_human_to_sec($ARGV[0]);
-    debug "hello world", timetag_sec_to_human($b);
-    shift @ARGV;
-} elsif (@ARGV >= 4) {
-    my ($x1, $y1, $x2, $y2) = map {timetag_human_to_sec $_} @ARGV[0..3];
-    $a = ($y2 - $y1) / ($x2 - $x1);
-    $b = $y1 - $a * $x1;
-    @ARGV = @ARGV[4..$#ARGV];
-} else {
-    die "Usage: $0 DIFF or $0 old_start old_end new_start new_end"
+if (not $delay) {
+  my ($x1, $y1, $x2, $y2) = map {timetag_human_to_sec $_} ($old_t1, $new_t1, $old_t2, $new_t2);
+  $ratio = ($y2 - $y1) / ($x2 - $x1);
+  $delay = $y1 - $a * $x1;
 }
 
-debug "a is $a, b is $b";
+use File::Slurp;
 
-while (<>) {
+my $new_srt_file = "$srt_file.new";
+write_file($new_srt_file, "");
+
+for (read_file($srt_file)) {
     chomp;
     s/\r//g;
     if (m/^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/) {
         my ($tag1, $tag2) = map {timetag_human_to_sec $_} ($1, $2);
-        $tag1 = $a * $tag1 + $b;
-        $tag2 = $a * $tag2 + $b;
-        printf "%s --> %s\n", map {timetag_sec_to_human $_} ($tag1, $tag2);
+        $tag1 = $ratio * $tag1 + $delay;
+        $tag2 = $ratio * $tag2 + $delay;
+        append_file $new_srt_file, sprintf("%s --> %s\n", map {timetag_sec_to_human $_} ($tag1, $tag2));
     } else {
-        print "$_\n";
+        append_file $new_srt_file, "$_\n";
     }
 }

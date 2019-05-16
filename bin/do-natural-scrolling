@@ -5,6 +5,10 @@ set -e
 base0=$(basename $0)
 
 if test "$base0" = do-natural-scrolling; then
+    if test "$(xinput | grep pointer | grep -v Touchpad | wc -l )" = 2; then
+        do-unnatural-scrolling
+        exit
+    fi
     xmodmap -e 'pointer = 1 2 3 5 4 6 7 8 9 10'
     symbol=-
     natural_enabled=1
