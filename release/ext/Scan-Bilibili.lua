@@ -2,7 +2,7 @@
 -- 打开Bilibili客户端扫描二维码功能
 
 function open_bili_scan()
-   start_app("tv.danmaku.bili")
+   start_app("tv.danmaku.bili", {restart = 1})
    wait_top_activity_n_ok(5, [[tv.danmaku.bili/tv.danmaku.bili.MainActivity]])
    adb_event"adb-tap 1002 317" -- click discovery
    wait_top_activity_n_ok(5, [[tv.danmaku.bili/tv.danmaku.bili.MainActivity]])

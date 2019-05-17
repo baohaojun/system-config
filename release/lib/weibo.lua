@@ -11,7 +11,7 @@ M.find_weibo_friend = function(friend_name)
 
    putclip_nowait(friend_name)
    for i = 1, 3 do
-      M.start_app(W.weibo_home_activity)
+      M.start_app(W.weibo_home_activity, {restart = 1})
       adb_tap_1080x2160(748, 1855) -- click 3rd tab
       sleep(.3)
       adb_tap_1080x2160(270, 100) -- click search

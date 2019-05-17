@@ -196,3 +196,25 @@ M.jump_from_to = function(from_scene, to_scene, settings)
    end
    error("Can't jump from " .. from_scene .. " to " .. to_scene)
 end
+
+M.jump_out_of = function(scene, settings)
+   settings = settings or {}
+   times = settings.times or 1
+   sleep_time = settings.sleep_time or .2
+
+   for t = 1, times do
+      if not find_scene(scene) then
+         log("jumped out of %s", scene)
+         return
+      end
+
+      settings.skip_refind = 1
+      click_scene(scene, settings)
+      sleep(sleep_time)
+      if t == times and not find_scene(scene) then
+         log("jumped out of %s", scene)
+         return
+      end
+   end
+   error("Can't jump out of %s", scene)
+end
