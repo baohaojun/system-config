@@ -13,18 +13,17 @@ if test -z "${phone_width}"; then
 fi
 
 
-# echo phone_sticky=$phone_sticky phone_width=$phone_width phone_height=$phone_height $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$ANDROID_SERIAL
+# echo phone_width=$phone_width phone_height=$phone_height $(debug-args $0 "$@") >> ~/tmp/adb-screenshot.args.$ANDROID_SERIAL
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt x:x=0 y:y=0 s:s='${phone_width:-0}x${phone_height:-0}' '?size' eedit @:sticky='${phone_sticky:-0}' @system-screencap
+# generate-getopt x:x=0 y:y=0 s:s='${phone_width:-0}x${phone_height:-0}' '?size' eedit @system-screencap
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o es:x:y:h \
-               --long edit,s:,sticky:,system-screencap,x:,y:,help,no-edit,no-system-screencap \
+               --long edit,s:,system-screencap,x:,y:,help,no-edit,no-system-screencap \
                -n $(basename -- $0) -- "$@")
 declare edit=false
-declare s=${phone_width}x${phone_height}
-declare sticky=${phone_sticky:-0}
+declare s=${phone_width:-0}x${phone_height:-0}
 declare system_screencap=false
 declare x=0
 declare y=0
@@ -43,11 +42,6 @@ while true; do
             ;;
         -s|--s)
             s=$2
-            shift 2
-
-            ;;
-        --sticky)
-            sticky=$2
             shift 2
 
             ;;
@@ -81,9 +75,6 @@ while true; do
             printf %06s '-s, '
             printf %-24s '--s=S'
             echo size
-            printf "%06s" " "
-            printf %-24s '--sticky=STICKY'
-            echo
             printf "%06s" " "
             printf %-24s '--[no-]system-screencap'
             echo
@@ -133,11 +124,7 @@ else
     fi
     sd_file=$(basename "$1").jpg
     adb shell /data/data/com.android.shell/screencap \
-        -x $x -y $y -X $X -Y $Y $(
-        if test "$sticky" != 0; then
-            echo -s $sticky;
-        fi
-        ) /sdcard/$sd_file
+        -x $x -y $y -X $X -Y $Y /sdcard/$sd_file
 fi
 
 if test "$1"; then

@@ -45,7 +45,7 @@ const server = net.createServer(
   }
 );
 
-server.listen('/tmp/look-same.' + (process.env['ANDROID_SERIAL'] || '') + '.' + (process.env['g_onmyoji_location'] || '') + (process.env['onmyoji_parallel'] || ''), () => {
+server.listen('/tmp/look-same/' + (process.env['ANDROID_SERIAL'] || '') + '.' + (process.env['g_onmyoji_location'] || '') + (process.env['onmyoji_parallel'] || ''), () => {
   console.log('server bound');
 });
 
