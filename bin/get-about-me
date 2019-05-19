@@ -16,17 +16,45 @@ if test $(basename $0) = get-about-me; then
     fi
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt d:default
+    # generate-getopt d:default pprompt-for-input
     ## end code-generator
     ## start generated code
-    TEMP=$(getopt -o d: --long "default:"  -n $(basename $0) -- "$@")
-    default=
+    TEMP=$( getopt -o d:ph \
+                   --long default:,prompt-for-input,help,no-prompt-for-input \
+                   -n $(basename -- $0) -- "$@")
+    declare default=
+    declare prompt_for_input=false
     eval set -- "$TEMP"
     while true; do
         case "$1" in
+
             -d|--default)
                 default=$2
                 shift 2
+
+                ;;
+            -p|--prompt-for-input|--no-prompt-for-input)
+                if test "$1" = --no-prompt-for-input; then
+                    prompt_for_input=false
+                else
+                    prompt_for_input=true
+                fi
+                shift
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %06s '-d, '
+                printf %-24s '--default=DEFAULT'
+                echo
+                printf %06s '-p, '
+                printf %-24s '--[no-]prompt-for-input'
+                echo
+                exit
+                shift
                 ;;
             --)
                 shift
@@ -38,12 +66,20 @@ if test $(basename $0) = get-about-me; then
         esac
     done
 
+
     ## end generated code
 
     if test -e ~/.config/system-config/about_me/$1; then
+
         cat ~/.config/system-config/about_me/$1
     else
-        echo ${default:-unknown}
+        if test "${prompt_for_input}" = true; then
+            about_me=$(ask-for-input-with-emacs -p "what is your $1")
+            set-about-me "$1" "${about_me}" &>/dev/null
+            echo "${about_me}"
+        else
+            echo ${default:-unknown}
+        fi
     fi
 elif test $(basename $0) = rm-about-me; then
     rm ~/.config/system-config/about_me/$1
