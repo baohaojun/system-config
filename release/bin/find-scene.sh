@@ -42,6 +42,7 @@ function picture-matches() {
                 set -x
                 flock -n 9 || exit
                 rm /tmp/$sock_name -f
+                mkdir -p /tmp/${sock_name%/*}
                 nohup nodejs ~/system-config/bin/look-same.server || (bhj-notify Onmyoji "You need to make sure nodejs works") 9>/dev/null
             ) 9> ~/tmp/$sock_name.lock >> ~/tmp/$sock_name.log 2>&1 &
             if test "${node_try}" = 2; then
