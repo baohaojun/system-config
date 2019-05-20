@@ -1,5 +1,6 @@
-0-59/15 *  * * * . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner 15m 15m
-8       2  * * * . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner daily 10h
-4       *  * * * . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner hourly 1h
-12       3 * * 4 . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner weekly 10h
-10       20 * * 5 . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner friday 10h
+0-59/15 *  * * *  . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner 15m 15m
+8       2  * * *  . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner daily 10h
+4       *  * * *  . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner hourly 1h
+12      3  * * 4  . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner weekly 10h
+10     20  * * 5  . ~/.config/system-config/.bashrc-path; ~/system-config/bin/bhj-cron-runner friday 10h
+*/3     *  * * *  . ~/.config/system-config/.bashrc-path; watch-my-window
