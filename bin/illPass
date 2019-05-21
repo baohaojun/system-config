@@ -35,7 +35,7 @@ for password in ${passwords}; do
     password_map[$password]=1
 done
 
-which_password=$(select-args -p "Which password do you want to use?" $passwords "Add a new password by inputing 'NEW-PASSWORD-NAME!<return>'")
+which_password=$(select-args -o -p "Which password do you want to use?" $passwords "Add a new password by inputing 'NEW-PASSWORD-NAME!<return>'")
 
 if test "${password_map[$which_password]}" != 1; then
     bhj-notify illPass "需要创建一个新的密码，请输入这个密码的名字（可以是它的用途，比如 sudo 等）"

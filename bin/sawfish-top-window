@@ -4,4 +4,15 @@ if test $(basename $0) = sawfish-top-window-name; then
 else
     function=bhj-window-class
 fi
-sawfish-client -e "($function (input-focus))"|perl -npe 's/"//g'|tr -d '\n'
+sawfish-client -e "($function (input-focus))"|perl -ne "$(
+cat <<'EOF3a5a0240b117'
+# {%perl-mode%}
+s,^",,;
+s,"$,,;
+s,",',g;
+$_ = sprintf '"%s"', $_;
+print eval "$_";
+# {%/perl-mode%}
+EOF3a5a0240b117
+
+)"

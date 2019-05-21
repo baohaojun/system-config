@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -x
+exec &> ~/tmp/watch-my-window.log
+exec >> ~/today/watch-my-window.log
+
+if ! screen-is-on; then
+    echo "$(date): screen-locked"
+    exit
+fi
+
+. ~/.renew-xauth
+
+top_window=$(sawfish-top-window)
+
+
+if [[ $top_window =~ Firefox ]]; then
+    url=$(firefox-get-tab-url)
+    echo "$(date): ${top_window} ($url)"
+    if is-at-work && [[ $url =~ weibo.com|www.newsmth.net ]]; then
+        alarm 0m "You should not view weibo when at work!"
+    fi
+else
+    echo "$(date): ${top_window}"
+fi

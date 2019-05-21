@@ -58,3 +58,4 @@ if test "$USER" = bhj; then
 fi
 setsid run-dir-once ~/.local-config/etc/sawfish/start&
 setsid run-dir-once ~/system-config/.sawfish/start&
+setsid run-dir-once ~/external/etc/sawfish/start
