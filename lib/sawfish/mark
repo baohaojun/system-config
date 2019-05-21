@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P t:mark-to-var sset-mark rretrive-and-reset
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o t:rsh \
+                      --long mark-to-var:,retrive-and-reset,set-mark,help,no-retrive-and-reset,no-set-mark \
+                      -n $(basename -- $0) -- "$@")
+declare mark_to_var=
+declare retrive_and_reset=false
+declare set_mark=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -t|--mark-to-var)
+            mark_to_var=$2
+            shift 2
+
+            ;;
+        -r|--retrive-and-reset|--no-retrive-and-reset)
+            if test "$1" = --no-retrive-and-reset; then
+                retrive_and_reset=false
+            else
+                retrive_and_reset=true
+            fi
+            shift
+
+            ;;
+        -s|--set-mark|--no-set-mark)
+            if test "$1" = --no-set-mark; then
+                set_mark=false
+            else
+                set_mark=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-t, '
+            printf %-24s '--mark-to-var=MARK_TO_VAR'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]retrive-and-reset'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--[no-]set-mark'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${set_mark}" = true; then
+    eval "sawfish-client -e '(setq SW-MARK-${mark_to_var} (input-focus))'"
+elif test "${retrive_and_reset}" = true; then
+    sawfish-client -e "$(
+cat <<'EOF3161fa088506' | . .replace-%% --
+; {%sawfish-mode%}
+(progn
+  (activate-window SW-MARK-[%mark_to_var%])
+  (unintern 'SW-MARK-[%mark_to_var%]))
+; {%/sawfish-mode%}
+EOF3161fa088506
+)"
+fi

@@ -1,8 +1,15 @@
 #!/bin/bash
 
+if false; then
+    set -ex
+    exec 2> ~/tmp/illPass.log
+fi
+
 export EMACS=t
 window_class=$(sawfish-top-window-class)
 window_name=$(sawfish-top-window-name)
+
+sawfish-window mark -t illPass -s
 
 window_class=${window_class,,}
 window_name=${window_name,,}
@@ -35,6 +42,7 @@ if test "${password_map[$which_password]}" != 1; then
     which_password=$(ask-for-input-with-sawfish -p "请输入新的密码的名字")
     which_password="${window_class}/${window_name}/${which_password}"
     pass edit $which_password
+    sawfish-window mark -t illPass -r
 fi
 
 password=$(

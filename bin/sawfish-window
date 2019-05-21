@@ -1,0 +1,7 @@
+#!/bin/bash
+cmd=$1
+
+shift
+if test -e ~/system-config/lib/sawfish/"$cmd"; then
+    ~/system-config/lib/sawfish/"$cmd" "$@"
+fi

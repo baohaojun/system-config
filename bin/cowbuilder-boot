@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/cowbuilder-boot.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/cowbuilder-boot.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
 #!/bin/bash
@@ -134,7 +132,7 @@ root_uuid=$(
     get-uuid $root_dev
          )
 
-if [[ $boot_dev =~ ^/dev/sd[a-f][0-9]$ ]]; then
+if true || [[ $boot_dev =~ ^/dev/sd[a-f][0-9]$ ]]; then
     type=msdos
     if grep -q 'hd\d+,gpt\d+' /boot/grub/grub.cfg -P; then
         type=gpt
@@ -143,7 +141,7 @@ if [[ $boot_dev =~ ^/dev/sd[a-f][0-9]$ ]]; then
         perl -e "'$boot_dev' =~ m,/dev/sd([a-f])([0-9]),; printf 'hd%d,$type%d', (ord(\$1) - ord 'a'), \$2"
              )
 else
-    die "can't decide hdNmsdosN"
+    die "can't decide hdNmsdosN, boot_dev=$boot_dev"
 fi
 
 cat <<EOF | sudo tee /etc/grub.d/40_$cowname
@@ -178,5 +176,4 @@ sudo update-grub
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here
