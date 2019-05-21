@@ -7,14 +7,15 @@ fi
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt u:user='$(get-about-me ldap-user)' \
         # p:pass='$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))' \
-        # ddecode g:glob='"*"'
+        # ddecode g:glob='"*"' m:match-regexp=.
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o dg:p:u:h \
-               --long decode,glob:,pass:,user:,help,no-decode \
+TEMP=$( getopt -o dg:m:p:u:h \
+               --long decode,glob:,match-regexp:,pass:,user:,help,no-decode \
                -n $(basename -- $0) -- "$@")
 declare decode=false
 declare glob="*"
+declare match_regexp=.
 declare pass=$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))
 declare user=$(get-about-me ldap-user)
 eval set -- "$TEMP"
@@ -32,6 +33,11 @@ while true; do
             ;;
         -g|--glob)
             glob=$2
+            shift 2
+
+            ;;
+        -m|--match-regexp)
+            match_regexp=$2
             shift 2
 
             ;;
@@ -55,6 +61,9 @@ while true; do
             echo
             printf %06s '-g, '
             printf %-24s '--glob=GLOB'
+            echo
+            printf %06s '-m, '
+            printf %-24s '--match-regexp=MATCH_REGEXP'
             echo
             printf %06s '-p, '
             printf %-24s '--pass=PASS...'
@@ -173,7 +182,7 @@ function maybe-filter() {
         ~/.local-config/bin/comp-mail-filter
     else
         cat
-    fi
+    fi | grep -P "${match_regexp}" -i
 }
 
 ldapsearch -LLL -b "$(get-about-me ldap-dc)" \

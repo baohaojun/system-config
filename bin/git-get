@@ -266,10 +266,10 @@ else
                 git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
             fi
             if test "$single_branch" != true; then
-                git fetch -v origin
+                git fetch -v origin "${extra_fetch_args[@]}"
             fi
 
-            git fetch -v origin $branch
+            git fetch -v origin $branch "${extra_fetch_args[@]}"
             if test -z "$mirror"; then
                 git clean -xfd || true
 
