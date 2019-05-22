@@ -11,4 +11,5 @@ if test -d ~/Maildir/ -a -e ~/.offlineimaprc; then
     else
         bhj-notify offlineimap
     fi
-fi
+fi || true
+exit 0
