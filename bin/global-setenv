@@ -1,10 +1,12 @@
 #!/bin/bash
-setenvs=$(declare -x -p | perl -pe "$(
+setenvs=$(declare -x -p | perl -ne "$(
 cat <<'EOF3ca1586eb1f1'
 # {%perl-mode%}
+next unless m,^declare -x \w+="[^"]*"$,;
 s,^declare -x ,(setenv ",;
 s,=," ,;
 s,$,),;
+print
 # {%/perl-mode%}
 EOF3ca1586eb1f1
 
@@ -19,6 +21,6 @@ lisp=$(
 EOF2f77bccb9b66
 
 )
-
+echo "${lisp}" > ~/tmp/global-setenv.log
 emacsclient -e "${lisp}"
 sawfish-client -e "${lisp}"
