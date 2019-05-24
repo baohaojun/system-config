@@ -1462,6 +1462,9 @@ M.shift_click_notification = function(key, pkg, title, text)
 
       sender = sender:gsub("%.", " ")
       wrench_call(sender .. "@@qq")
+   elseif pkg == "com.alibaba.android.rimet" then
+      sender = title or ""
+      wrench_call(sender .. '@@dd')
    end
 end
 
