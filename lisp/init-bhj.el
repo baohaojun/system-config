@@ -1,3 +1,8 @@
+(defun sanityinc/local-push-company-backend (backend)
+  "Add BACKEND to a buffer-local version of `company-backends'."
+  (make-local-variable 'company-backends)
+  (push backend company-backends))
+
 (after-load 'company
   (add-hook 'sh-mode-hook
             (lambda () (sanityinc/local-push-company-backend 'company-shell)))
