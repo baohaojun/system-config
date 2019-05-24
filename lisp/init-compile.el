@@ -54,7 +54,7 @@
       (view-mode 1))))
 (advice-add 'shell-command-on-region :after 'sanityinc/shell-command-in-view-mode)
 
-(ad-deactivate 'shell-command-on-region)
+;(ad-deactivate 'shell-command-on-region)
 
 (after-load 'compile
   (require 'ansi-color)
