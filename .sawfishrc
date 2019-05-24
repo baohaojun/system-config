@@ -341,6 +341,7 @@
         ("Prior" . '((qpdfview "BS")))
         ("C-d" . '((t "DEL")))
         ("C-e" . '((t "End")))
+        ("C-q" . '((Firefox this-key-is-dead))) ; should not exit whole firefox
         ("C-b" . '((Firefox "Left") (Firefox-esr "Left") (Iceweasel "Left") (t "Left")))
         ("C-y" . '((t "C-v")))
         ("C-f" . '((t "Right")))
@@ -418,6 +419,9 @@
 
 (defun mm6-heal ()
   (system "mm6 cast heal&"))
+
+(defun this-key-is-dead ()
+  (system "alarm 0m This key is dead, check your ~/.sawfishrc&"))
 
 (defun mm6-dragon-fly ()
   (system "mm6 cast air.fly&"))

@@ -1,5 +1,52 @@
 #!/bin/bash
 
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @with-xkeytool=true
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long with-xkeytool,help,no-with-xkeytool \
+                      -n $(basename -- $0) -- "$@")
+declare with_xkeytool=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --with-xkeytool|--no-with-xkeytool)
+            if test "$1" = --no-with-xkeytool; then
+                with_xkeytool=false
+            else
+                with_xkeytool=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]with-xkeytool'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 # exec 2> ~/tmp/get-firefox-tab-url.log
 # set -x
 
@@ -15,7 +62,9 @@ for x in $(seq 1 5); do
     if test "$x" = 1; then
         xdotool key F22
     else
-        sawfish-browser-input C-l C-c
+        if test "${with_xkeytool}" = true; then
+            sawfish-browser-input C-l C-c
+        fi
     fi
 
     sleep .1

@@ -229,13 +229,21 @@
 ;;;###autoload
 (defun random-theme(&optional specified-theme)
   (interactive)
-  (dolist (theme custom-enabled-themes)
-    (disable-theme theme))
-  (load-theme (or specified-theme
-                  (and current-prefix-arg (intern (completing-read "Which theme?" (custom-available-themes) nil t)))
-                  (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
-                    (message "loaded theme: %s" theme)
-                    theme))))
+  (let ((next-theme-list (custom-available-themes))
+        (current-theme)
+        (next-theme))
+    (dolist (theme custom-enabled-themes)
+      (setq next-theme-list (delete theme next-theme-list)
+            current-theme theme)
+      )
+    (setq next-theme (or specified-theme
+                         (and current-prefix-arg (intern (completing-read "Which theme?" (custom-available-themes) nil t nil nil (symbol-name current-theme))))
+                         (let ((theme (nth (random (length next-theme-list)) next-theme-list)))
+                           (message "loaded theme: %s" theme)
+                           theme)))
+    (dolist (theme custom-enabled-themes)
+      (disable-theme theme))
+    (load-theme next-theme)))
 
 (unless (boundp 'bhj-no-random-theme)
   (condition-case nil

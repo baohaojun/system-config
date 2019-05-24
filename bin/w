@@ -3,7 +3,10 @@
 exec > ~/tmp/w.log 2>&1
 set -x
 . ~/.profile
-if [[ $(sawfish-top-window) =~ Firefox ]]; then
+
+top_window=$(sawfish-top-window)
+top_window=${top_window,,}
+if [[ ${top_window} =~ firefox ]]; then
     url=$(get-firefox-tab-url)
     url=${url%/}/
     if [[ $url =~ /job/[^/]*/?$ ]]; then
@@ -16,10 +19,33 @@ if [[ $(sawfish-top-window) =~ Firefox ]]; then
         url=$(echo $url | perl -pe 's,(/job/.*/[0-9]+(/|$)).*,$1,')
         bhj-notify jc "Waiting for $url"
         global-x jc wait "$url"
-        alarm 0m "$url has completed"
+        alarm -a "firefox $url" 0m "$url has completed"
         mail-bhj -s "gtd: $url has completed"
         exit 0
     fi
+elif [[ $top_window =~ xterm ]]; then
+    activated_tmux_window=$(
+        tmux list-windows | perl -ne 'print $1 if m,^(\d)+:.*\(active\)$,'
+                         )
+
+    tmux-get-window-text() {
+        tmux capture-pane -t 5
+        tmux save-buffer -
+        tmux delete-buffer
+    }
+
+    window_text=$(
+        tmux-get-window-text
+               )
+
+    while true; do
+        sleep 30
+        if test "${window_text}" != "$(tmux-get-window-text)"; then
+            alarm 0m "tmux completed task: $window_text"
+            mail-bhj -s "gtd: $url has completed"
+            exit 0
+        fi
+    done
 fi
 
 bhj-notify w "Don't know what to do"
