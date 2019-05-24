@@ -1,0 +1,2 @@
+;;; -*- no-byte-compile: t -*-
+(define-package "ghub+" "20181113.32" "a thick GitHub API client built on ghub" '((emacs "25") (ghub "2.0") (apiwrap "0.5")) :commit "51ebffe549286b3c0b0565a373f44f4d64fc57af" :keywords '("extensions" "multimedia" "tools") :authors '(("Sean Allred" . "code@seanallred.com")) :maintainer '("Sean Allred" . "code@seanallred.com") :url "https://github.com/vermiculus/ghub-plus")

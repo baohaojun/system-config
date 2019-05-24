@@ -1,0 +1,2 @@
+;;; -*- no-byte-compile: t -*-
+(define-package "wgrep" "20181229.40" "Writable grep buffer and apply the changes to files" 'nil :commit "379afd89ebd76f63842c8589127d66096a8bb595" :keywords '("grep" "edit" "extensions") :authors '(("Masahiro Hayashi" . "mhayashi1120@gmail.com")) :maintainer '("Masahiro Hayashi" . "mhayashi1120@gmail.com") :url "http://github.com/mhayashi1120/Emacs-wgrep/raw/master/wgrep.el")

@@ -1,0 +1,2 @@
+;;; -*- no-byte-compile: t -*-
+(define-package "inf-ruby" "20190219.1147" "Run a Ruby process in a buffer" 'nil :commit "ca10d72e0c64fb7947246c77a409a5443f1f4ba0" :keywords '("languages" "ruby") :authors '(("Yukihiro Matsumoto") ("Nobuyoshi Nakada") ("Cornelius Mika" . "cornelius.mika@gmail.com") ("Dmitry Gutov" . "dgutov@yandex.ru") ("Kyle Hargraves" . "pd@krh.me")) :maintainer '("Yukihiro Matsumoto") :url "http://github.com/nonsequitur/inf-ruby")

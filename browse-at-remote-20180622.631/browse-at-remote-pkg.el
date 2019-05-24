@@ -1,2 +1,0 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "browse-at-remote" "20180622.631" "Open github/gitlab/bitbucket/stash page from Emacs" '((f "0.17.2") (s "1.9.0") (cl-lib "0.5")) :commit "99af94ada33badd3e1eceb704e07f62c1eef513a" :keywords '("github" "gitlab" "bitbucket" "convenience") :authors '(("Rustem Muslimov" . "r.muslimov@gmail.com")) :maintainer '("Rustem Muslimov" . "r.muslimov@gmail.com"))

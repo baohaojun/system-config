@@ -1,2 +1,0 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "racer" "20171211.1548" "code completion, goto-definition and docs browsing for Rust via racer" '((emacs "24.3") (rust-mode "0.2.0") (dash "2.13.0") (s "1.10.0") (f "0.18.2") (pos-tip "0.4.6")) :commit "cb74060bbaff8e505ba36e20e4a3a763ee7dd4c8" :keywords '("abbrev" "convenience" "matching" "rust" "tools") :url "https://github.com/racer-rust/emacs-racer")
