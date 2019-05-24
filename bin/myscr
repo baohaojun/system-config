@@ -242,10 +242,11 @@ if session-exists; then
                 fi
             fi
 
+            echo . atexit unset HISTIGNORE
+
             echo . ~/system-config/bin/set-ssh-agent
             printf "cd %q;" "$oldpwd"
             echo export SCREEN_TITLE=$SCREEN_TITLE
-            echo unset HISTIGNORE
             for x in "$@"; do
                 printf "%q " "$x"
             done
