@@ -214,6 +214,7 @@ This is simple using Perl's “reflection”.
   <<create-1-issue>>
   <<comment-issue>>
   <<assign-1-issue>>
+  <<mv-issue-to-sprint>>
   <<transition-1-issue>>
   <<subcmd-helps>>
   <<which-to-call>>
@@ -341,9 +342,58 @@ This is simple using Perl's “reflection”.
   }
 
   sub jkd_q(@) {
+      my $unset_jql = '!unset!';
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl q:jql='"$unset_jql"'
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("default");
+
+
+
+      my $jql = "$unset_jql";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-q, ';
+          printf "%-24s", '--jql=JQL';
+          if (length('--jql=JQL') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'jql|q=s' => \$jql,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
       use URI::Escape;
-      my $jql = uri_escape(join(" ", @ARGV));
-      my $jql_ret = decode_json get("rest/api/2/search?jql=$jql")->content;
+      if ($jql eq $unset_jql) {
+          if (@ARGV) {
+              $jql = uri_escape(join(" ", @ARGV));
+          } else {
+              die "Must specify jql"
+          }
+      } else {
+          if (@ARGV) {
+              die "Extra args: ", join(" ", @ARGV);
+          } else {
+              $jql = uri_escape($jql);
+          }
+      }
+
+     my $jql_ret = decode_json get("rest/api/2/search?jql=$jql")->content;
       my @issues;
       for my $issue (@{$jql_ret->{issues}}) {
           push @issues, sprintf "%s: %s", $issue->{key}, $issue->{fields}{summary};
@@ -776,6 +826,99 @@ This is simple using Perl's “reflection”.
     }
   #+END_SRC
 
+* move issue to a sprint
+  #+name: mv-issue-to-sprint
+  #+BEGIN_SRC perl
+    use HTTP::Request::Common;
+    use LWP::UserAgent;
+    use JSON;
+
+
+    sub jkd_mits(@) {
+        ## start code-generator "^\\s *#\\s *"
+        # generate-getopt -s perl -l i:issue s:sprint b:board
+        ## end code-generator
+        ## start generated code
+        use Getopt::Long;
+
+        Getopt::Long::Configure("default");
+
+        local @ARGV = @_;
+
+        my $board = "";
+        my $issue = "";
+        my $sprint = "";
+
+        my $handler_help = sub {
+            print ;
+            print "\n\n选项和参数：\n";
+            printf "%6s", '-b, ';
+            printf "%-24s", '--board=BOARD';
+            if (length('--board=BOARD') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
+            printf "%6s", '-i, ';
+            printf "%-24s", '--issue=ISSUE';
+            if (length('--issue=ISSUE') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
+            printf "%6s", '-s, ';
+            printf "%-24s", '--sprint=SPRINT';
+            if (length('--sprint=SPRINT') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
+
+            exit(0);
+        };
+
+        GetOptions (
+            'board|b=s' => \$board,
+            'issue|i=s' => \$issue,
+            'sprint|s=s' => \$sprint,
+            'help|h!' => \&$handler_help,
+            );
+
+
+        ## end generated code
+
+        use v5.10;
+
+        if (not $sprint) {
+            if ($board) {
+                my $json_sprints = decode_json get("rest/agile/1.0/board/$board/sprint")->content;
+                $sprint = $json_sprints->{values}[-1]{id};
+            } else {
+                die "Must specify one of sprint or board, when using board, the last sprint will be used";
+            }
+        }
+
+        my $ua = LWP::UserAgent->new;
+
+        my $request = POST jkd_url_for_api("/rest/agile/1.0/sprint/${sprint}/issue"),
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            "charset" => "utf-8",
+            Content => encode_json {
+                issues => [
+                    "$issue"
+                    ]
+        };
+        my $response = $ua->request($request);
+
+        say "POST response code:" . $response->code, "result: ", $response->content;
+
+
+    }
+  #+END_SRC
 * 指定 reviewer
 
 #+name: assign-1-issue
