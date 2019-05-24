@@ -56,6 +56,7 @@ sawfish-client -e "$env"
 if test "$USER" = bhj; then
     (setxkbmap -layout us -variant dvp; re-xmodmap 2>&1 | cat)&
 fi
+declare -x -p > ~/.env.print
 setsid run-dir-once ~/.local-config/etc/sawfish/start&
 setsid run-dir-once ~/system-config/.sawfish/start&
 setsid run-dir-once ~/external/etc/sawfish/start

@@ -229,7 +229,7 @@
 ;;;###autoload
 (defun random-theme(&optional specified-theme)
   (interactive)
-  (let ((next-theme-list (custom-available-themes))
+  (let ((next-theme-list '(leuven deeper-blue manoj-dark misterioso tango-dark tsdh-dark wheatgrass wombat))
         (current-theme)
         (next-theme))
     (dolist (theme custom-enabled-themes)

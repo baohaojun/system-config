@@ -4,6 +4,9 @@
 (global-set-key (kbd "C-c y v") 'yas-visit-snippet-file)
 
 (defun bhj-insert-file-basename () (interactive) (insert (bhj-file-basename)))
+(defun bhj-insert-theme () (interactive) (insert (symbol-name (car custom-enabled-themes))))
+
+(global-set-key (kbd "C-c i t") 'bhj-insert-theme)
 
 (defun bhj-insert-date (arg)
   (interactive "p")
@@ -125,4 +128,3 @@
 (define-key global-map (kbd "<S-escape>") esc-map)
 (define-key global-map (kbd "<XF86Search>") 's-dicts)
 (define-key global-map (kbd "<C-M-mouse-1>") 'netease-music-jump-into)
-
