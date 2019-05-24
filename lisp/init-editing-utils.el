@@ -1,3 +1,7 @@
+;;; init-editing-utils.el --- Day-to-day editing helpers -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 (require-package 'unfill)
 
 (when (fboundp 'electric-pair-mode)
@@ -60,7 +64,7 @@
 
 (when (maybe-require-package 'beacon)
   (setq-default beacon-lighter "")
-  (setq-default beacon-size 5)
+  (setq-default beacon-size 20)
   (add-hook 'after-init-hook 'beacon-mode))
 
 
@@ -83,8 +87,18 @@
 
 
 
-(unless (fboundp 'display-line-numbers-mode)
-  (require-package 'nlinum))
+(when (fboundp 'display-line-numbers-mode)
+  (setq-default display-line-numbers-width 3)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+
+(when (maybe-require-package 'goto-line-preview)
+  (global-set-key [remap goto-line] 'goto-line-preview)
+
+  (when (fboundp 'display-line-numbers-mode)
+    (defun sanityinc/with-display-line-numbers (f &rest args)
+      (let ((display-line-numbers t))
+        (apply f args)))
+    (advice-add 'goto-line-preview :around #'sanityinc/with-display-line-numbers)))
 
 
 (when (require-package 'rainbow-delimiters)
@@ -96,18 +110,13 @@
   (add-hook 'after-init-hook 'global-prettify-symbols-mode))
 
 
-(require-package 'undo-tree)
-(add-hook 'after-init-hook 'global-undo-tree-mode)
-(after-load 'undo-tree
-  (diminish 'undo-tree-mode))
-
-
 (when (maybe-require-package 'symbol-overlay)
-  (dolist (hook '(prog-mode-hook html-mode-hook css-mode-hook yaml-mode-hook conf-mode-hook))
+  (dolist (hook '(prog-mode-hook html-mode-hook yaml-mode-hook conf-mode-hook))
     (add-hook hook 'symbol-overlay-mode))
   (after-load 'symbol-overlay
     (diminish 'symbol-overlay-mode)
     (define-key symbol-overlay-mode-map (kbd "M-i") 'symbol-overlay-put)
+    (define-key symbol-overlay-mode-map (kbd "M-I") 'symbol-overlay-remove-all)
     (define-key symbol-overlay-mode-map (kbd "M-n") 'symbol-overlay-jump-next)
     (define-key symbol-overlay-mode-map (kbd "M-p") 'symbol-overlay-jump-prev)))
 
@@ -214,54 +223,60 @@
 ;; use M-S-up and M-S-down, which will work even in lisp modes.
 ;;----------------------------------------------------------------------------
 (require-package 'move-dup)
-(global-set-key [M-up] 'md/move-lines-up)
-(global-set-key [M-down] 'md/move-lines-down)
-(global-set-key [M-S-up] 'md/move-lines-up)
-(global-set-key [M-S-down] 'md/move-lines-down)
+(global-set-key [M-up] 'md-move-lines-up)
+(global-set-key [M-down] 'md-move-lines-down)
+(global-set-key [M-S-up] 'md-move-lines-up)
+(global-set-key [M-S-down] 'md-move-lines-down)
 
-(global-set-key (kbd "C-c d") 'md/duplicate-down)
-(global-set-key (kbd "C-c u") 'md/duplicate-up)
+(global-set-key (kbd "C-c d") 'md-duplicate-down)
+(global-set-key (kbd "C-c u") 'md-duplicate-up)
 
 ;;----------------------------------------------------------------------------
 ;; Fix backward-up-list to understand quotes, see http://bit.ly/h7mdIL
 ;;----------------------------------------------------------------------------
-(defun backward-up-sexp (arg)
+(defun sanityinc/backward-up-sexp (arg)
   "Jump up to the start of the ARG'th enclosing sexp."
   (interactive "p")
   (let ((ppss (syntax-ppss)))
     (cond ((elt ppss 3)
            (goto-char (elt ppss 8))
-           (backward-up-sexp (1- arg)))
+           (sanityinc/backward-up-sexp (1- arg)))
           ((backward-up-list arg)))))
 
-(global-set-key [remap backward-up-list] 'backward-up-sexp) ; C-M-u, C-M-up
+(global-set-key [remap backward-up-list] 'sanityinc/backward-up-sexp) ; C-M-u, C-M-up
 
 
 ;;----------------------------------------------------------------------------
 ;; Cut/copy the current line if no region is active
 ;;----------------------------------------------------------------------------
 (require-package 'whole-line-or-region)
-(add-hook 'after-init-hook 'whole-line-or-region-mode)
+(add-hook 'after-init-hook 'whole-line-or-region-global-mode)
 (after-load 'whole-line-or-region
   (diminish 'whole-line-or-region-local-mode))
 
-(defun suspend-mode-during-cua-rect-selection (mode-name)
-  "Add an advice to suspend `MODE-NAME' while selecting a CUA rectangle."
-  (let ((flagvar (intern (format "%s-was-active-before-cua-rectangle" mode-name)))
-        (advice-name (intern (format "suspend-%s" mode-name))))
-    (eval-after-load 'cua-rect
-      `(progn
-         (defvar ,flagvar nil)
-         (make-variable-buffer-local ',flagvar)
-         (defadvice cua--activate-rectangle (after ,advice-name activate)
-           (setq ,flagvar (and (boundp ',mode-name) ,mode-name))
-           (when ,flagvar
-             (,mode-name 0)))
-         (defadvice cua--deactivate-rectangle (after ,advice-name activate)
-           (when ,flagvar
-             (,mode-name 1)))))))
+
+;; Some local minor modes clash with CUA rectangle selection
 
-(suspend-mode-during-cua-rect-selection 'whole-line-or-region-mode)
+(defvar-local sanityinc/suspended-modes-during-cua-rect nil
+  "Modes that should be re-activated when cua-rect selection is done.")
+
+(eval-after-load 'cua-rect
+  (advice-add 'cua--deactivate-rectangle :after
+              (lambda (&rest _)
+                (dolist (m sanityinc/suspended-modes-during-cua-rect)
+                  (funcall m 1)
+                  (setq sanityinc/suspended-modes-during-cua-rect nil)))))
+
+(defun sanityinc/suspend-mode-during-cua-rect-selection (mode-name)
+  "Add an advice to suspend `MODE-NAME' while selecting a CUA rectangle."
+  (eval-after-load 'cua-rect
+    (advice-add 'cua--activate-rectangle :after
+                (lambda (&rest _)
+                  (when (bound-and-true-p mode-name)
+                    (push mode-name sanityinc/suspended-modes-during-cua-rect)
+                    (funcall mode-name 0))))))
+
+(sanityinc/suspend-mode-during-cua-rect-selection 'whole-line-or-region-local-mode)
 
 
 
@@ -299,8 +314,8 @@ With arg N, insert N newlines."
 ;;----------------------------------------------------------------------------
 ;; Random line sorting
 ;;----------------------------------------------------------------------------
-(defun sort-lines-random (beg end)
-  "Sort lines in region randomly."
+(defun sanityinc/sort-lines-random (beg end)
+  "Sort lines in region from BEG to END randomly."
   (interactive "r")
   (save-excursion
     (save-restriction
@@ -324,5 +339,17 @@ With arg N, insert N newlines."
 (after-load 'guide-key
   (diminish 'guide-key-mode))
 
+
+(defun sanityinc/disable-features-during-macro-call (orig &rest args)
+  "When running a macro, disable features that might be expensive.
+ORIG is the advised function, which is called with its ARGS."
+  (let (post-command-hook
+        font-lock-mode
+        (tab-always-indent (or (eq 'complete tab-always-indent) tab-always-indent)))
+    (apply orig args)))
+
+(advice-add 'kmacro-call-macro :around 'sanityinc/disable-features-during-macro-call)
+
 
 (provide 'init-editing-utils)
+;;; init-editing-utils.el ends here

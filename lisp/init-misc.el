@@ -1,3 +1,7 @@
+;;; init-misc.el --- Miscellaneous config -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 ;;----------------------------------------------------------------------------
 ;; Misc config - yet to be placed in separate files
 ;;----------------------------------------------------------------------------
@@ -7,7 +11,6 @@
 (add-hook 'prog-mode-hook 'goto-address-prog-mode)
 (setq goto-address-mail-face 'link)
 
-;; TODO: publish this as "newscript" package or similar, providing global minor mode
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 (add-hook 'after-save-hook 'sanityinc/set-mode-for-new-scripts)
 
@@ -20,6 +23,11 @@
      (widen)
      (string= "#!" (buffer-substring (point-min) (+ 2 (point-min)))))
    (normal-mode)))
+
+
+(when (maybe-require-package 'info-colors)
+  (after-load 'info
+    (add-hook 'Info-selection-hook 'info-colors-fontify-node)))
 
 
 ;; Handle the prompt pattern for the 1password command-line interface
@@ -42,3 +50,4 @@
 
 
 (provide 'init-misc)
+;;; init-misc.el ends here

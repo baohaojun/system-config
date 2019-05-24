@@ -1,3 +1,7 @@
+;;; init-isearch.el --- isearch settings -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 ;; Show number of matches while searching
 (when (maybe-require-package 'anzu)
   (add-hook 'after-init-hook 'global-anzu-mode)
@@ -32,11 +36,10 @@
 (define-key isearch-mode-map "\C-\M-w" 'isearch-yank-symbol)
 
 
-;; http://www.emacswiki.org/emacs/ZapToISearch
-(defun sanityinc/isearch-exit-other-end (rbeg rend)
+(defun sanityinc/isearch-exit-other-end ()
   "Exit isearch, but at the other end of the search string.
 This is useful when followed by an immediate kill."
-  (interactive "r")
+  (interactive)
   (isearch-exit)
   (goto-char isearch-other-end))
 
@@ -44,3 +47,4 @@ This is useful when followed by an immediate kill."
 
 
 (provide 'init-isearch)
+;;; init-isearch.el ends here

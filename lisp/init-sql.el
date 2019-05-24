@@ -1,3 +1,7 @@
+;;; init-sql.el --- Support for SQL -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 (after-load 'sql
   ;; sql-mode pretty much requires your psql to be uncustomised from stock settings
   (push "--no-psqlrc" sql-postgres-options))
@@ -25,14 +29,13 @@ Fix for the above hasn't been released as of Emacs 25.2."
 (after-load 'sql
   (define-key sql-mode-map (kbd "C-c C-z") 'sanityinc/pop-to-sqli-buffer)
   (when (package-installed-p 'dash-at-point)
-    (defun sanityinc/maybe-set-dash-db-docset ()
+    (defun sanityinc/maybe-set-dash-db-docset (&rest _)
       (when (eq sql-product 'postgres)
-        (set (make-local-variable 'dash-at-point-docset) "psql")))
+        (setq-local dash-at-point-docset "psql")))
 
     (add-hook 'sql-mode-hook 'sanityinc/maybe-set-dash-db-docset)
     (add-hook 'sql-interactive-mode-hook 'sanityinc/maybe-set-dash-db-docset)
-    (defadvice sql-set-product (after set-dash-docset activate)
-      (sanityinc/maybe-set-dash-db-docset))))
+    (advice-add 'sql-set-product :after 'sanityinc/maybe-set-dash-db-docset)))
 
 (setq-default sql-input-ring-file-name
               (expand-file-name ".sqli_history" user-emacs-directory))
@@ -43,24 +46,10 @@ Fix for the above hasn't been released as of Emacs 25.2."
     (sql-product-font-lock nil nil)))
 (add-hook 'sql-interactive-mode-hook 'sanityinc/font-lock-everything-in-sql-interactive-mode)
 
-(defun sanityinc/sqlformat (beg end)
-  "Reformat SQL in region from BEG to END using the \"sqlformat\" program.
-If no region is active, the current statement (paragraph) is reformatted.
-Install the \"sqlparse\" (Python) package to get \"sqlformat\"."
-  (interactive "r")
-  (unless (use-region-p)
-    (setq beg (save-excursion
-		(backward-paragraph)
-                (skip-syntax-forward " >")
-		(point))
-          end (save-excursion
-		(forward-paragraph)
-                (skip-syntax-backward " >")
-		(point))))
-  (shell-command-on-region beg end "sqlformat -r -" nil t "*sqlformat-errors*" t))
 
+(require-package 'sqlformat)
 (after-load 'sql
-  (define-key sql-mode-map (kbd "C-c C-f") 'sanityinc/sqlformat))
+  (define-key sql-mode-map (kbd "C-c C-f") 'sqlformat))
 
 ;; Package ideas:
 ;;   - PEV
@@ -109,22 +98,27 @@ This command currently blocks the UI, sorry."
             (if (zerop retcode)
                 (progn
                   (json-mode)
+                  (read-only-mode 1)
                   (if copy
                       (progn
                         (kill-ring-save (buffer-substring-no-properties (point-min) (point-max)))
                         (message "EXPLAIN output copied to kill-ring."))
-                    (view-buffer (current-buffer))))
+                    (display-buffer (current-buffer))))
               (with-current-buffer (get-buffer-create "*sql-explain-errors*")
-                (setq buffer-read-only nil)
-                (insert-file-contents err-file nil nil nil t)
-                (view-buffer (current-buffer))
+                (let ((inhibit-read-only t))
+                  (insert-file-contents err-file nil nil nil t))
+                (display-buffer (current-buffer))
                 (user-error "EXPLAIN failed")))))))))
 
 
-
+;; Submitted upstream as https://github.com/stanaka/dash-at-point/pull/28
+(after-load 'sql
+  (after-load 'dash-at-point
+    (add-to-list 'dash-at-point-mode-alist '(sql-mode . "psql,mysql,sqlite,postgis"))))
 
 
 (after-load 'page-break-lines
   (push 'sql-mode page-break-lines-modes))
 
 (provide 'init-sql)
+;;; init-sql.el ends here

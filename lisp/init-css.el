@@ -1,3 +1,7 @@
+;;; init-css.el --- CSS/Less/SASS/SCSS support -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
+
 ;;; Colourise CSS colour literals
 (when (maybe-require-package 'rainbow-mode)
   (dolist (hook '(css-mode-hook html-mode-hook sass-mode-hook))
@@ -14,14 +18,14 @@
       :face mmm-code-submode-face
       :front "<style[^>]*>[ \t\n]*\\(//\\)?<!\\[CDATA\\[[ \t]*\n?"
       :back "[ \t]*\\(//\\)?]]>[ \t\n]*</style>"
-      :insert ((?j js-tag nil @ "<style type=\"text/css\">"
+      :insert ((?c css-tag nil @ "<style type=\"text/css\">"
                    @ "\n" _ "\n" @ "</style>" @)))
      (css
       :submode css-mode
       :face mmm-code-submode-face
       :front "<style[^>]*>[ \t]*\n?"
       :back "[ \t]*</style>"
-      :insert ((?j js-tag nil @ "<style type=\"text/css\">"
+      :insert ((?c css-tag nil @ "<style type=\"text/css\">"
                    @ "\n" _ "\n" @ "</style>" @)))
      (css-inline
       :submode css-mode
@@ -64,3 +68,4 @@
 
 
 (provide 'init-css)
+;;; init-css.el ends here
