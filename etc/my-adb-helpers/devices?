@@ -6,7 +6,7 @@
     # 1make-sure-only-1-device '?确保只有一个设备（如果设置了 ANDROID_SERIAL 环境变量，确保这个设备在线）' \
     # sset-device '?需要时，通过 reset-env 脚本设置 ANDROID_SERIAL 变量' \
     # p:prompt-set-device='"你想要使用哪个 adb 设备？"' '?设置 ANDROID_SERIAL 环境变量时的提示信息' \
-    # t:device-type='both' "?想要查看哪种类型的设备？可以指定 adb、fastboot 或 both。" \
+    # t:device-type='adb' "?想要查看哪种类型的设备？可以指定 adb、fastboot 或 both。" \
     # xdebug '?use shell set -x for debug'
 ## end code-generator
 ## start generated code
@@ -14,7 +14,7 @@ TEMP=$( getopt -o xt:1p:sh \
                --long debug,device-type:,make-sure-only-1-device,prompt-set-device:,set-device,help,no-debug,no-make-sure-only-1-device,no-set-device \
                -n $(basename -- $0) -- "$@")
 declare debug=false
-declare device_type=both
+declare device_type=adb
 declare make_sure_only_1_device=false
 declare prompt_set_device="你想要使用哪个 adb 设备？"
 declare set_device=false
@@ -29,10 +29,12 @@ while true; do
                 debug=true
             fi
             shift
+
             ;;
         -t|--device-type)
             device_type=$2
             shift 2
+
             ;;
         -1|--make-sure-only-1-device|--no-make-sure-only-1-device)
             if test "$1" = --no-make-sure-only-1-device; then
@@ -41,10 +43,12 @@ while true; do
                 make_sure_only_1_device=true
             fi
             shift
+
             ;;
         -p|--prompt-set-device)
             prompt_set_device=$2
             shift 2
+
             ;;
         -s|--set-device|--no-set-device)
             if test "$1" = --no-set-device; then
@@ -53,6 +57,7 @@ while true; do
                 set_device=true
             fi
             shift
+
             ;;
         -h|--help)
             set +x
@@ -61,25 +66,25 @@ while true; do
             echo Options and arguments:
             printf %06s '-x, '
             printf %-24s '--[no-]debug'
-            echo 'use shell set -x for debug'
+            echo use shell set -x for debug
             printf %06s '-t, '
             printf %-24s '--device-type=DEVICE_TYPE'
             echo
             printf "%30s" ""
-            echo '想要查看哪种类型的设备？可以指定 adb、fastboot 或 both。'
+            echo 想要查看哪种类型的设备？可以指定 adb、fastboot 或 both。
             printf %06s '-1, '
             printf %-24s '--[no-]make-sure-only-1-device'
             echo
             printf "%30s" ""
-            echo '确保只有一个设备（如果设置了 ANDROID_SERIAL 环境变量，确保这个设备在线）'
+            echo 确保只有一个设备（如果设置了 ANDROID_SERIAL 环境变量，确保这个设备在线）
             printf %06s '-p, '
             printf %-24s '--prompt-set-device=PROMPT_SET_DEVICE'
             echo
             printf "%30s" ""
-            echo '设置 ANDROID_SERIAL 环境变量时的提示信息'
+            echo 设置 ANDROID_SERIAL 环境变量时的提示信息
             printf %06s '-s, '
             printf %-24s '--[no-]set-device'
-            echo '需要时，通过 reset-env 脚本设置 ANDROID_SERIAL 变量'
+            echo 需要时，通过 reset-env 脚本设置 ANDROID_SERIAL 变量
             exit
             shift
             ;;
