@@ -344,7 +344,7 @@ This is simple using Perl's “reflection”.
   sub jkd_q(@) {
       my $unset_jql = '!unset!';
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl q:jql='"$unset_jql"'
+      # generate-getopt -s perl q:jql='"$unset_jql"' pprint-all
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -354,6 +354,7 @@ This is simple using Perl's “reflection”.
 
 
       my $jql = "$unset_jql";
+      my $print_all = 0;
 
       my $handler_help = sub {
           print ;
@@ -366,12 +367,21 @@ This is simple using Perl's “reflection”.
           }
           printf "%s", ;
           print "\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--[no]print-all';
+          if (length('--[no]print-all') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
 
           exit(0);
       };
 
       GetOptions (
           'jql|q=s' => \$jql,
+          'print-all|p!' => \$print_all,
           'help|h!' => \&$handler_help,
           );
 
@@ -393,12 +403,18 @@ This is simple using Perl's “reflection”.
           }
       }
 
-     my $jql_ret = decode_json get("rest/api/2/search?jql=$jql")->content;
+      my $jql_content = get("rest/api/2/search?jql=$jql")->content;
+      if ($print_all) {
+          print "${jql_content}";
+          exit 0;
+      }
+
+      my $jql_ret = decode_json $jql_content;
       my @issues;
       for my $issue (@{$jql_ret->{issues}}) {
-          push @issues, sprintf "%s: %s", $issue->{key}, $issue->{fields}{summary};
+          push @issues, sprintf "%s: %s (%s)", $issue->{key}, $issue->{fields}{summary}, $issue->{fields}{status}{statusCategory}{key};
       }
-      my $selected_issue = select_args("-p", "which issue do you want?", @issues);
+      my $selected_issue = select_args("-p", "which issue do you want?", sort {$a cmp $b} @issues);
       system("putclip", $selected_issue);
   }
 
@@ -538,6 +554,224 @@ This is simple using Perl's “reflection”.
       return decode_json $issue_fields_resp->content;
   }
 
+  use File::Slurp;
+
+  sub org_markdown_convert(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l @:text @:from @:to
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("default");
+
+      local @ARGV = @_;
+
+      my $from = "";
+      my $text = "";
+      my $to = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '';
+          printf "%-24s", '--from=FROM';
+          if (length('--from=FROM') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--text=TEXT';
+          if (length('--text=TEXT') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--to=TO';
+          if (length('--to=TO') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'from=s' => \$from,
+          'text=s' => \$text,
+          'to=s' => \$to,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+      if (not $text) {
+          return "";
+      }
+
+      chomp(my $tmp_file = qx(mktemp));
+      write_file($tmp_file, $text);
+      my $res = qx(pandoc -f $from -t $to $tmp_file);
+      unlink($tmp_file);
+      return $res;
+  }
+
+  sub org_to_markdown($) {
+      return org_markdown_convert("--from", "org", "--to", "markdown", "--text", $_[0]);
+  }
+
+  sub markdown_to_org($) {
+      return org_markdown_convert("--to", "org", "--from", "markdown", "--text", $_[0]);
+  }
+
+  sub work_with_all_fields($$\%;$) {
+      my ($project_id, $issue_type_id, $required_fields, $edit_issue_json_obj) = @_;
+
+      my $issue_fields_obj = jkd_get_issue_fields("-p", "$project_id", "-i", "$issue_type_id");
+
+      for my $project (@{$issue_fields_obj->{projects}}) {
+          for my $it (@{$project->{issuetypes}}) {
+              if ($it->{id} != $issue_type_id) {
+                  next;
+              }
+
+              my @fields_to_edit;
+              if ($edit_issue_json_obj) {
+                 my @command = (
+                     "select-args-n", "-p", decode_utf8("请输入你想要编辑的域"),
+                     map {
+                         sprintf "%s: %s", $_, $it->{fields}{$_}{name}
+                     }
+                     grep {
+                         $it->{fields}{$_}{required}
+                     } sort keys %{$it->{fields}}
+                     );
+                 my $command = join(" ", shell_quote(@command));
+                 my $values = decode_utf8 qx($command);
+                 $values =~ s,:.*,,mg;
+                 @fields_to_edit = split(" ", $values);
+                 say STDERR "fields_to_edit is @fields_to_edit";
+              } else {
+                  @fields_to_edit = sort keys %{$it->{fields}};
+              }
+
+              for my $field_key (@fields_to_edit) {
+                  if ($it->{fields}{$field_key}{required}) {
+                      if ($field_key eq 'project' || $field_key eq 'issuetype') {
+                          next;
+                      }
+                      say "fild value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
+                      if ($it->{fields}{$field_key}{schema}{type} eq 'string') {
+                          my @command = (
+                              "ask-for-input-with-emacs", "-p", sprintf("Please input the %s", encode_utf8($it->{fields}{$field_key}{name} or "$field_key (field has no name)")),
+                              "--init-text", markdown_to_org encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "")
+                              );
+                          my $command = join(" ", shell_quote(@command));
+                          say "command is $command";
+                          $required_fields->{$field_key} = decode_utf8 org_to_markdown qx($command);
+                      } elsif ($it->{fields}{$field_key}{schema}{type} eq 'array' and
+                               $it->{fields}{$field_key}{schema}{custom} eq "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") {
+                          my $field_name = $it->{fields}{$field_key}{name};
+                          my %allowed_values_map;
+                          map { $allowed_values_map{$_->{value}} = $_->{id}} @{$it->{fields}{$field_key}{allowedValues}};
+                          my @command = (
+                              "select-args-n", "-p", decode_utf8("请输入你想要选择的 ") . "$field_name",
+                              keys %allowed_values_map
+                              );
+                          my $command = join(" ", shell_quote @command);
+                          my $values = decode_utf8 qx($command);
+                          $required_fields->{$field_key} = [];
+                          for (split " ", $values) {
+                              say "Working for $field_name: $_";
+                              push @{$required_fields->{$field_key}}, {id => $allowed_values_map{$_}} if ${allowed_values_map{$_}};
+                          }
+                      } else {
+                          say $it->{fields}{$field_key}{name}, " scheme is ", $it->{fields}{$field_key}{schema}{type}, ", don't know how to deal";
+                      }
+                  }
+              }
+          }
+      }
+  }
+
+  sub jkd_e(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl i:issue-to-edit f:field-to-edit
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("default");
+
+
+
+      my $field_to_edit = "";
+      my $issue_to_edit = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-f, ';
+          printf "%-24s", '--field-to-edit=FIELD-TO-EDIT';
+          if (length('--field-to-edit=FIELD-TO-EDIT') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '-i, ';
+          printf "%-24s", '--issue-to-edit=ISSUE-TO-EDIT';
+          if (length('--issue-to-edit=ISSUE-TO-EDIT') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'field-to-edit|f=s' => \$field_to_edit,
+          'issue-to-edit|i=s' => \$issue_to_edit,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
+      if (not $issue_to_edit) {
+          die "You must specify -issue-to-edit";
+      }
+
+      my $json_issue = decode_json get("rest/api/2/issue/$issue_to_edit")->content;
+      my $issue_type_id = $json_issue->{fields}{issuetype}{id};
+      my $issue_project = $json_issue->{fields}{project}{key};
+      my $issue_fields_obj = jkd_get_issue_fields("-p", "$issue_project", "-i", "$issue_type_id");
+
+      my %edited_fields;
+
+      work_with_all_fields($issue_project, $issue_type_id, %edited_fields, $json_issue);
+
+      my $ua = LWP::UserAgent->new;
+
+      my $request = PUT jkd_url_for_api("rest/api/2/issue/$issue_to_edit"),
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+          "charset" => "utf-8",
+          Content => encode_json {
+              fields => \%edited_fields
+      };
+      my $response = $ua->request($request);
+
+      say "PUT response code:" . $response->code, "result: ", $response->content;
+  }
 
   sub jkd_c(@) { # create issue
 
@@ -597,49 +831,8 @@ This is simple using Perl's “reflection”.
           say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
       }
 
-      my $issue_fields_obj = jkd_get_issue_fields("-p", "$project", "-i", "$issue_type_id");
-
       my %required_fields;
-      for my $project (@{$issue_fields_obj->{projects}}) {
-          for my $it (@{$project->{issuetypes}}) {
-              if ($it->{id} != $issue_type_id) {
-                  next;
-              }
-              for my $field_key (keys %{$it->{fields}}) {
-                  if ($it->{fields}{$field_key}{required}) {
-                      if ($field_key eq 'project' || $field_key eq 'issuetype') {
-                          next;
-                      }
-                      if ($it->{fields}{$field_key}{schema}{type} eq 'string') {
-                          my @command = (
-                              "ask-for-input-with-emacs", "-p", sprintf("Please input the %s", ($it->{fields}{$field_key}{name} or "$field_key (field has no name)"))
-                              );
-                          my $command = join(" ", shell_quote(@command));
-                          $required_fields{$field_key} = decode_utf8 qx($command);
-                      } elsif ($it->{fields}{$field_key}{schema}{type} eq 'array' and
-                               $it->{fields}{$field_key}{schema}{custom} eq "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") {
-                          my $field_name = $it->{fields}{$field_key}{name};
-                          my %allowed_values_map;
-                          map { $allowed_values_map{$_->{value}} = $_->{id}} @{$it->{fields}{$field_key}{allowedValues}};
-                          my @command = (
-                              "select-args-n", "-p", decode_utf8("请输入你想要选择的 ") . "$field_name",
-                              keys %allowed_values_map
-                              );
-                          my $command = join(" ", shell_quote @command);
-                          my $values = decode_utf8 qx($command);
-                          $required_fields{$field_key} = [];
-                          for (split " ", $values) {
-                              say "Working for $field_name: $_";
-                              push @{$required_fields{$field_key}}, {id => $allowed_values_map{$_}} if ${allowed_values_map{$_}};
-                          }
-                      } else {
-                          say $it->{fields}{$field_key}{name}, " scheme is ", $it->{fields}{$field_key}{schema}{type}, ", don't know how to deal";
-                      }
-                  }
-
-              }
-          }
-      }
+      work_with_all_fields($project, $issue_type_id, %required_fields);
 
       $required_fields{project} = {
           key => $project,

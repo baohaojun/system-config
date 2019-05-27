@@ -982,6 +982,7 @@ sub ok_np(@) {
                      ),
                      $result->{title}
                 );
+            $path =~ s,\@\@\@\w+\@\@\@,,g;
             $id_path_map{$result->{content}{id}} = $path;
             $path_id_map{$path} = $result->{content}{id};
         }
