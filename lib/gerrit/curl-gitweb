@@ -1,0 +1,81 @@
+#!/usr/bin/env perl
+
+# Given a gerrit's gitweb url for a blob, parse and download it (from gerrit mirror)
+
+# example gitweb url
+# http://GERRIT_SERVER/gitweb?p=PROJECT;a=blob;f=FILENAME;h=FILEHASH;hb=COMMITHASH
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl m:gerrit-mirror u:blob-url
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $blob_url = "";
+my $gerrit_mirror = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-u, ';
+  printf "%-24s", '--blob-url=BLOB-URL';
+  if (length('--blob-url=BLOB-URL') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-m, ';
+  printf "%-24s", '--gerrit-mirror=GERRIT-MIRROR';
+  if (length('--gerrit-mirror=GERRIT-MIRROR') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'blob-url|u=s' => \$blob_url,
+            'gerrit-mirror|m=s' => \$gerrit_mirror,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+use URI;
+use URI::QueryParam;
+
+my $url = URI->new($blob_url);
+
+my $file = $url->query_param("f");
+my $filehash = $url->query_param("h");
+my $commit_hash = $url->query_param("hb");
+my $project = $url->query_param("p");
+
+use v5.10;
+
+say "file is $file, filehash is $filehash, project is $project";
+
+use File::Basename;
+use File::Path qw(make_path remove_tree);
+make_path(dirname($file));
+
+use autodie qw(:all);
+
+use String::ShellQuote;
+
+my @command = ("git", "--git-dir", "${gerrit_mirror}/${project}", "cat-file", "blob", "${filehash}");
+my $command = join(" ", shell_quote(@command));
+
+$command .= " > " . shell_quote($file);
+say "command is $command";
+
+system($command);

@@ -1,4 +1,3 @@
-
 (eval-after-load "grep"
   '(progn
      (grep-compute-defaults)
@@ -310,3 +309,9 @@ passed via standard input." t nil)
             (tramp-remote-shell-args
              ("-c")))
           tramp-methods)))
+
+(eval-after-load 'org-src
+  '(define-key org-src-mode-map "\C-x#" 'org-edit-src-exit))
+
+(eval-after-load 'fence-edit
+  '(define-key fence-edit-mode-map "\C-x#" 'fence-edit-exit))

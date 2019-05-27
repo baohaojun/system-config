@@ -3,15 +3,16 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt p:prompt m:mode eempty-ok
+# generate-getopt p:prompt m:mode eempty-ok @:init-text
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o em:p:h \
-               --long empty-ok,mode:,prompt:,help,no-empty-ok \
+               --long empty-ok,init-text:,mode:,prompt:,help,no-empty-ok \
                -n $(basename -- $0) -- "$@")
-empty_ok=false
-mode=
-prompt=
+declare empty_ok=false
+declare init_text=
+declare mode=
+declare prompt=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -23,14 +24,22 @@ while true; do
                 empty_ok=true
             fi
             shift
+
+            ;;
+        --init-text)
+            init_text=$2
+            shift 2
+
             ;;
         -m|--mode)
             mode=$2
             shift 2
+
             ;;
         -p|--prompt)
             prompt=$2
             shift 2
+
             ;;
         -h|--help)
             set +x
@@ -39,6 +48,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-e, '
             printf %-24s '--[no-]empty-ok'
+            echo
+            printf "%06s" " "
+            printf %-24s '--init-text=INIT_TEXT'
             echo
             printf %06s '-m, '
             printf %-24s '--mode=MODE'
@@ -68,24 +80,13 @@ fi
 
 test $# = 0 -o $# = 1
 tmp=/tmp/`basename $0`.$$
-if test "$USE_BUFFER_NAME"; then
-    tmp=/tmp/$USE_BUFFER_NAME
-    exec 9>/tmp/$USE_BUFFER_NAME.lock
-    if ! flock -n 9; then
-        set -x
-        (
-            find-or-exec emacs
-            emacsclient -e '(progn (switch-to-buffer "'$USE_BUFFER_NAME'") (toggle-input-method t))' >/dev/null 2>&1
-            ps.tree $$
-        ) >/dev/null 2>&1
-        kill $(get-ppid|tail -n 1) >/dev/null 2>&1
-    fi
-fi
+
+. atexit rm -f "$tmp"
 touch $tmp
 
 if test "$prompt"; then
     cat <<EOF >> $tmp
-
+$init_text
 ###start of comment###
 "$prompt"$(if test $empty_ok = true; then echo "（空白输入 OK）"; fi)
 
@@ -94,10 +95,8 @@ if test "$prompt"; then
 # mode : $mode
 # End:
 EOF
-elif tty >/dev/null 2>&1 || test $# = 1; then
-    test $# = 1 -a "$1" != $tmp && cat $1 > $tmp
 else
-    cat > $tmp
+    echo "${init_text}" > $tmp
 fi
 
 if ! grep "" -q $tmp; then
@@ -131,45 +130,25 @@ fi
 
 echo " done" 1>&2
 function get-rid-of-comment() {
-    cat "$@" | perl -ne '
-BEGIN {
-    if ($ENV{USE_BUFFER_NAME}) {
-        open($out, ">", "/tmp/$ENV{USE_BUFFER_NAME}.out");
-    }
-}
+    cat "$@" | perl -ne "$(
+cat <<'EOF2daa3be0838b'
+# {%perl-mode%}
 if (m/###start of comment###/) { $comment = 1; }
 if (not $comment) {
     print;
-    if ($ENV{USE_BUFFER_NAME}) {
-        if (m/^$/) {print $out "​" unless 1..1}
-        chomp;
-        print $out "\n" unless 1..1;
-        print $out $_;
-    }
 }
-'
+# {%/perl-mode%}
+EOF2daa3be0838b
+
+)"
 }
 if test $empty_ok = false -a "`get-rid-of-comment $tmp | perl -npe 's/\s//g' | wc -c`" == 0; then
     if ! ps.pl emacs.mm >/dev/null 2>&1; then
         exit -1
     fi
     if EMACS=t yes-or-no-p -y "Error: input can not be empty, try again?"; then
-        if test "$USE_BUFFER_NAME"; then
-            cp /tmp/"$USE_BUFFER_NAME".1 /tmp/"$USE_BUFFER_NAME"
-        fi
-        exec get-stdin $tmp
+        exec get-stdin --init-text "$(cat $tmp)"
     fi
 fi
 get-rid-of-comment $tmp | rm-last-nl
-if test "$USE_BUFFER_NAME"; then
-    (
-        cd /tmp
-        for x in $(seq 5 -1 2); do
-            mv "$USE_BUFFER_NAME".$((x - 1)) "$USE_BUFFER_NAME".$x >/dev/null 2>&1 || true
-        done
-
-        mv "$USE_BUFFER_NAME" "$USE_BUFFER_NAME".1
-    )
-fi
-
 rm $tmp
