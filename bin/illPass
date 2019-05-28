@@ -1,5 +1,6 @@
 #!/bin/bash
 
+umask 0077
 if false; then
     set -ex
     exec 2> ~/tmp/illPass.log
@@ -14,7 +15,10 @@ sawfish-window mark -t illPass -s
 window_class=${window_class,,}
 window_name=${window_name,,}
 
+add_newline_and_notify=false
+
 if test "${window_name}" = myscr -a "${window_class}" = xterm; then
+    add_newline_and_notify=true
     who_and_where=$(
         tmux capture-pane; tmux save-buffer - | reverse | grep '(\S+@\S+)\s' -o -P | head -n 1|tr -d ' '
                  )
@@ -35,14 +39,35 @@ for password in ${passwords}; do
     password_map[$password]=1
 done
 
-which_password=$(select-args -o -p "Which password do you want to use?" $passwords "Add a new password by inputing 'NEW-PASSWORD-NAME!<return>'")
+extra_options=(
+    "以上选项都不是，我要自己指定密码搜索的文件名（使用缩写的方式）"
+    "Add a new password by inputing 'PATH/TO/NEW-PASSWORD-NAME!<return>'"
+)
+
+which_password=$(select-args -o -p "Which password do you want to use?" $passwords "${extra_options[@]}")
 
 if test "${password_map[$which_password]}" != 1; then
-    bhj-notify illPass "需要创建一个新的密码，请输入这个密码的名字（可以是它的用途，比如 sudo 等）"
-    which_password=$(ask-for-input-with-sawfish -p "请输入 ${window_class}/${window_name} 下新密码的名字")
-    which_password="${window_class}/${window_name}/${which_password}"
-    pass edit $which_password
-    sawfish-window mark -t illPass -r
+    if test "${which_password}" = "${extra_options[0]}"; then
+        abbrev=$(ask-for-input-with-sawfish -p "请输入你想使用的密码名字")
+        which_password=$(
+            cd ~/.password-store
+            select-output-line -1 -p "请选择、确认你想使用的密码" find ./ -name .git -prune -o -type f -name "*$abbrev*.gpg" -print | perl -pe 's,\.gpg$,,'
+                      )
+    else
+        if test "${which_password}" = "${extra_options[1]}"; then
+            bhj-notify illPass "需要创建一个新的密码，请输入这个密码的名字（可以是它的用途，比如 sudo 等）"
+            which_password=$(ask-for-input-with-sawfish -p "请输入新密码的名字（默认在 ${window_class}/${window_name} 下，如想更改路径，请直接输入 PATH/TO/FILENAME")
+        fi
+        if ! [[ $which_password =~ / ]]; then
+            which_password="${window_class}/${window_name}/${which_password}"
+        fi
+
+        if yes-or-no-p -y "生成一个随机密码？"; then
+            pass generate "$which_password" 12
+        fi
+        pass edit $which_password
+        sawfish-window mark -t illPass -r
+    fi
 fi
 
 password=$(
@@ -50,3 +75,8 @@ password=$(
         )
 
 xdotool-when-keyboard-clear type "${password}"
+
+if test "${add_newline_and_notify}" = true; then
+    xdotool-when-keyboard-clear type $'\n'
+    bhj-notify illPass "Have inputed your password!"
+fi

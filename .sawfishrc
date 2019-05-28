@@ -792,6 +792,7 @@
 (bind-keys s-h-keymap "l" '(system "sawfish-move-to-laptop&"))
 (bind-keys s-h-keymap "L" '(system "sawfish-move-to-home-screen&"))
 (bind-keys s-h-keymap "Super-p" '(system "illPass&"))
+(bind-keys s-h-keymap "Super-a" '(system "abbrevs&"))
 (bind-keys s-h-keymap "Super-SPC" '(synthesize-event-gnome? "Menu" (input-focus)))
 (bind-keys s-h-keymap "Super-+" '(system "terminal-font-change +&"))
 (bind-keys s-h-keymap "Super--" '(system "terminal-font-change -&"))

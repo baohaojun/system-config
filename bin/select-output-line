@@ -27,7 +27,7 @@ EOF
 }
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt '?"$(sol-help)"' \
+    # generate-getopt -l '?"$(sol-help)"' \
     # O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?Should use history for list order' \
     # s:select-dist-word='${SELECT_DIST_WORD:-not-set\!}' '?选中参数的时候，按照与这个参数的字符串距离排序' \
     # m:max-history=-1 '?如果保存历史输入，最多保存几个历史输入，默认是无限' \
@@ -42,22 +42,22 @@ EOF
     # vverbose '?调试选项，打印更多输出'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o oa:1i:m:O:p:s:vh \
-               --long ORDERED,always-selection:,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
-               -n $(basename -- $0) -- "$@")
-ORDERED=${SELECT_HISTORY_ORDER:-false}
-always_selection=
-dot_sep_init=
-exclude=
-hint_1_entry=false
-init=
-max_history=-1
-order_name=
-prompt="Please enter your selection"
-select_dist_word=${SELECT_DIST_WORD:-not-set\!}
-select_from_history_too=false
-use_file=${SA_USE_FILE:-false}
-verbose=false
+TEMP=$(POSIXLY_CORRECT=true getopt -o oa:1i:m:O:p:s:vh \
+                      --long ORDERED,always-selection:,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
+                      -n $(basename -- $0) -- "$@")
+declare ORDERED=${SELECT_HISTORY_ORDER:-false}
+declare always_selection=
+declare dot_sep_init=
+declare exclude=
+declare hint_1_entry=false
+declare init=
+declare max_history=-1
+declare order_name=
+declare prompt="Please enter your selection"
+declare select_dist_word=${SELECT_DIST_WORD:-not-set\!}
+declare select_from_history_too=false
+declare use_file=${SA_USE_FILE:-false}
+declare verbose=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -69,18 +69,22 @@ while true; do
                 ORDERED=true
             fi
             shift
+
             ;;
         -a|--always-selection)
             always_selection=$2
             shift 2
+
             ;;
         --dot-sep-init)
             dot_sep_init=$2
             shift 2
+
             ;;
         --exclude)
             exclude=$2
             shift 2
+
             ;;
         -1|--hint-1-entry|--no-hint-1-entry)
             if test "$1" = --no-hint-1-entry; then
@@ -89,26 +93,32 @@ while true; do
                 hint_1_entry=true
             fi
             shift
+
             ;;
         -i|--init)
             init=$2
             shift 2
+
             ;;
         -m|--max-history)
             max_history=$2
             shift 2
+
             ;;
         -O|--order-name)
             order_name=$2
             shift 2
+
             ;;
         -p|--prompt)
             prompt=$2
             shift 2
+
             ;;
         -s|--select-dist-word)
             select_dist_word=$2
             shift 2
+
             ;;
         --select-from-history-too|--no-select-from-history-too)
             if test "$1" = --no-select-from-history-too; then
@@ -117,6 +127,7 @@ while true; do
                 select_from_history_too=true
             fi
             shift
+
             ;;
         --use-file|--no-use-file)
             if test "$1" = --no-use-file; then
@@ -125,6 +136,7 @@ while true; do
                 use_file=true
             fi
             shift
+
             ;;
         -v|--verbose|--no-verbose)
             if test "$1" = --no-verbose; then
@@ -133,6 +145,7 @@ while true; do
                 verbose=true
             fi
             shift
+
             ;;
         -h|--help)
             set +x
@@ -141,53 +154,53 @@ while true; do
             echo Options and arguments:
             printf %06s '-o, '
             printf %-24s '--[no-]ORDERED'
-            echo 'Should use history for list order'
+            echo Should use history for list order
             printf %06s '-a, '
             printf %-24s '--always-selection=ALWAYS_SELECTION'
             echo
             printf "%30s" ""
-            echo '这个参数给出的选项，永远出现在列表里'
+            echo 这个参数给出的选项，永远出现在列表里
             printf "%06s" " "
             printf %-24s '--dot-sep-init=DOT_SEP_INIT'
             echo
             printf "%30s" ""
-            echo '用 . 把初始输入切割开'
+            echo 用 . 把初始输入切割开
             printf "%06s" " "
             printf %-24s '--exclude=EXCLUDE'
-            echo '不要选中这个参数中给定的选项'
+            echo 不要选中这个参数中给定的选项
             printf %06s '-1, '
             printf %-24s '--[no-]hint-1-entry'
-            echo '只有一个选项的时候，不用选，但要提示'
+            echo 只有一个选项的时候，不用选，但要提示
             printf %06s '-i, '
             printf %-24s '--init=INIT'
-            echo '初始输入的匹配字符串，跟它匹配才会列出'
+            echo 初始输入的匹配字符串，跟它匹配才会列出
             printf %06s '-m, '
             printf %-24s '--max-history=MAX_HISTORY'
             echo
             printf "%30s" ""
-            echo '如果保存历史输入，最多保存几个历史输入，默认是无限'
+            echo 如果保存历史输入，最多保存几个历史输入，默认是无限
             printf %06s '-O, '
             printf %-24s '--order-name=ORDER_NAME'
             echo
             printf %06s '-p, '
             printf %-24s '--prompt=PROMPT'
-            echo '让用户选择时给的提示'
+            echo 让用户选择时给的提示
             printf %06s '-s, '
             printf %-24s '--select-dist-word=SELECT_DIST_WORD'
             echo
             printf "%30s" ""
-            echo '选中参数的时候，按照与这个参数的字符串距离排序'
+            echo 选中参数的时候，按照与这个参数的字符串距离排序
             printf "%06s" " "
             printf %-24s '--[no-]select-from-history-too'
             echo
             printf "%30s" ""
-            echo '是否也允许从历史中选择（默认只从给定的参数、输出中选择）'
+            echo 是否也允许从历史中选择（默认只从给定的参数、输出中选择）
             printf "%06s" " "
             printf %-24s '--[no-]use-file'
-            echo '把参数写到文件中，而不是从命令行上传递'
+            echo 把参数写到文件中，而不是从命令行上传递
             printf %06s '-v, '
             printf %-24s '--[no-]verbose'
-            echo '调试选项，打印更多输出'
+            echo 调试选项，打印更多输出
             exit
             shift
             ;;
@@ -310,7 +323,7 @@ if test ${#dood[@]} = 0; then
     exit -1
 elif test "${#dood[@]}" = 1 -a -z "${always_selection}" -a -z "$init"; then
     if test "$hint_1_entry" = true; then
-        hint "只有一个选项： ${dood[0]}" >/dev/tty 2>&1 </dev/tty
+        hint "只有一个选项： ${dood[0]}"
     fi
     echo -n "${dood[0]}"
     exit 0

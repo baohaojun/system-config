@@ -1,0 +1,66 @@
+#!/bin/bash
+
+config_dirs=(
+    ~/system-config/etc/abbrevs/
+    ~/.local-config/etc/abbrevs/
+)
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P a:abbrev
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:h \
+                      --long abbrev:,help \
+                      -n $(basename -- $0) -- "$@")
+declare abbrev=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--abbrev)
+            abbrev=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--abbrev=ABBREV'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "$abbrev" -a "$1"; then
+    if test "$#" -gt 1; then
+        die "Don't take more than 1 argument"
+    else
+        abbrev=$1
+    fi
+elif test "$abbrev" -a "$1"; then
+    die "Must specify ABBREV with either -a ABBREV or \$1, can't use both"
+else
+    abbrev=$(ask-for-input-with-sawfish -p "Please input your abbrev")
+fi
+
+abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -name "*$abbrev*" -type f)
+expand_text=$(
+    cat $abbrev_file
+           )
+xdotool-when-keyboard-clear type "$expand_text"
