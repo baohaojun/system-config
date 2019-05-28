@@ -1,4 +1,10 @@
 #+title: Debugging
+ * 2019
+  - 2019-05
+   * 2019-05-28
+
+     [[../../blog/2019/05/28/0-about-bugs-priority-severity.org][关于 Bug 的优先级、严重性]]
+
  * 2015
   - 2015-09
    * 2015-09-14

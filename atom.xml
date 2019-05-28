@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[关于 Bug 的优先级、严重性]]></title>
+    <link href="http://baohaojun.github.io/blog/2019/05/28/0-about-bugs-priority-severity.html"/>
+    <updated>2019-15-28T09:05:38+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2019/05/28/0-about-bugs-priority-severity.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[OKR 减肥记]]></title>
     <link href="http://baohaojun.github.io/blog/2019/04/17/0-After-Reading-OKR.html"/>
-    <updated>2019-46-18T09:04:18+08:00</updated>
+    <updated>2019-04-18T09:48:38+08:00</updated>
     <id>http://baohaojun.github.io/blog/2019/04/17/0-After-Reading-OKR.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html"/>
     <updated>2016-12-11T15:26:49+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[各种编程语言之间的对比学习]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html"/>
-    <updated>2016-12-11T15:26:49+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/12/10/1-Learning-Programming-Languages-by-Comparing.html</id>
   </entry>
 </feed>
