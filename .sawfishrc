@@ -864,7 +864,8 @@
 (bind-both-global&window-keymaps "XF86ScrollUp" '(system "am dvp&"))
 (bind-both-global&window-keymaps "XF86ScrollDown" '(system "am dvp&"))
 (bind-both-global&window-keymaps "Super-M-C-m" '(system "am dvp&"))
-; some times the keyboard itself got scrambled
+(bind-both-global&window-keymaps "M-C-M" '(system "ma&"))
+                                        ; some times the keyboard itself got scrambled
 (bind-both-global&window-keymaps "M-Mod1-C-m" '(system "am dvp&"))
 
 (defun emacs-code-reading-off (&optional w)
