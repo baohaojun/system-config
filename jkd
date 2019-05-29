@@ -732,6 +732,10 @@ sub jkd_c(@) { # create issue
         id => $issue_type_id,
     };
 
+    $required_fields{assignee} = {
+        name => $ENV{scm_jira_user}
+    };
+
     my $ua = LWP::UserAgent->new;
     say "json is ", encode_json { fields => \%required_fields };
 

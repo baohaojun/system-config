@@ -842,6 +842,10 @@ This is simple using Perl's “reflection”.
           id => $issue_type_id,
       };
 
+      $required_fields{assignee} = {
+          name => $ENV{scm_jira_user}
+      };
+
       my $ua = LWP::UserAgent->new;
       say "json is ", encode_json { fields => \%required_fields };
 
