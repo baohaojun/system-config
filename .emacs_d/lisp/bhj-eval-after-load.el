@@ -315,3 +315,7 @@ passed via standard input." t nil)
 
 (eval-after-load 'fence-edit
   '(define-key fence-edit-mode-map "\C-x#" 'fence-edit-exit))
+
+(eval-after-load 'anaconda-mode
+  '(defadvice anaconda-mode-find-definitions (before bhj/push-mark activate)
+     (ajoke--push-marker-ring)))
