@@ -1086,6 +1086,11 @@ This is simple using Perl's “reflection”.
         use v5.10;
 
         if (not $sprint) {
+            if (not $board) {
+                my $json_boards = decode_json get("rest/agile/1.0/board/")->content;
+                $board = select_args("-p", "which board do you want? (should be scrum, not kanban)", sort {$a cmp $b} map {sprintf "%s: %s", $_->{id}, encode_utf8 $_->{name}} @{$json_boards->{values}});
+                $board =~ s,:.*,,;
+            }
             if ($board) {
                 my $json_sprints = decode_json get("rest/agile/1.0/board/$board/sprint")->content;
                 $sprint = $json_sprints->{values}[-1]{id};
