@@ -285,3 +285,10 @@ M.wrench_call = function(number)
    end
 end
 
+M.emoji_for_dingding = function(text)
+   return emoji_rewrite(text, dingding_emojis_remap)
+end
+
+M.dingding_emojis_remap = {
+   ["[街舞]"] = "[跳舞]",
+}

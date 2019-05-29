@@ -365,13 +365,17 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          return "executed string"
       end
 
-      if window:match("com.tencent.mobileqq") then
+      local pkg = window:gsub("/.*", "")
+
+      if pkg == 'com.tencent.mobileqq' then
          putclip(emoji_for_qq(text))
-      elseif window:match("com.tencent.mm/") then
+      elseif pkg == "com.tencent.mm" then
          -- text = text:gsub("\n", "​\n")
          putclip(emoji_for_weixin(text))
-      elseif window:match("com.sina.weibo/") then
+      elseif pkg == "com.sina.weibo"  then
          putclip(emoji_for_weibo(text))
+      elseif pkg == "com.alibaba.android.rimet" then
+         putclip(emoji_for_dd(text))
       else
          putclip(text)
       end
