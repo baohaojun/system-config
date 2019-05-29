@@ -11,6 +11,7 @@ else
     fi
     export http_proxy=http://localhost:$port
     export https_proxy=http://localhost:$port
+    export ALL_PROXY=socks5://localhost:3080
 
     if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
         ps-killall tinyproxy.conf || true
