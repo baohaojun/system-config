@@ -375,7 +375,7 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       elseif pkg == "com.sina.weibo"  then
          putclip(emoji_for_weibo(text))
       elseif pkg == "com.alibaba.android.rimet" then
-         putclip(emoji_for_dd(text))
+         putclip(emoji_for_dingding(text))
       else
          putclip(text)
       end
