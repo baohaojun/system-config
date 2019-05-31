@@ -51,7 +51,7 @@ if test "${password_map[$which_password]}" != 1; then
         abbrev=$(ask-for-input-with-sawfish -p "请输入你想使用的密码名字")
         which_password=$(
             cd ~/.password-store
-            select-output-line -1 -p "请选择、确认你想使用的密码" find ./ -name .git -prune -o -type f -name "*$abbrev*.gpg" -print | perl -pe 's,\.gpg$,,'
+            select-output-line -1 -p "请选择、确认你想使用的密码" find ./ -name .git -prune -o -type f -path "*$abbrev*.gpg" -print | perl -pe 's,\.gpg$,,'
                       )
     else
         if test "${which_password}" = "${extra_options[1]}"; then
@@ -73,6 +73,12 @@ fi
 password=$(
     pass "${which_password}"
         )
+
+if test ${#password} -gt 20 || [[ $password =~ $'\n' ]]; then
+    bhj-notify illPass "Bad password: $password"
+    hint "You have inputed a very long password, will now exit"
+    exit
+fi
 
 xdotool-when-keyboard-clear type "${password}"
 
