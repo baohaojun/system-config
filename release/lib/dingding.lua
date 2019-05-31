@@ -290,5 +290,5 @@ M.emoji_for_dingding = function(text)
 end
 
 M.dingding_emojis_remap = {
-   ["[街舞]"] = "[跳舞]", ["[捂脸]"] = "[捂脸哭]",
+   ["[街舞]"] = "[跳舞]", ["[捂脸]"] = "[捂脸哭]", ["[100 分]"] = "[100分]"
 }
