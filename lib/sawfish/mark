@@ -2,15 +2,16 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P t:mark-to-var sset-mark rretrive-and-reset
+# generate-getopt -P t:mark-to-var sset-mark rretrive-and-reset @with-mark
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o t:rsh \
-                      --long mark-to-var:,retrive-and-reset,set-mark,help,no-retrive-and-reset,no-set-mark \
+                      --long mark-to-var:,retrive-and-reset,set-mark,with-mark,help,no-retrive-and-reset,no-set-mark,no-with-mark \
                       -n $(basename -- $0) -- "$@")
 declare mark_to_var=
 declare retrive_and_reset=false
 declare set_mark=false
+declare with_mark=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -38,6 +39,15 @@ while true; do
             shift
 
             ;;
+        --with-mark|--no-with-mark)
+            if test "$1" = --no-with-mark; then
+                with_mark=false
+            else
+                with_mark=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -52,21 +62,31 @@ while true; do
             printf %06s '-s, '
             printf %-24s '--[no-]set-mark'
             echo
+            printf "%06s" " "
+            printf %-24s '--[no-]with-mark'
+            echo
             exit
             shift
             ;;
         --)
             shift
             break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
+   ;;
+   *)
+       die "internal error: $(. bt; echo; bt | indent-stdin)"
+       ;;
+   esac
 done
 
 
 ## end generated code
+
+if test "${with_mark}" = true; then
+    sawfish-window mark -t "${mark_to_var}" -s
+    "$@"
+    sawfish-window mark -t "${mark_to_var}" -r
+    exit
+fi
 
 if test "${set_mark}" = true; then
     eval "sawfish-client -e '(setq SW-MARK-${mark_to_var} (input-focus))'"

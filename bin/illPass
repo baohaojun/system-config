@@ -40,25 +40,34 @@ for password in ${passwords}; do
 done
 
 extra_options=(
-    "以上选项都不是，我要自己指定密码搜索的文件名（使用缩写的方式）"
-    "Add a new password by inputing 'PATH/TO/NEW-PASSWORD-NAME!<return>'"
+    "请选择你想要使用的密码，此处显示的是按照你的窗口上下文匹配出来的密码"
+    "也可以输入「[*+]密码名字或片断」!<return>来强制使用(*)或新增(+)一个密码"
 )
+
+is-extra-options() {
+    for x in "${extra_options[@]}"; do
+        if test "$x" = "$1"; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 
 which_password=$(select-args -o -p "Which password do you want to use?" $passwords "${extra_options[@]}")
 
 if test "${password_map[$which_password]}" != 1; then
-    if test "${which_password}" = "${extra_options[0]}"; then
-        abbrev=$(ask-for-input-with-sawfish -p "请输入你想使用的密码名字")
+    if is-extra-options "${which_password}"; then
+        hint "这是一个帮助用的提示选项，选它不会执行任何操作，请重试"
+        exit 0
+    elif [[ $which_password =~ ^\* ]]; then
+        abbrev=${which_password:1}
         which_password=$(
             cd ~/.password-store
             select-output-line -1 -p "请选择、确认你想使用的密码" find ./ -name .git -prune -o -type f -path "*$abbrev*.gpg" -print | perl -pe 's,\.gpg$,,'
                       )
-    else
-        if test "${which_password}" = "${extra_options[1]}"; then
-            bhj-notify illPass "需要创建一个新的密码，请输入这个密码的名字（可以是它的用途，比如 sudo 等）"
-            which_password=$(ask-for-input-with-sawfish -p "请输入新密码的名字（默认在 ${window_class}/${window_name} 下，如想更改路径，请直接输入 PATH/TO/FILENAME")
-        fi
-        if ! [[ $which_password =~ / ]]; then
+    elif [[ $which_password =~ ^\+ ]]; then
+        if ! [[ $which_password =~ / ]] && yes-or-no-p -y "你输入的密码名字不包含目录，使用 ${window_class}/${window_name} 作为父目录？"; then
             which_password="${window_class}/${window_name}/${which_password}"
         fi
 

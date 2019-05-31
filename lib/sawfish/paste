@@ -1,0 +1,5 @@
+#!/bin/bash
+
+putclip "$*"
+
+sawfish-send-focused-window-event "S-Insert"

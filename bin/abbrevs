@@ -1,8 +1,8 @@
 #!/bin/bash
 
 config_dirs=(
-    ~/system-config/etc/abbrevs/
     ~/.local-config/etc/abbrevs/
+    ~/system-config/etc/abbrevs/
 )
 
 set -e
@@ -56,11 +56,20 @@ if test -z "$abbrev" -a "$1"; then
 elif test "$abbrev" -a "$1"; then
     die "Must specify ABBREV with either -a ABBREV or \$1, can't use both"
 else
-    abbrev=$(ask-for-input-with-sawfish -p "Please input your abbrev")
+    abbrev=$(ask-for-input-with-sawfish -p "Please input your abbrev. Or simply ? for help")
+fi
+
+if test "${abbrev}" = '?'; then
+    EMACS=t hint "You can use + to add a new abbrev, like this: +NEW_ABBREV"
+    exit
+elif test "${abbrev:0:1}" = +; then
+    touch "${config_dirs[0]}/${abbrev:1}"
+    sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
+    exit
 fi
 
 abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -name "*$abbrev*" -type f)
 expand_text=$(
-    cat $abbrev_file
+    cat "$abbrev_file"
            )
-xdotool-when-keyboard-clear type "$expand_text"
+sawfish-window paste "${expand_text}"
