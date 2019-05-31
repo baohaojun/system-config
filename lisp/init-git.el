@@ -26,12 +26,7 @@
 
   (defun sanityinc/magit-or-vc-log-file (&optional prompt)
     (interactive "P")
-    (if (and (buffer-file-name)
-             (eq 'Git (vc-backend (buffer-file-name))))
-        (if prompt
-            (magit-log-buffer-file-popup)
-          (magit-log-buffer-file t))
-      (vc-print-log)))
+    (vc-print-log))
 
   (after-load 'vc
     (define-key vc-prefix-map (kbd "l") 'sanityinc/magit-or-vc-log-file)))
