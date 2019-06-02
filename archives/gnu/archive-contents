@@ -538,7 +538,7 @@
 	   ((:url . "http://elpa.gnu.org/packages/flymake.html")
 	    (:keywords "c" "languages" "tools"))])
  (fountain-mode .
-		[(2 7 0)
+		[(2 7 1)
 		 ((emacs
 		   (24 5)))
 		 "Major mode for screenwriting in Fountain markup" single
@@ -1104,29 +1104,99 @@
 	      ((:url . "http://elpa.gnu.org/packages/rcirc-menu.html")
 	       (:keywords "comm"))])
  (realgud .
-	  [(1 4 5)
+	  [(1 5 0)
 	   ((load-relative
 	     (1 2))
 	    (loc-changes
 	     (1 2))
 	    (test-simple
 	     (1 2 0))
-	    (cl-lib
-	     (0 5))
 	    (emacs
-	     (24)))
+	     (25)))
 	   "A modular front-end for interacting with external debuggers" tar
-	   ((:keywords "gdb" "python" "perl" "go" "bash" "nodejs" "zsh" "bashdb" "zshdb" "remake" "make" "trepan" "perldb" "pdb")
+	   ((:keywords "debugger" "gdb" "python" "perl" "go" "bash" "zsh" "bashdb" "zshdb" "remake" "trepan" "perldb" "pdb")
 	    (:url . "http://github.com/realgud/realgud/"))])
+ (realgud-ipdb .
+	       [(1 0 0)
+		((realgud
+		  (1 4 5))
+		 (load-relative
+		  (1 2))
+		 (cl-lib
+		  (0 5))
+		 (emacs
+		  (24)))
+		"Realgud front-end to ipdb" single
+		((:url . "http://github.com/rocky/realgud-ipdb")
+		 (:keywords))])
+ (realgud-jdb .
+	      [(1 0 0)
+	       ((realgud
+		 (1 4 5))
+		(load-relative
+		 (1 2))
+		(cl-lib
+		 (0 5))
+		(emacs
+		 (25)))
+	       "Realgud front-end to Java's jdb debugger\"" tar
+	       ((:url . "http://github.com/realgud/realgud-jdb"))])
+ (realgud-lldb .
+	       [(1 0 1)
+		((load-relative
+		  (1 2))
+		 (realgud
+		  (1 5 0))
+		 (emacs
+		  (25)))
+		"Realgud front-end to lldb" single
+		((:url . "http://github.com/realgud/realgud-lldb")
+		 (:keywords))])
+ (realgud-node-debug .
+		     [(1 0 0)
+		      ((realgud
+			(1 4 5))
+		       (load-relative
+			(1 2))
+		       (cl-lib
+			(0 5))
+		       (emacs
+			(25)))
+		      "Realgud front-end to older \"node debug\"" tar
+		      ((:url . "http://github.com/realgud/realgud-node-debug"))])
+ (realgud-node-inspect .
+		       [(1 0 0)
+			((realgud
+			  (1 4 5))
+			 (load-relative
+			  (1 2))
+			 (cl-lib
+			  (0 5))
+			 (emacs
+			  (24)))
+			"Realgud front-end to newer \"node inspect\"" tar
+			((:url . "http://github.com/realgud/realgud-node-inspect"))])
+ (realgud-trepan-ni .
+		    [(1 0 1)
+		     ((load-relative
+		       (1 2))
+		      (realgud
+		       (1 5 0))
+		      (cl-lib
+		       (0 5))
+		      (emacs
+		       (25)))
+		     "Realgud front-end to trepan-ni" tar
+		     ((:url . "http://github.com/realgud/realgud-trepan-ni"))])
  (register-list .
 		[(0 1)
 		 nil "Interactively list/edit registers" single
 		 ((:url . "http://elpa.gnu.org/packages/register-list.html")
 		  (:keywords "register"))])
  (relint .
-	 [(1 7)
+	 [(1 8)
 	  ((xr
-	    (1 11)))
+	    (1 12)))
 	  "Elisp regexp mistake finder" single
 	  ((:url . "https://github.com/mattiase/relint")
 	   (:keywords "lisp" "maint" "regexps"))])
@@ -1482,7 +1552,7 @@
        ((:keywords "multimedia" "xpm")
 	(:url . "http://www.gnuvola.org/software/xpm/"))])
  (xr .
-     [(1 11)
+     [(1 12)
       nil "Convert string regexp to rx notation" tar
       ((:keywords "lisp" "maint" "regexps")
        (:url . "https://github.com/mattiase/xr"))])
