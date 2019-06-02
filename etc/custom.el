@@ -341,7 +341,8 @@
  '(yas-snippet-dirs
    (quote
     ("~/.local-config/etc/yasnippet" "~/system-config/.emacs_d/yasnippet/snippets" "~/system-config/.emacs_d/yasnippet-snippets")))
- '(yas-trigger-key "M-TAB"))
+ '(yas-trigger-key "M-TAB")
+ '(yas-wrap-around-region t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

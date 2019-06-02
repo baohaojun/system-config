@@ -25,14 +25,6 @@ exec >> ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
 set -x
 
 if test $(basename $0) = screen-lock-off; then # lock off, screen on
-    if test -e ~/.local-config/.gitconfig.bhj; then
-        (
-            set -x
-            . wait-keys-clear
-            am dvp
-        ) > ~/.cache/system-config/logs/screen-on.log 2>&1&
-    fi
-    find-or-exec emacs emacs.bhj
     xdotool mousemove 20 10
     sleep 1
     xdotool mousemove 1024 10
@@ -43,7 +35,6 @@ else # lock on, screen off
     # my-adb key power
 
     rm ~/.cache/system-config/logs/screen-on -f
-    am dvp
     destroy-windows Wrench
     adb-lcd -a off
     killall-tty-logins
