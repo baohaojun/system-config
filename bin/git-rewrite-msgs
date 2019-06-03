@@ -26,17 +26,28 @@ b0=$(basename $BASH_SOURCE)
 
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt '?"$b0 OPTIONS REV1 [REV2]"' \
-        # s:start-with=1 '?"start reworking with which commit (in reverse order, 1 means the oldest patch)"'
+        # s:start-with=1 '?"start reworking with which commit (in reverse order, 1 means the oldest patch)"' \
+        # 1one-by-one
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o s:h \
-               --long start-with:,help \
+TEMP=$( getopt -o 1s:h \
+               --long one-by-one,start-with:,help,no-one-by-one \
                -n $(basename -- $0) -- "$@")
+declare one_by_one=false
 declare start_with=1
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -1|--one-by-one|--no-one-by-one)
+            if test "$1" = --no-one-by-one; then
+                one_by_one=false
+            else
+                one_by_one=true
+            fi
+            shift
+
+            ;;
         -s|--start-with)
             start_with=$2
             shift 2
@@ -47,6 +58,9 @@ while true; do
             echo -e "$b0 OPTIONS REV1 [REV2]"
             echo
             echo Options and arguments:
+            printf %06s '-1, '
+            printf %-24s '--[no-]one-by-one'
+            echo
             printf %06s '-s, '
             printf %-24s '--start-with=START_WITH'
             echo "start reworking with which commit (in reverse order, 1 means the oldest patch)"
@@ -83,6 +97,8 @@ fi
 
 set -- $(git rev-parse $1) $(git rev-parse $2)
 
+export last_rev=$2
+
 if test $# != 2; then
     die "Usage: $(basename $0) START_REV END_REV(default to HEAD)"
 fi
@@ -92,7 +108,15 @@ export list=$(git rev-list $1..$2|reverse)
 git reset --hard $1
 if test $(basename $0) = git-rework-change; then
     start_recursive_shell "Rework commit $1" || true
-    git cherry-pick $1..$2
+    if test "${one_by_one}" = true; then
+        for x in $list; do
+            export $WORKING_REV=$x
+            git cherry-pick $x || start_recursive_shell "cherry-pick $x failed" || true
+            start_recursive_shell "done cherry-pick $x, please check" || true
+        done
+    else
+        git cherry-pick $1..$2
+    fi
     exit
 fi
 
@@ -100,5 +124,9 @@ for x in $list; do
     export WORKING_REV=$x
     git commit --amend
     git cherry-pick $x || start_recursive_shell "cherry-pick $x failed" || true
+
+    if test "${one_by_one}" = true; then
+        start_recursive_shell "done cherry-pick $x, please check" || true
+    fi
 done
 git commit --amend
