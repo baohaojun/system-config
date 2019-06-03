@@ -19,12 +19,18 @@ add_newline_and_notify=false
 
 if test "${window_name}" = myscr -a "${window_class}" = xterm; then
     add_newline_and_notify=true
+    screen_text_reversed=$(
+        tmux capture-pane;
+        tmux save-buffer - | reverse;
+        tmux delete-buffer
+                        )
     who_and_where=$(
-        tmux capture-pane; tmux save-buffer - | reverse | grep '(\S+@\S+)\s' -o -P | head -n 1|tr -d ' '
+        echo "${screen_text_reversed}" | grep '(\S+@\S+)\s' -o -P | head -n 1|tr -d ' '
                  )
+
     if test "${who_and_where}"; then
-        window_class=${who_and_where#*@}
-        window_name=${who_and_where%@*}
+        window_class=${who_and_where#*@}/${who_and_where%@*}
+        window_name=$(echo "${screen_text_reversed}" | grep . | head -n 1)
     fi
 fi
 
@@ -67,6 +73,7 @@ if test "${password_map[$which_password]}" != 1; then
             select-output-line -1 -p "请选择、确认你想使用的密码" find ./ -name .git -prune -o -type f -path "*$abbrev*.gpg" -print | perl -pe 's,\.gpg$,,'
                       )
     elif [[ $which_password =~ ^\+ ]]; then
+        which_password=${which_password#+}
         if ! [[ $which_password =~ / ]] && yes-or-no-p -y "你输入的密码名字不包含目录，使用 ${window_class}/${window_name} 作为父目录？"; then
             which_password="${window_class}/${window_name}/${which_password}"
         fi
