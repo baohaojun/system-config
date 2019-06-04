@@ -25,6 +25,7 @@ exec >> ~/.cache/system-config/logs/screen-lock-on-off.log 2>&1
 set -x
 
 if test $(basename $0) = screen-lock-off; then # lock off, screen on
+    sawfish-client -e "(bhj-activate-window (car (mapped-stacking-order)))"
     xdotool mousemove 20 10
     sleep 1
     xdotool mousemove 1024 10

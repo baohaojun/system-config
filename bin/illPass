@@ -32,12 +32,36 @@ if test "${window_name}" = myscr -a "${window_class}" = xterm; then
         window_class=${who_and_where#*@}/${who_and_where%@*}
         window_name=$(echo "${screen_text_reversed}" | grep . | head -n 1)
     fi
+
+elif [[ $window_class =~ firefox ]]; then
+    url=$(get-firefox-tab-url --no-with-xkeytool|tr -d '"')
+
+    url_host=$(
+        perl -e "$(
+cat <<'EOF2dc8a5676097' | . .replace-%% --
+# {%perl-mode%}
+use URI;
+
+$url = URI->new("<%url%>")->canonical;
+print $url->host
+# {%/perl-mode%}
+EOF2dc8a5676097
+
+)" || true
+
+            )
+
+    if test "${url_host}"; then
+        window_name=$url_host
+    else
+        bhj-notify illPass "Can't get firefox url"
+    fi
 fi
 
 IFS=$'\n'
 passwords=$(
     cd ~/.password-store/
-    find "${window_class}/${window_name}" -type f|perl -pe 's,\.gpg$,,'
+    find "${window_class}/${window_name}" -name "*.gpg" \( -type f -o -type l \)|perl -pe 's,\.gpg$,,'
          )
 
 declare -A password_map
@@ -48,6 +72,7 @@ done
 extra_options=(
     "请选择你想要使用的密码，此处显示的是按照你的窗口上下文匹配出来的密码"
     "也可以输入「[*+]密码名字或片断」!<return>来强制使用(*)或新增(+)一个密码"
+    "也可以输入 「~密码名字或片断」!<return>来生成一个软链接"
 )
 
 is-extra-options() {
@@ -60,18 +85,27 @@ is-extra-options() {
 }
 
 
-which_password=$(select-args -o -p "Which password do you want to use?" $passwords "${extra_options[@]}")
+which_password=$(select-args -o -p "Which password do you want to use for ${window_class}/${window_name}?" $passwords "${extra_options[@]}")
 
 if test "${password_map[$which_password]}" != 1; then
     if is-extra-options "${which_password}"; then
         hint "这是一个帮助用的提示选项，选它不会执行任何操作，请重试"
         exit 0
-    elif [[ $which_password =~ ^\* ]]; then
+    elif [[ $which_password =~ ^(\*|~) ]]; then
+        first_char=${which_password:0:1}
         abbrev=${which_password:1}
+
         which_password=$(
             cd ~/.password-store
             select-output-line -1 -p "请选择、确认你想使用的密码" find ./ -name .git -prune -o -type f -path "*$abbrev*.gpg" -print | perl -pe 's,\.gpg$,,'
                       )
+        if test "${first_char}" = \~; then
+            (
+                cd ~/.password-store
+                mkdir -p "${window_class}/${window_name}"
+                relative-link "$which_password".gpg "${window_class}/${window_name}/"
+            )
+        fi
     elif [[ $which_password =~ ^\+ ]]; then
         which_password=${which_password#+}
         if ! [[ $which_password =~ / ]] && yes-or-no-p -y "你输入的密码名字不包含目录，使用 ${window_class}/${window_name} 作为父目录？"; then
