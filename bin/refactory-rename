@@ -293,7 +293,7 @@ function rename-files() {
 
 rename-files . "$@"
 if test "$use_git" = true -a "${#change_files[@]}" != 0; then
-    git checkout "${change_files[@]}"
+    true git checkout "${change_files[@]}" # why?
 fi
 git-interactive-add
 

@@ -1,0 +1,142 @@
+#!/bin/bash
+
+set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P f:from t:to rreplace-first ddelete-extra
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o df:rt:h \
+                      --long delete-extra,from:,replace-first,to:,help,no-delete-extra,no-replace-first \
+                      -n $(basename -- $0) -- "$@")
+declare delete_extra=false
+declare from=
+declare replace_first=false
+declare to=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--delete-extra|--no-delete-extra)
+            if test "$1" = --no-delete-extra; then
+                delete_extra=false
+            else
+                delete_extra=true
+            fi
+            shift
+
+            ;;
+        -f|--from)
+            from=$2
+            shift 2
+
+            ;;
+        -r|--replace-first|--no-replace-first)
+            if test "$1" = --no-replace-first; then
+                replace_first=false
+            else
+                replace_first=true
+            fi
+            shift
+
+            ;;
+        -t|--to)
+            to=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]delete-extra'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--from=FROM'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]replace-first'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to=TO'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${replace_first}" = true; then
+    for new_from in $(
+                     ssh-gerrit ls-groups | grep "$from"
+                 ); do
+        new_to=${new_from/$from/$to}
+
+        if [[ $new_to =~ -(DEV|SME|ADMIN)$ ]]; then
+            ssh-gerrit  create-group ${new_to%-*}-ADMIN || true
+            ssh-gerrit  create-group ${new_to%-*}-SME -g ${new_to%-*}-ADMIN -o ${new_to%-*}-ADMIN || true
+            ssh-gerrit  create-group ${new_to%-*}-DEV -g ${new_to%-*}-SME -o ${new_to%-*}-SME || true
+        fi
+
+        if yes-or-no-p "work with $new_from: $new_to"; then
+            log-run $me -f "$new_from" -t "$new_to"
+        fi
+    done
+    exit
+fi
+
+from_members=$(
+    ssh-gerrit ls-members "${from}" | perl -ne 'print unless 1..1' | pn 2
+            )
+
+to_members=$(
+    ssh-gerrit ls-members "${to}" | perl -ne 'print unless 1..1' | pn 2
+          )
+
+if test "$delete_extra" = true; then
+    for x in $(arg1-arg2 "$to_members" "$from_members"); do
+
+        log "remove: $x"
+        ssh-gerrit set-members "$to" -r "$x"
+    done
+fi
+
+for x in $(arg1-arg2 "$from_members" "$to_members"); do
+    log "add: $x"
+    ssh-gerrit set-members "$to" -a "$x"
+done

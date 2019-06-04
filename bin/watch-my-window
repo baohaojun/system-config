@@ -17,7 +17,7 @@ top_window=$(sawfish-top-window)
 if [[ $top_window =~ Firefox ]]; then
     url=$(firefox-get-tab-url --no-with-xkeytool)
     echo "$(date): ${top_window} ($url)"
-    if is-at-work && [[ $url =~ weibo.com|www.newsmth.net ]]; then
+    if is-at-work &>/dev/null && [[ $url =~ weibo.com|www.newsmth.net ]]; then
         alarm -a "e ~/system-config/doc/projects/daily.org" 0m "You should not view weibo when at work!"
     fi
 else

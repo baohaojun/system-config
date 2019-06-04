@@ -1,0 +1,58 @@
+#!/bin/bash
+
+set -e
+export scm_test_workspace=~/tmp/manifest-for-test
+export scm_test_branch=disposable/test-patch-download
+export scm_push_url=ssh://${scm_gerrit_user}@${scm_gerrit_server}:${scm_gerrit_port}/
+
+gerrit-query-for-repo-download -q "branch:${scm_test_branch}" |
+    while read project change patchset commit; do
+        log delete patch ${change}
+        gr delete-patch -c ${change} </dev/null
+    done
+
+rm -rf $scm_test_workspace
+mkdir -p $scm_test_workspace
+
+clean-up() {
+    git push ${scm_push_url}platform/manifest.ep :refs/heads/${scm_test_branch}
+    rm -rf $scm_test_workspace
+}
+
+#. atexit clean-up; . aterr clean-up
+
+cd $scm_test_workspace
+
+git init .
+scp -p -P ${scm_gerrit_port} ${scm_gerrit_user}@${scm_gerrit_server}:hooks/commit-msg .git/hooks/
+GIT_COMMITTER_DATE='Mon Mar 18 14:58:08 CST 2019' git commit -m 'init commit' --allow-empty --date 'Mon Mar 18 14:58:08 CST 2019'
+
+
+cat <<EOFf4b034f45c76 > default.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+       <remote fetch=".." name="origin" review="http://192.168.4.101:8080"/>
+
+       <default remote="origin" revision="$scm_test_branch"/>
+
+       <project name="ep/scm/sandbox1" path="sandbox1" />
+       <project name="ep/scm/sandbox2" path="sandbox2" />
+       <project name="ep/scm/sandbox3" path="sandbox3" />
+     </manifest>
+EOFf4b034f45c76
+
+git add .
+git commit -m "Add init version of default.xml"
+git push ${scm_push_url}platform/manifest.ep HEAD:refs/heads/${scm_test_branch} -f
+
+(
+    for x in $(seq 1 3); do
+        ssh-gerrit --admin create-project ep/scm/sandbox$x --empty-commit &>/dev/null || true
+    done
+)
+
+(
+    for x in $(seq 1 3); do
+        git push ${scm_push_url}ep/scm/sandbox$x HEAD:refs/heads/${scm_test_branch} -f
+    done
+)

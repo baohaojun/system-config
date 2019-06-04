@@ -110,4 +110,11 @@ else # -z ${user}
         )@
 fi
 
+if test -x ${scm_common_libdir}/gerrit/$1; then
+    action=${scm_common_libdir}/gerrit/$1
+    shift
+    $action "$@"
+    exit
+fi
+
 ssh ${user}$host -p ${port} gerrit "$@"
