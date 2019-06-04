@@ -104,6 +104,8 @@ if test "${password_map[$which_password]}" != 1; then
                 cd ~/.password-store
                 mkdir -p "${window_class}/${window_name}"
                 relative-link "$which_password".gpg "${window_class}/${window_name}/"
+                git add .
+                git commit -m "Add symlink" || true
             )
         fi
     elif [[ $which_password =~ ^\+ ]]; then
