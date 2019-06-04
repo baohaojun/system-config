@@ -58,7 +58,7 @@ empty_clipboard=@empty@
 
 putclip "${empty_clipboard}"
 
-for x in $(seq 1 5); do
+for x in $(seq 1 2); do
     if test "$x" = 1; then
         xdotool key F22
     else

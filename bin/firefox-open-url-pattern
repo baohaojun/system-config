@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if test "${EMACS}" = t; then
+    unset EMACS
+    setsid nohup firefox-open-url-pattern "$@" &> ~/.cache/system-config/logs/firefox-open-url-pattern.log&
+    exit
+fi
+
 clip_save=$(getclip)
 . atexit putclip "${clip_save}"
 
@@ -73,6 +79,10 @@ if test "$special" = true; then
     sawfish-start-special help firefox
 fi
 
+if test "$#" = 1; then
+    set -- "." "$1"
+fi
+
 pattern=$1
 url=$2
 
@@ -102,7 +112,7 @@ function current_url_matches() {
     local current_url=$2
     local pattern=$3
 
-    if (test "$exact" -a "$(echo "$current_url" | unurl.pl)" = "$pattern") || (test ! "$exact" && echo "$current_url" | grep -q -P -e "$pattern"); then
+    if test "$pattern" = . || (test "$exact" -a "$(echo "$current_url" | unurl.pl)" = "$pattern") || (test ! "$exact" && echo "$current_url" | grep -q -P -e "$pattern"); then
         return 0
     else
         return 1
@@ -136,6 +146,9 @@ if test "$exact"; then
     fi
 fi
 
+if test -e "$url"; then
+    url=file://$(readlink -f "$url")
+fi
 if test -z "${new_tab}" -a "${special}" = true; then
     putclip "$url"
     sawfish-browser-input "C-l" "S-Insert" "RET"
