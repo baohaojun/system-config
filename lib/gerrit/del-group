@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P u:user g:group '?"从该组中删除。根据 use-regexp 参数，此参数可以是正则表达式"' ruse-regexp
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o g:ru:h \
+                      --long group:,use-regexp,user:,help,no-use-regexp \
+                      -n $(basename -- $0) -- "$@")
+declare group=
+declare use_regexp=false
+declare user=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -g|--group)
+            group=$2
+            shift 2
+
+            ;;
+        -r|--use-regexp|--no-use-regexp)
+            if test "$1" = --no-use-regexp; then
+                use_regexp=false
+            else
+                use_regexp=true
+            fi
+            shift
+
+            ;;
+        -u|--user)
+            user=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-g, '
+            printf %-24s '--group=GROUP'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]use-regexp'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--user=USER'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+IFS=$'\n'
+if test "$use_regexp" = true; then
+    group=$(
+        gerrit-show-groups $user | grep -P -e "$group"
+         )
+
+    log group changed to $group
+fi
+
+for group in $group; do
+    log delete $user from $group
+    ssh-gerrit --admin set-members "'$group'" -r "$user"
+done

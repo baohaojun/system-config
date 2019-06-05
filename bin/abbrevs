@@ -60,12 +60,19 @@ else
 fi
 
 if test "${abbrev}" = '?'; then
-    EMACS=t hint "You can use + to add a new abbrev, like this: +NEW_ABBREV"
+    EMACS=t hint "You can use + to add a new abbrev, like this: +NEW_ABBREV
+
+You can use > to edit an existing abbrev, like thin: >OLD_ABBREV"
+
     exit
 elif test "${abbrev:0:1}" = +; then
     touch "${config_dirs[0]}/${abbrev:1}"
     sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
     exit
+elif test "${abbrev:0:1}" = '>'; then
+    abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -name "*${abbrev:1}*" -type f)
+    ew "${abbrev_file}"
+    exec bhj-notify abbrevs "Done editing ${abbrev_file##*/}"
 fi
 
 abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -name "*$abbrev*" -type f)

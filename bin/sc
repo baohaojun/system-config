@@ -48,12 +48,12 @@ b0=$(basename $BASH_SOURCE)
 me_home=${me%/system-config/bin/sc}
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -p sc @:home='${HOME}' '?"指定使用哪个目录作为临时的 HOME 目录（绿色安装，不要影响用户默认环境）"'
+# generate-getopt -p sc -P @:home='${HOME}' '?"指定使用哪个目录作为临时的 HOME 目录（绿色安装，不要影响用户默认环境）"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o h \
-               --long home:,help \
-               -n $(basename -- $0) -- "$@")
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long home:,help \
+                      -n $(basename -- $0) -- "$@")
 declare sc_home=${HOME}
 eval set -- "$TEMP"
 while true; do
@@ -137,7 +137,13 @@ elif test "$action" = try; then
     bash
 elif test "$action" = bg; then
     . ~/system-config/etc/reinit-bash-env
-    exec bash
+    if test "$#" -gt 1; then
+        shift
+        "$@"
+        exit
+    else
+        exec bash
+    fi
 elif test "$action" = exit; then
     exit
 elif test "$action" = help; then
