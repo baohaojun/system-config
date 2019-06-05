@@ -120,11 +120,10 @@ function git-meld() {
 
 git-interactive-review-1() {
     local x=$1
-    if test "${x:0:1}" = \" && yes-or-no-p -y "Eval $x?"; then
+    if test "${x:0:1}" = \"; then
         eval x=\$\'"$x"\'
         x=${x#\"}
         x=${x%\"}
-        echo "x changed to '$x'"
     fi
     if test -d "$x"; then
         continue

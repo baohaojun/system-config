@@ -114,6 +114,13 @@ git fetch s:$from refs/meta/*:refs/meta/*
 
 git reset --hard refs/meta/config
 
-ssh-gerrit create-project $to -p $from --permissions-only
+. atexit start_recursive_shell xx
+ssh-gerrit create-project $to -p $from --permissions-only || true
 rename-refactory -f project.config "$ORIGINAL_FROM" "$ORIGINAL_TO"
-start_recursive_shell xx
+gerrit-meta-fix-groups
+
+git fetch s:$to refs/meta/config
+git reset --soft FETCH_HEAD
+git add .
+git commit -s -m "Copy from $from"
+git push s:$to HEAD:refs/meta/config

@@ -48,7 +48,7 @@ done
 ## end generated code
 
 if test $# = 0; then
-    set -- s:All-Projects
+    set -- s:$(select-output-line -p "Which project do you want?" ssh-gerrit ls-projects)
 fi
 
 if test $# != 0; then
