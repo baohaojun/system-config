@@ -4,4 +4,8 @@ if test $# = 1; then
     BUILD_URL=$1
 fi
 
+if ! [[ $BUILD_URL =~ /job/ ]]; then
+    die "It's not a job build url"
+fi
+
 jc curl "${BUILD_URL%/}"/doDelete -X POST

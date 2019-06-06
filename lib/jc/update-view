@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jc update "view/$1/config.xml"

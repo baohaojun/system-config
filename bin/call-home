@@ -1,7 +1,7 @@
 #! /bin/bash
 
 . ensure-at-work
-for home in realhome home realhome-pc; do
+for home in realhome-pc; do
     (
         flock -n 9 || { set +e; echo 'lock failed for home at '$(date); ps-killall sleep.51555005; exit 0; }
         while true; do
@@ -27,4 +27,3 @@ for home in realhome home realhome-pc; do
         done >~/.cache/system-config/logs/call-$home.log 2>&1&
     ) 9>~/.cache/system-config/logs/$(basename $0).$home.lock  2>&1 &
 done
-
