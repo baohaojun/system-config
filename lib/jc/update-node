@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jc update computer/$1/config.xml

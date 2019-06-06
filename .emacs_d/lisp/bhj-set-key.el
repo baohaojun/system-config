@@ -2,6 +2,7 @@
 (global-set-key (kbd "C-c o") (lambda()(interactive)(shell-command-to-string (format "of %s" (shell-quote-argument (buffer-file-name))))))
 (global-set-key (kbd "C-c y n") 'yas-new-snippet)
 (global-set-key (kbd "C-c y v") 'yas-visit-snippet-file)
+(global-set-key (kbd "C-c y i") 'yas-insert-snippet)
 
 (defun bhj-insert-file-basename () (interactive) (insert (bhj-file-basename)))
 (defun bhj-insert-theme () (interactive) (insert (symbol-name (car custom-enabled-themes))))

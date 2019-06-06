@@ -72,7 +72,7 @@ done
 extra_options=(
     "请选择你想要使用的密码，此处显示的是按照你的窗口上下文匹配出来的密码"
     "也可以输入「[*+]密码名字或片断」!<return>来强制使用(*)或新增(+)一个密码"
-    "也可以输入 「~密码名字或片断」!<return>来生成一个软链接"
+    "也可以输入 「[~>]密码名字或片断」!<return>来生成一个软链接（~）或编辑（>）"
 )
 
 is-extra-options() {
@@ -91,7 +91,7 @@ if test "${password_map[$which_password]}" != 1; then
     if is-extra-options "${which_password}"; then
         hint "这是一个帮助用的提示选项，选它不会执行任何操作，请重试"
         exit 0
-    elif [[ $which_password =~ ^(\*|~) ]]; then
+    elif [[ $which_password =~ ^(\*|~|\>) ]]; then
         first_char=${which_password:0:1}
         abbrev=${which_password:1}
 
@@ -107,6 +107,9 @@ if test "${password_map[$which_password]}" != 1; then
                 git add .
                 git commit -m "Add symlink" || true
             )
+        elif test "${first_char}" = \>; then
+            pass edit "$which_password"
+            sawfish-window mark -t illPass -r
         fi
     elif [[ $which_password =~ ^\+ ]]; then
         which_password=${which_password#+}
