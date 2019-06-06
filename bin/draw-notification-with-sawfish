@@ -3,12 +3,12 @@ set -e
 # debug-args $(basename "$0") "$@" > ~/.cache/system-config/logs/$(basename $0).log 2>&1
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt i:icon h:headline c:content s:shell @:info @wrap
+# generate-getopt -P i:icon h:headline c:content s:shell @:info @wrap
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o c:h:i:s:h \
-               --long content:,headline:,icon:,info:,shell:,wrap,help,no-wrap \
-               -n $(basename -- $0) -- "$@")
+TEMP=$(POSIXLY_CORRECT=true getopt -o c:h:i:s:h \
+                      --long content:,headline:,icon:,info:,shell:,wrap,help,no-wrap \
+                      -n $(basename -- $0) -- "$@")
 declare content=
 declare headline=
 declare icon=

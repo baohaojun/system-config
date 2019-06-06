@@ -38,6 +38,6 @@ else # lock on, screen off
     rm ~/.cache/system-config/logs/screen-on -f
     destroy-windows Wrench
     adb-lcd -a off
-    killall-tty-logins
+    bash -x killall-tty-logins &> ~/tmp/killall-tty-logins.log
     true
 fi
