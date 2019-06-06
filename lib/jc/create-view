@@ -1,0 +1,110 @@
+#!/usr/bin/env perl
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P -s perl v:view-name x:xml-str p:parent-view ttest-drive
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $parent_view = "";
+my $test_drive = 0;
+my $view_name = "";
+my $xml_str = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-p, ';
+  printf "%-24s", '--parent-view=PARENT-VIEW';
+  if (length('--parent-view=PARENT-VIEW') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-t, ';
+  printf "%-24s", '--[no]test-drive';
+  if (length('--[no]test-drive') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-v, ';
+  printf "%-24s", '--view-name=VIEW-NAME';
+  if (length('--view-name=VIEW-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-x, ';
+  printf "%-24s", '--xml-str=XML-STR';
+  if (length('--xml-str=XML-STR') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'parent-view|p=s' => \$parent_view,
+            'test-drive|t!' => \$test_drive,
+            'view-name|v=s' => \$view_name,
+            'xml-str|x=s' => \$xml_str,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+if (not $xml_str) {
+  $xml_str = join("", <>);
+}
+
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($xml_str);
+
+if ($dom->at('views')) {
+  $dom->at('views')->content('');
+}
+
+use v5.10;
+
+use String::ShellQuote;
+my @command = shell_quote("jc", "update", "${parent_view}createView?name=${view_name}");
+my $command = join(" ", @command);
+
+if ($test_drive) {
+  say $command;
+} else {
+  system("jc", "delete-view", "${parent_view}${view_name}");
+  open(my $jc_create, "|$command");
+  print $jc_create "$dom";
+  close($jc_create);
+}
+
+$dom = Mojo::DOM->new->parse($xml_str);
+if (! $dom->at('views')) {
+  exit 0;
+}
+
+$dom->at('views')->children->each
+  (
+   sub {
+     my $name = $_->at('name')->text;
+     my $xml_str = '<?xml version="1.1" encoding="UTF-8"?>' . $_;
+     if ($test_drive) {
+       say "create sub view: ", $_->at('name')->text;
+     } else {
+       system('jc', 'create-view', '-v', $name, "-p", "${parent_view}view/${view_name}/", "--xml-str", $xml_str);
+     }
+   }
+  );
