@@ -101,6 +101,10 @@ else
             unset -f git git_svn
             command git-interactive-add
         )
+        (
+            . .gitx
+            git submodule foreach 'if test -e .git/sc-not-merged; then git-interactive-add; fi'
+        )
     }
     export -f git-interactive-add
 fi
