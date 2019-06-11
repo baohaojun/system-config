@@ -13,9 +13,9 @@ else
 end
 
 ldap = Net::LDAP.new
-ldap.host = '172.16.21.3'
-ldap.port = 3268
-ldap.auth "itadmin@smartisan.cn", `cat ~/.ssh/mysql-cmbuild.pass`.chomp
+ldap.host = ENV['scm_ldap_host']
+ldap.port = ENV['scm_ldap_port']
+ldap.auth ENV['scm_ldap_user'], ENV['scm_ldap_password']
 
 user_email = String.new(ARGV[0])
 
@@ -25,8 +25,8 @@ user_email = user_email.sub(/\.cn$/, ".com")
 
 
 [user_email, user_email2].each { | user |
-  result = ldap.bind_as(:base => "dc=smartisan, dc=cn",
-                        :filter => "(&(|(mail=#{user})(userPrincipalName=#{user}))(sAMAccountName=#{user.sub(/@.*/, "")}))",
+  result = ldap.bind_as(:base => "DC=chj,DC=local",
+                        :filter => "(sAMAccountName=#{user.sub(/@.*/, "")})",
                         :password => ARGV[1])
   if result
     puts "good: #{user}"
@@ -35,4 +35,3 @@ user_email = user_email.sub(/\.cn$/, ".com")
   end
 
 }
-
