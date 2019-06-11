@@ -130,7 +130,7 @@ password=$(
         )
 
 if test ${#password} -gt 20 || [[ $password =~ $'\n' ]]; then
-    bhj-notify illPass "Bad password: $password"
+    bhj-notify illPass "Bad password, too long"
     hint "You have inputed a very long password, will now exit"
     exit
 fi
