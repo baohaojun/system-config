@@ -253,6 +253,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.account.ui.MobileInputUI'] = 'manual-p
 map['com.tencent.mm/com.tencent.mm.plugin.address.ui.WalletAddAddressUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandSearchUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI'] = 'manual-post'
+map['com.tencent.mm/com.tencent.mm.plugin.brandservice.ui.timeline.preload.ui.TmplWebViewTooLMpUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.chatroom.ui.ChatroomInfoUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.chatroom.ui.ModRemarkRoomNameUI'] = 'manual-post'
 map['com.tencent.mm/com.tencent.mm.plugin.chatroom.ui.SeeRoomMemberUI'] = 'manual-post'
