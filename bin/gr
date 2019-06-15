@@ -3,26 +3,35 @@
 # This script is short for "Gerrit Rest".
 
 set -e
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P u:username p:password
+# generate-getopt -e -P s:gerrit-server-url='${scm_gerrit_url}' \
+    # u:gerrit-user='${scm_gerrit_admin_user}' \
+    # p:gerrit-web-password='${scm_gerrit_admin_user_web_password}'
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o p:u:h \
-                      --long password:,username:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o s:u:p:h \
+                      --long gerrit-server-url:,gerrit-user:,gerrit-web-password:,help \
                       -n $(basename -- $0) -- "$@")
-declare password=
-declare username=
+declare -x gerrit_server_url=${gerrit_server_url:-${scm_gerrit_url}}
+declare -x gerrit_user=${gerrit_user:-${scm_gerrit_admin_user}}
+declare -x gerrit_web_password=${gerrit_web_password:-${scm_gerrit_admin_user_web_password}}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -p|--password)
-            password=$2
+        -s|--gerrit-server-url)
+            gerrit_server_url=$2
             shift 2
 
             ;;
-        -u|--username)
-            username=$2
+        -u|--gerrit-user)
+            gerrit_user=$2
+            shift 2
+
+            ;;
+        -p|--gerrit-web-password)
+            gerrit_web_password=$2
             shift 2
 
             ;;
@@ -31,11 +40,14 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-p, '
-            printf %-24s '--password=PASSWORD'
+            printf %06s '-s, '
+            printf %-24s '--gerrit-server-url=GERRIT_SERVER_URL'
             echo
             printf %06s '-u, '
-            printf %-24s '--username=USERNAME'
+            printf %-24s '--gerrit-user=GERRIT_USER'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--gerrit-web-password=GERRIT_WEB_PASSWORD'
             echo
             exit
             shift
@@ -53,134 +65,22 @@ done
 
 ## end generated code
 
-if test -z "${username}" -a -e ~/.config/org-kungfu/config.ini; then
-    username=$(git config -f ~/.config/org-kungfu/config.ini ok.username)
-    if test -z "${password}"; then
-        password=$(git config -f ~/.config/org-kungfu/config.ini ok.password)
-    fi
-elif test -z "${username}"; then
-    username=${scm_gerrit_user}
-    password=${scm_gerrit_password}
+if test -z "${gerrit_web_password}"; then
+    gerrit_web_password=$(
+        git config -f ${scm_secrets_conf} gerrit.${gerrit_user}.password
+                       )
 fi
 
-gr-delete-patch() {
-
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P c:change
-    ## end code-generator
-    ## start generated code
-    TEMP=$(POSIXLY_CORRECT=true getopt -o c:h \
-                          --long change:,help \
-                          -n $(basename -- $0) -- "$@")
-    declare change=
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-
-            -c|--change)
-                change=$2
-                shift 2
-
-                ;;
-            -h|--help)
-                set +x
-                echo -e
-                echo
-                echo Options and arguments:
-                printf %06s '-c, '
-                printf %-24s '--change=CHANGE'
-                echo
-                exit
-                shift
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error: $(. bt; echo; bt | indent-stdin)"
-                ;;
-        esac
-    done
-
-
-    ## end generated code
-
-    curl -X DELETE -u "${username}:${password}" ${scm_gerrit_url}/a/changes/${change}
-}
-
 _curl() {
-    curl -u "${username}:${password}" "$@"
+    curl -s -u "${gerrit_user}:${gerrit_web_password}" "$@"
 }
+export -f _curl
 
-gr-set-topic() {
-    set -e
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P c:change t:topic
-    ## end code-generator
-    ## start generated code
-    TEMP=$(POSIXLY_CORRECT=true getopt -o c:t:h \
-                          --long change:,topic:,help \
-                          -n $(basename -- $0) -- "$@")
-    declare change=
-    declare topic=
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-
-            -c|--change)
-                change=$2
-                shift 2
-
-                ;;
-            -t|--topic)
-                topic=$2
-                shift 2
-
-                ;;
-            -h|--help)
-                set +x
-                echo -e
-                echo
-                echo Options and arguments:
-                printf %06s '-c, '
-                printf %-24s '--change=CHANGE'
-                echo
-                printf %06s '-t, '
-                printf %-24s '--topic=TOPIC'
-                echo
-                exit
-                shift
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error: $(. bt; echo; bt | indent-stdin)"
-                ;;
-        esac
-    done
-
-
-    ## end generated code
-
-   _curl -X PUT ${scm_gerrit_url}/a/changes/${change}/topic -H "Content-Type: application/json" -H "charset=UTF-8" --data "$(
-cat <<EOF3dc33dfa770d | grep -v '^#'
-# {%json-mode%}
-  {
-    "topic": "$topic"
-  }
-# {%/json-mode%}
-EOF3dc33dfa770d
-)
-"
-}
-
-if test $(type -t gr-"$1") = function; then
-    f=gr-$1
+if test -x ${scm_common_libdir}/gerrit/$1; then
+    action=${scm_common_libdir}/gerrit/$1
     shift
-    $f "$@"
+    $action "$@"
+    exit
 else
     die "Can't execute your command: $*"
 fi

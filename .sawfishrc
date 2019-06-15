@@ -790,6 +790,7 @@
 (bind-keys s-h-keymap "w"  '(system "find-or-exec wine&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
 (bind-keys s-h-keymap "l" '(system "sawfish-move-to-laptop&"))
+(bind-keys s-h-keymap "Super-l" '(system "switch-to-laptop&"))
 (bind-keys s-h-keymap "L" '(system "sawfish-move-to-home-screen&"))
 (bind-keys s-h-keymap "Super-p" '(system "illPass&"))
 (bind-keys s-h-keymap "Super-a" '(system "abbrevs&"))

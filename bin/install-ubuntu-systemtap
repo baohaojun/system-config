@@ -1,0 +1,15 @@
+#!/bin/bash
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C8CAB6595FDFF622
+codename=$(lsb_release -c | awk  '{print $2}')
+sudo tee /etc/apt/sources.list.d/ddebs.list << EOF
+deb http://ddebs.ubuntu.com/ ${codename}      main restricted universe multiverse
+deb http://ddebs.ubuntu.com/ ${codename}-security main restricted universe multiverse
+deb http://ddebs.ubuntu.com/ ${codename}-updates  main restricted universe multiverse
+deb http://ddebs.ubuntu.com/ ${codename}-proposed main restricted universe multiverse
+EOF
+
+sudo add-apt-repository ppa:niedbalski/systemtap-backports
+sudo apt-get update
+sudo apt-get install linux-image-$(uname -r)-dbgsym
+sudo apt-get install systemtap systemtap-client systemtap-common  systemtap-doc systemtap-runtime  systemtap-sdt-dev systemtap-server

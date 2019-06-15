@@ -1,6 +1,5 @@
-
 clear mod4
-keycode 135 = Alt_R
+keycode 135 = Menu
 
 clear control
 clear mod1
@@ -22,4 +21,3 @@ add Lock = Caps_Lock
 
 keycode 197 = F23
 keycode 202 = F24
-
