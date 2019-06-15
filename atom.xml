@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[参加「高效能人士的七个习惯」培训感悟（第一个习惯）]]></title>
+    <link href="http://baohaojun.github.io/blog/2019/06/16/0-7-habits-1.html"/>
+    <updated>2019-53-16T00:06:00+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2019/06/16/0-7-habits-1.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[关于 Bug 的优先级、严重性]]></title>
     <link href="http://baohaojun.github.io/blog/2019/05/28/0-about-bugs-priority-severity.html"/>
     <updated>2019-05-28T09:16:51+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html"/>
     <updated>2016-12-13T14:31:07+08:00</updated>
     <id>http://baohaojun.github.io/blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[偶像重出江湖了]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html"/>
-    <updated>2016-12-11T15:26:49+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/12/11/0-Steve-Yegge-started-blogging-again-after-4-years.html</id>
   </entry>
 </feed>
