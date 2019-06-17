@@ -1,0 +1,19 @@
+#!/usr/bin/env perl
+my $text;
+if (@ARGV) {
+  $text = join(" ", @ARGV);
+} else {
+  $text = join("", <>);
+}
+
+use List::Util qw(max);
+my $max_quote = 0;
+while ($text =~ m,[\[\]](=*)[\[\]],) {
+  $max_quote = max($max_quote, length $1);
+}
+
+my $quote = "=" x $max_quote;
+
+my $post_text = sprintf("wrench_post([%s[%s]%s])", $quote, $text, $quote);
+
+system("Wrench.sh", $post_text);
