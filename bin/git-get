@@ -177,7 +177,11 @@ if ! valid-git-dir "$dir"; then
     fi
     (
         cd "$dir"
-        git init .
+        if test "${mirror}"; then
+            git init --bare .
+        else
+            git init .
+        fi
     )
 fi
 
