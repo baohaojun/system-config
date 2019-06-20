@@ -39,14 +39,16 @@ EOF
     # @select-from-history-too '?"是否也允许从历史中选择（默认只从给定的参数、输出中选择）"' \
     # @:exclude '?"不要选中这个参数中给定的选项"' \
     # @use-file='${SA_USE_FILE:-false}' '?"把参数写到文件中，而不是从命令行上传递"' \
-    # vverbose '?"调试选项，打印更多输出"'
+    # vverbose '?"调试选项，打印更多输出"' \
+    # @ask-for-input '?"如果没有输入选项，直接调用 ask-for-input 程序让用户输入，一般跟 select-from-history-too 联用"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o oa:1i:m:O:p:s:vh \
-                      --long ORDERED,always-selection:,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
+                      --long ORDERED,always-selection:,ask-for-input,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-ask-for-input,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
                       -n $(basename -- $0) -- "$@")
 declare ORDERED=${SELECT_HISTORY_ORDER:-false}
 declare always_selection=
+declare ask_for_input=false
 declare dot_sep_init=
 declare exclude=
 declare hint_1_entry=false
@@ -74,6 +76,15 @@ while true; do
         -a|--always-selection)
             always_selection=$2
             shift 2
+
+            ;;
+        --ask-for-input|--no-ask-for-input)
+            if test "$1" = --no-ask-for-input; then
+                ask_for_input=false
+            else
+                ask_for_input=true
+            fi
+            shift
 
             ;;
         --dot-sep-init)
@@ -160,6 +171,9 @@ while true; do
             echo
             printf "%30s" ""
             echo "这个参数给出的选项，永远出现在列表里"
+            printf "%06s" " "
+            printf %-24s '--[no-]ask-for-input'
+            echo "如果没有输入选项，直接调用 ask-for-input 程序让用户输入，一般跟 select-from-history-too 联用"
             printf "%06s" " "
             printf %-24s '--dot-sep-init=DOT_SEP_INIT'
             echo
@@ -319,29 +333,53 @@ dood=(
             fi
     )
 ) || true
-if test ${#dood[@]} = 0; then
-    exit -1
-elif test "${#dood[@]}" = 1 -a -z "${always_selection}" -a -z "$init"; then
-    if test "$hint_1_entry" = true; then
-        hint "只有一个选项： ${dood[0]}"
-    fi
-    echo -n "${dood[0]}"
-    exit 0
-fi
 
-n=$(my-select "${dood[@]}")
-
-function is-good-n() {
-    echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}
+is-good-n() {
+    true
 }
 
-output=$(
-    if is-good-n; then
-        echo -n ${dood[n-1]}
+if test ${#dood[@]} = 0; then
+    if test "${ask_for_input}" = true; then
+        output=$(
+            ask-for-input -p "${prompt}"
+              )
     else
-        echo -n "$n"
+        exit 1
     fi
-      )
+elif test "${#dood[@]}" = 1 -a -z "${always_selection}" -a -z "$init"; then
+    if test "$hint_1_entry" = true; then
+        if test "${ask_for_input}" = true; then
+
+            if yes-or-no-p -y "只有一个选项： ${dood[0]}，确定？"; then
+                echo -n "${dood[0]}"
+                exit 0
+            else
+                output=$(
+                    ask-for-input -p "${prompt}"
+                      )
+            fi
+        else
+            hint "只有一个选项：${dood[0]}"
+            echo -n "${dood[0]}"
+            exit 0
+        fi
+    fi
+else
+
+    n=$(my-select "${dood[@]}")
+
+    function is-good-n() {
+        echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}
+    }
+
+    output=$(
+        if is-good-n; then
+            echo -n ${dood[n-1]}
+        else
+            echo -n "$n"
+        fi
+          )
+fi
 
 echo -n "$output"
 

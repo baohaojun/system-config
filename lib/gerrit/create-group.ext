@@ -1,0 +1,77 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P t:group-type=sme p:project i:include-group=@ '?"默认为空，如果首字母为~，则为正则表达式"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o t:i:p:h \
+                      --long group-type:,include-group:,project:,help \
+                      -n $(basename -- $0) -- "$@")
+declare group_type=sme
+declare include_group=
+declare project=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -t|--group-type)
+            group_type=$2
+            shift 2
+
+            ;;
+        -i|--include-group)
+            include_group=$2
+            shift 2
+
+            ;;
+        -p|--project)
+            project=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-t, '
+            printf %-24s '--group-type=GROUP_TYPE'
+            echo
+            printf %06s '-i, '
+            printf %-24s '--include-group=INCLUDE_GROUP'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+group_name=chj-${project//\//-}-${group_type}
+group_name=${group_name^^}
+
+hint creating group: ${group_name}
+if [[ $include_group =~ ^'~' ]]; then
+    include_group=$(
+        select-output-line -i "${include_group:1}" ssh-gerrit ls-groups
+                 )
+fi
+
+if test "${include_group}" = @; then
+    ssh-gerrit create-group ${group_name}
+else
+    ssh-gerrit create-group ${group_name} --group ${include_group}
+fi

@@ -30,6 +30,6 @@ export JS_EXECUTE=$(
         printf "%q " "$x"
     done
        )
-export JS_TARGET=$(echo ${host} | perl -npe 's/.*?(\d+)$/$1/')
+export JS_TARGET=$(echo ${host} | perl -npe 's/.*?(\d+)$/.4.$1/')
 
 exec js-ssh

@@ -13,7 +13,7 @@ if {[info exists env(JS_EXECUTE)]} {
 }
 
 if [regexp {^\d+$} $js_target] {
-    set js_target -$js_target
+    set js_target .4.$js_target
 }
 
 proc qx cmd {
@@ -23,11 +23,23 @@ proc qx cmd {
     return $res
 }
 
+set home $env(HOME)
+
+proc log str {
+    global home
+    set logf [open ${home}/tmp/js-ssh.log a+]
+    puts $logf $str
+    close $logf
+}
+
 set local_ip [qx get-my-ip]
 
 spawn ssh -o ControlMaster=auto -o ControlPath='tramp.%C' -o ControlPersist=no -e none js;
+log_user 0
 expect "Opt>" {
+    # log "Seend Opt>, sending $js_target\n";
     send -- "$js_target\n";
+    log_user 1
     expect -re "\\$" {
         if {$argc != 0} {
             foreach arg $argv {

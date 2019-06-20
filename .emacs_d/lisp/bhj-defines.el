@@ -1579,4 +1579,14 @@ to the value of `temporary-file-directory'."
                   (if (use-region-p) (region-end))
                   nil))
 
+(defun bhj-wrench-post (&optional prefix)
+  "Post it through Wrench"
+  (interactive "P")
+  (let ((beg (point-min))
+        (end (point-max)))
+    (when (region-active-p)
+      (setq beg (mark)
+            end (point)))
+    (shell-command-on-region beg end (concat "Wrench-post" (if prefix " --ask-to-whom" "")))))
+
 (provide 'bhj-defines)
