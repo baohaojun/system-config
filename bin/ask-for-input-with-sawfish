@@ -110,17 +110,23 @@ read_file=$(cat <<EOF
 EOF
 )
 
-sawfish_script=$(cat <<EOF
+sawfish_script=$(
+    cat <<'EOF05d020239856' | . .replace-%% -- | grep -v "^;"
+; {%sawfish-mode%}
 (let* ((bhj-prompt-completion-fun (lambda ()))
        (bhj-prompt-window-position
         (cons 200 200))
-      $(if test $secret = true; then
-          echo '(bhj-prompt-display-fun (lambda (s) (make-string (length s) ?*)))';
-          echo '(bhj-prompt-history (make-ring 16))';
-      fi))
-   (bhj-prompt $read_file nil))
-EOF
-)
+       (eval-key-release-events nil)
+       (bhj-prompt-display-fun #'bhj-prompt-display-fun)
+       (bhj-prompt-history #'bhj-prompt-history))
+  (when (string= "<%secret%>" "true")
+    (setq bhj-prompt-display-fun (lambda (s) (make-string (length s) ?*)))
+    (setq bhj-prompt-history (make-ring 16)))
+  (bhj-prompt <%read_file%> nil))
+; {%/sawfish-mode%}
+EOF05d020239856
+
+              )
 x=$(sawfish-client -e "$sawfish_script" | perl -npe 's/^"|"$//g' | tr -d '\r\n'|perl -npe 's,\\([0-7]{3}),chr(oct($1)),eg')
 if test "$x" = $'\003'; then
     exit 1

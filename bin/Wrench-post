@@ -1,4 +1,62 @@
 #!/usr/bin/env perl
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl @ask-to-whom
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $ask_to_whom = 0;
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '';
+  printf "%-24s", '--[no]ask-to-whom';
+  if (length('--[no]ask-to-whom') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'ask-to-whom!' => \$ask_to_whom,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+sub quote_lua_str($) {
+  my $text = $_[0];
+  my $max_quote = 0;
+  while ($text =~ m,[\[\]](=*)[\[\]],) {
+    $max_quote = max($max_quote, length $1);
+  }
+
+  my $quote = "=" x $max_quote;
+  return sprintf("[%s[%s]%s]", $quote, $text, $quote);
+}
+
+if ($ask_to_whom) {
+  chomp(my $whom = qx(select-args --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
+  my $call_text = sprintf("wrench_call(%s)", quote_lua_str($whom));
+  system("log-run", "Wrench.sh", $call_text);
+
+  if (system("yes-or-no-p '已经找到你想发送消息的人了么？'") != 0) {
+    system("bhj-notify", "Wrench-post", "Can't find $whom to post, please fix it");
+    exit 1;
+  }
+}
+
 my $text;
 if (@ARGV) {
   $text = join(" ", @ARGV);
@@ -7,13 +65,8 @@ if (@ARGV) {
 }
 
 use List::Util qw(max);
-my $max_quote = 0;
-while ($text =~ m,[\[\]](=*)[\[\]],) {
-  $max_quote = max($max_quote, length $1);
-}
 
-my $quote = "=" x $max_quote;
 
-my $post_text = sprintf("wrench_post([%s[%s]%s])", $quote, $text, $quote);
+my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
 
 system("Wrench.sh", $post_text);

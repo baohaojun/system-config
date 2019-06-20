@@ -2,7 +2,8 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P r:project-regexp p:parent-project
+    # generate-getopt -P r:project-regexp '?"需要修改的仓库的正则表达式（所有匹配的仓库都会被修改）"' \
+        # p:parent-project '?"也可以只指定一个正则表达式"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o p:r:h \
@@ -32,9 +33,13 @@ while true; do
             printf %06s '-p, '
             printf %-24s '--parent-project=PARENT_PROJECT'
             echo
+            printf "%30s" ""
+            echo "也可以只指定一个正则表达式"
             printf %06s '-r, '
             printf %-24s '--project-regexp=PROJECT_REGEXP'
             echo
+            printf "%30s" ""
+            echo "需要修改的仓库的正则表达式（所有匹配的仓库都会被修改）"
             exit
             shift
             ;;
