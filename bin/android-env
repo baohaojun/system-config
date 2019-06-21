@@ -1,9 +1,177 @@
 #!/bin/bash
 
 set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+mm-help() {
+    cat<<EOF
+使用安卓提供的模块化编译，节省编译时间。
+
+用法：$b0 [OPTIONS]... [DIR] [TARGETS]...
+
+mmma：编译指定 DIR 目录下的所有模块（或指定 TARGETS）及其依赖
+mmm： 编译指定 DIR 目录下所有模块（或指定的 TARGETS），但不编译其依赖（如果
+     某依赖模块尚未编译，mmm 会出错）
+
+如果不指定 TARGETS，默认的 TARGET 是 all_modules（当前目录下所有模块），
+这有时候会导致整编 system.img 时碰不到的编译错误。
+
+EOF
+}
+
+mmm-o-help() {
+    if test "$b0" = mmm; then
+        echo "（mmm 专属参数）只编指定的模块，不要编指定目录下所有模块。可以指定多次，以编译多个模块"
+    else
+        echo "（mmma 命令不支持此参数）"
+    fi
+}
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"$(mmm-help)"' \
+    # vverbose='("" showcommands)' '?"编译的时候打印所使用的详细编译命令"' \
+    # j:jobs '?"使用多少个线程进行编译（默认是你的机器的 CPU 线程数）"' \
+    # kkeep-building='$default_keep_building' '?"即使出错了，也继续编译没有出错的模块"' \
+    # f:make-flags '?"其他想要传给 make 命令的标志和参数"' \
+    # qquick '?"$(quick-help)"' \
+    # @debug '?"调试此脚本"' \
+    # o:only-module='()' '?"$(mmm-o-help)"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o j:kf:o:qvh \
+                      --long debug,jobs:,keep-building,make-flags:,only-module:,quick,verbose,help,no-debug,no-keep-building,no-quick,no-verbose \
+                      -n $(basename -- $0) -- "$@")
+declare debug=false
+declare jobs=
+declare keep_building=$default_keep_building
+declare make_flags=
+declare -a only_module=()
+declare quick=false
+declare verbose=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
+            shift
+
+            ;;
+        -j|--jobs)
+            jobs=$2
+            shift 2
+
+            ;;
+        -k|--keep-building|--no-keep-building)
+            if test "$1" = --no-keep-building; then
+                keep_building=false
+            else
+                keep_building=true
+            fi
+            shift
+
+            ;;
+        -f|--make-flags)
+            make_flags=$2
+            shift 2
+
+            ;;
+        -o|--only-module)
+            only_module=("${only_module[@]}" "$2")
+            shift 2
+
+            ;;
+        -q|--quick|--no-quick)
+            if test "$1" = --no-quick; then
+                quick=false
+            else
+                quick=true
+            fi
+            shift
+
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=
+            else
+                verbose=showcommands
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "$(mmm-help)"
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]debug'
+            echo "调试此脚本"
+            printf %06s '-j, '
+            printf %-24s '--jobs=JOBS'
+            echo "使用多少个线程进行编译（默认是你的机器的 CPU 线程数）"
+            printf %06s '-k, '
+            printf %-24s '--[no-]keep-building'
+            echo "即使出错了，也继续编译没有出错的模块"
+            printf %06s '-f, '
+            printf %-24s '--make-flags=MAKE_FLAGS'
+            echo "其他想要传给 make 命令的标志和参数"
+            printf %06s '-o, '
+            printf %-24s '--only-module=ONLY_MODULE...'
+            echo
+            printf "%30s" ""
+            echo "$(mmm-o-help)"
+            printf %06s '-q, '
+            printf %-24s '--[no-]quick'
+            echo "$(quick-help)"
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo "编译的时候打印所使用的详细编译命令"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 build_env=$(lookup-file -e build/envsetup.sh || true)
 if test -z "$build_env"; then
-    die "无法找到 build/envsetup.sh 文件，不是安卓代码目录？"
+    die "无法找到 build/envsetup.sh 文件，不是安卓代码目录？"
 fi
 top_dir=`dirname $build_env`
 top_dir=`readlink -f $top_dir/..`

@@ -30,19 +30,42 @@
     . atexit warn
 
     mkdir -p $OUT_DIR/
-    cat <<EOF > $OUT_DIR/Android.mk.$$
-bootimage-nodeps: ${PRODUCT_OUT}/kernel $(if test -e ${PRODUCT_OUT}/dt.img; then echo ${PRODUCT_OUT}/dt.img; fi)
+    dt_img=$(
+        if test -e ${PRODUCT_OUT}/dt.img; then echo ${PRODUCT_OUT}/dt.img; fi
+          )
+cat <<'EOFb8dbed335f48' | . .replace-%% -- > $OUT_DIR/Android.mk.$$
+# {%make-mode%}
+bootimage-nodeps: ${PRODUCT_OUT}/kernel <%dt_img%>
 
-ifeq (\$(filter \$(TARGET_DEVICE_DIR)/AndroidBoard.mk, \$(MAKEFILE_LIST)),)
-\$(info need to include the AndroidBoard.mk)
--include \$(TARGET_DEVICE_DIR)/AndroidBoard.mk
+BUILD_PREBUILT_BAK := $(BUILD_PREBUILT)
+BUILD_PREBUILT := $(CLEAR_VARS)
+
+ifeq ($(filter $(TARGET_DEVICE_DIR)/AndroidBoard.mk, $(MAKEFILE_LIST)),)
+$(info need to include the AndroidBoard.mk)
+-include $(TARGET_DEVICE_DIR)/AndroidBoard.mk
 else
-\$(info no need to include the AndroidBoard.mk)
+$(info no need to include the AndroidBoard.mk)
 endif
-EOF
+
+BUILD_PREBUILT := $(BUILD_PREBUILT_BAK)
+
+LOCAL_PATH:= out
+include $(CLEAR_VARS)
+LOCAL_MODULE := fake_kernel
+LOCAL_SRC_FILES := Android.mk
+LOCAL_MODULE_CLASS := EXECUTABLES
+LOCAL_IS_HOST_MODULE := true
+LOCAL_MODULE_TAGS := optional
+LOCAL_REQUIRED_MODULES := \
+    bootimage-nodeps
+
+include $(BUILD_PREBUILT)
+# {%/make-mode%}
+EOFb8dbed335f48
+
         cd $OUT_DIR/
         if ! diff Android.mk.$$ Android.mk; then
             mv Android.mk.$$ Android.mk
         fi
-        $do_nice mm --only-module bootimage-nodeps -j$jobs $verbose
+        $do_nice mm --only-module bootimage-nodeps -j$jobs $verbose $(if test "${quick}" = true; then echo -q; fi)
 )

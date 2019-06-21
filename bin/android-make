@@ -136,12 +136,6 @@ fi
 repo_dir=$(lookup-file .repo)
 android_dir=$(lookup-file-dir -e bionic)
 cd ${android_dir}
-if test -d kernel && ! test -e ${repo_dir}/kernel; then
-    # 以下是为了绕过某 CPU 厂商改出来的编译兼容性问题。本来安卓编译的
-    # 一个设计目标是允许任意指定编译输出目录，而非硬编码为 out 的，但
-    # 该厂商的工程师修改编译脚本时强行假设了输出目录就是 out。。。
-    ln -sf $PWD/kernel ${repo_dir}
-fi
 
 export CCACHE_DIR=$repo_dir/.ccache
 rm ~/.ccache >/dev/null 2>&1 || true

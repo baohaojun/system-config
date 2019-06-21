@@ -381,6 +381,12 @@ else
           )
 fi
 
+if test "${output}" = + -a "${ask_for_input}" = true; then
+    output=$(
+        ask-for-input-with-emacs -p "${prompt}"
+          )
+fi
+
 echo -n "$output"
 
 if (  is-good-n && test "$ORDERED" != false ) || test "$select_from_history_too" = true; then

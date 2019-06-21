@@ -184,6 +184,17 @@ if test "$b0" = mma -a "${only_module}" -a "$quick" = false; then
     die "mma 命令不支持 -o 参数，如果当前目录下有些模块会出错的话，建议使用 -k 参数，确保编译所有 *能够* 成功编译的模块"
 fi
 
+ap() {
+    (
+        if test "$1"; then
+            cd "$1"
+        fi
+        relative-path "$PWD" "$(lookup-file-dir bionic)"
+    )
+}
+
+export ap
+
 if test "$b0" = mma -a ${#saved_args[@]} = 0 -a "$PWD" != "$(PWD= pwd -P)"; then
     hint "当前目录是一个软链接？需要帮你把 mma 改成用 mmma 编译"
     ap=$(ap)

@@ -232,10 +232,8 @@
   (let ((next-theme-list '(leuven deeper-blue manoj-dark misterioso tango-dark tsdh-dark wheatgrass wombat))
         (current-theme)
         (next-theme))
-    (dolist (theme custom-enabled-themes)
-      (setq next-theme-list (delete theme next-theme-list)
-            current-theme theme)
-      )
+    (setq current-theme (car custom-enabled-themes))
+    (setq next-theme-list (delete current-theme next-theme-list))
     (setq next-theme (or specified-theme
                          (and current-prefix-arg (intern (completing-read "Which theme?" (custom-available-themes) nil t nil nil (symbol-name current-theme))))
                          (let ((theme (nth (random (length next-theme-list)) next-theme-list)))

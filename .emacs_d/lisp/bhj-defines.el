@@ -1587,6 +1587,6 @@ to the value of `temporary-file-directory'."
     (when (region-active-p)
       (setq beg (mark)
             end (point)))
-    (shell-command-on-region beg end (concat "Wrench-post" (if prefix " --ask-to-whom" "")))))
+    (shell-command-to-string (format "nohup Wrench-post %s -- %s >/dev/null 2>&1 </dev/null&" (if prefix " --ask-to-whom" "") (shell-quote-argument (buffer-substring-no-properties beg end))))))
 
 (provide 'bhj-defines)

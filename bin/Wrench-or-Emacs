@@ -1,0 +1,20 @@
+#!/bin/bash
+top_window=$(
+    sawfish-top-window
+          )
+
+if test "${top_window}" != Emacs; then
+    find-or-exec Emacs
+    emacsclient -e "$(
+cat <<'EOF6a5a109f8722'
+; {%emacs-lisp-mode%}
+(progn
+  (find-file "~/src/github/projects/chat.org")
+  (mark-whole-buffer))
+; {%/emacs-lisp-mode%}
+EOF6a5a109f8722
+
+)"
+else
+    Wrench.sh
+fi

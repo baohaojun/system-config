@@ -171,7 +171,7 @@
 (bind-both-global&window-keymaps "Super-F4" '(system "EMACS=t do-capture&"))
 
 (bind-both-global&window-keymaps "XF86Launch6" '(system "Wrench.sh&"))
-(bind-both-global&window-keymaps "Super-F5" '(system "Wrench.sh&"))
+(bind-both-global&window-keymaps "Super-F5" '(system "Wrench-or-Emacs&"))
 
 (bind-keys s-h-keymap "XF86Launch6" '(system "Wrench.sh&"))
 (bind-both-global&window-keymaps "XF86Launch7" '(system "find-or-exec gjiten gjiten&"))
@@ -759,32 +759,10 @@
 (define-cycle-command-pair
   'cycle-fm-window 'cycle-fm-window-backwards
   (lambda () (filter-windows
-              (lambda (x) (and (string-match fm-class (bhj-window-class x))
-                               (not (string-match "x-nautilus-desktop" (window-name x)))))
-              (stacking-order))))
+         (lambda (x) (and (string-match fm-class (bhj-window-class x))
+                     (not (string-match "x-nautilus-desktop" (window-name x)))))
+         (stacking-order))))
 
-(defun scroll-lock-off (&optional w)
-  (when w
-    (window-put w 'scroll-lock nil))
-  (unbind-both-global&window-keymaps "SPC")
-  (unbind-both-global&window-keymaps "BS")
-  (system "switch-caps-led off&"))
-
-(defun scroll-lock-on (&optional w)
-  (when w
-    (window-put w 'scroll-lock t))
-  (bind-both-global&window-keymaps "SPC" '(synthesize-event "Next" (input-focus)))
-  (bind-both-global&window-keymaps "BS" '(synthesize-event "Prior" (input-focus)))
-  (system "switch-caps-led on&"))
-
-(defun scroll-lock-toggle ()
-  (let ((w (input-focus)))
-    (if (window-get w 'scroll-lock)
-        (scroll-lock-off w)
-      (scroll-lock-on w))))
-
-(bind-both-global&window-keymaps "XF86LaunchA" #'scroll-lock-toggle) ; The F3 key on MBA
-(bind-both-global&window-keymaps "Super-S-SPC" #'scroll-lock-toggle)
 (bind-both-global&window-keymaps "C-ESC" '(synthesize-event "ESC" (input-focus)))
 (bind-keys s-h-keymap "g"  '(system "find-or-exec Gimp&"))
 (bind-keys s-h-keymap "w"  '(system "find-or-exec wine&"))
@@ -802,12 +780,6 @@
   (ime-toggle w focus-mode))
 
 (defun ime-toggle (w focus-mode)
-  (if (window-get w 'scroll-lock)
-      (scroll-lock-on)
-    (scroll-lock-off))
-  (if (window-get w 'code-reading)
-      (emacs-code-reading-on w)
-    (emacs-code-reading-off w))
   (if (string= (bhj-window-class w) "rdesktop")
       (bind-both-global&window-keymaps "M-C-RET" '(system "toggle-rdesktop-keys&"))
     (system "toggle-rdesktop-keys off&"))
@@ -838,17 +810,6 @@
           (synthesize-event e (input-focus)))
         events))
 
-(defun emacs-code-reading-toggle ()
-  (let ((w (input-focus)))
-    (if (window-get w 'code-reading)
-        (emacs-code-reading-off w)
-      (emacs-code-reading-on w))))
-
-(defun emacs-code-reading-on (&optional w)
-  (when w
-    (window-put w 'code-reading t))
-  (system "switch-caps-led on&")
-  (load-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl"))
 
 (bind-both-global&window-keymaps "XF86Calculator"  '(system "sawfish-window-custom-menu&"))
 (bind-both-global&window-keymaps "Pause"  '(system "sawfish-window-custom-menu&"))
@@ -869,15 +830,6 @@
 (bind-both-global&window-keymaps "M-C-M" '(system "ma&"))
                                         ; some times the keyboard itself got scrambled
 (bind-both-global&window-keymaps "M-Mod1-C-m" '(system "am dvp&"))
-
-(defun emacs-code-reading-off (&optional w)
-  (when w
-    (window-put w 'code-reading nil))
-  (unload-keys-in-file "~/system-config/.sawfish/lisp/easy-emacs-code-reading.jl")
-  (bind-both-global&window-keymaps "F23" '(system "am dvp&"))
-  (bind-both-global&window-keymaps "F24" '(system "am dvp&"))
-  (bind-both-global&window-keymaps "XF86Back" '(system "xdotool click 1&"))
-  (system "switch-caps-led off&"))
 
 (defun keypad-number-on ()
   (unload-keys-in-file "~/system-config/.sawfish/lisp/keypad-music.jl")

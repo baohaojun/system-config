@@ -71,6 +71,12 @@ expect "Opt>" {
     }
 }
 
+expect_background "Opt>" {
+    send "exit\n";
+    wait
+    exit
+}
+
 interact {
     timeout 1750 {
         set current_hour [clock format [clock seconds] -format %k]
