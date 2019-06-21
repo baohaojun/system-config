@@ -40,9 +40,7 @@ M.wrench_find_dingding_contact = function(friend_name)
    putclip_nowait(friend_name)
    open_dd_search()
    adb_event"key scroll_lock key enter sleep .8"
-   if yes_or_no_p("第一个人就是你要找的人吗？") then
-      click_scene("dd-NiKeNengXiangZhao", {y = 200, x = 100})
-   end
+   click_scene("dd-NiKeNengXiangZhao", {y = 200, x = 100})
 end
 
 M.dingding_open_homepage = function()
@@ -238,50 +236,6 @@ M.press_dial_key = function()
       adb_event("adb-tap 554 1668")
       log("Error: unknown where_is_dial_key: %s, must be one of Middle, First from left, Second from left.\n\nPlease update %s", where_is_dial_key, M.configDirFile("phone_info.lua"))
       where_is_dial_key = nil
-   end
-end
-
-M.wrench_call = function(number)
-   if number:match("@@") then
-      number = string_strip(number)
-      local names = split("@@", number, true)
-      local who, where = names[1] or "", names[2] or ""
-      if where == "qq" then
-         wrench_find_qq_contact(who)
-      elseif where == "wx" then
-         wrench_find_weixin_contact(who)
-      elseif where == "zd" then
-         find_zidanduanxin_friend(who)
-      elseif where == "dd" then
-         wrench_find_dingding_contact(who)
-      elseif where == "coffee" then
-         get_coffee(who)
-      elseif where == "mail" then
-         search_mail(who)
-      elseif where == "wb" or where == "weibo" then
-         find_weibo_friend(who)
-      elseif where == "sms" then
-         search_sms(who)
-      elseif where == "ext" then
-         wrench_run("ext" .. package.config:sub(1, 1) .. who .. ".lua")
-      elseif where == "eval" then
-         local func = loadstring(who)
-         wrench_eval(func, who)
-      else
-         prompt_user("Don't know how to do it: " .. where)
-      end
-      return
-   end
-
-   adb_am("am start -a android.intent.action.DIAL tel:" .. number)
-   adb_event("sleep .5")
-   if not yes_or_no_p("Phone number correct and dial it?") then
-       return
-   end
-   press_dial_key()
-   adb_event("sleep 1")
-   if adb_top_window() == "com.android.contacts/com.android.contacts.activities.DialtactsActivity" then
-      press_dial_key()
    end
 end
 
