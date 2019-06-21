@@ -390,5 +390,4 @@
 (global-set-key (kbd "C-c '") 'fence-edit-code-at-point)
 (load "move-by-indentation.el")
 
-(require 'netease-music)
 (setq netease-music-api "http://localhost:3000")
