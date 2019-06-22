@@ -48,6 +48,7 @@ sub quote_lua_str($) {
 
 if ($ask_to_whom) {
   chomp(my $whom = qx(select-args --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
+  $whom =~ s, #\S*$,,;
   my $call_text = sprintf("wrench_call(%s)", quote_lua_str($whom));
   system("log-run", "Wrench.sh", $call_text);
 
