@@ -1,7 +1,7 @@
 #!/bin/bash
 
 umask 0077
-if false; then
+if true; then
     set -ex
     exec 2> ~/tmp/illPass.log
 fi
@@ -34,10 +34,13 @@ if test "${window_name}" = myscr -a "${window_class}" = xterm; then
     fi
 
 elif [[ $window_class =~ firefox ]]; then
-    url=$(get-firefox-tab-url --no-with-xkeytool|tr -d '"')
+    if test "$window_name" = "password required"; then
+        true
+    else
+        url=$(get-firefox-tab-url --no-with-xkeytool|tr -d '"')
 
-    url_host=$(
-        perl -e "$(
+        url_host=$(
+            perl -e "$(
 cat <<'EOF2dc8a5676097' | . .replace-%% --
 # {%perl-mode%}
 use URI;
@@ -49,12 +52,13 @@ EOF2dc8a5676097
 
 )" || true
 
-            )
+                )
 
-    if test "${url_host}"; then
-        window_name=$url_host
-    else
-        bhj-notify illPass "Can't get firefox url"
+        if test "${url_host}"; then
+            window_name=$url_host
+        else
+            bhj-notify illPass "Can't get firefox url"
+        fi
     fi
 fi
 

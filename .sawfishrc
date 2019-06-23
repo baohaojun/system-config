@@ -252,6 +252,8 @@
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
 
 ;; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
+(bind-both-global&window-keymaps "Super-Button3-Click" '(system "EMACS=t SAWFISH_CLICK=t s&"))
+(bind-both-global&window-keymaps "Super-Button2-Click" '(system "EMACS=t SAWFISH_CLICK=t s&"))
 (bind-both-global&window-keymaps "XF86Search" '(system "sawfish-xf86search&"))
 (bind-both-global&window-keymaps "Super-F2" '(system "sawfish-xf86search&"))
 
