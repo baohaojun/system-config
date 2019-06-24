@@ -1,9 +1,10 @@
 #!/bin/bash
+
 top_window=$(
     sawfish-top-window
           )
 
-if test "${top_window}" != Emacs; then
+if test "${top_window}" != Emacs -o "$(emacs-current-file | perl -pe 's,.*/,,')" != chat.org; then
     find-or-exec Emacs
     emacsclient -e "$(
 cat <<'EOF6a5a109f8722'
