@@ -82,9 +82,9 @@ done
 ## end generated code
 
 if test "${with_mark}" = true; then
-    sawfish-window mark -t "${mark_to_var}" -s
+    sawfish-window mark -t "${mark_to_var}" -s &>/dev/null
     "$@"
-    sawfish-window mark -t "${mark_to_var}" -r
+    sawfish-window mark -t "${mark_to_var}" -r &>/dev/null
     exit
 fi
 

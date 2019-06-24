@@ -91,5 +91,6 @@ else
 fi
 
 sawfish-window \
+    mark \
     --with-mark \
     zenity $ztype --text="$text" --title="$title"
