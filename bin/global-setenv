@@ -1,4 +1,47 @@
 #!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P c:client
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o c:h \
+                      --long client:,help \
+                      -n $(basename -- $0) -- "$@")
+declare client=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -c|--client)
+            client=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--client=CLIENT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 setenvs=$(declare -x -p | perl -ne "$(
 cat <<'EOF3ca1586eb1f1'
 # {%perl-mode%}
@@ -21,6 +64,14 @@ lisp=$(
 EOF2f77bccb9b66
 
 )
+
+
+# {%sh-mode%}
 echo "${lisp}" > ~/tmp/global-setenv.log
-emacsclient -e "${lisp}"
-sawfish-client -e "${lisp}"
+if test "${client}"; then
+    ${client} -e "${lisp}"
+else
+    emacsclient -e "${lisp}"
+    sawfish-client -e "${lisp}"
+fi
+# {%/sh-mode%}

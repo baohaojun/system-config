@@ -75,62 +75,21 @@ fi
 exec 9> ~/.cache/system-config/logs/$(basename $0).lock2
 flock 9
 
-if ! is-sawfish; then
-    title=$(echo "$prompt" | tail -n 1)
-    text=$prompt
-    (
-        for x in $(seq 1 10); do
-            sleep .$x;
-            find-or-exec -e zenity && exit
-        done
-    )&
+title=$(echo "$prompt" | tail -n 1)
+text=$prompt
+(
+    for x in $(seq 1 10); do
+        sleep .$x;
+        find-or-exec -e zenity && exit
+    done
+)&
 
-    if test "$secret" = true; then
-        ztype=--password
-    else
-        ztype=--entry
-    fi
+if test "$secret" = true; then
+    ztype=--password
+else
+    ztype=--entry
+fi
+
+sawfish-window \
+    --with-mark \
     zenity $ztype --text="$text" --title="$title"
-    exit
-fi
-
-tmpf=/tmp/$(basename $0).$$
-
-echo -n "$prompt " > $tmpf
-
-read_file=$(cat <<EOF
-(progn
-  (let* ((file (open-file "$tmpf" 'read))
-         (str "")
-         (line ""))
-    (while (setq line (read-line file))
-      (setq str (concat str line)))
-    (close-file file)
-    str))
-EOF
-)
-
-sawfish_script=$(
-    cat <<'EOF05d020239856' | . .replace-%% -- | grep -v "^;"
-; {%sawfish-mode%}
-(let* ((bhj-prompt-completion-fun (lambda ()))
-       (bhj-prompt-window-position
-        (cons 200 200))
-       (eval-key-release-events nil)
-       (bhj-prompt-display-fun #'bhj-prompt-display-fun)
-       (bhj-prompt-history #'bhj-prompt-history))
-  (when (string= "<%secret%>" "true")
-    (setq bhj-prompt-display-fun (lambda (s) (make-string (length s) ?*)))
-    (setq bhj-prompt-history (make-ring 16)))
-  (bhj-prompt <%read_file%> nil))
-; {%/sawfish-mode%}
-EOF05d020239856
-
-              )
-x=$(sawfish-client -e "$sawfish_script" | perl -npe 's/^"|"$//g' | tr -d '\r\n'|perl -npe 's,\\([0-7]{3}),chr(oct($1)),eg')
-if test "$x" = $'\003'; then
-    exit 1
-fi
-echo "$x"
-
-rm $tmpf

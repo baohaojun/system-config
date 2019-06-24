@@ -487,6 +487,21 @@
     (t
      `(classed-key-synthesize ,from ,to)))))
 
+;;; sawfish 和 xdotools 好像不能一起用，必须做成异步的。另外，如果
+;;; Escape 还被绑定成 do-esc-map 的话，再怎么发送这个键，还是不停地调用 do-esc-map
+(defun send-esc ()
+  (system "
+# {%sh-mode%}
+  (
+      sawfish-client -e '(unbind-both-global&window-keymaps \"ESC\")';
+      sleep .1;
+      xdotool key Escape;
+      sawfish-client -e '(bind-both-global&window-keymaps \"ESC\" do-esc-map)'
+  )&
+# {%/sh-mode%}
+EOF856ceee4ab57
+"))
+
 (defun do-global-emacs-remap(class)
   (mapc (lambda (key-map-1)
           (let* ((from (car key-map-1))
@@ -504,7 +519,7 @@
             (do-bind-keys-nil-unbind esc-g-map from to window-mapped-to class)))
         esc-g-remap-alist)
   (bind-both-global&window-keymaps "ESC" do-esc-map)
-  (bind-keys esc-map "ESC" `(synthesize-event-gnome? "ESC" ,(input-focus)))
+  (bind-keys esc-map "ESC" '(send-esc))
   (bind-keys s-h-keymap "C-x" c-x-map)
   (bind-keys esc-map "g" '(do-esc-g-map)))
 
@@ -623,7 +638,7 @@
                                  "C-r" '("C-r")
                                  "C-x" '("C-x"))))
 
-(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Lxterminal|Gucharmap|^libre.*")
+(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Lxterminal|Gucharmap|^libre.*|zenity")
 
                                         ; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)
