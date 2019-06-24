@@ -45,7 +45,8 @@ done
 setenvs=$(declare -x -p | perl -ne "$(
 cat <<'EOF3ca1586eb1f1'
 # {%perl-mode%}
-next unless m,^declare -x \w+="[^"]*"$,;
+next unless m,^declare -x (\w+)="[^"]*"$,;
+next if $1 eq "WINDOWID";
 s,^declare -x ,(setenv ",;
 s,=," ,;
 s,$,),;

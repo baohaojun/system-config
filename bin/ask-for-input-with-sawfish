@@ -77,13 +77,6 @@ flock 9
 
 title=$(echo "$prompt" | tail -n 1)
 text=$prompt
-(
-    for x in $(seq 1 10); do
-        sleep .$x;
-        find-or-exec -e zenity && exit
-    done
-)&
-
 if test "$secret" = true; then
     ztype=--password
 else

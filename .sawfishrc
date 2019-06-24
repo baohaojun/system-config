@@ -802,7 +802,7 @@ EOF856ceee4ab57
     (system "toggle-rdesktop-keys off&"))
   (if (string= (bhj-window-class w) "Emacs")
       (unbind-both-global&window-keymaps "Super-\\")
-    (bind-both-global&window-keymaps "Super-\\"  '(system "xdotool-when-keyboard-clear key super+F12&"))))
+    (bind-both-global&window-keymaps "Super-\\"  '(system "xdotool-when-keyboard-clear key shift+F12&"))))
 
 (add-hook 'focus-in-hook ime-toggle-hook)
 
