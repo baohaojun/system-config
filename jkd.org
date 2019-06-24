@@ -776,7 +776,7 @@ This is simple using Perl's “reflection”.
   sub jkd_c(@) { # create issue
 
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l p:project i:issue-type-id
+      # generate-getopt -s perl -l p:project i:issue-type-id @assign-to-myself=1
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -785,12 +785,21 @@ This is simple using Perl's “reflection”.
 
       local @ARGV = @_;
 
+      my $assign_to_myself = 1;
       my $issue_type_id = "";
       my $project = "";
 
       my $handler_help = sub {
           print ;
           print "\n\n选项和参数：\n";
+          printf "%6s", '';
+          printf "%-24s", '--[no]assign-to-myself';
+          if (length('--[no]assign-to-myself') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
           printf "%6s", '-i, ';
           printf "%-24s", '--issue-type-id=ISSUE-TYPE-ID';
           if (length('--issue-type-id=ISSUE-TYPE-ID') > 24 and length() > 0) {
@@ -812,6 +821,7 @@ This is simple using Perl's “reflection”.
       };
 
       GetOptions (
+          'assign-to-myself!' => \$assign_to_myself,
           'issue-type-id|i=s' => \$issue_type_id,
           'project|p=s' => \$project,
           'help|h!' => \&$handler_help,
@@ -842,9 +852,11 @@ This is simple using Perl's “reflection”.
           id => $issue_type_id,
       };
 
-      $required_fields{assignee} = {
-          name => $ENV{scm_jira_user}
-      };
+      if ($assign_to_myself) {
+          $required_fields{assignee} = {
+              name => $ENV{scm_jira_user}
+          };
+      }
 
       my $ua = LWP::UserAgent->new;
       say "json is ", encode_json { fields => \%required_fields };
