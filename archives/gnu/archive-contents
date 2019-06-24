@@ -188,7 +188,7 @@
 	       (:keywords))])
  (cl-lib .
 	 [(0 6 1)
-	  nil "Properly prefixed CL functions and macros" single
+	  nil "Forward cl-lib compatibility library for Emacs<24.3" single
 	  ((:url . "http://elpa.gnu.org/packages/cl-lib.html")
 	   (:keywords))])
  (cl-print .
@@ -368,7 +368,7 @@
 	  "Dis Mode Ain't Lotus: Spreadsheet program Emacs" tar
 	  ((:url . "http://elpa.gnu.org/packages/dismal.html"))])
  (djvu .
-       [(1 0 1)
+       [(1 1)
 	nil "Edit and view Djvu files via djvused" single
 	((:url . "http://elpa.gnu.org/packages/djvu.html")
 	 (:keywords "files" "wp"))])
@@ -392,7 +392,7 @@
 	     ((:keywords "killing" "convenience")
 	      (:url . "https://github.com/leoliu/easy-kill"))])
  (ebdb .
-       [(0 6 8)
+       [(0 6 9)
 	((emacs
 	  (25 1))
 	 (cl-lib
@@ -426,7 +426,7 @@
 	     ((:url . "http://elpa.gnu.org/packages/ediprolog.html")
 	      (:keywords "languages" "processes"))])
  (eev .
-      [(20190425)
+      [(20190517)
        ((emacs
 	 (24 1)))
        "Support for e-scripts (eepitch blocks, elisp hyperlinks, etc)" tar
@@ -488,18 +488,18 @@
 		  ((:keywords "convenience")
 		   (:url . "https://github.com/ergoemacs/ergoemacs-mode"))])
  (excorporate .
-	      [(0 8 1)
+	      [(0 8 3)
 	       ((emacs
 		 (24 1))
 		(fsm
-		 (0 2))
+		 (0 2 1))
 		(soap-client
-		 (3 1 4))
+		 (3 1 5))
 		(url-http-ntlm
-		 (2 0 3))
+		 (2 0 4))
 		(nadvice
 		 (0 3)))
-	       "Exchange integration" tar
+	       "Exchange Web Services (EWS) integration" tar
 	       ((:keywords "calendar")
 		(:url . "http://elpa.gnu.org/packages/excorporate.html"))])
  (exwm .
@@ -1051,7 +1051,7 @@
 	 ((:url . "http://elpa.gnu.org/packages/poker.html")
 	  (:keywords "games"))])
  (posframe .
-	   [(0 4 3)
+	   [(0 5 0)
 	    ((emacs
 	      (26)))
 	    "Pop a posframe (just a frame) at point" single
@@ -1300,7 +1300,7 @@
 	   ((:url . "https://github.com/Malabarba/spinner.el")
 	    (:keywords "processes" "mode-line"))])
  (sql-indent .
-	     [(1 3)
+	     [(1 4)
 	      ((cl-lib
 		(0 5)))
 	      "Support for indenting code in SQL files." tar
@@ -1337,7 +1337,7 @@
 	     ((:url . "http://elpa.gnu.org/packages/svg-clock.html")
 	      (:keywords "demo" "svg" "clock"))])
  (system-packages .
-		  [(1 0 10)
+		  [(1 0 11)
 		   ((emacs
 		     (24 3)))
 		   "functions to manage system packages" tar
@@ -1468,11 +1468,6 @@
       nil "Fully customizable, largely undocumented web browser for Emacs" tar
       ((:keywords "faces" "help" "comm" "news" "mail" "processes" "mouse" "hypermedia")
        (:url . "http://elpa.gnu.org/packages/w3.html"))])
- (wcheck-mode .
-	      [(2016 1 30)
-	       nil "General interface for text checkers" single
-	       ((:url . "https://github.com/tlikonen/wcheck-mode")
-		(:keywords "text" "spell" "check" "languages" "ispell"))])
  (wconf .
 	[(0 2 1)
 	 ((emacs
