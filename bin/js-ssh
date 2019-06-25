@@ -54,6 +54,8 @@ expect "Opt>" {
                     expect {
                         -re "Opt>" {
                             send "exit\n";
+                            wait
+                            exit
                         }
                         timeout {
                             exp_continue;
