@@ -274,7 +274,7 @@ fi
 . aterr rm -f $histfile.$$
 
 IFS=$'\n'
-dood=(
+selection_entries=(
     $(
         tmpfile=/tmp/$(basename $0).$$
         (
@@ -338,7 +338,7 @@ is-good-n() {
     true
 }
 
-if test ${#dood[@]} = 0; then
+if test ${#selection_entries[@]} = 0; then
     if test "${ask_for_input}" = true; then
         output=$(
             ask-for-input -p "${prompt}"
@@ -346,11 +346,11 @@ if test ${#dood[@]} = 0; then
     else
         exit 1
     fi
-elif test "${#dood[@]}" = 1 -a -z "${always_selection}" -a -z "$init"; then
+elif test "${#selection_entries[@]}" = 1 -a -z "${always_selection}" -a -z "$init"; then
     if test "$hint_1_entry" = true; then
         if test "${ask_for_input}" = true; then
-            if yes-or-no-p -y "只有一个选项： ${dood[0]}，确定？"; then
-                echo -n "${dood[0]}"
+            if yes-or-no-p -y "只有一个选项： ${selection_entries[0]}，确定？"; then
+                echo -n "${selection_entries[0]}"
                 exit 0
             else
                 output=$(
@@ -358,32 +358,34 @@ elif test "${#dood[@]}" = 1 -a -z "${always_selection}" -a -z "$init"; then
                       )
             fi
         else
-            hint "只有一个选项：${dood[0]}"
+            hint "只有一个选项：${selection_entries[0]}"
         fi
     fi
-    echo -n "${dood[0]}"
+    echo -n "${selection_entries[0]}"
     exit 0
 else
-
-    n=$(my-select "${dood[@]}")
+    if test "${select_from_history_too}" = true; then
+        edit_history="@@@edit the history file@@@"
+        selection_entries+=("${edit_history}")
+    fi
+    n=$(my-select "${selection_entries[@]}")
 
     function is-good-n() {
-        echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#dood[@]}
+        echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#selection_entries[@]}
     }
 
     output=$(
         if is-good-n; then
-            echo -n ${dood[n-1]}
+            echo -n ${selection_entries[n-1]}
         else
             echo -n "$n"
         fi
           )
-fi
 
-if test "${output}" = + -a "${ask_for_input}" = true; then
-    output=$(
-        ask-for-input-with-emacs -p "${prompt}"
-          )
+    if test "${select_from_history_too}" = true -a "$output" = "${edit_history}"; then
+        ew $histfile
+        exit 1
+    fi
 fi
 
 echo -n "$output"

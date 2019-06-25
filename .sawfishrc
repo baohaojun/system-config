@@ -351,8 +351,6 @@
         ("M-f" . '((t "C-Right")))
         ("M-B" . '((t "C-S-Left")))
         ("M-F" . '((t "C-S-Right")))
-        ("S-F12" . '((Emacs "C-c" "M-j" "D")))
-        ("S-F11" . '((Emacs "C-c" "M-j" "D")))
         ("C-s" . '((Firefox "C-f") (Firefox-esr "C-f")
                    (Iceweasel "C-f")
                    (Okular "F3")
@@ -380,8 +378,8 @@
         ("M-Right" . '((qpdfview "C-S-RET")))
         ("C-x" . '((t do-c-x-map)))
         ("Super-&" . '((Wrench "Meta-&")))
-        ("F11" . '((Emacs "C-C-c" "M-j" "s") (Wine mm6-drop)))
-        ("F12" . '((Emacs "C-c" "M-j" "d") (Wine mm6-heal)))
+        ("F11" . '((Wine mm6-drop)))
+        ("F12" . '((Wine mm6-heal)))
         ("Super-*" . '((Wrench "Meta-*")))))
 
 (setq wine-global-emacs-remap-alist
@@ -487,6 +485,21 @@
     (t
      `(classed-key-synthesize ,from ,to)))))
 
+;;; sawfish 和 xdotools 好像不能一起用，必须做成异步的。另外，如果
+;;; Escape 还被绑定成 do-esc-map 的话，再怎么发送这个键，还是不停地调用 do-esc-map
+(defun send-esc ()
+  (system "
+# {%sh-mode%}
+  (
+      sawfish-client -e '(unbind-both-global&window-keymaps \"ESC\")';
+      sleep .1;
+      xdotool key Escape;
+      sawfish-client -e '(bind-both-global&window-keymaps \"ESC\" do-esc-map)'
+  )&
+# {%/sh-mode%}
+EOF856ceee4ab57
+"))
+
 (defun do-global-emacs-remap(class)
   (mapc (lambda (key-map-1)
           (let* ((from (car key-map-1))
@@ -504,7 +517,7 @@
             (do-bind-keys-nil-unbind esc-g-map from to window-mapped-to class)))
         esc-g-remap-alist)
   (bind-both-global&window-keymaps "ESC" do-esc-map)
-  (bind-keys esc-map "ESC" `(synthesize-event-gnome? "ESC" ,(input-focus)))
+  (bind-keys esc-map "ESC" '(send-esc))
   (bind-keys s-h-keymap "C-x" c-x-map)
   (bind-keys esc-map "g" '(do-esc-g-map)))
 
@@ -623,7 +636,7 @@
                                  "C-r" '("C-r")
                                  "C-x" '("C-x"))))
 
-(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Lxterminal|Gucharmap|^libre.*")
+(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Lxterminal|Gucharmap|^libre.*|zenity")
 
                                         ; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)
@@ -787,7 +800,7 @@
     (system "toggle-rdesktop-keys off&"))
   (if (string= (bhj-window-class w) "Emacs")
       (unbind-both-global&window-keymaps "Super-\\")
-    (bind-both-global&window-keymaps "Super-\\"  '(system "xdotool-when-keyboard-clear key super+F12&"))))
+    (bind-both-global&window-keymaps "Super-\\"  '(system "xdotool-when-keyboard-clear key shift+F12&"))))
 
 (add-hook 'focus-in-hook ime-toggle-hook)
 
@@ -867,7 +880,7 @@
 (bind-keys print-keymap "e" '(system "e-screen-exchange&"))
 (bind-keys print-keymap "t" '(system "edit-terminal-capture&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
-(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular|kindle|Display|Gimp'&"))
+(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular|kindle|Display|Gimp|libreoffice'&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))

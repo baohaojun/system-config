@@ -101,7 +101,6 @@ Used to strip and replace the indentation upon beginning/completion of editing."
 
 (defvar fence-edit-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") 'fence-edit-exit)
     (define-key map (kbd "C-c '")   'fence-edit-exit)
     (define-key map (kbd "C-c C-k") 'fence-edit-abort)
     (define-key map (kbd "C-x C-s") 'fence-edit-save)
