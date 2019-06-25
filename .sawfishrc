@@ -351,8 +351,6 @@
         ("M-f" . '((t "C-Right")))
         ("M-B" . '((t "C-S-Left")))
         ("M-F" . '((t "C-S-Right")))
-        ("S-F12" . '((Emacs "C-c" "M-j" "D")))
-        ("S-F11" . '((Emacs "C-c" "M-j" "D")))
         ("C-s" . '((Firefox "C-f") (Firefox-esr "C-f")
                    (Iceweasel "C-f")
                    (Okular "F3")
@@ -380,8 +378,8 @@
         ("M-Right" . '((qpdfview "C-S-RET")))
         ("C-x" . '((t do-c-x-map)))
         ("Super-&" . '((Wrench "Meta-&")))
-        ("F11" . '((Emacs "C-C-c" "M-j" "s") (Wine mm6-drop)))
-        ("F12" . '((Emacs "C-c" "M-j" "d") (Wine mm6-heal)))
+        ("F11" . '((Wine mm6-drop)))
+        ("F12" . '((Wine mm6-heal)))
         ("Super-*" . '((Wrench "Meta-*")))))
 
 (setq wine-global-emacs-remap-alist

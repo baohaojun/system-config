@@ -10,7 +10,8 @@ use autodie qw(:all);
 # generate-getopt -s perl -P p:params='()' '?"可以指定多个，格式为 name=value，目前不支持文件格式参数"' \
 # j:job-or-url '?"如果是 job，则应使用 job 名字，如果是 url，则格式为正则：\${scm_jenkins_url}job/JOB_NAME/"' \
 # @:extra-environ-params '?"额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值"' \
-# @:extra-environ-params-regexp '?"参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入"'
+# @:extra-environ-params-regexp '?"参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入"' \
+# @print-params-only '?"仅打印启动任务时的参数列表，之后就退出，不真正启动编译"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -23,6 +24,7 @@ my $extra_environ_params = "";
 my $extra_environ_params_regexp = "";
 my $job_or_url = "";
 my @params = ();
+my $print_params_only = 0;
 
 my $handler_help = sub {
   print ;
@@ -59,6 +61,14 @@ my $handler_help = sub {
   }
   printf "%s", "可以指定多个，格式为 name=value，目前不支持文件格式参数";
   print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--[no]print-params-only';
+  if (length('--[no]print-params-only') > 24 and length("仅打印启动任务时的参数列表，之后就退出，不真正启动编译") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "仅打印启动任务时的参数列表，之后就退出，不真正启动编译";
+  print "\n";
 
   exit(0);
 };
@@ -68,6 +78,7 @@ GetOptions (
             'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
             'job-or-url|j=s' => \$job_or_url,
             'params|p=s' => \@params,
+            'print-params-only!' => \$print_params_only,
             'help|h!' => \&$handler_help,
            );
 
@@ -134,6 +145,18 @@ for (@{$job_api_json_obj->{property}}) {
 for (keys %default_params_map) {
   push @params, {name => $_, value => $default_params_map{$_}};
 }
+
+if ($print_params_only) {
+  for (@params) {
+    my $name = $_->{name};
+    my $value = $_->{value};
+    if ($name =~ m/^\w+$/) {
+      printf "export %s=%s\n", $name, shell_quote($value);
+    }
+  }
+  exit;
+}
+
 
 my $json_arg = decode_utf8 decode_utf8 encode_json {
   parameter => \@params
