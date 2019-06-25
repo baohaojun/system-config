@@ -335,6 +335,7 @@ map['com.twitter.android/com.twitter.android.PasswordResetActivity'] = 'manual-p
 map['com.twitter.android/com.twitter.android.trends.TrendsPlusActivity'] = 'manual-post'
 map['com.twitter.android/com.twitter.app.main.MainActivity'] = 'manual-post'
 map['com.twitter.android/com.twitter.app.onboarding.entertext.EnterTextSubtaskActivity'] = 'manual-post'
+map['com.twitter.android/com.twitter.composer.ComposerActivity'] = 'weibo-share'
 map['com.unnoo.quan/com.unnoo.quan.activities.SearchActivity'] = 'manual-post'
 map['com.uroad.piaogen/com.uroad.piaogen.BindCardActivity'] = 'manual-post'
 map['com.uroad.piaogen/com.uroad.piaogen.InvoiceHeadComfirmActivity'] = 'manual-post'
