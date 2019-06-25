@@ -359,6 +359,7 @@ map['org.mozilla.firefox/org.mozilla.gecko.fxa.activities.FxAccountCreateAccount
 map['org.openintents.filemanager/org.openintents.filemanager.FileManagerActivity'] = 'manual-post'
 map['org.telegram.messenger/org.telegram.ui.LaunchActivity'] = 'manual-post'
 map['PopUpStatusBar'] = 'manual-post'
+map['smt_launcher'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.account.reset.ResetPassActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.answer.AnswerActivity'] = 'manual-post'
 map['tv.danmaku.bili/tv.danmaku.bili.ui.login.LoginActivity'] = 'manual-post'
