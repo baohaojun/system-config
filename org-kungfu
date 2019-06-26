@@ -587,7 +587,18 @@ sub ok_edit_html_with_org(@) {
     ## end generated code
 
     if ($called_for_emacs) {
-        chdir("$ENV{HOME}/tmp");
+        use File::Path qw(make_path remove_tree);
+        my $tmp_dir = "$ENV{HOME}/tmp/.ehwo/edit-$$";
+        make_path($tmp_dir);
+        chdir($tmp_dir);
+
+        use AtExit;
+        *clean_tmpdir = sub {
+            chdir "/";
+            remove_tree $tmp_dir;
+        };
+        atexit(\&clean_tmpdir);
+
         System("emacs-current-text -b buffer-ehwo-$$ > content.html");
     }
 
