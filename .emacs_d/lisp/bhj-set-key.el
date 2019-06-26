@@ -118,7 +118,7 @@
 (define-key global-map [remap upcase-region] 'bhj-upcase-symbol-or-region)
 (define-key global-map [remap downcase-region] 'bhj-downcase-symbol-or-region)
 (define-key global-map [(super f1)] 'x-maximize-frame)
-(define-key global-map [(control x) (b)] 'ido-switch-buffer)
+(define-key global-map [(control x) (b)] 'ivy-switch-buffer)
 (define-key global-map [(control c) (W)] 'bhj-set-working-buffer)
 (define-key global-map [(meta shift o)] '(lambda () (interactive) (font-lock-fontify-block (line-number-at-pos))))
 (when window-system
