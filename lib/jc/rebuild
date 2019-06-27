@@ -79,34 +79,26 @@ EOF0dd108dc7891
 
 use Mojo::DOM;
 use File::Slurp;
-$html_str = qx(jc curl ${jc_build_url}/rebuild/parameterized);
-write_file("$ENV{HOME}/tmp/jc-rebuild.html", $html_str);
+use JSON;
 
-$dom = Mojo::DOM->new->parse($html_str);
 
 my @parameters;
 my @values;
 
+use Encode;
 
-my $sep_regex = qr/separator-[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/;
-$dom->find('input')
-  ->each(
-         sub {
-           if ($_->{name} eq "name" && $_->{type} eq "hidden" && not $_->{value} =~ m/$sep_regex/) {
-             push @parameters, $_->{value};
-             printf "got parameter: (%s) \@%d\n", $_->{value}, scalar(@parameters);
-             $next = $_->next;
-             if ($next->tag eq 'textarea') {
-               push @values, $next->text;
-               printf "got value: (%s) \@%d\n", $next->text, scalar(@values);
-             }
-           }
-           if ($_->{class} =~ m/setting-input/) {
-               push @values, $_->{value};
-               printf "got value: (%s) \@%d\n", $_->{value}, scalar(@values);
-           }
-         }
-        );
+my $json_str = qx(jc curl ${jc_build_url}/api/json);
+my $json_obj = decode_json $json_str;
+
+for (@{$json_obj->{actions}}) {
+  if ($_->{_class} eq "hudson.model.ParametersAction") {
+    for (@{$_->{parameters}}) {
+      push @parameters, $_->{name};
+      push @values, $_->{value};
+    }
+  }
+
+}
 
 use JSON;
 use v5.10;

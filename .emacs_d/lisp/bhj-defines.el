@@ -1584,9 +1584,22 @@ to the value of `temporary-file-directory'."
   (interactive "P")
   (let ((beg (point-min))
         (end (point-max)))
-    (when (region-active-p)
+    (when (and (region-active-p) (not (= (point) (mark))))
       (setq beg (mark)
             end (point)))
     (shell-command-to-string (format "nohup Wrench-post %s -- %s >/dev/null 2>&1 </dev/null&" (if prefix " --ask-to-whom" "") (shell-quote-argument (buffer-substring-no-properties beg end))))))
+
+(defun switch-to-file (file-name)
+  (let* ((buffer-list (buffer-list))
+         (buffer (car buffer-list)))
+    (while buffer-list
+      (when buffer
+        (when (string= (buffer-file-name buffer) file-name)
+          (switch-to-buffer buffer)
+          (setq buffer-list nil)))
+      (setq buffer-list (cdr buffer-list)
+            buffer (car buffer-list))))
+  (unless (string= (buffer-file-name) file-name)
+    (find-file file-name)))
 
 (provide 'bhj-defines)
