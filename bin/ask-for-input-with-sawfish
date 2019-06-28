@@ -107,6 +107,7 @@ else
     ztype=--entry
 fi
 
+unset WINDOWID
 sawfish-window \
     mark \
     --with-mark \
