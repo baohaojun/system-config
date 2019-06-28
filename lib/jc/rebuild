@@ -97,7 +97,6 @@ for (@{$json_obj->{actions}}) {
       push @values, $_->{value};
     }
   }
-
 }
 
 use JSON;

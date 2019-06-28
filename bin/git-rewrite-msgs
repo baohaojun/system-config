@@ -27,13 +27,13 @@ b0=$(basename $BASH_SOURCE)
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt '?"$b0 OPTIONS REV1 [REV2]"' \
         # s:start-with=1 '?"start reworking with which commit (in reverse order, 1 means the oldest patch)"' \
-        # 1one-by-one
+        # 1one-by-one=true
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o 1s:h \
                --long one-by-one,start-with:,help,no-one-by-one \
                -n $(basename -- $0) -- "$@")
-declare one_by_one=false
+declare one_by_one=true
 declare start_with=1
 eval set -- "$TEMP"
 while true; do
@@ -95,9 +95,28 @@ if test $# = 1; then
     set -- $1 HEAD
 fi
 
+cd $(lookup-file-dir .git)
 set -- $(git rev-parse $1) $(git rev-parse $2)
 
 export last_rev=$2
+
+function show-changes() {
+    IFS=$'\n'
+    files=$(git diff --name-only  HEAD^)
+    files=$(
+        git diff --name-only $last_rev $files
+         )
+    if test "$files"; then
+        git-interactive-add -r $last_rev -- $files
+        if yes-or-no-p -y "$files
+
+compress all changes?"; then
+            git co $last_rev $files
+        fi
+    fi
+}
+
+export -f show-changes
 
 if test $# != 2; then
     die "Usage: $(basename $0) START_REV END_REV(default to HEAD)"
@@ -110,7 +129,8 @@ if test $(basename $0) = git-rework-change; then
     start_recursive_shell "Rework commit $1" || true
     if test "${one_by_one}" = true; then
         for x in $list; do
-            export $WORKING_REV=$x
+            log "working with $x"
+            export WORKING_REV=$x
             git cherry-pick $x || start_recursive_shell "cherry-pick $x failed" || true
             start_recursive_shell "done cherry-pick $x, please check" || true
         done
@@ -121,6 +141,7 @@ if test $(basename $0) = git-rework-change; then
 fi
 
 for x in $list; do
+    log "working with $x"
     export WORKING_REV=$x
     git commit --amend
     git cherry-pick $x || start_recursive_shell "cherry-pick $x failed" || true

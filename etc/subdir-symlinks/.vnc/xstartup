@@ -14,7 +14,11 @@ grep -v lock -i ~/.Xmodmap | grep -v '^pointer' > ~/external/.Xmodmap.vnc
 xmodmap ~/external/.Xmodmap.vnc
 declare -x -p > ~/.renew-xauth.${DISPLAY##*:}
 
-sawfish&
+(
+    cd ~/src/reading/sawfish-1.11.90/ &&
+        en_US nobrew ./src/sawfish &> ~/tmp/xinitrc.log ||
+            sawfish
+)&
 deluge&
 lxpanel&
 

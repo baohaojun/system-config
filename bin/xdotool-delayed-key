@@ -1,0 +1,9 @@
+#!/bin/bash
+
+(
+    sleep .15
+    exec >> ~/tmp/xdotool-delayed-key.log
+    flock 1
+    echo "$@"
+    xdotool key --clearmodifiers "$@"
+)&

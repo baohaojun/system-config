@@ -1,8 +1,11 @@
 #!/bin/bash
 
 if test "$#" = 0; then
-    hint "You need to specify the key to fix, such as C-w"
-    set -- $(for k in {a..z}; do echo C-$k; done)
+    sawfish-help-key
+    set -- "$(getclip)"
+    if ! EMACS=t yes-or-no-p "fix $1"; then
+        exit 0
+    fi
 fi
 
 unbind_statements=$(

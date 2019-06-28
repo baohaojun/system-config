@@ -1,0 +1,11 @@
+#!/bin/bash
+IFS=$'\n'
+
+PATH=$(string-join : $(
+           echo "${PATH}" | tr : '\n' | grep -v ~/.linuxbrew
+                   ))
+if test "$#" = 0; then
+    start_recursive_shell nobrew
+else
+    "$@"
+fi

@@ -11,7 +11,9 @@ use autodie qw(:all);
 # j:job-or-url '?"如果是 job，则应使用 job 名字，如果是 url，则格式为正则：\${scm_jenkins_url}job/JOB_NAME/"' \
 # @:extra-environ-params '?"额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值"' \
 # @:extra-environ-params-regexp '?"参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入"' \
-# @print-params-only '?"仅打印启动任务时的参数列表，之后就退出，不真正启动编译"'
+# @print-params-only '?"仅打印启动任务时的参数列表，之后就退出，不真正启动编译"' \
+# @:extra-params-from-build-url '?"从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）"' \
+# vverbose '?"输出更多 log"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -22,9 +24,11 @@ Getopt::Long::Configure("posix_default");
 
 my $extra_environ_params = "";
 my $extra_environ_params_regexp = "";
+my $extra_params_from_build_url = "";
 my $job_or_url = "";
 my @params = ();
 my $print_params_only = 0;
+my $verbose = 0;
 
 my $handler_help = sub {
   print ;
@@ -44,6 +48,14 @@ my $handler_help = sub {
     printf "%30s", "";
   }
   printf "%s", "参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--extra-params-from-build-url=EXTRA-PARAMS-FROM-BUILD-URL';
+  if (length('--extra-params-from-build-url=EXTRA-PARAMS-FROM-BUILD-URL') > 24 and length("从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）";
   print "\n";
   printf "%6s", '-j, ';
   printf "%-24s", '--job-or-url=JOB-OR-URL';
@@ -69,6 +81,14 @@ my $handler_help = sub {
   }
   printf "%s", "仅打印启动任务时的参数列表，之后就退出，不真正启动编译";
   print "\n";
+  printf "%6s", '-v, ';
+  printf "%-24s", '--[no]verbose';
+  if (length('--[no]verbose') > 24 and length("输出更多 log") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "输出更多 log";
+  print "\n";
 
   exit(0);
 };
@@ -76,9 +96,11 @@ my $handler_help = sub {
 GetOptions (
             'extra-environ-params=s' => \$extra_environ_params,
             'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
+            'extra-params-from-build-url=s' => \$extra_params_from_build_url,
             'job-or-url|j=s' => \$job_or_url,
             'params|p=s' => \@params,
             'print-params-only!' => \$print_params_only,
+            'verbose|v!' => \$verbose,
             'help|h!' => \&$handler_help,
            );
 
@@ -94,42 +116,17 @@ use Encode;
 
 my %params_map;
 
-@params = map {
-  my ($name, $value) = split "=", $_;
-  $params_map{$name} = $value;
-  {name => $name, value => $value}
-} @params;
-
-if ($extra_environ_params) {
-  @params = (
-             @params, map {
-               my ($name, $value) = ($_, $ENV{$_});
-               $params_map{$name} = $value;
-               {name => $name, value => $value}
-             } split(" ", $extra_environ_params)
-            );
-}
-
-if ($extra_environ_params_regexp) {
-  $extra_environ_params_regexp = qr($extra_environ_params_regexp);
-  @params = (
-             @params, map {
-               my ($name, $value) = ($_, $ENV{$_});
-               $params_map{$name} = $value;
-               {name => $name, value => $value}
-             } grep { m/$extra_environ_params_regexp/ } keys %ENV
-            );
-}
-
-if ($job_or_url !~ m,/,) {
-  $job_or_url = "$ENV{scm_jenkins_url}job/${job_or_url}/";
-}
-
 my %default_params_map;
+
+if ($job_or_url !~ m,://.*/job/, ) {
+  $job_or_url = "$ENV{scm_jenkins_url}job/$job_or_url"
+}
+
 (my $job_api_url = $job_or_url) =~ s,/*$,/api/json,;
 $job_api_url = shell_quote $job_api_url;
 
 my $job_api_str = qx(jc curl $job_api_url);
+print ("jc curl $job_api_url", $job_api_str) if $verbose;
 my $job_api_json_obj  = decode_json $job_api_str;
 
 for (@{$job_api_json_obj->{property}}) {
@@ -143,8 +140,51 @@ for (@{$job_api_json_obj->{property}}) {
 }
 
 for (keys %default_params_map) {
-  push @params, {name => $_, value => $default_params_map{$_}};
+  $params_map{$_} = $default_params_map{$_};
 }
+
+$extra_params_from_build_url =~ s,/*$,/,;
+
+my $json_str = qx(jc curl ${extra_params_from_build_url}api/json);
+my $json_obj = decode_json $json_str;
+
+for (@{$json_obj->{actions}}) {
+  if ($_->{_class} eq "hudson.model.ParametersAction") {
+    for (@{$_->{parameters}}) {
+      $params_map{$_->{name}} = $_->{value};
+    }
+  }
+}
+
+map {
+  my ($name, $value) = split "=", $_;
+  $params_map{$name} = $value;
+} @params;
+
+if ($extra_environ_params) {
+  map {
+    my ($name, $value) = ($_, $ENV{$_});
+    $params_map{$name} = $value;
+  } split(" ", $extra_environ_params);
+}
+
+if ($extra_environ_params_regexp) {
+  $extra_environ_params_regexp = qr($extra_environ_params_regexp);
+  map {
+    my ($name, $value) = ($_, $ENV{$_});
+    $params_map{$name} = $value;
+  } grep { m/$extra_environ_params_regexp/ } keys %ENV;
+}
+
+if ($job_or_url !~ m,/,) {
+  $job_or_url = "$ENV{scm_jenkins_url}job/${job_or_url}/";
+}
+
+@params = map {
+  {
+    name => $_, value => $params_map{$_}
+  }
+} keys %params_map;
 
 if ($print_params_only) {
   for (@params) {
@@ -158,7 +198,7 @@ if ($print_params_only) {
 }
 
 
-my $json_arg = decode_utf8 decode_utf8 encode_json {
+my $json_arg = decode_utf8 encode_json {
   parameter => \@params
 };
 

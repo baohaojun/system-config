@@ -76,6 +76,7 @@ error_patterns=(
     'method does not override or implement'
     'syntax error'
     'invalid argument'
+    'argument list too long'
     'no such '
     'circular.*dropped'
     'no rule to'

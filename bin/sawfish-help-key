@@ -7,7 +7,7 @@ fi
 
 
 cmd=$(cat <<EOF
-; {%sawfish%}
+; {%sawfish-mode%}
 (progn
   (defun help-key (pressed-keys map)
     ; (message (format nil "pressed-keys is %s, map is %s" pressed-keys map))
@@ -37,7 +37,7 @@ cmd=$(cat <<EOF
                  pressed-keys
                  event)))))
   (help-key "" $map))
-; {%/sawfish%}
+; {%/sawfish-mode%}
 EOF
    )
 

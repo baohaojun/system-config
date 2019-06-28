@@ -75,7 +75,6 @@ if test "$do_kill" = true; then
     exit 0
 fi
 
-find-or-exec -e zenity || true
 if test "${INPUT_LOCK_FILE}"; then
     exec 9> "${INPUT_LOCK_FILE}"
 else
@@ -88,7 +87,8 @@ else
 fi
 
 if ! flock -n 9; then
-    bhj-notify ask-for-input-with-sawfish "$prompt"
+    bhj-notify ask-for-input-with-sawfish "$prompt is blocked"
+    find-or-exec -e zenity || true
     flock 9
 fi
 

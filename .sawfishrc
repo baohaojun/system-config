@@ -670,7 +670,8 @@ EOF856ceee4ab57
                bhj-is-gnome?)
           (and (not (eq (input-focus) window))
                (string-match gnome-windows-re (bhj-window-class window) 0 t)))
-      (progn
+      (if (boundp 'xdo-event)
+          (post-event (rewrite-event-for-xdotool event))
         (system
          (format nil "xdotool_window=%d xdotool-when-keyboard-clear key %s&"
                  (window-id window)
@@ -931,3 +932,20 @@ EOF856ceee4ab57
                                        (delete-window-class-safely class)))))
 
 (bind-both-global&window-keymaps "Super-h" s-h-keymap)
+
+(defun xdo-maybe ()
+  (when xdo-post-event
+    (when (stringp xdo-post-event)
+      (setq xdo-post-event (cons xdo-post-event)))
+    (while xdo-post-event
+      (xdo-event (car xdo-post-event) (input-focus))
+      (setq xdo-post-event (cdr xdo-post-event)))
+    (setq post-command-hook nil)))
+
+(defun post-event (event)
+  (setq post-command-hook nil)
+  (add-hook 'post-command-hook xdo-maybe)
+  (setq xdo-post-event event))
+
+(bind-both-global&window-keymaps "Super-F11" '(post-event '("ctrl" "ctrl" "ctrl+Left")))
+(bind-both-global&window-keymaps "Super-Menu" '(system "sawfish-fix-key&"))
