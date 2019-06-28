@@ -3,13 +3,13 @@ clear control
 clear mod1
 clear mod5
 
-keycode 135 = Super_R
+add mod4 = Super_R Super_L
+
 keycode 37 = Control_L
 keycode 64 = Alt_L
 keycode 105 = Control_R
 keycode 108 = Alt_R
 
-add mod4 = Super_R Super_L
 add control = Control_L Control_R
 add mod1 = Alt_L Alt_R
 

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# do input with my specified lock
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P l:lock-name=default
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o l:h \
+                      --long lock-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare lock_name=default
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -l|--lock-name)
+            lock_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-l, '
+            printf %-24s '--lock-name=LOCK_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+export INPUT_LOCK_FILE=~/.cache/system-config/logs/input-lock/${lock_name}
+
+mkdir -p "${INPUT_LOCK_FILE%/*}"
+touch "${INPUT_LOCK_FILE}"
+
+if test "$#" != 0; then
+    exec "$@"
+fi

@@ -3,15 +3,15 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt p:prompt='"> "' ssecret kdo-kill
+# generate-getopt -P p:prompt='"> "' ssecret kdo-kill
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o ksp:h \
-              --long do-kill,secret,prompt:,help,no-do-kill,no-secret \
-              -n $(basename -- $0) -- "$@")
-do_kill=false
-secret=false
-prompt="> "
+TEMP=$(POSIXLY_CORRECT=true getopt -o kp:sh \
+                      --long do-kill,prompt:,secret,help,no-do-kill,no-secret \
+                      -n $(basename -- $0) -- "$@")
+declare do_kill=false
+declare prompt="> "
+declare secret=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -23,6 +23,12 @@ while true; do
                 do_kill=true
             fi
             shift
+
+            ;;
+        -p|--prompt)
+            prompt=$2
+            shift 2
+
             ;;
         -s|--secret|--no-secret)
             if test "$1" = --no-secret; then
@@ -31,14 +37,11 @@ while true; do
                 secret=true
             fi
             shift
-            ;;
-        -p|--prompt)
-            prompt=$2
-            shift 2
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf %06s '-k, '
@@ -73,8 +76,21 @@ if test "$do_kill" = true; then
 fi
 
 find-or-exec -e zenity || true
-exec 9> ~/.cache/system-config/logs/$(basename $0).lock2
-flock 9
+if test "${INPUT_LOCK_FILE}"; then
+    exec 9> "${INPUT_LOCK_FILE}"
+else
+    if is-cron; then
+        lock_suffix=cron
+    else
+        lock_suffix=none
+    fi
+    exec 9> ~/.cache/system-config/logs/$(basename $0).lock.$lock_suffix
+fi
+
+if ! flock -n 9; then
+    bhj-notify ask-for-input-with-sawfish "$prompt"
+    flock 9
+fi
 
 title=$(echo "$prompt" | tail -n 1)
 text=$prompt

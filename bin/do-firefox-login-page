@@ -3,7 +3,7 @@ set -e
 
 url=$(firefox-get-tab-url)
 
-sawfish-browser-input TAB TAB
+sawfish-browser-input C-f ESC
 host=$(echo "$url" | perl -npe 's!^http.*?://!!; s!/.*!!')
 echo $host
 
@@ -18,7 +18,7 @@ declare -A n_before_search_taps_map
 
 search_for_map[i.smartisan.com]="登录"
 search_for_map[mp.weixin.qq.com]="记住帐号"
-n_before_search_taps_map[mp.weixin.qq.com]=2
+n_before_search_taps_map[mp.weixin.qq.com]=0
 n_stab_map[i.smartisan.com]=3
 n_stab_map[mp.weixin.qq.com]=4
 

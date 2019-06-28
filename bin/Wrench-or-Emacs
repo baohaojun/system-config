@@ -10,7 +10,8 @@ if test "${top_window}" != Emacs -o "$(emacs-current-file | perl -pe 's,.*/,,')"
 cat <<'EOF6a5a109f8722'
 ; {%emacs-lisp-mode%}
 (progn
-  (find-file "~/src/github/projects/chat.org")
+  (sanityinc/toggle-delete-other-windows)
+  (switch-to-file (expand-file-name "~/src/github/projects/chat.org"))
   (mark-whole-buffer))
 ; {%/emacs-lisp-mode%}
 EOF6a5a109f8722
