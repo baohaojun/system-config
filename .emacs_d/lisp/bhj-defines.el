@@ -1175,7 +1175,7 @@ criteria can be provided via the optional match-string argument "
 (defun bhj-get-clang-completion-errors ()
   (interactive)
   (let ((cflags "")
-        (ac-clang-cflags ac-clang-cflags))
+        (ac-clang-cflags company-clang-arguments))
     (while ac-clang-cflags
       (setq cflags (format "%s %s" cflags (shell-quote-argument (car ac-clang-cflags)))
             ac-clang-cflags (cdr ac-clang-cflags)))

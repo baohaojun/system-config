@@ -38,3 +38,7 @@ function sudo-x() {
         exec sudo -E env PATH="$PATH" "$@"
     )
 }
+
+if test -e ~/.local-config/.bashrc-linux-bash; then
+    . ~/.local-config/.bashrc-linux-bash
+fi

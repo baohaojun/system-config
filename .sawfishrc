@@ -540,6 +540,11 @@ EOF856ceee4ab57
 (defun do-focus-global-remap-hook (w focus-mode)
   (do-focus-global-remap w focus-mode))
 
+(defun focus-debug (w focus-debug)
+  (message "focus in/out"))
+
+; (add-hook 'focus-in-hook focus-debug)
+
 (defun do-focus-global-remap (w focus-mode)
   (let ((class (bhj-window-class w)))
     (if (string-match emacs-style-window-class-re class 0 t)
@@ -939,13 +944,21 @@ EOF856ceee4ab57
       (setq xdo-post-event (cons xdo-post-event)))
     (while xdo-post-event
       (xdo-event (car xdo-post-event) (input-focus))
+      (unless (cdr xdo-post-event)
+        ;;(system (format nil "bhj-notify hello world $$ %s&" (string-replace "'" "\\'" (car xdo-post-event))))
+        ;;(system (format nil "xdotool key --clearmodifiers %s" "ctrl+Left"))
+        )
       (setq xdo-post-event (cdr xdo-post-event)))
     (setq post-command-hook nil)))
 
 (defun post-event (event)
   (setq post-command-hook nil)
+  (setq xdo-post-event event)
   (add-hook 'post-command-hook xdo-maybe)
-  (setq xdo-post-event event))
+  ;(system "(sleep .0; sawfish-client -e '(xdo-maybe)')&")
+  )
 
-(bind-both-global&window-keymaps "Super-F11" '(post-event '("ctrl" "ctrl" "ctrl+Left")))
+(bind-both-global&window-keymaps "Super-F11" '(post-event '("-F11" "d")))
+;; (bind-both-global&window-keymaps "Super-F11" '(synthesize-event "c" (input-focus)))
+;; (bind-both-global&window-keymaps "Super-F11" (lambda ()))
 (bind-both-global&window-keymaps "Super-Menu" '(system "sawfish-fix-key&"))
