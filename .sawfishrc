@@ -931,7 +931,7 @@ EOF856ceee4ab57
                                        (delete-window-class-safely class)))))
 
 (bind-both-global&window-keymaps "Super-h" s-h-keymap)
-
+(bind-both-global&window-keymaps "Super-Menu" '(system "sawfish-fix-key&"))
 (defun xdo-events (events)
   (when (stringp events)
     (setq events (cons events)))
@@ -939,8 +939,8 @@ EOF856ceee4ab57
     (xdo-event (car events) (input-focus))
     (setq events (cdr events))))
 
+;;; some keys for debugging
 (bind-both-global&window-keymaps "Super-F11" '(xdo-events '("-F11" "d")))
 (bind-keys s-h-keymap "F11" '(xdo-events '("-F11" "d")))
 ;; (bind-both-global&window-keymaps "Super-F11" '(synthesize-event "c" (input-focus)))
 ;; (bind-both-global&window-keymaps "Super-F11" (lambda ()))
-(bind-both-global&window-keymaps "Super-Menu" '(system "sawfish-fix-key&"))
