@@ -63,7 +63,7 @@
 
 ;; end generated code
 
-(bind-keys s-h-keymap "q" '(synthesize-event-gnome? (read-event "Press the key you wanna send") (input-focus)))
+(bind-keys s-h-keymap "q" '(synthesize-event-gnome? (read-event-quietly "Press the key you wanna send") (input-focus)))
 
 (defun sc-maxmize-window-toggle (&optional w)
   (setq w (or w (input-focus)))
@@ -81,31 +81,7 @@
             (delete-window-safely window)))
         (managed-windows)))
 
-(defun do-esc-map ()
-  (let* ((event (read-event "ESC"))
-         (key (event-name event))
-         (binding (let ((override-keymap esc-map))
-                    (lookup-event-binding event))))
-    (when binding
-      (apply-command (car binding) (cdr binding)))))
-
-(defun do-esc-g-map ()
-  (let* ((event (read-event "ESC g"))
-         (key (event-name event))
-         (binding (let ((global-keymap esc-g-map))
-                    (lookup-event-binding event))))
-    (when binding
-      (apply-command (car binding) (cdr binding)))))
-
-(defun do-c-x-map ()
-  (let* ((event (read-event "C-x"))
-         (key (event-name event)))
-    (when (let ((global-keymap c-x-map))
-            (lookup-event-binding event))
-
-      (synthesize-event-gnome? key (input-focus)))))
-
-(bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event "M-")))))
+(bind-keys s-h-keymap "ESC" '(let ((key (concat "M-" (event-name (read-event-quietly "M-")))))
                                (synthesize-event-gnome? key (input-focus))))
 
 (setq esc-g-remap-alist
@@ -370,13 +346,13 @@
                    (t "C-End")))
         ("C-r" . '((Firefox "C-g") (Firefox-esr "C-g") (Iceweasel "C-g") (Okular "S-F3") (t "C-S-g")))
         ("C-k" . '((t "S-End" "DEL")))
-        ("M-BS" . '((t "C-BS")))
+        ("M-BS" . '((t "C-S-Left" "DEL")))
         ("C-p" . '((t "Up")))
         ("C-n" . '((t "Down")))
         ("M-Left" . '((qpdfview "C-RET")
                       (t nil)))
         ("M-Right" . '((qpdfview "C-S-RET")))
-        ("C-x" . '((t do-c-x-map)))
+        ("C-x" . '((t c-x-map)))
         ("Super-&" . '((Wrench "Meta-&")))
         ("F11" . '((Wine mm6-drop)))
         ("F12" . '((Wine mm6-heal)))
@@ -486,7 +462,7 @@
      `(classed-key-synthesize ,from ,to)))))
 
 ;;; sawfish 和 xdotools 好像不能一起用，必须做成异步的。另外，如果
-;;; Escape 还被绑定成 do-esc-map 的话，再怎么发送这个键，还是不停地调用 do-esc-map
+;;; Escape 还被绑定成 esc-map 的话，再怎么发送这个键，还是不停地调用 esc-map
 (defun send-esc ()
   (system "
 # {%sh-mode%}
@@ -494,7 +470,7 @@
       sawfish-client -e '(unbind-both-global&window-keymaps \"ESC\")';
       sleep .1;
       xdotool key Escape;
-      sawfish-client -e '(bind-both-global&window-keymaps \"ESC\" do-esc-map)'
+      sawfish-client -e '(bind-both-global&window-keymaps \"ESC\" esc-map)'
   )&
 # {%/sh-mode%}
 EOF856ceee4ab57
@@ -516,10 +492,10 @@ EOF856ceee4ab57
                  (window-mapped-to (get-window-map to class)))
             (do-bind-keys-nil-unbind esc-g-map from to window-mapped-to class)))
         esc-g-remap-alist)
-  (bind-both-global&window-keymaps "ESC" do-esc-map)
+  (bind-both-global&window-keymaps "ESC" esc-map)
   (bind-keys esc-map "ESC" '(send-esc))
   (bind-keys s-h-keymap "C-x" c-x-map)
-  (bind-keys esc-map "g" '(do-esc-g-map)))
+  (bind-keys esc-map "g" esc-g-map))
 
 (defun undo-global-emacs-remap(class)
   (mapc (lambda (key-map-1)
@@ -669,14 +645,28 @@ EOF856ceee4ab57
       (setq main-key "Escape")))
     (setq result (concat result main-key))))
 
+(define (read-event-quietly #!optional prompt)
+  (call-with-keyboard-grabbed
+   (lambda ()
+     (unwind-protect
+         (let
+             ((override-keymap '(keymap))
+              (unbound-key-hook
+               (list (lambda ()
+                       (throw 'read-event (current-event))))))
+           (catch 'read-event
+             (recursive-edit)))))))
+
 (defun synthesize-event-gnome? (event window)
-  ;;(message (format nil "key is %s, window is %s" event (bhj-window-class window)))
-  (if (or (and (eq (input-focus) window)
-               bhj-is-gnome?)
-          (and (not (eq (input-focus) window))
-               (string-match gnome-windows-re (bhj-window-class window) 0 t)))
+  ;;(message (format nil "doing event %s for %s" event (event-name (current-event))))
+  (if bhj-is-gnome?
       (if (boundp 'xdo-event)
-          (post-event (rewrite-event-for-xdotool event))
+          (let ((current-key (string-replace ".*-" "" (event-name (current-event))))
+                (current-key-xdo-release))
+            (when (string= current-key "")
+              (setq current-key "-"))
+            (setq current-key-xdo-release (format nil "-%s" (rewrite-event-for-xdotool current-key)))
+            (xdo-events (list current-key-xdo-release (rewrite-event-for-xdotool event))))
         (system
          (format nil "xdotool_window=%d xdotool-when-keyboard-clear key %s&"
                  (window-id window)
@@ -938,27 +928,15 @@ EOF856ceee4ab57
 
 (bind-both-global&window-keymaps "Super-h" s-h-keymap)
 
-(defun xdo-maybe ()
-  (when xdo-post-event
-    (when (stringp xdo-post-event)
-      (setq xdo-post-event (cons xdo-post-event)))
-    (while xdo-post-event
-      (xdo-event (car xdo-post-event) (input-focus))
-      (unless (cdr xdo-post-event)
-        ;;(system (format nil "bhj-notify hello world $$ %s&" (string-replace "'" "\\'" (car xdo-post-event))))
-        ;;(system (format nil "xdotool key --clearmodifiers %s" "ctrl+Left"))
-        )
-      (setq xdo-post-event (cdr xdo-post-event)))
-    (setq post-command-hook nil)))
+(defun xdo-events (events)
+  (when (stringp events)
+    (setq events (cons events)))
+  (while events
+    (xdo-event (car events) (input-focus))
+    (setq events (cdr events))))
 
-(defun post-event (event)
-  (setq post-command-hook nil)
-  (setq xdo-post-event event)
-  (add-hook 'post-command-hook xdo-maybe)
-  ;(system "(sleep .0; sawfish-client -e '(xdo-maybe)')&")
-  )
-
-(bind-both-global&window-keymaps "Super-F11" '(post-event '("-F11" "d")))
+(bind-both-global&window-keymaps "Super-F11" '(xdo-events '("-F11" "d")))
+(bind-keys s-h-keymap "F11" '(xdo-events '("-F11" "d")))
 ;; (bind-both-global&window-keymaps "Super-F11" '(synthesize-event "c" (input-focus)))
 ;; (bind-both-global&window-keymaps "Super-F11" (lambda ()))
 (bind-both-global&window-keymaps "Super-Menu" '(system "sawfish-fix-key&"))
