@@ -9,6 +9,7 @@ gobject.threads_init()
 import gtk
 import getopt, sys
 from os.path import abspath, join, basename
+import os
 
 import glipper, glipper.defs
 from glipper.Clipboards import *
@@ -40,6 +41,7 @@ import glipper
 from glipper.Clipboards import *
 from glipper.PluginsManager import *
 from gettext import gettext as _
+import pipes
 
 class History(gobject.GObject):
         __gsignals__ = {
@@ -61,7 +63,7 @@ class History(gobject.GObject):
 
         def on_new_item(self, clipboards, item, is_from_selection):
                 self.add(item, is_from_selection)
-                print("hello: new item {}\n".format(item))
+                os.system("emacs-clipmon {text}".format(text = pipes.quote(item)))
 
         def clear(self):
                 self.history = []
