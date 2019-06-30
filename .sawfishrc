@@ -32,7 +32,9 @@
                      (quotient (- (cdr (current-head-dimensions w))
                                   (cdr (window-frame-dimensions w))) 2))))
 
-(setq bhj-is-gnome? nil)
+;; gtk window does not support XSendEvent, must use xdotool or libxdo
+(setq bhj-current-window-is-gtk? nil)
+
 (setq warp-to-window-offset 50
       warp-to-window-enabled t)
 
@@ -527,8 +529,8 @@ EOF856ceee4ab57
         (undo-global-emacs-remap (intern class)) ; it will map emacs style windows if specified
       (do-global-emacs-remap (intern class)))
     (if (string-match gnome-windows-re class 0 t)
-        (setq bhj-is-gnome? t)
-      (setq bhj-is-gnome? nil))
+        (setq bhj-current-window-is-gtk? t)
+      (setq bhj-current-window-is-gtk? nil))
     (if (string-match no-tap-drag-window-class-re class 0 t)
         (system "synclient TapAndDragGesture=0&")
       (system "synclient TapAndDragGesture=1&"))))
@@ -659,19 +661,21 @@ EOF856ceee4ab57
 
 (defun synthesize-event-gnome? (event window)
   ;;(message (format nil "doing event %s for %s" event (event-name (current-event))))
-  (if bhj-is-gnome?
+  (if (not bhj-current-window-is-gtk?)
+      (synthesize-event event window)
+    (let ((current-key (string-replace ".*-" "" (event-name (current-event))))
+          (current-key-xdo-release))
+      (when (string= current-key "")
+        (setq current-key "-"))
+      (setq event (rewrite-event-for-xdotool event)
+            current-key (rewrite-event-for-xdotool current-key))
+      (setq current-key-xdo-release (format nil "-%s" current-key))
       (if (boundp 'xdo-event)
-          (let ((current-key (string-replace ".*-" "" (event-name (current-event))))
-                (current-key-xdo-release))
-            (when (string= current-key "")
-              (setq current-key "-"))
-            (setq current-key-xdo-release (format nil "-%s" (rewrite-event-for-xdotool current-key)))
-            (xdo-events (list current-key-xdo-release (rewrite-event-for-xdotool event))))
+          (xdo-events (list current-key-xdo-release event))
         (system
-         (format nil "xdotool_window=%d xdotool-when-keyboard-clear key %s&"
-                 (window-id window)
-                 (rewrite-event-for-xdotool event))))
-    (synthesize-event event window)))
+         (format nil "xdotool keyup %s; xdotool key --clearmodifiers %s"
+                 current-key
+                 event))))))
 
 (defun my-debug (fmt &rest args)
   (message (apply format nil fmt args)))
