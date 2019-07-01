@@ -33,9 +33,7 @@ This is simple using Perl's “reflection”.
 
          my @subcmd_help_strs;
          my %subcmd_helpstr_map = (
-             update1page => "Update 1 page (html text and all images -- automatically upload as page attachments)",
-             get1page => "Get 1 page (html text and all image attachments)",
-             e => "Edit 1 page in emacs org-mode, download/edit/upload",
+             e => "Edit jira issue in emacs org-mode",
              tri => "Transition of an issue",
              );
 
