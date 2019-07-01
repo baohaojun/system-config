@@ -38,24 +38,34 @@ EOF
 if test "$(sawfish-client -e "$sawfish_find_tagged_window_command")" = $special_tag; then
     exit 0
 else
+    old_top_window=$(sawfish-client -e "(input-focus)")
     $program&
     window_match=
     for x in $(seq 1 30); do
+        if test "$(sawfish-client -e "(input-focus)")" = "$old_top_window"; then
+            sleep .5
+            continue
+        fi
         if [[ $(sawfish-client -e '(window-class (input-focus))') =~ $window_class ]]; then
             window_match=-y
             break
         fi
         sleep .5
     done
-    if EMACS=t yes-or-no-p $window_match "Is the top window special for $special_tag"; then
-        sawfish_apply_tag_command=$(
-            cat <<EOF
+    set -x
+    exec &> ~/tmp/sawfish-start-special.log
+
+    if EMACS=t sawfish-window mark --with-mark yes-or-no-p $window_match "Is the top window special for $special_tag"; then
+        (
+            sawfish_apply_tag_command=$(
+                cat <<EOF
 ; {%sawfish%}
-(window-put (input-focus) 'special '$special_tag)
+(window-put (car (window-order)) 'special '$special_tag)
 ; {%/sawfish%}
 EOF
-                                 )
-        sawfish-client -e "$sawfish_apply_tag_command"
+                                     )
+            sawfish-client -e "$sawfish_apply_tag_command"
+        )
     fi
 fi
 

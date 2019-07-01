@@ -83,9 +83,13 @@ done
 
 if test "${with_mark}" = true; then
     sawfish-window mark -t "${mark_to_var}" -s &>/dev/null
-    "$@"
-    sawfish-window mark -t "${mark_to_var}" -r &>/dev/null
-    exit
+    if "$@"; then
+        ret=0
+    else
+        ret=$?
+    fi
+    sawfish-window mark -t "${mark_to_var}" -r &>/dev/null || true
+    exit $?
 fi
 
 if test "${set_mark}" = true; then

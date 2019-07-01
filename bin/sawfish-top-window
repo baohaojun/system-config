@@ -24,7 +24,7 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
-if test $b0 = sawfish-top-window-name; then
+if test $b0 = sawfish-top-window-name -o $b0 = sawfish-top-window; then
     function=window-name
 elif test "$b0" = sawfish-top-window-wmclass; then
     function=bhj-wm-class

@@ -111,6 +111,14 @@ if test $host = gerrit; then
     url=$(printf "${scm_gerrit_url}#/q/%s,n,z" "$fill")
 fi
 
+if test "$host" = gerrit-project; then
+    url=$(printf "${scm_gerrit_url}#/admin/projects/%s/" "$fill")
+fi
+
+if test "$host" = gerrit-people; then
+    url=$(printf "${scm_gerrit_url}#/admin/groups/")
+fi
+
 if test $prog = search-google; then
     url="https://www.google.com/search?q=$fill"
 fi
