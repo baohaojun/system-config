@@ -531,9 +531,9 @@ EOF856ceee4ab57
     (if (string-match emacs-style-window-class-re class 0 t)
         (undo-global-emacs-remap (intern class)) ; it will map emacs style windows if specified
       (do-global-emacs-remap (intern class)))
-    (if (string-match gnome-windows-re class 0 t)
-        (setq bhj-current-window-is-gtk? t)
-      (setq bhj-current-window-is-gtk? nil))
+    (if (string-match x11-windows-re class 0 t)
+        (setq bhj-current-window-is-gtk? nil)
+      (setq bhj-current-window-is-gtk? t))
     (if (string-match no-tap-drag-window-class-re class 0 t)
         (system "synclient TapAndDragGesture=0&")
       (system "synclient TapAndDragGesture=1&"))))
@@ -622,7 +622,7 @@ EOF856ceee4ab57
                                  "C-r" '("C-r")
                                  "C-x" '("C-x"))))
 
-(setq gnome-windows-re "gnome-.*|nautilus|evince|eog|gedit|Lxterminal|Gucharmap|^libre.*|zenity")
+(setq x11-windows-re "firefox|emacs|xterm|wrench|gjiten")
 
                                         ; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)

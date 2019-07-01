@@ -3,6 +3,12 @@
 set -e
 
 commit_id=$(git stash create)
+if test -z "${commit_id}"; then
+    commit_id=$(
+        cat $(lookup-file -e .git/refs/stash || echo /dev/null)
+             )
+fi
+
 git stash store -m "snapshot @$(now)" "$commit_id"
 
 git stash list
