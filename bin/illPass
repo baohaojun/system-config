@@ -34,7 +34,7 @@ if test "${window_name}" = myscr -a "${window_class}" = xterm; then
     fi
 
 elif [[ $window_class =~ firefox ]]; then
-    if test "$window_name" = "password required"; then
+    if test "$(sawfish-top-window-wmclass)" = Prompt:Firefox:; then
         true
     else
         url=$(get-firefox-tab-url --no-with-xkeytool|tr -d '"')

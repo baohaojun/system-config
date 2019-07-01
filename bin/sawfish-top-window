@@ -1,9 +1,40 @@
 #!/bin/bash
-if test $(basename $0) = sawfish-top-window-name; then
-    function=window-name
-else
-    function=bhj-window-class
+
+set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
 fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+if test $b0 = sawfish-top-window-name; then
+    function=window-name
+elif test "$b0" = sawfish-top-window-wmclass; then
+    function=bhj-wm-class
+elif test "$b0" = sawfish-top-window-class; then
+    function=bhj-window-class
+else
+    bhj-notify sawfish-top-window "no such function $b0"
+    exit 1
+fi
+
 sawfish-client -e "($function (input-focus))"|perl -ne "$(
 cat <<'EOF3a5a0240b117'
 # {%perl-mode%}
