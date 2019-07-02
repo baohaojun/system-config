@@ -1,9 +1,7 @@
 #!/usr/bin/env perl
 
 use strict;
-use utf8;
 use String::ShellQuote;
-
 use autodie qw(:all);
 
 ## start code-generator "^\\s *#\\s *"
@@ -13,6 +11,7 @@ use autodie qw(:all);
 # @:extra-environ-params-regexp '?"参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入"' \
 # @print-params-only '?"仅打印启动任务时的参数列表，之后就退出，不真正启动编译"' \
 # @:extra-params-from-build-url '?"从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）"' \
+# @:rebuild-url '?"指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_OR_URL 和 EXTRA_PARAMS_FROM_BUILD_URL"' \
 # vverbose '?"输出更多 log"'
 ## end code-generator
 ## start generated code
@@ -28,6 +27,7 @@ my $extra_params_from_build_url = "";
 my $job_or_url = "";
 my @params = ();
 my $print_params_only = 0;
+my $rebuild_url = "";
 my $verbose = 0;
 
 my $handler_help = sub {
@@ -81,6 +81,14 @@ my $handler_help = sub {
   }
   printf "%s", "仅打印启动任务时的参数列表，之后就退出，不真正启动编译";
   print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--rebuild-url=REBUILD-URL';
+  if (length('--rebuild-url=REBUILD-URL') > 24 and length("指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_OR_URL 和 EXTRA_PARAMS_FROM_BUILD_URL") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_OR_URL 和 EXTRA_PARAMS_FROM_BUILD_URL";
+  print "\n";
   printf "%6s", '-v, ';
   printf "%-24s", '--[no]verbose';
   if (length('--[no]verbose') > 24 and length("输出更多 log") > 0) {
@@ -100,6 +108,7 @@ GetOptions (
             'job-or-url|j=s' => \$job_or_url,
             'params|p=s' => \@params,
             'print-params-only!' => \$print_params_only,
+            'rebuild-url=s' => \$rebuild_url,
             'verbose|v!' => \$verbose,
             'help|h!' => \&$handler_help,
            );
@@ -117,6 +126,16 @@ use Encode;
 my %params_map;
 
 my %default_params_map;
+
+if ($rebuild_url) {
+  if (not $job_or_url) {
+    ($job_or_url = $rebuild_url) =~ s,(.*)/\d+/?$,$1,;
+  }
+
+  if (not $extra_params_from_build_url) {
+    $extra_params_from_build_url = $rebuild_url;
+  }
+}
 
 if ($job_or_url !~ m,://.*/job/, ) {
   $job_or_url = "$ENV{scm_jenkins_url}job/$job_or_url"

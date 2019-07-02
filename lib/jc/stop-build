@@ -2,14 +2,16 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P j:job-name n:build-number
+# generate-getopt -P j:job-name n:build-number u:build-url rrebuild
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o n:j:h \
-                      --long build-number:,job-name:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o n:u:j:rh \
+                      --long build-number:,build-url:,job-name:,rebuild,help,no-rebuild \
                       -n $(basename -- $0) -- "$@")
 declare build_number=
+declare build_url=
 declare job_name=
+declare rebuild=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -19,9 +21,23 @@ while true; do
             shift 2
 
             ;;
+        -u|--build-url)
+            build_url=$2
+            shift 2
+
+            ;;
         -j|--job-name)
             job_name=$2
             shift 2
+
+            ;;
+        -r|--rebuild|--no-rebuild)
+            if test "$1" = --no-rebuild; then
+                rebuild=false
+            else
+                rebuild=true
+            fi
+            shift
 
             ;;
         -h|--help)
@@ -32,8 +48,14 @@ while true; do
             printf %06s '-n, '
             printf %-24s '--build-number=BUILD_NUMBER'
             echo
+            printf %06s '-u, '
+            printf %-24s '--build-url=BUILD_URL'
+            echo
             printf %06s '-j, '
             printf %-24s '--job-name=JOB_NAME'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]rebuild'
             echo
             exit
             shift
@@ -51,4 +73,23 @@ done
 
 ## end generated code
 
-jc curl ${scm_jenkins_url}job/${job_name}/${build_number}/stop -X POST
+if test -z "${build_url}"; then
+    if test "${job_name}" -a "${build_number}"; then
+        build_url=${scm_jenkins_url}job/${job_name}/${build_number}
+    fi
+fi
+
+build_url=$(echo "${build_url}" | perl -pe 's,/*$,,')
+if test -z "${build_url}"; then
+    die "Can't stop it without job/build info, check usage with jc stop-build --help"
+fi
+
+jc curl "${build_url}/stop" -X POST
+
+if test "${rebuild}" = true; then
+    if ! jc rebuild -u "${build_url}"; then
+        log should use trigger?
+        jc curl ${build_url}/gerrit-trigger-retrigger-this -v
+        jc curl ${build_url}/gerrit-trigger-retrigger-this/ -v
+    fi
+fi

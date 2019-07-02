@@ -24,11 +24,11 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
-if test $b0 = sawfish-top-window-name -o $b0 = sawfish-top-window; then
+if test $b0 = sawfish-top-window-name; then
     function=window-name
 elif test "$b0" = sawfish-top-window-wmclass; then
     function=bhj-wm-class
-elif test "$b0" = sawfish-top-window-class; then
+elif test "$b0" = sawfish-top-window-class -o $b0 = sawfish-top-window; then
     function=bhj-window-class
 else
     bhj-notify sawfish-top-window "no such function $b0"

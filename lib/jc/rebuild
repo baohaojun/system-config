@@ -119,15 +119,16 @@ if ($jc_switch_to_job) {
 
 
 
-system("jc", "curl", $rebuild_url, "-X", "POST", "--data-urlencode", "json=" . encode_json {
-                $parameter =>
-                  [
-                   map {
-                     $_ = {
-                           name => $parameters[$_],
-                           value => $values[$_],
-                          };
-                   } 0 .. (@parameters -1)
-                  ]
-                }, "-v"
-      );
+my $ret = system("jc", "curl", $rebuild_url, "-X", "POST", "--data-urlencode", "json=" . encode_json {
+  $parameter =>
+    [
+     map {
+       $_ = {
+             name => $parameters[$_],
+             value => $values[$_],
+            };
+     } 0 .. (@parameters -1)
+    ]
+  }, "-v"
+                );
+exit $ret;
