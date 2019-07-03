@@ -1031,12 +1031,9 @@ bool WrenchMainWindow::eventFilter(QObject *obj, QEvent *ev)
             }
         }
     } else if (ev->type() == QEvent::KeyPress) {
-        qDebug() << "ev is: " << ev;
         QWidget* w = (QWidget *)obj;
         QKeyEvent* e = (QKeyEvent*)ev;
         return handleEmacsKeys(w, e);
-    } else if (ev->type() == QEvent::KeyRelease) {
-        qDebug() << "ev is: " << ev;
     }
 
     return QMainWindow::eventFilter(obj, ev);
