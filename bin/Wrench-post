@@ -66,6 +66,7 @@ if (@ARGV) {
 
 use List::Util qw(max);
 
+system("bhj-notify", "Wrench-post", "posting $text");
 
 my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
 
