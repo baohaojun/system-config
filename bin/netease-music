@@ -197,11 +197,7 @@ EOF759c8785e7c0
         fi
         ;;
     pause)
-        if ps.pl -o stat mplayer | pn 4 | grep T; then
-            killall -CONT mplayer
-        else
-            killall -STOP mplayer
-        fi
+        emacsclient -e '(netease-music-toggle)'
         ;;
     back)
         emacsclient -e '(netease-music-seek-back 5)'
