@@ -316,29 +316,39 @@ git add .
 
 if git status -s | grep . ; then
     git commit -s -m "$(
-        if test -e .default-commit-msg -a ! -e .commit-msg-bhj; then
-            cat .default-commit-msg
-            exit
-        fi
-        (
-            if test -e .commit-msg-bhj; then
-                cat .commit-msg-bhj | sort-commit-msgs
-                rm .commit-msg-bhj
-            fi
-            echo "###start of comment###"
-            echo in $(pwd):
-            echo -e "remotes:\n$(git remote -v|pn 2|sort -u)"
-            git diff -w HEAD | perl -npe 's,^diff --git ,* ,'
-            LOCAL=Local
-            cat <<EOF
+# {%sh-mode%}
+tmp_file=/tmp/$(basename $0).$$
+
+if test -e .default-commit-msg -a ! -e .commit-msg-bhj; then
+    cat .default-commit-msg
+    exit
+fi
+(
+    if test -e .commit-msg-bhj; then
+        cat .commit-msg-bhj | sort-commit-msgs
+        rm .commit-msg-bhj
+    fi
+    echo "###start of comment###"
+    echo in $(pwd):
+    echo -e "remotes:\n$(git remote -v|pn 2|sort -u)"
+    git diff -w HEAD | perl -npe 's,^diff --git ,* ,'
+    LOCAL=Local
+    cat <<EOF
 
 # $LOCAL Variables: #
 # mode:org #
 # End: #
 EOF
-        ) > /tmp/$(basename $0).$$
-        get-stdin --init-text "$(cat /tmp/$(basename $0).$$)"
-        rm /tmp/$(basename $0).$$
+
+) > /tmp/$(basename $0).$$
+if ! get-stdin --init-file $tmp_file; then
+    bhj-notify git-push-rebase "Can't get-stdin from $tmp_file"
+    e $tmp_file
+else
+    rm $tmp_file
+fi
+
+# {%/sh-mode%}
     )" ||true # " to fix the font-lock...
 fi
 
