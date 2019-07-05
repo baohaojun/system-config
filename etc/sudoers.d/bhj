@@ -12,5 +12,8 @@ bhj ALL = NOPASSWD: /usr/bin/apt-get update, \
     /bin/chvt, \
     /bin/umount, \
     /usr/sbin/openconnect, \
+    /usr/sbin/ntpdate-debian, \
+    /sbin/hwclock, \
+    /sbin/poweroff, \
     /sbin/route add -net 172.16.0.0 netmask 255.255.0.0 dev tun0, \
     /bin/true
