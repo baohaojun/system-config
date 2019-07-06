@@ -39,7 +39,8 @@
         (puthash key emoji emoji-hash-table)
         (setq emoji-names (cons key emoji-names)))
       (setq emojis-string-list (cdr emojis-string-list)))
-    (setq emoji-regexp (string-join (nreverse (sort emoji-regexp-list #'string<)) "\\|")))
+    (setq emoji-regexp (string-join (nreverse (sort emoji-regexp-list #'string<)) "\\|"))
+    (setq emoji-regexp (replace-regexp-in-string "\\([][]\\)" "\\\\\\1" emoji-regexp)))
   (setq emoji-names (reverse emoji-names)))
 
 (defun org2pdf-emojify ()
@@ -75,7 +76,8 @@
   (let ((emoji))
     (flet ((bhj-hack-helm-s-return-helper () (interactive) (throw 's-return (buffer-substring-no-properties (point-min) (point-max)))))
       (let ((key (catch 's-return
-                   (completing-read "Enter your emoji: " emoji-names nil t nil 'emoji-history))))
+                   (let ((ivy-sort-functions-alist nil))
+                     (completing-read "Enter your emoji: " emoji-names nil t nil 'emoji-history)))))
         (setq emoji (gethash key emoji-hash-table))
         (if emoji
             (progn
