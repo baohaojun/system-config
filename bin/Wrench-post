@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl @ask-to-whom @:send-to @:extra-send-text
@@ -58,8 +58,12 @@ GetOptions (
 sub quote_lua_str($) {
   my $text = $_[0];
   my $max_quote = 0;
-  while ($text =~ m,[\[\]](=*)[\[\]],) {
+  while ($text =~ m,[\[\]](=*)[\[\]],g) {
     $max_quote = max($max_quote, length $1);
+  }
+
+  if ($text =~ m,\]$,) {
+    $max_quote += 1;
   }
 
   my $quote = "=" x $max_quote;
@@ -90,10 +94,13 @@ if (@ARGV) {
   $text = join("", <>);
 }
 
+$text =~ s,\s*$,,; # get rid of empty lines at the end.
+
 use List::Util qw(max);
 
-system("bhj-notify", "Wrench-post", "posting $text");
+use String::ShellQuote;
 
+system("bhj-notify", "Wrench-post $text");
 my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
 
 system("Wrench.sh", $post_text);

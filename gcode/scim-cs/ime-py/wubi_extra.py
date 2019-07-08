@@ -76,3 +76,6 @@ g_quail_map = {
     "} " : ("｝",),
     "~ " : ("~",),
 }
+
+for c in range(ord('A'), ord('Z') + 1):
+    g_quail_map[chr(c) + "  "] = chr(ord(u'Ａ') - ord('A') + c)
