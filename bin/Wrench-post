@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl @ask-to-whom
+# generate-getopt -s perl @ask-to-whom @:send-to @:extra-send-text
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -11,6 +11,8 @@ Getopt::Long::Configure("default");
 
 
 my $ask_to_whom = 0;
+my $extra_send_text = "";
+my $send_to = "";
 
 my $handler_help = sub {
   print ;
@@ -23,12 +25,30 @@ my $handler_help = sub {
   }
   printf "%s", ;
   print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--extra-send-text=EXTRA-SEND-TEXT';
+  if (length('--extra-send-text=EXTRA-SEND-TEXT') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--send-to=SEND-TO';
+  if (length('--send-to=SEND-TO') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
 
   exit(0);
 };
 
 GetOptions (
             'ask-to-whom!' => \$ask_to_whom,
+            'extra-send-text=s' => \$extra_send_text,
+            'send-to=s' => \$send_to,
             'help|h!' => \&$handler_help,
            );
 
@@ -46,8 +66,14 @@ sub quote_lua_str($) {
   return sprintf("[%s[%s]%s]", $quote, $text, $quote);
 }
 
-if ($ask_to_whom) {
-  chomp(my $whom = qx(input-lock -l Wrench-post select-args --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
+if ($ask_to_whom or $send_to) {
+  my $whom;
+  if ($send_to) {
+    $whom = $send_to
+  } else {
+    chomp($whom = qx(input-lock -l Wrench-post select-args --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
+  }
+
   my $call_text = sprintf("wrench_call(%s)", quote_lua_str($whom));
   system("log-run", "Wrench.sh", $call_text);
 
@@ -71,3 +97,6 @@ system("bhj-notify", "Wrench-post", "posting $text");
 my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
 
 system("Wrench.sh", $post_text);
+if ($extra_send_text) {
+  system("Wrench-post", "--", "$extra_send_text");
+}

@@ -150,43 +150,50 @@ edit."
   "Return metadata about block surrounding point.
 
 Return nil if no block is found."
-  (save-excursion
-    (beginning-of-line)
-    (let ((pos (point))
-          (blocks fence-edit-blocks)
-          block re-start re-end lang-id start end lang)
-      (catch 'exit
-        (while (setq block (pop blocks))
-          (save-excursion
-            (setq re-start (car block)
-                  re-end (nth 1 block)
-                  lang-id (nth 2 block))
-            (if (or (looking-at re-start)
-                    (re-search-backward re-start nil t))
-                (progn
-                  (setq start (fence-edit--next-line-beginning-position-at-pos (match-end 0))
-                        lang (if (integerp lang-id)
-                                 (match-string lang-id)
-                               (symbol-name lang-id)))
-                  (if (and (and (goto-char (match-end 0))
-                                (re-search-forward re-end nil t))
-                           (>= (match-beginning 0) pos))
-                      (throw 'exit `(,start ,(match-beginning 0) ,lang)))))))))))
+  (if (and current-prefix-arg (region-active-p))
+      (list (point) (mark) "ask")
+    (save-excursion
+      (beginning-of-line)
+      (let ((pos (point))
+            (blocks fence-edit-blocks)
+            block re-start re-end lang-id start end lang)
+        (catch 'exit
+          (while (setq block (pop blocks))
+            (save-excursion
+              (setq re-start (car block)
+                    re-end (nth 1 block)
+                    lang-id (nth 2 block))
+              (if (or (looking-at re-start)
+                      (re-search-backward re-start nil t))
+                  (progn
+                    (setq start (fence-edit--next-line-beginning-position-at-pos (match-end 0))
+                          lang (if (integerp lang-id)
+                                   (match-string lang-id)
+                                 (symbol-name lang-id)))
+                    (if (and (and (goto-char (match-end 0))
+                                  (re-search-forward re-end nil t))
+                             (>= (match-beginning 0) pos))
+                        (throw 'exit `(,start ,(match-beginning 0) ,lang))))))))))))
+
+(defvar fence-edit--custom-modes-history nil
+  "History for fence edit custom modes")
 
 (defun fence-edit--get-mode-for-lang (lang)
   "Try to get a mode function from language name LANG.
 
 The assumption is that language `LANG' has a mode `LANG-mode'."
-  (let ((mode-name (intern (concat lang "-mode"))))
-    (if (fboundp mode-name)
-        mode-name
-      (if (assoc lang fence-edit-lang-modes)
-          (cdr (assoc lang fence-edit-lang-modes))
-        fence-edit-default-mode))))
+  (if (string= lang "ask")
+      (intern (completing-read "What is the mode that you want" fence-edit--custom-modes-history))
+    (let ((mode-name (intern (concat lang "-mode"))))
+      (if (fboundp mode-name)
+          mode-name
+        (if (assoc lang fence-edit-lang-modes)
+            (cdr (assoc lang fence-edit-lang-modes))
+          fence-edit-default-mode)))))
 
-(defun fence-edit-code-at-point ()
+(defun fence-edit-code-at-point (&optional prefix-arg)
   "Look for a code block at point and, if found, edit it."
-  (interactive)
+  (interactive "P")
   (let* ((block (fence-edit--get-block-around-point))
          (pos (point))
          (beg (make-marker))

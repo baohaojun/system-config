@@ -1587,7 +1587,12 @@ to the value of `temporary-file-directory'."
     (when (and (region-active-p) (not (= (point) (mark))))
       (setq beg (mark)
             end (point)))
-    (shell-command-to-string (format "nohup Wrench-post %s -- %s >/dev/null 2>&1 </dev/null&" (if prefix " --ask-to-whom" "") (shell-quote-argument (buffer-substring-no-properties beg end))))))
+    (shell-command-to-string (format "nohup Wrench-post %s -- %s >/dev/null 2>&1 </dev/null&" (if prefix " --ask-to-whom" "") (shell-quote-argument (buffer-substring-no-properties beg end)))))
+  (unless (region-active-p)
+    (set-mark (point-min))
+    (goto-char (point-max)))
+  (when (string= (buffer-file-name) (expand-file-name "~/src/github/projects/chat.org"))
+    (save-buffer)))
 
 (defun switch-to-file (file-name)
   (let* ((buffer-list (buffer-list))
