@@ -36,7 +36,7 @@ org_target=$(
     else
         knuth_repo=~/system-config
     fi
-    org_target=$(expand-file-name "$(perl -ne 'print $1 if m,\[\[file:(.*?)::,' $target)")
+    org_target=$(expand-file-name "$(perl -ne 'print $1 if m,\[\[file:(.*?\.org)::,' $target)")
     if [[ $org_target =~ % ]]; then
         org_target=$(
             urlify -u <<< "${org_target}"
