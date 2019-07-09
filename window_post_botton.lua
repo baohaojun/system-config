@@ -19,6 +19,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.Convers
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConversationSettingsActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.MsgForwardActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.PicViewActivity'] = 'manual-post'
+map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.LaunchHomeActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.search.activity.MsgListActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.contact.activities.OrgContactActivity'] = 'manual-post'
