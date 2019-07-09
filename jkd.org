@@ -11,7 +11,8 @@ I still need a way to work with Jira, org-jira just can't fulfill my needs anymo
 This is simple using Perl's “reflection”.
   #+name: which-to-call
   #+BEGIN_SRC perl
-    my $sub_command = "jkd_" . shift;
+    (my $sub_command = "jkd_" . shift) =~ s,-,_,g;
+
 
     if (not defined &$sub_command) {
         say "Can't find sub-command: $sub_command";
@@ -204,6 +205,13 @@ This is simple using Perl's “reflection”.
   chdir($jkd_topdir)
       or die "Can't chdir: $jkd_topdir";
 
+  use JIRA::REST;
+
+  my $jira = JIRA::REST->new({
+      url      => "$jkd_jiraurl",
+      username => "$jkd_username",
+      password => "$jkd_password"
+                           });
 #+END_SRC
 
 #+name: the-ultimate-script
@@ -547,6 +555,10 @@ This is simple using Perl's “reflection”.
 
       ## end generated code
 
+      if (not $issue_type) {
+          $issue_type = jkd_select_issue_type("-p", "$project");
+      }
+
       my $issue_fields_resp = get("rest/api/2/issue/createmeta?projectKeys=${project}&issuetypeIds=${issue_type}&expand=projects.issuetypes.fields");
 
       return decode_json $issue_fields_resp->content;
@@ -658,6 +670,8 @@ This is simple using Perl's “reflection”.
               } else {
                   @fields_to_edit = sort keys %{$it->{fields}};
               }
+
+              $required_fields->{assignee} = '' if exists $it->{fields}{assignee};
 
               for my $field_key (@fields_to_edit) {
                   if ($it->{fields}{$field_key}{required}) {
@@ -771,6 +785,49 @@ This is simple using Perl's “reflection”.
       say "PUT response code:" . $response->code, "result: ", $response->content;
   }
 
+  sub jkd_select_issue_type(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -l p:project
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("default");
+
+      local @ARGV = @_;
+
+      my $project = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--project=PROJECT';
+          if (length('--project=PROJECT') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'project|p=s' => \$project,
+          'help|h!' => \&$handler_help,
+          );
+
+
+      ## end generated code
+
+      my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
+      my $issue_type_name = decode_utf8 select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
+      my $issue_type_id = $jkd_project_issue_types_name_id_map{$issue_type_name};
+      say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
+      return $issue_type_id;
+  }
+
   sub jkd_c(@) { # create issue
 
       ## start code-generator "^\\s *#\\s *"
@@ -833,10 +890,7 @@ This is simple using Perl's “reflection”.
       }
 
       if (not $issue_type_id) {
-          my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
-          my $issue_type_name = decode_utf8 select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
-          $issue_type_id = $jkd_project_issue_types_name_id_map{$issue_type_name};
-          say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
+          $issue_type_id = jkd_select_issue_type("-p", $project);
       }
 
       my %required_fields;
@@ -850,10 +904,12 @@ This is simple using Perl's “reflection”.
           id => $issue_type_id,
       };
 
-      if ($assign_to_myself) {
+      if ($assign_to_myself and exists $required_fields{assignee}) {
           $required_fields{assignee} = {
               name => $ENV{scm_jira_user}
           };
+      } else {
+          delete $required_fields{assignee};
       }
 
       my $ua = LWP::UserAgent->new;
@@ -964,7 +1020,7 @@ This is simple using Perl's “reflection”.
   #+BEGIN_SRC perl
     sub jkd_comment(@) {
         ## start code-generator "^\\s *#\\s *"
-        # generate-getopt -l -s perl i:issue c:comment
+        # generate-getopt -l -s perl i:issue c:comment @once
         ## end code-generator
         ## start generated code
         use Getopt::Long;
@@ -975,6 +1031,7 @@ This is simple using Perl's “reflection”.
 
         my $comment = "";
         my $issue = "";
+        my $once = 0;
 
         my $handler_help = sub {
             print ;
@@ -995,6 +1052,14 @@ This is simple using Perl's “reflection”.
             }
             printf "%s", ;
             print "\n";
+            printf "%6s", '';
+            printf "%-24s", '--[no]once';
+            if (length('--[no]once') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
 
             exit(0);
         };
@@ -1002,11 +1067,22 @@ This is simple using Perl's “reflection”.
         GetOptions (
             'comment|c=s' => \$comment,
             'issue|i=s' => \$issue,
+            'once!' => \$once,
             'help|h!' => \&$handler_help,
             );
 
 
         ## end generated code
+
+        if ($once) {
+            my $jira_issue = $jira->GET("/issue/$issue");
+            for (@{$jira_issue->{fields}{comment}{comments}}) {
+                if ($_->{body} eq "$comment") {
+                    say "$comment already exists";
+                    exit 0;
+                }
+            }
+        }
 
         my $ua = LWP::UserAgent->new;
 
@@ -1031,6 +1107,56 @@ This is simple using Perl's “reflection”.
         say "PUT response code:" . $response->code, "result: ", $response->content;
 
     }
+
+    sub jkd_get_comment(@) {
+        ## start code-generator "^\\s *#\\s *"
+        # generate-getopt -s perl -l -P i:issue n:nth-comment=-1
+        ## end code-generator
+        ## start generated code
+        use Getopt::Long;
+
+        Getopt::Long::Configure("posix_default");
+
+        local @ARGV = @_;
+
+        my $issue = "";
+        my $nth_comment = -1;
+
+        my $handler_help = sub {
+            print ;
+            print "\n\n选项和参数：\n";
+            printf "%6s", '-i, ';
+            printf "%-24s", '--issue=ISSUE';
+            if (length('--issue=ISSUE') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
+            printf "%6s", '-n, ';
+            printf "%-24s", '--nth-comment=NTH-COMMENT';
+            if (length('--nth-comment=NTH-COMMENT') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
+
+            exit(0);
+        };
+
+        GetOptions (
+            'issue|i=s' => \$issue,
+            'nth-comment|n=s' => \$nth_comment,
+            'help|h!' => \&$handler_help,
+            );
+
+
+        ## end generated code
+        my $jira_issue = $jira->GET("/issue/$issue");
+        print $jira_issue->{fields}{comment}{comments}[-1]{body};
+    }
+
   #+END_SRC
 
 * move issue to a sprint
