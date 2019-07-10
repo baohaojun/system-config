@@ -79,17 +79,17 @@ if ($jkd_verbose) {
     say "jkd", shell_quote(@ARGV);
 }
 
-my %file_config;
-use Config::Simple;
+my $secret_conf;
+use Config::GitLike;
 
-my ($config_file) = glob "~/.config/org-kungfu/config.ini";
+my ($config_file) = $ENV{scm_secrets_conf};
 
 if (-e $config_file) {
-    Config::Simple->import_from($config_file, \%file_config);
+    $secret_conf = Config::GitLike->load_file($config_file);
 }
 
 if (not $jkd_password) {
-    $jkd_password = $file_config{"jkd.password"};
+    $jkd_password = $secret_conf->{"ldap.${jkd_username}.password"};
 }
 
 if (not $jkd_password) {
@@ -98,7 +98,7 @@ if (not $jkd_password) {
 }
 
 if (not $jkd_username) {
-    $jkd_username = $file_config{"jkd.username"};
+    $jkd_username = $secret_conf->{"jkd.username"};
 }
 
 if (not $jkd_username) {
@@ -107,7 +107,7 @@ if (not $jkd_username) {
 }
 
 if (not $jkd_jiraurl) {
-    $jkd_jiraurl = $file_config{"jkd.jiraurl"};
+    $jkd_jiraurl = $secret_conf->{"jkd.jiraurl"};
 }
 
 if (not $jkd_jiraurl) {
@@ -115,7 +115,7 @@ if (not $jkd_jiraurl) {
     &$handler_help(1);
 }
 
-my $jkd_topdir = $file_config{"jkd.topdir"};
+my $jkd_topdir = $secret_conf->{"jkd.topdir"};
 if (not $jkd_topdir) {
     $jkd_topdir = glob("~/src/github/jkd-doujyou"); # doujyou is japanese for 道場
 }
@@ -902,9 +902,10 @@ sub jkd_comment(@) {
                     ]
             }
     };
-    my $response = $ua->request($request);
+    my $res = $ua->request($request);
 
-    say "PUT response code:" . $response->code, "result: ", $response->content;
+    say "PUT res code:" . $res->code, "result: ", $res->content;
+    die sprintf("invalid request result: code = %d, content = '%s'", $res->code, $res->content) if ($res->code < 200 or $res->code >= 300);
 
 }
 
