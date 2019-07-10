@@ -28,7 +28,7 @@ if test $# = 1 -a "$1" = '' || test $# = 0; then
     fi
 fi
 
-double_click=false
+select_search_engine=false
 
 if is-sawfish; then
     if test "$SAWFISH_CLICK" = t; then
@@ -44,36 +44,21 @@ if is-sawfish; then
         exec 2>~/tmp/s.txt
         echo "s: $@" 1>&2
 
-        declare -a start_events
         max_try=50
 
-        for x in $(seq 1 $max_try ); do
-            start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
-            if test "$x" = 1 && [[ ${start_event,,} =~ button1 ]] && test "$use_clip" = true; then
+        start_event=$(sawfish-client -e '(event-name (last-event))'|tr -d \")
+        start_event=${start_event,,}
+
+        if [[ $start_event =~ m- ]]; then
+            select_search_engine=true
+        else
+            select_search_engine=false
+            if [[ ${start_event} =~ button1 ]] && test "$use_clip" = true; then
                 s-dicts "$*"
                 exit
             fi
-            if [[ ${start_event/-Off/-Click} =~ -Click[0-9] ]]; then # double click
-                double_click=true
-                break
-            fi
+        fi
 
-            if perl -e '$x = -M "$ENV{HOME}/tmp/s.lock" || 5; print STDERR "Got -M date: $x"; exit 1 if ($x > 25.787037037037037e-06); exit 0'; then
-                cat ~/tmp/s.lock 1>&2
-                double_click=true
-                break
-            fi
-
-            start_events[$x]=$start_event
-            if echo "${start_events[@]}"|grep -q -e '-Off.*-Click'; then
-                double_click=true
-                break
-            fi
-            sleep .03
-            if test $x = $max_try; then
-                start_event=${start_events[1]}
-            fi
-        done
         rm -f ~/tmp/s.lock
     fi
 
@@ -83,8 +68,8 @@ if is-sawfish; then
         start_event=super-button3
     fi
 
-    if [[ $start_event =~ Super-Button ]]; then
-        s_how=$(echo ${start_event,,} | grep -o -P -e 'button\d+' -i)
+    if [[ $start_event =~ super-.*button ]]; then
+        s_how=$(echo ${start_event} | grep -o -P -e 'button\d+' -i)
     fi
 fi
 
@@ -106,13 +91,13 @@ search_engines=$(
 
 engine1=$(echo "$search_engines" | perl -ne 'print if 1..1' )
 
-if test "$double_click" = true; then
+if test "$select_search_engine" = false; then
     engineX=$engine1
 else
     engineX=$(select-args -p "Which search engine for $s_how?" $search_engines)
 fi
 
-if test "$double_click" = true; then
+if test "$select_search_engine" = true; then
     (
         sleep 2&
     )
