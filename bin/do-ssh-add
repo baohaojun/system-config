@@ -55,7 +55,7 @@ if [string eq "" $password] {
 
 spawn ssh-add $id_rsa
 
-expect -timeout 150 passphrase {
+expect -timeout 150 "Enter passphrase" {
     puts "send password\n";
     send "$password\n"
 } timeout {
@@ -66,9 +66,11 @@ expect -timeout 150 passphrase {
 }
 
 expect -timeout 150 "Identity added:" {
-    exit
+    exit 0
 } timeout {
     puts "timeout for Identity added:\n"
+} "Bad passphrase," {
+    exit 1
 }
 
 

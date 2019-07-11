@@ -1,8 +1,10 @@
 #!/bin/bash
-if test "$#" != 0; then
-    pass=$(cat)
+set -e
+
+if test "${ASK_FOR_PASSWORD}" = true; then
+    pass=$(timeout 60 zenity --password --text "password for ssh keys" --title 'ssh-keys' || true)
 else
-    pass=$(ssh-askpass "password for your id_rsa keys")
+    bhj-notify do-ssh-add-all "Can't get password"
 fi
 for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'|sort); do
     (
@@ -10,6 +12,10 @@ for x in $(find ~/.ssh/ -name 'id_rsa*'|grep -v '\.pub'|sort); do
         if test -e $(dirname $x)/.$(basename $x).host; then
             host=-h\ $(cat $(dirname $x)/.$(basename $x).host)
         fi
-        echo -n $pass | do-ssh-add -- -k $x $host
+        if ! echo -n $pass | do-ssh-add -- -k $x $host; then
+            bhj-notify do-ssh-add-all "Can't unlock $x!"
+            sleep 5
+            exit 1
+        fi
     );
 done

@@ -2,4 +2,4 @@
 
 putclip "$*"
 
-sawfish-send-focused-window-event "S-Insert"
+xdotool-when-keyboard-clear key "shift+Insert"

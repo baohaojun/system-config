@@ -158,12 +158,8 @@ if test -z "$SHELL" -o "$SHELL" = /bin/sh && test -e /bin/bash; then
     export SHELL=/bin/bash
 fi
 
-if test "$USER" = bhj && test $# = 0 || test $# = 1 -a "$1" = first; then
-    if test "${MYSCR_SKIP_SSH_AGENT}" = true; then
-        true
-    else
-        . ~/system-config/.bashrc-ssh-agent
-    fi
+if test "${MYSCR_ADD_SSH_AGENT}" = true; then
+    . ~/system-config/.bashrc-ssh-agent
 fi
 
 if test -x /opt/local/bin/bash; then

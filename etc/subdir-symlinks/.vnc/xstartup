@@ -39,7 +39,6 @@ fi
 sleep 3
 export MYSCR_SOCKET=onmyoji${DISPLAY##*:}
 export MYSCR_SESSION=onmyoji${DISPLAY##*:}
-export MYSCR_SKIP_SSH_AGENT=true
 xterm -e myscr&
 
 sleep 3
