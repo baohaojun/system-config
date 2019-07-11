@@ -60,7 +60,7 @@ putclip "${empty_clipboard}"
 
 for x in $(seq 1 2); do
     if test "$x" = 1 -o "${with_xkeytool}" != true; then
-        xdotool key F22
+        xdotool-delayed-key ctrl+shift+F11
     else
         if test "${with_xkeytool}" = true; then
             sawfish-browser-input C-l C-c
