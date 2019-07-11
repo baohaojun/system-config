@@ -28,7 +28,7 @@ if test $# = 1 -a "$1" = '' || test $# = 0; then
     fi
 fi
 
-select_search_engine=false
+select_search_engine=true
 
 if is-sawfish; then
     if test "$SAWFISH_CLICK" = t; then
