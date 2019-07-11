@@ -3,19 +3,21 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt ?'第三方邮件服务器 postfix 转发设置' \
-    # h:host ?'第三方邮件服务器主机名' \
-    # p:port ?'第三方邮件服务器端口' \
-    # u:user='()' ?'第三方邮件服务器登录用户' \
-    # P:password='()' ?'第三方邮件服务器登录密码'
+# generate-getopt "?'第三方邮件服务器 postfix 转发设置'" \
+    # h:host "?'第三方邮件服务器主机名'" \
+    # p:port "?'第三方邮件服务器端口'" \
+    # u:user='()' "?'第三方邮件服务器登录用户'" \
+    # P:password='()' "?'第三方邮件服务器登录密码'" \
+    # @print-config '?"打印当前设置"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o h:P:p:u:h \
-               --long host:,password:,port:,user:,help \
+               --long host:,password:,port:,print-config,user:,help,no-print-config \
                -n $(basename -- $0) -- "$@")
 declare host=
 declare -a password=()
 declare port=
+declare print_config=false
 declare -a user=()
 eval set -- "$TEMP"
 while true; do
@@ -36,6 +38,15 @@ while true; do
             shift 2
 
             ;;
+        --print-config|--no-print-config)
+            if test "$1" = --no-print-config; then
+                print_config=false
+            else
+                print_config=true
+            fi
+            shift
+
+            ;;
         -u|--user)
             user=("${user[@]}" "$2")
             shift 2
@@ -43,21 +54,24 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e 第三方邮件服务器 postfix 转发设置
+            echo -e '第三方邮件服务器 postfix 转发设置'
             echo
             echo Options and arguments:
             printf %06s '-h, '
             printf %-24s '--host=HOST'
-            echo 第三方邮件服务器主机名
+            echo '第三方邮件服务器主机名'
             printf %06s '-P, '
-            printf %-24s '--password=PASSWORD'
-            echo 第三方邮件服务器登录密码
+            printf %-24s '--password=PASSWORD...'
+            echo '第三方邮件服务器登录密码'
             printf %06s '-p, '
             printf %-24s '--port=PORT'
-            echo 第三方邮件服务器端口
+            echo '第三方邮件服务器端口'
+            printf "%06s" " "
+            printf %-24s '--[no-]print-config'
+            echo "打印当前设置"
             printf %06s '-u, '
-            printf %-24s '--user=USER'
-            echo 第三方邮件服务器登录用户
+            printf %-24s '--user=USER...'
+            echo '第三方邮件服务器登录用户'
             exit
             shift
             ;;
@@ -74,6 +88,16 @@ done
 
 ## end generated code
 
+if test "${print_config}" = true; then
+    echo relay-postfix $(
+        grep 'relayhost' /etc/postfix/main.cf |perl -pe 's,.*\[(.*)\]:(\d+),--host $1 --port $2,'
+        sudo cat /etc/postfix/sasl_passwd |head -n 1 | perl -pe 's,.*\s(\S*?):(\S*),--user $1 --password $2,'
+         )
+
+
+    exit
+fi
+
 if test -e ~/.local-config/etc/relay-postfix.rc; then
     . ~/.local-config/etc/relay-postfix.rc
 fi
@@ -84,39 +108,33 @@ arg-not-empty user "$user"
 arg-not-empty password "$password"
 
 if test ! -e /etc/postfix/main.cf; then
-    hint "接下来要安装postfix服务器，配置时请选择“Internet Site”。可能需要输入sudo密码。"
+    hint "接下来要安装 postfix 服务器，配置时请选择“Internet Site”。可能需要输入 sudo 密码。"
     sudo apt-get install postfix
 fi
 
 
 if ! grep "^relayhost.*$host" /etc/postfix/main.cf; then
     sudo perl -npe 's/^relayhost\s*=\s*$//' -i /etc/postfix/main.cf
-    cat <<EOF | sudo tee -a /etc/postfix/main.cf
+    if test ! -e /etc/mailname; then
+        hostname | sudo tee /etc/mailname
+    fi
 
-# inserted by relay-postfix ...
-smtp_sasl_auth_enable = yes
-# api_user和api_key
-smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
-smtp_sasl_security_options = noanonymous
-smtp_pix_workarounds =
+    sudo postconf smtp_sasl_auth_enable=yes \
+         smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd \
+         smtp_sasl_security_options=noanonymous \
+         smtp_pix_workarounds= \
+         default_transport=smtp \
+         relay_transport=smtp \
+         home_mailbox=Maildir/postfix.localhost/ \
+         smtpd_tls_auth_only=no \
+         smtp_always_send_ehlo=yes \
+         myorigin=/etc/mailname \
+         "relayhost=[$host]:$port" \
+         smtp_use_tls=yes \
+         smtp_sender_dependent_authentication=yes \
+         smtp_tls_wrappermode=yes \
+         smtp_tls_security_level=encrypt
 
-default_transport = smtp
-relay_transport = smtp
-
-home_mailbox = Maildir/postfix.localhost/
-smtpd_tls_auth_only = no
-smtp_always_send_ehlo = yes
-inet_protocols = ipv4
-myorigin = /etc/mailname
-
-relayhost = [$host]:$port
-smtp_use_tls = yes
-smtp_sender_dependent_authentication = yes
-
-smtp_tls_wrappermode = yes
-smtp_tls_security_level = encrypt
-
-EOF
 fi
 
 for n in $(seq 0 $(( ${#user[@]} - 1 ))); do
@@ -133,7 +151,7 @@ done
 sudo postmap /etc/postfix/sasl_passwd
 sudo postfix reload
 if ! which heirloom-mailx >/dev/null 2>&1; then
-    hint "需要安装 heirloom-mailx，可能需要输入 sudo 密码"
+    hint "需要安装 heirloom-mailx，可能需要输入 sudo 密码"
     sudo apt-get install heirloom-mailx
 fi
 
@@ -147,4 +165,3 @@ if test "$user_email"; then
         set -- "mailx is OK on $MYNAME $(date)"; heirloom-mailx -S from=$user  -S smtp=localhost:25 -s "$*" $user_email </dev/null
     done
 fi
-

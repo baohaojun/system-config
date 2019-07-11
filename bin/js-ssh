@@ -1,5 +1,6 @@
 #!/usr/bin/expect
 
+
 if {[info exists env(JS_TARGET)]} {
     set js_target $env(JS_TARGET); #
 } else {
@@ -15,6 +16,8 @@ if {[info exists env(JS_EXECUTE)]} {
 if [regexp {^\d+$} $js_target] {
     set js_target .4.$js_target
 }
+
+# close [open "|bhj-notify hello $js_target '$js_execute'"]
 
 proc qx cmd {
     set fh [open "|$cmd"]
@@ -39,15 +42,16 @@ log_user 0
 expect "Opt>" {
     # log "Seend Opt>, sending $js_target\n";
     send -- "$js_target\n";
-    log_user 1
     expect -re "\\$" {
         if {$argc != 0} {
             foreach arg $argv {
                 send "$arg "
             }
             send "\n";
+            log_user 1
         } else {
             send "REMOTEPROTOCOL=jssh REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
+            log_user 1
             if { $js_execute ne {} } {
                 expect -re "\\$" {
                     send "exec $js_execute\n";
@@ -70,6 +74,15 @@ expect "Opt>" {
     } -re " Would you like to check for updates.*:" {
         send "n\n"
         exp_continue
+    } -re "Opt>" {
+        close [open "|bhj-notify js-ssh Cannot connect, please use strace to debug"]
+        log_user 1
+        sleep 1
+        exit 1
+    } -re "提示: 输入资产.*，直接登录资产.*\n:" {
+        close [open "|bhj-notify js-ssh Cannot connect, please use strace to debug"]
+        sleep 1
+        exit 1
     }
 }
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+exit 0 # 日，手机 root 权限弄丢了
 
 # 这个脚本把锤子科技的 ideapills 里的条目输出成一个 org-mode 文本文件
 
@@ -73,4 +74,3 @@ EOF593e59f62027
 
 adb-sync --exclude '*.wave' --exclude '*.pcm' -R /data/data/com.smartisanos.sara/files/wav/ . >/dev/null 2>&1
 git add .
-

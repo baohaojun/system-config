@@ -30,6 +30,25 @@ export JS_EXECUTE=$(
         printf "%q " "$x"
     done
        )
-export JS_TARGET=$(echo ${host} | perl -npe 's/.*?(\d+)$/.4.$1/')
 
-exec js-ssh
+export JS_HOST_SAVE="$host"
+if test "$(ip-or-name "$host")" != $host; then
+    export JS_TARGET=$(ip-or-name "$host")
+else
+    export JS_TARGET=$(echo ${host} | perl -pe '
+use Regexp::Common qw /net/;
+if (/^$RE{net}{IPv4}$/) {
+    0;
+} elsif (m/(\.\d+){2,}$/) {
+    s/.*?((\.\d+){2,})$/$1/
+} else {
+    s/.*?(\d+)$/.4.$1/
+}
+')
+fi
+
+if true; then # allow to debug.
+    exec js-ssh
+else
+    exec strace -s 2000 -o ~/tmp/x.jssh js-ssh
+fi

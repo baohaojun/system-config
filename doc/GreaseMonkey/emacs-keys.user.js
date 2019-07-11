@@ -83,7 +83,7 @@
       }
     }
 
-    if (ev.type == "keydown" && ev.key == "F22") {
+    if (ev.type == "keydown" && ev.key == "F11" && ev.shiftKey && ev.ctrlKey) {
       GM.setClipboard(document.location);
     }
   }
