@@ -671,7 +671,7 @@ This is simple using Perl's “reflection”.
                   @fields_to_edit = sort keys %{$it->{fields}};
               }
 
-              $required_fields->{assignee} = '' if exists $it->{fields}{assignee};
+              $required_fields->{assignee} = '' if exists $it->{fields}{assignee} and not $edit_issue_json_obj;
 
               for my $field_key (@fields_to_edit) {
                   if ($it->{fields}{$field_key}{required}) {
