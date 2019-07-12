@@ -148,6 +148,7 @@ sub get($) {
     my $ua = LWP::UserAgent->new;
     my $api = $_[0];
     my $url = kungfu_url_for_api($api);
+    say STDERR "$url" if $ok_verbose;
     my $response = $ua->request(GET $url);
     if ($response->code != 200) {
         die "Can't get $api: code is " . $response->code;
@@ -960,7 +961,8 @@ sub ok_np(@) {
         if ($title_pattern) {
             $cql_str .= " and title ~ \"${title_pattern}\"";
         }
-        $cql_str = uri_encode($cql_str);
+        $cql_str .= " ORDER BY lastmodified DESC";
+        $cql_str = uri_encode(decode_utf8 $cql_str);
         my $page_api = "rest/api/search?cql=$cql_str&expand=content.ancestors";
 
         my $response = get($page_api);
@@ -969,6 +971,7 @@ sub ok_np(@) {
 
         my %id_path_map;
         my %path_id_map;
+        my @paths;
         for my $result (@{$cql_object->{results}}) {
             # my @dirs = (".");
             # my $path = "";
@@ -996,12 +999,12 @@ sub ok_np(@) {
             $path =~ s,\@\@\@\w+\@\@\@,,g;
             $id_path_map{$result->{content}{id}} = $path;
             $path_id_map{$path} = $result->{content}{id};
+            push @paths, $path;
         }
 
         my @select_command = (
             "select-args", "-p", "Please select which page you want to edit",
-            "-O", "ok-select-page",
-            sort keys %path_id_map
+            @paths
             );
 
         my $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
