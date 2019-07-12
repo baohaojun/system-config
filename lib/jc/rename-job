@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P f:old-job-url t:to-new-job-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:t:h \
+                      --long old-job-url:,to-new-job-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare old_job_url=
+declare to_new_job_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--old-job-url)
+            old_job_url=$2
+            shift 2
+
+            ;;
+        -t|--to-new-job-name)
+            to_new_job_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--old-job-url=OLD_JOB_URL'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to-new-job-name=TO_NEW_JOB_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+jc curl "${old_job_url}doRename?newName=$to_new_job_name" -X POST
