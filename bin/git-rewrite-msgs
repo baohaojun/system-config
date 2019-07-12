@@ -99,6 +99,7 @@ cd $(lookup-file-dir .git)
 set -- $(git rev-parse $1) $(git rev-parse $2)
 
 export last_rev=$2
+export orev=$2
 
 function show-changes() {
     IFS=$'\n'
@@ -125,6 +126,7 @@ fi
 export list=$(git rev-list $1..$2|reverse)
 
 git reset --hard $1
+start_recursive_shell "done with $1, please check" || true
 if test $(basename $0) = git-rework-change; then
     start_recursive_shell "Rework commit $1" || true
     if test "${one_by_one}" = true; then
