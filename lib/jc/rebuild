@@ -129,6 +129,6 @@ my $ret = system("jc", "curl", $rebuild_url, "-X", "POST", "--data-urlencode", "
             };
      } 0 .. (@parameters -1)
     ]
-  }, "-v"
+  }
                 );
 exit $ret;

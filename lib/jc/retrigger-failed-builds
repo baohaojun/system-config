@@ -1,0 +1,58 @@
+#!/usr/bin/env perl
+
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl j:job-url
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $job_url = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-j, ';
+  printf "%-24s", '--job-url=JOB-URL';
+  if (length('--job-url=JOB-URL') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'job-url|j=s' => \$job_url,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+use JSON;
+
+my $job_json = qx(jc curl ${job_url}api/json);
+$job_json = decode_json $job_json;
+use v5.10;
+for (@{$job_json->{builds}}) {
+  my $build_url = $_->{url};
+  my $build_json = qx(jc curl ${build_url}api/json);
+  $build_json = decode_json $build_json;
+  if ($build_json->{result} ne "SUCCESS") {
+    say "retrigger: $build_url, result: ", $build_json->{result};
+    if (system("jc", "rebuild", "-u", "${build_url}") != 0) {
+      if (system("jc", "curl", "${build_url}gerrit-trigger-retrigger-this", "-v") != 0 ||
+          system("jc", "curl", "${build_url}gerrit-trigger-retrigger-this/", "-v") != 0) {
+        say "Falied to retrigger: $build_url";
+      }
+    }
+  }
+}
