@@ -117,6 +117,12 @@ add_at_end[nxml-html-simple]=']]>'
 add_at_start[-nxml]='<!--start nxml-->'
 add_at_end[-nxml]='<!--end nxml-->'
 
+add_at_start[nxml-groovy]='<![CDATA[// {%groovy-mode%}
+'
+add_at_start[nxml-groovy-simple]='<![CDATA['
+add_at_end[nxml-groovy]='// {%/groovy-mode%}]]>'
+add_at_end[nxml-groovy-simple]=']]>'
+
 echo_arg=-n
 if test "$simple_fence" = true; then
     simple=-simple
@@ -145,9 +151,11 @@ old_text=$(
     cat | ${pipe_cmd}
         )
 
-if [[ $to_mode =~ html ]] && [[ $old_text =~ '<!--start html-->' ]]; then
-    simple=-simple
-elif [[ $to_mode =~ sh ]] && [[ ${old_text%%$'\n'*} =~ '#!/bin/bash' ]]; then
+simple_prefix="${add_at_start[$from_mode-$to_mode-simple]}"
+complex_prefix="${add_at_start[$from_mode-$to_mode]}"
+simple_new_text=${simple_prefix}${old_text}
+
+if test "${simple_new_text:0:${#complex_prefix}}" = "${complex_prefix}"; then
     simple=-simple
 fi
 
