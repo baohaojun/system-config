@@ -88,8 +88,11 @@ is-extra-options() {
     return 1
 }
 
-
-which_password=$(select-args -o -p "Which password do you want to use for ${window_class}/${window_name}?" $passwords "${extra_options[@]}")
+if test "${#password_map[*]}" = 1; then
+    which_password=${passwords}
+else
+    which_password=$(select-args -o -p "Which password do you want to use for ${window_class}/${window_name}?" $passwords "${extra_options[@]}")
+fi
 
 if test "${password_map[$which_password]}" != 1; then
     if is-extra-options "${which_password}"; then
