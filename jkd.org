@@ -1077,7 +1077,7 @@ This is simple using Perl's “reflection”.
         if ($once) {
             my $jira_issue = $jira->GET("/issue/$issue");
             for (@{$jira_issue->{fields}{comment}{comments}}) {
-                if ($_->{body} eq "$comment") {
+                if (encode_utf8 $_->{body} eq "$comment") {
                     say "$comment already exists";
                     exit 0;
                 }
@@ -1111,7 +1111,7 @@ This is simple using Perl's “reflection”.
 
     sub jkd_get_comment(@) {
         ## start code-generator "^\\s *#\\s *"
-        # generate-getopt -s perl -l -P i:issue n:nth-comment=-1
+        # generate-getopt -s perl -l -P i:issue n:nth-comment=-1 c:comment '?"如果指定，在注释中找到此参数的话，即退出"'
         ## end code-generator
         ## start generated code
         use Getopt::Long;
@@ -1120,12 +1120,21 @@ This is simple using Perl's “reflection”.
 
         local @ARGV = @_;
 
+        my $comment = "";
         my $issue = "";
         my $nth_comment = -1;
 
         my $handler_help = sub {
             print ;
             print "\n\n选项和参数：\n";
+            printf "%6s", '-c, ';
+            printf "%-24s", '--comment=COMMENT';
+            if (length('--comment=COMMENT') > 24 and length("如果指定，在注释中找到此参数的话，即退出") > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", "如果指定，在注释中找到此参数的话，即退出";
+            print "\n";
             printf "%6s", '-i, ';
             printf "%-24s", '--issue=ISSUE';
             if (length('--issue=ISSUE') > 24 and length() > 0) {
@@ -1147,6 +1156,7 @@ This is simple using Perl's “reflection”.
         };
 
         GetOptions (
+            'comment|c=s' => \$comment,
             'issue|i=s' => \$issue,
             'nth-comment|n=s' => \$nth_comment,
             'help|h!' => \&$handler_help,
@@ -1155,7 +1165,16 @@ This is simple using Perl's “reflection”.
 
         ## end generated code
         my $jira_issue = $jira->GET("/issue/$issue");
-        print $jira_issue->{fields}{comment}{comments}[-1]{body};
+        if ($comment) {
+            for (@{$jira_issue->{fields}{comment}{comments}}) {
+                if (encode_utf8 $_->{body} eq "$comment") {
+                    exit 0;
+                }
+            }
+            exit 1;
+        }
+
+        print encode_utf8 $jira_issue->{fields}{comment}{comments}[$nth_comment]{body};
     }
 
   #+END_SRC
