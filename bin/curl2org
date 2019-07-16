@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl "$@" | pandoc -f html -t org -
