@@ -72,6 +72,10 @@ if xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${task}.from-j
     jc htmlify-xml-tag -t command -f $task-$$.xml --to-mode bash
 fi
 
+if xmlstarlet sel -T -t -m '//definition[@class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"]/script' -c . "${task}.from-jc.xml" &>/dev/null; then
+    jc htmlify-xml-tag -t script -f $task-$$.xml --to-mode groovy
+fi
+
 jc htmlify-xml-tag -t description -f $task-$$.xml
 
 if test "${extra_save}"; then

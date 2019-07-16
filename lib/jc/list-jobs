@@ -1,0 +1,17 @@
+#!/bin/bash
+
+jc curl api/json | perl -e "$(
+cat <<'EOF97e7afd434f1'
+# {%perl-mode%}
+use JSON;
+use Encode;
+my $json_str = join("", <>);
+my $json_obj = decode_json $json_str;
+
+for (@{$json_obj->{jobs}}) {
+    print encode_utf8($_->{name}), "\n";
+}
+# {%/perl-mode%}
+EOF97e7afd434f1
+
+)"
