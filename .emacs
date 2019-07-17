@@ -388,6 +388,7 @@
 
 (require 'fence-edit)
 (global-set-key (kbd "C-c '") 'fence-edit-code-at-point)
+(global-set-key (kbd "C-c \"") 'fence-edit-code-at-point)
 (load "move-by-indentation.el")
 
 (setq netease-music-api "http://localhost:3000")

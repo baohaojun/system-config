@@ -101,7 +101,6 @@ Used to strip and replace the indentation upon beginning/completion of editing."
 
 (defvar fence-edit-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c '")   'fence-edit-exit)
     (define-key map (kbd "C-c C-k") 'fence-edit-abort)
     (define-key map (kbd "C-x C-s") 'fence-edit-save)
     map)
@@ -150,8 +149,20 @@ edit."
   "Return metadata about block surrounding point.
 
 Return nil if no block is found."
-  (if (and current-prefix-arg (region-active-p))
-      (list (point) (mark) "ask")
+  (if current-prefix-arg
+      (if (region-active-p)
+          (list (point) (mark) "ask")
+        (list (save-excursion
+                (goto-char
+                 (previous-property-change (point)))
+                (forward-line)
+                (point))
+              (save-excursion
+                (goto-char
+                 (next-property-change (point)))
+                (forward-line 0)
+                (point))
+              "ask"))
     (save-excursion
       (beginning-of-line)
       (let ((pos (point))
@@ -183,7 +194,7 @@ Return nil if no block is found."
 
 The assumption is that language `LANG' has a mode `LANG-mode'."
   (if (string= lang "ask")
-      (intern (completing-read "What is the mode that you want" fence-edit--custom-modes-history))
+      (intern (completing-read "What is the mode that you want: " fence-edit--custom-modes-history))
     (let ((mode-name (intern (concat lang "-mode"))))
       (if (fboundp mode-name)
           mode-name

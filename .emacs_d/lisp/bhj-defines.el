@@ -1607,4 +1607,22 @@ to the value of `temporary-file-directory'."
   (unless (string= (buffer-file-name) file-name)
     (find-file file-name)))
 
+(defun goto-next-text-region (&optional text-prop)
+  (interactive)
+  (when (not text-prop)
+    (setq text-prop (read-from-minibuffer "What text property do you want to goto: ")))
+  (let ((target-point)
+        (next-prop-point)
+        (pos-text-prop))
+    (save-excursion
+      (catch 'found
+        (while (setq next-prop-point (next-property-change (point)))
+          (goto-char next-prop-point)
+          (setq pos-text-prop (get-text-property (point) 'face))
+          (when (string-match text-prop (format "%s" pos-text-prop))
+            (setq target-point (point))
+            (throw 'found t)))))
+    (when target-point
+      (goto-char target-point))))
+
 (provide 'bhj-defines)
