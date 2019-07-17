@@ -33,7 +33,6 @@ _char_map['``['] = '『'
 _char_map['\'\']'] = '』'
 
 for c in _char_map:
-    g_quail_map[c] = (_char_map[c],)
     g_quail_map[c + ' '] = (_char_map[c],)
     for ex_c in ',', '.', ':':
         g_quail_map[c + ex_c] = (_char_map[c] + _char_map[ex_c],)
@@ -56,5 +55,4 @@ _extra_map['[[\''] = ('『』',)
 _extra_map['[\'\''] = ('『』',)
 
 for c in _extra_map:
-    g_quail_map[c] = _extra_map[c]
     g_quail_map[c + " "] = _extra_map[c]

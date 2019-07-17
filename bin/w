@@ -1,8 +1,66 @@
 #!/bin/bash
 
 exec > ~/tmp/w.log 2>&1
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P rrun-command
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o rh \
+                      --long run-command,help,no-run-command \
+                      -n $(basename -- $0) -- "$@")
+declare run_command=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -r|--run-command|--no-run-command)
+            if test "$1" = --no-run-command; then
+                run_command=false
+            else
+                run_command=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-r, '
+            printf %-24s '--[no-]run-command'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 set -x
 . ~/.profile
+
+if test "${run_command}" = true; then
+    while true; do
+        if ("$@"); then
+            alarm 0m "$* is ok now"
+            break
+        fi
+        sleep 5
+    done
+    exit
+fi
 
 top_window=$(sawfish-top-window)
 top_window=${top_window,,}
