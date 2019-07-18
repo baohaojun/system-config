@@ -154,12 +154,15 @@ Return nil if no block is found."
           (list (point) (mark) "ask")
         (list (save-excursion
                 (goto-char
-                 (previous-property-change (point)))
+                 (or (previous-property-change (point))
+                     (point-min)))
                 (forward-line)
                 (point))
               (save-excursion
                 (goto-char
-                 (next-property-change (point)))
+                 (or
+                  (next-property-change (point))
+                  (point-max)))
                 (forward-line 0)
                 (point))
               "ask"))

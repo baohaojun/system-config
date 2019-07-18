@@ -26,7 +26,7 @@ might be bad."
       (goto-char (point-min))
       (when (and (search-forward-regexp "\t\\|[ \t]$" nil t)
                  (or bhj-force-cleanup-buffer (eq this-command 'cleanup-buffer-safe)))
-        (unless (string-match "makefile\\|message-mode\\|org-mode\\|text-mode" (symbol-name major-mode))
+        (unless (string-match "makefile\\|message-mode\\|org-mode\\|text-mode\\|fundamental-mode" (symbol-name major-mode))
           (untabify (point-min) (point-max)))
         (delete-trailing-whitespace)))))
 
