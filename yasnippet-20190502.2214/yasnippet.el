@@ -1401,6 +1401,9 @@ conditions to filter out potential expansions."
                                 (push (cons name template) acc))
                             namehash))
                (yas--table-hash table))
+      (maphash #'(lambda (uuid template)
+                   (push (cons uuid template) acc))
+               (yas--table-uuidhash table))
       (yas--filter-templates-by-condition acc))))
 
 (defun yas--templates-for-key-at-point ()
@@ -2844,7 +2847,7 @@ DEBUG is for debugging the YASnippet engine itself."
              (switch-to-buffer (get-buffer-create buffer-name))
              (setq buffer-undo-list nil)
              (condition-case nil (funcall test-mode) (error nil))
-	     (yas-minor-mode 1)
+             (yas-minor-mode 1)
              (setq buffer-read-only nil)
              (yas-expand-snippet yas--current-template
                                  (point-min) (point-max))
