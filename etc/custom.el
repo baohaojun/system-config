@@ -338,7 +338,11 @@
  '(weechat-color-list
    (unspecified "#272822" "#49483E" "#A20C41" "#F92672" "#67930F" "#A6E22E" "#968B26" "#E6DB74" "#21889B" "#66D9EF" "#A41F99" "#FD5FF0" "#349B8D" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
  '(whitespace-action (quote (auto-cleanup)))
+ '(whitespace-cleanup-mode-ignore-modes
+   (quote
+    (fundamental-mode markdown-mode special-mode view-mode comint-mode cider-repl-mode haskell-interactive-mode)))
  '(whitespace-cleanup-mode-only-if-initially-clean nil)
+ '(whitespace-global-modes (quote (not fundamental-mode)))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(yas-also-auto-indent-first-line t)
