@@ -9,17 +9,17 @@ ignored_patterns=(
         fi
     done
     )
-    "$PWD/out"
+    "*/out"
     "*/.repo"
     "*/po"
     "*/.git"
-    "$PWD/development/ndk/platforms/android-*"
-    "$PWD/prebuilts/ndk"
-    "$PWD/external/kernel-headers"
-    "$PWD/bionic/libc/kernel/common/linux"
-    "$PWD/Wrench-ubuntu-*"
-    "$PWD/ext-local"
-    "$PWD/onmyoji-res"
+    "*/development/ndk/platforms/android-*"
+    "*/prebuilts/ndk"
+    "*/external/kernel-headers"
+    "*/bionic/libc/kernel/common/linux"
+    "*/Wrench-ubuntu-*"
+    "*/ext-local"
+    "*/onmyoji-res"
 )
 
 BEAGREP_IGNORE_DIR_PATTERNS=$(string-join , "${ignored_patterns[@]}")

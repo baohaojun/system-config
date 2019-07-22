@@ -15,7 +15,7 @@ function do_it() {
 
         (
             cd $code_dir
-            nice for-code-reading
+            nice timeout 3600 for-code-reading
         ) 2>&1 | tee $logfile
     fi
 }

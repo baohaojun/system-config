@@ -93,6 +93,7 @@ my @gerrit_search_command_args = (
     );
 
 my $gerrit_search_command = join(" ", shell_quote(@gerrit_search_command_args));
+
 my $html_search_str = qx($gerrit_search_command);
 
 use File::Slurp;

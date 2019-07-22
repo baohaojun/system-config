@@ -1,0 +1,27 @@
+#!/usr/bin/env perl
+# works by get all nodes, then get labels from nodes
+
+use strict;
+
+my $list_of_nodes = qx(jc list-nodes);
+my @nodes = split(" ", $list_of_nodes);
+
+use Mojo::DOM;
+my %labels;
+
+for my $node (@nodes) {
+  my $config = qx(jc get-node $node);
+  my $dom = Mojo::DOM->new->parse($config);
+  $dom->find('label')->each
+    (
+     sub {
+       $_ = $_->text;
+       for (split) {
+         $labels{$_} = 1;
+       }
+     }
+    );
+}
+
+$, = " ";
+print keys %labels;

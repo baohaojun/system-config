@@ -70,78 +70,6 @@ if test -e "$outDir"/.before-for-code-reading; then
     bash "$outDir"/.before-for-code-reading
 fi
 
-function mkcscope_files() {
-    # When in Emacs, we want to be able to use "echo $FILE | mkgtags
-    # -u" to check if $FILE is updated or not, and in that case, we
-    # don't use `find' to find all the files, instead we just `cat'
-    # (the stdin).
-    if tty >/dev/null 2>&1 || test "$RUNNING_IN_CRON" = true || {
-            test -f /dev/stdin &&
-            test $(stat -c %s "$(readlink -f /dev/stdin)") = 0
-        }; then
-        find $relativeSrcDir \( '-path' '*/CVS' \
-            '-o' '-path' '*/.svn' \
-            '-o' '-path' '*/autom4te.cache' \
-            '-o' '-path' '*/{arch}' \
-            '-o' '-path' '*/.hg' \
-            '-o' '-path' '*/_darcs' \
-            '-o' '-path' '*/out-*' \
-            '-o' '-path' '*/.git' \
-            '-o' '-path' '*/.bzr' \
-            '-o' '-path' '*~*' \
-            '-o' '-path' '*#' \
-            '-o' '-path' '*/TAGS' \
-            '-o' '-path' '*/tags' \
-            '-o' '-path' '*/semantic.cache' \
-            '-o' '-iname' '*.o' \
-            '-o' '-iname' '*.class' \
-            '-o' '-iname' '*.obj' \
-            '-o' '-iname' '*.pyc' \
-            '-o' '-iname' '*.elc' \
-            '-o' '-path' '*/.ignore' \
-            '-o' '-path' '*/.repo' \
-            '-o' '-iname' '*.ncb' \
-            '-o' '-iname' "cscope.files" \
-            -o -iname "cscope.out" \
-            -o -ipath "*/.beagrep" \
-            \) -prune -o -type f -print |
-            perl -ne 'print unless m,
-                (?:frameworks/base/api/[0-9]+.xml)|
-                (?:prebuilts/sdk/api/\d+.xml)|
-                (?:frameworks/base/docs/html/sdk/api_diff/.*\.xml)|
-                (?:development/sdk/api-versions.xml),x' |
-            tee "$outDir"/cscope.files
-    else
-        cat # see comment above
-    fi | if test -e ~/system-config/etc/gtags-filter.rc; then
-        bash ~/system-config/etc/gtags-filter.rc
-    else
-        cat
-    fi
-}
-
-function mkgtags() {
-    mkdir -p "$outDir"
-    if test -e .globalrc; then
-        export GTAGSCONF=$(readlink -f .globalrc)
-    fi
-    if test -e "$outDir"/.langmap; then
-        fix-lang-map "$outDir"
-        export GTAGSCONF=$(readlink -f "$outDir"/.globalrc)
-    fi
-    if test -e "$outDir"/GTAGS && test "$(stat -c %s "$outDir"/GTAGS)" = 0; then
-        (
-            cd "$outDir"
-            rm GPATH GRTAGS GTAGS GTAGS.dump -f
-        )
-    fi
-    mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
-}
-
-function mkgtags-filter() {
-    gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
-}
-
 function wlp() {
     case $(uname) in
         CYGWIN*)
@@ -174,7 +102,7 @@ function mkbeagrepidx() {
     elif test -e "$(lookup-file .beagrep-ignore.sh)"; then
         . .beagrep-ignore.sh
     else
-        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/$x,; fi; done)$PWD/out,*/.repo,*/.git")
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/$x,; fi; done)*/out,*/.repo,*/.git")
     fi
 
     subdir=.beagrep
