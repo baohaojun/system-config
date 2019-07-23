@@ -58,5 +58,5 @@ parent_project=$(
               )
 
 for p in "$@"; do
-    log-run ssh-gerrit create-project "$p" -p "$parent_project"
+    log-run ssh-gerrit create-project "$p" -p "$parent_project" --empty-commit
 done

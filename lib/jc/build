@@ -12,6 +12,7 @@ use autodie qw(:all);
 # @print-params-only '?"仅打印启动任务时的参数列表，之后就退出，不真正启动编译"' \
 # @:extra-params-from-build-url '?"从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）"' \
 # @:rebuild-url '?"指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_OR_URL 和 EXTRA_PARAMS_FROM_BUILD_URL"' \
+# @:gerrit-trigger '?"使用这个参数指定的gerrit review url，模拟gerrit trigger"' \
 # vverbose '?"输出更多 log"'
 ## end code-generator
 ## start generated code
@@ -24,6 +25,7 @@ Getopt::Long::Configure("posix_default");
 my $extra_environ_params = "";
 my $extra_environ_params_regexp = "";
 my $extra_params_from_build_url = "";
+my $gerrit_trigger = "";
 my $job_or_url = "";
 my @params = ();
 my $print_params_only = 0;
@@ -56,6 +58,14 @@ my $handler_help = sub {
     printf "%30s", "";
   }
   printf "%s", "从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）";
+  print "\n";
+  printf "%6s", '';
+  printf "%-24s", '--gerrit-trigger=GERRIT-TRIGGER';
+  if (length('--gerrit-trigger=GERRIT-TRIGGER') > 24 and length("使用这个参数指定的gerrit review url，模拟gerrit trigger") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "使用这个参数指定的gerrit review url，模拟gerrit trigger";
   print "\n";
   printf "%6s", '-j, ';
   printf "%-24s", '--job-or-url=JOB-OR-URL';
@@ -105,6 +115,7 @@ GetOptions (
             'extra-environ-params=s' => \$extra_environ_params,
             'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
             'extra-params-from-build-url=s' => \$extra_params_from_build_url,
+            'gerrit-trigger=s' => \$gerrit_trigger,
             'job-or-url|j=s' => \$job_or_url,
             'params|p=s' => \@params,
             'print-params-only!' => \$print_params_only,
@@ -193,6 +204,42 @@ if ($extra_environ_params_regexp) {
     my ($name, $value) = ($_, $ENV{$_});
     $params_map{$name} = $value;
   } grep { m/$extra_environ_params_regexp/ } keys %ENV;
+}
+
+if ($gerrit_trigger) {
+  my $gr_json = decode_json(qx(gr q -u $gerrit_trigger -e CURRENT_REVISION -e DETAILED_ACCOUNTS));
+  die "Can't find a single gerrit review for your trigger url: $gerrit_trigger"
+    unless (@{$gr_json});
+  $params_map{GERRIT_BRANCH} = $gr_json->[0]{branch};
+  $params_map{GERRIT_TOPIC} = $gr_json->[0]{topic};
+  $params_map{GERRIT_CHANGE_NUMBER} = $gr_json->[0]{_number};
+  $params_map{GERRIT_CHANGE_ID} = $gr_json->[0]{change_id};
+
+  my $current_revision_info = $gr_json->[0]{revisions}{$gr_json->[0]{current_revision}};
+  $params_map{GERRIT_PATCHSET_NUMBER} = $current_revision_info->{_number};
+  $params_map{GERRIT_PATCHSET_REVISION} = $gr_json->[0]{current_revision};
+  $params_map{GERRIT_REFSPEC} = $current_revision_info->{ref};
+  $params_map{GERRIT_PROJECT} = $gr_json->[0]{project};
+  $params_map{GERRIT_CHANGE_SUBJECT} = $gr_json->[0]{subject};
+  $params_map{GERRIT_CHANGE_COMMIT_MESSAGE} = qx(gr get-commit-msg -u $gerrit_trigger --format base64);
+  $params_map{GERRIT_CHANGE_URL} = "$ENV{scm_gerrit_url}" . $params_map{GERRIT_CHANGE_NUMBER};
+  $params_map{GERRIT_CHANGE_OWNER} = sprintf('"%s" <%s>', $gr_json->[0]{owner}{name}, $gr_json->[0]{owner}{email});
+  $params_map{GERRIT_CHANGE_OWNER_NAME} = $gr_json->[0]{owner}{name};
+  $params_map{GERRIT_CHANGE_OWNER_EMAIL} = $gr_json->[0]{owner}{email};
+  $params_map{GERRIT_PATCHSET_UPLOADER} = sprintf('"%s" <%s>', $current_revision_info->{uploader}{name}, $current_revision_info->{uploader}{email});
+  $params_map{GERRIT_PATCHSET_UPLOADER_NAME} = $current_revision_info->{uploader}{name};
+  $params_map{GERRIT_PATCHSET_UPLOADER_EMAIL} = $current_revision_info->{uploader}{email};
+
+  $params_map{GERRIT_EVENT_ACCOUNT} = $params_map{GERRIT_CHANGE_OWNER};
+  $params_map{GERRIT_EVENT_ACCOUNT_NAME} = $params_map{GERRIT_CHANGE_OWNER_NAME};
+  $params_map{GERRIT_EVENT_ACCOUNT_EMAIL} = $params_map{GERRIT_CHANGE_OWNER_EMAIL};
+
+  $params_map{GERRIT_NAME} = "Gerrit"; # fixme: hardcode
+  $params_map{GERRIT_HOST} = $ENV{scm_gerrit_server};
+  $params_map{GERRIT_PORT} = 29418;
+  $params_map{GERRIT_SCHEME} = "ssh";
+  $params_map{GERRIT_VERSION} = "2.14.3"; # fixme: hardcode
+
 }
 
 if ($job_or_url !~ m,/,) {

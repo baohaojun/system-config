@@ -2,7 +2,7 @@
 use strict;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl c:change u:url
+# generate-getopt -s perl c:change u:url f:format='"raw"' '?"可以指定 raw 或 base64，后者可直接用于 jc build"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -12,6 +12,7 @@ Getopt::Long::Configure("default");
 
 
 my $change = "";
+my $format = "raw";
 my $url = "";
 
 my $handler_help = sub {
@@ -24,6 +25,14 @@ my $handler_help = sub {
     printf "%30s", "";
   }
   printf "%s", ;
+  print "\n";
+  printf "%6s", '-f, ';
+  printf "%-24s", '--format=FORMAT';
+  if (length('--format=FORMAT') > 24 and length("可以指定 raw 或 base64，后者可直接用于 jc build") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "可以指定 raw 或 base64，后者可直接用于 jc build";
   print "\n";
   printf "%6s", '-u, ';
   printf "%-24s", '--url=URL';
@@ -39,6 +48,7 @@ my $handler_help = sub {
 
 GetOptions (
             'change|c=s' => \$change,
+            'format|f=s' => \$format,
             'url|u=s' => \$url,
             'help|h!' => \&$handler_help,
            );
@@ -56,5 +66,12 @@ my $change_json = decode_json(qx(gr q -q change:$change -e CURRENT_REVISION));
 my $id = $change_json->[0]{id};
 my $revision = $change_json->[0]{current_revision};
 
+my $program;
+if ($format eq "base64") {
+  $program = "cat";
+} else {
+  $program = "base64  -d";
+}
 
-print qx(gr rest -a a/changes/$id/revisions/$revision/files/%2fCOMMIT_MSG/content|base64  -d);
+
+print qx(gr rest -a a/changes/$id/revisions/$revision/files/%2fCOMMIT_MSG/content|$program);

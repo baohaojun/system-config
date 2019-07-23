@@ -17,4 +17,5 @@ bhj ALL = NOPASSWD: /usr/bin/apt-get update, \
     /sbin/poweroff, \
     /sbin/route add -net 172.16.0.0 netmask 255.255.0.0 dev tun0, \
     /usr/bin/timedatectl set-local-rtc 1, \
+    /bin/su - bhj, \
     /bin/true
