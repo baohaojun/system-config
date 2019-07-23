@@ -1,0 +1,96 @@
+#!/usr/bin/env perl
+
+# stop the build if the PARAMETER matches the VALUE
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl j:job-url p:param v:value ndry-run
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $dry_run = 0;
+my $job_url = "";
+my $param = "";
+my $value = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-n, ';
+  printf "%-24s", '--[no]dry-run';
+  if (length('--[no]dry-run') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-j, ';
+  printf "%-24s", '--job-url=JOB-URL';
+  if (length('--job-url=JOB-URL') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-p, ';
+  printf "%-24s", '--param=PARAM';
+  if (length('--param=PARAM') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-v, ';
+  printf "%-24s", '--value=VALUE';
+  if (length('--value=VALUE') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'dry-run|n!' => \$dry_run,
+            'job-url|j=s' => \$job_url,
+            'param|p=s' => \$param,
+            'value|v=s' => \$value,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+die "Must specify the job url" unless $job_url;
+die "Must specify the param" unless $param;
+
+use JSON;
+use v5.10;
+
+my $job_json = decode_json(qx(jc curl ${job_url}api/json));
+for (@{$job_json->{builds}}) {
+  my $build_number = $_->{number};
+  my $build_json = decode_json(qx(jc curl ${job_url}${build_number}/api/json));
+
+  if ($build_json->{result}) {
+    printf STDERR "build $build_number is %s\n", $build_json->{result};
+    next;
+  }
+  for (@{$build_json->{actions}}) {
+    if ($_->{_class} eq "hudson.model.ParametersAction") {
+      for (@{$_->{parameters}}) {
+        if ($_->{name} eq $param and $_->{value} eq $value) {
+          say "should stop build: ${job_url}${build_number}";
+          system("jc", "stop-build", "-u", "${job_url}${build_number}/");
+        }
+      }
+    }
+  }
+}

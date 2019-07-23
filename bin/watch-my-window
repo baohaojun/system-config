@@ -18,7 +18,13 @@ if [[ $top_window =~ Firefox ]]; then
     url=$(firefox-get-tab-url --no-with-xkeytool)
     echo "$(date): ${top_window} ($url)"
     if [[ $url =~ weibo.com|www.newsmth.net|youtube.com ]]; then
-        alarm -a "e ~/system-config/doc/projects/daily.org" 0m "You should not view weibo when at work!"
+        alarm -a "
+e ~/system-config/doc/projects/daily.org;
+for x in $(seq 1 3); do
+    sleep 1;
+    find-or-exec zenity;
+done
+" 0m "You should not view weibo when at work!"
     fi
 else
     echo "$(date): ${top_window}"
