@@ -17,7 +17,7 @@ g_quail_map = {
 }
 
 _char_map = {}
-for c in ':', ',', '(', ')', '{', '}', '[', ']', '?':
+for c in ':', ',', '(', ')', '{', '}', '[', ']', '?', '!':
     _char_map[c] = chr(ord(u'Ａ') - ord('A') + ord(c))
 
 _char_map['.'] = "。"

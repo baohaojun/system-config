@@ -18,6 +18,7 @@ if [[ $top_window =~ Firefox ]]; then
     url=$(firefox-get-tab-url --no-with-xkeytool)
     echo "$(date): ${top_window} ($url)"
     if [[ $url =~ weibo.com|www.newsmth.net|youtube.com ]]; then
+        sawfish-send-focused-window-event "C-w" || true
         alarm -a "
 e ~/system-config/doc/projects/daily.org;
 for x in $(seq 1 3); do

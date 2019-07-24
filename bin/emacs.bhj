@@ -29,7 +29,3 @@ done
 
 sawfish-re-maximize
 myscr --bg global-setenv -c emacsclient
-
-export ANDROID_SERIAL=$(get-about-me -d a2024058 adb-serial);
-for x in sawfish-client emacsclient; do $x -e '(setenv "ANDROID_SERIAL" "'$ANDROID_SERIAL'")'; done
-emacs-source-env ~/system-config/bin/set-ssh-agent SSH_AUTH_SOCK
