@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# SE means Switch Env：在生产环境和测试环境之间切换
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P ddefault
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o dh \
+                      --long default,help,no-default \
+                      -n $(basename -- $0) -- "$@")
+declare default=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--default|--no-default)
+            if test "$1" = --no-default; then
+                default=false
+            else
+                default=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]default'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+set -x
+exec &> ~/tmp/se.log
+
+declare -A url_switch_map
+
+url_switch_map[$scm_jenkins_prod_url]=$scm_jenkins_test_url
+url_switch_map[$scm_jenkins_test_url]=$scm_jenkins_prod_url
+
+url_switch_map[http://hmi-ci.it.chehejia.com/]=$scm_jenkins_test_url
+
+url_switch_map[$scm_gerrit_prod_url]=$scm_gerrit_test_url
+url_switch_map[$scm_gerrit_test_url]=$scm_gerrit_prod_url
+
+if test "${default}" != true; then
+    top_window=$(sawfish-top-window)
+    if [[ $top_window =~ Firefox ]]; then
+        current_url=$(get-firefox-tab-url)
+        for match_url in "${!url_switch_map[@]}"; do
+            if [[ $current_url =~ ^$match_url ]]; then
+                target_url=${url_switch_map[$match_url]}${current_url#$match_url}
+                firefox "$target_url"
+                exit
+            fi
+        done
+    fi
+fi

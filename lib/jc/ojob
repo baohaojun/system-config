@@ -1,0 +1,3 @@
+#!/bin/bash
+
+nohup firefox ${scm_jenkins_url}job/${1%.xml}&
