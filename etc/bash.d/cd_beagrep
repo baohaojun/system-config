@@ -31,22 +31,3 @@ cd_ok()
 }
 
 alias bcd=cd_beagrep
-
-global() {
-    globalenv global "$@"
-}
-
-globalenv() {
-    (
-        if test -e GTAGS; then
-            cd_beagrep
-        fi
-        export GTAGSROOT=$(builtin cd -P .; cd_beagrep; cd_beagrep; pwd)
-        export GTAGSDBPATH=$(builtin cd -P .; cd_beagrep; pwd)
-        export GTAGSLIBPATH=$(builtin cd -P .; cd_beagrep;
-            for x in .java-fallback.*; do echo "$PWD/$x"; done |
-            grep . | rm-last-nl | tr '\n' :
-        )
-        command "$@"
-    )
-}
