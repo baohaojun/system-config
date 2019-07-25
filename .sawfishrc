@@ -845,7 +845,7 @@ EOF856ceee4ab57
 (bind-both-global&window-keymaps "XF86ScrollUp" '(system "am dvp&"))
 (bind-both-global&window-keymaps "XF86ScrollDown" '(system "am dvp&"))
 (bind-both-global&window-keymaps "Super-M-C-m" '(system "am dvp&"))
-(bind-both-global&window-keymaps "M-C-M" '(system "ma&"))
+(bind-both-global&window-keymaps "Super-M-C-M" '(system "ma&"))
                                         ; some times the keyboard itself got scrambled
 (bind-both-global&window-keymaps "M-Mod1-C-m" '(system "am dvp&"))
 
@@ -857,7 +857,7 @@ EOF856ceee4ab57
   (load-file "~/system-config/.sawfish/lisp/keypad-music.jl"))
 
 (bind-both-global&window-keymaps "Super-KP_Enter" '(system "toggle-number-lock&"))
-(bind-both-global&window-keymaps "Super-DEL" '(system "toggle-number-lock&"))
+(bind-both-global&window-keymaps "Super-M-C-DEL" '(system "toggle-number-lock&"))
 
 (bind-keys s-h-keymap "?"
            '(read-event (format nil "%s" (lookup-event-binding (read-event)))))

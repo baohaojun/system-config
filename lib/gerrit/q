@@ -70,6 +70,10 @@ if ($url and not $query) {
   $url =~ s,.*//.*?/.*?(\d+).*,$1,;
   $query = "change:$url";
 }
+
+use URI::Escape;
+$query = uri_escape($query);
+
 use String::ShellQuote;
 my @command = ("gr", "rest", "-a", "a/changes/?q=$query");
 if (@extra_output) {

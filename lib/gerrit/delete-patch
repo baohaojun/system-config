@@ -2,19 +2,25 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P c:change
+# generate-getopt -P c:change q:query
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o c:h \
-                      --long change:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o c:q:h \
+                      --long change:,query:,help \
                       -n $(basename -- $0) -- "$@")
 declare change=
+declare query=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
         -c|--change)
             change=$2
+            shift 2
+
+            ;;
+        -q|--query)
+            query=$2
             shift 2
 
             ;;
@@ -25,6 +31,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-c, '
             printf %-24s '--change=CHANGE'
+            echo
+            printf %06s '-q, '
+            printf %-24s '--query=QUERY'
             echo
             exit
             shift
@@ -42,4 +51,17 @@ done
 
 ## end generated code
 
-gr rest -a a/changes/${change} -- -X DELETE
+if test "${query}"; then
+    changes=(
+        $(gr q -q "$query" | jq '.[]|._number' -r)
+    )
+else
+    changes=(
+        $change
+    )
+fi
+
+for change in "${changes[@]}"; do
+    log delete: $change
+    gr rest -a a/changes/${change} -- -X DELETE
+done

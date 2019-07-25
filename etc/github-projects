@@ -1,24 +1,25 @@
 #!/bin/bash
 
 github_projects=(
-    elpa
-    opencc
-    org-jira
-    emacs.d
-    guilt
-    emacs-clang-complete-async
-    mo-git-blame
-    bbyac
-    yasnippet-snippets
     Firemacs
+    Wrench
+    adb-sync
     ajoke
+    bbyac
     beagrep
     crossdict
+    elpa
+    emacs-clang-complete-async
+    emacs.d
+    ext-local
+    guilt
     gxr
     ibus-sdim
-    adb-sync
-    Wrench
-    ext-local
+    mo-git-blame
+    opencc
+    org-jira
+    org-kungfu
+    yasnippet-snippets
 )
 
 smartcm_projects=(
