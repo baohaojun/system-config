@@ -3,7 +3,7 @@
 use strict;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl j:job-url
+# generate-getopt -s perl j:job-url m:min-build-number=0
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -13,6 +13,7 @@ Getopt::Long::Configure("default");
 
 
 my $job_url = "";
+my $min_build_number = 0;
 
 my $handler_help = sub {
   print ;
@@ -25,12 +26,21 @@ my $handler_help = sub {
   }
   printf "%s", ;
   print "\n";
+  printf "%6s", '-m, ';
+  printf "%-24s", '--min-build-number=MIN-BUILD-NUMBER';
+  if (length('--min-build-number=MIN-BUILD-NUMBER') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
 
   exit(0);
 };
 
 GetOptions (
             'job-url|j=s' => \$job_url,
+            'min-build-number|m=s' => \$min_build_number,
             'help|h!' => \&$handler_help,
            );
 
@@ -47,12 +57,21 @@ for (@{$job_json->{builds}}) {
   my $build_json = qx(jc curl ${build_url}api/json);
   $build_json = decode_json $build_json;
   if ($build_json->{result} ne "SUCCESS") {
+    if ($build_json->{number} < $min_build_number) {
+      printf STDERR "build %d smaller then min_build_number, do not retrigger\n", $build_json->{number};
+      next;
+    }
     say "retrigger: $build_url, result: ", $build_json->{result};
     if (system("jc", "rebuild", "-u", "${build_url}") != 0) {
+      say "Failed to use rebuild on ${build_url}";
       if (system("jc", "curl", "${build_url}gerrit-trigger-retrigger-this", "-v") != 0 ||
           system("jc", "curl", "${build_url}gerrit-trigger-retrigger-this/", "-v") != 0) {
         say "Falied to retrigger: $build_url";
+      } else {
+        say "Started with retrigger: ${build_url}";
       }
+    } else {
+      say "Started with rebuild: ${build_url}";
     }
   }
 }

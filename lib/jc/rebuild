@@ -118,7 +118,7 @@ if ($jc_switch_to_job) {
 }
 
 
-
+# use autodie qw(:all);
 my $ret = system("jc", "curl", $rebuild_url, "-X", "POST", "--data-urlencode", "json=" . encode_json {
   $parameter =>
     [
@@ -131,4 +131,9 @@ my $ret = system("jc", "curl", $rebuild_url, "-X", "POST", "--data-urlencode", "
     ]
   }
                 );
-exit $ret;
+
+if ($ret != 0) {
+  exit 1;
+} else {
+  exit 0;
+}

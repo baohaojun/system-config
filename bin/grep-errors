@@ -89,6 +89,7 @@ error_patterns=(
     '[0-9] error\b'
     'error:'
     'command not found'
+    ': not found' # /bin/sh: 1: bc: not found
     'error while loading shared libraries'
     'undefined symbol'
     'undefined reference to'

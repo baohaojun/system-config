@@ -52,6 +52,11 @@ use Mojo::DOM;
 my $dom = Mojo::DOM->new->parse($node_xml);
 
 if ($dom->at('label')->child_nodes->first) {
+  if ($labels =~ m/^\+/) {
+    my $old_labels = $dom->at('label')->text;
+    $labels =~ s,^\+, ,;
+    $labels = $old_labels . $labels;
+  }
   $dom->at('label')->child_nodes->first->replace("$labels");
 } else {
   $dom->at('label')->append_content("$labels");

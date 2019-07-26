@@ -12,6 +12,7 @@ github_projects=(
     emacs-clang-complete-async
     emacs.d
     ext-local
+    fence-edit.el
     guilt
     gxr
     ibus-sdim
