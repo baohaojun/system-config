@@ -1,0 +1,39 @@
+#!/usr/bin/env perl
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl t:role-type '?"(globalRoles by default, projectRoles, slaveRoles)"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $role_type = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-t, ';
+  printf "%-24s", '--role-type=ROLE-TYPE';
+  if (length('--role-type=ROLE-TYPE') > 24 and length("(globalRoles by default, projectRoles, slaveRoles)") > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", "(globalRoles by default, projectRoles, slaveRoles)";
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'role-type|t=s' => \$role_type,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+system "jc", "curl", "role-strategy/strategy/getAllRoles?type=${role_type}"

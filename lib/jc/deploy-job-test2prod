@@ -1,0 +1,70 @@
+#!/bin/bash
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P j:job-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o j:h \
+                      --long job-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare job_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -j|--job-name)
+            job_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-j, '
+            printf %-24s '--job-name=JOB_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+(
+    task=$job_name
+    log working with $task
+    save-it() {
+        save.-to-git -m "auto commit at $(now), before jc get-job"
+        jc get-job-for-edit -t "$task" --extra-save "$task.before-edit.xml"
+        save.-to-git -m "auto commit at $(now), before edit"
+    }
+
+    for server in $scm_jenkins_test_server $scm_jenkins_prod_server; do
+        cd ~/src/jenkins-tasks/.sites/${server}
+        save-it
+    done
+
+    if test ! -e $task.xml; then
+        EMACS=t hint "copying $task from test to prod, as prod don't have it"
+        cp ../$scm_jenkins_test_server/$task.xml .
+        jc create-job $task < $task.xml
+    else
+        if diff $task.xml ../$scm_jenkins_test_server/$task.xml; then
+            EMACS=t hint "No need to update $task, prod same with test"
+            exit
+        fi
+        cp ../$scm_jenkins_test_server/$task.xml .
+        ew $task.xml
+    fi
+)

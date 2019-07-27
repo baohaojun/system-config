@@ -1,0 +1,49 @@
+#!/usr/bin/env perl
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl t:role-type n:role-name
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $role_name = "";
+my $role_type = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-n, ';
+  printf "%-24s", '--role-name=ROLE-NAME';
+  if (length('--role-name=ROLE-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-t, ';
+  printf "%-24s", '--role-type=ROLE-TYPE';
+  if (length('--role-type=ROLE-TYPE') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'role-name|n=s' => \$role_name,
+            'role-type|t=s' => \$role_type,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+system "jc", "curl", "role-strategy/strategy/getRole?type=${role_type}&roleName=${role_name}"
