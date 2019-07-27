@@ -87,3 +87,12 @@ my $updateRoleData = sprintf
   );
 
 system("jc", "curl", "role-strategy/strategy/addRole", "--data", "$updateRoleData", "-X", "POST");
+
+for my $sid (@{$role_json->{sids}}) {
+  my $assign_data = sprintf(
+                            "type=%s&roleName=%s&sid=%s",
+                            $role_type, $role_name, $sid
+                           );
+  say STDERR "assign $sid to $role_name";
+  system "jc", "curl", "role-strategy/strategy/assignRole", "--data", "$assign_data", "-X", "POST";
+}
