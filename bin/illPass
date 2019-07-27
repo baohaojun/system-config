@@ -25,7 +25,7 @@ if test "${window_name}" = myscr -a "${window_class}" = xterm; then
         tmux delete-buffer
                         )
     who_and_where=$(
-        echo "${screen_text_reversed}" | grep '(\S+@\S+)\s' -o -P | head -n 1|tr -d ' '
+        echo "${screen_text_reversed}" | grep '^\{ ([-\w]+@\S+)\s' -o -P | head -n 1|tr -d ' {' # make it work with system-config's PS1
                  )
 
     if test "${who_and_where}"; then
