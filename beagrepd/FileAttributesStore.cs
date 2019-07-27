@@ -31,7 +31,7 @@ using Beagrep.Util;
 namespace Beagrep.Daemon {
 
 	public class FileAttributesStore : IDisposable {
-		
+
 		private static bool Debug = Beagrep.Util.Debug.Enabled ("FileAttributesStore");
 
 		private IFileAttributesStore ifas;
@@ -86,7 +86,7 @@ namespace Beagrep.Daemon {
 					attr = new FileAttributes ();
 					attr.UniqueId = unique_id;
 					attr.Path = path;
-					
+
 					created = true;
 				}
 
@@ -114,6 +114,7 @@ namespace Beagrep.Daemon {
 				if (Debug)
 					Log.Debug ("Writing attr for {0}", attr.Path);
 
+				attr.LastWriteTime += new TimeSpan(0, 0, 1);
 				attr.LastAttrTime = DateTime.UtcNow;
 
 				bool success = ifas.Write (attr);
@@ -197,14 +198,14 @@ namespace Beagrep.Daemon {
 
 				if (attr.FilterName != filter.Name)
 					return false;
-				
+
 				// FIXME: Obviously we want to reindex if
 				// attr.FilterVersion < filter.Version.
 				// But what if the filter we would use is older
 				// than the one that was previously used?
 				if (attr.FilterVersion != filter.Version)
 					return false;
-			} 
+			}
 
 			if (last_write_time == DateTime.MaxValue)
 				return (attr.LastWriteTime >= FileSystem.GetLastWriteTimeUtc (path));
