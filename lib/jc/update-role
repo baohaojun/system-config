@@ -1,0 +1,89 @@
+#!/usr/bin/env perl
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl t:role-type n:role-name p:role-projects-pattern
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $role_name = "";
+my $role_projects_pattern = "";
+my $role_type = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-n, ';
+  printf "%-24s", '--role-name=ROLE-NAME';
+  if (length('--role-name=ROLE-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-p, ';
+  printf "%-24s", '--role-projects-pattern=ROLE-PROJECTS-PATTERN';
+  if (length('--role-projects-pattern=ROLE-PROJECTS-PATTERN') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-t, ';
+  printf "%-24s", '--role-type=ROLE-TYPE';
+  if (length('--role-type=ROLE-TYPE') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'role-name|n=s' => \$role_name,
+            'role-projects-pattern|p=s' => \$role_projects_pattern,
+            'role-type|t=s' => \$role_type,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+use autodie qw(:all);
+use JSON;
+my $role_json = decode_json(qx(jc getRole -t ${role_type} -n ${role_name}));
+
+use v5.10;
+
+say STDERR JSON->new->utf8(1)->pretty(1)->encode($role_json);
+
+my $removeRoleData = sprintf "type=%s&roleNames=%s", ${role_type}, ${role_name};
+
+
+
+# system("jc", "curl", "role-strategy/strategy/removeRoles", "--data", "$removeRoleData", "-X", "POST");
+
+my $new_pattern;
+if ($role_projects_pattern =~ s,^\+,,) {
+  $new_pattern = $role_json->{pattern} . $role_projects_pattern;
+} else {
+  $new_pattern = $role_projects_pattern;
+}
+
+my $updateRoleData = sprintf
+  (
+   "type=%s&roleName=%s&permissionIds=%s&pattern=%s&overwrite=true",
+   $role_type,
+   $role_name,
+   join(",", keys %{$role_json->{permissionIds}}) . ",",
+   $new_pattern
+  );
+
+system("jc", "curl", "role-strategy/strategy/addRole", "--data", "$updateRoleData", "-X", "POST");
