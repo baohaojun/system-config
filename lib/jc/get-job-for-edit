@@ -84,7 +84,11 @@ fi
 
 if ! diff -w "${output_file}" $task-$$.xml > ${output_file}.diff; then
     if test -e "${output_file}"; then
-        bhj-notify jc "Got diff between ${output_file} and $task-$$.xml: $(cat ${output_file}.diff)"&
+        (
+            cp $task-$$.xml $task-meld-$$.xml
+            . atexit rm -f $task-meld-$$.xml
+            meld "${output_file}" $task-meld-$$.xml
+        )&
     fi
     emacs-file-op cat $task-$$.xml '>' "${output_file}"
 fi

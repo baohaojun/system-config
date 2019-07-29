@@ -1592,6 +1592,7 @@ to the value of `temporary-file-directory'."
     (set-mark (point-min))
     (goto-char (point-max)))
   (when (string= (buffer-file-name) (expand-file-name "~/src/github/projects/chat.org"))
+    (delete-region (point-min) (point-max))
     (save-buffer)))
 
 (defun switch-to-file (file-name)
