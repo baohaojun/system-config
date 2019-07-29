@@ -61,8 +61,17 @@ done
 
 ## end generated code
 
+if test -z "${BUILD_URL}" && test -z "${job_name}" -o -z "${build_number}"; then
+    die "Must specify job_name and build_number"
+fi
+
+if test -z "${BUILD_URL}" || test "${job_name}" -a "${build_number}"; then
+    BUILD_URL=${scm_jenkins_url}job/${job_name}/${build_number}/
+fi
+
+
 if test "${description}" = @NULL@; then
-    jc curl ${scm_jenkins_url}job/${job_name}/${build_number}/api/json | jq -r .description
+    jc curl ${BUILD_URL}api/json | jq -r .description
 else
-    jc curl ${scm_jenkins_url}job/${job_name}/${build_number}/submitDescription -X POST --data-urlencode "description=$description"
+    jc curl ${BUILD_URL}submitDescription -X POST --data-urlencode "description=$description"
 fi
