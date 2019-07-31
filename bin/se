@@ -50,6 +50,19 @@ done
 set -x
 exec &> ~/tmp/se.log
 
+if test "${default}" = true; then
+    if test -e ~/.config/system-config/scm-testing; then
+        rm -f ~/.config/system-config/scm-testing
+        touch ~/.config/system-config/scm-prod
+    else
+        rm -f ~/.config/system-config/scm-prod
+        touch ~/.config/system-config/scm-testing
+    fi
+    myscr --bg 'global-setenv'
+    myscr bash
+    exit
+fi
+
 declare -A url_switch_map
 
 url_switch_map[$scm_jenkins_prod_url]=$scm_jenkins_test_url

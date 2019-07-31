@@ -211,7 +211,7 @@ if ($gerrit_trigger) {
   die "Can't find a single gerrit review for your trigger url: $gerrit_trigger"
     unless (@{$gr_json});
   $params_map{GERRIT_BRANCH} = $gr_json->[0]{branch};
-  $params_map{GERRIT_TOPIC} = $gr_json->[0]{topic};
+  $params_map{GERRIT_TOPIC} = $gr_json->[0]{topic} || "";
   $params_map{GERRIT_CHANGE_NUMBER} = $gr_json->[0]{_number};
   $params_map{GERRIT_CHANGE_ID} = $gr_json->[0]{change_id};
 
