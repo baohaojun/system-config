@@ -201,7 +201,9 @@ echo shit > $tmpf.tmp
 cat $tmpf |
 xargs -d \\n grep $perl_re -l -i -I -e "$1" |
 xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x is a match" 1>&2 && echo "$x"; done; echo '$tmpf.tmp true |
-xargs -d \\n perl -npe '
+xargs -d \\n log-run perl -npe "$(
+cat <<'EOF53f3c820af3c'
+# {%perl-mode%}
 BEGIN{
     $from = $ENV{ARG1};
     $to = $ENV{ARG2};
@@ -232,14 +234,21 @@ while (m#($prepend$from$postpend)#ig) {
 
 for $key (keys %rep_save) {
     my ($from, $to) = ($key, $rep_save{$key});
-    s/$prepend\Q$from\E$postpend/$to/g;
+    if ($prepend eq '\Q') {
+        s/\Q$from\E/$to/g;
+    } else {
+        s/$prepend\Q$from\E$postpend/$to/g;
+    }
 }
 
 END {
     use Storable;
     store \%rep_save, "'$perlhash'";
 }
-' -i
+# {%/perl-mode%}
+EOF53f3c820af3c
+
+)" -i
 
 function compute-new-string() {
 echo "$@"|perl -npe '

@@ -245,7 +245,7 @@ function _android_full_build() {
         -m 1000 \
         -d '\n' -- \
         "$(
-            cd $(lookup-file .repo/..) >/dev/null 2>&1
+            cd $(lookup-file-dir .repo) >/dev/null 2>&1
             . build/envsetup.sh >/dev/null 2>&1
             for x in "${LUNCH_MENU_CHOICES[@]}"; do
                 echo "$x"

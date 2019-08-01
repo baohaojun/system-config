@@ -35,7 +35,7 @@ if test -e ~/src/github/smartcm/etc/gerrit-ip-host.map; then
     . ~/src/github/smartcm/etc/gerrit-ip-host.map
 fi
 
-if test -z "${GERRIT_HOST}" -a ! -d .git && ! lookup-file -e .repo/.. >/dev/null 2>&1; then
+if test -z "${GERRIT_HOST}" -a ! -d .git && ! lookup-file-dir -e .repo >/dev/null 2>&1; then
     export GERRIT_HOST=$(echo "$1"| perl -ne 'print $1 if m,https?://(.*)?(:\d+)/,')
 fi
 

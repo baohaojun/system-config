@@ -23,7 +23,7 @@ if test $# != 0; then # should be make i386_defconfig
     touch ~/.cache/system-config/kernel-build.ok
 else
     (
-        cd $(lookup-file .repo/..)
+        cd $(lookup-file-dir .repo)
         android-make msm-kernel
         touch ~/.cache/system-config/kernel-build.ok
     )

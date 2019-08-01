@@ -246,8 +246,8 @@ else
     fi
     if test "$ANDROID_TOP"; then
         cd "$ANDROID_TOP"
-    elif test -e "$(lookup-file -e .repo/..)"; then
-        cd $(lookup-file -e .repo/..)
+    elif test -e "$(lookup-file-dir -e .repo)"; then
+        cd $(lookup-file-dir -e .repo)
     else
         cd $(lookup-file -e out/..)
     fi

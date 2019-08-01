@@ -108,7 +108,7 @@ abc-repo-revision() {
 }
 
 croot() {
-    root_dir=$(lookup-file -e .repo/..)
+    root_dir=$(lookup-file-dir -e .repo)
     cd $root_dir
 }
 

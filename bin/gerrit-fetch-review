@@ -246,7 +246,7 @@ EOF
 fi
 
 if test -n "$git_dir"; then
-    cd $(lookup-file .repo/..) || die repo not found.
+    cd $(lookup-file-dir .repo) || die repo not found.
     cd $git_dir || die "$git_dir: cd failed"
 fi
 

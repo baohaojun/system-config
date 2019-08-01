@@ -146,7 +146,7 @@ function clean-a-repo() {
             cd ..
             if git_dir=$(lookup-file -e .git/..); then
                 cd "$git_dir"
-                if lookup-file -e .repo/..; then
+                if lookup-file-dir -e .repo; then
                     clean-a-repo
                 fi
                 exit 0
@@ -427,7 +427,7 @@ EOF
                         exit 1
                     fi
                 )
-                cd $(lookup-file -e .repo/..)
+                cd $(lookup-file-dir -e .repo)
                 clean-up
 
                 mail-cms "Warn: Jenkins repo sync failed for $JOB_NAME, will remove all and try again"

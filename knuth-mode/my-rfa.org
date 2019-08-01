@@ -150,7 +150,7 @@
   else
       my_rfa_dirs=(
           $(
-              cd $(lookup-file -e .repo/..)
+              cd $(lookup-file-dir -e .repo)
               for x in "${my_rfa_dirs[@]}"; do
                   if test -d "$x"; then
                       if test -d "$x"/.git; then
@@ -171,7 +171,7 @@
   fi
   job=0
 
-  cd $(lookup-file .repo/..)
+  cd $(lookup-file-dir .repo)
   (
       cd .repo;
 

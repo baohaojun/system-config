@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# [[file:~/system-config/knuth-mode/repo-changes?.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
-
+# [[file:~/system-config/knuth-mode/repo-changes?.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
 if test $(basename $0) = repo-not-clean; then
@@ -154,7 +152,7 @@ my-rfa $verbose -j 4 "$@" -- "$(cat <<'EOF552bc89ae4fe'
 
 EOF552bc89ae4fe
 )" 10>~/.cache/system-config/logs/repo-changes.lock | (
-    cd $(lookup-file .repo/..);
+    cd $(lookup-file-dir .repo);
     mkdir -p $(readlink -m out)
     log=./out/repo-changes.log"$(echo -n $*)"
     lognow="$log-$(now)"
@@ -166,5 +164,4 @@ EOF552bc89ae4fe
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
-
 # the-ultimate-script ends here

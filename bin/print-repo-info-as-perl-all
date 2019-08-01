@@ -54,7 +54,7 @@ exit
 # {%/sh-mode%}
 EOF
 
-repo_top_dir=$(lookup-file -e .repo/..)
+repo_top_dir=$(lookup-file-dir -e .repo)
 cd ${repo_top_dir}
 
 . repo-info-from-manifest

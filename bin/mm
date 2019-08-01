@@ -249,7 +249,7 @@ time (
         set_stuff_for_environment
         BHJ_OUT_DIR=${OUT%target/*}
     else
-        BHJ_OUT_DIR=$(lookup-file .repo/../)/out
+        BHJ_OUT_DIR=$(lookup-file-dir .repo/)/out
         if test -e "$top_dir"/.buildspec.sc; then
             . "$top_dir"/.buildspec.sc;
         fi
@@ -326,7 +326,7 @@ time (
 
     (
         echo '# -*- mode: compilation -*-'
-        echo "make: Entering directory \`$(lookup-file .repo/..)'"
+        echo "make: Entering directory \`$(lookup-file-dir .repo)'"
         . ~/system-config/etc/.fix-java-version
         if test "$(type -t $b0)" = function; then
             if test "$debug" = true; then

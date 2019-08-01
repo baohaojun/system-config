@@ -1,5 +1,5 @@
 #+name: check-if-git-is-clean
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :noweb yes
   (
       if test "$DEBUG" = true; then
           set -x
@@ -95,7 +95,7 @@
 #+END_SRC
 
 #+name: old-code
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :noweb yes
   if test $(basename $0) = repo-not-clean; then
       export DO_GIT_ST_ONLY=true
   fi
@@ -163,7 +163,7 @@
   <<check-if-git-is-clean>>
   EOF552bc89ae4fe
   )" 10>~/.cache/system-config/logs/repo-changes.lock | (
-      cd $(lookup-file .repo/..);
+      cd $(lookup-file-dir .repo);
       mkdir -p $(readlink -m out)
       log=./out/repo-changes.log"$(echo -n $*)"
       lognow="$log-$(now)"
