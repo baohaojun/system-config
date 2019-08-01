@@ -16,7 +16,7 @@
           }
           export -f git
       fi
-      set -- $($REPO_INFO remote branch path)
+      set -- $(for x in remote branch path; do $REPO_INFO $x; done)
       remote=$1
       branch=$2
       path=$3

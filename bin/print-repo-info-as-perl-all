@@ -39,7 +39,7 @@ for x in ${repo_info_keys[@]}; do
 done
 
 if test $# != 1; then
-    die "Can only take 1 arg from: ${repo_info_keys[@]}"
+    die "Can only take 1 arg from: ${repo_info_keys[@]}, passing: $*"
 elif test ! -v repo_info_keys_map[$1]; then
     die "arg $1 must be in ${repo_info_keys[@]}"
 fi
