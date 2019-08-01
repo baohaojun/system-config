@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "$@" > ~/tmp/jssh.log
+
 host=$(
     while test $# != 0; do
         if test "${1}" = --execute; then
@@ -39,8 +41,8 @@ else
 use Regexp::Common qw /net/;
 if (/^$RE{net}{IPv4}$/) {
     0;
-} elsif (m/(\.\d+){2,}$/) {
-    s/.*?((\.\d+){2,})$/$1/
+} elsif (m/(\d+(\.\d+){1,})$/) {
+    s/.*?(\d+(\.\d+){1,})$/$1/
 } else {
     s/.*?(\d+)$/.4.$1/
 }

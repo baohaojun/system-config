@@ -93,7 +93,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         local atop=${ANDROID_TOP}
         if test -z "$atop"; then
             if lookup-file -e .repo >/dev/null 2>&1; then
-                atop=$(readlink -f $(lookup-file .repo/..))/
+                atop=$(readlink -f $(lookup-file-dir .repo))/
             else atop=$(
                     cd ..
                     echo $PWD/
@@ -109,7 +109,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         if test "$ANDROID_TOP"; then
             relative-path "$FILE" $(readlink -f "$ANDROID_TOP")
         elif lookup-file -e .repo >/dev/null 2>&1; then
-            relative-path "$FILE" $(readlink -f $(lookup-file .repo/..))/
+            relative-path "$FILE" $(readlink -f $(lookup-file-dir .repo))/
         else
             relative-path "$FILE" ..
         fi
