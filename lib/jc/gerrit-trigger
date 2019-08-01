@@ -70,6 +70,7 @@ use String::ShellQuote;
 $gerrit_url = shell_quote($gerrit_url);
 
 chomp (my $gerrit_change = qx(gerrit-query-for-repo-download -u $gerrit_url --fields change));
+say STDERR "gerrit changes: $gerrit_change";
 
 my $cookie_file = "/tmp/gerrit_manual_trigger.$$.cookie";
 

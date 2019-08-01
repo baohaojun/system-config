@@ -2,7 +2,7 @@
 use strict;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl n:node l:labels
+# generate-getopt -s perl n:node l:labels '?"+xx 表示增加 xx 为 label"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -19,11 +19,11 @@ my $handler_help = sub {
   print "\n\n选项和参数：\n";
   printf "%6s", '-l, ';
   printf "%-24s", '--labels=LABELS';
-  if (length('--labels=LABELS') > 24 and length() > 0) {
+  if (length('--labels=LABELS') > 24 and length("+xx 表示增加 xx 为 label") > 0) {
     print "\n";
     printf "%30s", "";
   }
-  printf "%s", ;
+  printf "%s", "+xx 表示增加 xx 为 label";
   print "\n";
   printf "%6s", '-n, ';
   printf "%-24s", '--node=NODE';

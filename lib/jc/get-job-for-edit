@@ -83,7 +83,7 @@ if test "${extra_save}"; then
 fi
 
 if ! diff -w "${output_file}" $task-$$.xml > ${output_file}.diff; then
-    if test -e "${output_file}" -a test -s ${output_file}.diff; then
+    if test -e "${output_file}" -a -s ${output_file}.diff; then
         EMACS=t hint "$task has difference between local and remote versions"
         meld $output_file $task-$$.xml
     fi

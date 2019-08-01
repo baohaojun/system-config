@@ -50,7 +50,7 @@ expect "Opt>" {
             send "\n";
             log_user 1
         } else {
-            send "REMOTEPROTOCOL=jssh REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
+            send "REMOTEPROTOCOL=jssh PS1HOSTNAME=js-$js_target REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
             log_user 1
             if { $js_execute ne {} } {
                 expect -re "\\$" {

@@ -1,13 +1,14 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P j:job-name
+# generate-getopt -P j:job-name @prod2test
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o j:h \
-                      --long job-name:,help \
+                      --long job-name:,prod2test,help,no-prod2test \
                       -n $(basename -- $0) -- "$@")
 declare job_name=
+declare prod2test=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -17,6 +18,15 @@ while true; do
             shift 2
 
             ;;
+        --prod2test|--no-prod2test)
+            if test "$1" = --no-prod2test; then
+                prod2test=false
+            else
+                prod2test=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -24,6 +34,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-j, '
             printf %-24s '--job-name=JOB_NAME'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]prod2test'
             echo
             exit
             shift
@@ -40,6 +53,12 @@ done
 
 
 ## end generated code
+
+if test "${prod2test}" = true; then
+    tmp=$scm_jenkins_prod_server
+    scm_jenkins_prod_server=$scm_jenkins_test_server
+    scm_jenkins_test_server=$tmp
+fi
 
 (
     task=$job_name

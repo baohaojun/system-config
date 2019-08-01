@@ -11,6 +11,7 @@ window_class=$(sawfish-top-window-class)
 window_name=$(sawfish-top-window-name)
 
 sawfish-window mark -t illPass -s
+. atexit sawfish-window mark -t illPass -r
 
 window_class=${window_class,,}
 window_name=${window_name,,}
@@ -141,6 +142,7 @@ if test ${#password} -gt 20 || [[ $password =~ $'\n' ]]; then
     hint "You have inputed a very long password, will now exit"
     exit
 fi
+sawfish-window mark -t illPass -r
 
 xdotool-when-keyboard-clear type "${password}"
 
