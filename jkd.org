@@ -640,10 +640,12 @@ This is simple using Perl's “reflection”.
       return org_markdown_convert("--to", "org", "--from", "markdown", "--text", $_[0]);
   }
 
-  sub work_with_all_fields($$\%;$) {
-      my ($project_id, $issue_type_id, $required_fields, $edit_issue_json_obj) = @_;
-
+  sub work_with_all_fields($$\%$) {
+      my ($project_id, $issue_type_id, $required_fields, $work_options) = @_;
+      my $edit_issue_json_obj = $work_options->{edit_issue_json_obj};
+      my $print_schemes = $work_options->{"print-schemes"};
       my $issue_fields_obj = jkd_get_issue_fields("-p", "$project_id", "-i", "$issue_type_id");
+
 
       for my $project (@{$issue_fields_obj->{projects}}) {
           for my $it (@{$project->{issuetypes}}) {
@@ -678,18 +680,32 @@ This is simple using Perl's “reflection”.
                       if ($field_key eq 'project' || $field_key eq 'issuetype') {
                           next;
                       }
-                      say "fild value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
+                      say STDERR "fild value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
+                      my $field_name = encode_utf8($it->{fields}{$field_key}{name} or "$field_key (field has no name)");
+
+                      if ($print_schemes) {
+                          print "--field-value $field_name= ";
+                          next;
+                      }
+
+
+                      if ($required_fields->{$field_name}) {
+                          $required_fields->{$field_key} = $required_fields->{$field_name};
+                          delete $required_fields->{$field_name} unless ${field_key} eq ${field_name};
+                          next;
+                      }
+
                       if ($it->{fields}{$field_key}{schema}{type} eq 'string') {
                           my @command = (
-                              "ask-for-input-with-emacs", "-p", sprintf("Please input the %s", encode_utf8($it->{fields}{$field_key}{name} or "$field_key (field has no name)")),
+                              "ask-for-input-with-emacs", "-p", sprintf("Please input the %s (field key: %s)", $field_name, $field_key),
                               "--init-text", markdown_to_org encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "")
                               );
                           my $command = join(" ", shell_quote(@command));
                           say "command is $command";
+
                           $required_fields->{$field_key} = decode_utf8 org_to_markdown qx($command);
                       } elsif ($it->{fields}{$field_key}{schema}{type} eq 'array' and
                                $it->{fields}{$field_key}{schema}{custom} eq "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") {
-                          my $field_name = $it->{fields}{$field_key}{name};
                           my %allowed_values_map;
                           map { $allowed_values_map{$_->{value}} = $_->{id}} @{$it->{fields}{$field_key}{allowedValues}};
                           my @command = (
@@ -704,11 +720,14 @@ This is simple using Perl's “reflection”.
                               push @{$required_fields->{$field_key}}, {id => $allowed_values_map{$_}} if ${allowed_values_map{$_}};
                           }
                       } else {
-                          say $it->{fields}{$field_key}{name}, " scheme is ", $it->{fields}{$field_key}{schema}{type}, ", don't know how to deal";
+                          say ${field_name}, " scheme is ", $it->{fields}{$field_key}{schema}{type}, ", don't know how to deal";
                       }
                   }
               }
           }
+      }
+      if ($print_schemes) {
+          exit;
       }
   }
 
@@ -769,7 +788,7 @@ This is simple using Perl's “reflection”.
 
       my %edited_fields;
 
-      work_with_all_fields($issue_project, $issue_type_id, %edited_fields, $json_issue);
+      work_with_all_fields($issue_project, $issue_type_id, %edited_fields, {edit_issue_json_obj => $json_issue});
 
       my $ua = LWP::UserAgent->new;
 
@@ -831,7 +850,12 @@ This is simple using Perl's “reflection”.
   sub jkd_c(@) { # create issue
 
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l p:project i:issue-type-id @assign-to-myself=1
+      # generate-getopt -s perl -l \
+      #     p:project \
+      #     i:issue-type-id \
+      #     @assign-to-myself=1 \
+      #     @:field-value='()' \
+      #     @print-schemes
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -841,7 +865,9 @@ This is simple using Perl's “reflection”.
       local @ARGV = @_;
 
       my $assign_to_myself = 1;
+      my @field_value = ();
       my $issue_type_id = "";
+      my $print_schemes = 0;
       my $project = "";
 
       my $handler_help = sub {
@@ -855,9 +881,25 @@ This is simple using Perl's “reflection”.
           }
           printf "%s", ;
           print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--field-value=FIELD-VALUE';
+          if (length('--field-value=FIELD-VALUE') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
           printf "%6s", '-i, ';
           printf "%-24s", '--issue-type-id=ISSUE-TYPE-ID';
           if (length('--issue-type-id=ISSUE-TYPE-ID') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--[no]print-schemes';
+          if (length('--[no]print-schemes') > 24 and length() > 0) {
               print "\n";
               printf "%30s", "";
           }
@@ -877,7 +919,9 @@ This is simple using Perl's “reflection”.
 
       GetOptions (
           'assign-to-myself!' => \$assign_to_myself,
+          'field-value=s' => \@field_value,
           'issue-type-id|i=s' => \$issue_type_id,
+          'print-schemes!' => \$print_schemes,
           'project|p=s' => \$project,
           'help|h!' => \&$handler_help,
           );
@@ -894,7 +938,17 @@ This is simple using Perl's “reflection”.
       }
 
       my %required_fields;
-      work_with_all_fields($project, $issue_type_id, %required_fields);
+
+      for (@field_value) {
+          if (m/(.*?)=(.*)/) {
+              my ($field, $value) = ($1, $2);
+              $required_fields{$field} = $value;
+          } else {
+              die "$_ not format of FIELD=VALUE?"
+          }
+      }
+
+      work_with_all_fields($project, $issue_type_id, %required_fields, {"print-schemes" => ${print_schemes}});
 
       $required_fields{project} = {
           key => $project,
