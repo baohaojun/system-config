@@ -208,7 +208,7 @@ if ! lookup-file -e .repo >/dev/null 2>&1 &&
         if test -e ~/src/android-mirror/${PROJECT%.git}.git; then
             echo --reference ~/src/android-mirror/${PROJECT%.git}.git
         fi
-            )
+            ) --depth 1 --single-branch
 
     git_dir=~/src/gerrit-fetch-review/$(basename $PROJECT)
     (
@@ -246,7 +246,9 @@ EOF
 fi
 
 if test -n "$git_dir"; then
-    cd $(lookup-file-dir .repo) || die repo not found.
+    if lookup-file-dir -e .repo &>/dev/null; then
+        cd $(lookup-file-dir .repo) || die repo not found.
+    fi
     cd $git_dir || die "$git_dir: cd failed"
 fi
 

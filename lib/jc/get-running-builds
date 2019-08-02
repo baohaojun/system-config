@@ -1,0 +1,85 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl j:job-name n:which-node
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $job_name = "";
+my $which_node = "";
+
+my $handler_help = sub {
+  print ;
+  print "\n\n选项和参数：\n";
+  printf "%6s", '-j, ';
+  printf "%-24s", '--job-name=JOB-NAME';
+  if (length('--job-name=JOB-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+  printf "%6s", '-n, ';
+  printf "%-24s", '--which-node=WHICH-NODE';
+  if (length('--which-node=WHICH-NODE') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+  }
+  printf "%s", ;
+  print "\n";
+
+  exit(0);
+};
+
+GetOptions (
+            'job-name|j=s' => \$job_name,
+            'which-node|n=s' => \$which_node,
+            'help|h!' => \&$handler_help,
+           );
+
+
+## end generated code
+
+my @nodes = ("(master)", split " ", qx(jc list-nodes));
+
+if ($which_node) {
+  @nodes = ($which_node);
+}
+
+my @build_info;
+use JSON;
+use String::ShellQuote;
+
+for my $node (@nodes) {
+  say STDERR "checking $node";
+
+  my $command = join " ", shell_quote("jc", "get-node-info", "-n", "$node", "-d", "1");
+  my $node_json = decode_json(qx($command));
+  for my $executor (@{$node_json->{executors}}) {
+    my $executable = $executor->{currentExecutable};
+    next unless $executable;
+
+    my $executor_number = $executor->{number};
+    my $build_number = $executable->{number};
+    my $build_url = $executable->{url};
+    (my $job_name = $build_url) =~ s,.*?/job/([^/]+)/.*,$1,;
+
+    push @build_info,
+      {
+       node => $node,
+       executor => $executor_number,
+       build_number => $build_number,
+       build_url => $build_url,
+       job_name => $job_name,
+    };
+  }
+}
+
+print encode_json \@build_info;

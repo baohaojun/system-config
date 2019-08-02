@@ -96,11 +96,21 @@ if (@ARGV) {
 
 $text =~ s,\s*$,,; # get rid of empty lines at the end.
 
+use File::Slurp;
+
+append_file("$ENV{HOME}/.cache/system-config/Wrench-post.history",
+            <<EOF
+----------------------------------------------------------------
+$text
+
+
+EOF
+           );
+
 use List::Util qw(max);
 
 use String::ShellQuote;
 
-system("bhj-notify", "Wrench-post $text");
 my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
 
 system("Wrench.sh", $post_text);

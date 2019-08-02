@@ -168,7 +168,7 @@ if ($job_or_url !~ m,://.*/job/, ) {
 $job_api_url = shell_quote $job_api_url;
 
 my $job_api_str = qx(jc curl $job_api_url);
-print ("jc curl $job_api_url", $job_api_str) if $verbose;
+# print ("jc curl $job_api_url", $job_api_str) if $verbose;
 my $job_api_json_obj  = decode_json $job_api_str;
 
 my $job_supports_params = 0;
@@ -322,7 +322,7 @@ $request = POST $job_build_url,
 
 $request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
 
-say STDERR "request: ", $request->as_string() if $verbose;
+# say STDERR "request: ", $request->as_string() if $verbose;
 $response = $ua->request($request);
 
 die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);

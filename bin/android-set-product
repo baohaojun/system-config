@@ -71,7 +71,7 @@ fi
 
 parse-env after_env
 
-ccache -M 100G
+ccache -M 100G -F 0
 
 . ~/system-config/bin/.android-set-outdir
 
