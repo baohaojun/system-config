@@ -676,7 +676,7 @@ EOF856ceee4ab57
       (if (boundp 'xdo-event)
           (xdo-events (list current-key-xdo-release event))
         (system
-         ;(format nil "export LD_LIBRARY_PATH=/home/bhj/src/reading/xdotool-3.20160805.1; export DEBUG=true; (set -x; xdotool keyup %s; xdotool key --clearmodifiers %s) > ~/tmp/xdoxdo.log 2>&1"
+                                        ;(format nil "export LD_LIBRARY_PATH=/home/bhj/src/reading/xdotool-3.20160805.1; export DEBUG=true; (set -x; xdotool keyup %s; xdotool key --clearmodifiers %s) > ~/tmp/xdoxdo.log 2>&1"
          (format nil "xdotool keyup %s; xdotool key --clearmodifiers %s"
                  current-key
                  event))))))
@@ -942,6 +942,18 @@ EOF856ceee4ab57
   (while events
     (xdo-event (car events) (input-focus))
     (setq events (cdr events))))
+
+(bind-keys s-h-keymap "F1" '(system "qtcreator-edit-with-emacs&"))
+(bind-keys s-h-keymap "F2" '(system "sawfish-xf86search&"))
+(bind-keys s-h-keymap "F3" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
+(bind-keys s-h-keymap "F4" '(system "EMACS=t do-capture&"))
+(bind-keys s-h-keymap "F5" '(system "Wrench-or-Emacs&"))
+(bind-keys s-h-keymap "F6" '(system "find-or-exec gjiten gjiten&"))
+(bind-keys s-h-keymap "F7" '(system "custom-command&"))
+(bind-keys s-h-keymap "F8" '(system "EMACS=t ssssh&"))
+(bind-keys s-h-keymap "F9" '(system "wrench-show-notifications.sh&"))
+(bind-keys s-h-keymap "F10" '(system "sawfish-window-custom-menu&"))
+
 
 ;;; some keys for debugging
 (bind-both-global&window-keymaps "Super-F11" '(xdo-events '("-F11" "d")))
