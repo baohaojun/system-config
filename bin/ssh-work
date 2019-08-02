@@ -1,0 +1,19 @@
+#!/bin/bash
+
+host=$1
+shift
+if [[ $host =~ ^(js-|Js-) ]]; then
+    export JS_TARGET=${host#*-}
+
+    if ! [[ $JS_TARGET =~ ^[0-9]+$ ]]; then
+        JS_TARGET=$(ip-or-name ${JS_TARGET})
+        if ! [[ $JS_TARGET =~ [0-9]+$ ]]; then
+            JS_TARGET=$(host ${JS_TARGET} | pn 4)
+        fi
+    else
+        JS_TARGET=.4.${JS_TARGET}
+    fi
+    exec js-ssh "$@"
+elif test "${host}" = js; then
+    exec ssh js
+fi
