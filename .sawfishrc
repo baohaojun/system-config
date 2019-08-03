@@ -622,7 +622,7 @@ EOF856ceee4ab57
                                  "C-r" '("C-r")
                                  "C-x" '("C-x"))))
 
-(setq x11-windows-re "firefox|emacs|xterm|wrench|gjiten")
+(setq x11-windows-re "firefox|emacs|xterm|wrench|gjiten|gimp")
 
                                         ; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)
