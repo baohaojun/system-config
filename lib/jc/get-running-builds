@@ -58,7 +58,7 @@ use JSON;
 use String::ShellQuote;
 
 for my $node (@nodes) {
-  say STDERR "checking $node";
+  # say STDERR "checking $node";
 
   my $command = join " ", shell_quote("jc", "get-node-info", "-n", "$node", "-d", "1");
   my $node_json = decode_json(qx($command));
