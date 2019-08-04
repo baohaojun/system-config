@@ -622,7 +622,7 @@ EOF856ceee4ab57
                                  "C-r" '("C-r")
                                  "C-x" '("C-x"))))
 
-(setq x11-windows-re "firefox|emacs|xterm|wrench|gjiten")
+(setq x11-windows-re "firefox|emacs|xterm|wrench|gjiten|gimp")
 
                                         ; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)
@@ -676,7 +676,7 @@ EOF856ceee4ab57
       (if (boundp 'xdo-event)
           (xdo-events (list current-key-xdo-release event))
         (system
-                                        ;(format nil "export LD_LIBRARY_PATH=/home/bhj/src/reading/xdotool-3.20160805.1; export DEBUG=true; (set -x; xdotool keyup %s; xdotool key --clearmodifiers %s) > ~/tmp/xdoxdo.log 2>&1"
+         ;;(format nil "export LD_LIBRARY_PATH=/home/bhj/src/reading/xdotool-3.20160805.1; export DEBUG=true; (set -x; xdotool keyup %s; xdotool key --clearmodifiers %s) > ~/tmp/xdoxdo.log 2>&1"
          (format nil "xdotool keyup %s; xdotool key --clearmodifiers %s"
                  current-key
                  event))))))

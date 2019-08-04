@@ -27,8 +27,7 @@ do-dvp() {
         fi
     ) >/dev/null 2>&1 || true
     echo am: dvp layout
-    setxkbmap -layout us -variant dvp
-    re-xmodmap 2>&1|tee
+    setxkbmap -layout us -variant dvp -option ctrl:swap_lalt_lctl -option ctrl:swap_ralt_rctl -option caps:swapescape
     do-natural-scrolling 9>/dev/null || true
 }
 
@@ -43,9 +42,7 @@ do-dvp() {
         do-dvp
     elif test "$1" = ma || setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
         echo am: normal layout
-        setxkbmap -layout us
-        xmodmap ~/system-config/etc/hardware-mach/.Xmodmap-undo
-        xmodmap ~/system-config/etc/hardware-mach/always/.Xmodmap
+        setxkbmap -layout us -option
         do-natural-scrolling
         if test -e ~/.config/system-config/using-fcitx; then
             (
