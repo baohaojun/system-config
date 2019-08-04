@@ -1,0 +1,80 @@
+#!/bin/bash
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P f:properties-file=/dev/stdout @:format '?"(pass|prop|nxml), default is prop"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:h \
+                      --long format:,properties-file:,help \
+                      -n $(basename -- $0) -- "$@")
+declare format=
+declare properties_file=/dev/stdout
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --format)
+            format=$2
+            shift 2
+
+            ;;
+        -f|--properties-file)
+            properties_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--format=FORMAT'
+            echo "(pass|prop|nxml), default is prop"
+            printf %06s '-f, '
+            printf %-24s '--properties-file=PROPERTIES_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+gerrit_params=$(
+    cat ${scm_common_etcdir}/gerrit.params
+             )
+
+if test -z "${format}" -o "${format}" = prop; then
+    for g in $gerrit_params; do
+        eval echo $g=\$$g
+    done > $properties_file
+elif test "${format}" = pass; then
+    for g in $gerrit_params; do
+        echo $g=\$\{$g\}
+    done
+elif test "${format}" = nxml; then
+    for g in $gerrit_params; do
+        cat <<EOF
+        <hudson.model.StringParameterDefinition>
+          <name>$g</name>
+          <description><![CDATA[<!--start html-->
+
+          <!--end html-->
+]]></description>
+          <defaultValue />
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+EOF
+    done
+else
+    die "Can't support format: $format"
+fi

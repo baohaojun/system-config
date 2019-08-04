@@ -84,7 +84,7 @@ fi
 
 if ! diff -w "${output_file}" $task-$$.xml > ${output_file}.diff; then
     if test -e "${output_file}" -a -s ${output_file}.diff; then
-        EMACS=t hint "$task has difference between local and remote versions"
+        EMACS=t hint "$task has difference between local ($output_file) and remote ($task-$$.xml)"
         meld $output_file $task-$$.xml
     fi
     emacs-file-op cat $task-$$.xml '>' "${output_file}"

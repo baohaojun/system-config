@@ -41,6 +41,7 @@ function jc-create-job() {
     task=$(basename "$task")
 
 
+    rm $task.before-update.xml -f
     if ! jc get-job-for-edit -t $task -o $task.before-update.xml 2>&1; then
         bhj-notify jc "Can't get-job: $task"
         exit 1
