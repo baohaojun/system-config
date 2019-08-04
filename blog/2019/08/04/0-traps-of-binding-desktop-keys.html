@@ -136,7 +136,7 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 <li style="margin: 0.5em 0"># 2 &#x2013;clearmodifiers 开关会把 Ctrl 先松开，然后按下、松开 Left，再把 Ctrl 键按回去</li>
 </ul>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
-我花了很多时间，才总结出这个规律来<img class="emoji" src="blog/2019/08/04/emojis/wx-WuLian.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>。
+我花了很多时间，才总结出这个规律来<img class="emoji" src="emojis/wx-WuLian.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>。
 </p>
 <ol class="org-ol" style="margin: 1.2em 0; padding-left: 2em">
 <li style="margin: 0.5em 0">之前一直以为直接发送 Left 就可以（因为 sawfish 就是这样操作的！），</li>
@@ -149,7 +149,7 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 这个脚本能用是能用，但是体验很不好，我每按一次 Ctrl-b，都需要自己把两个键都松开，然后脚本检测到之后才会发送 Left 键。
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0.5em 0">
-由于使用了轮循检测所有按键是否已松开，脚本的性能也有问题，时序也无法保证（比如连续快速按下两个快捷键的话，发送出来的顺序跟按下的顺序不一定是一致的<img class="emoji" src="blog/2019/08/04/emojis/wx-WuLian.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>）。
+由于使用了轮循检测所有按键是否已松开，脚本的性能也有问题，时序也无法保证（比如连续快速按下两个快捷键的话，发送出来的顺序跟按下的顺序不一定是一致的<img class="emoji" src="emojis/wx-WuLian.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>）。
 </p></li>
 <li style="margin: 0.5em 0">用了很多年 <code style="background: transparent; font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline; color: #7f7f7f">xdotool-when-keyboard-clear</code> 之后，重新折腾 xdotool 的源代码，才发现应该可以用上面的方法，用 xdotool 自带的机制直接搞定。</li>
 </ol>
@@ -161,10 +161,10 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 由于 <code style="background: transparent; font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline; color: #7f7f7f">--clearmodifiers</code> 的关系，xdotool 会把上例中的 Ctrl 键先松开，最后再『按』回去。这一按不要紧，有时候它按回去的时候，实际上你的手指自己已经松开了 Ctrl 键。
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
-你猜这种情况下会发生什么现象呢？<img class="emoji" src="blog/2019/08/04/emojis/SMILING_FACE_WITH_OPEN_MOUTH_AND_COLD_SWEAT.png" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>
+你猜这种情况下会发生什么现象呢？<img class="emoji" src="emojis/SMILING_FACE_WITH_OPEN_MOUTH_AND_COLD_SWEAT.png" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
-在这里，我只告诉你这个情况我是怎么解决的，就是把键盘上的所有 ctrl、alt、super、shift 等辅助按键全部都按下、再松开<img class="emoji" src="blog/2019/08/04/emojis/QQ-WUNAI.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>。
+在这里，我只告诉你这个情况我是怎么解决的，就是把键盘上的所有 ctrl、alt、super、shift 等辅助按键全部都按下、再松开<img class="emoji" src="emojis/QQ-WUNAI.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>。
 </p>
 </div>
 </div>
@@ -201,7 +201,7 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 这一点，也可以用 xev 程序来验证：
 </p>
-<pre class="example" style="background: transparent; border: 2pt solid #7E0D0C; padding: 5pt; overflow: auto; font-family: Consolas, Inconsolata, Courier, monospace; font-size: 1em; line-height: 1.2em; margin: 1.2em 0; color: #7f7f7f"><br/>KeyPress event, serial 43, synthetic NO, window 0x3c00001,<br/>    root 0x217, subw 0x0, time 4496810, (831,443), root<img class="emoji" src="blog/2019/08/04/emojis/DISAPPOINTED_FACE.png" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>872,565),<br/>    state 0x8, keycode 113 (keysym 0xff51, Left), same_screen YES,<br/>    XLookupString gives 0 bytes:<br/>    XmbLookupString gives 0 bytes:<br/>    XFilterEvent returns: False<br/></pre>
+<pre class="example" style="background: transparent; border: 2pt solid #7E0D0C; padding: 5pt; overflow: auto; font-family: Consolas, Inconsolata, Courier, monospace; font-size: 1em; line-height: 1.2em; margin: 1.2em 0; color: #7f7f7f"><br/>KeyPress event, serial 43, synthetic NO, window 0x3c00001,<br/>    root 0x217, subw 0x0, time 4496810, (831,443), root<img class="emoji" src="emojis/DISAPPOINTED_FACE.png" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>872,565),<br/>    state 0x8, keycode 113 (keysym 0xff51, Left), same_screen YES,<br/>    XLookupString gives 0 bytes:<br/>    XmbLookupString gives 0 bytes:<br/>    XFilterEvent returns: False<br/></pre>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 那个 state 0x8，记录的就是当前的辅助按键的状态，0x8 代表 Alt 键被按下了。如果是 Ctrl 键的话，应该是 0x4（第一个 Ctrl-b 时能看到 0x4）。
 </p>
@@ -225,7 +225,7 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 果然，试了一下，确实没有问题了。
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
-可怜我十多年就这么凑和过来了，今天才知道事情的真相<img class="emoji" src="blog/2019/08/04/emojis/wx-WuLian.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>。
+可怜我十多年就这么凑和过来了，今天才知道事情的真相<img class="emoji" src="emojis/wx-WuLian.PNG" style="max-width: 100%; width: 1.3em; vertical-align: -0.35em;"/>。
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 使用的命令：
@@ -252,13 +252,13 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 <nav>
 <ul id="prev_next_posts" style="margin: 1.2em 0; padding-left: 2em; list-style: none; padding: 0">
 <li class="prev_post" style="margin: 0.5em 0; float: left; width: 50%">
-<a href="blog/2019/06/16/0-7-habits-1.html" style="color: #06C; text-decoration: underline"> <!-- prev-url -->
+<a href="../../06/16/0-7-habits-1.html" style="color: #06C; text-decoration: underline"> <!-- prev-url -->
 <i class="icon-chevron-left">《</i>
         参加「高效能人士的七个习惯」培训感悟（第一个习惯） <!-- prev-title -->
 </a>
 </li>
 <li class="next_post" style="margin: 0.5em 0; float: right; width: 50%; text-align: right;">
-<a href="meta/Archive.html" style="color: #06C; text-decoration: underline"> <!-- next-url -->
+<a href="../../../../meta/Archive.html" style="color: #06C; text-decoration: underline"> <!-- next-url -->
         Archive <!-- next-title -->
 <i class="icon-chevron-right">》</i>
 </a>
@@ -310,20 +310,20 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 </dl>
 <h2 style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'>Tags</h2>
 <ul style="padding-left: 2em; margin: 0 0 1.5em; padding: 0 0 1.5em; border-bottom: 1px dotted #ccc; list-style: none">
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="meta/tags/workaround.html" style="color: #06C; text-decoration: underline" title="workaround for some bugs I found">workaround</a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../../meta/tags/workaround.html" style="color: #06C; text-decoration: underline" title="workaround for some bugs I found">workaround</a></li>
 </ul>
 <h2 class="sidebar-title" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'>Previous Posts</h2>
 <ul id="recently" style="padding-left: 2em; margin: 0 0 1.5em; padding: 0 0 1.5em; border-bottom: 1px dotted #ccc; list-style: none">
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2019/06/16/0-7-habits-1.html" style="color: #06C; text-decoration: underline"> 参加「高效能人士的七个习惯」培训感悟（第一个习惯） </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2019/05/28/0-about-bugs-priority-severity.html" style="color: #06C; text-decoration: underline"> 关于 Bug 的优先级、严重性 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2019/04/17/0-After-Reading-OKR.html" style="color: #06C; text-decoration: underline"> OKR 减肥记 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2019/01/09/0-Jenkins-Mac-Keychain.html" style="color: #06C; text-decoration: underline"> Jenkins Mac Slave 的 Keychain 配置方法 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2018/08/27/sc-complete.html" style="color: #06C; text-decoration: underline"> bash 下更方便的补齐选择方法 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html" style="color: #06C; text-decoration: underline"> Automating bash/perl arguments handling in Emacs </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2018/05/02/0-after-watching-a-movie.html" style="color: #06C; text-decoration: underline"> “后来的我们”观后瞎扯 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2017/07/01/0-Wrench-User-Manual.html" style="color: #06C; text-decoration: underline"> 小扳手使用手册 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2017/06/29/0-One-Wrench-To-Screw-Them-All.html" style="color: #06C; text-decoration: underline"> 小扳手的野望 </a></li>
-<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="blog/2017/02/16/0-wrap-lines-with-emacs.html" style="color: #06C; text-decoration: underline"> 刚刚学到一招：简便 Emacs 折行 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../06/16/0-7-habits-1.html" style="color: #06C; text-decoration: underline"> 参加「高效能人士的七个习惯」培训感悟（第一个习惯） </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../05/28/0-about-bugs-priority-severity.html" style="color: #06C; text-decoration: underline"> 关于 Bug 的优先级、严重性 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../04/17/0-After-Reading-OKR.html" style="color: #06C; text-decoration: underline"> OKR 减肥记 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../01/09/0-Jenkins-Mac-Keychain.html" style="color: #06C; text-decoration: underline"> Jenkins Mac Slave 的 Keychain 配置方法 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2018/08/27/sc-complete.html" style="color: #06C; text-decoration: underline"> bash 下更方便的补齐选择方法 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html" style="color: #06C; text-decoration: underline"> Automating bash/perl arguments handling in Emacs </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2018/05/02/0-after-watching-a-movie.html" style="color: #06C; text-decoration: underline"> “后来的我们”观后瞎扯 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2017/07/01/0-Wrench-User-Manual.html" style="color: #06C; text-decoration: underline"> 小扳手使用手册 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2017/06/29/0-One-Wrench-To-Screw-Them-All.html" style="color: #06C; text-decoration: underline"> 小扳手的野望 </a></li>
+<li style="margin: 0; padding: 0 0 0.25em 15px; text-indent: -15px; line-height: 1.5em"><a href="../../../2017/02/16/0-wrap-lines-with-emacs.html" style="color: #06C; text-decoration: underline"> 刚刚学到一招：简便 Emacs 折行 </a></li>
 </ul>
 <h2 class="sidebar-title" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'>Archive</h2>
 <ul id="archives" style="padding-left: 2em; margin: 0 0 1.5em; padding: 0 0 1.5em; border-bottom: 1px dotted #ccc; list-style: none">

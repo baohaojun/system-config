@@ -1,0 +1,109 @@
+#+title: 修改桌面键绑定的那些坑
+# bhj-tags: workaround
+
+我在使用 sawfish 作为窗口管理器，同时会参考 Emacs 的键绑定，定制很多全局的窗口快捷键，比如在 gedit 里，也要求按下 Ctrl-b 之后，可以起到向后移动一个字符（即方向键 Left）的效果。
+
+这个操作本身就已经有比较多的坑了，然而，由于我调换了 Ctrl 键和 Alt 键的位置，所有的坑也变得更深了。
+
+* Gtk 的窗口
+
+Sawfish 自带的定制键盘消息，是通过这个命令：=synthesize-event=，它是通过 X11 的接口 XSendEvent 来实现的，然而，在 gtk 的窗口上，这个接口被认为有安全隐患，因此把它给禁用了，不会处理你发给它的消息。
+
+但是，X11 还有一个扩展，叫 XTest，也可以用于发送伪造的键盘消息，不知道为什么，gtk 窗口没有认为这个一样的机制也是一种安全隐患，还是支持它的。但是，sawfish 自己不支持 XTest 接口。
+
+但是，Linux 下有一个叫 xdotool 的工具，它支持 XTest 的接口。
+
+* Xdotool 的坑
+
+Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，必须做如下操作：
+
+#+BEGIN_EXAMPLE
+keyup b # 1
+
+key --clearmodifiers Left # 2
+#+END_EXAMPLE
+
+- # 1 先把当前接着的 b 给松开，不松开的话，窗口系统不会处理接下来发送的 Left 键。
+- # 2 --clearmodifiers 开关会把 Ctrl 先松开，然后按下、松开 Left，再把 Ctrl 键按回去
+
+我花了很多时间，才总结出这个规律来[捂脸]。
+
+1. 之前一直以为直接发送 Left 就可以（因为 sawfish 就是这样操作的！），
+2. 然后，发现基本不 work，想发出去的 Left 根本没被接收到，
+3. 但是又不知道怎么解决，多次尝试之后发现加个 sleep 等待一会儿就可以接收
+4. 怀疑到可能是要等键盘上的键全部松开才可以，于是写了个脚本，=xdotool-when-keyboard-clear=
+
+   这个脚本能用是能用，但是体验很不好，我每按一次 Ctrl-b，都需要自己把两个键都松开，然后脚本检测到之后才会发送 Left 键。
+
+   由于使用了轮循检测所有按键是否已松开，脚本的性能也有问题，时序也无法保证（比如连续快速按下两个快捷键的话，发送出来的顺序跟按下的顺序不一定是一致的[捂脸]）。
+5. 用了很多年 =xdotool-when-keyboard-clear= 之后，重新折腾 xdotool 的源代码，才发现应该可以用上面的方法，用 xdotool 自带的机制直接搞定。
+
+** 剩下的一个小坑
+
+由于 =--clearmodifiers= 的关系，xdotool 会把上例中的 Ctrl 键先松开，最后再『按』回去。这一按不要紧，有时候它按回去的时候，实际上你的手指自己已经松开了 Ctrl 键。
+
+你猜这种情况下会发生什么现象呢？😅
+
+在这里，我只告诉你这个情况我是怎么解决的，就是把键盘上的所有 ctrl、alt、super、shift 等辅助按键全部都按下、再松开[无奈]。
+
+* 切换在 ctrl 和 alt 引入的问题
+
+前面已经说过，我自己切换过 ctrl 和 alt 的位置，因此导致了一个非常奇怪的问题。
+
+我的 sawfish 配置是这样的（其实是从 Emacs 中拷贝出来的）：
+
+- 按下 Ctrl-b 的时候，实际给窗口发送 Left 键消息（向后移动一个字符）
+- 按下 Alt-b 的时候，实际给窗口发送 Ctrl-Left 键消息（向后移动一个单词）
+
+但是，我在实际使用的时候，发现一个奇怪的现象，即刚启动的时候，我可以连续按多次 Ctrl-b（更确切地说，是按住 Ctrl 之后，按多次 b），系统会发送多个 Left 消息。这个跟系统自带的按住 Left 键不松开，就会发送多个 Left 比起来，不算最理想的体验，但对我来说暂时够用了。
+
+然而，用了一段时间之后，我就发现按住 Ctrl 不放开，按多次 b 键的话，只会在第一次按 b 时发送一个 Left，后面的 Left 就不发送了。
+
+触发这个问题的方法，就是我自己再运行一次 swap alt/ctrl 键的脚本。这个脚本的工作原理是这样的：
+
+1. 调用 setxkbmap 设置我的键盘布局为 dvp
+2. 调用 xmodmap 交换我的 alt/ctrl、caps/escape 键的位置。
+
+经过一番艰苦的调试之后，我发现这时候 xdotool 又进入了键盘状态不正确的工作方式。在处理完第一个 Ctrl-b 之后，我发现 sawfish 调用 xdotools 的方式变了，不再是发送 Left，而是发送了 Ctrl-Left，也就是说，XWindow 系统把 Ctrl-b 认成了 Alt-b。
+
+这一点，也可以用 xev 程序来验证：
+
+#+BEGIN_EXAMPLE
+KeyPress event, serial 43, synthetic NO, window 0x3c00001,
+    root 0x217, subw 0x0, time 4496810, (831,443), root😞872,565),
+    state 0x8, keycode 113 (keysym 0xff51, Left), same_screen YES,
+    XLookupString gives 0 bytes:
+    XmbLookupString gives 0 bytes:
+    XFilterEvent returns: False
+#+END_EXAMPLE
+
+那个 state 0x8，记录的就是当前的辅助按键的状态，0x8 代表 Alt 键被按下了。如果是 Ctrl 键的话，应该是 0x4（第一个 Ctrl-b 时能看到 0x4）。
+
+** 解决方案
+
+我在写这篇博客的时候，还没有想到最终的解决方案，还在想一个 workaround（这也是为什么这篇博客的归类是 workaround）。
+
+但是，现在我已经知道问题的根本原因，以及解决方案了。
+
+问题的根本原因，是因为 X 的键盘程序，和 xmodmap 有点儿不兼容。虽然我用 xmodmap 交换了 ctrl/alt，但是被 xdotool 的 clearmodifiers 一发送，就会被 X 给认成原来没有交换的辅助按键，即 ctrl 被认成 alt，alt 被认成 ctrl。然后因为键盘状态一错，xdotool 就不再工作了（否则 Ctrl-b 被认成 Alt-b，sawfish 调用 xdotool 发送了 Ctrl-Left，光标应该向后移动一个单词才对，事实上光标一动也不动）。
+
+明白了这一点，解决方案也就很简单了，因为我用的是 dvp 布局，我马上想到把 qwepty 布局能改成 dvp 布局，那这个改布局的程序（setxkbmap）肯定也拥有修改辅助按键的能力，并且通过它改的话，肯定不会有问题了吧？
+
+果然，试了一下，确实没有问题了。
+
+可怜我十多年就这么凑和过来了，今天才知道事情的真相[捂脸]。
+
+使用的命令：
+
+#+BEGIN_SRC sh
+setxkbmap -layout us -variant dvp -option ctrl:swap_lalt_lctl -option caps:swapescape -option ctrl:swap_ralt_rctl
+#+END_SRC
+
+其中，前两个 option 是系统自带本身就支持的，最后一个 option 需要按照这篇文档进行修改：
+
+https://askubuntu.com/questions/885045/how-to-swap-ctrl-and-alt-keys-in-ubuntu-16-04
+
+* 总结
+
+1. 以后不要用 xmodmap 了（反正在 wayland 上已经是不能用了的，setxkbmap 不知道能不能用）
+2. 通过 setxkbmap 修改 modifier keys。

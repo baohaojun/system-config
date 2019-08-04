@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[修改桌面键绑定的那些坑]]></title>
+    <link href="http://baohaojun.github.io/blog/2019/08/04/0-traps-of-binding-desktop-keys.html"/>
+    <updated>2019-50-04T20:08:57+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2019/08/04/0-traps-of-binding-desktop-keys.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[参加「高效能人士的七个习惯」培训感悟（第一个习惯）]]></title>
     <link href="http://baohaojun.github.io/blog/2019/06/16/0-7-habits-1.html"/>
     <updated>2019-06-16T00:54:27+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2017/02/16/0-wrap-lines-with-emacs.html"/>
     <updated>2017-02-16T11:26:07+08:00</updated>
     <id>http://baohaojun.github.io/blog/2017/02/16/0-wrap-lines-with-emacs.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[江湖救急：Emacs org mode 下怎么排版中文 pdf 文档]]></title>
-    <link href="http://baohaojun.github.io/blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html"/>
-    <updated>2016-12-13T14:31:07+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2016/12/13/0-How-to-export-Chinese-with-Org-mode-Latex-backend.html</id>
   </entry>
 </feed>
