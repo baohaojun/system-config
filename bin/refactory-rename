@@ -34,13 +34,15 @@ EOF
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt p:prepend P:postpend aask-replacer=true @use-git=true '?"要不要执行 git 检查"' \
         # f:change-files='()' '?"要修改哪些文件，可一次指定多个或指定多次（但不能混用），默认会自己搜索匹配的文件"' \
-        # @perl-re='("" -P -P)' '?"by default, use grep -P (perl regexp)"'
+        # @perl-re='("" -P -P)' '?"by default, use grep -P (perl regexp)"' \
+        # @beagrep '?"使用 beagrep 来搜索匹配的需要替换的文件列表"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o af:P:p:h \
-               --long ask-replacer,change-files:,perl-re,postpend:,prepend:,use-git,help,no-ask-replacer,no-perl-re,no-use-git \
+               --long ask-replacer,beagrep,change-files:,perl-re,postpend:,prepend:,use-git,help,no-ask-replacer,no-beagrep,no-perl-re,no-use-git \
                -n $(basename -- $0) -- "$@")
 declare ask_replacer=true
+declare beagrep=false
 declare -a change_files=()
 declare perl_re=-P
 declare postpend=
@@ -55,6 +57,15 @@ while true; do
                 ask_replacer=false
             else
                 ask_replacer=true
+            fi
+            shift
+
+            ;;
+        --beagrep|--no-beagrep)
+            if test "$1" = --no-beagrep; then
+                beagrep=false
+            else
+                beagrep=true
             fi
             shift
 
@@ -100,6 +111,9 @@ while true; do
             printf %06s '-a, '
             printf %-24s '--[no-]ask-replacer'
             echo
+            printf "%06s" " "
+            printf %-24s '--[no-]beagrep'
+            echo "使用 beagrep 来搜索匹配的需要替换的文件列表"
             printf %06s '-f, '
             printf %-24s '--change-files=CHANGE_FILES...'
             echo
@@ -132,6 +146,10 @@ done
 
 
 ## end generated code
+
+if test -z "${change_files}" -a "${beagrep}" = true; then
+    change_files=$(beagrep -e "$1" --grep -lP | tr : ' '|pn 1)
+fi
 
 export ask_replacer
 export prepend
@@ -202,7 +220,7 @@ cat $tmpf |
 xargs -d \\n grep $perl_re -l -i -I -e "$1" |
 xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x is a match" 1>&2 && echo "$x"; done; echo '$tmpf.tmp true |
 xargs -d \\n log-run perl -npe "$(
-cat <<'EOF53f3c820af3c'
+cat <<'EOF53f3c820af3c' | . .replace-%% --
 # {%perl-mode%}
 BEGIN{
     $from = $ENV{ARG1};
@@ -243,7 +261,7 @@ for $key (keys %rep_save) {
 
 END {
     use Storable;
-    store \%rep_save, "'$perlhash'";
+    store \%rep_save, "[%%perlhash]";
 }
 # {%/perl-mode%}
 EOF53f3c820af3c
@@ -251,10 +269,12 @@ EOF53f3c820af3c
 )" -i
 
 function compute-new-string() {
-echo "$@"|perl -npe '
+echo "$@"|perl -npe "$(
+cat <<'EOF284559d578b2' | . .replace-%% --
+# {%perl-mode%}
 BEGIN{
     use Storable;
-    %rep_save = %{retrieve("'$perlhash'")};
+    %rep_save = %{retrieve("[%perlhash%")};
     $prepend = $ENV{prepend};
     $postpend = $ENV{postpend};
 }
@@ -263,7 +283,10 @@ for $key (keys %rep_save) {
     my ($from, $to) = ($key, $rep_save{$key});
     s/$prepend$from$postpend/$to/g;
 }
-'
+# {%/perl-mode%}
+EOF284559d578b2
+
+)"
 }
 
 function rename-files() {
@@ -301,9 +324,8 @@ function rename-files() {
 }
 
 rename-files . "$@"
-if test "$use_git" = true -a "${#change_files[@]}" != 0; then
-    true git checkout "${change_files[@]}" # why?
+if test "${use_git}" = true; then
+    git-interactive-add
 fi
-git-interactive-add
 
-rm $tmpf.tmp $tmpf.hash $tmpf
+rm $tmpf.tmp $tmpf.hash $tmpf -f
