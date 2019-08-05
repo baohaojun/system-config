@@ -492,10 +492,9 @@ This is simple using Perl's “reflection”.
       my $project_meta_obj = decode_json $project_meta_resp->content;
       for my $project (@{$project_meta_obj->{projects}}) {
           for my $issuetype (@{$project->{issuetypes}}) {
-              my $name = $issuetype->{name};
+              my $name = encode_utf8 $issuetype->{name};
               my $id = $issuetype->{id};
               $jkd_project_issue_types_name_id_map{$name} = $id;
-              say "Got issue type: $name => $id";
           }
       }
 
@@ -806,7 +805,7 @@ This is simple using Perl's “reflection”.
 
   sub jkd_select_issue_type(@) {
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l p:project
+      # generate-getopt -s perl -l p:project t:issue-type
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -815,11 +814,20 @@ This is simple using Perl's “reflection”.
 
       local @ARGV = @_;
 
+      my $issue_type = "";
       my $project = "";
 
       my $handler_help = sub {
           print ;
           print "\n\n选项和参数：\n";
+          printf "%6s", '-t, ';
+          printf "%-24s", '--issue-type=ISSUE-TYPE';
+          if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
           printf "%6s", '-p, ';
           printf "%-24s", '--project=PROJECT';
           if (length('--project=PROJECT') > 24 and length() > 0) {
@@ -833,6 +841,7 @@ This is simple using Perl's “reflection”.
       };
 
       GetOptions (
+          'issue-type|t=s' => \$issue_type,
           'project|p=s' => \$project,
           'help|h!' => \&$handler_help,
           );
@@ -841,7 +850,7 @@ This is simple using Perl's “reflection”.
       ## end generated code
 
       my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
-      my $issue_type_name = decode_utf8 select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
+      my $issue_type_name = $issue_type || decode_utf8 select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
       my $issue_type_id = $jkd_project_issue_types_name_id_map{$issue_type_name};
       say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
       return $issue_type_id;
@@ -852,7 +861,7 @@ This is simple using Perl's “reflection”.
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl -l \
       #     p:project \
-      #     i:issue-type-id \
+      #     t:issue-type '?"指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project）"' \
       #     @assign-to-myself=1 \
       #     @:field-value='()' \
       #     @print-schemes
@@ -866,7 +875,7 @@ This is simple using Perl's “reflection”.
 
       my $assign_to_myself = 1;
       my @field_value = ();
-      my $issue_type_id = "";
+      my $issue_type = "";
       my $print_schemes = 0;
       my $project = "";
 
@@ -889,13 +898,13 @@ This is simple using Perl's “reflection”.
           }
           printf "%s", ;
           print "\n";
-          printf "%6s", '-i, ';
+          printf "%6s", '-t, ';
           printf "%-24s", '--issue-type-id=ISSUE-TYPE-ID';
-          if (length('--issue-type-id=ISSUE-TYPE-ID') > 24 and length() > 0) {
+          if (length('--issue-type-id=ISSUE-TYPE-ID') > 24 and length("指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project），可指定 jira id 或名字") > 0) {
               print "\n";
               printf "%30s", "";
           }
-          printf "%s", ;
+          printf "%s", "指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project），可指定 jira id 或名字";
           print "\n";
           printf "%6s", '';
           printf "%-24s", '--[no]print-schemes';
@@ -920,7 +929,7 @@ This is simple using Perl's “reflection”.
       GetOptions (
           'assign-to-myself!' => \$assign_to_myself,
           'field-value=s' => \@field_value,
-          'issue-type-id|i=s' => \$issue_type_id,
+          'issue-type-id|t=s' => \$issue_type,
           'print-schemes!' => \$print_schemes,
           'project|p=s' => \$project,
           'help|h!' => \&$handler_help,
@@ -933,8 +942,8 @@ This is simple using Perl's “reflection”.
           ($project = jkd_select_project()) =~ s/:.*//;
       }
 
-      if (not $issue_type_id) {
-          $issue_type_id = jkd_select_issue_type("-p", $project);
+      if (not $issue_type or not $issue_type =~ m/^\d+$/) {
+          $issue_type = jkd_select_issue_type("-p", $project, "-t", "$issue_type");
       }
 
       my %required_fields;
@@ -948,14 +957,14 @@ This is simple using Perl's “reflection”.
           }
       }
 
-      work_with_all_fields($project, $issue_type_id, %required_fields, {"print-schemes" => ${print_schemes}});
+      work_with_all_fields($project, $issue_type, %required_fields, {"print-schemes" => ${print_schemes}});
 
       $required_fields{project} = {
           key => $project,
       };
 
       $required_fields{issuetype} = {
-          id => $issue_type_id,
+          id => $issue_type,
       };
 
       if ($assign_to_myself and exists $required_fields{assignee}) {
