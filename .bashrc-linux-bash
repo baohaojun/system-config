@@ -35,7 +35,7 @@ function read-xauth() { # so that in the saved gnu screen session, I can reset t
 function sudo-x() {
     (
         unset PROMPT_COMMAND
-        exec sudo -E env PATH="$PATH" "$@"
+        exec sudo -E env PATH="$PATH" PERL5LIB="$PERL5LIB" "$@"
     )
 }
 
