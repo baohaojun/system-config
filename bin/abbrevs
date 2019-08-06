@@ -1,5 +1,11 @@
 #!/bin/bash
 
+exec &> ~/tmp/abbrevs.log
+set -x
+
+sawfish-window mark -t abbrevs -s
+. atexit sawfish-window mark -t abbrevs -r
+
 config_dirs=(
     ~/.local-config/etc/abbrevs/
     ~/system-config/etc/abbrevs/
@@ -70,13 +76,21 @@ elif test "${abbrev:0:1}" = +; then
     sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
     exit
 elif test "${abbrev:0:1}" = '>'; then
-    abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -iname "*${abbrev:1}*" \( -type f -o -type l \))
-    ew "${abbrev_file}"
-    exec bhj-notify abbrevs "Done editing ${abbrev_file##*/}"
+    if abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -iname "*${abbrev:1}*" \( -type f -o -type l \)); then
+        ew "${abbrev_file}"
+        exec bhj-notify abbrevs "Done editing ${abbrev_file##*/}"
+    else
+        EMACS=t hint "Maybe you mean +$abbrev?"
+    fi
 fi
 
 abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -iname "*$abbrev*" \( -type f -o -type l \))
 expand_text=$(
-    cat "$abbrev_file"
+    if test -x "${abbrev_file}" && EMACS=t yes-or-no-p "Execute $abbrev_file to get the abbrev?"; then
+        "$abbrev_file"
+    else
+        cat "$abbrev_file"
+    fi
            )
+sawfish-window mark -t abbrevs -r
 sawfish-window paste "${expand_text}"
