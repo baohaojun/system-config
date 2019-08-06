@@ -399,9 +399,9 @@ sub jkd_get_issue_types(@) {
     return %jkd_project_issue_types_name_id_map;
 }
 
-sub jkd_get_issue_fields(@) {
+sub jkd_get_issue_type_fields(@) {
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl -l p:project i:issue-type
+    # generate-getopt -s perl -l p:project t:issue-type vverbose '?"print the json"'
     ## end code-generator
     ## start generated code
     use Getopt::Long;
@@ -412,11 +412,12 @@ sub jkd_get_issue_fields(@) {
 
     my $issue_type = "";
     my $project = "";
+    my $verbose = 0;
 
     my $handler_help = sub {
         print ;
         print "\n\n选项和参数：\n";
-        printf "%6s", '-i, ';
+        printf "%6s", '-t, ';
         printf "%-24s", '--issue-type=ISSUE-TYPE';
         if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
             print "\n";
@@ -432,25 +433,35 @@ sub jkd_get_issue_fields(@) {
         }
         printf "%s", ;
         print "\n";
+        printf "%6s", '-v, ';
+        printf "%-24s", '--[no]verbose';
+        if (length('--[no]verbose') > 24 and length("print the json") > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", "print the json";
+        print "\n";
 
         exit(0);
     };
 
     GetOptions (
-        'issue-type|i=s' => \$issue_type,
+        'issue-type|t=s' => \$issue_type,
         'project|p=s' => \$project,
+        'verbose|v!' => \$verbose,
         'help|h!' => \&$handler_help,
         );
 
 
     ## end generated code
 
-    if (not $issue_type) {
-        $issue_type = jkd_select_issue_type("-p", "$project");
+    if (not $issue_type or not $issue_type =~ m/^\d+$/) {
+        $issue_type = jkd_select_issue_type("-p", "$project", "-t", $issue_type);
     }
 
     my $issue_fields_resp = get("rest/api/2/issue/createmeta?projectKeys=${project}&issuetypeIds=${issue_type}&expand=projects.issuetypes.fields");
 
+    print $issue_fields_resp->content if $verbose;
     return decode_json $issue_fields_resp->content;
 }
 
@@ -534,7 +545,7 @@ sub work_with_all_fields($$\%$) {
     my ($project_id, $issue_type_id, $required_fields, $work_options) = @_;
     my $edit_issue_json_obj = $work_options->{edit_issue_json_obj};
     my $print_schemes = $work_options->{"print-schemes"};
-    my $issue_fields_obj = jkd_get_issue_fields("-p", "$project_id", "-i", "$issue_type_id");
+    my $issue_fields_obj = jkd_get_issue_type_fields("-p", "$project_id", "-t", "$issue_type_id");
 
 
     for my $project (@{$issue_fields_obj->{projects}}) {
@@ -545,20 +556,22 @@ sub work_with_all_fields($$\%$) {
 
             my @fields_to_edit;
             if ($edit_issue_json_obj) {
-               my @command = (
-                   "select-args-n", "-p", decode_utf8("请输入你想要编辑的域"),
-                   map {
-                       sprintf "%s: %s", $_, $it->{fields}{$_}{name}
-                   }
-                   grep {
-                       $it->{fields}{$_}{required}
-                   } sort keys %{$it->{fields}}
-                   );
-               my $command = join(" ", shell_quote(@command));
-               my $values = decode_utf8 qx($command);
-               $values =~ s,:.*,,mg;
-               @fields_to_edit = split(" ", $values);
-               say STDERR "fields_to_edit is @fields_to_edit";
+                my @command = (
+                    "select-args-n", "-p", decode_utf8("请输入你想要编辑的域"),
+                    map {
+                        sprintf "%s: %s", $_, $it->{fields}{$_}{name}
+                    }
+                    grep {
+                        $it->{fields}{$_}{required}
+                    } sort keys %{$it->{fields}}
+                    );
+                my $command = join(" ", shell_quote(@command));
+                my $values = decode_utf8 qx($command);
+                $values =~ s,:.*,,mg;
+                @fields_to_edit = split(" ", $values);
+                say STDERR "fields_to_edit is @fields_to_edit";
+
+
             } else {
                 @fields_to_edit = sort keys %{$it->{fields}};
             }
@@ -570,7 +583,7 @@ sub work_with_all_fields($$\%$) {
                     if ($field_key eq 'project' || $field_key eq 'issuetype') {
                         next;
                     }
-                    say STDERR "fild value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
+                    say STDERR "field value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
                     my $field_name = encode_utf8($it->{fields}{$field_key}{name} or "$field_key (field has no name)");
 
                     if ($print_schemes) {
@@ -618,6 +631,93 @@ sub work_with_all_fields($$\%$) {
     }
     if ($print_schemes) {
         exit;
+    }
+}
+
+sub get_issue_type($$$) {
+    my ($projects_issuetypes, $project_id, $issue_type_id) = @_;
+    for (@{$projects_issuetypes->{projects}}) {
+        if ($_->{id} == $project_id || $_->{key} eq $project_id) {
+            for (@{$_->{issuetypes}}) {
+                if ($_->{id} == $issue_type_id) {
+                    return $_;
+                }
+            }
+        }
+    }
+}
+
+sub jkd_print_issue(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl i:issue f:fields-to-print='()'
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("default");
+
+
+
+    my @fields_to_print = ();
+    my $issue = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-f, ';
+        printf "%-24s", '--fields-to-print=FIELDS-TO-PRINT';
+        if (length('--fields-to-print=FIELDS-TO-PRINT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--issue=ISSUE';
+        if (length('--issue=ISSUE') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'fields-to-print|f=s' => \@fields_to_print,
+        'issue|i=s' => \$issue,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my $json_issue = decode_json get("rest/api/2/issue/$issue")->content;
+    my $issue_type_id = $json_issue->{fields}{issuetype}{id};
+    my $issue_project = $json_issue->{fields}{project}{key};
+    my $issue_fields_obj = jkd_get_issue_type_fields("-p", "$issue_project", "-t", "$issue_type_id");
+
+    my $it = get_issue_type($issue_fields_obj, $issue_project, $issue_type_id);
+
+    my @required_fields = grep {
+        $it->{fields}{$_}{required}
+    } sort keys %{$it->{fields}};
+
+    my %fields_to_print;
+    for (@fields_to_print) {
+        $fields_to_print{$_} = 1;
+    }
+
+    for (@required_fields) {
+        my $field_name = encode_utf8 $it->{fields}{$_}{name};
+        if ($fields_to_print{$_} or $fields_to_print{$field_name} or not @fields_to_print) {
+            if (@fields_to_print == 1) {
+                say encode_utf8($json_issue->{fields}{$_});
+            } else {
+                say sprintf("%s(%s): %s", encode_utf8($_), encode_utf8($field_name), encode_utf8 ($json_issue->{fields}{$_}));
+            }
+        }
     }
 }
 
@@ -674,11 +774,15 @@ sub jkd_e(@) {
     my $json_issue = decode_json get("rest/api/2/issue/$issue_to_edit")->content;
     my $issue_type_id = $json_issue->{fields}{issuetype}{id};
     my $issue_project = $json_issue->{fields}{project}{key};
-    my $issue_fields_obj = jkd_get_issue_fields("-p", "$issue_project", "-i", "$issue_type_id");
+    my $issue_fields_obj = jkd_get_issue_type_fields("-p", "$issue_project", "-t", "$issue_type_id");
 
     my %edited_fields;
 
-    work_with_all_fields($issue_project, $issue_type_id, %edited_fields, {edit_issue_json_obj => $json_issue});
+    work_with_all_fields(
+        $issue_project, $issue_type_id, %edited_fields,
+        {
+            edit_issue_json_obj => $json_issue,
+        });
 
     my $ua = LWP::UserAgent->new;
 
