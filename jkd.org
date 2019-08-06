@@ -837,9 +837,15 @@ This is simple using Perl's “reflection”.
           next unless $json_issue->{fields}{$_};
           if ($fields_to_print{$_} or $fields_to_print{$field_name} or not @fields_to_print) {
               if (@fields_to_print == 1) {
-                  say $jsonParser->pretty->encode($json_issue->{fields}{$_});
+                  use Data::Types qw(:string);
+                  my $value = $json_issue->{fields}{$_};
+                  if (is_string $value) {
+                      say $value;
+                  } else {
+                      say $jsonParser->utf8->pretty->encode($value);
+                  }
               } else {
-                  say sprintf("%s(%s): %s", encode_utf8($_), $field_name, $jsonParser->pretty->encode ($json_issue->{fields}{$_}));
+                  say sprintf("%s(%s): %s", encode_utf8($_), $field_name, $jsonParser->utf8->pretty->encode ($json_issue->{fields}{$_}));
               }
           }
       }
