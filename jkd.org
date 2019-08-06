@@ -758,7 +758,7 @@ This is simple using Perl's “reflection”.
 
   sub jkd_print_issue(@) {
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl i:issue f:fields-to-print='()'
+      # generate-getopt -s perl i:issue f:fields-to-print='()' @json
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -769,6 +769,7 @@ This is simple using Perl's “reflection”.
 
       my @fields_to_print = ();
       my $issue = "";
+      my $json = 0;
 
       my $handler_help = sub {
           print ;
@@ -789,6 +790,14 @@ This is simple using Perl's “reflection”.
           }
           printf "%s", ;
           print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--[no]json';
+          if (length('--[no]json') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
 
           exit(0);
       };
@@ -796,6 +805,7 @@ This is simple using Perl's “reflection”.
       GetOptions (
           'fields-to-print|f=s' => \@fields_to_print,
           'issue|i=s' => \$issue,
+          'json!' => \$json,
           'help|h!' => \&$handler_help,
           );
 
@@ -803,28 +813,33 @@ This is simple using Perl's “reflection”.
       ## end generated code
 
       my $json_issue = decode_json get("rest/api/2/issue/$issue")->content;
+      if ($json) {
+          print encode_json($json_issue);
+          exit;
+      }
       my $issue_type_id = $json_issue->{fields}{issuetype}{id};
       my $issue_project = $json_issue->{fields}{project}{key};
       my $issue_fields_obj = jkd_get_issue_type_fields("-p", "$issue_project", "-t", "$issue_type_id");
 
       my $it = get_issue_type($issue_fields_obj, $issue_project, $issue_type_id);
 
-      my @required_fields = grep {
-          $it->{fields}{$_}{required}
-      } sort keys %{$it->{fields}};
+      my @all_fields = sort keys %{$json_issue->{fields}};
 
       my %fields_to_print;
       for (@fields_to_print) {
           $fields_to_print{$_} = 1;
       }
 
-      for (@required_fields) {
+      my $jsonParser = JSON->new->allow_nonref;
+
+      for (@all_fields) {
           my $field_name = encode_utf8 $it->{fields}{$_}{name};
+          next unless $json_issue->{fields}{$_};
           if ($fields_to_print{$_} or $fields_to_print{$field_name} or not @fields_to_print) {
               if (@fields_to_print == 1) {
-                  say encode_utf8($json_issue->{fields}{$_});
+                  say $jsonParser->pretty->encode($json_issue->{fields}{$_});
               } else {
-                  say sprintf("%s(%s): %s", encode_utf8($_), encode_utf8($field_name), encode_utf8 ($json_issue->{fields}{$_}));
+                  say sprintf("%s(%s): %s", encode_utf8($_), $field_name, $jsonParser->pretty->encode ($json_issue->{fields}{$_}));
               }
           }
       }
