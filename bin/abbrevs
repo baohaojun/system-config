@@ -70,12 +70,12 @@ elif test "${abbrev:0:1}" = +; then
     sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
     exit
 elif test "${abbrev:0:1}" = '>'; then
-    abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -name "*${abbrev:1}*" -type f)
+    abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -iname "*${abbrev:1}*" \( -type f -o -type l \))
     ew "${abbrev_file}"
     exec bhj-notify abbrevs "Done editing ${abbrev_file##*/}"
 fi
 
-abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -name "*$abbrev*" -type f)
+abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -iname "*$abbrev*" \( -type f -o -type l \))
 expand_text=$(
     cat "$abbrev_file"
            )
