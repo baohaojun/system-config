@@ -389,6 +389,8 @@
 (load "move-by-indentation.el")
 
 (setq netease-music-api "http://localhost:3000")
+(add-to-list 'load-path "~/src/github/emacs-pde/lisp")
+(load "pde-load")
 
 ;; this must come at last.
 (when (file-exists-p "~/.local-config/.emacs")

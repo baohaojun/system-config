@@ -79,6 +79,13 @@ case "$web" in
         of ${scm_jira_url}browse/$1
         exit
         ;;
+    GP|gerrit-project)
+        if test -z "$1"; then
+            set -- $(repo-project)
+        fi
+        of ${scm_gerrit_url}#/admin/projects/$1
+        exit
+        ;;
     ?*)
         die "Don't know how to do it"
         ;;

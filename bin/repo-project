@@ -19,9 +19,15 @@ elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
     exit
 fi
 
+remote=
 branch=$(git-tracking-branch)
 if test "$branch"; then
     remote=$(git config branch.$branch.remote)
-    url=$(git config remote.$remote.url)
-    echo ${url#*:}
 fi
+
+if test -z "${remote}"; then
+    remote=origin
+fi
+
+url=$(git config remote.$remote.url)
+echo ${url#*:}

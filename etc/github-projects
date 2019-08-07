@@ -10,6 +10,7 @@ github_projects=(
     crossdict
     elpa
     emacs-clang-complete-async
+    emacs-pde
     emacs.d
     ext-local
     fence-edit.el
