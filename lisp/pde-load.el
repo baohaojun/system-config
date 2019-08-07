@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 
-;; 
+;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
 ;;   (require 'pde-load)
@@ -127,7 +127,6 @@
   (global-set-key "\C-cf" 'comint-dynamic-complete)
   (global-set-key "\C-cs" 'compile-dwim-compile)
   (global-set-key "\C-cr" 'compile-dwim-run)
-  (global-set-key "\C-ci" 'imenu)
   (global-set-key "\C-cv" 'imenu-tree)
   (global-set-key "\C-cj" 'ffap)
   (global-set-key "\C-ch" 'help-dwim)
