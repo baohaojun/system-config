@@ -95,7 +95,7 @@
  '(jira-host "localhost.18888")
  '(jira-url "http://localhost:18888/rpc/xmlrpc")
  '(keyboard-coding-system (quote cp936))
- '(kill-ring-max 6000)
+ '(kill-ring-max 200)
  '(linum-format " %7i ")
  '(lisp-mode-hook
    (quote

@@ -1,14 +1,14 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts h:host='${GERRIT_HOST}' p:port u:user @admin
+# generate-getopts h:host='${scm_gerrit_server}' p:port u:user @admin
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h:p:u:h \
                       --long admin,host:,port:,user:,help,no-admin \
                       -n $(basename -- $0) -- "$@")
 declare admin=false
-declare host=${GERRIT_HOST}
+declare host=${scm_gerrit_server}
 declare port=
 declare user=
 eval set -- "$TEMP"
