@@ -2,20 +2,40 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt d:mu-dir='${HOME}/.mu-gtd'
+# generate-getopt d:mu-dir='${HOME}/.mu-gtd' @rebuild='("" --rebuild "")' @both
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o d:h \
-               --long mu-dir:,help \
+               --long both,mu-dir:,rebuild,help,no-both,no-rebuild \
                -n $(basename -- $0) -- "$@")
+declare both=false
 declare mu_dir=${HOME}/.mu-gtd
+declare rebuild=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --both|--no-both)
+            if test "$1" = --no-both; then
+                both=false
+            else
+                both=true
+            fi
+            shift
+
+            ;;
         -d|--mu-dir)
             mu_dir=$2
             shift 2
+
+            ;;
+        --rebuild|--no-rebuild)
+            if test "$1" = --no-rebuild; then
+                rebuild=
+            else
+                rebuild=--rebuild
+            fi
+            shift
 
             ;;
         -h|--help)
@@ -23,8 +43,14 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]both'
+            echo
             printf %06s '-d, '
             printf %-24s '--mu-dir=MU_DIR'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]rebuild'
             echo
             exit
             shift
@@ -42,10 +68,13 @@ done
 
 ## end generated code
 
+if test "${both}" = true; then
+    mu index $rebuild&
+fi
 
 . force-1 || exit 0
 if which mu >/dev/null 2>&1; then
-    time mu index --muhome ${mu_dir} || true
+    time mu index --muhome ${mu_dir} $rebuild|| true
     emacsclient -e "$(
 cat <<'EOFba23472b1552'
 ; {%emacs-lisp-mode%}
@@ -57,3 +86,4 @@ EOFba23472b1552
 
 )" || true
 fi
+wait
