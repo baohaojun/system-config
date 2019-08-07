@@ -14,14 +14,15 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @last c:command
+# generate-getopt @last c:command w:web
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o c:h \
-               --long command:,last,help,no-last \
+TEMP=$( getopt -o c:w:h \
+               --long command:,last,web:,help,no-last \
                -n $(basename -- $0) -- "$@")
-command=
-last=false
+declare command=
+declare last=false
+declare web=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -29,6 +30,7 @@ while true; do
         -c|--command)
             command=$2
             shift 2
+
             ;;
         --last|--no-last)
             if test "$1" = --no-last; then
@@ -37,6 +39,12 @@ while true; do
                 last=true
             fi
             shift
+
+            ;;
+        -w|--web)
+            web=$2
+            shift 2
+
             ;;
         -h|--help)
             set +x
@@ -48,6 +56,9 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--[no-]last'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--web=WEB'
             echo
             exit
             shift
@@ -62,6 +73,25 @@ while true; do
     esac
 done
 
+
+case "$web" in
+    jira)
+        of ${scm_jira_url}browse/$1
+        exit
+        ;;
+    GP|gerrit-project)
+        if test -z "$1"; then
+            set -- $(repo-project)
+        fi
+        of ${scm_gerrit_url}#/admin/projects/$1
+        exit
+        ;;
+    ?*)
+        die "Don't know how to do it"
+        ;;
+    '')
+        ;;
+esac
 
 ## end generated code
 
