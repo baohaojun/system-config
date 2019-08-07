@@ -137,6 +137,8 @@ repo_dir=$(lookup-file .repo)
 android_dir=$(lookup-file-dir -e bionic)
 cd ${android_dir}
 
+OUT_DIR_LONG=${android_dir}/out
+
 export CCACHE_DIR=$repo_dir/.ccache
 rm ~/.ccache >/dev/null 2>&1 || true
 unset CLASSPATH
