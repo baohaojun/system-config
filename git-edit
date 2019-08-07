@@ -1,8 +1,7 @@
 #!/bin/bash
-#
-# Given a git tree, create a COVER commit with a cover-letter
-# The cover-letter can also have a CC: list which will be used
-# during patch generation.
+# An ncurses based UI to quickly select a git commit from a 'git log --online' output
+# and press a key on it to perform a single action (Checkout, reword changelog, edit patch, etc).
+# Author: Joel Fernandes <joel@joelfernandes.org>
 
 ##### GIT-EDIT-GUI
 cat > /tmp/geg.py << "END"
