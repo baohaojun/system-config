@@ -1,0 +1,269 @@
+#!/bin/bash
+#
+# Given a git tree, create a COVER commit with a cover-letter
+# The cover-letter can also have a CC: list which will be used
+# during patch generation.
+
+##### GIT-EDIT-GUI
+cat > /tmp/geg.py << "END"
+#!/usr/bin/python
+# curses bits from: 
+# https://stackoverflow.com/questions/30828804/how-to-make-a-scrolling-menu-in-python-curses
+# This scripts reads a list of commits from an input file generated
+# by git log --oneline, and outputs the commit number of the selected
+# commit, later stages will edit the commit
+
+from __future__ import division  #You don't need this in Python3
+import curses
+from math import *
+import sys
+import os
+
+with open("/tmp/ncurses-input-tmp") as f:
+    content = f.readlines()
+strings = [x.rstrip() for x in content]
+
+screen = curses.initscr()
+curses.noecho()
+curses.cbreak()
+curses.start_color()
+screen.keypad( 1 )
+curses.init_pair(1,curses.COLOR_BLACK, curses.COLOR_CYAN)
+highlightText = curses.color_pair( 1 )
+normalText = curses.A_NORMAL
+screen.border( 0 )
+curses.curs_set( 0 )
+max_row = 100 #max number of rows
+box = curses.newwin( max_row + 2, 130, 1, 1 )
+box.box()
+
+row_num = len( strings )
+
+pages = int( ceil( row_num / max_row ) )
+position = 1
+page = 1
+for i in range( 1, max_row + 1 ):
+    if row_num == 0:
+        box.addstr( 1, 1, "There aren't strings", highlightText )
+    else:
+        if (i == position):
+            box.addstr( i, 2, str( i ) + " - " + strings[ i - 1 ], highlightText )
+        else:
+            box.addstr( i, 2, str( i ) + " - " + strings[ i - 1 ], normalText )
+        if i == row_num:
+            break
+
+screen.refresh()
+box.refresh()
+
+x = screen.getch()
+
+def write_exit(cmd, commit):
+    screen.erase()
+    with open("/tmp/ncurses-commit-output", "w") as text_file:
+        text_file.write("{0} {1}".format(cmd, commit))
+    exit()
+
+while x != 27:
+    if x == curses.KEY_DOWN:
+        if page == 1:
+            if position < i:
+                position = position + 1
+            else:
+                if pages > 1:
+                    page = page + 1
+                    position = 1 + ( max_row * ( page - 1 ) )
+        elif page == pages:
+            if position < row_num:
+                position = position + 1
+        else:
+            if position < max_row + ( max_row * ( page - 1 ) ):
+                position = position + 1
+            else:
+                page = page + 1
+                position = 1 + ( max_row * ( page - 1 ) )
+    if x == curses.KEY_UP:
+        if page == 1:
+            if position > 1:
+                position = position - 1
+        else:
+            if position > ( 1 + ( max_row * ( page - 1 ) ) ):
+                position = position - 1
+            else:
+                page = page - 1
+                position = max_row + ( max_row * ( page - 1 ) )
+    if x == curses.KEY_LEFT:
+        if page > 1:
+            page = page - 1
+            position = 1 + ( max_row * ( page - 1 ) )
+
+    if x == curses.KEY_RIGHT:
+        if page < pages:
+            page = page + 1
+            position = ( 1 + ( max_row * ( page - 1 ) ) )
+
+    if x == ord( 'r' ):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("reword", commit)
+
+    if x == ord('e'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("edit", commit)
+
+    if x == ord('p'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("editpatch", commit)
+
+    if x == ord('q'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("quit", commit)
+
+    if x == ord('R'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("revert", commit)
+
+    if x == ord('c'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("checkout", commit)
+
+    if x == ord('s'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("stat", commit)
+
+    if x == 10:
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("show", commit)
+
+    # box.erase()
+    # screen.border( 0 )
+    # box.border( 0 )
+
+    for i in range( 1 + ( max_row * ( page - 1 ) ), max_row + 1 + ( max_row * ( page - 1 ) ) ):
+        if row_num == 0:
+            box.addstr( 1, 1, "There aren't strings",  highlightText )
+        else:
+            if ( i + ( max_row * ( page - 1 ) ) == position + ( max_row * ( page - 1 ) ) ):
+                box.addstr( i - ( max_row * ( page - 1 ) ), 2, str( i ) + " - " + strings[ i - 1 ], highlightText )
+            else:
+                box.addstr( i - ( max_row * ( page - 1 ) ), 2, str( i ) + " - " + strings[ i - 1 ], normalText )
+            if i == row_num:
+                break
+
+    screen.refresh()
+    box.refresh()
+    x = screen.getch()
+
+curses.endwin()
+exit()
+END
+chmod +x /tmp/geg.py
+
+##### GIT-EDIT-COMMIT
+cat > /tmp/igec.py <<END0
+#!/bin/bash
+strstr() {
+  [ "\${1#*\$2*}" = "\$1" ] && return 1
+  return 0
+}
+strstr \$1 "git-rebase-todo"
+if [ \$? -eq 0 ]; then
+	# Only change the first line
+	sed -i '1!b;s/pick\(.*\)/edit\1/g' .git/rebase-merge/git-rebase-todo
+else
+	vi \$1
+fi
+END0
+chmod +x /tmp/igec.py
+
+cat > /tmp/gec.py <<END1
+#!/bin/bash
+EDITOR=/tmp/igec.py git rebase -i \$1^
+END1
+chmod +x /tmp/gec.py
+
+##### GIT-EDIT-PATCH
+cat > /tmp/gep.py <<END2
+#!/bin/bash
+
+EDITOR=/tmp/igec.py git rebase -i \$1^
+
+rm -rf /tmp/tmp-gep/
+mkdir -p /tmp/tmp-gep/
+
+git format-patch HEAD^ -o /tmp/tmp-gep/
+vi /tmp/tmp-gep/*patch
+
+git checkout HEAD^
+git checkout .
+git am /tmp/tmp-gep/*patch
+
+git rebase --continue
+END2
+chmod +x /tmp/gep.py
+
+##### GIT-REWORD-COMMIT
+cat > /tmp/igrc.py <<END3
+#!/bin/bash
+strstr() {
+  [ "\${1#*\$2*}" = "\$1" ] && return 1
+  return 0
+}
+
+strstr \$1 "git-rebase-todo"
+if [ \$? -eq 0 ]; then
+	# Only change the first line
+	sed -i '1!b;s/pick\(.*\)/reword\1/g' .git/rebase-merge/git-rebase-todo
+else
+	vi \$1
+fi
+END3
+chmod +x /tmp/igrc.py
+
+cat > /tmp/grc.py <<END4
+#!/bin/bash
+
+EDITOR=/tmp/igrc.py git rebase -i \$1^
+END4
+chmod +x /tmp/grc.py
+
+while [ 1 ]; do # START WHILE
+
+rm /tmp/ncurses*
+git log --oneline | head -n 100 > /tmp/ncurses-input-tmp
+/tmp/geg.py
+tput reset
+
+function do_quit() {
+	rm /tmp/g*.py
+	rm /tmp/ncurses*
+        exit
+}
+
+if [ -f /tmp/ncurses-commit-output ]; then
+	cmd=$(cat /tmp/ncurses-commit-output | cut -d ' ' -f1)
+	commit=$(cat /tmp/ncurses-commit-output | cut -d ' ' -f2)
+	if [ $cmd == "edit" ]; then
+		/tmp/gec.py $commit
+                do_quit
+	elif [ $cmd == "editpatch" ]; then
+		/tmp/gep.py $commit
+	elif [ $cmd == "reword" ]; then
+		/tmp/grc.py $commit
+	elif [ $cmd == "show" ]; then
+		git show $commit
+	elif [ $cmd == "revert" ]; then
+		git revert $commit
+	elif [ $cmd == "checkout" ]; then
+		git checkout $commit
+	elif [ $cmd == "stat" ]; then
+		git show --stat $commit
+	fi
+        echo > /dev/null  # without this it appears not to work (above command out disappears)
+
+if [ $cmd == "quit" ]; then
+        do_quit
+	exit
+fi
+fi
+
+done # END WHILE
