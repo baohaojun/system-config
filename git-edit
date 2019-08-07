@@ -1,7 +1,8 @@
 #!/bin/bash
-# An ncurses based UI to quickly select a git commit from a 'git log --online' output
-# and press a key on it to perform a single action (Checkout, reword changelog, edit patch, etc).
-# Author: Joel Fernandes <joel@joelfernandes.org>
+# An ncurses based UI to quickly select a git commit from a 'git log --online'
+# output and press a key on it to perform a single action (Checkout, reword
+# changelog, edit patch, etc).  Opens up vim editor when needed. Inspired by a
+# grep frontend called ngp.
 
 ##### GIT-EDIT-GUI
 cat > /tmp/geg.py << "END"
