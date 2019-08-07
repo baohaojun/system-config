@@ -3,6 +3,7 @@
 # output and press a key on it to perform a single action (Checkout, reword
 # changelog, edit patch, etc).  Opens up vim editor when needed. Inspired by a
 # grep frontend called ngp.
+# Author: Joel Fernandes <joel@joelfernandes.org>
 
 ##### GIT-EDIT-GUI
 cat > /tmp/geg.py << "END"
