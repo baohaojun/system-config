@@ -76,7 +76,7 @@ elif test "${abbrev:0:1}" = +; then
     sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
     exit
 elif test "${abbrev:0:1}" = '>'; then
-    if abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -iname "*${abbrev:1}*" \( -type f -o -type l \)); then
+    if abbrev_file=$(EMACS=t select-output-line -o find "${config_dirs[@]}" -iname "*${abbrev:1}*" \( -type f -o -type l \)); then
         ew "${abbrev_file}"
         exec bhj-notify abbrevs "Done editing ${abbrev_file##*/}"
     else
@@ -84,7 +84,7 @@ elif test "${abbrev:0:1}" = '>'; then
     fi
 fi
 
-abbrev_file=$(EMACS=t select-output-line find "${config_dirs[@]}" -iname "*$abbrev*" \( -type f -o -type l \))
+abbrev_file=$(EMACS=t select-output-line -o find "${config_dirs[@]}" -iname "*$abbrev*" \( -type f -o -type l \))
 expand_text=$(
     if test -x "${abbrev_file}" && EMACS=t yes-or-no-p "Execute $abbrev_file to get the abbrev?"; then
         "$abbrev_file"
