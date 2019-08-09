@@ -47,7 +47,7 @@ GetOptions (
 
 ## end generated code
 
-my @nodes = ("(master)", split " ", qx(jc list-nodes));
+my @nodes = (split " ", qx(jc list-nodes --online-only));
 
 if ($which_node) {
   @nodes = ($which_node);
@@ -58,7 +58,9 @@ use JSON;
 use String::ShellQuote;
 
 for my $node (@nodes) {
-  # say STDERR "checking $node";
+    $node = '(master)' if $node eq 'master';
+
+    # say STDERR "checking $node";
 
   my $command = join " ", shell_quote("jc", "get-node-info", "-n", "$node", "-d", "1");
   my $node_json = decode_json(qx($command));

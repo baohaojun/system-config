@@ -85,8 +85,13 @@ elif test "${abbrev:0:1}" = '>'; then
 fi
 
 abbrev_file=$(EMACS=t select-output-line -o find "${config_dirs[@]}" -iname "*$abbrev*" \( -type f -o -type l \))
+
+if test ! -e "${abbrev_file}"; then
+    bhj-notify abbrevs "There is no matching file for $abbrev, use +$abbrev to create a new abbrev"
+    exit 1
+fi
 expand_text=$(
-    if test -x "${abbrev_file}" && EMACS=t yes-or-no-p "Execute $abbrev_file to get the abbrev?"; then
+    if test -x "${abbrev_file}"; then
         "$abbrev_file"
     else
         cat "$abbrev_file"

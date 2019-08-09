@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 use strict;
-
+use v5.10;
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl j:job-pattern @dry=1
+# generate-getopt -s perl j:job-pattern @dry=1 q:queue-url
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -13,44 +13,64 @@ Getopt::Long::Configure("default");
 
 my $dry = 1;
 my $job_pattern = "";
+my $queue_url = "";
 
 my $handler_help = sub {
-  print ;
-  print "\n\n选项和参数：\n";
-  printf "%6s", '';
-  printf "%-24s", '--[no]dry';
-  if (length('--[no]dry') > 24 and length() > 0) {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]dry';
+    if (length('--[no]dry') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '-j, ';
-  printf "%-24s", '--job-pattern=JOB-PATTERN';
-  if (length('--job-pattern=JOB-PATTERN') > 24 and length() > 0) {
+    printf "%6s", '-j, ';
+    printf "%-24s", '--job-pattern=JOB-PATTERN';
+    if (length('--job-pattern=JOB-PATTERN') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
+    printf "%6s", '-q, ';
+    printf "%-24s", '--queue-url=QUEUE-URL';
+    if (length('--queue-url=QUEUE-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
-  exit(0);
+    exit(0);
 };
 
 GetOptions (
-            'dry!' => \$dry,
-            'job-pattern|j=s' => \$job_pattern,
-            'help|h!' => \&$handler_help,
-           );
+    'dry!' => \$dry,
+    'job-pattern|j=s' => \$job_pattern,
+    'queue-url|q=s' => \$queue_url,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
 
 use JSON;
 
+if ($queue_url) {
+    die "Can't do both queue url and job pattern" if $job_pattern;
+
+    my $q_json = decode_json(qx(jc curl ${queue_url}api/json));
+    my $id = $q_json->{id};
+
+    say STDERR "about to kill queue: $id";
+    system("jc", "curl", "$ENV{scm_jenkins_url}queue/cancelItem?id=$id", "-X", "POST");
+    exit 0;
+}
+
 my $q_json = decode_json(qx(jc curl $ENV{scm_jenkins_url}queue/api/json));
 
-use v5.10;
 $job_pattern = qr($job_pattern);
 for (@{$q_json->{items}}) {
   my $id = $_->{id};
