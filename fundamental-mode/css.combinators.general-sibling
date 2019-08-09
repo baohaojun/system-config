@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: css.combinators.general-sibling
+# --
+A ~ B
+
+
+
+The general sibling combinator (~) separates two selectors and matches the second element only if it follows the first element (though not necessarily immediately), and both are children of the same parent element.

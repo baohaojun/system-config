@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: css.pseudo.elements
+# --
+::after (:after)
+::backdrop
+::before (:before)
+::cue (:cue)
+::first-letter (:first-letter)
+::first-line (:first-line)
+::grammar-error
+::marker
+::part()
+::placeholder

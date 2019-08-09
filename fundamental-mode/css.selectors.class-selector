@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: css.selectors.class-selector
+# --
+.classname
