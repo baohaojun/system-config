@@ -2,5 +2,18 @@
 tmpf=/tmp/$(basename $0).$$
 cat > $tmpf
 
-ctags-ajoke "$@" $tmpf
+ctags-ajoke "$@" $tmpf | perl -ne "$(
+cat <<'EOF542db799a5d0'
+# {%perl-mode%}
+if (m:^(.*?)(\s+\w+\s+\d+\s+/.*):) {
+    my ($what, $remainder) = ($1, $2);
+    $what =~ s,\s,-,g;
+    print "$what$remainder\n";
+} else {
+    print;
+}
+# {%/perl-mode%}
+EOF542db799a5d0
+
+)"
 rm $tmpf
