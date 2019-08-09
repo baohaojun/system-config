@@ -3,17 +3,27 @@
 # SE means Switch Env：在生产环境和测试环境之间切换
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P ddefault
+# generate-getopt -P ddefault=@null@
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o dh \
-                      --long default,help,no-default \
+                      --long bash,default,help,no-bash,no-default \
                       -n $(basename -- $0) -- "$@")
-declare default=false
+declare bash=false
+declare default=@null@
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --bash|--no-bash)
+            if test "$1" = --no-bash; then
+                bash=false
+            else
+                bash=true
+            fi
+            shift
+
+            ;;
         -d|--default|--no-default)
             if test "$1" = --no-default; then
                 default=false
@@ -28,6 +38,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]bash'
+            echo
             printf %06s '-d, '
             printf %-24s '--[no-]default'
             echo
@@ -47,9 +60,6 @@ done
 
 ## end generated code
 
-set -x
-exec &> ~/tmp/se.log
-
 if test "${default}" = true; then
     if test -e ~/.config/system-config/scm-testing; then
         rm -f ~/.config/system-config/scm-testing
@@ -61,6 +71,10 @@ if test "${default}" = true; then
     myscr --bg 'global-setenv'
     myscr bash
     exit
+elif test "${default}" = false; then
+    export SE_LOCAL=true
+    . ~/src/ep-tools/common_utils/etc/global-settings.rc
+    exec bash
 fi
 
 declare -A url_switch_map

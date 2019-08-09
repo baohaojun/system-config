@@ -1,0 +1,77 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P n:name s:snippet m:mode=fundamental-mode
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o m:n:s:h \
+                      --long mode:,name:,snippet:,help \
+                      -n $(basename -- $0) -- "$@")
+declare mode=fundamental-mode
+declare name=
+declare snippet=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -m|--mode)
+            mode=$2
+            shift 2
+
+            ;;
+        -n|--name)
+            name=$2
+            shift 2
+
+            ;;
+        -s|--snippet)
+            snippet=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--mode=MODE'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--name=NAME'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--snippet=SNIPPET'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if ! [[ $mode =~ -mode$ ]]; then
+    $mode=$mode-mode
+fi
+
+s_dir=~/src/github/yasnippet-snippets/$mode
+mkdir -p $s_dir
+cd $s_dir
+
+cat <<EOF > $name
+# -*- mode: snippet -*-
+# name: $name
+# --
+$snippet
+EOF
+e $name

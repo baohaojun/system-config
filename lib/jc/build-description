@@ -2,14 +2,17 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P j:job-name n:build-number \
-    # d:description='"@NULL@"'
+# generate-getopt -P '?"Note: When setting current build, need only set -d"' \
+    # j:job-name n:build-number \
+    # b:build-url='"${BUILD_URL}"' '?"default is \$BUILD_URL"' \
+    # d:description='"@NULL@"' '?"when not specified, print current description (i.e., get)"'
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o n:d:j:h \
-                      --long build-number:,description:,job-name:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o n:b:d:j:h \
+                      --long build-number:,build-url:,description:,job-name:,help \
                       -n $(basename -- $0) -- "$@")
 declare build_number=
+declare build_url="${BUILD_URL}"
 declare description="@NULL@"
 declare job_name=
 eval set -- "$TEMP"
@@ -18,6 +21,11 @@ while true; do
 
         -n|--build-number)
             build_number=$2
+            shift 2
+
+            ;;
+        -b|--build-url)
+            build_url=$2
             shift 2
 
             ;;
@@ -33,15 +41,20 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e
+            echo -e "Note: When setting current build, need only set -d"
             echo
             echo Options and arguments:
             printf %06s '-n, '
             printf %-24s '--build-number=BUILD_NUMBER'
             echo
+            printf %06s '-b, '
+            printf %-24s '--build-url=BUILD_URL'
+            echo "default is \$BUILD_URL"
             printf %06s '-d, '
             printf %-24s '--description=DESCRIPTION'
             echo
+            printf "%30s" ""
+            echo "when not specified, print current description (i.e., get)"
             printf %06s '-j, '
             printf %-24s '--job-name=JOB_NAME'
             echo
