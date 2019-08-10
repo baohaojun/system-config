@@ -166,7 +166,11 @@ M.click_scene = function (scene, settings)
    xy = split(" ", xy)
    for n = 1, click_times do
       log("click %s @%d", scene, n)
-      adb_tap_XY(xy[1] + x_plus, xy[2] + y_plus)
+      if settings.long_press then
+         adb_long_press_XY(xy[1] + x_plus, xy[2] + y_plus, settings.long_press)
+      else
+         adb_tap_XY(xy[1] + x_plus, xy[2] + y_plus)
+      end
       if n < click_times then
          sleep(.1)
       end

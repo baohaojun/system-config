@@ -129,6 +129,31 @@ M.weixin_find_friend = function(friend_name, depth)
    end
 end
 
+M.weixin_shezhi_pyq_guanbi = function()
+   weixin_open_homepage()
+   jump_from_to("wx-wo", "wx-shezhi")
+   jump_from_to("wx-shezhi", "wx-shezhi-tongyong")
+   jump_from_to("wx-shezhi-tongyong", "wx-shezhi-faxianyeguanli")
+   jump_from_to("wx-shezhi-faxianyeguanli", "wx-shezhi-pyq")
+   jump_from_to("wx-shezhi-pyq-dakai", "wx-shezhi-pyq-guanbi")
+end
+
+M.weixin_shezhi_pyq_kaiqi = function()
+   weixin_open_homepage()
+   jump_from_to("wx-wo", "wx-shezhi")
+   jump_from_to("wx-shezhi", "wx-shezhi-tongyong")
+   jump_from_to("wx-shezhi-tongyong", "wx-shezhi-faxianyeguanli")
+   jump_from_to("wx-shezhi-faxianyeguanli", "wx-shezhi-pyq")
+   jump_from_to("wx-shezhi-pyq-guanbi", "wx-shezhi-pyq-dakai")
+end
+
+M.weixin_shezhi_pyq_fabiaowenzi = function()
+   weixin_open_homepage()
+   jump_from_to("wx-faxian", "wx-faxian-pyq")
+   jump_from_to("wx-faxian-pyq", "wx-pyq-shexiangtou")
+   jump_from_to("wx-pyq-shexiangtou", "wx-pyq-fabiaowenzi", {long_press = 800})
+end
+
 M.adb_start_weixin_share = function(text_or_image)
    if using_adb_root then
       if text_or_image == 'text' then
@@ -141,25 +166,8 @@ M.adb_start_weixin_share = function(text_or_image)
       return
    end
 
-   local click = "adb-tap"
-   if text_or_image == 'text' then
-      click = "adb-long-press-800"
-   elseif text_or_image ~= 'image' then
-      error("Can only do image or text")
-   end
-
-   weixin_open_homepage()
-   adb_event("adb-tap 654 1850 sleep .5 adb-tap 332 358")
-   if (wait_top_activity_match("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")):match"com.tencent.mm/com.tencent.mm.plugin.sns.ui." then
-      adb_event("sleep 1 " .. click .. " 977 132")
-   else
-      log("Can't switch to the Friend Zone page.")
-   end
-   if text_or_image == 'image' then
-      adb_event("adb-tap 213 929") -- choose picture
-   end
-   adb_event("adb-tap 143 264")
-   wait_input_target("com.tencent.mm/com.tencent.mm.plugin.sns.ui.")
+   weixin_shezhi_pyq_kaiqi()
+   weixin_shezhi_pyq_fabiaowenzi()
    log("start weixin share complete")
 end
 
@@ -245,6 +253,7 @@ M.wrench_share_to_weixin = function(text)
    end
    adb_start_weixin_share('text')
    wrench_post(nil, 'top-right', "分享到微信朋友圈？")
+   weixin_shezhi_pyq_guanbi()
 end
 
 M.weixin_text_share = function(window, text)

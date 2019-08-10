@@ -88,6 +88,11 @@ M.adb_set_tap_params = function(pressure, size)
    adb_quick_input{("input set-pressure-size %.2f %.2f"):format(pressure, size)};
 end
 
+M.adb_long_press_XY = function(x, y, milli)
+   adb_quick_input{("input touchscreen swipe %d %d %d %d %s;"):format(x, y, x, y, milli)}
+   sleep(milli/1000)
+end
+
 M.adb_tap_XY = function(x, y) -- do not modify x and y
    -- log("adb_tap_XY(%d, %d)", x, y)
    adb_quick_input{("input tap %d %d"):format(x, y)}
