@@ -70,31 +70,14 @@ sub quote_lua_str($) {
   return sprintf("[%s[%s]%s]", $quote, $text, $quote);
 }
 
-if ($ask_to_whom or $send_to) {
-  my $whom;
-  if ($send_to) {
-    $whom = $send_to
-  } else {
-    chomp($whom = qx(input-lock -l Wrench-post select-args --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
-  }
-
-  my $call_text = sprintf("wrench_call(%s)", quote_lua_str($whom));
-  system("log-run", "Wrench.sh", $call_text);
-
-  if (system("yes-or-no-p '已经找到你想发送消息的人了么？'") != 0) {
-    system("bhj-notify", "Wrench-post", "Can't find $whom to post, please fix it");
-    exit 1;
-  }
-}
-
 my $text;
 if (@ARGV) {
-  $text = join(" ", @ARGV);
+    $text = join(" ", @ARGV);
 } else {
-  $text = join("", <>);
+    $text = join("", <>);
 }
 
-$text =~ s,\s*$,,; # get rid of empty lines at the end.
+$text =~ s,\s*$,,;              # get rid of empty lines at the end.
 
 use File::Slurp;
 
@@ -105,11 +88,35 @@ $text
 
 
 EOF
-           );
+        );
 
 use List::Util qw(max);
 
 use String::ShellQuote;
+
+
+if ($ask_to_whom or $send_to) {
+  my $whom;
+  if ($send_to) {
+    $whom = $send_to
+  } else {
+    chomp($whom = qx(input-lock -l Wrench-post select-args --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
+  }
+
+  if ($whom eq 'pengyouquan@@wx') {
+      my $post_text = sprintf("wrench_share_to_weixin(%s)", quote_lua_str($text));
+      system("Wrench.sh", $post_text);
+      exit 0;
+  }
+
+  my $call_text = sprintf("wrench_call(%s)", quote_lua_str($whom));
+  system("log-run", "Wrench.sh", $call_text);
+
+  if (system("yes-or-no-p '已经找到你想发送消息的人了么？'") != 0) {
+    system("bhj-notify", "Wrench-post", "Can't find $whom to post, please fix it");
+    exit 1;
+  }
+}
 
 my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
 
