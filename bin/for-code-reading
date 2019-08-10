@@ -95,12 +95,13 @@ function mkbeagrepidx() {
 
     if test $# != 0; then
         ADDITIONAL_OPTIONS=("$@")
-    elif test "$BEAGREP_IGNORE_DIR_PATTERNS"; then
-        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$BEAGREP_IGNORE_DIR_PATTERNS")
-    elif test -e "$(lookup-file .beagrep-ignore 2>/dev/null)"; then
-        ADDITIONAL_OPTIONS=(--deny-directory-pattern "*/.git,$(cat $(lookup-file .beagrep-ignore))")
+    elif lookup-file -e .beagrep-ignore; then
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "${BEAGREP_IGNORE_DIR_PATTERNS:-*/.git},$(cat $(lookup-file .beagrep-ignore))")
+        # EMACS=t hint "deny is set to: ${ADDITIONAL_OPTIONS[*]}, $PWD"
     elif test -e "$(lookup-file .beagrep-ignore.sh)"; then
         . .beagrep-ignore.sh
+    elif test "$BEAGREP_IGNORE_DIR_PATTERNS"; then
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern )
     else
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/$x,; fi; done)*/out,*/.repo,*/.git")
     fi

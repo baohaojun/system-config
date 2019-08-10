@@ -1,17 +1,74 @@
 #!/usr/bin/env perl
+use strict;
 
-
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P s:split rregexp vverbose
+## end code-generator
+## start generated code
 use Getopt::Long;
-my $split;
-GetOptions(
-    "split=s" => \$split,
-    );
 
-$split = q(\s|'|:) unless $split;
-$split = qr($split);
+Getopt::Long::Configure("posix_default");
 
-$arg1 = $ARGV[0];
-@arg1 = split($split, $arg1);
+
+
+my $regexp = 0;
+my $split = "";
+my $verbose = 0;
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--[no]regexp';
+    if (length('--[no]regexp') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--split=SPLIT';
+    if (length('--split=SPLIT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'regexp|r!' => \$regexp,
+    'split|s=s' => \$split,
+    'verbose|v!' => \$verbose,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+if (not $split) {
+    $split = " ";
+} else {
+    $split = qr($split) if $regexp;
+}
+
+
+my $arg1 = $ARGV[0];
+my @arg1 = split($split, $arg1);
+if ($verbose) {
+    local $, = ", ";
+    print "arg1 is @arg1\n";
+}
 
 sub debug(@) {
     print STDERR "@_\n";
@@ -29,6 +86,9 @@ if (@ARGV > 1) {
     $arg2 = $ARGV[0];
     @arg2 = split($split, $arg2);
 }
+
+my %arg2;
+my @arg1_remain;
 
 for (@arg2) {
     $arg2{$_} = 1;

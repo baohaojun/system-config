@@ -12,15 +12,18 @@ my $comment = <<~'EOFc8d96c1eb1b8';
 
 * 杀 build 的标准：
 
-1. 如果两个 build 都没有 gerrit_topic，则以谁的 patchset number 更大为准，谁小的谁被 kill 掉
+1. 如果两个都设置了相同的 topic 的话，谁的 build number 小，谁被干掉（因为后面的那个 topic build，可能代码已经有更新）。
 
-   - 一样大的话，谁的 build number 小，谁留下（已经编上了，代码也没有更新，没有必要重编，留着就可以了，build number 大的那个自己退出）
+2. 否则，则以谁的 patchset number 更大为准，
 
-2. 如果其中一个 build 有 gerrit topic，另一个没有的话，干掉那个没有 topic 的。
+   - patchset number 小的被 kill 掉
 
-3. 如果两个都有 topic 的话，谁的 build number 小，谁被干掉（因为后面的那个 topic build，可能代码已经有更新）。
+   - 一样大的话，如果有一个 build 加了 topic，干掉另一个没加 topic 的
 
-   如果有 topic 的话，不再比较 topic 里的各个 patchset 的 number。只比较 build number。
+   - 都没有加 topic 的话，谁的 build number 小，谁留下（已经编上了，代码也没有更新，没有必要重编，留着就可以了，build number 大的那个自己退出）
+
+
+
 # {%/org-mode%}
 EOFc8d96c1eb1b8
 
@@ -153,25 +156,27 @@ sub should_new_kill_old($$$$) {
         return "kill-old";
     }
 
-    if ($env_new->{GERRIT_TOPIC} and not $env_old->{GERRIT_TOPIC}) {
-        $stop_build_reason = "Topic build stops non-topic: $url_new";
-        return "kill-old";
-    }
-
-    if ($env_new->{GERRIT_TOPIC} or $env_old->{GERRIT_TOPIC}) {
-        say STDERR "at least 1 topic set, do nothing";
-        return "do-nothing";
-    }
-
     if ($env_new->{GERRIT_CHANGE_NUMBER} == $env_old->{GERRIT_CHANGE_NUMBER}) {
         if ($env_new->{GERRIT_PATCHSET_NUMBER} > $env_old->{GERRIT_PATCHSET_NUMBER}) {
-            $stop_build_reason = "Patchset larger stops smaller: $url_new > $url_old";
+            $stop_build_reason = "Patchset>: $url_new > $url_old";
             return "kill-old";
-        } elsif ($env_new->{GERRIT_PATCHSET_NUMBER} <= $env_old->{GERRIT_PATCHSET_NUMBER}) {
-            $stop_build_reason = "Patchset <= should not rebuild: $url_new : $url_old";
+        } elsif ($env_new->{GERRIT_PATCHSET_NUMBER} < $env_old->{GERRIT_PATCHSET_NUMBER}) {
+            $stop_build_reason = "Patchset<: $url_new < $url_old";
             return "kill-new";
+        } else {
+            if ($env_new->{GERRIT_TOPIC}) {
+                $stop_build_reason = "Patchset=, topic kills: $url_new -> $url_old";
+                return "kill-old";
+            } elsif ($env_old->{GERRIT_TOPIC}) {
+                $stop_build_reason = "Patchset=, topic kills: $url_old -> $url_new";
+                return "kill-new";
+            } else {
+                $stop_build_reason = "Patchset=, no rebuild: $url_old -> $url_new";
+                return "kill-new";
+            }
         }
     }
+    return "do-nothing";
 }
 
 sub stop_a_build($) {
