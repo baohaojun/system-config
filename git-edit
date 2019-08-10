@@ -5,6 +5,20 @@
 # grep frontend called ngp.
 # Author: Joel Fernandes <joel@joelfernandes.org>
 
+function do_quit() {
+  rm /tmp/ncurses*
+  rm /tmp/g*.py
+  exit
+}
+
+function press_any_key() {
+  # If the command returns real fast, press any key
+  if [ $SECONDS -lt 1 ]; then
+    echo "------------"
+    read -n 1 -s -r -p "Press any key to continue.."
+  fi
+}
+
 ##### GIT-EDIT-GUI
 cat > /tmp/geg.py << "END"
 #!/usr/bin/python
@@ -131,6 +145,26 @@ while x != 27:
         commit = strings[ position - 1 ].split()[0]
         write_exit("stat", commit)
 
+    if x == ord('b'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("rebasei", commit)
+
+    if x == ord('f'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("fixup", commit)
+
+    if x == ord('F'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("fixup-merge", commit)
+
+    if x == ord('m'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("muttappend", commit)
+
+    if x == ord('d'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("drop", commit)
+
     if x == 10:
         commit = strings[ position - 1 ].split()[0]
         write_exit("show", commit)
@@ -176,12 +210,6 @@ fi
 END0
 chmod +x /tmp/igec.py
 
-cat > /tmp/gec.py <<END1
-#!/bin/bash
-EDITOR=/tmp/igec.py git rebase -i \$1^
-END1
-chmod +x /tmp/gec.py
-
 ##### GIT-EDIT-PATCH
 cat > /tmp/gep.py <<END2
 #!/bin/bash
@@ -220,46 +248,65 @@ fi
 END3
 chmod +x /tmp/igrc.py
 
-cat > /tmp/grc.py <<END4
+##### DROP COMMIT FROM REBASE
+cat > /tmp/drop-commit.sh <<END2
 #!/bin/bash
 
-EDITOR=/tmp/igrc.py git rebase -i \$1^
-END4
-chmod +x /tmp/grc.py
+COMMIT=\$(cat /tmp/commit)
+grep -v \$COMMIT .git/rebase-merge/git-rebase-todo > /tmp/gitreb
+mv /tmp/gitreb .git/rebase-merge/git-rebase-todo
+rm /tmp/commit
+END2
+chmod +x /tmp/drop-commit.sh
 
 while [ 1 ]; do # START WHILE
-
 rm /tmp/ncurses*
 git log --oneline | head -n 100 > /tmp/ncurses-input-tmp
 /tmp/geg.py
 tput reset
 
-function do_quit() {
-	rm /tmp/g*.py
-	rm /tmp/ncurses*
-        exit
-}
-
 if [ -f /tmp/ncurses-commit-output ]; then
+        SECONDS=0
+
 	cmd=$(cat /tmp/ncurses-commit-output | cut -d ' ' -f1)
 	commit=$(cat /tmp/ncurses-commit-output | cut -d ' ' -f2)
 	if [ $cmd == "edit" ]; then
-		/tmp/gec.py $commit
+                EDITOR=/tmp/igec.py git rebase -i $commit^ --autosquash
                 do_quit
 	elif [ $cmd == "editpatch" ]; then
 		/tmp/gep.py $commit
 	elif [ $cmd == "reword" ]; then
-		/tmp/grc.py $commit
+                EDITOR=/tmp/igrc.py git rebase -i $commit^
 	elif [ $cmd == "show" ]; then
 		git show $commit
+                press_any_key
 	elif [ $cmd == "revert" ]; then
 		git revert $commit
+                press_any_key
 	elif [ $cmd == "checkout" ]; then
 		git checkout $commit
 	elif [ $cmd == "stat" ]; then
 		git show --stat $commit
+        elif [ $cmd == "drop" ]; then
+                echo -n $commit > /tmp/commit
+		EDITOR=/tmp/drop-commit.sh git rebase -i $commit^
+	elif [ $cmd == "rebasei" ]; then
+		git rebase -i --autosquash $commit
+                press_any_key
+        # Just create a fixup commit
+	elif [ $cmd == "fixup" ]; then
+		git commit -as --fixup=$commit
+        # Create a fixup commit and try to merge it
+	elif [ $cmd == "fixup-merge" ]; then
+		git commit -as --fixup=$commit
+                git rebase -i $commit^ --autosquash
+        # Joel: mutt-append-commit is a script I wrote to append the
+        # contents of a commit to an open mutt email being composed.
+        # Let me know if you want it!
+	elif [ $cmd == "muttappend" ]; then
+		mutt-append-commit $commit
 	fi
-        echo > /dev/null  # without this it appears not to work (above command out disappears)
+
 
 if [ $cmd == "quit" ]; then
         do_quit
