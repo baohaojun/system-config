@@ -51,6 +51,12 @@ if test $(basename $0) = do-capture-darwin; then
     export EMACS=t
 fi
 
+case "$(date +%w)" in
+    0|6)
+        show_all_tasks=true
+        ;;
+esac
+
 if test "$show_all_tasks" = true; then
     touch ~/.cache/system-config/do-capture.show-all
 elif test "$show_all_tasks" = false; then

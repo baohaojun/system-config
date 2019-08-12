@@ -40,6 +40,9 @@ function jc-create-job() {
     local task=${1%.xml}
     task=$(basename "$task")
 
+    if ! jc get-job $task &>/dev/null; then
+        jc create-job $task < $task.xml
+    fi
 
     rm $task.before-update.xml -f
     if ! jc get-job-for-edit -t $task -o $task.before-update.xml 2>&1; then
