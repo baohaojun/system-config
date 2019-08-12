@@ -103,4 +103,10 @@ EOFd56e460f1481
     fi
 done
 
-HOME=${private_dir} firefox --ProfileManager -new-instance&
+
+export HOME=${private_dir}
+
+(
+    ibus-daemon -x -d
+    firefox --ProfileManager -new-instance
+)&

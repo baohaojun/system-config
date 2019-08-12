@@ -51,13 +51,13 @@ done
 ## end generated code
 
 mkdir -p "${output_dir}"
-cd $output_dir
-wget -r -k --page-requisites -c $url "$@"
+cd "$output_dir"
+wget -k --page-requisites -c "$url" "$@"
 
 html=${url##*//}
 
 if test -e "$html"; then
-    cat $html | pandoc -f html -t org --wrap=none - >${html%.html}.org
+    cat "$html" | pandoc -f html -t org --wrap=none - >"${html%.html}.org"
 else
     die "Can't find html: $html"
 fi
