@@ -1,7 +1,7 @@
 M.dd_pkg = "com.alibaba.android.rimet/"
 M.dd_activity = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.activity.HomeActivity"
 M.dd_search_activity = "com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchActivity"
-
+M.dd_home = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.LaunchHomeActivity"
 
 M.open_dd_search = function()
    local top_window, i
@@ -17,21 +17,23 @@ M.open_dd_search = function()
             return
          end
          log("not found dd search window: %s", M.m_focused_window)
-      end
-
-      local found_grey = find_scene("dd-xiaoxi-weixuanzhong")
-      local found_duihua = find_scene("dd-xiaoxi-xuanzhong")
-      if not found_grey and not found_duihua then
+      elseif M.m_focused_window ~= M.dd_home then
          adb_back_from_activity()
-      elseif found_grey then
-         jump_from_to("dd-xiaoxi-weixuanzhong", "dd-xiaoxi-xuanzhong")
-         found_duihua = 1
-      end
+      else
+         local found_grey = find_scene("dd-xiaoxi-weixuanzhong")
+         local found_duihua = find_scene("dd-xiaoxi-xuanzhong")
+         if not found_grey and not found_duihua then
+            adb_back_from_activity()
+         elseif found_grey then
+            jump_from_to("dd-xiaoxi-weixuanzhong", "dd-xiaoxi-xuanzhong")
+            found_duihua = 1
+         end
 
-      if found_duihua then
-         jump_from_to("dd-xiaoxi-dd-biaoti", "dd-xiaoxi-sousuo", {click_times = 2})
-         jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
-         return
+         if found_duihua then
+            jump_from_to("dd-xiaoxi-dd-biaoti", "dd-xiaoxi-sousuo", {click_times = 2})
+            jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
+            return
+         end
       end
    end
 end
