@@ -65,6 +65,11 @@ else
     abbrev=$(ask-for-input-with-sawfish -p "Please input your abbrev. Or simply ? for help")
 fi
 
+get-abbrev-file() {
+    local abbrev=$1
+    EMACS=t select-output-line -i "${abbrev}" -o find "${config_dirs[@]}" -iname "*$(set -- $abbrev; echo -n $1)*" \( -type f -o -type l \)
+}
+
 if test "${abbrev}" = '?'; then
     EMACS=t hint "You can use + to add a new abbrev, like this: +NEW_ABBREV
 
@@ -76,7 +81,7 @@ elif test "${abbrev:0:1}" = +; then
     sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
     exit
 elif test "${abbrev:0:1}" = '>'; then
-    if abbrev_file=$(EMACS=t select-output-line -o find "${config_dirs[@]}" -iname "*${abbrev:1}*" \( -type f -o -type l \)); then
+    if abbrev_file=$(get-abbrev-file "${abbrev:1}"); then
         ew "${abbrev_file}"
         exec bhj-notify abbrevs "Done editing ${abbrev_file##*/}"
     else
@@ -84,7 +89,7 @@ elif test "${abbrev:0:1}" = '>'; then
     fi
 fi
 
-abbrev_file=$(EMACS=t select-output-line -o find "${config_dirs[@]}" -iname "*$abbrev*" \( -type f -o -type l \))
+abbrev_file=$(get-abbrev-file "${abbrev}")
 
 if test ! -e "${abbrev_file}"; then
     bhj-notify abbrevs "There is no matching file for $abbrev, use +$abbrev to create a new abbrev"

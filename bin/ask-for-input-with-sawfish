@@ -106,4 +106,4 @@ unset WINDOWID
         mark \
         --with-mark \
         zenity $ztype --text="$text" --title="$title"
-) 9>/dev/null
+) 9>/dev/null | rm-last-nl

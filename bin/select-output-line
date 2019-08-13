@@ -27,7 +27,7 @@ EOF
 }
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -l '?"$(sol-help)"' \
+    # generate-getopt -P '?"$(sol-help)"' \
     # O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?"Should use history for list order"' \
     # s:select-dist-word='${SELECT_DIST_WORD:-not-set\!}' '?"选中参数的时候，按照与这个参数的字符串距离排序"' \
     # m:max-history=-1 '?"如果保存历史输入，最多保存几个历史输入，默认是无限"' \
