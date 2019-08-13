@@ -22,7 +22,10 @@ if [regexp {^\d+$} $js_target] {
 proc qx cmd {
     set fh [open "|$cmd"]
     set res [read $fh]
-    close $fh
+    if {[catch {close $fh} err]} {
+        puts "command failed: $err"
+    }
+
     return $res
 }
 
@@ -51,21 +54,28 @@ expect "Opt>" {
             log_user 1
         } else {
             send "REMOTEPROTOCOL=jssh PS1HOSTNAME=js-$js_target REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
-            log_user 1
             if { $js_execute ne {} } {
-                expect -re "\\$" {
-                    send "exec $js_execute\n";
+                expect -re "try.*\\$" {
+                    log_user 1
+                    send "( $js_execute ); echo -n exit; echo 123456;\n";
                     expect {
-                        -re "Opt>" {
+                        -re "exit123456" {
+                            log_user 0
                             send "exit\n";
-                            wait
-                            exit
+                            expect "Opt>" {
+                                send "exit\n";
+                                wait
+                                exit
+                            }
                         }
                         timeout {
+                            send_user "timed out>\n";
                             exp_continue;
                         }
                     }
                 }
+            } else {
+                log_user 1
             }
         }
     } -re " Would you like to update.*:" {

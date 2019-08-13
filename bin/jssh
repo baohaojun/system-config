@@ -52,5 +52,5 @@ fi
 if true; then # allow to debug.
     exec js-ssh
 else
-    exec strace -s 2000 -o ~/tmp/x.jssh js-ssh
+    exec strace -f -s 2000 -o ~/tmp/x.jssh js-ssh
 fi

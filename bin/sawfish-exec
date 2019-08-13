@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+if test "$#" = 1; then
+    command=$1
+else
+    command=$(
+        for x in "$@"; do
+            printf "%q " "$x"
+        done
+           )
+fi
+setsid bash -c "$command"&

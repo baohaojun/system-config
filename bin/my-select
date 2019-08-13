@@ -119,7 +119,7 @@ sub my_select($) {
       foreach (@$remaining_options) {
         tty "$count) $_\n";
         if ($count > 40 and @$remaining_options > $count) {
-          tty sprintf("... （共有 %d 个选项，请输入*回车查看所有，或输入?回车查看帮助）\n", scalar(@$remaining_options));
+          tty sprintf("... （共有 %d 个选项，请输入『*』回车查看所有，或输入『?』回车查看帮助）\n", scalar(@$remaining_options));
           last;
         }
         $count++;
@@ -136,8 +136,9 @@ sub my_select($) {
         tty "\n\nmy-select 用户界面帮助：\n\n";
         tty "你可以输入一些文字以进行选项的进一步细化过滤。也可以输入一些特殊字符：\n\n  ";
         tty "直接回车表示选择第一个选项\n  ";
-        tty "输入数字 NX 回车表示选择第 NX 个选项\n  ";
+        tty "输入数字 NNN 回车表示选择第 NNN 个选项\n  ";
         tty "输入 !word1 word2：！表示反向过滤，这里表示删除跟 word1 匹配的和跟 word2 不匹配的选项\n  ";
+        tty "输入 ~REGEXP：表示使用正则表达式 REGEXP 进行匹配（默认为浏览器地址栏补齐匹配算法）\n  ";
         tty "输入 ? 表示查看帮助\n  ";
         tty "输入 STRING!（字符串最后加英文叹号）表示强制接受 STRING 为最终的选择结果\n  ";
         tty "输入 - 表示删回上一层（丢弃上次输入的过滤选项）\n  ";
@@ -177,7 +178,10 @@ sub my_select($) {
         my $re = substr($_, 1);
         $matchers{$_}{"qr"} = qr($re)i;
         $matchers{$_}{"reverse"} = 1;
-      } else {
+    } elsif ($_ =~ m/^~/) {
+        my $re = substr($_, 1);
+        $matchers{$_}{"qr"} = qr($re)i;
+    } else {
         $matchers{$_}{"qr"} = qr(\Q$_\E)i;
         $matchers{$_}{"reverse"} = 0;
       }

@@ -286,7 +286,7 @@ selection_entries=(
                 bash -c "$1"
             else
                 "$@"
-            fi > $tmpfile
+            fi | tr '\r' '\n' > $tmpfile
 
             if test $ORDERED != false; then
                 common-lines-in-files $tmpfile $histfile.$$
@@ -388,7 +388,7 @@ else
     fi
 fi
 
-echo -n "$output"
+echo -n "$output" | tr -d '\r'
 
 if (  is-good-n && test "$ORDERED" != false ) || test "$select_from_history_too" = true; then
     (
