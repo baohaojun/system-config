@@ -542,17 +542,6 @@ beginning of current defun."
             (setq not-match nil)))))))
 
 (setq-default imenu-create-index-function #'ajoke--create-index-function)
-; (setq-default beginning-of-defun-function #'ajoke--beginning-of-defun-function)
-(defadvice beginning-of-defun (around ajoke--beginning-of-defun first activate)
-  (if (eq this-command 'beginning-of-defun)
-    (let ((beginning-of-defun-function #'ajoke--beginning-of-defun-function))
-      ad-do-it)
-    ad-do-it))
-(defadvice end-of-defun (around ajoke--end-of-defun first activate)
-  (if (eq this-command 'end-of-defun)
-      (let ((beginning-of-defun-function #'ajoke--beginning-of-defun-function))
-        ad-do-it)
-    ad-do-it))
 
 (defun ajoke-insert-package ()
   "GUESS and insert the package name at the beginning of the file."

@@ -14,6 +14,7 @@ github_projects=(
     emacs.d
     ext-local
     fence-edit.el
+    git-edit
     guilt
     gxr
     ibus-sdim
