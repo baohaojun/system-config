@@ -3,7 +3,7 @@ use strict;
 use v5.10;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl j:job-name n:which-node
+# generate-getopt -s perl j:job-name n:which-node @:on-node-label
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -13,41 +13,51 @@ Getopt::Long::Configure("default");
 
 
 my $job_name = "";
+my $on_node_label = "";
 my $which_node = "";
 
 my $handler_help = sub {
-  print ;
-  print "\n\n选项和参数：\n";
-  printf "%6s", '-j, ';
-  printf "%-24s", '--job-name=JOB-NAME';
-  if (length('--job-name=JOB-NAME') > 24 and length() > 0) {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--job-name=JOB-NAME';
+    if (length('--job-name=JOB-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '-n, ';
-  printf "%-24s", '--which-node=WHICH-NODE';
-  if (length('--which-node=WHICH-NODE') > 24 and length() > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--on-node-label=ON-NODE-LABEL';
+    if (length('--on-node-label=ON-NODE-LABEL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--which-node=WHICH-NODE';
+    if (length('--which-node=WHICH-NODE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
-  exit(0);
+    exit(0);
 };
 
-GetOptions (
-            'job-name|j=s' => \$job_name,
-            'which-node|n=s' => \$which_node,
-            'help|h!' => \&$handler_help,
-           );
+       GetOptions (
+           'job-name|j=s' => \$job_name,
+           'on-node-label=s' => \$on_node_label,
+           'which-node|n=s' => \$which_node,
+           'help|h!' => \&$handler_help,
+       );
 
 
 ## end generated code
 
-my @nodes = (split " ", qx(jc list-nodes --online-only));
+my @nodes = (split " ", qx(jc list-nodes --online-only -l "$on_node_label"));
 
 if ($which_node) {
   @nodes = ($which_node);

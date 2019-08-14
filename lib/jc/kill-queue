@@ -2,7 +2,7 @@
 use strict;
 use v5.10;
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl j:job-pattern @dry=1 q:queue-url
+# generate-getopt -s perl j:job-pattern q:queue-url
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -11,21 +11,12 @@ Getopt::Long::Configure("default");
 
 
 
-my $dry = 1;
 my $job_pattern = "";
 my $queue_url = "";
 
 my $handler_help = sub {
     print ;
     print "\n\n选项和参数：\n";
-    printf "%6s", '';
-    printf "%-24s", '--[no]dry';
-    if (length('--[no]dry') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
-    print "\n";
     printf "%6s", '-j, ';
     printf "%-24s", '--job-pattern=JOB-PATTERN';
     if (length('--job-pattern=JOB-PATTERN') > 24 and length() > 0) {
@@ -47,7 +38,6 @@ my $handler_help = sub {
 };
 
 GetOptions (
-    'dry!' => \$dry,
     'job-pattern|j=s' => \$job_pattern,
     'queue-url|q=s' => \$queue_url,
     'help|h!' => \&$handler_help,
@@ -66,6 +56,14 @@ if ($queue_url) {
 
     say STDERR "about to kill queue: $id";
     system("jc", "curl", "$ENV{scm_jenkins_url}queue/cancelItem?id=$id", "-X", "POST");
+
+    # after kill the queue, double check if it has been started as a actual build.
+    $q_json = decode_json(qx(jc curl ${queue_url}api/json));
+    my $build_url = $q_json->{executable}{url};
+    if ($build_url) {
+        say STDERR "also need to kill the running build: $build_url";
+        system("jc", "stop-build", "-b", "$build_url");
+    }
     exit 0;
 }
 
@@ -78,12 +76,7 @@ for (@{$q_json->{items}}) {
   (my $job = $url) =~ s,.*/([^/]+)/?,$1,;
 
   if ($job =~ m/$job_pattern/) {
-
-    if (not $dry) {
       say "job matched: $ENV{scm_jenkins_url}queue/item/$id/, killing it...";
       system("jc", "curl", "$ENV{scm_jenkins_url}queue/cancelItem?id=$id", "-X", "POST");
-    } else {
-      say "job matched: $ENV{scm_jenkins_url}queue/item/$id/, not killed";
-    }
   }
 }

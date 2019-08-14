@@ -46,6 +46,8 @@ GetOptions (
 
 ## end generated code
 
+$jc_build_url =~ s,/*$,/,;
+
 # name=CI
 # value=2bded966f16eefbd7fc9ec93c1a779652cdb1093
 # name=RE
@@ -87,7 +89,7 @@ my @values;
 
 use Encode;
 
-my $json_str = qx(jc curl ${jc_build_url}/api/json);
+my $json_str = qx(jc curl ${jc_build_url}api/json);
 my $json_obj = decode_json $json_str;
 
 for (@{$json_obj->{actions}}) {
@@ -104,8 +106,6 @@ use v5.10;
 use HTTP::Request::Common;
 use LWP::UserAgent;
 use URI::Escape;
-
-$jc_build_url =~ s,/*$,/,;
 
 my $rebuild_url = "${jc_build_url}rebuild/configSubmit";
 

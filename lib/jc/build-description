@@ -4,7 +4,7 @@ set -e
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"Note: When setting current build, need only set -d"' \
     # j:job-name n:build-number \
-    # b:build-url='"${BUILD_URL}"' '?"default is \$BUILD_URL"' \
+    # b:build-url \
     # d:description='"@NULL@"' '?"when not specified, print current description (i.e., get)"'
 ## end code-generator
 ## start generated code
@@ -12,7 +12,7 @@ TEMP=$(POSIXLY_CORRECT=true getopt -o n:b:d:j:h \
                       --long build-number:,build-url:,description:,job-name:,help \
                       -n $(basename -- $0) -- "$@")
 declare build_number=
-declare build_url="${BUILD_URL}"
+declare build_url=
 declare description="@NULL@"
 declare job_name=
 eval set -- "$TEMP"
@@ -49,7 +49,7 @@ while true; do
             echo
             printf %06s '-b, '
             printf %-24s '--build-url=BUILD_URL'
-            echo "default is \$BUILD_URL"
+            echo
             printf %06s '-d, '
             printf %-24s '--description=DESCRIPTION'
             echo
@@ -74,14 +74,21 @@ done
 
 ## end generated code
 
-if test -z "${build_url}" && test -z "${job_name}" -o -z "${build_number}"; then
-    die "Must specify job_name and build_number"
+if test "${job_name}" -a "${build_number}"; then
+    if test "${build_url}"; then
+        die "Can't specify both BUILD_URL and JOB_NAME/BUILD_NUMBER"
+    else
+        build_url=${scm_jenkins_url}job/${job_name}/${build_number}/
+    fi
+elif test "${job_name}" -o "${build_number}"; then
+    die "Must specify both job_name and build_number"
+elif test -z "${build_url}"; then
+    if test "${BUILD_URL}"; then
+        build_url=${BUILD_URL} # from jenkins env, current build.
+    else
+        die "Can't decide the build url"
+    fi
 fi
-
-if test -z "${build_url}"; then
-    build_url=${scm_jenkins_url}job/${job_name}/${build_number}/
-fi
-
 
 if test "${description}" = @NULL@; then
     jc curl ${build_url}api/json | jq -r .description

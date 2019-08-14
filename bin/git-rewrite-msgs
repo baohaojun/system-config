@@ -26,7 +26,7 @@ b0=$(basename $BASH_SOURCE)
 
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt '?"$b0 OPTIONS REV1 [REV2]"' \
-        # s:start-with=1 '?"start reworking with which commit (in reverse order, 1 means the oldest patch)"' \
+        # s:start-with=1 '?"start reworking with Nth commit (1 means the oldest patch, can also use commit-id)"' \
         # 1one-by-one=true
 ## end code-generator
 ## start generated code
@@ -80,6 +80,11 @@ done
 
 ## end generated code
 
+if [[ $start_with =~ ^[0-9a-fA-F]{40}$ ]]; then
+    start_with=$(
+        git log $start_with..HEAD --pretty=%H|wc -l
+         )
+fi
 
 if test $# = 0; then
     set -- $(

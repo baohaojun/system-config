@@ -31,6 +31,7 @@ use strict;
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl j:job-name \
+# @:job-node-label \
 # @scan-queues \
 # @scan-builds \
 # @dry-run=1 \
@@ -48,6 +49,7 @@ Getopt::Long::Configure("default");
 my $current_build_url = "";
 my $dry_run = 1;
 my $job_name = "";
+my $job_node_label = "";
 my $must_compare_patchset = 1;
 my $scan_builds = 0;
 my $scan_queues = 0;
@@ -75,6 +77,14 @@ my $handler_help = sub {
     printf "%6s", '-j, ';
     printf "%-24s", '--job-name=JOB-NAME';
     if (length('--job-name=JOB-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--job-node-label=JOB-NODE-LABEL';
+    if (length('--job-node-label=JOB-NODE-LABEL') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -120,6 +130,7 @@ GetOptions (
     'current-build-url=s' => \$current_build_url,
     'dry-run!' => \$dry_run,
     'job-name|j=s' => \$job_name,
+    'job-node-label=s' => \$job_node_label,
     'must-compare-patchset!' => \$must_compare_patchset,
     'scan-builds!' => \$scan_builds,
     'scan-queues!' => \$scan_queues,
@@ -136,7 +147,7 @@ if (not $job_name) {
     die "Must specify job name";
 }
 
-my $builds_json = decode_json(qx(jc get-running-builds));
+my $builds_json = decode_json(qx(jc get-running-builds --on-node-label "$job_node_label"));
 
 my %build_url_envmap;
 my %queue_url_envmap;
@@ -148,30 +159,34 @@ sub should_new_kill_old($$$$) {
 
     my ($env_new, $env_old, $url_new, $url_old) = @_;
     return "do-nothing" if $url_new eq $url_old;
+
+    (my $surl_new = $url_new) =~ s,.*?//.*?/(job/)?,,;
+    (my $surl_old = $url_old) =~ s,.*?//.*?/(job/)?,,;
+
     printf STDERR "checking %s topic(%s) change/patchset(%d/%d) : %s topic(%s) change/patchset(%d/%d)\n",
         $url_new, $env_new->{GERRIT_TOPIC}, $env_new->{GERRIT_CHANGE_NUMBER}, $env_new->{GERRIT_PATCHSET_NUMBER},
         $url_old, $env_old->{GERRIT_TOPIC}, $env_old->{GERRIT_CHANGE_NUMBER}, $env_old->{GERRIT_PATCHSET_NUMBER};
     if ($env_new->{GERRIT_TOPIC} and $env_new->{GERRIT_TOPIC} eq $env_old->{GERRIT_TOPIC}) {
-        $stop_build_reason = "Topic same stops old-build: $url_new : $url_old";
+        $stop_build_reason = "$surl_new -> $surl_old (same topic stops old build)";
         return "kill-old";
     }
 
     if ($env_new->{GERRIT_CHANGE_NUMBER} == $env_old->{GERRIT_CHANGE_NUMBER}) {
         if ($env_new->{GERRIT_PATCHSET_NUMBER} > $env_old->{GERRIT_PATCHSET_NUMBER}) {
-            $stop_build_reason = "Patchset>: $url_new > $url_old";
+            $stop_build_reason = "$surl_new -> $surl_old (newer patchset stops old build)";
             return "kill-old";
         } elsif ($env_new->{GERRIT_PATCHSET_NUMBER} < $env_old->{GERRIT_PATCHSET_NUMBER}) {
-            $stop_build_reason = "Patchset<: $url_new < $url_old";
+            $stop_build_reason = "$surl_new <- $surl_old (older patchset no rebuild)";
             return "kill-new";
         } else {
             if ($env_new->{GERRIT_TOPIC}) {
-                $stop_build_reason = "Patchset=, topic kills: $url_new -> $url_old";
+                $stop_build_reason = "$surl_new -> $surl_old (same patchset, topic wins)";
                 return "kill-old";
             } elsif ($env_old->{GERRIT_TOPIC}) {
-                $stop_build_reason = "Patchset=, topic kills: $url_old -> $url_new";
+                $stop_build_reason = "$surl_new <- $surl_old (same patchset, topic wins)";
                 return "kill-new";
             } else {
-                $stop_build_reason = "Patchset=, no rebuild: $url_old -> $url_new";
+                $stop_build_reason = "$surl_new <- $surl_old (same patchset, no rebuild)";
                 return "kill-new";
             }
         }
@@ -182,7 +197,7 @@ sub should_new_kill_old($$$$) {
 sub stop_a_build($) {
     my $this_url = $_[0];
 
-    system("jc stop-build -u $this_url && jc build-description -b $this_url -d " . shell_quote($stop_build_reason));
+    system("jc build-description -b $this_url -d " . shell_quote($stop_build_reason) . " && jc stop-build -b $this_url");
 }
 
 
