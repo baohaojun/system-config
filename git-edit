@@ -165,6 +165,14 @@ while x != 27:
         commit = strings[ position - 1 ].split()[0]
         write_exit("drop", commit)
 
+    if x == ord('D'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("diff", commit)
+
+    if x == ord('w'):
+        commit = strings[ position - 1 ].split()[0]
+        write_exit("format-patch", commit)
+
     if x == 10:
         commit = strings[ position - 1 ].split()[0]
         write_exit("show", commit)
@@ -290,6 +298,10 @@ if [ -f /tmp/ncurses-commit-output ]; then
         elif [ $cmd == "drop" ]; then
                 echo -n $commit > /tmp/commit
 		EDITOR=/tmp/drop-commit.sh git rebase -i $commit^
+        elif [ $cmd == "diff" ]; then
+                git diff $commit > /tmp/diff
+                vi /tmp/diff
+                rm /tmp/diff
 	elif [ $cmd == "rebasei" ]; then
 		git rebase -i --autosquash $commit
                 press_any_key
@@ -300,13 +312,15 @@ if [ -f /tmp/ncurses-commit-output ]; then
 	elif [ $cmd == "fixup-merge" ]; then
 		git commit -as --fixup=$commit
                 git rebase -i $commit^ --autosquash
+	elif [ $cmd == "format-patch" ]; then
+                git format-patch $commit^..$commit
+                press_any_key
         # Joel: mutt-append-commit is a script I wrote to append the
         # contents of a commit to an open mutt email being composed.
         # Let me know if you want it!
 	elif [ $cmd == "muttappend" ]; then
 		mutt-append-commit $commit
 	fi
-
 
 if [ $cmd == "quit" ]; then
         do_quit

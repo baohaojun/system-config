@@ -148,7 +148,9 @@ class Screen(object):
 
 
 def main():
-    items = ["hello", "world"]
+    with open("/tmp/ncurses-input-tmp") as f:
+        content = f.readlines()
+    items = [x.rstrip() for x in content]
     Screen(items)
 
 
