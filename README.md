@@ -1,6 +1,6 @@
 ngit is an ncurses based UI to quickly select a git commit from a 'git log
 --online' output and press a key on it to perform a single action (Checkout,
-reword changelog, edit patch, etc). Opens up vim editor when needed. Inspired
+reword changelog, edit patch, etc). See screenshot below. Opens up vim editor when needed. Inspired
 by a grep frontend called ngp. It is similar in spirit to tgit but IMO requires
 way fewer key strokes and is not that complex of a code base.
 
