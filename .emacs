@@ -386,6 +386,22 @@
 (add-to-list 'load-path "~/src/github/emacs-pde/lisp")
 (load "pde-load")
 
+(require 'helm-net)
+
+(setq helm-google-suggest-actions
+      (append helm-google-suggest-actions
+              '(("Stack Snippet" . (lambda (candidate)
+                                     (helm-search-suggest-perform-additional-action
+                                      "http://www.stacksnippet.com/#gsc.tab=0&gsc.q=%s"
+                                      candidate))))))
+
+(defun my-helm-google-suggest ()
+  (interactive)
+  ;; set debug-on-error to swallow potential network errors
+  ;; idea taken from: https://blog.johnregner.com/post/78877988910/fixing-helm-spotify#_=_
+  (let ((debug-on-error t))
+    (helm-google-suggest)))
+
 ;; this must come at last.
 (when (file-exists-p "~/.local-config/.emacs")
   (load "~/.local-config/.emacs"))

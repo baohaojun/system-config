@@ -45,7 +45,7 @@ rm -rf ~/tmp/sandbox-vendor-android/
 mkdir -p ~/tmp/sandbox-vendor-android/
 cd ~/tmp/sandbox-vendor-android/
 
-repo init -u ssh://s.t/platform/manifest -b $manifest_branch_name -m default.xml --repo-url ssh://chjscm@192.168.4.101:29418/git-repo
+repo-with-auto-fixer init -u ssh://s.t/platform/manifest -b $manifest_branch_name -m default.xml --repo-url ssh://chjscm@192.168.4.101:29418/git-repo
 repo sync -j4 -d -q -c --no-tags
 
 my-rfa "$(
