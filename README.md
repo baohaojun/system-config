@@ -12,4 +12,6 @@ more suitable for using with the fewest key strokes IMHO.
 
 Screenshots:
 ![Screen1](/images/screen1.png)
+
+Help screen:
 ![Screen2](/images/screen2.png)
