@@ -5,6 +5,8 @@
 # grep frontend called ngp.
 # Author: Joel Fernandes <joel@joelfernandes.org>
 
+spath="$(dirname "$(readlink -f "$0")")"
+
 function do_quit() {
   rm /tmp/ncurses*
   rm /tmp/g*.py
@@ -18,188 +20,6 @@ function press_any_key() {
     read -n 1 -s -r -p "Press any key to continue.."
   fi
 }
-
-##### GIT-EDIT-GUI
-cat > /tmp/geg.py << "END"
-#!/usr/bin/python
-# curses bits from: 
-# https://stackoverflow.com/questions/30828804/how-to-make-a-scrolling-menu-in-python-curses
-# This scripts reads a list of commits from an input file generated
-# by git log --oneline, and outputs the commit number of the selected
-# commit, later stages will edit the commit
-
-from __future__ import division  #You don't need this in Python3
-import curses
-from math import *
-import sys
-import os
-
-with open("/tmp/ncurses-input-tmp") as f:
-    content = f.readlines()
-strings = [x.rstrip() for x in content]
-
-screen = curses.initscr()
-curses.noecho()
-curses.cbreak()
-curses.start_color()
-screen.keypad( 1 )
-curses.init_pair(1,curses.COLOR_BLACK, curses.COLOR_CYAN)
-highlightText = curses.color_pair( 1 )
-normalText = curses.A_NORMAL
-screen.border( 0 )
-curses.curs_set( 0 )
-max_row = 100 #max number of rows
-box = curses.newwin( max_row + 2, 130, 1, 1 )
-box.box()
-
-row_num = len( strings )
-
-pages = int( ceil( row_num / max_row ) )
-position = 1
-page = 1
-for i in range( 1, max_row + 1 ):
-    if row_num == 0:
-        box.addstr( 1, 1, "There aren't strings", highlightText )
-    else:
-        if (i == position):
-            box.addstr( i, 2, str( i ) + " - " + strings[ i - 1 ], highlightText )
-        else:
-            box.addstr( i, 2, str( i ) + " - " + strings[ i - 1 ], normalText )
-        if i == row_num:
-            break
-
-screen.refresh()
-box.refresh()
-
-x = screen.getch()
-
-def write_exit(cmd, commit):
-    screen.erase()
-    with open("/tmp/ncurses-commit-output", "w") as text_file:
-        text_file.write("{0} {1}".format(cmd, commit))
-    exit()
-
-while x != 27:
-    if x == curses.KEY_DOWN:
-        if page == 1:
-            if position < i:
-                position = position + 1
-            else:
-                if pages > 1:
-                    page = page + 1
-                    position = 1 + ( max_row * ( page - 1 ) )
-        elif page == pages:
-            if position < row_num:
-                position = position + 1
-        else:
-            if position < max_row + ( max_row * ( page - 1 ) ):
-                position = position + 1
-            else:
-                page = page + 1
-                position = 1 + ( max_row * ( page - 1 ) )
-    if x == curses.KEY_UP:
-        if page == 1:
-            if position > 1:
-                position = position - 1
-        else:
-            if position > ( 1 + ( max_row * ( page - 1 ) ) ):
-                position = position - 1
-            else:
-                page = page - 1
-                position = max_row + ( max_row * ( page - 1 ) )
-    if x == curses.KEY_LEFT:
-        if page > 1:
-            page = page - 1
-            position = 1 + ( max_row * ( page - 1 ) )
-
-    if x == curses.KEY_RIGHT:
-        if page < pages:
-            page = page + 1
-            position = ( 1 + ( max_row * ( page - 1 ) ) )
-
-    if x == ord( 'r' ):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("reword", commit)
-
-    if x == ord('e'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("edit", commit)
-
-    if x == ord('p'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("editpatch", commit)
-
-    if x == ord('q'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("quit", commit)
-
-    if x == ord('R'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("revert", commit)
-
-    if x == ord('c'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("checkout", commit)
-
-    if x == ord('s'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("stat", commit)
-
-    if x == ord('b'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("rebasei", commit)
-
-    if x == ord('f'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("fixup", commit)
-
-    if x == ord('F'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("fixup-merge", commit)
-
-    if x == ord('m'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("muttappend", commit)
-
-    if x == ord('d'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("drop", commit)
-
-    if x == ord('D'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("diff", commit)
-
-    if x == ord('w'):
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("format-patch", commit)
-
-    if x == 10:
-        commit = strings[ position - 1 ].split()[0]
-        write_exit("show", commit)
-
-    # box.erase()
-    # screen.border( 0 )
-    # box.border( 0 )
-
-    for i in range( 1 + ( max_row * ( page - 1 ) ), max_row + 1 + ( max_row * ( page - 1 ) ) ):
-        if row_num == 0:
-            box.addstr( 1, 1, "There aren't strings",  highlightText )
-        else:
-            if ( i + ( max_row * ( page - 1 ) ) == position + ( max_row * ( page - 1 ) ) ):
-                box.addstr( i - ( max_row * ( page - 1 ) ), 2, str( i ) + " - " + strings[ i - 1 ], highlightText )
-            else:
-                box.addstr( i - ( max_row * ( page - 1 ) ), 2, str( i ) + " - " + strings[ i - 1 ], normalText )
-            if i == row_num:
-                break
-
-    screen.refresh()
-    box.refresh()
-    x = screen.getch()
-
-curses.endwin()
-exit()
-END
-chmod +x /tmp/geg.py
 
 ##### GIT-EDIT-COMMIT
 cat > /tmp/igec.py <<END0
@@ -268,61 +88,71 @@ END2
 chmod +x /tmp/drop-commit.sh
 
 while [ 1 ]; do # START WHILE
-rm /tmp/ncurses*
 git log --oneline | head -n 100 > /tmp/ncurses-input-tmp
-/tmp/geg.py
+
+$spath/tui.py
+
 tput reset
 
-if [ -f /tmp/ncurses-commit-output ]; then
+if [ -f /tmp/ncurses-output ]; then
         SECONDS=0
 
-	cmd=$(cat /tmp/ncurses-commit-output | cut -d ' ' -f1)
-	commit=$(cat /tmp/ncurses-commit-output | cut -d ' ' -f2)
-	if [ $cmd == "edit" ]; then
+	cmd=$(cat /tmp/ncurses-output| cut -d '=' -f2|cut -d ' ' -f1)
+
+	one_line=$(cat /tmp/ncurses-output|cut -d '=' -f3)
+	commit=$(echo $one_line | cut -d ' ' -f1)
+
+	# Amend the comment (then you have to do git rebase --continue)
+	if [ $cmd == "e" ]; then
                 EDITOR=/tmp/igec.py git rebase -i $commit^ --autosquash
                 do_quit
-	elif [ $cmd == "editpatch" ]; then
+	# Edit the patch of the commit
+	elif [ $cmd == "p" ]; then
 		/tmp/gep.py $commit
-	elif [ $cmd == "reword" ]; then
+	# Reword the commit message
+	elif [ $cmd == "r" ]; then
                 EDITOR=/tmp/igrc.py git rebase -i $commit^
-	elif [ $cmd == "show" ]; then
+	# Show the commit
+	elif [ $cmd == "10" ]; then
 		git show $commit
                 press_any_key
-	elif [ $cmd == "revert" ]; then
+	# Revert
+	elif [ $cmd == "R" ]; then
 		git revert $commit
                 press_any_key
-	elif [ $cmd == "checkout" ]; then
+	# Checkout
+	elif [ $cmd == "c" ]; then
 		git checkout $commit
-	elif [ $cmd == "stat" ]; then
+	# stat of the diff
+	elif [ $cmd == "s" ]; then
 		git show --stat $commit
-        elif [ $cmd == "drop" ]; then
+	# Delete the commit from history
+        elif [ $cmd == "d" ]; then
                 echo -n $commit > /tmp/commit
 		EDITOR=/tmp/drop-commit.sh git rebase -i $commit^
-        elif [ $cmd == "diff" ]; then
+	# Diff of the commit with respect to HEAD
+        elif [ $cmd == "D" ]; then
                 git diff $commit > /tmp/diff
                 vi /tmp/diff
                 rm /tmp/diff
-	elif [ $cmd == "rebasei" ]; then
+	# Start interactive rebase from here
+	elif [ $cmd == "b" ]; then
 		git rebase -i --autosquash $commit
                 press_any_key
         # Just create a fixup commit
-	elif [ $cmd == "fixup" ]; then
+	elif [ $cmd == "f" ]; then
 		git commit -as --fixup=$commit
         # Create a fixup commit and try to merge it
-	elif [ $cmd == "fixup-merge" ]; then
+	elif [ $cmd == "F" ]; then
 		git commit -as --fixup=$commit
                 git rebase -i $commit^ --autosquash
-	elif [ $cmd == "format-patch" ]; then
+	# Create a patch file out of the commit
+	elif [ $cmd == "w" ]; then
                 git format-patch $commit^..$commit
                 press_any_key
-        # Joel: mutt-append-commit is a script I wrote to append the
-        # contents of a commit to an open mutt email being composed.
-        # Let me know if you want it!
-	elif [ $cmd == "muttappend" ]; then
-		mutt-append-commit $commit
 	fi
 
-if [ $cmd == "quit" ]; then
+if [ $cmd == "q" ]; then
         do_quit
 	exit
 fi
