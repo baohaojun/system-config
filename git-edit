@@ -94,6 +94,25 @@ $spath/tui.py
 
 tput reset
 
+function usage()
+{
+  tput reset
+  echo "p:  Edit the whole patch in vim"
+  echo "r:  Edit the commit message of patch in vim"
+  echo "e:  Amend the patch using an interactive rebase (after this step, do 'git rebase --continue')"
+  echo "<Enter>: Show the patch using 'git show'"
+  echo "R:  Revert the <commit>"
+  echo "c:  Checkout this <commit>"
+  echo "s:  Show the diff stat of the <commit>"
+  echo "d:  Delete the commit from the tree"
+  echo "D:  Show a diff with respect to HEAD"
+  echo "b:  Start an interactive rebase from this <commit>"
+  echo "f:  Create a fixup against this <commit> from the unstaged changes in the tree"
+  echo "F:  Create a fixup against this <commit> from the unstaged changes and start interactive rebase"
+  echo "w:  Create a patch from <commit> (using git format-patch)"
+  press_any_key
+}
+
 if [ -f /tmp/ncurses-output ]; then
         SECONDS=0
 
@@ -103,7 +122,11 @@ if [ -f /tmp/ncurses-output ]; then
 	commit=$(echo $one_line | cut -d ' ' -f1)
 
 	# Amend the comment (then you have to do git rebase --continue)
-	if [ $cmd == "e" ]; then
+	if [ $cmd == "h" ]; then
+	        usage
+	elif [ $cmd == "63" ]; then
+	        usage
+	elif [ $cmd == "e" ]; then
                 EDITOR=/tmp/igec.py git rebase -i $commit^ --autosquash
                 do_quit
 	# Edit the patch of the commit

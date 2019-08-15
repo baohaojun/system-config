@@ -35,6 +35,10 @@ class Screen(object):
         self.items = items
 
         self.max_lines = curses.LINES
+
+        # First line is for help message
+        self.max_lines = self.max_lines - 1
+
         self.top = 0
         self.bottom = len(self.items)
         self.current = 0
@@ -53,6 +57,7 @@ class Screen(object):
         curses.start_color()
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_YELLOW)
 
         self.current = curses.color_pair(2)
 
@@ -138,12 +143,13 @@ class Screen(object):
     def display(self):
         """Display the items on window"""
         self.window.erase()
+        self.window.addstr(0, 0, "p = Edit commit, c = Checkout, R = Revert,  h or ? for more options", curses.color_pair(3))
         for idx, item in enumerate(self.items[self.top:self.top + self.max_lines]):
             # Highlight the current cursor line
             if idx == self.current:
-                self.window.addstr(idx, 0, item[0:(self.window.getmaxyx()[1] - 1)], curses.color_pair(2))
+                self.window.addstr(idx + 1, 0, item[0:(self.window.getmaxyx()[1] - 1)], curses.color_pair(2))
             else:
-                self.window.addstr(idx, 0, item[0:(self.window.getmaxyx()[1] - 1)], curses.color_pair(1))
+                self.window.addstr(idx + 1, 0, item[0:(self.window.getmaxyx()[1] - 1)], curses.color_pair(1))
         self.window.refresh()
 
 
