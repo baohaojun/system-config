@@ -967,7 +967,7 @@ sub jkd_c(@) { # create issue
     for (@field_value) {
         if (m/(.*?)=(.*)/) {
             my ($field, $value) = ($1, $2);
-            $required_fields{$field} = $value;
+            $required_fields{$field} = decode_utf8 $value;
         } else {
             die "$_ not format of FIELD=VALUE?"
         }
@@ -1293,9 +1293,9 @@ sub jkd_mits(@) {
     use v5.10;
 
     if (not $sprint) {
-        if (not $board) {
+        if (not $board or $board !~ m/^\d+$/) {
             my $json_boards = decode_json get("rest/agile/1.0/board/")->content;
-            $board = select_args("-p", "which board do you want? (should be scrum, not kanban)", sort {$a cmp $b} map {sprintf "%s: %s", $_->{id}, encode_utf8 $_->{name}} @{$json_boards->{values}});
+            $board = select_args("-i", $board, "-p", "which board do you want? (should be scrum, not kanban)", sort {$a cmp $b} map {sprintf "%s: %s", $_->{id}, encode_utf8 $_->{name}} @{$json_boards->{values}});
             $board =~ s,:.*,,;
         }
         if ($board) {
