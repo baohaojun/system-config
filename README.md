@@ -6,7 +6,7 @@ way fewer key strokes and is not that complex of a code base.
 
 It is written purely in bash and python.
 
-Run ngit in any git repository. Type 'h' for usage instructions.
+Run ngit from any git repository. Type 'h' for usage instructions.
 
 To install
 ----------

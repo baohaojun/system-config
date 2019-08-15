@@ -90,7 +90,8 @@ chmod +x /tmp/drop-commit.sh
 while [ 1 ]; do # START WHILE
 git log --oneline | head -n 100 > /tmp/ncurses-input-tmp
 
-$spath/tui.py
+chmod +x $spath/lib/tui.py
+$spath/lib/tui.py
 
 tput reset
 
