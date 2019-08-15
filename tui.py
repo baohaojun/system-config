@@ -51,7 +51,7 @@ class Screen(object):
         curses.cbreak()
 
         curses.start_color()
-        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
 
         self.current = curses.color_pair(2)
@@ -77,9 +77,9 @@ class Screen(object):
                 self.scroll(self.UP)
             elif ch == curses.KEY_DOWN:
                 self.scroll(self.DOWN)
-            elif ch == curses.KEY_LEFT:
+            elif ch == curses.KEY_PPAGE:
                 self.paging(self.UP)
-            elif ch == curses.KEY_RIGHT:
+            elif ch == curses.KEY_NPAGE:
                 self.paging(self.DOWN)
             else:
                 with open("/tmp/ncurses-output", "w") as text_file:
@@ -141,9 +141,9 @@ class Screen(object):
         for idx, item in enumerate(self.items[self.top:self.top + self.max_lines]):
             # Highlight the current cursor line
             if idx == self.current:
-                self.window.addstr(idx, 0, item, curses.color_pair(2))
+                self.window.addstr(idx, 0, item[0:(self.window.getmaxyx()[1] - 1)], curses.color_pair(2))
             else:
-                self.window.addstr(idx, 0, item, curses.color_pair(1))
+                self.window.addstr(idx, 0, item[0:(self.window.getmaxyx()[1] - 1)], curses.color_pair(1))
         self.window.refresh()
 
 
