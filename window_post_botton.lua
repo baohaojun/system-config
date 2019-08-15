@@ -88,6 +88,7 @@ map['com.baidu.tieba_mini/com.baidu.tieba.imMessageCenter.im.chat.PersonalChatAc
 map['com.baidu.tieba_mini/com.baidu.tieba.mention.SingleMentionActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.pb.pb.main.PbActivity'] = 'weixin-chat'
 map['com.baidu.tieba_mini/com.baidu.tieba.write.write.WriteActivity'] = 'manual-post'
+map['com.bhj.setclip/com.bhj.setclip.MainActivity'] = 'manual-post'
 map['com.bluedancer.bluedancer/com.bluedancer.bluedancer.V3home.v3Activity.SearchActivity'] = 'manual-post'
 map['com.booking/com.booking.activity.UserLoginWithFacebookActivity'] = 'manual-post'
 map['com.bullet.messenger/com.bullet.friendsmoments.PublishPostActivity'] = 'weibo-share'
