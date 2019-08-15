@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# DONOT RUN DIRECTLY, USE THE ./ngit script.
+
 import curses
 import curses.textpad
 import os
