@@ -14,15 +14,19 @@ my $comment = <<~'EOFc8d96c1eb1b8';
 
 1. 如果两个都设置了相同的 topic 的话，谁的 build number 小，谁被干掉（因为后面的那个 topic build，可能代码已经有更新）。
 
-2. 否则，则以谁的 patchset number 更大为准，
+2. 否则，如果二者的 patchset number 都有设置，且不相等的话，
 
-   - patchset number 小的被 kill 掉
+   以谁的 patchset number 更大为准，patchset number 小的被 kill 掉
 
-   - 一样大的话，如果有一个 build 加了 topic，干掉另一个没加 topic 的
+3. 否则，如果有一个 build 加了 topic，干掉另一个没加 topic 的
 
-   - 都没有加 topic 的话，谁的 build number 小，谁留下（已经编上了，代码也没有更新，没有必要重编，留着就可以了，build number 大的那个自己退出）
+   注意，加 topic 操作本身启动的 build，它是没有 patchset number 的。
 
+   有 topic，又有 patchset number，一般都是之前加过了 topic，这回又提交了新的 patchset。
 
+4. 都没有加 topic 的话，谁的 build number 小，谁留下
+
+   已经编上了，代码也没有更新，没有必要重编，留着就可以了，build number 大的那个自己退出
 
 # {%/org-mode%}
 EOFc8d96c1eb1b8
@@ -172,12 +176,16 @@ sub should_new_kill_old($$$$) {
     }
 
     if ($env_new->{GERRIT_CHANGE_NUMBER} == $env_old->{GERRIT_CHANGE_NUMBER}) {
-        if ($env_new->{GERRIT_PATCHSET_NUMBER} > $env_old->{GERRIT_PATCHSET_NUMBER}) {
-            $stop_build_reason = "$surl_new -> $surl_old (newer patchset stops old build)";
-            return "kill-old";
-        } elsif ($env_new->{GERRIT_PATCHSET_NUMBER} < $env_old->{GERRIT_PATCHSET_NUMBER}) {
-            $stop_build_reason = "$surl_new <- $surl_old (older patchset no rebuild)";
-            return "kill-new";
+        if ($env_new->{GERRIT_PATCHSET_NUMBER} && $env_old->{GERRIT_PATCHSET_NUMBER} &&
+                $env_new->{GERRIT_PATCHSET_NUMBER} != $env_old->{GERRIT_PATCHSET_NUMBER}
+            ) {
+            if ($env_new->{GERRIT_PATCHSET_NUMBER} > $env_old->{GERRIT_PATCHSET_NUMBER}) {
+                $stop_build_reason = "$surl_new -> $surl_old (newer patchset stops old build)";
+                return "kill-old";
+            } else {
+                $stop_build_reason = "$surl_new <- $surl_old (older patchset no rebuild)";
+                return "kill-new";
+            }
         } else {
             if ($env_new->{GERRIT_TOPIC}) {
                 $stop_build_reason = "$surl_new -> $surl_old (same patchset, topic wins)";
