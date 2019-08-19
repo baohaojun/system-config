@@ -150,7 +150,7 @@ end
 M.weixin_shezhi_pyq_fabiaowenzi = function()
    weixin_open_homepage()
    jump_from_to("wx-faxian", "wx-faxian-pyq")
-   jump_from_to("wx-faxian-pyq", "wx-pyq-shexiangtou")
+   jump_from_to("wx-faxian-pyq", "wx-pyq-shexiangtou", {sleep_time = .8, times = 3})
    jump_from_to("wx-pyq-shexiangtou", "wx-pyq-fabiaowenzi", {long_press = 800})
 end
 
