@@ -200,7 +200,7 @@ cdr()
 }
 
 if tty -s; then
-    stty -ixon -ixoff >/dev/null 2>&1
+    stty -ixon -ixoff start undef stop undef >/dev/null 2>&1
 fi
 
 qcd()
