@@ -2,19 +2,45 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P m:manifest-branch-name
+# generate-getopt -P m:manifest-branch-name @prod2test @:repo-sync-dir @do-sync=true
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o m:h \
-                      --long manifest-branch-name:,help \
+                      --long do-sync,manifest-branch-name:,prod2test,repo-sync-dir:,help,no-do-sync,no-prod2test \
                       -n $(basename -- $0) -- "$@")
+declare do_sync=true
 declare manifest_branch_name=
+declare prod2test=false
+declare repo_sync_dir=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --do-sync|--no-do-sync)
+            if test "$1" = --no-do-sync; then
+                do_sync=false
+            else
+                do_sync=true
+            fi
+            shift
+
+            ;;
         -m|--manifest-branch-name)
             manifest_branch_name=$2
+            shift 2
+
+            ;;
+        --prod2test|--no-prod2test)
+            if test "$1" = --no-prod2test; then
+                prod2test=false
+            else
+                prod2test=true
+            fi
+            shift
+
+            ;;
+        --repo-sync-dir)
+            repo_sync_dir=$2
             shift 2
 
             ;;
@@ -23,8 +49,17 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]do-sync'
+            echo
             printf %06s '-m, '
             printf %-24s '--manifest-branch-name=MANIFEST_BRANCH_NAME'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]prod2test'
+            echo
+            printf "%06s" " "
+            printf %-24s '--repo-sync-dir=REPO_SYNC_DIR'
             echo
             exit
             shift
@@ -41,6 +76,77 @@ done
 
 
 ## end generated code
+
+if test "${prod2test}" = true; then
+    if test -z "${repo_sync_dir}"; then
+        die "Must specify which dir to work with"
+    fi
+
+    cd "${repo_sync_dir}"
+
+    if test "${do_sync}" = true; then
+
+        repo init \
+             --depth 1 \
+             -u ${scm_gerrit_admin_ssh_url}platform/manifest \
+             -b ${manifest_branch_name} -m default.xml \
+             --repo-url ${scm_gerrit_admin_ssh_url}git-repo
+
+        repo sync -j4 -d -c -q
+        repo manifest -r -o snapshot.xml
+    fi
+    snapshot=$PWD/snapshot.xml
+
+
+    perl -e "$(
+cat <<'EOF43e2131a27b4' | . .replace-%% --
+# {%perl-mode%}
+use strict;
+use v5.10;
+
+use File::Slurp;
+my $xml_str = read_file("<%snapshot%>");
+
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($xml_str);
+
+$dom->find('project')->each
+    (
+        sub {
+            my $project = $_->{name} || $_->{path};
+            my $path = $_->{path} || $_->{name};
+            my $revision = $_->{revision};
+            my $branch = $_->{upstream};
+
+            $branch = "refs/heads/$branch" unless $branch =~ m,^refs/,;
+            say "$project $path $revision $branch";
+        }
+    );
+# {%/perl-mode%}
+EOF43e2131a27b4
+
+)" | xargs -d '\n' -n 1 -P 5 bash -c "$(
+cat <<'EOF4d62f6f844d9'
+# {%sh-mode%}
+echo "$@" |
+    while read project path revision branch; do
+        log working with $project : $branch
+        (
+            for dir in $path "${scm_gerrit_mirror_dir}"/$project.git; do
+                (
+                    cd $dir &&
+                    git push ${scm_gerrit_admin_ssh_test_url}$project $revision:$branch
+                ) && exit 0
+            done
+            exit 1
+        ) &>/tmp/deploy-manifest-test2prod.$$ || echo $project $branch failed
+    done
+# {%/sh-mode%}
+EOF4d62f6f844d9
+
+)" true
+    exit
+fi
 rm -rf ~/tmp/sandbox-vendor-android/
 mkdir -p ~/tmp/sandbox-vendor-android/
 cd ~/tmp/sandbox-vendor-android/
