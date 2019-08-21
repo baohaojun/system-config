@@ -866,7 +866,7 @@ sub jkd_select_issue_type(@) {
     ## end generated code
 
     my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
-    my $issue_type_name = $issue_type || decode_utf8 select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
+    my $issue_type_name = $issue_type || select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
     my $issue_type_id = $jkd_project_issue_types_name_id_map{$issue_type_name};
     say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
     return $issue_type_id;
