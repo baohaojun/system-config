@@ -148,7 +148,7 @@ if test "${text}" != "${init_text}"; then
 fi
 
 old_text=$(
-    cat | ${pipe_cmd}
+    cat | ${pipe_cmd} | tr -d '\r'
         )
 
 simple_prefix="${add_at_start[$from_mode-$to_mode-simple]}"

@@ -2,7 +2,7 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P @:times=3 @:wait-secs=60 @:errout-regexp '?"stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"'
+# generate-getopt -P @:times=3 @:wait-secs=60 '?"default is 60"' @:errout-regexp '?"stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
@@ -45,7 +45,7 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--wait-secs=WAIT_SECS'
-            echo
+            echo "default is 60"
             exit
             shift
             ;;

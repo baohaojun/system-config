@@ -118,6 +118,11 @@ if ($ask_to_whom or $send_to) {
   }
 }
 
+if ($text =~ m/(\@\S+)( | )/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
+    if ($text =~ s,(\@\S+?)( | ),$1,g) {
+        system("bhj-notify", "Wrench-post", "replaced $1: $text");
+    }
+}
 my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
 
 system("Wrench.sh", $post_text);

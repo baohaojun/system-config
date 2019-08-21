@@ -65,6 +65,7 @@ fi
     log working with $task
     save-it() {
         save.-to-git -m "auto commit at $(now), before jc get-job"
+        rm $task.xml -f
         jc get-job-for-edit -t "$task" --extra-save "$task.before-edit.xml"
         save.-to-git -m "auto commit at $(now), before edit"
     }
@@ -80,7 +81,7 @@ fi
         jc create-job $task < $task.xml
     else
         if diff $task.xml ../$scm_jenkins_test_server/$task.xml; then
-            EMACS=t hint "No need to update $task, prod same with test"
+            EMACS=t hint "No need to update $PWD/$task, prod same with test ../$scm_jenkins_test_server/$task.xml"
             exit
         fi
         cp ../$scm_jenkins_test_server/$task.xml .
