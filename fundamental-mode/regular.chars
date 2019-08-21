@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: regular.chars
+# --
+^[-.\w/]+$
