@@ -1008,7 +1008,7 @@ sub jkd_c(@) { # create issue
 
 sub jkd_comment(@) {
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -l -s perl i:issue c:comment @once
+    # generate-getopt -l -s perl i:issue c:comment @once '?"以前已经添加过的 comment，就不会再重复添加了"'
     ## end code-generator
     ## start generated code
     use Getopt::Long;
@@ -1042,11 +1042,11 @@ sub jkd_comment(@) {
         print "\n";
         printf "%6s", '';
         printf "%-24s", '--[no]once';
-        if (length('--[no]once') > 24 and length() > 0) {
+        if (length('--[no]once') > 24 and length("以前已经添加过的 comment，就不会再重复添加了") > 0) {
             print "\n";
             printf "%30s", "";
         }
-        printf "%s", ;
+        printf "%s", "以前已经添加过的 comment，就不会再重复添加了";
         print "\n";
 
         exit(0);
@@ -1057,7 +1057,7 @@ sub jkd_comment(@) {
         'issue|i=s' => \$issue,
         'once!' => \$once,
         'help|h!' => \&$handler_help,
-        );
+    );
 
 
     ## end generated code
