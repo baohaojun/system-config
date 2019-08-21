@@ -165,12 +165,8 @@ fi
 
 if is-in-emacs; then
 
-    if test "${b0}" = Wsync; then
-        nohup setsid bash -c 'set -x; Wrench.sh "wrench_post($(lua-quote-string "$(emacs-current-text)"))"' </dev/null > ~/tmp/psync.log 2>&1&
-        exit
-    fi
     if test $# = 0; then
-        psync_host=$(get-about-me psync-host)
+        psync_host=$(get-about-me ${b0}-host)
         if test "${psync_host}"  = unknown; then
             set -- cmdev
         else
@@ -179,6 +175,7 @@ if is-in-emacs; then
     fi
 
     if test "$#" = 1; then
+        psync_host=$1
         nohup setsid bash -c "$(
 cat <<'EOFb52d0b099efd' | . .replace-%% --
 # {%sh-mode%}
@@ -186,7 +183,7 @@ set -x;
 emacs_current_file=$(emacs-current-file)
 
 CHECK_ORG=true out-of-emacs bash -x "<%b0%>" \
-         "$@" "$(emacs-current-file)"
+         [%psync_host%] "$(emacs-current-file)"
 # {%/sh-mode%}
 EOFb52d0b099efd
 

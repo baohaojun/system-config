@@ -2,7 +2,7 @@
 use strict;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P p:project e:entry
+# generate-getopt -s perl -P p:project e:entry r:raw-entry '?"不要修改我的 entry，它是符合 opengrok 的参数格式的"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -13,6 +13,7 @@ Getopt::Long::Configure("posix_default");
 
 my $entry = "";
 my $project = "";
+my $raw_entry = "";
 
 my $handler_help = sub {
     print ;
@@ -33,6 +34,14 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--raw-entry=RAW-ENTRY';
+    if (length('--raw-entry=RAW-ENTRY') > 24 and length("不要修改我的 entry，它是符合 opengrok 的参数格式的") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "不要修改我的 entry，它是符合 opengrok 的参数格式的";
+    print "\n";
 
     exit(0);
 };
@@ -40,6 +49,7 @@ my $handler_help = sub {
 GetOptions (
     'entry|e=s' => \$entry,
     'project|p=s' => \$project,
+    'raw-entry|r=s' => \$raw_entry,
     'help|h!' => \&$handler_help,
 );
 
@@ -49,7 +59,9 @@ use JSON;
 
 use URI::Encode qw(uri_encode uri_decode);
 
-$entry = "/$entry/" unless $entry =~ m,^/.*/$,;
+if (not $raw_entry) {
+    $entry = "/$entry/" unless $entry =~ m,^/.*/$,;
+}
 
 $project = uri_encode($project);
 $entry = uri_encode($entry);
