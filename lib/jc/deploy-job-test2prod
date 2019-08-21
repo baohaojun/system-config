@@ -78,7 +78,8 @@ fi
     if test ! -e $task.xml; then
         EMACS=t hint "copying $task from test to prod, as prod don't have it"
         cp ../$scm_jenkins_test_server/$task.xml .
-        jc create-job $task < $task.xml
+        jc create-job $task < $task.xml || true
+        jc ojob $task
     else
         if diff $task.xml ../$scm_jenkins_test_server/$task.xml; then
             EMACS=t hint "No need to update $PWD/$task, prod same with test ../$scm_jenkins_test_server/$task.xml"
