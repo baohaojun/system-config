@@ -21,7 +21,7 @@ if [[ $top_window =~ Firefox ]]; then
         sawfish-send-focused-window-event "C-w" || true
         alarm -a '
 e ~/system-config/doc/projects/daily.org;
-' 0m "You should not view weibo when at work!"
+' 0m "You should not view weibo when at work, go do 2 squats!"
     fi
 else
     echo "$(date): ${top_window}"
