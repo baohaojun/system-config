@@ -2,7 +2,11 @@
 use strict;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P p:project e:entry rraw-entry '?"不要修改我的 entry，它是符合 opengrok 的参数格式的"'
+# generate-getopt -s perl -P \
+# '?"调用 opengrok rest api 的命令行程序，允许在 emacs、vim 等软件中集成 opengrok 搜索"' \
+# p:project '?"指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表"' \
+# e:entry '?"默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助"' \
+# rraw-entry '?"不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -16,31 +20,31 @@ my $project = "";
 my $raw_entry = 0;
 
 my $handler_help = sub {
-    print ;
+    print "调用 opengrok rest api 的命令行程序，允许在 emacs、vim 等软件中集成 opengrok 搜索";
     print "\n\n选项和参数：\n";
     printf "%6s", '-e, ';
     printf "%-24s", '--entry=ENTRY';
-    if (length('--entry=ENTRY') > 24 and length() > 0) {
+    if (length('--entry=ENTRY') > 24 and length("默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助";
     print "\n";
     printf "%6s", '-p, ';
     printf "%-24s", '--project=PROJECT';
-    if (length('--project=PROJECT') > 24 and length() > 0) {
+    if (length('--project=PROJECT') > 24 and length("指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表";
     print "\n";
     printf "%6s", '-r, ';
     printf "%-24s", '--[no]raw-entry';
-    if (length('--[no]raw-entry') > 24 and length("不要修改我的 entry，它是符合 opengrok 的参数格式的") > 0) {
+    if (length('--[no]raw-entry') > 24 and length("不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "不要修改我的 entry，它是符合 opengrok 的参数格式的";
+    printf "%s", "不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api";
     print "\n";
 
     exit(0);
