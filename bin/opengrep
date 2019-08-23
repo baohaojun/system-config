@@ -71,8 +71,10 @@ $project = uri_encode($project);
 $entry = uri_encode($entry);
 
 my $command = "curl -s '$ENV{scm_opengrok_url}api/v1/search?projects=$project&full=$entry&defs=&refs=&path=&hist=&type='";
+(my $url = $command) =~ s,api/v1/,,;
+$url =~ s,curl -s ,,;
 
-print STDERR "$command\n";
+print STDERR "$command\nopengrok url is $url\n";
 
 my $result = qx($command);
 

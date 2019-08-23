@@ -98,13 +98,14 @@ function mkbeagrepidx() {
     elif lookup-file -e .beagrep-ignore; then
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "${BEAGREP_IGNORE_DIR_PATTERNS:-*/.git},$(cat $(lookup-file .beagrep-ignore))")
         # EMACS=t hint "deny is set to: ${ADDITIONAL_OPTIONS[*]}, $PWD"
-    elif test -e "$(lookup-file .beagrep-ignore.sh)"; then
-        . .beagrep-ignore.sh
+    elif lookup-file -e .beagrep-ignore.sh; then
+        . "$(lookup-file -e .beagrep-ignore.sh)"
     elif test "$BEAGREP_IGNORE_DIR_PATTERNS"; then
-        ADDITIONAL_OPTIONS=(--deny-directory-pattern )
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$BEAGREP_IGNORE_DIR_PATTERNS")
     else
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/$x,; fi; done)*/out,*/.repo,*/.git")
     fi
+    bhj-notify for-code-reading ADDITIONAL_OPTIONS is $ADDITIONAL_OPTIONS || true
 
     subdir=.beagrep
     if test "$SOURCECODETAGSMODE" = true; then
