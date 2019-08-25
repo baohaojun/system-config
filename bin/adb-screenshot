@@ -140,6 +140,7 @@ if test "$1"; then
     rm -f ~/tmp/$$-$sd_file
     if test "${edit}" = true; then
         gimp "$1"&
+        putclip "$1"
     fi
     exit
 fi
