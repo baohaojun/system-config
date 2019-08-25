@@ -62,9 +62,7 @@ sub quote_lua_str($) {
     $max_quote = max($max_quote, length $1);
   }
 
-  if ($text =~ m,\]$,) {
-    $max_quote += 1;
-  }
+  $max_quote += 1;
 
   my $quote = "=" x $max_quote;
   return sprintf("[%s[%s]%s]", $quote, $text, $quote);

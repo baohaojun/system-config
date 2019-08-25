@@ -347,7 +347,9 @@ if test ${#selection_entries[@]} = 0; then
         exit 1
     fi
 elif test "${#selection_entries[@]}" = 1 -a -z "${always_selection}" -a -z "$init"; then
+    new_output=false
     if test "$hint_1_entry" = true; then
+
         if test "${ask_for_input}" = true; then
             if yes-or-no-p -y "只有一个选项： ${selection_entries[0]}，确定？"; then
                 echo -n "${selection_entries[0]}"
@@ -356,13 +358,16 @@ elif test "${#selection_entries[@]}" = 1 -a -z "${always_selection}" -a -z "$ini
                 output=$(
                     ask-for-input -p "${prompt}"
                       )
+                new_output=true
             fi
         else
             hint "只有一个选项：${selection_entries[0]}"
         fi
     fi
-    echo -n "${selection_entries[0]}"
-    exit 0
+    if test "${new_output}" = false; then
+        echo -n "${selection_entries[0]}"
+        exit 0
+    fi
 else
     if test "${select_from_history_too}" = true; then
         edit_history="@@@edit the history file@@@"
