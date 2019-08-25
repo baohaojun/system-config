@@ -20,8 +20,10 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
         File flagFile = new File("/sdcard/Wrench/usb_online");
         try {
             if (intent.getAction() == Intent.ACTION_POWER_DISCONNECTED) {
+                Log.e("bhj", String.format("%s:%d: power disconnect", "PowerConnectionReceiver.java", 23));
                 flagFile.delete();
             } else if (intent.getAction() == Intent.ACTION_POWER_CONNECTED) {
+                Log.e("bhj", String.format("%s:%d: power connect", "PowerConnectionReceiver.java", 26));
                 flagFile.createNewFile();
             } else {
                 Log.e("bhj", String.format("%s:%d: ", "PowerConnectionReceiver.java", 27));
@@ -31,4 +33,3 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
         }
     }
 }
-
