@@ -19,7 +19,7 @@ cd "$1"
 (
     if ! flock -n 9; then
         cat <<EOF > .lock-failed
-Can't lock because of:
+Can't lock .$(basename $0).lock because of:
 $(fuser .$(basename $0).lock)
 EOF
     else

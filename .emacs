@@ -235,7 +235,7 @@
                            theme)))
     (dolist (theme custom-enabled-themes)
       (disable-theme theme))
-    (load-theme next-theme)))
+    (when next-theme (load-theme next-theme))))
 
 (unless (boundp 'bhj-no-random-theme)
   (condition-case nil
