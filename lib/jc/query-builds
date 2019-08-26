@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P j:job-name '?"也可以指定 job url"' \
+# p:test-path '?"比如 \$..causes.*.userId"' \
+# v:test-value '?"比如 baohaojun"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $job_name = "";
+my $test_path = "";
+my $test_value = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--job-name=JOB-NAME';
+    if (length('--job-name=JOB-NAME') > 24 and length("也可以指定 job url") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "也可以指定 job url";
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--test-path=TEST-PATH';
+    if (length('--test-path=TEST-PATH') > 24 and length("比如 \$..causes.*.userId") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "比如 \$..causes.*.userId";
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--test-value=TEST-VALUE';
+    if (length('--test-value=TEST-VALUE') > 24 and length("比如 baohaojun") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "比如 baohaojun";
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'job-name|j=s' => \$job_name,
+    'test-path|p=s' => \$test_path,
+    'test-value|v=s' => \$test_value,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+my $job_url = $job_name;
+
+if ( $job_url !~ m,://, ) {
+    $job_url = "$ENV{scm_jenkins_url}job/${job_name}/";
+}
+
+use JSON;
+use JSON::Path;
+my $job_json = decode_json(qx(jc curl ${job_url}api/json?depth=1));
+
+use v5.10;
+my $jpath = JSON::Path->new('$..builds.*');
+
+for ($jpath->values($job_json)) {
+    my $jpath2 = JSON::Path->new($test_path);
+    if (grep {$_ eq "$test_value"} $jpath2->values($_)) {
+        print "$job_url" . $_->{number} . "\n";
+    }
+}

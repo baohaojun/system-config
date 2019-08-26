@@ -15,57 +15,51 @@ my $extra_send_text = "";
 my $send_to = "";
 
 my $handler_help = sub {
-  print ;
-  print "\n\n选项和参数：\n";
-  printf "%6s", '';
-  printf "%-24s", '--[no]ask-to-whom';
-  if (length('--[no]ask-to-whom') > 24 and length() > 0) {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]ask-to-whom';
+    if (length('--[no]ask-to-whom') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '';
-  printf "%-24s", '--extra-send-text=EXTRA-SEND-TEXT';
-  if (length('--extra-send-text=EXTRA-SEND-TEXT') > 24 and length() > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--extra-send-text=EXTRA-SEND-TEXT';
+    if (length('--extra-send-text=EXTRA-SEND-TEXT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '';
-  printf "%-24s", '--send-to=SEND-TO';
-  if (length('--send-to=SEND-TO') > 24 and length() > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--send-to=SEND-TO';
+    if (length('--send-to=SEND-TO') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
 
-  exit(0);
+    exit(0);
 };
 
 GetOptions (
-            'ask-to-whom!' => \$ask_to_whom,
-            'extra-send-text=s' => \$extra_send_text,
-            'send-to=s' => \$send_to,
-            'help|h!' => \&$handler_help,
-           );
+    'ask-to-whom!' => \$ask_to_whom,
+    'extra-send-text=s' => \$extra_send_text,
+    'send-to=s' => \$send_to,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
+use String::ShellQuote;
 
 sub quote_lua_str($) {
-  my $text = $_[0];
-  my $max_quote = 0;
-  while ($text =~ m,[\[\]](=*)[\[\]],g) {
-    $max_quote = max($max_quote, length $1);
-  }
-
-  $max_quote += 1;
-
-  my $quote = "=" x $max_quote;
-  return sprintf("[%s[%s]%s]", $quote, $text, $quote);
+    my @command = ("str.quote.lua", "$_[0]");
+    my $command = join(" ", shell_quote(@command));
+    return scalar qx($command);
 }
 
 my $text;
@@ -87,11 +81,6 @@ $text
 
 EOF
         );
-
-use List::Util qw(max);
-
-use String::ShellQuote;
-
 
 if ($ask_to_whom or $send_to) {
   my $whom;

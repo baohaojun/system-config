@@ -50,14 +50,28 @@ done
 
 ## end generated code
 
+if test -z "$url"; then
+    die "Must specify url"
+fi
+
 mkdir -p "${output_dir}"
 cd "$output_dir"
 wget -k --page-requisites -c "$url" "$@"
 
-html=${url##*//}
+log url is "$url"
+html=${url##*://}
 
-if test -e "$html"; then
+if test ! -f "$html" -a -e "$html/index.html"; then
+    html=$html/index.html
+fi
+
+if test -f "$html"; then
     cat "$html" | pandoc -f html -t org --wrap=none - >"${html%.html}.org"
+    (
+        cd "$(dirname "$html")"
+        save.-to-git -m "$url"
+    )
+    e "${html%.html}.org"
 else
     die "Can't find html: $html"
 fi

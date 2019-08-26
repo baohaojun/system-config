@@ -235,6 +235,7 @@
      ("screen" . shell-script)
      ("shell" . sh)
      ("bash" . sh))))
+ '(org-support-shift-select nil)
  '(org-use-sub-superscripts (quote {}))
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
