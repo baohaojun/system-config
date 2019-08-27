@@ -102,23 +102,7 @@
   (autoload 're-builder "re-builder-x" "Construct a regexp interactively." t)
   (setq comint-completion-addsuffix '("/" . ""))
   (setq tags-table-list '("./TAGS" "../TAGS" "../../TAGS"))
-  (setq hippie-expand-try-functions-list
-        '(try-expand-line
-          try-expand-dabbrev
-          try-expand-line-all-buffers
-          try-expand-list
-          try-expand-list-all-buffers
-          try-expand-dabbrev-visible
-          try-expand-dabbrev-all-buffers
-          try-expand-dabbrev-from-kill
-          try-complete-file-name
-          try-complete-file-name-partially
-          try-complete-lisp-symbol
-          try-complete-lisp-symbol-partially
-          try-expand-whole-kill))
 
-  (global-set-key "\C-m" 'newline-and-indent)
-  (global-set-key "\C-j" 'newline)
   (global-set-key (kbd "M-'") 'just-one-space)
   (global-set-key (kbd "C-M-=") 'pde-indent-dwim)
   ;; nearest key to dabbrev-expand
