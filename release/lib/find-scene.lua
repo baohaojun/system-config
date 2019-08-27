@@ -157,6 +157,7 @@ M.click_scene = function (scene, settings)
    x_plus = settings.x or 0
    y_plus = settings.y or 0
    click_times = settings.click_times or 1
+   click_wait = settings.click_wait or .1
 
    if not settings.skip_refind and not refind_scene(scene, settings.retry) then
       log("Can't find scene: %s for click (retry: %s)", scene, settings.retry)
@@ -172,7 +173,7 @@ M.click_scene = function (scene, settings)
          adb_tap_XY(xy[1] + x_plus, xy[2] + y_plus)
       end
       if n < click_times then
-         sleep(.1)
+         sleep(click_wait)
       end
    end
 end
@@ -220,5 +221,5 @@ M.jump_out_of = function(scene, settings)
          return
       end
    end
-   error("Can't jump out of %s", scene)
+   error(("Can't jump out of %s"):format(scene))
 end
