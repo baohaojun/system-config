@@ -110,8 +110,8 @@ for the JavaScript code in this tag.
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 这个操作本身就已经有比较多的坑了，然而，由于我调换了 Ctrl 键和 Alt 键的位置，所有的坑也变得更深了。
 </p>
-<div class="outline-2" id="outline-container-org0b92edf">
-<h2 id="org0b92edf" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">1</span> Gtk 的窗口</h2>
+<div class="outline-2" id="outline-container-org39046a5">
+<h2 id="org39046a5" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">1</span> Gtk 的窗口</h2>
 <div class="outline-text-2" id="text-1">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 Sawfish 自带的定制键盘消息，是通过这个命令：<code style="background: transparent; font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline; color: #7f7f7f">synthesize-event</code>，它是通过 X11 的接口 XSendEvent 来实现的，然而，在 gtk 的窗口上，这个接口被认为有安全隐患，因此把它给禁用了，不会处理你发给它的消息。
@@ -124,8 +124,8 @@ Sawfish 自带的定制键盘消息，是通过这个命令：<code style="bac
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org538659e">
-<h2 id="org538659e" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">2</span> Xdotool 的坑</h2>
+<div class="outline-2" id="outline-container-org397f825">
+<h2 id="org397f825" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">2</span> Xdotool 的坑</h2>
 <div class="outline-text-2" id="text-2">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，必须做如下操作：
@@ -154,8 +154,8 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 <li style="margin: 0.5em 0">用了很多年 <code style="background: transparent; font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline; color: #7f7f7f">xdotool-when-keyboard-clear</code> 之后，重新折腾 xdotool 的源代码，才发现应该可以用上面的方法，用 xdotool 自带的机制直接搞定。</li>
 </ol>
 </div>
-<div class="outline-3" id="outline-container-orga83f289">
-<h3 id="orga83f289" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">2.1</span> 剩下的一个小坑</h3>
+<div class="outline-3" id="outline-container-orgd28550d">
+<h3 id="orgd28550d" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">2.1</span> 剩下的一个小坑</h3>
 <div class="outline-text-3" id="text-2-1">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 由于 <code style="background: transparent; font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline; color: #7f7f7f">--clearmodifiers</code> 的关系，xdotool 会把上例中的 Ctrl 键先松开，最后再『按』回去。这一按不要紧，有时候它按回去的时候，实际上你的手指自己已经松开了 Ctrl 键。
@@ -169,8 +169,8 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 </div>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org636002f">
-<h2 id="org636002f" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">3</span> 切换在 ctrl 和 alt 引入的问题</h2>
+<div class="outline-2" id="outline-container-orgf3972a4">
+<h2 id="orgf3972a4" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">3</span> 切换在 ctrl 和 alt 引入的问题</h2>
 <div class="outline-text-2" id="text-3">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 前面已经说过，我自己切换过 ctrl 和 alt 的位置，因此导致了一个非常奇怪的问题。
@@ -206,8 +206,8 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 那个 state 0x8，记录的就是当前的辅助按键的状态，0x8 代表 Alt 键被按下了。如果是 Ctrl 键的话，应该是 0x4（第一个 Ctrl-b 时能看到 0x4）。
 </p>
 </div>
-<div class="outline-3" id="outline-container-orgbf80db5">
-<h3 id="orgbf80db5" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">3.1</span> 解决方案</h3>
+<div class="outline-3" id="outline-container-org74283bc">
+<h3 id="org74283bc" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">3.1</span> 解决方案</h3>
 <div class="outline-text-3" id="text-3-1">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 我在写这篇博客的时候，还没有想到最终的解决方案，还在想一个 workaround（这也是为什么这篇博客的归类是 workaround）。
@@ -242,8 +242,8 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 </div>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgb5bbc8a">
-<h2 id="orgb5bbc8a" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">4</span> 总结</h2>
+<div class="outline-2" id="outline-container-orgc93ef5e">
+<h2 id="orgc93ef5e" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">4</span> 总结</h2>
 <div class="outline-text-2" id="text-4">
 <ol class="org-ol" style="margin: 1.2em 0; padding-left: 2em">
 <li style="margin: 0.5em 0">以后不要用 xmodmap 了（反正在 wayland 上已经是不能用了的，setxkbmap 不知道能不能用）</li>
@@ -258,8 +258,8 @@ Xdotool 在使用的过程中，比如我想把 Crtl-b 转换成 Left，
 </a>
 </li>
 <li class="next_post" style="margin: 0.5em 0; float: right; width: 50%; text-align: right;">
-<a href="../../../../meta/Archive.html" style="color: #06C; text-decoration: underline"> <!-- next-url -->
-        Archive <!-- next-title -->
+<a href="../27/0-7-habits-2.html" style="color: #06C; text-decoration: underline"> <!-- next-url -->
+        七个习惯感悟（二）「以终为始、要事第一」 <!-- next-title -->
 <i class="icon-chevron-right">》</i>
 </a>
 </li>

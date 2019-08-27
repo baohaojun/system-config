@@ -12,9 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[七个习惯感悟（二）「以终为始、要事第一」]]></title>
+    <link href="http://baohaojun.github.io/blog/2019/08/27/0-7-habits-2.html"/>
+    <updated>2019-29-27T22:08:32+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2019/08/27/0-7-habits-2.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[修改桌面键绑定的那些坑]]></title>
     <link href="http://baohaojun.github.io/blog/2019/08/04/0-traps-of-binding-desktop-keys.html"/>
-    <updated>2019-50-04T20:08:57+08:00</updated>
+    <updated>2019-08-04T20:52:16+08:00</updated>
     <id>http://baohaojun.github.io/blog/2019/08/04/0-traps-of-binding-desktop-keys.html</id>
   </entry>
   <entry>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2017/06/29/0-One-Wrench-To-Screw-Them-All.html"/>
     <updated>2017-06-29T12:37:20+08:00</updated>
     <id>http://baohaojun.github.io/blog/2017/06/29/0-One-Wrench-To-Screw-Them-All.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[刚刚学到一招：简便 Emacs 折行]]></title>
-    <link href="http://baohaojun.github.io/blog/2017/02/16/0-wrap-lines-with-emacs.html"/>
-    <updated>2017-02-16T11:26:07+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2017/02/16/0-wrap-lines-with-emacs.html</id>
   </entry>
 </feed>
