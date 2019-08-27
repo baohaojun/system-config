@@ -26,7 +26,7 @@
 
 以终为始是最难的一个习惯，因为它要求你能预见未来，能想明白你五年后、十年后、以及快去世的时候，你想要的是什么。但同时它也是最简单的一个习惯，因为连四五岁的小朋友都会回答这样的问题「你的理想是什么？你长大想成为什么样的人？」
 
-以终为始，是跟时间相关的一个话题。而时间，是宇宙最大的未解之迷。趁机跟大家推荐两本跟时间相关的书，一本是『思考，快与慢』（快慢应该算是跟时间相关的吧［疑问］），另一本是以前提到过的『第五项修炼』，里面总结了很多种系统模型，其中有一些就是跟时间相关的系统。
+以终为始，是跟时间相关的一个话题。而时间，是宇宙最大的未解之迷。趁机跟大家推荐两本跟时间相关的书，一本是『思考，快与慢』（快慢应该算是跟时间相关的吧[疑问]），另一本是以前提到过的『第五项修炼』，里面总结了很多种系统模型，其中有一些就是跟时间相关的系统。
 
 ** Wishful thinking
 
@@ -36,17 +36,17 @@
 Envision what you want in the future so you can work and plan towards it. Understand how people make decisions in their life. To be effective you need to act based on principles and constantly review your mission statement. Are you - right now - who you want to be? What do I have to say about myself? How do you want to be remembered? If habit 1 advises to change your life to act and be proactive, habit 2 advises that /you are the programmer!/ Grow and stay humble.
 #+END_QUOTE
 
-注意里面斜体字的那一句，/你是一个程序员/！嗯？怎么扯到程序员上去了？
+注意里面斜体字的那一句，/你是一个程序员/！嗯？怎么扯到程序员上去了？哈哈，没错，前面我也提到了一个非常著名的程序员，Vim 的作者，写了向七个习惯致敬的『高效编辑器使用者的七个习惯』，现在好了，高七这是直接推荐大家都去学编程了吗？不是的，这里的意思应该是让大家去安排好自己想要的那些东西的顺序，1、2、3。其实编程也就是这么回事儿，想要让计算机做什么事儿，在程序里写好，1、2、3，就完了。
 
 嗯，在这个人人都需要学一点编程的时代，跟大家推荐两本书，一本是“How to Design Programs”，在序里面就提到其实编程一点儿也不复杂，将军、主妇、厨师的工作，其实都是一种编程。
 
 另一本书是“Structure and Interpretation of Computer Programs”（两本书都是 MIT 的教材，但是都非常简单易懂），在这本书里面我第一次接触到一种非常强大的思考方式，叫“许愿式思考”（wishful thinking）。
 
-关于 wishful thinking，我以前也写过一篇博客，在我的公众号里也发过。可以 [[./../../../2016/11/12/0-Programming-by-Wishful-Thinking.org][点击这里]] 阅读（如果你不是程序员的话，请忽略其中关于编程的那些部分）。
+关于 wishful thinking，我以前也写过一篇博客，在我的公众号里也发过。可以点击这里 http://baohaojun.github.io/blog/2016/11/12/0-Programming-by-Wishful-Thinking.html 阅读（如果你不是程序员的话，请忽略其中关于编程的那些部分）。
 
 ** 我的个人使命宣言
 
-把自己的个人使命宣言写出来，感觉很奇怪，有点丢人呢[害羞]［捂脸］。
+把自己的个人使命宣言写出来，感觉很奇怪，有点丢人呢[害羞][捂脸]。
 
 以下是我的个人使命宣言。
 
@@ -54,7 +54,7 @@ Envision what you want in the future so you can work and plan towards it. Unders
 
 如果别人认为我做的事情太简单，没有价值，那我就去找一点难的事情，想办法把它变简单，然后用这个过程中产生的价值去跟别人交易。
 
-好吧，其实我还没有想好我的个人使命宣言［偷笑］。
+好吧，其实我还没有想好我的个人使命宣言[偷笑]。
 
 （如果你觉得这个使命宣言形同儿戏的话，想一下阿里巴巴的使命宣言，「让天下没有难做的生意」，他们让天下的生意都很容易做，我也做一些容易的事情，不行嘛😜）
 
