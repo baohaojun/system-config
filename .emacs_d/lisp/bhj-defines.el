@@ -1626,4 +1626,26 @@ to the value of `temporary-file-directory'."
     (when target-point
       (goto-char target-point))))
 
+(defun bhj-forward-to-same-indentation ()
+  (interactive)
+  (let ((old-indentation (save-excursion (back-to-indentation) (current-column)))
+        new-indentation found)
+    (set-mark (point))
+    (while (not found)
+      (forward-line)
+      (setq new-indentation (save-excursion (back-to-indentation) (current-column)))
+      (when (= new-indentation old-indentation)
+        (setq found t)))))
+
+(defun bhj-backward-to-same-indentation ()
+  (interactive)
+  (let ((old-indentation (save-excursion (back-to-indentation) (current-column)))
+        new-indentation found)
+    (set-mark (point))
+    (while (not found)
+      (forward-line -1)
+      (setq new-indentation (save-excursion (back-to-indentation) (current-column)))
+      (when (= new-indentation old-indentation)
+        (setq found t)))))
+
 (provide 'bhj-defines)
