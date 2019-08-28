@@ -315,7 +315,8 @@ M.ask_for_window_type = function(window)
                              'Above the input method, the right end, confirm before send',
                              "Top-right corner of phone's screen",
                              "Top-right corner of phone's screen, confirm before send",
-                             'I will click the send button myself',
+                             "Please enter with the <Enter> key",
+                             'Do nothing, I will click the send button myself',
    }
    if window_type == 'Above the input method, the right end' then
       window_type = 'weixin-chat'
@@ -327,8 +328,10 @@ M.ask_for_window_type = function(window)
       window_type = 'weixin-confirm'
    elseif window_type == "Top-right corner of phone's screen, confirm before send" then
       window_type = 'weibo-confirm'
-   else
+   elseif window_type == "Please enter with the <Enter> key" then
       window_type = 'manual-post'
+   else
+      window_type = 'no-post'
    end
    window_post_button_map[window] = window_type
    save_window_types()
@@ -339,10 +342,10 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    local window = adb_top_window()
    debug("sharing text: %s for window: %s", text, window)
    if text and text:match("^@%?") then
-      wrench_post("@", 'manual-post')
-      prompt_user("请选择你要@谁，然后继续")
+      wrench_post("@", 'no-post')
+      prompt_user("请选择你要 @ 谁，然后继续")
       text = text:gsub("^@%?", "")
-      how_to_post = 'manual-post'
+      how_to_post = 'no-post'
    end
 
    if text and text:match("@%?$") then
@@ -517,10 +520,15 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          post_button = right_button_x .. ' 150'
       elseif window_type == 'manual-post' then
          post_button = 'key enter'
+      elseif window_type == 'no-post' then
+         post_button = ''
       end
 
       debugging("add is %s", add)
       adb_event(add .. " key scroll_lock")
+      if text:match("[\x02\x07]") then
+         log("using dingding to @sbd?")
+      end
       if confirm_before_post and not yes_or_no_p(confirm_before_post) then
          return ""
       end

@@ -102,6 +102,11 @@ M.debug_find_scene = function(desc, scene)
 end
 
 M.find_scene = function(scene, times)
+   if type(scene) == 'function' then
+      return scene()
+   elseif scene == true then
+      return true
+   end
    load_scene_map()
    times = times or 1
    if M.g_find_scene_debug then
@@ -169,24 +174,47 @@ M.get_scene_size = function(scene)
    return size
 end
 
-M.get_scene_x = function(scene)
+M.get_scene_w = function(scene)
    size = M.get_scene_size(scene)
    return size:gsub("x.*", "")
 end
 
-M.get_scene_y = function(scene)
+M.get_scene_h = function(scene)
    size = M.get_scene_size(scene)
    return size:gsub(".*x", "")
+end
+
+M.swipe_scene = function (scene, settings)
+   log("Click scene: %s", scene)
+   settings = settings or {}
+
+   swipe_millisecs = settings.swipe_millisecs or 100
+
+   x_plus = settings.x or M.get_scene_w(scene) / 2
+   y_plus = settings.y or M.get_scene_h(scene) / 2
+
+   x_delta = settings.dx
+   y_delta = settings.dy
+
+   M.load_scene_map()
+
+   local xy = scenes_map[scene]
+   xy = split(" ", xy)
+   from_x = xy[1] + x_plus
+   from_y = xy[2] + y_plus
+
+   to_x = from_x + x_delta
+   to_y = from_y + y_delta
+
+   adb_quick_input{("input touchscreen swipe %d %d %d %d %d"):format(from_x, from_y, to_x, to_y, swipe_millisecs)}
 end
 
 M.click_scene = function (scene, settings)
    log("Click scene: %s", scene)
    settings = settings or {}
 
-
-
-   x_plus = settings.x or M.get_scene_x(scene)
-   y_plus = settings.y or M.get_scene_y(scene)
+   x_plus = settings.x or M.get_scene_w(scene)
+   y_plus = settings.y or M.get_scene_h(scene)
    click_times = settings.click_times or 1
    click_wait = settings.click_wait or .1
 
@@ -214,6 +242,8 @@ M.jump_from_to = function(from_scene, to_scene, settings)
    times = settings.times or 3
    sleep_time = settings.sleep_time or .2
 
+   action = settings.action
+
    for t = 1, times do
       if find_scene(to_scene) then
          log("jumped from %s to %s", from_scene, to_scene)
@@ -222,7 +252,11 @@ M.jump_from_to = function(from_scene, to_scene, settings)
 
       if find_scene(from_scene) then
          settings.skip_refind = 1
-         click_scene(from_scene, settings)
+         if action then
+            action()
+         else
+            click_scene(from_scene, settings)
+         end
          sleep(sleep_time)
          if t == times and find_scene(to_scene) then
             log("jumped from %s to %s", from_scene, to_scene)
@@ -230,8 +264,29 @@ M.jump_from_to = function(from_scene, to_scene, settings)
          end
       end
    end
-   log("Can't jump from %s to %s", from_scene, to_scene)
-   error("Can't jump from " .. from_scene .. " to " .. to_scene)
+   log("Can't jump from %s to %s", tostring(from_scene), tostring(to_scene))
+   error("Can't jump from " .. tostring(from_scene) .. " to " .. tostring(to_scene))
+end
+
+M.wait_for_scene = function(scene, settings)
+   settings = settings or {}
+   times = settings.times or 3
+   sleep_time = settings.sleep_time or .2
+
+   for t = 1, times do
+      found = false
+      if type(scene) == 'string' and find_scene(scene) then
+         found = true
+      elseif type(scene) == 'function' and scene() then
+         found = true
+      end
+
+      if found == true then
+         return true
+      end
+      sleep(sleep_time)
+   end
+   error(("Can't wait for scene: %s"):format(scene))
 end
 
 M.jump_out_of = function(scene, settings)
