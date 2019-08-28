@@ -1,0 +1,3 @@
+#!/bin/bash
+
+Wrench.sh "$(printf "find_scene('%s')" $1)"
