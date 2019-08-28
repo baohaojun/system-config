@@ -1,16 +1,5 @@
 #!/bin/bash
 
-exec &> ~/tmp/abbrevs.log
-set -x
-
-sawfish-window mark -t abbrevs -s
-. atexit sawfish-window mark -t abbrevs -r
-
-config_dirs=(
-    ~/.local-config/etc/abbrevs/
-    ~/system-config/etc/abbrevs/
-)
-
 set -e
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P a:abbrev
@@ -53,6 +42,17 @@ done
 
 ## end generated code
 
+exec &> ~/tmp/abbrevs.log
+set -x
+
+sawfish-window mark -t abbrevs -s
+. atexit sawfish-window mark -t abbrevs -r
+
+config_dirs=(
+    ~/.local-config/etc/abbrevs/
+    ~/system-config/etc/abbrevs/
+)
+
 if test -z "$abbrev" -a "$1"; then
     if test "$#" -gt 1; then
         die "Don't take more than 1 argument"
@@ -61,7 +61,7 @@ if test -z "$abbrev" -a "$1"; then
     fi
 elif test "$abbrev" -a "$1"; then
     die "Must specify ABBREV with either -a ABBREV or \$1, can't use both"
-else
+elif test -z "${abbrev}"; then
     abbrev=$(ask-for-input-with-sawfish -p "Please input your abbrev. Or simply ? for help")
 fi
 
@@ -92,6 +92,9 @@ fi
 abbrev_file=$(get-abbrev-file "${abbrev}")
 
 if test ! -e "${abbrev_file}"; then
+    if test "${abbrev_file:0:1}" = +; then
+        exec bash -x abbrevs -a "${abbrev_file}" &> ~/tmp/abbrevs.recur
+    fi
     bhj-notify abbrevs "There is no matching file for $abbrev, use +$abbrev to create a new abbrev"
     exit 1
 fi

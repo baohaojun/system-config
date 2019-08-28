@@ -105,14 +105,35 @@ if ($ask_to_whom or $send_to) {
   }
 }
 
+my @cur_at_end;
+
 if ($text =~ m/(\@\S+)( | )/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
-    if ($text =~ s,(\@\S+?)( | ),$1,g) {
-        system("bhj-notify", "Wrench-post", "replaced $1: $text");
+    while ($text =~ s,^\@(\S+?)( | ),,) {
+        my $at_whom = $1;
+        my $command = sprintf("wrench_cue(%s)", quote_lua_str($at_whom));
+        system("Wrench.sh", $command);
+    }
+    while ($text =~ s,\@(\S+?)( | |$),,) {
+        push @cur_at_end, $1;
     }
 }
-my $post_text = sprintf("wrench_post(%s)", quote_lua_str($text));
+
+my $how_to_post = 'nil';
+
+if (@cur_at_end) {
+    $how_to_post = '"no-post"';
+}
+my $post_text = sprintf("wrench_post(%s, %s)", quote_lua_str($text), $how_to_post);
 
 system("Wrench.sh", $post_text);
+if (@cur_at_end) {
+    for (@cur_at_end) {
+        my $command = sprintf("wrench_cue(%s)", quote_lua_str($_));
+        system("Wrench.sh", $command);
+    }
+    system("Wrench.sh", "wrench_post('')");
+}
+
 if ($extra_send_text) {
   system("Wrench-post", "--", "$extra_send_text");
 }

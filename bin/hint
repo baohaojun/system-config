@@ -53,8 +53,15 @@ if is-recording || test "$EMACS"; then
 请按‘回车’继续.. "
 else
     echo 1>&2
-    read -p "
+    if read -p "
 ----------------
 $*.
-请按‘回车’继续.. "
+请按「回车」继续；或 Ctrl-C 中止.. "; then
+        true
+    else
+        ret=$?
+        if test $ret = 142; then
+            echo "$TMOUT 秒内未输入，继续.." 1>&2
+        fi
+    fi
 fi || true
