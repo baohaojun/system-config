@@ -150,12 +150,43 @@ M.find_scene = function(scene, times)
    end
 end
 
+M.scene_size_map = {}
+
+M.get_scene_size = function(scene)
+   if not M.scene_size_map[scene] then
+      command = ("(set -x; identify %s/%s.png | perl -pe 's,.*?\\s(\\d+x\\d+)\\s.*,$1,') 2>~/tmp/x.txt"):format(M.resDir, scene)
+      size = qx(command)
+      M.scene_size_map[scene] = size
+   end
+
+   if not M.scene_size_map[scene] then
+      log("Can't get size for scene: %s", scene)
+      size = "20x20"
+   else
+      size = M.scene_size_map[scene]
+   end
+   log ("size for %s is %s", scene, size)
+   return size
+end
+
+M.get_scene_x = function(scene)
+   size = M.get_scene_size(scene)
+   return size:gsub("x.*", "")
+end
+
+M.get_scene_y = function(scene)
+   size = M.get_scene_size(scene)
+   return size:gsub(".*x", "")
+end
+
 M.click_scene = function (scene, settings)
    log("Click scene: %s", scene)
    settings = settings or {}
 
-   x_plus = settings.x or 0
-   y_plus = settings.y or 0
+
+
+   x_plus = settings.x or M.get_scene_x(scene)
+   y_plus = settings.y or M.get_scene_y(scene)
    click_times = settings.click_times or 1
    click_wait = settings.click_wait or .1
 
@@ -180,7 +211,7 @@ end
 
 M.jump_from_to = function(from_scene, to_scene, settings)
    settings = settings or {}
-   times = settings.times or 1
+   times = settings.times or 3
    sleep_time = settings.sleep_time or .2
 
    for t = 1, times do
@@ -199,6 +230,7 @@ M.jump_from_to = function(from_scene, to_scene, settings)
          end
       end
    end
+   log("Can't jump from %s to %s", from_scene, to_scene)
    error("Can't jump from " .. from_scene .. " to " .. to_scene)
 end
 
@@ -221,5 +253,6 @@ M.jump_out_of = function(scene, settings)
          return
       end
    end
+   log("Can't jump out of %s", scene)
    error(("Can't jump out of %s"):format(scene))
 end
