@@ -45,6 +45,8 @@ done
 exec &> ~/tmp/abbrevs.log
 set -x
 
+export SELECT_HISTORY_ORDER=true
+
 sawfish-window mark -t abbrevs -s
 . atexit sawfish-window mark -t abbrevs -r
 

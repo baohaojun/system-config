@@ -7,6 +7,7 @@ if true; then
 fi
 
 export EMACS=t
+export SELECT_HISTORY_ORDER=true
 window_class=$(sawfish-top-window-class)
 window_name=$(sawfish-top-window-name)
 

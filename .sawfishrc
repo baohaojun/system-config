@@ -682,7 +682,7 @@ EOF856ceee4ab57
 
 (mapc
  #'bind-super-key
- '("a" "b" "c" "d" "e" "f" "g" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
+ '("a" "b" "c" "d" "e" "f" "g" "i" "j" "k" "l" "m" "n" "o" "p" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
 
 (bind-both-global&window-keymaps "Super-Insert"  '(system "send-key&"))
 (bind-both-global&window-keymaps "Super-S-RET"  '(system "send-key&"))
