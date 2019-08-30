@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+failed_png=$(
+    select-output-line "ls -t failed-* | head -n 20"
+          )
+
+stem=$(echo $failed_png | perl -pe 's,failed-,,; s,.png$,,')
+
+of *$stem.*png&
+
+if yes-or-no-p -y "$failed_png" $(dist-of $failed_png $stem.png); then
+    for x in $(seq 1 100); do
+        target_png=${failed_png#failed-}
+        target_png=${target_png%.png}.$x.png
+        if test ! -e "$target_png"; then
+            cp ${failed_png} ${target_png}
+            exit
+        fi
+    done
+fi
