@@ -81,6 +81,7 @@ declare -A url_switch_map
 
 url_switch_map[$scm_jenkins_prod_url]=$scm_jenkins_test_url
 url_switch_map[$scm_jenkins_test_url]=$scm_jenkins_prod_url
+url_switch_map[http://192.168.4.168:8088/]=${scm_jenkins_prod_url}
 
 url_switch_map[http://hmi-ci.it.chehejia.com/]=$scm_jenkins_test_url
 

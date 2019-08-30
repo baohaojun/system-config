@@ -4,14 +4,33 @@ if test $(basename $0) = ps.pl0; then
     export MATCH_PROG_ONLY=true
 fi
 
-opts=
-TEMP=$(getopt -o o: --long opts: -n $(basename $0) -- "$@")
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P o:opts
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o o:h \
+                      --long opts:,help \
+                      -n $(basename -- $0) -- "$@")
+declare opts=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+
         -o|--opts)
-            opts=$2,
+            opts=$2
             shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-o, '
+            printf %-24s '--opts=OPTS'
+            echo
+            exit
+            shift
             ;;
         --)
             shift
@@ -23,10 +42,14 @@ while true; do
     esac
 done
 
+
+## end generated code
+
 export ARGS=$@
 MORE_OPTS_VARS=
 if test "$opts"; then
-    export MORE_OPTS_VARS=$(echo "$opts" | perl -npe 's/(^|,(?!$))/$1\$VAR_/g; s,\%,,g')
+    opts=${opts%,},
+    export MORE_OPTS_VARS=$(echo "${opts}" | perl -npe 's/(^|,(?!$))/$1\$VAR_/g; s,\%,,g')
 fi
 ps -eo pid,ppid,etime,${opts}command | perl -ne '
 BEGIN{

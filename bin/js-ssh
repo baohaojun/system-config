@@ -34,9 +34,11 @@ set home $env(HOME)
 proc log str {
     global home
     set logf [open ${home}/tmp/js-ssh.log a+]
-    puts $logf $str
+    puts -nonewline $logf $str
     close $logf
 }
+
+# log "got argv: $argv\n"
 
 set local_ip [qx get-my-ip]
 
@@ -101,7 +103,11 @@ expect_background "Opt>" {
     wait
     exit
 }
+# -re "(.)" {
+#     log $expect_out(1,string)
+# }
 
+# exp_internal 1
 interact {
     timeout 1750 {
         set current_hour [clock format [clock seconds] -format %k]
@@ -111,5 +117,9 @@ interact {
             send " \010";
         }
     }
+    # -re "(.)" {
+    #     log $interact_out(1,string)
+    #     send -- $interact_out(1,string)
+    # }
 };
 wait

@@ -131,6 +131,7 @@ fi
 
 while true; do
     scrot $select "$out"
+    putclip "$out"
     if test -e "$out"; then
         if test "$(basename $0)" = screenshot-edit -o "$edit" = true; then
             gimp -n "$out" >/dev/null 2>&1

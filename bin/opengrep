@@ -6,7 +6,10 @@ use strict;
 # '?"调用 opengrok rest api 的命令行程序，允许在 emacs、vim 等软件中集成 opengrok 搜索"' \
 # p:project '?"指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表"' \
 # e:entry '?"默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助"' \
-# rraw-entry '?"不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api"'
+# rraw-entry '?"不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api"' \
+# ssmart-short-relative-path '?"根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project"' \
+# @:username='":null:"' '?"opengrok 登录用户名（默认为环境变量 scm_opengrok_user 的值）"' \
+# @:password='":null:"' '?"opengrok 登录密码，与 USERNAME 联用"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -16,8 +19,11 @@ Getopt::Long::Configure("posix_default");
 
 
 my $entry = "";
+my $password = ":null:";
 my $project = "";
 my $raw_entry = 0;
+my $smart_short_relative_path = 0;
+my $username = ":null:";
 
 my $handler_help = sub {
     print "调用 opengrok rest api 的命令行程序，允许在 emacs、vim 等软件中集成 opengrok 搜索";
@@ -29,6 +35,14 @@ my $handler_help = sub {
         printf "%30s", "";
     }
     printf "%s", "默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--password=PASSWORD';
+    if (length('--password=PASSWORD') > 24 and length("opengrok 登录密码，与 USERNAME 联用") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "opengrok 登录密码，与 USERNAME 联用";
     print "\n";
     printf "%6s", '-p, ';
     printf "%-24s", '--project=PROJECT';
@@ -46,14 +60,33 @@ my $handler_help = sub {
     }
     printf "%s", "不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api";
     print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--[no]smart-short-relative-path';
+    if (length('--[no]smart-short-relative-path') > 24 and length("根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--username=USERNAME';
+    if (length('--username=USERNAME') > 24 and length("opengrok 登录用户名（默认为环境变量 scm_opengrok_user 的值）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "opengrok 登录用户名（默认为环境变量 scm_opengrok_user 的值）";
+    print "\n";
 
     exit(0);
 };
 
 GetOptions (
     'entry|e=s' => \$entry,
+    'password=s' => \$password,
     'project|p=s' => \$project,
     'raw-entry|r!' => \$raw_entry,
+    'smart-short-relative-path|s!' => \$smart_short_relative_path,
+    'username=s' => \$username,
     'help|h!' => \&$handler_help,
 );
 
@@ -63,6 +96,18 @@ use JSON;
 
 use URI::Encode qw(uri_encode uri_decode);
 
+if ($smart_short_relative_path) {
+    my $manifest_dir = qx(lookup-file -e .repo/manifests);
+    die "Can't find manifest dir" unless $manifest_dir;
+
+    chomp(my $manifest_branch = qx(cd $manifest_dir; git config branch.default.merge | perl -pe 's,^refs/heads/,,'));
+
+    $project = $manifest_branch unless $project;
+    (my $top_dir = $manifest_dir) =~ s,\.repo/manifests/?,,;
+
+    printf "Using smart & short format, project is $project, Entering directory `%s'\n", $top_dir;
+}
+
 if (not $raw_entry) {
     $entry = "/$entry/" unless $entry =~ m,^/.*/$,;
 }
@@ -70,13 +115,31 @@ if (not $raw_entry) {
 $project = uri_encode($project);
 $entry = uri_encode($entry);
 
-my $command = "curl -s '$ENV{scm_opengrok_url}api/v1/search?projects=$project&full=$entry&defs=&refs=&path=&hist=&type='";
+if ($username eq ':null:') {
+    $username = $ENV{scm_opengrok_user};
+}
+my $opengrok_url = $ENV{scm_opengrok_url};
+
+if ($username) {
+    if ($password eq ':null:') {
+        chomp($password = qx(git config -f $ENV{scm_secrets_conf} ldap.$username.password));
+    }
+
+    if ($password) {
+        $opengrok_url =~ s,(^http.?://),$1$username:$password\@,;
+    }
+}
+
+my $command = "curl -s '${opengrok_url}api/v1/search?projects=$project&full=$entry&defs=&refs=&path=&hist=&type='";
 (my $url = $command) =~ s,api/v1/,,;
 $url =~ s,curl -s ,,;
 
 print STDERR "$command\nopengrok url is $url\n";
 
 my $result = qx($command);
+if ( $? != 0 ) {
+    die "failed to execute: $command";
+}
 
 $result =~ s,\\uD83D,,g;
 
@@ -88,6 +151,9 @@ for my $file (keys %{$json->{results}}) {
     for (@{$json->{results}{$file}}) {
         my $line = encode_utf8 $_->{line};
         my $lineNumber = $_->{lineNumber};
+
+        $line =~ s,</?b>,,g;
+        $file =~ s,^/.*?/,, if $smart_short_relative_path;
 
         print "$file:$lineNumber: $line\n";
     }

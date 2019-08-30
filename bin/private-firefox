@@ -63,6 +63,14 @@ if test ! -d ${private_dir}/.mozilla -o "$rsync" = true; then
     rsync ~/.local-config/etc/firefox-icons/* ${private_dir}/external/firefox/browser/chrome/icons/default -av
 fi
 
+export HOME=${private_dir}
+if test $# != 0; then
+    log running $* in $HOME
+    "$@"
+    exit
+fi
+
+
 for pid in $(
                 sawfish-client -e "$(
 cat <<'EOF9cacf490bebf'
@@ -103,10 +111,30 @@ EOFd56e460f1481
     fi
 done
 
+. nobrew
 
-export HOME=${private_dir}
+dbus_pid=$(get-pid-env -p dbus.daemon -e "^HOME=$PWD" | pn 1 | head -n 1)
+if test "$dbus_procs"; then
+
+    dbus_env=$(
+        get-pid-env -p $dbus_pid -e "^DBUS_SESSION_BUS_ADDRESS=" | pn 2
+            )
+    bhj-notify dbus "Got dbus $dbus_env from $dbus_procs"
+else
+    dbus_env=$(
+        dbus-launch > /tmp/private-firefox.$$
+        cat /tmp/private-firefox.$$
+        rm -f /tmp/private-firefox.$$
+            )
+fi
+
+if test "$dbus_env"; then
+    eval "$dbus_env"
+fi
+export DBUS_SESSION_BUS_ADDRESS
 
 (
     ibus-daemon -x -d
+    sleep 3
     firefox --ProfileManager -new-instance
 )&

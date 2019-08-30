@@ -1,0 +1,9 @@
+#!/usr/bin/env perl
+use strict;
+use JSON;
+
+my $queue_json = decode_json(qx(jc curl queue/api/json));
+
+for (@{$queue_json->{items}}) {
+    printf "$ENV{scm_jenkins_url}%s : %s\n", $_->{url}, $_->{task}{url};
+}

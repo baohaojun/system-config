@@ -1,26 +1,36 @@
 #!/bin/bash
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P p:pid-or-regexp v:variable='".*"'
+# generate-getopt -P p:pid-or-regexp e:env-value-regexp='".*"' suse-sudo
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o p:v:h \
-                      --long pid-or-regexp:,variable:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o e:p:sh \
+                      --long env-value-regexp:,pid-or-regexp:,use-sudo,help,no-use-sudo \
                       -n $(basename -- $0) -- "$@")
+declare env_value_regexp=".*"
 declare pid_or_regexp=
-declare variable=".*"
+declare use_sudo=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -e|--env-value-regexp)
+            env_value_regexp=$2
+            shift 2
+
+            ;;
         -p|--pid-or-regexp)
             pid_or_regexp=$2
             shift 2
 
             ;;
-        -v|--variable)
-            variable=$2
-            shift 2
+        -s|--use-sudo|--no-use-sudo)
+            if test "$1" = --no-use-sudo; then
+                use_sudo=false
+            else
+                use_sudo=true
+            fi
+            shift
 
             ;;
         -h|--help)
@@ -28,11 +38,14 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-e, '
+            printf %-24s '--env-value-regexp=ENV_VALUE_REGEXP'
+            echo
             printf %06s '-p, '
             printf %-24s '--pid-or-regexp=PID_OR_REGEXP'
             echo
-            printf %06s '-v, '
-            printf %-24s '--variable=VARIABLE'
+            printf %06s '-s, '
+            printf %-24s '--[no-]use-sudo'
             echo
             exit
             shift
@@ -50,13 +63,27 @@ done
 
 ## end generated code
 
-if cd /proc/$pid_or_regexp/ >/dev/null 2>&1; then
+if test -d /proc/$pid_or_regexp/; then
+    processes=(
+        $pid_or_regexp
+    )
     true
 else
-    process=$(
-        select-output-line -p "Which process do you want to check" ps.pl "$pid_or_regexp !select-output-line"
-       )
-    cd /proc/$(echo "${process}"|pn 1)/
+    process=(
+        $(
+            ps.pl "$pid_or_regexp !select-output-line" | pn 1
+        )
+    )
 fi
 
-cat environ | tr '\000' '\n' | grep -P -e "${variable}="
+if test "$use_sudo" = true; then
+    sudo=sudo
+else
+    sudo=
+fi
+
+for p in "${process[@]}"; do
+    if test -r "/proc/$p/environ" &>/dev/null || test "$use_sudo" = true; then
+        echo -n "$p "; $sudo cat /proc/$p/environ | tr '\000' '\n' | grep -P -e "${env_value_regexp}" || echo
+    fi
+done

@@ -93,8 +93,8 @@ if test "${prod2test}" = true; then
              --repo-url ${scm_gerrit_admin_ssh_url}git-repo
 
         repo sync -j4 -d -c -q
-        repo manifest -r -o snapshot.xml
     fi
+    repo manifest -r -o snapshot.xml
     snapshot=$PWD/snapshot.xml
 
 
@@ -139,12 +139,19 @@ echo "$@" |
                 ) && exit 0
             done
             exit 1
-        ) &>/tmp/deploy-manifest-test2prod.$$ || echo $project $branch failed
+        ) &>/tmp/deploy-manifest-test2prod.$$ || {
+            echo $project $branch failed
+            exit 1
+        }
     done
 # {%/sh-mode%}
 EOF4d62f6f844d9
 
 )" true
+    (
+        cd .repo/manifests/
+        git push ${scm_gerrit_admin_ssh_test_url}platform/manifest HEAD:refs/heads/$manifest_branch_name
+    )
     exit
 fi
 rm -rf ~/tmp/sandbox-vendor-android/

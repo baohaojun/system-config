@@ -592,39 +592,14 @@ EOF856ceee4ab57
                 (Gimp-2.8 . ("C-M-s"))
                 (Gjiten . ("M-x" "TAB" "TAB" "TAB" "TAB" "TAB" "TAB" "RET"))
                 (Qtcreator . "C-S-s")))))
-(setenv "SC_FIREFOX_57" "true")
-(if (string= (getenv "SC_FIREFOX_57") "true")
-    (progn
-      (setq super-key-window-remap
-            (update-all-firefox-keys super-key-window-remap
-                                     "f" '("C-Next")
-                                     "b" '("C-Prior"))))
-  (setq emacs-style-window-class-re (concat "firefox|" emacs-style-window-class-re))
-  (setq super-key-window-remap
-        (update-all-firefox-keys super-key-window-remap
-                                 "b" '("C-M-h")
-                                 "f" '("C-M-l")
-                                 "w" '("C-x" "C-w")
-                                 "l" '("C-x" "C-l")
-                                 "r" '("C-x" "C-r")
-                                 "v" '("C-q" "C-v")
-                                 "c" '("C-q" "C-c")
-                                 "s" '("C-x" "C-s")
-                                 "d" '("C-x" "C-d")))
-  (setq global-emacs-remap-alist
-        (update-all-firefox-keys global-emacs-remap-alist
-                                 "Prior" '("ESC" "v")
-                                 "C-g" '("C-g")
-                                 "Next" '("C-v")
-                                 "C-y" '("C-y")
-                                 "C-f" '("Right")
-                                 "C-s" '("C-s")
-                                 "C-r" '("C-r")
-                                 "C-x" '("C-x"))))
+(setq super-key-window-remap
+      (update-all-firefox-keys super-key-window-remap
+                               "f" '("C-Next")
+                               "b" '("C-Prior")))
 
 (setq x11-windows-re "firefox|emacs|xterm|wrench|gjiten|gimp")
 
-                                        ; ref. /usr/include/X11/keysymdef.h
+;; ref. /usr/include/X11/keysymdef.h
 (defun rewrite-event-for-xdotool (event)
   (let* ((keys-break-down (string-split "-" event))
          (modifiers (reverse (cdr (reverse keys-break-down))))
@@ -877,6 +852,7 @@ EOF856ceee4ab57
 (bind-keys print-keymap "Print" '(system "screenshot --full&"))
 (bind-keys print-keymap "f" '(system "screenshot --full&"))
 (bind-keys print-keymap "d" '(system "screenshot -d&"))
+(bind-keys print-keymap "w" '(system "screenshot -d&"))
 (bind-keys print-keymap "s" '(system "screenshot --selected&"))
 (bind-keys print-keymap "S" '(system "screenshot --selected --edit&"))
 (bind-keys print-keymap "c" '(system "screenshot --current&"))
@@ -960,3 +936,4 @@ EOF856ceee4ab57
 (bind-keys s-h-keymap "F11" '(xdo-events '("-F11" "d")))
 ;; (bind-both-global&window-keymaps "Super-F11" '(synthesize-event "c" (input-focus)))
 ;; (bind-both-global&window-keymaps "Super-F11" (lambda ()))
+(system "bhj-notify sawfish 'load complete'&")

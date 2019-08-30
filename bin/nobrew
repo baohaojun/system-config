@@ -5,7 +5,13 @@ PATH=$(string-join : $(
            echo "${PATH}" | tr : '\n' | grep -v brew
                    ))
 if test "$#" = 0; then
-    start_recursive_shell nobrew
+    if test "$BASH_SOURCE" = "$0"; then
+        # we are being run
+        start_recursive_shell nobrew
+    else
+        # we are being sourced.
+        return 0
+    fi
 else
     "$@"
 fi
