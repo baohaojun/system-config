@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: compilation-mode.entering
+# --
+
+printf "Using short format, Entering directory \`%s'\n", \$${1:pwd};

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sc.today
+# --
+
+date +%Y-%m-%d -d "${1:-1} days"

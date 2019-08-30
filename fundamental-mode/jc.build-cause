@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: jc.build-cause
+# --
+
+test "$BUILD_CAUSE" = "TIMERTRIGGER"
