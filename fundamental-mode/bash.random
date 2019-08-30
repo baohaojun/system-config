@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: bash.random
+# --
+
+echo \$((1 + RANDOM % ${1:10}))
