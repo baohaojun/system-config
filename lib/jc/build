@@ -7,15 +7,15 @@ use autodie qw(:all);
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P p:params='()' '?"可以指定多个，格式为 name=value，目前不支持文件格式参数"' \
-# j:job-or-url '?"如果是 job，则应使用 job 名字，如果是 url，则格式为正则：\${scm_jenkins_url}job/JOB_NAME/"' \
+# j:job-name-or-url '?"指定 job 名字，或 job url"' \
 # @:extra-environ-params '?"额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值"' \
 # @:extra-environ-params-regexp '?"参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入"' \
 # @print-params-only '?"仅打印启动任务时的参数列表，之后就退出，不真正启动编译"' \
 # @:extra-params-from-build-url '?"从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）"' \
-# @:rebuild-url '?"指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_OR_URL 和 EXTRA_PARAMS_FROM_BUILD_URL"' \
+# @:rebuild-url '?"指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_URL 和 EXTRA_PARAMS_FROM_BUILD_URL"' \
 # @:gerrit-trigger '?"使用这个参数指定的 gerrit review url，模拟 gerrit trigger"' \
 # ssynchronized '?"同步编译，直到编译结束才 exit，并通过 exit value 体现其结果"' \
-# vverbose '?"输出更多 log"'
+# vverbose '?"输出更多 log，以及本次 build 的终端输出"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -28,7 +28,7 @@ my $extra_environ_params = "";
 my $extra_environ_params_regexp = "";
 my $extra_params_from_build_url = "";
 my $gerrit_trigger = "";
-my $job_or_url = "";
+my $job_name_or_url = "";
 my @params = ();
 my $print_params_only = 0;
 my $rebuild_url = "";
@@ -36,105 +36,105 @@ my $synchronized = 0;
 my $verbose = 0;
 
 my $handler_help = sub {
-  print ;
-  print "\n\n选项和参数：\n";
-  printf "%6s", '';
-  printf "%-24s", '--extra-environ-params=EXTRA-ENVIRON-PARAMS';
-  if (length('--extra-environ-params=EXTRA-ENVIRON-PARAMS') > 24 and length("额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值") > 0) {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--extra-environ-params=EXTRA-ENVIRON-PARAMS';
+    if (length('--extra-environ-params=EXTRA-ENVIRON-PARAMS') > 24 and length("额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值";
-  print "\n";
-  printf "%6s", '';
-  printf "%-24s", '--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP';
-  if (length('--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP') > 24 and length("参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入") > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP';
+    if (length('--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP') > 24 and length("参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入";
-  print "\n";
-  printf "%6s", '';
-  printf "%-24s", '--extra-params-from-build-url=EXTRA-PARAMS-FROM-BUILD-URL';
-  if (length('--extra-params-from-build-url=EXTRA-PARAMS-FROM-BUILD-URL') > 24 and length("从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）") > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--extra-params-from-build-url=EXTRA-PARAMS-FROM-BUILD-URL';
+    if (length('--extra-params-from-build-url=EXTRA-PARAMS-FROM-BUILD-URL') > 24 and length("从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "从另一个 build 里读取它的参数列表，指定的话会确保在第一个运行（指定的参数生效的优先级最低）";
-  print "\n";
-  printf "%6s", '';
-  printf "%-24s", '--gerrit-trigger=GERRIT-TRIGGER';
-  if (length('--gerrit-trigger=GERRIT-TRIGGER') > 24 and length("使用这个参数指定的 gerrit review url，模拟 gerrit trigger") > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--gerrit-trigger=GERRIT-TRIGGER';
+    if (length('--gerrit-trigger=GERRIT-TRIGGER') > 24 and length("使用这个参数指定的 gerrit review url，模拟 gerrit trigger") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "使用这个参数指定的 gerrit review url，模拟 gerrit trigger";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "使用这个参数指定的 gerrit review url，模拟 gerrit trigger";
-  print "\n";
-  printf "%6s", '-j, ';
-  printf "%-24s", '--job-or-url=JOB-OR-URL';
-  if (length('--job-or-url=JOB-OR-URL') > 24 and length("如果是 job，则应使用 job 名字，如果是 url，则格式为正则：\${scm_jenkins_url}job/JOB_NAME/") > 0) {
+    printf "%6s", '-j, ';
+    printf "%-24s", '--job-name-or-url=JOB-NAME-OR-URL';
+    if (length('--job-name-or-url=JOB-NAME-OR-URL') > 24 and length("指定 job 名字，或 job url") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定 job 名字，或 job url";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "如果是 job，则应使用 job 名字，如果是 url，则格式为正则：\${scm_jenkins_url}job/JOB_NAME/";
-  print "\n";
-  printf "%6s", '-p, ';
-  printf "%-24s", '--params=PARAMS';
-  if (length('--params=PARAMS') > 24 and length("可以指定多个，格式为 name=value，目前不支持文件格式参数") > 0) {
+    printf "%6s", '-p, ';
+    printf "%-24s", '--params=PARAMS';
+    if (length('--params=PARAMS') > 24 and length("可以指定多个，格式为 name=value，目前不支持文件格式参数") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "可以指定多个，格式为 name=value，目前不支持文件格式参数";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "可以指定多个，格式为 name=value，目前不支持文件格式参数";
-  print "\n";
-  printf "%6s", '';
-  printf "%-24s", '--[no]print-params-only';
-  if (length('--[no]print-params-only') > 24 and length("仅打印启动任务时的参数列表，之后就退出，不真正启动编译") > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--[no]print-params-only';
+    if (length('--[no]print-params-only') > 24 and length("仅打印启动任务时的参数列表，之后就退出，不真正启动编译") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "仅打印启动任务时的参数列表，之后就退出，不真正启动编译";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "仅打印启动任务时的参数列表，之后就退出，不真正启动编译";
-  print "\n";
-  printf "%6s", '';
-  printf "%-24s", '--rebuild-url=REBUILD-URL';
-  if (length('--rebuild-url=REBUILD-URL') > 24 and length("指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_OR_URL 和 EXTRA_PARAMS_FROM_BUILD_URL") > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--rebuild-url=REBUILD-URL';
+    if (length('--rebuild-url=REBUILD-URL') > 24 and length("指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_URL 和 EXTRA_PARAMS_FROM_BUILD_URL") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_URL 和 EXTRA_PARAMS_FROM_BUILD_URL";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_OR_URL 和 EXTRA_PARAMS_FROM_BUILD_URL";
-  print "\n";
-  printf "%6s", '-s, ';
-  printf "%-24s", '--[no]synchronized';
-  if (length('--[no]synchronized') > 24 and length("同步编译，直到编译结束才 exit，并通过 exit value 体现其结果") > 0) {
+    printf "%6s", '-s, ';
+    printf "%-24s", '--[no]synchronized';
+    if (length('--[no]synchronized') > 24 and length("同步编译，直到编译结束才 exit，并通过 exit value 体现其结果") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "同步编译，直到编译结束才 exit，并通过 exit value 体现其结果";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "同步编译，直到编译结束才 exit，并通过 exit value 体现其结果";
-  print "\n";
-  printf "%6s", '-v, ';
-  printf "%-24s", '--[no]verbose';
-  if (length('--[no]verbose') > 24 and length("输出更多 log") > 0) {
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length("输出更多 log，以及本次 build 的终端输出") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "输出更多 log，以及本次 build 的终端输出";
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "输出更多 log";
-  print "\n";
 
-  exit(0);
+    exit(0);
 };
 
 GetOptions (
-            'extra-environ-params=s' => \$extra_environ_params,
-            'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
-            'extra-params-from-build-url=s' => \$extra_params_from_build_url,
-            'gerrit-trigger=s' => \$gerrit_trigger,
-            'job-or-url|j=s' => \$job_or_url,
-            'params|p=s' => \@params,
-            'print-params-only!' => \$print_params_only,
-            'rebuild-url=s' => \$rebuild_url,
-            'synchronized|s!' => \$synchronized,
-            'verbose|v!' => \$verbose,
-            'help|h!' => \&$handler_help,
-           );
+    'extra-environ-params=s' => \$extra_environ_params,
+    'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
+    'extra-params-from-build-url=s' => \$extra_params_from_build_url,
+    'gerrit-trigger=s' => \$gerrit_trigger,
+    'job-name-or-url|j=s' => \$job_name_or_url,
+    'params|p=s' => \@params,
+    'print-params-only!' => \$print_params_only,
+    'rebuild-url=s' => \$rebuild_url,
+    'synchronized|s!' => \$synchronized,
+    'verbose|v!' => \$verbose,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
@@ -150,9 +150,11 @@ my %params_map;
 
 my %default_params_map;
 
+my $job_url = $job_name_or_url;
+
 if ($rebuild_url) {
-  if (not $job_or_url) {
-    ($job_or_url = $rebuild_url) =~ s,(.*)/\d+/?$,$1,;
+  if (not $job_url) {
+    ($job_url = $rebuild_url) =~ s,(.*)/\d+/?$,$1,;
   }
 
   if (not $extra_params_from_build_url) {
@@ -160,11 +162,11 @@ if ($rebuild_url) {
   }
 }
 
-if ($job_or_url !~ m,://.*/job/, ) {
-  $job_or_url = "$ENV{scm_jenkins_url}job/$job_or_url"
+if ($job_url !~ m,://.*/job/, ) {
+  $job_url = "$ENV{scm_jenkins_url}job/$job_url"
 }
 
-(my $job_api_url = $job_or_url) =~ s,/*$,/api/json,;
+(my $job_api_url = $job_url) =~ s,/*$,/api/json,;
 $job_api_url = shell_quote $job_api_url;
 
 my $job_api_str = qx(jc curl $job_api_url);
@@ -202,7 +204,7 @@ for (@{$json_obj->{actions}}) {
 
 map {
   my ($name, $value) = split "=", $_;
-  $params_map{$name} = $value;
+  $params_map{decode_utf8 $name} = decode_utf8 $value;
 } @params;
 
 if ($extra_environ_params) {
@@ -256,8 +258,8 @@ if ($gerrit_trigger) {
 
 }
 
-if ($job_or_url !~ m,/,) {
-  $job_or_url = "$ENV{scm_jenkins_url}job/${job_or_url}/";
+if ($job_url !~ m,/,) {
+  $job_url = "$ENV{scm_jenkins_url}job/${job_url}/";
 }
 
 @params = map {
@@ -284,13 +286,13 @@ my $params_str = join
    map {sprintf "%s=%s", map {uri_encode($_, {encode_reserved => 1})} ($_->{name}, $_->{value})} @params
   );
 
-my $job_build_url = $job_or_url;
+my $job_build_url = $job_url;
 if ($params_str) {
   if ($job_supports_params) {
     $job_build_url =~ s,/*$,/buildWithParameters/?,;
     $job_build_url .= $params_str
   } else {
-    die "job $job_or_url does not support parameters";
+    die "job $job_url does not support parameters";
   }
 } elsif (not $job_supports_params) {
   $job_build_url =~ s,/*$,/build/,;
@@ -302,19 +304,28 @@ use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new;
 
-my $request = GET "$ENV{scm_jenkins_url}crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)";
+my $jenkins_crumb = $ENV{JC_CRUMB};
 
-$request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
+unless ($jenkins_crumb) {
+    my $request = GET "$ENV{scm_jenkins_url}crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)";
 
-my $response = $ua->request($request);
+    $request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
 
-die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
+    my $response = $ua->request($request);
 
-my $jenkins_crumb = $response->content;
+    die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
+    $jenkins_crumb = $response->content;
+    $ENV{JC_CRUMB} = $jenkins_crumb;
+} else {
+    say STDERR "already got crumb from env";
+}
 
 my ($crumb_header, $crumb_value) = split(':', $jenkins_crumb);
 
-$request = POST $job_build_url,
+my $old_last_build_json = decode_json(qx(jc curl $job_url/lastBuild/api/json) or "{}");
+my $old_last_build_id = $old_last_build_json->{id} || 0;
+
+my $request = POST $job_build_url,
   'Content-Type' => 'application/x-www-form-urlencoded',
   "charset" => "utf-8",
   $crumb_header => $crumb_value;
@@ -323,7 +334,7 @@ $request = POST $job_build_url,
 $request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
 
 # say STDERR "request: ", $request->as_string() if $verbose;
-$response = $ua->request($request);
+my $response = $ua->request($request);
 
 die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
 
@@ -337,27 +348,62 @@ my $location = $response->header('Location');
 
 die "Can't get queue info" unless $location =~ m,queue/item/,;
 
+(my $queueIdFromHttpResponse = $location) =~ s,.*item/,,;
+
+$queueIdFromHttpResponse =~ s,/,,;
+
+my $build_url;
+
+my $start_time = time();
+use List::Util qw(max min);
+
 while (1) {
-  my $queue_json = decode_json(qx(jc curl ${location}api/json));
-  my $build_url = $queue_json->{executable}{url};
-  if ($build_url) {
-    say STDERR "building at $build_url" if $verbose;
-    while (1) {
-      my $build_json = decode_json(qx(jc curl ${build_url}api/json));
-      if ($build_json->{result} eq 'SUCCESS') {
-        exit 0
-      } elsif ($build_json->{result}) {
-        say STDERR "build exited with ", $build_json->{result} if $verbose;
-        exit 1;
-      } else {
-        sleep 5;
-      }
+    my $queue_json = decode_json(qx(jc curl ${location}api/json));
+    my $queueId = $queue_json->{id};
 
+    my $sleep = max(1, min(10, (time() - $start_time)/5));
+
+    $build_url = $queue_json->{executable}{url} unless $build_url;
+
+    if ($build_url) {
+        say STDERR "building at $build_url" if $verbose;
+        if ($verbose) {
+            system("jc console -b $build_url");
+        }
+        while (1) {
+            my $build_json = decode_json(qx(jc curl ${build_url}api/json));
+            if ($build_json->{result}) {
+                if ($build_json->{result} eq 'SUCCESS') {
+                    exit 0;
+                } else {
+                    say STDERR "build exited with ", $build_json->{result} if $verbose;
+                    exit 1;
+                }
+            } else {
+                sleep $sleep;
+            }
+
+        }
+    } elsif ($queueId == $queueIdFromHttpResponse) {
+        sleep $sleep;
+    } else {
+        say STDERR "Can't get build_url and queueId, this is rare, need to check all builds";
+        my $new_last_build_json = decode_json(qx(jc curl $job_url/lastBuild/api/json));
+        my $new_last_build_id = $new_last_build_json->{id} || 0;
+
+        my $checking_build_id = $new_last_build_id;
+
+        while ($checking_build_id > $old_last_build_id) {
+            my $checking_build_json = decode_json(qx(jc curl $job_url/build/$checking_build_id/api/json));
+            if ($checking_build_json->{queueId} == $queueIdFromHttpResponse) {
+                $build_url = "$job_url/build/$checking_build_id/";
+                last;
+            }
+        }
+        if (not $build_url) {
+            die "Build not found: queueId = $queueIdFromHttpResponse, maybe cancelled?"
+        }
     }
-
-  } else {
-    sleep 1;
-  }
 }
 
 exit 0

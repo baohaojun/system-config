@@ -1,0 +1,119 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P b:build-url s:sleep=1 vverbose @:start=0
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $build_url = "";
+my $sleep = 3;
+my $start = 0;
+my $verbose = 0;
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-b, ';
+    printf "%-24s", '--build-url=BUILD-URL';
+    if (length('--build-url=BUILD-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--sleep=SLEEP';
+    if (length('--sleep=SLEEP') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--start=START';
+    if (length('--start=START') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'build-url|b=s' => \$build_url,
+    'sleep|s=s' => \$sleep,
+    'start=s' => \$start,
+    'verbose|v!' => \$verbose,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+use HTTP::Request::Common;
+use LWP::UserAgent;
+
+my $ua = LWP::UserAgent->new;
+
+my $jenkins_crumb = $ENV{JC_CRUMB};
+
+use List::Util qw(max min);
+unless ($jenkins_crumb) {
+    my $request = GET "$ENV{scm_jenkins_url}crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)";
+
+    $request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
+
+    my $response = $ua->request($request);
+
+    die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
+    $jenkins_crumb = $response->content;
+    $ENV{JC_CRUMB} = $jenkins_crumb;
+} else {
+    say STDERR "already got crumb from env";
+}
+
+my ($crumb_header, $crumb_value) = split(':', $jenkins_crumb);
+
+while (1) {
+    my $request = GET "$build_url/logText/progressiveText?start=$start",
+        'Content-Type' => 'application/x-www-form-urlencoded',
+        "charset" => "utf-8",
+        $crumb_header => $crumb_value;
+
+
+    $request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
+
+    # say STDERR "request: ", $request->as_string() if $verbose;
+    my $response = $ua->request($request);
+    die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
+
+    print $response->content;
+
+    my $old_start = $start;
+
+    $start = $response->header('x-text-size');
+    my $more = $response->header('x-more-data');
+    last unless $more eq 'true';
+
+    if ($old_start != $start) {
+        sleep .3;
+        next;
+    }
+    sleep max($sleep, 1);
+}
