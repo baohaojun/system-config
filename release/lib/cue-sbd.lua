@@ -19,7 +19,10 @@ M.wrench_cue = function(who)
 
    find_scene(cue_all)
    jump_from_to(search_button, wait_ime)
-   wrench_post(who, "no-post")
+
+   if who:lower() ~= "all" and who ~= "所有人" then
+      wrench_post(who, "no-post")
+   end
 
 
    is_back_to_chat = function()
