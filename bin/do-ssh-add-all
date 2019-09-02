@@ -2,7 +2,7 @@
 set -e
 
 if test "${ASK_FOR_PASSWORD}" = true; then
-    pass=$(timeout 60 zenity --password --text "password for ssh keys" --title 'ssh-keys' || true)
+    pass=$(timeout 60 yad --password --text "password for ssh keys" --title 'ssh-keys' || true)
 else
     bhj-notify do-ssh-add-all "Can't get password"
 fi

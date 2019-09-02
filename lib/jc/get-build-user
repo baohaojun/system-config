@@ -1,0 +1,50 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P b:build-url='$ENV{BUILD_URL}' '?"默认是当前 build 的 build url 环境变量"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $build_url = $ENV{BUILD_URL};
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-b, ';
+    printf "%-24s", '--build-url=BUILD-URL';
+    if (length('--build-url=BUILD-URL') > 24 and length("默认是当前 build 的 build url 环境变量") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "默认是当前 build 的 build url 环境变量";
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'build-url|b=s' => \$build_url,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use JSON;
+
+my $build_json = decode_json(qx(jc curl ${build_url}api/json));
+
+use JSON::Path 'jpath_map';
+
+# All books in the store
+my $jpath   = JSON::Path->new('$.actions..causes..userId');
+my $userId   = $jpath->value($build_json);
+
+print $userId;

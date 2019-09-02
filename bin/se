@@ -79,7 +79,7 @@ fi
 
 declare -A url_switch_map
 
-url_switch_map[$scm_jenkins_prod_url]=$scm_jenkins_test_url
+url_switch_map[$scm_jenkins_prod_url]=:'EMACS=t select-args $scm_jenkins_test_url http://192.168.4.168:8088/'
 url_switch_map[$scm_jenkins_test_url]=$scm_jenkins_prod_url
 url_switch_map[http://192.168.4.168:8088/]=${scm_jenkins_prod_url}
 
@@ -94,7 +94,11 @@ if test "${default}" != true; then
         current_url=$(get-firefox-tab-url)
         for match_url in "${!url_switch_map[@]}"; do
             if [[ $current_url =~ ^$match_url ]]; then
-                target_url=${url_switch_map[$match_url]}${current_url#$match_url}
+                target_site=${url_switch_map[$match_url]}
+                if [[ $target_site =~ ^: ]]; then
+                    target_site=$(eval "${target_site#:}")
+                fi
+                target_url=${target_site}${current_url#$match_url}
                 firefox "$target_url"
                 exit
             fi

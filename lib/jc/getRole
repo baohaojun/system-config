@@ -46,4 +46,11 @@ GetOptions (
 
 ## end generated code
 
+use Encode;
+
+use URI::Encode qw(uri_encode uri_decode);
+
+$role_name = decode_utf8 $role_name;
+$role_name = uri_encode($role_name);
+
 system "jc", "curl", "role-strategy/strategy/getRole?type=${role_type}&roleName=${role_name}"

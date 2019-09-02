@@ -15,7 +15,8 @@ use autodie qw(:all);
 # @:rebuild-url '?"指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_URL 和 EXTRA_PARAMS_FROM_BUILD_URL"' \
 # @:gerrit-trigger '?"使用这个参数指定的 gerrit review url，模拟 gerrit trigger"' \
 # ssynchronized '?"同步编译，直到编译结束才 exit，并通过 exit value 体现其结果"' \
-# vverbose '?"输出更多 log，以及本次 build 的终端输出"'
+# vverbose '?"实时输出本次 build 的终端输出"' \
+# ddebug '?"调试选项，打印出 build 相关的一些信息"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -24,6 +25,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $debug = 0;
 my $extra_environ_params = "";
 my $extra_environ_params_regexp = "";
 my $extra_params_from_build_url = "";
@@ -38,6 +40,14 @@ my $verbose = 0;
 my $handler_help = sub {
     print ;
     print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--[no]debug';
+    if (length('--[no]debug') > 24 and length("调试选项，打印出 build 相关的一些信息") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "调试选项，打印出 build 相关的一些信息";
+    print "\n";
     printf "%6s", '';
     printf "%-24s", '--extra-environ-params=EXTRA-ENVIRON-PARAMS';
     if (length('--extra-environ-params=EXTRA-ENVIRON-PARAMS') > 24 and length("额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值") > 0) {
@@ -112,17 +122,18 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '-v, ';
     printf "%-24s", '--[no]verbose';
-    if (length('--[no]verbose') > 24 and length("输出更多 log，以及本次 build 的终端输出") > 0) {
+    if (length('--[no]verbose') > 24 and length("实时输出本次 build 的终端输出") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "输出更多 log，以及本次 build 的终端输出";
+    printf "%s", "实时输出本次 build 的终端输出";
     print "\n";
 
     exit(0);
 };
 
 GetOptions (
+    'debug|d!' => \$debug,
     'extra-environ-params=s' => \$extra_environ_params,
     'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
     'extra-params-from-build-url=s' => \$extra_params_from_build_url,
@@ -338,7 +349,7 @@ my $response = $ua->request($request);
 
 die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
 
-say STDERR $response->header('Location') if $verbose;
+# say STDERR "Location is ", $response->header('Location') if $verbose;
 
 if (not $synchronized) {
   exit 0;
@@ -366,7 +377,7 @@ while (1) {
     $build_url = $queue_json->{executable}{url} unless $build_url;
 
     if ($build_url) {
-        say STDERR "building at $build_url" if $verbose;
+        say STDERR "building at $build_url" if $debug;
         if ($verbose) {
             system("jc console -b $build_url");
         }
@@ -376,7 +387,7 @@ while (1) {
                 if ($build_json->{result} eq 'SUCCESS') {
                     exit 0;
                 } else {
-                    say STDERR "build exited with ", $build_json->{result} if $verbose;
+                    # say STDERR "build exited with ", $build_json->{result} if $debug;
                     exit 1;
                 }
             } else {

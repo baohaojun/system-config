@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+jc update "createItem?name=$1"
+jc ojob "$1"

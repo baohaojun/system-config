@@ -87,7 +87,7 @@ fi
 exec 9> "${INPUT_LOCK_FILE}"
 if ! flock -n 9; then
     bhj-notify ask-for-input-with-sawfish "ask-for-input-with-sawfish ${INPUT_LOCK_FILE} blocked by $(echo; fuser ${INPUT_LOCK_FILE}|xargs ps|cut -b 1-100)"
-    find-or-exec -e zenity || true
+    find-or-exec -e yad || true
     flock 9
 fi
 
@@ -105,5 +105,5 @@ unset WINDOWID
     sawfish-window \
         mark \
         --with-mark \
-        zenity $ztype --text="$text" --title="$title"
+        yad $ztype --text="$text" --title="$title"
 ) 9>/dev/null | rm-last-nl

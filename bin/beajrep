@@ -1,0 +1,85 @@
+#!/usr/bin/env perl
+use strict;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P \
+# '?"调用 jenkins job 来进行 Beagrep（http://baohaojun.github.io/beagrep-cn.html）搜索的命令行程序，允许在 emacs、vim 等软件中调用代码搜索"' \
+# p:project '?"指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表"' \
+# e:entry '?"默认为指定搜索的正则表达式，参考 Beagrep 的文档"' \
+# ssmart-short-relative-path '?"根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $entry = "";
+my $project = "";
+my $smart_short_relative_path = 0;
+
+my $handler_help = sub {
+    print "调用 jenkins job 来进行 Beagrep（http://baohaojun.github.io/beagrep-cn.html）搜索的命令行程序，允许在 emacs、vim 等软件中调用代码搜索";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-e, ';
+    printf "%-24s", '--entry=ENTRY';
+    if (length('--entry=ENTRY') > 24 and length("默认为指定搜索的正则表达式，参考 Beagrep 的文档") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "默认为指定搜索的正则表达式，参考 Beagrep 的文档";
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project=PROJECT';
+    if (length('--project=PROJECT') > 24 and length("指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表";
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--[no]smart-short-relative-path';
+    if (length('--[no]smart-short-relative-path') > 24 and length("根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project";
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'entry|e=s' => \$entry,
+    'project|p=s' => \$project,
+    'smart-short-relative-path|s!' => \$smart_short_relative_path,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+use JSON;
+
+use URI::Encode qw(uri_encode uri_decode);
+
+if ($smart_short_relative_path) {
+    my $manifest_dir = qx(lookup-file -e .repo/manifests);
+    die "Can't find manifest dir" unless $manifest_dir;
+
+    chomp(my $manifest_branch = qx(cd $manifest_dir; git config branch.default.merge | perl -pe 's,^refs/heads/,,'));
+
+    $project = $manifest_branch unless $project;
+    (my $top_dir = $manifest_dir) =~ s,\.repo/manifests/?,,;
+
+    printf "Using smart & short format, project is $project, Entering directory `%s'\n", $top_dir;
+}
+
+$project = uri_encode($project);
+$entry = uri_encode($entry);
+
+my @command = (
+    "jc", "build", "-v", "-s", "-j", "Beagrep", "-p", "SCM_BEAGREP_WHICH_PROJECT=$project", "-p", "SCM_BEAGREP_REGEXP=$entry"
+);
+
+system(@command);
