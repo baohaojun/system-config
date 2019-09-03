@@ -83,7 +83,10 @@ else
 fi
 
 for p in "${process[@]}"; do
+    if test "$p" = $$; then
+        continue
+    fi
     if test -r "/proc/$p/environ" &>/dev/null || test "$use_sudo" = true; then
         echo -n "$p "; $sudo cat /proc/$p/environ | tr '\000' '\n' | grep -P -e "${env_value_regexp}" || echo
     fi
-done
+done | grep -v '^\d+ $' -P

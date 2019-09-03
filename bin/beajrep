@@ -73,6 +73,8 @@ if ($smart_short_relative_path) {
     (my $top_dir = $manifest_dir) =~ s,\.repo/manifests/?,,;
 
     printf "Using smart & short format, project is $project, Entering directory `%s'\n", $top_dir;
+} else {
+    die "Must specify project" unless $project;
 }
 
 $project = uri_encode($project);
