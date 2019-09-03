@@ -5,6 +5,7 @@
 # grep frontend called ngp.
 # Author: Joel Fernandes <joel@joelfernandes.org>
 
+export LESS="RSX"
 spath="$(dirname "$(readlink -f "$0")")"
 
 function do_quit() {
