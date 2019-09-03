@@ -85,6 +85,8 @@ url_switch_map[http://192.168.4.168:8088/]=${scm_jenkins_prod_url}
 
 url_switch_map[http://hmi-ci.it.chehejia.com/]=$scm_jenkins_test_url
 
+url_switch_map[$scm_jira_prod_url]=$scm_jira_test_url
+url_switch_map[$scm_jira_test_url]=$scm_jira_prod_url
 url_switch_map[$scm_gerrit_prod_url]=$scm_gerrit_test_url
 url_switch_map[$scm_gerrit_test_url]=$scm_gerrit_prod_url
 

@@ -282,7 +282,7 @@ if ($job_url !~ m,/,) {
 if ($print_params_only) {
   for (@params) {
     my $name = $_->{name};
-    my $value = $_->{value};
+    my $value = encode_utf8 $_->{value};
     if ($name =~ m/^\w+$/) {
       printf "export %s=%s\n", $name, shell_quote($value);
     }
