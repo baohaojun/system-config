@@ -43,7 +43,7 @@ class Screen(object):
 
         self.top = 0
         self.bottom = len(self.items)
-        self.current = 0
+        self.current = int(os.getenv("NGIT_CURRENT_ITEM") or 0)
         self.page = self.bottom // self.max_lines
 
         self.run()
@@ -92,7 +92,7 @@ class Screen(object):
                 with open("/tmp/ncurses-output", "w") as text_file:
                     if ch >= 65 and ch <= 122:
                         ch = chr(ch)
-                    text_file.write("key={} selection={}".format(ch, self.items[self.current]))
+                    text_file.write("key={} current={} selection={}".format(ch, self.current, self.items[self.current]))
                 break
 
     def scroll(self, direction):

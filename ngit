@@ -30,10 +30,10 @@ strstr() {
 }
 strstr \$1 "git-rebase-todo"
 if [ \$? -eq 0 ]; then
-	# Only change the first line
-	sed -i '1!b;s/pick\(.*\)/edit\1/g' .git/rebase-merge/git-rebase-todo
+        # Only change the first line
+        sed -i '1!b;s/pick\(.*\)/edit\1/g' .git/rebase-merge/git-rebase-todo
 else
-	vi \$1
+        vi \$1
 fi
 END0
 chmod +x /tmp/igec.py
@@ -68,10 +68,10 @@ strstr() {
 
 strstr \$1 "git-rebase-todo"
 if [ \$? -eq 0 ]; then
-	# Only change the first line
-	sed -i '1!b;s/pick\(.*\)/reword\1/g' .git/rebase-merge/git-rebase-todo
+        # Only change the first line
+        sed -i '1!b;s/pick\(.*\)/reword\1/g' .git/rebase-merge/git-rebase-todo
 else
-	vi \$1
+        vi \$1
 fi
 END3
 chmod +x /tmp/igrc.py
@@ -117,68 +117,69 @@ function usage()
 if [ -f /tmp/ncurses-output ]; then
         SECONDS=0
 
-	cmd=$(cat /tmp/ncurses-output| cut -d '=' -f2|cut -d ' ' -f1)
+        cmd=$(cat /tmp/ncurses-output| cut -d '=' -f2|cut -d ' ' -f1)
+        export NGIT_CURRENT_ITEM=$(cat /tmp/ncurses-output| cut -d '=' -f3|cut -d ' ' -f1)
 
-	one_line=$(cat /tmp/ncurses-output|cut -d '=' -f3)
-	commit=$(echo $one_line | cut -d ' ' -f1)
+        one_line=$(cat /tmp/ncurses-output|cut -d '=' -f4)
+        commit=$(echo $one_line | cut -d ' ' -f1)
 
-	# Amend the comment (then you have to do git rebase --continue)
-	if [ $cmd == "h" ]; then
-	        usage
-	elif [ $cmd == "63" ]; then
-	        usage
-	elif [ $cmd == "e" ]; then
+        # Amend the comment (then you have to do git rebase --continue)
+        if [ $cmd == "h" ]; then
+                usage
+        elif [ $cmd == "63" ]; then
+                usage
+        elif [ $cmd == "e" ]; then
                 EDITOR=/tmp/igec.py git rebase -i $commit^ --autosquash
                 do_quit
-	# Edit the patch of the commit
-	elif [ $cmd == "p" ]; then
-		/tmp/gep.py $commit
-	# Reword the commit message
-	elif [ $cmd == "r" ]; then
+        # Edit the patch of the commit
+        elif [ $cmd == "p" ]; then
+                /tmp/gep.py $commit
+        # Reword the commit message
+        elif [ $cmd == "r" ]; then
                 EDITOR=/tmp/igrc.py git rebase -i $commit^
-	# Show the commit
-	elif [ $cmd == "10" ]; then
-		git show $commit
+        # Show the commit
+        elif [ $cmd == "10" ]; then
+                git show $commit
                 press_any_key
-	# Revert
-	elif [ $cmd == "R" ]; then
-		git revert $commit
+        # Revert
+        elif [ $cmd == "R" ]; then
+                git revert $commit
                 press_any_key
-	# Checkout
-	elif [ $cmd == "c" ]; then
-		git checkout $commit
-	# stat of the diff
-	elif [ $cmd == "s" ]; then
-		git show --stat $commit
-	# Delete the commit from history
+        # Checkout
+        elif [ $cmd == "c" ]; then
+                git checkout $commit
+        # stat of the diff
+        elif [ $cmd == "s" ]; then
+                git show --stat $commit
+        # Delete the commit from history
         elif [ $cmd == "d" ]; then
                 echo -n $commit > /tmp/commit
-		EDITOR=/tmp/drop-commit.sh git rebase -i $commit^
-	# Diff of the commit with respect to HEAD
+                EDITOR=/tmp/drop-commit.sh git rebase -i $commit^
+        # Diff of the commit with respect to HEAD
         elif [ $cmd == "D" ]; then
                 git diff $commit > /tmp/diff
                 vi /tmp/diff
                 rm /tmp/diff
-	# Start interactive rebase from here
-	elif [ $cmd == "b" ]; then
-		git rebase -i --autosquash $commit
+        # Start interactive rebase from here
+        elif [ $cmd == "b" ]; then
+                git rebase -i --autosquash $commit
                 press_any_key
         # Just create a fixup commit
-	elif [ $cmd == "f" ]; then
-		git commit -as --fixup=$commit
+        elif [ $cmd == "f" ]; then
+                git commit -as --fixup=$commit
         # Create a fixup commit and try to merge it
-	elif [ $cmd == "F" ]; then
-		git commit -as --fixup=$commit
+        elif [ $cmd == "F" ]; then
+                git commit -as --fixup=$commit
                 git rebase -i $commit^ --autosquash
-	# Create a patch file out of the commit
-	elif [ $cmd == "w" ]; then
+        # Create a patch file out of the commit
+        elif [ $cmd == "w" ]; then
                 git format-patch $commit^..$commit
                 press_any_key
-	fi
+        fi
 
 if [ $cmd == "q" ]; then
         do_quit
-	exit
+        exit
 fi
 fi
 
