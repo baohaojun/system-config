@@ -95,7 +95,7 @@ title=$(echo "$prompt" | tail -n 1)
 text=$prompt
 
 if test "$secret" = true; then
-    ztype=--password
+    ztype='--entry --hide-text'
 else
     ztype=--entry
 fi
