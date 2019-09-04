@@ -1,12 +1,14 @@
 #!/usr/bin/env perl
 use strict;
-
+use v5.10;
+use String::ShellQuote;
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P \
 # '?"调用 jenkins job 来进行 Beagrep（http://baohaojun.github.io/beagrep-cn.html）搜索的命令行程序，允许在 emacs、vim 等软件中调用代码搜索"' \
 # p:project '?"指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表"' \
 # e:entry '?"默认为指定搜索的正则表达式，参考 Beagrep 的文档"' \
-# ssmart-short-relative-path '?"根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project"'
+# ssmart-short-relative-path '?"根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project"' \
+# vverbose
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -18,6 +20,7 @@ Getopt::Long::Configure("posix_default");
 my $entry = "";
 my $project = "";
 my $smart_short_relative_path = 0;
+my $verbose = 0;
 
 my $handler_help = sub {
     print "调用 jenkins job 来进行 Beagrep（http://baohaojun.github.io/beagrep-cn.html）搜索的命令行程序，允许在 emacs、vim 等软件中调用代码搜索";
@@ -46,6 +49,14 @@ my $handler_help = sub {
     }
     printf "%s", "根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project";
     print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
     exit(0);
 };
@@ -54,6 +65,7 @@ GetOptions (
     'entry|e=s' => \$entry,
     'project|p=s' => \$project,
     'smart-short-relative-path|s!' => \$smart_short_relative_path,
+    'verbose|v!' => \$verbose,
     'help|h!' => \&$handler_help,
 );
 
@@ -63,7 +75,7 @@ use JSON;
 
 use URI::Encode qw(uri_encode uri_decode);
 
-if ($smart_short_relative_path) {
+if ($smart_short_relative_path or not $project) {
     my $manifest_dir = qx(lookup-file -e .repo/manifests);
     die "Can't find manifest dir" unless $manifest_dir;
 
@@ -73,13 +85,17 @@ if ($smart_short_relative_path) {
     (my $top_dir = $manifest_dir) =~ s,\.repo/manifests/?,,;
 
     printf "Using smart & short format, project is $project, Entering directory `%s'\n", $top_dir;
+} else {
+    die "Must specify project" unless $project;
 }
 
-$project = uri_encode($project);
-$entry = uri_encode($entry);
+# $project = uri_encode($project);
+# $entry = uri_encode($entry);
 
 my @command = (
     "jc", "build", "-v", "-s", "-j", "Beagrep", "-p", "SCM_BEAGREP_WHICH_PROJECT=$project", "-p", "SCM_BEAGREP_REGEXP=$entry"
 );
+
+say STDERR join(" ", shell_quote(@command)) if $verbose;
 
 system(@command);

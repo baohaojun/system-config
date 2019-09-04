@@ -4,7 +4,7 @@ IFS=$'\n'
 PATH=$(string-join : $(
            echo "${PATH}" | tr : '\n' | grep -v brew
                    ))
-if test "$#" = 0; then
+if test "$#" = 0 || test $# = 1 -a "$1" = --; then
     if test "$BASH_SOURCE" = "$0"; then
         # we are being run
         start_recursive_shell nobrew

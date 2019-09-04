@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+
+declare -A repo_dir_map
+
+while read dir extra; do
+    if test "$dir" = skipping; then
+        dir=$extra
+        mkdir -p "$dir"
+    fi
+    repo_dir_map[$dir]=1
+done <<<"$(
+    repo forall -c 'pwd' 2>&1
+)"
+
+for dir in "${!repo_dir_map[@]}"; do
+    echo "$dir"
+done | xargs -P 5 -n 1 bash -c "$(
+cat <<'EOF66ceabc8e751'
+# {%sh-mode%}
+dir=$1
+cd $dir
+REPO_PROJECT=$(repo forall . 'echo $REPO_PROJECT')
+REPO_PATH=$(repo forall . 'echo $REPO_PATH')
+repo sync -c -q -l -d . &>/dev/null ||
+    (
+        cd -
+        rm -rf "$dir/.git" \
+           .repo/project-objects/"${REPO_PROJECT}".git \
+           ".repo/projects/${REPO_PATH}.git"
+        repo sync -c -q -d $REPO_PROJECT &>/dev/null
+        echo repo sync failed first, then ok.
+    )
+echo $dir done
+# {%/sh-mode%}
+EOF66ceabc8e751
+
+)" true

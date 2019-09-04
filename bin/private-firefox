@@ -1,12 +1,12 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt rrsync i:private-instance=1
+# generate-getopt -P rrsync i:private-instance=1
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o i:rh \
-               --long private-instance:,rsync,help,no-rsync \
-               -n $(basename -- $0) -- "$@")
+TEMP=$(POSIXLY_CORRECT=true getopt -o i:rh \
+                      --long private-instance:,rsync,help,no-rsync \
+                      -n $(basename -- $0) -- "$@")
 declare private_instance=1
 declare rsync=false
 eval set -- "$TEMP"
@@ -64,12 +64,35 @@ if test ! -d ${private_dir}/.mozilla -o "$rsync" = true; then
 fi
 
 export HOME=${private_dir}
+
+. nobrew --
+
+cd $HOME
+dbus_pid=$(get-pid-env -p dbus.daemon -e "^HOME=$PWD" | pn 1 | head -n 1)
+if test "$dbus_pid"; then
+    dbus_env=$(
+        get-pid-env -p $dbus_pid -e "^DBUS_SESSION_BUS_ADDRESS=" | pn 2
+            )
+    bhj-notify dbus "Got dbus $dbus_env from $dbus_pid"
+else
+    dbus_env=$(
+        dbus-launch > /tmp/private-firefox.$$
+        cat /tmp/private-firefox.$$
+        rm -f /tmp/private-firefox.$$
+            )
+    bhj-notify dbus "No running dbus!"
+fi
+
+if test "$dbus_env"; then
+    eval "$dbus_env"
+fi
+export DBUS_SESSION_BUS_ADDRESS
+
 if test $# != 0; then
     log running $* in $HOME
     "$@"
     exit
 fi
-
 
 for pid in $(
                 sawfish-client -e "$(
@@ -110,28 +133,6 @@ EOFd56e460f1481
         exit
     fi
 done
-
-. nobrew
-
-dbus_pid=$(get-pid-env -p dbus.daemon -e "^HOME=$PWD" | pn 1 | head -n 1)
-if test "$dbus_procs"; then
-
-    dbus_env=$(
-        get-pid-env -p $dbus_pid -e "^DBUS_SESSION_BUS_ADDRESS=" | pn 2
-            )
-    bhj-notify dbus "Got dbus $dbus_env from $dbus_procs"
-else
-    dbus_env=$(
-        dbus-launch > /tmp/private-firefox.$$
-        cat /tmp/private-firefox.$$
-        rm -f /tmp/private-firefox.$$
-            )
-fi
-
-if test "$dbus_env"; then
-    eval "$dbus_env"
-fi
-export DBUS_SESSION_BUS_ADDRESS
 
 (
     ibus-daemon -x -d
