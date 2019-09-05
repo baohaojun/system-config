@@ -93,6 +93,7 @@ GetOptions (
 
 ## end generated code
 use JSON;
+use Encode;
 
 use URI::Encode qw(uri_encode uri_decode);
 
@@ -113,7 +114,7 @@ if (not $raw_entry) {
 }
 
 $project = uri_encode($project);
-$entry = uri_encode($entry);
+$entry = uri_encode(decode_utf8 $entry);
 
 if ($username eq ':null:') {
     $username = $ENV{scm_opengrok_user};
@@ -145,11 +146,9 @@ $result =~ s,\\uD83D,,g;
 
 my $json = decode_json $result;
 
-use Encode;
-
 for my $file (keys %{$json->{results}}) {
     for (@{$json->{results}{$file}}) {
-        my $line = encode_utf8 $_->{line};
+        my $line = $_->{line};
         my $lineNumber = $_->{lineNumber};
 
         $line =~ s,</?b>,,g;

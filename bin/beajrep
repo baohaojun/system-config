@@ -91,6 +91,9 @@ if ($smart_short_relative_path or not $project) {
 
 # $project = uri_encode($project);
 # $entry = uri_encode($entry);
+if (not $entry and @ARGV == 1) {
+    $entry = $ARGV[0];
+}
 
 my @command = (
     "jc", "build", "-v", "-s", "-j", "Beagrep", "-p", "SCM_BEAGREP_WHICH_PROJECT=$project", "-p", "SCM_BEAGREP_REGEXP=$entry"
