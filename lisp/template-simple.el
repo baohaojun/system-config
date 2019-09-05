@@ -7,7 +7,7 @@
 ;; Created: 21 Dec 2007
 ;; Version: 0.01
 ;; Keywords: tools, convenience
-;; 
+;;
 ;; This file is part of PDE (Perl Development Environment).
 ;; But it is useful for generic programming.
 
@@ -63,7 +63,7 @@
 ;;; Installation:
 ;; Put this file into your load-path and the following into your ~/.emacs:
 ;;   (require 'template-simple)
-;;   
+;;
 ;;; Code:
 (eval-when-compile
   (require 'cl))
@@ -170,7 +170,7 @@ The program fragment is surrounded by `template-parens', the escape
 char `\\' is used for escape the open parenthesis.
 The text in the parentheseses are `read' into a list. For example:
   (template-compile-string
-   \";; -*- template-parens: (\\\"{\\\" . \\\"}\\\") -*- 
+   \";; -*- template-parens: (\\\"{\\\" . \\\"}\\\") -*-
    (defun {p} ({p})
     \\\"{(read-from-minibuffer \\\"Document: \\\")}\\\"
     )
@@ -280,7 +280,7 @@ template is translated by `template-expansion'"
      ,(format "Expand template by %s" name)
      (let ((template-default-alist
             (append ,alist template-default-alist))
-           ;; save global variable 
+           ;; save global variable
            (template-expand-function
             ',(intern (format "template-%s-expand" name))))
        (if (stringp template)
@@ -395,10 +395,6 @@ Use `template-expand-function' to expand the parsed template."
                    (y-or-n-p (format "Use template %s? " file)))
                (template-simple-expand-template file)))))
   nil)
-
-(if (boundp 'write-file-functions)
-    (add-hook 'write-file-functions 'template-simple-update-header)
-  (add-hook 'write-file-hooks 'template-simple-update-header))
 
 (let ((hook (if (boundp 'find-file-hook)
                 'find-file-hook
