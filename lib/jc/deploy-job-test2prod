@@ -61,7 +61,7 @@ if test "${prod2test}" = true; then
 fi
 
 (
-    task=$job_name
+    task=$(basename "$job_name")
     log working with $task
     save-it() {
         save.-to-git -m "auto commit at $(now), before jc get-job"

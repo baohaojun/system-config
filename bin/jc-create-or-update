@@ -2,6 +2,25 @@
 
 set -e
 
+if test -z "$JC_SERVER"; then
+    jc_servers=$(
+        for x in jc.conf.*; do
+            if test -e $x; then
+                echo ${x##*.}
+            fi
+        done
+              )
+
+    if test "${jc_servers}"; then
+        for JC_SERVER in ${jc_servers}; do
+            export JC_SERVER
+            bhj-notify jc-create-or-update $JC_SERVER
+            sleep 1
+            jc-create-or-update
+        done
+        exit
+    fi
+fi
 if test -e jc.conf; then
     . jc.conf
 fi

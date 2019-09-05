@@ -69,7 +69,7 @@ fi
 
 get-abbrev-file() {
     local abbrev=$1
-    EMACS=t select-output-line -i "${abbrev}" -o find "${config_dirs[@]}" -iname "*$(set -- $abbrev; echo -n $1)*" \( -type f -o -type l \)
+    EMACS=t select-output-line -i "${abbrev}" -o find "${config_dirs[@]}" -iname "*$(set -- $abbrev; echo -n $1)*" \( -type f -o -type l \) || true
 }
 
 if test "${abbrev}" = '?'; then
@@ -96,6 +96,9 @@ abbrev_file=$(get-abbrev-file "${abbrev}")
 if test ! -e "${abbrev_file}"; then
     if test "${abbrev_file:0:1}" = +; then
         exec bash -x abbrevs -a "${abbrev_file}" &> ~/tmp/abbrevs.recur
+    fi
+    if EMACS=t yes-or-no-p -y "abbrev file for $abbrev not found, create?"; then
+        exec bash -x abbrevs -a "+${abbrev}" &> ~/tmp/abbrevs.recur
     fi
     bhj-notify abbrevs "There is no matching file for $abbrev, use +$abbrev to create a new abbrev"
     exit 1
