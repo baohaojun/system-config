@@ -1,0 +1,58 @@
+#!/bin/bash
+profile=~/.config/fcitx/profile
+
+# EnabledIMList=fcitx-keyboard-us-dvp:True,
+
+EnabledIMList=$(
+    grep -P -e '^\s*EnabledIMList=' ~/.config/fcitx/profile
+             )
+
+if test -z "${EnabledIMList}"; then
+    die "Can't find EnabledIMList"
+fi
+
+declare -a EnabledIMListKeys=()
+declare -A EnabledIMListMap
+
+while read k v; do
+    if test "$k" -a "$v"; then
+        EnabledIMListKeys+=($k)
+        EnabledIMListMap[$k]=$v
+    fi
+done <<<"$(
+    echo -n "${EnabledIMList}" | perl -ne '
+s,.*=,,;
+while (m/(.*?):(True|False),?/g) {
+    print "$1 $2\n";
+}
+'
+)"
+
+if test "$1" = dvp; then
+    k1=fcitx-keyboard-us-dvp
+else
+    k1=fcitx-keyboard-us
+fi
+
+new_keys=(
+    $k1
+    "${EnabledIMListKeys[@]}"
+)
+EnabledIMListMap[$k1]=True
+
+new_list=$(
+    string-join \
+        , \
+        $(
+        for k in "${new_keys[@]}"; do
+              if test "${EnabledIMListMap[$k]}"; then
+                  echo $k:${EnabledIMListMap[$k]}
+                  EnabledIMListMap[$k]=
+              fi
+          done
+        )
+        )
+
+export new_list
+
+perl -pe 's,(^\s*EnabledIMList\s*=\s*).*,$1$ENV{new_list},' -i $profile

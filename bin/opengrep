@@ -110,7 +110,7 @@ if ($smart_short_relative_path) {
 }
 
 if (not $raw_entry) {
-    $entry = "/$entry/" unless $entry =~ m,^/.*/$,;
+    $entry = "\"$entry\"" unless $entry =~ m,^".*"$,;
 }
 
 $project = uri_encode($project);

@@ -32,6 +32,16 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo "$FILE"
     }
 
+    function catp()
+    {
+        cat <<EOF98db9599d6e4
+cat <<'EOFe14737c1e5cd' > "$FILE"
+$(cat "$FILE")
+EOFe14737c1e5cd
+EOF98db9599d6e4
+
+    }
+
 # redefine these functions
     function swp()
     {
@@ -232,7 +242,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo "$out" | putclip
     fi
 else # we are being sourced
-    for x in gerrit-gitweb-p gerrit-url-p swp sup gitp wp ap up rp mp tmp realp filep urlp orgp ipp bp homep; do
+    for x in gerrit-gitweb-p gerrit-url-p swp catp sup gitp wp ap up rp mp tmp realp filep urlp orgp ipp bp homep; do
         eval 'function '$x'() {
             command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             if test "$NO_PUTCLIP" = true; then

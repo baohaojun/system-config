@@ -42,6 +42,9 @@ do-dvp() {
         do-dvp
     elif test "$1" = ma || setxkbmap -query | grep 'variant:\s+dvp' -Pq; then
         echo am: normal layout
+        if [[ $XMODIFIERS =~ fcitx ]]; then
+            echo "**** please consider using aoeu/asdf ****"
+        fi
         setxkbmap -layout us -option
         do-natural-scrolling
         if test -e ~/.config/system-config/using-fcitx; then

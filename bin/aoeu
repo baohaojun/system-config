@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+# 这个脚本像 am 脚本一样，可以用来切换键盘布局。但是，它只能用在
+#  fcitx 输入法下（fcitx 的切换方法，和 ibus 不一样，它要求必须把第一
+# 个输入法设置成 dvp）。
+
+set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+if test "$b0" = asdf; then
+    fcitx-toggle-dvp dvp
+else
+    fcitx-toggle-dvp
+fi
+
+cd ~/tmp/
+nohup fcitx -r -d&
+
+sleep 3
+nohup fcitx-configtool&
