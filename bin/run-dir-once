@@ -22,6 +22,7 @@ cd "$1"
 Can't lock .$(basename $0).lock because of:
 $(fuser .$(basename $0).lock)
 EOF
+        exit
     else
         echo start running > .log
     fi

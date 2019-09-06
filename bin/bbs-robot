@@ -67,4 +67,4 @@ elif test "$find_bbs_screen" = true -a "$SCREEN_TITLE" != bbs; then
     exec ssssh bbs
 fi
 
-run-every-N-minutes bbs-robot.exp "$@" 2> ~/.cache/system-config/logs/bbs-robot.log
+run-every-N-minutes bash -c '. ~/renew-xauth; bbs-robot.exp "$@"' true "$@" 2> ~/.cache/system-config/logs/bbs-robot.log

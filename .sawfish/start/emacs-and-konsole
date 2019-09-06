@@ -30,7 +30,11 @@ hint "$check_program 安装完成，请按回车键关闭此窗口"
 
 
 if test -e ~/.local-config/etc/baohaojun; then
-    konsole.bhj bbs-robot --use-current-screen-window
+    if ps.pl bbs.robot.tmux; then
+        konsole.bhj
+    else
+        konsole.bhj bbs-robot --use-current-screen-window
+    fi
 else
     konsole.bhj
 fi&
