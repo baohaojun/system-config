@@ -66,6 +66,10 @@ fi
 
 jc get-job "$task" > "${task}.from-jc.xml"
 cp "${task}.from-jc.xml" "$task-$$.xml"
+if [[ "$(cat "$task-$$.xml"|head -n 1)" =~ ^'&lt;?xml' ]]; then
+    bhj-notify "hello" "Got xml entities"
+    perl -e '@x = <>; $x = join("", @x); use XML::Entities; print XML::Entities::decode("all", $x)' "$task-$$.xml" | tee-with-tmp "$task-$$.xml"
+fi
 . atexit rm -f $task-$$.xml
 
 if xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${task}.from-jc.xml" 2>/dev/null); then

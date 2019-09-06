@@ -60,6 +60,14 @@ x2_url="${url%/showDiffFiles*}/configOutput?type=raw&${x2_timestamp}"
     jc curl "${x1_url}" > ~/tmp/x1.xml
     jc curl "${x2_url}" > ~/tmp/x2.xml
 
+
+    for xf in ~/tmp/x1.xml ~/tmp/x2.xml; do
+        if [[ "$(cat "${xf}"|head -n 1)" =~ ^'&lt;?xml' ]]; then
+            bhj-notify "hello" "Got xml entities"
+            perl -e '@x = <>; $x = join("", @x); use XML::Entities; print XML::Entities::decode("all", $x)' "${xf}" | tee-with-tmp "${xf}"
+        fi
+    done
+
     for f in ~/tmp/x1.xml ~/tmp/x2.xml; do
         jc htmlify-xml-tag -t command -f $f --to-mode bash
         jc htmlify-xml-tag -t description -f $f
