@@ -276,6 +276,11 @@ This is simple using Perl's “reflection”.
       return $response;
   }
 
+  sub jkd_get($) {
+      my $response = get($_[0]);
+      print $response->content;
+  }
+
   sub select_args(@) {
       if ($jkd_verbose) {
           say STDERR "select-args ", join(" ", shell_quote(@_));
@@ -506,6 +511,72 @@ This is simple using Perl's “reflection”.
               );
       }
       return %jkd_project_issue_types_name_id_map;
+  }
+
+  sub jkd_get_issue_type_field_names(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -P -l p:project t:issue-type
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("posix_default");
+
+      local @ARGV = @_;
+
+      my $issue_type = "";
+      my $project = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-t, ';
+          printf "%-24s", '--issue-type=ISSUE-TYPE';
+          if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '-p, ';
+          printf "%-24s", '--project=PROJECT';
+          if (length('--project=PROJECT') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'issue-type|t=s' => \$issue_type,
+          'project|p=s' => \$project,
+          'help|h!' => \&$handler_help,
+      );
+
+
+      ## end generated code
+
+      my @fields = @ARGV;
+
+      @ARGV = ();
+
+      my $fields_json;
+      if ($project and $issue_type) {
+          $fields_json = decode_json(qx(jkd get-issue-type-fields -p $project -t '$issue_type' -v));
+      } else {
+          $fields_json = read_file("/dev/stdin");
+      }
+
+      use JSON::Path 'jpath_map';
+
+      for (@fields) {
+          my $jpath = JSON::Path->new("\$..$_.name");
+          my $name = encode_utf8 $jpath->value($fields_json);
+          say "$name : $_";
+      }
   }
 
   sub jkd_get_issue_type_fields(@) {
