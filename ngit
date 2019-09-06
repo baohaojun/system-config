@@ -5,6 +5,57 @@
 # grep frontend called ngp.
 # Author: Joel Fernandes <joel@joelfernandes.org>
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P s:start-item
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o s:h \
+                      --long start-item:,help \
+                      -n $(basename -- $0) -- "$@")
+declare start_item=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -s|--start-item)
+            start_item=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-s, '
+            printf %-24s '--start-item=START_ITEM'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if [[ $start_item =~ ^[a-f0-9]{40}$ ]]; then
+    start_item=$(
+        git log --pretty=%H $start_item..HEAD | wc -l
+              )
+fi
+
+if test "${start_item}"; then
+    export NGIT_CURRENT_ITEM=$start_item
+fi
+
 export LESS="RSX"
 spath="$(dirname "$(readlink -f "$0")")"
 
