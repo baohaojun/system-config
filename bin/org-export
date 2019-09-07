@@ -168,7 +168,7 @@ for x in "$@"; do
             if test ! -e emojis; then
                 relative-link $(readlink -f ".git/../emojis") .
             fi
-            git-interactive-add
+            save.-to-git -m "before org2html $x"
             org2html "$(basename "$x".html)"
             (
                 cd emojis
