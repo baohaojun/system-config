@@ -890,6 +890,70 @@ sub jkd_e(@) {
     say "PUT response code:" . $response->code, "result: ", $response->content;
 }
 
+sub jkd_resolve(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -P i:issue-to-edit r:resolution
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("posix_default");
+
+
+
+    my $issue_to_edit = "";
+    my $resolution = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--issue-to-edit=ISSUE-TO-EDIT';
+        if (length('--issue-to-edit=ISSUE-TO-EDIT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-r, ';
+        printf "%-24s", '--resolution=RESOLUTION';
+        if (length('--resolution=RESOLUTION') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'issue-to-edit|i=s' => \$issue_to_edit,
+        'resolution|r=s' => \$resolution,
+        'help|h!' => \&$handler_help,
+    );
+
+
+    ## end generated code
+
+    my $ua = LWP::UserAgent->new;
+
+    my $request = PUT jkd_url_for_api("rest/api/2/issue/$issue_to_edit"),
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        "charset" => "utf-8",
+        Content => encode_json {
+            fields => {
+                resolution => {
+                    name => decode_utf8 '完成'
+                }
+            }
+        };
+    my $response = $ua->request($request);
+
+    say "PUT response code:" . $response->code, "result: ", $response->content;
+}
+
 sub jkd_select_issue_type(@) {
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -s perl -l p:project t:issue-type
