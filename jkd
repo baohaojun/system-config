@@ -775,7 +775,7 @@ sub jkd_print_issue(@) {
     ## end generated code
 
     my $json_issue = decode_json get("rest/api/2/issue/$issue")->content;
-    if ($json) {
+    if ($json and not @fields_to_print) {
         print encode_json($json_issue);
         exit;
     }
@@ -788,17 +788,29 @@ sub jkd_print_issue(@) {
     my @all_fields = sort keys %{$json_issue->{fields}};
 
     my %fields_to_print;
+
+    sub getNormalizedName($) {
+        my $name = $_[0];
+
+        $name =~ s, | ,,g;
+        return $name;
+    }
+
+    my %fields_to_print_normalized;
+    my %fields_results;
+
     for (@fields_to_print) {
         $fields_to_print{$_} = 1;
+        $fields_to_print_normalized{getNormalizedName $_} = $_;
     }
 
     my $jsonParser = JSON->new->allow_nonref;
 
     for (@all_fields) {
-        my $field_name = encode_utf8 $it->{fields}{$_}{name};
+        my $field_name = getNormalizedName encode_utf8 $it->{fields}{$_}{name};
         next unless $json_issue->{fields}{$_};
-        if ($fields_to_print{$_} or $fields_to_print{$field_name} or not @fields_to_print) {
-            if (@fields_to_print == 1) {
+        if ($fields_to_print{$_} or $fields_to_print_normalized{$field_name} or not @fields_to_print) {
+            if (@fields_to_print == 1 and not $json) {
                 use Data::Types qw(:string);
                 my $value = $json_issue->{fields}{$_};
                 if (is_string $value) {
@@ -807,9 +819,16 @@ sub jkd_print_issue(@) {
                     say $jsonParser->utf8->pretty->encode($value);
                 }
             } else {
-                say sprintf("%s(%s): %s", encode_utf8($_), $field_name, $jsonParser->utf8->pretty->encode ($json_issue->{fields}{$_}));
+                if ($fields_to_print{$_}) {
+                    $fields_results{decode_utf8 $_} = $json_issue->{fields}{$_}
+                } elsif ($fields_to_print_normalized{$field_name}) {
+                    $fields_results{decode_utf8 $fields_to_print_normalized{$field_name}} = $json_issue->{fields}{$_}
+                }
             }
         }
+    }
+    if (%fields_results) {
+        print $jsonParser->utf8->pretty->encode (\%fields_results);
     }
 }
 
@@ -945,7 +964,7 @@ sub jkd_resolve(@) {
         Content => encode_json {
             fields => {
                 resolution => {
-                    name => decode_utf8 '完成'
+                    id => 10300
                 }
             }
         };
