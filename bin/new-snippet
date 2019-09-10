@@ -2,7 +2,9 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P n:name s:snippet m:mode=fundamental-mode
+    # generate-getopt -P n:name '?"Snippet 的名字"' \
+        # s:snippet '?"Snippet 的内容"' \
+        # m:mode=fundamental-mode '?"可以加 -mode，也可以不加，默认是 fundamental"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o m:n:s:h \
@@ -37,13 +39,13 @@ while true; do
             echo Options and arguments:
             printf %06s '-m, '
             printf %-24s '--mode=MODE'
-            echo
+            echo "可以加 -mode，也可以不加，默认是 fundamental"
             printf %06s '-n, '
             printf %-24s '--name=NAME'
-            echo
+            echo "Snippet 的名字"
             printf %06s '-s, '
             printf %-24s '--snippet=SNIPPET'
-            echo
+            echo "Snippet 的内容"
             exit
             shift
             ;;
@@ -61,7 +63,7 @@ done
 ## end generated code
 
 if ! [[ $mode =~ -mode$ ]]; then
-    $mode=$mode-mode
+    mode=$mode-mode
 fi
 
 s_dir=~/src/github/yasnippet-snippets/$mode
