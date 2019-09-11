@@ -1,5 +1,51 @@
 #!/bin/bash
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @confirm=false
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long confirm,help,no-confirm \
+                      -n $(basename -- $0) -- "$@")
+declare confirm=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --confirm|--no-confirm)
+            if test "$1" = --no-confirm; then
+                confirm=false
+            else
+                confirm=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]confirm'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 umask 0077
 if true; then
     set -ex
@@ -90,7 +136,7 @@ is-extra-options() {
     return 1
 }
 
-if test "${#password_map[*]}" = 1; then
+if test "${#password_map[*]}" = 1 -a "$confirm" = false; then
     which_password=${passwords}
 else
     which_password=$(select-args -o -p "Which password do you want to use for ${window_class}/${window_name}?" $passwords "${extra_options[@]}")

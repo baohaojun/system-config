@@ -13,7 +13,7 @@ else
         text=$(xclip -o -selection primary)
     fi
 fi
-text=$(echo -n "$text"|perl -npe 's/(,|\.|……」|』、『|、|……。|。|！|……|」|』|）)$//')
+text=$(echo -n "$text"|perl -npe 's/(,|（|\.|……」|』、『|、|……。|。|！|……|」|』|）)$//')
 (
     text=$(echo -n "$text" | perl -npe 's/^\s*//; s/\s*$//')
     if [[ $text =~ ^https?:// ]]; then
