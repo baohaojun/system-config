@@ -827,6 +827,13 @@ This is simple using Perl's “reflection”.
       }
   }
 
+  sub getNormalizedName($) {
+      my $name = $_[0];
+
+      $name =~ s, | ,,g;
+      return $name;
+  }
+
   sub jkd_print_issue(@) {
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl i:issue f:fields-to-print='()' @json
@@ -898,13 +905,6 @@ This is simple using Perl's “reflection”.
 
       my %fields_to_print;
 
-      sub getNormalizedName($) {
-          my $name = $_[0];
-
-          $name =~ s, | ,,g;
-          return $name;
-      }
-
       my %fields_to_print_normalized;
       my %fields_results;
 
@@ -943,7 +943,7 @@ This is simple using Perl's “reflection”.
 
   sub jkd_e(@) {
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl i:issue-to-edit f:field-to-edit
+      # generate-getopt -s perl i:issue-to-edit f:field-to-edit @:fields-json='"{}"'
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -953,6 +953,7 @@ This is simple using Perl's “reflection”.
 
 
       my $field_to_edit = "";
+      my $fields_json = "{}";
       my $issue_to_edit = "";
 
       my $handler_help = sub {
@@ -961,6 +962,14 @@ This is simple using Perl's “reflection”.
           printf "%6s", '-f, ';
           printf "%-24s", '--field-to-edit=FIELD-TO-EDIT';
           if (length('--field-to-edit=FIELD-TO-EDIT') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--fields-json=FIELDS-JSON';
+          if (length('--fields-json=FIELDS-JSON') > 24 and length() > 0) {
               print "\n";
               printf "%30s", "";
           }
@@ -980,9 +989,10 @@ This is simple using Perl's “reflection”.
 
       GetOptions (
           'field-to-edit|f=s' => \$field_to_edit,
+          'fields-json=s' => \$fields_json,
           'issue-to-edit|i=s' => \$issue_to_edit,
           'help|h!' => \&$handler_help,
-          );
+      );
 
 
       ## end generated code
@@ -998,11 +1008,19 @@ This is simple using Perl's “reflection”.
 
       my %edited_fields;
 
-      work_with_all_fields(
-          $issue_project, $issue_type_id, %edited_fields,
-          {
-              edit_issue_json_obj => $json_issue,
-          });
+      if ($fields_json eq "{}") {
+          work_with_all_fields(
+              $issue_project, $issue_type_id, %edited_fields,
+              {
+                  edit_issue_json_obj => $json_issue,
+              });
+      } else {
+          my $issue_fields_obj = decode_json get("rest/api/2/issue/${issue_to_edit}?expand=names")->content;
+          my $fields_json_obj = decode_json $fields_json;
+          update_names_with_fields($fields_json_obj, $issue_fields_obj->{names});
+          %edited_fields = %$fields_json_obj;
+      }
+
 
       my $ua = LWP::UserAgent->new;
 
@@ -1277,9 +1295,45 @@ This is simple using Perl's “reflection”.
   #+BEGIN_SRC perl
     use v5.10;
 
+    sub update_names_with_fields($$) {
+        my ($named_obj, $fields_map) = @_;
+
+        my %name_field_map;
+
+        for (keys %$fields_map) {
+            my $name = $fields_map->{$_};
+
+            if (ref $name) {
+                $name = $name->{name};
+            }
+
+            if ($name) {
+                $name = getNormalizedName encode_utf8 $name;
+
+                $name_field_map{$name} = $_;
+                say STDERR "Created a map: $name: $name_field_map{$name}";
+            }
+
+        }
+
+
+        for (keys %$named_obj) {
+
+            my $name = getNormalizedName encode_utf8 $_;
+            say STDERR "working with specified name: $name: $name_field_map{$name}";
+
+
+            if ($name_field_map{$name} and $name_field_map{$name} ne $_) {
+                say STDERR "update $name with $name_field_map{$name}";
+                $named_obj->{$name_field_map{$name}} = $named_obj->{$_};
+                delete $named_obj->{$_};
+            }
+        }
+    }
+
     sub jkd_tri(@) {
         ## start code-generator "^\\s *#\\s *"
-        # generate-getopt -l -s perl i:issue t:transition
+        # generate-getopt -l -s perl i:issue t:transition @:fields-json='"{}"' @print-trans
         ## end code-generator
         ## start generated code
         use Getopt::Long;
@@ -1288,15 +1342,33 @@ This is simple using Perl's “reflection”.
 
         local @ARGV = @_;
 
+        my $fields_json = "{}";
         my $issue = "";
+        my $print_trans = 0;
         my $transition = "";
 
         my $handler_help = sub {
             print ;
             print "\n\n选项和参数：\n";
+            printf "%6s", '';
+            printf "%-24s", '--fields-json=FIELDS-JSON';
+            if (length('--fields-json=FIELDS-JSON') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
             printf "%6s", '-i, ';
             printf "%-24s", '--issue=ISSUE';
             if (length('--issue=ISSUE') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
+            printf "%6s", '';
+            printf "%-24s", '--[no]print-trans';
+            if (length('--[no]print-trans') > 24 and length() > 0) {
                 print "\n";
                 printf "%30s", "";
             }
@@ -1315,10 +1387,12 @@ This is simple using Perl's “reflection”.
         };
 
         GetOptions (
+            'fields-json=s' => \$fields_json,
             'issue|i=s' => \$issue,
+            'print-trans!' => \$print_trans,
             'transition|t=s' => \$transition,
             'help|h!' => \&$handler_help,
-            );
+        );
 
 
         ## end generated code
@@ -1328,9 +1402,24 @@ This is simple using Perl's “reflection”.
             &$handler_help();
         }
 
-        unless ($transition =~ m/^\d+$/) {
+        my $transision_json_obj;
+
+        if ($transition !~ m/^\d+$/ or $fields_json ne "{}") {
             my $response = get("rest/api/2/issue/${issue}/transitions?expand=transitions.fields");
-            my $json_obj = decode_json $response->content;
+            if ($print_trans) {
+                print $response->content;
+                exit;
+            }
+            $transision_json_obj = decode_json $response->content;
+        }
+
+        my $fields_json_obj = decode_json $fields_json;
+        if ($fields_json ne "{}") {
+            update_names_with_fields($fields_json_obj, $transision_json_obj->{fields});
+        }
+
+        unless ($transition =~ m/^\d+$/) {
+            my $json_obj = $transision_json_obj;
             $transition = select_args("-p", "如何变更当前 issue：${issue}", "-i", "$transition", map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
             say "transition is $transition";
             $transition =~ s,^id=(\d+):.*,$1, or
@@ -1346,7 +1435,8 @@ This is simple using Perl's “reflection”.
             Content => encode_json {
                 transition => {
                     id => $transition
-                }
+                },
+                fields => $fields_json_obj
         };
         say "my request's content: ", $request->content;
         my $response = $ua->request($request);
