@@ -128,12 +128,24 @@ xmlstarlet sel -t -m //program -v @filename -o " " -v @start_sector -o " " -v @l
             if [[ $img =~ ${part%_?}_1\. ]]; then
                 the_start=$start
             fi
-            start=$((start - the_start)) || true
-            dd if=$img of=${out} seek=$start bs=$bs
-        elif test "$seen_part" = true -a "$padding" = true; then
-            # make our best guess at the true size of the system/vendor partition.
-            dd if=/dev/zero of=${out} seek=$((start - the_start - 1)) bs=$bs count=1
+            seek_start=$((start - the_start)) || true
+            dd if=$img of=${out} seek=$seek_start bs=$bs
+            last_start=start
+            last_end=$((start + $(stat -c %s $img) / $bs))
+        elif test "$seen_part" = true; then
             break
         fi
     done
+    if test "$padding" = true; then
+        # make our best guess at the true size of the system/vendor partition.
+        log "add some padding"
+        set -x
+        if test "${start:-0}" -ge "${last_end}"; then
+            log "last_end is $last_end, the_start is $the_start, start is $start"
+            dd if=/dev/zero of=${out} seek=$((start - the_start - 1)) bs=$bs count=1
+        else
+            log "last_end is $last_end, the_start is $the_start"
+            dd if=/dev/zero of=${out} seek=$((last_end - the_start)) bs=$bs count=$(( (last_end - the_start) / 100))
+        fi
+    fi
 }

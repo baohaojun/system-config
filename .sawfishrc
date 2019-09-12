@@ -913,6 +913,7 @@ EOF856ceee4ab57
 
 (bind-both-global&window-keymaps "Super-h" s-h-keymap)
 (bind-both-global&window-keymaps "Super-Menu" '(system "sawfish-fix-key&"))
+(bind-both-global&window-keymaps "Super-S-Menu" '(system "sawfish-fix-key -a&"))
 (defun xdo-events (events)
   (when (stringp events)
     (setq events (cons events)))
