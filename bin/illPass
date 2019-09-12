@@ -98,7 +98,7 @@ fi
 
 if test "${password_map[$which_password]}" != 1; then
     if is-extra-options "${which_password}"; then
-        hint "这是一个帮助用的提示选项，选它不会执行任何操作，请重试"
+        bhj-notify illPass "这是一个帮助用的提示选项，选它不会执行任何操作，请重试"
         exit 0
     elif [[ $which_password =~ ^(\*|~|\>) ]]; then
         first_char=${which_password:0:1}
@@ -140,7 +140,6 @@ password=$(
 
 if test ${#password} -gt 20 || [[ $password =~ $'\n' ]]; then
     bhj-notify illPass "Bad password, too long"
-    hint "You have inputed a very long password, will now exit"
     exit
 fi
 sawfish-window mark -t illPass -r
