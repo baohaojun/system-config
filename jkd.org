@@ -763,8 +763,9 @@ This is simple using Perl's “reflection”.
                       if ($field_key eq 'project' || $field_key eq 'issuetype') {
                           next;
                       }
-                      say STDERR "field value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
                       my $field_name = encode_utf8($it->{fields}{$field_key}{name} or "$field_key (field has no name)");
+
+                      say STDERR "field ${field_name}'s value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
 
                       if ($print_schemes) {
                           print "--field-value $field_name= ";
@@ -778,7 +779,15 @@ This is simple using Perl's “reflection”.
                           next;
                       }
 
-                      if ($it->{fields}{$field_key}{schema}{type} eq 'string') {
+                      my $schema_type = $it->{fields}{$field_key}{schema}{type};
+
+                      my %selection_types = (
+                          array => 1,
+                          option => 1,
+                      );
+
+
+                      if ($schema_type eq 'string') {
                           my @command = (
                               "ask-for-input-with-emacs", "-p", sprintf("Please input the %s (field key: %s)", $field_name, $field_key),
                               "--init-text", markdown_to_org encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "")
@@ -787,23 +796,51 @@ This is simple using Perl's “reflection”.
                           say "command is $command";
 
                           $required_fields->{$field_key} = decode_utf8 org_to_markdown qx($command);
-                      } elsif ($it->{fields}{$field_key}{schema}{type} eq 'array' and
-                               $it->{fields}{$field_key}{schema}{custom} eq "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes") {
+                      } elsif ($selection_types{$schema_type}) {
                           my %allowed_values_map;
-                          map { $allowed_values_map{$_->{value}} = $_->{id}} @{$it->{fields}{$field_key}{allowedValues}};
+                          map {
+                              my $key = $_->{value} || $_->{name};
+                              $allowed_values_map{$key} = $_->{id}} @{$it->{fields}{$field_key}{allowedValues}};
+
+                          my $select_command;
+
+                          if ($schema_type eq "array") {
+                              $select_command = "select-args-n";
+                          } else {
+                              $select_command = "select-args";
+                          }
                           my @command = (
-                              "select-args-n", "-p", decode_utf8("请输入你想要选择的 ") . "$field_name",
+                              $select_command, "-p", decode_utf8("请输入你想要选择的 " . "$field_name"),
                               keys %allowed_values_map
                               );
-                          my $command = join(" ", shell_quote @command);
+                          my $command = join(" ", shell_quote(@command));
                           my $values = decode_utf8 qx($command);
-                          $required_fields->{$field_key} = [];
-                          for (split " ", $values) {
-                              say "Working for $field_name: $_";
-                              push @{$required_fields->{$field_key}}, {id => $allowed_values_map{$_}} if ${allowed_values_map{$_}};
+                          $required_fields->{$field_key} = [] if $schema_type eq "array";
+                          for (split "\n", $values) {
+                              next unless $_;
+                              say "Adding option for $field_name: ", encode_utf8 $_;
+                              die "invalid $_" unless ${allowed_values_map{$_}};
+                              if ($schema_type eq "array") {
+                                  push @{$required_fields->{$field_key}}, {id => $allowed_values_map{$_}};
+                              } else {
+                                  $required_fields->{$field_key} = {id => $allowed_values_map{$_}};
+                              }
+
                           }
                       } else {
-                          say ${field_name}, " scheme is ", $it->{fields}{$field_key}{schema}{type}, ", don't know how to deal";
+                          my $jsonParser = JSON->new->allow_nonref;
+                          my $json = $jsonParser->utf8->pretty->encode($it->{fields}{$field_key});
+                          say <<EOF;
+
+  $json
+
+  Don't know how to deal with ${field_name}, please input with json.
+
+  EOF
+                          while (1) {
+                              $required_fields->{$field_key} = eval 'decode_json(qx(ask-for-input -p "what is your input json?"))';
+                              last unless $@;
+                          }
                       }
                   }
               }
@@ -890,7 +927,7 @@ This is simple using Perl's “reflection”.
 
       ## end generated code
 
-      my $json_issue = decode_json get("rest/api/2/issue/$issue")->content;
+      my $json_issue = decode_json get("rest/api/2/issue/$issue?expand=names")->content;
       if ($json and not @fields_to_print) {
           print encode_json($json_issue);
           exit;
@@ -1161,7 +1198,8 @@ This is simple using Perl's “reflection”.
       #     t:issue-type '?"指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project）"' \
       #     @assign-to-myself=1 \
       #     @:field-value='()' \
-      #     @print-schemes
+      #     @print-schemes \
+      #     @:fields-json
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -1172,6 +1210,7 @@ This is simple using Perl's “reflection”.
 
       my $assign_to_myself = 1;
       my @field_value = ();
+      my $fields_json = "";
       my $issue_type = "";
       my $print_schemes = 0;
       my $project = "";
@@ -1195,13 +1234,21 @@ This is simple using Perl's “reflection”.
           }
           printf "%s", ;
           print "\n";
-          printf "%6s", '-t, ';
-          printf "%-24s", '--issue-type-id=ISSUE-TYPE-ID';
-          if (length('--issue-type-id=ISSUE-TYPE-ID') > 24 and length("指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project），可指定 jira id 或名字") > 0) {
+          printf "%6s", '';
+          printf "%-24s", '--fields-json=FIELDS-JSON';
+          if (length('--fields-json=FIELDS-JSON') > 24 and length() > 0) {
               print "\n";
               printf "%30s", "";
           }
-          printf "%s", "指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project），可指定 jira id 或名字";
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '-t, ';
+          printf "%-24s", '--issue-type=ISSUE-TYPE';
+          if (length('--issue-type=ISSUE-TYPE') > 24 and length("指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project）") > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", "指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project）";
           print "\n";
           printf "%6s", '';
           printf "%-24s", '--[no]print-schemes';
@@ -1226,11 +1273,12 @@ This is simple using Perl's “reflection”.
       GetOptions (
           'assign-to-myself!' => \$assign_to_myself,
           'field-value=s' => \@field_value,
-          'issue-type-id|t=s' => \$issue_type,
+          'fields-json=s' => \$fields_json,
+          'issue-type|t=s' => \$issue_type,
           'print-schemes!' => \$print_schemes,
           'project|p=s' => \$project,
           'help|h!' => \&$handler_help,
-          );
+      );
 
 
       ## end generated code
@@ -1254,16 +1302,20 @@ This is simple using Perl's “reflection”.
           }
       }
 
-      work_with_all_fields($project, $issue_type, %required_fields, {"print-schemes" => ${print_schemes}});
+      if ( $fields_json) {
+          my $required_fields = decode_json $fields_json;
+          %required_fields = %$required_fields;
+      } else {
+          work_with_all_fields($project, $issue_type, %required_fields, {"print-schemes" => ${print_schemes}});
 
-      $required_fields{project} = {
-          key => $project,
-      };
+          $required_fields{project} = {
+              key => $project,
+          };
 
-      $required_fields{issuetype} = {
-          id => $issue_type,
-      };
-
+          $required_fields{issuetype} = {
+              id => $issue_type,
+          };
+      }
       if ($assign_to_myself and exists $required_fields{assignee}) {
           $required_fields{assignee} = {
               name => $ENV{scm_jira_user}
