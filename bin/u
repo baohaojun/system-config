@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+# 修改当前 url，±1
+
+url=$(get-firefox-tab-url)
+
+
+export ADD_HOW_MUCH=${1}
+
+url=$(echo $url| perl -pe 's,(.*\b)(\d+)(.*),$1 . ($2 + $ENV{ADD_HOW_MUCH}) . $3,e')
+firefox "$url"

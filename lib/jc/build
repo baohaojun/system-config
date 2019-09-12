@@ -207,8 +207,11 @@ my $json_obj = decode_json $json_str;
 
 for (@{$json_obj->{actions}}) {
   if ($_->{_class} eq "hudson.model.ParametersAction") {
-    for (@{$_->{parameters}}) {
-      $params_map{$_->{name}} = $_->{value};
+      for (@{$_->{parameters}}) {
+          my $value = encode_json $_->{value};
+
+          say STDERR sprintf("Got name: %s, value: %s", $_->{name}, $value);
+          $params_map{$_->{name}} = $value;
     }
   }
 }

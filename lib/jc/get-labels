@@ -23,5 +23,5 @@ for my $node (@nodes) {
     );
 }
 
-$, = " ";
+$, = "\n";
 print keys %labels;

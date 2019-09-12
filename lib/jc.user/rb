@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+# rebuild the current url
+
+job_url=$(get-firefox-tab-url)
+
+job_url=${job_url%/}/
+
+job_url=$(echo "$job_url" | perl -pe 's,(/job/.*?)(/?$|/.*),$1/,')
+
+export scm_jenkins_url=${job_url%/job/*}/
+
+command=(
+    jc build -j $job_url --rebuild-url ${job_url}lastBuild/
+       )
+
+bhj-notify rb "${command[*]}"
+
+putclip ${command[*]}
+
+"${command[@]}"
+
+sleep 3
+firefox ${job_url}lastBuild/console

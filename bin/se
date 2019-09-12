@@ -74,6 +74,7 @@ if test "${default}" = true; then
 elif test "${default}" = false; then
     export SE_LOCAL=true
     . ~/src/ep-tools/common_utils/etc/global-settings.rc
+    tmux rename-window SE
     exec bash
 fi
 

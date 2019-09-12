@@ -59,7 +59,7 @@ done
 if ! [[ $parent_project =~ ^All- ]]; then
     parent_project=$(
         export parent_project
-        select-output-line -p "请选择你想要的父项目" 'ssh-gerrit ls-projects | grep "All-.*$parent_project" -i'
+        select-output-line -p "请选择你想要的父项目" 'ssh-gerrit ls-projects --prefix All- | grep "All-.*$parent_project" -i'
                   )
 fi
 
