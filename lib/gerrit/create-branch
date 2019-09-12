@@ -2,15 +2,16 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P p:project b:branch f:from eempty
+# generate-getopt -P p:project b:branch f:from eempty m:manifest-branch
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o b:ef:p:h \
-                      --long branch:,empty,from:,project:,help,no-empty \
+TEMP=$(POSIXLY_CORRECT=true getopt -o b:ef:m:p:h \
+                      --long branch:,empty,from:,manifest-branch:,project:,help,no-empty \
                       -n $(basename -- $0) -- "$@")
 declare branch=
 declare empty=false
 declare from=
+declare manifest_branch=
 declare project=
 eval set -- "$TEMP"
 while true; do
@@ -35,6 +36,11 @@ while true; do
             shift 2
 
             ;;
+        -m|--manifest-branch)
+            manifest_branch=$2
+            shift 2
+
+            ;;
         -p|--project)
             project=$2
             shift 2
@@ -54,6 +60,9 @@ while true; do
             printf %06s '-f, '
             printf %-24s '--from=FROM'
             echo
+            printf %06s '-m, '
+            printf %-24s '--manifest-branch=MANIFEST_BRANCH'
+            echo
             printf %06s '-p, '
             printf %-24s '--project=PROJECT'
             echo
@@ -72,5 +81,25 @@ done
 
 
 ## end generated code
+
+if test "$manifest_branch"; then
+    if test -z "${project}"; then
+        tmpf=/tmp/create-branch.$$.txt
+        . atexit rm $tmpf
+        jssh ${scm_jenkins_server} \
+             --execute "cat /apps/scm/prod/config/android-branches/${manifest_branch}/manifest.xml" \
+             > $tmpf
+
+        project=$(select-output-line cat $tmpf | perl -ne 'print $1 if m,name\s*=\s*"(.*?)",')
+        if test -z "$from"; then
+            from=$(cat $tmpf| grep "name=.$project." | perl -ne 'print $1 if m,upstream\s*=\s*"(.*?)",' )
+        fi
+        if test -z "$branch"; then
+            branch=$manifest_branch
+        fi
+        yes-or-no-p -y "project: $project, branch: $branch, from: $from"
+    fi
+
+fi
 
 ssh-gerrit create-branch $project $branch $from

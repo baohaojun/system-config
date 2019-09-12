@@ -2,6 +2,12 @@
 
 echo "$@" > ~/tmp/jssh.log
 
+if test "$#" = 1 && test "$1" = -h -o "$1" = --help; then
+    cat <<EOF
+jssh js-xxx --execute "echo hello world"
+EOF
+fi
+
 host=$(
     while test $# != 0; do
         if test "${1}" = --execute; then

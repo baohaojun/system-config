@@ -6,15 +6,9 @@ if test -z "$GTK_IM_MODULE" -a "$SAVED_GTK_IM_MODULE"; then
     export XIM=$SAVED_XIM
 fi
 
-if echo $SHELLOPTS | grep -q xtrace; then
-    export SHELLOPTS
-else
-    exec > ~/.cache/system-config/logs/of.log 2>&1
-fi
-
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @last c:command w:web
+# generate-getopt @last c:command w:web '?"jira, GG(gerrit group), GP(gerrit project)"'
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o c:w:h \
@@ -59,7 +53,7 @@ while true; do
             echo
             printf %06s '-w, '
             printf %-24s '--web=WEB'
-            echo
+            echo "jira, GG(gerrit group), GP(gerrit project)"
             exit
             shift
             ;;
@@ -73,6 +67,14 @@ while true; do
     esac
 done
 
+
+## end generated code
+
+if echo $SHELLOPTS | grep -q xtrace; then
+    export SHELLOPTS
+else
+    exec > ~/.cache/system-config/logs/of.log 2>&1
+fi
 
 case "$web" in
     jira)
@@ -96,8 +98,6 @@ case "$web" in
     '')
         ;;
 esac
-
-## end generated code
 
 if test "$last" = true -a "$1"; then
     (
