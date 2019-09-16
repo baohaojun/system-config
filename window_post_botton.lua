@@ -33,6 +33,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.user.profile.activities.EditP
 map['com.alibaba.android.rimet/com.alibaba.android.user.search.activity.GlobalSearchInputActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'manual-post'
+map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.miniapp.activity.MiniAppInternalActivity'] = 'no-post'
 map['com.alicemap/com.alicemap.ui.activity.LoginActivity'] = 'weixin-chat'
 map['com.alicemap/com.alicemap.ui.activity.MainActivity'] = 'weixin-chat'
 map['com.alicemap/com.alicemap.ui.activity.RegisterActivity'] = 'manual-post'
