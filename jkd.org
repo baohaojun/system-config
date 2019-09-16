@@ -929,6 +929,17 @@ This is simple using Perl's “reflection”.
 
       my $json_issue = decode_json get("rest/api/2/issue/$issue?expand=names")->content;
       if ($json and not @fields_to_print) {
+          for (keys %{$json_issue->{fields}}) {
+              my $name = $json_issue->{names}{$_};
+              if ($name) {
+                  if (ref $json_issue->{fields}{$_} ne "ARRAY" || not $json_issue->{fields}{$_}) {
+                      $json_issue->{fields}{$_} = {} unless $json_issue->{fields}{$_};
+                      $json_issue->{fields}{$_}{jkd_name} = $name;
+                  }
+                  delete $json_issue->{names}{$_};
+              }
+
+          }
           print encode_json($json_issue);
           exit;
       }
