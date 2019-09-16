@@ -28,7 +28,6 @@ do-dvp() {
     ) >/dev/null 2>&1 || true
     echo am: dvp layout
     setxkbmap -layout us -variant dvp -option ctrl:swap_lalt_lctl -option ctrl:swap_ralt_rctl -option caps:swapescape
-    do-natural-scrolling 9>/dev/null || true
 }
 
 (
@@ -46,7 +45,6 @@ do-dvp() {
             echo "**** please consider using aoeu/asdf ****"
         fi
         setxkbmap -layout us -option
-        do-natural-scrolling
         if test -e ~/.config/system-config/using-fcitx; then
             (
                 exec 9>/dev/null

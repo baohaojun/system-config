@@ -9,7 +9,7 @@ target_dir=~/.local-config/back-to-gmail/$(get-mac|pn 1|head -n 1)
 mkdir -p "$target_dir"
 
 cd ~/system-config/etc/back-to-gmail
-rsync-with-dir-struct-L "$target_dir" . || true
+rsync-with-dir-struct-L "$target_dir" . || hint -t 1 "Some files failed to sync, please check"
 cat ~/.cache/system-config/.where | sort > "$target_dir"/.where
 cd "$target_dir"
 git add .

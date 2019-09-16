@@ -129,7 +129,6 @@
 (bind-both-global&window-keymaps "Super-KP_Multiply" '(system "netease-music loop-same-author&"))
 (bind-both-global&window-keymaps "KP_Divide" '(system "netease-music unlike&"))
 (bind-both-global&window-keymaps "Super-Down"  '(system "netease-music info&"))
-(bind-both-global&window-keymaps "Super-Up" '(system "do-natural-scrolling&"))
 (bind-both-global&window-keymaps "Super-Right"  '(system "sawfish-move-to-next-screen&"))
 (bind-both-global&window-keymaps "Super-Left"  '(system "sawfish-move-to-prev-screen&"))
 (bind-both-global&window-keymaps "Super-S-Right"  '(system "netease-music forth&"))
