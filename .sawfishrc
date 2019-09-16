@@ -861,7 +861,7 @@ EOF856ceee4ab57
 (bind-keys print-keymap "e" '(system "e-screen-exchange&"))
 (bind-keys print-keymap "t" '(system "edit-terminal-capture&"))
 (bind-keys print-keymap "p" '(system "adb-get-screenshot-for-emacs-org&"))
-(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular|kindle|Display|Gimp|libreoffice'&"))
+(bind-keys s-h-keymap "a" '(system "find-or-exec 'qpdfview|okular|kindle|Display|Gimp|Yad|libreoffice'&"))
 (bind-keys s-h-keymap "A" '(system "adb-ignite-device&"))
 (bind-both-global&window-keymaps "Super-Control-F1" '(system "sawfish-force-maximize&"))
 (bind-keys s-h-keymap "Super-XF86Favorites" '(let ((w (input-focus))) (hide-window w) (show-window w)))
