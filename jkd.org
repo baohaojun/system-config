@@ -932,13 +932,25 @@ This is simple using Perl's “reflection”.
           for (keys %{$json_issue->{fields}}) {
               my $name = $json_issue->{names}{$_};
               if ($name) {
-                  if (ref $json_issue->{fields}{$_} ne "ARRAY" || not $json_issue->{fields}{$_}) {
-                      $json_issue->{fields}{$_} = {} unless $json_issue->{fields}{$_};
-                      $json_issue->{fields}{$_}{jkd_name} = $name;
+                  if (ref $json_issue->{fields}{$_} ne "HASH") {
+                      my $val = $json_issue->{fields}{$_};
+                      $json_issue->{fields}{$_} = {};
+                      $json_issue->{fields}{$_}{jkd_value} = $val;
                   }
+                  $json_issue->{fields}{$_} = {} unless $json_issue->{fields}{$_};
+
+                  if (0) { # for debugging
+                      say STDERR sprintf(
+                          "name is %s, _ is %s, %s",
+                          encode_utf8($name),
+                          encode_utf8($_),
+                          encode_json($json_issue->{fields}{$_})
+                      );
+                  }
+
+                  $json_issue->{fields}{$_}{jkd_name} = $name;
                   delete $json_issue->{names}{$_};
               }
-
           }
           print encode_json($json_issue);
           exit;
