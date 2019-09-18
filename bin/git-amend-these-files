@@ -5,13 +5,22 @@ files=$(
     git diff HEAD --name-only
      )
 
-target_commit=$(select-output-line -p "Which commit do you want to amend?" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $files | pn 1)
+for f in $files; do
+    target_commit=$(select-output-line -p "Which commit do you want to amend for $f?" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $f | pn 1)
 
-if test -z "${target_commit}"; then
-    die "Can't amend $file, not committed after sync from upstream"
-fi
+    if test -z "${target_commit}"; then
+        if yes-or-no-p "$(git-get-log HEAD; echo; echo piggy back with current commit?)"; then
+            git add $f
+            git commit --amend --no-edit
+            continue
+        else
+            die "Can't amend $file, not committed after sync from upstream"
+        fi
+    fi
 
-if yes-or-no-p -y "$(git-get-log $target_commit)"; then
-    git commit --fixup=$target_commit -a
-    git rebase --no-ff -i --autosquash $target_commit^
-fi
+    if yes-or-no-p -y "$(git-get-log $target_commit; echo; echo amend this for 『$f』)"; then
+        git add $f
+        git commit --fixup=$target_commit
+    fi
+done
+git rebase --no-ff -i --autosquash $(git-remote-branch)
