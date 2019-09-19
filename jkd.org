@@ -156,7 +156,7 @@ This is simple using Perl's “reflection”.
   use String::ShellQuote;
 
   if ($jkd_verbose) {
-      say "jkd", shell_quote(@ARGV);
+      say STDERR  "jkd ", shell_quote(@ARGV);
   }
 
   my $secret_conf;
@@ -173,7 +173,7 @@ This is simple using Perl's “reflection”.
   }
 
   if (not $jkd_password) {
-      say "Must specify the jira password";
+      say STDERR "Must specify the jira password";
       &$handler_help(1)
   }
 
@@ -182,7 +182,7 @@ This is simple using Perl's “reflection”.
   }
 
   if (not $jkd_username) {
-      say "Must specify the jira username";
+      say STDERR  "Must specify the jira username";
       &$handler_help(1);
   }
 
@@ -191,7 +191,7 @@ This is simple using Perl's “reflection”.
   }
 
   if (not $jkd_jiraurl) {
-      say "Must specify the jira url";
+      say STDERR  "Must specify the jira url";
       &$handler_help(1);
   }
 
@@ -957,9 +957,6 @@ This is simple using Perl's “reflection”.
       }
       my $issue_type_id = $json_issue->{fields}{issuetype}{id};
       my $issue_project = $json_issue->{fields}{project}{key};
-      my $issue_fields_obj = jkd_get_issue_type_fields("-p", "$issue_project", "-t", "$issue_type_id");
-
-      my $it = get_issue_type($issue_fields_obj, $issue_project, $issue_type_id);
 
       my @all_fields = sort keys %{$json_issue->{fields}};
 
@@ -976,7 +973,9 @@ This is simple using Perl's “reflection”.
       my $jsonParser = JSON->new->allow_nonref;
 
       for (@all_fields) {
-          my $field_name = getNormalizedName encode_utf8 $it->{fields}{$_}{name};
+          my $field_name = getNormalizedName encode_utf8 $json_issue->{names}{$_};
+          say STDERR "working with $field_name" if $jkd_verbose;
+
           next unless $json_issue->{fields}{$_};
           if ($fields_to_print{$_} or $fields_to_print_normalized{$field_name} or not @fields_to_print) {
               if (@fields_to_print == 1 and not $json) {
