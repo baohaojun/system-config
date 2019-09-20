@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: groovy.new.regexp
+# --
+
+// create a java.util.regex.Pattern: assert p instanceof Pattern
+def p = ~/foo/

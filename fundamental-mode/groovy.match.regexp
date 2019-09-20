@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: groovy.match.regexp
+# --
+
+def text = "some text to match"
+def m = text =~ /match/
+assert m instanceof Matcher
+// Matcher coerced to boolean! Like Perl's! 『==~』 is more strict match (the whole string)
+if (!m) {
+throw new RuntimeException("Oops, text not found!")
+}

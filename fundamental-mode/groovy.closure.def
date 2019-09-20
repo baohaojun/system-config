@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: groovy.closure.def
+# --
+
+def listener = { e, x -> println "Clicked on \$e.source" }

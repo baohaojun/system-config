@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: groovy.replace.regexp
+# --
+
+def mphone = "1+555-555-5555"
+mphone.replaceFirst($/^1/$, "")
+mphone.replaceAll(\$/5/\$, "")
