@@ -261,7 +261,7 @@ for $key (keys %rep_save) {
 
 END {
     use Storable;
-    store \%rep_save, "[%%perlhash]";
+    store \%rep_save, "[%perlhash%]";
 }
 # {%/perl-mode%}
 EOF53f3c820af3c
@@ -274,7 +274,7 @@ cat <<'EOF284559d578b2' | . .replace-%% --
 # {%perl-mode%}
 BEGIN{
     use Storable;
-    %rep_save = %{retrieve("[%perlhash%")};
+    %rep_save = %{retrieve("[%perlhash%]")};
     $prepend = $ENV{prepend};
     $postpend = $ENV{postpend};
 }
