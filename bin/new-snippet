@@ -70,10 +70,12 @@ s_dir=~/src/github/yasnippet-snippets/$mode
 mkdir -p $s_dir
 cd $s_dir
 
-cat <<EOF > $name
+if test ! -e $name; then
+    cat <<EOF > $name
 # -*- mode: snippet -*-
 # name: $name
 # --
 $snippet
 EOF
+fi
 e $name

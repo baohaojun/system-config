@@ -2,20 +2,20 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P f:old-job-url t:to-new-job-name
+# generate-getopt -P f:old-job-name-or-url t:to-new-job-name
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o f:t:h \
-                      --long old-job-url:,to-new-job-name:,help \
+                      --long old-job-name-or-url:,to-new-job-name:,help \
                       -n $(basename -- $0) -- "$@")
-declare old_job_url=
+declare old_job_name_or_url=
 declare to_new_job_name=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -f|--old-job-url)
-            old_job_url=$2
+        -f|--old-job-name-or-url)
+            old_job_name_or_url=$2
             shift 2
 
             ;;
@@ -30,7 +30,7 @@ while true; do
             echo
             echo Options and arguments:
             printf %06s '-f, '
-            printf %-24s '--old-job-url=OLD_JOB_URL'
+            printf %-24s '--old-job-name-or-url=OLD_JOB_NAME_OR_URL'
             echo
             printf %06s '-t, '
             printf %-24s '--to-new-job-name=TO_NEW_JOB_NAME'
@@ -50,5 +50,11 @@ done
 
 
 ## end generated code
+
+old_job_url=${old_job_name_or_url}
+
+if ! [[ $old_job_name_or_url =~ /job/ ]]; then
+    old_job_url=${scm_jenkins_url}job/${old_job_name_or_url}/
+fi
 
 jc curl "${old_job_url}doRename?newName=$to_new_job_name" -X POST
