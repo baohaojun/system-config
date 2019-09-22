@@ -1,0 +1,6 @@
+#!/bin/bash
+
+args=("$@")
+n=$((RANDOM % $#)) || true
+
+echo ${args[$n]}
