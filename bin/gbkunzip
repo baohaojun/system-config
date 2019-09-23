@@ -1,24 +1,61 @@
 #!/bin/bash
 set -e
 
-[[ "$1" =~ .zip$ ]]
-FILE=`readlink -f "$1"`
-DIR=${FILE##*/}.$$
+check-program unar unar
 
-mkdir -p "$DIR"
+## start code-generator "^\\s *#\\s *"
+# generate-getopt d:unzip-dir
+## end code-generator
+## start generated code
+TEMP=$( getopt -o d:h \
+               --long unzip-dir:,help \
+               -n $(basename -- $0) -- "$@")
+declare unzip_dir=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
 
-TD=$DIR.td
-mkdir $TD
+        -d|--unzip-dir)
+            unzip_dir=$2
+            shift 2
 
-(
-    cd $TD
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--unzip-dir=UNZIP_DIR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
 
-    check-program 7za p7zip
 
-    7za x "$FILE" &>/dev/null
-    convmv -f gbk -t utf8 -r --notest -- * &>/dev/null
-)
-mv $TD/* "$DIR" -v
-rmdir $TD
-cd "$DIR"
+## end generated code
+
+zip_file=$(readlink -f "$1")
+
+if test ! -e "$zip_file"; then
+    die "Can't find file: $1"
+fi
+
+if test -z "${unzip_dir}"; then
+    unzip_dir=$zip_file.unar
+fi
+
+mkdir -p "$unzip_dir"
+cd "${unzip_dir}"
+unar "$zip_file"
+
 fix-deep-dirs
