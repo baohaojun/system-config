@@ -1,42 +1,38 @@
 #!/bin/bash
-
 set -e
 
-base0=$(basename $0)
-
-if test "$base0" = do-natural-scrolling; then
-    if test "$(xinput | grep pointer | grep -v Touchpad | wc -l )" = 2; then
-        do-unnatural-scrolling
-        exit
-    fi
-    xmodmap -e 'pointer = 1 2 3 5 4 6 7 8 9 10'
-    symbol=-
-    natural_enabled=1
-    if test "${USER}" = bhj; then
-        bhj-notify mouse "you specified natural scrolling"
-    fi
-else
-    xmodmap -e 'pointer = 1 2 3 4 5 6 7 8 9 10'
-    symbol=
-    natural_enabled=0
-    if test "${USER}" = bhj; then
-        bhj-notify mouse "you specified unnatural scrolling"
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
     fi
 fi
 
-# FIXME： 这后面的脚本有点复杂，我希望自己搞清楚到底哪些窗口需要做这些
-# 额外的设置并记录下来。
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
 
-devices=$(xinput -list|grep pointer|perl -ne 'print "$1\n" if m/id=(\d+)/')
-if xinput list-props $devices | grep -q 'libinput Natural Scrolling Enabled'; then
-    xmodmap -e 'pointer = 1 2 3 4 5 6 7 8 9 10'
-fi
-for device in $devices; do
-    xinput set-prop "$device" "libinput Natural Scrolling Enabled" $natural_enabled ||
-        xinput set-prop "$device" "Evdev Scrolling Distance" ${symbol}1 ${symbol}1 ${symbol}1 ||
-        xinput set-prop "$device" "Synaptics Scrolling Distance" ${symbol}112 ${symbol}112 || true
-done 2>&1 | if echo $SHELLOPTS | grep -q xtrace; then
-    cat
-else
-    cat > /dev/null
-fi
+b0=$(basename $BASH_SOURCE)
+
+declare -A device_id_name_map
+while read line; do
+    id=$(echo $line | perl -ne 'print "$1" if m/id=(\d+)/')
+    name=$(echo $line | perl -ne 'print "$1" if m/↳ (.*?)\s+id=/')
+    device_id_name_map[$id]=$name
+done <<<"$(xinput -list | grep 'Mouse|Touchpad' -P)"
+
+. aterr bhj-notify do-natural-scrolling "Failed to do-natural-scrolling, please check errors"
+
+for id in "${!device_id_name_map[@]}"; do
+    name=${device_id_name_map[$id]}
+    xinput set-prop "$id" "libinput Natural Scrolling Enabled" 1
+done

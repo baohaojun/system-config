@@ -23,6 +23,10 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
+if test "$#" = 0; then
+    die "Must specify the jobs that you want disable"
+fi
+
 for x in "$@"; do
     x=${x%.xml}
     x=${x##*/}
