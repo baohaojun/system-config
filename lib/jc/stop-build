@@ -2,12 +2,13 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P j:job-name n:build-number b:build-url rrebuild
+# generate-getopt -P j:job-name n:build-number b:build-url rrebuild @all-builds-and-queues
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o n:b:j:rh \
-                      --long build-number:,build-url:,job-name:,rebuild,help,no-rebuild \
+                      --long all-builds-and-queues,build-number:,build-url:,job-name:,rebuild,help,no-all-builds-and-queues,no-rebuild \
                       -n $(basename -- $0) -- "$@")
+declare all_builds_and_queues=false
 declare build_number=
 declare build_url=
 declare job_name=
@@ -16,6 +17,15 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --all-builds-and-queues|--no-all-builds-and-queues)
+            if test "$1" = --no-all-builds-and-queues; then
+                all_builds_and_queues=false
+            else
+                all_builds_and_queues=true
+            fi
+            shift
+
+            ;;
         -n|--build-number)
             build_number=$2
             shift 2
@@ -45,6 +55,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]all-builds-and-queues'
+            echo
             printf %06s '-n, '
             printf %-24s '--build-number=BUILD_NUMBER'
             echo
@@ -72,6 +85,25 @@ done
 
 
 ## end generated code
+
+if test "${all_builds_and_queues}" = true; then
+    if test -z "${job_name}"; then
+        die "Must specify job name"
+    fi
+
+    jc kill-queue -j "${job_name}"
+
+    running_build_urls=$(
+            jc curl job/${job_name}/api/json?depth=1|jq '.builds|.[]|if .result == null then .url else empty end' -r
+                      )
+    (
+        for build_url in $running_build_urls; do
+            jc stop-build -b "$build_url"
+        done
+    )
+
+    exit
+fi
 
 if test "${job_name}" -a "${build_number}"; then
     if test "${build_url}"; then

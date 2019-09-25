@@ -9,7 +9,7 @@ job_url=${job_url%/}/
 
 job_url=$(echo "$job_url" | perl -pe 's,(/job/.*?)(/?$|/.*),$1/,')
 
-export scm_jenkins_url=${job_url%/job/*}/
+export scm_jenkins_url=$(echo "${job_url}" | perl -pe 's,(.*?//.*?/).*,$1,')
 
 command=(
     jc build -j $job_url --rebuild-url ${job_url}lastBuild/

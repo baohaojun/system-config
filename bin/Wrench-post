@@ -107,13 +107,15 @@ if ($ask_to_whom or $send_to) {
 
 my @cur_at_end;
 
-if ($text =~ m/(\@\S+)( | )/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
-    while ($text =~ s,^\@(\S+?)( | |\n),,) {
+my $at_someone_regexp = qr(\@(\S+)( | |$|\n));
+
+if ($text =~ m/$at_someone_regexp/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
+    while ($text =~ s,^$at_someone_regexp,,) {
         my $at_whom = $1;
         my $command = sprintf("wrench_cue(%s)", quote_lua_str($at_whom));
         system("Wrench.sh", $command);
     }
-    while ($text =~ s,\@(\S+?)( | |$|\n),,) {
+    while ($text =~ s,$at_someone_regexp($|\n),,) {
         push @cur_at_end, $1;
     }
 }

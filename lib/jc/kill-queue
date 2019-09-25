@@ -2,7 +2,7 @@
 use strict;
 use v5.10;
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl j:job-pattern q:queue-url
+# generate-getopt -s perl @:kill-job-pattern q:queue-url j:kill-job-name
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -11,15 +11,24 @@ Getopt::Long::Configure("default");
 
 
 
-my $job_pattern = "";
+my $kill_job_name = "";
+my $kill_job_pattern = "";
 my $queue_url = "";
 
 my $handler_help = sub {
     print ;
     print "\n\n选项和参数：\n";
     printf "%6s", '-j, ';
-    printf "%-24s", '--job-pattern=JOB-PATTERN';
-    if (length('--job-pattern=JOB-PATTERN') > 24 and length() > 0) {
+    printf "%-24s", '--kill-job-name=KILL-JOB-NAME';
+    if (length('--kill-job-name=KILL-JOB-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--kill-job-pattern=KILL-JOB-PATTERN';
+    if (length('--kill-job-pattern=KILL-JOB-PATTERN') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -38,7 +47,8 @@ my $handler_help = sub {
 };
 
 GetOptions (
-    'job-pattern|j=s' => \$job_pattern,
+    'kill-job-name|j=s' => \$kill_job_name,
+    'kill-job-pattern=s' => \$kill_job_pattern,
     'queue-url|q=s' => \$queue_url,
     'help|h!' => \&$handler_help,
 );
@@ -49,7 +59,7 @@ GetOptions (
 use JSON;
 
 if ($queue_url) {
-    die "Can't do both queue url and job pattern" if $job_pattern;
+    die "Can't do both queue url and job pattern/name" if $kill_job_pattern or $kill_job_name;
 
     my $q_json = decode_json(qx(jc curl ${queue_url}api/json));
     my $id = $q_json->{id};
@@ -69,13 +79,14 @@ if ($queue_url) {
 
 my $q_json = decode_json(qx(jc curl $ENV{scm_jenkins_url}queue/api/json));
 
-$job_pattern = qr($job_pattern);
+$kill_job_pattern = qr($kill_job_pattern) if $kill_job_pattern;
+
 for (@{$q_json->{items}}) {
   my $id = $_->{id};
   my $url = $_->{task}{url};
   (my $job = $url) =~ s,.*/([^/]+)/?,$1,;
 
-  if ($job =~ m/$job_pattern/) {
+  if ($kill_job_pattern && $job =~ m/$kill_job_pattern/ || $job eq $kill_job_name) {
       say "job matched: $ENV{scm_jenkins_url}queue/item/$id/, killing it...";
       system("jc", "curl", "$ENV{scm_jenkins_url}queue/cancelItem?id=$id", "-X", "POST");
   }
