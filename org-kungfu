@@ -341,12 +341,16 @@ sub rewrite_html_for_update() {
     if ($should_emojify) {
         my $page_id = qx(cat page-id.txt);
         my %existing_attachments;
-        my $attachments_json = decode_json get("rest/api/content/${page_id}/child/attachment")->content;
+        my $attachment_nextlink = "rest/api/content/${page_id}/child/attachment";
 
-        for (@{$attachments_json->{results}}) {
-            my $title = $_->{title};
-            $existing_attachments{$title} = 1;
-        }
+        do {
+            my $attachments_json = decode_json get($attachment_nextlink)->content;
+            for (@{$attachments_json->{results}}) {
+                my $title = $_->{title};
+                $existing_attachments{$title} = 1;
+            }
+            ($attachment_nextlink = $attachments_json->{_links}{next}) =~ s,^/,,;
+        } while ($attachment_nextlink);
 
         # replace emojis with wiki attachment
         $dom->find('img')->each(
@@ -357,6 +361,7 @@ sub rewrite_html_for_update() {
                         return;
                     }
                     (my $png_file_basename = $png_file) =~ s,.*/,ok.emoji.,;
+                    $png_file_basename =~ s,\+,-,g;
 
                     use File::Path qw(make_path remove_tree);
 
@@ -541,7 +546,7 @@ sub ok_upload1attachment(@) {
     my $response = $ua->request($request);
     say "POST response code:" . $response->code;
     if ($response->code != 200) {
-        die "Can't get $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+        die "Can't post $filename to $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
     }
 
     return $response;

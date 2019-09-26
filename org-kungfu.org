@@ -294,12 +294,16 @@ And this is the real get1page subroutine.
       if ($should_emojify) {
           my $page_id = qx(cat page-id.txt);
           my %existing_attachments;
-          my $attachments_json = decode_json get("rest/api/content/${page_id}/child/attachment")->content;
+          my $attachment_nextlink = "rest/api/content/${page_id}/child/attachment";
 
-          for (@{$attachments_json->{results}}) {
-              my $title = $_->{title};
-              $existing_attachments{$title} = 1;
-          }
+          do {
+              my $attachments_json = decode_json get($attachment_nextlink)->content;
+              for (@{$attachments_json->{results}}) {
+                  my $title = $_->{title};
+                  $existing_attachments{$title} = 1;
+              }
+              ($attachment_nextlink = $attachments_json->{_links}{next}) =~ s,^/,,;
+          } while ($attachment_nextlink);
 
           # replace emojis with wiki attachment
           $dom->find('img')->each(
@@ -310,6 +314,7 @@ And this is the real get1page subroutine.
                           return;
                       }
                       (my $png_file_basename = $png_file) =~ s,.*/,ok.emoji.,;
+                      $png_file_basename =~ s,\+,-,g;
 
                       use File::Path qw(make_path remove_tree);
 
@@ -443,70 +448,70 @@ Here's the script to upload page attachment. Only allow to upload 1 file at a ti
 
   #+name: upload-page-attachment
   #+BEGIN_SRC perl
-      sub ok_upload1attachment(@) {
-          ## start code-generator "^\\s *#\\s *"
-          # generate-getopt -s perl -l -P p:page-id f:filename
-          ## end code-generator
-          ## start generated code
-          use Getopt::Long;
+    sub ok_upload1attachment(@) {
+        ## start code-generator "^\\s *#\\s *"
+        # generate-getopt -s perl -l -P p:page-id f:filename
+        ## end code-generator
+        ## start generated code
+        use Getopt::Long;
 
-          Getopt::Long::Configure("posix_default");
+        Getopt::Long::Configure("posix_default");
 
-          local @ARGV = @_;
+        local @ARGV = @_;
 
-          my $filename = "";
-          my $page_id = "";
+        my $filename = "";
+        my $page_id = "";
 
-          my $handler_help = sub {
-              print ;
-              print "\n\n选项和参数：\n";
-              printf "%6s", '-f, ';
-              printf "%-24s", '--filename=FILENAME';
-              if (length('--filename=FILENAME') > 24 and length() > 0) {
-                  print "\n";
-                  printf "%30s", "";
-              }
-              printf "%s", ;
-              print "\n";
-              printf "%6s", '-p, ';
-              printf "%-24s", '--page-id=PAGE-ID';
-              if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
-                  print "\n";
-                  printf "%30s", "";
-              }
-              printf "%s", ;
-              print "\n";
+        my $handler_help = sub {
+            print ;
+            print "\n\n选项和参数：\n";
+            printf "%6s", '-f, ';
+            printf "%-24s", '--filename=FILENAME';
+            if (length('--filename=FILENAME') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
+            printf "%6s", '-p, ';
+            printf "%-24s", '--page-id=PAGE-ID';
+            if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
+                print "\n";
+                printf "%30s", "";
+            }
+            printf "%s", ;
+            print "\n";
 
-              exit(0);
-          };
+            exit(0);
+        };
 
-          GetOptions (
-              'filename|f=s' => \$filename,
-              'page-id|p=s' => \$page_id,
-              'help|h!' => \&$handler_help,
-              );
+        GetOptions (
+            'filename|f=s' => \$filename,
+            'page-id|p=s' => \$page_id,
+            'help|h!' => \&$handler_help,
+            );
 
 
-          ## end generated code
+        ## end generated code
 
-          my $ua = LWP::UserAgent->new;
-          my $api = sprintf "rest/api/content/%d/child/attachment", $page_id;
+        my $ua = LWP::UserAgent->new;
+        my $api = sprintf "rest/api/content/%d/child/attachment", $page_id;
 
-          my $request = POST kungfu_url_for_api($api),
-              "X-Atlassian-Token" => "nocheck",
-              Content_Type => 'form-data',
-              Content => [
-                  file => ["$filename"],
-              ];
+        my $request = POST kungfu_url_for_api($api),
+            "X-Atlassian-Token" => "nocheck",
+            Content_Type => 'form-data',
+            Content => [
+                file => ["$filename"],
+            ];
 
-          my $response = $ua->request($request);
-          say "POST response code:" . $response->code;
-          if ($response->code != 200) {
-              die "Can't get $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
-          }
+        my $response = $ua->request($request);
+        say "POST response code:" . $response->code;
+        if ($response->code != 200) {
+            die "Can't post $filename to $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+        }
 
-          return $response;
-      }
+        return $response;
+    }
 
   #+END_SRC
 
