@@ -151,10 +151,15 @@ sub get($) {
     say STDERR "$url" if $ok_verbose;
     my $response = $ua->request(GET $url);
     if ($response->code != 200) {
-        die "Can't get $api: code is " . $response->code;
+        die "Can't get $api: code is " . $response->code . ", content is " . $response->content;
     }
 
     return $response;
+}
+
+sub ok_curl(@) {
+    my $response = get($_[0]);
+    print $response->content;
 }
 
 sub get_page_info($$) {
@@ -231,7 +236,7 @@ sub ok_get1page(@) {
 
     system("git add .; git commit -m 'save to git before download from confluence'");
 
-    save_to_file("content.html", $page_object->{body}{editor}{value});
+    save_to_file("content.html", encode_utf8 $page_object->{body}{editor}{value});
 
     my $current_version = 0;
     if (-e "version.txt") {
@@ -316,6 +321,9 @@ sub rewrite_html_for_update() {
 
     $html_str = decode_utf8 $html_str;
     my $dom = Mojo::DOM->new->xml(1)->parse($html_str);
+
+    my $should_emojify = 0;
+
     $dom->find('img')->each(
         sub {
             my $src = $_->{src};
@@ -323,8 +331,50 @@ sub rewrite_html_for_update() {
                 $src =~ s/^\.//;
             }
             $_->{src} = $src;
+
+            if ($_->{class} eq 'emoji') {
+                $should_emojify = 1;
+            }
         }
-        );
+    );
+
+    if ($should_emojify) {
+        my $page_id = qx(cat page-id.txt);
+        my %existing_attachments;
+        my $attachments_json = decode_json get("rest/api/content/${page_id}/child/attachment")->content;
+
+        for (@{$attachments_json->{results}}) {
+            my $title = $_->{title};
+            $existing_attachments{$title} = 1;
+        }
+
+        # replace emojis with wiki attachment
+        $dom->find('img')->each(
+            sub {
+                if ($_->{class} eq 'emoji') {
+                    my $png_file = $_->{src};
+                    if ($png_file =~ m,^(\./)download/attachments/$page_id/,) {
+                        return;
+                    }
+                    (my $png_file_basename = $png_file) =~ s,.*/,ok.emoji.,;
+
+                    use File::Path qw(make_path remove_tree);
+
+                    my $attach_dir = "download/attachments/$page_id/";
+                    my $attach_file = "$attach_dir/$png_file_basename";
+
+                    if (! $existing_attachments{$png_file_basename}) {
+                        make_path($attach_dir);
+                        system("cp", "$png_file", "$attach_file");
+                        ok_upload1attachment("-p", "$page_id", "-f", encode_utf8 "$attach_file");
+                        $existing_attachments{$png_file_basename} = 1;
+                    }
+                    $_->{src} = "/$attach_file";
+                }
+            }
+        )
+    }
+
     save_to_file("content.html", encode_utf8 $dom);
     System("cp content.html after-fix-img.html");
     if ($ENV{SYSTEM_CONFIG_INITED} eq 'true') {
@@ -424,7 +474,7 @@ sub ok_update1page(@) {
     if ($response->code != 200) {
         say "PUT response code:" . $response->code;
         say "response content:" . $response->content;
-        exit 1;
+        die "Can't upload page: " . encode_json $page_object;
     }
 
     if (not $quietly) {
@@ -632,6 +682,8 @@ sub ok_edit_html_with_org(@) {
            (delete-region (point-min) (point-max))
            (fundamental-mode)
            (insert html_str)
+           (when (fboundp 'org2html-emojify)
+             (org2html-emojify))
            (write-file html_file))))
      
      (defun org-kungfu--export-to-buffer (file buffer)
