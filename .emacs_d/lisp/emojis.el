@@ -64,7 +64,7 @@
    '(replace-eval-replacement
      replace-quote
      (format
-      "<img class='emoji' src='%s' style='width: 1.3em; vertical-align: -0.35em;' />"
+      "<img class='emoji' src='%s' style='font-size: 1em; width: 1.3em; vertical-align: -0.35em;' />"
       (expand-file-name (nth 1 (assoc (match-string 0) emoji-alist))))) nil (point-min) (point-max) nil))
 
 ;;;###autoload

@@ -107,7 +107,7 @@ if ($ask_to_whom or $send_to) {
 
 my @cur_at_end;
 
-my $at_someone_regexp = qr(\@(\S+)( | |$|\n));
+my $at_someone_regexp = qr(\@(\S+?)( | |$|\n));
 
 if ($text =~ m/$at_someone_regexp/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
     while ($text =~ s,^$at_someone_regexp,,) {

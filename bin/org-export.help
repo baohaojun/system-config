@@ -1,6 +1,6 @@
 #!/bin/bash
 cat <<EOF
-; {%emacs-lisp%}
+; {%emacs-lisp-mode%}
 (let (org-export-with-toc
       org-html-head-include-default-style
       org-export-with-timestamps
@@ -86,9 +86,5 @@ cat <<EOF
   (advice-remove 'org-html--build-pre/postamble 'ad-Advice-org-html--build-pre/postamble)
   (kill-buffer "$(basename "$1")")
   ())
-; {%/emacs-lisp%}
+; {%/emacs-lisp-mode%}
 EOF
-
-# Local Variables:
-# eval: (mmm-mode 1)
-# End:
