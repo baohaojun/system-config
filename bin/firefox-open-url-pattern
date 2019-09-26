@@ -76,7 +76,7 @@ if test $# != 2; then
 fi
 
 if test "$special" = true; then
-    sawfish-start-special help firefox
+    sawfish-start-special --special-tag help --start-program firefox --window-class firefox
 fi
 
 if test "$#" = 1; then

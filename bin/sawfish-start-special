@@ -2,28 +2,95 @@
 
 set -e
 
-shopt -s nocasematch
-
-if echo $SHELLOPTS | grep -q xtrace; then
-    exec 2> ~/tmp/sawfish-start-special.log
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
 fi
 
-special_tag=$1
-program=$2
-window_class=${3:-$program}
-
-if ! [[ $special_tag =~ ^[-a-z]+$ ]]; then
-    die "tag '$special_tag' is dangerous"
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
 fi
 
-if ! [[ $program =~ ^[-a-z]+$ ]]; then
-    die "program '$program' is dangerous"
-fi
+b0=$(basename $BASH_SOURCE)
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P t:special-tag p:start-program c:window-class
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o t:p:c:h \
+                      --long special-tag:,start-program:,window-class:,help \
+                      -n $(basename -- $0) -- "$@")
+declare special_tag=
+declare start_program=
+declare window_class=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -t|--special-tag)
+            special_tag=$2
+            shift 2
+
+            ;;
+        -p|--start-program)
+            start_program=$2
+            shift 2
+
+            ;;
+        -c|--window-class)
+            window_class=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-t, '
+            printf %-24s '--special-tag=SPECIAL_TAG'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--start-program=START_PROGRAM'
+            echo
+            printf %06s '-c, '
+            printf %-24s '--window-class=WINDOW_CLASS'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+sawfish-client -e "(setq old-list-of-windows.$$ (managed-windows))"
+. atexit sawfish-client -e "(unintern 'old-list-of-windows.$$)"
+
+my_pid=$$
 
 sawfish_find_tagged_window_command=$(
     cat <<EOF
-; {%sawfish%}
+; {%sawfish-mode%}
 (catch 'found
   (mapc
    (lambda (w)
@@ -31,44 +98,31 @@ sawfish_find_tagged_window_command=$(
        (bhj-activate-window w)
        (throw 'found '$special_tag)))
    (managed-windows)))
-; {%/sawfish%}
+; {%/sawfish-mode%}
 EOF
                                   )
+
+sawfish_tag_it_command=$(
+    cat <<'EOF83dab6c15b01' | . .replace-%% --
+; {%sawfish-mode%}
+(cond
+ ((member (input-focus) old-list-of-windows.<%my_pid%>) (format nil "window %s is old" (input-focus)))
+ ((string-match "<%window_class%>" (window-class (input-focus)) nil t)
+  (window-put (input-focus) 'special '<%special_tag%>)
+  "we are done")
+ (t "window is new, but not match"))
+; {%/sawfish-mode%}
+EOF83dab6c15b01
+                      )
 
 if test "$(sawfish-client -e "$sawfish_find_tagged_window_command")" = $special_tag; then
     exit 0
 else
-    old_top_window=$(sawfish-client -e "(input-focus)")
-    $program&
-    window_match=
-    for x in $(seq 1 30); do
-        if test "$(sawfish-client -e "(input-focus)")" = "$old_top_window"; then
-            sleep .5
-            continue
-        fi
-        if [[ $(sawfish-client -e '(window-class (input-focus))') =~ $window_class ]]; then
-            window_match=-y
+    $start_program&
+    for try in $(seq 1 30); do
+        if test "$(sawfish-client -e "${sawfish_tag_it_command}")" = '"we are done"'; then
             break
         fi
-        sleep .5
+        sleep $((try/10)).$((try%10))
     done
-    set -x
-    exec &> ~/tmp/sawfish-start-special.log
-
-    if EMACS=t sawfish-window mark --with-mark yes-or-no-p $window_match "Is the top window special for $special_tag"; then
-        (
-            sawfish_apply_tag_command=$(
-                cat <<EOF
-; {%sawfish%}
-(window-put (car (window-order)) 'special '$special_tag)
-; {%/sawfish%}
-EOF
-                                     )
-            sawfish-client -e "$sawfish_apply_tag_command"
-        )
-    fi
 fi
-
-# Local Variables: #
-# eval: (mmm-mode 1) #
-# End: #
