@@ -355,27 +355,45 @@ sub rewrite_html_for_update() {
         # replace emojis with wiki attachment
         $dom->find('img')->each(
             sub {
-                if ($_->{class} eq 'emoji') {
-                    my $png_file = $_->{src};
-                    if ($png_file =~ m,^(\./)download/attachments/$page_id/,) {
+                my $png_file = $_->{src};
+                if ($png_file =~ m,^(\./)download/attachments/$page_id/,) {
+                    return;
+                }
+
+                if (! -e "$png_file") {
+                    use URI::Encode qw(uri_encode uri_decode);
+
+                    use File::Fetch;
+                    my $ff = File::Fetch->new(uri => uri_decode $png_file);
+                    if ($ff->scheme eq "file") {
+                        my $new_file = sprintf "%s/%s", $ff->path, $ff->file;
+
+                        say STDERR "png changed from $png_file to $new_file";
+                        $png_file = decode_utf8 $new_file;
+                    } else {
+                        say STDERR "Don't know how to upload: $png_file";
                         return;
                     }
-                    (my $png_file_basename = $png_file) =~ s,.*/,ok.emoji.,;
-                    $png_file_basename =~ s,\+,-,g;
-
-                    use File::Path qw(make_path remove_tree);
-
-                    my $attach_dir = "download/attachments/$page_id/";
-                    my $attach_file = "$attach_dir/$png_file_basename";
-
-                    if (! $existing_attachments{$png_file_basename}) {
-                        make_path($attach_dir);
-                        system("cp", "$png_file", "$attach_file");
-                        ok_upload1attachment("-p", "$page_id", "-f", encode_utf8 "$attach_file");
-                        $existing_attachments{$png_file_basename} = 1;
-                    }
-                    $_->{src} = "/$attach_file";
                 }
+
+                (my $png_file_basename = $png_file) =~ s,.*/,,;
+                $png_file_basename =~ s,\+,-,g;
+
+                use File::Path qw(make_path remove_tree);
+                my $attach_dir = "download/attachments/$page_id/";
+                make_path($attach_dir);
+
+                if ($_->{class} eq 'emoji') {
+                    $png_file_basename = "ok.emoji.${png_file_basename}";
+                }
+
+                my $attach_file = "$attach_dir/$png_file_basename";
+                if (! $existing_attachments{$png_file_basename}) {
+                    system("cp", "$png_file", "$attach_file");
+                    ok_upload1attachment("-p", "$page_id", "-f", encode_utf8 "$attach_file");
+                    $existing_attachments{$png_file_basename} = 1;
+                }
+                $_->{src} = "/$attach_file";
             }
         )
     }
