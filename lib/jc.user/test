@@ -1,0 +1,110 @@
+#!/bin/bash
+set -e
+
+comment=$(
+    cat <<'EOF33a35dc2181d'
+# {%org-mode%}
+1. 把指定的或当前 job.xml 文件布署到测试环境
+2. 在测试环境上运行这个 job（运行的时候指定 build 的参数）
+# {%/org-mode%}
+EOF33a35dc2181d
+
+       )
+
+set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+saved_args=("$@")
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P f:job-config-file
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:h \
+                      --long job-config-file:,help \
+                      -n $(basename -- $0) -- "$@")
+declare job_config_file=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--job-config-file)
+            job_config_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--job-config-file=JOB_CONFIG_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${EMACS}" -a -z "${job_config_file}"; then
+    nohup setsid bash -c 'set -x; file=$(emacs-current-file); out-of-emacs jc test -f ${file}' true -- "$@" </dev/null > ~/tmp/$b0.log 2>&1&
+    exit
+fi
+
+set -x
+if test -z "${job_config_file}"; then
+    die "Must specify job config file"
+fi
+
+job_name=$(echo $job_config_file | perl -pe 's,.*/,,; s,\.xml,,').test
+jc -j ${scm_jenkins_test_url} create-job "$job_name" < "$job_config_file" ||
+    jc -j ${scm_jenkins_test_url} update-job "$job_name" < "$job_config_file"
+
+getLastBuildNumber() {
+    jc -j ${scm_jenkins_test_url} curl "${job_name}"/lastBuild/api/json?depth=1|jq '.number'
+}
+lastBuildNumber=$(
+    getLastBuildNumber
+               )
+jc -j ${scm_jenkins_test_url} build -j "${job_name}" "$@"
+
+for x in $(seq 1 30); do
+    if test "$(getLastBuildNumber)" != "${lastBuildNumber}"; then
+        break
+    fi
+    sleep 1
+done
+
+jc -j ${scm_jenkins_test_url} disable-job "${job_name}"
