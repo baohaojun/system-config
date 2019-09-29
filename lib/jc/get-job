@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
 
-jc curl job/$1/config.xml |
+jc curl job/"$(uri-escape "$1")"/config.xml |
     perl -pe 's,(\Q<?xml version=\E.\Q1.1\E.),<?xml version="1.0", if 1..1' |
     xmlstarlet ed /dev/stdin

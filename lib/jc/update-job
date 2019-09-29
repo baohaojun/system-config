@@ -1,4 +1,6 @@
 #!/bin/bash
 set -e
+
+set -- "$(uri-escape "$1")"
 jc update job/$1/config.xml
 jc ojob $1 &>/dev/null || true
