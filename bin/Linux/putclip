@@ -145,10 +145,12 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
         xclip -o -selection clipboard|xclip -i
     ) >~/.cache/system-config/logs/${b0}.log 2>&1&
 else
-    rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
-    xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
-    if test "$(xclip -o -selection clipboard)" != "$(xclip -o)"; then
-        sleep .1
+    (
+        rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
         xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
-    fi
+        if test "$(xclip -o -selection clipboard)" != "$(xclip -o)"; then
+            sleep .1
+            xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
+        fi
+    )
 fi
