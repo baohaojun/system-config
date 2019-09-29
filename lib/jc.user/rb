@@ -3,6 +3,65 @@ set -e
 
 # rebuild the current url
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @test
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long prod,test,help,no-prod,no-test \
+                      -n $(basename -- $0) -- "$@")
+declare prod=false
+declare test=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --prod|--no-prod)
+            if test "$1" = --no-prod; then
+                prod=false
+            else
+                prod=true
+            fi
+            shift
+
+            ;;
+        --test|--no-test)
+            if test "$1" = --no-test; then
+                test=false
+            else
+                test=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]prod'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]test'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 job_url=$(get-firefox-tab-url)
 
 job_url=${job_url%/}/
@@ -11,8 +70,27 @@ job_url=$(echo "$job_url" | perl -pe 's,(/job/.*?)(/?$|/.*),$1/,')
 
 export scm_jenkins_url=$(echo "${job_url}" | perl -pe 's,(.*?//.*?/).*,$1,')
 
+if test "${test}" = true; then
+    rebuild_job_url=${job_url/%.test\//\/}
+    if test "${rebuild_job_url}" = ${job_url}; then
+        die -n "You are not running a test build!"
+    fi
+    rebuild_job_url=${rebuild_job_url/${scm_jenkins_test_url}/${scm_jenkins_prod_url}}
+else
+    rebuild_job_url=${job_url}
+fi
+
+job_name=$(basename $job_url)
+
+getLastBuildNumber() {
+    jc -j ${scm_jenkins_url} curl jobs/"${job_name}"/lastBuild/api/json?depth=1|jq '.number'
+}
+lastBuildNumber=$(
+    getLastBuildNumber
+               )
+
 command=(
-    jc build -j $job_url --rebuild-url ${job_url}lastBuild/
+    jc build -j $job_url --rebuild-url ${rebuild_job_url}lastBuild/
        )
 
 bhj-notify rb "${command[*]}"
@@ -21,5 +99,12 @@ putclip ${command[*]}
 
 "${command[@]}"
 
-sleep 3
+for x in $(seq 1 10); do
+    if test "$(getLastBuildNumber)" != "${lastBuildNumber}"; then
+        break
+    fi
+    sleep 1
+    bhj-notify rb "Waiting for build to start @$x"
+done
+
 firefox ${job_url}lastBuild/console

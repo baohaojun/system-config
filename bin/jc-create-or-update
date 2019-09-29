@@ -87,9 +87,6 @@ function jc-create-job() {
             cat $task.xml | jc create-job $task
         fi
     )
-    (
-        nohup firefox ${scm_jenkins_url}job/${task} >/dev/null 2>&1
-    )&
     jc get-job-for-edit -t "$task" --extra-save "$task.before-edit.xml"
 }
 echo jc-create-or-update "$1"

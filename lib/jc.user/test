@@ -79,7 +79,7 @@ done
 ## end generated code
 
 if test "${EMACS}" -a -z "${job_config_file}"; then
-    nohup setsid bash -c 'set -x; file=$(emacs-current-file); out-of-emacs jc test -f ${file}' true -- "$@" </dev/null > ~/tmp/$b0.log 2>&1&
+    nohup setsid bash -c 'set -x; file=$(emacs-current-file); out-of-emacs jc test -f ${file} "$@"' true -- "$@" </dev/null > ~/tmp/$b0.log 2>&1&
     exit
 fi
 
@@ -93,7 +93,7 @@ jc -j ${scm_jenkins_test_url} create-job "$job_name" < "$job_config_file" ||
     jc -j ${scm_jenkins_test_url} update-job "$job_name" < "$job_config_file"
 
 getLastBuildNumber() {
-    jc -j ${scm_jenkins_test_url} curl "${job_name}"/lastBuild/api/json?depth=1|jq '.number'
+    jc -j ${scm_jenkins_test_url} curl jobs/"${job_name}"/lastBuild/api/json?depth=1|jq '.number'
 }
 lastBuildNumber=$(
     getLastBuildNumber
