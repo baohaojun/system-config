@@ -2,10 +2,14 @@
 set -e
 
 comment=$(
-    cat <<'EOF33a35dc2181d'
+    cat <<'EOF33a35dc2181d' | grep -v '^#'
 # {%org-mode%}
 1. 把指定的或当前 job.xml 文件布署到测试环境
-2. 在测试环境上运行这个 job（运行的时候指定 build 的参数）
+
+   如果当前窗口是 emacs 的话，也可以不指定文件，将当前正在编辑的文件当成 job.xml。
+2. 在测试环境上运行这个 job（运行的时候允许指定 build 的参数）
+
+   在运行 jc build 的时候，会加上这条命令后面额外的参数，比如可以指定 --rebuild-url $job_url/lastCompletedBuild/
 # {%/org-mode%}
 EOF33a35dc2181d
 
@@ -38,7 +42,7 @@ b0=$(basename $BASH_SOURCE)
 saved_args=("$@")
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P f:job-config-file
+# generate-getopt -P '?"$comment"' f:job-config-file
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o f:h \
@@ -56,7 +60,7 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e
+            echo -e "$comment"
             echo
             echo Options and arguments:
             printf %06s '-f, '

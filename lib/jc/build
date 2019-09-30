@@ -202,6 +202,8 @@ for (keys %default_params_map) {
 
 $extra_params_from_build_url =~ s,/*$,/,;
 
+say STDERR "extra_params_from_build_url is $extra_params_from_build_url";
+
 my $json_str = qx(jc curl ${extra_params_from_build_url}api/json);
 my $json_obj = decode_json $json_str;
 

@@ -50,4 +50,8 @@ if test -z "${node_name}"; then
     fi
 fi
 
+if [[ $node_name =~ / ]]; then
+    node_name=$(basename $node_name)
+fi
+
 jc curl computer/${node_name}/config.xml
