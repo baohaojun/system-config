@@ -1648,4 +1648,22 @@ to the value of `temporary-file-directory'."
       (when (= new-indentation old-indentation)
         (setq found t)))))
 
+(defun bhj-string-contains-each-other (str1 str2)
+  (or (string-match-p (regexp-quote str1) str2)
+      (string-match-p (regexp-quote str2) str1)))
+
+(defun bhj-string-contains (str1 str2)
+  (string-match-p (regexp-quote str2) str1))
+
+(defun insert-kill-ring (text)
+  (let ((first-entry (car kill-ring)))
+    (cond
+     ((string= text first-entry) t)
+     ((bhj-string-contains text first-entry)
+      (setq kill-ring (cons text (cdr kill-ring))))
+     ((bhj-string-contains first-entry text)
+      t)
+     (t
+      (setq kill-ring (cons text kill-ring))))))
+
 (provide 'bhj-defines)
