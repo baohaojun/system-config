@@ -1,13 +1,14 @@
 #!/bin/bash
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P rrsync i:private-instance=1
+# generate-getopt -P rrsync i:private-instance=1 pprofile-manager
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o i:rh \
-                      --long private-instance:,rsync,help,no-rsync \
+TEMP=$(POSIXLY_CORRECT=true getopt -o i:prh \
+                      --long private-instance:,profile-manager,rsync,help,no-profile-manager,no-rsync \
                       -n $(basename -- $0) -- "$@")
 declare private_instance=1
+declare profile_manager=false
 declare rsync=false
 eval set -- "$TEMP"
 while true; do
@@ -16,6 +17,15 @@ while true; do
         -i|--private-instance)
             private_instance=$2
             shift 2
+
+            ;;
+        -p|--profile-manager|--no-profile-manager)
+            if test "$1" = --no-profile-manager; then
+                profile_manager=false
+            else
+                profile_manager=true
+            fi
+            shift
 
             ;;
         -r|--rsync|--no-rsync)
@@ -34,6 +44,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-i, '
             printf %-24s '--private-instance=PRIVATE_INSTANCE'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--[no-]profile-manager'
             echo
             printf %06s '-r, '
             printf %-24s '--[no-]rsync'
@@ -137,5 +150,9 @@ done
 (
     ibus-daemon -x -d
     sleep 3
-    firefox --ProfileManager -new-instance
+    if test "${profile_manager}" = true; then
+        firefox --ProfileManager -new-instance
+    else
+        firefox
+    fi
 )&
