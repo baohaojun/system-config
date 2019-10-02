@@ -1664,6 +1664,7 @@ to the value of `temporary-file-directory'."
      ((bhj-string-contains first-entry text)
       t)
      (t
-      (setq kill-ring (cons text kill-ring))))))
+      (setq kill-ring (cons text kill-ring)))))
+  nil)
 
 (provide 'bhj-defines)
