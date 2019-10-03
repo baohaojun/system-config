@@ -5,7 +5,7 @@ if test "$REPO_INFO"; then
     $REPO_INFO project | grep . ||
         ap
     exit
-elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1; then
+elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1 && ! [[ $PWD =~ /.repo/manifests ]]; then
     (
         if git_dir=$(lookup-file -e .git/..); then
             cd "$git_dir"
@@ -29,4 +29,9 @@ if test -z "${remote}"; then
 fi
 
 url=$(git config remote.$remote.url)
-echo ${url#*:}
+
+if [[ $url =~ :// ]]; then
+    echo ${url} | perl -pe 's,.*?://.*?/+,,'
+else
+    echo ${url#*:}
+fi
