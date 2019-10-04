@@ -873,7 +873,7 @@ This is simple using Perl's “reflection”.
 
   sub jkd_print_issue(@) {
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl i:issue f:fields-to-print='()' @json
+      # generate-getopt -s perl i:issue f:fields-to-print='()' @json @for-clone
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -883,6 +883,7 @@ This is simple using Perl's “reflection”.
 
 
       my @fields_to_print = ();
+      my $for_clone = 0;
       my $issue = "";
       my $json = 0;
 
@@ -892,6 +893,14 @@ This is simple using Perl's “reflection”.
           printf "%6s", '-f, ';
           printf "%-24s", '--fields-to-print=FIELDS-TO-PRINT';
           if (length('--fields-to-print=FIELDS-TO-PRINT') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--[no]for-clone';
+          if (length('--[no]for-clone') > 24 and length() > 0) {
               print "\n";
               printf "%30s", "";
           }
@@ -919,40 +928,57 @@ This is simple using Perl's “reflection”.
 
       GetOptions (
           'fields-to-print|f=s' => \@fields_to_print,
+          'for-clone!' => \$for_clone,
           'issue|i=s' => \$issue,
           'json!' => \$json,
           'help|h!' => \&$handler_help,
-          );
+      );
 
 
       ## end generated code
 
       my $json_issue = decode_json get("rest/api/2/issue/$issue?expand=names")->content;
       if ($json and not @fields_to_print) {
-          for (keys %{$json_issue->{fields}}) {
-              my $name = $json_issue->{names}{$_};
-              if ($name) {
-                  if (ref $json_issue->{fields}{$_} ne "HASH") {
-                      my $val = $json_issue->{fields}{$_};
-                      $json_issue->{fields}{$_} = {};
-                      $json_issue->{fields}{$_}{jkd_value} = $val;
-                  }
-                  $json_issue->{fields}{$_} = {} unless $json_issue->{fields}{$_};
+          if (not $for_clone) {
+              for (keys %{$json_issue->{fields}}) {
+                  my $name = $json_issue->{names}{$_};
+                  if ($name) {
+                      if (ref $json_issue->{fields}{$_} ne "HASH") {
+                          my $val = $json_issue->{fields}{$_};
+                          $json_issue->{fields}{$_} = {};
+                          $json_issue->{fields}{$_}{jkd_value} = $val;
+                      }
+                      $json_issue->{fields}{$_} = {} unless $json_issue->{fields}{$_};
 
-                  if (0) { # for debugging
-                      say STDERR sprintf(
-                          "name is %s, _ is %s, %s",
-                          encode_utf8($name),
-                          encode_utf8($_),
-                          encode_json($json_issue->{fields}{$_})
-                      );
-                  }
+                      if (0) {    # for debugging
+                          say STDERR sprintf(
+                              "name is %s, _ is %s, %s",
+                              encode_utf8($name),
+                              encode_utf8($_),
+                              encode_json($json_issue->{fields}{$_})
+                          );
+                      }
 
-                  $json_issue->{fields}{$_}{jkd_name} = $name;
-                  delete $json_issue->{names}{$_};
+                      $json_issue->{fields}{$_}{jkd_name} = $name;
+                      delete $json_issue->{names}{$_};
+                  }
               }
+              print encode_json($json_issue);
+          } else {
+              my %fields;
+              for (keys %{$json_issue->{fields}}) {
+                  if ($json_issue->{fields}{$_}) {
+                      my $name = $json_issue->{names}{$_};
+                      if ($name) {
+                          $fields{$_} = $json_issue->{fields}{$_};
+                      } else {
+                          $fields{$_} = $json_issue->{fields}{$_};
+                      }
+
+                  }
+              }
+              print encode_json \%fields;
           }
-          print encode_json($json_issue);
           exit;
       }
       my $issue_type_id = $json_issue->{fields}{issuetype}{id};
@@ -1327,6 +1353,14 @@ This is simple using Perl's “reflection”.
       if ( $fields_json) {
           my $required_fields = decode_json $fields_json;
           %required_fields = %$required_fields;
+          $required_fields{project} = {
+              key => $project,
+          };
+
+          $required_fields{issuetype} = {
+              id => $issue_type,
+          };
+
       } else {
           work_with_all_fields($project, $issue_type, %required_fields, {"print-schemes" => ${print_schemes}});
 
@@ -1347,18 +1381,28 @@ This is simple using Perl's “reflection”.
       }
 
       my $ua = LWP::UserAgent->new;
-      say "json is ", encode_json { fields => \%required_fields };
+      say "json is ", encode_json { fields => \%required_fields } if $jkd_verbose;
 
-      my $request = POST jkd_url_for_api("rest/api/2/issue"),
-          'Content-Type' => 'application/json',
-          'Accept' => 'application/json',
-          "charset" => "utf-8",
-          Content => encode_json {
-              fields => \%required_fields,
-      };
-      my $response = $ua->request($request);
+      for (my $try = 0; $try < 2; $try++) {
+          my $request = POST jkd_url_for_api("rest/api/2/issue"),
+              'Content-Type' => 'application/json',
+              'Accept' => 'application/json',
+              "charset" => "utf-8",
+              Content => encode_json {
+                  fields => \%required_fields,
+              };
+          my $response = $ua->request($request);
 
-      say "POST response code:" . $response->code, "result: ", $response->content;
+          say "POST response code:" . $response->code, "result: ", $response->content;
+
+          last if $response->is_success;
+
+          my $errors = decode_json($response->content)->{errors};
+          for (keys %$errors) {
+              # die "Can't find $_" unless $required_fields{$_};
+              delete $required_fields{$_};
+          }
+      }
   }
 
 #+END_SRC
@@ -1494,7 +1538,7 @@ This is simple using Perl's “reflection”.
 
         unless ($transition =~ m/^\d+$/) {
             my $json_obj = $transision_json_obj;
-            $transition = select_args("-p", "如何变更当前 issue：${issue}", "-i", "$transition", map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
+            $transition = select_args("-p", decode_utf8 ("如何变更当前 issue：${issue}"), "-i", "$transition", map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
             say "transition is $transition";
             $transition =~ s,^id=(\d+):.*,$1, or
                 die "Invalid transision $transition";
@@ -1502,20 +1546,33 @@ This is simple using Perl's “reflection”.
 
         my $ua = LWP::UserAgent->new;
 
-        my $request = POST jkd_url_for_api("rest/api/2/issue/${issue}/transitions"),
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-            "charset" => "utf-8",
-            Content => encode_json {
-                transition => {
-                    id => $transition
-                },
-                fields => $fields_json_obj
-        };
-        say "my request's content: ", $request->content;
-        my $response = $ua->request($request);
+        for (my $try = 0; $try < 2; $try++) {
+            my $request = POST jkd_url_for_api("rest/api/2/issue/${issue}/transitions"),
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                "charset" => "utf-8",
+                Content => encode_json {
+                    transition => {
+                        id => $transition
+                    },
+                    fields => $fields_json_obj
+                };
+            say("my request's content: ", $request->content) if $jkd_verbose;
+            my $response = $ua->request($request);
 
-        say "PUT response code:" . $response->code, "result: ", $response->content;
+            if ($response->is_success) {
+                say STDERR "Tri 成功了，正常退出";
+                last;
+            };
+
+            say "PUT response code:" . $response->code, "result: ", $response->content;
+
+            my $errors = decode_json($response->content)->{errors};
+            for (keys %$errors) {
+                delete $fields_json_obj->{$_};
+            }
+            die "Can't tri it after $try times" if ($try == 2);
+        }
 
     }
   #+END_SRC
