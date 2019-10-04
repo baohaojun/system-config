@@ -92,6 +92,10 @@ if test "${b0}" = putfile; then
     if test $# != 1 -o ! -e "$1"; then
         die "This command ($b0) can only take 1 argument (a file) onto remote host ${REMOTEIP}"
     fi
+
+    if test "${1:0:1}" != /; then
+        set -- "$PWD/$1"
+    fi
 fi
 
 if test "$EMACS" = t -o "$REMOTEIP"; then
