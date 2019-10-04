@@ -73,10 +73,11 @@ mkdir -p ${private_dir} ${private_dir}/.cache/system-config/logs/ ${private_dir}
 if test ! -d ${private_dir}/.mozilla -o "$rsync" = true; then
     rsync ~/.mozilla ${private_dir} -av --delete
     rsync ~/external/firefox ${private_dir}/external -av --delete
-    rsync ~/.local-config/etc/firefox-icons/* ${private_dir}/external/firefox/browser/chrome/icons/default -av
+    rsync ~/.local-config/etc/firefox-icons/ ${private_dir}/external/firefox/browser/chrome/icons/default -av
 fi
-
 export HOME=${private_dir}
+
+PATH=~/external/firefox:$PATH
 
 . nobrew --
 
@@ -153,6 +154,6 @@ done
     if test "${profile_manager}" = true; then
         firefox --ProfileManager -new-instance
     else
-        firefox
+        firefox -new-instance
     fi
 )&
