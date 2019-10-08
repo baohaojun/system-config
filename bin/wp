@@ -35,7 +35,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     function catp()
     {
         cat <<EOF98db9599d6e4
-cat <<'EOFe14737c1e5cd' > "$FILE"
+cat <<'EOFe14737c1e5cd' > "${FILE/${HOME}/\${HOME\}}"
 $(cat "$FILE")
 EOFe14737c1e5cd
 EOF98db9599d6e4
