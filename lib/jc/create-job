@@ -2,5 +2,10 @@
 set -e
 
 set -- "$(uri-escape "$1")"
-jc update "createItem?name=$1"
+
+if jc get-job "$1" &>/dev/null; then
+    jc update job/$1/config.xml
+else
+    jc update "createItem?name=$1"
+fi
 jc ojob "$1" &>/dev/null || true

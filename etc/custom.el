@@ -53,7 +53,7 @@
      ("<!\\[CDATA\\[#!.*/bin/bash" "]]>" sh)
      ("<!\\[CDATA\\[<!--start html-->" "<!--end html-->" html)
      ("<!--start nxml-->" "<!--end nxml-->" nxml)
-     ("{%\\(.*?\\)-mode%}" ".*{%/\\(.*?\\)-mode%}" 1))))
+     ("{%\\(.*?\\)-mode%}" ".*{%/#1-mode%}" 1))))
  '(fill-column 70)
  '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(flycheck-shellcheck-excluded-warnings (quote ("2034")))
