@@ -1533,7 +1533,7 @@ This is simple using Perl's “reflection”.
 
         my $fields_json_obj = decode_json $fields_json;
         if ($fields_json ne "{}") {
-            update_names_with_fields($fields_json_obj, $transision_json_obj->{fields});
+            update_names_with_fields($fields_json_obj, $transision_json_obj->{transitions}[0]{fields});
         }
 
         unless ($transition =~ m/^\d+$/) {
