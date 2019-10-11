@@ -1,0 +1,9 @@
+#!/usr/bin/expect -f
+
+spawn {*}$argv
+
+expect "yes/no" {
+    send "yes\n"
+}
+interact
+wait

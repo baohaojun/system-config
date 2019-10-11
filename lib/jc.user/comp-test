@@ -1,0 +1,33 @@
+#!/bin/bash
+set -e
+
+if test $# = 1; then
+    if [[ $1 =~ ${scm_jenkins_test_url} ]]; then
+        set -- "$1" ${scm_jenkins_prod_url}"${1#${scm_jenkins_test_url}}"
+    else
+        set -- "$1" ${scm_jenkins_test_url}"${1#${scm_jenkins_prod_url}}"
+    fi
+fi
+
+tmp_dir=~/tmp/jc.comp-test/$1
+
+mkdir -p "$tmp_dir"
+cd $tmp_dir
+
+task=$(basename $1)
+
+get-job-config() {
+    dir=$1
+    mkdir -p $dir
+    (
+        cd $dir
+        jenkins_url=$(echo $2 | perl -pe 's,(.*?://.*?/).*,$1,')
+        jc -j "$jenkins_url" get-job-for-edit -t "$task"
+    )
+}
+
+get-job-config 1 $1
+get-job-config 2 $2
+
+echo "$1 <=> $2"
+meld 1/$task.xml 2/$task.xml

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+if test "$#" = 1; then
+    set -- "$1" "${1%.mock/*}"/lastBuild/
+fi
+
+get-params() {
+    jc curl "${1}/api/json"|jq '..|.parameters?|.[]?|.name? + "=" + (.value?|tostring)'|sort | grep -v '"separator-'
+}
+
+get-params "$1" > ~/tmp/good.txt
+get-params "$2" > ~/tmp/bad.txt
+
+meld ~/tmp/good.txt ~/tmp/bad.txt

@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+. aterr bhj-notify "falied to run $*"
+
+if test "$#" = 0; then
+    job=$(jc get-browser-tab-job)
+
+    set -- "$job" "$job.mock"
+fi
+
+job_xml=$(jc get-job $1)
+
+echo "${job_xml}" | jc create-job $2

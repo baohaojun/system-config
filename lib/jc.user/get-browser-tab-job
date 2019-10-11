@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+url=$(get-firefox-tab-url)
+echo $url | perl -pe 's,.*?/job/,,; s,/.*,,' | grep .
