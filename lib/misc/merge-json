@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+
+use JSON;
+
+my %total_json;
+use File::Slurp;
+for (@ARGV) {
+    my $json_str = read_file($_);
+    my $json_obj = decode_json($json_str);
+
+    for (keys %{$json_obj}) {
+        $total_json{$_} = $json_obj->{$_} unless $total_json{$_}
+    }
+}
+
+say encode_json \%total_json;
