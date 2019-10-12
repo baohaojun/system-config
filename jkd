@@ -1742,7 +1742,7 @@ sub jkd_tri(@) {
 
     unless ($transition =~ m/^\d+$/) {
         my $json_obj = $transision_json_obj;
-        $transition = select_args("-p", decode_utf8 ("如何变更当前 issue：${issue}"), "-i", "$transition", map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
+        $transition = select_args("-p", decode_utf8 ("如何变更当前 issue：${issue}"), "-i", decode_utf8("$transition"), map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
         $transition_name = $transition;
         say "transition is $transition";
         $transition =~ s,^id=(\d+):.*,$1, or
