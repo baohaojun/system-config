@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+if test "${scm_jira_url}" != "${scm_jira_test_url}"; then
+    die "Can only run in test jira"
+fi
+
+jira_key=$(
+    jkd c -p EF -t "【智能与系统-车机】版本发布Workflow" \
+        --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)" |
+        tee /dev/stderr |
+        perl -ne 'print if s,POST response code:201result:,,' | jq .key -r
+         )
+
+jkd tri -i $jira_key --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)" -t "【系统部】发布需求符合要求"
+jkd tri -i $jira_key --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)"
+jkd tri -i $jira_key --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)"
+
+echo "jira_key is $jira_key"
