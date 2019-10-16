@@ -1,0 +1,64 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P istd-input '?"read repo sync failed log from stdin"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o ih \
+                      --long std-input,help,no-std-input \
+                      -n $(basename -- $0) -- "$@")
+declare std_input=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--std-input|--no-std-input)
+            if test "$1" = --no-std-input; then
+                std_input=false
+            else
+                std_input=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--[no-]std-input'
+            echo "read repo sync failed log from stdin"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${std_input}" = true; then
+    cat |tee /dev/stderr | perl -ne  'print "$1 $2\n" if m/error:\s+(\S+):\s+(\S+) checkout [0-9a-f]{40}/' |
+        (
+            declare -a paths
+            while read path project; do
+                path=${path%/}
+                if test -d "$path" -o -d .repo/projects/$path.git -o -d .repo/project-objects/$project.git; then
+                    log working with $path and $project
+
+                    rm -rf $path .repo/projects/$path.git .repo/project-objects/$project.git;
+                    paths+=($path)
+                fi
+            done
+            repo sync -j4 -d -c -q "${paths[@]}"
+        )
+fi
