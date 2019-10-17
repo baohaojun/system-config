@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+jenkins_url=$(get-firefox-tab-url | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
+
+declare -A function_url_map
+
+function_url_map["Configure System"]=configure
+function_url_map["Manage Jenkins"]=manage
+function_url_map["Manage Plugins"]=pluginManager/
+function_url_map["select-a-job"]=xxx
+
+export EMACS=t
+
+which_func=$(
+    select-args -o -p "Which function do you want?" "${!function_url_map[@]}"
+     )
+
+if test "${which_func}" = select-a-job; then
+    jobs=$(jc -j ${jenkins_url} list-jobs)
+    job=$(select-args -o -p "Which job do you want?" $jobs)
+
+    url=job/${job}
+else
+    url=${function_url_map["${which_func}"]}
+fi
+
+bhj-notify go ${jenkins_url}${url}
+
+of ${jenkins_url}${url}
