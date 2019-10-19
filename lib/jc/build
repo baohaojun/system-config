@@ -5,6 +5,8 @@ use strict;
 use String::ShellQuote;
 use autodie qw(:all);
 
+use File::Slurp;
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P p:params='()' '?"可以指定多个，格式为 name=value，目前不支持文件格式参数"' \
 # j:job-name-or-url '?"指定 job 名字，或 job url"' \
@@ -16,7 +18,8 @@ use autodie qw(:all);
 # @:gerrit-trigger '?"使用这个参数指定的 gerrit review url，模拟 gerrit trigger"' \
 # ssynchronized '?"同步编译，直到编译结束才 exit，并通过 exit value 体现其结果"' \
 # vverbose '?"实时输出本次 build 的终端输出"' \
-# ddebug '?"调试选项，打印出 build 相关的一些信息"'
+# ddebug '?"调试选项，打印出 build 相关的一些信息"' \
+# @:save-build-url-to '?"Specify a file where the new build url will be saved"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -34,6 +37,7 @@ my $job_name_or_url = "";
 my @params = ();
 my $print_params_only = 0;
 my $rebuild_url = "";
+my $save_build_url_to = "";
 my $synchronized = 0;
 my $verbose = 0;
 
@@ -112,6 +116,14 @@ my $handler_help = sub {
     }
     printf "%s", "指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_URL 和 EXTRA_PARAMS_FROM_BUILD_URL";
     print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--save-build-url-to=SAVE-BUILD-URL-TO';
+    if (length('--save-build-url-to=SAVE-BUILD-URL-TO') > 24 and length("Specify a file where the new build url will be saved") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "Specify a file where the new build url will be saved";
+    print "\n";
     printf "%6s", '-s, ';
     printf "%-24s", '--[no]synchronized';
     if (length('--[no]synchronized') > 24 and length("同步编译，直到编译结束才 exit，并通过 exit value 体现其结果") > 0) {
@@ -142,6 +154,7 @@ GetOptions (
     'params|p=s' => \@params,
     'print-params-only!' => \$print_params_only,
     'rebuild-url=s' => \$rebuild_url,
+    'save-build-url-to=s' => \$save_build_url_to,
     'synchronized|s!' => \$synchronized,
     'verbose|v!' => \$verbose,
     'help|h!' => \&$handler_help,
@@ -200,11 +213,14 @@ for (keys %default_params_map) {
   $params_map{$_} = $default_params_map{$_};
 }
 
-$extra_params_from_build_url =~ s,/*$,/,;
+my $json_str = "{}";
 
-say STDERR "extra_params_from_build_url is $extra_params_from_build_url";
+if ($extra_params_from_build_url) {
+    $extra_params_from_build_url =~ s,/*$,/,;
+    say STDERR "extra_params_from_build_url is $extra_params_from_build_url";
+    $json_str = qx(jc curl ${extra_params_from_build_url}api/json);
+}
 
-my $json_str = qx(jc curl ${extra_params_from_build_url}api/json);
 my $json_obj = decode_json $json_str;
 
 for (@{$json_obj->{actions}}) {
@@ -387,6 +403,8 @@ while (1) {
 
     if ($build_url) {
         say STDERR "building at $build_url" if $debug;
+        write_file($save_build_url_to, "$build_url") if $save_build_url_to;
+
         if ($verbose) {
             system("jc console -b $build_url");
         }

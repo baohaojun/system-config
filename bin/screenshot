@@ -136,7 +136,7 @@ while true; do
         if test "$(basename $0)" = screenshot-edit -o "$edit" = true; then
             gimp -n "$out" >/dev/null 2>&1
         else
-            eog "$out" >/dev/null 2>&1
+            gimp -n "$out" >/dev/null 2>&1
         fi
         mp "$out"
         mp "$out" | putclip
