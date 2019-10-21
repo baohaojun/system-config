@@ -16,12 +16,14 @@ sc_atexit_args_[%sc_atexit_number%]=(
 )
 
 function sc_atexit_[%sc_atexit_number%]() {
-    "${sc_atexit_args_[%sc_atexit_number%][@]}"
+    local atexit_ret=${atexit_ret:-$?}
+    "${sc_atexit_args_[%sc_atexit_number%][@]}" || true
     local sc_n=[%sc_atexit_number%]
     if test "${sc_n}" -gt 1; then
         ((sc_n--)) || true
-        eval sc_atexit_${sc_n}
+        eval sc_atexit_${sc_n} || true
     fi
+    return $atexit_ret
 }
 
 trap sc_atexit_[%sc_atexit_number%] 0

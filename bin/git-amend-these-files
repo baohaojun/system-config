@@ -11,7 +11,7 @@ for f in $files; do
     if test -z "${target_commit}"; then
         if yes-or-no-p "$(git diff HEAD $f;
                           echo "****************************************************************";
-                          git-get-log HEAD;
+                          git-get-log --name-status HEAD;
                           echo;
                           echo piggy back $f with current commit?
                          )"; then
@@ -29,7 +29,7 @@ for f in $files; do
         fi
     fi
 
-    if yes-or-no-p -y "$(git-get-log $target_commit; echo; echo amend this for 『$f』)"; then
+    if yes-or-no-p -y "$(git-get-log --name-status $target_commit; echo; echo amend this for 『$f』)"; then
         git add $f
         git commit --fixup=$target_commit
     fi
