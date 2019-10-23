@@ -314,7 +314,7 @@ sub jkd_q(@) {
     my $jql_ret = decode_json $jql_content;
     my @issues;
     for my $issue (@{$jql_ret->{issues}}) {
-        push @issues, sprintf "%s: %s (%s)", $issue->{key}, $issue->{fields}{summary}, $issue->{fields}{status}{statusCategory}{key};
+        push @issues, sprintf "%s: %s (%s)", $issue->{key}, $issue->{fields}{summary}, $issue->{fields}{status}{name};
     }
     my $selected_issue = select_args("-p", "which issue do you want?", sort {$a cmp $b} @issues);
     system("putclip", $selected_issue);
@@ -1123,7 +1123,7 @@ sub jkd_select_issue_type(@) {
     ## end generated code
 
     my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
-    my $issue_type_name = $issue_type || select_args("-p", "Which type of issue do you want?", "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
+    my $issue_type_name = select_args("-p", "Which type of issue do you want?", "-i", $issue_type, "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
     my $issue_type_id = $jkd_project_issue_types_name_id_map{$issue_type_name};
     say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
     return $issue_type_id;
