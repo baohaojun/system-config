@@ -41,9 +41,9 @@ proc log str {
 # log "got argv: $argv\n"
 
 set local_ip [qx get-my-ip]
-
-spawn ssh -o ControlMaster=auto -o ControlPath='tramp.%C' -o ControlPersist=no -e none js;
 log_user 0
+spawn ssh -o ControlMaster=auto -o ControlPath='tramp.%C' -o ControlPersist=no -e none js;
+
 expect "Opt>" {
     # log "Seend Opt>, sending $js_target\n";
     send -- "$js_target\n";
@@ -55,9 +55,11 @@ expect "Opt>" {
             send "\n";
             log_user 1
         } else {
-            send "REMOTEPROTOCOL=jssh PS1HOSTNAME=js-$js_target REMOTEIP=$local_ip REMOTEUSER=$env(USER) exec bash -c '. /apps/scm/prod/system-config/bin/sc try'\n";
+            send "REMOTEPROTOCOL=jssh PS1HOSTNAME=js-$js_target REMOTEIP=$local_ip REMOTEUSER=$env(USER) "
+            send "exec bash -c 'sc=system-config/bin/sc; for d in /apps/scm/prod ~; do f=\${d}/\${sc}; if test -e \${f}; then \${f} try; break; fi; done\n"
+            send ": EOF'\n";
             if { $js_execute ne {} } {
-                expect -re "try.*\\$" {
+                expect -re ": EOF.*\n" {
                     log_user 1
                     send "( $js_execute ); echo -n exit; echo 123456;\n";
                     expect {
@@ -77,7 +79,9 @@ expect "Opt>" {
                     }
                 }
             } else {
-                log_user 1
+                expect -re ": EOF.*\n" {
+                    log_user 1
+                }
             }
         }
     } -re " Would you like to update.*:" {

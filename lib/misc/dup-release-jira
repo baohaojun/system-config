@@ -1,19 +1,92 @@
 #!/bin/bash
 set -e
 
+## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P i:old-issue '?"The old jira issue to copy from"' \
+        # r:replace-regexp '?"默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"' \
+        # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14500 = 1.0.0"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o j:i:r:h \
+                      --long jq-expression:,old-issue:,replace-regexp:,help \
+                      -n $(basename -- $0) -- "$@")
+declare jq_expression=.
+declare old_issue=
+declare replace_regexp=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -j|--jq-expression)
+            jq_expression=$2
+            shift 2
+
+            ;;
+        -i|--old-issue)
+            old_issue=$2
+            shift 2
+
+            ;;
+        -r|--replace-regexp)
+            replace_regexp=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-j, '
+            printf %-24s '--jq-expression=JQ_EXPRESSION'
+            echo
+            printf "%30s" ""
+            echo "传给 jq 的表达式，比如可以用于改变版本号：.customfield_14500 = 1.0.0"
+            printf %06s '-i, '
+            printf %-24s '--old-issue=OLD_ISSUE'
+            echo "The old jira issue to copy from"
+            printf %06s '-r, '
+            printf %-24s '--replace-regexp=REPLACE_REGEXP'
+            echo
+            printf "%30s" ""
+            echo "默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 if test "${scm_jira_url}" != "${scm_jira_test_url}"; then
     die "Can only run in test jira"
 fi
 
+if test -z "${old_issue}"; then
+    die "Must specify the old jira issue to copy from, for e.g., EF-251"
+fi
+
+old_json=$(
+    jkd print-issue -i ${old_issue} --json --for-clone|jq "${jq_expression}" | perl -pe "${replace_regexp}"
+        )
 jira_key=$(
-    jkd c -p EF -t "【智能与系统-车机】版本发布Workflow" \
-        --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)" |
+    jkd c -p EF -t "【智能与系统-车机】版本发布 Workflow" \
+        --fields-json "${old_json}" |
         tee /dev/stderr |
         perl -ne 'print if s,POST response code:201result:,,' | jq .key -r
          )
 
-jkd tri -i $jira_key --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)" -t "【系统部】发布需求符合要求"
-jkd tri -i $jira_key --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)"
-jkd tri -i $jira_key --fields-json "$(jkd print-issue -i EF-251 --json --for-clone|jq .)"
+jkd tri -i $jira_key --fields-json "${old_json}" -t "【系统部】发布需求符合要求"
+jkd tri -i $jira_key --fields-json "${old_json}"
+jkd tri -i $jira_key --fields-json "${old_json}"
 
 echo "jira_key is $jira_key"

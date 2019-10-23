@@ -60,3 +60,5 @@ parent_project=$(
 for p in "$@"; do
     log-run ssh-gerrit create-project "$p" -p "$parent_project" --empty-commit
 done
+
+git push s:$p HEAD:refs/meta/config -f

@@ -18,6 +18,8 @@ if ($ENV{EMACS}) {
   open ($tty, ">", "/dev/tty") or $tty = "";
 }
 
+$ENV{ORIGINAL_MATCHER} =~ s, , ,g;
+
 my $accrue_prompt = "$ENV{ORIGINAL_MATCHER}";
 if ($accrue_prompt) {
   $accrue_prompt = "$accrue_prompt\n";
