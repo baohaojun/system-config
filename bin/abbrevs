@@ -80,9 +80,14 @@ You can use > to edit an existing abbrev, like thin: >OLD_ABBREV"
 
     exit
 elif test "${abbrev:0:1}" = +; then
-    touch "${config_dirs[0]}/${abbrev:1}"
-    sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
-    exit
+    abbrev_file="${config_dirs[0]}/${abbrev:1}"
+    if test -e "${abbrev_file}"; then
+        abbrev=${abbrev:1}
+    else
+        touch "${abbrev_file}"
+        sawfish-window mark -t abbrevs --with-mark ew "${config_dirs[0]}/${abbrev:1}"
+        exit
+    fi
 elif test "${abbrev:0:1}" = '>'; then
     if abbrev_file=$(get-abbrev-file "${abbrev:1}"); then
         ew "${abbrev_file}"

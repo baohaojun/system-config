@@ -8,8 +8,27 @@ fi
 target_dir=~/.local-config/back-to-gmail/$(get-mac|pn 1|head -n 1)
 mkdir -p "$target_dir"
 
+while test -e "$1"; do
+    b1=$(basename "$1")
+    for x in "" $(seq 1 1000); do
+        t1=~/system-config/etc/back-to-gmail/${b1}${x:+.$x}
+        if test "$(readlink -f "$t1")" = "$(readlink -f "$1")"; then
+            log "already found it $t1 <- $1"
+            break
+        elif test ! -e "${t1}"; then
+            log "create new symlink: $1 -> $t1"
+            relative-link "$1" "$t1"
+            break
+        fi
+    done
+    shift
+done
+
 cd ~/system-config/etc/back-to-gmail
 rsync-with-dir-struct-L "$target_dir" . || hint -t 1 "Some files failed to sync, please check"
 cat ~/.cache/system-config/.where | sort > "$target_dir"/.where
 cd "$target_dir"
+
 git add .
+
+log "Done working with $PWD"

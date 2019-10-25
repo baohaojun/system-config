@@ -2,7 +2,9 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P j:job-name n:build-number b:build-url rrebuild @all-builds-and-queues
+    # generate-getopt -P j:job-name n:build-number \
+        # b:build-url '?"什么也不指定的话，就使用当前的 BUILD_URL"' \
+        # rrebuild @all-builds-and-queues
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o n:b:j:rh \
