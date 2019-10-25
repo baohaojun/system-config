@@ -3,13 +3,13 @@ set -e
 
 echo Entering directory \`$PWD\'
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/tmp/build-wrench ddo-debug
+# generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/.cache/build-wrench ddo-debug
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o b:dr:h \
                       --long build-dir:,do-debug,release_dir:,help,no-do-debug \
                       -n $(basename -- $0) -- "$@")
-declare build_dir=~/tmp/build-wrench
+declare build_dir=~/.cache/build-wrench
 declare do_debug=false
 declare release_dir=Wrench-debian
 eval set -- "$TEMP"
@@ -68,7 +68,7 @@ done
 cd $(dirname $(readlink -f $0))
 
 if test "$do_debug" = true; then
-    build_dir=~/tmp/build-wrench-debug
+    build_dir=~/.cache/build-wrench-debug
 fi
 mkdir -p $build_dir
 chmod u+w $build_dir

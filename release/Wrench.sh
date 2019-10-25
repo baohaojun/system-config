@@ -171,15 +171,15 @@ EOF
         mv ~/.config/system-config/Wrench-adb.map.$$ ~/.config/system-config/Wrench-adb.map
     fi
 
-    wrench_dir=~/tmp/build-wrench/
+    wrench_dir=~/.cache/build-wrench/
     if test "${do_debug}" = true; then
-        wrench_dir=~/tmp/build-wrench-debug/
+        wrench_dir=~/.cache/build-wrench-debug/
     fi
-    rsync ${wrench_dir} ~/tmp/build-wrench.$postfix -a --chmod=D0755
+    rsync ${wrench_dir} ~/.cache/build-wrench.$postfix -a --chmod=D0755
     path_args=(
-        PATH ${HOME}/system-config/bin/Linux:${HOME}/tmp/build-wrench.$postfix:"$PATH"
+        PATH ${HOME}/system-config/bin/Linux:${HOME}/.cache/build-wrench.$postfix:"$PATH"
     )
-    if test "$(which Wrench)" = ~/tmp/build-wrench.$postfix/Wrench; then
+    if test "$(which Wrench)" = ~/.cache/build-wrench.$postfix/Wrench; then
         path_args=()
     fi
     . reset-env WRENCH_INSTANCE ${wrench_adb_map[$postfix]} "${path_args[@]}"
@@ -187,7 +187,7 @@ EOF
     if test "$system" = true; then
         (
             for x in $(ps.pl Wrench|pn 1); do
-                if test "$(readlink -f /proc/$x/exe)" = ~/tmp/build-wrench/Wrench; then
+                if test "$(readlink -f /proc/$x/exe)" = ~/.cache/build-wrench/Wrench; then
                     kill $x
                 fi
             done
