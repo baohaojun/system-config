@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -x
-exec &> ~/tmp/watch-my-window.log
+exec &> ~/.cache/watch-my-window.log
 exec >> ~/today/watch-my-window.log
 
 if ! screen-is-on; then

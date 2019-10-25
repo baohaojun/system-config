@@ -55,33 +55,10 @@ fi
 
 if test "${extract_url}" = true || [[ "$(sawfish-top-window)" =~ Firefox ]]; then
     old_text=$(getclip)
-    urls=$(
-        perl -e "$(
-cat <<'EOF63aa0d87444c'
-# {%perl-mode%}
-use URI::Find;
-use strict;
-use File::Slurp;
 
-use Encode;
-
-my $text = decode_utf8 join(" ", @ARGV);
-my $finder = URI::Find->new( sub { print encode_utf8 $_[1] . "\n" } );
-$finder->find(\$text );
-# {%/perl-mode%}
-EOF63aa0d87444c
-
-)" "$old_text"
-        )
-
-    if test "${urls}" -a "${urls}" != "${old_text}"; then
-        IFS=$'\n'
-        text_to_post=$(
-            EMACS=t select-args -p "Which text do you want to post?" $urls "The old text"
-                    )
-        if test "${text_to_post}" != "The old text"; then
-            putclip "${text_to_post}"
-        fi
+    new_text=$(extract-urls-from-text "${old_text}" | grep . || true)
+    if test "${new_text}"; then
+        putclip "${new_text}"
     fi
 fi
 
