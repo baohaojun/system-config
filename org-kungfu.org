@@ -1196,7 +1196,7 @@ Here, I will be using system-config's select-args to ask for input, because it p
   use URI::Encode qw(uri_encode uri_decode);
   sub ok_np(@) {
       ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l -P p:page-id u:url t:title-pattern
+      # generate-getopt -s perl -l -P p:page-id u:url t:title-pattern q:cql-query
       ## end code-generator
       ## start generated code
       use Getopt::Long;
@@ -1205,6 +1205,7 @@ Here, I will be using system-config's select-args to ask for input, because it p
 
       local @ARGV = @_;
 
+      my $cql_query = "";
       my $page_id = "";
       my $title_pattern = "";
       my $url = "";
@@ -1212,6 +1213,14 @@ Here, I will be using system-config's select-args to ask for input, because it p
       my $handler_help = sub {
           print ;
           print "\n\n选项和参数：\n";
+          printf "%6s", '-q, ';
+          printf "%-24s", '--cql-query=CQL-QUERY';
+          if (length('--cql-query=CQL-QUERY') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
           printf "%6s", '-p, ';
           printf "%-24s", '--page-id=PAGE-ID';
           if (length('--page-id=PAGE-ID') > 24 and length() > 0) {
@@ -1241,11 +1250,12 @@ Here, I will be using system-config's select-args to ask for input, because it p
       };
 
       GetOptions (
+          'cql-query|q=s' => \$cql_query,
           'page-id|p=s' => \$page_id,
           'title-pattern|t=s' => \$title_pattern,
           'url|u=s' => \$url,
           'help|h!' => \&$handler_help,
-          );
+      );
 
 
       ## end generated code
@@ -1261,6 +1271,11 @@ Here, I will be using system-config's select-args to ask for input, because it p
               $cql_str .= " and title ~ \"${title_pattern}\"";
           }
           $cql_str .= " ORDER BY lastmodified DESC";
+
+          if ($cql_query) {
+              $cql_str = $cql_query;
+          }
+
           $cql_str = uri_encode(decode_utf8 $cql_str);
           my $page_api = "rest/api/search?cql=$cql_str&expand=content.ancestors";
 
