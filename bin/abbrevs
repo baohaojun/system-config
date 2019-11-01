@@ -111,6 +111,7 @@ if test ! -e "${abbrev_file}"; then
 fi
 expand_text=$(
     if test -x "${abbrev_file}"; then
+        export EMACS=t
         "$abbrev_file"
     else
         cat "$abbrev_file"

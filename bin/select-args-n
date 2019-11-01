@@ -1,6 +1,28 @@
 #!/bin/bash
-
 set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P p:prompt e:extra-sa-args='()'
 ## end code-generator
@@ -53,15 +75,37 @@ done
 
 IFS=$'\n'
 
-no_more_selections="这是一个多项选择，如果没有更多要选的，请选此选项以结束"
+export no_more_selections="这是一个多项选择，如果没有更多要选的，请选此选项以结束"
+export select_n_tmp_file=~/tmp/$b0.$$
 
 declare -A selected_answers
 
+if test "${b0}" = select-output-line-n; then
+    if test $# -gt 1; then
+        "$@" > ${select_n_tmp_file}
+    else
+        bash -c "$1" > ${select_n_tmp_file}
+    fi
+
+    . atexit rm ${select_n_tmp_file}
+    my-select-output-command() {
+        cat ${select_n_tmp_file}
+    }
+
+    export -f my-select-output-command
+fi
+
 while true; do
-    currently_selected="当前已选：$(string-join ", " "${!selected_answers[@]}" || true)"
-    ans=$(
-        select-args "${extra_sa_args[@]}" -p "$prompt" "$@" "$no_more_selections" "$currently_selected"
-       )
+    export currently_selected="当前已选：$(string-join ", " "${!selected_answers[@]}" || true)"
+    if test "${b0}" = select-output-line-n; then
+        ans=$(
+            select-output-line "${extra_sa_args[@]}" -p "$prompt" -a "${no_more_selections}" -a "${currently_selected}" my-select-output-command
+           )
+    else
+        ans=$(
+            select-args "${extra_sa_args[@]}" -p "$prompt" "$@" "$no_more_selections" "$currently_selected"
+           )
+    fi
 
     if test "$ans" = "$no_more_selections"; then
         break
@@ -87,4 +131,3 @@ done
 for x in "${!selected_answers[@]}"; do
     echo "$x"
 done
-

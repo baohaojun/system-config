@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P f:apk-file
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:h \
+                      --long apk-file:,help \
+                      -n $(basename -- $0) -- "$@")
+declare apk_file=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--apk-file)
+            apk_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--apk-file=APK_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+tmpdir=~/tmp/apk-get-key-md5.$$
+. atexit rm -rf $tmpdir
+
+mkdir -p $tmpdir
+
+unzip $apk_file -d $tmpdir
+
+keytool -printcert -file $(find $tmpdir -name '*.RSA')

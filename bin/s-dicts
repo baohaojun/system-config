@@ -53,10 +53,10 @@ text=$(echo -n "$text"|perl -npe 's/(「|,|　|（|\.|……」|』、『|、|�
                         fi
                     done
                     ;;
-                *いで)
+                *いで|*いて)
                     saved_text=$text
                     for x in く ぐ; do
-                        text=${saved_text%いで}$x
+                        text=${saved_text%い?}$x
                         if grep -q "$text" /usr/share/gjiten/dics/*; then
                             break
                         fi

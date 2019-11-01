@@ -11,9 +11,9 @@ current_groups=$(
 
 if [[ "$template_user" =~ ^- ]]; then
     add_groups=
-    remove_groups=${template_user#-}
+    remove_groups=$(echo ${template_user#-} | tr ' ' '\n')
 elif [[ $template_user =~ ^\+ ]]; then
-    add_groups=${template_user#+}
+    add_groups=$(echo ${template_user#+} | tr ' ' '\n')
     remove_groups=
 else
     to_groups=$(

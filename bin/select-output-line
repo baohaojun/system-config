@@ -31,7 +31,7 @@ EOF
     # O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?"Should use history for list order"' \
     # s:select-dist-word='${SELECT_DIST_WORD:-not-set\!}' '?"选中参数的时候，按照与这个参数的字符串距离排序"' \
     # m:max-history=-1 '?"如果保存历史输入，最多保存几个历史输入，默认是无限"' \
-    # a:always-selection '?"这个参数给出的选项，永远出现在列表里"' \
+    # a:always-selections='()' '?"这个参数给出的选项，永远出现在列表里"' \
     # 1hint-1-entry '?"只有一个选项的时候，不用选，但要提示"' \
     # p:prompt='"Please enter your selection"' '?"让用户选择时给的提示"' \
     # i:init '?"初始输入的匹配字符串，跟它匹配才会列出"' \
@@ -44,10 +44,10 @@ EOF
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o oa:1i:m:O:p:s:vh \
-                      --long ORDERED,always-selection:,ask-for-input,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-ask-for-input,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
+                      --long ORDERED,always-selections:,ask-for-input,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-ask-for-input,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
                       -n $(basename -- $0) -- "$@")
 declare ORDERED=${SELECT_HISTORY_ORDER:-false}
-declare always_selection=
+declare -a always_selections=()
 declare ask_for_input=false
 declare dot_sep_init=
 declare exclude=
@@ -73,8 +73,8 @@ while true; do
             shift
 
             ;;
-        -a|--always-selection)
-            always_selection=$2
+        -a|--always-selections)
+            always_selections=("${always_selections[@]}" "$2")
             shift 2
 
             ;;
@@ -167,7 +167,7 @@ while true; do
             printf %-24s '--[no-]ORDERED'
             echo "Should use history for list order"
             printf %06s '-a, '
-            printf %-24s '--always-selection=ALWAYS_SELECTION'
+            printf %-24s '--always-selections=ALWAYS_SELECTIONS...'
             echo
             printf "%30s" ""
             echo "这个参数给出的选项，永远出现在列表里"
@@ -231,8 +231,8 @@ done
 
 ## end generated code
 
-if test "$always_selection"; then
-    export always_selection
+if test "${always_selections[0]}"; then
+    export always_selection=$(string-join $'\n' "${always_selections[@]}")
 fi
 
 export SELECT_PROMPT=$prompt
