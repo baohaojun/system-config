@@ -3,8 +3,9 @@ use strict;
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P j:job-name '?"也可以指定 job url"' \
-# p:test-path '?"比如 \$..causes.*.userId"' \
-# v:test-value '?"比如 baohaojun"'
+# p:test-path '?"比如 \$..causes.*.userId，查找是谁启动的；\$..parameters.*.value，参数"' \
+# s:short-cut '?"简写，可以用 who 查责任人，params 查参数"' \
+# v:test-value '?"比如 baohaojun"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -14,6 +15,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $job_name = "";
+my $short_cut = "";
 my $test_path = "";
 my $test_value = "";
 
@@ -28,21 +30,29 @@ my $handler_help = sub {
     }
     printf "%s", "也可以指定 job url";
     print "\n";
-    printf "%6s", '-p, ';
-    printf "%-24s", '--test-path=TEST-PATH';
-    if (length('--test-path=TEST-PATH') > 24 and length("比如 \$..causes.*.userId") > 0) {
+    printf "%6s", '-s, ';
+    printf "%-24s", '--short-cut=SHORT-CUT';
+    if (length('--short-cut=SHORT-CUT') > 24 and length("简写，可以用 who 查责任人，params 查参数") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "比如 \$..causes.*.userId";
+    printf "%s", "简写，可以用 who 查责任人，params 查参数";
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--test-path=TEST-PATH';
+    if (length('--test-path=TEST-PATH') > 24 and length("比如 \$..causes.*.userId，查找是谁启动的；\$..parameters.*.value，参数") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "比如 \$..causes.*.userId，查找是谁启动的；\$..parameters.*.value，参数";
     print "\n";
     printf "%6s", '-v, ';
     printf "%-24s", '--test-value=TEST-VALUE';
-    if (length('--test-value=TEST-VALUE') > 24 and length("比如 baohaojun") > 0) {
+    if (length('--test-value=TEST-VALUE') > 24 and length("比如 baohaojun") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "比如 baohaojun";
+    printf "%s", "比如 baohaojun";
     print "\n";
 
     exit(0);
@@ -50,6 +60,7 @@ my $handler_help = sub {
 
 GetOptions (
     'job-name|j=s' => \$job_name,
+    'short-cut|s=s' => \$short_cut,
     'test-path|p=s' => \$test_path,
     'test-value|v=s' => \$test_value,
     'help|h!' => \&$handler_help,
@@ -63,6 +74,16 @@ if ( $job_url !~ m,://, ) {
     $job_url = "$ENV{scm_jenkins_url}job/${job_name}/";
 }
 
+if ($short_cut and $test_path) {
+    die "不能同时指定 short-cut 和 test-path！"
+}
+
+if ($short_cut eq "who") {
+    $test_path = '$..causes.*.userId';
+} elsif ($short_cut =~ m/^(params?|parameters?)/) {
+    $test_path = '$..parameters.*.value';
+}
+
 use JSON;
 use JSON::Path;
 my $job_json = decode_json(qx(jc curl ${job_url}api/json?depth=1));
@@ -72,7 +93,7 @@ my $jpath = JSON::Path->new('$..builds.*');
 
 for ($jpath->values($job_json)) {
     my $jpath2 = JSON::Path->new($test_path);
-    if (grep {$_ eq "$test_value"} $jpath2->values($_)) {
+    if (grep {$_ =~ m/\Q$test_value\E/} $jpath2->values($_)) {
         print "$job_url" . $_->{number} . "\n";
     }
 }

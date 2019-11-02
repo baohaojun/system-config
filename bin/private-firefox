@@ -75,6 +75,7 @@ if test ! -d ${private_dir}/.mozilla -o "$rsync" = true; then
     rsync ~/external/firefox ${private_dir}/external -av --delete
     rsync ~/.local-config/etc/firefox-icons/ ${private_dir}/external/firefox/browser/chrome/icons/default -av
 fi
+rsync ~/.local-config/etc/firefox-icons/ ${private_dir}/external/firefox/browser/chrome/icons/default -av
 export HOME=${private_dir}
 
 PATH=~/external/firefox:$PATH

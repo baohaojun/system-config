@@ -1660,10 +1660,12 @@ to the value of `temporary-file-directory'."
     (cond
      ((string= text first-entry) t)
      ((bhj-string-contains text first-entry)
+      (setq kill-ring (delete-dups kill-ring))
       (setq kill-ring (cons text (cdr kill-ring))))
      ((bhj-string-contains first-entry text)
       t)
      (t
+      (setq kill-ring (delete-dups kill-ring))
       (setq kill-ring (cons text kill-ring)))))
   nil)
 

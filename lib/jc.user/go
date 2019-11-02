@@ -1,13 +1,17 @@
 #!/bin/bash
 set -e
 
-jenkins_url=$(get-firefox-tab-url | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
+exec >& ~/tmp/go.log
+
+original_url=$(get-firefox-tab-url)
+jenkins_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
 
 declare -A function_url_map
 
 function_url_map["Configure System"]=configure
 function_url_map["Manage Jenkins"]=manage
 function_url_map["Manage Plugins"]=pluginManager/
+function_url_map["Gerrit Trigger in Jenkins"]=yyy
 function_url_map["select-a-job"]=xxx
 
 export EMACS=t
@@ -21,6 +25,18 @@ if test "${which_func}" = select-a-job; then
     job=$(select-args -o -p "Which job do you want?" $jobs)
 
     url=job/${job}
+elif test "${which_func}" = "Gerrit Trigger in Jenkins"; then
+    gerrit_url=$(echo ${original_url} | perl -pe 's,(/c/\d+/?).*,$1,')
+    jc gerrit-trigger -s Gerrit -u ${gerrit_url} &> ~/tmp/gerrit-trigger.txt
+    build_url=$(
+        extract-urls-from-text "$(cat ~/tmp/gerrit-trigger.txt)"
+             )
+    if test "${build_url}"; then
+        firefox "${build_url}"
+    else
+        e ~/tmp/gerrit-trigger.txt
+    fi
+    exit
 else
     url=${function_url_map["${which_func}"]}
 fi

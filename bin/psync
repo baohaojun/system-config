@@ -251,6 +251,33 @@ cat <<'EOFda3074d5015b' | . .replace-%% --
 EOFda3074d5015b
 
 )"
+elif test "${b0}" = jsftp; then
+    jsftp_tmpdir=/tmp/.jsftp.$$
+    jsftp_target_dir=${target_dir#\~/}
+    jsftp_target_dir=$(eval echo "${jsftp_target_dir}")
+    jsftp_target_dir=$(printf %q "$jsftp_target_dir")
+
+    (
+        set -o pipefail
+        jssh $host --execute "
+# {%sh-mode%}
+ln -s / $jsftp_tmpdir;
+mkdir -p $jsftp_target_dir;
+echo target: \$(readlink -f $jsftp_target_dir)
+echo host: \$(hostname)
+# {%/sh-mode%}
+" 2>&1 | tr -d '\r' |
+            tee ~/tmp/$b0.$$
+    )
+
+    . atexit rm ~/tmp/$b0.$$
+    jsftp_target_dir=.jsftp.$$/$( # this dir is under /tmp already when using lftp sftp://
+        cat ~/tmp/$b0.$$ | perl -ne 'print $1 if m,^target: (.*),'
+                    )
+    sfpt_host=$(cat ~/tmp/$b0.$$ | grep '^hostname: '|pn 2)
+
+    jsftp_target_dir=$(printf %q "$jsftp_target_dir")
+    log "jsftp_target_dir is $jsftp_target_dir"
 fi
 
 if test -e psync-exclude.rc -a -z "$delete"; then
@@ -315,7 +342,38 @@ EOF0ecb2235bec3
 )"
             fi
         done
+    elif test "${b0}" = jsftp; then
+        for x in "$@"; do
+            if test "$gitp"; then
+                extra_dir=$(
+                    printf %q \
+                        /"$(cd "$(dirname "$x")"; gitp .)"
+                         )
+            else
+                extra_dir=""
+            fi
+
+            tmpdir=jsftp.$$
+
+            source_file=$(printf %q "$(readlink -f "${x}")")
+            target_file="${jsftp_target_dir}${extra_dir}/${source_file##*/}"
+
+            if test -f "${x}"; then
+                lftp_command=put
+            else
+                lftp_command="mirror -R -P 5"
+            fi
+
+            (
+                set -x
+                js_username=$(git config -f $scm_secrets_conf sftp.js.username) || die "Must specify sftp.js.username in \${scm_secrets_conf}"
+                js_port=$(git config -f $scm_secrets_conf sftp.js.port || echo 2222)
+                lftp sftp://${js_username}:@js:${js_port}/jenkins_slave-4-198/ -e "${lftp_command} $source_file $jsftp_target_dir;" || true
+            )
+        done
+        jssh $host --execute "rm -f $jsftp_tmpdir"
     fi
+
     if test "$CHECK_ORG" = true && [[ $1 =~ \.org$ ]]; then
         x=$1
         (

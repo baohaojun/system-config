@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use v5.10;
 our @current_input;
 
 sub echo(@) {
@@ -77,14 +78,19 @@ sub hint($) {
 
 my @options_list = @ARGV;
 @ARGV = ();
+my %always_selections;
+
 if ($ENV{always_selection}) {
-  push @options_list, $ENV{always_selection};
+    for (split("\n", $ENV{always_selection})) {
+        push @options_list, $_;
+        $always_selections{$_} = 1;
+    }
 }
 
 sub found_it($$) {
   my ($entry, $remaining_options) = @_;
 
-  if ($ENV{always_selection} eq $entry) {
+  if ($always_selections{$entry}) {
     echo $entry;
     exit;
   }
@@ -169,7 +175,9 @@ sub my_select($) {
   } elsif ($ans =~ m/^\d+$/ and $ans <= @$remaining_options) {
     found_it($$remaining_options[$ans - 1], $remaining_options);
   } else {
-    my @matches;
+      my @matches;
+      my %matches;
+
 
     my @matchers = split(" ", $ans);
     my %matchers;
@@ -190,7 +198,13 @@ sub my_select($) {
     }
 
     for my $entry (@$remaining_options) {
-      my $matched = 1;
+        my $matched = 1;
+
+        for (keys %always_selections) {
+            push @matches, $_ unless $matches{$_};
+            $matches{$_} = 1;
+        }
+
 
       for my $matcher_ref (keys %matchers) {
         my $matcher = $matchers{$matcher_ref}{"qr"};
@@ -206,12 +220,9 @@ sub my_select($) {
         }
       }
       if ($matched) {
-        push @matches, $entry;
+          push @matches, $entry unless $matches{$entry};
+          $matches{$entry} = 1;
       }
-    }
-
-    if ($ENV{always_selection}) {
-      push @matches, $ENV{always_selection} unless $matches[-1] eq $ENV{always_selection};
     }
 
     if (@matches == 1) {

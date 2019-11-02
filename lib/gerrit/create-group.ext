@@ -3,14 +3,14 @@
 set -e
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt -P t:group-type=sme '?"sme or dev or admin"' \
-        # p:project i:include-group=@ '?"默认为空，如果首字母为~，则为正则表达式"'
+        # p:project i:include-group= '?"默认为空，如果首字母为~，则为 select-args 初始输入"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o t:i:p:h \
                       --long group-type:,include-group:,project:,help \
                       -n $(basename -- $0) -- "$@")
 declare group_type=sme
-declare include_group=@
+declare include_group=
 declare project=
 eval set -- "$TEMP"
 while true; do
@@ -43,7 +43,7 @@ while true; do
             printf %-24s '--include-group=INCLUDE_GROUP'
             echo
             printf "%30s" ""
-            echo "默认为空，如果首字母为~，则为正则表达式"
+            echo "默认为空，如果首字母为~，则为 select-args 初始输入"
             printf %06s '-p, '
             printf %-24s '--project=PROJECT'
             echo
@@ -66,15 +66,12 @@ done
 group_name=chj-${project//\//-}-${group_type}
 group_name=${group_name^^}
 
-hint creating group: ${group_name}
 if [[ $include_group =~ ^'~' ]]; then
     include_group=$(
-        select-output-line -i "${include_group:1}" ssh-gerrit ls-groups
+        select-output-line-n -e -i -e "${include_group:1}" ssh-gerrit ls-groups
                  )
 fi
+hint creating group: ${group_name}, includes: ${include_group}
 
-if test "${include_group}" = @; then
-    ssh-gerrit create-group ${group_name}
-else
-    ssh-gerrit create-group ${group_name} --group ${include_group}
-fi
+
+ssh-gerrit create-group ${group_name} $(for x in ${include_group}; do echo --group $x; done)

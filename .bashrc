@@ -92,20 +92,18 @@ if test ! -e ~/.config/system-config/.bashrc-path; then
     else
         echo ~/system-config/etc/path/$uname-$march not exist?
     fi
-
-    if test -e ~/system-config/.by-user/$USER/.home-perl5 -o -e ~/perl5; then
-        cat <<'EOF' >> ~/.config/system-config/.bashrc-path
-    export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
-    export PERL_MB_OPT="--install_base $HOME/perl5";
-    export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
-    export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$HOME/system-config/etc/perl${PERL5LIB:+:$PERL5LIB}";
-    export PATH="$HOME/perl5/bin:$PATH";
-EOF
-    fi
 fi
 
 if test -z "$RECURSIVE_SHELL"; then
     . ~/.config/system-config/.bashrc-path
+
+    if test -z "${PERL_LOCAL_LIB_ROOT}" -a -e ~/perl5; then
+        export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
+        export PERL_MB_OPT="--install_base $HOME/perl5";
+        export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
+        export PERL5LIB="$HOME/perl5/lib/perl5:$HOME/system-config/etc/perl${PERL5LIB:+:$PERL5LIB}";
+        export PATH="$HOME/perl5/bin:$PATH";
+    fi
     if test ! -e ~/.local-config/etc/baohaojun; then
         PATH=$PATH:$OLD_PATH
     fi

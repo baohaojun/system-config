@@ -187,9 +187,11 @@ fi
 
 extra_clone_args=()
 extra_fetch_args=()
+extra_submod_update_args=()
 if test "$depth"; then
     extra_clone_args+=(--depth $depth)
     extra_fetch_args+=(--depth $depth)
+    extra_submod_update_args+=(--depth $depth)
     single_branch=true
 fi
 
@@ -284,6 +286,11 @@ else
         die "从 $url 更新代码到 $dir 目录失败，请检查一下 1. $dir 目录是否已损坏，删除试试？ 2. 是否拥有 $url 仓库代码权限"
     fi
 fi
+
+(
+    cd $dir
+    git submodule update --init "${extra_submod_update_args[@]}"
+)
 
 (
     cd $dir

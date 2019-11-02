@@ -48,7 +48,7 @@ done
 
 umask 0077
 if true; then
-    set -ex
+    set -e # set -x
     exec 2> ~/tmp/illPass.log
 fi
 

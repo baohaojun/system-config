@@ -2,17 +2,27 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P s:sibling-project
+# generate-getopt -P s:sibling-project ppermissions-only='("" --permissions-only)'
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o s:h \
-                      --long sibling-project:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o ps:h \
+                      --long permissions-only,sibling-project:,help,no-permissions-only \
                       -n $(basename -- $0) -- "$@")
+declare permissions_only=
 declare sibling_project=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -p|--permissions-only|--no-permissions-only)
+            if test "$1" = --no-permissions-only; then
+                permissions_only=
+            else
+                permissions_only=--permissions-only
+            fi
+            shift
+
+            ;;
         -s|--sibling-project)
             sibling_project=$2
             shift 2
@@ -23,6 +33,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--[no-]permissions-only'
+            echo
             printf %06s '-s, '
             printf %-24s '--sibling-project=SIBLING_PROJECT'
             echo
@@ -58,7 +71,7 @@ parent_project=$(
               )
 
 for p in "$@"; do
-    log-run ssh-gerrit create-project "$p" -p "$parent_project" --empty-commit
+    log-run ssh-gerrit create-project "$p" -p "$parent_project" --empty-commit ${permissions_only}
 done
 
 git push s:$p HEAD:refs/meta/config -f
