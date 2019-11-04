@@ -316,7 +316,8 @@ sub jkd_q(@) {
     for my $issue (@{$jql_ret->{issues}}) {
         push @issues, sprintf "%s: %s (%s)", $issue->{key}, $issue->{fields}{summary}, $issue->{fields}{status}{name};
     }
-    my $selected_issue = select_args("-p", "which issue do you want?", sort {$a cmp $b} @issues);
+
+    my $selected_issue = select_args("-p", "which issue do you want?", "--", "-1", sort {$a cmp $b} @issues);
     system("putclip", $selected_issue);
 }
 
@@ -764,7 +765,7 @@ sub getNormalizedName($) {
 
 sub jkd_print_issue(@) {
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl i:issue f:fields-to-print='()' @json @for-clone
+    # generate-getopt -s perl i:issue f:fields-to-print='()' @json @for-clone @pretty=1
     ## end code-generator
     ## start generated code
     use Getopt::Long;
@@ -777,6 +778,7 @@ sub jkd_print_issue(@) {
     my $for_clone = 0;
     my $issue = "";
     my $json = 0;
+    my $pretty = 1;
 
     my $handler_help = sub {
         print ;
@@ -813,6 +815,14 @@ sub jkd_print_issue(@) {
         }
         printf "%s", ;
         print "\n";
+        printf "%6s", '';
+        printf "%-24s", '--[no]pretty';
+        if (length('--[no]pretty') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
 
         exit(0);
     };
@@ -822,6 +832,7 @@ sub jkd_print_issue(@) {
         'for-clone!' => \$for_clone,
         'issue|i=s' => \$issue,
         'json!' => \$json,
+        'pretty!' => \$pretty,
         'help|h!' => \&$handler_help,
     );
 
@@ -831,27 +842,29 @@ sub jkd_print_issue(@) {
     my $json_issue = decode_json get("rest/api/2/issue/$issue?expand=names")->content;
     if ($json and not @fields_to_print) {
         if (not $for_clone) {
-            for (keys %{$json_issue->{fields}}) {
-                my $name = $json_issue->{names}{$_};
-                if ($name) {
-                    if (ref $json_issue->{fields}{$_} ne "HASH") {
-                        my $val = $json_issue->{fields}{$_};
-                        $json_issue->{fields}{$_} = {};
-                        $json_issue->{fields}{$_}{jkd_value} = $val;
-                    }
-                    $json_issue->{fields}{$_} = {} unless $json_issue->{fields}{$_};
+            if ($pretty) {
+                for (keys %{$json_issue->{fields}}) {
+                    my $name = $json_issue->{names}{$_};
+                    if ($name) {
+                        if (ref $json_issue->{fields}{$_} ne "HASH") {
+                            my $val = $json_issue->{fields}{$_};
+                            $json_issue->{fields}{$_} = {};
+                            $json_issue->{fields}{$_}{jkd_value} = $val;
+                        }
+                        $json_issue->{fields}{$_} = {} unless $json_issue->{fields}{$_};
 
-                    if (0) {    # for debugging
-                        say STDERR sprintf(
-                            "name is %s, _ is %s, %s",
-                            encode_utf8($name),
-                            encode_utf8($_),
-                            encode_json($json_issue->{fields}{$_})
-                        );
-                    }
+                        if (0) { # for debugging
+                            say STDERR sprintf(
+                                "name is %s, _ is %s, %s",
+                                encode_utf8($name),
+                                encode_utf8($_),
+                                encode_json($json_issue->{fields}{$_})
+                            );
+                        }
 
-                    $json_issue->{fields}{$_}{jkd_name} = $name;
-                    delete $json_issue->{names}{$_};
+                        $json_issue->{fields}{$_}{jkd_name} = $name;
+                        delete $json_issue->{names}{$_};
+                    }
                 }
             }
             print encode_json($json_issue);
