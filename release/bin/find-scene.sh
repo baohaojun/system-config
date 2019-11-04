@@ -8,12 +8,53 @@ if test "$WRENCH_APP_DIR"; then
 fi
 
 function picture-matches() {
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P t:default-tolerance=15
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o t:h \
+                          --long default-tolerance:,help \
+                          -n $(basename -- $0) -- "$@")
+    declare default_tolerance=15
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -t|--default-tolerance)
+                default_tolerance=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %06s '-t, '
+                printf %-24s '--default-tolerance=DEFAULT_TOLERANCE'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
     if test ! -e "$1" -o ! -e "$2"; then
         die "Usage: picture-matches FILE1.PNG FILE2.PNG"
     fi
 
     set -- "$(readlink -f "$1")" "$(readlink -f "$2")"
-    default_tolerance=15
 
     export g_onmyoji_location=Wrench
     export onmyoji_parallel=0
