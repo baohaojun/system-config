@@ -273,7 +273,7 @@
     (when (eq keymap global-keymap)
       (unbind-keys window-keymap key))))
 
-(setq emacs-style-window-class-re "rdesktop|wrench|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|wine|xterm")
+(setq emacs-style-window-class-re "rdesktop|wrench|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|xterm")
 (defvar global-emacs-remap-alist nil
   "Window specific remap list")
 
@@ -337,8 +337,10 @@
                    (Gjiten "M-s" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "Home" "S-End" "RET")
                    (t "C-g")))
         ("C-v" . '((qpdfview "SPC") (t "Next")))
-        ("SPC" . '((Fbreader "Next")))
-        ("BS" . '((Fbreader "Prior")))
+        ("SPC" . '((Fbreader "Next")
+                   (kindle.exe:Wine: kindle-scroll)))
+        ("BS" . '((Fbreader "Prior")
+                  (kindle.exe:Wine: kindle-scroll)))
         ("C-." . '((Lxterminal "ESC" ".") (XTerm "ESC" ".") (Gnome-terminal "ESC" ".") (Xfce4-terminal "ESC" ".")))
         ("C-," . '((Lxterminal "ESC" ",") (XTerm "ESC" ",") (Gnome-terminal "ESC" ",") (Xfce4-terminal "ESC" ",")))
         ("C-?" . '((Lxterminal "ESC" "?") (XTerm "ESC" "?") (Gnome-terminal "ESC" "?") (Xfce4-terminal "ESC" "?")))
@@ -402,6 +404,9 @@
 
 (defun this-key-is-dead ()
   (system "alarm 0m This key is dead, check your ~/.sawfishrc&"))
+
+(defun kindle-scroll ()
+  (system (format nil "kindle-scroll '%s'&" (event-name (current-event)))))
 
 (defun mm6-dragon-fly ()
   (system "mm6 cast air.fly&"))

@@ -1,0 +1,60 @@
+#!/bin/bash
+set -e
+. aterr bhj-notify kindle-scroll "Error running kindle-scroll"
+
+exec >& ~/tmp/kindle-scroll.log
+set -x
+
+# bhj-notify kindle-scroll "working with $1"
+
+pic-matches() {
+    (
+        cd ~/tmp/
+        find-scene.sh picture-matches -t 5 ~/tmp/kindle-scroll.shot.png "$1"
+    )
+}
+
+if test "$1" = SPC; then
+    take-pic() {
+        scrot -a '1894,1113,17,30' ~/tmp/kindle-scroll.shot.png
+    }
+
+    take-pic
+
+
+    scroll_done=~/system-config/share/kindle-scroll/scroll-done.png
+    scroll_able=~/system-config/share/kindle-scroll/scroll-able.png
+
+    if pic-matches ${scroll_able}; then
+        xdotool-when-keyboard-clear mousemove 1904 1093 click 1
+        sleep .2
+        take-pic
+        if pic-matches ${scroll_able}; then
+            xdotool key Up Up Up
+        fi
+
+    elif pic-matches ${scroll_done}; then
+        xdotool-when-keyboard-clear key Next
+    else
+        exit 1
+    fi
+elif test "$1" = BS; then
+    take-pic() {
+        scrot -a '1896,165,14,32' ~/tmp/kindle-scroll.shot.png
+    }
+
+    take-pic
+
+    scroll_done=~/system-config/share/kindle-scroll/scroll-at-top.png
+    scroll_able=~/system-config/share/kindle-scroll/scroll-not-at-top.png
+
+    if pic-matches ${scroll_done}; then
+        xdotool-when-keyboard-clear key Prior
+    elif pic-matches ${scroll_able}; then
+        xdotool-when-keyboard-clear mousemove 1906 210 click 1
+    else
+        exit 1
+    fi
+else
+    bhj-notify kindle-scroll "Can't work with $1"
+fi

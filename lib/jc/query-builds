@@ -93,7 +93,7 @@ my $jpath = JSON::Path->new('$..builds.*');
 
 for ($jpath->values($job_json)) {
     my $jpath2 = JSON::Path->new($test_path);
-    if (grep {$_ =~ m/\Q$test_value\E/} $jpath2->values($_)) {
+    if (grep {$_ =~ m/\Q$test_value\E/i} $jpath2->values($_)) {
         print "$job_url" . $_->{number} . "\n";
     }
 }
