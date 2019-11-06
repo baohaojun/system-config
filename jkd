@@ -765,7 +765,7 @@ sub getNormalizedName($) {
 
 sub jkd_print_issue(@) {
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl i:issue f:fields-to-print='()' @json @for-clone @pretty=1
+    # generate-getopt -s perl i:issue f:fields-to-print='()' @json @for-clone @pretty-names
     ## end code-generator
     ## start generated code
     use Getopt::Long;
@@ -778,7 +778,7 @@ sub jkd_print_issue(@) {
     my $for_clone = 0;
     my $issue = "";
     my $json = 0;
-    my $pretty = 1;
+    my $pretty_names = 0;
 
     my $handler_help = sub {
         print ;
@@ -816,8 +816,8 @@ sub jkd_print_issue(@) {
         printf "%s", ;
         print "\n";
         printf "%6s", '';
-        printf "%-24s", '--[no]pretty';
-        if (length('--[no]pretty') > 24 and length() > 0) {
+        printf "%-24s", '--[no]pretty-names';
+        if (length('--[no]pretty-names') > 24 and length() > 0) {
             print "\n";
             printf "%30s", "";
         }
@@ -832,7 +832,7 @@ sub jkd_print_issue(@) {
         'for-clone!' => \$for_clone,
         'issue|i=s' => \$issue,
         'json!' => \$json,
-        'pretty!' => \$pretty,
+        'pretty-names!' => \$pretty_names,
         'help|h!' => \&$handler_help,
     );
 
@@ -842,7 +842,7 @@ sub jkd_print_issue(@) {
     my $json_issue = decode_json get("rest/api/2/issue/$issue?expand=names")->content;
     if ($json and not @fields_to_print) {
         if (not $for_clone) {
-            if ($pretty) {
+            if ($pretty_names) {
                 for (keys %{$json_issue->{fields}}) {
                     my $name = $json_issue->{names}{$_};
                     if ($name) {
