@@ -19,7 +19,11 @@ text=$(echo -n "$text"|perl -npe 's/(^(「)|(「|,|　|（|\.|……」|』、�
     if [[ $text =~ ^https?:// ]]; then
       firefox -new-tab "$text"
     elif echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
-        search-dict "$text"
+        if [[ $text =~ ^[A-Z]+-[0-9]+ ]]; then
+            of -w jira "${text%:}"
+        else
+            search-dict "$text"
+        fi
     else
         if ! grep -q "$text" /usr/share/gjiten/dics/*; then
             if [[ $text =~ れて ]]; then

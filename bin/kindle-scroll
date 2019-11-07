@@ -1,6 +1,5 @@
 #!/bin/bash
-set -e
-. aterr bhj-notify kindle-scroll "Error running kindle-scroll"
+# . aterr bhj-notify kindle-scroll "Error running kindle-scroll"
 
 exec >& ~/tmp/kindle-scroll.log
 set -x
@@ -36,7 +35,7 @@ if test "$1" = SPC; then
     elif pic-matches ${scroll_done}; then
         xdotool-when-keyboard-clear key Next
     else
-        exit 1
+        xdotool-when-keyboard-clear key Next
     fi
 elif test "$1" = BS; then
     take-pic() {
@@ -53,7 +52,7 @@ elif test "$1" = BS; then
     elif pic-matches ${scroll_able}; then
         xdotool-when-keyboard-clear mousemove 1906 210 click 1
     else
-        exit 1
+        xdotool-when-keyboard-clear key Prior
     fi
 else
     bhj-notify kindle-scroll "Can't work with $1"

@@ -59,7 +59,7 @@ cd "$output_dir"
 wget -k --page-requisites -c "$url" "$@"
 
 log url is "$url"
-html=${url##*://}
+html=${url#*://}
 
 if test ! -f "$html" -a -e "$html/index.html"; then
     html=$html/index.html
