@@ -75,6 +75,40 @@ M.dingding_open_homepage = function()
    end
 end
 
+M.click_dingding_pics = function(npics)
+   local pic_share_buttons = {}
+
+   local click_2x1_x = scene_x("dingding-fatu-1")
+   local click_2x1_y = scene_y("dingding-fatu-1")
+
+   local click_3x1_x = scene_x("dingding-fatu-2")
+   local click_3x1_y = scene_y("dingding-fatu-2")
+
+   local click_2x2_x = scene_x("dingding-fatu-3")
+   local click_2x2_y = scene_y("dingding-fatu-3")
+
+   local cell_height = math.floor(click_2x2_y - click_2x1_y)
+   local cell_width = math.floor(click_3x1_x - click_2x1_x)
+
+   for i = 1, npics do
+      local col = i % 4
+      local row = math.floor(i / 4)
+
+      local tap_x = cell_width * (col - 1) + click_2x1_x + 14
+      local tap_y = cell_height * row + click_2x1_y + 20
+
+      pic_share_buttons[i] = ("adb-tap-XY %d %d"):format(tap_x, tap_y)
+      log("dingding tap: %d %s", i, pic_share_buttons[i])
+      local button = pic_share_buttons[i]
+      adb_event("sleep .2 " .. button .. " sleep .1")
+
+      if i == 1 then
+         jump_from_to("dingding-yuantu-weixuanzhong", "dingding-yuantu-yixuanzhong")
+      end
+
+   end
+end
+
 M.picture_to_dingding_chat = function(pics, ...)
    if type(pics) ~= "table" then
       pics = {pics, ...}
@@ -98,39 +132,22 @@ M.picture_to_dingding_chat = function(pics, ...)
 
    ]])
 
-   if not click_to_album_wx_chat_style("adb-tap 173 1359", "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.AlbumActivity") then
-      return
+   local dd_extra_button="dingding-liaotian-gengduo-gongneng"
+   if ime_is_active() then
+      dd_extra_button = dd_extra_button .. "@ime"
    end
 
-   local pic_share_buttons = {
-      "adb-tap 587 314", "adb-tap 1007 348", "adb-tap 284 712",
-      "adb-tap 649 666", "adb-tap 969 676", "adb-tap 292 1053",
-      "adb-tap 598 1029", "adb-tap 980 1027", "adb-tap 260 1407"
-   }
-   for i = 1, #pics do
-      local target = pics[i]
-      local button = pic_share_buttons[i]
-      if i == 1 then
-         for n = 1, 10 do
-            local window = adb_top_window()
-            if window == "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.AlbumActivity" then
-               adb_event"sleep .2"
-               adb_event(button .. " sleep .2 adb-tap 907 1860")
-            elseif window == "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.AlbumPreviewActivity" then
-               adb_event"sleep .5 adb-tap 859 1850 sleep .2 adb-tap 85 169 sleep .3"
-               break
-            end
-         end
-      end
-      adb_event("sleep .2 " .. button .. " sleep .1")
-   end
-   adb_event"adb-tap 930 1876 sleep .2 adb-tap 96 1860 sleep .2"
+   jump_from_to(dd_extra_button, "dingding-xiangce-button")
+   jump_from_to("dingding-xiangce-button", "dingding-paishe-zhaopian")
+
+   click_dingding_pics(#pics)
    if yes_or_no_p"Confirm to send these pictures to dingding" then
-      adb_event"adb-tap 888 128 sleep .2"
+      jump_from_to("dingding-tupian-fasong", "dingding-xiangce-button")
+   else
+      adb_event("key back")
    end
-   if wait_top_activity_n(2, old_top_window) ~= old_top_window then
-      log"Can't get old dd chat window"
-   end
+
+   adb_event("key back")
 end
 
 M.get_out_of_windows = function(windows, ...)

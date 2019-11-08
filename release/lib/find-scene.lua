@@ -101,11 +101,26 @@ M.debug_find_scene = function(desc, scene)
    return ret_val, should_ret
 end
 
+M.scene_x = function(scene)
+   load_scene_map()
+   local saved_scene_xy = M.scenes_map[scene]
+   return saved_scene_xy:gsub(" .*", "")
+end
+
+M.scene_y = function(scene)
+   load_scene_map()
+   local saved_scene_xy = M.scenes_map[scene]
+   return saved_scene_xy:gsub(".* ", "")
+end
+
 M.find_scene = function(scene, times)
    if type(scene) == 'function' then
       return scene()
    elseif scene == true then
       return true
+   elseif scene:match("^window:") then
+      scene = scene:gsub("window:", "")
+      return adb_top_window() == scene
    end
    load_scene_map()
    times = times or 1

@@ -1327,6 +1327,11 @@ M.tap_bottom_center = function()
    adb_event"adb-tap 592 1836"
 end
 
+M.ime_is_active = function()
+   local input_active, ime_height = adb_get_input_window_dump()
+   return ime_height > 0
+end
+
 M.exit_ime = function()
    local input_active, ime_height = adb_get_input_window_dump()
    log("exit ime: %s %s", ime_active, ime_height)

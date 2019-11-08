@@ -225,6 +225,10 @@ M.adb_event = function(events)
             command_str = command_str .. add
          end
          i = i + 5
+      elseif events[i] == 'adb-tap-XY' then
+         local add = ("input tap %d %d;"):format(events[i+1], events[i+2])
+         command_str = command_str .. add
+         i = i + 3
       elseif events[i] == 'adb-tap' or events[i]:match('adb%-no%-virt%-key%-') then
          i = i + 1
       else
