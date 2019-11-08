@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl @ask-to-whom @:send-to @:extra-send-text
+# generate-getopt -s perl @ask-to-whom @:send-to @:extra-send-text @:image
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -12,6 +12,7 @@ Getopt::Long::Configure("default");
 
 my $ask_to_whom = 0;
 my $extra_send_text = "";
+my $image = "";
 my $send_to = "";
 
 my $handler_help = sub {
@@ -34,6 +35,14 @@ my $handler_help = sub {
     printf "%s", ;
     print "\n";
     printf "%6s", '';
+    printf "%-24s", '--image=IMAGE';
+    if (length('--image=IMAGE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
     printf "%-24s", '--send-to=SEND-TO';
     if (length('--send-to=SEND-TO') > 24 and length() > 0) {
         print "\n";
@@ -48,6 +57,7 @@ my $handler_help = sub {
 GetOptions (
     'ask-to-whom!' => \$ask_to_whom,
     'extra-send-text=s' => \$extra_send_text,
+    'image=s' => \$image,
     'send-to=s' => \$send_to,
     'help|h!' => \&$handler_help,
 );
@@ -60,6 +70,15 @@ sub quote_lua_str($) {
     my @command = ("str.quote.lua", "$_[0]");
     my $command = join(" ", shell_quote(@command));
     return scalar qx($command);
+}
+
+if ($image) {
+    my $post_text = sprintf("wrench_picture(%s)", quote_lua_str($image));
+    say STDERR "sending image: $post_text";
+
+    system("Wrench.sh", $post_text);
+
+    exit 0;
 }
 
 my $text;

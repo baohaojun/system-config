@@ -1,0 +1,80 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use Encode;
+
+use JSON;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P u:username
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $username = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--username=USERNAME';
+    if (length('--username=USERNAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'username|u=s' => \$username,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+my $roles_json = decode_json(qx(jc getRoles -t projectRoles|jq .));
+
+my $groups = qx(comp-mail -d ${username} -g '' -m 'memberOf');
+
+my %user_groups;
+
+$user_groups{$username} = 1;
+while ($groups =~ m: CN=(.*?),:mg) {
+    $user_groups{$1} = 1;
+}
+
+my @jobs = split("\n", qx(jc list-jobs));
+
+my %user_roles;
+
+for my $roleName (sort keys %{$roles_json}) {
+    my @role_groups = @{$roles_json->{$roleName}};
+
+    for (@role_groups) {
+        my $group = encode_utf8 $_;
+        if ($user_groups{$group}) {
+            my $role_json = decode_json(qx(jc getRole -t projectRoles -n "${roleName}"));
+
+            my $jsonParser = JSON->new->allow_nonref;
+
+            do {
+                my $pattern = qr($role_json->{pattern});
+
+                for my $job (grep {m/$pattern/} @jobs ) {
+                    say sprintf("%s (%s): %s", encode_utf8($roleName), $role_json->{pattern}, $job);
+                }
+            } while ( 0 );
+
+            say STDERR $jsonParser->utf8->pretty->encode($role_json);
+        }
+    }
+}

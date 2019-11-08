@@ -105,6 +105,7 @@ error_patterns=(
     'Communication error with Jack server'
     'te:[0-9]*:ERROR .unknown type'
     'fatal: cannot obtain manifest'
+    '> Could not'
 )
 
 pat=$(
