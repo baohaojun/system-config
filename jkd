@@ -168,7 +168,50 @@ sub get($) {
 }
 
 sub jkd_get($) {
-    my $response = get($_[0]);
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -P a:api '?"for e.g., rest/api/2/project/"'
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("posix_default");
+
+
+
+    my $api = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-a, ';
+        printf "%-24s", '--api=API';
+        if (length('--api=API') > 24 and length("for e.g., rest/api/2/project/") > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", "for e.g., rest/api/2/project/";
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'api|a=s' => \$api,
+        'help|h!' => \&$handler_help,
+    );
+
+
+    ## end generated code
+
+    if (not $api) {
+        $api = $ARGV[0];
+    }
+
+    if (not $api) {
+        die "Must specify the api with -a API";
+    }
+
+    my $response = get($api);
     print $response->content;
 }
 
