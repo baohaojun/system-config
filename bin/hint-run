@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+hint "running: $(command debug-args "$@")"
+"$@"
