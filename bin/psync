@@ -360,15 +360,17 @@ EOF0ecb2235bec3
 
             if test -f "${x}"; then
                 lftp_command=put
+                extra_file_arg=/${source_file##*/}
             else
                 lftp_command="mirror -R -P 5"
+                extra_file_arg=
             fi
 
             (
                 set -x
                 js_username=$(git config -f $scm_secrets_conf sftp.js.username) || die "Must specify sftp.js.username in \${scm_secrets_conf}"
                 js_port=$(git config -f $scm_secrets_conf sftp.js.port || echo 2222)
-                lftp sftp://${js_username}:@js:${js_port}/jenkins_slave-4-198/ -e "${lftp_command} $source_file $jsftp_target_dir;" || true
+                lftp sftp://${js_username}:@js:${js_port}/jenkins_slave-4-198/ -e "cd $jsftp_target_dir; ${lftp_command} $source_file .${extra_file_arg};" || true
             )
         done
         jssh $host --execute "rm -f $jsftp_tmpdir"
