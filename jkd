@@ -216,6 +216,8 @@ sub jkd_get($) {
 }
 
 sub select_args(@) {
+    $ENV{SELECT_HISTORY_ORDER} = 'jkd';
+
     if ($jkd_verbose) {
         say STDERR "select-args ", join(" ", shell_quote(@_));
     }
@@ -361,7 +363,21 @@ sub jkd_q(@) {
     }
 
     my $selected_issue = select_args("-p", "which issue do you want?", "--", "-1", sort {$a cmp $b} @issues);
-    system("putclip", $selected_issue);
+
+    $selected_issue =~ s,:.*,,s;
+    say STDERR "You selected: $selected_issue";
+
+    my $action = select_args("-p", "what actions do you want?", "putclip issue-key", "open it in browser", "transit it to another state");
+
+    if ($action eq "putclip issue-key") {
+        system("putclip", $selected_issue);
+    } elsif ($action eq "open it in browser") {
+        system("of", "$ENV{scm_jira_url}browse/${selected_issue}");
+    } elsif ($action eq "transit it to another state") {
+        jkd_tri("-i", "${selected_issue}");
+    } else {
+        die "Can't do the action: $action"
+    }
 }
 
 sub jkd_select_project(@) {
@@ -1687,7 +1703,7 @@ sub update_names_with_fields($$) {
             $name = getNormalizedName encode_utf8 $name;
 
             $name_field_map{$name} = $_;
-            say STDERR "Created a map: $name: $name_field_map{$name}";
+            say STDERR "Created a map: $name: $name_field_map{$name}" if $jkd_verbose;
         }
 
     }
@@ -1875,6 +1891,13 @@ sub subcmd_help() {
 
 
 if (not defined &$sub_command) {
+    (my $lib_command = $sub_command) =~ s,^jkd_,jkd/,;
+
+    $lib_command = "$ENV{scm_common_libdir}/$lib_command";
+
+    if (-x $lib_command) {
+        exit system("$lib_command", @ARGV);
+    }
     say "Can't find sub-command: $sub_command";
     &$handler_help();
 }
