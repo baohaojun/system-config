@@ -1,0 +1,88 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P -e m:manifest-file f:from-name-pattern t:change-to-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o t:f:m:h \
+                      --long change-to-name:,from-name-pattern:,manifest-file:,help \
+                      -n $(basename -- $0) -- "$@")
+declare -x change_to_name=${change_to_name:-}
+declare -x from_name_pattern=${from_name_pattern:-}
+declare -x manifest_file=${manifest_file:-}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -t|--change-to-name)
+            change_to_name=$2
+            shift 2
+
+            ;;
+        -f|--from-name-pattern)
+            from_name_pattern=$2
+            shift 2
+
+            ;;
+        -m|--manifest-file)
+            manifest_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-t, '
+            printf %-24s '--change-to-name=CHANGE_TO_NAME'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--from-name-pattern=FROM_NAME_PATTERN'
+            echo
+            printf %06s '-m, '
+            printf %-24s '--manifest-file=MANIFEST_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+change-1-repo() {
+    (
+        set -e
+        . aterr exit -1
+        repo=$1
+        branches=$(
+            git ls-remote --heads ${scm_gerrit_admin_ssh_url}${repo} | grep "$from_name_pattern" -i -P | pn 2 | perl -pe 's,refs/heads/,,'
+                )
+        for b in ${branches}; do
+            t_b=$(
+                echo $b | perl -pe 's,$ENV{from_name_pattern},$ENV{change_to_name},gi'
+               )
+            log changing $b to $t_b in ${repo}
+            ssh-gerrit create-branch $repo $t_b $b
+            git push ${scm_gerrit_admin_ssh_url}${repo} :refs/heads/$b
+        done
+    ) </dev/null
+}
+
+export -f change-1-repo
+
+(
+    echo platform/manifest
+    xmlstarlet sel -t -m "//project" -v @name -n ${manifest_file}
+) |
+    xargs -P 5 -d \\n -n 1 bash -c 'change-1-repo "$@"' true

@@ -76,11 +76,14 @@ _curl() {
 }
 export -f _curl
 
-if test -x ${scm_common_libdir}/gerrit/$1; then
-    action=${scm_common_libdir}/gerrit/$1
-    shift
-    $action "$@"
-    exit
-else
-    die "Can't execute your command: $*"
-fi
+for libdir in gr gr.user; do
+
+    if test -x ${scm_common_libdir}/${libdir}/$1; then
+        action=${scm_common_libdir}/${libdir}/$1
+        shift
+        $action "$@"
+        exit
+    else
+        die "Can't execute your command: $*"
+    fi
+done

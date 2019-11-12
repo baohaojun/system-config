@@ -22,9 +22,9 @@
 
 #+name: emacs-lisp-export
 #+BEGIN_SRC emacs-lisp
-  (let* ((org-file "%file%")
+  (let* ((org-file "[%org_file%]")
          (my-loaded-themes custom-enabled-themes)
-         (html-file (replace-regexp-in-string "\\.org$" ".html" "%file%"))
+         (html-file (replace-regexp-in-string "\\.org$" ".html" "[%org_file%]"))
          (html-buffer (find-buffer-visiting html-file)))
     (when html-buffer
       (kill-buffer html-buffer))
@@ -37,7 +37,7 @@
           (disable-theme theme)))
       (load-theme 'adwaita)
       (find-file org-file)
-      (org-html-export-to-html)
+      (org-html-export-to-html [%how_to_export%])
       (when my-loaded-themes
         (dolist (theme my-loaded-themes)
           (load-theme theme))))
@@ -57,34 +57,107 @@
    #+BEGIN_SRC sh :tangle ~/system-config/bin/org2html :comments link :shebang "#!/bin/bash" :noweb yes
      set -e
 
+     ## start code-generator "^\\s *#\\s *"
+     # generate-getopt -P @bare @cat
+     ## end code-generator
+     ## start generated code
+     TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                           --long bare,cat,help,no-bare,no-cat \
+                           -n $(basename -- $0) -- "$@")
+     declare bare=false
+     declare cat=false
+     eval set -- "$TEMP"
+     while true; do
+         case "$1" in
+
+             --bare|--no-bare)
+                 if test "$1" = --no-bare; then
+                     bare=false
+                 else
+                     bare=true
+                 fi
+                 shift
+
+                 ;;
+             --cat|--no-cat)
+                 if test "$1" = --no-cat; then
+                     cat=false
+                 else
+                     cat=true
+                 fi
+                 shift
+
+                 ;;
+             -h|--help)
+                 set +x
+                 echo -e
+                 echo
+                 echo Options and arguments:
+                 printf "%06s" " "
+                 printf %-24s '--[no-]bare'
+                 echo
+                 printf "%06s" " "
+                 printf %-24s '--[no-]cat'
+                 echo
+                 exit
+                 shift
+                 ;;
+             --)
+                 shift
+                 break
+                 ;;
+             ,*)
+                 die "internal error: $(. bt; echo; bt | indent-stdin)"
+                 ;;
+         esac
+     done
+
+
+     ## end generated code
+
      cd "$(dirname "$1")"
      set -- "$(basename "$1")"
 
      if [[ $1 =~ .org$ ]]; then
          org_file=$1
          html_file=${1%.org}.html
-     elif [[ $1 =~ .html$ ]]; then
-         org_file="no-such-file"
-         html_file=$1
+     else
+         die "Must specify an extra arg as a .org file"
      fi
 
-     emacsclient -e "$(cat <<'EOF6405e5bce1d2' | perl -npe "s,%file%,${1},g"
-     <<emacs-lisp-export>>
+     if test "${bare}" = true; then
+         how_to_export='nil nil nil t'
+     else
+         how_to_export=''
+     fi
+
+     emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
+               <<emacs-lisp-export>>
      EOF6405e5bce1d2
-     )"
+               )" 1>&2
 
-     perl -npe "$(cat <<'EOFf0ea35142ce4'
-          <<replace-emojis-with-local-files>>
+     if test "${bare}" = true; then
+         true
+     else
+
+         perl -npe "$(cat <<'EOFf0ea35142ce4'
+                    <<replace-emojis-with-local-files>>
      EOFf0ea35142ce4
-     )" -i "$html_file"
+               )" -i "$html_file"
 
 
-     css-inline "$html_file" > "$html_file".$$
-     replace-mathjs "$html_file".$$
-     mv "$html_file".$$ "$html_file"
+         css-inline "$html_file" > "$html_file".$$
+         replace-mathjs "$html_file".$$
+         mv "$html_file".$$ "$html_file"
 
-     if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
-         of "$html_file"
+         if [[ $org_file =~ .org$ ]]; then # else, we are called from org-export?
+             of "$html_file"
+         fi
+     fi
+
+     if test "${cat}" = true; then
+         cat "$html_file"
+         rm "$html_file"
      fi
 
      # Local Variables: #

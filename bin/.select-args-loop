@@ -1,0 +1,89 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P a:action p:prompt="Which choice do you want?"
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:h \
+                      --long action:,help \
+                      -n $(basename -- $0) -- "$@")
+declare action=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--action)
+            action=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--action=ACTION'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+declare sal_all_keys=("$@")
+
+declare sal_tbd_keys=("$@")
+declare sal_done_keys=()
+
+last_choice="Done with them all, exit"
+restart_choice="Restart selection with all choices"
+
+IFS=$'\n'
+
+existing_history() {
+    eval "$exported_done_keys"
+    for k in "${sal_done_keys[@]}"; do
+        echo -n "$k" | perl -pe 's,\n,\%r\%n,g'; echo
+    done
+}
+
+export -f existing_history
+while true; do
+    selected=$(
+        select-args -p "$prompt" -a "$last_choice" -a "$restart_choice" \
+                    --history-forerunner existing_history \
+                    "${sal_tbd_keys[@]}"
+            )
+    if test "$selected" = "$last_choice"; then
+        return
+    fi
+    if test "${selected}" = "$restart_choice"; then
+        sal_tbd_keys=("${sal_all_keys[@]}")
+        continue
+    fi
+    $action "$selected"
+    sal_done_keys+=("$selected")
+    export exported_done_keys=$(declare -x -p sal_done_keys)
+
+    sal_tbd_keys=(
+        $(
+            for x in "${sal_tbd_keys[@]}"; do
+                if test "${x}" != "$selected"; then
+                    echo "$x"
+                fi
+            done
+        )
+    )
+done

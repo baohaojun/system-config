@@ -1,0 +1,152 @@
+#!/bin/bash
+set -e
+
+saved_args=("$@")
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P u:jira-url vverbose
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o u:vh \
+                      --long jira-url:,verbose,help,no-verbose \
+                      -n $(basename -- $0) -- "$@")
+declare jira_url=
+declare verbose=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -u|--jira-url)
+            jira_url=$2
+            shift 2
+
+            ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=false
+            else
+                verbose=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-u, '
+            printf %-24s '--jira-url=JIRA_URL'
+            echo
+            printf %06s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+export SELECT_HISTORY_ORDER=jkd-ue
+export EMACS=t
+
+. aterr bhj-notify jkd-ue "Failed to run $(debug-args ue "${saved_args[@]}")"
+
+if [[ $jira_url =~ selectedIssue= ]]; then
+    issue=$(echo "${jira_url}" | perl -ne 'print $1 if m,selectedIssue=(\w+-\d+),')
+elif [[ $jira_url =~ /browse/ ]]; then
+    issue=$(echo "${jira_url}" | perl -ne 'print $1 if m,/browse/(\w+-\d+),')
+fi
+
+IFS=$'\n'
+fields_json=$(jkd get rest/api/2/issue/$issue/editmeta)
+fields=(
+    $(
+        echo "${fields_json}"|perl -e "$(
+cat <<'EOF7ef811d86afe'
+# {%perl-mode%}
+use JSON;
+$js = join("", <>);
+$jo = decode_json($js);
+
+use Encode;
+
+for (keys %{$jo->{fields}}) {
+    print encode_utf8(sprintf("%s: %s\n", $_, $jo->{fields}{$_}{name}));
+}
+# {%/perl-mode%}
+EOF7ef811d86afe
+
+)"
+    )
+)
+
+issue_json=$(jkd get rest/api/2/issue/${issue})
+
+mkdir -p ~/tmp/jkd-ue
+tmp_org=~/tmp/jkd-ue/edit-$$.org
+. atexit rm $tmp_org
+
+edit-a-field() {
+    field=${1%:*}
+    field_type=$(echo "${fields_json}"|jq ".fields|.${field}|.schema|.type" -r)
+
+    if test "${field_type}" = string; then
+        content=$(
+            echo "${issue_json}" | jq ".fields|.${field}|values" -r
+               )
+        while true; do
+            (
+                echo "#+OPTIONS: toc:nil num:nil";
+                echo -n "$content" | pandoc --wrap=none -f textile -t org
+            ) > ${tmp_org}
+            ew ${tmp_org}
+            textile_content=$(
+                org2html --cat --bare ${tmp_org} | pandoc --wrap=none -f html -t textile | rm-last-nl
+                           )
+
+            if test "${verbose}" = true; then
+                log "textile_content is '$textile_content'"
+            fi
+            if ! [[ $textile_content =~ \</[a-z]+\>$ ]]; then
+                break
+            else
+                bhj-notify ue "Can't convert to textile correctly, please edit again: ${textile_content}"
+            fi
+        done
+
+        export jkd_field=$field
+        export jkd_value=$textile_content
+
+        jkd e -i ${issue} --fields-json "$(
+perl -e "$(
+cat <<'EOF27fdd5364fd8'
+# {%perl-mode%}
+use JSON;
+use Encode;
+$x = {
+    decode_utf8($ENV{jkd_field}) => decode_utf8($ENV{jkd_value})
+};
+
+print encode_json($x);
+# {%/perl-mode%}
+EOF27fdd5364fd8
+
+)"
+)"
+        firefox ${scm_jira_url}/browse/${issue} &>/dev/null&
+    else
+        die "can't edit $field"
+    fi
+}
+
+. .select-args-loop -a edit-a-field "${fields[@]}"

@@ -374,7 +374,7 @@ my $response = $ua->request($request);
 
 die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
 
-# say STDERR "Location is ", $response->header('Location') if $verbose;
+say STDERR "Location is ", $response->header('Location') if $verbose;
 
 if (not $synchronized) {
   exit 0;
@@ -396,6 +396,11 @@ use List::Util qw(max min);
 while (1) {
     my $queue_json = decode_json(qx(jc curl ${location}api/json));
     my $queueId = $queue_json->{id};
+    my $queueCancelled = $queue_json->{cancelled};
+
+    if ($queueCancelled) {
+        die "build is cancelled: ${location}api/json";
+    }
 
     my $sleep = max(1, min(10, (time() - $start_time)/5));
 

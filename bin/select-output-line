@@ -27,10 +27,12 @@ EOF
 }
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P '?"$(sol-help)"' \
-    # O:order-name oORDERED='${SELECT_HISTORY_ORDER:-false}' '?"Should use history for list order"' \
+# generate-getopt -P '?"$(sol-help)"' \
+    # O:order-name \
+    # oORDERED='${SELECT_HISTORY_ORDER:-false}' '?"Should use history for list order"' \
+    # @:history-forerunner '?"提前运行以打印一些历史选项，for .select-args-loop"' \
     # s:select-dist-word='${SELECT_DIST_WORD:-not-set\!}' '?"选中参数的时候，按照与这个参数的字符串距离排序"' \
-    # m:max-history=-1 '?"如果保存历史输入，最多保存几个历史输入，默认是无限"' \
+    # m:max-history='${SA_MAX_HISTORY:-100}' '?"如果保存历史输入，最多保存几个历史输入，默认是 100 条，-1 代表无上限"' \
     # a:always-selections='()' '?"这个参数给出的选项，永远出现在列表里"' \
     # 1hint-1-entry '?"只有一个选项的时候，不用选，但要提示"' \
     # p:prompt='"Please enter your selection"' '?"让用户选择时给的提示"' \
@@ -44,7 +46,7 @@ EOF
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o oa:1i:m:O:p:s:vh \
-                      --long ORDERED,always-selections:,ask-for-input,dot-sep-init:,exclude:,hint-1-entry,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-ask-for-input,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
+                      --long ORDERED,always-selections:,ask-for-input,dot-sep-init:,exclude:,hint-1-entry,history-forerunner:,init:,max-history:,order-name:,prompt:,select-dist-word:,select-from-history-too,use-file,verbose,help,no-ORDERED,no-ask-for-input,no-hint-1-entry,no-select-from-history-too,no-use-file,no-verbose \
                       -n $(basename -- $0) -- "$@")
 declare ORDERED=${SELECT_HISTORY_ORDER:-false}
 declare -a always_selections=()
@@ -52,8 +54,9 @@ declare ask_for_input=false
 declare dot_sep_init=
 declare exclude=
 declare hint_1_entry=false
+declare history_forerunner=
 declare init=
-declare max_history=-1
+declare max_history=${SA_MAX_HISTORY:-100}
 declare order_name=
 declare prompt="Please enter your selection"
 declare select_dist_word=${SELECT_DIST_WORD:-not-set\!}
@@ -104,6 +107,11 @@ while true; do
                 hint_1_entry=true
             fi
             shift
+
+            ;;
+        --history-forerunner)
+            history_forerunner=$2
+            shift 2
 
             ;;
         -i|--init)
@@ -185,6 +193,11 @@ while true; do
             printf %06s '-1, '
             printf %-24s '--[no-]hint-1-entry'
             echo "只有一个选项的时候，不用选，但要提示"
+            printf "%06s" " "
+            printf %-24s '--history-forerunner=HISTORY_FORERUNNER'
+            echo
+            printf "%30s" ""
+            echo "提前运行以打印一些历史选项，for .select-args-loop"
             printf %06s '-i, '
             printf %-24s '--init=INIT'
             echo "初始输入的匹配字符串，跟它匹配才会列出"
@@ -192,7 +205,7 @@ while true; do
             printf %-24s '--max-history=MAX_HISTORY'
             echo
             printf "%30s" ""
-            echo "如果保存历史输入，最多保存几个历史输入，默认是无限"
+            echo "如果保存历史输入，最多保存几个历史输入，默认是 100 条，-1 代表无上限"
             printf %06s '-O, '
             printf %-24s '--order-name=ORDER_NAME'
             echo
@@ -259,6 +272,7 @@ if test $ORDERED != false; then
     fi
     cmdfile=~/.cache/system-config/bhj/select-output-line/$md5.cmd.$UID
     histfile=~/.cache/system-config/bhj/select-output-line/$md5.hist.$UID
+    . aterr rm -f $histfile.$$
     if test "$verbose" = true; then
         echo 1>&2 "Histfile is $histfile"
     fi
@@ -279,9 +293,9 @@ selection_entries=(
         tmpfile=/tmp/$(basename $0).$$
         (
             if test "$b0" = select-args; then
-               for x in "$@"; do
-                   echo -n "$x" | perl -pe 's,\n,\%r\%n,g'; echo
-               done
+                for x in "$@"; do
+                    echo -n "$x" | perl -pe 's,\n,\%r\%n,g'; echo
+                done
             elif test $# = 1; then
                 bash -c "$1"
             else
@@ -404,10 +418,23 @@ fi
 
 output-result "$output"
 
-if (  is-good-n && test "$ORDERED" != false ) || test "$select_from_history_too" = true; then
-    (
-        echo "$output"
-        cat $histfile.$$ 2>/dev/null || true
-    ) | perl -ne "print if 1..$max_history" | uniq-even-non-ajacent > $histfile.$$.2 &&
-        mv $histfile.$$.2 $histfile && rm $histfile.$$ -f
-fi&
+(
+    . atexit rm -f $histfile.$$*
+    if (  is-good-n && test "$ORDERED" != false ) || test "$select_from_history_too" = true; then
+        (
+            if test "${history_forerunner}"; then
+                $history_forerunner
+            fi
+            (
+                for a_sel in "${always_selection[@]}"; do
+                    if test "$output" = "${a_sel}"; then
+                        exit
+                    fi
+                done
+                echo -n "$output" | perl -pe 's,\n,\%r\%n,g'; echo
+            )
+            cat $histfile.$$ 2>/dev/null || true
+        ) | perl -ne "print if 1..$max_history" | uniq-even-non-ajacent > $histfile.$$.2 &&
+            mv $histfile.$$.2 $histfile && rm $histfile.$$ -f
+    fi
+)
