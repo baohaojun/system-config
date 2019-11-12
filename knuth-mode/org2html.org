@@ -25,18 +25,27 @@
   (let* ((org-file "[%org_file%]")
          (my-loaded-themes custom-enabled-themes)
          (html-file (replace-regexp-in-string "\\.org$" ".html" "[%org_file%]"))
+         (org-file-already-loaded)
+         (buffers (buffer-list))
+         (org-buffer)
          (html-buffer (find-buffer-visiting html-file)))
     (when html-buffer
       (kill-buffer html-buffer))
     (package-initialize)
     (require 'ox-html)
     (require 'emojis)
+    (while buffers
+      (when (string= (buffer-file-name (car buffers)) org-file)
+        (setq org-file-already-loaded t
+              buffers nil))
+      (setq buffers (cdr buffers)))
     (when (string-match ".org$" org-file)
       (when custom-enabled-themes
         (dolist (theme custom-enabled-themes)
           (disable-theme theme)))
       (load-theme 'adwaita)
       (find-file org-file)
+      (setq org-buffer (current-buffer))
       (org-html-export-to-html [%how_to_export%])
       (when my-loaded-themes
         (dolist (theme my-loaded-themes)
@@ -48,6 +57,8 @@
       (org2html-emojify)
       (goto-char (point-min))
       (write-file html-file)
+      (unless org-file-already-loaded
+        (kill-buffer org-buffer))
       (kill-buffer)))
 #+END_SRC
 
@@ -114,6 +125,12 @@
 
 
      ## end generated code
+
+     if test "$#" = 0 || test "$#" = 1 -a "$1" = -; then
+         set -- ~/tmp/org2html.$$.org
+         cat > ~/tmp/org2html.$$.org
+         . atexit rm -f ~/tmp/org2html.$$.org
+     fi
 
      cd "$(dirname "$1")"
      set -- "$(basename "$1")"

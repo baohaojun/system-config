@@ -1,0 +1,170 @@
+#!/bin/bash
+set -e
+
+mkdir -p ~/tmp/ejwo
+export tmp_file=~/tmp/ejwo/ejwo-$$
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P \
+    # ddebug '?"for debug, do not remove tmp files ${tmp_file}\*"' \
+    # @tidy-html-for-markdown '?"tidy up html using MOJO::Dom"' \
+    # @o2j '?"convert org text to textile"'
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o dh \
+                      --long debug,o2j,tidy-html-for-markdown,help,no-debug,no-o2j,no-tidy-html-for-markdown \
+                      -n $(basename -- $0) -- "$@")
+declare debug=false
+declare o2j=false
+declare tidy_html_for_markdown=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
+            shift
+
+            ;;
+        --o2j|--no-o2j)
+            if test "$1" = --no-o2j; then
+                o2j=false
+            else
+                o2j=true
+            fi
+            shift
+
+            ;;
+        --tidy-html-for-markdown|--no-tidy-html-for-markdown)
+            if test "$1" = --no-tidy-html-for-markdown; then
+                tidy_html_for_markdown=false
+            else
+                tidy_html_for_markdown=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--[no-]debug'
+            echo "for debug, do not remove tmp files ${tmp_file}\*"
+            printf "%06s" " "
+            printf %-24s '--[no-]o2j'
+            echo "convert org text to textile"
+            printf "%06s" " "
+            printf %-24s '--[no-]tidy-html-for-markdown'
+            echo
+            printf "%30s" ""
+            echo "tidy up html using MOJO::Dom"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${tidy_html_for_markdown}" = true; then
+    exec perl -e "$(
+cat <<'EOF9b1e97d4565c'
+# {%perl-mode%}
+use Encode;
+
+my $html = decode_utf8 join("", <>);
+
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($html);
+
+$dom->find('*')->each
+    (
+        sub {
+            delete $_->{id};
+            $_->{class} = "should-remove" if $_->{class};
+        }
+    );
+
+while (1) {
+    my $done_replace = 0;
+
+    $dom->find('div')->each
+        (
+            sub {
+                $_->replace($_->content);
+                $done_replace = 1;
+            }
+        );
+
+    last unless $done_replace;
+}
+
+print encode_utf8($dom);
+# {%/perl-mode%}
+EOF9b1e97d4565c
+)"
+fi
+
+
+
+exec 3>&1
+
+exec &>/dev/null
+
+if test "${debug}" != true; then
+    . atexit bash -c 'rm -fv ${tmp_file}*'
+fi
+tmp_org=${tmp_file}.org
+
+if test "${o2j}" = true; then
+    (
+        echo "#+OPTIONS: toc:nil num:nil";
+        cat
+    ) > ${tmp_org}
+    do_edit=false
+else
+    (
+        echo "#+OPTIONS: toc:nil num:nil";
+        cat | j2m.sh | pandoc --wrap=none -f markdown -t org
+    ) > ${tmp_org}
+fi
+
+while true; do
+    if test "${do_edit}" = false; then
+        do_edit=true # should do edit next time
+    else
+        ew ${tmp_file}.org
+    fi
+    textile_content=$(
+        org2html --cat --bare ${tmp_org} |
+            ejwo --tidy-html-for-markdown |
+            pandoc --wrap=none -f html -t markdown | perl -pe 's,\Q{.should-remove}\E,,' | m2j.sh | rm-last-nl
+                   )
+
+    if test "${verbose}" = true; then
+        log "textile_content is '$textile_content'"
+    fi
+    if ! [[ $textile_content =~ \</[a-z]+\>$ ]]; then
+        break
+    else
+        bhj-notify ue "Can't convert to textile correctly, please edit again: ${textile_content}"
+    fi
+done
+
+
+echo "${textile_content}" 1>&3

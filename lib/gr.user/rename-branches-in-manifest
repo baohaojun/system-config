@@ -65,6 +65,7 @@ change-1-repo() {
         set -e
         . aterr exit -1
         repo=$1
+        log checking $repo
         branches=$(
             git ls-remote --heads ${scm_gerrit_admin_ssh_url}${repo} | grep "$from_name_pattern" -i -P | pn 2 | perl -pe 's,refs/heads/,,'
                 )
@@ -80,6 +81,10 @@ change-1-repo() {
 }
 
 export -f change-1-repo
+
+if test -z "${change_to_name}" -o -z "${from_name_pattern}"; then
+    die "Can't do this, must specify both from and to"
+fi
 
 (
     echo platform/manifest

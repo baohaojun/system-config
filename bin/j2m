@@ -1,0 +1,11 @@
+#!/usr/bin/env nodejs
+"use strict";
+
+var jira2markdown = require('jira2markdown');
+
+// Instantiate the converter
+var j2m = new jira2markdown.Converter();
+
+// If converting from Jira Wiki Syntax to Markdown:
+var md = j2m.toMarkdown(process.env['JIRA_TEXT']);
+console.log("%s", md);

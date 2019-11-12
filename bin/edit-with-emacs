@@ -1,0 +1,84 @@
+#!/bin/bash
+
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @ejwo '?"edit jira with org-mode"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long ejwo,help,no-ejwo \
+                      -n $(basename -- $0) -- "$@")
+declare ejwo=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --ejwo|--no-ejwo)
+            if test "$1" = --no-ejwo; then
+                ejwo=false
+            else
+                ejwo=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]ejwo'
+            echo "edit jira with org-mode"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+top_window=$(sawfish-top-window)
+top_window_id=$(sawfish-client -e '(window-id (input-focus))')
+
+next_file=~/src/github/edit-with-emacs/$(get-next-file -p "emacs-edit-%d.org")
+
+if test "$top_window" = QtCreator; then
+    exec sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
+else
+    (
+        cd ~/src/github/edit-with-emacs
+        git add .
+        git commit -m "auto commit at $(now)" >/dev/null 2>&1 || true
+    )
+    if test "$1" = region; then
+        sawfish-events-delayed .1 "C-c"
+    else
+        sawfish-events-delayed .1 "C-Home" "C-S-End"
+        sawfish-events-delayed .1 "C-c"
+    fi
+    getclip > $next_file
+    if test "${ejwo}" = true; then
+        cat $next_file | ejwo | tee-with-tmp $next_file
+    else
+        ew $next_file
+    fi
+    cat $next_file| putclip
+    if find-or-exec -e --window-id $top_window_id; then
+        exec sawfish-events-delayed .1 "S-Insert"
+    else
+        bhj-notify qtcreator-edit-with-emacs "Failed to find old window (id: $top_window_id; class: ${top_window})"
+    fi
+fi
+
+exec find-or-exec QtCreator

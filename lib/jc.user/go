@@ -3,8 +3,55 @@ set -e
 
 exec >& ~/tmp/go.log
 
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P j:job-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o j:h \
+                      --long job-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare job_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -j|--job-name)
+            job_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-j, '
+            printf %-24s '--job-name=JOB_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 original_url=$(get-firefox-tab-url)
 jenkins_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
+
+if test "${job_name}"; then
+    url=${jenkins_url}job/${job_name}
+    exec of $url
+fi
 
 declare -A function_url_map
 

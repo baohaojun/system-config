@@ -14,20 +14,27 @@ tmp_dir=~/tmp/jc.comp-test/$1
 mkdir -p "$tmp_dir"
 cd $tmp_dir
 
-task=$(basename $1)
+get-jenkins-url() {
+    echo $1 | perl -ne 'print $1 if m,(.*?://.*?/),' | grep . || echo ${scm_jenkins_url}
+}
+
+get-edit-dir() {
+    echo ~/src/jenkins-tasks/.sites/$(get-jenkins-url "$1" | perl -pe 's,.*://(.*?)/.*,$1,')/
+}
 
 get-job-config() {
-    dir=$1
-    mkdir -p $dir
+    task=$(basename $1)
+    dir=$(get-edit-dir $1)
     (
         cd $dir
-        jenkins_url=$(echo $2 | perl -pe 's,(.*?://.*?/).*,$1,')
-        jc -j "$jenkins_url" get-job-for-edit -t "$task"
+        jenkins_url=$(get-jenkins-url $1)
+        jc -j "${jenkins_url}" get-job-for-edit -t "$task"
     )
 }
 
-get-job-config 1 $1
-get-job-config 2 $2
+get-job-config $1
+get-job-config $2
 
 echo "$1 <=> $2"
-meld 1/$task.xml 2/$task.xml
+meld $(get-edit-dir $1)/${1##*/}.xml \
+     $(get-edit-dir $2)/${2##*/}.xml
