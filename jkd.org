@@ -11,19 +11,27 @@ I still need a way to work with Jira, org-jira just can't fulfill my needs anymo
 This is simple using Perl's “reflection”.
   #+name: which-to-call
   #+BEGIN_SRC perl
+    $ENV{SELECT_HISTORY_ORDER} = 'jkd';
+
+
     (my $sub_command = "jkd_" . shift) =~ s,-,_,g;
 
 
     if (not defined &$sub_command) {
-        (my $lib_command = $sub_command) =~ s,^jkd_,jkd/,;
+        my $lib_command;
 
-        $lib_command = "$ENV{scm_common_libdir}/$lib_command";
+        for ("jkd/", "jkd.user/") {
+            ($lib_command = $sub_command) =~ s,^jkd_,$_,;
+            $lib_command =~ s,_,-,g;
 
-        if (-x $lib_command) {
-            exit system("$lib_command", @ARGV);
+            $lib_command = "$ENV{scm_common_libdir}/$lib_command";
+
+            if (-x $lib_command) {
+                exit system("$lib_command", @ARGV);
+            }
         }
-        say "Can't find sub-command: $sub_command";
-        &$handler_help();
+
+        &$handler_help(1, "Can't find sub-command: $lib_command");
     }
 
     $sub_command = \&{$sub_command};
@@ -146,7 +154,13 @@ This is simple using Perl's “reflection”.
       printf "%s", "Verbose debug output";
       print "\n";
 
-      exit(0);
+      my $exit_value = 0;
+      if (@_) {
+          $exit_value = shift @_;
+          print "@_\n";
+      }
+
+      exit($exit_value);
   };
 
   GetOptions (
@@ -155,7 +169,7 @@ This is simple using Perl's “reflection”.
       'username|u=s' => \$jkd_username,
       'verbose|v!' => \$jkd_verbose,
       'help|h!' => \&$handler_help,
-      );
+  );
 
 
   ## end generated code
@@ -283,7 +297,72 @@ This is simple using Perl's “reflection”.
       return $response;
   }
 
-  sub jkd_get($) {
+  sub jkd_post(@) {
+      ## start code-generator "^\\s *#\\s *"
+      # generate-getopt -s perl -P a:api @:json
+      ## end code-generator
+      ## start generated code
+      use Getopt::Long;
+
+      Getopt::Long::Configure("posix_default");
+
+
+
+      my $api = "";
+      my $json = "";
+
+      my $handler_help = sub {
+          print ;
+          print "\n\n选项和参数：\n";
+          printf "%6s", '-a, ';
+          printf "%-24s", '--api=API';
+          if (length('--api=API') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+          printf "%6s", '';
+          printf "%-24s", '--json=JSON';
+          if (length('--json=JSON') > 24 and length() > 0) {
+              print "\n";
+              printf "%30s", "";
+          }
+          printf "%s", ;
+          print "\n";
+
+          exit(0);
+      };
+
+      GetOptions (
+          'api|a=s' => \$api,
+          'json=s' => \$json,
+          'help|h!' => \&$handler_help,
+      );
+
+
+      ## end generated code
+
+      my $ua = LWP::UserAgent->new;
+      my $url = jkd_url_for_api($api);
+
+      my $request = POST jkd_url_for_api("${api}"),
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+          "charset" => "utf-8",
+          Content => $json;
+
+      my $response = $ua->request($request);
+
+      die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content)
+          if ($response->code < 200 or $response->code >= 300);
+
+      say $response->content;
+
+      return $response;
+  }
+
+  sub jkd_get(@) {
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl -P a:api '?"for e.g., rest/api/2/project/"'
       ## end code-generator
@@ -332,8 +411,6 @@ This is simple using Perl's “reflection”.
   }
 
   sub select_args(@) {
-      $ENV{SELECT_HISTORY_ORDER} = 'jkd';
-
       if ($jkd_verbose) {
           say STDERR "select-args ", join(" ", shell_quote(@_));
       }

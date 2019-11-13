@@ -570,8 +570,12 @@ sub ok_upload1attachment(@) {
     return $response;
 }
 
-sub ok_ehwo() { # edit html as org-mode, requires system-config
-    ok_edit_html_with_org("-e");
+sub ok_ehbwo() { # edit current emacs buffer's html as org-mode, requires system-config
+    ok_edit_html_with_org("--edit-html-buffer");
+}
+
+sub ok_ehwo() { # html from stdin, edit with org, output with html
+    ok_edit_html_with_org("--edit-pipe");
 }
 
 sub ok_erwo(@) { # edit region (comments) with org-mode, requires system-config
@@ -615,7 +619,8 @@ sub ok_erwo(@) { # edit region (comments) with org-mode, requires system-config
 
 sub ok_edit_html_with_org(@) {
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl -l -P ecalled-for-emacs '?"Get the html from current emacs buffer, SC ONLY"' \
+    # generate-getopt -s perl -l -P @edit-html-buffer '?"Get the html from current emacs buffer, SC ONLY"' \
+    # @edit-pipe '?"edit html from pipeline, edit with org-mode, output new html"' \
     # u:update-org=1 '?"Update the .org file from the .html file"'
     ## end code-generator
     ## start generated code
@@ -625,19 +630,28 @@ sub ok_edit_html_with_org(@) {
 
     local @ARGV = @_;
 
-    my $called_for_emacs = 0;
-    my $update_org = "1";
+    my $edit_html_buffer = 0;
+    my $edit_pipe = 0;
+    my $update_org = 1;
 
     my $handler_help = sub {
         print ;
         print "\n\n选项和参数：\n";
-        printf "%6s", '-e, ';
-        printf "%-24s", '--[no]called-for-emacs';
-        if (length('--[no]called-for-emacs') > 24 and length("Get the html from current emacs buffer, SC ONLY") > 0) {
+        printf "%6s", '';
+        printf "%-24s", '--[no]edit-html-buffer';
+        if (length('--[no]edit-html-buffer') > 24 and length("Get the html from current emacs buffer, SC ONLY") > 0) {
             print "\n";
             printf "%30s", "";
         }
         printf "%s", "Get the html from current emacs buffer, SC ONLY";
+        print "\n";
+        printf "%6s", '';
+        printf "%-24s", '--[no]edit-pipe';
+        if (length('--[no]edit-pipe') > 24 and length("edit html from pipeline, edit with org-mode, output new html") > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", "edit html from pipeline, edit with org-mode, output new html";
         print "\n";
         printf "%6s", '-u, ';
         printf "%-24s", '--update-org=UPDATE-ORG';
@@ -652,17 +666,18 @@ sub ok_edit_html_with_org(@) {
     };
 
     GetOptions (
-        'called-for-emacs|e!' => \$called_for_emacs,
+        'edit-html-buffer!' => \$edit_html_buffer,
+        'edit-pipe!' => \$edit_pipe,
         'update-org|u=s' => \$update_org,
         'help|h!' => \&$handler_help,
-        );
+    );
 
 
     ## end generated code
 
-    if ($called_for_emacs) {
+    if ($edit_html_buffer or $edit_pipe) {
         use File::Path qw(make_path remove_tree);
-        my $tmp_dir = "$ENV{HOME}/tmp/.ehwo/edit-$$";
+        my $tmp_dir = "$ENV{HOME}/tmp/.ehbwo/edit-$$";
         make_path($tmp_dir);
         chdir($tmp_dir);
 
@@ -672,8 +687,11 @@ sub ok_edit_html_with_org(@) {
             remove_tree $tmp_dir;
         };
         atexit(\&clean_tmpdir);
-
-        System("emacs-current-text -b buffer-ehwo-$$ > content.html");
+        if ($edit_html_buffer) {
+            System("emacs-current-text -b buffer-ehbwo-$$ > content.html");
+        } else {
+            System("cat > content.html");
+        }
     }
 
     if ($update_org) {
@@ -682,7 +700,7 @@ sub ok_edit_html_with_org(@) {
         system("bhj-notify 'ok' 'No need to update the org file'");
     }
 
-    System("emacsclient content.org");
+    System("emacsclient content.org 1>&2");
 
     my $emacs_script = <<~'EOF64f308bc1e9a';
           ; {%emacs-lisp-mode%}
@@ -733,20 +751,25 @@ sub ok_edit_html_with_org(@) {
 
     EOF64f308bc1e9a
 
-    if ($called_for_emacs) {
+    if ($edit_html_buffer) {
         $emacs_script =~ s,<%how-to-export%>,
-            (org-kungfu--export-to-buffer "content.org" buffer-ehwo-$$)
-            (pop-to-buffer buffer-ehwo-$$)
-            (unintern 'buffer-ehwo-$$),x;
+            (org-kungfu--export-to-buffer "content.org" buffer-ehbwo-$$)
+            (pop-to-buffer buffer-ehbwo-$$)
+            (unintern 'buffer-ehbwo-$$),x;
     } else {
         $emacs_script =~ s,<%how-to-export%>,(org-kungfu--export-to-html "content.org"),;
     }
 
-    System("emacsclient", "-e", $emacs_script);
-    if (not $called_for_emacs) {
-        System("cp content.html content-after-export.html");
-    }
+    $emacs_script = shell_quote($emacs_script);
+    System("emacsclient -e $emacs_script 1>&2");
 
+    if (not $edit_html_buffer) {
+        if ($edit_pipe) {
+            System("cat content.html");
+        } else {
+            System("cp content.html content-after-export.html");
+        }
+    }
 }
 
 sub get_page_id_maybe_from_url($$) {
