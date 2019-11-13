@@ -40,6 +40,7 @@ Before you can use this script, you need make sure you have the following Perl p
 - LWP::UserAgent
 - JSON
 - Mojo::DOM
+- URI::Encode
 
 * Known Bugs
 
