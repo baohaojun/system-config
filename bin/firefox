@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if test -e ~/external/the-firefox; then
+if test "${THE_FIREFOX}"; then
+    the_firefox=${THE_FIREFOX}
+elif test -e ~/external/the-firefox; then
     the_firefox=$(readlink -f ~/external/the-firefox)
 elif test -e ~/external/firefox/firefox; then
     the_firefox=~/external/firefox/firefox
@@ -13,9 +15,9 @@ else
     exit 1
 fi
 
-if test $# = 1 -a "$1" = -h; then
+if test $# = 1 && test "$1" = -h -o "$1" = --help; then
     true
 else
-    find-or-exec firefox true
+    find-or-exec -p "${the_firefox}" firefox true
 fi
-exec $the_firefox "$@"
+exec $the_firefox ${FIREFOX_PROFILE_ARG} "$@"

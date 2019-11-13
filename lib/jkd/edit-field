@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+# http://jira/secure/admin/EditCustomField!default.jspa?id=14204
+
+custom_fields_json=$(
+    jkd get rest/api/2/field
+                  )
+
+custom_field=$(
+    echo "$custom_fields_json" |
+        jq '.[]|.id + ": " + .name' -r |
+        select-output-line -p "which field to you want?" cat |
+        perl -pe 's,:.*,,; s,.*_,,'
+            )
+
+firefox "${scm_jira_url}secure/admin/EditCustomField!default.jspa?id=${custom_field}"

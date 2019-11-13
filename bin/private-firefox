@@ -1,160 +1,119 @@
-#!/bin/bash
+#!/usr/bin/env perl
+
+use autodie qw(:all);
+use Config::IniFiles;
+use String::ShellQuote;
+use strict;
+use v5.10; # for say
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P rrsync i:private-instance=1 pprofile-manager
+# generate-getopt -s perl -P rrsync i:private-instance=1 pprofile-manager
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o i:prh \
-                      --long private-instance:,profile-manager,rsync,help,no-profile-manager,no-rsync \
-                      -n $(basename -- $0) -- "$@")
-declare private_instance=1
-declare profile_manager=false
-declare rsync=false
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
+use Getopt::Long;
 
-        -i|--private-instance)
-            private_instance=$2
-            shift 2
+Getopt::Long::Configure("posix_default");
 
-            ;;
-        -p|--profile-manager|--no-profile-manager)
-            if test "$1" = --no-profile-manager; then
-                profile_manager=false
-            else
-                profile_manager=true
-            fi
-            shift
 
-            ;;
-        -r|--rsync|--no-rsync)
-            if test "$1" = --no-rsync; then
-                rsync=false
-            else
-                rsync=true
-            fi
-            shift
 
-            ;;
-        -h|--help)
-            set +x
-            echo -e
-            echo
-            echo Options and arguments:
-            printf %06s '-i, '
-            printf %-24s '--private-instance=PRIVATE_INSTANCE'
-            echo
-            printf %06s '-p, '
-            printf %-24s '--[no-]profile-manager'
-            echo
-            printf %06s '-r, '
-            printf %-24s '--[no-]rsync'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
+my $private_instance = 1;
+my $profile_manager = 0;
+my $rsync = 0;
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--private-instance=PRIVATE-INSTANCE';
+    if (length('--private-instance=PRIVATE-INSTANCE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--[no]profile-manager';
+    if (length('--[no]profile-manager') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--[no]rsync';
+    if (length('--[no]rsync') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'private-instance|i=s' => \$private_instance,
+    'profile-manager|p!' => \$profile_manager,
+    'rsync|r!' => \$rsync,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
 
-private_dir=~/.cache/private-firefox-${private_instance}
-mkdir -p ${private_dir} ${private_dir}/.cache/system-config/logs/ ${private_dir}/external
+my $private_home_dir = "$ENV{HOME}/.cache/private-firefox-${private_instance}";
+my $home_dir = "$ENV{HOME}";
+chdir "${home_dir}/.mozilla/firefox"
+    or die "Can't change dir to firefox settings dir";
 
-if test ! -d ${private_dir}/.mozilla -o "$rsync" = true; then
-    rsync ~/.mozilla ${private_dir} -av --delete
-    rsync ~/external/firefox ${private_dir}/external -av --delete
-    rsync ~/.local-config/etc/firefox-icons/ ${private_dir}/external/firefox/browser/chrome/icons/default -av
-fi
-rsync ~/.local-config/etc/firefox-icons/ ${private_dir}/external/firefox/browser/chrome/icons/default -av
-export HOME=${private_dir}
+use File::Path qw(make_path remove_tree);
+my @created = make_path("${private_home_dir}");
 
-PATH=~/external/firefox:$PATH
+my $private_profile_name = "private${private_instance}";
+my $private_profile_dir = "${private_profile_name}.firefox/";
+my $private_firefox_dir = "${private_home_dir}/firefox";
 
-. nobrew --
 
-cd $HOME
-dbus_pid=$(get-pid-env -p dbus.daemon -e "^HOME=$PWD" | pn 1 | head -n 1)
-if test "$dbus_pid"; then
-    dbus_env=$(
-        get-pid-env -p $dbus_pid -e "^DBUS_SESSION_BUS_ADDRESS=" | pn 2
-            )
-    bhj-notify dbus "Got dbus $dbus_env from $dbus_pid"
-else
-    dbus_env=$(
-        dbus-launch > /tmp/private-firefox.$$
-        cat /tmp/private-firefox.$$
-        rm -f /tmp/private-firefox.$$
-            )
-    bhj-notify dbus "No running dbus!"
-fi
+my $profile_ini = Config::IniFiles->new( -file => "profiles.ini" );
 
-if test "$dbus_env"; then
-    eval "$dbus_env"
-fi
-export DBUS_SESSION_BUS_ADDRESS
+my $default_section;
+my $private_section;
 
-if test $# != 0; then
-    log running $* in $HOME
-    "$@"
-    exit
-fi
+for my $section ($profile_ini->Sections) {
+    $default_section = $section if $profile_ini->val($section, "Default") == 1;
+    $private_section = $section if $profile_ini->val($section, "Path") eq "$private_profile_dir";
+}
 
-for pid in $(
-                sawfish-client -e "$(
-cat <<'EOF9cacf490bebf'
-; {%sawfish-mode%}
-(mapcar
- (lambda (w)
-   (let ((class (bhj-window-class w)))
-     (when (or (string-equal class "Firefox")
-               (string-equal class "Firefox-esr"))
-       (window-pid w))))
- (managed-windows))
-; {%/sawfish-mode%}
-EOF9cacf490bebf
+die "Can't find default section" unless $default_section;
 
-)" | tr -d '()' | tr ' ' '\n' | sort -u
+my $default_profile_dir = $profile_ini->val($default_section, "Path");
+die "Can't find default profile dir" unless -d $default_profile_dir;
 
-            ); do
-    log "checking $pid"
-    if [[ $pid =~ ^[0-9]+$ ]] && cat /proc/$pid/environ|tr '\0' '\n' | grep "^HOME=${private_dir}" -q; then
-        wanted_pid=$pid
-        log "We want to activate $wanted_pid"
-        sawfish-client -e "$(
-cat <<'EOFd56e460f1481' | . .replace-%% --
-; {%sawfish-mode%}
-(let ((first nil))
-  (mapc
-   (lambda (w)
-     (when (and (not first)
-                (= (window-pid w) [%wanted-pid%]))
-       (bhj-activate-window w)
-       (setq first t)))
-   (managed-windows)))
-; {%/sawfish-mode%}
-EOFd56e460f1481
+if (not $private_section) {
+    for ( 0..100 ) {
+        if (not $profile_ini->exists("Profile$_")) {
+            $profile_ini->AddSection ( "Profile$_" );
+            $private_section = "Profile$_";
+            # [Profile3]
+            # Name=firefox-57
+            # IsRelative=1
+            # Path=neaao4ee.firefox-57
 
-)"
-        exit
-    fi
-done
+            $profile_ini->setval("${private_section}", "Path", "${private_profile_dir}");
+            $profile_ini->setval("${private_section}", "Name", $private_profile_name);
+            $profile_ini->setval("${private_section}", "IsRelative", 1);
+            last;
+        }
+    }
+}
 
-(
-    ibus-daemon -x -d
-    sleep 3
-    if test "${profile_manager}" = true; then
-        firefox --ProfileManager -new-instance
-    else
-        firefox -new-instance
-    fi
-)&
+if (! -d $private_profile_dir || ! -d $private_firefox_dir || "$rsync") {
+    system("rsync", "$default_profile_dir", "$default_profile_dir", "-av", "--delete");
+    system("rsync ~/external/firefox ${private_home_dir} -av --delete");
+    system("rsync ~/.local-config/etc/firefox-icons/ ${private_firefox_dir}/browser/chrome/icons/default -av");
+}
+
+$ENV{THE_FIREFOX} = "${private_firefox_dir}/firefox";
+
+my $args = join(" ", shell_quote(@ARGV));
+system("nohup firefox -P ${private_profile_name} $args &>/dev/null &");
