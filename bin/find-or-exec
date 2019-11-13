@@ -94,7 +94,7 @@ if ! is-sawfish || test "${process_pattern}"; then
             if [[ ${class,,} =~ ${to_match,,} ]]; then
                 if test "${process_pattern}"; then
                     pid=$(sawfish-client -e "(window-pid (get-window-by-id $wid))")
-                    if ! cat /proc/$pid/cmdline | tr '\0' ' ' | grep -P "$process_pattern"; then
+                    if ! (ls -l /proc/$pid/exe; cat /proc/$pid/cmdline) | tr '\0' ' ' | grep -P "$process_pattern"; then
                         continue
                     fi
                 fi

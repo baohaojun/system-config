@@ -473,7 +473,13 @@ use Getopt::Long;
 my $handler_help = sub {
     <%output-help%>
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_) {
+       $exit_value = shift @_;
+       print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (

@@ -178,6 +178,7 @@ sub my_select($) {
       my @matches;
       my %matches;
 
+      $ans =~ s,\., ,g;
 
     my @matchers = split(" ", $ans);
     my %matchers;

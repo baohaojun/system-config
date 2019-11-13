@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+declare -A admin_pages=(
+    [screens]=${scm_jira_url}secure/admin/ViewFieldScreens.jspa
+    [dynamic-forms]=${scm_jira_url}secure/admin/DFConfiguration.jspa
+)
+
+which_page=$(
+    select-args -p "which admin page do you want?" "${!admin_pages[@]}"
+          )
+
+firefox ${admin_pages[$which_page]}

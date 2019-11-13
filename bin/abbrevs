@@ -70,7 +70,7 @@ fi
 
 get-abbrev-file() {
     local abbrev=$1
-    EMACS=t select-output-line -i "${abbrev}" -o find "${config_dirs[@]}" -iname "*$(set -- $abbrev; echo -n $1)*" \( -type f -o -type l \) || true
+    EMACS=t select-output-line -i "${abbrev}" -o find "${config_dirs[@]}" -iname "*$(set -- ${abbrev//./\ }; echo -n $1)*" \( -type f -o -type l \) || true
 }
 
 if test "${abbrev}" = '?'; then

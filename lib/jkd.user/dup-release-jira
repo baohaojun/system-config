@@ -5,12 +5,14 @@ set -e
 # generate-getopt -P i:old-issue '?"The old jira issue to copy from"' \
     # @:old-jira-url='${scm_jira_url}' '?"The jira url for the old issue, default is \$scm_jira_url"' \
     # r:replace-regexp '?"默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"' \
-    # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14500 = 1.0.0"'
+    # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14500 = 1.0.0"' \
+    # @:force-prod
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o j:i:r:h \
-                      --long jq-expression:,old-issue:,old-jira-url:,replace-regexp:,help \
+                      --long force-prod:,jq-expression:,old-issue:,old-jira-url:,replace-regexp:,help \
                       -n $(basename -- $0) -- "$@")
+declare force_prod=
 declare jq_expression=.
 declare old_issue=
 declare old_jira_url=${scm_jira_url}
@@ -19,6 +21,11 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --force-prod)
+            force_prod=$2
+            shift 2
+
+            ;;
         -j|--jq-expression)
             jq_expression=$2
             shift 2
@@ -44,6 +51,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--force-prod=FORCE_PROD'
+            echo
             printf %06s '-j, '
             printf %-24s '--jq-expression=JQ_EXPRESSION'
             echo
@@ -79,7 +89,7 @@ done
 ## end generated code
 
 
-if test "${scm_jira_url}" != "${scm_jira_test_url}"; then
+if test "${scm_jira_url}" != "${scm_jira_test_url}" -a "${force_prod}" != yes; then
     die "Can only run in test jira"
 fi
 
@@ -102,3 +112,5 @@ jkd tri -i $jira_key --fields-json "${old_json}"
 jkd tri -i $jira_key --fields-json "${old_json}"
 
 echo "jira_key is $jira_key"
+
+firefox "${scm_jira_url}browse/${jira_key}"

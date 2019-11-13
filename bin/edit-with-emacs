@@ -3,22 +3,33 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P @ejwo '?"edit jira with org-mode"'
+# generate-getopt -P @jira '?"edit jira with org-mode"' \
+    # @html '?"edit html with org-mode"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
-                      --long ejwo,help,no-ejwo \
+                      --long html,jira,help,no-html,no-jira \
                       -n $(basename -- $0) -- "$@")
-declare ejwo=false
+declare html=false
+declare jira=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --ejwo|--no-ejwo)
-            if test "$1" = --no-ejwo; then
-                ejwo=false
+        --html|--no-html)
+            if test "$1" = --no-html; then
+                html=false
             else
-                ejwo=true
+                html=true
+            fi
+            shift
+
+            ;;
+        --jira|--no-jira)
+            if test "$1" = --no-jira; then
+                jira=false
+            else
+                jira=true
             fi
             shift
 
@@ -29,7 +40,10 @@ while true; do
             echo
             echo Options and arguments:
             printf "%06s" " "
-            printf %-24s '--[no-]ejwo'
+            printf %-24s '--[no-]html'
+            echo "edit html with org-mode"
+            printf "%06s" " "
+            printf %-24s '--[no-]jira'
             echo "edit jira with org-mode"
             exit
             shift
@@ -68,8 +82,10 @@ else
         sawfish-events-delayed .1 "C-c"
     fi
     getclip > $next_file
-    if test "${ejwo}" = true; then
+    if test "${jira}" = true; then
         cat $next_file | ejwo | tee-with-tmp $next_file
+    elif test "${html}" = true; then
+        cat $next_file | ok ehwo | tee-with-tmp $next_file
     else
         ew $next_file
     fi

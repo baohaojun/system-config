@@ -1,0 +1,80 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+
+use Encode;
+use JSON;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P n:name d:description t:type
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $description = "";
+my $name = "";
+my $type = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--description=DESCRIPTION';
+    if (length('--description=DESCRIPTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--name=NAME';
+    if (length('--name=NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-t, ';
+    printf "%-24s", '--type=TYPE';
+    if (length('--type=TYPE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'description|d=s' => \$description,
+    'name|n=s' => \$name,
+    'type|t=s' => \$type,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $type_map = {
+    'string' => 'com.atlassian.jira.plugin.system.customfieldtypes:textfield',
+    'textarea' => 'com.atlassian.jira.plugin.system.customfieldtypes:textarea',
+};
+
+if (not $type_map->{$type}) {
+    die "Must specify type as one of (the currently supported): " . join(" ", keys %$type_map);
+}
+
+my $json_obj = {
+    name => decode_utf8($name),
+    description => decode_utf8($description),
+    "type" => decode_utf8($type_map->{$type}),
+};
+
+use autodie qw(:all);
+
+system("jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
