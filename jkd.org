@@ -27,7 +27,11 @@ This is simple using Perl's “reflection”.
             $lib_command = "$ENV{scm_common_libdir}/$lib_command";
 
             if (-x $lib_command) {
-                exit system("$lib_command", @ARGV);
+                do {
+                    use autodie qw(:all);
+                    system("$lib_command", @ARGV);
+                    exit;
+                }
             }
         }
 
@@ -198,6 +202,8 @@ This is simple using Perl's “reflection”.
       &$handler_help(1)
   }
 
+  $ENV{scm_jira_user} = $jkd_username; # for lib scripts
+
   if (not $jkd_username) {
       $jkd_username = $secret_conf->{"jkd.username"};
   }
@@ -357,7 +363,7 @@ This is simple using Perl's “reflection”.
       die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content)
           if ($response->code < 200 or $response->code >= 300);
 
-      say $response->content;
+      say $response->content if $jkd_verbose;
 
       return $response;
   }
