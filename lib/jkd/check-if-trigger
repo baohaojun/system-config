@@ -1,0 +1,132 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+use JSON;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P i:issue f:field-name v:field-value @debug
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $debug = 0;
+my $field_name = "";
+my $field_value = "";
+my $issue = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]debug';
+    if (length('--[no]debug') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--field-name=FIELD-NAME';
+    if (length('--field-name=FIELD-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--field-value=FIELD-VALUE';
+    if (length('--field-value=FIELD-VALUE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issue=ISSUE';
+    if (length('--issue=ISSUE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'debug!' => \$debug,
+    'field-name|f=s' => \$field_name,
+    'field-value|v=s' => \$field_value,
+    'issue|i=s' => \$issue,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use Encode;
+
+$field_name = decode_utf8($field_name);
+$field_value = decode_utf8($field_value);
+
+my $json_issue = decode_json(qx(jkd get 'rest/api/2/issue/${issue}/?expand=changelog'));
+
+my $changelog_time;
+
+for my $changelog (@{$json_issue->{changelog}{histories}}) {
+    for my $item (@{$changelog->{items}}) {
+        if ($item->{field} eq ${field_name} && $item->{toString} eq ${field_value}) {
+            $changelog_time = $changelog->{created};
+        }
+    }
+}
+
+my $build_msg_prefix = "$ENV{JOB_NAME} building for change: $field_name = $field_value \@${changelog_time}";
+
+my $comments_pattern = qr(\Q${build_msg_prefix}\E);
+
+for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
+    my $msg = $comment->{body};
+    if ($msg =~ m,$comments_pattern,) {
+        say STDERR encode_utf8 "There is already a build building it: $msg";
+        exit 1;
+    }
+}
+
+my $build_msg = "${build_msg_prefix}: $ENV{BUILD_URL}";
+
+system("jkd", "comment", "-i", "$issue", "-c", "${build_msg}");
+
+$json_issue = decode_json(qx(jkd get 'rest/api/2/issue/${issue}/?expand=changelog'));
+
+say STDERR JSON->new->allow_nonref->utf8->pretty->encode($json_issue) if $debug;
+
+for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
+    my $msg = $comment->{body};
+    say STDERR encode_utf8 "checking $msg against $comments_pattern" if $debug;
+
+    if ($msg =~ m,$comments_pattern,) {
+        if ($msg eq $build_msg) {
+            say STDERR "Yes! We are the first one to add comment, we win!";
+            exit 0
+        } else {
+            say STDERR "There is already a build building it: $msg";
+            exit 1;
+        }
+    }
+}
+
+say STDERR "This should not happen, please check the log!";
+
+exit 1

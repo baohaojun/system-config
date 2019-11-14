@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+if test -z "${scm_jira_password}"; then
+    scm_jira_password=$(
+        git config -f ${scm_secrets_conf} ldap.${scm_jira_user}.password
+                     )
+fi
+
+curl -f --user "${scm_jira_user}:${scm_jira_password}" "$@"

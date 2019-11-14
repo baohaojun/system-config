@@ -6,12 +6,14 @@ set -e
     # @:old-jira-url='${scm_jira_url}' '?"The jira url for the old issue, default is \$scm_jira_url"' \
     # r:replace-regexp '?"默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"' \
     # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14500 = 1.0.0"' \
-    # @:force-prod
+    # @:force-prod \
+    # @debug='("" hint-run)'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o j:i:r:h \
-                      --long force-prod:,jq-expression:,old-issue:,old-jira-url:,replace-regexp:,help \
+                      --long debug,force-prod:,jq-expression:,old-issue:,old-jira-url:,replace-regexp:,help,no-debug \
                       -n $(basename -- $0) -- "$@")
+declare debug=
 declare force_prod=
 declare jq_expression=.
 declare old_issue=
@@ -21,6 +23,15 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=
+            else
+                debug=hint-run
+            fi
+            shift
+
+            ;;
         --force-prod)
             force_prod=$2
             shift 2
@@ -51,6 +62,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]debug'
+            echo
             printf "%06s" " "
             printf %-24s '--force-prod=FORCE_PROD'
             echo
@@ -101,15 +115,18 @@ old_json=$(
     jkd -j ${old_jira_url} print-issue -i ${old_issue} --json --for-clone|jq "${jq_expression}" | perl -pe "${replace_regexp}"
         )
 jira_key=$(
-    jkd c -p EF -t "【智能与系统-车机】版本发布 Workflow" \
+    $debug jkd c -p EF -t "【智能与系统-车机】版本发布 Workflow" \
         --fields-json "${old_json}" |
         tee /dev/stderr |
         perl -ne 'print if s,POST response code:201result:,,' | jq .key -r
-         )
+        )
+if test -z "${jira_key}"; then
+    die "Can't create jira issue"
+fi
 
-jkd tri -i $jira_key --fields-json "${old_json}" -t "【系统部】发布需求符合要求"
-jkd tri -i $jira_key --fields-json "${old_json}"
-jkd tri -i $jira_key --fields-json "${old_json}"
+$debug jkd tri -i $jira_key --fields-json "${old_json}" -t "【系统部】发布需求符合要求"
+$debug jkd tri -i $jira_key --fields-json "${old_json}"
+$debug jkd tri -i $jira_key --fields-json "${old_json}"
 
 echo "jira_key is $jira_key"
 

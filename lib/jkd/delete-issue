@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P i:issue
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o i:h \
+                      --long issue:,help \
+                      -n $(basename -- $0) -- "$@")
+declare issue=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--issue)
+            issue=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--issue=ISSUE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+jkd curl -X DELETE ${scm_jira_url}rest/api/2/issue/${issue}

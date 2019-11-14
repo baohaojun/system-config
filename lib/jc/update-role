@@ -2,7 +2,7 @@
 use strict;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl t:role-type n:role-name p:role-projects-pattern g:add-group='()' '?"如需添加多个，允许多次指定此参数"'
+# generate-getopt -s perl t:role-type='"projectRoles"' '?"配置哪种类型的 role：one of globalRoles, projectRoles(default), slaveRoles"' n:role-name p:role-projects-pattern g:add-group='()' '?"如需添加多个，允许多次指定此参数"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -14,7 +14,7 @@ Getopt::Long::Configure("default");
 my @add_group = ();
 my $role_name = "";
 my $role_projects_pattern = "";
-my $role_type = "";
+my $role_type = "projectRoles";
 
 my $handler_help = sub {
     print ;
@@ -45,14 +45,20 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '-t, ';
     printf "%-24s", '--role-type=ROLE-TYPE';
-    if (length('--role-type=ROLE-TYPE') > 24 and length() > 0) {
+    if (length('--role-type=ROLE-TYPE') > 24 and length("配置哪种类型的 role：one of globalRoles, projectRoles(default), slaveRoles") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "配置哪种类型的 role：one of globalRoles, projectRoles(default), slaveRoles";
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (

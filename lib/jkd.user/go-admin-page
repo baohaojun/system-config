@@ -2,12 +2,13 @@
 set -e
 
 declare -A admin_pages=(
-    [screens]=${scm_jira_url}secure/admin/ViewFieldScreens.jspa
-    [dynamic-forms]=${scm_jira_url}secure/admin/DFConfiguration.jspa
+    [screens]=secure/admin/ViewFieldScreens.jspa
+    [dynamic-forms]=secure/admin/DFConfiguration.jspa
+    [webhooks]=plugins/servlet/webhooks
 )
 
 which_page=$(
     select-args -p "which admin page do you want?" "${!admin_pages[@]}"
           )
 
-firefox ${admin_pages[$which_page]}
+firefox ${scm_jira_url}${admin_pages[$which_page]}

@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P n:field-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o n:h \
+                      --long field-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare field_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -n|--field-name)
+            field_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %06s '-n, '
+            printf %-24s '--field-name=FIELD_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+field=$(
+    jkd get rest/api/2/field/|jq .
+     )
