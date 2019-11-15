@@ -18,6 +18,17 @@ fi
 if test $# = 1 && test "$1" = -h -o "$1" = --help; then
     true
 else
-    find-or-exec -p "${the_firefox}" firefox true
+    if find-or-exec -e -p "${the_firefox}" firefox true; then
+        if  test "$#" = 0; then
+            exit
+        fi
+    else
+        $the_firefox ${FIREFOX_PROFILE_ARG}
+        sawfish-window wait-for-window find-or-exec -e -p "${the_firefox}" firefox true
+    fi
 fi
-exec $the_firefox ${FIREFOX_PROFILE_ARG} "$@"
+
+$the_firefox ${FIREFOX_PROFILE_ARG} "$@"
+if echo " $*" | grep -e ' -new-tab'; then
+    sawfish-send-focused-window-event "M-1" "C-Prior"
+fi

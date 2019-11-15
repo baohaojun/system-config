@@ -220,7 +220,6 @@
  '(
    ("Super-m"          "Emacs" "emacs.bhj")
    ("v"                "adjust-volume" "adjust-volume")
-   ("Super-n"          "iceweasel|firefox|chromium|google-chrome" "firefox --new-window")
    ("Super-t"          (lambda (w) (and
                                (string-match "konsole|gnome-terminal|xterm|lxterminal|xfce4-terminal" (bhj-window-class w) 0 t)
                                (not (string= "emacs" (window-name w))))) "konsole.bhj")
@@ -230,6 +229,9 @@
    ("Super-x" "xcalc" "xcalc")
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/system-config/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
+
+(bind-keys s-h-keymap "Super-n" '(system "find-or-exec -p $HOME/external/firefox\\|chromium firefox firefox&"))
+(bind-keys s-h-keymap "Super-b" '(system "find-or-exec -p \"$HOME/.cache/private-firefox.*/firefox\" firefox private-firefox&"))
 
 ;; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-both-global&window-keymaps "Super-Button3-Click" '(system "EMACS=t SAWFISH_CLICK=t s&"))

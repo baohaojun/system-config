@@ -88,12 +88,54 @@ case "$1" in
         ;;
 esac
 
-if ! is-sawfish || test "${process_pattern}"; then
-    wmctrl -l -x|(
-        while read wid desktop class user name; do
+if is-sawfish; then
+    is_sawfish=true
+else
+    is_sawfish=false
+fi
+
+if test "${is_sawfish}" = false -o "${process_pattern}"; then
+    wmctrl -l -p -x |
+        if test "${is_sawfish}" = true; then
+            # sort them in the stacking order
+            perl -e "$(
+cat <<'EOFf8df153f3112'
+# {%perl-mode%}
+my @list_windows = <>;
+
+my %wid_line_map;
+
+for (@list_windows) {
+    (my $wid = $_) =~ s,\s.*,,;
+    $wid = hex($wid);
+    $wid_line_map{$wid} = $_;
+}
+# (#<window 1c00004> #<window 2e0000f>)
+my $sawfish_output = qx(sawfish-client  -e '(stacking-order)');
+
+my %stacking_map;
+
+my $n = 0;
+
+while ($sawfish_output =~ m/#<window (.*?)>/g) {
+    my $wid = hex("0x$1");
+    $stacking_map{$wid} = ++$n;
+}
+
+for (sort {$stacking_map{$a} <=> $stacking_map{$b} }keys %wid_line_map) {
+    print $wid_line_map{$_};
+}
+# {%/perl-mode%}
+EOFf8df153f3112
+
+)"
+        else
+            cat
+        fi | tee ~/tmp/find-or-exec.list |
+        (
+        while read wid desktop pid class user name; do
             if [[ ${class,,} =~ ${to_match,,} ]]; then
-                if test "${process_pattern}"; then
-                    pid=$(sawfish-client -e "(window-pid (get-window-by-id $wid))")
+                if test $pid != 0 -a "${process_pattern}"; then
                     if ! (ls -l /proc/$pid/exe; cat /proc/$pid/cmdline) | tr '\0' ' ' | grep -P "$process_pattern"; then
                         continue
                     fi

@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-exec >& ~/tmp/go.log
-
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P j:job-name
 ## end code-generator

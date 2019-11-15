@@ -65,16 +65,13 @@ done
 top_window=$(sawfish-top-window)
 top_window_id=$(sawfish-client -e '(window-id (input-focus))')
 
-next_file=~/src/github/edit-with-emacs/$(get-next-file -p "emacs-edit-%d.org")
+mkdir -p ~/tmp/edit-with-emacs
+
+next_file=~/tmp/edit-with-emacs/$(get-next-file -p "emacs-edit-%d.org")
 
 if test "$top_window" = QtCreator; then
     exec sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
 else
-    (
-        cd ~/src/github/edit-with-emacs
-        git add .
-        git commit -m "auto commit at $(now)" >/dev/null 2>&1 || true
-    )
     if test "$1" = region; then
         sawfish-events-delayed .1 "C-c"
     else

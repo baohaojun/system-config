@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+pid=$(
+    ~/system-config/lib/sawfish/get-top-window-pid
+   )
+get-pid-env -p $pid -e "$1" | perl -pe 's,^\d+ .*?=,,'

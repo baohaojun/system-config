@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+sawfish-client -e '(window-pid (car (stacking-order)))'

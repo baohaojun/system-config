@@ -76,7 +76,21 @@ if test $# != 2; then
 fi
 
 if test "$special" = true; then
-    sawfish-start-special --special-tag help --start-program firefox --window-class firefox
+    function firefox() {
+        private-firefox -- "$@"
+    }
+
+    if ! find-or-exec -e -p ~/.cache/private-firefox-1/firefox/firefox firefox true; then
+        found_private_firefox=false
+        private-firefox&
+        if sawfish-window wait-for-window find-or-exec -e -p ~/.cache/private-firefox-1/firefox/firefox firefox true; then
+           found_private_firefox=true
+        fi
+
+        if test "${found_private_firefox}" != true; then
+            bhj-notify "Can't get private firefox"
+        fi
+    fi
 fi
 
 if test "$#" = 1; then
@@ -149,9 +163,5 @@ fi
 if test -e "$url"; then
     url=file://$(readlink -f "$url")
 fi
-if test -z "${new_tab}" -a "${special}" = true; then
-    putclip "$url"
-    sawfish-browser-input "C-l" "S-Insert" "RET"
-else
-    firefox $new_tab "$url"
-fi
+
+firefox $new_tab "$url"

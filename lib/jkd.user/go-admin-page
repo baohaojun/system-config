@@ -5,10 +5,32 @@ declare -A admin_pages=(
     [screens]=secure/admin/ViewFieldScreens.jspa
     [dynamic-forms]=secure/admin/DFConfiguration.jspa
     [webhooks]=plugins/servlet/webhooks
+    [project]=plugins/servlet/project-config/'$(get-project-key)'/summary
+    [custom-fields]=secure/admin/ViewCustomFields.jspa
 )
+
+if ! is-tty-io; then
+    original_url=$(get-firefox-tab-url)
+    scm_jira_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
+
+    FIREFOX_PROFILE_ARG=$(sawfish-window get-top-window-env '^FIREFOX_PROFILE_ARG=' || true)
+    export THE_FIREFOX=$(sawfish-window get-top-window-env '^THE_FIREFOX=' || true)
+fi
+
 
 which_page=$(
     select-args -p "which admin page do you want?" "${!admin_pages[@]}"
           )
 
-firefox ${scm_jira_url}${admin_pages[$which_page]}
+path=${admin_pages[$which_page]}
+
+get-project-key() {
+    jkd get rest/api/2/project|jq '.[]|.key + " : " + .name' -r |
+        select-output-line -p "Which project?" cat | pn 1
+}
+
+if [[ $path =~ \$\( ]]; then
+    eval path=$path
+fi
+
+firefox ${FIREFOX_PROFILE_ARG} ${scm_jira_url}${path}

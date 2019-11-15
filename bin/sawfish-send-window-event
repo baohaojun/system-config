@@ -1,6 +1,13 @@
 #!/bin/bash
 
 if test $(basename $0) = sawfish-send-focused-window-event; then
+    if test $# -gt 1; then
+        for k in "$@"; do
+            sawfish-send-focused-window-event "$k"
+            sleep .1
+        done
+        exit
+    fi
     script=$(cat <<EOF
 (progn
   $(for x in "$@"; do
@@ -8,6 +15,7 @@ if test $(basename $0) = sawfish-send-focused-window-event; then
     done))
 EOF
           )
+
 else
     script=$(cat <<EOF
 (catch 'TAG

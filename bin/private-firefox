@@ -116,4 +116,5 @@ if (! -d $private_profile_dir || ! -d $private_firefox_dir || "$rsync") {
 $ENV{THE_FIREFOX} = "${private_firefox_dir}/firefox";
 
 my $args = join(" ", shell_quote(@ARGV));
-system("nohup firefox -P ${private_profile_name} $args &>/dev/null &");
+$ENV{FIREFOX_PROFILE_ARG} = "-P ${private_profile_name}";
+system("nohup firefox $args &>/dev/null &");

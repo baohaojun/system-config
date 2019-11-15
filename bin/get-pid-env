@@ -69,7 +69,7 @@ if test -d /proc/$pid_or_regexp/; then
     )
     true
 else
-    process=(
+    processes=(
         $(
             ps.pl "$pid_or_regexp !select-output-line" | pn 1
         )
@@ -82,7 +82,7 @@ else
     sudo=
 fi
 
-for p in "${process[@]}"; do
+for p in "${processes[@]}"; do
     if test "$p" = $$; then
         continue
     fi
