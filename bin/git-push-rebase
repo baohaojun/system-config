@@ -197,16 +197,16 @@ else
 fi
 EOF
            )
-        git submodule foreach bash -c "$cmd" 2>&1 |
+        git submodule foreach bash -c "($cmd) 2>&1 | tee .git/git-push-rebase.log" 2>&1 |
         tee /dev/stderr |
         grep "^hello.*failed$"
     )
 then
-    echo "$PWD failed: $output"
+    myscr -n "GitPush" bash -c "hint GitPush failed: $output; bash"
     exit -1
 else
     true
-fi
+fi&
 
 function get-tags()
 {
