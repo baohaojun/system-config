@@ -435,4 +435,7 @@ if test $(pwd) = ~/system-config; then
     ) >/dev/null 2>&1&
 fi
 
+log "Waiting for all submodules to end"
+
+wait
 exit 0;
