@@ -1,4 +1,68 @@
 #!/bin/bash
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P @start-ss @:password @:port
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long password:,port:,start-ss,help,no-start-ss \
+                      -n $(basename -- $0) -- "$@")
+declare password=
+declare port=
+declare start_ss=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --password)
+            password=$2
+            shift 2
+
+            ;;
+        --port)
+            port=$2
+            shift 2
+
+            ;;
+        --start-ss|--no-start-ss)
+            if test "$1" = --no-start-ss; then
+                start_ss=false
+            else
+                start_ss=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--password=PASSWORD'
+            echo
+            printf "%06s" " "
+            printf %-24s '--port=PORT'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]start-ss'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
 if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
     echo need install rc.local service 1>&2
     cat <<EOF | tee /etc/systemd/system/rc-local.service
@@ -29,3 +93,11 @@ EOF
     systemctl enable rc-local.service
     systemctl start rc-local.service
 fi
+
+if test "${start_ss}" = true; then
+    cat >> /etc/rc.local <<EOF
+#!/bin/bash
+
+cd /root
+nohup ssserver -k "${password}" -p "${port}"&
+EOF
