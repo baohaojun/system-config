@@ -23,7 +23,7 @@
 (bind-both-global&window-keymaps "XF86Forward" '(system "netease-music forward&"))
 (bind-both-global&window-keymaps "KP_Enter" '(system "emacsclient -e '(with-current-buffer (window-buffer (selected-window))(netease-music-jump-into))'&"))
 
-(bind-both-global&window-keymaps "F1" '(system "qtcreator-edit-with-emacs&"))
+(bind-both-global&window-keymaps "F1" '(system "edit-with-emacs&"))
 (bind-both-global&window-keymaps "F2" '(system "sawfish-xf86search&"))
 (bind-both-global&window-keymaps "F3" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
 (bind-both-global&window-keymaps "F4" '(system "EMACS=t do-capture&"))
@@ -34,3 +34,13 @@
 (bind-both-global&window-keymaps "F9" '(system "wrench-show-notifications.sh&"))
 (bind-both-global&window-keymaps "F10" '(system "sawfish-window-custom-menu&"))
 (bind-both-global&window-keymaps "Menu" '(system "am dvp&"))
+(bind-both-global&window-keymaps
+ "Super-KP_Begin"
+ '(progn
+    (mapc (lambda (w) (set-window-depth w 0))
+          (managed-windows))
+    (raise-window (input-focus))))
+(bind-both-global&window-keymaps "Super-KP_Up" '(progn
+                                                  (raise-window-depth (input-focus))
+                                                  (raise-window (input-focus))))
+(bind-both-global&window-keymaps "Super-KP_Down" '(lower-window-depth (input-focus)))

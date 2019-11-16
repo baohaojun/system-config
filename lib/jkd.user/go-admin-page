@@ -7,6 +7,8 @@ declare -A admin_pages=(
     [webhooks]=plugins/servlet/webhooks
     [project]=plugins/servlet/project-config/'$(get-project-key)'/summary
     [custom-fields]=secure/admin/ViewCustomFields.jspa
+    [create-issue]=projects/'$(get-project-key)'
+    ["field-config(optional/required)"]=secure/admin/ViewFieldLayouts.jspa
 )
 
 if ! is-tty-io; then
@@ -19,8 +21,9 @@ fi
 
 
 which_page=$(
-    select-args -p "which admin page do you want?" "${!admin_pages[@]}"
+    select-args -i "$1" -p "which admin page do you want?" "${!admin_pages[@]}"
           )
+shift
 
 path=${admin_pages[$which_page]}
 

@@ -91,7 +91,9 @@ die "Can't find default profile dir" unless -d $default_profile_dir;
 
 if (not $private_section) {
     for ( 0..100 ) {
-        if (not $profile_ini->exists("Profile$_")) {
+        if (not $profile_ini->SectionExists("Profile$_")) {
+            say STDERR "Adding section: Profile$_";
+
             $profile_ini->AddSection ( "Profile$_" );
             $private_section = "Profile$_";
             # [Profile3]
@@ -99,18 +101,19 @@ if (not $private_section) {
             # IsRelative=1
             # Path=neaao4ee.firefox-57
 
-            $profile_ini->setval("${private_section}", "Path", "${private_profile_dir}");
-            $profile_ini->setval("${private_section}", "Name", $private_profile_name);
-            $profile_ini->setval("${private_section}", "IsRelative", 1);
+            $profile_ini->newval("${private_section}", "Path", "${private_profile_dir}");
+            $profile_ini->newval("${private_section}", "Name", $private_profile_name);
+            $profile_ini->newval("${private_section}", "IsRelative", 1);
+            $profile_ini->RewriteConfig();
             last;
         }
     }
 }
 
 if (! -d $private_profile_dir || ! -d $private_firefox_dir || "$rsync") {
-    system("rsync", "$default_profile_dir", "$default_profile_dir", "-av", "--delete");
-    system("rsync ~/external/firefox ${private_home_dir} -av --delete");
-    system("rsync ~/.local-config/etc/firefox-icons/ ${private_firefox_dir}/browser/chrome/icons/default -av");
+    system("debug-run", "rsync", "$default_profile_dir/", "$private_profile_dir", "-a", "--delete");
+    system("debug-run rsync ~/external/firefox ${private_home_dir} -a --delete");
+    system("debug-run rsync ~/.local-config/etc/firefox-icons.${private_instance}/ ${private_firefox_dir}/browser/chrome/icons/default -a");
 }
 
 $ENV{THE_FIREFOX} = "${private_firefox_dir}/firefox";

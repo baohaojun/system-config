@@ -87,7 +87,11 @@
   (defvar bhj-prompt-max-display 20
     "Maximum number of completions to display under the input string.")
 
-  (defvar bhj-prompt-word-regexp "[0-9a-z_]"
+  (defvar bhj-prompt-word-regexp "[0-9a-z]"
+    "Regexp that determines which characters are to be considered part
+of a word when moving.")
+
+  (defvar bhj-prompt-non-word-regexp "[^0-9a-z]"
     "Regexp that determines which characters are to be considered part
 of a word when moving.")
 
@@ -233,45 +237,41 @@ displayed. See the `display-message' function for more details.")
            (setq bhj-prompt-position new-pos)
            (bhj-prompt-update-display))))
 
-  (defun bhj-prompt-forward-word ()
+  (defun bhj-prompt-forward-word (&optional no-update-display)
     "Move to next non-word character."
-    (setq bhj-prompt-position (1+ bhj-prompt-position))
-    (while (and (< bhj-prompt-position (length bhj-prompt-result))
-                (string-looking-at bhj-prompt-word-regexp
-                                   bhj-prompt-result bhj-prompt-position t))
-      (setq bhj-prompt-position (1+ bhj-prompt-position)))
-    (setq bhj-prompt-position (min bhj-prompt-position
-                                   (length bhj-prompt-result)))
-    (bhj-prompt-update-display))
+    (if (string-looking-at "[^a-z0-9]*[a-z0-9]+" bhj-prompt-result bhj-prompt-position t)
+        (setq bhj-prompt-position (match-end 0))
+      (setq bhj-prompt-position (length bhj-prompt-result)))
+    (unless no-update-display
+      (bhj-prompt-update-display)))
 
-  (defun bhj-prompt-backward-word ()
+  (defun bhj-prompt-backward-word (&optional no-update-display)
     "Move to previous non-word character."
     (setq bhj-prompt-position (1- bhj-prompt-position))
     (while (and (> bhj-prompt-position 0)
-                (string-looking-at "\\s"
+                (string-looking-at bhj-prompt-non-word-regexp
                                    bhj-prompt-result bhj-prompt-position t))
       (setq bhj-prompt-position (1- bhj-prompt-position)))
-    (while (and (> bhj-prompt-position 0)
+    (while (and (>= bhj-prompt-position 0)
                 (string-looking-at bhj-prompt-word-regexp
                                    bhj-prompt-result bhj-prompt-position t))
       (setq bhj-prompt-position (1- bhj-prompt-position)))
-    (setq bhj-prompt-position (max bhj-prompt-position 0))
-    (bhj-prompt-update-display))
+    (setq bhj-prompt-position (max (1+ bhj-prompt-position) 0))
+    (unless no-update-display
+      (bhj-prompt-update-display)))
 
   (defun bhj-prompt-backward-kill-word ()
-    (bhj-prompt-backward-word)
-    (bhj-prompt-kill-word))
+    (let ((old-bhj-prompt-position bhj-prompt-position))
+      (bhj-prompt-backward-word t)
+      (setq bhj-prompt-result (concat (substring bhj-prompt-result 0 bhj-prompt-position)
+                                      (substring bhj-prompt-result old-bhj-prompt-position (length bhj-prompt-result))))
+      (bhj-prompt-update-display)
+      (throw 'bhj-prompt-esc-exit nil)))
 
   (defun bhj-prompt-kill-word ()
     "Kill the next word."
     (let ((old-bhj-prompt-position bhj-prompt-position))
-      (setq bhj-prompt-position (1+ bhj-prompt-position))
-      (while (and (< bhj-prompt-position (length bhj-prompt-result))
-                  (string-looking-at bhj-prompt-word-regexp
-                                     bhj-prompt-result bhj-prompt-position t))
-        (setq bhj-prompt-position (1+ bhj-prompt-position)))
-      (setq bhj-prompt-position (min bhj-prompt-position
-                                     (length bhj-prompt-result)))
+      (bhj-prompt-forward-word t)
       (setq bhj-prompt-result (concat (substring bhj-prompt-result 0 old-bhj-prompt-position)
                                       (substring bhj-prompt-result bhj-prompt-position (length bhj-prompt-result)))
             bhj-prompt-position old-bhj-prompt-position)

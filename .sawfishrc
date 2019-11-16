@@ -231,7 +231,8 @@
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/system-config/bin/myscr")))
 
 (bind-keys s-h-keymap "Super-n" '(system "find-or-exec -p $HOME/external/firefox\\|chromium firefox firefox&"))
-(bind-keys s-h-keymap "Super-b" '(system "find-or-exec -p \"$HOME/.cache/private-firefox.*/firefox\" firefox private-firefox&"))
+(bind-keys s-h-keymap "Super-b" '(system "find-or-exec -p \"$HOME/.cache/private-firefox-1/firefox\" firefox private-firefox&"))
+(bind-keys s-h-keymap "Super-B" '(system "find-or-exec -p \"$HOME/.cache/private-firefox-2/firefox\" firefox private-firefox&"))
 
 ;; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-both-global&window-keymaps "Super-Button3-Click" '(system "EMACS=t SAWFISH_CLICK=t s&"))
@@ -927,7 +928,7 @@ EOF856ceee4ab57
     (xdo-event (car events) (input-focus))
     (setq events (cdr events))))
 
-(bind-keys s-h-keymap "F1" '(system "qtcreator-edit-with-emacs&"))
+(bind-keys s-h-keymap "F1" '(system "ewe&"))
 (bind-keys s-h-keymap "F2" '(system "sawfish-xf86search&"))
 (bind-keys s-h-keymap "F3" '(synthesize-multiple-events "C-x" "C-s" "C-x" "#"))
 (bind-keys s-h-keymap "F4" '(system "EMACS=t do-capture&"))

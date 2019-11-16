@@ -46,6 +46,9 @@ done
 original_url=$(get-firefox-tab-url)
 jenkins_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
 
+export FIREFOX_PROFILE_ARG=$(sawfish-window get-top-window-env '^FIREFOX_PROFILE_ARG=' || true)
+export THE_FIREFOX=$(sawfish-window get-top-window-env '^THE_FIREFOX=' || true)
+
 if test "${job_name}"; then
     url=${jenkins_url}job/${job_name}
     exec of $url
@@ -56,18 +59,21 @@ declare -A function_url_map
 function_url_map["Configure System"]=configure
 function_url_map["Manage Jenkins"]=manage
 function_url_map["Manage Plugins"]=pluginManager/
-function_url_map["Gerrit Trigger in Jenkins"]=yyy
+function_url_map["Gerrit Trigger this change"]=yyy
+function_url_map["Config Gerrit Trigger"]=gerrit-trigger/
 function_url_map["select-a-job"]=xxx
 
 export EMACS=t
 
 which_func=$(
-    select-args -o -p "Which function do you want?" "${!function_url_map[@]}"
-     )
+    select-args -i "$1" -o -p "Which function do you want?" "${!function_url_map[@]}"
+          )
+
+shift
 
 if test "${which_func}" = select-a-job; then
     jobs=$(jc -j ${jenkins_url} list-jobs)
-    job=$(select-args -o -p "Which job do you want?" $jobs)
+    job=$(select-args -i "$1" -o -p "Which job do you want?" $jobs)
 
     url=job/${job}
 elif test "${which_func}" = "Gerrit Trigger in Jenkins"; then
@@ -86,6 +92,4 @@ else
     url=${function_url_map["${which_func}"]}
 fi
 
-bhj-notify go ${jenkins_url}${url}
-
-of ${jenkins_url}${url}
+firefox ${jenkins_url}${url}

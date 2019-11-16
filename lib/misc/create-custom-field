@@ -64,6 +64,7 @@ my $type_map = {
     'string' => 'com.atlassian.jira.plugin.system.customfieldtypes:textfield',
     'textarea' => 'com.atlassian.jira.plugin.system.customfieldtypes:textarea',
     'dyn-radio' => 'com.intenso.jira.plugin.dynamic-forms:dynamic-radiobutton-customfield',
+    'multi-check' => 'com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes',
 };
 
 if (not $type_map->{$type}) {
