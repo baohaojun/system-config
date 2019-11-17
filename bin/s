@@ -20,8 +20,7 @@ if test $# = 1 -a "$1" = '' || test $# = 0; then
     if sawfish-top-window |grep -qi kindle.exe; then
         set -- $(getclip |
                      # print except the last line
-                     perl -ne 'print $line_2; $line_2 = $line_1; $line_1 = $_;' |
-                     tr -d ' '
+                     perl -ne 'print $line_2; $line_2 = $line_1; $line_1 = $_;'
             )
     else
         set -- "$(xclip -o)"
