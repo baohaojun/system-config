@@ -797,78 +797,14 @@ This is simple using Perl's “reflection”.
 
   use File::Slurp;
 
-  sub org_markdown_convert(@) {
-      ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l @:text @:from @:to
-      ## end code-generator
-      ## start generated code
-      use Getopt::Long;
-
-      Getopt::Long::Configure("default");
-
-      local @ARGV = @_;
-
-      my $from = "";
-      my $text = "";
-      my $to = "";
-
-      my $handler_help = sub {
-          print ;
-          print "\n\n选项和参数：\n";
-          printf "%6s", '';
-          printf "%-24s", '--from=FROM';
-          if (length('--from=FROM') > 24 and length() > 0) {
-              print "\n";
-              printf "%30s", "";
-          }
-          printf "%s", ;
-          print "\n";
-          printf "%6s", '';
-          printf "%-24s", '--text=TEXT';
-          if (length('--text=TEXT') > 24 and length() > 0) {
-              print "\n";
-              printf "%30s", "";
-          }
-          printf "%s", ;
-          print "\n";
-          printf "%6s", '';
-          printf "%-24s", '--to=TO';
-          if (length('--to=TO') > 24 and length() > 0) {
-              print "\n";
-              printf "%30s", "";
-          }
-          printf "%s", ;
-          print "\n";
-
-          exit(0);
-      };
-
-      GetOptions (
-          'from=s' => \$from,
-          'text=s' => \$text,
-          'to=s' => \$to,
-          'help|h!' => \&$handler_help,
-          );
-
-
-      ## end generated code
-      if (not $text) {
-          return "";
-      }
-
-      chomp(my $tmp_file = qx(mktemp));
-      write_file($tmp_file, $text);
-      my $res = qx(pandoc -f $from -t $to $tmp_file);
-      unlink($tmp_file);
-      return $res;
+  sub org_to_jira($) {
+      my $text = shell_quote($_[0]);
+      return qx(ejwo --o2j --text $text </dev/null);
   }
 
-  sub org_to_markdown($) {
-      return org_markdown_convert("--from", "org", "--to", "markdown", "--text", $_[0]);
-  }
-
-  sub markdown_to_org($) {
-      return org_markdown_convert("--to", "org", "--from", "markdown", "--text", $_[0]);
+  sub jira_to_org($) {
+      my $text = shell_quote($_[0]);
+      return qx(ejwo --j2o --text $text </dev/null);
   }
 
   sub work_with_all_fields($$\%$) {
@@ -938,14 +874,25 @@ This is simple using Perl's “reflection”.
 
 
                       if ($schema_type eq 'string') {
+                          my $init_text = encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
+                          if ($field_key eq "description") {
+                              say STDERR "special treatment for description";
+                              $init_text = jira_to_org $init_text;
+                            }
+
                           my @command = (
                               "ask-for-input-with-emacs", "-p", sprintf("Please input the %s (field key: %s)", $field_name, $field_key),
-                              "--init-text", markdown_to_org encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "")
+                              "--init-text", $init_text
                               );
                           my $command = join(" ", shell_quote(@command));
-                          say "command is $command";
+                          say STDERR "command is $command";
 
-                          $required_fields->{$field_key} = decode_utf8 org_to_markdown qx($command);
+                          my $result_text = qx($command);
+                          if ($field_key eq "description") {
+                              $result_text = org_to_jira $result_text;
+                          }
+
+                          $required_fields->{$field_key} = decode_utf8 $result_text;
                       } elsif ($selection_types{$schema_type}) {
                           my %allowed_values_map;
                           map {
