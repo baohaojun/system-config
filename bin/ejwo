@@ -8,15 +8,19 @@ export tmp_file=~/tmp/ejwo/ejwo-$$
 # generate-getopt -P \
     # ddebug '?"for debug, do not remove tmp files ${tmp_file}\*"' \
     # @tidy-html-for-markdown '?"tidy up html using MOJO::Dom"' \
-    # @o2j '?"convert org text to textile"'
+    # @o2j '?"convert org text to jira"' \
+    # @j2o '?"convert jira to org"' \
+    # @:text '?"The input text, default is read from stdin"'
 
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o dh \
-                      --long debug,o2j,tidy-html-for-markdown,help,no-debug,no-o2j,no-tidy-html-for-markdown \
+                      --long debug,j2o,o2j,text:,tidy-html-for-markdown,help,no-debug,no-j2o,no-o2j,no-tidy-html-for-markdown \
                       -n $(basename -- $0) -- "$@")
 declare debug=false
+declare j2o=false
 declare o2j=false
+declare text=
 declare tidy_html_for_markdown=false
 eval set -- "$TEMP"
 while true; do
@@ -31,6 +35,15 @@ while true; do
             shift
 
             ;;
+        --j2o|--no-j2o)
+            if test "$1" = --no-j2o; then
+                j2o=false
+            else
+                j2o=true
+            fi
+            shift
+
+            ;;
         --o2j|--no-o2j)
             if test "$1" = --no-o2j; then
                 o2j=false
@@ -38,6 +51,11 @@ while true; do
                 o2j=true
             fi
             shift
+
+            ;;
+        --text)
+            text=$2
+            shift 2
 
             ;;
         --tidy-html-for-markdown|--no-tidy-html-for-markdown)
@@ -58,8 +76,14 @@ while true; do
             printf %-24s '--[no-]debug'
             echo "for debug, do not remove tmp files ${tmp_file}\*"
             printf "%06s" " "
+            printf %-24s '--[no-]j2o'
+            echo "convert jira to org"
+            printf "%06s" " "
             printf %-24s '--[no-]o2j'
-            echo "convert org text to textile"
+            echo "convert org text to jira"
+            printf "%06s" " "
+            printf %-24s '--text=TEXT'
+            echo "The input text, default is read from stdin"
             printf "%06s" " "
             printf %-24s '--[no-]tidy-html-for-markdown'
             echo
@@ -124,12 +148,16 @@ fi
 
 exec 3>&1
 
-exec &>/dev/null
+exec &> ~/tmp/ejwo.log
 
 if test "${debug}" != true; then
     . atexit bash -c 'rm -fv ${tmp_file}*'
 fi
 tmp_org=${tmp_file}.org
+
+if test "${text}"; then
+    exec <<<"${text}"
+fi
 
 if test "${o2j}" = true; then
     (
@@ -144,27 +172,32 @@ else
     ) > ${tmp_org}
 fi
 
+if test "${j2o}" = true; then
+    cat ${tmp_org} 1>&3
+    exit
+fi
+
 while true; do
     if test "${do_edit}" = false; then
         do_edit=true # should do edit next time
     else
         ew ${tmp_file}.org
     fi
-    textile_content=$(
+    jira_content=$(
         org2html --cat --bare ${tmp_org} |
             ejwo --tidy-html-for-markdown |
             pandoc --wrap=none -f html -t markdown | perl -pe 's,\Q{.should-remove}\E,,' | m2j.sh | rm-last-nl
                    )
 
     if test "${verbose}" = true; then
-        log "textile_content is '$textile_content'"
+        log "jira_content is '$jira_content'"
     fi
-    if ! [[ $textile_content =~ \</[a-z]+\>$ ]]; then
+    if ! [[ $jira_content =~ \</[a-z]+\>$ ]]; then
         break
     else
-        bhj-notify ue "Can't convert to textile correctly, please edit again: ${textile_content}"
+        bhj-notify ue "Can't convert to jira correctly, please edit again: ${jira_content}"
     fi
 done
 
 
-echo "${textile_content}" 1>&3
+echo "${jira_content}" 1>&3
