@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 
-;; 
+;;
 
 ;; Put this file into your load-path and the following into your ~/.emacs:
 ;;   (require 'pde)
@@ -135,7 +135,7 @@
               (or (assoc-default name pde-buffer-tabbar-label)
                   name)))))
 
-;;;###autoload 
+;;;###autoload
 (defun pde-tabbar-register ()
   "Add tabbar and register current buffer to group Perl."
   (require 'tabbar-x)
@@ -156,7 +156,7 @@
 (defalias 'pde-imenu-tree 'imenu-tree)
 ;;}}}
 
-;;;###autoload 
+;;;###autoload
 (defun pde-ffap-locate (name &optional force)
   "Return cperl module for ffap."
   (let ((mod (perldoc-module-ap)))
@@ -168,7 +168,7 @@
       (setq ffap-string-at-point mod)
       (perldoc-locate-module mod))))
 
-;;;###autoload 
+;;;###autoload
 (defun pde-compilation-buffer-name (mode)
   "Enable running multiple compilations."
   (let (bufs)
@@ -185,7 +185,7 @@
                 (format "<%d>" (length bufs)))
             "*")))
 
-;;;###autoload 
+;;;###autoload
 (defun pde-ido-imenu-completion (index-alist &optional prompt)
   ;; Create a list for this buffer only when needed.
   (let ((name (thing-at-point 'symbol))
@@ -222,7 +222,7 @@
   (let ((tempo-template template))
     (tempo-insert-template 'tempo-template nil)))
 
-;;;###autoload 
+;;;###autoload
 (defun pde-indent-dwim ()
   "Indent the region between paren.
 If region selected, indent the region.
@@ -280,7 +280,7 @@ With prefix argument, reflesh the formated manpage."
           (display-buffer buf))
       (message "No pod found in current buffer"))))
 
-;;;###autoload 
+;;;###autoload
 (defun pde-perl-mode-hook ()
   "Hooks run when enter perl-mode"
   ;; initialize with key binding and so on
@@ -288,7 +288,6 @@ With prefix argument, reflesh the formated manpage."
     (add-hook 'imenu-tree-mode-hook 'pde-imenu-tree-hook)
     (add-to-list 'cperl-style-alist
                  '("PDE"
-                   (cperl-auto-newline                         . t)
                    (cperl-brace-offset                         . 0)
                    (cperl-close-paren-offset                   . -4)
                    (cperl-continued-brace-offset               . 0)
@@ -333,7 +332,7 @@ With prefix argument, reflesh the formated manpage."
       (define-key map "\C-c\C-d" 'perldb-ui))
     (cperl-lazy-install)
     (setq pde-initialized t))
-  
+
   (cperl-set-style "PDE")
   (abbrev-mode t)
   (help-dwim-active-type 'perldoc)
