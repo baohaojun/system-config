@@ -1,4 +1,4 @@
-#+title: Firefox: -new-tab or no -new-tab
+#+title: Firefox: --new-tab or no --new-tab
 # bhj-tags: system-config
 
 When using firefox to repeatedly open similar URLs from the command
@@ -72,7 +72,7 @@ getclip
 
 Here putclip and getclip are both my wrappers around xclip.
 
-Oh, almost forgot: by default, =firefox URL= and =firefox -new-tab
+Oh, almost forgot: by default, =firefox URL= and =firefox --new-tab
 URL= behave the same: both will open URL in a new tab. To make the
 former open URL in the current tab, goto about:config and toggle
 =browser.link.open_newwindow.override.external= to 1.

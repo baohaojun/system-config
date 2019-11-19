@@ -384,7 +384,7 @@
 
    * 2013-07-05
 
-     [[../blog/2013/07/05/0-firefox-smart-new-tab.org][Firefox: -new-tab or no -new-tab]]
+     [[../blog/2013/07/05/0-firefox-smart-new-tab.org][Firefox: --new-tab or no --new-tab]]
 
   - 2013-06
    * 2013-06-18
