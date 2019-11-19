@@ -280,6 +280,10 @@ sub jkd_get(@) {
         $api = $ARGV[0];
     }
 
+    if ($api !~ m,rest/api/,) {
+        ($api = "rest/api/2/$api") =~ s,/+,/,g;
+    }
+
     if (not $api) {
         die "Must specify the api with -a API";
     }
