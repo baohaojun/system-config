@@ -3,17 +3,39 @@ set -e
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt rrecursive
+# generate-getopt rrecursive sis-script d:meta-dir p:project
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o rh \
-               --long recursive,help,no-recursive \
+TEMP=$( getopt -o sd:p:rh \
+               --long is-script,meta-dir:,project:,recursive,help,no-is-script,no-recursive \
                -n $(basename -- $0) -- "$@")
+declare is_script=false
+declare meta_dir=
+declare project=
 declare recursive=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -s|--is-script|--no-is-script)
+            if test "$1" = --no-is-script; then
+                is_script=false
+            else
+                is_script=true
+            fi
+            shift
+
+            ;;
+        -d|--meta-dir)
+            meta_dir=$2
+            shift 2
+
+            ;;
+        -p|--project)
+            project=$2
+            shift 2
+
+            ;;
         -r|--recursive|--no-recursive)
             if test "$1" = --no-recursive; then
                 recursive=false
@@ -28,6 +50,15 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-s, '
+            printf %-24s '--[no-]is-script'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--meta-dir=META_DIR'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo
             printf %06s '-r, '
             printf %-24s '--[no-]recursive'
             echo
@@ -47,25 +78,46 @@ done
 
 ## end generated code
 
-if test $# = 0; then
-    set -- s:$(select-output-line -p "Which project do you want?" ssh-gerrit ls-projects)
+if test "${is_script}" = true; then
+    if test -z "${meta_dir}"; then
+        die "Must specify the meta dir"
+    fi
+
+    if test -z "${project}"; then
+        die "Must specify the project"
+    fi
+else
+    if test -z "${project}"; then
+        if test $# = 0; then
+            set -- s:$(select-output-line -p "Which project do you want?" ssh-gerrit ls-projects)
+        fi
+        project=$1
+    fi
+
+    if test -z "${meta_dir}"; then
+        meta_dir=~/tmp/$project
+    fi
 fi
 
-if test $# != 0; then
-    mkdir -p ~/tmp/$1
-    cd ~/tmp/$1
-    git init .
-    git remote add  origin "$1" >/dev/null 2>&1 || true
-    git config remote.origin.fetch '+refs/meta/config:refs/meta/config'
-    git config remote.origin.push HEAD:refs/meta/config
-fi
+mkdir -p "${meta_dir}"
+cd "${meta_dir}"
+git init .
+git remote add  origin "$project" >/dev/null 2>&1 || true
+git config remote.origin.fetch '+refs/meta/config:refs/meta/config'
+git config remote.origin.push HEAD:refs/meta/config
+
 
 git fetch $(repo-remote) refs/meta/*:refs/meta/*
 git checkout refs/meta/config || git reset --soft refs/meta/config
+
+if test "${is_script}" = true; then
+    exit
+fi
+
 start_recursive_shell update-meta
 
 if test "${recursive}" = true; then
-    if test "$1" = s:All-Projects; then
+    if test "$project" = s:All-Projects; then
         exit
     else
         parent_project=$(git config -f project.config access.inheritFrom)

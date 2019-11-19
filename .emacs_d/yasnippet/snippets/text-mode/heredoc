@@ -3,4 +3,5 @@
 # key: heredoc
 # --
 cat <<'EOF${1:`(shell-command-to-string "random-mac|tr -d :")`}'
+$0
 EOF$1
