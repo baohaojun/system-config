@@ -168,7 +168,7 @@ perl -npe "$(cat <<'EOFf0ea35142ce4'
 while (m,(/home/bhj/src/github/private-config/Wrench-cache|/home/bhj/src/github/Wrench/release/emojis)/.*?.png,g) {
     $png_file = $&;
     unless (-e "$png_file.size") {
-        $size = qx(identify "$png_file" | pn 3);
+        chomp($size = qx(identify "$png_file" | pn 3));
         ($x = $size) =~ s/x.*//;
         ($y = $size) =~ s/.*x//;
         open my $file, ">$png_file.size" or

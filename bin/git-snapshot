@@ -2,6 +2,10 @@
 
 set -e
 
+if git-is-clean -r HEAD; then
+    exit 0
+fi
+
 commit_id=$(git stash create)
 if test -z "${commit_id}"; then
     commit_id=$(
