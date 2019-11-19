@@ -16,19 +16,19 @@ if test "$(gettask-android)" = com.android.browser; then
     adb-wide-tap-2 1031 274
     adb-wide-tap 767 291
 elif test "$(gettask-android)" = com.android.email; then
-    firefox -new-tab "$(getclip-android)"
+    firefox --new-tab "$(getclip-android)"
     exit
 elif test "$(gettask-android)" = com.tencent.mm; then
     adb-tap 990 114
     #adb-tap 666 847
     adb-tap 654 729
     #adb-tap 666 999
-    firefox -new-tab "$(getclip-android)"
+    firefox --new-tab "$(getclip-android)"
     exit
 elif test "$(gettask-android)" = com.tencent.mobileqq; then
     adb-tap 990 114
     adb-tap 367 1486
-    firefox -new-tab "$(getclip-android)"
+    firefox --new-tab "$(getclip-android)"
     exit
 elif test "$(gettask-android)" = com.sina.weibo; then
     if adb-is-activity com.sina.weibo/com.sina.weibo.ProfileInfoActivity; then
@@ -38,7 +38,7 @@ elif test "$(gettask-android)" = com.sina.weibo; then
         adb-tap 990 114
         adb-tap 318 1562
     fi
-    firefox -new-tab "$(getclip-android)"
+    firefox --new-tab "$(getclip-android)"
     exit
 else # firefox?
     adb-swipe 200 300 200 1000
@@ -59,4 +59,4 @@ y=${xy[1]}
 
 # 624 400
 adb-tap $((x + 624 - 355)) $((y + 400 - 302))
-firefox -new-tab "$(getclip-android)"
+firefox --new-tab "$(getclip-android)"

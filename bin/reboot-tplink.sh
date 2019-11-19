@@ -2,7 +2,7 @@
 
 ps-killall gnome-screensaver
 ps-killall firefox
-firefox -new-tab http://admin:$(get-authinfo 192.168.33.8 admin)@192.168.33.8&
+firefox --new-tab http://admin:$(get-authinfo 192.168.33.8 admin)@192.168.33.8&
 
 function send-key() {
     sawfish-browser-input "$1"

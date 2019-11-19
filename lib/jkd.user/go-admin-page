@@ -23,7 +23,7 @@ fi
 which_page=$(
     select-args -i "$1" -p "which admin page do you want?" "${!admin_pages[@]}"
           )
-shift
+shift || true
 
 path=${admin_pages[$which_page]}
 

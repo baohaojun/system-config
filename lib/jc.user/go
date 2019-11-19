@@ -69,7 +69,7 @@ which_func=$(
     select-args -i "$1" -o -p "Which function do you want?" "${!function_url_map[@]}"
           )
 
-shift
+shift || true
 
 if test "${which_func}" = select-a-job; then
     jobs=$(jc -j ${jenkins_url} list-jobs)

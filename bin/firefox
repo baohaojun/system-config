@@ -29,6 +29,6 @@ else
 fi
 
 $the_firefox ${FIREFOX_PROFILE_ARG} "$@"
-if echo " $*" | grep -e ' -new-tab'; then
+if echo " $*" | grep -e ' --new-tab'; then
     sawfish-send-focused-window-event "M-1" "C-Prior"
 fi
