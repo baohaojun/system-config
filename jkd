@@ -849,8 +849,6 @@ sub jkd_print_issue(@) {
 
     Getopt::Long::Configure("default");
 
-
-
     my @fields_to_print = ();
     my $for_clone = 0;
     my $issue = "";

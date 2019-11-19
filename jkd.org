@@ -977,8 +977,6 @@ This is simple using Perl's “reflection”.
 
       Getopt::Long::Configure("default");
 
-
-
       my @fields_to_print = ();
       my $for_clone = 0;
       my $issue = "";
