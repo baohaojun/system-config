@@ -1,0 +1,344 @@
+%!PS-Adobe-3.0
+%%Creator: (ImageMagick)
+%%Title: (private-hiddenglyph.png.ps)
+%%CreationDate: (2019-11-19T09:31:19+08:00)
+%%BoundingBox: -0 -0 48 48
+%%HiResBoundingBox: 0 0 47.9933 48
+%%DocumentData: Clean7Bit
+%%LanguageLevel: 1
+%%Orientation: Portrait
+%%PageOrder: Ascend
+%%Pages: 1
+%%EndComments
+
+%%BeginDefaults
+%%EndDefaults
+
+%%BeginProlog
+%
+% Display a color image.  The image is displayed in color on
+% Postscript viewers or printers that support color, otherwise
+% it is displayed as grayscale.
+%
+/DirectClassPacket
+{
+  %
+  % Get a DirectClass packet.
+  %
+  % Parameters:
+  %   red.
+  %   green.
+  %   blue.
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile color_packet readhexstring pop pop
+  compression 0 eq
+  {
+    /number_pixels 3 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add 3 mul def
+  } ifelse
+  0 3 number_pixels 1 sub
+  {
+    pixels exch color_packet putinterval
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/DirectClassImage
+{
+  %
+  % Display a DirectClass image.
+  %
+  systemdict /colorimage known
+  {
+    columns rows 8
+    [
+      columns 0 0
+      rows neg 0 rows
+    ]
+    { DirectClassPacket } false 3 colorimage
+  }
+  {
+    %
+    % No colorimage operator;  convert to grayscale.
+    %
+    columns rows 8
+    [
+      columns 0 0
+      rows neg 0 rows
+    ]
+    { GrayDirectClassPacket } image
+  } ifelse
+} bind def
+
+/GrayDirectClassPacket
+{
+  %
+  % Get a DirectClass packet;  convert to grayscale.
+  %
+  % Parameters:
+  %   red
+  %   green
+  %   blue
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile color_packet readhexstring pop pop
+  color_packet 0 get 0.299 mul
+  color_packet 1 get 0.587 mul add
+  color_packet 2 get 0.114 mul add
+  cvi
+  /gray_packet exch def
+  compression 0 eq
+  {
+    /number_pixels 1 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add def
+  } ifelse
+  0 1 number_pixels 1 sub
+  {
+    pixels exch gray_packet put
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/GrayPseudoClassPacket
+{
+  %
+  % Get a PseudoClass packet;  convert to grayscale.
+  %
+  % Parameters:
+  %   index: index into the colormap.
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile byte readhexstring pop 0 get
+  /offset exch 3 mul def
+  /color_packet colormap offset 3 getinterval def
+  color_packet 0 get 0.299 mul
+  color_packet 1 get 0.587 mul add
+  color_packet 2 get 0.114 mul add
+  cvi
+  /gray_packet exch def
+  compression 0 eq
+  {
+    /number_pixels 1 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add def
+  } ifelse
+  0 1 number_pixels 1 sub
+  {
+    pixels exch gray_packet put
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/PseudoClassPacket
+{
+  %
+  % Get a PseudoClass packet.
+  %
+  % Parameters:
+  %   index: index into the colormap.
+  %   length: number of pixels minus one of this color (optional).
+  %
+  currentfile byte readhexstring pop 0 get
+  /offset exch 3 mul def
+  /color_packet colormap offset 3 getinterval def
+  compression 0 eq
+  {
+    /number_pixels 3 def
+  }
+  {
+    currentfile byte readhexstring pop 0 get
+    /number_pixels exch 1 add 3 mul def
+  } ifelse
+  0 3 number_pixels 1 sub
+  {
+    pixels exch color_packet putinterval
+  } for
+  pixels 0 number_pixels getinterval
+} bind def
+
+/PseudoClassImage
+{
+  %
+  % Display a PseudoClass image.
+  %
+  % Parameters:
+  %   class: 0-PseudoClass or 1-Grayscale.
+  %
+  currentfile buffer readline pop
+  token pop /class exch def pop
+  class 0 gt
+  {
+    currentfile buffer readline pop
+    token pop /depth exch def pop
+    /grays columns 8 add depth sub depth mul 8 idiv string def
+    columns rows depth
+    [
+      columns 0 0
+      rows neg 0 rows
+    ]
+    { currentfile grays readhexstring pop } image
+  }
+  {
+    %
+    % Parameters:
+    %   colors: number of colors in the colormap.
+    %   colormap: red, green, blue color packets.
+    %
+    currentfile buffer readline pop
+    token pop /colors exch def pop
+    /colors colors 3 mul def
+    /colormap colors string def
+    currentfile colormap readhexstring pop pop
+    systemdict /colorimage known
+    {
+      columns rows 8
+      [
+        columns 0 0
+        rows neg 0 rows
+      ]
+      { PseudoClassPacket } false 3 colorimage
+    }
+    {
+      %
+      % No colorimage operator;  convert to grayscale.
+      %
+      columns rows 8
+      [
+        columns 0 0
+        rows neg 0 rows
+      ]
+      { GrayPseudoClassPacket } image
+    } ifelse
+  } ifelse
+} bind def
+
+/DisplayImage
+{
+  %
+  % Display a DirectClass or PseudoClass image.
+  %
+  % Parameters:
+  %   x & y translation.
+  %   x & y scale.
+  %   label pointsize.
+  %   image label.
+  %   image columns & rows.
+  %   class: 0-DirectClass or 1-PseudoClass.
+  %   compression: 0-none or 1-RunlengthEncoded.
+  %   hex color packets.
+  %
+  gsave
+  /buffer 512 string def
+  /byte 1 string def
+  /color_packet 3 string def
+  /pixels 768 string def
+
+  currentfile buffer readline pop
+  token pop /x exch def
+  token pop /y exch def pop
+  x y translate
+  currentfile buffer readline pop
+  token pop /x exch def
+  token pop /y exch def pop
+  currentfile buffer readline pop
+  token pop /pointsize exch def pop
+  x y scale
+  currentfile buffer readline pop
+  token pop /columns exch def
+  token pop /rows exch def pop
+  currentfile buffer readline pop
+  token pop /class exch def pop
+  currentfile buffer readline pop
+  token pop /compression exch def pop
+  class 0 gt { PseudoClassImage } { DirectClassImage } ifelse
+  grestore
+  showpage
+} bind def
+%%EndProlog
+%%Page:  1 1
+%%PageBoundingBox: 0 0 48 48
+DisplayImage
+0 0
+47.9933 47.9933
+12
+48 48
+1
+1
+1
+8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFF0100010001000001000001010101010101010101010101
+0001010000000101000101010101010000010100010001FFFF0100000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000001FF
+FF0000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000100FFFF0000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000100FFFF010000FF0101FFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF010101FFFF0100FF
+FF010000FF010101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFF00010101FFFF0100FFFF010000FF00010101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFF0100000101FFFF0100FFFF010000FFFF01010100FFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01010100FFFFFFFF0100FF
+FF000000FFFFFF01010000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+01010001FFFFFFFFFF0100FFFF010000FFFFFFFF01010101FFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFF01010101FFFFFFFFFFFF0100FFFF000000FFFFFFFFFF010100
+01FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01010100FFFFFFFFFFFFFF0000FF
+FF010000FFFFFFFFFFFF01010100FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF010101
+00FFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFF01000101FFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFF00010101FFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFFFF
+00000101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00010100FFFFFFFFFFFFFFFFFFFF0100FF
+FF000000FFFFFFFFFFFFFFFFFF01010000FFFFFFFFFFFFFFFFFFFFFFFFFF01010101FFFF
+FFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFFFFFFFF01010000FFFFFFFFFFFF
+FFFFFFFFFF01010101FFFFFFFFFFFFFFFFFFFFFFFF0000FFFF010000FFFFFFFFFFFFFFFF
+FFFFFF01010100FFFFFFFFFFFFFFFFFF01000100FFFFFFFFFFFFFFFFFFFFFFFFFF0100FF
+FF010000FFFFFFFFFFFFFFFFFFFFFFFF01010001FFFFFFFFFFFFFF00010101FFFFFFFFFF
+FFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFFFFFFFFFFFFFF01010100FFFFFF
+FFFF01010101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFFFF
+FFFFFFFFFFFF01010001FFFFFF00010101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FF
+FF010000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01010100FFFF010100FFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01010001
+010100FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFF010000FFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFF00010101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FF
+FF010000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01000101FFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFF0000FFFF010000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01010100
+010100FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFF00010001FFFF010101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0100FF
+FF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF01000101FFFFFF00010101FFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFF0000FFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFF01010001FFFFFF
+FFFF01010000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0100FFFF000000FFFFFFFFFFFFFFFF
+FFFFFFFF00010001FFFFFFFFFFFFFF01010000FFFFFFFFFFFFFFFFFFFFFFFFFFFF0100FF
+FF010000FFFFFFFFFFFFFFFFFFFFFF00010001FFFFFFFFFFFFFFFFFF01010101FFFFFFFF
+FFFFFFFFFFFFFFFFFF0100FFFF000000FFFFFFFFFFFFFFFFFFFF00000100FFFFFFFFFFFF
+FFFFFFFFFF01010001FFFFFFFFFFFFFFFFFFFFFFFF0000FFFF000000FFFFFFFFFFFFFFFF
+FF00010101FFFFFFFFFFFFFFFFFFFFFFFFFF01010101FFFFFFFFFFFFFFFFFFFFFF0100FF
+FF000000FFFFFFFFFFFFFFFF00000001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01000100FF
+FFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFF01010101FFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFF01010100FFFFFFFFFFFFFFFFFF0000FFFF010000FFFFFFFFFFFF0001
+0100FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01010101FFFFFFFFFFFFFFFF0000FF
+FF010000FFFFFFFFFF00010001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0101
+0101FFFFFFFFFFFFFF0100FFFF000000FFFFFFFF01000101FFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFF00010101FFFFFFFFFFFF0100FFFF010000FFFFFF00010100FF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00010001FFFFFFFFFF0000FF
+FF010000FFFF00010101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FF01000000FFFFFFFF0100FFFF010000FF01000001FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFF0000010101FFFF0100FFFF010000FF010000FFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00010101FFFF0100FF
+FF010000FF0101FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFF000000FFFF0100FFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0100FFFF010000FFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0100FF
+FF0101000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000001FFFF0101010101010101000101000100000101010101010000
+0101000001010001000101010100010101000101010101FFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%PageTrailer
+%%Trailer
+%%EOF
