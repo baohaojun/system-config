@@ -58,6 +58,7 @@ map['com.android.contacts/com.android.contacts.activities.ContactSelectionActivi
 map['com.android.contacts/com.android.contacts.activities.DialtactsActivity'] = 'manual-post'
 map['com.android.contacts/com.android.contacts.yellowpage.YellowPageActivity'] = 'manual-post'
 map['com.android.email/com.android.email.activity.setup.AccountSetupBasics'] = 'manual-post'
+map['com.android.email/com.android.email.activity.setup.AccountSetupFinal'] = 'no-post'
 map['com.android.email/com.android.email.activity.setup.AccountSetupInOutServer'] = 'manual-post'
 map['com.android.email/com.android.email.activity.setup.OAuthAuthenticationActivity'] = 'manual-post'
 map['com.android.gallery3d/com.android.gallery3d.app.Gallery'] = 'weixin-chat'
