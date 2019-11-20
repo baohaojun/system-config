@@ -71,7 +71,9 @@ else
     g_url="${gerrit_server_url}${access_point}"
 fi
 
-curl -s -u "${gerrit_user}:${gerrit_web_password}" "$g_url" "$@" |
+set -o pipefail
+
+curl -f -s -u "${gerrit_user}:${gerrit_web_password}" "$g_url" "$@" |
     if test "${raw}" = true; then
         cat
     else

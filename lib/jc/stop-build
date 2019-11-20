@@ -4,15 +4,19 @@ set -e
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt -P j:job-name n:build-number \
         # b:build-url '?"什么也不指定的话，就使用当前的 BUILD_URL"' \
-        # rrebuild @all-builds-and-queues
+        # rrebuild @all-builds-and-queues \
+        # @debug \
+        # @delete
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o n:b:j:rh \
-                      --long all-builds-and-queues,build-number:,build-url:,job-name:,rebuild,help,no-all-builds-and-queues,no-rebuild \
+                      --long all-builds-and-queues,build-number:,build-url:,debug,delete,job-name:,rebuild,help,no-all-builds-and-queues,no-debug,no-delete,no-rebuild \
                       -n $(basename -- $0) -- "$@")
 declare all_builds_and_queues=false
 declare build_number=
 declare build_url=
+declare debug=false
+declare delete=false
 declare job_name=
 declare rebuild=false
 eval set -- "$TEMP"
@@ -36,6 +40,24 @@ while true; do
         -b|--build-url)
             build_url=$2
             shift 2
+
+            ;;
+        --debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
+            shift
+
+            ;;
+        --delete|--no-delete)
+            if test "$1" = --no-delete; then
+                delete=false
+            else
+                delete=true
+            fi
+            shift
 
             ;;
         -j|--job-name)
@@ -65,6 +87,12 @@ while true; do
             echo
             printf %06s '-b, '
             printf %-24s '--build-url=BUILD_URL'
+            echo "什么也不指定的话，就使用当前的 BUILD_URL"
+            printf "%06s" " "
+            printf %-24s '--[no-]debug'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]delete'
             echo
             printf %06s '-j, '
             printf %-24s '--job-name=JOB_NAME'
@@ -121,6 +149,23 @@ elif test -z "${build_url}"; then
     else
         die "Can't decide the build url"
     fi
+fi
+
+if test "${debug}" = true; then
+    log "Stopping build @${build_url}"
+fi
+
+if test "${delete}" = true; then
+    command=$(cat <<EOF
+if test "${debug}" = true; then
+    set -x
+    exec >& ~/tmp/stop-build.log
+fi
+jc curl "${build_url}stop" -X POST
+jc delete-build "${build_url}"
+EOF
+           )
+    smartcm-daemonize bash -c "$command"
 fi
 
 jc curl "${build_url}stop" -X POST

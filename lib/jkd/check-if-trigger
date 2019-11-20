@@ -5,7 +5,7 @@ use autodie qw(:all);
 use JSON;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P i:issue f:field-name v:field-value @debug
+# generate-getopt -s perl -P i:issue f:field-name='"status"' v:field-value @debug
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -15,7 +15,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $debug = 0;
-my $field_name = "";
+my $field_name = "status";
 my $field_value = "";
 my $issue = "";
 
@@ -77,6 +77,10 @@ GetOptions (
 
 use Encode;
 
+if (not $field_name) {
+    die "You must specify the field name!"
+}
+
 $field_name = decode_utf8($field_name);
 $field_value = decode_utf8($field_value);
 
@@ -84,10 +88,16 @@ my $json_issue = decode_json(qx(jkd get 'rest/api/2/issue/${issue}/?expand=chang
 
 my $changelog_time;
 
-for my $changelog (@{$json_issue->{changelog}{histories}}) {
+check_changes:
+for my $changelog (reverse @{$json_issue->{changelog}{histories}}) {
     for my $item (@{$changelog->{items}}) {
-        if ($item->{field} eq ${field_name} && $item->{toString} eq ${field_value}) {
+        if ($item->{field} eq ${field_name} && (
+            $item->{toString} eq ${field_value} ||
+                not ${field_value})
+        ) {
+            $field_value = $item->{toString};
             $changelog_time = $changelog->{created};
+            last check_changes;
         }
     }
 }
