@@ -193,7 +193,7 @@ function do_it() {
 if test "$REMOTEIP" = 127.0.0.1 || test -d blog/ -a -d css/; then
     IS_TTY_IO=true do_it -a
 else
-    do_it&
+    do_it
 fi
 EOF
            )
