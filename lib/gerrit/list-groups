@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+gr rest -a a/groups/ | jq 'keys|.[]' -r

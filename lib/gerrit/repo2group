@@ -1,0 +1,139 @@
+#!/bin/bash
+set -e
+
+comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+给定一个仓库的名字，这个脚本会给出其最合适的权限组的名字。
+
+比如，仓库的名字叫 xx/yy/zz，我们的权限组通过如下规则计算：
+
+for PREFIX in $TRY_PREFIXES; check each of the following:
+
+    $PREFIX-XX-YY-ZZ-$GROUP_TYPE
+    $PREFIX-XX-YY-$GROUP_TYPE
+    $PREFIX-XX-$GROUP_TYPE
+
+其中，TRY_PREFIXES、GROUP_TYPE 是可以设置的参数。
+# {%/org-mode%}
+EOFe9576f8668e0
+           )
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt '?"$comment_doc"' r:repo-project-name \
+    # g:group-type=ADMIN \
+    # @:try-prefixes='${scm_gerrit_repo_group_prefixes:-GRP-}' \
+    # @print-prefix-too=false
+## end code-generator
+## start generated code
+TEMP=$( getopt -o g:r:h \
+               --long group-type:,print-prefix-too,repo-project-name:,try-prefixes:,help,no-print-prefix-too \
+               -n $(basename -- $0) -- "$@")
+declare group_type=ADMIN
+declare print_prefix_too=false
+declare repo_project_name=
+declare try_prefixes=${scm_gerrit_repo_group_prefixes:-GRP-}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -g|--group-type)
+            group_type=$2
+            shift 2
+
+            ;;
+        --print-prefix-too|--no-print-prefix-too)
+            if test "$1" = --no-print-prefix-too; then
+                print_prefix_too=false
+            else
+                print_prefix_too=true
+            fi
+            shift
+
+            ;;
+        -r|--repo-project-name)
+            repo_project_name=$2
+            shift 2
+
+            ;;
+        --try-prefixes)
+            try_prefixes=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "$comment_doc"
+            echo
+            echo Options and arguments:
+            printf %06s '-g, '
+            printf %-24s '--group-type=GROUP_TYPE'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]print-prefix-too'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
+            echo
+            printf "%06s" " "
+            printf %-24s '--try-prefixes=TRY_PREFIXES'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+uc_project=${repo_project_name^^}
+
+try_postfixes=$(
+    echo "${uc_project//\//-}"-${group_type}
+    while true; do
+        uc_project=${uc_project%/*}
+        echo "${uc_project//\//-}"-${group_type}
+        if ! [[ ${uc_project} =~ / ]]; then
+            break
+        fi
+    done
+             )
+
+all_choices=
+
+declare -A choice_info
+for pre in $try_prefixes; do
+    for post in $try_postfixes; do
+        c=$pre$post
+        choice_info[$c-prefix]=$pre
+        choice_info[$c-postfix]=$post
+        all_choices+=" $c"
+    done
+done
+
+declare -A all_groups
+for g in $(gr list-groups); do
+    all_groups[$g]=1
+done
+
+for c in $all_choices; do
+    if test "${all_groups[$c]}"; then
+        if test "${print_prefix_too}" = true; then
+            echo $c ${choice_info[$c-prefix]}
+        else
+            echo $c
+        fi
+        exit 0
+    fi
+done
+
+die "Can't find group for your repo: $repo_project_name"

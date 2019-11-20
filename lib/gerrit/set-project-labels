@@ -1,0 +1,261 @@
+#!/bin/bash
+set -e
+
+default_complete_list_of_labels=(
+    Build-Verified
+    CommitMessage-Verified
+    Jira-Verified
+    Sonar-Verified
+    StaticAnalysis-Verified
+    UT-Verified
+)
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"$0 -p PROJECT [-l COMPLETE-LIST] [ON-LABELS]..."' \
+    # l:complete-list='"${default_complete_list_of_labels[*]}"' \
+    # p:project \
+    # @:sme-group \
+    # @:dev-group \
+    # @debug \
+    # @special-labels=true
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o l:p:h \
+                      --long complete-list:,debug,dev-group:,project:,sme-group:,special-labels,help,no-debug,no-special-labels \
+                      -n $(basename -- $0) -- "$@")
+declare complete_list="${default_complete_list_of_labels[*]}"
+declare debug=false
+declare dev_group=
+declare project=
+declare sme_group=
+declare special_labels=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -l|--complete-list)
+            complete_list=$2
+            shift 2
+
+            ;;
+        --debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
+            shift
+
+            ;;
+        --dev-group)
+            dev_group=$2
+            shift 2
+
+            ;;
+        -p|--project)
+            project=$2
+            shift 2
+
+            ;;
+        --sme-group)
+            sme_group=$2
+            shift 2
+
+            ;;
+        --special-labels|--no-special-labels)
+            if test "$1" = --no-special-labels; then
+                special_labels=false
+            else
+                special_labels=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "$0 -p PROJECT [-l COMPLETE-LIST] [ON-LABELS]..."
+            echo
+            echo Options and arguments:
+            printf %06s '-l, '
+            printf %-24s '--complete-list=COMPLETE_LIST'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]debug'
+            echo
+            printf "%06s" " "
+            printf %-24s '--dev-group=DEV_GROUP'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo
+            printf "%06s" " "
+            printf %-24s '--sme-group=SME_GROUP'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]special-labels'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+declare -A label_config_fragment=(
+    ["CommitMessage-Verified"]=$(
+        cat <<'EOF'
+[label "CommitMessage-Verified"]
+        function = MaxWithBlock
+        value = -1 Issues found
+        value =  0 No score
+        value = +1 Verified
+        defaultValue = 0
+EOF
+                              )
+    ["Build-Verified"]=$(
+        cat <<'EOF'
+[label "Build-Verified"]
+        function = MaxWithBlock
+        value = -1 Issues found
+        value =  0 No score
+        value = +1 Verified
+        defaultValue = 0
+EOF
+                      )
+    ["Jira-Verified"]=$(
+        cat <<'EOF'
+[label "Jira-Verified"]
+        function = MaxWithBlock
+        value = -1 Issues found
+        value =  0 No score
+        value = +1 Verified
+        defaultValue = 0
+EOF
+                     )
+
+    ["UT-Verified"]=$(
+        cat <<'EOF'
+[label "UT-Verified"]
+        function = MaxWithBlock
+        value = -1 Issues found
+        value =  0 No score
+        value = +1 Verified
+        defaultValue = 0
+EOF
+                   )
+    ["Sonar-Verified"]=$(
+        cat <<'EOFa96f33e86757'
+[label "Sonar-Verified"]
+        function = MaxWithBlock
+        value = -1 Issues found
+        value =  0 No score
+        value = +1 Verified
+        defaultValue = 0
+EOFa96f33e86757
+
+                      )
+    ["StaticAnalysis-Verified"]=$(
+        cat <<'EOFd75a2d6802f0'
+[label "StaticAnalysis-Verified"]
+        function = MaxWithBlock
+        value = -1 Issues found
+        value =  0 No score
+        value = +1 Verified
+        defaultValue = 0
+EOFd75a2d6802f0
+                               )
+)
+
+declare -A handled_keys
+
+tmpd=gerrit-set-project-labels.$$
+if test "${debug}" != true; then
+    . atexit rm -rf $tmpd
+fi
+
+gerrit-update-meta -s \
+                   -d $tmpd \
+                   -p ${scm_gerrit_admin_ssh_url}"${project}"
+
+cd $tmpd
+
+allow-group-on-label() {
+    local g=$1
+    local k=$2
+
+    local v=${3:-1}
+
+    if ! git config --get-all -f project.config access.'refs/*'.${k} "^-${v}\.\.\+${v} group $g$"; then
+        git config --add -f project.config access.'refs/*'.${k} \
+            "-${v}..+${v} group ${g}"
+    fi
+}
+
+if test "${special_labels}" = true; then
+   for k in "$@"; do
+       handled_keys[$k]=1
+       if [[ $k =~ ^Code-Review ]]; then
+           continue
+       fi
+
+       git config -f project.config --remove-section label.${k} &>/dev/null || true
+       (
+           echo
+           echo "${label_config_fragment[$k]}"
+       ) >> project.config
+   done
+
+   for k in $complete_list; do
+       if test "${handled_keys[$k]}"; then
+           continue
+       fi
+       git config -f project.config --remove-section label.${k} &>/dev/null || true
+       (
+           cat <<EOFca087349c47c >> project.config
+
+[label "$k"]
+        function = NoOp
+EOFca087349c47c
+       )
+   done
+
+   for k in $complete_list; do
+       for g in Administrators "Non-Interactive Users"; do
+           allow-group-on-label "$g" "label-$k"
+       done
+   done
+fi
+
+if test "${sme_group}"; then
+    allow-group-on-label "${sme_group}" "label-Code-Review" 2
+fi
+
+if test "${dev_group}"; then
+    allow-group-on-label "${dev_group}" "label-Verified" 1
+
+    k=submit
+    g=${dev_group}
+    if ! git config --get-all -f project.config access.'refs/*'.${k} "^group $g$"; then
+        git config --add -f project.config access.'refs/*'.submit \
+            "group ${g}"
+    fi
+fi
+
+gerrit-meta-fix-groups
+
+if test "${debug}" = true; then
+    cat project.config
+fi
+
+git add .
+git commit -m "Update labels: $*" -s
+git push

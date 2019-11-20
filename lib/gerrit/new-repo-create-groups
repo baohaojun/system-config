@@ -1,0 +1,97 @@
+#!/bin/bash
+set -e
+
+comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+给定一个新建的仓库，根据既定的规则：
+
+1. 帮其创建相关的 admin、sme、dev 分组
+2. 给这些分组分配相关的 gerrit 权限
+
+# {%/org-mode%}
+EOFe9576f8668e0
+           )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"$comment_doc"' r:repo-project-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o r:h \
+                      --long repo-project-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare repo_project_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -r|--repo-project-name)
+            repo_project_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "$comment_doc"
+            echo
+            echo Options and arguments:
+            printf %06s '-r, '
+            printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if parent_group_info=$(
+    gr repo2group -r "${repo_project_name}" -g ADMIN --print-prefix-too
+                    ); then
+    parent_group=$(
+        set -- $parent_group_info
+        echo $1
+                )
+    prefix=$(
+        set -- $parent_group_info
+        echo $2
+          )
+
+    parent_prefix=${parent_group%ADMIN}
+
+    new_group_name_mid=${repo_project_name//-/--}
+    new_group_name_prefix=$prefix${new_group_name_mid//\//-}-
+    new_group_name_prefix=${new_group_name_prefix^^}
+
+    declare -A group_contains_relationship=(
+        [SME]=ADMIN
+        [DEV]=SME
+    )
+
+    for t in ADMIN SME DEV; do
+        (
+            for try in $t ADMIN; do
+                if debug-run ssh-gerrit create-group ${new_group_name_prefix}${t} \
+                              --group ${parent_prefix}${try} \
+                              --owner ${parent_group} \
+                              $(if test "${group_contains_relationship[$t]}"; then echo --group ${new_group_name_prefix}${group_contains_relationship[$t]}; fi) \
+                              -d "'$t for ${repo_project_name}'"; then
+                    exit
+                fi
+            done
+            ding --title "Failed to create ${new_group_name_prefix}${t} for ${repo_project_name} " --text "check build log@$BUILD_URL"
+            exit 1
+        )
+    done
+else
+    die "Can't get parent group info"
+fi

@@ -12,30 +12,252 @@ if (not -e "/usr/local/bin/mkbeagrepidx") {
     eval qx(cat ~/src/github/beagrep/.setenv.pl);
 }
 
-my $pat = '';
-my $pathpat = '.';
-my $additional_tokens = $ENV{BEAGREP_ADDITIONAL_TOKENS};
-my $use_tokens = '';
-my $pathdeny = '^$';
-my $pwd = realpath(".");
-my $pwd_opt;
-my $list_beagrep;
-my $short_format = 0;
-my $use_beagrep_for_dir;
-my $use_top_code_dir;
-my $abc_base;
+my @saved_args = @ARGV;
 
-my $ignore_case;
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P \
+# @:entering-dir \
+# @:beagrep-from-dir \
+# @:abc-base \
+# @top-code-dir \
+# a:additional-tokens='$ENV{BEAGREP_ADDITIONAL_TOKENS}' \
+# t:use-tokens \
+# e:regexp-pat \
+# p:path-pat='"."' \
+# @perl-style-regexp \
+# @:grep-additional-opts \
+# v:reverse-path-filter='"^\$"' \
+# d:source-dir \
+# iignore-case \
+# ffind-file-only \
+# llist-beagrep \
+# oonly-grep-myself \
+# sshort-format \
+# @:replace-with \
+# @is-beagrep '?"测试当前目录是否有 beagrep 索引数据"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $abc_base = "";
+my $additional_tokens = $ENV{BEAGREP_ADDITIONAL_TOKENS};
+my $beagrep_from_dir = "";
+my $entering_dir = "";
 my $find_file_only = 0;
+my $grep_additional_opts = "";
+my $ignore_case = 0;
+my $is_beagrep = 0;
+my $list_beagrep = 0;
+my $only_grep_myself = 0;
+my $path_pat = ".";
+my $perl_style_regexp = 0;
+my $regexp_pat = "";
+my $replace_with = "";
+my $reverse_path_filter = "^\$";
+my $short_format = 0;
+my $source_dir = "";
+my $top_code_dir = 0;
+my $use_tokens = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--abc-base=ABC-BASE';
+    if (length('--abc-base=ABC-BASE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--additional-tokens=ADDITIONAL-TOKENS';
+    if (length('--additional-tokens=ADDITIONAL-TOKENS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--beagrep-from-dir=BEAGREP-FROM-DIR';
+    if (length('--beagrep-from-dir=BEAGREP-FROM-DIR') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--entering-dir=ENTERING-DIR';
+    if (length('--entering-dir=ENTERING-DIR') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--[no]find-file-only';
+    if (length('--[no]find-file-only') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--grep-additional-opts=GREP-ADDITIONAL-OPTS';
+    if (length('--grep-additional-opts=GREP-ADDITIONAL-OPTS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--[no]ignore-case';
+    if (length('--[no]ignore-case') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]is-beagrep';
+    if (length('--[no]is-beagrep') > 24 and length("测试当前目录是否有 beagrep 索引数据") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "测试当前目录是否有 beagrep 索引数据";
+    print "\n";
+    printf "%6s", '-l, ';
+    printf "%-24s", '--[no]list-beagrep';
+    if (length('--[no]list-beagrep') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-o, ';
+    printf "%-24s", '--[no]only-grep-myself';
+    if (length('--[no]only-grep-myself') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--path-pat=PATH-PAT';
+    if (length('--path-pat=PATH-PAT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]perl-style-regexp';
+    if (length('--[no]perl-style-regexp') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-e, ';
+    printf "%-24s", '--regexp-pat=REGEXP-PAT';
+    if (length('--regexp-pat=REGEXP-PAT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--replace-with=REPLACE-WITH';
+    if (length('--replace-with=REPLACE-WITH') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--reverse-path-filter=REVERSE-PATH-FILTER';
+    if (length('--reverse-path-filter=REVERSE-PATH-FILTER') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--[no]short-format';
+    if (length('--[no]short-format') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--source-dir=SOURCE-DIR';
+    if (length('--source-dir=SOURCE-DIR') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]top-code-dir';
+    if (length('--[no]top-code-dir') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-t, ';
+    printf "%-24s", '--use-tokens=USE-TOKENS';
+    if (length('--use-tokens=USE-TOKENS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'abc-base=s' => \$abc_base,
+    'additional-tokens|a=s' => \$additional_tokens,
+    'beagrep-from-dir=s' => \$beagrep_from_dir,
+    'entering-dir=s' => \$entering_dir,
+    'find-file-only|f!' => \$find_file_only,
+    'grep-additional-opts=s' => \$grep_additional_opts,
+    'ignore-case|i!' => \$ignore_case,
+    'is-beagrep!' => \$is_beagrep,
+    'list-beagrep|l!' => \$list_beagrep,
+    'only-grep-myself|o!' => \$only_grep_myself,
+    'path-pat|p=s' => \$path_pat,
+    'perl-style-regexp!' => \$perl_style_regexp,
+    'regexp-pat|e=s' => \$regexp_pat,
+    'replace-with=s' => \$replace_with,
+    'reverse-path-filter|v=s' => \$reverse_path_filter,
+    'short-format|s!' => \$short_format,
+    'source-dir|d=s' => \$source_dir,
+    'top-code-dir!' => \$top_code_dir,
+    'use-tokens|t=s' => \$use_tokens,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+my @fallback_dirs;
 my $file_default_line = 1;
 my $file_tag = "";
-my $grep_use_perl_regexp;
-my $replace_with;
-my $entering_dir;
-
-my @saved_args = @ARGV;
-my @fallback_dirs;
-my $only_grep_myself;
 
 open(my $log, ">>", "$ENV{HOME}/.beagrep.log") or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
@@ -47,129 +269,22 @@ sub debug(@) {
     print $debuglog "@_\n";
 }
 
-
-my $grep_add_opts = "";
-GetOptions(
-           "entering-dir=s" => \$entering_dir,
-           "beagrep=s" => \$use_beagrep_for_dir,
-           "abc=s" => \$abc_base,
-           "top=s" => \$use_top_code_dir,
-           "a=s" => \$additional_tokens,
-           "t=s" => \$use_tokens,
-           "e=s" => \$pat,
-           "p=s" => \$pathpat,
-           "perl!" => \$grep_use_perl_regexp,
-           "grep=s" => \$grep_add_opts,
-           "v=s" => \$pathdeny,
-           "d=s" => \$pwd_opt,
-           "i!" => \$ignore_case,
-           "c!" => sub {$ENV{LC_ALL} = "C"},
-           "f!" => \$find_file_only,
-           "l!" => \$list_beagrep,
-           "o!" => \$only_grep_myself,
-           "s!" => \$short_format,
-           "rewrite=s" => \$replace_with,
-          ) or die;
-
-if ($pwd_opt) {
-    $abc_base = "";
-  }
-
-if (not $pat and @ARGV == 1) {
-  $pat = $ARGV[0];
-  shift;
-}
-
-if (@ARGV) {
-  if ($ARGV[0] eq "/dev/null" && scalar(@ARGV) == 1) {
-    shift;
-  } else {
-    die "Don't know how to handle extra args: @ARGV";
-  }
-}
-
-if ($replace_with) {
-    my $char_1 = substr($replace_with, 0, 1);
-    my @parts = split($char_1, $replace_with);
-    my $re = $parts[1];
-    my $with = $parts[2];
-    $pat =~ s/$re/$with/;
-}
-
-if ($ignore_case) {
-  $ignore_case = '-i';
-} else {
-  $ignore_case = '';
-}
-
-if ($grep_use_perl_regexp) {
-    $grep_use_perl_regexp = '-P';
-} else {
-    $grep_use_perl_regexp = '';
-}
-
-
-die 'no regexp specified' unless $pat ne "";
-if ($pwd_opt) {
-  $pwd = realpath $pwd_opt;
+my $pwd = realpath(".");
+if ($source_dir) {
+  $pwd = realpath $source_dir;
 }
 chdir $pwd or die "$pwd: $!";
-
-my $pat_implicit_path = $pat;
-
-if ($find_file_only) {
-  $ENV{FIND_FILE_ONLY} = 1;
-  if ($pat =~ m/:([0-9]+)$/) { #hack for using beagrep in java-bt-mode
-      $file_default_line = $1;
-      $pat = substr($pat, 0, rindex($pat, ':'));
-      if ($pat =~ m/(.*)\(/) {
-          $file_tag = $1;
-          $pat = substr($pat, index($pat, '(') + 1);
-      }
-      $pat_implicit_path = $pat;
-  }
-  $pat =~ s,.*/,,; #beagrep can only find a filename, not a path name.
-  $pat_implicit_path = $pat;
-}
-
-if ($pat_implicit_path =~ m/\(|\)/) {
-    # hack for fixing unexpected error messages when we actually
-    # should not do implicit path matching
-    $pat_implicit_path = "^it can not be a path pat, do not bother!";
-}
-
-$pat = shell_quote($pat);
-debug "pat is: $pat.\n";
-
-# debug "beagrep query argument `[01;31m"
-#   . substr(qx/beagrep-get-tokens $pat/, 0, -1)
-#   . "[0m'\n";
-
-my $beagrep_files_cmd = "beagrep-files -- $use_tokens";
-if (not $use_tokens) {
-    $beagrep_files_cmd = "beagrep-files -- $pat $additional_tokens";
-}
-
-my $beagrep_files_pipe;
-if ($abc_base) {
-    open($beagrep_files_pipe, "-|", "abc-x", "-b", "$abc_base", "abc-files", "$pat $additional_tokens");
-} else {
-    open($beagrep_files_pipe, "-|", $beagrep_files_cmd);
-    debug "pipe cmd is: '$beagrep_files_cmd'"
-}
-
-
 
 my $pwd_save = $pwd;
 my $cache_dir = "$ENV{HOME}/.cache/system-config/for-code-reading";
 my $db_dir = "$cache_dir/$pwd";
-if ($use_beagrep_for_dir) {
-    $use_beagrep_for_dir = realpath $use_beagrep_for_dir;
-    $db_dir = "$cache_dir/$use_beagrep_for_dir";
-    if (not $use_top_code_dir) {
-        die "with -D $use_beagrep_for_dir, you must specify top_code_dir with -T"
+if ($beagrep_from_dir) {
+    $beagrep_from_dir = realpath $beagrep_from_dir;
+    $db_dir = "$cache_dir/$beagrep_from_dir";
+    if (not $top_code_dir) {
+        die "with --beagrep-from-dir $beagrep_from_dir, you must specify top_code_dir with -T"
     } else {
-        $pwd = realpath $use_top_code_dir;
+        $pwd = realpath $top_code_dir;
     }
 }
 while (! -d "$db_dir/.beagrep") {
@@ -189,6 +304,94 @@ while (! -d "$db_dir/.beagrep") {
     debug "change db to $db_dir";
 }
 debug "found beagrep db at $db_dir";
+
+if ($is_beagrep) {
+    exit 0
+}
+
+if ($source_dir) {
+    $abc_base = "";
+  }
+
+if (not $regexp_pat and @ARGV == 1) {
+  $regexp_pat = $ARGV[0];
+  shift;
+}
+
+if (@ARGV) {
+  if ($ARGV[0] eq "/dev/null" && scalar(@ARGV) == 1) {
+    shift;
+  } else {
+    die "Don't know how to handle extra args: @ARGV";
+  }
+}
+
+if ($replace_with) {
+    my $char_1 = substr($replace_with, 0, 1);
+    my @parts = split($char_1, $replace_with);
+    my $re = $parts[1];
+    my $with = $parts[2];
+    $regexp_pat =~ s/$re/$with/;
+}
+
+if ($ignore_case) {
+  $ignore_case = '-i';
+} else {
+  $ignore_case = '';
+}
+
+if ($perl_style_regexp) {
+    $perl_style_regexp = '-P';
+} else {
+    $perl_style_regexp = '';
+}
+
+die 'no regexp specified' unless $regexp_pat ne "";
+
+my $pat_implicit_path = $regexp_pat;
+
+if ($find_file_only) {
+  $ENV{FIND_FILE_ONLY} = 1;
+  if ($regexp_pat =~ m/:([0-9]+)$/) { #hack for using beagrep in java-bt-mode
+      $file_default_line = $1;
+      $regexp_pat = substr($regexp_pat, 0, rindex($regexp_pat, ':'));
+      if ($regexp_pat =~ m/(.*)\(/) {
+          $file_tag = $1;
+          $regexp_pat = substr($regexp_pat, index($regexp_pat, '(') + 1);
+      }
+      $pat_implicit_path = $regexp_pat;
+  }
+  $regexp_pat =~ s,.*/,,; #beagrep can only find a filename, not a path name.
+  $pat_implicit_path = $regexp_pat;
+}
+
+if ($pat_implicit_path =~ m/\(|\)/) {
+    # hack for fixing unexpected error messages when we actually
+    # should not do implicit path matching
+    $pat_implicit_path = "^it can not be a path pat, do not bother!";
+}
+
+$regexp_pat = shell_quote($regexp_pat);
+debug "pat is: $regexp_pat.\n";
+
+# debug "beagrep query argument `[01;31m"
+#   . substr(qx/beagrep-get-tokens $regexp_pat/, 0, -1)
+#   . "[0m'\n";
+
+my $beagrep_files_cmd = "beagrep-files -- $use_tokens";
+if (not $use_tokens) {
+    $beagrep_files_cmd = "beagrep-files -- $regexp_pat $additional_tokens";
+}
+
+my $beagrep_files_pipe;
+if ($abc_base) {
+    open($beagrep_files_pipe, "-|", "abc-x", "-b", "$abc_base", "abc-files", "$regexp_pat $additional_tokens");
+} else {
+    open($beagrep_files_pipe, "-|", $beagrep_files_cmd);
+    debug "pipe cmd is: '$beagrep_files_cmd'"
+}
+
+
 
 @fallback_dirs = glob("$db_dir/.beagrep-fallback.*");
 if (@fallback_dirs) {
@@ -216,15 +419,15 @@ if ($list_beagrep) {
 my @beagrep_files;
 my $grep;
 if (!$find_file_only) {
-    open($grep, "|xargs -d '\\n' -- grep -e $pat -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp|(cut-long-lines||cat)");
+    open($grep, "|xargs -d '\\n' -- grep -e $regexp_pat -H -n -I $ignore_case $grep_additional_opts $perl_style_regexp|(cut-long-lines||cat)");
 }
 
 while (<$beagrep_files_pipe>) {
     chomp;
     $_ = substr($_, $start) if ($short_format and not $abc_base);
     push @beagrep_files, $_;
-    next unless m/$pathpat/i;
-    next if m/$pathdeny/i;
+    next unless m/$path_pat/i;
+    next if m/$reverse_path_filter/i;
     next unless -f $_;
     print $grep "$_\n" unless $find_file_only;
 }
@@ -236,12 +439,12 @@ close $grep unless $find_file_only;
 #see [[http://baohaojun.wordpress.com/2010/05/06/beagrep-grep-sh%E5%8A%9F%E8%83%BD%E5%8F%88%E5%8F%98%E5%BC%BA%E5%A4%A7%E4%BA%86/]] for why
 if ($find_file_only || 1) {
     my %path_match_set;
-    debug "pat_implicit_path is $pat_implicit_path, pathpat is $pathpat";
+    debug "pat_implicit_path is $pat_implicit_path, path_pat is $path_pat";
     for (@beagrep_files) {
-        $path_match_set{$_} = 1 if m/$pat_implicit_path/i and m/$pathpat/i;
+        $path_match_set{$_} = 1 if m/$pat_implicit_path/i and m/$path_pat/i;
         if (not $path_match_set{$_} and -l $_) {
             my $t = readlink($_);
-            $path_match_set{$_} = 2 if $t =~ m/$pat_implicit_path/i and $t =~ m/$pathpat/i;
+            $path_match_set{$_} = 2 if $t =~ m/$pat_implicit_path/i and $t =~ m/$path_pat/i;
         }
 
     }

@@ -148,6 +148,9 @@ done
 ## end generated code
 
 if test -z "${change_files}" -a "${beagrep}" = true; then
+    if ! beagrep --is-beagrep; then
+        die "Beagrep data not found? $PWD"
+    fi
     change_files=$(beagrep -e "$1" --grep -lP | tr : ' '|pn 1)
 fi
 

@@ -58,8 +58,15 @@ done
 
 ## end generated code
 if test -z "${access_point}"; then
-    g_url=$1
-    shift
+    access_point=$1
+fi
+
+if test -z "${access_point}"; then
+    die "Must specify the access ponit!"
+fi
+
+if [[ $access_point =~ :// ]]; then
+    g_url=$access_point
 else
     g_url="${gerrit_server_url}${access_point}"
 fi
