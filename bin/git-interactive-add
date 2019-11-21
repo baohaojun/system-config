@@ -26,12 +26,13 @@ fi
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt r:revision b:review-base sselective-review=true
+# generate-getopt r:revision b:review-base sselective-review=true odups-only '?"只检查重复提交的文件。必须与 REVISION 合用"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o b:r:sh \
-               --long review-base:,revision:,selective-review,help,no-selective-review \
+TEMP=$( getopt -o ob:r:sh \
+               --long dups-only,review-base:,revision:,selective-review,help,no-dups-only,no-selective-review \
                -n $(basename -- $0) -- "$@")
+declare dups_only=false
 declare review_base=
 declare revision=
 declare selective_review=true
@@ -39,13 +40,24 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -o|--dups-only|--no-dups-only)
+            if test "$1" = --no-dups-only; then
+                dups_only=false
+            else
+                dups_only=true
+            fi
+            shift
+
+            ;;
         -b|--review-base)
             review_base=$2
             shift 2
+
             ;;
         -r|--revision)
             revision=$2
             shift 2
+
             ;;
         -s|--selective-review|--no-selective-review)
             if test "$1" = --no-selective-review; then
@@ -54,12 +66,16 @@ while true; do
                 selective_review=true
             fi
             shift
+
             ;;
         -h|--help)
             set +x
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-o, '
+            printf %-24s '--[no-]dups-only'
+            echo "只检查重复提交的文件。必须与 REVISION 合用"
             printf %06s '-b, '
             printf %-24s '--review-base=REVIEW_BASE'
             echo
@@ -89,19 +105,49 @@ if test -e .git-interactive-add.before; then
     bash .git-interactive-add.before
 fi
 
+if test "${dups_only}" = true; then
+    if test -z "${revision}"; then
+        die "Must specify which revision to compare with!"
+    fi
+
+    if ! git-is-clean -r "HEAD"; then
+        die "git not clean!"
+    fi
+
+    if test $# -gt 0; then
+        die "Must not specify any args: $*"
+    fi
+    set -- $(git log --name-only  ${revision}..HEAD --pretty=''|perl -ne 'print if $a{$_}++' |sort -u)
+    if test $# = 0; then
+        echo "Every file has only 1 commit, good!"
+        exit 0
+    fi
+fi
+
 function git-diff() {
     clear
 
     if git status -s "$@" | grep -q -P -e '^\?\?'; then
         if test -f "$1"; then
-            read -e -p "$@ seems to be a new file, press Enter to continue...  "
+            read -e -p "$* seems to be a new file, press Enter to continue...  "
             diff /dev/null "$@" || true
         fi
     else
-        if git diff -w $review_base $revision -- "$@" | grep -q .; then
+        if test "${revision}" && git diff --quiet HEAD -- "$@"; then
+            LESS="RSX" git log -p "${revision}"..HEAD "$@"
+            for rev in $(git log --pretty=%H "${revision}"..HEAD "$@"); do
+                LESS="RSX" git log --name-status -1 $rev
+                if yes-or-no-p -y "show details?"; then
+                    LESS="RSX" git log -p -1 $rev
+                fi
+            done
+            if yes-or-no-p -n "start new shell for $*"?; then
+                start_recursive_shell "$*"
+            fi
+        elif git diff -w $review_base $revision -- "$@" | grep -q .; then
             git diff -w $review_base $revision -- "$@" || true
         else
-            read -e -p "$@ seems contain only whitespace changes, press Enter to continue...  "
+            read -e -p "$* seems contain only whitespace changes, press Enter to continue...  "
         fi
     fi
 }
@@ -110,7 +156,7 @@ function git-meld() {
     clear
 
     if git status -s "$@" | grep -q -P -e '^\?\?'; then
-        read -e -p "$@ seems to be a new file, press Enter to continue...  "
+        read -e -p "$*n seems to be a new file, press Enter to continue...  "
         diff /dev/null "$@"
     else
         git difftool -t meld -y $review_base $revision -- "$@"
@@ -126,14 +172,14 @@ git-interactive-review-1() {
         x=${x%\"}
     fi
     if test -d "$x"; then
-        continue
+        return
     fi
     if test ! -e "$x" && git status -s |grep -P -e "\Q$x\E" | grep "^RM"; then
         x=$(git status -s |grep -P -e "\Q$x\E" | grep "^RM" | perl -npe 's/.*-> //')
     fi
     if test ! -e "$x" && git status -s "$x" | grep -P -e '^ D|^D' && yes-or-no-p "$x removed, remove it from git?"; then
         git rm "$x"
-        continue
+        return
     fi
     git-diff "$x";
 
@@ -145,15 +191,27 @@ git-interactive-review-1() {
     gia_options[meld]="meld    (check the patch with meld)"
     gia_options[delete]="delete  (delete this file)"
     gia_options[edit]="edit    (open it with my editor)"
+
+    declare -a select_args=(
+        "${gia_options[yes]}"
+        "${gia_options[no]}"
+        "${gia_options[discard]}"
+        "${gia_options[diff]}"
+        "${gia_options[meld]}"
+        "${gia_options[delete]}"
+        "${gia_options[edit]}"
+    )
+
+    if test "${revision}"; then
+        gia_options[history]="history   (显示其从 ${revision} 的变更历史)"
+        select_args+=("${gia_options[history]}")
+    fi
+
+
+
     while true; do
         out=$(select-args -p "What do you want to do with this file?" \
-                          "${gia_options[yes]}" \
-                          "${gia_options[no]}" \
-                          "${gia_options[discard]}" \
-                          "${gia_options[diff]}" \
-                          "${gia_options[meld]}" \
-                          "${gia_options[delete]}" \
-                          "${gia_options[edit]}" \
+                          "${select_args[@]}" \
                           "@       $PWD/$x "
            );
         if test "$out" = "${gia_options[diff]}"; then
@@ -169,6 +227,11 @@ git-interactive-review-1() {
         if test "$out" = "${gia_options[delete]}"; then
             rm "$x"
             break
+        fi
+
+        if test "${out}" = "${gia_options[history]}"; then
+            LESS="RSX" git log -p "${revision}"..HEAD "$x"
+            continue
         fi
 
         if test "$out" = "${gia_options[edit]}"; then

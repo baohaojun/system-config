@@ -1,0 +1,89 @@
+#!/bin/bash
+set -e
+
+. aterr bhj-notify "$0" "failed to run $0"
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # r:replace-regexp
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o r:h \
+                      --long replace-regexp:,help \
+                      -n $(basename -- $0) -- "$@")
+declare replace_regexp=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -r|--replace-regexp)
+            replace_regexp=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-r, '
+            printf %-24s '--replace-regexp=REPLACE_REGEXP'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+if ! is-tty-io; then
+    original_url=$(get-firefox-tab-url)
+    export FIREFOX_PROFILE_ARG=$(sawfish-window get-top-window-env '^FIREFOX_PROFILE_ARG=' || true)
+    export THE_FIREFOX=$(sawfish-window get-top-window-env '^THE_FIREFOX=' || true)
+else
+    original_url=$1
+fi
+
+scm_jira_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
+
+if test "${scm_jira_url}" != "${scm_jira_test_url}" -a "${force_prod}" != yes; then
+    die "Can only run in test jira"
+fi
+
+old_issue=$(jkd url2issue -u "$original_url")
+
+if test -z "${old_issue}"; then
+    die "Must specify the old jira issue to copy from, for e.g., EF-251"
+fi
+
+old_json=$(
+    jkd print-issue -i ${old_issue} --json --for-clone | perl -pe "${replace_regexp}"
+        )
+
+issuetype=$(echo "$old_json" | jq ".issuetype.name" -r)
+jira_key=$(
+    $debug jkd c -p EF -t "${issuetype}" \
+        --fields-json "${old_json}" |
+        tee /dev/stderr |
+        perl -ne 'print if s,POST response code:201result:,,' | jq .key -r
+        )
+
+firefox "${scm_jira_url}browse/${jira_key}"

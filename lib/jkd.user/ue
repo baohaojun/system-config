@@ -63,8 +63,10 @@ export EMACS=t
 
 if [[ $jira_url =~ selectedIssue= ]]; then
     issue=$(echo "${jira_url}" | perl -ne 'print $1 if m,selectedIssue=(\w+-\d+),')
-elif [[ $jira_url =~ /browse/ ]]; then
-    issue=$(echo "${jira_url}" | perl -ne 'print $1 if m,/browse/(\w+-\d+),')
+elif [[ $jira_url =~ /browse/|/issues/ ]]; then
+    issue=$(echo "${jira_url}" | perl -ne 'print $1 if m,/(?:browse|issues)/(\w+-\d+),')
+else
+    die "Can't extract the issue from ${jira_url}"
 fi
 
 IFS=$'\n'
@@ -143,7 +145,7 @@ EOF27fdd5364fd8
 
 )"
 )"
-        firefox ${scm_jira_url}/browse/${issue} &>/dev/null&
+        firefox ${scm_jira_url}browse/${issue} &>/dev/null&
     else
         die "can't edit $field"
     fi

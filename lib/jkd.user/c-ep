@@ -1,0 +1,77 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # s:summary \
+    # t:type '?"one of Story,任务,Improvement,Bug,Epic,New Feature,Technical task,WBS,子任务,文档,测试,过程问题,问题跟踪,"' \
+    # d:description
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:s:t:h \
+                      --long description:,summary:,type:,help \
+                      -n $(basename -- $0) -- "$@")
+declare description=
+declare summary=
+declare type=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--description)
+            description=$2
+            shift 2
+
+            ;;
+        -s|--summary)
+            summary=$2
+            shift 2
+
+            ;;
+        -t|--type)
+            type=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--description=DESCRIPTION'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--summary=SUMMARY'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--type=TYPE'
+            echo "one of Story,任务,Improvement,Bug,Epic,New Feature,Technical task,WBS,子任务,文档,测试,过程问题,问题跟踪,"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+jkd c -p EP -t "${type}" --field-value Summary="${summary}" --field-value Description="${description}" 2>&1 | tee ~/tmp/c-ep.log
+
+issue=$(cat ~/tmp/c-ep.log | perl -ne 'print "$1\n" if m,(EP-\d+),')
+firefox --new-tab ${scm_jira_url}browse/$issue

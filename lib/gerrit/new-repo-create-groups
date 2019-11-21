@@ -80,7 +80,7 @@ if parent_group_info=$(
     for t in ADMIN SME DEV; do
         (
             for try in $t ADMIN; do
-                if debug-run ssh-gerrit create-group ${new_group_name_prefix}${t} \
+                if debug-run ssh-gerrit --admin create-group ${new_group_name_prefix}${t} \
                               --group ${parent_prefix}${try} \
                               --owner ${parent_group} \
                               $(if test "${group_contains_relationship[$t]}"; then echo --group ${new_group_name_prefix}${group_contains_relationship[$t]}; fi) \
