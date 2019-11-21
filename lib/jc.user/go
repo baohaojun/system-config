@@ -76,7 +76,7 @@ if test "${which_func}" = select-a-job; then
     job=$(select-args -i "$1" -o -p "Which job do you want?" $jobs)
 
     url=job/${job}
-elif test "${which_func}" = "Gerrit Trigger in Jenkins"; then
+elif test "${which_func}" = "Gerrit Trigger this change"; then
     gerrit_url=$(echo ${original_url} | perl -pe 's,(/c/\d+/?).*,$1,')
     jc gerrit-trigger -s Gerrit -u ${gerrit_url} &> ~/tmp/gerrit-trigger.txt
     build_url=$(
