@@ -396,12 +396,21 @@ fi
 
 (
     set -o pipefail
+
+    function failed-to-push() {
+        bhj-notify git-push-rebase "you need to merge it in $PWD" >/dev/null 2>&1
+        die "you need to merge it!"
+    }
+
+    . aterr failed-to-push
+
     for try in $(seq 1 3); do
         if timeout $((10 * try)) git push $origin HEAD:refs/heads/$branch 2>&1 | tee .git/sc-git-push.log; then
             exit 0
         fi
         if grep 'fetch first|non-fast-forward' -P .git/sc-git-push.log; then
-            git fetch $(repo-remote)
+            timeout 10 git fetch $(repo-remote) ||
+                tsocks1 git fetch $(repo-remote)
             myscr -n push-$(bp) -w '
                 git-interactive-add -b "$(git merge-base $(repo-remote-branch) HEAD)" -r "$(repo-remote-branch)";
                 if yes-or-no-p "Merge?"; then
@@ -416,10 +425,7 @@ fi
 
     done
     tsocks1 git push $origin HEAD:refs/heads/$branch;
-) || {
-    bhj-notify git-push-rebase "you need to merge it in $PWD" >/dev/null 2>&1
-    die "you need to merge it!"
-}
+)
 if test -e .after-push-hook; then
     bash .after-push-hook
 fi
