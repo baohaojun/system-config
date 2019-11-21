@@ -1228,7 +1228,7 @@ sub jkd_c(@) { # create issue
     #     p:project \
     #     t:issue-type '?"指定要创建的 issue 类型，比如 bug、feature、story 等（取决于 project）"' \
     #     @assign-to-myself=1 \
-    #     @:field-value='()' \
+    #     @:field-value='()' '?"可指定多次。格式为简单的 name=value。不支持复杂的数据"' \
     #     @print-schemes \
     #     @:fields-json
     ## end code-generator
@@ -1259,11 +1259,11 @@ sub jkd_c(@) { # create issue
         print "\n";
         printf "%6s", '';
         printf "%-24s", '--field-value=FIELD-VALUE';
-        if (length('--field-value=FIELD-VALUE') > 24 and length() > 0) {
+        if (length('--field-value=FIELD-VALUE') > 24 and length("可指定多次。格式为简单的 name=value。不支持复杂的数据") > 0) {
             print "\n";
             printf "%30s", "";
         }
-        printf "%s", ;
+        printf "%s", "可指定多次。格式为简单的 name=value。不支持复杂的数据";
         print "\n";
         printf "%6s", '';
         printf "%-24s", '--fields-json=FIELDS-JSON';
@@ -1298,7 +1298,13 @@ sub jkd_c(@) { # create issue
         printf "%s", ;
         print "\n";
 
-        exit(0);
+        my $exit_value = 0;
+        if (@_ && $_[0] ne "help" && $_[1] != 1) {
+            $exit_value = shift @_;
+            print "@_\n";
+        }
+
+        exit($exit_value);
     };
 
     GetOptions (
