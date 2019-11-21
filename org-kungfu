@@ -12,6 +12,7 @@ use strict;
 ## end code-generator
 ## start generated code
 use Getopt::Long;
+use File::Slurp;
 
 Getopt::Long::Configure("posix_default");
 
@@ -170,16 +171,7 @@ sub get_page_info($$) {
     my $page_object = decode_json $response->content;
     return $page_object;
 }
-
-sub save_to_file($$) {
-    my ($file, $content) = @_;
-    open(my $f, ">$file")
-        or die "Can't open $file for write";
-    print $f $content;
-    close($f);
-}
-
-sub ok_get1page(@) {
+sub ok_get1page(@) { # download a page's html, save it, test if org needs update.
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -s perl -l -P p:page-id
     ## end code-generator
@@ -236,7 +228,7 @@ sub ok_get1page(@) {
 
     system("git add .; git commit -m 'save to git before download from confluence'");
 
-    save_to_file("content.html", encode_utf8 $page_object->{body}{editor}{value});
+    write_file("content.html", encode_utf8 $page_object->{body}{editor}{value});
 
     my $current_version = 0;
     if (-e "version.txt") {
@@ -245,14 +237,14 @@ sub ok_get1page(@) {
 
     my $need_update_org = 0;
     if ($current_version < $page_object->{version}{number}) {
-        save_to_file("page-id.txt", $page_id);
-        save_to_file("page-title.txt", $page_object->{title});
+        write_file("page-id.txt", $page_id);
+        write_file("page-title.txt", $page_object->{title});
         download_all_attachments($page_id);
         rewrite_html_after_download();
         $need_update_org = 1;
     }
     system("git add .; git commit -m 'save to git after rewrite'");
-    save_to_file("version.txt", $page_object->{version}{number});
+    write_file("version.txt", $page_object->{version}{number});
 
     return $need_update_org;
 }
@@ -267,7 +259,7 @@ sub download_1_file($) {
         return;
     }
     my $response = get($download_path);
-    save_to_file("$filename", $response->content);
+    write_file("$filename", $response->content);
 }
 
 sub download_all_attachments($) {
@@ -284,20 +276,18 @@ sub download_all_attachments($) {
 
 use Mojo::DOM;
 sub rewrite_html_after_download() {
-    open(my $html, "<content.html")
-        or die "Can't open content.html for read";
+    my $html_str = read_file("content.html");
+    write_file("content-after-download.html", $html_str);
 
-    my $html_str = join "", <$html>;
     $html_str = decode_utf8 $html_str;
-    close($html);
-
-    save_to_file("content-after-download.html", $html_str);
 
     my $dom = Mojo::DOM->new($html_str);
+    my $wikiurl_re = qr(\Q${ok_wikiurl}\E);
     $dom->find('img')->each(
         sub {
             my $src = $_->{src};
-            if ($src =~ m,^/download/,) {
+            if ($src =~ m,^(/|${wikiurl_re})download/,) {
+                $src =~ s,^$wikiurl_re,/,;
                 $src =~ s,\?.*,,;
                 if (not -e ".$src") {
                     download_1_file($src);
@@ -306,7 +296,7 @@ sub rewrite_html_after_download() {
                 $_->{src} = $src;
             }
         });
-    save_to_file("content.html", encode_utf8 $dom);
+    write_file("content.html", encode_utf8 $dom);
 }
 
 sub ok_rhfu() {
@@ -314,10 +304,7 @@ sub ok_rhfu() {
 }
 
 sub rewrite_html_for_update() {
-    open(my $html, "<content.html")
-        or die "Can't open content.html for read";
-    my $html_str = join "", <$html>;
-    close($html);
+    my $html_str = read_file("content.html");
 
     $html_str = decode_utf8 $html_str;
     my $dom = Mojo::DOM->new->xml(1)->parse($html_str);
@@ -398,22 +385,12 @@ sub rewrite_html_for_update() {
         )
     }
 
-    save_to_file("content.html", encode_utf8 $dom);
+    write_file("content.html", encode_utf8 $dom);
     System("cp content.html after-fix-img.html");
     if ($ENV{SYSTEM_CONFIG_INITED} eq 'true') {
         System("css-inline content.html | tee-with-tmp content.html");
     }
     System("cp content.html after-css-inline.html");
-}
-
-sub read_file($) {
-    my $file = $_[0];
-    open(my $f, "<$file")
-        or die "Can't open $file for reading";
-
-    my $str = join "", <$f>;
-    close($f);
-    return $str;
 }
 
 sub ok_update1page(@) {
@@ -485,7 +462,7 @@ sub ok_update1page(@) {
     $page_object->{version}{number}++;
     $page_object->{version}{message} = "Edit with org-mode";
 
-    save_to_file("version.txt", $page_object->{version}{number});
+    write_file("version.txt", $page_object->{version}{number});
 
     my $ua = LWP::UserAgent->new;
     my $request = PUT kungfu_url_for_api("rest/api/content/${page_id}"),
@@ -594,11 +571,11 @@ sub ok_erwo(@) { # edit region (comments) with org-mode, requires system-config
 
     my $first_prefix_re = qr(\Q${first_prefix}\E);
     $selected_text =~ s,^$first_prefix_re,,gm;
-    save_to_file("erwo-$$.org", $selected_text);
+    write_file("erwo-$$.org", $selected_text);
     System("emacsclient erwo-$$.org");
     my $edited_text = read_file("erwo-$$.org");
     $edited_text =~ s,^,$first_prefix,gm;
-    save_to_file("erwo-$$.org", $edited_text);
+    write_file("erwo-$$.org", $edited_text);
 
     my $emacs_script = <<~'EOF20924b0d836e';
     ; {%emacs-lisp-mode%}

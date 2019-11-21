@@ -41,6 +41,7 @@ Before you can use this script, you need make sure you have the following Perl p
 - JSON
 - Mojo::DOM
 - URI::Encode
+- File::Slurp
 
 * Known Bugs
 
