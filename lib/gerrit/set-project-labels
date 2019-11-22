@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+unset GIT_PAGER
 default_complete_list_of_labels=(
     Build-Verified
     CommitMessage-Verified
@@ -258,4 +259,4 @@ fi
 
 git add .
 git commit -m "Update labels: $*" -s
-git push
+HOME=/ git push ${scm_gerrit_admin_ssh_url}"${project}" HEAD:refs/meta/config

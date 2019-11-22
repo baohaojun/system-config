@@ -60,9 +60,15 @@ expect "Opt>" {
             send ": EOF'\n";
             if { $js_execute ne {} } {
                 expect -re ": EOF.*\n" {
-                    log_user 1
-                    send "( $js_execute ); echo -n exit; echo 123456;\n";
+                    # log_user 1;
+                    # set -x; export SHELLOPTS;
+                    send "( $js_execute ); echo -n exit; read -p 123456; exit;\n";
+
                     expect {
+                        -re "echo -n exit; read -p 123456" {
+                            log_user 1;
+                            exp_continue;
+                        }
                         -re "exit123456" {
                             log_user 0
                             send "exit\n";

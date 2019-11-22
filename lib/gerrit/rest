@@ -59,6 +59,7 @@ done
 ## end generated code
 if test -z "${access_point}"; then
     access_point=$1
+    shift
 fi
 
 if test -z "${access_point}"; then

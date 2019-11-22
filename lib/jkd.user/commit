@@ -1,0 +1,135 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # u:url i:issue t:type=feature \
+    # m:module=build
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o i:m:t:u:h \
+                      --long issue:,module:,type:,url:,help \
+                      -n $(basename -- $0) -- "$@")
+declare issue=
+declare module=build
+declare type=feature
+declare url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--issue)
+            issue=$2
+            shift 2
+
+            ;;
+        -m|--module)
+            module=$2
+            shift 2
+
+            ;;
+        -t|--type)
+            type=$2
+            shift 2
+
+            ;;
+        -u|--url)
+            url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--issue=ISSUE'
+            echo
+            printf %06s '-m, '
+            printf %-24s '--module=MODULE'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--type=TYPE'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--url=URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "${issue}"; then
+    if test -z "${url}"; then
+        die "Must specify 1 of URL or ISSUE"
+    fi
+    issue=$(
+        jkd url2issue -u "$url"
+         )
+fi
+
+json=$(
+    jkd get issue/${issue}
+    )
+
+summary=$(
+    echo "$json" | jq .fields.summary -r
+       )
+
+case "${type}" in
+    feature|story)
+        msg=$(
+            cat <<EOF
+[${module}:${type}] ${summary,,}
+
+Issue-Id: ${issue}
+
+Signed-off-by: Bao Haojun <baohaojun@lixiang.com>
+EOF
+           )
+        ;;
+    bug)
+
+        msg=$(
+            cat<<EOF
+[${module}:bugfix] ${summary,,}
+
+
+
+DO-NOT-CHERRYPICK
+
+Issue-Id: ${issue}
+Bug-Introduced-Phase: coding
+Root-Cause: refactor
+Resolution-Description: res
+
+Signed-off-by: Bao Haojun <baohaojun@lixiang.com>
+EOF
+           )
+        ;;
+    *)
+        die "Can't handle your commit type: ${type}"
+        ;;
+esac
+
+git commit -m "${msg}" --edit

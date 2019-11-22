@@ -65,31 +65,7 @@ if test -z "${output_file}"; then
 fi
 
 jc get-job "$task" > "${task}.from-jc.xml"
-cp "${task}.from-jc.xml" "$task-$$.xml"
-if [[ "$(cat "$task-$$.xml"|head -n 1)" =~ ^'&lt;?xml' ]]; then
-    bhj-notify "hello" "Got xml entities"
-    perl -e '@x = <>; $x = join("", @x); use XML::Entities; print XML::Entities::decode("all", $x)' "$task-$$.xml" | tee-with-tmp "$task-$$.xml"
-fi
-. atexit rm -f $task-$$.xml
 
-if xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${task}.from-jc.xml" 2>/dev/null); then
-    jc htmlify-xml-tag -t command -f $task-$$.xml --to-mode bash
-fi
+export extra_save
 
-if xmlstarlet sel -T -t -m '//definition[@class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"]/script' -c . "${task}.from-jc.xml" &>/dev/null; then
-    jc htmlify-xml-tag -t script -f $task-$$.xml --to-mode groovy
-fi
-
-jc htmlify-xml-tag -t description -f $task-$$.xml
-
-if test "${extra_save}"; then
-    cp $task-$$.xml "${extra_save}"
-fi
-
-if ! diff -w -B "${output_file}" $task-$$.xml > ${output_file}.diff; then
-    if test -e "${output_file}" -a -s ${output_file}.diff; then
-        EMACS=t hint "$task has difference between local ($output_file) and remote ($task-$$.xml)"
-        meld $output_file $task-$$.xml
-    fi
-    emacs-file-op cat $task-$$.xml '>' "${output_file}"
-fi
+jc normalize-xml -f "${task}.from-jc.xml" -t "${output_file}"
