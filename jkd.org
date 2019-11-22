@@ -222,16 +222,7 @@ This is simple using Perl's “reflection”.
       &$handler_help(1);
   }
 
-  my $jkd_topdir = $secret_conf->{"jkd.topdir"};
-  if (not $jkd_topdir) {
-      $jkd_topdir = glob("~/src/github/jkd-doujyou"); # doujyou is japanese for 道場
-  }
-
   use File::Path;
-  make_path($jkd_topdir);
-  chdir($jkd_topdir)
-      or die "Can't chdir: $jkd_topdir";
-
   use JIRA::REST;
 
   my $jira = JIRA::REST->new({
