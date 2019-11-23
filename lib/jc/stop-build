@@ -174,7 +174,6 @@ if test "${build_url}" = "${BUILD_URL}"; then
     sleep 10 # wait for my self to get killed
 fi
 
-
 if test "${rebuild}" = true; then
     if ! jc rebuild -u "${build_url}"; then
         log should use trigger?
