@@ -1,0 +1,92 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+输入一个 jenkins job 的 xml 文件，将其格式化为统一的格式，方便对比并异。
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # f:from-xml t:to-xml
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:t:h \
+                      --long from-xml:,to-xml:,help \
+                      -n $(basename -- $0) -- "$@")
+declare from_xml=
+declare to_xml=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--from-xml)
+            from_xml=$2
+            shift 2
+
+            ;;
+        -t|--to-xml)
+            to_xml=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--from-xml=FROM_XML'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to-xml=TO_XML'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+
+cp "${from_xml}" "$to_xml-$$.xml"
+if [[ "$(cat "$to_xml-$$.xml"|head -n 1)" =~ ^'&lt;?xml' ]]; then
+    bhj-notify "hello" "Got xml entities"
+    perl -e '@x = <>; $x = join("", @x); use XML::Entities; print XML::Entities::decode("all", $x)' "$to_xml-$$.xml" | tee-with-tmp "$to_xml-$$.xml"
+fi
+. atexit rm -f $to_xml-$$.xml
+
+if xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${from_xml}" 2>/dev/null); then
+    jc htmlify-xml-tag -t command -f $to_xml-$$.xml --to-mode bash
+fi
+
+if xmlstarlet sel -T -t -m '//definition[@class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"]/script' -c . "${from_xml}" &>/dev/null; then
+    jc htmlify-xml-tag -t script -f $to_xml-$$.xml --to-mode groovy
+fi
+
+jc htmlify-xml-tag -t description -f $to_xml-$$.xml
+
+if test "${extra_save}"; then
+    cp $to_xml-$$.xml "${extra_save}"
+fi
+
+if ! diff -w -B "${to_xml}" $to_xml-$$.xml > ${to_xml}.diff; then
+    if test -e "${to_xml}" -a -s ${to_xml}.diff; then
+        EMACS=t hint "$to_xml has difference between local ($to_xml) and remote ($to_xml-$$.xml)"
+        meld $to_xml $to_xml-$$.xml
+    fi
+    emacs-file-op cat $to_xml-$$.xml '>' "${to_xml}"
+fi

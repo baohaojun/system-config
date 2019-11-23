@@ -13,13 +13,15 @@ EOFe9576f8668e0
 # generate-getopt -P '?"${comment_doc}"' \
     # s:summary \
     # t:type '?"one of Story,任务,Improvement,Bug,Epic,New Feature,Technical task,WBS,子任务,文档,测试,过程问题,问题跟踪,"' \
-    # d:description
+    # d:description \
+    # cdo-commit
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o d:s:t:h \
-                      --long description:,summary:,type:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:cs:t:h \
+                      --long description:,do-commit,summary:,type:,help,no-do-commit \
                       -n $(basename -- $0) -- "$@")
 declare description=
+declare do_commit=false
 declare summary=
 declare type=
 eval set -- "$TEMP"
@@ -29,6 +31,15 @@ while true; do
         -d|--description)
             description=$2
             shift 2
+
+            ;;
+        -c|--do-commit|--no-do-commit)
+            if test "$1" = --no-do-commit; then
+                do_commit=false
+            else
+                do_commit=true
+            fi
+            shift
 
             ;;
         -s|--summary)
@@ -48,6 +59,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-d, '
             printf %-24s '--description=DESCRIPTION'
+            echo
+            printf %06s '-c, '
+            printf %-24s '--[no-]do-commit'
             echo
             printf %06s '-s, '
             printf %-24s '--summary=SUMMARY'
@@ -71,7 +85,17 @@ done
 
 ## end generated code
 
+if test -z "${description}"; then
+    description=${summary}
+fi
+
 jkd c -p EP -t "${type}" --field-value Summary="${summary}" --field-value Description="${description}" 2>&1 | tee ~/tmp/c-ep.log
 
 issue=$(cat ~/tmp/c-ep.log | perl -ne 'print "$1\n" if m,(EP-\d+),')
 firefox --new-tab ${scm_jira_url}browse/$issue
+
+putclip ${scm_jira_url}browse/$issue
+
+if test "${do_commit}" = true; then
+    jkd commit -t "${type,,}" -i ${issue}
+fi

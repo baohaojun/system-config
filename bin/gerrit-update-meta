@@ -106,8 +106,14 @@ git remote add  origin "$project" >/dev/null 2>&1 || true
 git config remote.origin.fetch '+refs/meta/config:refs/meta/config'
 git config remote.origin.push HEAD:refs/meta/config
 
+(
+    if ! git ls-remote | grep refs/meta/ -q; then
+        log "Can't find refs/meta, maybe because of gerrit slave replication not finished"
+        HOME=/
+    fi
+    git fetch "$(repo-remote)" "refs/meta/*:refs/meta/*"
+)
 
-git fetch $(repo-remote) refs/meta/*:refs/meta/*
 git checkout refs/meta/config || git reset --soft refs/meta/config
 
 if test "${is_script}" = true; then

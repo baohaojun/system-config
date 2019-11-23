@@ -69,8 +69,8 @@ x2_url="${url%/showDiffFiles*}/configOutput?type=raw&${x2_timestamp}"
     done
 
     for f in ~/tmp/x1.xml ~/tmp/x2.xml; do
-        jc htmlify-xml-tag -t command -f $f --to-mode bash
-        jc htmlify-xml-tag -t description -f $f
+        jc normalize-xml -f $f -t $f.xml
+        mv $f.xml $f
     done
 )
 
