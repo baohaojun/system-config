@@ -4,6 +4,7 @@ set -e
 set -o errtrace
 if test "$#" = 0; then
     trap - ERR
+    unset sc_aterr_number
     return
 fi
 
