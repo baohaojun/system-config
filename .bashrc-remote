@@ -30,3 +30,4 @@ if test -e ~/.config/system-config/.bashrc-path -a -e ~/.kill-bt; then
 fi
 
 . ~/system-config/.bashrc-ssh-agent
+. ~/system-config/.profile
