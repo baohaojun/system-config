@@ -37,6 +37,13 @@ if id | grep 'uid=0\b' -P; then
                 sleep 3
             fi
 
+            pid_display=$(cat /proc/$pid/environ | tr '\0' '\n' | grep ^DISPLAY=)
+
+            if test "$pid_display" != "DISPLAY=$DISPLAY"; then
+                echo should not kill $pid, DISPLAY not match: "$pid_display != DISPLAY=$DISPLAY"
+                continue
+            fi
+
             kill "$pid"
             (
                 sleep 3
@@ -98,5 +105,5 @@ else
         screen_pid=$(ps.pl tmux.first.new.session|grep '^\s*\d+\s+1\s+' -P|pn 1)
     fi
 
-    sudo setsid env SCREEN_PID=$screen_pid PATH=$PATH OLDUSER=${1:-$USER} WAIT=$wait MY_PPID=$MY_PPID bash $xdebug $0
+    sudo setsid env DISPLAY=$DISPLAY SCREEN_PID=$screen_pid PATH=$PATH OLDUSER=${1:-$USER} WAIT=$wait MY_PPID=$MY_PPID bash $xdebug $0
 fi
