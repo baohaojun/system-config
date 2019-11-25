@@ -1,0 +1,117 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+调用 select-args 来从一个列表中选择要处理哪个事项。
+
+选中的事项处理完毕后，从剩下的事项中进行选择。
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # a:args-to-select f:func-to-call
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:f:h \
+                      --long args-to-select:,func-to-call:,help \
+                      -n $(basename -- $0) -- "$@")
+declare args_to_select=
+declare func_to_call=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--args-to-select)
+            args_to_select=$2
+            shift 2
+
+            ;;
+        -f|--func-to-call)
+            func_to_call=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--args-to-select=ARGS_TO_SELECT'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--func-to-call=FUNC_TO_CALL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+eval "args_to_select=($args_to_select)"
+for a in "${args_to_select[@]}"; do
+    echo "$a"
+done
+
+saved_list_of_entries=("$@")
+list_of_entries=("$@")
+
+while true; do
+    special_menu="其他菜单选项"
+    if test "${#list_of_entries[@]}" = 0; then
+        break
+    fi
+    x=$(
+        select-args -a "$special_menu" "${args_to_select[@]}" -- "${list_of_entries[@]}"
+     )
+
+    if test "$x" = "$special_menu"; then
+        declare -A special_ops
+        special_ops[quit]="quit：退出 Review"
+        special_ops[all]="show-all：重新显示完整列表"
+        special_ops[back]="back：按错了，返回继续"
+        x=$(
+            select-args -p "请选择你想要执行的操作" "${special_ops[quit]}" "${special_ops[all]}" "${special_ops[back]}"
+         )
+        if test "$x" = "${special_ops[all]}"; then
+            list_of_entries=(
+                "${saved_list_of_entries[@]}"
+            )
+            continue
+        elif test "$x" = "${special_ops[quit]}"; then
+            break
+        elif test "$x" = "${special_ops[back]}"; then
+            continue
+        fi
+    fi
+
+    IFS=$'\n'
+    list_of_entries=(
+        $(
+            for f in "${list_of_entries[@]}"; do
+                if test "$x" = "$f"; then
+                    continue
+                fi
+                echo "$f"
+            done
+        )
+    )
+    (
+        ${func_to_call} "$x"
+    )
+done

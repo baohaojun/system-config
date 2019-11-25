@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e
+
+IFS=$'\n'
+
+issues=$(
+    jkd q -q 'reporter = baohaojun AND status not in (done, Cancelled) and project = EP' -p |
+        jq '.issues|.[]|.key + ":" + .fields.summary' -r
+      )
+
+
+review-1-isuse() {
+    declare -A actions_map=(
+        [browse]="在浏览器中打开"
+        [transition]="Workflow 流转"
+    )
+    action=$(
+        select-args -p "你想对这个 issue 做什么？" "${actions_map[@]}"
+          )
+    issue=${1%:*}
+
+    case "$action" in
+        ${actions_map[browse]})
+            of -w $issue
+            ;;
+        ${actions_map[transition]})
+            jkd tri -i $issue
+            ;;
+        *)
+            die "don't know how to do $action"
+            ;;
+    esac
+}
+
+export -f review-1-isuse
+
+check-list -a "$(quote-args -p "你想检查哪个 issue？")" -f review-1-isuse $issues
