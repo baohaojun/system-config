@@ -112,10 +112,10 @@ done
 uc_project=${repo_project_name^^}
 
 try_postfixes=$(
-    echo "${uc_project//\//-}"-${group_type}
+    echo "${uc_project//-/--}"-${group_type} | perl -pe 's,/,-,g'
     while true; do
         uc_project=${uc_project%/*}
-        echo "${uc_project//\//-}"-${group_type}
+        echo "${uc_project//-/--}"-${group_type} | perl -pe 's,/,-,g'
         if ! [[ ${uc_project} =~ / ]]; then
             break
         fi

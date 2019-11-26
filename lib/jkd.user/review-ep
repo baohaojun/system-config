@@ -1,10 +1,63 @@
 #!/bin/bash
 set -e
 
+default_query="reporter = baohaojun AND status not in (done, Cancelled) and project = EP"
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # q:query='$default_query' '?"default is $default_query"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o q:h \
+                      --long query:,help \
+                      -n $(basename -- $0) -- "$@")
+declare query=$default_query
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -q|--query)
+            query=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-q, '
+            printf %-24s '--query=QUERY'
+            echo "default is $default_query"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 IFS=$'\n'
 
 issues=$(
-    jkd q -q 'reporter = baohaojun AND status not in (done, Cancelled) and project = EP' -p |
+    jkd q -q "${query}" -p |
         jq '.issues|.[]|.key + ":" + .fields.summary' -r
       )
 

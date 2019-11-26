@@ -7,7 +7,8 @@ use strict;
 use v5.10; # for say
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P rrsync i:private-instance=1 pprofile-manager
+# generate-getopt -s perl -P rrsync i:private-instance=1 pprofile-manager \
+# eexecute
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -16,6 +17,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $execute = 0;
 my $private_instance = 1;
 my $profile_manager = 0;
 my $rsync = 0;
@@ -23,6 +25,14 @@ my $rsync = 0;
 my $handler_help = sub {
     print ;
     print "\n\n选项和参数：\n";
+    printf "%6s", '-e, ';
+    printf "%-24s", '--[no]execute';
+    if (length('--[no]execute') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-i, ';
     printf "%-24s", '--private-instance=PRIVATE-INSTANCE';
     if (length('--private-instance=PRIVATE-INSTANCE') > 24 and length() > 0) {
@@ -48,10 +58,17 @@ my $handler_help = sub {
     printf "%s", ;
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
+    'execute|e!' => \$execute,
     'private-instance|i=s' => \$private_instance,
     'profile-manager|p!' => \$profile_manager,
     'rsync|r!' => \$rsync,
@@ -120,4 +137,9 @@ $ENV{THE_FIREFOX} = "${private_firefox_dir}/firefox";
 
 my $args = join(" ", shell_quote(@ARGV));
 $ENV{FIREFOX_PROFILE_ARG} = "-P ${private_profile_name}";
-system("nohup firefox $args &>/dev/null &");
+
+if ($execute) {
+    system(@ARGV);
+} else {
+    system("nohup firefox $args &>/dev/null &");
+}
