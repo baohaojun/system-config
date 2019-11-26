@@ -60,7 +60,7 @@ my $handler_help = sub {
     print "\n";
 
     my $exit_value = 0;
-    if (@_) {
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
         $exit_value = shift @_;
         print "@_\n";
     }
@@ -99,8 +99,7 @@ if (not $jkd_password) {
 }
 
 if (not $jkd_password) {
-    say STDERR "Must specify the jira password";
-    &$handler_help(1)
+    &$handler_help(1, "Must specify the jira password")
 }
 
 $ENV{scm_jira_user} = $jkd_username; # for lib scripts
