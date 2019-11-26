@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-default_query="reporter = baohaojun AND status not in (done, Cancelled) and project = EP"
+default_query="(reporter = baohaojun or assignee = baohaojun) AND status not in (done, Cancelled, 问题挂起) and project = EP"
 
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'

@@ -64,9 +64,6 @@ done
 
 
 eval "args_to_select=($args_to_select)"
-for a in "${args_to_select[@]}"; do
-    echo "$a"
-done
 
 saved_list_of_entries=("$@")
 list_of_entries=("$@")

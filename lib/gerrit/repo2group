@@ -25,13 +25,15 @@ EOFe9576f8668e0
     # g:group-type=ADMIN \
     # @:try-prefixes='${scm_gerrit_repo_group_prefixes:-GRP-}' \
     # @print-prefix-too=false \
-    # @debug
+    # @debug \
+    # eexact-match '?"找到的 group 必须是这个仓库自身的，不能往上级去找"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o g:r:h \
-               --long debug,group-type:,print-prefix-too,repo-project-name:,try-prefixes:,help,no-debug,no-print-prefix-too \
+TEMP=$( getopt -o eg:r:h \
+               --long debug,exact-match,group-type:,print-prefix-too,repo-project-name:,try-prefixes:,help,no-debug,no-exact-match,no-print-prefix-too \
                -n $(basename -- $0) -- "$@")
 declare debug=false
+declare exact_match=false
 declare group_type=ADMIN
 declare print_prefix_too=false
 declare repo_project_name=
@@ -45,6 +47,15 @@ while true; do
                 debug=false
             else
                 debug=true
+            fi
+            shift
+
+            ;;
+        -e|--exact-match|--no-exact-match)
+            if test "$1" = --no-exact-match; then
+                exact_match=false
+            else
+                exact_match=true
             fi
             shift
 
@@ -81,6 +92,9 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]debug'
             echo
+            printf %06s '-e, '
+            printf %-24s '--[no-]exact-match'
+            echo "找到的 group 必须是这个仓库自身的，不能往上级去找"
             printf %06s '-g, '
             printf %-24s '--group-type=GROUP_TYPE'
             echo
@@ -113,6 +127,10 @@ uc_project=${repo_project_name^^}
 
 try_postfixes=$(
     echo "${uc_project//-/--}"-${group_type} | perl -pe 's,/,-,g'
+
+    if test "${exact_match}" = true; then
+        exit 0
+    fi
     while true; do
         uc_project=${uc_project%/*}
         echo "${uc_project//-/--}"-${group_type} | perl -pe 's,/,-,g'

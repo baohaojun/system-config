@@ -14,17 +14,24 @@ EOFe9576f8668e0
            )
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P '?"$comment_doc"' r:repo-project-name
+# generate-getopt -P '?"$comment_doc"' r:repo-project-name \
+    # @:create-types='"ADMIN SME DEV"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o r:h \
-                      --long repo-project-name:,help \
+                      --long create-types:,repo-project-name:,help \
                       -n $(basename -- $0) -- "$@")
+declare create_types="ADMIN SME DEV"
 declare repo_project_name=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        --create-types)
+            create_types=$2
+            shift 2
+
+            ;;
         -r|--repo-project-name)
             repo_project_name=$2
             shift 2
@@ -35,6 +42,9 @@ while true; do
             echo -e "$comment_doc"
             echo
             echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--create-types=CREATE_TYPES'
+            echo
             printf %06s '-r, '
             printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
             echo
@@ -77,7 +87,7 @@ if parent_group_info=$(
         [DEV]=SME
     )
 
-    for t in ADMIN SME DEV; do
+    for t in ${create_types}; do
         (
             for try in $t ADMIN; do
                 if debug-run ssh-gerrit --admin create-group ${new_group_name_prefix}${t} \

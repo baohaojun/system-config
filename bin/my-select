@@ -2,6 +2,58 @@
 
 use strict;
 use v5.10;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P ddebug='$ENV{MY_SELECT_DEBUG}' istdin
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $debug = $ENV{MY_SELECT_DEBUG};
+my $stdin = 0;
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--[no]debug';
+    if (length('--[no]debug') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--[no]stdin';
+    if (length('--[no]stdin') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'debug|d!' => \$debug,
+    'stdin|i!' => \$stdin,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
 our @current_input;
 
 sub echo(@) {
@@ -201,21 +253,21 @@ sub my_select($) {
     for my $entry (@$remaining_options) {
         my $matched = 1;
 
-        for (keys %always_selections) {
-            push @matches, $_ unless $matches{$_};
-            $matches{$_} = 1;
-        }
-
-
       for my $matcher_ref (keys %matchers) {
         my $matcher = $matchers{$matcher_ref}{"qr"};
         my $reverse = $matchers{$matcher_ref}{"reverse"};
         if ($entry =~ m/$matcher/) {
-          if ($reverse) {
+            if ($reverse) {
+                if ($debug) {
+                    say STDERR "$entry out for $matcher_ref, reverse";
+                }
             $matched = 0;
             last;
           }
         } elsif (not $reverse) {
+            if ($debug) {
+                say STDERR "$entry out for $matcher_ref, not reverse";
+            }
           $matched = 0;
           last;
         }
@@ -225,6 +277,12 @@ sub my_select($) {
           $matches{$entry} = 1;
       }
     }
+
+      for (keys %always_selections) {
+          push @matches, $_ unless $matches{$_};
+          $matches{$_} = 1;
+      }
+
 
     if (@matches == 1) {
       found_it($matches[0], $remaining_options);

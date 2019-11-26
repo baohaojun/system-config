@@ -26,7 +26,6 @@ get-job-config() {
     task=$(basename $1)
     dir=$(get-edit-dir $1)
     (
-        cd $dir
         jenkins_url=$(get-jenkins-url $1)
         jc -j "${jenkins_url}" get-job-for-edit -t "$task"
     )
@@ -36,5 +35,4 @@ get-job-config $1
 get-job-config $2
 
 echo "$1 <=> $2"
-meld $(get-edit-dir $1)/${1##*/}.xml \
-     $(get-edit-dir $2)/${2##*/}.xml
+meld $(basename $1).xml $(basename $2).xml
