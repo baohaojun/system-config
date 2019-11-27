@@ -285,8 +285,8 @@ end
 
 M.wait_for_scene = function(scene, settings)
    settings = settings or {}
-   times = settings.times or 3
-   sleep_time = settings.sleep_time or .2
+   times = settings.times or 10
+   sleep_time = settings.sleep_time or .1
 
    for t = 1, times do
       found = false

@@ -12,6 +12,7 @@ map['com.adobe.psmobile/com.adobe.creativesdk.foundation.internal.auth.AdobeAuth
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.CMailSignatureDetailConfigActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailComposeActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailDetailActivity'] = 'manual-post'
+map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailLoginActivity'] = 'no-post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailSearchActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.ding.activity.DingDetailActivity'] = 'manual-post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.AddRobotActivity'] = 'manual-post'
