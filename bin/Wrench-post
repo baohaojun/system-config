@@ -72,6 +72,12 @@ sub quote_lua_str($) {
     return scalar qx($command);
 }
 
+if (not $image) {
+    if ($ARGV[0] =~ m/^image:(\S+)/) {
+        $image = $1
+    }
+}
+
 if ($image) {
     my $post_text = sprintf("wrench_picture(%s)", quote_lua_str($image));
     say STDERR "sending image: $post_text";
