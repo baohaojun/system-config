@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if test -e ~/src/github/smartcm/etc/ldap.rc; then
     . ~/src/github/smartcm/etc/ldap.rc >/dev/null 2>&1
 fi
@@ -7,14 +9,19 @@ fi
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt u:user='$(get-about-me ldap-user)' \
         # p:pass='$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))' \
-        # ddecode g:glob='"*"' m:match-regexp=.
+        # ddecode g:glob='"*"' '?"默认为「*」，在要搜索的名字前后添加此参数。如需精确搜索，请使用 -g \"\""' \
+        # m:match-regexp=. '?"只输出匹配正则表达式 MATCH_REGEXP（默认为「.」）的行"' \
+        # eexact-query-input '?"不要修改我的 query input"' \
+        # @:group '?"在某个组中搜索此用户"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o dg:m:p:u:h \
-               --long decode,glob:,match-regexp:,pass:,user:,help,no-decode \
+TEMP=$( getopt -o deg:m:p:u:h \
+               --long decode,exact-query-input,glob:,group:,match-regexp:,pass:,user:,help,no-decode,no-exact-query-input \
                -n $(basename -- $0) -- "$@")
 declare decode=false
+declare exact_query_input=false
 declare glob="*"
+declare group=
 declare match_regexp=.
 declare pass=$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))
 declare user=$(get-about-me ldap-user)
@@ -31,8 +38,22 @@ while true; do
             shift
 
             ;;
+        -e|--exact-query-input|--no-exact-query-input)
+            if test "$1" = --no-exact-query-input; then
+                exact_query_input=false
+            else
+                exact_query_input=true
+            fi
+            shift
+
+            ;;
         -g|--glob)
             glob=$2
+            shift 2
+
+            ;;
+        --group)
+            group=$2
             shift 2
 
             ;;
@@ -59,12 +80,20 @@ while true; do
             printf %06s '-d, '
             printf %-24s '--[no-]decode'
             echo
+            printf %06s '-e, '
+            printf %-24s '--[no-]exact-query-input'
+            echo "不要修改我的 query input"
             printf %06s '-g, '
             printf %-24s '--glob=GLOB'
-            echo
+            echo "默认为「*」，在要搜索的名字前后添加此参数。如需精确搜索，请使用 -g \"\""
+            printf "%06s" " "
+            printf %-24s '--group=GROUP'
+            echo "在某个组中搜索此用户"
             printf %06s '-m, '
             printf %-24s '--match-regexp=MATCH_REGEXP'
             echo
+            printf "%30s" ""
+            echo "只输出匹配正则表达式 MATCH_REGEXP（默认为「.」）的行"
             printf %06s '-p, '
             printf %-24s '--pass=PASS...'
             echo
@@ -107,8 +136,21 @@ done
 
 set -- "${matches[@]}"
 
+if test "${group}"; then
+    if ! [[ $group =~ = ]]; then
+        group="CN=$group"
+        group=$(
+            comp-mail -d -e "$group" -m '^dn:'|pn 2
+             )
+        group="memberOf=$group"
+    fi
+fi
+
+
 if test $# = 1; then
-    if [[ "$1" =~ = ]]; then
+    if test "${exact_query_input}" = true; then
+        query=$1
+    elif [[ "$1" =~ = ]]; then
         query=$1
     else
         query=$(printf "(|(sAMAccountName=${glob}%s${glob})(cn=${glob}%s${glob})(sn=${glob}%s${glob})(mail=${glob}%s${glob})(displayName=${glob}%s${glob}))" "$1" "$1" "$1" "$1" "$1")
@@ -123,6 +165,10 @@ elif test $# = 2; then
             done
         done
     query=$query')'
+fi
+
+if test "${group}"; then
+    query="(&($group)${query})"
 fi
 
 function get-display() {

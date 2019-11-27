@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+for libdir in ldap; do
+    if test -x ${scm_common_libdir}/${libdir}/$1; then
+        action=${scm_common_libdir}/${libdir}/$1
+        shift
+        $action "$@"
+        exit
+    fi
+done
+
+die "Can't execute your command: $*"

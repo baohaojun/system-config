@@ -74,7 +74,7 @@ sub quote_lua_str($) {
 
 if (not $image) {
     if ($ARGV[0] =~ m/^image:(\S+)/) {
-        $image = $1
+        $image = $1;
     }
 }
 

@@ -1,0 +1,84 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+给定一个中文名字，比如「包昊军」，通过 ldap 查询，将其转为拼音（英文账号名），即 baohaojun。
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # n:name t:to-type '?"one of 中文名字，英文名字，邮箱地址"' \
+    # g:group '?"因为有些员工同名同姓，所以允许指定分组，这样可以减少冲突的情况"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o g:n:t:h \
+                      --long group:,name:,to-type:,help \
+                      -n $(basename -- $0) -- "$@")
+declare group=
+declare name=
+declare to_type=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -g|--group)
+            group=$2
+            shift 2
+
+            ;;
+        -n|--name)
+            name=$2
+            shift 2
+
+            ;;
+        -t|--to-type)
+            to_type=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-g, '
+            printf %-24s '--group=GROUP'
+            echo "因为有些员工同名同姓，所以允许指定分组，这样可以减少冲突的情况"
+            printf %06s '-n, '
+            printf %-24s '--name=NAME'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--to-type=TO_TYPE'
+            echo "one of 中文名字，英文名字，邮箱地址"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+case "${to_type}" in
+    "中文名字")
+        true
+        ;;
+    "英文名字")
+        comp-mail -d "${name}" -g '' --group "${group}" -m '^sAMAccountName:' | pn 2
+        true
+        ;;
+    "邮箱地址")
+        true
+        ;;
+esac
