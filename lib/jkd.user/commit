@@ -97,7 +97,7 @@ summary=$(
        )
 
 case "${type}" in
-    feature|story)
+    feature|story|"任务")
         msg=$(
             cat <<EOF
 [${module}:${type}] ${summary,,}
