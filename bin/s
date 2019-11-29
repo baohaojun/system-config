@@ -20,7 +20,25 @@ if test $# = 1 -a "$1" = '' || test $# = 0; then
     if sawfish-top-window |grep -qi kindle.exe; then
         set -- $(getclip |
                      # print except the last line
-                     perl -ne 'print $line_2; $line_2 = $line_1; $line_1 = $_;'
+                     perl -ne "$(
+cat <<'EOF532544ecff5d'
+# {%perl-mode%}
+BEGIN {
+    use Encode
+}
+
+$_ = decode_utf8($_);
+
+s,(\p{Lo}) (?=\p{Lo}),$1,g;
+print $line_2;
+$line_2 = $line_1;
+$line_1 = $_;
+
+$_ = encode_utf8($_);
+# {%/perl-mode%}
+EOF532544ecff5d
+
+)"
             )
     else
         set -- "$(xclip -o)"
