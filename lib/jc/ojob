@@ -1,5 +1,9 @@
 #!/bin/bash
 
 if ! is-jenkins; then
-    nohup firefox ${scm_jenkins_url}job/${1%.xml}&
+    firefox=firefox
+    if ! [[ $scm_jenkins_url =~ ^${scm_jenkins_prod_url} ]]; then
+        firefox=private-firefox
+    fi
+    nohup $firefox ${scm_jenkins_url}job/${1%.xml}&
 fi
