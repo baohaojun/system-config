@@ -12,11 +12,11 @@ def test_clipboard():
             print target
             continue
 
-        if target == 'text/html' and sys.argv[0].find("getclip-html") >= 0:
+        if target == 'text/html' and sys.argv[0].find("2html") >= 0:
             contents = clipboard.wait_for_contents(target)
             if contents:
                 sys.stdout.write(contents.data)
-        elif target == "image/png" and sys.argv[0].find("getclip-png") >= 0:
+        elif target == "image/png" and sys.argv[0].find("2png") >= 0:
             contents = clipboard.wait_for_contents(target)
             if contents:
                 sys.stdout.write(contents.data)

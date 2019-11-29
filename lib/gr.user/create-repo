@@ -1,0 +1,133 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+参考 Jira 的创建仓库流程。
+
+- 给定一个仓库的名字，先做一些检查、计算，得出其 parent project 的名字。
+
+- 然后给它创建出来。
+
+- 然后给它创建配套的 gerrit groups。
+
+- 如果有特殊权限要求的话，最后再给它配置（TBD，本期先不做）。
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # r:repo-name \
+    # d:repo-description \
+    # @dry-run '?"只检查，不实现"' \
+    # @existing-ok
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:r:h \
+                      --long dry-run,existing-ok,repo-description:,repo-name:,help,no-dry-run,no-existing-ok \
+                      -n $(basename -- $0) -- "$@")
+declare dry_run=false
+declare existing_ok=false
+declare repo_description=
+declare repo_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --dry-run|--no-dry-run)
+            if test "$1" = --no-dry-run; then
+                dry_run=false
+            else
+                dry_run=true
+            fi
+            shift
+
+            ;;
+        --existing-ok|--no-existing-ok)
+            if test "$1" = --no-existing-ok; then
+                existing_ok=false
+            else
+                existing_ok=true
+            fi
+            shift
+
+            ;;
+        -d|--repo-description)
+            repo_description=$2
+            shift 2
+
+            ;;
+        -r|--repo-name)
+            repo_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--[no-]dry-run'
+            echo "只检查，不实现"
+            printf "%06s" " "
+            printf %-24s '--[no-]existing-ok'
+            echo
+            printf %06s '-d, '
+            printf %-24s '--repo-description=REPO_DESCRIPTION'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--repo-name=REPO_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+check-repo() {
+    project_exists=false
+    if gr get-project -p "${repo_name}" &>/dev/null; then
+        project_exists=true
+        echo "repo ${repo_name} already exists"
+        if test "${existing_ok}" != true; then
+            exit 1
+        fi
+    fi
+
+    if ! parent_project=$(gr get-possible-parent-project -p "${repo_name}"); then
+        die "Can't find a parent project for ${repo_name}"
+    fi
+}
+
+check-repo
+
+if test "${dry_run}" = true; then
+    how_to_run=debug-args
+else
+    how_to_run=debug-run
+fi
+
+if test "${project_exists}" != true; then
+    $how_to_run ssh-gerrit --admin \
+                "create-project" "$repo_name" "--parent" "$parent_project" "--empty-commit" "-d" "$(printf %q "${repo_description}")"
+fi
+
+$how_to_run gr new-repo-create-groups -r ${repo_name}
+
+sme_group=$(gr repo2group -e -r ${repo_name} -g SME)
+dev_group=$(gr repo2group -e -r ${repo_name} -g DEV)
+
+$how_to_run gr set-project-labels --sme-group ${sme_group} --dev-group ${dev_group} -p ${repo_name} --no-special-labels

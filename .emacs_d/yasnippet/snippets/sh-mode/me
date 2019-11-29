@@ -2,8 +2,6 @@
 # name: me
 # key: me
 # --
-set -e
-
 me=\$(readlink -f \$${1:BASH_SOURCE})
 if test ! -e "\$me"; then
     me=\$(readlink -f "\$(which \$$1)")

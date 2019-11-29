@@ -1,0 +1,51 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+
+use URI::Escape;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P p:project-name '?"for e.g., platform/manifest"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $project_name = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project-name=PROJECT-NAME';
+    if (length('--project-name=PROJECT-NAME') > 24 and length("for e.g., platform/manifest") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "for e.g., platform/manifest";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'project-name|p=s' => \$project_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+$project_name = uri_escape($project_name);
+
+system("gr rest a/projects/${project_name}");

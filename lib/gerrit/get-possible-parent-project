@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+给定一个 Gerrit 仓库的名字，按照既定规则，计算出其父仓库（即权限仓库）的名字。
+
+如果找不到，直接出错。不允许直接继承最上层的 All-Projects.
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# p:project-name
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $project_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+print "\n\n选项和参数：\n";
+printf "%6s", '-p, ';
+printf "%-24s", '--project-name=PROJECT-NAME';
+if (length('--project-name=PROJECT-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+       $exit_value = shift @_;
+       print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+'project-name|p=s' => \$project_name,
+'help|h!' => \&$handler_help,
+    );
+
+
+## end generated code
+
+my @all_parent_projects;
+sub get_parent_project($) {
+    my $possible_parent_repo_name = $_[0];
+    $possible_parent_repo_name =~ s,/,-,g;
+    $possible_parent_repo_name =~ s,^-*,all-,;
+
+    @all_parent_projects = sort {
+        length($b) <=> length($a) # sort them from the longest to the shortest
+    } split " ", qx(ssh-gerrit ls-projects -r '^[Aa][lL]{2}.*') if not @all_parent_projects;
+
+    if (not @all_parent_projects) {
+        die "Can't find any parent projects";
+    }
+    for (@all_parent_projects) {
+        if (uc($_) eq uc(substr($possible_parent_repo_name, 0, length($_)))) {
+            return $_;
+        }
+    }
+
+    die "Can't find parent project for $_[0]!";
+}
+
+print get_parent_project($project_name);

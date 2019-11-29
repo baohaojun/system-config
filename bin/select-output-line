@@ -293,9 +293,19 @@ selection_entries=(
         tmpfile=/tmp/$(basename $0).$$
         (
             if test "$b0" = select-args; then
-                for x in "$@"; do
-                    echo -n "$x" | perl -pe 's,\n,\%r\%n,g'; echo
-                done
+                perl -e "$(
+cat <<'EOF68b65b38dc35'
+# {%perl-mode%}
+map {
+    s,\n,\%r\%n,g
+} @ARGV;
+for (@ARGV) {
+    print "$_\n";
+}
+# {%/perl-mode%}
+EOF68b65b38dc35
+
+)" "$@"
             elif test $# = 1; then
                 bash -c "$1"
             else
