@@ -15,7 +15,7 @@ if (not -e "/usr/local/bin/mkbeagrepidx") {
 my @saved_args = @ARGV;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P \
+# generate-getopt -s perl \
 # @:entering-dir \
 # @:beagrep-from-dir \
 # @:abc-base \
@@ -39,7 +39,7 @@ my @saved_args = @ARGV;
 ## start generated code
 use Getopt::Long;
 
-Getopt::Long::Configure("posix_default");
+Getopt::Long::Configure("default");
 
 
 

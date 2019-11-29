@@ -87,7 +87,7 @@ if test "$manifest_branch"; then
         tmpf=/tmp/create-branch.$$.txt
         . atexit rm $tmpf
         jssh ${scm_jenkins_server} \
-             --execute "cat /apps/scm/prod/config/android-branches/${manifest_branch}/manifest.xml" \
+             --execute "cat ${scm_config_dir}android-branches/${manifest_branch}/manifest.xml" \
              > $tmpf
 
         project=$(select-output-line cat $tmpf | perl -ne 'print $1 if m,name\s*=\s*"(.*?)",')
