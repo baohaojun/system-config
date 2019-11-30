@@ -5,12 +5,6 @@ if test "$DEBUG" = true; then
     set -x
 fi
 
-exit() {
-    . bt
-    bt
-    builtin exit "$@"
-}
-
 function die() {
     echo Error: "$@"
     exit -1
@@ -148,6 +142,14 @@ if test "$SC_NOT_REPO" = false; then
 fi
 
 test "$(pwd)" = $HOME && cd ~/system-config
+
+if test "${PWD}" = ~/system-config; then
+    exit() {
+        . bt
+        bt
+        builtin exit "$@"
+    }
+fi
 cd "$(dirname "$(lookup-file -e .git)")"
 
 if ! [[ $PWD =~ /system-config(/|$)|/src/github/ ]]; then
