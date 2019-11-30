@@ -147,7 +147,7 @@ if test "${PWD}" = ~/system-config; then
     exit() {
         . bt
         bt
-        log wait for all sub modules
+        log wait for all sub modules @$PWD
         wait
         builtin exit "$@"
     }
