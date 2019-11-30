@@ -5,6 +5,12 @@ if test "$DEBUG" = true; then
     set -x
 fi
 
+exit() {
+    . bt
+    bt
+    builtin exit "$@"
+}
+
 function die() {
     echo Error: "$@"
     exit -1
