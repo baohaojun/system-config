@@ -147,6 +147,7 @@ if test "${PWD}" = ~/system-config; then
     exit() {
         . bt
         bt
+        wait
         builtin exit "$@"
     }
 fi
