@@ -1,9 +1,46 @@
 #!/bin/bash
-function redirect_tcp_port() {
-    if sudo iptables-save | grep "PREROUTING.*$1.*$2"; then
-        return 0
-    fi
-    sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport $1 -j DNAT --to-destination :$2
-}
 
-redirect_tcp_port "$@"
+iptables_save=$(
+    sudo iptables-save
+             )
+
+prerouting_lines=$(
+    echo "${iptables_save}" | grep "PREROUTING -p tcp -m tcp --dport $1 "
+                )
+
+if test "$(echo "${prerouting_lines}" | wc -l)" != 1 ||
+        ! [[ $prerouting_lines =~ "PREROUTING -p tcp -m tcp --dport $1 -j REDIRECT --to-ports $2" ]]; then
+    echo "${prerouting_lines}" |
+        while read ip_rule; do
+            {
+                if test "${ip_rule}"; then
+                    sudo iptables -t nat ${ip_rule/#-A /-D}
+                fi
+            } < /dev/null
+        done
+
+    sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport $1 -j REDIRECT --to-ports $2
+else
+    log "No need to nat external: $1 -> $2"
+fi
+
+output_lines=$(
+    echo "${iptables_save}" | grep "OUTPUT -p tcp -m tcp --dport $1 "
+            )
+
+
+if test "$(echo "${output_lines}" | wc -l)" != 1 ||
+        ! [[ $output_lines =~ "OUTPUT -p tcp -m tcp --dport $1 -j REDIRECT --to-ports $2" ]]; then
+    echo "${output_lines}" |
+        while read ip_rule; do
+            {
+                if test "${ip_rule}"; then
+                    sudo iptables -t nat ${ip_rule/#-A /-D}
+                fi
+            } < /dev/null
+        done
+
+    sudo iptables -t nat -A OUTPUT -p tcp -m tcp --dport $1 -j REDIRECT --to-ports $2
+else
+    log "No need to nat localhost: $1 -> $2"
+fi
