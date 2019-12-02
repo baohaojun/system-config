@@ -1,0 +1,81 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+根据 ACTION 参数，显示指定文件的 gitweb 下载地址或浏览器查看地址。
+
+- download-url :: print the gitweb download url
+- browse-url :: print the gitweb browse url
+- of :: Open 「File」 in firefox
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # a:action '?"one of download-url, browse-url, of"'
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:h \
+                      --long action:,help \
+                      -n $(basename -- $0) -- "$@")
+declare action=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--action)
+            action=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--action=ACTION'
+            echo "one of download-url, browse-url"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+p=$( # project
+    repo-abs-path | perl -pe 's,^/*,,'
+ )
+
+f=$( # file
+    gitp "$1"
+ )
+
+b=$( # branch
+    repo-branch
+ )
+
+
+case "$action" in
+    d*)
+        echo "${scm_gerrit_url}gitweb?p=$p.git;a=blob_plain;f=$f;hb=refs/heads/$b"
+        ;;
+    b*)
+        echo "${scm_gerrit_url}gitweb?p=$p.git;a=blob;f=$f;hb=refs/heads/$b"
+        ;;
+    of)
+        of "$(gr gitweb -a browse-url "$1")"
+        ;;
+esac

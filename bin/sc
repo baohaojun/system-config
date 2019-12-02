@@ -105,9 +105,11 @@ if test ! -d ~/system-config; then
     ln -s "$(eval echo ~${USER})"/.* ~/ >/dev/null 2>&1 || true
 fi
 
+set +e
 . ${sc_home}/system-config/etc/force-system-config
 . ${sc_home}/system-config/.profile
 . ${sc_home}/system-config/.bashrc
+set -e
 
 sc-check-darwin
 
@@ -135,6 +137,9 @@ elif test "$action" = stop; then
     exec sc bg
 elif test "$action" = try; then
     bash
+elif test "$action" = env; then
+    log "using env"
+    return
 elif test "$action" = bg; then
     . ~/system-config/etc/reinit-bash-env
     if test "$#" -gt 1; then

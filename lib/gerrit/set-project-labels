@@ -11,8 +11,16 @@ default_complete_list_of_labels=(
     UT-Verified
 )
 
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+set-project-labels -p PROJECT [-l COMPLETE-LIST] [ON-LABELS]...
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P '?"$0 -p PROJECT [-l COMPLETE-LIST] [ON-LABELS]..."' \
+# generate-getopt -P '?"${comment_doc}"' \
     # l:complete-list='"${default_complete_list_of_labels[*]}"' \
     # p:project \
     # @:sme-group \
@@ -74,7 +82,7 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e "$0 -p PROJECT [-l COMPLETE-LIST] [ON-LABELS]..."
+            echo -e "${comment_doc}"
             echo
             echo Options and arguments:
             printf %06s '-l, '
