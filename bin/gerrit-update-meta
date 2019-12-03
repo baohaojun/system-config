@@ -89,7 +89,7 @@ if test "${is_script}" = true; then
 else
     if test -z "${project}"; then
         if test $# = 0; then
-            set -- s:$(select-output-line -p "Which project do you want?" ssh-gerrit ls-projects)
+            set -- ${scm_gerrit_admin_ssh_url}$(select-output-line -p "Which project do you want?" ssh-gerrit ls-projects)
         fi
         project=$1
     fi
@@ -123,12 +123,12 @@ fi
 start_recursive_shell update-meta
 
 if test "${recursive}" = true; then
-    if test "$project" = s:All-Projects; then
+    if test "$project" = ${scm_gerrit_admin_ssh_url}All-Projects; then
         exit
     else
         parent_project=$(git config -f project.config access.inheritFrom)
         if test "${parent_project}"; then
-            gerrit-update-meta --recursive s:${parent_project}
+            gerrit-update-meta --recursive ${scm_gerrit_admin_ssh_url}${parent_project}
         fi
     fi
 fi

@@ -1,8 +1,18 @@
 #!/bin/bash
 
 set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+gr rest [--raw] [-a] ACCESS-POINT [--] [EXTRA_ARGS_TO_CURL...]
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P a:access-point '?"Specify which rest api to call"' \
+# generate-getopt -P '?"${comment_doc}"' \
+    # a:access-point '?"Specify which rest api to call"' \
     # @raw
 ## end code-generator
 ## start generated code
@@ -31,7 +41,7 @@ while true; do
             ;;
         -h|--help)
             set +x
-            echo -e
+            echo -e "${comment_doc}"
             echo
             echo Options and arguments:
             printf %06s '-a, '
@@ -57,6 +67,7 @@ done
 
 
 ## end generated code
+
 if test -z "${access_point}"; then
     access_point=$1
     shift

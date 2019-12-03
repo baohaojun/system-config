@@ -1,0 +1,140 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# c:change-number='$ENV{GERRIT_CHANGE_NUMBER}' \
+# l:delete-labels='()' '?"删除哪些 labels 的打分，不指定的话为所有"' \
+# r:delete-reviewers='()' '?"删除哪些 reviewers 的打分，不指定的话为所有"' \
+# v:delete-values='()' '?"删除哪些分值？不指定的话，删除所有非零分值"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $change_number = $ENV{GERRIT_CHANGE_NUMBER};
+my @delete_labels = ();
+my @delete_reviewers = ();
+my @delete_values = ();
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-c, ';
+    printf "%-24s", '--change-number=CHANGE-NUMBER';
+    if (length('--change-number=CHANGE-NUMBER') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-l, ';
+    printf "%-24s", '--delete-labels=DELETE-LABELS';
+    if (length('--delete-labels=DELETE-LABELS') > 24 and length("删除哪些 labels 的打分，不指定的话为所有") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "删除哪些 labels 的打分，不指定的话为所有";
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--delete-reviewers=DELETE-REVIEWERS';
+    if (length('--delete-reviewers=DELETE-REVIEWERS') > 24 and length("删除哪些 reviewers 的打分，不指定的话为所有") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "删除哪些 reviewers 的打分，不指定的话为所有";
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--delete-values=DELETE-VALUES';
+    if (length('--delete-values=DELETE-VALUES') > 24 and length("删除哪些分值？不指定的话，删除所有非零分值") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "删除哪些分值？不指定的话，删除所有非零分值";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'change-number|c=s' => \$change_number,
+    'delete-labels|l=s' => \@delete_labels,
+    'delete-reviewers|r=s' => \@delete_reviewers,
+    'delete-values|v=s' => \@delete_values,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+# gr rest -a a/changes/104080/revisions/3f20394852570d208fd5cdcfa741286edaf2ca42/reviewers/391/votes/Code-Review -- -X 'DELETE'
+use JSON;
+
+die "change_number not a number: $change_number" unless $change_number =~ m,^\d+$,;
+
+my $reviewers_info = decode_json(qx(gr rest a/changes/$change_number/reviewers/));
+my $revision_info = decode_json(qx(gr rest -a 'a/changes/$change_number?o=CURRENT_REVISION'));
+
+my $revision = $revision_info->{current_revision};
+
+unless (@$reviewers_info) {
+    say STDERR "no reviewers_info?";
+    exit 0;
+}
+
+unless (@delete_labels) {
+    for (keys %{$reviewers_info->[0]{approvals}}) {
+        push @delete_labels, $_;
+    }
+};
+
+unless (@delete_reviewers) {
+    for (@$reviewers_info) {
+        push @delete_reviewers, $_->{username};
+    }
+}
+
+my %username_id_map;
+my %user_label_value_map;
+
+for (@$reviewers_info) {
+    $username_id_map{$_->{username}} = $_->{_account_id};
+    my $user = $_->{username};
+    my %approvals = %{$_->{approvals}};
+    for (keys %approvals) {
+        my $label = $_;
+        ($user_label_value_map{"$user:$label"} = $approvals{$label}) =~ s,\s,,g; # remove the leading SPC in " 0"
+    }
+}
+
+my %delete_values = map { $_ => 1 } @delete_values;
+
+for my $label (@delete_labels) {
+    for my $user (@delete_reviewers) {
+        my $value = $user_label_value_map{"$user:$label"};
+        next unless $value; # not voted
+
+        if ($delete_values{$value} || not @delete_values) {
+            my $user_id = $username_id_map{$user};
+            say STDERR "delete $user:$label";
+            system("gr", "rest", "-a", "a/changes/${change_number}/revisions/${revision}/reviewers/${user_id}/votes/${label}", "--", "-X", "DELETE");
+        }
+    }
+}
