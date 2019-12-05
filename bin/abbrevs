@@ -109,6 +109,8 @@ if test ! -e "${abbrev_file}"; then
     bhj-notify abbrevs "There is no matching file for $abbrev, use +$abbrev to create a new abbrev"
     exit 1
 fi
+
+bhj-notify "abbrevs" "abbrev_file: $abbrev_file"
 expand_text=$(
     if test -x "${abbrev_file}"; then
         export EMACS=t

@@ -62,10 +62,11 @@ expect "Opt>" {
                 expect -re ": EOF.*\n" {
                     # log_user 1;
                     # set -x; export SHELLOPTS;
-                    send "( $js_execute ); echo -n exit; read -p 123456; exit;\n";
+                    send "( $js_execute ); \\\necho -n exit; read -p 123456; exit;\n";
 
                     expect {
                         -re "echo -n exit; read -p 123456" {
+                            # send_error "hello seen read 123456\n"
                             log_user 1;
                             exp_continue;
                         }
