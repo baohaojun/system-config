@@ -5,4 +5,4 @@ job_xml=$1
 
 job_name=$(basename "$1" | perl -pe 's,\.xml,,')
 
-jc -j ${scm_jenkins_test_url} create-job "${job_name}" < $job_xml
+jc get-job $job_name | jc -j ${scm_jenkins_test_url} create-job "${job_name}"

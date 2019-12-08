@@ -191,7 +191,7 @@ extra_submod_update_args=()
 if test "$depth"; then
     extra_clone_args+=(--depth $depth)
     extra_fetch_args+=(--depth $depth)
-    extra_submod_update_args+=(--depth $depth)
+    # extra_submod_update_args+=(--depth $depth)
     single_branch=true
 fi
 

@@ -23,15 +23,4 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
-if test "$#" = 0; then
-    die "Must specify the jobs that you want disable"
-fi
-
-for x in "$@"; do
-    x=${x%.xml}
-    x=${x##*/}
-
-    echo "doing $b0 $x"
-
-    jc curl job/$x/${b0%-*} -X POST
-done
+ssh-gerrit $b0 "$@"

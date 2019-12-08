@@ -1,0 +1,89 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+- [ ] 所有群组，其 owner 关系需设置正确，需查一下 rest api
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # p:project
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o p:h \
+                      --long project:,help \
+                      -n $(basename -- $0) -- "$@")
+declare project=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -p|--project)
+            project=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+admin_group=$(
+    gr repo2group -r "${project}" -e -g ADMIN
+     )
+
+group_prefix=${admin_group%ADMIN}
+
+groups_info=$(
+    gr curl "a/groups/?m=${group_prefix}"
+           )
+
+admin_id=$(
+    echo "${groups_info}" | jq ".\"${admin_group}\".id" -r
+        )
+
+for postfix in SME DEV; do
+    do_group=${group_prefix}${postfix}
+    do_id=$(
+        echo "${groups_info}" | jq ".\"${do_group}\".id" -r
+         )
+    old_owner=$(
+        echo "${groups_info}" | jq ".\"${do_group}\".owner" -r
+             )
+
+    if test "${old_owner}" != "${admin_group}"; then
+        log change from $old_owner to ${admin_group} for ${project}
+    fi
+
+    gr rest -a a/groups/${do_id}/owner -- -X PUT --data "$(
+cat <<EOF6a3efd9b1d62
+  {
+    "owner": "${admin_id}"
+  }
+EOF6a3efd9b1d62
+)" -H 'Content-Type: application/json; charset=UTF-8'
+
+done

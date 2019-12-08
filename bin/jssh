@@ -57,7 +57,7 @@ fi
 
 if true; then # allow to debug.
     if test "${JS_EXECUTE}" && ! is-tty-io; then
-        js-ssh 2>&1 | tr -d '\b\r' | perl -ne '
+        js-ssh | tee ~/tmp/jssh.tee | tr -d '\b\r' | perl -ne '
 BEGIN{my $print};
 if (m,echo -n exit; read -p 123456;,) {
     $print = 1;

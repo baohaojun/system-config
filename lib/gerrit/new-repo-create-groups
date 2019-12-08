@@ -15,14 +15,16 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"$comment_doc"' r:repo-project-name \
-    # @:create-types='"ADMIN SME DEV"'
+    # @:create-types='"ADMIN SME DEV"' \
+    # @set-permission=true
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o r:h \
-                      --long create-types:,repo-project-name:,help \
+                      --long create-types:,repo-project-name:,set-permission,help,no-set-permission \
                       -n $(basename -- $0) -- "$@")
 declare create_types="ADMIN SME DEV"
 declare repo_project_name=
+declare set_permission=true
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -37,6 +39,15 @@ while true; do
             shift 2
 
             ;;
+        --set-permission|--no-set-permission)
+            if test "$1" = --no-set-permission; then
+                set_permission=false
+            else
+                set_permission=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e "$comment_doc"
@@ -47,6 +58,9 @@ while true; do
             echo
             printf %06s '-r, '
             printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]set-permission'
             echo
             exit
             shift
@@ -89,10 +103,15 @@ if parent_group_info=$(
 
     for t in ${create_types}; do
         (
+            if test "${t}" = ADMIN; then
+                owner_group=${parent_group}
+            else
+                owner_group=${new_group_name_prefix}ADMIN
+            fi
             for try in $t ADMIN; do
                 if debug-run ssh-gerrit --admin create-group ${new_group_name_prefix}${t} \
                               --group ${parent_prefix}${try} \
-                              --owner ${parent_group} \
+                              --owner ${owner_group} \
                               $(if test "${group_contains_relationship[$t]}"; then echo --group ${new_group_name_prefix}${group_contains_relationship[$t]}; fi) \
                               -d "'$t for ${repo_project_name}'"; then
                     exit
@@ -102,6 +121,10 @@ if parent_group_info=$(
             exit 1
         )
     done
+
+    if test "${set_permission}" = true; then
+        gr set-project-labels -p "${repo}" --new-project
+    fi
 else
     die "Can't get parent group info"
 fi

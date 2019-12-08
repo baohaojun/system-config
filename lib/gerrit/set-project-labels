@@ -26,15 +26,17 @@ EOFe9576f8668e0
     # @:sme-group \
     # @:dev-group \
     # @debug \
+    # @new-project \
     # @special-labels=true
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o l:p:h \
-                      --long complete-list:,debug,dev-group:,project:,sme-group:,special-labels,help,no-debug,no-special-labels \
+                      --long complete-list:,debug,dev-group:,new-project,project:,sme-group:,special-labels,help,no-debug,no-new-project,no-special-labels \
                       -n $(basename -- $0) -- "$@")
 declare complete_list="${default_complete_list_of_labels[*]}"
 declare debug=false
 declare dev_group=
+declare new_project=false
 declare project=
 declare sme_group=
 declare special_labels=true
@@ -59,6 +61,15 @@ while true; do
         --dev-group)
             dev_group=$2
             shift 2
+
+            ;;
+        --new-project|--no-new-project)
+            if test "$1" = --no-new-project; then
+                new_project=false
+            else
+                new_project=true
+            fi
+            shift
 
             ;;
         -p|--project)
@@ -94,6 +105,9 @@ while true; do
             printf "%06s" " "
             printf %-24s '--dev-group=DEV_GROUP'
             echo
+            printf "%06s" " "
+            printf %-24s '--[no-]new-project'
+            echo
             printf %06s '-p, '
             printf %-24s '--project=PROJECT'
             echo
@@ -118,6 +132,16 @@ done
 
 
 ## end generated code
+
+if test "${new_project}" = true; then
+    special_labels=false
+    sme_group=$(
+        gr repo2group -r ${project} -e -g SME
+             )
+    dev_group=$(
+        gr repo2group -r ${project} -e -g DEV
+             )
+fi
 
 declare -A label_config_fragment=(
     ["CommitMessage-Verified"]=$(
