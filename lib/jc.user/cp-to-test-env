@@ -1,8 +1,66 @@
 #!/bin/bash
 set -e
 
-job_xml=$1
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
 
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # 2to-test2
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o 2h \
+                      --long to-test2,help,no-to-test2 \
+                      -n $(basename -- $0) -- "$@")
+declare to_test2=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -2|--to-test2|--no-to-test2)
+            if test "$1" = --no-to-test2; then
+                to_test2=false
+            else
+                to_test2=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-2, '
+            printf %-24s '--[no-]to-test2'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+job_xml=$1
 job_name=$(basename "$1" | perl -pe 's,\.xml,,')
+
+if test "${to_test2}" = true; then
+    scm_jenkins_test_url=${scm_jenkins_test_url2}
+fi
 
 jc get-job $job_name | jc -j ${scm_jenkins_test_url} create-job "${job_name}"
