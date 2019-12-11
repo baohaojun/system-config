@@ -5,7 +5,7 @@ set -e
 # generate-getopt -P i:old-issue '?"The old jira issue to copy from"' \
     # @:old-jira-url='${scm_jira_url}' '?"The jira url for the old issue, default is \$scm_jira_url"' \
     # r:replace-regexp '?"默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"' \
-    # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14500 = 1.0.0"' \
+    # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14504 = \"1.0.0\""' \
     # @:force-prod \
     # @debug='("" hint-run)'
 ## end code-generator
@@ -72,7 +72,7 @@ while true; do
             printf %-24s '--jq-expression=JQ_EXPRESSION'
             echo
             printf "%30s" ""
-            echo "传给 jq 的表达式，比如可以用于改变版本号：.customfield_14500 = 1.0.0"
+            echo "传给 jq 的表达式，比如可以用于改变版本号：.customfield_14504 = \"1.0.0\""
             printf %06s '-i, '
             printf %-24s '--old-issue=OLD_ISSUE'
             echo "The old jira issue to copy from"

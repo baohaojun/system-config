@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+jc curl "${1}"consoleText > ~/tmp/jc.console.txt
+echo ~/tmp/jc.console.txt
+putclip ~/tmp/jc.console.txt
