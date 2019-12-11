@@ -3,13 +3,14 @@
 # 显示用户的 ldap 组名及其描述
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P u:user g:group-regexp
+# generate-getopt -P u:user g:group-regexp mmost-relevant-group=true
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o g:u:h \
-                      --long group-regexp:,user:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o g:mu:h \
+                      --long group-regexp:,most-relevant-group,user:,help,no-most-relevant-group \
                       -n $(basename -- $0) -- "$@")
 declare group_regexp=
+declare most_relevant_group=true
 declare user=
 eval set -- "$TEMP"
 while true; do
@@ -18,6 +19,15 @@ while true; do
         -g|--group-regexp)
             group_regexp=$2
             shift 2
+
+            ;;
+        -m|--most-relevant-group|--no-most-relevant-group)
+            if test "$1" = --no-most-relevant-group; then
+                most_relevant_group=false
+            else
+                most_relevant_group=true
+            fi
+            shift
 
             ;;
         -u|--user)
@@ -32,6 +42,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-g, '
             printf %-24s '--group-regexp=GROUP_REGEXP'
+            echo
+            printf %06s '-m, '
+            printf %-24s '--[no-]most-relevant-group'
             echo
             printf %06s '-u, '
             printf %-24s '--user=USER'
@@ -61,4 +74,32 @@ for g in ${groups}; do
         echo $g
         comp-mail -d $g -m descr
     fi
-done
+done |
+    if test "${most_relevant_group}" = true; then
+        perl -ne "$(
+cat <<'EOF47b005703faf'
+# {%perl-mode%}
+use v5.10;
+if (m,CN=(.*),) {
+    $last_group = $1;
+} elsif (m,description:+\s+(.*),) {
+    $last_description = $1;
+    $group_desc_map{$last_group} = $last_description;
+}
+
+END {
+    @staff_groups = grep {m,Department.*-staff,} keys %group_desc_map;
+    @staff_groups = sort {
+        length($group_desc_map{$a}) <=> length($group_desc_map{$b})
+    } @staff_groups;
+
+    ($most_specific_group = $staff_groups[-1]) =~ s,-staff,,;
+    printf "%s : %s\n", $most_specific_group, $group_desc_map{$most_specific_group};
+}
+# {%/perl-mode%}
+EOF47b005703faf
+
+)"
+    else
+        cat
+    fi

@@ -95,7 +95,8 @@ unescape-html() {
     xmlstarlet unesc - | tr -d \\r
 }
 
-add_at_start[nxml-bash]='<![CDATA[#!/bin/bash'
+add_at_start[nxml-bash]='<![CDATA[#!/bin/bash
+'
 add_at_end[nxml-bash]='#!end-of-fence]]>'
 
 add_at_start[nxml-bash-simple]='<![CDATA['
