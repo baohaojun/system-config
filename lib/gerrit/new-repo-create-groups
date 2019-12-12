@@ -16,13 +16,15 @@ EOFe9576f8668e0
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"$comment_doc"' r:repo-project-name \
     # @:create-types='"ADMIN SME DEV"' \
-    # @set-permission=true
+    # @set-permission=true \
+    # @existing-ok
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o r:h \
-                      --long create-types:,repo-project-name:,set-permission,help,no-set-permission \
+                      --long create-types:,existing-ok,repo-project-name:,set-permission,help,no-existing-ok,no-set-permission \
                       -n $(basename -- $0) -- "$@")
 declare create_types="ADMIN SME DEV"
+declare existing_ok=false
 declare repo_project_name=
 declare set_permission=true
 eval set -- "$TEMP"
@@ -32,6 +34,15 @@ while true; do
         --create-types)
             create_types=$2
             shift 2
+
+            ;;
+        --existing-ok|--no-existing-ok)
+            if test "$1" = --no-existing-ok; then
+                existing_ok=false
+            else
+                existing_ok=true
+            fi
+            shift
 
             ;;
         -r|--repo-project-name)
@@ -55,6 +66,9 @@ while true; do
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--create-types=CREATE_TYPES'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]existing-ok'
             echo
             printf %06s '-r, '
             printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
@@ -109,6 +123,12 @@ if parent_group_info=$(
                 owner_group=${new_group_name_prefix}ADMIN
             fi
             for try in $t ADMIN; do
+                if test "${existing_ok}" = true; then
+                    if gr rest -a a/groups/${new_group_name_prefix}${t} &>/dev/null; then
+                        log ${new_group_name_prefix}${t} already exists
+                        exit
+                    fi
+                fi
                 if debug-run ssh-gerrit --admin create-group ${new_group_name_prefix}${t} \
                               --group ${parent_prefix}${try} \
                               --owner ${owner_group} \
@@ -123,7 +143,7 @@ if parent_group_info=$(
     done
 
     if test "${set_permission}" = true; then
-        gr set-project-labels -p "${repo}" --new-project
+        gr set-project-labels -p "${repo_project_name}" --new-project
     fi
 else
     die "Can't get parent group info"

@@ -212,7 +212,7 @@ declare -A handled_keys
 
 tmpd=gerrit-set-project-labels.$$
 if test "${debug}" != true; then
-    . atexit rm -rf $tmpd
+    . atexit rm -rf "$PWD/$tmpd"
 fi
 
 gerrit-update-meta -s \
@@ -290,5 +290,5 @@ if test "${debug}" = true; then
 fi
 
 git add .
-git commit -m "Update labels: $*" -s
+git commit -m "Update labels: $*" -s --allow-empty
 HOME=/ git push ${scm_gerrit_admin_ssh_url}"${project}" HEAD:refs/meta/config

@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+set -o pipefail
+gr rest -a a/projects/ | jq 'keys|.[]' -r

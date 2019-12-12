@@ -1,0 +1,28 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+
+my @groups = split(' ', qx(gr groups));
+my @projects = split(' ', qx(gr projects));
+
+my @dev_groups = grep { m,-DEV$, } @groups;
+
+my @prefixs = split(' ', $ENV{scm_gerrit_repo_group_prefixes});
+
+my %possible_project_groups;
+
+for my $pre (@prefixs) {
+    for (@projects) {
+        my $proj = $_;
+        $proj =~ s,-,--,g;
+        $proj =~ s,/,-,g;
+        $proj = uc $proj;
+        my $group = "$pre$proj-DEV";
+        $possible_project_groups{$group} = 1;
+    }
+}
+
+for (@dev_groups) {
+    print "$_\n" unless $possible_project_groups{$_};
+}

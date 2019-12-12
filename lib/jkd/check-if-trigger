@@ -140,16 +140,22 @@ my $comments_pattern = qr(\Q${build_msg_prefix}\E);
 for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
     my $msg = $comment->{body};
     if ($msg =~ m,$comments_pattern,) {
-        say STDERR encode_utf8 "There is already a build building it: $msg";
-        exit 1;
+        say STDERR encode_utf8 "There is already a build building it: $msg, we are $ENV{BUILD_URL}";
+        exit 42;
     }
 }
 
-my $build_msg = "${build_msg_prefix}: $ENV{BUILD_URL}";
+my $build_msg = "${build_msg_prefix}: $ENV{BUILD_URL} \@$ENV{NODE_NAME}";
 
+say STDERR "add comment: $build_msg";
 system("jkd", "comment", "-i", "$issue", "-c", "${build_msg}");
 
-$json_issue = decode_json(qx(jkd get 'rest/api/2/issue/${issue}/?expand=changelog'));
+my $new_changelog = qx(jkd get 'rest/api/2/issue/${issue}/?expand=changelog');
+if (not $new_changelog) {
+    die "Can't get change log!";
+}
+
+$json_issue = decode_json($new_changelog);
 
 say STDERR JSON->new->allow_nonref->utf8->pretty->encode($json_issue) if $debug;
 
@@ -163,11 +169,11 @@ for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
             exit 0
         } else {
             say STDERR "There is already a build building it: $msg";
-            exit 1;
+            exit 42
         }
     }
 }
 
-say STDERR "This should not happen, please check the log!";
+say STDERR "This should not happen, please check the log! changelog is ${new_changelog}";
 
-exit 1
+exit 1;

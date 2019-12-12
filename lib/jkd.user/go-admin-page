@@ -6,9 +6,9 @@ declare -A admin_pages=(
     [dynamic-forms]=secure/admin/DFConfiguration.jspa
     [webhooks]=plugins/servlet/webhooks
     [project]=plugins/servlet/project-config/'$(get-project-key)'/summary
-    [custom-fields]=secure/admin/ViewCustomFields.jspa
+    ["custom-fields (edit description 1)"]=secure/admin/ViewCustomFields.jspa
     [create-issue]=projects/'$(get-project-key)'
-    ["field-config(optional/required)"]=secure/admin/ViewFieldLayouts.jspa
+    ["field-config(optional/required/edit description 2)"]=secure/admin/ViewFieldLayouts.jspa
 )
 
 if ! is-tty-io; then

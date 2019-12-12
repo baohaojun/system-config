@@ -26,15 +26,17 @@ EOFe9576f8668e0
     # @:try-prefixes='${scm_gerrit_repo_group_prefixes:-GRP-}' \
     # @print-prefix-too=false \
     # @debug \
+    # oopen-in-browser \
     # eexact-match '?"找到的 group 必须是这个仓库自身的，不能往上级去找"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o eg:r:h \
-               --long debug,exact-match,group-type:,print-prefix-too,repo-project-name:,try-prefixes:,help,no-debug,no-exact-match,no-print-prefix-too \
+TEMP=$( getopt -o eg:or:h \
+               --long debug,exact-match,group-type:,open-in-browser,print-prefix-too,repo-project-name:,try-prefixes:,help,no-debug,no-exact-match,no-open-in-browser,no-print-prefix-too \
                -n $(basename -- $0) -- "$@")
 declare debug=false
 declare exact_match=false
 declare group_type=ADMIN
+declare open_in_browser=false
 declare print_prefix_too=false
 declare repo_project_name=
 declare try_prefixes=${scm_gerrit_repo_group_prefixes:-GRP-}
@@ -63,6 +65,15 @@ while true; do
         -g|--group-type)
             group_type=$2
             shift 2
+
+            ;;
+        -o|--open-in-browser|--no-open-in-browser)
+            if test "$1" = --no-open-in-browser; then
+                open_in_browser=false
+            else
+                open_in_browser=true
+            fi
+            shift
 
             ;;
         --print-prefix-too|--no-print-prefix-too)
@@ -97,6 +108,9 @@ while true; do
             echo "找到的 group 必须是这个仓库自身的，不能往上级去找"
             printf %06s '-g, '
             printf %-24s '--group-type=GROUP_TYPE'
+            echo
+            printf %06s '-o, '
+            printf %-24s '--[no-]open-in-browser'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]print-prefix-too'
@@ -176,6 +190,9 @@ for c in $all_choices; do
             echo $c ${choice_info[$c-prefix]}
         else
             echo $c
+        fi
+        if test "${open_in_browser}" = true; then
+            of -w GG $c
         fi
         exit 0
     fi
