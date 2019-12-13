@@ -7,7 +7,7 @@ fi
 command=$(
 cat <<EOF
 cd /data/data/com.android.shell
-PATH=/data/data/com.android.shell/bin:$PATH
+PATH=/data/data/com.android.shell/bin:\$PATH
 touch not-started.\$\$
 setsid nohup setsid sh -c 'set -x
 rm 'not-started.\$\$'
