@@ -113,7 +113,10 @@ if (@match_jsonpath_value) {
         my $jpath   = JSON::Path->new($key);
 
 
-        die sprintf("{%s: %s} not equal to %s", $key, encode_utf8($jpath->value($json_issue)), $value) unless no_spaces_equal(encode_utf8 $jpath->value($json_issue), $value);
+        unless (no_spaces_equal(encode_utf8 $jpath->value($json_issue), $value)) {
+            say STDERR sprintf("{%s: %s} not equal to %s", $key, encode_utf8($jpath->value($json_issue)), $value) ;
+            exit 42;
+        }
     }
 }
 

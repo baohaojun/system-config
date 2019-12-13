@@ -9,6 +9,8 @@ declare -A admin_pages=(
     ["custom-fields (edit description 1)"]=secure/admin/ViewCustomFields.jspa
     [create-issue]=projects/'$(get-project-key)'
     ["field-config(optional/required/edit description 2)"]=secure/admin/ViewFieldLayouts.jspa
+    ["admin-issues"]=secure/admin/ViewIssueTypes.jspa
+    ["admin-workflows"]=secure/admin/workflows/ListWorkflows.jspa
 )
 
 if ! is-tty-io; then
