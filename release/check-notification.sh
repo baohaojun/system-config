@@ -10,6 +10,10 @@ else
     unset ANDROID_SERIAL
 fi
 
+if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
+    watch-phone -u # do not watch weibo for too long.
+fi&
+
 # this script checks if wrench notification is working
 notification_port=58888
 if test "$WRENCH_INSTANCE"; then
