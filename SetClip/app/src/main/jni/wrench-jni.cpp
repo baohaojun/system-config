@@ -55,7 +55,7 @@ getUid(JNIEnv *env, jclass clazz) {
     return uid;
 }
 
-static const char *classPathName = "com.Wrench.Input";
+static const char *classPathName = "com/Wrench/Input";
 
 static JNINativeMethod methods[] = {
   {"checkPerm", "(Ljava/io/FileDescriptor;)Z", (void*)checkPerm },
