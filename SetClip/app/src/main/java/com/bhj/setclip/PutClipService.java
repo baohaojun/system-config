@@ -28,6 +28,7 @@ import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -256,9 +257,12 @@ public class PutClipService extends Service {
             }
 
             String picName = intent.getStringExtra("picture");
+            String toastText = intent.getStringExtra("toast");
             if (picName != null) {
                 Uri picUri = Uri.parse("file://" + picName);
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, picUri));
+            } else if (toastText != null) {
+                Toast.makeText(PutClipService.this, String.format("%s", toastText), Toast.LENGTH_SHORT).show();
             } else if (intent.getIntExtra("watch-clipboard", 0) == 1) {
                 startMonitorClipboard();
                 try {
