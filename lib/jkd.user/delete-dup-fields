@@ -1,0 +1,82 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+
+use JSON;
+use Encode;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# pprint-only
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $print_only = 0;
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--[no]print-only';
+    if (length('--[no]print-only') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'print-only|p!' => \$print_only,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+my $fields_json = decode_json(qx(jkd get field));
+
+my %name_id_map;
+for (@$fields_json) {
+    my $name = encode_utf8 $_->{name};
+    my $id = $_->{id};
+
+    if (not $name_id_map{$name}) {
+        $name_id_map{$name} = $id;
+    } else {
+        my $id1 = $name_id_map{$name};
+        my $delete_id = $id1;
+        if ($id gt $id1) {
+            $delete_id = $id;
+        }
+
+        $delete_id =~ s,.*_,,;
+
+        say STDERR "need check $name: $id $id1";
+        if ( not $print_only) {
+            system("firefox", "$ENV{scm_jira_url}secure/admin/DeleteCustomField!default.jspa?id=${delete_id}");
+            system("hint 'press any key to continue...'");
+        }
+    }
+}

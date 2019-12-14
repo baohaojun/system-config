@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+lines=$(getclip)
+sawfish-wait-for-start
+
+while read line; do
+    {
+        sleep .5
+        putclip "$line"
+        sawfish-send-focused-window-event "End" "C-S-Home" "C-v" "RET" "RET"
+
+        if sawfish-client -e '(query-pointer)' | grep '^(0 '; then
+            break
+        fi
+    } < /dev/null
+done <<< "${lines}"

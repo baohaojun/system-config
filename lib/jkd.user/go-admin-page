@@ -11,6 +11,7 @@ declare -A admin_pages=(
     ["field-config(optional/required/edit description 2)"]=secure/admin/ViewFieldLayouts.jspa
     ["admin-issues"]=secure/admin/ViewIssueTypes.jspa
     ["admin-workflows"]=secure/admin/workflows/ListWorkflows.jspa
+    ["admin-issuetypes"]="hint: project -> issuetypes -> actions (top-right corner) -> edit issuetypes -> add issuetypes"
 )
 
 if ! is-tty-io; then
@@ -36,6 +37,9 @@ get-project-key() {
 
 if [[ $path =~ \$\( ]]; then
     eval path=$path
+elif [[ $path =~ hint: ]]; then
+    EMACS=t yes-or-no-p -y "$path"
+    exit
 fi
 
 firefox ${FIREFOX_PROFILE_ARG} ${scm_jira_url}${path}

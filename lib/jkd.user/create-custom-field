@@ -5,8 +5,21 @@ use v5.10; # for say
 use Encode;
 use JSON;
 
+
+my $type_map = {
+    'string' => 'com.atlassian.jira.plugin.system.customfieldtypes:textfield',
+    'textarea' => 'com.atlassian.jira.plugin.system.customfieldtypes:textarea',
+    'dyn-radio' => 'com.intenso.jira.plugin.dynamic-forms:dynamic-radiobutton-customfield',
+    'multi-check' => 'com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes',
+};
+
+sub get_types() {
+    return join(" ", keys %$type_map);
+}
+
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P n:name d:description t:type
+# generate-getopt -s perl -P n:name d:description t:type '?"one of " . get_types()'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -40,14 +53,20 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '-t, ';
     printf "%-24s", '--type=TYPE';
-    if (length('--type=TYPE') > 24 and length() > 0) {
+    if (length('--type=TYPE') > 24 and length("one of " . get_types()) > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "one of " . get_types();
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
@@ -59,13 +78,6 @@ GetOptions (
 
 
 ## end generated code
-
-my $type_map = {
-    'string' => 'com.atlassian.jira.plugin.system.customfieldtypes:textfield',
-    'textarea' => 'com.atlassian.jira.plugin.system.customfieldtypes:textarea',
-    'dyn-radio' => 'com.intenso.jira.plugin.dynamic-forms:dynamic-radiobutton-customfield',
-    'multi-check' => 'com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes',
-};
 
 if (not $type_map->{$type}) {
     die "Must specify type as one of (the currently supported): " . join(" ", keys %$type_map);
