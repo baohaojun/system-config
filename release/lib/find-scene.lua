@@ -280,7 +280,12 @@ M.jump_from_to = function(from_scene, to_scene, settings)
       end
    end
    log("Can't jump from %s to %s", tostring(from_scene), tostring(to_scene))
-   error("Can't jump from " .. tostring(from_scene) .. " to " .. tostring(to_scene))
+   if not  M.g_find_scene_debug then
+      M.g_find_scene_debug = true
+      M.jump_from_to(from_scene, to_scene, settings)
+   else
+      error("Can't jump from " .. tostring(from_scene) .. " to " .. tostring(to_scene))
+   end
 end
 
 M.wait_for_scene = function(scene, settings)
