@@ -57,75 +57,75 @@ GetOptions (
 our @current_input;
 
 sub echo(@) {
-  print "@_\n";
+    print "@_\n";
 }
 
 sub debug(@) {
-  print STDERR "@_\n";
+    print STDERR "@_\n";
 }
 
 my $tty;
 if ($ENV{EMACS}) {
-  $tty = "";
+    $tty = "";
 } elsif (system("tty -s") == 0) {
-  open ($tty, ">", "/dev/tty") or $tty = "";
+    open ($tty, ">", "/dev/tty") or $tty = "";
 }
 
 $ENV{ORIGINAL_MATCHER} =~ s, , ,g;
 
 my $accrue_prompt = "$ENV{ORIGINAL_MATCHER}";
 if ($accrue_prompt) {
-  $accrue_prompt = "$accrue_prompt\n";
+    $accrue_prompt = "$accrue_prompt\n";
 }
 sub tty(@) {
-  if ($tty) {
-    print $tty "@_";
-  } else {
-    $accrue_prompt .= "@_";
-  }
+    if ($tty) {
+        print $tty "@_";
+    } else {
+        $accrue_prompt .= "@_";
+    }
 }
 
 
 
 sub read_ans {
-  my ($prompt, $hint) = @_;
-  $prompt =~ s/\s*>?$//;
-  if ($hint) {
-    $prompt .= "\n请按回车继续... ";
-  } else {
-    if (@current_input) {
-      $prompt .= sprintf " l%d ", scalar(@current_input);
+    my ($prompt, $hint) = @_;
+    $prompt =~ s/\s*>?$//;
+    if ($hint) {
+        $prompt .= "\n请按回车继续... ";
+    } else {
+        if (@current_input) {
+            $prompt .= sprintf " l%d ", scalar(@current_input);
+        }
+        $prompt .= " (Type ? for help)>";
     }
-    $prompt .= " (Type ? for help)>";
-  }
 
-  if (not $tty) {
-    tty "$prompt";
-  }
-  my $ans;
-  if ($tty) {
-    $ENV{BASH_READ_PROMPT} = $prompt;
-    my $cmd = qq(bash -c 'read -e -p "\$BASH_READ_PROMPT"; echo -n "\$REPLY"');
-    chomp($ans = qx($cmd));
-  } else {
-    my @accrue_prompt = split("\n", $accrue_prompt);
-    if (@accrue_prompt > 20) {
-      my $n_items = @accrue_prompt - 1;
-      @accrue_prompt = (@accrue_prompt[0..19], "... （共有 $n_items 个选项，请输入*回车查看所有，或输入?回车查看帮助）", $accrue_prompt[-1]);
+    if (not $tty) {
+        tty "$prompt";
     }
-    my $sawfish_prompt = join("\n", @accrue_prompt);
-    use String::ShellQuote;
-    $sawfish_prompt = shell_quote($sawfish_prompt);
-    chomp($ans = qx(ask-for-input-with-sawfish -p $sawfish_prompt));
-  }
+    my $ans;
+    if ($tty) {
+        $ENV{BASH_READ_PROMPT} = $prompt;
+        my $cmd = qq(bash -c 'read -e -p "\$BASH_READ_PROMPT"; echo -n "\$REPLY"');
+        chomp($ans = qx($cmd));
+    } else {
+        my @accrue_prompt = split("\n", $accrue_prompt);
+        if (@accrue_prompt > 20) {
+            my $n_items = @accrue_prompt - 1;
+            @accrue_prompt = (@accrue_prompt[0..19], "... （共有 $n_items 个选项，请输入*回车查看所有，或输入?回车查看帮助）", $accrue_prompt[-1]);
+        }
+        my $sawfish_prompt = join("\n", @accrue_prompt);
+        use String::ShellQuote;
+        $sawfish_prompt = shell_quote($sawfish_prompt);
+        chomp($ans = qx(ask-for-input-with-sawfish -p $sawfish_prompt));
+    }
 
-  $accrue_prompt = "";
-  return $ans;
+    $accrue_prompt = "";
+    return $ans;
 }
 
 sub hint($) {
-  my ($prompt) = @_;
-  read_ans($prompt, 1);
+    my ($prompt) = @_;
+    read_ans($prompt, 1);
 }
 
 my @options_list = @ARGV;
@@ -140,185 +140,183 @@ if ($ENV{always_selection}) {
 }
 
 sub found_it($$) {
-  my ($entry, $remaining_options) = @_;
+    my ($entry, $remaining_options) = @_;
 
-  if ($always_selections{$entry}) {
-    echo $entry;
-    exit;
-  }
-
-  my $count = 1;
-  for (@options_list) {
-    if ($entry eq $_) {
-      echo $count;
-      exit 0;
+    if ($always_selections{$entry}) {
+        echo $entry;
+        exit;
     }
-    $count++;
-  }
+
+    my $count = 1;
+    for (@options_list) {
+        if ($entry eq $_) {
+            echo $count;
+            exit 0;
+        }
+        $count++;
+    }
 }
 
 sub my_select($);
 
 sub my_select($) {
-  my ($remaining_options) = @_;
+    my ($remaining_options) = @_;
 
-  if (@$remaining_options == 1 and $ENV{ORIGINAL_MATCHER} eq "") {
-    found_it($$remaining_options[0], $remaining_options);
-    return;
-  }
-
-  my $ans;
-  my $got_ans_from_env = 0;
-  if ($ENV{ORIGINAL_MATCHER}) {
-    $ans = $ENV{ORIGINAL_MATCHER};
-    $ENV{ORIGINAL_MATCHER} = "";
-    $got_ans_from_env = 1;
-  } else {
-    while (1) {
-      my $count = 1;
-      foreach (@$remaining_options) {
-        tty "$count) $_\n";
-        if ($count > 40 and @$remaining_options > $count) {
-          tty sprintf("... （共有 %d 个选项，请输入『*』回车查看所有，或输入『?』回车查看帮助）\n", scalar(@$remaining_options));
-          last;
-        }
-        $count++;
-      }
-
-      $ans = read_ans($ENV{SELECT_PROMPT} or 'Please select ');
-      if ($ans eq '-') {
-        if (@current_input) {
-          return 0;
-        } else {
-          hint("不能再返回上一层了，我们已经在最上层，所有过滤文本都丢弃了。");
-        }
-      } elsif ($ans eq '?') {
-        tty "\n\nmy-select 用户界面帮助：\n\n";
-        tty "你可以输入一些文字以进行选项的进一步细化过滤。也可以输入一些特殊字符：\n\n  ";
-        tty "直接回车表示选择第一个选项\n  ";
-        tty "输入数字 NNN 回车表示选择第 NNN 个选项\n  ";
-        tty "输入 !word1 word2：！表示反向过滤，这里表示删除跟 word1 匹配的和跟 word2 不匹配的选项\n  ";
-        tty "输入 ~REGEXP：表示使用正则表达式 REGEXP 进行匹配（默认为浏览器地址栏补齐匹配算法）\n  ";
-        tty "输入 ? 表示查看帮助\n  ";
-        tty "输入 STRING!（字符串最后加英文叹号）表示强制接受 STRING 为最终的选择结果\n  ";
-        tty "输入 - 表示删回上一层（丢弃上次输入的过滤选项）\n  ";
-        tty "输入 * 在终端下显示所有选项（如果你当前的选项太多的话）\n  ";
-        tty "输入 Ctrl-C 退出\n";
-        if (@current_input) {
-          tty "\n你当前输入的过滤文本是：" . join(", ", @current_input) . "\n";
-        }
-
-        hint("\n");
-      } elsif ($ans eq '*') {
-        my $count = 1;
-        foreach (@$remaining_options) {
-          tty "$count) $_\n";
-          $count++;
-        }
-        hint "\n";
-      } else {
-        last;
-      }
+    if (@$remaining_options == 1 and $ENV{ORIGINAL_MATCHER} eq "") {
+        found_it($$remaining_options[0], $remaining_options);
+        return;
     }
-  }
 
-  if (not $ans) {
-    found_it($$remaining_options[0], $remaining_options);
-  } elsif ($ans =~ m/^\d+$/ and $ans <= @$remaining_options) {
-    found_it($$remaining_options[$ans - 1], $remaining_options);
-  } else {
-      my @matches;
-      my %matches;
-
-    my @matchers = split(" ", $ans);
-    my %matchers;
-    for (@matchers) {
-      $matchers{$_} = {};
-
-      if ($_ =~ m/^!/) {
-        my $re = substr($_, 1);
-        $matchers{$_}{"qr"} = qr($re)i;
-        $matchers{$_}{"reverse"} = 1;
-    } elsif ($_ =~ m/^~/) {
-        my $re = substr($_, 1);
-        $matchers{$_}{"qr"} = qr($re)i;
+    my $ans;
+    my $got_ans_from_env = 0;
+    if ($ENV{ORIGINAL_MATCHER}) {
+        $ans = $ENV{ORIGINAL_MATCHER};
+        $ENV{ORIGINAL_MATCHER} = "";
+        $got_ans_from_env = 1;
     } else {
-        for (split(/\./, $_)) {
-            $matchers{$_}{"qr"} = qr(\Q$_\E)i;
-            $matchers{$_}{"reverse"} = 0;
-        }
-      }
-    }
-
-    for my $entry (@$remaining_options) {
-        my $matched = 1;
-
-      for my $matcher_ref (keys %matchers) {
-        my $matcher = $matchers{$matcher_ref}{"qr"};
-        my $reverse = $matchers{$matcher_ref}{"reverse"};
-        if ($entry =~ m/$matcher/) {
-            if ($reverse) {
-                if ($debug) {
-                    say STDERR "$entry out for $matcher_ref, reverse";
+        while (1) {
+            my $count = 1;
+            foreach (@$remaining_options) {
+                tty "$count) $_\n";
+                if ($count > 40 and @$remaining_options > $count) {
+                    tty sprintf("... （共有 %d 个选项，请输入『*』回车查看所有，或输入『?』回车查看帮助）\n", scalar(@$remaining_options));
+                    last;
                 }
-            $matched = 0;
-            last;
-          }
-        } elsif (not $reverse) {
-            if ($debug) {
-                say STDERR "$entry out for $matcher_ref, not reverse";
+                $count++;
             }
-          $matched = 0;
-          last;
+
+            $ans = read_ans($ENV{SELECT_PROMPT} or 'Please select ');
+            if ($ans eq '-') {
+                if (@current_input) {
+                    return 0;
+                } else {
+                    hint("不能再返回上一层了，我们已经在最上层，所有过滤文本都丢弃了。");
+                }
+            } elsif ($ans eq '?') {
+                tty "\n\nmy-select 用户界面帮助：\n\n";
+                tty "你可以输入一些文字以进行选项的进一步细化过滤。也可以输入一些特殊字符：\n\n  ";
+                tty "直接回车表示选择第一个选项\n  ";
+                tty "输入数字 NNN 回车表示选择第 NNN 个选项\n  ";
+                tty "输入 !word1 word2：！表示反向过滤，这里表示删除跟 word1 匹配的和跟 word2 不匹配的选项\n  ";
+                tty "输入 ~REGEXP：表示使用正则表达式 REGEXP 进行匹配（默认为浏览器地址栏补齐匹配算法）\n  ";
+                tty "输入 ? 表示查看帮助\n  ";
+                tty "输入 STRING!（字符串最后加英文叹号）表示强制接受 STRING 为最终的选择结果\n  ";
+                tty "输入 - 表示删回上一层（丢弃上次输入的过滤选项）\n  ";
+                tty "输入 * 在终端下显示所有选项（如果你当前的选项太多的话）\n  ";
+                tty "输入 Ctrl-C 退出\n";
+                if (@current_input) {
+                    tty "\n你当前输入的过滤文本是：" . join(", ", @current_input) . "\n";
+                }
+
+                hint("\n");
+            } elsif ($ans eq '*') {
+                my $count = 1;
+                foreach (@$remaining_options) {
+                    tty "$count) $_\n";
+                    $count++;
+                }
+                hint "\n";
+            } else {
+                last;
+            }
         }
-      }
-      if ($matched) {
-          push @matches, $entry unless $matches{$entry};
-          $matches{$entry} = 1;
-      }
     }
 
-      for (keys %always_selections) {
-          push @matches, $_ unless $matches{$_};
-          $matches{$_} = 1;
-      }
-
-
-    if (@matches == 1) {
-      found_it($matches[0], $remaining_options);
-    } elsif (@matches) {
-      push @current_input, $ans;
-      if (my_select(\@matches) == 0) {
-        pop @current_input;
-        return my_select($remaining_options);
-      }
-    } else {
-      if ($got_ans_from_env) {
-        exit -1;
-      }
-      my $saved_ans = $ans;
-      if ($ans =~ m/!$/) {
+    if (not $ans) {
+        found_it($$remaining_options[0], $remaining_options);
+    } elsif ($ans =~ m/^\d+$/ and $ans <= @$remaining_options) {
+        found_it($$remaining_options[$ans - 1], $remaining_options);
+    } elsif ($ans =~ m/!$/) {
         $ans =~ s/!$//;
         print $ans;
         exit;
-      }
+    } else {
+        my @matches;
+        my %matches;
 
-      while (1) {
-        if ($ans =~ m/\003/ || $ans eq "()") {
-          kill "TERM", getppid();
-          exit;
+        my @matchers = split(" ", $ans);
+        my %matchers;
+        for (@matchers) {
+            $matchers{$_} = {};
+
+            if ($_ =~ m/^!/) {
+                my $re = substr($_, 1);
+                $matchers{$_}{"qr"} = qr($re)i;
+                $matchers{$_}{"reverse"} = 1;
+            } elsif ($_ =~ m/^~/) {
+                my $re = substr($_, 1);
+                $matchers{$_}{"qr"} = qr($re)i;
+            } else {
+                for (split(/\./, $_)) {
+                    $matchers{$_}{"qr"} = qr(\Q$_\E)i;
+                    $matchers{$_}{"reverse"} = 0;
+                }
+            }
         }
-        $ans = read_ans "Warning: no matches found for $ans,\ntype -<return> to go back or type !<return> to return $saved_ans";
-        if ($ans eq '!') {
-          print $saved_ans;
-          exit;
-        } elsif ($ans eq '-') {
-          return my_select($remaining_options);
-          last;
+
+        for my $entry (@$remaining_options) {
+            my $matched = 1;
+
+            for my $matcher_ref (keys %matchers) {
+                my $matcher = $matchers{$matcher_ref}{"qr"};
+                my $reverse = $matchers{$matcher_ref}{"reverse"};
+                if ($entry =~ m/$matcher/) {
+                    if ($reverse) {
+                        if ($debug) {
+                            say STDERR "$entry out for $matcher_ref, reverse";
+                        }
+                        $matched = 0;
+                        last;
+                    }
+                } elsif (not $reverse) {
+                    if ($debug) {
+                        say STDERR "$entry out for $matcher_ref, not reverse";
+                    }
+                    $matched = 0;
+                    last;
+                }
+            }
+            if ($matched) {
+                push @matches, $entry unless $matches{$entry};
+                $matches{$entry} = 1;
+            }
         }
-      }
+
+        for (keys %always_selections) {
+            push @matches, $_ unless $matches{$_};
+            $matches{$_} = 1;
+        }
+
+
+        if (@matches == 1) {
+            found_it($matches[0], $remaining_options);
+        } elsif (@matches) {
+            push @current_input, $ans;
+            if (my_select(\@matches) == 0) {
+                pop @current_input;
+                return my_select($remaining_options);
+            }
+        } else {
+            if ($got_ans_from_env) {
+                exit -1;
+            }
+            my $saved_ans = $ans;
+            while (1) {
+                if ($ans =~ m/\003/ || $ans eq "()") {
+                    kill "TERM", getppid();
+                    exit;
+                }
+                $ans = read_ans "Warning: no matches found for $ans,\ntype -<return> to go back or type !<return> to return $saved_ans";
+                if ($ans eq '!') {
+                    print $saved_ans;
+                    exit;
+                } elsif ($ans eq '-') {
+                    return my_select($remaining_options);
+                    last;
+                }
+            }
+        }
     }
-  }
 }
 
 my_select \@options_list;

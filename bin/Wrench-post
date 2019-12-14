@@ -112,10 +112,10 @@ if ($ask_to_whom or $send_to) {
   if ($send_to) {
     $whom = $send_to
   } else {
-    chomp($whom = qx(input-lock -l Wrench-post select-args --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
+    chomp($whom = qx(input-lock -l Wrench-post select-args -a pengyouquan\@\@wx -a 朋友圈\@\@wx --ask-for-input -1 --select-from-history-too -o -p "你想给谁发送消息"));
   }
 
-  if ($whom eq 'pengyouquan@@wx') {
+  if ($whom eq 'pengyouquan@@wx' or $whom eq '朋友圈@@wx' ) {
       my $post_text = sprintf("wrench_share_to_weixin(%s)", quote_lua_str($text));
       system("Wrench.sh", $post_text);
       exit 0;
