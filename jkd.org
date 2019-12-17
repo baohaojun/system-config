@@ -202,6 +202,7 @@ This is simple using Perl's “reflection”.
   }
 
   $ENV{scm_jira_user} = $jkd_username; # for lib scripts
+  $ENV{scm_jira_password} = $jkd_password;
 
   if (not $jkd_username) {
       $jkd_username = $secret_conf->{"jkd.username"};
