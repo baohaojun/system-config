@@ -1,0 +1,289 @@
+#!/bin/bash
+set -e
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+add-field-to-screen-tab -s SCREEN-NAME -t TAB-NAME ACTION ARGS...
+
+* action = add-fields
+将 ARGS 中指定的每一个 field 加入指定的 screen/tab。
+
+- 如果该 field 已经存在指定 tab 中，则直接返回
+- 如果该 field 已经存在另一 tab 中，则先删除
+
+* action = list-fields
+
+列出所有该 tab 下的 fields
+
+* action = delete-fields
+
+删除所有该 tab 下的 fields
+
+* action = sync-from-screen
+
+将 ARGS 中指定的 screen 下所有 fields 同步到该 tab。参考 sync-from-screen --help。
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # s:screen-name \
+    # t:tab-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o s:t:h \
+                      --long screen-name:,tab-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare screen_name=
+declare tab_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -s|--screen-name)
+            screen_name=$2
+            shift 2
+
+            ;;
+        -t|--tab-name)
+            tab_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-s, '
+            printf %-24s '--screen-name=SCREEN_NAME'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--tab-name=TAB_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+screen_id=$(
+    jkd rest screens | jq "$(
+cat <<'EOF28c4b7fc74d2' | . .replace-%% --
+# {%jq-mode%}
+.[]|
+if .name == "[%screen_name%]" then .id else null end | values
+# {%/jq-mode%}
+EOF28c4b7fc74d2
+
+)"
+         )
+
+tab_id=$(
+    jkd rest screens/${screen_id}/tabs | jq "$(
+cat <<'EOF28c4b7fc74d2' | . .replace-%% --
+# {%jq-mode%}
+.[]|
+if .name == "[%tab_name%]" then .id else null end | values
+# {%/jq-mode%}
+EOF28c4b7fc74d2
+
+)"
+      )
+
+declare -A field_tab_map
+
+tabs_ids=$(
+    jkd rest screens/${screen_id}/tabs | jq '.[]|.id' -r
+        )
+
+for tid in $tabs_ids; do
+    while read name; do
+        {
+            if test "${name}"; then
+                field_tab_map[$name]=$tid
+            fi
+        } </dev/null
+    done <<<"$(
+         jkd rest screens/${screen_id}/tabs/${tid}/fields | jq '.[]|.name' -r
+    )"
+done
+
+field_list_json=$(
+    jkd rest field
+               )
+
+get-f_id() {
+    f_id=$(
+        echo "${field_list_json}" | jq "$(
+cat <<'EOF28c4b7fc74d2' | . .replace-%% --
+# {%jq-mode%}
+.[]|
+if .name == "[%f%]" then .id else null end | values
+# {%/jq-mode%}
+EOF28c4b7fc74d2
+
+)" -r
+        )
+}
+
+add-field-to-tab() {
+    field_tab_map[$f]=$tab_id
+
+    for f_id in $f_id; do
+        jkd rest screens/${screen_id}/tabs/${tab_id}/fields -- -X POST --data '{"fieldId" : "'"${f_id}"'"}' -H 'Content-Type: application/json'
+    done
+}
+
+action=$1
+shift
+
+list-fields() {
+    jkd rest screens/${screen_id}/tabs/${tab_id}/fields
+}
+
+sync-from-screen() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # f:from-screen \
+        # eempty-first
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o ef:h \
+                          --long empty-first,from-screen:,help,no-empty-first \
+                          -n $(basename -- $0) -- "$@")
+    declare empty_first=false
+    declare from_screen=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -e|--empty-first|--no-empty-first)
+                if test "$1" = --no-empty-first; then
+                    empty_first=false
+                else
+                    empty_first=true
+                fi
+                shift
+
+                ;;
+            -f|--from-screen)
+                from_screen=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %06s '-e, '
+                printf %-24s '--[no-]empty-first'
+                echo
+                printf %06s '-f, '
+                printf %-24s '--from-screen=FROM_SCREEN'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if test "${empty-first}"; then
+        delete-fields
+    fi
+
+    from_screen_id=$(
+        jkd rest screens | jq "$(
+cat <<'EOF28c4b7fc74d2' | . .replace-%% --
+# {%jq-mode%}
+.[]|
+if .name == "[%from_screen%]" then .id else null end | values
+# {%/jq-mode%}
+EOF28c4b7fc74d2
+
+)" -r
+                  )
+
+    from_tab_id=$(
+        jkd rest screens/${from_screen_id}/tabs | jq '.[]|.id' -r
+               )
+
+    IFS=$'\n'
+    from_fields=$(
+        jkd rest screens/${from_screen_id}/tabs/${from_tab_id}/fields | jq '.[]|.name' -r
+               )
+
+    add-fields $from_fields
+}
+
+delete-fields() {
+    for f_id in $(list-fields | jq '.[]|.id' -r); do
+        jkd rest screens/${screen_id}/tabs/${tab_id}/fields/${f_id} -- -X DELETE
+    done
+}
+
+add-fields() {
+    for f in "$@"; do
+        case "${field_tab_map[$f]}" in
+            $tab_id)
+                log "$f already in $tab_id"
+                continue
+                ;;
+            '')
+                get-f_id
+                add-field-to-tab
+                ;;
+            *)
+                tid=${field_tab_map[$f]}
+                log "delete $f from $tid first"
+                get-f_id
+                for f_id in $f_id; do
+                    jkd rest screens/${screen_id}/tabs/${tid}/fields/${f_id} -- -X DELETE
+                    add-field-to-tab
+                done
+                ;;
+        esac
+    done
+}
+
+if test "${action}" = add-fields; then
+    add-fields "$@"
+elif test "${action}" = list-fields; then
+    list-fields
+elif test "${action}" = delete-fields; then
+    delete-fields
+elif test "${action}" = sync-from-screen; then
+    sync-from-screen "$@"
+else
+    die "Don't know how to work with your action: '$action'"
+fi

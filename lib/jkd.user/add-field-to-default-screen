@@ -1,0 +1,79 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+add-field-to-default-screen -s SCREEN-NAME FIELDS...
+
+未实现！对 default screen 的理解有误！
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # s:screen-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o s:h \
+                      --long screen-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare screen_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -s|--screen-name)
+            screen_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-s, '
+            printf %-24s '--screen-name=SCREEN_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+fields=$(
+    jkd rest field | jq '.[] | "\(.id) : \(.name)"' -r
+      )
+
+if test $# = 0; then
+    die "Must specify at least 1 field"
+fi
+
+if test -z "${screen_name}"; then
+    die "Must specify the screen name"
+fi
+
+screen_id=$(
+    jkd rest screens | jq '.[] | "\(.id) : \(.name)"' -r |
+        grep ": \Q${screen_name}\E$" -P | pn 1
+          )
+
+set -x
+for field_name in "$@"; do
+    field_id=$(
+        echo "${fields}" | grep ": \Q${field_name}\E$" -P | pn 1
+            )
+    jkd rest screens/${screen_id}/addToDefault/${field_id} -- -X POST
+done

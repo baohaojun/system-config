@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+projects=$(gr projects)
+
+for p in ${projects}; do
+    if ! gr repo2group -e -g ADMIN -r $p &>/dev/null; then
+        echo $p
+    fi
+done

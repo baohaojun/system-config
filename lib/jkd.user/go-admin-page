@@ -11,7 +11,9 @@ declare -A admin_pages=(
     ["field-config(optional/required/edit description 2)"]=secure/admin/ViewFieldLayouts.jspa
     ["admin-issues"]=secure/admin/ViewIssueTypes.jspa
     ["admin-workflows"]=secure/admin/workflows/ListWorkflows.jspa
-    ["admin-issuetypes"]="hint: project -> issuetypes -> actions (top-right corner) -> edit issuetypes -> add issuetypes"
+    ["admin-add-issuetypes"]="hint: project -> issuetypes -> actions (top-right corner) -> edit issuetypes -> add issuetypes"
+    ["admin-assign-workflow-to-issuetype"]="hint: project -> workflows -> ..."
+    ["admin-field-scheme-config(optional/required switch 2)"]="hint: associate a field configuration scheme with your issue type!"
 )
 
 if ! is-tty-io; then

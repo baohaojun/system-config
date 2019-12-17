@@ -7,13 +7,13 @@ set -e
     # r:replace-regexp '?"默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"' \
     # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14504 = \"1.0.0\""' \
     # @:force-prod \
-    # @debug='("" hint-run)'
+    # @debug='(true hint)'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o j:i:r:h \
                       --long debug,force-prod:,jq-expression:,old-issue:,old-jira-url:,replace-regexp:,help,no-debug \
                       -n $(basename -- $0) -- "$@")
-declare debug=
+declare debug=true
 declare force_prod=
 declare jq_expression=.
 declare old_issue=
@@ -25,9 +25,9 @@ while true; do
 
         --debug|--no-debug)
             if test "$1" = --no-debug; then
-                debug=
+                debug=true
             else
-                debug=hint-run
+                debug=hint
             fi
             shift
 
@@ -115,18 +115,25 @@ old_json=$(
     jkd -j ${old_jira_url} print-issue -i ${old_issue} --json --for-clone|jq "${jq_expression}" | perl -pe "${replace_regexp}"
         )
 jira_key=$(
-    $debug jkd c -p EF -t "【智能与系统-车机】版本发布 Workflow" \
+    jkd c -p EF -t "【智能与系统-车机】版本发布 Workflow" \
         --fields-json "${old_json}" |
         tee /dev/stderr |
         perl -ne 'print if s,POST response code:201result:,,' | jq .key -r
         )
+
+$debug created jira: $jira_key
 if test -z "${jira_key}"; then
     die "Can't create jira issue"
 fi
 
-$debug jkd tri -i $jira_key --fields-json "${old_json}" -t "【系统部】发布需求符合要求"
-$debug jkd tri -i $jira_key --fields-json "${old_json}"
-$debug jkd tri -i $jira_key --fields-json "${old_json}"
+jkd tri -i $jira_key --fields-json "${old_json}" -t "【系统部】发布需求符合要求"
+$debug transitioned jira: 1
+
+jkd tri -i $jira_key --fields-json "${old_json}"
+$debug transitioned jira: 2
+
+jkd tri -i $jira_key --fields-json "${old_json}"
+$debug transitioned jira: 3
 
 echo "jira_key is $jira_key"
 
