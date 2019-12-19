@@ -3,6 +3,8 @@
 # do 2 things with links:
 # 1. fix links to find the target file and use relative path
 # 2. make images clickable
+
+use URI::Encode qw(uri_encode uri_decode);
 use strict;
 use String::ShellQuote;
 
@@ -22,6 +24,7 @@ sub fix_link($)
     my $anchor;
     if ($link =~ m!^~/|^$ENV{HOME}/!) {
         $link =~ s!^~/!$ENV{HOME}/!;
+        $link = uri_decode $link;
         my $q_link = shell_quote($link);
         chomp(my $abs_path = qx(readlink -f $q_link));
         if ($abs_path !~ m!^$ENV{PWD}/!) {
