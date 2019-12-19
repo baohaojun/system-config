@@ -1,0 +1,185 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+* action = list
+
+列出指定项目的角色列表
+
+* action = add-user
+
+将指定的 user 加入到指定的 role
+
+- 特殊值 ALL：加入所有 roles
+- 若不指定 role，会让你手动选择
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # a:action p:project
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:p:h \
+                      --long action:,project:,help \
+                      -n $(basename -- $0) -- "$@")
+declare action=
+declare project=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--action)
+            action=$2
+            shift 2
+
+            ;;
+        -p|--project)
+            project=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--action=ACTION'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+list-roles() {
+    IFS=$'\n'
+
+    roles_json=$(
+        jkd rest project/${project}/role
+              )
+    role_names=$(
+        echo "${roles_json}" | jq 'keys|.[]' -r
+              )
+
+    echo '['
+    first=true
+    for role in ${role_names}; do
+        if test "${first}" = true; then
+            first=false
+        else
+            echo ,
+        fi
+        role_id=$(
+            echo "${roles_json}" | jq '."'"${role}"'"' -r | perl -pe 's,.*/,,'
+               )
+        jkd rest project/${project}/role/"${role_id}" | jq .
+    done
+
+    echo ']'
+}
+
+add-user() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # r:role-name u:user-name
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o r:u:h \
+                          --long role-name:,user-name:,help \
+                          -n $(basename -- $0) -- "$@")
+    declare role_name=
+    declare user_name=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -r|--role-name)
+                role_name=$2
+                shift 2
+
+                ;;
+            -u|--user-name)
+                user_name=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %06s '-r, '
+                printf %-24s '--role-name=ROLE_NAME'
+                echo
+                printf %06s '-u, '
+                printf %-24s '--user-name=USER_NAME'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    IFS=$'\n'
+    if test "${role_name}" = ALL; then
+        set -- $(jkd rest project/${project}/role | jq 'keys|.[]' -r)
+    elif test -z "${role_name}"; then
+        set -- $(jkd sel-name --jkd "roles -a list -p $project")
+    else
+        set -- "${role_name}"
+    fi
+
+    for role in "$@"; do
+        role_id=$(
+            jkd rest project/${project}/role | jq '."'"${role}"'"' -r | perl -pe 's,.*/,,'
+               )
+        log role_id is $role_id
+        if jkd rest project/${project}/role/"${role_id}" | jq '.actors|.[]|.name' -r | grep -q -P "^\Q${user_name}\E$"; then
+            log "${user_name} already in ${role}"
+            continue
+        fi
+        debug-run jkd rest -a project/${project}/role/${role_id} -- -X POST --data '{"user" : ["'"${user_name}"'"]}' -H 'Content-Type: application/json'
+    done
+}
+
+if test "${action}" = list; then
+    list-roles "$@"
+elif test "${action}" = add-user; then
+    add-user "$@"
+fi

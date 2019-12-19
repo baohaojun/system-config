@@ -83,6 +83,23 @@ if (not $type_map->{$type}) {
     die "Must specify type as one of (the currently supported): " . join(" ", keys %$type_map);
 }
 
+my $fields_json = decode_json(qx(jkd rest field));
+
+sub nospace_strcmp($$) {
+    my @args = @_;
+    map {
+        s, | ,,g;
+    } @args;
+    return $args[0] eq $args[1];
+}
+
+for (@$fields_json) {
+    if (nospace_strcmp encode_utf8($_->{name}), $name) {
+        say STDERR "$name already exists: ", encode_utf8($_->{name});
+        exit;
+    }
+}
+
 my $json_obj = {
     name => decode_utf8($name),
     description => decode_utf8($description),

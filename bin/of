@@ -77,7 +77,7 @@ else
 fi
 
 case "$web" in
-    jira)
+    jira|JIRA)
         of ${scm_jira_url}browse/$1
         exit
         ;;

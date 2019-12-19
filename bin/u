@@ -8,5 +8,25 @@ url=$(get-firefox-tab-url)
 
 export ADD_HOW_MUCH=${1}
 
-url=$(echo $url| perl -pe 's,(.*\b)(\d+)(.*),$1 . ($2 + $ENV{ADD_HOW_MUCH}) . $3,e')
+if [[ $ADD_HOW_MUCH =~ ^[+|-][0-9]+ ]]; then
+    url=$(echo $url| perl -pe 's,(.*\b)(\d+)(.*),$1 . ($2 + $ENV{ADD_HOW_MUCH}) . $3,e')
+
+else
+    jira_regexp=$(
+        declare -x -p | perl -ne 'push @u, $1 if m,^declare -x scm_jira.*url.*="(.*)",; END {print join("|", @u)}'
+               )
+    jenkins_regexp=$(
+        declare -x -p | perl -ne 'push @u, $1 if m,^declare -x scm_jenkins.*url.*="(.*)",; END {print join("|", @u)}'
+                  )
+
+    if [[ $url =~ $jenkins_regexp ]]; then
+        bhj-notify u "jc go $*"
+        exec jc go "$@"
+    elif [[ $url =~ $jira_regexp ]]; then
+        bhj-notify u "jkd go $*"
+        exec jkd go "$@"
+    else
+        bhj-notify u "Don't know how to do $*"
+    fi
+fi
 firefox "$url"

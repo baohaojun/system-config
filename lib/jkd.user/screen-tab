@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+
+IFS=$'\n'
+
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
 # {%org-mode%}
@@ -21,7 +24,11 @@ add-field-to-screen-tab -s SCREEN-NAME -t TAB-NAME ACTION ARGS...
 
 * action = sync-from-screen
 
-将 ARGS 中指定的 screen 下所有 fields 同步到该 tab。参考 sync-from-screen --help。
+将 ARGS 中指定的 screen 下所有 fields 同步到该 tab。参考 sync-from-screen --help。
+
+* action = add-tab
+
+创建 tab
 # {%/org-mode%}
 EOFe9576f8668e0
         )
@@ -78,6 +85,8 @@ done
 
 ## end generated code
 
+IFs=$'\n'
+
 screen_id=$(
     jkd rest screens | jq "$(
 cat <<'EOF28c4b7fc74d2' | . .replace-%% --
@@ -90,8 +99,12 @@ EOF28c4b7fc74d2
 )"
          )
 
+tabs_json=$(
+    jkd rest screens/${screen_id}/tabs
+         )
+
 tab_id=$(
-    jkd rest screens/${screen_id}/tabs | jq "$(
+    echo "${tabs_json}" | jq "$(
 cat <<'EOF28c4b7fc74d2' | . .replace-%% --
 # {%jq-mode%}
 .[]|
@@ -104,14 +117,34 @@ EOF28c4b7fc74d2
 
 declare -A field_tab_map
 
-tabs_ids=$(
-    jkd rest screens/${screen_id}/tabs | jq '.[]|.id' -r
-        )
+tabs_ids=(
+    $(
+        echo "${tabs_json}" | jq '.[]|.id' -r
+    )
+)
 
-for tid in $tabs_ids; do
+tabs_names=(
+    $(
+        echo "${tabs_json}" | jq '.[]|.name' -r
+    )
+)
+
+declare -A tabs_name_id_map
+declare -A tabs_id_name_map
+
+for x in $(seq 0 $(( ${#tabs_ids[@]} - 1))); do
+    id=${tabs_ids[$x]}
+    name=${tabs_names[$x]}
+
+    tabs_name_id_map[$name]=$id
+    tabs_id_name_map[$id]=$name
+done
+
+for tid in "${tabs_ids[@]}"; do
     while read name; do
         {
             if test "${name}"; then
+                log "$name already in in tab ${tabs_id_name_map[$tid]}"
                 field_tab_map[$name]=$tid
             fi
         } </dev/null
@@ -139,6 +172,7 @@ EOF28c4b7fc74d2
 }
 
 add-field-to-tab() {
+    log "add $f to ${tab_id_name_map[$tab_id]}"
     field_tab_map[$f]=$tab_id
 
     for f_id in $f_id; do
@@ -165,14 +199,20 @@ EOFe9576f8668e0
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -P '?"${comment_doc}"' \
         # f:from-screen \
-        # eempty-first
+        # eempty-first \
+        # oonly-if-missing='("" -o)' '?"只添加尚未添加的字段"' \
+        # wwhich-tab='("" -w)' '?"先选择要同步到哪个 tab"' \
+        # mmove-tab='("" -m)' '?"如果在别的 tab 上，将其移动到指定的 tab"'
     ## end code-generator
     ## start generated code
-    TEMP=$(POSIXLY_CORRECT=true getopt -o ef:h \
-                          --long empty-first,from-screen:,help,no-empty-first \
+    TEMP=$(POSIXLY_CORRECT=true getopt -o ef:mowh \
+                          --long empty-first,from-screen:,move-tab,only-if-missing,which-tab,help,no-empty-first,no-move-tab,no-only-if-missing,no-which-tab \
                           -n $(basename -- $0) -- "$@")
     declare empty_first=false
     declare from_screen=
+    declare move_tab=
+    declare only_if_missing=
+    declare which_tab=
     eval set -- "$TEMP"
     while true; do
         case "$1" in
@@ -191,6 +231,33 @@ EOFe9576f8668e0
                 shift 2
 
                 ;;
+            -m|--move-tab|--no-move-tab)
+                if test "$1" = --no-move-tab; then
+                    move_tab=
+                else
+                    move_tab=-m
+                fi
+                shift
+
+                ;;
+            -o|--only-if-missing|--no-only-if-missing)
+                if test "$1" = --no-only-if-missing; then
+                    only_if_missing=
+                else
+                    only_if_missing=-o
+                fi
+                shift
+
+                ;;
+            -w|--which-tab|--no-which-tab)
+                if test "$1" = --no-which-tab; then
+                    which_tab=
+                else
+                    which_tab=-w
+                fi
+                shift
+
+                ;;
             -h|--help)
                 set +x
                 echo -e "${comment_doc}"
@@ -202,6 +269,15 @@ EOFe9576f8668e0
                 printf %06s '-f, '
                 printf %-24s '--from-screen=FROM_SCREEN'
                 echo
+                printf %06s '-m, '
+                printf %-24s '--[no-]move-tab'
+                echo "如果在别的 tab 上，将其移动到指定的 tab"
+                printf %06s '-o, '
+                printf %-24s '--[no-]only-if-missing'
+                echo "只添加尚未添加的字段"
+                printf %06s '-w, '
+                printf %-24s '--[no-]which-tab'
+                echo "先选择要同步到哪个 tab"
                 exit
                 shift
                 ;;
@@ -218,7 +294,7 @@ EOFe9576f8668e0
 
     ## end generated code
 
-    if test "${empty-first}"; then
+    if test "${empty_first}" = true; then
         delete-fields
     fi
 
@@ -238,12 +314,11 @@ EOF28c4b7fc74d2
         jkd rest screens/${from_screen_id}/tabs | jq '.[]|.id' -r
                )
 
-    IFS=$'\n'
     from_fields=$(
         jkd rest screens/${from_screen_id}/tabs/${from_tab_id}/fields | jq '.[]|.name' -r
                )
 
-    add-fields $from_fields
+    add-fields ${which_tab} ${move_tab} ${only_if_missing} $from_fields
 }
 
 delete-fields() {
@@ -253,8 +328,105 @@ delete-fields() {
 }
 
 add-fields() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # wwhich-tab='("" -w)' '?"先选择要同步到哪个 tab"' \
+        # mforce-move '?"如果已经在别的 tab，将它 move 过来"' \
+        # oonly-if-missing='("" -o)' '?"只添加尚未添加的字段"'
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o mowh \
+                          --long force-move,only-if-missing,which-tab,help,no-force-move,no-only-if-missing,no-which-tab \
+                          -n $(basename -- $0) -- "$@")
+    declare force_move=false
+    declare only_if_missing=
+    declare which_tab=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -m|--force-move|--no-force-move)
+                if test "$1" = --no-force-move; then
+                    force_move=false
+                else
+                    force_move=true
+                fi
+                shift
+
+                ;;
+            -o|--only-if-missing|--no-only-if-missing)
+                if test "$1" = --no-only-if-missing; then
+                    only_if_missing=
+                else
+                    only_if_missing=-o
+                fi
+                shift
+
+                ;;
+            -w|--which-tab|--no-which-tab)
+                if test "$1" = --no-which-tab; then
+                    which_tab=
+                else
+                    which_tab=-w
+                fi
+                shift
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %06s '-m, '
+                printf %-24s '--[no-]force-move'
+                echo "如果已经在别的 tab，将它 move 过来"
+                printf %06s '-o, '
+                printf %-24s '--[no-]only-if-missing'
+                echo "只添加尚未添加的字段"
+                printf %06s '-w, '
+                printf %-24s '--[no-]which-tab'
+                echo "先选择要同步到哪个 tab"
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
     for f in "$@"; do
-        case "${field_tab_map[$f]}" in
+        tid=${field_tab_map[$f]}
+
+        if test "${tid}" -a "${only_if_missing}" = -o; then
+            log "$f already in ${tabs_id_name_map[$tid]}, and --only-if-missing is on, skip"
+            continue
+        fi
+        if test "${which_tab}" = -w; then
+            log "need ask which tab"
+            tab_name=$(
+                select-args -p "Which tab to move '$f' to?" "${tabs_names[@]}"
+                    )
+            tab_id=${tabs_name_id_map[$tab_name]}
+        else
+            log "no need to ask which tab: $which_tab"
+        fi
+        case "$tid" in
             $tab_id)
                 log "$f already in $tab_id"
                 continue
@@ -264,13 +436,17 @@ add-fields() {
                 add-field-to-tab
                 ;;
             *)
-                tid=${field_tab_map[$f]}
-                log "delete $f from $tid first"
-                get-f_id
-                for f_id in $f_id; do
-                    jkd rest screens/${screen_id}/tabs/${tid}/fields/${f_id} -- -X DELETE
-                    add-field-to-tab
-                done
+                if test "${force_move}" = true; then
+                    tid=${field_tab_map[$f]}
+                    log "delete $f from $tid first"
+                    get-f_id
+                    for f_id in $f_id; do
+                        jkd rest screens/${screen_id}/tabs/${tid}/fields/${f_id} -- -X DELETE
+                        add-field-to-tab
+                    done
+                else
+                    hint "Already in tab: ${tab_id_name_map{$tid}}"
+                fi
                 ;;
         esac
     done
@@ -284,6 +460,8 @@ elif test "${action}" = delete-fields; then
     delete-fields
 elif test "${action}" = sync-from-screen; then
     sync-from-screen "$@"
+elif test "${action}" = add-tab; then
+    jkd rest -a screens/${screen_id}/tabs -- -X POST --data '{"name" : "'"${tab_name}"'"}' -H 'Content-Type: application/json'
 else
     die "Don't know how to work with your action: '$action'"
 fi

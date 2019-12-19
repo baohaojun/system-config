@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 . wait-keys-clear --
 
 current_window=$(sawfish-client -e "(window-id (input-focus))")

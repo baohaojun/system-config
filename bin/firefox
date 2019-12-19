@@ -28,6 +28,11 @@ else
     fi
 fi
 
+if test "${FIREFOX_TAB_NUMBER}"; then
+    sawfish-send-focused-window-event "M-${FIREFOX_TAB_NUMBER}"
+    sleep .3
+fi
+
 $the_firefox ${FIREFOX_PROFILE_ARG} "$@"
 if echo " $*" | grep -e ' --new-tab'; then
     sawfish-send-focused-window-event "M-1" "C-Prior"

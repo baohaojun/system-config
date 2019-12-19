@@ -16,7 +16,7 @@ if test $(basename $0) = query-button-state; then
         xinput query-state $x
     done | grep -P "\[$1\].*down"
 else
-    if test ! -e ~/.config/system-config/keyboard-dev-ids; then
+    (
         xinput list |
         grep keyboard |
         grep -v XTEST |
@@ -24,9 +24,13 @@ else
         grep -v 'Video Bus|Button' -P |
         grep -o -e 'id=\d+' -P |
         cut -b 4- |
-        sort -u > ~/.config/system-config/keyboard-dev-ids
-    fi
+        sort -u > ~/.config/system-config/keyboard-dev-ids.bak
+        mv ~/.config/system-config/keyboard-dev-ids.bak \
+           ~/.config/system-config/keyboard-dev-ids
+    ) &
+
     for x in $(cat ~/.config/system-config/keyboard-dev-ids); do
+        log querying $x
         xinput query-state $x
     done | grep "down"
 fi

@@ -1,0 +1,64 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # g:group-name u:user-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o g:u:h \
+                      --long group-name:,user-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare group_name=
+declare user_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -g|--group-name)
+            group_name=$2
+            shift 2
+
+            ;;
+        -u|--user-name)
+            user_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-g, '
+            printf %-24s '--group-name=GROUP_NAME'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--user-name=USER_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+set -x
+jkd rest -a group/user?groupname=${group_name} -- -X POST --data '{"name" : "'"${user_name}"'"}' -H 'Content-Type: application/json'

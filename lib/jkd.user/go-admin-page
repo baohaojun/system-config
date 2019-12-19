@@ -6,6 +6,7 @@ declare -A admin_pages=(
     [dynamic-forms]=secure/admin/DFConfiguration.jspa
     [webhooks]=plugins/servlet/webhooks
     [project]=plugins/servlet/project-config/'$(get-project-key)'/summary
+    [bro]='go to brother page'
     ["custom-fields (edit description 1)"]=secure/admin/ViewCustomFields.jspa
     [create-issue]=projects/'$(get-project-key)'
     ["field-config(optional/required/edit description 2)"]=secure/admin/ViewFieldLayouts.jspa
@@ -30,6 +31,8 @@ which_page=$(
           )
 shift || true
 
+
+
 path=${admin_pages[$which_page]}
 
 get-project-key() {
@@ -42,6 +45,61 @@ if [[ $path =~ \$\( ]]; then
 elif [[ $path =~ hint: ]]; then
     EMACS=t yes-or-no-p -y "$path"
     exit
+fi
+
+if test "${which_page}" = screens -a "$#" != 0; then
+    screen_id=$(
+        jkd sel-id -a screens -i "$1"
+             )
+
+    shift
+    action=$(select-args -i "$1" "layout configuration" "edit name and description")
+    if test "${action}" = "layout configuration"; then
+        path=secure/admin/ConfigureFieldScreen.jspa?id=${screen_id}
+    else
+        path="secure/admin/EditFieldScreen!default.jspa?id=${screen_id}"
+    fi
+elif test "${which_page}" = "custom-fields (edit description 1)" -a "$#" != 0; then
+    field_id=$(
+        jkd sel-id -a field -i "$1"
+            )
+    shift
+    which_to_view=$(
+        select-args -i "$1" -p "edit what?" description options
+                 )
+    if test "${which_to_view}" = description; then
+        path="secure/admin/EditCustomField!default.jspa?id=${field_id#*_}"
+    else
+        path="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${field_id#*_}"
+    fi
+elif test "${which_page}" = bro; then
+    case "${original_url}" in
+        *"secure/admin/EditFieldScreen!default.jspa?id="*)
+            id=${original_url##*id=}
+            path="secure/admin/ConfigureFieldScreen.jspa?id=${id}"
+            ;;
+        *"secure/admin/ConfigureFieldScreen.jspa?id="*)
+            id=${original_url##*id=}
+            path="secure/admin/EditFieldScreen!default.jspa?id=${id}"
+            ;;
+        *)
+            bhj-notify "Don't know how to do brother page:
+
+$original_url
+"
+            exit 1
+            ;;
+
+    esac
+
+fi
+
+# bhj-notify go path is ${scm_jira_url}${path}
+
+if is-tty-io; then
+    export FIREFOX_TAB_NUMBER=1
+else
+    unset FIREFOX_TAB_NUMBER
 fi
 
 firefox ${FIREFOX_PROFILE_ARG} ${scm_jira_url}${path}

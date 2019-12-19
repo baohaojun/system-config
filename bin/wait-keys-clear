@@ -6,9 +6,9 @@
     for i in $(seq 1 50); do
         if query-keyboard-state >/dev/null 2>&1; then
             sleep .1;
-            if test $i = 50; then
-                bhj-notify keyboad 'It is always pressed'
-                exit
+            if test $i = 20; then
+                bhj-notify keyboad 'It is always pressed: $(query-keyboard-state 1>&2)'
+                exit 1
             fi
             continue
         else

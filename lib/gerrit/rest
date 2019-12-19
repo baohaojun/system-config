@@ -80,6 +80,14 @@ fi
 if [[ $access_point =~ :// ]]; then
     g_url=$access_point
 else
+    if ! [[ $access_point =~ ^/?a/ ]]; then
+        access_point=a/${access_point}
+    fi
+
+    if ! [[ $access_point =~ /($|\?) ]]; then
+        access_point=${access_point}/
+    fi
+
     g_url="${gerrit_server_url}${access_point}"
 fi
 
