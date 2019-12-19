@@ -3,14 +3,15 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P @bare @cat
+# generate-getopt -P @bare @cat @fix-emojis-only
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
-                      --long bare,cat,help,no-bare,no-cat \
+                      --long bare,cat,fix-emojis-only,help,no-bare,no-cat,no-fix-emojis-only \
                       -n $(basename -- $0) -- "$@")
 declare bare=false
 declare cat=false
+declare fix_emojis_only=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -33,6 +34,15 @@ while true; do
             shift
 
             ;;
+        --fix-emojis-only|--no-fix-emojis-only)
+            if test "$1" = --no-fix-emojis-only; then
+                fix_emojis_only=false
+            else
+                fix_emojis_only=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -43,6 +53,9 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--[no-]cat'
+            echo
+            printf "%06s" " "
+            printf %-24s '--[no-]fix-emojis-only'
             echo
             exit
             shift
@@ -72,8 +85,11 @@ set -- "$(basename "$1")"
 if [[ $1 =~ .org$ ]]; then
     org_file=$1
     html_file=${1%.org}.html
-else
+elif test "${fix_emojis_only}" != true; then
     die "Must specify an extra arg as a .org file"
+else
+    org_file="no-such-file"
+    html_file=$1
 fi
 
 if test "${bare}" = true; then
@@ -82,7 +98,8 @@ else
     how_to_export=''
 fi
 
-emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
+if test "${fix_emojis_only}" != true; then
+    emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
           (let* ((org-file "[%org_file%]")
                  (my-loaded-themes custom-enabled-themes)
                  (html-file (replace-regexp-in-string "\\.org$" ".html" "[%org_file%]"))
@@ -124,10 +141,10 @@ emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
 EOF6405e5bce1d2
           )" 1>&2
 
+fi
 if test "${bare}" = true; then
     true
 else
-
     perl -npe "$(cat <<'EOFf0ea35142ce4'
                # class='emoji' src='/home/bhj/src/github/Wrench/release/emojis/iphone-new/RING.png'
                while (m,class='emoji' src='(.*?)',g) {

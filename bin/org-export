@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+. aterr log "Failed to run org-export $*"
+
 tmp_el=/tmp/$(basename $0).$$
 
 function die() {
@@ -162,23 +164,22 @@ for x in "$@"; do
     export ORG_ORIGFILE_BASENAME=$(basename "$x")
 
     perl -npe 's|\Q$ENV{ORG_TEMPFILE_BASENAME}\E|$ENV{ORG_ORIGFILE_BASENAME}|g' $tf.html > "$x".html
-    if true || grep "emojify-mode" "$x".org -q; then
-        (
-            cd $(dirname "$x")
-            if test ! -e emojis; then
-                relative-link $(readlink -f ".git/../emojis") .
-            fi
-            save.-to-git -m "before org2html $x"
-            org2html "$(basename "$x".html)"
-            (
-                cd emojis
-                git add .
-            ) >/dev/null 2>&1 || true
-        )
 
-    fi
+    (
+        cd $(dirname "$x")
+        if test ! -e emojis; then
+            relative-link $(readlink -f ".git/../emojis") .
+        fi
+        # save.-to-git -m "before org2html $x"
+        org2html --fix-emojis-only "$(basename "$x".html)"
+        (
+            cd emojis
+            git add .
+        ) >/dev/null 2>&1 || true
+    )
+
     if test $# = 1 -a "$RUN_IN_PARALLEL" != true; then
-        of "$x".html
+        of "$x".html&
     fi
     rm $tf.*
 done
