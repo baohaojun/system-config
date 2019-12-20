@@ -7,17 +7,15 @@ declare -A admin_pages=(
     [webhooks]=plugins/servlet/webhooks
     [project]=plugins/servlet/project-config/'$(get-project-key)'/summary
     [bro]='go to brother page'
-    ["custom-fields (edit description 1)"]=secure/admin/ViewCustomFields.jspa
+    ["fields"]=fields
     [create-issue]=projects/'$(get-project-key)'
-    ["field-config(optional/required/edit description 2)"]=secure/admin/ViewFieldLayouts.jspa
     ["admin-issues"]=secure/admin/ViewIssueTypes.jspa
     ["admin-workflows"]=secure/admin/workflows/ListWorkflows.jspa
     ["admin-add-issuetypes"]="hint: project -> issuetypes -> actions (top-right corner) -> edit issuetypes -> add issuetypes"
     ["admin-assign-workflow-to-issuetype"]="hint: project -> workflows -> ..."
-    ["admin-field-scheme-config(optional/required switch 2)"]="hint: associate a field configuration scheme with your issue type!"
 )
 
-if ! is-tty-io; then
+if test -z "${TMUX}"; then
     original_url=$(get-firefox-tab-url)
     scm_jira_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
 
@@ -40,6 +38,124 @@ get-project-key() {
         select-output-line -p "Which project?" cat | pn 1
 }
 
+if test "${which_page}" = "fields"; then
+
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # cconfigure-options eedit-name-and-description \
+        # aadd-field i:field-id m:match-field-name
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o acei:m:h \
+                          --long add-field,configure-options,edit-name-and-description,field-id:,match-field-name:,help,no-add-field,no-configure-options,no-edit-name-and-description \
+                          -n $(basename -- $0) -- "$@")
+    declare add_field=false
+    declare configure_options=false
+    declare edit_name_and_description=false
+    declare field_id=
+    declare match_field_name=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -a|--add-field|--no-add-field)
+                if test "$1" = --no-add-field; then
+                    add_field=false
+                else
+                    add_field=true
+                fi
+                shift
+
+                ;;
+            -c|--configure-options|--no-configure-options)
+                if test "$1" = --no-configure-options; then
+                    configure_options=false
+                else
+                    configure_options=true
+                fi
+                shift
+
+                ;;
+            -e|--edit-name-and-description|--no-edit-name-and-description)
+                if test "$1" = --no-edit-name-and-description; then
+                    edit_name_and_description=false
+                else
+                    edit_name_and_description=true
+                fi
+                shift
+
+                ;;
+            -i|--field-id)
+                field_id=$2
+                shift 2
+
+                ;;
+            -m|--match-field-name)
+                match_field_name=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %06s '-a, '
+                printf %-24s '--[no-]add-field'
+                echo
+                printf %06s '-c, '
+                printf %-24s '--[no-]configure-options'
+                echo
+                printf %06s '-e, '
+                printf %-24s '--[no-]edit-name-and-description'
+                echo
+                printf %06s '-i, '
+                printf %-24s '--field-id=FIELD_ID'
+                echo
+                printf %06s '-m, '
+                printf %-24s '--match-field-name=MATCH_FIELD_NAME'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if test "${match_field_name}"; then
+        field_id=$(
+            jkd sel-id -a field -i "${match_field_name}"
+                )
+    fi
+
+    if test "${configure_options}" = true; then
+        path="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${field_id#*_}"
+    elif test "${edit_name_and_description}" = true; then
+        path="secure/admin/EditCustomField!default.jspa?id=${field_id#*_}"
+    elif test "${add_field}" = true; then
+        path='secure/admin/CreateCustomField!default.jspa'
+    else
+        path=secure/admin/ViewCustomFields.jspa
+    fi
+fi
+
 if [[ $path =~ \$\( ]]; then
     eval path=$path
 elif [[ $path =~ hint: ]]; then
@@ -48,42 +164,41 @@ elif [[ $path =~ hint: ]]; then
 fi
 
 if test "${which_page}" = screens -a "$#" != 0; then
-    screen_id=$(
-        jkd sel-id -a screens -i "$1"
-             )
-
-    shift
-    action=$(select-args -i "$1" "layout configuration" "edit name and description")
-    if test "${action}" = "layout configuration"; then
-        path=secure/admin/ConfigureFieldScreen.jspa?id=${screen_id}
+    if test "$1" = add; then
+        path=secure/admin/AddNewFieldScreen.jspa
     else
-        path="secure/admin/EditFieldScreen!default.jspa?id=${screen_id}"
-    fi
-elif test "${which_page}" = "custom-fields (edit description 1)" -a "$#" != 0; then
-    field_id=$(
-        jkd sel-id -a field -i "$1"
-            )
-    shift
-    which_to_view=$(
-        select-args -i "$1" -p "edit what?" description options
+        screen_id=$(
+            jkd sel-id -a screens -i "$1"
                  )
-    if test "${which_to_view}" = description; then
-        path="secure/admin/EditCustomField!default.jspa?id=${field_id#*_}"
-    else
-        path="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${field_id#*_}"
+
+        shift
+        action=$(select-args -i "$1" "layout configuration" "edit name and description")
+        if test "${action}" = "layout configuration"; then
+            path=secure/admin/ConfigureFieldScreen.jspa?id=${screen_id}
+        else
+            path="secure/admin/EditFieldScreen!default.jspa?id=${screen_id}"
+        fi
     fi
 elif test "${which_page}" = bro; then
     case "${original_url}" in
-        *"secure/admin/EditFieldScreen!default.jspa?id="*)
+        *'secure/admin/EditCustomField!default.jspa?id='*)
+            id=${original_url##*id=}
+            path="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${id}"
+            ;;
+        *'secure/admin/ConfigureCustomField!default.jspa?customFieldId='*)
+            id=${original_url##*Id=}
+            path="secure/admin/EditCustomField!default.jspa?id=${id}"
+            ;;
+        *'secure/admin/EditFieldScreen!default.jspa?id='*)
             id=${original_url##*id=}
             path="secure/admin/ConfigureFieldScreen.jspa?id=${id}"
             ;;
-        *"secure/admin/ConfigureFieldScreen.jspa?id="*)
+        *'secure/admin/ConfigureFieldScreen.jspa?id='*)
             id=${original_url##*id=}
             path="secure/admin/EditFieldScreen!default.jspa?id=${id}"
             ;;
         *)
-            bhj-notify "Don't know how to do brother page:
+            bhj-notify go-admin-page "Don't know how to do brother page:
 
 $original_url
 "
@@ -96,7 +211,7 @@ fi
 
 # bhj-notify go path is ${scm_jira_url}${path}
 
-if is-tty-io; then
+if test "${TMUX}"; then
     export FIREFOX_TAB_NUMBER=1
 else
     unset FIREFOX_TAB_NUMBER

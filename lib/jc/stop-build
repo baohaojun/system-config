@@ -166,12 +166,13 @@ jc delete-build "${build_url}"
 EOF
            )
     smartcm-daemonize bash -c "$command"
+else
+    jc curl "${build_url}stop" -X POST
 fi
 
-jc curl "${build_url}stop" -X POST
-
 if test "${build_url}" = "${BUILD_URL}"; then
-    sleep 10 # wait for my self to get killed
+    sleep 10 || exit 0 # wait for my self to get killed
+    exit 0
 fi
 
 if test "${rebuild}" = true; then

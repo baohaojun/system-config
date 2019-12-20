@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+cat <<'EOFcc6741846980'
+# {%org-mode%}
+1. 先 deploy 到 jira-sync 上
+2. 再 deploy 到 jira-prod 上
+# {%/org-mode%}
+EOFcc6741846980
+
+yes-or-no-p "把所有 field 字段列出来，在目标上改名（通过 field 名字）、创建，应该有一个脚本，migrate-fields"
+
+./migrate-fields
+
+yes-or-no-p "把所有 screen 列出来，在目标上改名（通过 screen id 对比）、创建"
+yes-or-no-p "把 workflow export 出来，在目标上 import"
+yes-or-no-p "把所有 dynamic export 出来，在目标上 import"

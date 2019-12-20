@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+sw mark -t kill-ring -s
+
+paste-it() {
+    sw mark -t kill-ring -r
+    putclip "${clip}"
+    sawfish-send-focused-window-event "S-Insert"
+}
+
+. atexit paste-it
+
+emacs_script=$(
+    cat <<'EOF8c8ffea5f194'
+; {%emacs-lisp-mode%}
+(progn
+  (switch-to-buffer "*em kill-ring*" nil t)
+  (delete-region (point-min) (point-max))
+  (flet ((browse-kill-ring-highlight-inserted (a b) (exit-recursive-edit)))
+    (browse-kill-ring)
+    (recursive-edit)
+    (prog1
+        (buffer-substring-no-properties (point-min) (point-max))
+      (bury-buffer))))
+; {%/emacs-lisp-mode%}
+EOF8c8ffea5f194
+
+            )
+
+clip=$(
+    emacs.client -d -e "${emacs_script}" | em str2text
+    )

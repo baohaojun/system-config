@@ -1,0 +1,24 @@
+#!/usr/bin/env perl
+use strict;
+
+$_ = join("", <>);
+
+s,^"|"$,,g;
+s,\\n,\n,g;
+s,\\f,\f,g;
+s,\\(["\\]),$1,g;
+print;
+
+exit 0;
+
+my $comment = <<~'EOFc83131117f09';
+; {%emacs-lisp-mode%}
+(let ((min 0)
+      (max 127)
+      (n 0))
+  (while (<= n max)
+    (insert n)
+    (setq n (1+ n))))
+; {%/emacs-lisp-mode%}
+
+EOFc83131117f09

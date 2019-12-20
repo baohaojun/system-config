@@ -105,17 +105,5 @@ cat <<'EOF16e1379802c6' | . .replace-%%
 EOF16e1379802c6
 
 )" | (
-    perl -e "$(
-cat <<'EOFd6b86c634928'
-# {%perl-mode%}
-$_ = join("", <>);
-s,^"|"$,,g;
-s,\\n,\n,g;
-s,\\f,\f,g;
-s,\\(["\\]),$1,g;
-print;
-# {%/perl-mode%}
-EOFd6b86c634928
-
-)"
+   em str2text
 )

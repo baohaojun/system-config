@@ -144,7 +144,10 @@ name2id() {
     id=$(
         echo "${json}" | jq '.[]|if .name == "'"$name"'" then .id else null end|values' -r
       )
-    echo $id
+    if test -z "${id}"; then
+        die "Can't find the id for $name"
+    fi
+    echo -n $id
 }
 
 id2name() {
@@ -152,7 +155,7 @@ id2name() {
     name=$(
         echo "${json}" | jq '.[]|if (.id|tostring) == "'"$id"'" then .name else null end|values' -r
         )
-    echo "$name"
+    echo -n "$name"
 }
 
 if test "${b0}" = sel-name; then

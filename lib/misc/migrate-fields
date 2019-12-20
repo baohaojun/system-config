@@ -1,0 +1,332 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+use IPC::System::Simple qw(systemx capturex);
+use String::ShellQuote;
+use JSON;
+use Encode;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+通过 SCREEN_PATTERN 指定一些字段面板，把它们包含的所有字段，从 TEST_JIRA 同步到 PROD_JIRA 上去。
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# p:prod-jira-url t:test-jira-url='$ENV{scm_jira_url}' s:screen-pattern
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $prod_jira_url = "";
+my $screen_pattern = "";
+my $test_jira_url = $ENV{scm_jira_url};
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--prod-jira-url=PROD-JIRA-URL';
+    if (length('--prod-jira-url=PROD-JIRA-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--screen-pattern=SCREEN-PATTERN';
+    if (length('--screen-pattern=SCREEN-PATTERN') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-t, ';
+    printf "%-24s", '--test-jira-url=TEST-JIRA-URL';
+    if (length('--test-jira-url=TEST-JIRA-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'prod-jira-url|p=s' => \$prod_jira_url,
+    'screen-pattern|s=s' => \$screen_pattern,
+    'test-jira-url|t=s' => \$test_jira_url,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+$ENV{scm_jira_url} = ${test_jira_url};
+
+my $test_screens_json = decode_json(qx(jkd rest screens));
+my %screen_name_id_map;
+my %screen_name_description_map;
+my %screen_name_dump_map;
+
+sub no_spaces_equal($$) {
+    my @pair = @_;
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($) {
+    map {s, | ,,g} @_;
+    return $_[0];
+}
+
+sub get_custom_field_settings() {
+    my @custom_fields;
+    my %field_id_settings_map;
+    do {
+        my $startAt = 1;
+        while (1) {
+            my $json = decode_json(qx(jkd rest customFields/?startAt=$startAt));
+            $startAt++;
+            push @custom_fields, @{$json->{values}};
+            last if $json->{isLast};
+        }
+    };
+
+    for (@custom_fields) {
+        my $id = $_->{id};
+        $field_id_settings_map{$id} = $_;
+    }
+    return \@custom_fields, \%field_id_settings_map;
+}
+
+my ($test_custom_fields, $test_field_id_settings_map) = get_custom_field_settings();
+
+my $screen_regexp = qr($screen_pattern)i;
+for (@$test_screens_json) {
+    my $name = encode_utf8 $_->{name};
+    if (${name} =~ m/$screen_regexp/) {
+        say STDERR  "working with $name";
+        $screen_name_id_map{$name} = $_->{id};
+        $screen_name_description_map{$name} = encode_utf8($_->{description});
+        $screen_name_dump_map{$name} = decode_json(qx(jkd dump-screen -s '${name}'))
+    }
+}
+
+
+my %test_field_name_id_map;
+my %fields_original_name_map;
+
+for my $screen (sort keys %screen_name_id_map) {
+    my $dump_json = $screen_name_dump_map{$screen};
+    for my $tab (@$dump_json) {
+        for my $field (@{$tab->{fields}}) {
+            my $field_name = no_spaces_convert encode_utf8 $field->{name};
+            $test_field_name_id_map{$field_name} = $field->{id};
+            $fields_original_name_map{$field_name} = encode_utf8 $field->{name};
+        }
+    }
+}
+
+$ENV{scm_jira_url} = ${prod_jira_url};
+
+my $prod_screens_json = decode_json(qx(jkd rest screens));
+
+my ($prod_custom_fields, $prod_field_id_settings_map);
+
+my %prod_screen_name_id_map;
+my %prod_screen_id_name_map;
+for (@$prod_screens_json) {
+    my $name = encode_utf8 $_->{name};
+    $prod_screen_name_id_map{$name} = $_->{id};
+    $prod_screen_id_name_map{$_->{id}} = $name;
+}
+
+sub hint($) {
+    do {
+        no autodie;
+        system("yes-or-no-p", "-y", @_);
+    }
+}
+
+sub rename_screen($$) {
+    my ($name, $old_name) = @_;
+    my $description = $screen_name_description_map{$old_name};
+    if (system("(putclip '$old_name'; jkd go screens '$name' name >/dev/null 2>&1 &)") == 0 &&
+            hint("please rename the screen $name to $old_name within browser, description: '$description'") == 0
+        ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub create_screen($) {
+    my $name = $_[0];
+    my $description = $screen_name_description_map{$name};
+    if (system("(putclip '$name'; jkd go screens add >/dev/null 2>&1 &)") == 0 &&
+            hint("please create the screen $name in browser, description: '$description'") == 0
+        ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+for (sort keys %screen_name_id_map) {
+    my $id = $screen_name_id_map{$_};
+    if ($prod_screen_name_id_map{$_}) {
+        say STDERR "$_ already exist in prod";
+    } elsif ($prod_screen_id_name_map{$id} && do {
+        no autodie;
+        my $name = $prod_screen_id_name_map{$id};
+        hint("Is $name your $_?") == 0 &&
+            rename_screen($name, $_)
+    }) {
+        1;
+    } else {
+        my @prod_screen_names = keys %prod_screen_name_id_map;
+        my $create_new_screen = "以上皆不是，创建一个新的面板";
+        my $ans = capturex("select-args", "-p", "$_ 对应的是哪个面板？", "-i", "$screen_pattern", "-a", $create_new_screen, @prod_screen_names);
+
+        if ($ans eq $create_new_screen) {
+            create_screen($_);
+        } else {
+            rename_screen($ans, $_);
+        }
+
+        while (
+            do {
+                no autodie;
+                system("jkd", "name2id", "-a", "screens", "$_") != 0;
+            }
+        ) {
+            hint("screen $_ not exist yet!");
+        }
+
+    }
+}
+
+say STDERR "checking all fields";
+my %prod_field_name_id_map;
+
+sub update_prod_fields() {
+    ($prod_custom_fields, $prod_field_id_settings_map) = get_custom_field_settings();
+    my $prod_fields_json = decode_json(qx(jkd rest field));
+    %prod_field_name_id_map = ();
+
+    for (@$prod_fields_json) {
+        my $name = no_spaces_convert encode_utf8 $_->{name};
+        my $id = $_->{id};
+
+        if (not $prod_field_name_id_map{$name}) {
+            $prod_field_name_id_map{$name} = $id;
+        } elsif ($test_field_name_id_map{$name}) {
+            my @ids = sort {$b cmp $a} ($id, $prod_field_name_id_map{$name});
+            my $ans = capturex("select-args", "-p", "应该删除（废弃）哪个「${name}」 字段（一般是更大的那个）？", @ids);
+
+            system("jkd go fields -e -i $ans &>/dev/null");
+            hint("done removing $ans?");
+        }
+    }
+}
+
+update_prod_fields;
+
+sub field_eq($) {
+    my $field_name = $_[0];
+    my $test_field_id = $test_field_name_id_map{$field_name};
+    my $prod_field_id = $prod_field_name_id_map{$field_name};
+
+    my $test_description = $test_field_id_settings_map->{$test_field_id}{description};
+    my $test_type = $test_field_id_settings_map->{$test_field_id}{type};
+
+    my $prod_description = $prod_field_id_settings_map->{$prod_field_id}{description};
+    my $prod_type = $prod_field_id_settings_map->{$prod_field_id}{type};
+
+    if ($test_type ne $prod_type) {
+        say STDERR "test type ($test_type) != prod type ($prod_type)";
+        return "type not equal: $test_type";
+    }
+
+    if ($test_description ne $prod_description) {
+        say STDERR "test description ($test_description) != prod description ($prod_description)";
+        return "description not equal: $test_description";
+    }
+
+    return "equal";
+}
+
+sub field_command($$$) {
+    my ($field, $command, $hint) = @_;
+    my $original_name = $fields_original_name_map{$field};
+
+    my $id = $test_field_name_id_map{$field};
+    my $description = $test_field_id_settings_map->{$id}{description};
+
+    say STDERR "description is ", encode_utf8 $description;
+    say STDERR "type is ", encode_utf8 $test_field_id_settings_map->{$id}{type};
+
+    system("putclip", $description);
+    system("putclip", $original_name);
+    system("$command");
+    hint($hint);
+}
+
+sub check_1_field($);
+sub check_1_field($) {
+    my $field = $_[0];
+    my $created_new_field = 0;
+
+    if (not $prod_field_name_id_map{$field}) {
+        my $create_new_field = "以上皆不是，创建一个新的字段（None of the above，create a new one）";
+        my $ans = capturex("select-args", "-p", "$field 对应的是哪个字段？", "-a", $create_new_field, sort keys %prod_field_name_id_map);
+        my $original_name = $fields_original_name_map{$field};
+        if ($ans eq $create_new_field) {
+            field_command($field, "jkd go fields -a &>/dev/null", "created ${original_name}?");
+        } else {
+            my $id = $prod_field_name_id_map{$ans};
+            field_command($field, "jkd go fields -e -i $id &>/dev/null", "renamed $ans to ${original_name}?");
+        }
+        while (
+            do {
+                no autodie;
+                system("jkd", "name2id", "-a", "field", "$original_name") != 0;
+            }
+        ) {
+            hint("field $original_name not exist yet!");
+        }
+
+        update_prod_fields;
+
+        my $eq_status = field_eq($field);
+        my $id = $prod_field_name_id_map{$field};
+
+        if ($eq_status =~ s,^type not equal: ,,) {
+            field_command($field, "jkd go fields -e -i $id &>/dev/null", "please recreate by delete current one with type info: $eq_status");
+            update_prod_fields;
+            check_1_field($field);
+        } elsif ($eq_status =~ s,^description not equal: ,,) {
+            field_command($field, "jkd go fields -e -i $id &>/dev/null", "please edit description to make it match $eq_status");
+            update_prod_fields;
+            check_1_field($field);
+        }
+    }
+}
+
+for my $field (sort keys %test_field_name_id_map) {
+    check_1_field($field);
+}
