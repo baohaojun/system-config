@@ -12,6 +12,8 @@ fi
 
 if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
     watch-phone -u # do not watch weibo for too long.
+else
+    my-adb sc-shell fuser -k /data/data/com.android.shell/var/watch-my-window.lock || true
 fi&
 
 # this script checks if wrench notification is working
