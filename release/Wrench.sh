@@ -203,7 +203,6 @@ EOF
 '
         done
     fi
-    set-about-me adb-serial $ANDROID_SERIAL || true
     nohup Wrench.sh -1 "$@"&
     exit
 fi
