@@ -6,7 +6,7 @@ IFS=$'\n'
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
 # {%org-mode%}
-add-field-to-screen-tab -s SCREEN-NAME -t TAB-NAME ACTION ARGS...
+screen-tab -s SCREEN-NAME -t TAB-NAME ACTION ARGS...
 
 * action = add-fields
 将 ARGS 中指定的每一个 field 加入指定的 screen/tab。
@@ -29,6 +29,10 @@ add-field-to-screen-tab -s SCREEN-NAME -t TAB-NAME ACTION ARGS...
 * action = add-tab
 
 创建 tab
+
+* action = delete-tab
+
+删除指定的 tab
 # {%/org-mode%}
 EOFe9576f8668e0
         )
@@ -172,7 +176,7 @@ EOF28c4b7fc74d2
 }
 
 add-field-to-tab() {
-    log "add $f to ${tab_id_name_map[$tab_id]}"
+    log "add $f to ${tabs_id_name_map[$tab_id]}"
     field_tab_map[$f]=$tab_id
 
     for f_id in $f_id; do
@@ -445,7 +449,7 @@ EOFe9576f8668e0
                         add-field-to-tab
                     done
                 else
-                    hint "Already in tab: ${tab_id_name_map{$tid}}"
+                    hint "Already in tab: ${tabs_id_name_map{$tid}}"
                 fi
                 ;;
         esac
@@ -462,6 +466,8 @@ elif test "${action}" = sync-from-screen; then
     sync-from-screen "$@"
 elif test "${action}" = add-tab; then
     jkd rest -a screens/${screen_id}/tabs -- -X POST --data '{"name" : "'"${tab_name}"'"}' -H 'Content-Type: application/json'
+elif test "${action}" = delete-tab; then
+    jkd rest -a screens/${screen_id}/tabs/${tab_id} -- -X DELETE
 else
     die "Don't know how to work with your action: '$action'"
 fi

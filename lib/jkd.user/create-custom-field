@@ -11,7 +11,11 @@ my $type_map = {
     'textarea' => 'com.atlassian.jira.plugin.system.customfieldtypes:textarea',
     'dyn-radio' => 'com.intenso.jira.plugin.dynamic-forms:dynamic-radiobutton-customfield',
     'multi-check' => 'com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes',
+    'Radio Buttons' => 'com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons',
 };
+
+$type_map->{'Text Field (single line)'} = $type_map->{string};
+$type_map->{'Text Field (multi-line)'} = $type_map->{textarea};
 
 sub get_types() {
     return join(" ", keys %$type_map);
@@ -80,7 +84,7 @@ GetOptions (
 ## end generated code
 
 if (not $type_map->{$type}) {
-    die "Must specify type as one of (the currently supported): " . join(" ", keys %$type_map);
+    die sprintf "Your type (%s) is not supported: (%s)", $type_map->{$type}, join(" ", keys %$type_map);
 }
 
 my $fields_json = decode_json(qx(jkd rest field));

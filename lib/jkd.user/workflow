@@ -1,0 +1,176 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+use JSON;
+use Encode;
+
+use XML::Quote qw(:all);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+* action = id2name
+
+将 workflow.xml 文件中的 ids（custom field、screen 等）改成对应的 names。
+
+* action name2id
+将 workflow.xml 文件中的 names（custom field、screen 等）改成对应的 ids。
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:action f:workflow-xml
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "";
+my $workflow_xml = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+print "\n\n选项和参数：\n";
+printf "%6s", '-a, ';
+printf "%-24s", '--action=ACTION';
+if (length('--action=ACTION') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-f, ';
+printf "%-24s", '--workflow-xml=WORKFLOW-XML';
+if (length('--workflow-xml=WORKFLOW-XML') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+       $exit_value = shift @_;
+       print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+'action|a=s' => \$action,
+'workflow-xml|f=s' => \$workflow_xml,
+'help|h!' => \&$handler_help,
+    );
+
+
+## end generated code
+
+use Mojo::DOM;
+use File::Slurp;
+
+my $xml_str = read_file($workflow_xml);
+my $dom = Mojo::DOM->new->parse($xml_str);
+
+my $fields_json = decode_json(qx(jkd rest field));
+my $screens_json = decode_json(qx(jkd rest screens));
+
+if ($action eq "id2name") {
+    $dom->find('arg')->each
+        (
+            sub {
+                if ($_->{name} eq 'hidFieldsList') {
+                    my @field_ids = grep {m/./} split('@@', $_->text);
+                    my @field_names;
+                    map {
+                        my $id = $_;
+                        for (@{$fields_json}) {
+                            if ($_->{id} eq $id) {
+                                push @field_names, encode_utf8 $_->{name};
+                            }
+                        }
+                    } @field_ids;
+
+                    if (@field_ids != @field_names) {
+                        die "#field ids != #field names"
+                    }
+                    $_->replace(sprintf('<arg name="hidFieldsList">%s</arg>', xml_quote join('@@', @field_names)));
+                }
+
+            }
+        );
+
+    $dom->find('meta')->each
+        (
+            sub {
+                if ($_->{name} eq 'jira.fieldscreen.id' and $_->text) { # <meta name="jira.fieldscreen.id"></meta>
+                    # say STDERR "working with ", $_->text;
+                    my $id = $_->text;
+                    my $screen_name;
+
+                    map {
+                        if ($_->{id} eq $id) {
+                            $screen_name = encode_utf8 $_->{name};
+                            # say STDERR "Got the screen name: $screen_name";
+                        }
+                    } @$screens_json;
+
+                    if (not $screen_name) {
+                        die "Can't get screen name!"
+                    }
+                    $_->replace(sprintf('<meta name="jira.fieldscreen.id">%s</meta>', xml_quote $screen_name));
+                }
+            }
+        );
+} elsif ($action eq "name2id") {
+    $dom->find('arg')->each
+        (
+            sub {
+                if ($_->{name} eq 'hidFieldsList') {
+                    my @field_names = grep {m/./} split('@@', $_->text);
+                    my @field_ids;
+                    map {
+                        my $name = decode_utf8 $_;
+                        for (@{$fields_json}) {
+                            if ($_->{name} eq $name) {
+                                push @field_ids, encode_utf8 $_->{id};
+                                last;
+                            }
+                        }
+                    } @field_names;
+
+                    if (@field_ids != @field_names) {
+                        die "#field ids != #field names"
+                    }
+                    $_->replace(sprintf('<arg name="hidFieldsList">%s</arg>', xml_quote join('@@', @field_ids)));
+                }
+
+            }
+        );
+
+    $dom->find('meta')->each
+        (
+            sub {
+                if ($_->{name} eq 'jira.fieldscreen.id' and $_->text) { # <meta name="jira.fieldscreen.id"></meta>
+                    my $screen_name = decode_utf8 $_->text;
+                    my $id;
+
+                    map {
+                        if ($_->{name} eq $screen_name) {
+                            $id = encode_utf8 $_->{id};
+                        }
+                    } @$screens_json;
+
+                    $_->replace(sprintf('<meta name="jira.fieldscreen.id">%s</meta>', xml_quote $id));
+                }
+            }
+        );
+} else {
+    die "Can't handle your action: '$action'";
+}
+
+print $dom;

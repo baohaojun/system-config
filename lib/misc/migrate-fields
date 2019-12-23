@@ -78,9 +78,9 @@ GetOptions (
 $ENV{scm_jira_url} = ${test_jira_url};
 
 my $test_screens_json = decode_json(qx(jkd rest screens));
-my %screen_name_id_map;
+my %test_screen_name_id_map;
 my %screen_name_description_map;
-my %screen_name_dump_map;
+my %test_screen_name_dump_map;
 
 sub no_spaces_equal($$) {
     my @pair = @_;
@@ -120,9 +120,9 @@ for (@$test_screens_json) {
     my $name = encode_utf8 $_->{name};
     if (${name} =~ m/$screen_regexp/) {
         say STDERR  "working with $name";
-        $screen_name_id_map{$name} = $_->{id};
+        $test_screen_name_id_map{$name} = $_->{id};
         $screen_name_description_map{$name} = encode_utf8($_->{description});
-        $screen_name_dump_map{$name} = decode_json(qx(jkd dump-screen -s '${name}'))
+        $test_screen_name_dump_map{$name} = decode_json(qx(jkd dump-screen -s '${name}'))
     }
 }
 
@@ -130,8 +130,8 @@ for (@$test_screens_json) {
 my %test_field_name_id_map;
 my %fields_original_name_map;
 
-for my $screen (sort keys %screen_name_id_map) {
-    my $dump_json = $screen_name_dump_map{$screen};
+for my $screen (sort keys %test_screen_name_id_map) {
+    my $dump_json = $test_screen_name_dump_map{$screen};
     for my $tab (@$dump_json) {
         for my $field (@{$tab->{fields}}) {
             my $field_name = no_spaces_convert encode_utf8 $field->{name};
@@ -165,6 +165,7 @@ sub hint($) {
 sub rename_screen($$) {
     my ($name, $old_name) = @_;
     my $description = $screen_name_description_map{$old_name};
+    system("putclip", "$description");
     if (system("(putclip '$old_name'; jkd go screens '$name' name >/dev/null 2>&1 &)") == 0 &&
             hint("please rename the screen $name to $old_name within browser, description: '$description'") == 0
         ) {
@@ -177,6 +178,7 @@ sub rename_screen($$) {
 sub create_screen($) {
     my $name = $_[0];
     my $description = $screen_name_description_map{$name};
+    system("putclip", $description);
     if (system("(putclip '$name'; jkd go screens add >/dev/null 2>&1 &)") == 0 &&
             hint("please create the screen $name in browser, description: '$description'") == 0
         ) {
@@ -186,8 +188,8 @@ sub create_screen($) {
     }
 }
 
-for (sort keys %screen_name_id_map) {
-    my $id = $screen_name_id_map{$_};
+for (sort keys %test_screen_name_id_map) {
+    my $id = $test_screen_name_id_map{$_};
     if ($prod_screen_name_id_map{$_}) {
         say STDERR "$_ already exist in prod";
     } elsif ($prod_screen_id_name_map{$id} && do {
@@ -296,7 +298,19 @@ sub check_1_field($) {
         my $ans = capturex("select-args", "-p", "$field 对应的是哪个字段？", "-a", $create_new_field, sort keys %prod_field_name_id_map);
         my $original_name = $fields_original_name_map{$field};
         if ($ans eq $create_new_field) {
-            field_command($field, "jkd go fields -a &>/dev/null", "created ${original_name}?");
+            my $id = $test_field_name_id_map{$field};
+            my $description = encode_utf8 $test_field_id_settings_map->{$id}{description};
+            my $type = encode_utf8 $test_field_id_settings_map->{$id}{type};
+            my $original_name = $fields_original_name_map{$field};
+            if (do {
+                no autodie;
+                say STDERR "try to create $original_name with jkd";
+                system("jkd", "create-custom-field", "-t", "$type", "-d", "$description", "-n", "$original_name") == 0
+            })  {
+                say STDERR "created it using jkd";
+            } else {
+                field_command($field, "jkd go fields -a &>/dev/null", "created ${original_name}?");
+            }
         } else {
             my $id = $prod_field_name_id_map{$ans};
             field_command($field, "jkd go fields -e -i $id &>/dev/null", "renamed $ans to ${original_name}?");
@@ -329,4 +343,81 @@ sub check_1_field($) {
 
 for my $field (sort keys %test_field_name_id_map) {
     check_1_field($field);
+}
+
+$prod_screens_json = decode_json(qx(jkd rest screens));
+
+for (sort keys %test_screen_name_id_map) {
+    my $screen_name = $_;
+    my $prod_screen_dump = decode_json(qx(jkd dump-screen -s '${screen_name}'));
+    my $test_screen_dump = $test_screen_name_dump_map{$screen_name};
+
+    my %test_tabs;
+    my %prod_tabs;
+
+    map { $test_tabs{$_->{name}} = 1 } @$test_screen_dump;
+    map { $prod_tabs{$_->{name}} = 1 } @$prod_screen_dump;
+
+    for my $tab_name (keys %test_tabs) {
+        if (not $prod_tabs{$tab_name}) {
+            system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-tab");
+        } else {
+            say STDERR "No need to add ${tab_name} again";
+        }
+    }
+
+    for my $tab_name (keys %prod_tabs) {
+        if (not $test_tabs{$tab_name}) {
+            system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-tab");
+        } else {
+            say STDERR "No need to delete $tab_name";
+        }
+    }
+
+    for my $tab_name (keys %test_tabs) {
+        my @test_fields;
+        my %test_fields_tab_map;
+
+        my @prod_fields;
+        my %prod_fields_tab_map;
+
+        map {
+            if ($_->{name} eq $tab_name) {
+                map {
+                    push @test_fields, $_->{name};
+                    $test_fields_tab_map{$_->{name}} = $tab_name;
+                } @{$_->{fields}}
+            }
+        } @$test_screen_dump;
+
+        map {
+            if ($_->{name} eq $tab_name) {
+                map {
+                    push @prod_fields, $_->{name};
+                    $prod_fields_tab_map{$_->{name}} = $tab_name;
+                } @{$_->{fields}}
+            }
+        } @$prod_screen_dump;
+
+        my $need_to_sync = 0;
+
+        for (@test_fields) {
+            if (not $prod_fields_tab_map{$_}) {
+                $need_to_sync = 1;
+            }
+        }
+
+        for (@prod_fields) {
+            if (not $test_fields_tab_map{$_}) {
+                $need_to_sync = 1;
+            }
+        }
+
+        if ($need_to_sync) {
+            system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-fields");
+            system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-fields", @test_fields);
+        } else {
+            say STDERR "No need to sync fields for $tab_name";
+        }
+    }
 }

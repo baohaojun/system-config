@@ -768,6 +768,7 @@ EOF856ceee4ab57
 (bind-keys s-h-keymap "g"  '(system "find-or-exec Gimp&"))
 (bind-keys s-h-keymap "w"  '(system "find-or-exec wine&"))
 (bind-keys s-h-keymap "m" 'move-window-interactively)
+(bind-keys s-h-keymap "y" '(system "em kill-ring&"))
 (bind-keys s-h-keymap "l" '(system "sawfish-move-to-laptop&"))
 (bind-keys s-h-keymap "Super-l" '(system "switch-to-laptop&"))
 (bind-keys s-h-keymap "L" '(system "sawfish-move-to-home-screen&"))
