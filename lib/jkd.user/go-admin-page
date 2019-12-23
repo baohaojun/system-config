@@ -160,6 +160,7 @@ if [[ $path =~ \$\( ]]; then
     eval path=$path
 elif [[ $path =~ hint: ]]; then
     EMACS=t yes-or-no-p -y "$path"
+    bhj-notify "go-admin-page" "$path"
     exit
 fi
 
@@ -196,6 +197,14 @@ elif test "${which_page}" = bro; then
         *'secure/admin/ConfigureFieldScreen.jspa?id='*)
             id=${original_url##*id=}
             path="secure/admin/EditFieldScreen!default.jspa?id=${id}"
+            ;;
+        *'secure/admin/EditIssueTypeScreenScheme!default.jspa?id='*)
+            id=${original_url##*id=}
+            path="secure/admin/ConfigureIssueTypeScreenScheme.jspa?id=${id}"
+            ;;
+        *'secure/admin/ConfigureIssueTypeScreenScheme.jspa?id='*)
+            id=${original_url##*id=}
+            path="secure/admin/EditIssueTypeScreenScheme!default.jspa?id=${id}"
             ;;
         *)
             bhj-notify go-admin-page "Don't know how to do brother page:

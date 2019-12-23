@@ -128,7 +128,7 @@ for (@$test_screens_json) {
 
 
 my %test_field_name_id_map;
-my %fields_original_name_map;
+my %test_fields_original_name_map;
 
 for my $screen (sort keys %test_screen_name_id_map) {
     my $dump_json = $test_screen_name_dump_map{$screen};
@@ -136,7 +136,7 @@ for my $screen (sort keys %test_screen_name_id_map) {
         for my $field (@{$tab->{fields}}) {
             my $field_name = no_spaces_convert encode_utf8 $field->{name};
             $test_field_name_id_map{$field_name} = $field->{id};
-            $fields_original_name_map{$field_name} = encode_utf8 $field->{name};
+            $test_fields_original_name_map{$field_name} = encode_utf8 $field->{name};
         }
     }
 }
@@ -224,6 +224,7 @@ for (sort keys %test_screen_name_id_map) {
 
 say STDERR "checking all fields";
 my %prod_field_name_id_map;
+my %prod_fields_original_name_map;
 
 sub update_prod_fields() {
     ($prod_custom_fields, $prod_field_id_settings_map) = get_custom_field_settings();
@@ -236,6 +237,7 @@ sub update_prod_fields() {
 
         if (not $prod_field_name_id_map{$name}) {
             $prod_field_name_id_map{$name} = $id;
+            $prod_fields_original_name_map{$name} = encode_utf8 $_->{name};
         } elsif ($test_field_name_id_map{$name}) {
             my @ids = sort {$b cmp $a} ($id, $prod_field_name_id_map{$name});
             my $ans = capturex("select-args", "-p", "应该删除（废弃）哪个「${name}」 字段（一般是更大的那个）？", @ids);
@@ -274,7 +276,7 @@ sub field_eq($) {
 
 sub field_command($$$) {
     my ($field, $command, $hint) = @_;
-    my $original_name = $fields_original_name_map{$field};
+    my $original_name = $test_fields_original_name_map{$field};
 
     my $id = $test_field_name_id_map{$field};
     my $description = $test_field_id_settings_map->{$id}{description};
@@ -293,15 +295,21 @@ sub check_1_field($) {
     my $field = $_[0];
     my $created_new_field = 0;
 
-    if (not $prod_field_name_id_map{$field}) {
+    if (!$prod_field_name_id_map{$field} || $prod_fields_original_name_map{$field} ne $test_fields_original_name_map{$field}) {
+        say STDERR "Need to work with $field: $prod_field_name_id_map{$field}, $prod_fields_original_name_map{$field}}";
         my $create_new_field = "以上皆不是，创建一个新的字段（None of the above，create a new one）";
-        my $ans = capturex("select-args", "-p", "$field 对应的是哪个字段？", "-a", $create_new_field, sort keys %prod_field_name_id_map);
-        my $original_name = $fields_original_name_map{$field};
+
+        my $ans = $field;
+        if (not $prod_field_name_id_map{$field}) {
+            $ans = capturex("select-args", "-p", "$field 对应的是哪个字段？", "-a", $create_new_field, sort keys %prod_field_name_id_map);
+        }
+
+        my $original_name = $test_fields_original_name_map{$field};
         if ($ans eq $create_new_field) {
             my $id = $test_field_name_id_map{$field};
             my $description = encode_utf8 $test_field_id_settings_map->{$id}{description};
             my $type = encode_utf8 $test_field_id_settings_map->{$id}{type};
-            my $original_name = $fields_original_name_map{$field};
+            my $original_name = $test_fields_original_name_map{$field};
             if (do {
                 no autodie;
                 say STDERR "try to create $original_name with jkd";
@@ -322,6 +330,8 @@ sub check_1_field($) {
             }
         ) {
             hint("field $original_name not exist yet!");
+            update_prod_fields;
+            check_1_field($field);
         }
 
         update_prod_fields;
@@ -338,10 +348,13 @@ sub check_1_field($) {
             update_prod_fields;
             check_1_field($field);
         }
+    } else {
+        say STDERR "No need to work with $field: $prod_field_name_id_map{$field}, $prod_fields_original_name_map{$field}}";
     }
 }
 
 for my $field (sort keys %test_field_name_id_map) {
+    say STDERR "checking $field";
     check_1_field($field);
 }
 
@@ -362,7 +375,7 @@ for (sort keys %test_screen_name_id_map) {
         if (not $prod_tabs{$tab_name}) {
             system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-tab");
         } else {
-            say STDERR "No need to add ${tab_name} again";
+            say STDERR "No need to add again: ", encode_utf8(${tab_name});
         }
     }
 
@@ -370,7 +383,7 @@ for (sort keys %test_screen_name_id_map) {
         if (not $test_tabs{$tab_name}) {
             system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-tab");
         } else {
-            say STDERR "No need to delete $tab_name";
+            say STDERR "No need to delete: ", encode_utf8($tab_name);
         }
     }
 
@@ -417,7 +430,7 @@ for (sort keys %test_screen_name_id_map) {
             system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-fields");
             system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-fields", @test_fields);
         } else {
-            say STDERR "No need to sync fields for $tab_name";
+            say STDERR "No need to sync fields for: ", encode_utf8 $tab_name;
         }
     }
 }

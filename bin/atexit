@@ -1,14 +1,22 @@
 #!/bin/bash
 
-if test "$#" = 0; then
-    trap - 0
-    return
+declare set_x_active_atexit
+if [[ $SHELLOPTS =~ xtrace ]]; then
+    set_x_active_atexit=true
+else
+    set_x_active_atexit=false
 fi
 
-sc_atexit_number=${sc_atexit_number:-0}
-((sc_atexit_number++)) || true
+set +x
 
-eval "$(
+if test "$#" = 0; then
+    trap - 0
+else
+
+    sc_atexit_number=${sc_atexit_number:-0}
+    ((sc_atexit_number++)) || true
+
+    eval "$(
 cat <<'EOF26ed439643f8' | . .replace-%% --
 # {%sh-mode%}
 sc_atexit_args_[%sc_atexit_number%]=(
@@ -17,6 +25,7 @@ sc_atexit_args_[%sc_atexit_number%]=(
 
 function sc_atexit_[%sc_atexit_number%]() {
     local atexit_ret=${atexit_ret:-$?}
+    set +x
     "${sc_atexit_args_[%sc_atexit_number%][@]}" || true
     local sc_n=[%sc_atexit_number%]
     if test "${sc_n}" -gt 1; then
@@ -30,3 +39,8 @@ trap sc_atexit_[%sc_atexit_number%] 0
 # {%/sh-mode%}
 EOF26ed439643f8
 )"
+fi
+
+if test "${set_x_active_atexit}" = true; then
+    set -x
+fi

@@ -432,6 +432,9 @@ EOFe9576f8668e0
         fi
         case "$tid" in
             $tab_id)
+                if test -z "${tab_id}"; then
+                    die "tab_id is empty!"
+                fi
                 log "$f already in $tab_id"
                 continue
                 ;;
@@ -449,7 +452,7 @@ EOFe9576f8668e0
                         add-field-to-tab
                     done
                 else
-                    hint "Already in tab: ${tabs_id_name_map{$tid}}"
+                    hint "$f already in tab: ${tabs_id_name_map[$tid]}"
                 fi
                 ;;
         esac

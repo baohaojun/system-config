@@ -103,9 +103,16 @@ done
 ## end generated code
 
 
-if test "${scm_jira_url}" != "${scm_jira_test_url}" -a "${force_prod}" != yes; then
-    die "Can only run in test jira"
-fi
+case "${scm_jira_url}" in
+    "${scm_jira_test_url}"|"${scm_jira_test1_url}"|"${scm_jira_test2_url}")
+        true
+        ;;
+    *)
+        if test "${force_prod}" != yes; then
+            die "Can only run in test jira"
+        fi
+        ;;
+esac
 
 if test -z "${old_issue}"; then
     die "Must specify the old jira issue to copy from, for e.g., EF-251"

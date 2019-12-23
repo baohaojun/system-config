@@ -1,87 +1,95 @@
 #!/bin/bash
+declare set_x_active_aterr
+if [[ $SHELLOPTS =~ xtrace ]]; then
+    set_x_active_aterr=true
+else
+    set_x_active_aterr=false
+fi
+
+set +x
+
 
 set -e
 set -o errtrace
 if test "$#" = 0; then
     trap - ERR
     unset sc_aterr_number
-    return
-fi
+else
 
-## start code-generator "^\\s *#\\s *"
-# generate-getopt -p aterr -P i:ignored-errno=0 '?"设置某些错误代码不处理。在多重 aterr 时慎用"' \
-    # @die=true '?"允许用 --no-die 设置不要抛出异常。在多重 aterr 时慎用。"'
-## end code-generator
-## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o i:h \
-                      --long die,ignored-errno:,help,no-die \
-                      -n $(basename -- $0) -- "$@")
-declare aterr_die=true
-declare aterr_ignored_errno=0
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -p aterr -P i:ignored-errno=0 '?"设置某些错误代码不处理。在多重 aterr 时慎用"' \
+        # @die=true '?"允许用 --no-die 设置不要抛出异常。在多重 aterr 时慎用。"'
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o i:h \
+                          --long die,ignored-errno:,help,no-die \
+                          -n $(basename -- $0) -- "$@")
+    declare aterr_die=true
+    declare aterr_ignored_errno=0
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
 
-        --die|--no-die)
-            if test "$1" = --no-die; then
-                aterr_die=false
-            else
-                aterr_die=true
-            fi
-            shift
+            --die|--no-die)
+                if test "$1" = --no-die; then
+                    aterr_die=false
+                else
+                    aterr_die=true
+                fi
+                shift
 
-            ;;
-        -i|--ignored-errno)
-            aterr_ignored_errno=$2
-            shift 2
+                ;;
+            -i|--ignored-errno)
+                aterr_ignored_errno=$2
+                shift 2
 
-            ;;
-        -h|--help)
-            set +x
-            echo -e
-            echo
-            echo Options and arguments:
-            printf "%06s" " "
-            printf %-24s '--[no-]die'
-            echo "允许用 --no-die 设置不要抛出异常。在多重 aterr 时慎用。"
-            printf %06s '-i, '
-            printf %-24s '--ignored-errno=IGNORED_ERRNO'
-            echo
-            printf "%30s" ""
-            echo "设置某些错误代码不处理。在多重 aterr 时慎用"
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf "%06s" " "
+                printf %-24s '--[no-]die'
+                echo "允许用 --no-die 设置不要抛出异常。在多重 aterr 时慎用。"
+                printf %06s '-i, '
+                printf %-24s '--ignored-errno=IGNORED_ERRNO'
+                echo
+                printf "%30s" ""
+                echo "设置某些错误代码不处理。在多重 aterr 时慎用"
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
 
 
-## end generated code
-export aterr_ignored_errno
-export aterr_die
+    ## end generated code
+    export aterr_ignored_errno
+    export aterr_die
 
-sc_aterr_number=${sc_aterr_number:-0}
-((sc_aterr_number++)) || true
+    sc_aterr_number=${sc_aterr_number:-0}
+    ((sc_aterr_number++)) || true
 
-function aterr_non_0_exit() {
-    return $?
-}
+    function aterr_non_0_exit() {
+        return $?
+    }
 
-. atexit aterr_non_0_exit
+    . atexit aterr_non_0_exit
 
-function setup-aterr() {
-    aterr_args=(
-        "$@"
-    )
+    function setup-aterr() {
+        aterr_args=(
+            "$@"
+        )
 
-    eval "$(
+        eval "$(
 cat <<'EOF26ed439643f8' | . .replace-%% --
 # {%sh-mode%}
 sc_aterr_args_[%sc_aterr_number%]=(
@@ -93,6 +101,7 @@ sc_aterr_ignored_errno_[%sc_aterr_number%]=[%aterr_ignored_errno%]
 
 function sc_aterr_[%sc_aterr_number%]() {
     local aterr_ret=${aterr_ret:-$?}
+    set +x
     if test "$aterr_ret" = 0; then
         return 0
     fi
@@ -124,6 +133,12 @@ trap sc_aterr_[%sc_aterr_number%] ERR
 EOF26ed439643f8
 )"
 
-}
+    }
 
-setup-aterr "$@"
+    setup-aterr "$@"
+fi
+
+
+if test "${set_x_active_aterr}" = true; then
+    set -x
+fi
