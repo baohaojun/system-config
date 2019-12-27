@@ -1,0 +1,176 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+use Encode;
+
+use JSON;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+将 stdin 中读入的 json 数据，其中所有的 customfield keys 替换为另一个 jira 环境下的 keys。
+
+需要用 name 来进行匹配。
+
+如果指定 SCREEN-FILTER 的话，只会翻译在这个 SCREEN 中出现的字段，其余字段全部删除。
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# f:from-jira-url t:to-jira-url='$ENV{scm_jira_url}' s:screen-filter
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $from_jira_url = "";
+my $screen_filter = "";
+my $to_jira_url = $ENV{scm_jira_url};
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--from-jira-url=FROM-JIRA-URL';
+    if (length('--from-jira-url=FROM-JIRA-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--screen-filter=SCREEN-FILTER';
+    if (length('--screen-filter=SCREEN-FILTER') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-t, ';
+    printf "%-24s", '--to-jira-url=TO-JIRA-URL';
+    if (length('--to-jira-url=TO-JIRA-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'from-jira-url|f=s' => \$from_jira_url,
+    'screen-filter|s=s' => \$screen_filter,
+    'to-jira-url|t=s' => \$to_jira_url,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $json = decode_json(qx(cat));
+
+my $from_jira_fields_json = decode_json
+    capturex(
+        "jkd", "-j", "${from_jira_url}",
+        "rest", "field"
+    );
+
+my $to_jira_fields_json = decode_json
+    capturex(
+        "jkd", "-j", "${to_jira_url}",
+        "rest", "field"
+    );
+
+sub no_spaces_equal($$) {
+    my @pair = @_;
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($) {
+    map {s, | ,,g} @_;
+    return $_[0];
+}
+
+my %from_2way_map;
+my %to_2way_map;
+
+use Data::Dumper;
+
+for (@$from_jira_fields_json) {
+    my $id = $_->{id};
+    if ($id =~ m,customfield_,) {
+        my $name = no_spaces_convert encode_utf8($_->{name});
+
+        $from_2way_map{$id} = $name;
+        $from_2way_map{$name} = $id;
+    }
+}
+
+for (@$to_jira_fields_json) {
+    my $id = $_->{id};
+    if ($id =~ m,customfield_,) {
+        my $name = no_spaces_convert encode_utf8($_->{name});
+
+        $to_2way_map{$id} = $name;
+        $to_2way_map{$name} = $id;
+    }
+}
+
+my %result;
+
+my %screen_filter_passed;
+if ($screen_filter) {
+    my $screen_json = decode_json
+        capturex(
+            "jkd", "-j", "${from_jira_url}",
+            "dump-screen", "-s", "$screen_filter"
+        );
+
+    for (@$screen_json) {
+        my $fields = $_->{fields};
+        for (@$fields) {
+            my $id = $_->{id};
+            $screen_filter_passed{$id} = 1;
+        }
+    }
+}
+
+use Data::Dumper;
+
+for my $id (keys %$json) {
+    if ($screen_filter and not $screen_filter_passed{$id}) {
+        next;
+    }
+
+    if ($id =~ m,customfield_,) {
+        my $name = $from_2way_map{$id};
+        die "Can't get custom field for $id in $from_jira_url" unless $name;
+
+        my $to_id = $to_2way_map{$name};
+        die "Can't get custom field for $name $id in $to_jira_url" unless $to_id;
+        say STDERR "convert $name from $id to $to_id";
+        $result{$to_id} = $json->{$id};
+
+        if (ref($result{$to_id}) eq "HASH") {
+            delete $result{$to_id}->{self};
+            delete $result{$to_id}->{id};
+        }
+    } else {
+        $result{$id} = $json->{$id};
+    }
+}
+
+print JSON->new->utf8(1)->pretty(1)->encode(\%result);

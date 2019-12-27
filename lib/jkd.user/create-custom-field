@@ -113,3 +113,4 @@ my $json_obj = {
 use autodie qw(:all);
 
 system("jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
+system("jkd", "go", "field", "$name", "edit");

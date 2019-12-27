@@ -20,9 +20,9 @@ cat <<'EOFcc6741846980'
   :END:
 
 * DONE yes-or-no-p "修改 issuetype 的 screen 关联"
-  CLOSED: [2019-12-23 月 15:41]
+  CLOSED: [2019-12-23 月 15:41]
   :LOGBOOK:
-  - State "DONE"       from "TODO"       [2019-12-23 月 15:41]
+  - State "DONE"       from "TODO"       [2019-12-23 月 15:41]
   :END:
 
 * DONE yes-or-no-p "把 workflow export 出来，在目标上 import"
@@ -32,9 +32,9 @@ cat <<'EOFcc6741846980'
   :END:
 
 * DONE yes-or-no-p "把 issuetype 关联到新的 workflow"
-  CLOSED: [2019-12-23 月 15:36]
+  CLOSED: [2019-12-23 月 15:36]
   :LOGBOOK:
-  - State "DONE"       from "TODO"       [2019-12-23 月 15:36]
+  - State "DONE"       from "TODO"       [2019-12-23 月 15:36]
   :END:
 * DONE yes-or-no-p "把所有 dynamic export 出来，在目标上 import"
   CLOSED: [2019-12-23 月 15:36]
@@ -44,8 +44,11 @@ cat <<'EOFcc6741846980'
 # {%/org-mode%}
 EOFcc6741846980
 
+yes-or-no-p "备份生产服务器上的 screens"
 ./migrate-fields
 yes-or-no-p "修改 issuetype 的 screen 关联"
-yes-or-no-p "把 workflow export 出来，在目标上 import"
+yes-or-no-p "把 workflow export 出来"
+yes-or-no-p "把 workflow 里的字段 id 改成目标环境上的 id"，参考 jkd workflow -h 命令
+yes-or-no-p "在目标上 import"
 yes-or-no-p "把 issuetype 关联到新的 workflow"
 yes-or-no-p "把所有 dynamic export 出来，在目标上 import"

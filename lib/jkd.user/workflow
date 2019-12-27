@@ -15,12 +15,16 @@ use XML::Quote qw(:all);
 
 * action name2id
 将 workflow.xml 文件中的 names（custom field、screen 等）改成对应的 ids。
+
+* hint
+
+To assign workflow to issuetype: admin -> project -> workflows -> ...
 # {%/org-mode%}
 EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# a:action f:workflow-xml
+# a:action f:workflow-xml kkeep-running
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -30,42 +34,52 @@ Getopt::Long::Configure("posix_default");
 
 
 my $action = "";
+my $keep_running = 0;
 my $workflow_xml = "";
 
 my $handler_help = sub {
     print "$comment_doc";
-print "\n\n选项和参数：\n";
-printf "%6s", '-a, ';
-printf "%-24s", '--action=ACTION';
-if (length('--action=ACTION') > 24 and length() > 0) {
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-}
-printf "%s", ;
-print "\n";
-printf "%6s", '-f, ';
-printf "%-24s", '--workflow-xml=WORKFLOW-XML';
-if (length('--workflow-xml=WORKFLOW-XML') > 24 and length() > 0) {
+    printf "%6s", '-k, ';
+    printf "%-24s", '--[no]keep-running';
+    if (length('--[no]keep-running') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-}
-printf "%s", ;
-print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--workflow-xml=WORKFLOW-XML';
+    if (length('--workflow-xml=WORKFLOW-XML') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
-       $exit_value = shift @_;
-       print "@_\n";
+        $exit_value = shift @_;
+        print "@_\n";
     }
 
     exit($exit_value);
 };
 
 GetOptions (
-'action|a=s' => \$action,
-'workflow-xml|f=s' => \$workflow_xml,
-'help|h!' => \&$handler_help,
-    );
+    'action|a=s' => \$action,
+    'keep-running|k!' => \$keep_running,
+    'workflow-xml|f=s' => \$workflow_xml,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
@@ -79,28 +93,66 @@ my $dom = Mojo::DOM->new->parse($xml_str);
 my $fields_json = decode_json(qx(jkd rest field));
 my $screens_json = decode_json(qx(jkd rest screens));
 
+sub id2name($) {
+    my $id = $_[0];
+
+    my @matched_names;
+    for (@{$fields_json}) {
+        if ($_->{id} eq $id or $_->{id} eq "customfield_$id") {
+            push @matched_names, encode_utf8 $_->{name};
+        }
+    }
+    if (@matched_names != 1) {
+        die "Can't find exactly 1 name for $id: '@matched_names'" unless $keep_running;
+    }
+
+    return $matched_names[0];
+}
+
+sub name2cfid($) {
+    my $name = $_[0];
+    my @matched_ids = map {
+        $_->{id}
+    } grep {
+        $name eq encode_utf8($_->{name})
+    } @$fields_json;
+    die "Can't find exactly 1 id for $name: '@matched_ids'" if (@matched_ids != 1 && not $keep_running);
+    return $matched_ids[0];
+}
+
+sub name2id($) {
+    (my $id = name2cfid($_[0])) =~ s,customfield_,,;
+    return $id
+}
+
+# 4 matches for "14509"
+#     145:            <arg name="fieldsList">customfield_14509</arg>
+#     529:                  <arg name="selectedTargetGeneralizedField">14509</arg>
+#     671:              <arg name="selectedCustomField">14509</arg>
+#     676:              <arg name="selectedFields">field::14509;condition::changedInTransition...</arg>
+
 if ($action eq "id2name") {
     $dom->find('arg')->each
         (
             sub {
-                if ($_->{name} eq 'hidFieldsList') {
+                if ($_->{name} =~ m,^(hidFieldsList|selectedTargetGeneralizedField|fieldsList)$,) {
                     my @field_ids = grep {m/./} split('@@', $_->text);
                     my @field_names;
-                    map {
-                        my $id = $_;
-                        for (@{$fields_json}) {
-                            if ($_->{id} eq $id) {
-                                push @field_names, encode_utf8 $_->{name};
-                            }
-                        }
+                    push @field_names, map {
+                        id2name($_);
                     } @field_ids;
 
-                    if (@field_ids != @field_names) {
-                        die "#field ids != #field names"
-                    }
-                    $_->replace(sprintf('<arg name="hidFieldsList">%s</arg>', xml_quote join('@@', @field_names)));
-                }
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote join('@@', @field_names)));
+                } elsif ($_->{name} eq "selectedFields") {
+                    my $text = $_->text;
 
+                    die "Can't handle this text: $text" unless $text =~ m,^field::(\d+);,;
+                    my $name = id2name($1);
+                    die "bad name $name: it matches ;!" if $name =~ m/;/;
+
+                    $text =~ s,^field::(\d+);,field::${name};,;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                }
             }
         );
 
@@ -120,7 +172,7 @@ if ($action eq "id2name") {
                     } @$screens_json;
 
                     if (not $screen_name) {
-                        die "Can't get screen name!"
+                        die "Can't get screen name for ${id}!" unless $keep_running;
                     }
                     $_->replace(sprintf('<meta name="jira.fieldscreen.id">%s</meta>', xml_quote $screen_name));
                 }
@@ -130,25 +182,37 @@ if ($action eq "id2name") {
     $dom->find('arg')->each
         (
             sub {
-                if ($_->{name} eq 'hidFieldsList') {
+                if ($_->{name} =~ m,^(hidFieldsList|selectedTargetGeneralizedField|fieldsList)$,) {
                     my @field_names = grep {m/./} split('@@', $_->text);
                     my @field_ids;
+                    my $arg_name = $_->{name};
                     map {
                         my $name = decode_utf8 $_;
                         for (@{$fields_json}) {
                             if ($_->{name} eq $name) {
-                                push @field_ids, encode_utf8 $_->{id};
+                                my $id = $_->{id};
+                                if ($arg_name !~ m,fieldslist,i) {
+                                    $id =~ s,.*_,,;
+                                }
+                                push @field_ids, $id;
                                 last;
                             }
                         }
                     } @field_names;
 
                     if (@field_ids != @field_names) {
-                        die "#field ids != #field names"
+                        die "#field ids != #field names: @field_ids, @field_names" unless $keep_running;
                     }
-                    $_->replace(sprintf('<arg name="hidFieldsList">%s</arg>', xml_quote join('@@', @field_ids)));
-                }
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote join('@@', @field_ids)));
+                } elsif ($_->{name} eq "selectedFields") {
+                    my $text = $_->text;
 
+                    die "Can't handle this text: $text" unless $text =~ m,^field::(.*?);,;
+                    my $id = name2id $1;
+
+                    $text =~ s,^field::(.*?);,field::${id};,;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                }
             }
         );
 
@@ -165,7 +229,7 @@ if ($action eq "id2name") {
                         }
                     } @$screens_json;
 
-                    die "Can't find id for ${screen_name}" unless $id;
+                    die "Can't find id for ${screen_name}" unless $id or $keep_running;
                     $_->replace(sprintf('<meta name="jira.fieldscreen.id">%s</meta>', xml_quote $id));
                 }
             }

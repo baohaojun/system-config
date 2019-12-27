@@ -3,13 +3,13 @@ set -e
 
 # 修改当前 url，±1
 
-url=$(get-firefox-tab-url)
+. .firefox.env
 
 
 export ADD_HOW_MUCH=${1}
 
 if [[ $ADD_HOW_MUCH =~ ^[+|-][0-9]+ ]]; then
-    url=$(echo $url| perl -pe 's,(.*\b)(\d+)(.*),$1 . ($2 + $ENV{ADD_HOW_MUCH}) . $3,e')
+    current_url=$(echo $current_url| perl -pe 's,(.*\b)(\d+)(.*),$1 . ($2 + $ENV{ADD_HOW_MUCH}) . $3,e')
 
 else
     jira_regexp=$(
@@ -19,14 +19,23 @@ else
         declare -x -p | perl -ne 'push @u, $1 if m,^declare -x scm_jenkins.*url.*="(.*)",; END {print join("|", @u)}'
                   )
 
-    if [[ $url =~ $jenkins_regexp ]]; then
-        bhj-notify u "jc go $*"
+    if test "$1" = go; then
+        shift
+    fi
+
+    if [[ $current_url =~ $jenkins_regexp ]]; then
         exec jc go "$@"
-    elif [[ $url =~ $jira_regexp ]]; then
-        bhj-notify u "jkd go $*"
+    elif [[ $current_url =~ $jira_regexp ]]; then
         exec jkd go "$@"
+    elif [[ $current_url =~ ${scm_artifactory_prod_server}|${scm_artifactory_test_server} ]]; then
+        if [[ $current_url =~ /webapp/ ]]; then
+            current_url=$(echo "${current_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
+        else
+            current_url=$(echo "${current_url}" | perl -pe 's,(/artifactory)/,$1/webapp/#/artifacts/browse/tree/General/,')
+        fi
+        exec firefox "${current_url}"
     else
         bhj-notify u "Don't know how to do $*"
     fi
 fi
-firefox "$url"
+firefox "$current_url"
