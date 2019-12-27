@@ -39,15 +39,26 @@ M.refind_scene = function(scene, retry)
       if find_scene(scene) then
          return true
       end
+      log("Scene %s not found", scene)
       sleep(.1)
    end
 
-   if retry == 1 then
-      return false
+   local ret = false
+
+   if retry ~= 1 then
+      forget_scene(scene)
+      ret = find_scene(scene)
    end
 
-   forget_scene(scene)
-   return find_scene(scene)
+   if not ret then
+      if not  M.g_find_scene_debug then
+         M.g_find_scene_debug = true
+         M.refind_scene(scene, retry)
+      else
+         error("Can't jump from " .. tostring(from_scene) .. " to " .. tostring(to_scene))
+      end
+   end
+   return ret
 end
 
 M.show_scene_for_dbg = function(scene)
@@ -70,6 +81,7 @@ M.debug_scene_actions = {
    "我手动操作一下手机，然后你在原来的位置重新比较一遍", -- 4
    "我手动操作一下手机，然后你忘记原来的位置，重新查找一遍", -- 5
    "关闭场景查找功能的调试开关", -- 6
+   "☠☠☠☠☠☠☠☠☠", -- 7
 }
 
 M.get_debug_action = function(desc)
@@ -96,6 +108,8 @@ M.debug_find_scene = function(desc, scene)
          should_ret = 1
       elseif action == M.debug_scene_actions[6] then
          M.g_find_scene_debug = nil
+      elseif action == M.debug_scene_actions[7] then
+         error("You have choosed to start over")
       end
    end
    return ret_val, should_ret
