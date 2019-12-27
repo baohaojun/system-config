@@ -50,6 +50,7 @@ if test -e ~/.local-config/etc/global-setenv; then
     diff ~/tmp/before-private-setenv ~/tmp/after-private-setenv > ~/tmp/private-env.diff || true
 fi
 
+unset TMUX
 
 setenvs=$(declare -x -p | perl -ne "$(
 cat <<'EOF3ca1586eb1f1'

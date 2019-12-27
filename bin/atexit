@@ -1,13 +1,15 @@
 #!/bin/bash
 
-declare set_x_active_atexit
-if [[ $SHELLOPTS =~ xtrace ]]; then
-    set_x_active_atexit=true
-else
-    set_x_active_atexit=false
-fi
+{
+    declare set_x_active_atexit
+    if [[ $SHELLOPTS =~ xtrace ]]; then
+        set_x_active_atexit=true
+    else
+        set_x_active_atexit=false
+    fi
 
-set +x
+    set +x
+} &>/dev/null
 
 if test "$#" = 0; then
     trap - 0
@@ -24,8 +26,10 @@ sc_atexit_args_[%sc_atexit_number%]=(
 )
 
 function sc_atexit_[%sc_atexit_number%]() {
-    local atexit_ret=${atexit_ret:-$?}
-    set +x
+    {
+        local atexit_ret=${atexit_ret:-$?}
+        set +x
+    } &>/dev/null
     "${sc_atexit_args_[%sc_atexit_number%][@]}" || true
     local sc_n=[%sc_atexit_number%]
     if test "${sc_n}" -gt 1; then

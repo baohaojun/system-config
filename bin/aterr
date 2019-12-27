@@ -1,13 +1,13 @@
 #!/bin/bash
-declare set_x_active_aterr
-if [[ $SHELLOPTS =~ xtrace ]]; then
-    set_x_active_aterr=true
-else
-    set_x_active_aterr=false
-fi
-
-set +x
-
+{
+    declare set_x_active_aterr
+    if [[ $SHELLOPTS =~ xtrace ]]; then
+        set_x_active_aterr=true
+    else
+        set_x_active_aterr=false
+    fi
+    set +x
+} &>/dev/null
 
 set -e
 set -o errtrace
@@ -100,8 +100,11 @@ sc_aterr_die_[%sc_aterr_number%]=[%aterr_die%]
 sc_aterr_ignored_errno_[%sc_aterr_number%]=[%aterr_ignored_errno%]
 
 function sc_aterr_[%sc_aterr_number%]() {
-    local aterr_ret=${aterr_ret:-$?}
-    set +x
+    {
+        local aterr_ret=${aterr_ret:-$?}
+        set +x
+    } &>/dev/null
+
     if test "$aterr_ret" = 0; then
         return 0
     fi

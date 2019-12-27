@@ -14,14 +14,16 @@ EOFe9576f8668e0
     # s:summary \
     # t:type '?"one of Story,任务,Improvement,Bug,Epic,New Feature,Technical task,WBS,子任务,文档,测试,过程问题,问题跟踪,"' \
     # d:description \
-    # cdo-commit
+    # cdo-commit \
+    # b:move-to-board
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o d:cs:t:h \
-                      --long description:,do-commit,summary:,type:,help,no-do-commit \
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:cb:s:t:h \
+                      --long description:,do-commit,move-to-board:,summary:,type:,help,no-do-commit \
                       -n $(basename -- $0) -- "$@")
 declare description=
 declare do_commit=false
+declare move_to_board=
 declare summary=
 declare type=
 eval set -- "$TEMP"
@@ -40,6 +42,11 @@ while true; do
                 do_commit=true
             fi
             shift
+
+            ;;
+        -b|--move-to-board)
+            move_to_board=$2
+            shift 2
 
             ;;
         -s|--summary)
@@ -62,6 +69,9 @@ while true; do
             echo
             printf %06s '-c, '
             printf %-24s '--[no-]do-commit'
+            echo
+            printf %06s '-b, '
+            printf %-24s '--move-to-board=MOVE_TO_BOARD'
             echo
             printf %06s '-s, '
             printf %-24s '--summary=SUMMARY'
@@ -98,4 +108,8 @@ putclip ${scm_jira_url}browse/$issue
 
 if test "${do_commit}" = true; then
     jkd commit -t "${type,,}" -i ${issue}
+fi
+
+if test "${move_to_board}"; then
+    jkd mits -b "${move_to_board}" -i ${issue}
 fi

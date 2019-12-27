@@ -4,13 +4,15 @@ set -e
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P @jira '?"edit jira with org-mode"' \
-    # @html '?"edit html with org-mode"'
+    # @html '?"edit html with org-mode"' \
+    # @io-only '?"仅作 input/output，不作拷贝粘贴"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
-                      --long html,jira,help,no-html,no-jira \
+                      --long html,io-only,jira,help,no-html,no-io-only,no-jira \
                       -n $(basename -- $0) -- "$@")
 declare html=false
+declare io_only=false
 declare jira=false
 eval set -- "$TEMP"
 while true; do
@@ -21,6 +23,15 @@ while true; do
                 html=false
             else
                 html=true
+            fi
+            shift
+
+            ;;
+        --io-only|--no-io-only)
+            if test "$1" = --no-io-only; then
+                io_only=false
+            else
+                io_only=true
             fi
             shift
 
@@ -43,6 +54,9 @@ while true; do
             printf %-24s '--[no-]html'
             echo "edit html with org-mode"
             printf "%06s" " "
+            printf %-24s '--[no-]io-only'
+            echo "仅作 input/output，不作拷贝粘贴"
+            printf "%06s" " "
             printf %-24s '--[no-]jira'
             echo "edit jira with org-mode"
             exit
@@ -62,10 +76,13 @@ done
 ## end generated code
 
 
-top_window=$(sawfish-top-window)
-top_window_id=$(sawfish-client -e '(window-id (input-focus))')
+if test "${io_only}" != true; then
+    top_window=$(sawfish-top-window)
+    top_window_id=$(sawfish-client -e '(window-id (input-focus))')
 
-mkdir -p ~/tmp/edit-with-emacs
+    mkdir -p ~/tmp/edit-with-emacs
+
+fi
 
 next_file=~/tmp/edit-with-emacs/$(get-next-file -p "emacs-edit-%d.org")
 
@@ -74,17 +91,25 @@ if test "$top_window" = QtCreator; then
 else
     if test "$1" = region; then
         sawfish-events-delayed .1 "C-c"
-    else
+    elif test "${io_only}" != true; then
         sawfish-events-delayed .1 "C-Home" "C-S-End"
         sawfish-events-delayed .1 "C-c"
     fi
-    getclip > $next_file
+    if test "${io_only}" = true; then
+       echo "$@" > $next_file
+    else
+        getclip > $next_file
+    fi
     if test "${jira}" = true; then
         cat $next_file | ejwo | tee-with-tmp $next_file
     elif test "${html}" = true; then
         cat $next_file | ok ehwo | tee-with-tmp $next_file
     else
         ew $next_file
+    fi
+
+    if test "${io_only}" = true; then
+        exit
     fi
     cat $next_file| putclip
     if find-or-exec -e --window-id $top_window_id; then

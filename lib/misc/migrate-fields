@@ -218,7 +218,6 @@ for (sort keys %test_screen_name_id_map) {
         ) {
             hint("screen $_ not exist yet!");
         }
-
     }
 }
 

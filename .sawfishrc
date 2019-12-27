@@ -232,7 +232,7 @@
 
 (bind-keys s-h-keymap "Super-n" '(system "find-or-exec -p $HOME/external/firefox\\|chromium firefox firefox&"))
 (bind-keys s-h-keymap "Super-b" '(system "find-or-exec -p \"$HOME/.cache/private-firefox-1/firefox\" firefox private-firefox&"))
-(bind-keys s-h-keymap "Super-B" '(system "find-or-exec -p \"$HOME/.cache/private-firefox-2/firefox\" firefox private-firefox&"))
+(bind-keys s-h-keymap "Super-B" '(system "find-or-exec -p \"$HOME/.cache/private-firefox-1/firefox\" firefox private-firefox&"))
 
 ;; (bind-both-global&window-keymaps "Super-Button1-Click"  '(system "xdotool-when-keyboard-clear keydown Control click 1 keyup Control&"))
 (bind-both-global&window-keymaps "Super-Button3-Click" '(system "EMACS=t SAWFISH_CLICK=t s&"))

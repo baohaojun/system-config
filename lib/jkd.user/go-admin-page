@@ -10,17 +10,15 @@ declare -A admin_pages=(
     ["fields"]=fields
     [create-issue]=projects/'$(get-project-key)'
     ["admin-issues"]=secure/admin/ViewIssueTypes.jspa
-    ["admin-workflows"]=secure/admin/workflows/ListWorkflows.jspa
+    ["workflows"]=secure/admin/workflows/ListWorkflows.jspa
     ["admin-add-issuetypes"]="hint: project -> issuetypes -> actions (top-right corner) -> edit issuetypes -> add issuetypes"
-    ["admin-assign-workflow-to-issuetype"]="hint: project -> workflows -> ..."
 )
 
 if test -z "${TMUX}"; then
-    original_url=$(get-firefox-tab-url)
-    scm_jira_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
-
-    FIREFOX_PROFILE_ARG=$(sawfish-window get-top-window-env '^FIREFOX_PROFILE_ARG=' || true)
-    export THE_FIREFOX=$(sawfish-window get-top-window-env '^THE_FIREFOX=' || true)
+    . .firefox.env
+    bhj-notify "go" ${current_url}
+    scm_jira_url=$(echo ${current_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
+    bhj-notify "go-admin-page" "${THE_FIREFOX}, ${FIREFOX_PROFILE_ARG}"
 fi
 
 
@@ -28,8 +26,6 @@ which_page=$(
     select-args -i "$1" -p "which admin page do you want?" "${!admin_pages[@]}"
           )
 shift || true
-
-
 
 path=${admin_pages[$which_page]}
 
@@ -149,10 +145,80 @@ EOFe9576f8668e0
         path="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${field_id#*_}"
     elif test "${edit_name_and_description}" = true; then
         path="secure/admin/EditCustomField!default.jspa?id=${field_id#*_}"
+        bhj-notify go-admin-page "You may also need to edit from: project -> select PROJECT NAME -> fields -> edit (with a PEN icon)"
     elif test "${add_field}" = true; then
         path='secure/admin/CreateCustomField!default.jspa'
     else
         path=secure/admin/ViewCustomFields.jspa
+    fi
+elif test "${which_page}" = workflows; then
+
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # eedit-workflow
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o eh \
+                          --long edit-workflow,help,no-edit-workflow \
+                          -n $(basename -- $0) -- "$@")
+    declare edit_workflow=false
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -e|--edit-workflow|--no-edit-workflow)
+                if test "$1" = --no-edit-workflow; then
+                    edit_workflow=false
+                else
+                    edit_workflow=true
+                fi
+                shift
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %06s '-e, '
+                printf %-24s '--[no-]edit-workflow'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if test $# != 0; then
+        workflow_name=$(
+            unset scm_jira_password
+            jkd -u "${scm_jira_admin_user}" sel-name -a workflow -i "$1"
+                     )
+
+        if test "${edit_workflow}" = true; then
+            viewMode=draft
+        else
+            viewMode=live
+        fi
+        path="secure/admin/workflows/ViewWorkflowSteps.jspa?workflowMode=${viewMode}&workflowName=$(uri-escape ${workflow_name})"
     fi
 fi
 
@@ -181,35 +247,45 @@ if test "${which_page}" = screens -a "$#" != 0; then
         fi
     fi
 elif test "${which_page}" = bro; then
-    case "${original_url}" in
+    case "${current_url}" in
         *'secure/admin/EditCustomField!default.jspa?id='*)
-            id=${original_url##*id=}
+            id=${current_url##*id=}
             path="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${id}"
             ;;
         *'secure/admin/ConfigureCustomField!default.jspa?customFieldId='*)
-            id=${original_url##*Id=}
+            id=${current_url##*Id=}
             path="secure/admin/EditCustomField!default.jspa?id=${id}"
             ;;
         *'secure/admin/EditFieldScreen!default.jspa?id='*)
-            id=${original_url##*id=}
+            id=${current_url##*id=}
             path="secure/admin/ConfigureFieldScreen.jspa?id=${id}"
             ;;
         *'secure/admin/ConfigureFieldScreen.jspa?id='*)
-            id=${original_url##*id=}
+            id=${current_url##*id=}
             path="secure/admin/EditFieldScreen!default.jspa?id=${id}"
             ;;
         *'secure/admin/EditIssueTypeScreenScheme!default.jspa?id='*)
-            id=${original_url##*id=}
+            id=${current_url##*id=}
             path="secure/admin/ConfigureIssueTypeScreenScheme.jspa?id=${id}"
             ;;
         *'secure/admin/ConfigureIssueTypeScreenScheme.jspa?id='*)
-            id=${original_url##*id=}
+            id=${current_url##*id=}
             path="secure/admin/EditIssueTypeScreenScheme!default.jspa?id=${id}"
+            ;;
+        *'workflowMode='*)
+            path_prefix="secure/admin/workflows/WorkflowDesigner.jspa?workflowMode="
+            mode=${current_url##*workflowMode=}
+            if [[ $mode =~ ^live ]]; then
+                mode=${mode/#live/draft}
+            else
+                mode=${mode/#draft/live}
+            fi
+            path="${path_prefix}${mode}"
             ;;
         *)
             bhj-notify go-admin-page "Don't know how to do brother page:
 
-$original_url
+$current_url
 "
             exit 1
             ;;

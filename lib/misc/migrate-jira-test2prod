@@ -20,9 +20,9 @@ cat <<'EOFcc6741846980'
   :END:
 
 * DONE yes-or-no-p "修改 issuetype 的 screen 关联"
-  CLOSED: [2019-12-23 月 15:41]
+  CLOSED: [2019-12-23 月 15:41]
   :LOGBOOK:
-  - State "DONE"       from "TODO"       [2019-12-23 月 15:41]
+  - State "DONE"       from "TODO"       [2019-12-23 月 15:41]
   :END:
 
 * DONE yes-or-no-p "把 workflow export 出来，在目标上 import"
@@ -32,9 +32,9 @@ cat <<'EOFcc6741846980'
   :END:
 
 * DONE yes-or-no-p "把 issuetype 关联到新的 workflow"
-  CLOSED: [2019-12-23 月 15:36]
+  CLOSED: [2019-12-23 月 15:36]
   :LOGBOOK:
-  - State "DONE"       from "TODO"       [2019-12-23 月 15:36]
+  - State "DONE"       from "TODO"       [2019-12-23 月 15:36]
   :END:
 * DONE yes-or-no-p "把所有 dynamic export 出来，在目标上 import"
   CLOSED: [2019-12-23 月 15:36]
@@ -44,8 +44,26 @@ cat <<'EOFcc6741846980'
 # {%/org-mode%}
 EOFcc6741846980
 
+yes-or-no-p "备份生产服务器上的 screens"
 ./migrate-fields
 yes-or-no-p "修改 issuetype 的 screen 关联"
-yes-or-no-p "把 workflow export 出来，在目标上 import"
+yes-or-no-p "把两边的 workflow export 出来，做一下对比"
+yes-or-no-p "把 workflow 里的字段 id 改成目标环境上的 id"，参考 jkd workflow -h 命令
+yes-or-no-p "在目标上 import"
+yes-or-no-p "确认每个状态都不是灰的！！！，"
+
+cat <<'EOF66c3f85d104c'
+# {%org-mode%}
+如果有，解决方法是
+
+1. 新建一个名字相近的 step（但是绝对绝对不能同名！！！），
+
+2. 然后把它的 linked status 改掉，
+
+3. 再把灰的那个改成用这个新的的 linked status，
+4. 再把新的 step 给删掉
+# {%/org-mode%}
+EOF66c3f85d104c
+
 yes-or-no-p "把 issuetype 关联到新的 workflow"
 yes-or-no-p "把所有 dynamic export 出来，在目标上 import"

@@ -1,0 +1,94 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+use Encode;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# f:dyn-file
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $dyn_file = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--dyn-file=DYN-FILE';
+    if (length('--dyn-file=DYN-FILE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'dyn-file|f=s' => \$dyn_file,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use File::Slurp;
+use JSON;
+
+my $dyn_json = decode_json(capturex("cat", "${dyn_file}"));
+
+my $field_json = decode_json(capturex("jkd", "rest", "field"));
+
+my %field_id_name_map2;
+
+sub no_spaces_equal($$) {
+    my @pair = @_;
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($) {
+    map {s, | ,,g} @_;
+    return $_[0];
+}
+
+map {
+    my $id = $_->{id};
+    my $name = no_spaces_convert encode_utf8 $_->{name};
+
+    $id =~ s,.*_,,;
+    $field_id_name_map2{$name} = $id;
+    $field_id_name_map2{$id} = $name;
+
+} @$field_json;
+
+for (@{$dyn_json->{exportData}}) {
+    my $name = no_spaces_convert encode_utf8 $_->{customFieldName};
+    my $id = $field_id_name_map2{$name};
+
+    die "Can't find id for $name" unless $id;
+    $_->{customFieldId} = int($id);
+}
+
+print JSON->new->utf8(1)->pretty(1)->encode($dyn_json);
