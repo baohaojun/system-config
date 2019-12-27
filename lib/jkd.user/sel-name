@@ -158,6 +158,10 @@ id2name() {
     echo -n "$name"
 }
 
+if test "$#" = 0 -a "${init_input}"; then
+    set -- "${init_input}"
+fi
+
 if test "${b0}" = sel-name; then
     sel-name
 elif test "${b0}" = name2id; then
