@@ -37,8 +37,8 @@ if test $(date +%H) -ge 17; then
 fi
 
 sleep 3
-export MYSCR_SOCKET=onmyoji${DISPLAY##*:}
-export MYSCR_SESSION=onmyoji${DISPLAY##*:}
+export MYSCR_SOCKET=o${DISPLAY##*:}
+export MYSCR_SESSION=o${DISPLAY##*:}
 xterm -e myscr&
 
 sleep 3
