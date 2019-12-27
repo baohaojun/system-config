@@ -16,6 +16,7 @@ my $type_map = {
 
 $type_map->{'Text Field (single line)'} = $type_map->{string};
 $type_map->{'Text Field (multi-line)'} = $type_map->{textarea};
+$type_map->{'Deviniti [Dynamic Forms] - Dynamic Radio Buttons'} = $type_map->{'dyn-radio'};
 
 sub get_types() {
     return join(" ", keys %$type_map);
@@ -113,4 +114,4 @@ my $json_obj = {
 use autodie qw(:all);
 
 system("jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
-system("jkd", "go", "field", "$name", "edit");
+system("jkd", "go", "field", "-e", "-m", "$name");
