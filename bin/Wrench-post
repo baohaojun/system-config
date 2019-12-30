@@ -132,34 +132,30 @@ if ($ask_to_whom or $send_to) {
 
 my @cur_at_end;
 
-my $at_someone_regexp = qr(\@(\S+?)( | |$|\n));
-
-if ($text =~ m/$at_someone_regexp/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
-    while ($text =~ s,^$at_someone_regexp,,) {
-        my $at_whom = $1;
-        my $command = sprintf("wrench_cue(%s)", quote_lua_str($at_whom));
-        system("Wrench.sh", $command);
-    }
-    while ($text =~ s,$at_someone_regexp($|\n),,) {
-        push @cur_at_end, $1;
-    }
-}
+my $at_someone_regexp = qr(\@\@(\S+?)( | |$|\n));
 
 my $how_to_post = 'nil';
+if ($text =~ m/$at_someone_regexp/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
+    while ($text =~ s,$at_someone_regexp,,) {
+        my $pre = $`;
+        my $post = $';
+        my $at_whom = $1;
 
-if (@cur_at_end) {
-    $how_to_post = '"no-post"';
+        if ($pre) {
+            my $post_text = sprintf("wrench_post(%s, %s)", quote_lua_str($`), '"no-post"');
+            system("Wrench.sh", $post_text);
+        }
+
+
+        my $command = sprintf("wrench_cue(%s)", quote_lua_str($at_whom));
+        system("Wrench.sh", $command);
+        $text = $post;
+    }
 }
-my $post_text = sprintf("wrench_post(%s, %s)", quote_lua_str($text), $how_to_post);
+
+my $post_text = sprintf("wrench_post(%s, %s)", quote_lua_str($text), 'nil');
 
 system("Wrench.sh", $post_text);
-if (@cur_at_end) {
-    for (@cur_at_end) {
-        my $command = sprintf("wrench_cue(%s)", quote_lua_str($_));
-        system("Wrench.sh", $command);
-    }
-    system("Wrench.sh", "wrench_post('')");
-}
 
 if ($extra_send_text) {
   system("Wrench-post", "--", "$extra_send_text");
