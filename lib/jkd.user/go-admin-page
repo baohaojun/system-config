@@ -272,6 +272,10 @@ elif test "${which_page}" = bro; then
             id=${current_url##*id=}
             path="secure/admin/EditIssueTypeScreenScheme!default.jspa?id=${id}"
             ;;
+        *'plugins/servlet/mobile#issue/'*)
+            issue=${current_url##*issue/}
+            path="browse/${issue}"
+            ;;
         *'workflowMode='*)
             path_prefix="secure/admin/workflows/WorkflowDesigner.jspa?workflowMode="
             mode=${current_url##*workflowMode=}
