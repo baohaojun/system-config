@@ -123,6 +123,10 @@ if test $org_file = true || yes-or-no-p -y "Export from .org"; then
     exp_func=org-latex-export-to-latex
     if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
         exp_func=org-beamer-export-to-latex
+        notify-presentation() {
+            bhj-notify "org2pdf" "记住：分享的时候，不要用笔记本自带的键盘和鼠标！"
+        }
+        . atexit notify-presentation
     fi
     eval_arg=$(cat <<EOF | . .replace-%% --
 ; {%emacs-lisp-mode%}
@@ -215,7 +219,7 @@ latex -halt-on-error -shell-escape $1
 latex -shell-escape $1
 dvipdfmx ${1/%.tex/.dvi}
 
-ps-killall acroread
+ps-killall acroread || true
 evince --unique ${1/%.tex/.pdf}&
 sleep 2
 qpdfview-resize

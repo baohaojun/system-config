@@ -170,7 +170,8 @@
  '(org-jira-done-states (quote ("Closed" "Resolved" "Done" "完成")))
  '(org-latex-classes
    (quote
-    (("beamer" "\\documentclass[presentation]{beamer}"
+    (("beamer" "\\documentclass[presentation]{beamer}
+\\usepackage{bxdpx-beamer}"
       ("\\section{%s}" . "\\section*{%s}")
       ("\\subsection{%s}" . "\\subsection*{%s}")
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
@@ -187,6 +188,7 @@
       ("\\paragraph{%s}" . "\\paragraph*{%s}")
       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
      ("中文演示" "\\documentclass[presentation,dvipdfmx,CJKbookmarks]{beamer}
+\\usepackage{bxdpx-beamer}
 \\usepackage{CJKutf8}
 \\usepackage{atbegshi}
 \\AtBeginShipoutFirst{\\special{pdf:tounicode UTF8-UTF16}} % for UTF-8

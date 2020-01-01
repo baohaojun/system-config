@@ -86,7 +86,16 @@ fi
 
 exec 9> "${INPUT_LOCK_FILE}"
 if ! flock -n 9; then
-    bhj-notify ask-for-input-with-sawfish "ask-for-input-with-sawfish ${INPUT_LOCK_FILE} blocked by $(echo; fuser ${INPUT_LOCK_FILE}|xargs ps|cut -b 1-100)"
+    bhj-notify ask-for-input-with-sawfish "$(readlink -f "${INPUT_LOCK_FILE}") locked by $(
+echo;
+
+set -o pipefail
+fuser "${INPUT_LOCK_FILE}"|
+    xargs ps|
+    cut -b 1-100|
+    head -n 10 || echo ...
+
+)"
     find-or-exec -e yad || true
     flock 9
 fi
