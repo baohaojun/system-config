@@ -10,12 +10,13 @@ for x in $(alias|pn 2 | pn 1 =); do
     unalias "$x"
 done
 
-for x in PS1 PROMPT_COMMAND; do
+for x in PS1 PROMPT_COMMAND $(declare -x -p |grep "^declare -x" | pn 3|pn 1 =); do
     unset "$x"
 done
 
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 if [ "`id -u`" -eq 0 ]; then
-  PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    true
 else
   PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
 fi
