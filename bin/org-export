@@ -168,7 +168,7 @@ for x in "$@"; do
     (
         cd $(dirname "$x")
         if test ! -e emojis; then
-            relative-link $(readlink -f ".git/../emojis") .
+            relative-link $(readlink -f $(lookup-file -e ".git/../emojis")) .
         fi
         # save.-to-git -m "before org2html $x"
         org2html --fix-emojis-only "$(basename "$x".html)"
