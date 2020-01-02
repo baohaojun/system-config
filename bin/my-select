@@ -2,6 +2,7 @@
 
 use strict;
 use v5.10;
+use File::Slurp;
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P ddebug='$ENV{MY_SELECT_DEBUG}' istdin
@@ -130,6 +131,12 @@ sub hint($) {
 
 my @options_list = @ARGV;
 @ARGV = ();
+
+if ($ENV{MY_SELECT_WORDS_FILE}) {
+    my $text = read_file($ENV{MY_SELECT_WORDS_FILE});
+    @options_list = (split("\n", $text), @options_list);
+}
+
 my %always_selections;
 
 if ($ENV{always_selection}) {
@@ -150,7 +157,7 @@ sub found_it($$) {
     my $count = 1;
     for (@options_list) {
         if ($entry eq $_) {
-            echo $count;
+            echo $entry;
             exit 0;
         }
         $count++;

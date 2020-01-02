@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+. aterr bhj-notify "$0" "failed to run $0"
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P j:job-name
 ## end code-generator
@@ -45,6 +47,10 @@ done
 
 original_url=$(get-firefox-tab-url)
 jenkins_url=$(echo ${original_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
+
+if test "${jenkins_url}" = / || ! declare -x -p | grep 'jenkins.*url' | grep "$jenkins_url" -q; then
+    jenkins_url=${scm_jenkins_prod_url}
+fi
 
 export FIREFOX_PROFILE_ARG=$(sawfish-window get-top-window-env '^FIREFOX_PROFILE_ARG=' || true)
 export THE_FIREFOX=$(sawfish-window get-top-window-env '^THE_FIREFOX=' || true)

@@ -705,7 +705,7 @@ EOF856ceee4ab57
                (hide-desktop))))
 
 (bind-keys s-h-keymap "r" 'bhj-run-application)
-(bind-keys s-h-keymap "Super-r" 'bhj-run-application)
+(bind-keys s-h-keymap "Super-r" '(system "run&"))
 
 (require 'sawfish.wm.commands.x-cycle)
 

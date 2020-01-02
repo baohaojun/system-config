@@ -40,7 +40,7 @@ EOF
     # @:dot-sep-init '?"用 . 把初始输入切割开"' \
     # @select-from-history-too '?"是否也允许从历史中选择（默认只从给定的参数、输出中选择）"' \
     # @:exclude '?"不要选中这个参数中给定的选项"' \
-    # @use-file='${SA_USE_FILE:-false}' '?"把参数写到文件中，而不是从命令行上传递"' \
+    # @use-file='${SA_USE_FILE:-false}' '?"把参数写到文件中，而不是从命令行上传递（适用于参数太多超限的情况）"' \
     # vverbose '?"调试选项，打印更多输出"' \
     # @ask-for-input '?"如果没有输入选项，直接调用 ask-for-input 程序让用户输入，一般跟 select-from-history-too 联用"'
 ## end code-generator
@@ -287,9 +287,17 @@ fi
 
 . aterr rm -f $histfile.$$
 
+if test "${use_file}" = true; then
+    export MY_SELECT_WORDS_FILE=~/tmp/$b0.args-file.$$
+    # . atexit rm -f $MY_SELECT_WORDS_FILE
+fi
+
 IFS=$'\n'
 selection_entries=(
     $(
+        if test "${MY_SELECT_WORDS_FILE}"; then
+            exec  > "${MY_SELECT_WORDS_FILE}"
+        fi
         tmpfile=/tmp/$(basename $0).$$
         (
             if test "$b0" = select-args; then
@@ -358,10 +366,6 @@ EOF68b65b38dc35
     )
 ) || true
 
-is-good-n() {
-    true
-}
-
 output-result() {
     echo -n "$@" | tr -d '\r' |
         if test "${b0}" = select-args; then
@@ -371,7 +375,8 @@ output-result() {
         fi
 }
 
-if test ${#selection_entries[@]} = 0; then
+if (test "${use_file}" = false && test ${#selection_entries[@]} = 0) ||
+       (test "${use_file}" = true && test "$(cat ${MY_SELECT_WORDS_FILE}|wc -l)" = 0); then
     if test "${ask_for_input}" = true; then
         output=$(
             ask-for-input -p "${prompt}"
@@ -406,19 +411,7 @@ else
         edit_history="@@@edit the history file@@@"
         selection_entries+=("${edit_history}")
     fi
-    n=$(my-select "${selection_entries[@]}")
-
-    function is-good-n() {
-        echo "$n" | grep -q -P -e '^[0-9]+$' && test "$n" -ge 1 -a $n -le ${#selection_entries[@]}
-    }
-
-    output=$(
-        if is-good-n; then
-            output-result ${selection_entries[n-1]}
-        else
-            output-result "$n"
-        fi
-          )
+    output=$(my-select "${selection_entries[@]}")
 
     if test "${select_from_history_too}" = true -a "$output" = "${edit_history}"; then
         ew $histfile
@@ -430,7 +423,7 @@ output-result "$output"
 
 (
     . atexit rm -f $histfile.$$*
-    if (  is-good-n && test "$ORDERED" != false ) || test "$select_from_history_too" = true; then
+    if ( test "$ORDERED" != false ) || test "$select_from_history_too" = true; then
         (
             if test "${history_forerunner}"; then
                 $history_forerunner

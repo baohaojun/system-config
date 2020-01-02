@@ -1,0 +1,98 @@
+#!/bin/bash
+set -e
+export EMACS=t
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # pprint-only mmatch-history
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o mph \
+                      --long match-history,print-only,help,no-match-history,no-print-only \
+                      -n $(basename -- $0) -- "$@")
+declare match_history=false
+declare print_only=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -m|--match-history|--no-match-history)
+            if test "$1" = --no-match-history; then
+                match_history=false
+            else
+                match_history=true
+            fi
+            shift
+
+            ;;
+        -p|--print-only|--no-print-only)
+            if test "$1" = --no-print-only; then
+                print_only=false
+            else
+                print_only=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--[no-]match-history'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--[no-]print-only'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test $# != 0; then
+    cmd=$(
+        perl -e 'use String::ShellQuote;
+@ARGV = shell_quote (@ARGV);
+
+$, = " ";
+print @ARGV;
+' "$@"
+       )
+else
+    cmd=$(select-args --select-from-history-too -m 1000 -O abbrev.SOL -a "echo hello world")
+fi
+if test "${print_only}" = true; then
+    if test "${match_history}" = true; then
+        cmd=$(
+            select-output-line -i "${cmd}" -p 'Which old cmd do you want?' --use-file \
+                               cat ~/.cache/system-config/.bash_history.bak \
+                               ~/.cache/system-config/bhj/select-output-line/abbrev.SOL.hist.${UID} \
+                               ~/.bash_history
+           )
+    fi
+
+    echo "${cmd}"
+else
+    unset EMACS
+    eval "$cmd"
+fi

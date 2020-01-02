@@ -35,7 +35,18 @@ else
     exit 1
 fi
 
-sawfish-client -e "($function (input-focus))"|perl -ne "$(
+max_try=10
+for x in $(seq 1 ${max_try}); do
+    if window=$(sawfish-client -e "($function (input-focus))") && test "${window}" != $'\007'; then
+        echo "${window}"
+        break
+    else
+        if test "${x}" = ${max_try}; then
+            bhj-notify sawfish-top-window "Can't get window after $x times"
+        fi
+        sleep .1
+    fi
+done | perl -ne "$(
 cat <<'EOF3a5a0240b117'
 # {%perl-mode%}
 s,^",,;
