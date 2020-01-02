@@ -70,6 +70,16 @@ done
 ## end generated code
 
 if test $# != 0; then
+    if test "$1" = +; then
+        . .firefox.env
+        desc=$(
+            input-lock -l "input.web.desc" \
+                       select-args --ask-for-input -1 --select-from-history-too -o -p "Please describe $current_url"
+            )
+        echo "$desc $current_url" >> ~/.cache/system-config/bhj/select-output-line/abbrev.WEB.hist.${UID}
+        exit
+    fi
+
     cmd=$(
         perl -e 'use String::ShellQuote;
 @ARGV = shell_quote (@ARGV);
@@ -79,24 +89,24 @@ print @ARGV;
 ' "$@"
        )
 else
-    cmd=$(
-        input-lock \
-            -l "abbrev.SOL" \
-            select-args --ask-for-input -1 -m 1000 --select-from-history-too -o -p "What command do you want to execute?"
-       )
+    cmd=$(select-args --select-from-history-too -m 1000 -O abbrev.WEB)
 fi
 if test "${print_only}" = true; then
     if test "${match_history}" = true; then
         cmd=$(
             select-output-line -i "${cmd}" -p 'Which old cmd do you want?' --use-file \
-                               cat ~/.cache/system-config/.bash_history.bak \
-                               ~/.cache/system-config/bhj/select-output-line/abbrev.SOL.hist.${UID} \
-                               ~/.bash_history
+                               ~/.cache/system-config/bhj/select-output-line/abbrev.WEB.hist.${UID}
            )
     fi
 
     echo "${cmd}"
 else
     unset EMACS
-    eval "$cmd"
+    echo "${cmd}" >> ~/.cache/system-config/bhj/select-output-line/abbrev.WEB.hist.${UID}
+    set -- $cmd
+    while test $# -gt 1; do
+        shift
+    done
+
+    firefox "$1"
 fi
