@@ -33,9 +33,7 @@ function cd_failed()
     elif test ${#dirs[@]} = 1; then
         builtin cd ${dirs[0]}
     else
-        NUM=`my-select "${dirs[@]}"`
-        ((NUM--))
-        builtin cd "${dirs[$NUM]}"
+        builtin cd `my-select "${dirs[@]}"`
     fi
     return 0
 }
@@ -50,9 +48,7 @@ function fcd()
     elif test ${#dirs[@]} = 1; then
         cd_bhj "${dirs[0]}"
     else
-        NUM=`my-select "${dirs[@]}"`
-        ((NUM--))
-        cd_bhj "${dirs[$NUM]}"
+        cd_bhj `my-select "${dirs[@]}"`
     fi
 }
 
@@ -66,9 +62,7 @@ function wcd()
     elif test ${#dirs[@]} = 1; then
         cd_bhj ${dirs[0]}
     else
-        NUM=`my-select "${dirs[@]}"`
-        ((NUM--))
-        cd_bhj "${dirs[$NUM]}"
+        cd_bhj `my-select "${dirs[@]}"`
     fi
 }
 
@@ -80,9 +74,7 @@ function fp()
 function rbcd()
 {
     dirs=(`repo branches|perl -npe 's/.* in\b.//; s/,/ /g; s/ /\n/g'|sort -u`);
-    NUM=`my-select "${dirs[@]}"`
-    ((NUM--))
-    cd_bhj "${dirs[$NUM]}"
+    cd_bhj `my-select "${dirs[@]}"`
 }
 
 function re()
@@ -358,9 +350,7 @@ function _select_cd() {
     elif test ${#dirs[@]} = 1; then
         builtin cd ${dirs[0]}
     else
-        NUM=`my-select "${dirs[@]}"`
-        ((NUM--))
-        builtin cd "${dirs[$NUM]}"
+        builtin cd `my-select "${dirs[@]}"`
     fi
 }
 

@@ -48,8 +48,7 @@ done
 
 umask 0077
 if true; then
-    set -e # set -x
-    exec 2> ~/tmp/illPass.log
+    set -e
 fi
 
 export EMACS=t
@@ -163,6 +162,7 @@ if test "${password_map[$which_password]}" != 1; then
                 git commit -m "Add symlink" || true
             )
         elif test "${first_char}" = \>; then
+            bhj-notify illPass "edit ${which_password}"
             pass edit "$which_password"
             sawfish-window mark -t illPass -r
         fi
@@ -175,9 +175,14 @@ if test "${password_map[$which_password]}" != 1; then
         if yes-or-no-p -y "生成一个随机密码？"; then
             pass generate "$which_password" 12
         fi
+        bhj-notify illPass "edit ${which_password}"
         pass edit $which_password
         sawfish-window mark -t illPass -r
     fi
+fi
+
+if test "${confirm}" = true && yes-or-no-p -y "Edit your password?"; then
+    exec pass edit "${which_password}"
 fi
 
 password=$(
@@ -194,5 +199,5 @@ xdotool-when-keyboard-clear type --clearmodifiers "${password}"
 
 if test "${add_newline_and_notify}" = true; then
     xdotool-when-keyboard-clear type --clearmodifiers $'\n'
-    bhj-notify illPass "Have inputed your password!"
+    bhj-notify illPass "Have inputed your password ${which_password}!"
 fi

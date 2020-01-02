@@ -98,7 +98,7 @@ if ($remote_ip) {
 my @emacsclient = ('emacs.client', '-n');
 
 my $do_wait = 0;
-if ($0 =~ m,/?edit-wait$, or $0 =~ m,/?ew$,) {
+if ($0 =~ m,/?(edit-wait|editor)$, or $0 =~ m,/?ew$,) {
   @emacsclient = ('emacs.client');
   $do_wait = 1;
 }
