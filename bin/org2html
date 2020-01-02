@@ -98,11 +98,10 @@ else
     how_to_export=''
 fi
 
-if test "${fix_emojis_only}" != true; then
-    emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
+emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
           (let* ((org-file "[%org_file%]")
                  (my-loaded-themes custom-enabled-themes)
-                 (html-file (replace-regexp-in-string "\\.org$" ".html" "[%org_file%]"))
+                 (html-file "[%html_file%]")
                  (org-file-already-loaded)
                  (buffers (buffer-list))
                  (org-buffer)
@@ -117,7 +116,7 @@ if test "${fix_emojis_only}" != true; then
                 (setq org-file-already-loaded t
                       buffers nil))
               (setq buffers (cdr buffers)))
-            (when (string-match ".org$" org-file)
+            (when (string-match ".org$" org-file) ; test whether fix emojis only
               (when custom-enabled-themes
                 (dolist (theme custom-enabled-themes)
                   (disable-theme theme)))
@@ -141,7 +140,6 @@ if test "${fix_emojis_only}" != true; then
 EOF6405e5bce1d2
           )" 1>&2
 
-fi
 if test "${bare}" = true; then
     true
 else

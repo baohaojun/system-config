@@ -1,7 +1,6 @@
 #!/bin/bash
 unset FORCE_SYSTEM_CONFIG
 unset SYSTEM_CONFIG_INITED
-export FORCE_NO_SYSTEM_CONFIG=true
 for x in $(set |grep '^\w.*\(\)' -P|pn 1); do
     unset -f "$x"
 done
@@ -10,12 +9,30 @@ for x in $(alias|pn 2 | pn 1 =); do
     unalias "$x"
 done
 
-for x in PS1 PROMPT_COMMAND; do
-    unset "$x"
+declare -A skip_env_vars=(
+    [HOME]=1
+    [LANG]=1
+    [LOGNAME]=1
+    [MAIL]=1
+    [PATH]=1
+    [PWD]=1
+    [SHELL]=1
+    [SHLVL]=1
+    [TERM]=1
+    [USER]=1
+)
+
+for x in PS1 PROMPT_COMMAND $(declare -x -p |grep "^declare -x" | pn 3|pn 1 =); do
+    if test -z "${skip_env_vars[$x]}"; then
+        unset "$x"
+    fi
 done
 
+export FORCE_NO_SYSTEM_CONFIG=true
+
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 if [ "`id -u`" -eq 0 ]; then
-  PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    true
 else
   PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
 fi
