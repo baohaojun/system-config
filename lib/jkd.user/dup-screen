@@ -1,0 +1,183 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+
+use Encode;
+use JSON;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# f:from-screen @:from-jira='$ENV{scm_jira_url}' \
+# t:to-screen @:to-jira='$ENV{scm_jira_url}' \
+# ccreate-first
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $create_first = 0;
+my $from_jira = $ENV{scm_jira_url};
+my $from_screen = "";
+my $to_jira = $ENV{scm_jira_url};
+my $to_screen = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-c, ';
+    printf "%-24s", '--[no]create-first';
+    if (length('--[no]create-first') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--from-jira=FROM-JIRA';
+    if (length('--from-jira=FROM-JIRA') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--from-screen=FROM-SCREEN';
+    if (length('--from-screen=FROM-SCREEN') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--to-jira=TO-JIRA';
+    if (length('--to-jira=TO-JIRA') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-t, ';
+    printf "%-24s", '--to-screen=TO-SCREEN';
+    if (length('--to-screen=TO-SCREEN') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'create-first|c!' => \$create_first,
+    'from-jira=s' => \$from_jira,
+    'from-screen|f=s' => \$from_screen,
+    'to-jira=s' => \$to_jira,
+    'to-screen|t=s' => \$to_screen,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $from_screen_json = decode_json(capturex(
+    "jkd", "-j", "${from_jira}", "dump-screen", "-s", "${from_screen}"
+));
+
+if ($create_first) {
+    my $description = $from_screen_json->{description};
+    system("jkd", "-j", "${to_jira}", "create-screen", "-n", "$to_screen", "-d", "$description");
+}
+
+my $to_screen_json = decode_json(capturex(
+    "jkd", "-j", "${from_jira}", "dump-screen", "-s", "${to_screen}"
+));
+
+
+my %from_tabs;
+my %to_tabs;
+
+my $screen_name = $to_screen;
+
+map { $from_tabs{$_->{name}} = 1 } @{$from_screen_json->{tabs}};
+map { $to_tabs{$_->{name}} = 1 } @{$to_screen_json->{tabs}};
+
+for my $tab_name (keys %from_tabs) {
+    if (not $to_tabs{$tab_name}) {
+        system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-tab");
+    } else {
+        say STDERR "No need to add again: ", encode_utf8(${tab_name});
+    }
+}
+
+for my $tab_name (keys %to_tabs) {
+    if (not $from_tabs{$tab_name}) {
+        system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-tab");
+    } else {
+        say STDERR "No need to delete: ", encode_utf8($tab_name);
+    }
+}
+
+for my $tab_name (keys %from_tabs) {
+    my @from_fields;
+    my %from_fields_tab_map;
+
+    my @to_fields;
+    my %to_fields_tab_map;
+
+    map {
+        if ($_->{name} eq $tab_name) {
+            map {
+                push @from_fields, $_->{name};
+                $from_fields_tab_map{$_->{name}} = $tab_name;
+            } @{$_->{fields}}
+        }
+    } @{$from_screen_json->{tabs}};
+
+    map {
+        if ($_->{name} eq $tab_name) {
+            map {
+                push @to_fields, $_->{name};
+                $to_fields_tab_map{$_->{name}} = $tab_name;
+            } @{$_->{fields}}
+        }
+    } @{$to_screen_json->{tabs}};
+
+    my $need_from_sync = 0;
+
+    for (@from_fields) {
+        if (not $to_fields_tab_map{$_}) {
+            $need_from_sync = 1;
+        }
+    }
+
+    for (@to_fields) {
+        if (not $from_fields_tab_map{$_}) {
+            $need_from_sync = 1;
+        }
+    }
+
+    if ($need_from_sync) {
+        system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-fields");
+        system("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-fields", @from_fields);
+    } else {
+        say STDERR "No need to sync fields for: ", encode_utf8 $tab_name;
+    }
+}

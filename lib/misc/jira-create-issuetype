@@ -1,20 +1,133 @@
-#!/bin/bash
-declare comment_doc=$(
-    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+
+use Encode;
+use JSON;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
 * TODO create issuetype
-* TODO edit issue type field scheme (better enter from project page)
 * TODO edit issuetype scheme (remember to save! there is a save button at the bottom!)
+* TODO edit issue type field scheme (better enter from project page)
 * TODO edit workflow scheme (add, assign)
 * TODO edit issue type screen schemes
 # {%/org-mode%}
-EOFe9576f8668e0
-        )
+EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P '?"${comment_doc}"' \
-    # ddebug s:serial
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# n:issue-type-name d:issue-type-description p:project-name
 ## end code-generator
 ## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $issue_type_description = "";
+my $issue_type_name = "";
+my $project_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--issue-type-description=ISSUE-TYPE-DESCRIPTION';
+    if (length('--issue-type-description=ISSUE-TYPE-DESCRIPTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--issue-type-name=ISSUE-TYPE-NAME';
+    if (length('--issue-type-name=ISSUE-TYPE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project-name=PROJECT-NAME';
+    if (length('--project-name=PROJECT-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'issue-type-description|d=s' => \$issue_type_description,
+    'issue-type-name|n=s' => \$issue_type_name,
+    'project-name|p=s' => \$project_name,
+    'help|h!' => \&$handler_help,
+);
+
 
 ## end generated code
+
+sub hint($) {
+    do {
+        no autodie;
+        system("yes-or-no-p", "-y", @_);
+    }
+}
+
+my $unicode_issuetype_name = decode_utf8 $issue_type_name;
+
+sub check_issue_type();
+sub check_issue_type() {
+    my $issuetype_json = decode_json(capturex("jkd", "rest", "issuetype"));
+    my $found_issuetype;
+
+    for (@$issuetype_json) {
+        if ($_->{name} eq $unicode_issuetype_name) {
+            $found_issuetype = 1;
+            last;
+        }
+    }
+
+    if (not $found_issuetype) {
+        system("putclip", "${issue_type_description}");
+        system("putclip $issue_type_name; jkd go open secure/admin/AddNewIssueType.jspa");
+        hint "Created issue type?";
+        check_issue_type();
+    } else {
+        say STDERR "Yes, we have already created ${issue_type_name}";
+    }
+
+    my $project_json = decode_json(capturex("jkd", "rest", "project/${project_name}/"));
+    $found_issuetype = 0;
+    for (@{$project_json->{issueTypes}}) {
+        if ($_->{name} eq $unicode_issuetype_name) {
+            $found_issuetype = 1;
+            last;
+        }
+    }
+
+    if (not $found_issuetype) {
+        system("jkd go open plugins/servlet/project-config/${project_name}/issuetypes");
+        hint "Added issue type to project ${project_name}?";
+        check_issue_type();
+    } else {
+        say STDERR "Already added ${issue_type_name}";
+    }
+}
+
+check_issue_type();
+
+system("jkd go open plugins/servlet/project-config/${project_name}/fields");
+hint "edited fields for ${project_name}?"

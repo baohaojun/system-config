@@ -460,6 +460,7 @@ EOFe9576f8668e0
 }
 
 if test "${action}" = add-fields; then
+    log "add-fields $*"
     add-fields "$@"
 elif test "${action}" = list-fields; then
     list-fields
@@ -468,8 +469,10 @@ elif test "${action}" = delete-fields; then
 elif test "${action}" = sync-from-screen; then
     sync-from-screen "$@"
 elif test "${action}" = add-tab; then
+    log "add-tab $tab_name"
     jkd rest -a screens/${screen_id}/tabs -- -X POST --data '{"name" : "'"${tab_name}"'"}' -H 'Content-Type: application/json'
 elif test "${action}" = delete-tab; then
+    log "add-tab $tab_name"
     jkd rest -a screens/${screen_id}/tabs/${tab_id} -- -X DELETE
 else
     die "Don't know how to work with your action: '$action'"

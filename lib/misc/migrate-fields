@@ -122,7 +122,7 @@ for (@$test_screens_json) {
         say STDERR  "working with $name";
         $test_screen_name_id_map{$name} = $_->{id};
         $screen_name_description_map{$name} = encode_utf8($_->{description});
-        $test_screen_name_dump_map{$name} = decode_json(qx(jkd dump-screen -s '${name}'))
+        $test_screen_name_dump_map{$name} = decode_json(qx(jkd dump-screen -s '${name}'))->{tabs}
     }
 }
 
@@ -361,7 +361,7 @@ $prod_screens_json = decode_json(qx(jkd rest screens));
 
 for (sort keys %test_screen_name_id_map) {
     my $screen_name = $_;
-    my $prod_screen_dump = decode_json(qx(jkd dump-screen -s '${screen_name}'));
+    my $prod_screen_dump = decode_json(qx(jkd dump-screen -s '${screen_name}'))->{tabs};
     my $test_screen_dump = $test_screen_name_dump_map{$screen_name};
 
     my %test_tabs;

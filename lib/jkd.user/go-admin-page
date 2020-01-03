@@ -12,6 +12,7 @@ declare -A admin_pages=(
     ["admin-issues"]=secure/admin/ViewIssueTypes.jspa
     ["workflows"]=secure/admin/workflows/ListWorkflows.jspa
     ["admin-add-issuetypes"]="hint: project -> issuetypes -> actions (top-right corner) -> edit issuetypes -> add issuetypes"
+    ["open"]=open
 )
 
 if test -z "${TMUX}"; then
@@ -151,6 +152,8 @@ EOFe9576f8668e0
     else
         path=secure/admin/ViewCustomFields.jspa
     fi
+elif test "${which_page}" = open; then
+    path=$1
 elif test "${which_page}" = workflows; then
 
     declare comment_doc=$(
