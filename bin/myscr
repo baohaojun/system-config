@@ -1,6 +1,5 @@
 #!/bin/bash
-
-export SC_USE_TMUX=true
+set -e
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P wwait-exit n:window-name \
@@ -140,10 +139,6 @@ done
 
 ## end generated code
 
-if echo $SHELLOPTS | grep -q xtrace; then
-    debug=true
-fi
-
 if test "$window_name"; then
     export SCREEN_TITLE=$window_name
 fi
@@ -181,19 +176,7 @@ if test -z "$session_name"; then
 fi
 
 session-exists() {
-    if test "$SC_USE_TMUX" = true; then
-        tmux -L ${socket} list-sessions | grep "$session_name"
-    else
-        screen -list|grep "$session_name"
-    fi
-}
-
-using-screen() {
-    test "$SC_USE_TMUX" != true
-}
-
-using-tmux() {
-    test "$SC_USE_TMUX" = true
+    tmux -L ${socket} list-sessions | grep "$session_name"
 }
 
 find-or-exec() {
@@ -202,16 +185,12 @@ find-or-exec() {
     fi
 }
 
-if using-screen; then
-    screen -wipe
-else
-    tmux_start_cmd=$(for x in $start_cmd "$@"; do
-                         printf "%q " "$x"
-                     done
-                  )
-    if test -z "$tmux_start_cmd"; then
-        tmux_start_cmd=/bin/bash
-    fi
+tmux_start_cmd=$(for x in $start_cmd "$@"; do
+                     printf "%q " "$x"
+                 done
+              )
+if test -z "$tmux_start_cmd"; then
+    tmux_start_cmd=/bin/bash
 fi
 
 if session-exists; then
@@ -234,6 +213,7 @@ if session-exists; then
 
             if test "$debug" = false; then
                 if test "$wait_exit" = true; then
+                    echo . ~/.profile
                     echo . atexit rm -f /tmp/screen-exec.$$ /tmp/screen-env.$$
                 else
                     echo rm -f /tmp/screen-exec.$$ /tmp/screen-env.$$
@@ -255,16 +235,13 @@ if session-exists; then
         if test -z "$SCREEN_TITLE"; then
             SCREEN_TITLE=bash
         fi
-        if using-screen; then
-            screen -X -S $session_name screen -t "$SCREEN_TITLE" bash /tmp/screen-exec.$$ >/dev/null 2>&1&
+
+        if test "$with_tty" = true; then
+            tmux -L ${socket} new-window $bg -n "$SCREEN_TITLE" "bash-tty '. /tmp/screen-env.$$; bash /tmp/screen-exec.$$'"
         else
-            if test "$with_tty" = true; then
-                tmux -L ${socket} new-window $bg -n "$SCREEN_TITLE" "bash-tty '. /tmp/screen-env.$$; bash /tmp/screen-exec.$$'"
-            else
-                tmux -L ${socket} new-window $bg -n "$SCREEN_TITLE" "bash -l /tmp/screen-exec.$$"
-            fi
-            find-or-exec konsole
+            tmux -L ${socket} new-window $bg -n "$SCREEN_TITLE" "bash /tmp/screen-exec.$$"
         fi
+        find-or-exec konsole
         if test "$wait_exit" = true; then
             while test -e /tmp/screen-exec.$$; do
                 sleep 2
@@ -274,15 +251,7 @@ if session-exists; then
     fi
 
     # $# = 0 ...
-    if using-screen; then
-        exec screen -x -r $session_name -t $session_name -s $SHELL $start_cmd "$@"
-    else
-        exec tmux -L ${socket} attach
-    fi
+    exec tmux -L ${socket} attach
 else # session not exist
-    if using-screen; then
-        exec screen -S $session_name -t $session_name -s $SHELL $start_cmd "$@"
-    else
-        exec tmux -L ${socket} new-session -s $session_name -n $session_name "$tmux_start_cmd"
-    fi
+    exec tmux -L ${socket} new-session -s $session_name -n $session_name "$tmux_start_cmd"
 fi

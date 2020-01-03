@@ -1,8 +1,3 @@
 #!/bin/bash
 
-if test "$SC_USE_TMUX" = true; then
-    tmux rename-window "$1"
-else
-    x=$'\e'
-    echo "${x}k${1:-nil}${x}\\"
-fi
+tmux rename-window "$1"

@@ -23,11 +23,11 @@ else
         shift
     fi
 
-    if [[ $current_url =~ $jenkins_regexp ]]; then
+    if [[ $current_url/ =~ $jenkins_regexp ]]; then
         exec jc go "$@"
-    elif [[ $current_url =~ $jira_regexp ]]; then
+    elif [[ $current_url/ =~ $jira_regexp ]]; then
         exec jkd go "$@"
-    elif [[ $current_url =~ ${scm_artifactory_prod_server}|${scm_artifactory_test_server} ]]; then
+    elif [[ $current_url/ =~ ${scm_artifactory_prod_server}|${scm_artifactory_test_server} ]]; then
         if [[ $current_url =~ /webapp/ ]]; then
             current_url=$(echo "${current_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
         else

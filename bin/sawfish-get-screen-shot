@@ -4,73 +4,10 @@ if test "$DEBUG"; then
     set -x
 fi
 
-if test "$SC_USE_TMUX" = true; then
-    if test ${0##*/} = sawfish-get-screen-shot-whole; then
-        tmux capture-pane -S -
-    else
-        tmux capture-pane
-    fi
-
-    tmux saveb /tmp/screen-exchange
-    cat /tmp/screen-exchange
-    exit
+if test ${0##*/} = sawfish-get-screen-shot-whole; then
+    tmux capture-pane -S -
+else
+    tmux capture-pane
 fi
-
-function get-by-copy-window() {
-    go_back="End Prior"
-    if test $(basename $0) = sawfish-get-screen-shot-whole; then
-        go_back=C-Home
-    fi
-    rm /tmp/screen-exchange
-    sawfish-send-focused-window-event "C-z" "ESC" $go_back "y" "G" "C-e" "RET" "C-z" ">"
-
-    for x in $(seq 1 20); do
-        if test -e /tmp/screen-exchange; then
-            perl -ne '
-        if (($. == 1 and ! m/./) .. m/./) {
-            print if m/./;
-        } else {
-            print
-        }' -i /tmp/screen-exchange
-            cat /tmp/screen-exchange
-            exit
-        fi
-        sleep .1
-    done
-}
-
-whole_screen=
-
-if test $(basename $0) = sawfish-get-screen-shot-whole; then
-    whole_screen=-h
-fi
-rm /tmp/screen-exchange
-command="hardcopy $whole_screen /tmp/screen-exchange"
-
-
-sawfish-send-focused-window-event "C-z" ":" $(
-    for n in $(seq 0 ${#command}); do
-        if test "${command:n:1}" = " "; then
-            echo SPC
-        else
-            echo "${command:n:1}"
-        fi
-    done ) RET
-
-for x in $(seq 1 20); do
-    if test -e /tmp/screen-exchange; then
-        if ! iconv -f utf8 -t utf8 /tmp/screen-exchange >/dev/null 2>&1; then
-            get-by-copy-window
-            exit
-        fi
-        perl -ne '
-        if (($. == 1 and ! m/./) .. m/./) {
-            print if m/./;
-        } else {
-            print
-        }' -i /tmp/screen-exchange
-        cat /tmp/screen-exchange
-        exit
-    fi
-    sleep .1
-done
+tmux saveb /tmp/screen-exchange
+cat /tmp/screen-exchange

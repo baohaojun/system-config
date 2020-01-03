@@ -12,11 +12,7 @@ fi
 emacs.bhj&
 
 (
-    if test "$SC_USE_TMUX" = true; then
-        export check_program=tmux
-    else
-        export check_program=screen
-    fi
+    export check_program=tmux
 
     if ! which $check_program; then
         xterm -e bash -c '

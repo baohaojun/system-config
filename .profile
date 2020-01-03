@@ -20,7 +20,6 @@ if test "$QT4_IM_MODULE" -a ! "$QT_IM_MODULE"; then
 fi
 
 export SUDO_ASKPASS=/usr/bin/ssh-askpass
-export SC_USE_TMUX=true
 export NODE_PATH=${HOME}/.node/node_modules
 
 if test -e ~/src/github/smartcm/etc/settings.rc; then

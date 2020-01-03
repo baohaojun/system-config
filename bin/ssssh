@@ -110,33 +110,31 @@ if window_text_match; then
     exit
 fi
 
-if test "$SC_USE_TMUX" = true; then
-    tmux list-windows | (
-        while read n current_name rest; do
-            # EMACS=t yes-or-no-p "hello: $n $current_name $rest"
-            if test "${current_name%[*-]}" = "$name"; then
-                window_n=${n%:}
-                tmux select-window -t "$window_n"
-                if window_text_match; then
-                    exit 0
-                elif test $? = 1 && yes-or-no-p -y "Use this window whose name matches?"; then
-                    user_at_host=$(
-                        echo "$current_window_text" | grep -o '\S+@[^ \t:]+[\s:]' -P | tail -n 1
-                                )
+tmux list-windows | (
+    while read n current_name rest; do
+        # EMACS=t yes-or-no-p "hello: $n $current_name $rest"
+        if test "${current_name%[*-]}" = "$name"; then
+            window_n=${n%:}
+            tmux select-window -t "$window_n"
+            if window_text_match; then
+                exit 0
+            elif test $? = 1 && yes-or-no-p -y "Use this window whose name matches?"; then
+                user_at_host=$(
+                    echo "$current_window_text" | grep -o '\S+@[^ \t:]+[\s:]' -P | tail -n 1
+                            )
 
-                    if yes-or-no-p -y "update the regexp: $user_at_host?"; then
-                        cat <<EOF > ~/.local-config/.ssssh/search-$host
+                if yes-or-no-p -y "update the regexp: $user_at_host?"; then
+                    cat <<EOF > ~/.local-config/.ssssh/search-$host
 regexp='$user_at_host'
 name=$host
 EOF
-                    fi
-                    exit 0
                 fi
+                exit 0
             fi
-        done
-        exit 1
-    ) && exit
-fi
+        fi
+    done
+    exit 1
+) && exit
 
 echo "$current_window_text" > ~/tmp/1.txt
 bhj-notify "hello" "$search not found"
