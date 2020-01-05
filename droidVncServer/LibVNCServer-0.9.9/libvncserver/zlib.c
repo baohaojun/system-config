@@ -59,7 +59,7 @@ static TLS int zlibAfterBufSize = 0;
 static TLS char *zlibAfterBuf = NULL;
 static TLS int zlibAfterBufLen = 0;
 
-void rfbZlibCleanup(rfbScreenInfoPtr screen)
+void rfbZlibCleanup(rfbScreenInfoPtr /*screen*/)
 {
   if (zlibBeforeBufSize) {
     free(zlibBeforeBuf);
@@ -90,7 +90,7 @@ rfbSendOneRectEncodingZlib(rfbClientPtr cl,
     int previousOut;
     int i;
     char *fbptr = (cl->scaledScreen->frameBuffer + (cl->scaledScreen->paddedWidthInBytes * y)
-    	   + (x * (cl->scaledScreen->bitsPerPixel / 8)));
+           + (x * (cl->scaledScreen->bitsPerPixel / 8)));
 
     int maxRawSize;
     int maxCompSize;
@@ -99,11 +99,11 @@ rfbSendOneRectEncodingZlib(rfbClientPtr cl,
                   * (cl->format.bitsPerPixel / 8));
 
     if (zlibBeforeBufSize < maxRawSize) {
-	zlibBeforeBufSize = maxRawSize;
-	if (zlibBeforeBuf == NULL)
-	    zlibBeforeBuf = (char *)malloc(zlibBeforeBufSize);
-	else
-	    zlibBeforeBuf = (char *)realloc(zlibBeforeBuf, zlibBeforeBufSize);
+        zlibBeforeBufSize = maxRawSize;
+        if (zlibBeforeBuf == NULL)
+            zlibBeforeBuf = (char *)malloc(zlibBeforeBufSize);
+        else
+            zlibBeforeBuf = (char *)realloc(zlibBeforeBuf, zlibBeforeBufSize);
     }
 
     /* zlib compression is not useful for very small data sets.
@@ -139,20 +139,20 @@ rfbSendOneRectEncodingZlib(rfbClientPtr cl,
     maxCompSize = maxRawSize + (( maxRawSize + 99 ) / 100 ) + 12;
 
     if (zlibAfterBufSize < maxCompSize) {
-	zlibAfterBufSize = maxCompSize;
-	if (zlibAfterBuf == NULL)
-	    zlibAfterBuf = (char *)malloc(zlibAfterBufSize);
-	else
-	    zlibAfterBuf = (char *)realloc(zlibAfterBuf, zlibAfterBufSize);
+        zlibAfterBufSize = maxCompSize;
+        if (zlibAfterBuf == NULL)
+            zlibAfterBuf = (char *)malloc(zlibAfterBufSize);
+        else
+            zlibAfterBuf = (char *)realloc(zlibAfterBuf, zlibAfterBufSize);
     }
 
 
-    /* 
+    /*
      * Convert pixel data to client format.
      */
     (*cl->translateFn)(cl->translateLookupTable, &cl->screen->serverFormat,
-		       &cl->format, fbptr, zlibBeforeBuf,
-		       cl->scaledScreen->paddedWidthInBytes, w, h);
+                       &cl->format, fbptr, zlibBeforeBuf,
+                       cl->scaledScreen->paddedWidthInBytes, w, h);
 
     cl->compStream.next_in = ( Bytef * )zlibBeforeBuf;
     cl->compStream.avail_in = w * h * (cl->format.bitsPerPixel / 8);
@@ -206,10 +206,10 @@ rfbSendOneRectEncodingZlib(rfbClientPtr cl,
         + w * (cl->format.bitsPerPixel / 8) * h);
 
     if (cl->ublen + sz_rfbFramebufferUpdateRectHeader + sz_rfbZlibHeader
-	> UPDATE_BUF_SIZE)
+        > UPDATE_BUF_SIZE)
     {
-	if (!rfbSendUpdateBuf(cl))
-	    return FALSE;
+        if (!rfbSendUpdateBuf(cl))
+            return FALSE;
     }
 
     rect.r.x = Swap16IfLE(x);
@@ -219,7 +219,7 @@ rfbSendOneRectEncodingZlib(rfbClientPtr cl,
     rect.encoding = Swap32IfLE(rfbEncodingZlib);
 
     memcpy(&cl->updateBuf[cl->ublen], (char *)&rect,
-	   sz_rfbFramebufferUpdateRectHeader);
+           sz_rfbFramebufferUpdateRectHeader);
     cl->ublen += sz_rfbFramebufferUpdateRectHeader;
 
     hdr.nBytes = Swap32IfLE(zlibAfterBufLen);
@@ -229,21 +229,21 @@ rfbSendOneRectEncodingZlib(rfbClientPtr cl,
 
     for (i = 0; i < zlibAfterBufLen;) {
 
-	int bytesToCopy = UPDATE_BUF_SIZE - cl->ublen;
+        int bytesToCopy = UPDATE_BUF_SIZE - cl->ublen;
 
-	if (i + bytesToCopy > zlibAfterBufLen) {
-	    bytesToCopy = zlibAfterBufLen - i;
-	}
+        if (i + bytesToCopy > zlibAfterBufLen) {
+            bytesToCopy = zlibAfterBufLen - i;
+        }
 
-	memcpy(&cl->updateBuf[cl->ublen], &zlibAfterBuf[i], bytesToCopy);
+        memcpy(&cl->updateBuf[cl->ublen], &zlibAfterBuf[i], bytesToCopy);
 
-	cl->ublen += bytesToCopy;
-	i += bytesToCopy;
+        cl->ublen += bytesToCopy;
+        i += bytesToCopy;
 
-	if (cl->ublen == UPDATE_BUF_SIZE) {
-	    if (!rfbSendUpdateBuf(cl))
-		return FALSE;
-	}
+        if (cl->ublen == UPDATE_BUF_SIZE) {
+            if (!rfbSendUpdateBuf(cl))
+                return FALSE;
+        }
     }
 
     return TRUE;
@@ -328,4 +328,3 @@ rfbSendRectEncodingZlib(rfbClientPtr cl,
     return TRUE;
 
 }
-

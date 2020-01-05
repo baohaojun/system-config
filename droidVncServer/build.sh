@@ -45,8 +45,16 @@ done
 
 cd "$build_dir"
 
-ln -sf ~/src/github/Wrench/droidVncServer ./external/
+if test -L ./external/droidVncServer; then
+    rm -f ./external/droidVncServer
+fi
+
+rsync -a ~/src/github/Wrench/droidVncServer ./external
+
 (
     android-set-product aosp_arm64-userdebug
-    mmma -j20 external/droidVncServer
+    cd external/droidVncServer
+
+    mma -j20 "$@"
 )
+rsync -a ./external/droidVncServer ~/src/github/Wrench/

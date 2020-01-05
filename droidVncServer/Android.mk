@@ -9,9 +9,11 @@ LOCAL_SHARED_LIBRARIES := \
     libcutils \
     libutils \
     libbinder \
-    libskia \
     libui \
     libgui
+
+LOCAL_STATIC_LIBRARIES := \
+    libskia
 
 LOCAL_MODULE := screencap-$(TARGET_ARCH).sdk$(PLATFORM_SDK_VERSION)
 LOCAL_MODULE_PATH := $(LOCAL_PATH)/
@@ -62,8 +64,8 @@ LIBVNCSERVER_SRC_FILES:= \
 	$(LIBVNCSERVER_ROOT)/common/turbojpeg.c
 
 LOCAL_CFLAGS  +=  -Wall \
-              -O3 \
-              -DLIBVNCSERVER_WITH_WEBSOCKETS \
+	      -O3 \
+	      -DLIBVNCSERVER_WITH_WEBSOCKETS \
 	      -DLIBVNCSERVER_HAVE_LIBPNG \
 	      -DLIBVNCSERVER_HAVE_ZLIB \
 	      -DLIBVNCSERVER_HAVE_LIBJPEG
@@ -71,21 +73,21 @@ LOCAL_CFLAGS  +=  -Wall \
 LOCAL_LDLIBS +=  -llog -lz -ldl
 
 LOCAL_SRC_FILES += \
-	        $(LIBVNCSERVER_SRC_FILES)\
-                droidvncserver.c 
+		$(LIBVNCSERVER_SRC_FILES)\
+		droidvncserver.c
 
 LOCAL_C_INCLUDES += \
 		 $(LOCAL_PATH) \
 		 $(LOCAL_PATH)/inputMethods \
 		 external/libpng \
 		 external/jpeg \
-                 external/zlib \
-                 external/openssl/include \
-                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/libvncserver \
-                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/common \
-                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/rfb \
-                 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/ \
-                 $(LOCAL_PATH)/../nativeMethods/
+		 external/zlib \
+		 external/openssl/include \
+		 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/libvncserver \
+		 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/common \
+		 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/rfb \
+		 $(LOCAL_PATH)/$(LIBVNCSERVER_ROOT)/ \
+		 $(LOCAL_PATH)/../nativeMethods/
 
 LOCAL_STATIC_LIBRARIES := libssl_static libcrypto_static
 
@@ -110,7 +112,7 @@ LOCAL_C_INCLUDES += \
 	external/jpeg
 
 LOCAL_CFLAGS += -Wno-multichar \
-                -DPLATFORM_SDK_VERSION=$(PLATFORM_SDK_VERSION)
+		-DPLATFORM_SDK_VERSION=$(PLATFORM_SDK_VERSION)
 
 LOCAL_MODULE := androidvncserver-$(TARGET_ARCH).sdk$(PLATFORM_SDK_VERSION)
 LOCAL_MODULE_PATH := $(LOCAL_PATH)/
