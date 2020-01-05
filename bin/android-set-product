@@ -81,8 +81,14 @@ declare -xp > .buildspec.sc
         TARGET_BUILD_APPS TARGET_BUILD_TYPE OUT_DIR
         TARGET_BUILD_VARIANT TARGET_PRODUCT TARGET_SIMULATOR
         TARGET_PRODUCT_SMARTISAN_EXTRA_ENV
-        ANDROID_BUILD_TOP
     )
+
+    if grep 'KATI_obsolete_var ANDROID_BUILD_TOP' build/make/core/config.mk -q; then
+        true
+    else
+        env_vars+=(ANDROID_BUILD_TOP)
+    fi
+
     for x in "${env_vars[@]}"; do
         if test "${after_env[$x]}"; then
             echo "export $x := ${after_env[$x]}"
