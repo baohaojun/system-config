@@ -37,6 +37,9 @@ fi
 
 max_try=10
 for x in $(seq 1 ${max_try}); do
+    if test "$(sawfish-client -e '(input-focus)')" = nil; then
+        sawfish-client -e '(activate-window (car (stacking-order)))'
+    fi
     if window=$(sawfish-client -e "($function (input-focus))") && test "${window}" != $'\007'; then
         echo "${window}"
         break
