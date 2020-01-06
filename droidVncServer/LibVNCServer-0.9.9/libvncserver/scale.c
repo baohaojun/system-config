@@ -6,7 +6,7 @@
  *  Copyright (C) 2005 Rohit Kumar, Johannes E. Schindelin
  *  Copyright (C) 2002 RealVNC Ltd.
  *  OSXvnc Copyright (C) 2001 Dan McGuirk <mcguirk@incompleteness.net>.
- *  Original Xvnc code Copyright (C) 1999 AT&T Laboratories Cambridge.  
+ *  Original Xvnc code Copyright (C) 1999 AT&T Laboratories Cambridge.
  *  All Rights Reserved.
  *
  *  This is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ int ScaleY(rfbScreenInfoPtr from, rfbScreenInfoPtr to, int y)
 /* So, all of the encodings point to the ->screen->frameBuffer,
  * We need to change this!
  */
-void rfbScaledCorrection(rfbScreenInfoPtr from, rfbScreenInfoPtr to, int *x, int *y, int *w, int *h, const char *function)
+void rfbScaledCorrection(rfbScreenInfoPtr from, rfbScreenInfoPtr to, int *x, int *y, int *w, int *h, const char * /*function*/)
 {
     double x1,y1,w1,h1, x2, y2, w2, h2;
     double scaleW = ((double) to->width) / ((double) from->width);
@@ -371,7 +371,7 @@ int rfbSendNewScaleSize(rfbClientPtr cl)
 {
     /* if the client supports newFBsize Encoding, use it */
     if (cl->useNewFBSize && cl->newFBSizePending)
-	return FALSE;
+        return FALSE;
 
     LOCK(cl->updateMutex);
     cl->newFBSizePending = FALSE;
