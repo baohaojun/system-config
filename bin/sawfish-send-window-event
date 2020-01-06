@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec 1>&2
+
 if test $(basename $0) = sawfish-send-focused-window-event; then
     if test $# -gt 1; then
         for k in "$@"; do
@@ -11,23 +13,62 @@ if test $(basename $0) = sawfish-send-focused-window-event; then
     script=$(cat <<EOF
 (progn
   $(for x in "$@"; do
-        echo "(synthesize-event-gnome? \"${x/\"/\\\"}\" (input-focus))"
+        echo "(synthesize-event-gnome? \"${x/\"/\\\"}\" (or (input-focus) (car (stacking-order))))"
     done))
 EOF
           )
 
 else
+
+    regexp=$1
+    focus-matches() {
+        test "$( sawfish-client -e "$(
+cat <<'EOFe42e67c824ad' | . .replace-%% --
+; {%sawfish-mode%}
+(and
+ (input-focus)
+ (string-match "[%regexp%]" (window-name (input-focus))))
+; {%/sawfish-mode%}
+EOFe42e67c824ad
+
+)"
+)" = t
+    }
+
+    if ! focus-matches; then
+        sawfish-client -e "$(
+cat <<'EOFc4d5b5b4b872' | . .replace-%% --
+; {%sawfish-mode%}
+(catch 'TAG
+  (mapc
+   (lambda (w)
+     (when (string-match "[%regexp%]" (window-name w))
+       (activate-window w)
+       (throw 'TAG)))
+   (stacking-order)))
+; {%/sawfish-mode%}
+EOFc4d5b5b4b872
+
+)"
+        for x in $(seq 1 10); do
+            if focus-matches; then
+                break
+            fi
+            sleep .1
+        done
+    fi
+
     script=$(cat <<EOF
 (catch 'TAG
- (mapc
+  (mapc
    (lambda (w)
      (when (string-match "$1" (window-name w))
        $(
-           shift;
-           for x in "$@"; do
-               echo "(synthesize-event-gnome? \"${x/\"/\\\"}\" w)"
-           done
-       )
+         shift;
+         for x in "$@"; do
+         echo "(synthesize-event-gnome? \"${x/\"/\\\"}\" w)"
+         done
+         )
        (throw 'TAG)))
    (stacking-order)))
 EOF

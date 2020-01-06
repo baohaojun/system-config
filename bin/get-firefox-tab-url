@@ -60,7 +60,8 @@ putclip "${empty_clipboard}"
 
 for x in $(seq 1 2); do
     if test "$x" = 1 -o "${with_xkeytool}" != true; then
-        xdotool-delayed-key ctrl+shift+F11
+        # xdotool-delayed-key ctrl+shift+F11
+        sawfish-browser-input C-S-F11
     else
         if test "${with_xkeytool}" = true; then
             sawfish-browser-input C-l C-c
@@ -82,7 +83,7 @@ for x in $(seq 1 2); do
                 xclip -o
             )
             if test "$out" != "${empty_clipboard}"; then
-                echo out became "'$out'" at $x/$y >> ~/.cache/system-config/logs/$(basename $0).log
+                 echo out became "'$out'" at $x/$y >> ~/.cache/system-config/logs/$(basename $0).log
                 echo -n ${out%/}
                 exit 0
             fi
