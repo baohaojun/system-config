@@ -39,9 +39,13 @@ export JS_EXECUTE=$(
     done
        )
 
+host=${host#js-}
+
 export JS_HOST_SAVE="$host"
 if test "$(ip-or-name "$host")" != $host; then
     export JS_TARGET=$(ip-or-name "$host")
+elif [[ $host =~ [a-zA-Z] ]]; then
+    export JS_TARGET=$(host $host | pn 4)
 else
     export JS_TARGET=$(echo ${host} | perl -pe '
 use Regexp::Common qw /net/;

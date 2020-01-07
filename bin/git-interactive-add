@@ -134,14 +134,16 @@ function git-diff() {
         fi
     else
         if test "${revision}" && git diff --quiet HEAD -- "$@"; then
-            LESS="RSX" git log -p "${revision}"..HEAD "$@"
+            LESS="RSX" git log -w -p "${revision}"..HEAD "$@" || true
             for rev in $(git log --pretty=%H "${revision}"..HEAD "$@"); do
-                LESS="RSX" git log --name-status -1 $rev
+                LESS="RSX" git log --name-status -1 $rev || true
                 if yes-or-no-p -y "show details?"; then
-                    LESS="RSX" git log -p -1 $rev
+                    LESS="RSX" git log -w -p -1 $rev || true
                 fi
             done
             if yes-or-no-p -n "start new shell for $*"?; then
+                export gia_rev=${revision}
+                export gia_file="$*"
                 start_recursive_shell "$*"
             fi
         elif git diff -w $review_base $revision -- "$@" | grep -q .; then
