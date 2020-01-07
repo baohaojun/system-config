@@ -57,8 +57,16 @@ static void usage(const char* pname)
             "usage: %s [-hp] [-d display-id] [FILENAME]\n"
             "   -h: this message\n"
             "   -p: save the file as a png.\n"
+            "   -j: save the file as a jpg.\n"
             "   -d: specify the display id to capture, default %d.\n"
+            "   -i: specify minimum layer\n"
+            "   -a: specify maximum layer\n"
+            "   -x: specify the left\n"
+            "   -y: specify the top\n"
+            "   -X: specify the right\n"
+            "   -Y: specify the bottom\n"
             "If FILENAME ends with .png it will be saved as a png.\n"
+            "If FILENAME ends with .jpg it will be saved as a jpg.\n"
             "If FILENAME is not given, the results will be printed to stdout.\n",
             pname, DEFAULT_DISPLAY_ID
     );
@@ -114,24 +122,58 @@ static status_t notifyMediaScanner(const char* fileName) {
     return NO_ERROR;
 }
 
+template <typename T> void bhj_swap(T& a, T& b)
+{
+    T t;
+    t = a;
+    a = b;
+    b = t;
+}
+
 int main(int argc, char** argv)
 {
     const char* pname = argv[0];
     bool png = false;
+    bool jpg = false;
+    int x = 0;
+    int y = 0;
+    int X = 0;
+    int Y = 0;
     int32_t displayId = DEFAULT_DISPLAY_ID;
     int c;
-    while ((c = getopt(argc, argv, "phd:")) != -1) {
+    uint32_t sticky_status_bar_height = 0;
+    while ((c = getopt(argc, argv, "jphd:x:y:X:Y:s:")) != -1) {
         switch (c) {
-            case 'p':
-                png = true;
-                break;
-            case 'd':
-                displayId = atoi(optarg);
-                break;
-            case '?':
-            case 'h':
-                usage(pname);
-                return 1;
+        case 'p':
+            png = true;
+            break;
+        case 'j':
+            jpg = true;
+            break;
+
+        case 'd':
+            displayId = atoi(optarg);
+            break;
+        case 'x':
+            fprintf(stderr, "x = %s\n", optarg);
+            x = atoi(optarg);
+            break;
+        case 'y':
+            y = atoi(optarg);
+            break;
+        case 'X':
+            X = atoi(optarg);
+            break;
+        case 'Y':
+            Y = atoi(optarg);
+            break;
+        case 's':
+            sticky_status_bar_height = atoi(optarg);
+            break;
+        case '?':
+        case 'h':
+            usage(pname);
+            return 1;
         }
     }
     argc -= optind;
@@ -149,8 +191,12 @@ int main(int argc, char** argv)
             return 1;
         }
         const int len = strlen(fn);
-        if (len >= 4 && 0 == strcmp(fn+len-4, ".png")) {
-            png = true;
+        if (len >= 4) {
+            if (0 == strcmp(fn+len-4, ".png")) {
+                png = true;
+            } else if (0 == strcmp(fn+len-4, ".jpg")) {
+                jpg = true;
+            }
         }
     }
 
@@ -202,8 +248,33 @@ int main(int argc, char** argv)
     uint8_t displayOrientation = configs[activeConfig].orientation;
     uint32_t captureOrientation = ORIENTATION_MAP[displayOrientation];
 
-    status_t result = screenshot.update(display, Rect(),
-            0 /* reqWidth */, 0 /* reqHeight */,
+    uint32_t phone_w = configs[activeConfig].w;
+    uint32_t phone_h = configs[activeConfig].h;
+
+    uint32_t updateW = X - x;
+    uint32_t updateH = Y - y;
+
+    if (displayOrientation % 2 == 1) {
+        if (displayOrientation == 1) {
+            y = phone_w - y;
+            Y = phone_w -Y;
+            bhj_swap(y, Y);
+        } else {
+            x = phone_h - x;
+            X = phone_h - X;
+            bhj_swap(x, X);
+        }
+        bhj_swap(x, y);
+        bhj_swap(X, Y);
+
+        if (displayOrientation == 1) {
+            y += sticky_status_bar_height;
+            Y += sticky_status_bar_height;
+        }
+    }
+
+    status_t result = screenshot.update(display, Rect(x, y, X, Y), 
+            updateW /* reqWidth */, updateH /* reqHeight */,
             INT32_MIN, INT32_MAX, /* all layers */
             false, captureOrientation);
     if (result == NO_ERROR) {
@@ -214,26 +285,34 @@ int main(int argc, char** argv)
         f = screenshot.getFormat();
         d = screenshot.getDataSpace();
         size = screenshot.getSize();
+        fprintf(stderr, "capture ok : x = %u, y = %u, X = %u, Y = %u, w = %u, h = %u, "
+                "config_w = %u, config_h = %u, "
+                "stride = %u, f = %u, size = %lu, orientation: %u\n",
+                x, y, X, Y, w, h,
+                configs[activeConfig].w, configs[activeConfig].h,
+                s, f, size, displayOrientation);
     }
 
     if (base != NULL) {
-        if (png) {
+        if (png || jpg) {
             const SkImageInfo info =
                 SkImageInfo::Make(w, h, flinger2skia(f), kPremul_SkAlphaType,
                     dataSpaceToColorSpace(d));
             SkPixmap pixmap(info, base, s * bytesPerPixel(f));
             struct FDWStream final : public SkWStream {
-              size_t fBytesWritten = 0;
-              int fFd;
-              FDWStream(int f) : fFd(f) {}
-              size_t bytesWritten() const override { return fBytesWritten; }
-              bool write(const void* buffer, size_t size) override {
-                fBytesWritten += size;
-                return size == 0 || ::write(fFd, buffer, size) > 0;
-              }
+                size_t fBytesWritten = 0;
+                int fFd;
+                FDWStream(int f) : fFd(f) {}
+                size_t bytesWritten() const override { return fBytesWritten; }
+                bool write(const void* buffer, size_t size) override {
+                    fBytesWritten += size;
+                    return size == 0 || ::write(fFd, buffer, size) > 0;
+                }
             } fdStream(fd);
-            (void)SkEncodeImage(&fdStream, pixmap, SkEncodedImageFormat::kPNG, 100);
-            if (fn != NULL) {
+
+            SkEncodedImageFormat fmt = png ? SkEncodedImageFormat::kPNG : SkEncodedImageFormat::kJPEG;
+            (void)SkEncodeImage(&fdStream, pixmap, fmt, 100);
+            if (fn != NULL && !jpg) {
                 notifyMediaScanner(fn);
             }
         } else {
