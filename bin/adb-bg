@@ -1,27 +1,83 @@
 #!/bin/bash
 
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # l:log-file=nohup.bg
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o l:h \
+                      --long log-file:,help \
+                      -n $(basename -- $0) -- "$@")
+declare log_file=nohup.bg
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -l|--log-file)
+            log_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-l, '
+            printf %-24s '--log-file=LOG_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
 if test $# = 1 && [[ "$1" =~ ' ' ]]; then
     set -- sh -c "$1"
 fi
 
-command=$(
-cat <<EOF
+sh_command=$(for x in "$@"; do printf "%q " "$x"; done)
+
+adb_command=$(
+    cat <<'EOF1d03d067624f' | . .replace-%% --
+# {%sh-mode%}
 cd /data/data/com.android.shell
-PATH=/data/data/com.android.shell/bin:\$PATH
-touch not-started.\$\$
+PATH=/data/data/com.android.shell/bin:$PATH
+touch not-started.$$
 setsid nohup setsid sh -c 'set -x
-rm 'not-started.\$\$'
-$(for x in "$@"; do printf "%q " "$x"; done)
-' >>nohup.bg 2>&1 & for i in \$(seq 1 50); do
+rm 'not-started.$$'
+[%sh_command%]
+' >>[%log_file%] 2>&1 &
+
+for i in $(seq 1 50); do
    if test -e not-started.$$; then
-      sleep .1
+       sleep .1
    else
-       echo started at i = \$i, pid = \$\$ >> nohup.start
+       echo started at i = $i, pid = $$ >> nohup.start
        exit
    fi
 done
-
-EOF
+# {%/sh-mode%}
+EOF1d03d067624f
 )
 
-my-adb "$command"
+my-adb "$adb_command"
