@@ -109,9 +109,6 @@ static uint32_t dataSpaceToInt(android_dataspace d)
 
 static status_t notifyMediaScanner(const char* fileName) {
     String8 cmd("am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file://");
-    String8 fileUrl("\"");
-    fileUrl.append(fileName);
-    fileUrl.append("\"");
     cmd.append(fileName);
     cmd.append(" > /dev/null");
     int result = system(cmd.string());
@@ -208,7 +205,7 @@ int main(int argc, char** argv)
     void const* mapbase = MAP_FAILED;
     ssize_t mapsize = -1;
 
-    void const* base = NULL;
+    void* base = NULL;
     uint32_t w, s, h, f;
     android_dataspace d;
     size_t size = 0;
@@ -228,7 +225,6 @@ int main(int argc, char** argv)
     ProcessState::self()->setThreadPoolMaxThreadCount(0);
     ProcessState::self()->startThreadPool();
 
-    ScreenshotClient screenshot;
     sp<IBinder> display = SurfaceComposerClient::getBuiltInDisplay(displayId);
     if (display == NULL) {
         fprintf(stderr, "Unable to get handle for display %d\n", displayId);
@@ -273,59 +269,66 @@ int main(int argc, char** argv)
         }
     }
 
-    status_t result = screenshot.update(display, Rect(x, y, X, Y), 
-            updateW /* reqWidth */, updateH /* reqHeight */,
-            INT32_MIN, INT32_MAX, /* all layers */
-            false, captureOrientation);
-    if (result == NO_ERROR) {
-        base = screenshot.getPixels();
-        w = screenshot.getWidth();
-        h = screenshot.getHeight();
-        s = screenshot.getStride();
-        f = screenshot.getFormat();
-        d = screenshot.getDataSpace();
-        size = screenshot.getSize();
-        fprintf(stderr, "capture ok : x = %u, y = %u, X = %u, Y = %u, w = %u, h = %u, "
-                "config_w = %u, config_h = %u, "
-                "stride = %u, f = %u, size = %lu, orientation: %u\n",
-                x, y, X, Y, w, h,
-                configs[activeConfig].w, configs[activeConfig].h,
-                s, f, size, displayOrientation);
+    sp<GraphicBuffer> outBuffer;
+    status_t result = ScreenshotClient::capture(display, Rect(x, y, X, Y), updateW /* reqWidth */,
+                                                updateH /* reqHeight */, INT32_MIN, INT32_MAX, /* all layers */ false, captureOrientation,
+        &outBuffer);
+    if (result != NO_ERROR) {
+        close(fd);
+        _exit(1);
     }
 
-    if (base != NULL) {
-        if (png || jpg) {
-            const SkImageInfo info =
-                SkImageInfo::Make(w, h, flinger2skia(f), kPremul_SkAlphaType,
-                    dataSpaceToColorSpace(d));
-            SkPixmap pixmap(info, base, s * bytesPerPixel(f));
-            struct FDWStream final : public SkWStream {
-                size_t fBytesWritten = 0;
-                int fFd;
-                FDWStream(int f) : fFd(f) {}
-                size_t bytesWritten() const override { return fBytesWritten; }
-                bool write(const void* buffer, size_t size) override {
-                    fBytesWritten += size;
-                    return size == 0 || ::write(fFd, buffer, size) > 0;
-                }
-            } fdStream(fd);
+    result = outBuffer->lock(GraphicBuffer::USAGE_SW_READ_OFTEN, &base);
 
-            SkEncodedImageFormat fmt = png ? SkEncodedImageFormat::kPNG : SkEncodedImageFormat::kJPEG;
-            (void)SkEncodeImage(&fdStream, pixmap, fmt, 100);
-            if (fn != NULL && !jpg) {
-                notifyMediaScanner(fn);
+    if (base == NULL) {
+        close(fd);
+        _exit(1);
+    }
+
+    w = outBuffer->getWidth();
+    h = outBuffer->getHeight();
+    s = outBuffer->getStride();
+    f = outBuffer->getPixelFormat();
+    d = HAL_DATASPACE_UNKNOWN;
+    size = s * h * bytesPerPixel(f);
+
+    fprintf(stderr, "capture ok : x = %u, y = %u, X = %u, Y = %u, w = %u, h = %u, "
+            "config_w = %u, config_h = %u, "
+            "stride = %u, f = %u, size = %lu, orientation: %u\n",
+            x, y, X, Y, w, h,
+            configs[activeConfig].w, configs[activeConfig].h,
+            s, f, size, displayOrientation);
+
+    if (png || jpg) {
+        const SkImageInfo info =
+            SkImageInfo::Make(w, h, flinger2skia(f), kPremul_SkAlphaType, dataSpaceToColorSpace(d));
+        SkPixmap pixmap(info, base, s * bytesPerPixel(f));
+        struct FDWStream final : public SkWStream {
+            size_t fBytesWritten = 0;
+            int fFd;
+            FDWStream(int f) : fFd(f) {}
+            size_t bytesWritten() const override { return fBytesWritten; }
+            bool write(const void* buffer, size_t size) override {
+                fBytesWritten += size;
+                return size == 0 || ::write(fFd, buffer, size) > 0;
             }
-        } else {
-            uint32_t c = dataSpaceToInt(d);
-            write(fd, &w, 4);
-            write(fd, &h, 4);
-            write(fd, &f, 4);
-            write(fd, &c, 4);
-            size_t Bpp = bytesPerPixel(f);
-            for (size_t y=0 ; y<h ; y++) {
-                write(fd, base, w*Bpp);
-                base = (void *)((char *)base + s*Bpp);
-            }
+        } fdStream(fd);
+
+        SkEncodedImageFormat fmt = png ? SkEncodedImageFormat::kPNG : SkEncodedImageFormat::kJPEG;
+        (void)SkEncodeImage(&fdStream, pixmap, fmt, 100);
+        if (fn != NULL && !jpg) {
+            notifyMediaScanner(fn);
+        }
+    } else {
+        uint32_t c = dataSpaceToInt(d);
+        write(fd, &w, 4);
+        write(fd, &h, 4);
+        write(fd, &f, 4);
+        write(fd, &c, 4);
+        size_t Bpp = bytesPerPixel(f);
+        for (size_t y=0 ; y<h ; y++) {
+            write(fd, base, w*Bpp);
+            base = (void *)((char *)base + s*Bpp);
         }
     }
     close(fd);
