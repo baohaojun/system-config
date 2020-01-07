@@ -45,16 +45,17 @@ done
 
 cd "$build_dir"
 
-if test -L ./external/droidVncServer; then
-    rm -f ./external/droidVncServer
+# 必须在 vendor 下编，因为从 android pie 开始，vendor，device 两个目录 warning 不报错，其他全部报错。
+if test -L ./vendor/droidVncServer; then
+    rm -f ./vendor/droidVncServer
 fi
 
-rsync -a ~/src/github/Wrench/droidVncServer ./external
+rsync -a ~/src/github/Wrench/droidVncServer ./vendor
 
 (
     android-set-product aosp_arm64-userdebug
-    cd external/droidVncServer
+    cd vendor/droidVncServer
 
     mma -j20 "$@"
 )
-rsync -a ./external/droidVncServer ~/src/github/Wrench/
+rsync -a ./vendor/droidVncServer ~/src/github/Wrench/

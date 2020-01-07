@@ -9,11 +9,9 @@ LOCAL_SHARED_LIBRARIES := \
     libcutils \
     libutils \
     libbinder \
+    libhwui \
     libui \
     libgui
-
-LOCAL_STATIC_LIBRARIES := \
-    libskia
 
 LOCAL_MODULE := screencap-$(TARGET_ARCH).sdk$(PLATFORM_SDK_VERSION)
 LOCAL_MODULE_PATH := $(LOCAL_PATH)/
@@ -102,13 +100,13 @@ LOCAL_SRC_FILES += \
 	Program.cpp
 
 LOCAL_SHARED_LIBRARIES += \
-	libstagefright libmedia libutils libbinder libstagefright_foundation \
-	libjpeg libgui libcutils liblog libEGL libGLESv2
+	libstagefright libmedia libmedia_omx libutils libbinder libstagefright_foundation \
+	libjpeg libui libgui libcutils liblog libEGL libGLESv2
 
 LOCAL_C_INCLUDES += \
 	frameworks/av/media/libstagefright \
 	frameworks/av/media/libstagefright/include \
-	$(TOP)/frameworks/native/include/media/openmax \
+	frameworks/native/include/media/openmax \
 	external/jpeg
 
 LOCAL_CFLAGS += -Wno-multichar \

@@ -414,7 +414,6 @@ static status_t recordScreen() {
         err = overlay->start(encoderInputSurface, &bufferProducer);
         if (err != NO_ERROR) {
             fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
-            if (encoder != NULL) encoder->release();
             return err;
         }
         if (gVerbose) {
@@ -430,7 +429,6 @@ static status_t recordScreen() {
     err = prepareVirtualDisplay(mainDpyInfo, bufferProducer, &dpy);
     if (err != NO_ERROR) {
         fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
-        if (encoder != NULL) encoder->release();
         return err;
     }
 
