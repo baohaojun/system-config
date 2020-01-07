@@ -18,11 +18,10 @@ M.weixin_open_search = function(depth)
       wait_top_activity_match("com.tencent.mm/")
 
       log("touch the search button " .. i)
-      local click_weixin_search_button = "adb-tap 801 132"
 
       local top_window
       for i_search = 1, 4 do
-         adb_event(click_weixin_search_button)
+         click_scene("wx-close-search", {skip_refind = 1})
          sleep(.1)
          top_window = adb_top_window()
          if top_window == W.weixinSearchActivity then

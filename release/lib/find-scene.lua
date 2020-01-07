@@ -61,15 +61,25 @@ M.refind_scene = function(scene, retry)
    return ret
 end
 
+M.click_post_button = function(button_name)
+   load_scene_map()
+   if not M.scene_exists(button_name) then
+      system(("find-scene.sh new-scene %s"):format(button_name))
+      find_scene(button_name)
+   end
+
+   click_scene(button_name, {skip_refind = 1})
+end
+
 M.show_scene_for_dbg = function(scene)
    system(
-      ("cd '%s' && convert failed-%s.png %s.png -append x.png && display x.png&"):format(
+      ("cd '%s' && convert %s.png.failed.png %s.png -append x.png && display x.png&"):format(
          M.resDir, scene, scene
    ))
 end
 
 M.update_scene = function(scene)
-   system(("cd '%s'; mv failed-%s.png %s.png"):format(
+   system(("cd '%s'; mv %s.png.failed.png %s.png"):format(
          M.resDir, scene, scene
    ))
 end
@@ -77,11 +87,12 @@ end
 M.debug_scene_actions = {
    "XXX", -- will be replaced as the prompt
    "确认此现象是正常的（啥也不做）", -- 2
-   "用 failed-XXX.png 进行替换", -- 3
+   "用 failed XXX.png 进行替换", -- 3
    "我手动操作一下手机，然后你在原来的位置重新比较一遍", -- 4
    "我手动操作一下手机，然后你忘记原来的位置，重新查找一遍", -- 5
    "关闭场景查找功能的调试开关", -- 6
    "☠☠☠☠☠☠☠☠☠", -- 7
+   "将 failed XXX.png 添加为 alias", -- 8
 }
 
 M.get_debug_action = function(desc)
@@ -110,9 +121,16 @@ M.debug_find_scene = function(desc, scene)
          M.g_find_scene_debug = nil
       elseif action == M.debug_scene_actions[7] then
          error("You have choosed to start over")
+      elseif action == M.debug_scene_actions[8] then
+         system(("find-scene.sh add-alias %s"):format(scene))
       end
    end
    return ret_val, should_ret
+end
+
+M.scene_exists = function(scene)
+   load_scene_map()
+   return M.scenes_map[scene]
 end
 
 M.scene_x = function(scene)
@@ -139,7 +157,7 @@ M.find_scene = function(scene, times)
    load_scene_map()
    times = times or 1
    if M.g_find_scene_debug then
-      system(("rm %s/failed-%s.png -f; killall display"):format(M.resDir, scene))
+      system(("rm %s/%s.png.failed.png -f; killall display"):format(M.resDir, scene))
    end
    saved_scene_xy = M.scenes_map[scene]
    if not M.scenes_map[scene] then
@@ -149,7 +167,7 @@ M.find_scene = function(scene, times)
          if scene_xy ~= "" then
             break
          elseif i == times then
-            debug_desc = ("无法找到新的场景：%s，要不要将 failed-%s.png 替换为 %s.png（如果选否，会重新查找，请确认）？"):format(scene, scene, scene)
+            debug_desc = ("无法找到新的场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会重新查找，请确认）？"):format(scene, scene, scene)
             ret_val, should_ret = debug_find_scene(debug_desc, scene)
             if should_ret then
                return ret_val
@@ -167,7 +185,7 @@ M.find_scene = function(scene, times)
 
    if system(("find-scene.sh is-scene -x %s -y %s -s %s"):format(s_x, s_y, scene)) then
       log("found scene: %s at %s %s", scene, s_x, s_y)
-      debug_desc = ("已找到场景：%s，要不要将 failed-%s.png 替换为 %s.png？"):format(scene, scene, scene)
+      debug_desc = ("已找到场景：%s，要不要将 failed %s.png 替换为 %s.png？"):format(scene, scene, scene)
       ret_val, should_ret = debug_find_scene(debug_desc, scene)
       if should_ret then
          return ret_val
@@ -175,7 +193,7 @@ M.find_scene = function(scene, times)
       return true
    else
       log("! found scene: %s at %s %s", scene, s_x, s_y)
-      debug_desc = ("无法找到旧的场景：%s，要不要将 failed-%s.png 替换为 %s.png（如果选否，会忘掉它，当成新场景处理，请手动切换到此场景）？"):format(scene, scene, scene)
+      debug_desc = ("无法找到旧的场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会忘掉它，当成新场景处理，请手动切换到此场景）？"):format(scene, scene, scene)
       ret_val, should_ret = debug_find_scene(debug_desc, scene)
       if should_ret then
          return ret_val
@@ -246,6 +264,10 @@ M.click_scene = function (scene, settings)
    y_plus = settings.y or M.get_scene_h(scene)
    click_times = settings.click_times or 1
    click_wait = settings.click_wait or .1
+
+   if settings.skip_refind and not M.scene_exists(scene) then
+      settings.skip_refind = false
+   end
 
    if not settings.skip_refind and not refind_scene(scene, settings.retry) then
       log("Can't find scene: %s for click (retry: %s)", scene, settings.retry)

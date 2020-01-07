@@ -1,5 +1,10 @@
 #!/bin/bash
 
+resdir=.
+if test "${WRENCH_APP_DIR}"; then
+    resdir=${WRENCH_APP_DIR}/res
+fi
+
 unset EMACS
 
 if test "$WRENCH_APP_DIR"; then
@@ -73,7 +78,7 @@ function picture-matches() {
             elif test "${nodejs_ret}" -a "${nodejs_ret}" != no; then
                 echo "nodejs_ret: $nodejs_ret" 1>&2
             elif test "${nodejs_ret}" = no; then
-                cp "$2" "$(dirname "$1")"/failed-"$(bp "$1")" || true
+                cp "$2" "$(dirname "$1")"/"$(bp "$1")".failed.png || true
             fi
             break
         else
@@ -118,11 +123,6 @@ get-image-size() {
 }
 
 function find-scene() {
-
-    local resdir=.
-    if test "${WRENCH_APP_DIR}"; then
-        resdir=${WRENCH_APP_DIR}/res
-    fi
 
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt d:dir='${WRENCH_DATA_DIR:-~/tmp/}' s:scene @:scene-dir='${resdir}' @:at-xy
@@ -296,12 +296,6 @@ is-scene() {
         exit 1
     fi
 
-    local resdir=.
-    if test "${WRENCH_APP_DIR}"; then
-        resdir=${WRENCH_APP_DIR}/res
-    fi
-
-
     local scene_png=${resdir}/${scene}.png
     local scene_size=$(get-image-size ${scene_png})
 
@@ -311,6 +305,40 @@ is-scene() {
         return 0
     fi
     return 1
+}
+
+add-alias() {
+    scene=$1
+
+    for x in $(seq 1 100); do
+        if test ! -e $resdir/${scene}.$x.png; then
+            mv $resdir/${scene}.png.failed.png $resdir/${scene}.$x.png
+            exit
+        fi
+    done
+
+    bhj-notify "find-scene.sh" "Failed to add alias"
+}
+
+new-scene() {
+    scene=$1
+
+    if test ! -e "${resdir}/${scene}".png; then
+        adb-screenshot -e &
+        if EMACS=t yes-or-no-p "Finished copying the scene?"; then
+            mkdir -p "$(dirname "${resdir}/${scene}")"
+            clip 2png > "${resdir}/${scene}".png
+        fi
+    fi
+
+    if [[ $scene =~ send-button/.*-(on|off) ]]; then
+        for x in on off; do
+            x=${scene%-*}-${x}
+            if test ! -e "${resdir}/${x}".png; then
+                relative-link "${resdir}/${scene}".png "${resdir}/${x}".png
+            fi
+        done
+    fi
 }
 
 "$@"

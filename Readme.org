@@ -84,9 +84,36 @@ Here's the simple steps:
 
 ** How to compile droidVncServer
 
-- Note :: If your phone is deeply customized, it might not work if you compile the droidVncServer in AOSP source code. I found this out on Smartisan (the company that I'm working at)'s U1 phone, where I compiled droidVncServer with aosp-lollipop-mr1-dev, which has the same SDK version as U1, but sadly the program crashes when run. I also compiled the AOSP screenrecord program with aosp-lollipop-mr1-dev, then run it on U1, and found that it can do .mp4 file recording, but also crashes when run for streaming (with =--output-format frames=).
+*Note*: if your phone is deeply customized, it might not work if you compile the droidVncServer in AOSP source code. I found this out on Smartisan (the company that I'm working at)'s U1 phone, where I compiled droidVncServer with aosp-lollipop-mr1-dev, which has the same SDK version as U1, but sadly the program crashes when run. I also compiled the AOSP screenrecord program with aosp-lollipop-mr1-dev, then run it on U1, and found that it can do .mp4 file recording, but also crashes when run for streaming (with =--output-format frames=). You will see logcat error like this:
 
-          In this case, the only way to make it work is to compile under the same source code where your phone's system image is compiled, which is unlikely unless you are a developper of this phone hardware company. Sorry.
+#+BEGIN_EXAMPLE
+  01-07 21:03:11.879  4960  4960 F DEBUG   : signal 6 (SIGABRT), code -6 (SI_TKILL), fault addr --------
+  01-07 21:03:11.879  4960  4960 F DEBUG   : Abort message: 'Vector<> have different types (this=0x7fc3d671b0 size=80, rhs=0x7fc3d67300, size=72)'
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x0  0000000000000000  x1  0000000000001359  x2  0000000000000006  x3  0000000000000008
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x4  fefeff761f685ca3  x5  fefeff761f685ca3  x6  fefeff761f685ca3  x7  7f7f7f7f7f7f7fff
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x8  0000000000000083  x9  b832f112249117ca  x10 0000000000000000  x11 fffffffc7fffffdf
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x12 0000000000000001  x13 ffffffffffffffff  x14 ffffffffff000000  x15 ffffffffffffffff
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x16 00000077207192b0  x17 0000007720638c24  x18 0000000000000010  x19 0000000000001359
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x20 0000000000001359  x21 0000000000000000  x22 000000772177f5e8  x23 0000007720ea7150
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x24 0000007720ea71a0  x25 000000772071b5b8  x26 0000005be4616d5c  x27 0000000000000003
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     x28 0000005be466e000  x29 0000007fc3d66c60
+  01-07 21:03:11.879  4960  4960 F DEBUG   :     sp  0000007fc3d66c20  lr  000000772062c354  pc  000000772062c37c
+  01-07 21:03:11.882  4960  4960 I unwind  : Malformed section header found, ignoring...
+  01-07 21:03:11.882  4960  4960 F DEBUG   :
+  01-07 21:03:11.882  4960  4960 F DEBUG   : backtrace:
+  01-07 21:03:11.882  4960  4960 F DEBUG   :     #00 pc 000000000002237c  /system/lib64/libc.so (abort+116)
+  01-07 21:03:11.882  4960  4960 F DEBUG   :     #01 pc 0000000000008644  /system/lib64/liblog.so (__android_log_assert+296)
+  01-07 21:03:11.882  4960  4960 F DEBUG   :     #02 pc 0000000000011b98  /system/lib64/libutils.so (android::VectorImpl::operator=(android::VectorImpl const&)+2
+  20)
+  01-07 21:03:11.882  4960  4960 F DEBUG   :     #03 pc 0000000000097d50  /system/lib64/libgui.so (android::SurfaceComposerClient::Transaction::apply(bool)+540)
+  01-07 21:03:11.882  4960  4960 F DEBUG   :     #04 pc 000000000001f6e0  /data/data/com.android.shell/androidvncserver
+  01-07 21:03:11.882  4960  4960 F DEBUG   :     #05 pc 0000000000049c88  /data/data/com.android.shell/androidvncserver
+  01-07 21:03:11.882  4960  4960 F DEBUG   :     #06 pc 00000000000c905c  /system/lib64/libc.so (__libc_init+88)
+  01-07 21:03:12.140  1914  2840 E bt_brm  : bt_brm_chkdbglevelprop lbdebug: property not change
+  01-07 21:03:12.346  1307  1968 W NativeCrashListener: Couldn't find ProcessRecord for pid 4953
+#+END_EXAMPLE
+
+In this case, the only way to make it work is to compile under the same source code where your phone's system image is compiled, which is unlikely unless you are a developper of this phone hardware company. Sorry.
 
 If your phone's Android SDK version/CPU arch is not supported, you can compile it yourself.
 

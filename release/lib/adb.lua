@@ -313,29 +313,17 @@ M.adb_tap_mid_bot = function()
 end
 
 M.ask_for_window_type = function(window)
-   window_type = select_args{'Where is the send button for ' .. window,
-                             'Above the input method, the right end',
-                             'Above the input method, the right end, with a row of buttons in between (like QQ)',
-                             'Above the input method, the right end, confirm before send',
-                             "Top-right corner of phone's screen",
-                             "Top-right corner of phone's screen, confirm before send",
-                             "Please enter with the <Enter> key",
+   window_type = select_args{('How to send the msg for %s?'):format(window),
+                             'Find my send button using image matching',
+                             "Enter with the <Enter> key",
                              'Do nothing, I will click the send button myself',
    }
-   if window_type == 'Above the input method, the right end' then
-      window_type = 'weixin-chat'
-   elseif window_type == 'Above the input method, the right end, with a row of buttons in between (like QQ)' then
-      window_type = 'qq-chat'
-   elseif window_type == "Top-right corner of phone's screen" then
-      window_type = 'weibo-share'
-   elseif window_type == 'Above the input method, the right end, confirm before send' then
-      window_type = 'weixin-confirm'
-   elseif window_type == "Top-right corner of phone's screen, confirm before send" then
-      window_type = 'weibo-confirm'
-   elseif window_type == "Please enter with the <Enter> key" then
-      window_type = 'manual-post'
+   if window_type == 'Find my send button using image matching' then
+      window_type = 'Find-Button'
+   elseif window_type == "Enter with the <Enter> key" then
+      window_type = 'Enter-Key'
    else
-      window_type = 'no-post'
+      window_type = 'No-Post'
    end
    window_post_button_map[window] = window_type
    save_window_types()
@@ -450,7 +438,7 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       wrench_mail(window)
       return
    else
-      local add, post_button = '', right_button_x .. ' 1850'
+      local add, post_button = '', ''
       local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
       log("input_method is %s, ime_xy is %s, ime_connected is %s", input_method, ime_height, ime_connected)
       -- debugging("ime_xy is %s", ime_xy)
@@ -460,25 +448,13 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       else
          add = "" -- # add="560 1840 key DEL key BACK"
       end
-      if input_method then
-         if ime_height ~= 0 then
-            add = ''
-            post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - 80)
-         end
-      else
+      if not input_method then
          if not ime_connected then
-            if window == W.qqChatActivity2 or window == W.qqChatActivity then
-               adb_event("540 1740")
-            elseif window and window:match("com.bullet.messenger/") then
-               adb_event("440 1840")
-            else
-               adb_event("540 1840")
-            end
             wait_input_target(window)
             if not adb_top_window():match("^PopupWindow") then
                adb_event("key back")
                for n = 1, 5 do
-                  local input_method, ime_height, ime_connected = adb_get_input_window_dump()
+                  input_method, ime_height, ime_connected = adb_get_input_window_dump()
                   -- log("ime_height is %d: %d", ime_height, n)
                   if ime_height == 0 then
                      adb_top_window() -- make sure we know that the nav bar is gone.
@@ -492,40 +468,16 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          end
       end
 
-      if window == "com.github.mobile/com.github.mobile.ui.issue.CreateCommentActivity" then
-         post_button = right_button_x .. ' 166'
+      if ime_height ~= 0 then
+         post_button = ('send-button/%s.ime-on'):format(window)
+      else
+         post_button = ('send-button/%s.ime-off'):format(window)
       end
 
       local window_type = (how_to_post or window_post_button_map[window])
-      if not window_type and (
-         window:match("^com.tencent.mm/com.tencent.mm.ui.chatting.") or -- weixin chat with a friend open from group members
-            window:match("^com.tencent.mm/com.tencent.mm.plugin.sns.ui.") -- weixin moments comment
-      ) then
-         window_type = 'weixin-chat'
-      end
 
       if not window_type then
          window_type = ask_for_window_type(window)
-      end
-      if window_type == 'weixin-chat' then
-         post_button = post_button -- empty
-      elseif window_type == 'qq-chat' then
-         local qq_button_sub = 200
-         if real_height >= 2160 then
-            qq_button_sub = 150
-         end
-         post_button = ('%d %d'):format(right_button_x, 1920 - ime_height - qq_button_sub)
-         -- log("ime_height is %d, post_button is adb_event'adb-long-press %s'", ime_height, post_button)
-      elseif window_type == 'weixin-confirm' then
-         post_button = post_button
-      elseif window_type == 'weibo-share' or window_type == 'top-right' then
-         post_button = right_button_x .. ' 150'
-      elseif window_type == 'weibo-confirm' then
-         post_button = right_button_x .. ' 150'
-      elseif window_type == 'manual-post' then
-         post_button = 'key enter'
-      elseif window_type == 'no-post' then
-         post_button = ''
       end
 
       debugging("add is %s", add)
@@ -533,16 +485,11 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       if text:match("[\x02\x07]") then
          log("using dingding to @sbd?")
       end
-      if confirm_before_post and not yes_or_no_p(confirm_before_post) then
-         return ""
-      end
 
-      if window_type:match("confirm") and not yes_or_no_p(("确认发送？（发送按钮位置与 %s 类似）"):format(window_type:gsub("-confirm", ""))) then
-         return ""
-      end
-
-      if post_button ~= "" then
-         adb_event(post_button)
+      if window_type == 'Find-Button' then
+         click_post_button(post_button)
+      elseif window_type == 'Enter-Key' then
+         adb_event"key enter"
       end
    end
    return "text sent"
