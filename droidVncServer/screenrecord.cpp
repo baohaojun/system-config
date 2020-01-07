@@ -50,7 +50,9 @@
 #include <media/stagefright/MediaCodec.h>
 #include <media/stagefright/MediaErrors.h>
 #include <media/stagefright/MediaMuxer.h>
+#include <media/stagefright/PersistentSurface.h>
 #include <media/ICrypto.h>
+#include <media/MediaCodecBuffer.h>
 
 #include "screenrecord.h"
 #include "Overlay.h"
@@ -68,6 +70,8 @@ static const char* kMimeTypeAvc = "video/avc";
 // Command-line parameters.
 static bool gVerbose = false;           // chatty on stdout
 static bool gRotate = false;            // rotate 90 degrees
+static bool gPersistentSurface = false; // use persistent surface
+static AString gCodecName = "";         // codec name override
 static bool gSizeSpecified = false;     // was size explicitly requested?
 static bool gWantInfoScreen = false;    // do we want initial info screen?
 static bool gWantFrameTime = false;     // do we want times on each frame?
@@ -91,7 +95,7 @@ static struct sigaction gOrigSigactionPIPE;
  */
 static void signalCatcher(int signum)
 {
-    gStopRequested = 1;
+    gStopRequested = true;
     switch (signum) {
     case SIGINT:
     case SIGHUP:
@@ -157,6 +161,7 @@ static status_t prepareEncoder(float displayFps, sp<MediaCodec>* pCodec,
     if (gVerbose) {
         printf("Configuring recorder for %dx%d %s at %.2fMbps\n",
                 gVideoWidth, gVideoHeight, kMimeTypeAvc, gBitRate / 1000000.0);
+        fflush(stdout);
     }
 
     sp<AMessage> format = new AMessage;
@@ -172,11 +177,21 @@ static status_t prepareEncoder(float displayFps, sp<MediaCodec>* pCodec,
     looper->setName("screenrecord_looper");
     looper->start();
     ALOGV("Creating codec");
-    sp<MediaCodec> codec = MediaCodec::CreateByType(looper, kMimeTypeAvc, true);
-    if (codec == NULL) {
-        fprintf(stderr, "ERROR: unable to create %s codec instance\n",
-                kMimeTypeAvc);
-        return UNKNOWN_ERROR;
+    sp<MediaCodec> codec;
+    if (gCodecName.empty()) {
+        codec = MediaCodec::CreateByType(looper, kMimeTypeAvc, true);
+        if (codec == NULL) {
+            fprintf(stderr, "ERROR: unable to create %s codec instance\n",
+                    kMimeTypeAvc);
+            return UNKNOWN_ERROR;
+        }
+    } else {
+        codec = MediaCodec::CreateByComponentName(looper, gCodecName);
+        if (codec == NULL) {
+            fprintf(stderr, "ERROR: unable to create %s codec instance\n",
+                    gCodecName.c_str());
+            return UNKNOWN_ERROR;
+        }
     }
 
     err = codec->configure(format, NULL, NULL,
@@ -190,10 +205,18 @@ static status_t prepareEncoder(float displayFps, sp<MediaCodec>* pCodec,
 
     ALOGV("Creating encoder input surface");
     sp<IGraphicBufferProducer> bufferProducer;
-    err = codec->createInputSurface(&bufferProducer);
+    if (gPersistentSurface) {
+        sp<PersistentSurface> surface = MediaCodec::CreatePersistentInputSurface();
+        bufferProducer = surface->getBufferProducer();
+        err = codec->setInputSurface(surface);
+    } else {
+        err = codec->createInputSurface(&bufferProducer);
+    }
     if (err != NO_ERROR) {
         fprintf(stderr,
-            "ERROR: unable to create encoder input surface (err=%d)\n", err);
+            "ERROR: unable to %s encoder input surface (err=%d)\n",
+            gPersistentSurface ? "set" : "create",
+            err);
         codec->release();
         return err;
     }
@@ -216,9 +239,10 @@ static status_t prepareEncoder(float displayFps, sp<MediaCodec>* pCodec,
  * Sets the display projection, based on the display dimensions, video size,
  * and device orientation.
  */
-static status_t setDisplayProjection(const sp<IBinder>& dpy,
+static status_t setDisplayProjection(
+        SurfaceComposerClient::Transaction& t,
+        const sp<IBinder>& dpy,
         const DisplayInfo& mainDpyInfo) {
-    status_t err;
 
     // Set the region of the layer stack we're interested in, which in our
     // case is "all of it".  If the app is rotated (so that the width of the
@@ -277,13 +301,15 @@ static status_t setDisplayProjection(const sp<IBinder>& dpy,
         if (gRotate) {
             printf("Rotated content area is %ux%u at offset x=%d y=%d\n",
                     outHeight, outWidth, offY, offX);
+            fflush(stdout);
         } else {
             printf("Content area is %ux%u at offset x=%d y=%d\n",
                     outWidth, outHeight, offX, offY);
+            fflush(stdout);
         }
     }
 
-    SurfaceComposerClient::setDisplayProjection(dpy,
+    t.setDisplayProjection(dpy,
             gRotate ? DISPLAY_ORIENTATION_90 : DISPLAY_ORIENTATION_0,
             layerStackRect, displayRect);
     return NO_ERROR;
@@ -299,11 +325,11 @@ static status_t prepareVirtualDisplay(const DisplayInfo& mainDpyInfo,
     sp<IBinder> dpy = SurfaceComposerClient::createDisplay(
             String8("ScreenRecorder"), false /*secure*/);
 
-    SurfaceComposerClient::openGlobalTransaction();
-    SurfaceComposerClient::setDisplaySurface(dpy, bufferProducer);
-    setDisplayProjection(dpy, mainDpyInfo);
-    SurfaceComposerClient::setDisplayLayerStack(dpy, 0);    // default stack
-    SurfaceComposerClient::closeGlobalTransaction();
+    SurfaceComposerClient::Transaction t;
+    t.setDisplaySurface(dpy, bufferProducer);
+    setDisplayProjection(t, dpy, mainDpyInfo);
+    t.setDisplayLayerStack(dpy, 0);    // default stack
+    t.apply();
 
     *pDisplayHandle = dpy;
 
@@ -388,10 +414,12 @@ static status_t recordScreen() {
         err = overlay->start(encoderInputSurface, &bufferProducer);
         if (err != NO_ERROR) {
             fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
+            if (encoder != NULL) encoder->release();
             return err;
         }
         if (gVerbose) {
             printf("Bugreport overlay created\n");
+            fflush(stdout);
         }
     } else {
         // Use the encoder's input surface as the virtual display surface.
@@ -402,6 +430,7 @@ static status_t recordScreen() {
     err = prepareVirtualDisplay(mainDpyInfo, bufferProducer, &dpy);
     if (err != NO_ERROR) {
         fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
+        if (encoder != NULL) encoder->release();
         return err;
     }
 
