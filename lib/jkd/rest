@@ -84,7 +84,7 @@ if test -z "${access_point}"; then
     die "Must specify the access ponit!"
 fi
 
-if ! [[ $access_point =~ rest/api/2/ ]]; then
+if ! [[ $access_point =~ ^rest/ ]]; then
     access_point=rest/api/2/${access_point#/}
 fi
 
