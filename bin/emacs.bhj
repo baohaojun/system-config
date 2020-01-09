@@ -1,7 +1,6 @@
 #!/bin/bash
-. ~/.profile
-. ~/system-config/bin/set-ssh-agent
-. ~/system-config/.bashrc
+
+. ~/system-config/etc/re-init-bash.rc
 
 EMACS=emacs
 
@@ -28,4 +27,7 @@ while ! emacsclient -e '(message "hello")' | grep -q '"hello"'; do
 done
 
 sawfish-re-maximize
-myscr --bg global-setenv -c emacsclient
+myscr --bg bash -c '
+. ~/system-config/etc/re-init-bash.rc
+global-setenv -c emacsclient
+'

@@ -1,0 +1,6 @@
+#!/bin/bash
+SYSTEM_CONFIG_INITED=false
+. ~/.profile
+. ~/system-config/bin/set-ssh-agent
+. ~/system-config/.bashrc
+
