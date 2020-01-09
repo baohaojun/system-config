@@ -1627,7 +1627,6 @@ This is simple using Perl's “reflection”.
             'help|h!' => \&$handler_help,
         );
 
-
         ## end generated code
 
         if (not $issue) {
@@ -1635,7 +1634,7 @@ This is simple using Perl's “reflection”.
             &$handler_help();
         }
 
-        my $transision_json_obj;
+        my $transition_json_obj;
 
         if ($transition !~ m/^\d+$/ or $fields_json ne "{}") {
             my $response = get("rest/api/2/issue/${issue}/transitions?expand=transitions.fields");
@@ -1643,23 +1642,30 @@ This is simple using Perl's “reflection”.
                 print $response->content;
                 exit;
             }
-            $transision_json_obj = decode_json $response->content;
+            $transition_json_obj = decode_json $response->content;
         }
 
         my $fields_json_obj = decode_json $fields_json;
-        if ($fields_json ne "{}") {
-            update_names_with_fields($fields_json_obj, $transision_json_obj->{transitions}[0]{fields});
-        }
-
         my $transition_name = $transition;
 
         unless ($transition =~ m/^\d+$/) {
-            my $json_obj = $transision_json_obj;
+            my $json_obj = $transition_json_obj;
             $transition = select_args("-p", decode_utf8 ("如何变更当前 issue：${issue}"), "-i", decode_utf8("$transition"), map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
             $transition_name = $transition;
             say "transition is $transition";
             $transition =~ s,^id=(\d+):.*,$1, or
-                die "Invalid transision $transition";
+                die "Invalid transition $transition";
+        }
+
+        my $transition_fields_obj;
+        map {
+            if ($_->{id} == $transition) {
+                $transition_fields_obj = $_->{fields};
+            }
+        } @{$transition_json_obj->{transitions}};
+
+        if ($fields_json ne "{}") {
+            update_names_with_fields($fields_json_obj, $transition_fields_obj);
         }
 
         my $ua = LWP::UserAgent->new;
