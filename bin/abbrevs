@@ -64,7 +64,7 @@ if test -z "$abbrev" -a "$1"; then
 elif test "$abbrev" -a "$1"; then
     die "Must specify ABBREV with either -a ABBREV or \$1, can't use both"
 elif test -z "${abbrev}"; then
-    abbrev=$(EMACS=t input-lock -l "Please input your abbrev. Or simply ? for help" \
+    abbrev=$(EMACS=t input-lock -l "NONE" \
                         select-args --ask-for-input -1 --select-from-history-too -o -p "Please input your abbrev. Or simply ? for help")
 fi
 

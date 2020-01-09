@@ -78,14 +78,16 @@ fi
 if test -z "${INPUT_LOCK_FILE}"; then
     if is-cron; then
         lock_suffix=cron
+        INPUT_LOCK_FILE=~/.cache/system-config/logs/$(basename $0).lock.$lock_suffix
     else
-        lock_suffix=none
+        INPUT_LOCK_FILE=~/.cache/system-config/logs/NONE
     fi
-    INPUT_LOCK_FILE=~/.cache/system-config/logs/$(basename $0).lock.$lock_suffix
 fi
 
 exec 9> "${INPUT_LOCK_FILE}"
-if ! flock -n 9; then
+if test "${INPUT_LOCK_FILE##*/}" = NONE; then
+    true
+elif ! flock -n 9; then
     bhj-notify ask-for-input-with-sawfish "$(readlink -f "${INPUT_LOCK_FILE}") locked by $(
 echo;
 
