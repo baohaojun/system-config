@@ -251,6 +251,7 @@ M.wrench_share_to_weixin = function(text)
       putclip_nowait(emoji_for_weixin(text))
    end
    adb_start_weixin_share('text')
+   adb_event("adb-key scroll_lock sleep .2")
    wrench_post(nil, 'Find-BOTTON')
    weixin_shezhi_pyq_guanbi()
 end
