@@ -334,7 +334,7 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    local window = adb_top_window()
    debug("sharing text: %s for window: %s", text, window)
    if text and text:match("^@%?") then
-      wrench_post("@", 'no-post')
+      wrench_post("@", 'No-Post')
       prompt_user("请选择你要 @ 谁，然后继续")
       text = text:gsub("^@%?", "")
       how_to_post = 'no-post'
@@ -342,8 +342,8 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
 
    if text and text:match("@%?$") then
       text = text:gsub("@%?$", "")
-      wrench_post(text, 'manual-post')
-      wrench_post("@", 'manual-post')
+      wrench_post(text, 'Enter-Key')
+      wrench_post("@", 'Enter-Key')
       return
    end
 
@@ -419,7 +419,10 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       return
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQLSActivity" then
       adb_event("adb-tap 297 884 key scroll_lock adb-tap 923 909")
-   elseif window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI" then
+   elseif text and (
+      window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsUploadUI" or
+         window == "com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentUI"
+   ) then
       weixin_text_share(window, text)
       return
    elseif window == "SmsPopupDialog" then
@@ -438,16 +441,11 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       wrench_mail(window)
       return
    else
-      local add, post_button = '', ''
+      local post_button = ''
       local input_method, ime_height, ime_connected = adb_get_input_window_dump() -- $(adb dumpsys window | perl -ne 'print if m/^\s*Window #\d+ Window\{[a-f0-9]* u0 InputMethod\}/i .. m/^\s*mHasSurface/')
       log("input_method is %s, ime_xy is %s, ime_connected is %s", input_method, ime_height, ime_connected)
       -- debugging("ime_xy is %s", ime_xy)
 
-      if input_method then
-         add = "key BACK"
-      else
-         add = "" -- # add="560 1840 key DEL key BACK"
-      end
       if not input_method then
          if not ime_connected then
             wait_input_target(window)
@@ -464,7 +462,6 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
                   end
                end
             end
-            add = ''
          end
       end
 
@@ -480,13 +477,14 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          window_type = ask_for_window_type(window)
       end
 
-      debugging("add is %s", add)
-      adb_event(add .. " key scroll_lock")
-      if text:match("[\x02\x07]") then
-         log("using dingding to @sbd?")
+      if text then
+         adb_event("key scroll_lock")
       end
 
+      log("window type is %s", window_type)
+
       if window_type == 'Find-Button' then
+         log("post button is %s", post_button)
          click_post_button(post_button)
       elseif window_type == 'Enter-Key' then
          adb_event"key enter"

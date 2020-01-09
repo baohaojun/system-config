@@ -5,7 +5,7 @@ M.wrench_cue = function(who)
    current_win = adb_top_window()
    current_pkg = current_win:gsub("/.*", "")
 
-   wrench_post("@", "no-post")
+   wrench_post("@", "No-Post")
 
    search_button = current_pkg .. ".cue-search"
    cue_all = current_pkg .. ".cue-all"
@@ -21,7 +21,7 @@ M.wrench_cue = function(who)
    jump_from_to(search_button, wait_ime)
 
    if who:lower() ~= "all" and who ~= "所有人" then
-      wrench_post(who, "no-post")
+      wrench_post(who, "No-Post")
    end
 
 

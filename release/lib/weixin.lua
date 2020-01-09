@@ -251,7 +251,7 @@ M.wrench_share_to_weixin = function(text)
       putclip_nowait(emoji_for_weixin(text))
    end
    adb_start_weixin_share('text')
-   wrench_post(nil, 'top-right', "分享到微信朋友圈？")
+   wrench_post(nil, 'Find-BOTTON')
    weixin_shezhi_pyq_guanbi()
 end
 
@@ -262,7 +262,7 @@ M.weixin_text_share = function(window, text)
    end
    adb_event("adb-key scroll_lock sleep .2")
    if yes_or_no_p("Share to wechat?") then
-      adb_event(" adb-tap 1016 131")
+      wrench_post(nil, 'Find-Button')
    end
 end
 

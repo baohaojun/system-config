@@ -30,7 +30,7 @@ M.open_dd_search = function()
          end
 
          if found_duihua then
-            jump_from_to("dd-xiaoxi-dd-biaoti", "dd-xiaoxi-sousuo", {click_times = 2})
+            jump_from_to("dd-xiaoxi-dd-biaoti", "dd-xiaoxi-sousuo", {click_times = 2, x = 200})
             jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
             return
          end
