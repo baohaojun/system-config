@@ -428,15 +428,6 @@ cd_record()
    return $ret
 }
 
-start_recursive_shell()
-{
-    (
-        export RECURSIVE_SHELL='[01;31mRecursive[01;32m:[01;31m'"$@"'[0m '
-        bash
-    )
-}
-export -f start_recursive_shell
-
 sudo() {
     (
         umask 0022
@@ -445,7 +436,6 @@ sudo() {
 }
 
 export -f sudo
-alias start-recursive-shell=start_recursive_shell
 
 if which python3 >/dev/null 2>&1; then
     has_python3=true

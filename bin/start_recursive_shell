@@ -1,0 +1,3 @@
+#!/bin/bash
+export RECURSIVE_SHELL='[01;31mRecursive[01;32m:[01;31m'"$@"'[0m '
+exec bash

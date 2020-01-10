@@ -1,89 +1,95 @@
 #+name: perl-script-xy
 #+BEGIN_SRC cperl
   BEGIN {
-    $mCurrentRotation = 0;
-    $standard_width = $ENV{standard_width};
-    $standard_height = $ENV{standard_height};
+      use v5.10;
+      $mCurrentRotation = 0;
+      $standard_width = $ENV{standard_width};
+      $standard_height = $ENV{standard_height};
 
-    $init_width = 1080;
-    $init_height = 1920;
+      $init_width = 1080;
+      $init_height = 1920;
 
-    if ($ENV{scaling} eq "false") {
-      $app_width = 1080;
-      $app_height = 1920;
-    } else {
-      $xy = qx(my-adb dumpsys window);
+      if ($ENV{scaling} eq "false") {
+          $app_width = 1080;
+          $app_height = 1920;
+      } else {
+          $xy = qx(my-adb dumpsys window);
 
-      $xy =~ m/mStableFullscreen=\(.*?\)-\((\d+),(\d+)\)/;
-      $app_width = $1;
-      $app_height = $2;
+          if ($xy =~ m/mStableFullscreen=.*?(\d+),(\d+)[])]$/m) {
+              $app_width = $1;
+              $app_height = $2;
 
-      $xy =~ m/init=(\d+)x(\d+)/;
-      $init_width = $1;
-      $init_height = $2;
+          } else {
+              print "Can't match width and height from mStableFullscreen";
+              exit 1;
+          }
 
-      $xy =~ m/cur=(\d+)x(\d+)/;
-      $cur_width = $1;
-      $cur_height = $2;
+          $xy =~ m/init=(\d+)x(\d+)/;
+          $init_width = $1;
+          $init_height = $2;
 
-      if ($app_width > $app_height) {
-        ($standard_width, $standard_height) = ($standard_height, $standard_width);
+          $xy =~ m/cur=(\d+)x(\d+)/;
+          $cur_width = $1;
+          $cur_height = $2;
+
+          if ($app_width > $app_height) {
+              ($standard_width, $standard_height) = ($standard_height, $standard_width);
+          }
+
+
+          if ($xy =~ m/mCurrentRotation=(\d)/) {
+              $mCurrentRotation = $1;
+          }
       }
-
-
-      if ($xy =~ m/mCurrentRotation=(\d)/) {
-        $mCurrentRotation = $1;
-      }
-    }
   }
   if (m/ABS_MT_POSITION_/) {
-    chomp;
-    @fields = split;
-    ($name, $val) = @fields[2,3];
-    $val = hex($val);
-    # print "$name: $val\r\n";
-    if ($name =~ m/ABS_MT_POSITION_X/) {
-      $val_x = $val;
-    } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
-      $val_y = $val;
-    }
+      chomp;
+      @fields = split;
+      ($name, $val) = @fields[2,3];
+      $val = hex($val);
+      # print "$name: $val\r\n";
+      if ($name =~ m/ABS_MT_POSITION_X/) {
+          $val_x = $val;
+      } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
+          $val_y = $val;
+      }
   }
 
   if (m/SYN_REPORT/) {
 
-    if ($mCurrentRotation % 2 == 1) {
-      ($x, $y) = ($val_y, $val_x);
-    } else {
-      ($x, $y) = ($val_x, $val_y);
-    }
-
-    if ($mCurrentRotation == 1) {
-      $y = $cur_height - $y;
-    }
-
-    if ($mCurrentRotation == 2) {
-      ($x, $y) = ($cur_width - $x, $cur_height - $y);
-    }
-
-    if ($mCurrentRotation == 3) {
-      $x = $cur_width - $x;
-    }
-
-    # print "$val_x -> $x, $val_y -> $y\r\n";
-
-    $x = int($x * $standard_width / $app_width);
-    $y = int($y * $standard_height / $app_height);
-    if ($ENV{print_tap}) {
-      my $print_str = "$ENV{print_tap}($x, $y)";
-      if ($ENV{print_format}) {
-        $print_str = sprintf($ENV{print_format}, $x, $y);
+      if ($mCurrentRotation % 2 == 1) {
+          ($x, $y) = ($val_y, $val_x);
+      } else {
+          ($x, $y) = ($val_x, $val_y);
       }
-      system("putclip", $print_str);
-      print "$print_str\r\n";
-    } else {
-      print "$ENV{TAP} $x $y\r\n";
-      system("putclip $ENV{TAP} $x $y");
-    }
+
+      if ($mCurrentRotation == 1) {
+          $y = $cur_height - $y;
+      }
+
+      if ($mCurrentRotation == 2) {
+          ($x, $y) = ($cur_width - $x, $cur_height - $y);
+      }
+
+      if ($mCurrentRotation == 3) {
+          $x = $cur_width - $x;
+      }
+
+      # print "$val_x -> $x, $val_y -> $y\r\n";
+
+      $x = int($x * $standard_width / $app_width);
+      $y = int($y * $standard_height / $app_height);
+      if ($ENV{print_tap}) {
+          my $print_str = "$ENV{print_tap}($x, $y)";
+          if ($ENV{print_format}) {
+              $print_str = sprintf($ENV{print_format}, $x, $y);
+          }
+          system("putclip", $print_str);
+          print "$print_str\r\n";
+      } else {
+          print "$ENV{TAP} $x $y\r\n";
+          system("putclip $ENV{TAP} $x $y");
+      }
   }
 
 #+END_SRC
@@ -97,7 +103,7 @@
 #+END_SRC
 
 #+name: old-code
-#+BEGIN_SRC sh
+#+BEGIN_SRC sh :noweb yes
   #!/bin/bash
 
 
@@ -178,7 +184,7 @@
       my-adb dumpsys window
              )
 
-  true_size=$(echo "$window_dump"|perl -ne 'print "app=${1}x${2}" if m/mStableFullscreen=.*?(\d+),(\d+)\)\s*$/')
+  true_size=$(echo "$window_dump"|perl -ne 'print "app=${1}x${2}" if m/mStableFullscreen=.*?(\d+),(\d+)[])]\s*$/')
   init_size=$(echo "$window_dump"|grep -o -P 'init=\d+x\d+')
 
   if test "$init_size" != "init=1080x1920"; then
@@ -204,7 +210,7 @@
 
   (sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
   adb-tty getevent -l "$@" </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
-    <<perl-script-xy>>
+  <<perl-script-xy>>
   EOF04cdaedc86bf
     )"
 #+END_SRC
