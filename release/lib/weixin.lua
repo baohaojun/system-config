@@ -158,9 +158,19 @@ end
 
 M.weixin_shezhi_pyq_fabiaowenzi = function()
    weixin_open_homepage()
+   log("Done open homepage, start pyq")
    jump_from_to("wx-faxian", "wx-faxian-pyq")
    jump_from_to("wx-faxian-pyq", "wx-pyq-shexiangtou", {sleep_time = .8, times = 3})
    jump_from_to("wx-pyq-shexiangtou", "wx-pyq-fabiaowenzi", {long_press = 800})
+end
+
+M.weixin_wait_share_ime = function()
+   adb_event"adb-tap 228 401"
+   if not M.wait_input_target_n_ok(10, "^com.tencent.mm/com.tencent.mm.plugin.sns.ui") then
+      error("图片分享到微信朋友圈时出错：输入法没有在朋友圈分享页面激活")
+   else
+      return
+   end
 end
 
 M.adb_start_weixin_share = function(text_or_image)
@@ -177,6 +187,7 @@ M.adb_start_weixin_share = function(text_or_image)
 
    weixin_shezhi_pyq_kaiqi()
    weixin_shezhi_pyq_fabiaowenzi()
+   weixin_wait_share_ime()
    log("start weixin share complete")
 end
 
@@ -284,8 +295,6 @@ M.picture_to_weixin_share = function(pics, ...)
    share_pics_to_app("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI", pics)
 
    local wait_chooser = true
-   local wait_input = true
-
 
    for try = 1, 10 do
       log("pic to wx: %d", try)
@@ -293,13 +302,9 @@ M.picture_to_weixin_share = function(pics, ...)
          log("got app chooser @%d", try)
          adb_event("adb-tap 341 1739 sleep .1")
          wait_chooser = false
-      elseif wait_input and adb_top_window():match"^com.tencent.mm/com.tencent.mm.plugin.sns.ui" then
-         adb_event"adb-tap 228 401"
-         if not M.wait_input_target_n_ok(10, "^com.tencent.mm/com.tencent.mm.plugin.sns.ui") then
-            prompt_user("图片分享到微信朋友圈时出错：输入法没有在朋友圈分享页面激活")
-         else
-            break
-         end
+      elseif adb_top_window():match"^com.tencent.mm/com.tencent.mm.plugin.sns.ui" then
+         weixin_wait_share_ime()
+         break
       end
    end
 end

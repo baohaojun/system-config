@@ -856,24 +856,27 @@ M.get_xy_from_dump = function(dump, prefix)
 end
 
 M.update_screen_size = function()
-
    M.m_window_dump = adb_pipe("dumpsys window policy; dumpsys window windows") or ""
    M.m_focused_app = M.m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
    M.m_focused_window = M.m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
 
+   M.m_window_displays = adb_pipe"dumpsys window displays" or ""
+
    -- mStableFullscreen=(0,0)-(1080,2160)
-   local mStableFullscreen = M.m_window_dump:match("mStableFullscreen=[-%(%)%d,]+")
+   local screen_size_re = "mStableFullscreen=.-[])].-[])]"
+   local mStableFullscreen = M.m_window_displays:match(screen_size_re) or
+      M.m_window_dump:match(screen_size_re)
+   -- log("mStableFullscreen is %s", mStableFullscreen)
    if M.last_screen_size ~= mStableFullscreen then
       M.last_screen_size = mStableFullscreen
-      app_width = M.last_screen_size:match('mStableFullscreen=.*%-%((%d+,%d+)%)')
+      app_width = M.last_screen_size:match('mStableFullscreen=.-[])].-[[(](%d+,%d+)')
       app_height = app_width:match(',(%d+)')
       app_width = app_width:match('(%d+),')
-      M.mCurrentRotation = M.m_window_dump:match("mCurrentRotation=(%d+)")
+      M.mCurrentRotation = M.m_window_dump:match("mCurrentRotation=.-(%d+)")
 
-      local displays = adb_pipe"dumpsys window displays"
-      real_width, real_height = get_xy_from_dump(displays, "cur")
-      log("M.real_height is %d", M.real_height)
-      ime_app_width, ime_app_height = get_xy_from_dump(displays, "app")
+      real_width, real_height = get_xy_from_dump(M.m_window_displays, "cur")
+      -- log("M.real_height is %d, app_width is %d, app_height is %d", M.real_height, app_width, app_height)
+      ime_app_width, ime_app_height = get_xy_from_dump(M.m_window_displays, "app")
 
       update_screen_ratios()
    end
