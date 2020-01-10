@@ -11,6 +11,10 @@ M.weixin_open_homepage = function()
    exit_ime()
 end
 
+M.is_weixin_chat_window = function(w)
+   return w == W.weixinLauncherActivity or w == W.weixinChatActivity
+end
+
 M.weixin_open_search = function(depth)
    if not depth then depth = 0 end
    for i = 1, 10 do
@@ -108,21 +112,27 @@ M.weixin_find_friend = function(friend_name, depth)
             prompt_user("Can't get out of weixinSearchActivity")
          end
       else
-         for i = 1, 10 do
-            sleep(.2)
-            if i > 5 then
-               log("still waiting for input after jump from search @%d", i)
-            end
-            if find_scene("wx-open-microphone") then
-               return
-            end
-            if find_scene("wx-open-keyboard") then
-               click_scene("wx-open-keyboard")
-               return
-            elseif wait_input_target_n_ok(1, "^com.tencent.mm/") then
-               return
-            end
-         end
+         M.weixin_open_keyboard()
+         return
+      end
+   end
+end
+
+M.weixin_open_keyboard = function()
+   for i = 1, 10 do
+      sleep(.2)
+      if i > 5 then
+         log("still waiting for input after jump from search @%d", i)
+      end
+      if find_scene("wx-open-microphone") then
+         click_scene("wx-open-microphone", {skip_refind = 1, x = 300})
+         return
+      end
+      if find_scene("wx-open-keyboard") then
+         jump_from_to("wx-open-keyboard", "wx-open-microphone")
+         click_scene("wx-open-microphone", {skip_refind = 1, x = 300})
+         return
+      elseif wait_input_target_n_ok(1, "^com.tencent.mm/") then
          return
       end
    end
