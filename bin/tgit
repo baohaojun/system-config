@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+cat <<'EOF67f021042aff' >/dev/null | . .replace-%% --
+# {%org-mode%}
+This command run git command with timeout and retry, first run it
+directly, then run it with tsocks1.
+
+It's mainly for using git with github, which sometimes can't be reached.
+# {%/org-mode%}
+EOF67f021042aff
+
+if timeout 10 git "$@"; then
+    exit
+fi
+tsocks1 git "$@"
