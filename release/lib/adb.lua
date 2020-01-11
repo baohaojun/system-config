@@ -312,6 +312,8 @@ M.adb_tap_mid_bot = function()
    adb_event{560, 1840}
 end
 
+M.adb_tap_bot_center = M.adb_tap_mid_bot
+
 M.ask_for_window_type = function(window)
    window_type = select_args{('How to send the msg for %s?'):format(window),
                              'Find my send button using image matching',
@@ -448,6 +450,9 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
 
       if not input_method then
          if not ime_connected then
+            if M.is_weixin_chat_window(window) then
+               M.weixin_open_keyboard()
+            end
             wait_input_target(window)
             if not adb_top_window():match("^PopupWindow") then
                adb_event("key back")
