@@ -203,7 +203,7 @@ EOF
 '
         done
     fi
-    nohup Wrench.sh -1 "$@"&
+    nohup Wrench.sh -1 "$@" &> ~/tmp/Wrench.log &
     exit
 fi
 
