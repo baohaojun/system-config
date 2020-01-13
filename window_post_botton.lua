@@ -5,6 +5,7 @@ map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebVi
 map['com.amazon.kindle/com.amazon.kcp.oob.MainActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.kcp.reader.StandAloneBookReaderActivity'] = 'No-Post'
 map['com.android.contacts/com.android.contacts.activities.DialtactsActivity'] = 'No-Post'
+map['com.netease.onmyoji/com.netease.onmyoji.Client'] = 'No-Post'
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'Find-Button'
 map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSMainUI'] = 'Enter-Key'
 map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.SayHiWithSnsPermissionUI'] = 'No-Post'
