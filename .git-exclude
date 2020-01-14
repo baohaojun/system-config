@@ -18,3 +18,5 @@ modules.order
 *.log
 core.*.[0-9]*
 nohup.out
+.factorypath
+

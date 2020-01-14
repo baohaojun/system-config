@@ -7,8 +7,8 @@ if test -e ~/src/github/smartcm/etc/ldap.rc; then
 fi
 
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt u:user='$(get-about-me ldap-user)' \
-        # p:pass='$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))' \
+    # generate-getopt u:user='${scm_ldap_user:-$(get-about-me ldap-user)}' \
+        # p:pass \
         # ddecode g:glob='"*"' '?"默认为「*」，在要搜索的名字前后添加此参数。如需精确搜索，请使用 -g \"\""' \
         # m:match-regexp=. '?"只输出匹配正则表达式 MATCH_REGEXP（默认为「.」）的行"' \
         # eexact-query-input '?"不要修改我的 query input"' \
@@ -231,10 +231,14 @@ function maybe-filter() {
     fi | grep -P "${match_regexp}" -i
 }
 
-ldapsearch -LLL -b "$(get-about-me ldap-dc)" \
+if test -z "${pass}"; then
+    pass=$(git config -f "${scm_secrets_conf}" ldap.password)
+fi
+
+ldapsearch -LLL -b "${scm_ldap_dc}" \
     -P 3 \
-    -H "$(get-about-me ldap-url)" \
+    -H "${scm_ldap_url}" \
     -D "$user" \
-    -w "$pass" "$query" |
+    -w "${pass}" "$query" |
     maybe-decode |
     maybe-filter

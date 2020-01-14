@@ -10,6 +10,8 @@
  '(ahk-syntax-directory "~/system-config/doc/ahk/Syntax/")
  '(ansi-color-faces-vector
    [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(auto-save-file-name-transforms
    (quote
@@ -18,9 +20,7 @@
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bbyac-max-chars 80)
  '(beacon-color "#ff9da4")
- '(before-save-hook
-   (quote
-    (confirm-risky-remote-edit cleanup-buffer-safe ajoke-get-imports-if-java-mode)))
+ '(before-save-hook (quote (confirm-risky-remote-edit cleanup-buffer-safe)))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(clipmon-mode t)
@@ -30,7 +30,7 @@
  '(custom-safe-themes
    (quote
     ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
- '(debug-on-quit nil)
+ '(debug-on-quit t)
  '(default-input-method "sdim")
  '(delete-old-versions t)
  '(describe-char-unidata-list
@@ -243,7 +243,7 @@
  '(org2blog/wp-use-tags-as-categories t)
  '(package-selected-packages
    (quote
-    (uptimes dotenv-mode daemons dsvn htmlize gnuplot flycheck-ledger ledger-mode origami regex-tool info-colors flycheck-clojure cider elein cljsbuild-mode clojure-mode slime-company hippie-expand-slime slime cask-mode cl-libify flycheck-package highlight-quoted macrostep cl-lib-highlight aggressive-indent immortal-scratch auto-compile ipretty elisp-slime-nav paredit-everywhere paredit nginx-mode company-terraform terraform-mode docker-compose-mode dockerfile-mode docker yaml-mode toml-mode flycheck-rust racer rust-mode sqlformat projectile-rails yard-mode bundler goto-gem yari robe ruby-compilation inf-ruby rspec-mode ruby-hash-syntax psci psc-ide purescript-mode flycheck-elm elm-test-runner elm-mode dhall-mode reformatter dante haskell-mode company-anaconda anaconda-mode pip-requirements restclient httprepl haml-mode css-eldoc skewer-less sass-mode rainbow-mode tagedit org-pomodoro writeroom-mode org-cliplink company-php smarty-mode php-mode add-node-modules-path skewer-mode js-comint prettier-js typescript-mode coffee-mode js2-mode json-mode erlang csv-mode markdown-mode textile-mode cmd-to-echo alert github-clone bug-reference-github yagist git-commit magit-todos magit git-timemachine gitconfig-mode gitignore-mode git-blamed vc-darcs darcsum browse-at-remote whitespace-cleanup-mode guide-key highlight-escape-sequences whole-line-or-region move-dup page-break-lines multiple-cursors avy expand-region symbol-overlay rainbow-delimiters goto-line-preview beacon mode-line-bell vlf list-unicode-display unfill mmm-mode switch-window company-quickhelp company ivy-xref swiper projectile counsel ivy flycheck-color-mode-line flycheck ibuffer-vc anzu diff-hl diredfl disable-mouse default-text-scale command-log-mode scratch diminish project-local-variables yasnippet oauth2 lua-mode keydef csharp-mode dts-mode helm bbdb browse-kill-ring wgrep exec-path-from-shell fullframe seq jq-mode tree-mode color-moccur py-autopep8 emms-player-simple-mpv emms-bilibili emms netease-music lyrics graphviz-dot-mode confluence ghub go-mode web-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized company-shell company-statistics helm-company ivy-bibtex ivy-dired-history ivy-erlang-complete ivy-gitlab ivy-hydra ivy-pages ivy-pass ivy-purpose ivy-rich ivy-rtags ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode emojify jedi org tabbar evil ddskk tidy session rinari redshank org-fstree mwe-log-commands lively hl-sexp hi2 hayoo git-messenger git-gutter-fringe git-blame ghci-completion fill-column-indicator f dired-sort dired+ csv-nav crontab-mode clojure-test-mode bbyac bbdb-vcard auto-complete-clang ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
+    (uptimes dotenv-mode daemons dsvn htmlize gnuplot flycheck-ledger ledger-mode origami regex-tool info-colors flycheck-clojure cider elein cljsbuild-mode clojure-mode slime-company hippie-expand-slime slime cask-mode cl-libify flycheck-package highlight-quoted macrostep cl-lib-highlight aggressive-indent immortal-scratch auto-compile ipretty elisp-slime-nav paredit-everywhere paredit nginx-mode company-terraform terraform-mode docker-compose-mode dockerfile-mode docker yaml-mode toml-mode flycheck-rust racer rust-mode sqlformat projectile-rails yard-mode bundler goto-gem yari robe ruby-compilation inf-ruby rspec-mode ruby-hash-syntax psci psc-ide purescript-mode flycheck-elm elm-test-runner elm-mode dhall-mode reformatter dante haskell-mode company-anaconda anaconda-mode pip-requirements restclient httprepl haml-mode css-eldoc skewer-less sass-mode rainbow-mode tagedit org-pomodoro writeroom-mode org-cliplink company-php smarty-mode php-mode add-node-modules-path skewer-mode js-comint prettier-js typescript-mode coffee-mode js2-mode json-mode erlang csv-mode markdown-mode textile-mode cmd-to-echo alert github-clone bug-reference-github yagist git-commit magit-todos magit git-timemachine gitconfig-mode gitignore-mode git-blamed vc-darcs darcsum browse-at-remote whitespace-cleanup-mode guide-key highlight-escape-sequences whole-line-or-region move-dup page-break-lines multiple-cursors avy expand-region symbol-overlay rainbow-delimiters goto-line-preview beacon mode-line-bell vlf list-unicode-display unfill mmm-mode switch-window company-quickhelp company ivy-xref swiper projectile counsel ivy flycheck-color-mode-line flycheck ibuffer-vc anzu diff-hl diredfl disable-mouse default-text-scale command-log-mode scratch diminish project-local-variables yasnippet oauth2 lua-mode keydef csharp-mode dts-mode helm bbdb browse-kill-ring wgrep exec-path-from-shell fullframe seq eglot jq-mode tree-mode color-moccur py-autopep8 emms-player-simple-mpv emms-bilibili lyrics graphviz-dot-mode confluence ghub go-mode web-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized company-shell company-statistics ivy-dired-history ivy-gitlab ivy-pages ivy-pass ivy-purpose ivy-todo ivy-xcdoc ivy-youtube qml-mode cmake-mode org tabbar tidy session rinari redshank org-fstree mwe-log-commands lively hl-sexp hi2 hayoo git-messenger git-gutter-fringe git-blame ghci-completion dired-sort dired+ csv-nav clojure-test-mode bbyac bbdb-vcard auto-complete-clang ace-jump-mode ac-slime ac-nrepl ac-inf-ruby ac-helm ac-clang ac-cider)))
  '(rainbow-identifiers-cie-l*a*b*-lightness 70)
  '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(recentf-exclude nil)
