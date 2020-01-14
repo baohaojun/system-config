@@ -1,2 +1,2 @@
 ;;; -*- no-byte-compile: t -*-
-(define-package "apiwrap" "20180602.2231" "api-wrapping macros" '((emacs "25")) :commit "e4c9c57d6620a788ec8a715ff1bb50542edea3a6" :keywords '("tools" "maint" "convenience") :authors '(("Sean Allred" . "code@seanallred.com")) :maintainer '("Sean Allred" . "code@seanallred.com") :url "https://github.com/vermiculus/apiwrap.el")
+(define-package "apiwrap" "20180602.2231" "api-wrapping macros" '((emacs "25")) :commit "a4fb21d96027369307b22439a4a6c765ee272f44" :keywords '("tools" "maint" "convenience") :authors '(("Sean Allred" . "code@seanallred.com")) :maintainer '("Sean Allred" . "code@seanallred.com") :url "https://github.com/vermiculus/apiwrap.el")

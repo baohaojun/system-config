@@ -1,0 +1,2 @@
+;;; -*- no-byte-compile: t -*-
+(define-package "biblio-core" "20190624.1408" "A framework for looking up and displaying bibliographic entries" '((emacs "24.3") (let-alist "1.0.4") (seq "1.11") (dash "2.12.1")) :commit "efeeab720cb8e3f95ddb4298d0cc62393cf237e9" :keywords '("bib" "tex" "convenience" "hypermedia") :authors '(("Clément Pit-Claudel" . "clement.pitclaudel@live.com")) :maintainer '("Clément Pit-Claudel" . "clement.pitclaudel@live.com") :url "http://github.com/cpitclaudel/biblio.el")
