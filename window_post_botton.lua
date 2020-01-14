@@ -1,6 +1,7 @@
 local map = {}
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.AddRobotActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'Find-Button'
+map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConfirmCreatingConversationActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.kcp.oob.MainActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.kcp.reader.StandAloneBookReaderActivity'] = 'No-Post'
