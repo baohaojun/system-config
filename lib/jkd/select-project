@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+select-output-line -i "$*" \
+    "-O" "select-jira-project" "-p" "Which project do you want to use?" \
+    'jkd rest project | jkd rest project|jq ".[]|\"\(.key): \(.name)\"" -r' |
+    pn 1 | tr -d ':\n'

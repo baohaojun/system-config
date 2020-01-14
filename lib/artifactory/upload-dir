@@ -1,0 +1,77 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # u:upload-url d:dir-to-upload
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:u:h \
+                      --long dir-to-upload:,upload-url:,help \
+                      -n $(basename -- $0) -- "$@")
+declare dir_to_upload=
+declare upload_url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--dir-to-upload)
+            dir_to_upload=$2
+            shift 2
+
+            ;;
+        -u|--upload-url)
+            upload_url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--dir-to-upload=DIR_TO_UPLOAD'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--upload-url=UPLOAD_URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+my-curl() {
+    curl -f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
+}
+
+if ! [[ $upload_url =~ $scm_artifactory_test_server ]]; then
+    yes-or-no-p "Are you sure to upload to $upload_url?"
+fi
+
+(
+    cd "${dir_to_upload}"
+    find . -type f | cut -b 3- |
+        while read f; do
+            my-curl -X PUT "${upload_url%/}/${f}" -T "$f"
+        done
+)

@@ -11,13 +11,14 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # u:dir-url d:mirror-to-dir
+    # u:dir-url d:mirror-to-dir ndry-run='("" "--dry-run")'
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o u:d:h \
-                      --long dir-url:,mirror-to-dir:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o u:nd:h \
+                      --long dir-url:,dry-run,mirror-to-dir:,help,no-dry-run \
                       -n $(basename -- $0) -- "$@")
 declare dir_url=
+declare dry_run=
 declare mirror_to_dir=
 eval set -- "$TEMP"
 while true; do
@@ -26,6 +27,15 @@ while true; do
         -u|--dir-url)
             dir_url=$2
             shift 2
+
+            ;;
+        -n|--dry-run|--no-dry-run)
+            if test "$1" = --no-dry-run; then
+                dry_run=
+            else
+                dry_run=--dry-run
+            fi
+            shift
 
             ;;
         -d|--mirror-to-dir)
@@ -40,6 +50,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-u, '
             printf %-24s '--dir-url=DIR_URL'
+            echo
+            printf %06s '-n, '
+            printf %-24s '--[no-]dry-run'
             echo
             printf %06s '-d, '
             printf %-24s '--mirror-to-dir=MIRROR_TO_DIR'
@@ -88,9 +101,13 @@ for c in "${children[@]}"; do
     if test "${is_dir}" = true; then
         mkdir -p "${target_name}"
         log "download subdir: '${sub_url}'"
-        artifactory mirror-dir -u "$sub_url" -d "${target_name}"
+        artifactory mirror-dir -u "$sub_url" -d "${target_name}" $dry_run
     else
         log download file: ${sub_url}
-        my-curl "${sub_url}" -o "${target_name}"
+        if test "${dry_run}"; then
+            touch "${target_name}"
+        else
+            my-curl "${sub_url}" -o "${target_name}"
+        fi
     fi
 done

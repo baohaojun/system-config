@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+saved_args=("$@")
+
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
 # {%org-mode%}
@@ -15,19 +17,40 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # a:action '?"one of download-url, browse-url, of"'
+    # a:action '?"one of download-url, browse-url, of"' \
+    # p:project=@empty@ \
+    # b:branch=@empty@ \
+    # f:file=@empty@
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o a:h \
-                      --long action:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:b:f:p:h \
+                      --long action:,branch:,file:,project:,help \
                       -n $(basename -- $0) -- "$@")
 declare action=
+declare branch=@empty@
+declare file=@empty@
+declare project=@empty@
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
         -a|--action)
             action=$2
+            shift 2
+
+            ;;
+        -b|--branch)
+            branch=$2
+            shift 2
+
+            ;;
+        -f|--file)
+            file=$2
+            shift 2
+
+            ;;
+        -p|--project)
+            project=$2
             shift 2
 
             ;;
@@ -38,7 +61,16 @@ while true; do
             echo Options and arguments:
             printf %06s '-a, '
             printf %-24s '--action=ACTION'
-            echo "one of download-url, browse-url"
+            echo "one of download-url, browse-url, of"
+            printf %06s '-b, '
+            printf %-24s '--branch=BRANCH'
+            echo
+            printf %06s '-f, '
+            printf %-24s '--file=FILE'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo
             exit
             shift
             ;;
@@ -55,27 +87,43 @@ done
 
 ## end generated code
 
-p=$( # project
-    repo-abs-path | perl -pe 's,^/*,,'
- )
+if test "${project}" != @empty@; then
+    p=${project}
+else
 
-f=$( # file
-    gitp "$1"
- )
+    p=$( # project
+        repo-abs-path | perl -pe 's,^/*,,'
+     )
+fi
 
-b=$( # branch
-    repo-branch
- )
+if test "${file}" != @empty@; then
+    f=$file
+else
+    f=$( # file
+        gitp "$1"
+     )
+fi
 
+if test "${branch}" != @empty@; then
+    b=${branch}
+else
+    b=$( # branch
+        repo-branch
+     )
+fi
 
 case "$action" in
     d*)
         echo "${scm_gerrit_url}gitweb?p=$p.git;a=blob_plain;f=$f;hb=refs/heads/$b"
         ;;
     b*)
-        echo "${scm_gerrit_url}gitweb?p=$p.git;a=blob;f=$f;hb=refs/heads/$b"
+        if test -z "$b"; then
+            echo "${scm_gerrit_url}gitweb?p=$p.git"
+        else
+            echo "${scm_gerrit_url}gitweb?p=$p.git;a=blob;f=$f;hb=refs/heads/$b"
+        fi
         ;;
     of)
-        of "$(gr gitweb -a browse-url "$1")"
+        of "$(gr gitweb "${saved_args[@]}" -a browse-url)"
         ;;
 esac

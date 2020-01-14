@@ -1,0 +1,116 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+
+use Encode;
+use JSON;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# n:named-json f:fields-map
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $fields_map = "";
+my $named_json = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--fields-map=FIELDS-MAP';
+    if (length('--fields-map=FIELDS-MAP') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--named-json=NAMED-JSON';
+    if (length('--named-json=NAMED-JSON') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'fields-map|f=s' => \$fields_map,
+    'named-json|n=s' => \$named_json,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $jkd_verbose = $ENV{jkd_verbose};
+
+say STDERR "fields_map is ${fields_map}, named_json is ${named_json}" if $jkd_verbose;
+
+sub no_spaces_equal($$) {
+    my @pair = @_;
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($) {
+    map {s, | ,,g} @_;
+    return $_[0];
+}
+
+$named_json = from_json($named_json);
+$fields_map = from_json($fields_map);
+
+my %name_field_map;
+
+for (keys %$fields_map) {
+    my $name = $fields_map->{$_};
+
+    if (ref $name) {
+        $name = $name->{name};
+    }
+
+    if ($name) {
+        $name = no_spaces_convert $name;
+
+        $name_field_map{$name} = $_;
+        say STDERR "Created a map: $name: $name_field_map{$name}" if $jkd_verbose;
+    }
+
+}
+
+
+for (keys %$named_json) {
+    my $name = no_spaces_convert $_;
+    say STDERR "working with specified name: $name: $name_field_map{$name}";
+
+    if ($name_field_map{$name} and $name_field_map{$name} ne $_) {
+        say STDERR "update $name with $name_field_map{$name}";
+        $named_json->{$name_field_map{$name}} = $named_json->{$_};
+        delete $named_json->{$_};
+    }
+}
+
+print to_json($named_json);
