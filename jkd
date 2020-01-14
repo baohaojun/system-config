@@ -2,6 +2,7 @@
 # [[file:~/src/github/org-kungfu/jkd.org::the-ultimate-script][the-ultimate-script]]
 use strict;
 use String::ShellQuote;
+use IPC::System::Simple qw(systemx capturex);
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P -s perl -p jkd \
@@ -454,156 +455,6 @@ sub jkd_q(@) {
     }
 }
 
-sub jkd_select_project(@) {
-    my $projects_resp = get("rest/api/2/project/");
-
-    my %project_key_name_map;
-    my $projects_object = decode_json $projects_resp->content;
-
-    for my $project (@{$projects_object}) {
-        $project_key_name_map{$project->{key}} = $project->{name};
-    }
-
-    return select_args("-p", "Which project do you want to use?",
-                "-O", "select-jira-project",
-                sort {$a cmp $b} map {sprintf "%s: %s", $_, $project_key_name_map{$_}} keys %project_key_name_map
-        );
-}
-
-sub jkd_get_issue_types(@) {
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl -l p:project ttest-it
-    ## end code-generator
-    ## start generated code
-    use Getopt::Long;
-
-    Getopt::Long::Configure("default");
-
-    local @ARGV = @_;
-
-    my $project = "";
-    my $test_it = 0;
-
-    my $handler_help = sub {
-        print ;
-        print "\n\n选项和参数：\n";
-        printf "%6s", '-p, ';
-        printf "%-24s", '--project=PROJECT';
-        if (length('--project=PROJECT') > 24 and length() > 0) {
-            print "\n";
-            printf "%30s", "";
-        }
-        printf "%s", ;
-        print "\n";
-        printf "%6s", '-t, ';
-        printf "%-24s", '--[no]test-it';
-        if (length('--[no]test-it') > 24 and length() > 0) {
-            print "\n";
-            printf "%30s", "";
-        }
-        printf "%s", ;
-        print "\n";
-
-        exit(0);
-    };
-
-    GetOptions (
-        'project|p=s' => \$project,
-        'test-it|t!' => \$test_it,
-        'help|h!' => \&$handler_help,
-        );
-
-
-    ## end generated code
-
-    my $project_meta_resp = get("rest/api/2/issue/createmeta?projectKeys=$project");
-    my %jkd_project_issue_types_name_id_map;
-
-    my $project_meta_obj = decode_json $project_meta_resp->content;
-    for my $project (@{$project_meta_obj->{projects}}) {
-        for my $issuetype (@{$project->{issuetypes}}) {
-            my $name = encode_utf8 $issuetype->{name};
-            my $id = $issuetype->{id};
-            $jkd_project_issue_types_name_id_map{$name} = $id;
-        }
-    }
-
-    if ($test_it) {
-        print join("\n",
-                   map
-                   {sprintf "%s: %s", $_, $jkd_project_issue_types_name_id_map{$_}}
-                   keys %jkd_project_issue_types_name_id_map
-            );
-    }
-    return %jkd_project_issue_types_name_id_map;
-}
-
-sub jkd_get_issue_type_field_names(@) {
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl -P -l p:project t:issue-type
-    ## end code-generator
-    ## start generated code
-    use Getopt::Long;
-
-    Getopt::Long::Configure("posix_default");
-
-    local @ARGV = @_;
-
-    my $issue_type = "";
-    my $project = "";
-
-    my $handler_help = sub {
-        print ;
-        print "\n\n选项和参数：\n";
-        printf "%6s", '-t, ';
-        printf "%-24s", '--issue-type=ISSUE-TYPE';
-        if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
-            print "\n";
-            printf "%30s", "";
-        }
-        printf "%s", ;
-        print "\n";
-        printf "%6s", '-p, ';
-        printf "%-24s", '--project=PROJECT';
-        if (length('--project=PROJECT') > 24 and length() > 0) {
-            print "\n";
-            printf "%30s", "";
-        }
-        printf "%s", ;
-        print "\n";
-
-        exit(0);
-    };
-
-    GetOptions (
-        'issue-type|t=s' => \$issue_type,
-        'project|p=s' => \$project,
-        'help|h!' => \&$handler_help,
-    );
-
-
-    ## end generated code
-
-    my @fields = @ARGV;
-
-    @ARGV = ();
-
-    my $fields_json;
-    if ($project and $issue_type) {
-        $fields_json = decode_json(qx(jkd get-issue-type-fields -p $project -t '$issue_type' -v));
-    } else {
-        $fields_json = read_file("/dev/stdin");
-    }
-
-    use JSON::Path 'jpath_map';
-
-    for (@fields) {
-        my $jpath = JSON::Path->new("\$..$_.name");
-        my $name = encode_utf8 $jpath->value($fields_json);
-        say "$name : $_";
-    }
-}
-
 sub jkd_get_issue_type_fields(@) {
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -s perl -l p:project t:issue-type vverbose '?"print the json"'
@@ -711,8 +562,6 @@ sub work_with_all_fields($$\%$) {
                 $values =~ s,:.*,,mg;
                 @fields_to_edit = split(" ", $values);
                 say STDERR "fields_to_edit is @fields_to_edit";
-
-
             } else {
                 @fields_to_edit = sort keys %{$it->{fields}};
             }
@@ -1155,11 +1004,13 @@ sub jkd_c(@) { # create issue
     ## end generated code
 
     if (not $project) {
-        ($project = jkd_select_project()) =~ s/:.*//;
+        $project = capturex("jkd", "select-project");
     }
 
+    my $issue_type_json;
     if (not $issue_type or not $issue_type =~ m/^\d+$/) {
-        $issue_type = jkd_select_issue_type("-p", $project, "-t", "$issue_type");
+        $issue_type_json = from_json(capturex("jkd", "select-issuetype", "-p", "${project}", "--json"));
+        $issue_type = $issue_type_json->{id};
     }
 
     my %required_fields;
@@ -1173,7 +1024,9 @@ sub jkd_c(@) { # create issue
         }
     }
 
-    if ( $fields_json) {
+    if ($fields_json) {
+        $fields_json = capturex("jkd", "customfield-json-names2ids", "-n", decode_utf8("$fields_json"), "-f", decode_utf8(to_json($issue_type_json->{fields})));
+
         my $required_fields = decode_json $fields_json;
         %required_fields = %$required_fields;
         $required_fields{project} = {
@@ -1195,6 +1048,7 @@ sub jkd_c(@) { # create issue
             id => $issue_type,
         };
     }
+
     if ($assign_to_myself and exists $required_fields{assignee}) {
         $required_fields{assignee} = {
             name => $ENV{scm_jira_user}
@@ -1227,7 +1081,6 @@ sub jkd_c(@) { # create issue
         }
     }
 }
-
 sub jkd_comment(@) {
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt -l -s perl i:issue c:comment @once '?"以前已经添加过的 comment，就不会再重复添加了"'
