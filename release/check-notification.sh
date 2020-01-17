@@ -11,7 +11,7 @@ else
 fi
 
 if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
-    start-watching -u # do not watch weibo for too long.
+    start-cuty # do not watch weibo for too long.
 else
     my-adb sc-shell fuser -k /data/data/com.android.shell/var/watch-my-window.lock || true
 fi&
