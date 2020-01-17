@@ -79,6 +79,9 @@ if (not @fields_to_print) {
     for (keys %{$json_issue->{fields}}) {
         if ($json_issue->{fields}{$_}) {
             my $name = $json_issue->{names}{$_};
+            if (ref $json_issue->{fields}{$_} eq "HASH") {
+                delete $json_issue->{fields}{$_}{id} if ($json_issue->{fields}{$_}{name} || $json_issue->{fields}{$_}{value});
+            }
             if ($name and $name ne $_) {
                 $fields{$name} = $json_issue->{fields}{$_};
             } else {
