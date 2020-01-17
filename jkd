@@ -775,16 +775,27 @@ sub jkd_e(@) {
 
     my $ua = LWP::UserAgent->new;
 
-    my $request = PUT jkd_url_for_api("rest/api/2/issue/$issue_to_edit"),
-        'Content-Type' => 'application/json',
-        'Accept' => 'application/json',
-        "charset" => "utf-8",
-        Content => encode_json {
-            fields => \%edited_fields
-    };
-    my $response = $ua->request($request);
+    for my $try (1..3) {
+        my $request = PUT jkd_url_for_api("rest/api/2/issue/$issue_to_edit"),
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            "charset" => "utf-8",
+            Content => encode_json {
+                fields => \%edited_fields
+            };
+        my $response = $ua->request($request);
 
-    say "PUT response code:" . $response->code, "result: ", $response->content;
+        say "PUT \@${try} response code:" . $response->code, "result: ", $response->content;
+
+        last if $response->is_success;
+
+        my $errors = decode_json($response->content)->{errors};
+        for (keys %$errors) {
+            # die "Can't find $_" unless $required_fields{$_};
+            say STDERR "Delete $_ and try again";
+            delete $edited_fields{$_};
+        }
+    }
 }
 
 sub jkd_resolve(@) {
@@ -1060,7 +1071,7 @@ sub jkd_c(@) { # create issue
     my $ua = LWP::UserAgent->new;
     say "json is ", encode_json { fields => \%required_fields } if $jkd_verbose;
 
-    for (my $try = 0; $try < 2; $try++) {
+    for (my $try = 0; $try < 3; $try++) {
         my $request = POST jkd_url_for_api("rest/api/2/issue"),
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
@@ -1070,13 +1081,14 @@ sub jkd_c(@) { # create issue
             };
         my $response = $ua->request($request);
 
-        say "POST response code:" . $response->code, "result: ", $response->content;
+        say "POST \@${try} response code:" . $response->code, "result: ", $response->content;
 
         last if $response->is_success;
 
         my $errors = decode_json($response->content)->{errors};
         for (keys %$errors) {
             # die "Can't find $_" unless $required_fields{$_};
+            say STDERR "Delete $_ and try again";
             delete $required_fields{$_};
         }
     }
