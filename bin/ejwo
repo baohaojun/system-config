@@ -10,16 +10,17 @@ export tmp_file=~/tmp/ejwo/ejwo-$$
     # @tidy-html-for-markdown '?"tidy up html using MOJO::Dom"' \
     # @o2j '?"convert org text to jira"' \
     # @j2o '?"convert jira to org"' \
-    # @:text '?"The input text, default is read from stdin"'
-
+    # @:text '?"The input text, default is read from stdin"' \
+    # @:syntax=jira '?"One of jira or markdown"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o dh \
-                      --long debug,j2o,o2j,text:,tidy-html-for-markdown,help,no-debug,no-j2o,no-o2j,no-tidy-html-for-markdown \
+                      --long debug,j2o,o2j,syntax:,text:,tidy-html-for-markdown,help,no-debug,no-j2o,no-o2j,no-tidy-html-for-markdown \
                       -n $(basename -- $0) -- "$@")
 declare debug=false
 declare j2o=false
 declare o2j=false
+declare syntax=jira
 declare text=
 declare tidy_html_for_markdown=false
 eval set -- "$TEMP"
@@ -53,6 +54,11 @@ while true; do
             shift
 
             ;;
+        --syntax)
+            syntax=$2
+            shift 2
+
+            ;;
         --text)
             text=$2
             shift 2
@@ -82,6 +88,9 @@ while true; do
             printf %-24s '--[no-]o2j'
             echo "convert org text to jira"
             printf "%06s" " "
+            printf %-24s '--syntax=SYNTAX'
+            echo "One of jira or markdown"
+            printf "%06s" " "
             printf %-24s '--text=TEXT'
             echo "The input text, default is read from stdin"
             printf "%06s" " "
@@ -104,6 +113,14 @@ done
 
 
 ## end generated code
+
+if test "${syntax}" = jira; then
+    mj_convert=m2j.sh
+    jm_convert=j2m.sh
+else
+    mj_convert=cat
+    jm_convert=cat
+fi
 
 if test "${tidy_html_for_markdown}" = true; then
     exec perl -e "$(
@@ -168,7 +185,7 @@ if test "${o2j}" = true; then
 else
     (
         echo "#+OPTIONS: toc:nil num:nil";
-        cat | j2m.sh | pandoc --wrap=none -f markdown -t org
+        cat | ${jm_convert} | pandoc --wrap=none -f markdown -t org
     ) > ${tmp_org}
 fi
 
@@ -186,7 +203,7 @@ while true; do
     jira_content=$(
         org2html --cat --bare ${tmp_org} |
             ejwo --tidy-html-for-markdown |
-            pandoc --wrap=none -f html -t markdown | perl -pe 's,\Q{.should-remove}\E,,' | m2j.sh | rm-last-nl
+            pandoc --wrap=none -f html -t markdown | perl -pe 's,\Q{.should-remove}\E,,' | ${mj_convert} | rm-last-nl
                    )
 
     if test "${verbose}" = true; then

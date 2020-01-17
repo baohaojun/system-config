@@ -5,15 +5,17 @@ set -e
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P @jira '?"edit jira with org-mode"' \
     # @html '?"edit html with org-mode"' \
+    # @markdown '?"edit markdown with org-mode"' \
     # @io-only '?"仅作 input/output，不作拷贝粘贴"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
-                      --long html,io-only,jira,help,no-html,no-io-only,no-jira \
+                      --long html,io-only,jira,markdown,help,no-html,no-io-only,no-jira,no-markdown \
                       -n $(basename -- $0) -- "$@")
 declare html=false
 declare io_only=false
 declare jira=false
+declare markdown=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -45,6 +47,15 @@ while true; do
             shift
 
             ;;
+        --markdown|--no-markdown)
+            if test "$1" = --no-markdown; then
+                markdown=false
+            else
+                markdown=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -59,6 +70,9 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]jira'
             echo "edit jira with org-mode"
+            printf "%06s" " "
+            printf %-24s '--[no-]markdown'
+            echo "edit markdown with org-mode"
             exit
             shift
             ;;
@@ -104,6 +118,8 @@ else
         cat $next_file | ejwo | tee-with-tmp $next_file
     elif test "${html}" = true; then
         cat $next_file | ok ehwo | tee-with-tmp $next_file
+    elif test "${markdown}" = true; then
+        cat $next_file | ejwo --syntax markdown | tee-with-tmp $next_file
     else
         ew $next_file
     fi
