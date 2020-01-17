@@ -27,5 +27,9 @@ if test "${urls}" -a "${urls}" != "${old_text}"; then
     text_to_post=$(
         EMACS=t select-args -p "Which text do you want to post?" $urls "The old text"
                 )
-    echo "${text_to_post}"
+    if test "${text_to_post}" = "The old text"; then
+        echo "${old_text}"
+    else
+        echo "${text_to_post}"
+    fi
 fi

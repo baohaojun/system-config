@@ -63,7 +63,7 @@ fi
 declare -A function_url_map=(
     ["Configure System"]=configure
     ["Manage Jenkins"]=manage
-    ["Manage Plugins"]=pluginManager/
+    ["Manage Plugins"]=pluginManager/advanced
     ["Gerrit Trigger this change"]=yyy
     ["Config Gerrit Trigger"]=gerrit-trigger/
     ["select-a-job"]=xxx

@@ -23,13 +23,15 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
-for libdir in ${b0}; do
-    if test -x ${scm_common_libdir}/${libdir}/$1; then
-        action=${scm_common_libdir}/${libdir}/$1
-        shift
-        $action "$@"
-        exit
-    fi
+for libdir in ${b0} ${b0}.user ${b0}.local; do
+    for top_libdir in "${scm_common_libdir}" "${scm_local_libdir}"; do
+        if test "${top_libdir}" -a -x ${top_libdir}/${libdir}/$1; then
+            action=${top_libdir}/${libdir}/$1
+            shift
+            $action "$@"
+            exit
+        fi
+    done
 done
 
 die "Can't execute your command: $*"

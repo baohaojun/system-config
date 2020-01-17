@@ -204,7 +204,11 @@ for (@{$job_api_json_obj->{property}}) {
     for (@{$_->{parameterDefinitions}}) {
       my $name = $_->{defaultParameterValue}{name};
       my $value = $_->{defaultParameterValue}{value};
+      if ($_->{_class} eq "hudson.model.BooleanParameterDefinition") {
+          $value = $value ? 'true' : 'false';
+      }
       $default_params_map{$name} = $value unless defined $params_map{$name};
+      say STDERR "${name}: ${value}" if $debug;
     }
   }
 }

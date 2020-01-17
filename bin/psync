@@ -274,10 +274,14 @@ echo host: \$(hostname)
     jsftp_target_dir=.jsftp.$$/$( # this dir is under /tmp already when using lftp sftp://
         cat ~/tmp/$b0.$$ | perl -ne 'print $1 if m,^target: (.*),'
                     )
-    sfpt_host=$(cat ~/tmp/$b0.$$ | grep '^hostname: '|pn 2)
+    sftp_host=$(cat ~/tmp/$b0.$$ | grep '^host: '|pn 2)
+
+    if test -z "${sftp_host}"; then
+        die "Can't sync when host is empty, too bad!"
+    fi
 
     jsftp_target_dir=$(printf %q "$jsftp_target_dir")
-    log "jsftp_target_dir is $jsftp_target_dir"
+    log "jsftp_target_dir is $jsftp_target_dir, sftp_host is $sftp_host"
 fi
 
 if test -e psync-exclude.rc -a -z "$delete"; then
@@ -370,7 +374,7 @@ EOF0ecb2235bec3
                 set -x
                 js_username=$(git config -f $scm_secrets_conf sftp.js.username) || die "Must specify sftp.js.username in \${scm_secrets_conf}"
                 js_port=$(git config -f $scm_secrets_conf sftp.js.port || echo 2222)
-                lftp sftp://${js_username}:@js:${js_port}/jenkins_slave-4-198/ -e "cd $jsftp_target_dir; ${lftp_command} $source_file .${extra_file_arg};" || true
+                lftp sftp://${js_username}:@js:${js_port}/${sftp_host}/ -e "cd $jsftp_target_dir; ${lftp_command} $source_file .${extra_file_arg};" || true
             )
         done
         jssh $host --execute "rm -f $jsftp_tmpdir"

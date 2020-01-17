@@ -9,13 +9,14 @@ domain=com/search?q=
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @:pat
+# generate-getopt @:pat pprint-url
 ## end code-generator
 ## start generated code
-TEMP=$(getopt -o h \
-              --long pat:,help \
-              -n $(basename -- $0) -- "$@")
-pat=
+TEMP=$( getopt -o ph \
+               --long pat:,print-url,help,no-print-url \
+               -n $(basename -- $0) -- "$@")
+declare pat=
+declare print_url=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -23,14 +24,27 @@ while true; do
         --pat)
             pat=$2
             shift 2
+
+            ;;
+        -p|--print-url|--no-print-url)
+            if test "$1" = --no-print-url; then
+                print_url=false
+            else
+                print_url=true
+            fi
+            shift
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf "%06s" " "
             printf %-24s '--pat=PAT'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--[no-]print-url'
             echo
             exit
             shift
@@ -44,6 +58,7 @@ while true; do
             ;;
     esac
 done
+
 
 ## end generated code
 
@@ -183,8 +198,14 @@ if test "$prog" = search-jenkins; then
 elif test "$prog" = search-jenkins-search; then
     url="http://$(get-about-me jenkins-host)/search/?q=$fill"
 fi
+if test "${print_url}" = true; then
+    echo -n "${url}"
+    exit
+fi
 
 set -x
+
+
 
 if test "$BHJ_URLIFY" = true; then
     echo -n "$url"
