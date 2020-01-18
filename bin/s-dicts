@@ -17,7 +17,7 @@ text=$(echo -n "$text"|perl -npe 's/(^(「)|(「|,|　|（|\.|……」|』、�
 (
     text=$(echo -n "$text" | perl -npe 's/^\s*//; s/\s*$//')
     if [[ $text =~ ^https?:// ]]; then
-      firefox --new-tab "$text"
+      u of "$text"
     elif echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
         if [[ $text =~ ^[A-Z]+-[0-9]+ ]]; then
             of -w jira "${text%:}"

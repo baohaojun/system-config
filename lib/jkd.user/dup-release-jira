@@ -131,7 +131,8 @@ if test -z "${old_issue}"; then
 fi
 
 old_json=$(
-    jkd -j ${old_jira_url} print-issue -i ${old_issue} --json --for-clone
+    set -x
+    jkd -j ${old_jira_url} print-issue -i ${old_issue} --json
         )
 
 $debug echo old json is "${old_json}"
