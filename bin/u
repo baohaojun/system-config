@@ -19,6 +19,7 @@ else
         declare -x -p | perl -ne 'push @u, $1 if m,^declare -x scm_jenkins.*url.*="(.*)",; END {print join("|", @u)}'
                   )
 
+
     if test "$1" = go; then
         shift
     elif test "$1" = of; then
@@ -35,7 +36,7 @@ else
         else
             current_url=$(echo "${current_url}" | perl -pe 's,(/artifactory)/,$1/webapp/#/artifacts/browse/tree/General/,')
         fi
-        exec firefox "${current_url}"
+        bhj-notify firefox "${current_url}"
     else
         bhj-notify u "Don't know how to do $*"
     fi

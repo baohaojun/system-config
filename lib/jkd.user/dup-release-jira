@@ -6,16 +6,16 @@ set -e
     # @:old-jira-url='${scm_jira_url}' '?"The jira url for the old issue, default is \$scm_jira_url"' \
     # r:replace-regexp '?"默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"' \
     # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14504 = \"1.0.0\" 或 .customfield_14108 = (.value = \"HU\")"' \
-    # @:force-prod \
+    # @force-prod \
     # @debug='(true hint)' \
     # @:screen-filter '?"比如「EF:发布需求.Tabbed」"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o j:i:r:h \
-                      --long debug,force-prod:,jq-expression:,old-issue:,old-jira-url:,replace-regexp:,screen-filter:,help,no-debug \
+                      --long debug,force-prod,jq-expression:,old-issue:,old-jira-url:,replace-regexp:,screen-filter:,help,no-debug,no-force-prod \
                       -n $(basename -- $0) -- "$@")
 declare debug=true
-declare force_prod=
+declare force_prod=false
 declare jq_expression=.
 declare old_issue=
 declare old_jira_url=${scm_jira_url}
@@ -34,9 +34,13 @@ while true; do
             shift
 
             ;;
-        --force-prod)
-            force_prod=$2
-            shift 2
+        --force-prod|--no-force-prod)
+            if test "$1" = --no-force-prod; then
+                force_prod=false
+            else
+                force_prod=true
+            fi
+            shift
 
             ;;
         -j|--jq-expression)
@@ -73,7 +77,7 @@ while true; do
             printf %-24s '--[no-]debug'
             echo
             printf "%06s" " "
-            printf %-24s '--force-prod=FORCE_PROD'
+            printf %-24s '--[no-]force-prod'
             echo
             printf %06s '-j, '
             printf %-24s '--jq-expression=JQ_EXPRESSION'
@@ -120,7 +124,7 @@ case "${scm_jira_url}" in
         true
         ;;
     *)
-        if test "${force_prod}" != yes; then
+        if test "${force_prod}" != true; then
             die "Can only run in test jira"
         fi
         ;;
