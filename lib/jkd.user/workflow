@@ -1,8 +1,12 @@
 #!/usr/bin/env perl
 use strict;
-use v5.10; # for say
+use v5.10.1; # for say and switch
 use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+
 use JSON;
+
+my $json = JSON->new;
 use Encode;
 
 use XML::Quote qw(:all);
@@ -90,16 +94,17 @@ use File::Slurp;
 my $xml_str = read_file($workflow_xml);
 my $dom = Mojo::DOM->new->parse($xml_str);
 
-my $fields_json = decode_json(qx(jkd rest field));
-my $screens_json = decode_json(qx(jkd rest screens));
+my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field"));
+my $screens_json = $json->decode(scalar capturex("jkd", "rest", "screens"));
+my $status_json = $json->decode(scalar capturex("jkd", "rest", "status"));
 
-sub id2name($) {
-    my $id = $_[0];
+sub id2name($\@) {
+    my ($id, $names_ids_json) = @_;
 
     my @matched_names;
-    for (@{$fields_json}) {
+    for (@{$names_ids_json}) {
         if ($_->{id} eq $id or $_->{id} eq "customfield_$id") {
-            push @matched_names, encode_utf8 $_->{name};
+            push @matched_names, $_->{name};
         }
     }
     if (@matched_names != 1) {
@@ -109,21 +114,31 @@ sub id2name($) {
     return $matched_names[0];
 }
 
-sub name2cfid($) {
-    my $name = $_[0];
+sub name2id($\@) {
+    my ($name, $names_ids_json) = @_;
+
+    if (not $name) {
+        die "You should not pass empty name!";
+    }
     my @matched_ids = map {
         $_->{id}
     } grep {
-        $name eq encode_utf8($_->{name})
-    } @$fields_json;
+        $name eq $_->{name}
+    } @$names_ids_json;
     die "Can't find exactly 1 id for $name: '@matched_ids'" if (@matched_ids != 1 && not $keep_running);
     return $matched_ids[0];
 }
 
-sub name2id($) {
-    (my $id = name2cfid($_[0])) =~ s,customfield_,,;
+sub fields_name2id_number_only($) {
+    (my $id = name2id($_[0], @$fields_json)) =~ s,customfield_,,;
     return $id
 }
+
+my %meta_field_name_json_map = (
+    'jira.fieldscreen.id' => $screens_json,
+    'jira.status.id' => $status_json,
+);
+
 
 # 4 matches for "14509"
 #     145:            <arg name="fieldsList">customfield_14509</arg>
@@ -139,7 +154,7 @@ if ($action eq "id2name") {
                     my @field_ids = grep {m/./} split('@@', $_->text);
                     my @field_names;
                     push @field_names, map {
-                        id2name($_);
+                        id2name($_, @$fields_json);
                     } @field_ids;
 
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote join('@@', @field_names)));
@@ -147,7 +162,7 @@ if ($action eq "id2name") {
                     my $text = $_->text;
 
                     die "Can't handle this text: $text" unless $text =~ m,^field::(\d+);,;
-                    my $name = id2name($1);
+                    my $name = id2name($1, @$fields_json);
                     die "bad name $name: it matches ;!" if $name =~ m/;/;
 
                     $text =~ s,^field::(\d+);,field::${name};,;
@@ -159,22 +174,11 @@ if ($action eq "id2name") {
     $dom->find('meta')->each
         (
             sub {
-                if ($_->{name} eq 'jira.fieldscreen.id' and $_->text) { # <meta name="jira.fieldscreen.id"></meta>
-                    # say STDERR "working with ", $_->text;
-                    my $id = $_->text;
-                    my $screen_name;
-
-                    map {
-                        if ($_->{id} eq $id) {
-                            $screen_name = encode_utf8 $_->{name};
-                            # say STDERR "Got the screen name: $screen_name";
-                        }
-                    } @$screens_json;
-
-                    if (not $screen_name) {
-                        die "Can't get screen name for ${id}!" unless $keep_running;
+                for my $meta_name (keys %meta_field_name_json_map) {
+                    if ($_->{name} eq $meta_name and $_->text) {
+                        my $name = id2name($_->text, @{$meta_field_name_json_map{$meta_name}});
+                        $_->replace(sprintf('<meta name="%s">%s</arg>', $_->{name}, xml_quote $name));
                     }
-                    $_->replace(sprintf('<meta name="jira.fieldscreen.id">%s</meta>', xml_quote $screen_name));
                 }
             }
         );
@@ -186,17 +190,12 @@ if ($action eq "id2name") {
                     my @field_names = grep {m/./} split('@@', $_->text);
                     my @field_ids;
                     my $arg_name = $_->{name};
-                    map {
-                        my $name = decode_utf8 $_;
-                        for (@{$fields_json}) {
-                            if ($_->{name} eq $name) {
-                                my $id = $_->{id};
-                                if ($arg_name !~ m,fieldslist,i) {
-                                    $id =~ s,.*_,,;
-                                }
-                                push @field_ids, $id;
-                                last;
-                            }
+
+                    @field_ids = map {
+                        if ($arg_name !~ m,fieldslist,i) {
+                            $_ = fields_name2id_number_only $_;
+                        } else {
+                            $_ = name2id($_, @$fields_json) if $_;
                         }
                     } @field_names;
 
@@ -208,7 +207,7 @@ if ($action eq "id2name") {
                     my $text = $_->text;
 
                     die "Can't handle this text: $text" unless $text =~ m,^field::(.*?);,;
-                    my $id = name2id $1;
+                    my $id = fields_name2id_number_only $1;
 
                     $text =~ s,^field::(.*?);,field::${id};,;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
@@ -219,18 +218,11 @@ if ($action eq "id2name") {
     $dom->find('meta')->each
         (
             sub {
-                if ($_->{name} eq 'jira.fieldscreen.id' and $_->text) { # <meta name="jira.fieldscreen.id"></meta>
-                    my $screen_name = decode_utf8 $_->text;
-                    my $id;
-
-                    map {
-                        if ($_->{name} eq $screen_name) {
-                            $id = encode_utf8 $_->{id};
-                        }
-                    } @$screens_json;
-
-                    die "Can't find id for ${screen_name}" unless $id or $keep_running;
-                    $_->replace(sprintf('<meta name="jira.fieldscreen.id">%s</meta>', xml_quote $id));
+                for my $meta_name (keys %meta_field_name_json_map) {
+                    if ($_->{name} eq $meta_name and $_->text) {
+                        my $id = name2id($_->text, @{$meta_field_name_json_map{$meta_name}});
+                        $_->replace(sprintf('<meta name="%s">%s</arg>', $_->{name}, xml_quote $id));
+                    }
                 }
             }
         );
