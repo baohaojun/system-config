@@ -8,7 +8,7 @@ M.wrench_cue = function(who)
    wrench_post("@", "No-Post")
 
    search_button = current_pkg .. ".cue-search"
-   cue_all = current_pkg .. ".cue-all"
+   cue_all_scene = current_pkg .. ".cue-all"
 
    wait_for_scene(search_button)
 
@@ -17,11 +17,12 @@ M.wrench_cue = function(who)
       return wait_input_target_n_ok(1, current_pkg)
    end
 
-   find_scene(cue_all)
+   find_scene(cue_all_scene)
    jump_from_to(search_button, wait_ime)
 
+   local cue_all = true
    if who:lower() ~= "all" and who ~= "所有人" then
-      wrench_post(who, "No-Post")
+      cue_all = false
    end
 
 
@@ -30,7 +31,16 @@ M.wrench_cue = function(who)
    end
 
    click_1 = function()
-      click_scene(cue_all, {skip_refind = true})
+      if cue_all then
+         log("cue_all is %s", cue_all)
+         click_scene(cue_all_scene, {skip_refind = true})
+      else
+         log("cue_all is %s", cue_all)
+         jump_out_of("dd/cue-multi")
+         wrench_post(who, "No-Post")
+         click_scene(cue_all_scene, {skip_refind = true})
+         jump_out_of("dd/cue-queding")
+      end
    end
 
    jump_from_to(true, is_back_to_chat, {action = click_1})
