@@ -44,9 +44,182 @@ cat <<'EOFcc6741846980'
 # {%/org-mode%}
 EOFcc6741846980
 
-yes-or-no-p "备份生产服务器上的 screens"
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # p:prod-jira-url \
+    # t:test-jira-url='${scm_jira_url}' \
+    # s:screens-regexp \
+    # w:workflow-regexp \
+    # @:issuetype-regexp
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o p:s:t:w:h \
+                      --long issuetype-regexp:,prod-jira-url:,screens-regexp:,test-jira-url:,workflow-regexp:,help \
+                      -n $(basename -- $0) -- "$@")
+declare issuetype_regexp=
+declare prod_jira_url=
+declare screens_regexp=
+declare test_jira_url=${scm_jira_url}
+declare workflow_regexp=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --issuetype-regexp)
+            issuetype_regexp=$2
+            shift 2
+
+            ;;
+        -p|--prod-jira-url)
+            prod_jira_url=$2
+            shift 2
+
+            ;;
+        -s|--screens-regexp)
+            screens_regexp=$2
+            shift 2
+
+            ;;
+        -t|--test-jira-url)
+            test_jira_url=$2
+            shift 2
+
+            ;;
+        -w|--workflow-regexp)
+            workflow_regexp=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--issuetype-regexp=ISSUETYPE_REGEXP'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--prod-jira-url=PROD_JIRA_URL'
+            echo
+            printf %06s '-s, '
+            printf %-24s '--screens-regexp=SCREENS_REGEXP'
+            echo
+            printf %06s '-t, '
+            printf %-24s '--test-jira-url=TEST_JIRA_URL'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--workflow-regexp=WORKFLOW_REGEXP'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "${prod_jira_url}"; then
+    prod_jira_url=${scm_jira_staging_url}
+fi
+
+if test -z "${screens_regexp}"; then
+    screens_regexp=$(
+        select-args --ask-for-input -1 --select-from-history-too -o -p "what is your screen regexp for migration?"
+                  )
+fi
+
+if test -z "${workflow_regexp}"; then
+    workflow_regexp=$(
+        select-args --ask-for-input -1 --select-from-history-too -o -p "Please input workflow regexp"
+                   )
+fi
+
+if test -z "${issuetype_regexp}"; then
+    issuetype_regexp=$(
+        select-args --ask-for-input -1 --select-from-history-too -o -p "Please input issue type regexp"
+                    )
+fi
+
+IFS=$'\n'
+
+cd ~/src/jenkins-tasks/jira
+
+prod_dir=$PWD/${prod_jira_url}
+test_dir=$PWD/${test_jira_url}
+
+mkdir -p -v {"${prod_dir}","${test_dir}"}/{screens,workflows}
+
+git.commit.pwd
+
+if ! yes-or-no-p "已经备份生产服务器上的 screens？"; then
+    (
+        cd "${prod_dir}"
+        for screen in $(jkd -j "${prod_jira_url}" rest screens |jq '.[]|.name' -r | grep -P "$screens_regexp"); do
+            jkd -j "${prod_jira_url}" dump-screen -s "${screen}" > screens/${screen}.json
+        done
+    )
+fi
 ./migrate-fields
+
+export scm_jira_url=${test_jira_url}
+
+matched_issue_type=(
+    $(
+        jkd rest issuetype | jq '.[]|.name' -r | grep -P "${issuetype_regexp}"
+    )
+)
+
+issuetype_name=$(
+    select-args -p "Which issue type to migrate?" "${matched_issue_type[@]}"
+          )
+
+while ! jkd -j "${prod_jira_url}" name2id -a issuetype "${issuetype_name}" &>/dev/null; do
+    jkd -j "${prod_jira_url}" go issuetype
+    hint "Have you created issue type ${issuetype_name}?"
+done
+
 yes-or-no-p "修改 issuetype 的 screen 关联"
+
+workflow_name=$(
+    jkd rest workflow | jq '.[]|.name' -r | grep -P "${workflow_regexp}" |
+        select-output-line cat
+             )
+
+cd "${test_dir}"
+
+workflow_file=workflows/${workflow_name}.xml
+workflow_file_with_names=workflows/${workflow_name}.names.xml
+
+if yes-or-no-p "Export workflow ${workflow_name} as xml, and put it in clipboard?"; then
+    jkd go workflow "${workflow_name}"
+    hint "Press enter when you are done"
+    getclip > workflows/${workflow_name}.xml
+fi
+
+jkd workflow -a id2name -f "${workflow_file}" > "${workflow_file_with_names}"
+
+cd ${prod_dir}
+
+while ! jkd  -j "${prod_jira_url}" workflow -a id2name -f ${test_dir}/"${workflow_file_with_names}" > "${workflow_file}"; do
+    hint "Migrate workflow (converting ids/names) has failed, please check"
+done
+
 yes-or-no-p "把两边的 workflow export 出来，做一下对比"
 yes-or-no-p "把 workflow 里的字段 id 改成目标环境上的 id"，参考 jkd workflow -h 命令
 yes-or-no-p "在目标上 import"

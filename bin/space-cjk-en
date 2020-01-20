@@ -8,16 +8,21 @@ my $thin_space = chr(0x2009);
 BEGIN {
     our $box = decode_utf8 "⃣";
     $box = qr($box);
-    our $symbols_always_add_space = qr((?:-|[/=~])*); # - is too special
+    our $symbols_always_add_space = qr((?:[=~])*);
+    our $symbols_always_add_space_around = qr((?:[-/])*);
     our $symbols_thinner_with_space = qr((?:-|[]/=~.()\${}[])*); # why $?
 }
 
 our $box;
 our $symbols_always_add_space;
 our $symbols_thinner_with_space;
+our $symbols_always_add_space_around;
 
 while (<>) {
     $_ = decode_utf8 $_;
+
+    s/(\p{CJK})\s*($symbols_always_add_space_around)\s*([a-z0-9])/$1$thin_space$2$thin_space$3/gi;
+    s/([a-z0-9])\s*($symbols_always_add_space_around)\s*(\p{CJK})/$1$thin_space$2$thin_space$3/gi;
 
     s/(\p{CJK})\s*($symbols_always_add_space[a-z0-9])(?!$box)/$1$thin_space$2/gi;
     s/(\p{CJK})(?: |$thin_space)+($symbols_thinner_with_space[a-z0-9])(?!$box)/$1$thin_space$2/gi; # 这个目录 $PWD

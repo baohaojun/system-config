@@ -11,7 +11,7 @@ declare -A admin_pages=(
     [create-issue]=projects/'$(get-project-key)'
     ["admin-issues"]=secure/admin/ViewIssueTypes.jspa
     ["workflows"]=secure/admin/workflows/ListWorkflows.jspa
-    ["admin-add-issuetypes"]="hint: project -> issuetypes -> actions (top-right corner) -> edit issuetypes -> add issuetypes"
+    ["admin-add-issuetypes"]=secure/admin/AddNewIssueType.jspa
     ["open"]=open
 )
 
