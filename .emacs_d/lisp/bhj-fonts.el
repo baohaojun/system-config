@@ -46,10 +46,10 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
      'default nil :font en-font)
     (condition-case font-error
         (progn
-          (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size (+ 0.0 english-font-size)))
-          (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
+          (set-face-font 'italic (font-spec :family "JetBrains Mono" :slant 'italic :weight 'normal :size (+ 0.0 english-font-size)))
+          (set-face-font 'bold-italic (font-spec :family "JetBrains Mono" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
 
-          (set-fontset-font t 'symbol (font-spec :family "Courier New")))
+          (set-fontset-font t 'symbol (font-spec :family "JetBrains Mono")))
       (error nil))
     (set-fontset-font t 'symbol (font-spec :family "Unifont") nil 'append)
     (set-fontset-font t nil (font-spec :family "DejaVu Sans"))
@@ -64,7 +64,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
   (shell-command-to-string "sawfish-client -e '(maximize-window (input-focus))'&"))
 
 
-(defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
+(defvar bhj-english-fonts '("JetBrains Mono" "Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
 (defvar bhj-chinese-fonts '("Microsoft Yahei" "Microsoft_Yahei" "微软雅黑" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
 
 (qiang-set-font
@@ -93,7 +93,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
  (t ;; is a linux:-)
   (setq chinese-font-size-scale-alist '((12 . 1.25) (12.5 . 1.25) (14 . 1.20) (16 . 1.25) (20 . 1.20)))))
 
-(defvar bhj-english-font-size-steps '(9 10.5 11.5 12 12.5 14 16 18 20 22 40))
+(defvar bhj-english-font-size-steps '(9 10.5 11.5 12 12.5 13 14 16 18 20 22 40))
 (defun bhj-step-frame-font-size (step)
   (let ((steps bhj-english-font-size-steps)
         next-size)

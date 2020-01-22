@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 cat <<'EOFcc6741846980'
@@ -52,23 +53,49 @@ declare comment_doc=$(
 EOFe9576f8668e0
         )
 
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+PATH=${abs0%/*}:$PATH
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P '?"${comment_doc}"' \
+# generate-getopt -e -P '?"${comment_doc}"' \
     # p:prod-jira-url \
     # t:test-jira-url='${scm_jira_url}' \
     # s:screens-regexp \
     # w:workflow-regexp \
-    # @:issuetype-regexp
+    # @:issuetype-regexp \
+    # @:project-key
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o p:s:t:w:h \
-                      --long issuetype-regexp:,prod-jira-url:,screens-regexp:,test-jira-url:,workflow-regexp:,help \
+                      --long issuetype-regexp:,prod-jira-url:,project-key:,screens-regexp:,test-jira-url:,workflow-regexp:,help \
                       -n $(basename -- $0) -- "$@")
-declare issuetype_regexp=
-declare prod_jira_url=
-declare screens_regexp=
-declare test_jira_url=${scm_jira_url}
-declare workflow_regexp=
+declare -x issuetype_regexp=${issuetype_regexp:-}
+declare -x prod_jira_url=${prod_jira_url:-}
+declare -x project_key=${project_key:-}
+declare -x screens_regexp=${screens_regexp:-}
+declare -x test_jira_url=${test_jira_url:-${scm_jira_url}}
+declare -x workflow_regexp=${workflow_regexp:-}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -80,6 +107,11 @@ while true; do
             ;;
         -p|--prod-jira-url)
             prod_jira_url=$2
+            shift 2
+
+            ;;
+        --project-key)
+            project_key=$2
             shift 2
 
             ;;
@@ -108,6 +140,9 @@ while true; do
             echo
             printf %06s '-p, '
             printf %-24s '--prod-jira-url=PROD_JIRA_URL'
+            echo
+            printf "%06s" " "
+            printf %-24s '--project-key=PROJECT_KEY'
             echo
             printf %06s '-s, '
             printf %-24s '--screens-regexp=SCREENS_REGEXP'
@@ -150,6 +185,12 @@ if test -z "${workflow_regexp}"; then
                    )
 fi
 
+if test -z "${project_key}"; then
+    project_key=$(
+        jkd sel-key -a project
+               )
+fi
+
 if test -z "${issuetype_regexp}"; then
     issuetype_regexp=$(
         select-args --ask-for-input -1 --select-from-history-too -o -p "Please input issue type regexp"
@@ -160,22 +201,33 @@ IFS=$'\n'
 
 cd ~/src/jenkins-tasks/jira
 
-prod_dir=$PWD/${prod_jira_url}
-test_dir=$PWD/${test_jira_url}
+export prod_dir=$PWD/${prod_jira_url}
+export test_dir=$PWD/${test_jira_url}
 
 mkdir -p -v {"${prod_dir}","${test_dir}"}/{screens,workflows}
 
-git.commit.pwd
+git.commit.pwd -m "Before migrate"
 
-if ! yes-or-no-p "已经备份生产服务器上的 screens？"; then
-    (
-        cd "${prod_dir}"
-        for screen in $(jkd -j "${prod_jira_url}" rest screens |jq '.[]|.name' -r | grep -P "$screens_regexp"); do
-            jkd -j "${prod_jira_url}" dump-screen -s "${screen}" > screens/${screen}.json
-        done
-    )
+. atexit bash -c "cd $PWD; git.commit.pwd -m 'After migrate'"
+
+if yes-or-no-p "migrate screens and fields?"; then
+    if ! yes-or-no-p "已经备份生产服务器上的 screens？"; then
+        (
+            cd "${prod_dir}"
+            screens=$(jkd -j "${prod_jira_url}" rest screens |jq '.[]|.name' -r | grep -P "$screens_regexp" || true)
+            if test -z "${screens}"; then
+                hint "No screens found on prod system for regexp ${screens_regexp}"
+                exit 0
+            fi
+            for screen in ${screens}; do
+                log "Working with $screen from $screens_regexp"
+                jkd -j "${prod_jira_url}" dump-screen -s "${screen}" > screens/${screen}.json
+            done
+        )
+    fi
+
+    migrate-fields -p "${prod_jira_url}" -s "${screens_regexp}"
 fi
-./migrate-fields
 
 export scm_jira_url=${test_jira_url}
 
@@ -185,58 +237,20 @@ matched_issue_type=(
     )
 )
 
-issuetype_name=$(
+export issuetype_name=$(
     select-args -p "Which issue type to migrate?" "${matched_issue_type[@]}"
-          )
+              )
 
-while ! jkd -j "${prod_jira_url}" name2id -a issuetype "${issuetype_name}" &>/dev/null; do
-    jkd -j "${prod_jira_url}" go issuetype
-    hint "Have you created issue type ${issuetype_name}?"
-done
-
-yes-or-no-p "修改 issuetype 的 screen 关联"
-
-workflow_name=$(
-    jkd rest workflow | jq '.[]|.name' -r | grep -P "${workflow_regexp}" |
-        select-output-line cat
-             )
-
-cd "${test_dir}"
-
-workflow_file=workflows/${workflow_name}.xml
-workflow_file_with_names=workflows/${workflow_name}.names.xml
-
-if yes-or-no-p "Export workflow ${workflow_name} as xml, and put it in clipboard?"; then
-    jkd go workflow "${workflow_name}"
-    hint "Press enter when you are done"
-    getclip > workflows/${workflow_name}.xml
+if yes-or-no-p "Migrate issuetype?"; then
+    migrate-issuetype -u "${prod_jira_url}" -p "${project_key}" -i "${issuetype_name}"
 fi
 
-jkd workflow -a id2name -f "${workflow_file}" > "${workflow_file_with_names}"
+export workflow_name=$(
+    jkd sel-name -a workflow "${workflow_regexp}"
+       )
 
-cd ${prod_dir}
+if yes-or-no-p "Migrate workflow?"; then
+    migrate-workflow
+fi
 
-while ! jkd  -j "${prod_jira_url}" workflow -a id2name -f ${test_dir}/"${workflow_file_with_names}" > "${workflow_file}"; do
-    hint "Migrate workflow (converting ids/names) has failed, please check"
-done
-
-yes-or-no-p "把两边的 workflow export 出来，做一下对比"
-yes-or-no-p "把 workflow 里的字段 id 改成目标环境上的 id"，参考 jkd workflow -h 命令
-yes-or-no-p "在目标上 import"
-yes-or-no-p "确认每个状态都不是灰的！！！，"
-
-cat <<'EOF66c3f85d104c'
-# {%org-mode%}
-如果有，解决方法是
-
-1. 新建一个名字相近的 step（但是绝对绝对不能同名！！！），
-
-2. 然后把它的 linked status 改掉，
-
-3. 再把灰的那个改成用这个新的的 linked status，
-4. 再把新的 step 给删掉
-# {%/org-mode%}
-EOF66c3f85d104c
-
-yes-or-no-p "把 issuetype 关联到新的 workflow"
 yes-or-no-p "把所有 dynamic export 出来，在目标上 import"

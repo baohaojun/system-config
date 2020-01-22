@@ -389,7 +389,7 @@ elif test "${#selection_entries[@]}" = 1 -a -z "${always_selection}" -a -z "$ini
     if test "$hint_1_entry" = true; then
 
         if test "${ask_for_input}" = true; then
-            if yes-or-no-p -y "只有一个选项： ${selection_entries[0]}，确定？"; then
+            if yes-or-no-p -y "只有一个选项： ${selection_entries[0]}，确定（$prompt）？"; then
                 output-result "${selection_entries[0]}"
                 exit 0
             else
@@ -399,7 +399,7 @@ elif test "${#selection_entries[@]}" = 1 -a -z "${always_selection}" -a -z "$ini
                 new_output=true
             fi
         else
-            hint "只有一个选项：${selection_entries[0]}"
+            hint "只有一个选项：${selection_entries[0]} ($prompt)"
         fi
     fi
     if test "${new_output}" = false; then

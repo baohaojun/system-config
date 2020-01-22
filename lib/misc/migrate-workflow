@@ -1,0 +1,50 @@
+#!/bin/bash
+set -e
+
+cd "${test_dir}"
+workflow_file=workflows/${workflow_name}.xml
+workflow_file_with_names=workflows/${workflow_name}.names.xml
+
+hint "Export workflow ${workflow_name} as xml, and put it in clipboard"
+jkd go workflow "${workflow_name}"
+hint "Press enter when you are done"
+
+save-workflow() {
+    while true; do
+        if yes-or-no-p "请确保已经将 workflow ${workflow_name} 导出并将其内容保存至系统剪贴板"; then
+            getclip > workflows/${workflow_name}.xml
+            if jkd workflow -a id2name -f "${workflow_file}" > "${workflow_file_with_names}"; then
+                jkd workflow -a name2id -f "${workflow_file_with_names}" > "${workflow_file}"
+                break
+            fi
+        fi
+    done
+}
+
+save-workflow
+
+cd ${prod_dir}
+export scm_jira_url=${prod_jira_url}
+
+while ! jkd  -j "${prod_jira_url}" workflow -a name2id -f ${test_dir}/"${workflow_file_with_names}" > "${workflow_file}"; do
+    hint "Migrate workflow (converting ids/names) has failed, please check"
+done
+
+yes-or-no-p "把两边的 workflow export 出来，做一下对比(prod <> test)"
+
+meld ${workflow_file} "${test_dir}"/${workflow_file}
+
+yes-or-no-p "在目标上 import workflow xml (会将 workflow 文件内容放入系统剪贴板)"
+putclip "${workflow_name}"
+cat "${workflow_file}" | putclip
+
+jkd go open 'secure/admin/workflows/ImportWorkflowFromXml!default.jspa'
+
+save-workflow
+
+yes-or-no-p "把两边的 workflow export 出来，做一下对比(prod <> test)"
+meld "${workflow_file_with_names}" "${test_dir}/${workflow_file_with_names}"
+
+yes-or-no-p "在目标上配置 issuetype workflow scheme （还是搜 ${project_key}）"
+
+jkd go open secure/admin/ViewWorkflowSchemes.jspa

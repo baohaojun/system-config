@@ -98,8 +98,16 @@ my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field"));
 my $screens_json = $json->decode(scalar capturex("jkd", "rest", "screens"));
 my $status_json = $json->decode(scalar capturex("jkd", "rest", "status"));
 
-sub id2name($\@) {
-    my ($id, $names_ids_json) = @_;
+my %datatype_json_map = (
+    field => $fields_json,
+    screens => $screens_json,
+    status => $status_json,
+);
+
+sub id2name($$) {
+    my ($id, $datatype) = @_;
+
+    my $names_ids_json = $datatype_json_map{$datatype};
 
     my @matched_names;
     for (@{$names_ids_json}) {
@@ -108,14 +116,24 @@ sub id2name($\@) {
         }
     }
     if (@matched_names != 1) {
-        die "Can't find exactly 1 name for $id: '@matched_names'" unless $keep_running;
+        my $extra_msg;
+        if (@matched_names == 0) {
+            $extra_msg = "Please create it!";
+            if ($datatype eq 'status') {
+                $extra_msg .= "\n\n (you need assign it to an issuetype in issuetype workflow scheme, for it to work) \n\n";
+            }
+        } else {
+            $extra_msg = "Please remove extra ones!"
+        }
+        die "Can't find exactly 1 ${datatype} name for $id: '@matched_names' ($extra_msg)" unless $keep_running;
     }
 
     return $matched_names[0];
 }
 
-sub name2id($\@) {
-    my ($name, $names_ids_json) = @_;
+sub name2id($$) {
+    my ($name, $datatype) = @_;
+    my $names_ids_json = $datatype_json_map{$datatype};
 
     if (not $name) {
         die "You should not pass empty name!";
@@ -125,18 +143,31 @@ sub name2id($\@) {
     } grep {
         $name eq $_->{name}
     } @$names_ids_json;
-    die "Can't find exactly 1 id for $name: '@matched_ids'" if (@matched_ids != 1 && not $keep_running);
+
+    if (@matched_ids != 1) {
+        my $extra_msg;
+        if (@matched_ids == 0) {
+            $extra_msg = "Please create it! check workflow file: ${workflow_xml} \@ $ENV{PWD}";
+            if ($datatype eq "status") {
+                system("jkd", "go", "workflow");
+            }
+        } else {
+            $extra_msg = "Please remove extra ones!"
+        }
+        die "Can't find exactly 1 id for ${datatype} name $name: '@matched_ids' ($extra_msg)" unless $keep_running;
+    }
+
     return $matched_ids[0];
 }
 
 sub fields_name2id_number_only($) {
-    (my $id = name2id($_[0], @$fields_json)) =~ s,customfield_,,;
+    (my $id = name2id($_[0], 'field')) =~ s,customfield_,,;
     return $id
 }
 
 my %meta_field_name_json_map = (
-    'jira.fieldscreen.id' => $screens_json,
-    'jira.status.id' => $status_json,
+    'jira.fieldscreen.id' => 'screens',
+    'jira.status.id' => 'status',
 );
 
 
@@ -154,7 +185,7 @@ if ($action eq "id2name") {
                     my @field_ids = grep {m/./} split('@@', $_->text);
                     my @field_names;
                     push @field_names, map {
-                        id2name($_, @$fields_json);
+                        id2name($_, 'field');
                     } @field_ids;
 
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote join('@@', @field_names)));
@@ -162,7 +193,7 @@ if ($action eq "id2name") {
                     my $text = $_->text;
 
                     die "Can't handle this text: $text" unless $text =~ m,^field::(\d+);,;
-                    my $name = id2name($1, @$fields_json);
+                    my $name = id2name($1, 'field');
                     die "bad name $name: it matches ;!" if $name =~ m/;/;
 
                     $text =~ s,^field::(\d+);,field::${name};,;
@@ -176,7 +207,7 @@ if ($action eq "id2name") {
             sub {
                 for my $meta_name (keys %meta_field_name_json_map) {
                     if ($_->{name} eq $meta_name and $_->text) {
-                        my $name = id2name($_->text, @{$meta_field_name_json_map{$meta_name}});
+                        my $name = id2name($_->text, $meta_field_name_json_map{$meta_name});
                         $_->replace(sprintf('<meta name="%s">%s</arg>', $_->{name}, xml_quote $name));
                     }
                 }
@@ -195,7 +226,7 @@ if ($action eq "id2name") {
                         if ($arg_name !~ m,fieldslist,i) {
                             $_ = fields_name2id_number_only $_;
                         } else {
-                            $_ = name2id($_, @$fields_json) if $_;
+                            $_ = name2id($_, 'field') if $_;
                         }
                     } @field_names;
 
@@ -220,7 +251,7 @@ if ($action eq "id2name") {
             sub {
                 for my $meta_name (keys %meta_field_name_json_map) {
                     if ($_->{name} eq $meta_name and $_->text) {
-                        my $id = name2id($_->text, @{$meta_field_name_json_map{$meta_name}});
+                        my $id = name2id($_->text, $meta_field_name_json_map{$meta_name});
                         $_->replace(sprintf('<meta name="%s">%s</arg>', $_->{name}, xml_quote $id));
                     }
                 }

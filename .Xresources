@@ -13,7 +13,7 @@ xterm*locale: true
 xterm.utf8:     true
 xterm*utf8Title: true
 xterm*fontMenu*fontdefault*Label: Default
-xterm*faceName:DejaVu Sans Mono:antialias=True:pixelsize=20
+xterm*faceName:JetBrains Mono:antialias=True:pixelsize=20
 xterm*boldFont:Sans:style=Bold:pixelsize=20
 xterm*faceNameDoublesize:WenQuanYi Zen Hei:antialias=True:pixelsize=20
 xterm*xftAntialias: true

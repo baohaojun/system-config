@@ -1,0 +1,98 @@
+#!/bin/bash
+set -e
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # p:project-key i:issuetype-name u:jira-url
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o i:u:p:h \
+                      --long issuetype-name:,jira-url:,project-key:,help \
+                      -n $(basename -- $0) -- "$@")
+declare issuetype_name=
+declare jira_url=
+declare project_key=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -i|--issuetype-name)
+            issuetype_name=$2
+            shift 2
+
+            ;;
+        -u|--jira-url)
+            jira_url=$2
+            shift 2
+
+            ;;
+        -p|--project-key)
+            project_key=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--issuetype-name=ISSUETYPE_NAME'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--jira-url=JIRA_URL'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--project-key=PROJECT_KEY'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+export scm_jira_url=${jira_url}
+
+while ! jkd -j "${prod_jira_url}" name2id -a issuetype "${issuetype_name}" &>/dev/null; do
+    jkd -j "${prod_jira_url}" go issuetype
+    hint "Have you created issue type ${issuetype_name}?"
+done
+
+hint "add issue type ${issuetype_name} to project (click Action -> edit issuetype, remember to click save\!)"
+putclip "${issuetype_name}"
+
+jkd go open "plugins/servlet/project-config/${project_key}/issuetypes"
+
+hint "create new screen scheme (并配置一下「默认、创建、编辑」等场合下使用哪个 screen)"
+hint "如果要创建一个新的 screen scheme 的话，建议将其命名为 ${issuetype_name}.screens，因为它是要给指定的 issuetype 用的"
+hint "（这是一个很奇怪的一个命令规律：screen scheme 的名字用的是 issuetype 名字或描述；issuetype screen scheme 的名字用的是 project 的名字或描述）"
+
+jkd go open "secure/admin/ViewFieldScreenSchemes.jspa"
+
+hint "create/configure issuetyfpe screen scheme（搜「${project_key}:」，这是一个好习惯，用 project key 做为前缀）"
+hint "另，如果有不用的 issuetyfpe screen scheme，直接给它删了吧，后面会有个删除选项的"
+
+jkd go open "secure/admin/ViewIssueTypeScreenSchemes.jspa"
+
+hint "创建、配置字段配置（哪个面板使用哪些字段，哪些是 required，在字段配置下字段还可以使用不一样的描述哦），建议使用 ${project_key}:${issuetype_name}.字段配置 作为名字"
+jkd go open "secure/admin/ViewFieldLayouts.jspa"
+
+hint "配置字段配置方案（哪个 issuetype 使用哪个字段配置）"
+jkd go open "secure/admin/ViewFieldLayoutSchemes.jspa"
