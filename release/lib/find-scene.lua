@@ -276,7 +276,7 @@ M.click_scene = function (scene, settings)
    local xy = scenes_map[scene]
    xy = split(" ", xy)
    for n = 1, click_times do
-      log("click %s @%d", scene, n)
+      log("click %s +(%d %d) @%d", scene, x_plus, y_plus, n)
       if settings.long_press then
          adb_long_press_XY(xy[1] + x_plus, xy[2] + y_plus, settings.long_press)
       else
