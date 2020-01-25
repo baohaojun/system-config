@@ -12,6 +12,7 @@ map['com.android.contacts/com.android.contacts.activities.DialtactsActivity'] = 
 map['com.android.settings/com.android.settings.NotificationAccessSettingsActivity'] = 'No-Post'
 map['com.baidu.netdisk/com.baidu.netdisk.uiframe.container.CommonActivity'] = 'No-Post'
 map['com.bjgas.shop/com.bjgas.shop.MainActivity'] = 'No-Post'
+map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'No-Post'
 map['com.instagram.android/com.instagram.nux.activity.SignedOutFragmentActivity'] = 'No-Post'
 map['com.netease.onmyoji/com.netease.mpay.MpayLoginActivity'] = 'Enter-Key'
 map['com.netease.onmyoji/com.netease.onmyoji.Client'] = 'Enter-Key'
