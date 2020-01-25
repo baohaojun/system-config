@@ -99,5 +99,12 @@ if test "${start_ss}" = true; then
 #!/bin/bash
 
 cd /root
-nohup ssserver -k "${password}" -p "${port}"&
+s=s
+password=$password
+port=$port
+
+nohup \${s}\${s}\${s}erver -k "\${password}" -p "\${port}"&
+nohup \${s}\${s}-\${s}erver --plugin obf\${s}-\${s}erver --plugin-opt\${s} "obf\${s}=http" -p "6\${port}" -k "\${password}"&
 EOF
+    chmod +x /etc/rc.local
+fi
