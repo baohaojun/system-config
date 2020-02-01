@@ -28,4 +28,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'Find-Bu
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'Find-Button'
 map['com.tencent.mm/com.tencent.mm.ui.LauncherUI'] = 'Find-Button'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.LoginActivity'] = 'Enter-Key'
+map['com.twitter.android/com.twitter.android.LoginActivity'] = 'No-Post'
+map['com.twitter.android/com.twitter.android.search.SearchActivity'] = 'No-Post'
+map['com.twitter.android/com.twitter.app.main.MainActivity'] = 'No-Post'
 return map
