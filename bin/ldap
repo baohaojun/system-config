@@ -34,4 +34,4 @@ for libdir in ${b0} ${b0}.user ${b0}.local; do
     done
 done
 
-die "Can't execute your command: $*"
+die "Can't execute ${b0} $*, sub command not found in COMMON:($scm_common_libdir) and LOCAL:($scm_local_libdir)"
