@@ -59,7 +59,7 @@ function picture-matches() {
         die "Usage: picture-matches FILE1.PNG FILE2.PNG"
     fi
 
-    set -- "$(readlink -f "$1")" "$(readlink -f "$2")"
+    set -- "$(absp "$1")" "$(absp "$2")"
 
     export g_onmyoji_location=Wrench
     export onmyoji_parallel=0

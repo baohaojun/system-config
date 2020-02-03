@@ -863,6 +863,18 @@ M.update_screen_size = function()
    M.m_window_displays = adb_pipe"dumpsys window displays" or ""
 
    -- mStableFullscreen=(0,0)-(1080,2160)
+
+   if M.m_window_displays:match("Display: mDisplayId=[1-9]") then
+      local lines = split("\n", M.m_window_displays, true)
+      local i, begin_0 = nil, 1
+      for i = 1, #lines do
+         if lines[i]:match("Display: mDisplayId=0") then
+            begin_0 = i
+            break
+         end
+      end
+      M.m_window_displays = M.join("\n", { table.unpack(lines, begin_0) })
+   end
    local screen_size_re = "mStableFullscreen=.-[])].-[])]"
    local mStableFullscreen = M.m_window_displays:match(screen_size_re) or
       M.m_window_dump:match(screen_size_re)
