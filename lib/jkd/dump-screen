@@ -108,7 +108,8 @@ for (0 .. (@tab_ids - 1)) {
         id => $id,
         name => decode_utf8($name),
         fields => $fields,
-    }
+    };
 }
 
+@$screen_tabs = sort {$a->{name} cmp $b->{name}} @$screen_tabs;
 print JSON->new->utf8(1)->pretty(1)->encode($screen_obj);

@@ -23,8 +23,8 @@ declare exact_query_input=false
 declare glob="*"
 declare group=
 declare match_regexp=.
-declare pass=$(get-authinfo -p "请输入 ldap 管理员账号密码" --host 127.0.0.1 -u $(get-about-me ldap-user))
-declare user=$(get-about-me ldap-user)
+declare pass=
+declare user=${scm_ldap_user:-$(get-about-me ldap-user)}
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -95,7 +95,7 @@ while true; do
             printf "%30s" ""
             echo "只输出匹配正则表达式 MATCH_REGEXP（默认为「.」）的行"
             printf %06s '-p, '
-            printf %-24s '--pass=PASS...'
+            printf %-24s '--pass=PASS'
             echo
             printf %06s '-u, '
             printf %-24s '--user=USER...'

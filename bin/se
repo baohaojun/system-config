@@ -5,27 +5,23 @@
 # SE means Switch Env：在生产环境和测试环境之间切换
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P ddefault=@null@
+# generate-getopt -P ddefault=@null@ \
+    # j:jira-env=test '?"one of test, sync"' \
+    # f:firefox-instance=1 '?"one of 1, 2"' \
+    # t:terminal-name=SE '?"new terminal name"'
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o dh \
-                      --long bash,default,help,no-bash,no-default \
+TEMP=$(POSIXLY_CORRECT=true getopt -o df:j:t:h \
+                      --long default,firefox-instance:,jira-env:,terminal-name:,help,no-default \
                       -n $(basename -- $0) -- "$@")
-declare bash=false
 declare default=@null@
+declare firefox_instance=1
+declare jira_env=test
+declare terminal_name=SE
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        --bash|--no-bash)
-            if test "$1" = --no-bash; then
-                bash=false
-            else
-                bash=true
-            fi
-            shift
-
-            ;;
         -d|--default|--no-default)
             if test "$1" = --no-default; then
                 default=false
@@ -35,17 +31,42 @@ while true; do
             shift
 
             ;;
+        -f|--firefox-instance)
+            firefox_instance=$2
+            shift 2
+
+            ;;
+        -j|--jira-env)
+            jira_env=$2
+            shift 2
+
+            ;;
+        -t|--terminal-name)
+            terminal_name=$2
+            shift 2
+
+            ;;
         -h|--help)
             set +x
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
-            printf %-24s '--[no-]bash'
-            echo
             printf %06s '-d, '
             printf %-24s '--[no-]default'
             echo
+            printf %06s '-f, '
+            printf %-24s '--firefox-instance=FIREFOX_INSTANCE'
+            echo
+            printf "%30s" ""
+            echo "one of 1, 2"
+            printf %06s '-j, '
+            printf %-24s '--jira-env=JIRA_ENV'
+            echo "one of test, sync"
+            printf %06s '-t, '
+            printf %-24s '--terminal-name=TERMINAL_NAME'
+            echo
+            printf "%30s" ""
+            echo "new terminal name"
             exit
             shift
             ;;
@@ -76,9 +97,19 @@ if test "${default}" = true; then
 elif test "${default}" = false; then
     export SE_LOCAL=true
     . ~/src/ep-tools/common_utils/etc/global-settings.rc
-    tmux rename-window SE
+    if test "${jira_env}" = sync; then
+        scm_jira_url=${scm_jira_staging_url}
+        firefox_instance=2
+        terminal_name=staging
+    elif test "${jira_env}" = test; then
+        scm_jira_url=${scm_jira_test_url}
+    else
+        die "Can't handle jira env: ${jira_env}"
+    fi
+
+    tmux rename-window "${terminal_name}"
     . atexit tmux rename-window bash
-    bash
+    private-firefox -i "${firefox_instance}" -e bash
     exit 0
 fi
 

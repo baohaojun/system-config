@@ -1,0 +1,108 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # a:action add p:project r:role u:user
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:ap:r:u:h \
+                      --long action:,dd,project:,role:,user:,help,no-dd \
+                      -n $(basename -- $0) -- "$@")
+declare action=
+declare dd=false
+declare project=
+declare role=
+declare user=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--action)
+            action=$2
+            shift 2
+
+            ;;
+        -a|--dd|--no-dd)
+            if test "$1" = --no-dd; then
+                dd=false
+            else
+                dd=true
+            fi
+            shift
+
+            ;;
+        -p|--project)
+            project=$2
+            shift 2
+
+            ;;
+        -r|--role)
+            role=$2
+            shift 2
+
+            ;;
+        -u|--user)
+            user=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--action=ACTION'
+            echo
+            printf %06s '-a, '
+            printf %-24s '--[no-]dd'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--role=ROLE'
+            echo
+            printf %06s '-u, '
+            printf %-24s '--user=USER'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+roles_json=$(
+    jkd rest project/${project}/role
+          )
+if test "${role}"; then
+        role_id=$(
+        echo "${roles_json}" | jq "$(printf '."%s"' "${role}")" -r |perl -pe 's,.*/,,'
+               )
+fi
+if test "${action}" = add; then
+    debug-run jkd rest project/${project}/role/${role_id} -- -X POST --data '{"user" : ["'"${user}"'"]}' -H 'Content-Type: application/json'
+elif test "${action}" = list-roles; then
+    jkd rest project/${project}/role|jq .
+elif test "${action}" = list-users; then
+    jkd rest project/${project}/role/${role_id}|jq .
+fi

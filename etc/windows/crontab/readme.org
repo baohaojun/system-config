@@ -1,0 +1,5 @@
+在 Windows 系统的「任务计划程序」里，点击本地计划任务下方的项目，将 reboot 和 update-time 两个 xml 给导入进去。
+
+注意：导入之后，必须点击本地计划任务下方的项目，才能看到 reboot 和 update-time。
+
+另外，目前需要将 ut.bat 拷贝到 c:\ 目录下

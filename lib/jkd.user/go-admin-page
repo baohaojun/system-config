@@ -210,6 +210,13 @@ EOFe9576f8668e0
 
     ## end generated code
 
+    if test $# = 0 && [[ $current_url =~ workflowName= ]]; then
+        set -- "$(
+            query=${current_url#*\?} \
+                perl -e 'use URI::Query; $qq = URI::Query->new($ENV{query}); print ${$qq->hash}{workflowName}'
+                     )"
+    fi
+
     if test $# != 0; then
         workflow_name=$(
             unset scm_jira_password

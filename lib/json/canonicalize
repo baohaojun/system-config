@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+
+use Encode;
+use JSON;
+
+my $json = JSON->new;
+
+use File::Slurp;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+- canonicalize -j JSON_TEXT
+- canonicalize [JSON_FILE...]
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# j:json-text
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $json_text = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n  选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--json-text=JSON-TEXT';
+    if (length('--json-text=JSON-TEXT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'json-text|j=s' => \$json_text,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+if ($json_text and @ARGV) {
+    die "Can't specify both JSON_TEXT and json files";
+} elsif (not $json_text and not @ARGV) {
+    say STDERR "using - as input";
+    @ARGV = ('-');
+}
+
+sub canonicalize_json_text($) {
+    my $json_text = $_[0];
+    my $json_obj = $json->decode($json_text);
+    print JSON->new->allow_nonref->pretty->canonical->encode($json_obj);
+}
+
+if ($json_text) {
+    canonicalize_json_text($json_text);
+} else {
+    for (@ARGV) {
+        $json_text = capturex("cat", "$_");
+        canonicalize_json_text($json_text);
+    }
+}

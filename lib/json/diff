@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+misc diff-texts \
+     "$(json canonicalize "$1")" \
+     "$(json canonicalize "$2")"

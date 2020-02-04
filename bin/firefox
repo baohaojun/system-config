@@ -24,7 +24,9 @@ else
         fi
     else
         $the_firefox ${FIREFOX_PROFILE_ARG}&
-        sawfish-window wait-for-window find-or-exec -e -p "${the_firefox}" firefox true
+        if sawfish-window wait-for-window find-or-exec -e -p "${the_firefox}" firefox true; then
+            exit
+        fi
     fi
 fi
 
