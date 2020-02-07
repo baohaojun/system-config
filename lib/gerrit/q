@@ -1,8 +1,14 @@
 #!/usr/bin/env perl
 use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P q:query u:url ddetails=0 \
+# generate-getopt -s perl -P q:query '?"see \${scm_gerrit_url}Documentation/user-search.html"' \
+# u:url '?"url of a gerrit change, query its details"' \
+# ddetails=0 \
+# m:max-results=500 \
 # e:extra-output='()' '?"LABELS, DETAILED_LABELS, CURRENT_REVISION,
 # ALL_REVISIONS, DOWNLOAD_COMMANDS, CURRENT_COMMIT, ALL_COMMITS,
 # CURRENT_FILES, ALL_FILES, DETAILED_ACCOUNTS, REVIEWER_UPDATES,
@@ -19,65 +25,81 @@ Getopt::Long::Configure("posix_default");
 
 my $details = 0;
 my @extra_output = ();
+my $max_results = 500;
 my $query = "";
 my $url = "";
 
 my $handler_help = sub {
-  print ;
-  print "\n\n选项和参数：\n";
-  printf "%6s", '-d, ';
-  printf "%-24s", '--[no]details';
-  if (length('--[no]details') > 24 and length() > 0) {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--[no]details';
+    if (length('--[no]details') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '-e, ';
-  printf "%-24s", '--extra-output=EXTRA-OUTPUT';
-  if (length('--extra-output=EXTRA-OUTPUT') > 24 and length("LABELS, DETAILED_LABELS, CURRENT_REVISION,
+    printf "%6s", '-e, ';
+    printf "%-24s", '--extra-output=EXTRA-OUTPUT';
+    if (length('--extra-output=EXTRA-OUTPUT') > 24 and length("LABELS, DETAILED_LABELS, CURRENT_REVISION,
 ALL_REVISIONS, DOWNLOAD_COMMANDS, CURRENT_COMMIT, ALL_COMMITS,
 CURRENT_FILES, ALL_FILES, DETAILED_ACCOUNTS, REVIEWER_UPDATES,
 MESSAGES, CURRENT_ACTIONS, CHANGE_ACTIONS, REVIEWED, SKIP_MERGEABLE,
 SKIP_DIFFSTAT, SUBMITTABLE, WEB_LINKS, CHECK, COMMIT_FOOTERS,
 PUSH_CERTIFICATES, TRACKING_IDS,NO-LIMIT") > 0) {
-    print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", "LABELS, DETAILED_LABELS, CURRENT_REVISION,
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "LABELS, DETAILED_LABELS, CURRENT_REVISION,
 ALL_REVISIONS, DOWNLOAD_COMMANDS, CURRENT_COMMIT, ALL_COMMITS,
 CURRENT_FILES, ALL_FILES, DETAILED_ACCOUNTS, REVIEWER_UPDATES,
 MESSAGES, CURRENT_ACTIONS, CHANGE_ACTIONS, REVIEWED, SKIP_MERGEABLE,
 SKIP_DIFFSTAT, SUBMITTABLE, WEB_LINKS, CHECK, COMMIT_FOOTERS,
 PUSH_CERTIFICATES, TRACKING_IDS,NO-LIMIT";
-  print "\n";
-  printf "%6s", '-q, ';
-  printf "%-24s", '--query=QUERY';
-  if (length('--query=QUERY') > 24 and length() > 0) {
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '-u, ';
-  printf "%-24s", '--url=URL';
-  if (length('--url=URL') > 24 and length() > 0) {
+    printf "%6s", '-m, ';
+    printf "%-24s", '--max-results=MAX-RESULTS';
+    if (length('--max-results=MAX-RESULTS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
+    printf "%6s", '-q, ';
+    printf "%-24s", '--query=QUERY';
+    if (length('--query=QUERY') > 24 and length("see \${scm_gerrit_url}Documentation/user-search.html") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "see \${scm_gerrit_url}Documentation/user-search.html";
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--url=URL';
+    if (length('--url=URL') > 24 and length("url of a gerrit change, query its details") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "url of a gerrit change, query its details";
+    print "\n";
 
-  exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
-            'details|d!' => \$details,
-            'extra-output|e=s' => \@extra_output,
-            'query|q=s' => \$query,
-            'url|u=s' => \$url,
-            'help|h!' => \&$handler_help,
-           );
+    'details|d!' => \$details,
+    'extra-output|e=s' => \@extra_output,
+    'max-results|m=s' => \$max_results,
+    'query|q=s' => \$query,
+    'url|u=s' => \$url,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
@@ -91,27 +113,42 @@ use URI::Escape;
 $query = uri_escape($query);
 
 use String::ShellQuote;
-my @command = ("gr", "rest", "-a", "a/changes/?q=$query");
-if (@extra_output) {
-  $command[-1] = join("&", $command[-1], map {$_ = "o=$_"} @extra_output);
-}
+my $results = [];
+my $start = 0;
 
-my $command = join " ", shell_quote(@command);
-print STDERR "run: $command\n";
-
-use v5.10;
-my $json = qx($command);
-if (not $details) {
-  print $json;
-  exit;
-}
-
+use Encode;
 use JSON;
-my $json_obj = decode_json $json;
+
+my $json = JSON->new;
+
+while (1) {
+    my @command = ("gr", "rest", "-a", "a/changes/?q=$query&n=${max_results}&S=${start}");
+    if (@extra_output) {
+        $command[-1] = join("&", $command[-1], map {"o=$_"} @extra_output);
+    }
+
+    my $command = join " ", shell_quote(@command);
+    print STDERR "run: $command\n";
+
+    use v5.10;
+    my $json_obj = $json->decode(scalar capturex(@command));
+    last unless @$json_obj;
+    push @$results, @$json_obj;
+    $start = @$results;
+    last if $start >= $max_results;
+    last unless ($json_obj->[-1]{_more_changes});
+}
+
+if (not $details) {
+    print JSON->new->utf8(0)->pretty(1)->encode($results);
+    exit;
+}
+
+my $json_obj = $results;
 my @details;
 for (@$json_obj) {
   my $number = $_->{_number};
-  $command = join " ", shell_quote("gr", "rest", "-a", "a/changes/$number/detail");
+  my $command = join " ", shell_quote("gr", "rest", "-a", "a/changes/$number/detail");
   if (@$json_obj == 1) {
     print qx($command);
     exit;

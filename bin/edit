@@ -168,10 +168,12 @@ sub edit_1($) {
       my $fileq = shell_quote($file);
       my $user = qx(stat -c %U $fileq);
       my $action ="readable";
+      my $default_opt = "-y";
       if (-r $file) {
-        $action = "writable";
+          $action = "writable";
+          $default_opt = "-n";
       }
-      if ($user ne $ENV{USER} and system("yes-or-no-p -y 'file not $action, use root?'") == 0) {
+      if ($user ne $ENV{USER} and system("yes-or-no-p ${default_opt} 'file not $action, use root?'") == 0) {
         system("sudoedit", $file);
         exit;
       }

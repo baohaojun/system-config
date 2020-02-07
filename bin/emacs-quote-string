@@ -27,12 +27,5 @@ b0=$(basename $0)
 if test "${b0}" = emacs-quote-string; then
     echo -n "$1" | perl -npe 's/\\/\\\\/g; s/"/\\"/g'
 elif test "${b0}" = lua-quote-string; then
-    n_equals=
-    while true; do
-        if ! echo "${1}" | grep -q -e "\[${n_equals}\["; then
-            echo "[${n_equals}[$1]${n_equals}]";
-            exit
-        fi
-        n_equals="${n_equals}="
-    done
+    str.quote.lua "$1"
 fi

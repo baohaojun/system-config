@@ -84,12 +84,12 @@ tmp_err=/tmp/run-with-retry.err.$$
         else
             ret=$?
             if grep -q -P -e "${errout_regexp}" "$tmp_out" "$tmp_err"; then
-                log need retry $*, output matched pattern: "${errout_regexp}"
+                log need retry $*, output matched pattern
                 redo-output
                 sleep "${wait_secs}"
                 continue
             else
-                log should not retry $*, output not matched pattern: "${errout_regexp}"
+                log should not retry $*, output not matched pattern
                 redo-output
                 exit $ret
             fi

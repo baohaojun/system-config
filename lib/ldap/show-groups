@@ -70,7 +70,7 @@ if test -z "${user}"; then
 fi
 
 groups=$(
-    comp-mail -d $user -m memberOf | pn 2 | pn 1 , | sort -u
+    comp-mail -g "" -d $user -m memberOf | pn 2 | pn 1 , | sort -u
       )
 
 for g in ${groups}; do

@@ -4,7 +4,9 @@ set -e
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P wwait-exit n:window-name \
     # s:session-name='${MYSCR_SESSION}' \
-    # S:start-cmd ddebug ekeep-env \
+    # S:start-cmd \
+    # ddebug \
+    # ekeep-env=true \
     # @:socket='${MYSCR_SOCKET:-default}' \
     # @with-tty \
     # @bg='("" -d)' '?"把新的窗口放在“后台”"'
@@ -15,7 +17,7 @@ TEMP=$(POSIXLY_CORRECT=true getopt -o des:S:wn:h \
                       -n $(basename -- $0) -- "$@")
 declare bg=
 declare debug=false
-declare keep_env=false
+declare keep_env=true
 declare session_name=${MYSCR_SESSION}
 declare socket=${MYSCR_SOCKET:-default}
 declare start_cmd=

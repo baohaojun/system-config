@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. .funlock ~/system-config/.sawfish/start/.run-dir-once.lock
+
 while test "$(sawfish-client -e '(window-exists-p "xfce4-panel")')" != t; do
     sleep 1
 done

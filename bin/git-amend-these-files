@@ -8,7 +8,7 @@ files=$(
 for f in $files; do
     target_commit=$(select-output-line -p "Which commit do you want to amend for $f?" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $f | pn 1)
 
-    if test -z "${target_commit}"; then
+    if test -z "${target_commit}" || ! yes-or-no-p -y "use $target_commit which changed $f?"; then
         if yes-or-no-p "$(git diff HEAD $f;
                           echo "****************************************************************";
                           git-get-log --name-status HEAD;

@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+# This is 「curl --fail」 but more reasonable.
+
+# Google: It's so unfortunate that the curl maintainer bagder
+# stubbornly insists on not providing a --fail-but-show-error
+
+exec {VARNAME}>&1
+http_code=$(curl --write-out '%{http_code}' "$@" -o >(cat >&${VARNAME}) )
+
+exec {VARNAME}>&-
+
+if [ $http_code -ge 400 ] && [ $http_code -lt 600 ]; then
+    echo $'\n'"HTTP $http_code" >&2
+    exit 22
+fi

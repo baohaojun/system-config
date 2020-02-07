@@ -96,13 +96,4 @@ fi
 
 set -o pipefail
 
-curl_args=(-u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@")
-if test "${xtrace}" != true; then
-    if curl -f -s "${curl_args[@]}"; then
-        exit 0
-    else
-        log "curl failed on jira rest api, ${j_url}, please add -x to see possible error msgs (and note that error detection won't work)"
-    fi
-else
-    curl "${curl_args[@]}"
-fi
+curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@"

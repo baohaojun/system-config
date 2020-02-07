@@ -23,7 +23,9 @@ else
     if test "$1" = go; then
         shift
     elif test "$1" = of; then
-         exec firefox --new-tab "$2"
+        exec firefox --new-tab "$2"
+    elif test "$1" = cap; then
+        exec emacs-file-op echo "* TODO $current_url" '>>' ~/system-config/doc/projects/Captures.org
     fi
 
     if [[ $current_url/ =~ $jenkins_regexp ]]; then

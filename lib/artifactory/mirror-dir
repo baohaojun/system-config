@@ -80,7 +80,7 @@ api_url=$(
        )
 
 my-curl() {
-    curl -f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
+    curl-f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
 }
 
 json=$(

@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+if test $# != 1; then
+    misc die "Usage: W f USER@@XX"
+fi
+
+Wrench.sh "$(printf 'wrench_call(%s)' "$(str quote -f lua "$1")")"

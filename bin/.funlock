@@ -1,0 +1,10 @@
+#!/bin/bash
+
+unlock_file=$1
+
+for f in /proc/$$/fd/*; do
+    if test "$(readlink -f "$f")" = "$(readlink -f "$unlock_file")"; then
+        echo unlock: $f
+        eval "exec ${f##*/}>&-"
+    fi
+done
