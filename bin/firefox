@@ -23,7 +23,7 @@ else
             exit
         fi
     else
-        $the_firefox ${FIREFOX_PROFILE_ARG}&
+        $the_firefox "$@" ${FIREFOX_PROFILE_ARG} &
         if sawfish-window wait-for-window find-or-exec -e -p "${the_firefox}" firefox true; then
             exit
         fi

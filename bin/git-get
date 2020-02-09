@@ -289,7 +289,7 @@ fi
 
 (
     cd $dir
-    git submodule update --init "${extra_submod_update_args[@]}"
+    git submodule update --init "${extra_submod_update_args[@]}" || true
 )
 
 (

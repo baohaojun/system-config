@@ -92,6 +92,7 @@
  '(imenu-space-replacement " ")
  '(install-elisp-repository-directory "~/system-config/.emacs_d/lisp/")
  '(ispell-program-name "aspell")
+ '(ivy-initial-inputs-alist nil)
  '(jira-host "localhost.18888")
  '(jira-url "http://localhost:18888/rpc/xmlrpc")
  '(keyboard-coding-system (quote cp936))
