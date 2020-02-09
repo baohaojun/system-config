@@ -319,3 +319,5 @@ passed via standard input." t nil)
 (eval-after-load 'anaconda-mode
   '(defadvice anaconda-mode-find-definitions (before bhj/push-mark activate)
      (ajoke--push-marker-ring)))
+(eval-after-load 'counsel
+  '(setq-default ivy-initial-inputs-alist nil))
