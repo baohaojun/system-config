@@ -1,4 +1,0 @@
-# -*- mode: snippet -*-
-# name: subject(:${1:name} { ... })
-# --
-subject(:${1:name}) { $0 }

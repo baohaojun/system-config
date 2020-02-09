@@ -1,4 +1,0 @@
-# -*- mode: snippet -*-
-# name: it { is_expected.to ... }
-# --
-it { is_expected.to $0 }

@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: it "does something" do ... end
-# --
-it "${1:does something}" do
-  $0
-end
