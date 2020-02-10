@@ -5,7 +5,8 @@ M.dd_home = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.LaunchHomeA
 
 M.open_dd_search = function()
    local top_window, i
-   for i = 1, 5 do
+   local max_times = 6
+   for i = 1, max_times do
       if not top_activity_match(M.dd_pkg) then
          start_app("com.alibaba.android.rimet")
       end
@@ -23,7 +24,11 @@ M.open_dd_search = function()
          local found_grey = find_scene("dd-xiaoxi-weixuanzhong")
          local found_duihua = find_scene("dd-xiaoxi-xuanzhong")
          if not found_grey and not found_duihua then
-            adb_back_from_activity()
+            if i >= 4 then
+               M.g_find_scene_debug = true
+            else
+               adb_back_from_activity()
+            end
          elseif found_grey then
             jump_from_to("dd-xiaoxi-weixuanzhong", "dd-xiaoxi-xuanzhong")
             found_duihua = 1
