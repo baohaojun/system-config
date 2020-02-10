@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+# download subtitle
+
+if test "$#" = 0; then
+    find . \( -iname '*.mp4' -o -name '*.avi' \) -print0 |
+        xargs -0 -n 1 misc subdown
+    exit 0
+fi
+
+if test "$#" = 1; then
+    log download subtitle for "$1"
+    subliminal download -l en "$1"
+    subfile="$(echo "${1%.*}".en.*)"
+    mv -vn "${subfile}" "${subfile/.en./.}"
+fi

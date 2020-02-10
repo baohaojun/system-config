@@ -1,0 +1,76 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # p:proc-name m:max-procs=300
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o m:p:h \
+                      --long max-procs:,proc-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare max_procs=
+declare proc_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -m|--max-procs)
+            max_procs=$2
+            shift 2
+
+            ;;
+        -p|--proc-name)
+            proc_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--max-procs=MAX_PROCS'
+            echo
+            printf %06s '-p, '
+            printf %-24s '--proc-name=PROC_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${#proc_name}" -lt 7; then
+    die "Can't work with proc name, it's too short and too dangerous: $proc_name"
+fi
+
+procs_info=$(ps aux | grep "${proc_name}" -P)
+n_procs=$(echo "${procs_info}" | wc -l)
+if test "${n_procs}" -gt "${max_procs}"; then
+    bhj-notify too-many-procs "${n_procs} $proc_name"
+    for x in $(seq 1 3); do
+        procs_info=$(ps aux | grep "${proc_name}" -P | grep -v 'grep.*-P')
+        echo "${procs_info}" | grep -v too-many-procs | pn 2 |xargs kill || true
+        sleep 1
+    done
+fi

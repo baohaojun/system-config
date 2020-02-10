@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt aall-dev w:window
@@ -48,6 +48,7 @@ while true; do
             ;;
         *)
             die "internal error: $(. bt; echo; bt | indent-stdin)"
+            exit 1
             ;;
     esac
 done
