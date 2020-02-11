@@ -63,6 +63,24 @@ done
 
 ## end generated code
 
+if test "${start_ss}" = true; then
+    touch /etc/rc.local
+    chmod +x /etc/rc.local
+    cat > /etc/rc.local <<EOF
+#!/bin/bash
+
+cd /root
+s=s
+password="$password"
+port=$port
+
+# nohup \${s}\${s}\${s}erver -k "\${password}" -p "\${port}"&
+nohup \${s}\${s}-\${s}erver --plugin obf\${s}-\${s}erver --plugin-opt\${s} "obf\${s}=http" -p "\${port}" -k "\${password}"&
+EOF
+    chmod +x /etc/rc.local
+    killall ss-server
+fi
+
 if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
     echo need install rc.local service 1>&2
     cat <<EOF | tee /etc/systemd/system/rc-local.service
@@ -91,20 +109,5 @@ EOF
     chmod a+X /etc/systemd/system/rc-local.service
     systemctl --system daemon-reload
     systemctl enable rc-local.service
-    systemctl start rc-local.service
 fi
-
-if test "${start_ss}" = true; then
-    cat >> /etc/rc.local <<EOF
-#!/bin/bash
-
-cd /root
-s=s
-password=$password
-port=$port
-
-nohup \${s}\${s}\${s}erver -k "\${password}" -p "\${port}"&
-nohup \${s}\${s}-\${s}erver --plugin obf\${s}-\${s}erver --plugin-opt\${s} "obf\${s}=http" -p "6\${port}" -k "\${password}"&
-EOF
-    chmod +x /etc/rc.local
-fi
+systemctl restart rc-local.service

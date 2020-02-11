@@ -96,4 +96,9 @@ fi
 
 set -o pipefail
 
-curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@"
+output=$(curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@")
+if [[ $output =~ \\u ]]; then # perl json module can't do this...
+    echo "${output}" | jq .
+else
+    echo "${output}"
+fi

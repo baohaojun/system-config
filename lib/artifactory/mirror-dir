@@ -75,6 +75,7 @@ done
 
 # url is like ${scm_artifactory_url}artifactory/REPO-KEY/PATH
 
+dir_url=$(echo "${dir_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
 if ! artifactory is-dir -u "${dir_url}"; then
     dir_url=$(dirname "${dir_url}")
 fi
