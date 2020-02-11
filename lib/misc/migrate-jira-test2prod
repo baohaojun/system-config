@@ -79,7 +79,7 @@ PATH=${abs0%/*}:$PATH
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -e -P '?"${comment_doc}"' \
-    # p:prod-jira-url \
+    # p:prod-jira-url='${scm_jira_staging_url}' \
     # t:test-jira-url='${scm_jira_url}' \
     # s:screens-regexp \
     # w:workflow-regexp \
@@ -91,7 +91,7 @@ TEMP=$(POSIXLY_CORRECT=true getopt -o p:s:t:w:h \
                       --long issuetype-regexp:,prod-jira-url:,project-key:,screens-regexp:,test-jira-url:,workflow-regexp:,help \
                       -n $(basename -- $0) -- "$@")
 declare -x issuetype_regexp=${issuetype_regexp:-}
-declare -x prod_jira_url=${prod_jira_url:-}
+declare -x prod_jira_url=${prod_jira_url:-${scm_jira_staging_url}}
 declare -x project_key=${project_key:-}
 declare -x screens_regexp=${screens_regexp:-}
 declare -x test_jira_url=${test_jira_url:-${scm_jira_url}}
@@ -169,20 +169,18 @@ done
 
 ## end generated code
 
-if test -z "${prod_jira_url}"; then
-    prod_jira_url=${scm_jira_staging_url}
-fi
-
 if test -z "${screens_regexp}"; then
     screens_regexp=$(
         select-args --ask-for-input -1 --select-from-history-too -o -p "what is your screen regexp for migration?"
                   )
+    yes-or-no-p -y "$(jkd sel-name -a screens -i "${screens_regexp}")"
 fi
 
 if test -z "${workflow_regexp}"; then
     workflow_regexp=$(
         select-args --ask-for-input -1 --select-from-history-too -o -p "Please input workflow regexp"
                    )
+    yes-or-no-p -y "$(jkd sel-name -a workflow -i "${workflow_regexp}")"
 fi
 
 if test -z "${project_key}"; then
@@ -193,7 +191,7 @@ fi
 
 if test -z "${issuetype_regexp}"; then
     issuetype_regexp=$(
-        select-args --ask-for-input -1 --select-from-history-too -o -p "Please input issue type regexp"
+        jkd sel-name -a issuetype
                     )
 fi
 
