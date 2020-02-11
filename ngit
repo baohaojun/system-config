@@ -6,17 +6,24 @@
 # Author: Joel Fernandes <joel@joelfernandes.org>
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P s:start-item
+# generate-getopt -P s:start-item \
+    # m:match-subject-re
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o s:h \
-                      --long start-item:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o m:s:h \
+                      --long match-subject-re:,start-item:,help \
                       -n $(basename -- $0) -- "$@")
+declare match_subject_re=
 declare start_item=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -m|--match-subject-re)
+            match_subject_re=$2
+            shift 2
+
+            ;;
         -s|--start-item)
             start_item=$2
             shift 2
@@ -27,6 +34,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-m, '
+            printf %-24s '--match-subject-re=MATCH_SUBJECT_RE'
+            echo
             printf %06s '-s, '
             printf %-24s '--start-item=START_ITEM'
             echo
@@ -45,6 +55,12 @@ done
 
 
 ## end generated code
+
+if test -z "${start_item}" -a "${match_subject_re}"; then
+    start_item=$(
+        select-output-line -i "${match_subject_re}" -p "which commit do you want?" git log --pretty="%H %s" | pn 1
+              )
+fi
 
 if [[ $start_item =~ ^[a-f0-9]{40}$ ]]; then
     start_item=$(
