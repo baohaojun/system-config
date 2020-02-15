@@ -34,4 +34,6 @@ map['com.tencent.mobileqq/com.tencent.mobileqq.activity.LoginActivity'] = 'Enter
 map['com.twitter.android/com.twitter.android.LoginActivity'] = 'No-Post'
 map['com.twitter.android/com.twitter.android.search.SearchActivity'] = 'No-Post'
 map['com.twitter.android/com.twitter.app.main.MainActivity'] = 'No-Post'
+map['com.weico.international/com.weico.international.activity.SinaMessageLoginActivity'] = 'No-Post'
+map['com.weico.international/com.weico.international.activity.v4.SmsLoginActivity'] = 'No-Post'
 return map
