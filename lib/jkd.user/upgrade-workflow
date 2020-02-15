@@ -1,0 +1,99 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+1. 将当前 workflow 备份，并将备份版本设置为 active workflow
+2. 删除原 workflow，因此当前未被使用，因此可以删除
+3. 将新的 xml 导入至原 workflow
+4. 激活原 workflow，从而完成在线更新
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# w:workflow-name f:workflow-xml-file
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $workflow_name = "";
+my $workflow_xml_file = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-w, ';
+    printf "%-24s", '--workflow-name=WORKFLOW-NAME';
+    if (length('--workflow-name=WORKFLOW-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--workflow-xml-file=WORKFLOW-XML-FILE';
+    if (length('--workflow-xml-file=WORKFLOW-XML-FILE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'workflow-name|w=s' => \$workflow_name,
+    'workflow-xml-file|f=s' => \$workflow_xml_file,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+my $workflow_exists = (runx(EXIT_ANY, "jkd", "exists-name", "-a", "workflow", "$workflow_name") == 0);
+
+my $backup_xml = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/workflows/${workflow_name}.bak.xml";
+my $temp_workflow = "$workflow_name.$$";
+
+if ($workflow_exists) {
+    runx("jkd", "export-workflow-as-xml", "-w", "${workflow_name}", "-f", $backup_xml);
+    runx("jkd", "import-workflow-from-xml", "-w", "$temp_workflow", "-f", "$backup_xml");
+}
+
+# step 1: workflow 当前在用的话，要将它卸载
+my $wf_scheme =
+    $json->decode(scalar capturex("jkd", "workflowscheme2json"));
+
+for my $scheme (@$wf_scheme) {
+    my %it_wf_map = %{$scheme->{issuetypes_workflow}};
+    my %wf_it_map = map {$it_wf_map{$_}, $_} %it_wf_map;
+
+    if ($wf_it_map{$workflow_name}) {
+        say STDERR "switch workflow ${workflow_name} for " . $scheme->{name};
+        runx("jkd", "wfs-switch-wf", "--scheme-id", $scheme->{id},
+             ( $scheme->{active} ? "--scheme-active" : "--noscheme-active" ),
+             "--wf-name", "$workflow_name", "--new-wf-name", "$temp_workflow");
+        next;
+    }
+}

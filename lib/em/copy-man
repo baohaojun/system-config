@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e
+sw mark -t kill-ring -s
+
+paste-it() {
+    sw mark -t kill-ring -r
+    putclip "${clip}"
+    sawfish-send-focused-window-event "S-Insert"
+}
+
+man_page=$(
+    select-output-line \
+        --ask-for-input -1 --select-from-history-too -o \
+        -p "请选择你想访问的是哪个 man page" \
+        cached-run misc list-man-pages
+        )
+
+. atexit paste-it
+
+emacs_script=$(
+    cat <<'EOF8c8ffea5f194' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(save-window-excursion
+  (delete-other-windows)
+  (man "[%man_page%]")
+  (delete-window)
+  (recursive-edit)
+  (when (mark)
+    (buffer-substring-no-properties (point) (mark))))
+; {%/emacs-lisp-mode%}
+EOF8c8ffea5f194
+
+            )
+
+clip=$(
+    emacs.client -d -e "${emacs_script}" | em str2text
+    )

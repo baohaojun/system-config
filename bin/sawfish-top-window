@@ -35,10 +35,13 @@ else
     exit 1
 fi
 
-max_try=10
+max_try=3
+
 for x in $(seq 1 ${max_try}); do
-    if test "$(sawfish-client -e '(input-focus)')" = nil; then
-        sawfish-client -e '(activate-window (car (stacking-order)))'
+    if [[ "$(sawfish-client -e '(input-focus)')" =~ ^(nil|\(\))$ ]]; then
+        sawfish-client -e '(activate-window (car (stacking-order)))'&
+        sleep .1
+        continue
     fi
     if window=$(sawfish-client -e "($function (input-focus))") && test "${window}" != $'\007'; then
         echo "${window}"

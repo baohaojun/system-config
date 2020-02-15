@@ -83,6 +83,8 @@ if test "${window_name}" = myscr -a "${window_class}" = xterm; then
 elif [[ $window_class =~ firefox ]]; then
     if test "$(sawfish-top-window-wmclass)" = Prompt:Firefox:; then
         true
+    elif [[  "$(sawfish-top-window-name)" =~ ^(パスワードを入力してください|Password Required)$ ]]; then
+        true
     else
         url=$(get-firefox-tab-url --no-with-xkeytool|tr -d '"')
 

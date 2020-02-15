@@ -1,0 +1,70 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # w:workflow-name f:workflow-filename
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:w:h \
+                      --long workflow-filename:,workflow-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare workflow_filename=
+declare workflow_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--workflow-filename)
+            workflow_filename=$2
+            shift 2
+
+            ;;
+        -w|--workflow-name)
+            workflow_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-f, '
+            printf %-24s '--workflow-filename=WORKFLOW_FILENAME'
+            echo
+            printf %06s '-w, '
+            printf %-24s '--workflow-name=WORKFLOW_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+workflow_name=$(
+    jkd sel-name -a workflow -i "${workflow_name}"
+             )
+
+. ${scm_common_libdir}/jkd.user/websudo
+
+echo Fetching XML...
+curl-f -s -b "$COOKIES" -H "$HEADER" -d "os_cookie=true" -d "webSudoIsPost=true" --output ${workflow_filename:-/dev/stdout} "${scm_jira_url}secure/admin/workflows/ViewWorkflowXml.jspa?workflowMode=live&workflowName=$(uri-escape "${workflow_name}")"

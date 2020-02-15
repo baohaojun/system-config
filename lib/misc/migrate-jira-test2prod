@@ -173,14 +173,14 @@ if test -z "${screens_regexp}"; then
     screens_regexp=$(
         select-args --ask-for-input -1 --select-from-history-too -o -p "what is your screen regexp for migration?"
                   )
-    yes-or-no-p -y "$(jkd sel-name -a screens -i "${screens_regexp}")"
+    yes-or-no-p -y "确认 $screens_regexp 匹配到的上面的选项没有问题？$(jkd sel-name -a screens -i "${screens_regexp}")"
 fi
 
 if test -z "${workflow_regexp}"; then
     workflow_regexp=$(
         select-args --ask-for-input -1 --select-from-history-too -o -p "Please input workflow regexp"
                    )
-    yes-or-no-p -y "$(jkd sel-name -a workflow -i "${workflow_regexp}")"
+    yes-or-no-p -y "确认 $workflow_regexp 匹配到的上面的选项没有问题？$(jkd sel-name -a workflow -i "${workflow_regexp}")"
 fi
 
 if test -z "${project_key}"; then

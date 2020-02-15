@@ -1,0 +1,26 @@
+#!/bin/bash
+
+shopt -s extglob
+
+_man ()
+{
+    cur=
+    local comprsuffix=".@([glx]z|bz2|lzma|Z)";
+    local manext="@([0-9lnp]|[0-9][px]|man|3?(gl|pm))?($comprsuffix)";
+    local mansect="@([0-9lnp]|[0-9][px]|3?(gl|pm))";
+
+    local manpath=$( manpath 2>/dev/null || command man -w 2>/dev/null );
+    [[ -z $manpath ]] && manpath="/usr/share/man:/usr/local/share/man";
+    local sect;
+    sect='*';
+    manpath=$manpath:;
+    manpath="${manpath//://*man$sect/ } ${manpath//://*cat$sect/ }";
+
+    COMPREPLY=($( eval command ls "$manpath" 2>/dev/null ));
+    COMPREPLY=(${COMPREPLY[@]##*/?(:)});
+    COMPREPLY=(${COMPREPLY[@]%$comprsuffix});
+
+    echo "${COMPREPLY[@]}" | tr ' ' '\n'
+}
+
+_man | sort -u

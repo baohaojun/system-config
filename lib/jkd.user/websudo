@@ -1,0 +1,60 @@
+#!/bin/bash
+set -e
+
+cache_dir=~/.cache/jira/${scm_jira_url}/
+mkdir -p "$cache_dir"
+COOKIES=${cache_dir}cookies.txt
+touch "$COOKIES"
+
+HEADER="X-Atlassian-Token: no-check"
+
+sudo-login() {
+    log "login"
+    curl-f -s -c "$COOKIES" -H "$HEADER" -d "os_username=$scm_jira_user" -d "os_password=$scm_jira_password" -d "os_cookie=true" $scm_jira_url/login.jsp > $cache_dir/login.html
+    if test "${jkd_verbose}" = 1; then
+        firefox --new-tab "$cache_dir/login.html" &>/dev/null
+    fi
+}
+
+sudo-sudo() {
+    log "sudo"
+    curl-f -si -c "$COOKIES" -b "$COOKIES" -H "$HEADER" -d "webSudoPassword=$scm_jira_password" -d "os_cookie=true" -d "webSudoIsPost=false" -d "authenticate=Confirm" $scm_jira_url/secure/admin/WebSudoAuthenticate.jspa > $cache_dir/websudo.html
+
+    if test "${jkd_verbose}" = 1; then
+        firefox --new-tab $cache_dir/websudo.html
+    fi
+
+}
+
+web-curl() {
+    local debug_run
+    if test "${jkd_verbose}" = 1; then
+        debug_run=debug-run
+    fi
+
+    $debug_run \
+    curl-f -s -b "$COOKIES" -H "$HEADER" "$@"
+}
+
+sudo-isok() {
+    web-curl -L ${scm_jira_url}secure/admin/ViewIssueTypes.jspa
+}
+
+for sudo_try in $(seq 1 2); do
+    view_issue_types=$(
+        sudo-isok
+                    );
+    if test $sudo_try = 1 && [[ "$view_issue_types" =~ '<form action="/login.jsp"' ]]; then
+        sudo-login
+        sudo-sudo
+    elif test $sudo_try = 1 && [[ "$view_issue_types" =~ '<form action="/secure/admin/WebSudoAuthenticate.jspa"' ]]; then
+        sudo-sudo
+    elif [[ "$view_issue_types" =~ 'You have temporary access to administrative functions' ]]; then
+        log "Got sudo @${sudo_try}"
+        return 0
+    fi
+done
+
+log "Can't get admin access"
+echo "${view_issue_types}" > $cache_dir/ViewIssueTypes.html
+return 1

@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+export extra_scripts=$(
+    cat <<'EOF6113cc9e16ac' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(call-interactively #'yas-activate-extra-mode)
+(call-interactively #'yas-insert-snippet)
+; {%/emacs-lisp-mode%}
+EOF6113cc9e16ac
+
+       )
+
+em get-text

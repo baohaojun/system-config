@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(system systemx capture capturex);
+
+my @workflow_scheme;
+
+my $comment = <<~'EOFc83131117f09';
+# {%json-mode%}
+{
+  "id": 12345,
+  "name": "scheme-name",
+  "projects": ["p1", "p2"],
+  "mappings": [
+    {
+      "issuetype": "Story",
+      "workflow": "WORKFLOW-NAME"
+    }
+  ]
+}
+# {%/json-mode%}
+EOFc83131117f09
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+my $workflowscheme_html = decode_utf8 scalar capturex('jkd', '-u', "$ENV{scm_jira_admin_user}", 'webget', "$ENV{scm_jira_url}secure/admin/ViewWorkflowSchemes.jspa");
+
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($workflowscheme_html);
+
+my @workflow_schemes;
+
+my %link_to_workflow;
+use URI::Query;
+sub link_to_workflow_name($) {
+    my $href = $_[0];
+    if (not $link_to_workflow{$href}) {
+        (my $query = $href) =~ s,.*\?,,;
+        my $qq = URI::Query->new(${query});
+        $link_to_workflow{$href} = ${$qq->hash}{workflowName};
+    }
+
+    return $link_to_workflow{$href};
+}
+
+$dom->find('td[class~="workflow-scheme-name"] strong:first-of-type')->each(
+    sub {
+        my $scheme_name = $_->text;
+        my $tr = $_->parent->parent;
+
+        my @projects = map { $_->text } $tr->find('td[class~="workflow-scheme-projects"] a')->each;
+
+        my @issuetypes = map { $_->attr('alt') } $tr->find('td[class~="workflow-scheme-details"] dt img')->each;
+        my @workflows = map { link_to_workflow_name $_->attr('href') } $tr->find('td[class~="workflow-scheme-details"] dd a')->each;
+
+        if (scalar @issuetypes != scalar @workflows) {
+            die "$scheme_name: " . join("\n", @issuetypes, ':', @workflows);
+        }
+
+        (my $id = $tr->at('td[class~="workflow-scheme-operations"] a[href^="EditWorkflowScheme"]')->attr('href')) =~ s,.*=,,;
+        my $active = $tr->at('td[class~="workflow-scheme-operations"] a[href^="DeleteWorkflowScheme"]') ? JSON::false : JSON::true;
+
+        my %issuetype_to_workflow_map = map { $issuetypes[$_], $workflows[$_] } (0 .. @issuetypes - 1);
+
+        push @workflow_schemes, {
+            id => $id,
+            name => $scheme_name,
+            projects => [@projects],
+            issuetypes_workflow => \%issuetype_to_workflow_map,
+            active => $active,
+        }
+    }
+);
+say JSON->new->utf8(1)->pretty(1)->encode(\@workflow_schemes);

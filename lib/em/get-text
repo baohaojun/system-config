@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+if test -z "${extra_scripts}"; then
+    extra_scripts=nil
+fi
+
+emacs_script=$(
+    cat <<'EOF8c8ffea5f194' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(save-window-excursion
+  (delete-other-windows)
+  (switch-to-buffer "*em get-text*" nil t)
+  (delete-region (point-min) (point-max))
+  [%extra_scripts%]
+  (recursive-edit)
+  (buffer-substring-no-properties (point-min) (point-max)))
+; {%/emacs-lisp-mode%}
+EOF8c8ffea5f194
+
+            )
+
+emacs.client -d -e "${emacs_script}" | em str2text

@@ -148,6 +148,21 @@ sel-x() {
                 perl -pe 's,(.*) :: (.*) :: (.*),$'${type_to_group_n[$sel_type]}','
 }
 
+exists-x() {
+    IFS=$'\n'
+    lines=(
+        $(
+            echo "${json}" | jq ".[]|.${exists_type}" -r
+        )
+    )
+    for l in "${lines[@]}"; do
+        if test "$l" = "$1"; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 x2y() {
     declare comment_doc=$(
         cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
@@ -226,6 +241,8 @@ fi
 
 if [[ $b0 =~ ^sel-(name|id|key)$ ]]; then
     sel_type=${b0#*-} sel-x
+elif [[ $b0 =~ ^exists-(name|id|key)$ ]]; then
+    exists_type=${b0#*-} exists-x "$1"
 elif [[ $b0 =~ ^(name|id|key)2(name|id|key)$ ]]; then
     x2y -f ${b0%2*} -t ${b0#*2} "$@"
 else

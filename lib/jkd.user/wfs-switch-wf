@@ -1,0 +1,160 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+use File::Slurp;
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# @:wf-name @:new-wf-name @:scheme-id @scheme-active
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $new_wf_name = "";
+my $scheme_active = 0;
+my $scheme_id = "";
+my $wf_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--new-wf-name=NEW-WF-NAME';
+    if (length('--new-wf-name=NEW-WF-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]scheme-active';
+    if (length('--[no]scheme-active') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--scheme-id=SCHEME-ID';
+    if (length('--scheme-id=SCHEME-ID') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--wf-name=WF-NAME';
+    if (length('--wf-name=WF-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'new-wf-name=s' => \$new_wf_name,
+    'scheme-active!' => \$scheme_active,
+    'scheme-id=s' => \$scheme_id,
+    'wf-name=s' => \$wf_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+my $scheme_json;
+my $scheme_update_api;
+if ($scheme_active) {
+    runx(EXIT_ANY, "jkd", "rest", "workflowscheme/${scheme_id}/draft", "--", "-X", "DELETE");
+    runx("jkd", "rest", "workflowscheme/${scheme_id}/createdraft", "--", "-X", "POST");
+    $scheme_update_api = "workflowscheme/${scheme_id}/draft";
+} else {
+    $scheme_update_api = "workflowscheme/${scheme_id}";
+}
+
+$scheme_json = $json->decode(scalar capturex("jkd", "rest", "$scheme_update_api"));
+
+if ($scheme_json->{defaultWorkflow} eq $wf_name) {
+    $scheme_json->{defaultWorkflow} = $new_wf_name;
+}
+
+for (keys %{$scheme_json->{issueTypeMappings}}) {
+    if ($scheme_json->{issueTypeMappings}{$_} eq $wf_name) {
+        $scheme_json->{issueTypeMappings}{$_} = $new_wf_name;
+    }
+}
+
+my %new_scheme_json = map {$_, $scheme_json->{$_}} ('defaultWorkflow', 'issueTypeMappings');
+runx("jkd", "rest", "${scheme_update_api}", "--", "-X", "PUT", "-H", "Content-Type: application/json", "--data", decode_utf8 $json->encode(\%new_scheme_json));
+
+
+if ($scheme_active) {
+    my $draft_id = $scheme_json->{id};
+    my $tmp_html = "$ENV{HOME}/tmp/wfs-switch-wf.$$.html";
+
+    if ($ENV{jkd_verbose} == 1) {
+        $tmp_html =~ s,\.$$,,;
+    } else {
+        use AtExit;
+        *clean_tmp = sub {
+            unlink $tmp_html;
+        };
+
+        atexit(\&clean_tmp);
+    }
+
+    my $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/project/SelectProjectWorkflowSchemeStep2!default.jspa?draftMigration=true&schemeId=${draft_id}");
+
+    use Mojo::DOM;
+    my $dom = Mojo::DOM->new->parse($html_text);
+    my @params = qw(projectId schemeId draftMigration projectIdsParameter Associate);
+    my %params_value;
+    for (@params) {
+        $params_value{$_} = $dom->at("input[name='$_']")->attr('value');
+    }
+
+
+    my $html_result =
+    capturex('debug-run', "jkd", "webcurl", "$ENV{scm_jira_url}secure/project/SelectProjectWorkflowSchemeStep2.jspa", "-X", "POST", "-L", # "-o", "$tmp_html",
+         map { ('--data-urlencode', sprintf("%s=%s", $_, $params_value{$_})) } (keys %params_value)
+     );
+
+    if ($ENV{jkd_verbose} == 1) {
+        write_file($tmp_html, $html_result);
+        say STDERR "html is saved at $tmp_html";
+    }
+
+    if ($html_result =~ m/Publishing workflow scheme/) {
+        exit 0
+    } else {
+        exit 1
+    }
+}

@@ -7,7 +7,7 @@ use IPC::System::Simple qw(system systemx capture capturex);
 use Encode;
 use JSON;
 
-my $j = JSON->new;
+my $j = JSON->new->utf8(0);
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl i:issue f:fields-to-print='()' @json
@@ -74,35 +74,22 @@ my $jkd_verbose = $ENV{jkd_verbose};
 
 my $json_issue = $j->decode(scalar capturex("jkd", "rest", "issue/$issue?expand=names"));
 
-if (not @fields_to_print) {
-    my %fields;
-    for (keys %{$json_issue->{fields}}) {
-        if ($json_issue->{fields}{$_}) {
-            my $name = $json_issue->{names}{$_};
-            if (ref $json_issue->{fields}{$_} eq "HASH") {
-                delete $json_issue->{fields}{$_}{id} if ($json_issue->{fields}{$_}{name} || $json_issue->{fields}{$_}{value});
-            }
-            if ($name and $name ne $_) {
-                $fields{$name} = $json_issue->{fields}{$_};
-            } else {
-                $fields{$_} = $json_issue->{fields}{$_};
-            }
-
+my %fields_with_names;
+for (keys %{$json_issue->{fields}}) {
+    if ($json_issue->{fields}{$_}) {
+        my $name = $json_issue->{names}{$_};
+        if ($name) {
+            $fields_with_names{$name} = $json_issue->{fields}{$_};
+        } else {
+            $fields_with_names{$_} = $json_issue->{fields}{$_};
         }
     }
-    print $j->utf8(0)->pretty(1)->encode(\%fields);
-    exit;
 }
 
-my $issue_type_id = $json_issue->{fields}{issuetype}{id};
-my $issue_project = $json_issue->{fields}{project}{key};
-
-my @all_fields = sort keys %{$json_issue->{fields}};
-
-my %fields_to_print;
-
-my %fields_to_print_normalized;
-my %fields_results;
+if (not @fields_to_print) {
+    print $j->utf8(0)->pretty(1)->encode(\%fields_with_names);
+    exit;
+}
 
 sub no_spaces_equal($$) {
     my @pair = @_;
@@ -115,32 +102,36 @@ sub no_spaces_convert($) {
     return $_[0];
 }
 
-for (@fields_to_print) {
-    $fields_to_print{$_} = 1;
-    $fields_to_print_normalized{no_spaces_convert $_} = $_;
+sub no_spaces_hash_convert(\%) {
+    my $hash = $_[0];
+    map {
+        (my $key = $_) =~ s, | ,,g;
+        $hash->{$key} = $hash->{$_}
+    } keys %$hash;
 }
 
-for (@all_fields) {
-    my $field_name = no_spaces_convert $json_issue->{names}{$_};
-    say STDERR "working with $field_name" if $jkd_verbose;
+sub no_spaces_hashget(\%$) {
+    my ($hash, $key) = @_;
 
-    next unless $json_issue->{fields}{$_};
-    if ($fields_to_print{$_} or $fields_to_print_normalized{$field_name} or not @fields_to_print) {
-        if (@fields_to_print == 1 and not $json) {
-            use Data::Types qw(:string);
-            my $value = $json_issue->{fields}{$_};
-            if (is_string $value) {
-                say $value;
-            } else {
-                say $j->pretty->encode($value);
-            }
-        } else {
-            if ($fields_to_print{$_}) {
-                $fields_results{$_} = $json_issue->{fields}{$_}
-            } elsif ($fields_to_print_normalized{$field_name}) {
-                $fields_results{$fields_to_print_normalized{$field_name}} = $json_issue->{fields}{$_}
-            }
-        }
+    if ($hash->{$key}) {
+        return $hash->{$key};
+    }
+
+    if ($hash->{no_spaces_hash_convert_done} != 'true') {
+        no_spaces_hash_convert %$hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    return $hash->{$key};
+}
+
+my %fields_results;
+
+for (@fields_to_print) {
+    my $value = no_spaces_hashget(%fields_with_names, $_) ||
+        no_spaces_hashget(%{$json_issue->{fields}}, $_);
+    if (defined $value) {
+        $fields_results{$_} = $value;
     }
 }
 

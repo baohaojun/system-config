@@ -25,10 +25,18 @@ EOF63aa0d87444c
 if test "${urls}" -a "${urls}" != "${old_text}"; then
     IFS=$'\n'
     text_to_post=$(
-        EMACS=t select-args -p "Which text do you want to post?" $urls "The old text"
+        EMACS=t select-args -p "Which text do you want to post?" $urls "The old text" "open all urls"
                 )
     if test "${text_to_post}" = "The old text"; then
         echo "${old_text}"
+    elif test "${text_to_post}" = "open all urls"; then
+        set -- $urls
+        echo "$1"
+        firefox "$1" &>/dev/null&
+        shift
+        for u in "$@"; do
+            firefox --new-tab "$u" &>/dev/null&
+        done
     else
         echo "${text_to_post}"
     fi

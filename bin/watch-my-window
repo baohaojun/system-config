@@ -17,7 +17,7 @@ top_window=$(sawfish-top-window)
 if [[ $top_window =~ Firefox ]]; then
     url=$(firefox-get-tab-url --no-with-xkeytool)
     echo "$(date): ${top_window} ($url)"
-    if [[ $url =~ weibo.com|www.newsmth.net|youtube.com ]]; then
+    if [[ $url =~ weibo.com|www.newsmth.net ]]; then
         if test -e ~/.config/system-config/sleep-later; then
             bhj-notify watch-my-window "stop watching $url"
             exit 0

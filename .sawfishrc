@@ -528,6 +528,11 @@ EOF856ceee4ab57
 (defun do-focus-global-remap-hook (w focus-mode)
   (do-focus-global-remap w focus-mode))
 
+(defun on-window-deleted (&optional w)
+  (activate-window (car (stacking-order))))
+
+(add-hook 'destroy-notify-hook on-window-deleted)
+
 (defun focus-debug (w focus-debug)
   (message "focus in/out"))
 

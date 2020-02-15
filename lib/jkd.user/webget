@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+. ${scm_common_libdir}/jkd.user/websudo
+
+web-curl "$@"
