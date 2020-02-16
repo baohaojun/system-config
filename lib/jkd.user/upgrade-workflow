@@ -76,24 +76,42 @@ my $workflow_exists = (runx(EXIT_ANY, "jkd", "exists-name", "-a", "workflow", "$
 my $backup_xml = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/workflows/${workflow_name}.bak.xml";
 my $temp_workflow = "$workflow_name.$$";
 
+my $done_switch;
+use feature 'signatures';
+sub switch_workflow($old_workflow, $new_workflow) {
+    # step 1: workflow 当前在用的话，要将它卸载
+    my $wf_scheme =
+        $json->decode(scalar capturex("jkd", "workflowscheme2json"));
+
+    for my $scheme (@$wf_scheme) {
+        my %it_wf_map = %{$scheme->{issuetypes_workflow}};
+        my %wf_it_map = map {$it_wf_map{$_}, $_} %it_wf_map;
+
+        if ($wf_it_map{$old_workflow}) {
+            say STDERR "switch workflow ${old_workflow} for " . $scheme->{name};
+            $done_switch = 1;
+            runx("jkd", "wfs-switch-wf", "--scheme-id", $scheme->{id},
+                 ( $scheme->{active} ? "--scheme-active" : "--noscheme-active" ),
+                 "--wf-name", "$old_workflow", "--new-wf-name", "$new_workflow");
+            next;
+        }
+    }
+}
+
 if ($workflow_exists) {
     runx("jkd", "export-workflow-as-xml", "-w", "${workflow_name}", "-f", $backup_xml);
     runx("jkd", "import-workflow-from-xml", "-w", "$temp_workflow", "-f", "$backup_xml");
+
+    switch_workflow($workflow_name, $temp_workflow);
+    runx("jkd", "wf-delete", "-w", "$workflow_name");
 }
 
-# step 1: workflow 当前在用的话，要将它卸载
-my $wf_scheme =
-    $json->decode(scalar capturex("jkd", "workflowscheme2json"));
+runx("jkd", "import-workflow-from-xml", "-w", "$workflow_name", "-f", "$workflow_xml_file");
 
-for my $scheme (@$wf_scheme) {
-    my %it_wf_map = %{$scheme->{issuetypes_workflow}};
-    my %wf_it_map = map {$it_wf_map{$_}, $_} %it_wf_map;
-
-    if ($wf_it_map{$workflow_name}) {
-        say STDERR "switch workflow ${workflow_name} for " . $scheme->{name};
-        runx("jkd", "wfs-switch-wf", "--scheme-id", $scheme->{id},
-             ( $scheme->{active} ? "--scheme-active" : "--noscheme-active" ),
-             "--wf-name", "$workflow_name", "--new-wf-name", "$temp_workflow");
-        next;
+if ($workflow_exists) {
+    if ($done_switch) {
+        switch_workflow($temp_workflow, $workflow_name);
     }
+
+    runx("jkd", "wf-delete", "-w", "$temp_workflow");
 }

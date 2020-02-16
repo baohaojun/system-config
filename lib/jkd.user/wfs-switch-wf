@@ -125,36 +125,71 @@ if ($scheme_active) {
     } else {
         use AtExit;
         *clean_tmp = sub {
-            unlink $tmp_html;
+            unlink $tmp_html if -e $tmp_html;
+            unlink "$tmp_html.head" if -e "$tmp_html.head";
         };
 
         atexit(\&clean_tmp);
     }
 
-    my $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/project/SelectProjectWorkflowSchemeStep2!default.jspa?draftMigration=true&schemeId=${draft_id}");
+    my $migrate_url = "$ENV{scm_jira_url}secure/project/SelectProjectWorkflowSchemeStep2!default.jspa?draftMigration=true&schemeId=${draft_id}";
+    my $html_text = decode_utf8 capturex("jkd", "webget", $migrate_url);
 
     use Mojo::DOM;
     my $dom = Mojo::DOM->new->parse($html_text);
     my @params = qw(projectId schemeId draftMigration projectIdsParameter Associate);
-    my %params_value;
+    my @params_values;
     for (@params) {
-        $params_value{$_} = $dom->at("input[name='$_']")->attr('value');
+        push @params_values, sprintf("%s=%s", $_, $dom->at("input[name='$_']")->attr('value'));
     }
 
+    if ($dom->at("select")) {
+        runx(EXIT_ANY, "firefox", "$migrate_url");
+        run("yes-or-no-p completed migration?");
+        exit 0;
+    }
 
     my $html_result =
-    capturex('debug-run', "jkd", "webcurl", "$ENV{scm_jira_url}secure/project/SelectProjectWorkflowSchemeStep2.jspa", "-X", "POST", "-L", # "-o", "$tmp_html",
-         map { ('--data-urlencode', sprintf("%s=%s", $_, $params_value{$_})) } (keys %params_value)
+    capturex('debug-run', "jkd", "webcurl", "$ENV{scm_jira_url}secure/project/SelectProjectWorkflowSchemeStep2.jspa", "-X", "POST", "-L", "-D", "$tmp_html.head",
+         map { ('--data-urlencode', $_) } @params_values
      );
 
-    if ($ENV{jkd_verbose} == 1) {
-        write_file($tmp_html, $html_result);
-        say STDERR "html is saved at $tmp_html";
+    my $head = read_file("$tmp_html.head");
+    if ($head =~ m,Location: (.*?)$,ms) {
+        (my $new_url = $1) =~ s,\r,,;
+        say STDERR "Got new url: $new_url, waiting for completion...";
+        my $migration_complete = 0;
+        for (1..60) {
+            sleep 1;
+            $html_result = capturex("jkd", "webget", "$new_url");
+            if ($html_result =~ m,Workflow migration complete,) {
+                $migration_complete = 1;
+                write_file($tmp_html, $html_result);
+
+                my $dom = Mojo::DOM->new->parse(decode_utf8 $html_result);
+                my @params = qw(taskId destinationURL Acknowledge);
+                my @params_values;
+                for (@params) {
+                    push @params_values, $_, $dom->at("input[name='$_']")->attr('value');
+                }
+                use URI::Query;
+                my $qq = URI::Query->new(@params_values);
+
+                my $html_result =
+                    capturex('debug-run', "jkd", "webcurl", "$ENV{scm_jira_url}secure/project/AcknowledgeTask.jspa?${qq}", "-L", "-D", "$tmp_html.head");
+
+                exit 0;
+            }
+            say STDERR ".";
+        }
+
+        if (not $migration_complete) {
+            say STDERR "$html_result";
+            die "Can't get to migration complete";
+        }
+    } else {
+        die "Can't get new url to see if migration is complete";
     }
 
-    if ($html_result =~ m/Publishing workflow scheme/) {
-        exit 0
-    } else {
-        exit 1
-    }
+    exit 1
 }

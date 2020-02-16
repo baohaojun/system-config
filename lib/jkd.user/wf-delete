@@ -53,7 +53,7 @@ GetOptions (
 
 ## end generated code
 
-runx('debug-args', "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/workflows/DeleteWorkflow.jspa", "-X", "POST", "-L",
+runx("jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/workflows/DeleteWorkflow.jspa", "-X", "POST", "-L", "-o", "/dev/null",
 
      "--data-urlencode", "workflowName=${workflow_name}",
      "--data-urlencode", "workflowMode=live",
@@ -61,3 +61,14 @@ runx('debug-args', "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/workflows/D
      "--data-urlencode", "issueType=",
      "--data-urlencode", "confirmedDelete=true",
      "--data-urlencode", "Delete=Delete");
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+my $workflow_json =
+    $json->decode(scalar capturex("jkd", "rest", "workflow"));
+
+if (grep {$_->{name} eq $workflow_name} @$workflow_json) {
+    die "Can't delete $workflow_name, it still exists!"
+}

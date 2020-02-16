@@ -82,7 +82,7 @@ if test "$special" = true; then
 
     if ! find-or-exec -e -p ~/.cache/private-firefox-1/firefox/firefox firefox true; then
         found_private_firefox=false
-        private-firefox&
+        private-firefox -- "$@"&
         if sawfish-window wait-for-window find-or-exec -e -p ~/.cache/private-firefox-1/firefox/firefox firefox true; then
            found_private_firefox=true
         fi
