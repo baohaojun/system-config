@@ -101,7 +101,7 @@ if [ \$? -eq 0 ]; then
         # Only change the first line
         sed -i '1!b;s/pick\(.*\)/edit\1/g' .git/rebase-merge/git-rebase-todo
 else
-        vi \$1
+        ew \$1
 fi
 END0
 chmod +x /tmp/igec.py
@@ -116,7 +116,7 @@ rm -rf /tmp/tmp-gep/
 mkdir -p /tmp/tmp-gep/
 
 git format-patch HEAD^ -o /tmp/tmp-gep/
-vi /tmp/tmp-gep/*patch
+ew /tmp/tmp-gep/*patch
 
 git checkout HEAD^
 git checkout .
@@ -139,7 +139,7 @@ if [ \$? -eq 0 ]; then
         # Only change the first line
         sed -i '1!b;s/pick\(.*\)/reword\1/g' .git/rebase-merge/git-rebase-todo
 else
-        vi \$1
+        ew \$1
 fi
 END3
 chmod +x /tmp/igrc.py
@@ -226,7 +226,7 @@ if [ -f /tmp/ncurses-output ]; then
         # Diff of the commit with respect to HEAD
         elif [ $cmd == "D" ]; then
                 git diff $commit > /tmp/diff
-                vi /tmp/diff
+                ew /tmp/diff
                 rm /tmp/diff
         # Start interactive rebase from here
         elif [ $cmd == "b" ]; then
