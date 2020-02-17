@@ -106,15 +106,15 @@ if test "$do_fetch" = true; then
         fi
 
         for x in $(seq 1 3); do
-            if timeout 30 git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args; then
+            if timeout $((x * 10)) git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args; then
                 exit
             fi
             echo failed $PWD at $x
-            sleep 10
+            sleep $(random 10)
+            tsocks1 git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args || {
+                kill $$
+            }
         done
-        tsocks1 git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args || {
-            kill $$
-        }
     )&
     if test "$fetch_only" != true; then
         wait
@@ -159,14 +159,29 @@ if test "$fetch_only" = true; then
     exit 0
 fi
 
-git submodule foreach 'bash -c "
+submodule_bash_command=$(printf %q "$(
+cat <<'EOFf150e327ac04' | . .replace-%% --
+# {%sh-mode%}
     function do-git-pull-mac-twice() {
-        git-pull-mac '$(if test "$fetch_first" = true; then echo -n --fetch-first; fi)'
+        set -o pipefail
+        logdir=~/.cache/system-config/logs/git-pull-mac/$PWD/
+        mkdir -p "$logdir"
+
+        git-pull-mac $(if test "[%fetch_first%]" = true; then echo -n --fetch-first; fi) 2>"$logdir/git-pull-mac.err" | (
+            tee "$logdir"/git-pull-mac.out
+        )
+        cat "$logdir/git-pull-mac.err" 1>&2
     }
 
     if ! do-git-pull-mac-twice; then
-        echo git-pull-mac failed in $PWD;
-    fi&"' | grep -v '^Entering '|grep 'failed in' || true # wait...
+        echo git-pull-mac FAILED in $PWD;
+    fi&
+# {%/sh-mode%}
+EOFf150e327ac04
+
+)")
+
+git submodule foreach "bash -c $submodule_bash_command" | grep -v '^Entering '|grep 'FAILED in' || true # wait...
 if git config --global user.email| grep -q baohaojun; then
     git submodule foreach 'git config user.email baohaojun@gmail.com'
     git config user.email baohaojun@gmail.com

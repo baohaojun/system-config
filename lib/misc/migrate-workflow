@@ -5,10 +5,6 @@ cd "${test_dir}"
 workflow_file=workflows/${workflow_name}.xml
 workflow_file_with_names=workflows/${workflow_name}.names.xml
 
-hint "Export workflow ${workflow_name} as xml, and put it in clipboard"
-jkd go workflow "${workflow_name}"
-hint "Press enter when you are done"
-
 save-workflow() {
     local workflow_name=$1
     hint "下面将保存并格式化 workflow: ${workflow_name}"
@@ -21,8 +17,6 @@ save-workflow() {
 
         hint "下面将显示本次 save workflow 之后，跟上次 git 提交之间的变化"
         git difftool -t meld -y HEAD workflows/${workflow_name}.xml || true
-
-        break
     fi
 }
 
@@ -39,17 +33,12 @@ if yes-or-no-p -y "把两边的 workflow 做一下对比(Prod Env <> Test En
     meld ${workflow_file} "${test_dir}"/${workflow_file} || true
 fi
 
-if yes-or-no-p -y "在目标上 import workflow xml (会将 workflow 文件内容放入系统剪贴板)"; then
-    postfix=$(ask-for-input-with-sawfish -p "请输入新的 workflow 名字的后缀")
-    jkd import-workflow-from-xml -w "${workflow_name}.${postfix}" -f "${workflow_file}"
+if yes-or-no-p -y "在目标上 import workflow xml？（会自动将其与对应的 issuetype 绑定）"; then
+    jkd upgrade-workflow -w "${workflow_name}" -f "${workflow_file}"
 fi
 
 save-workflow "${workflow_name}.${postfix}"
 
 if yes-or-no-p -y "再把两边的 workflow 用 names 表示，做一下对比(ProdEnv <> TestEnv)？"; then
     meld "${workflow_file_with_names}" "${test_dir}/${workflow_file_with_names}"
-fi
-
-if yes-or-no-p -y "在目标上配置 issuetype workflow scheme （还是搜 ${project_key}）？注意：prod 环境上的 workflow 名字不一定是 ${workflow_name} 了 "; then
-    jkd go open secure/admin/ViewWorkflowSchemes.jspa
 fi

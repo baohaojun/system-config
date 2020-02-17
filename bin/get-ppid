@@ -1,2 +1,7 @@
 #!/bin/bash
-ps -o ppid $(ps -o ppid $$|tail -n 1)
+
+if test "$#" = 0; then
+    ps h -o ppid $(ps h -o ppid $$|tail -n 1)
+else
+    ps h -o ppid "$1"
+fi | perl -pe 's,\s,,g'

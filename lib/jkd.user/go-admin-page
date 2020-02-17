@@ -17,9 +17,7 @@ declare -A admin_pages=(
 
 if test -z "${TMUX}"; then
     . .firefox.env
-    bhj-notify "go" ${current_url}
     scm_jira_url=$(echo ${current_url} | perl -pe 's,(.*?//.*?/).*,$1,; s,/*$,/,')
-    bhj-notify "go-admin-page" "${THE_FIREFOX}, ${FIREFOX_PROFILE_ARG}"
 fi
 
 
@@ -217,10 +215,12 @@ EOFe9576f8668e0
         elif [[ $current_url =~ /browse/ ]]; then
             tmp_html=~/tmp/x.$$.html
             . atexit rm -f $tmp_html
+
             jkd webget "${current_url}" > ${tmp_html}
             query_str=$(
                 misc html-query -f "${tmp_html}" -q 'a[data-track-click=issue.viewworkflow]' -a href
                      )
+            bhj-notify "go-admin-page.$$" "query_str is $query_str"
         fi
 
         if test "${query_str}"; then

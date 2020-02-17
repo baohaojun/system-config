@@ -239,7 +239,14 @@ EOF98db9599d6e4
         return
     fi
 
-    if is-in-emacs || is-tty-io; then
+    if (
+        set -x; export SHELLOPTS;
+        logdir=~/.cache/system-config/logs/pp/
+        mkdir -p "$logdir"
+        exec 2>> "${logdir}"/${0##*/}.err
+        ps.tree $$ 1>&2
+        is-in-emacs && [[ "$(ps h -o cmd "$(get-ppid $$)")" =~ "emacs -mm" ]]
+    ) || is-tty-io; then
         echo "$out" | putclip
     fi
 else # we are being sourced

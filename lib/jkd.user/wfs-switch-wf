@@ -157,6 +157,7 @@ if ($scheme_active) {
     my $head = read_file("$tmp_html.head");
     if ($head =~ m,Location: (.*?)$,ms) {
         (my $new_url = $1) =~ s,\r,,;
+        $new_url =~ s,^/,$ENV{scm_jira_url},;
         say STDERR "Got new url: $new_url, waiting for completion...";
         my $migration_complete = 0;
         for (1..60) {

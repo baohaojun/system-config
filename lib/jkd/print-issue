@@ -122,6 +122,7 @@ sub no_spaces_hashget(\%$) {
         $hash->{no_spaces_hash_convert_done} = 'true';
     }
 
+    $hash->{$key} = $hash->{no_spaces_convert $key};
     return $hash->{$key};
 }
 

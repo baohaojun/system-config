@@ -4,21 +4,24 @@ set -e
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
 # {%org-mode%}
+action can be of of
 
+- add
+- list-roles
+- list-users
 # {%/org-mode%}
 EOFe9576f8668e0
         )
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # a:action add p:project r:role u:user
+    # a:action p:project r:role u:user
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o a:ap:r:u:h \
-                      --long action:,dd,project:,role:,user:,help,no-dd \
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:p:r:u:h \
+                      --long action:,project:,role:,user:,help \
                       -n $(basename -- $0) -- "$@")
 declare action=
-declare dd=false
 declare project=
 declare role=
 declare user=
@@ -29,15 +32,6 @@ while true; do
         -a|--action)
             action=$2
             shift 2
-
-            ;;
-        -a|--dd|--no-dd)
-            if test "$1" = --no-dd; then
-                dd=false
-            else
-                dd=true
-            fi
-            shift
 
             ;;
         -p|--project)
@@ -62,9 +56,6 @@ while true; do
             echo Options and arguments:
             printf %06s '-a, '
             printf %-24s '--action=ACTION'
-            echo
-            printf %06s '-a, '
-            printf %-24s '--[no-]dd'
             echo
             printf %06s '-p, '
             printf %-24s '--project=PROJECT'
@@ -99,6 +90,7 @@ if test "${role}"; then
         echo "${roles_json}" | jq "$(printf '."%s"' "${role}")" -r |perl -pe 's,.*/,,'
                )
 fi
+
 if test "${action}" = add; then
     debug-run jkd rest project/${project}/role/${role_id} -- -X POST --data '{"user" : ["'"${user}"'"]}' -H 'Content-Type: application/json'
 elif test "${action}" = list-roles; then

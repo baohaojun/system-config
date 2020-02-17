@@ -43,6 +43,7 @@ done
 ## end generated code
 
 exec &> ~/tmp/abbrevs.log
+export EMACS=t
 set -x
 
 export SELECT_HISTORY_ORDER=true
@@ -64,19 +65,35 @@ if test -z "$abbrev" -a "$1"; then
 elif test "$abbrev" -a "$1"; then
     die "Must specify ABBREV with either -a ABBREV or \$1, can't use both"
 elif test -z "${abbrev}"; then
-    abbrev=$(EMACS=t input-lock -l "NONE" \
+    abbrev=$(input-lock -l "NONE" \
                         select-args --ask-for-input -1 --select-from-history-too -o -p "Please input your abbrev. Or simply ? for help")
 fi
 
 get-abbrev-file() {
     local abbrev=$1
-    EMACS=t select-output-line -i "${abbrev}" -o find "${config_dirs[@]}" -iname "*$(set -- ${abbrev//./\ }; echo -n $1)*" \( -type f -o -type l \) || true
+    select-output-line -i "${abbrev}" -o find "${config_dirs[@]}" -iname "*$(set -- ${abbrev//./\ }; echo -n $1)*" \( -type f -o -type l \) || true
 }
 
-if test "${abbrev}" = '?'; then
-    EMACS=t hint "You can use + to add a new abbrev, like this: +NEW_ABBREV
+if test "${abbrev:0:1}" = '~'; then
+    abbrev=$(
+        select-output-line -1 -o grep -e "${abbrev:1}" -P -l -r "${config_dirs[@]}" | perl -pe 's,.*/,,'
+          )
+    if yes-or-no-p -y "edit this abbrev? $abbrev"; then
+        abbrev=">$abbrev"
+    fi
+fi
 
-You can use > to edit an existing abbrev, like thin: >OLD_ABBREV"
+
+if test "${abbrev}" = '?'; then
+    hint "
+You can use X.Y.Z to search for abbrev that has X Y Z in its name
+
+You can use + to add a new abbrev, like this: +NEW_ABBREV
+
+You can use > to edit an existing abbrev, like this: >OLD_ABBREV
+
+You can use ~TEXT to search for text in abbrevs
+"
 
     exit
 elif test "${abbrev:0:1}" = +; then
@@ -93,7 +110,7 @@ elif test "${abbrev:0:1}" = '>'; then
         ew "${abbrev_file}"
         exec bhj-notify abbrevs "Done editing ${abbrev_file##*/}"
     else
-        EMACS=t hint "Maybe you mean +$abbrev?"
+        hint "Maybe you mean +$abbrev?"
     fi
 fi
 
@@ -103,7 +120,7 @@ if test ! -e "${abbrev_file}"; then
     if test "${abbrev_file:0:1}" = +; then
         exec bash -x abbrevs -a "${abbrev_file}" &> ~/tmp/abbrevs.recur
     fi
-    if EMACS=t yes-or-no-p -y "abbrev file for $abbrev not found, create?"; then
+    if yes-or-no-p -y "abbrev file for $abbrev not found, create?"; then
         exec bash -x abbrevs -a "+${abbrev}" &> ~/tmp/abbrevs.recur
     fi
     bhj-notify abbrevs "There is no matching file for $abbrev, use +$abbrev to create a new abbrev"
@@ -113,7 +130,6 @@ fi
 bhj-notify "abbrevs" "abbrev_file: $abbrev_file"
 expand_text=$(
     if test -x "${abbrev_file}"; then
-        export EMACS=t
         "$abbrev_file"
     else
         cat "$abbrev_file"
