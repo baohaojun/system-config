@@ -914,11 +914,6 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    M.configDir = configDir .. package.config:sub(1, 1)
    M.dataDir = os.getenv("WRENCH_DATA_DIR") .. package.config:sub(1, 1)
 
-   M.ExtMods = wrench_run("ext/.ls-modules.lua")
-   if not M.ExtMods then
-      log("无法加载 ext/.ls-modules.lua")
-   end
-
    wrench_run("lib/.init.lua")
 
    -- install the apk
@@ -1194,7 +1189,14 @@ end
 
 M.call_ext = function(ext, ...)
    M.ext_args = {...}
-   wrench_run("ext" .. package.config:sub(1, 1) .. ext .. ".lua")
+   for _, dir in pairs{configDirFile("ext"), "ext"} do
+      local file = configDirFile("ext") .. package.config:sub(1, 1) .. ext .. ".lua"
+      if file_exists(file) then
+         wrench_run(file)
+         break
+      end
+   end
+
    M.ext_args = {}
 end
 
@@ -1443,6 +1445,13 @@ M.wrench_run = function (file, argType)
 end
 
 M.wrenchThumbUp = function()
+   if not M.ExtMods then
+      M.ExtMods = wrench_run("ext/.ls-modules.lua")
+      if not M.ExtMods then
+         log("无法加载 ext/.ls-modules.lua")
+      end
+   end
+
    if not M.ExtMods.descriptions then
       prompt_user("扩展程序加载失败，无法执行此操作")
       return

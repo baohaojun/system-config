@@ -136,6 +136,12 @@ end
 M.scene_x = function(scene)
    load_scene_map()
    local saved_scene_xy = M.scenes_map[scene]
+   while not saved_scene_xy do
+      log("Can't get xy for %s, err!", scene)
+      M.g_find_scene_debug = true
+      find_scene(scene)
+      saved_scene_xy = M.scenes_map[scene]
+   end
    return saved_scene_xy:gsub(" .*", "")
 end
 

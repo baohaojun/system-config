@@ -83,14 +83,14 @@ end
 M.click_dingding_pics = function(npics)
    local pic_share_buttons = {}
 
-   local click_2x1_x = scene_x("dingding-fatu-1")
-   local click_2x1_y = scene_y("dingding-fatu-1")
+   local click_2x1_x = scene_x("dingding-fatu-x2y1")
+   local click_2x1_y = scene_y("dingding-fatu-x2y1")
 
-   local click_3x1_x = scene_x("dingding-fatu-2")
-   local click_3x1_y = scene_y("dingding-fatu-2")
+   local click_3x1_x = scene_x("dingding-fatu-x3y1")
+   local click_3x1_y = scene_y("dingding-fatu-x3y1")
 
-   local click_2x2_x = scene_x("dingding-fatu-3")
-   local click_2x2_y = scene_y("dingding-fatu-3")
+   local click_2x2_x = scene_x("dingding-fatu-x2y2")
+   local click_2x2_y = scene_y("dingding-fatu-x2y2")
 
    local cell_height = math.floor(click_2x2_y - click_2x1_y)
    local cell_width = math.floor(click_3x1_x - click_2x1_x)
