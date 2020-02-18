@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+if test "${scm_jira_user}" != "${scm_jira_admin_user}"; then
+    scm_jira_user=${scm_jira_admin_user}
+    scm_jira_password=$(git config -f "${scm_secrets_conf}" ldap.${scm_jira_user}.password)
+fi
+
 cache_dir=~/.cache/jira/${scm_jira_url}/
 mkdir -p "$cache_dir"
 COOKIES=${cache_dir}cookies.txt

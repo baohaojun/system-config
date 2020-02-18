@@ -112,7 +112,8 @@ for c in "${children[@]}"; do
         if test "${dry_run}"; then
             touch "${target_name}"
         else
-            my-curl "${sub_url}" -o "${target_name}"
+            new_url="$(uri-escape -s ':/' "${sub_url}")"
+            my-curl "$new_url" -o "${target_name}"
         fi
     fi
 done

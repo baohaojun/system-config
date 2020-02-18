@@ -66,7 +66,7 @@ cmd_md5_file_prefix=${cache_dir}/${cmd_md5:0:2}/${cmd_md5:2}
 mkdir -p "${cmd_md5_file_prefix%/*}"
 
 if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
-        test "$(cat "${cmd_md5_file_prefix}.cmd")" = "$*"; then
+        test "$(cat "${cmd_md5_file_prefix}.cmd")" = "$(echo -n "$*")"; then
     if test "${CACHED_RUN_FORCE_CLEAN}" != true; then
         cat "${cmd_md5_file_prefix}.out"
         exit

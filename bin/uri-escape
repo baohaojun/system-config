@@ -1,8 +1,79 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
+
+use v5.10;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# s:skip-chars=""
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $skip_chars = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--skip-chars=SKIP-CHARS';
+    if (length('--skip-chars=SKIP-CHARS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'skip-chars|s=s' => \$skip_chars,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my @reserved = (
+    "]", "[", ":", "/", "?", "#", "@",
+    "!", "\$", "&", "'", "(", ")",
+    "*", "+", ",", ";", "="
+);
+
+
+my $reserved;
+if ($skip_chars) {
+    my %skip_chars = map {($_ => 1)} split('', $skip_chars);
+    @reserved = grep {not $skip_chars{$_}} @reserved;
+    ($reserved = join("", @reserved) . "\x7f-\xff") =~ s,\$,\\\$,;
+}
+
+
 
 use URI::Escape;
 
 $, = " ";
-$escape = uri_escape("@ARGV");
+if ($reserved) {
+    $escape = uri_escape("@ARGV", $reserved);
+} else {
+    $escape = uri_escape("@ARGV");
+}
+
 
 print $escape;

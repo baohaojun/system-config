@@ -219,6 +219,12 @@ EOF98db9599d6e4
         echo -n "/scp:`whoami`@$LOCALIP:$FILE"
     }
 
+    if is-in-emacs; then
+        if [[ "$(ps h -o cmd "$(get-ppid $$)")" =~ "emacs -mm" ]]; then
+            export NEED_PUTCLIP=true # 直接被 emacs 调用，性质如同直接在命令行上执行，需放入 clipboard
+        fi
+    fi
+
     if is-in-emacs && test $# = 0 -a "$GET_PATH_FOR_CURRENT_EMACS_FILE" != true; then
         nohup setsid bash -c '
             set -x; export GET_PATH_FOR_CURRENT_EMACS_FILE=true;
@@ -239,14 +245,7 @@ EOF98db9599d6e4
         return
     fi
 
-    if (
-        set -x; export SHELLOPTS;
-        logdir=~/.cache/system-config/logs/pp/
-        mkdir -p "$logdir"
-        exec 2>> "${logdir}"/${0##*/}.err
-        ps.tree $$ 1>&2
-        is-in-emacs && [[ "$(ps h -o cmd "$(get-ppid $$)")" =~ "emacs -mm" ]]
-    ) || is-tty-io; then
+    if test "${NEED_PUTCLIP}" = true || is-tty-io; then
         echo "$out" | putclip
     fi
 else # we are being sourced
