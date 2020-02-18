@@ -1,0 +1,164 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# f:field-name
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $field_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--field-name=FIELD-NAME';
+    if (length('--field-name=FIELD-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'field-name|f=s' => \$field_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+sub no_spaces_equal($$) {
+    my @pair = @_;
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($) {
+    map {s, | ,,g} @_;
+    return $_[0];
+}
+
+sub no_spaces_hash_convert(\%) {
+    my $hash = $_[0];
+    map {
+        (my $key = $_) =~ s, | ,,g;
+        $hash->{$key} = $hash->{$_}
+    } keys %$hash;
+}
+
+sub no_spaces_hashget(\%$) {
+    my ($hash, $key) = @_;
+
+    if ($hash->{$key}) {
+        return $hash->{$key};
+    }
+
+    if ($hash->{no_spaces_hash_convert_done} != 'true') {
+        no_spaces_hash_convert %$hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    $hash->{$key} = $hash->{no_spaces_convert $key};
+    return $hash->{$key};
+}
+
+my $fields = $json->decode(scalar capturex("jkd", "rest", "field"));
+
+my %fields_names_id_map = map {($_->{name} => $_->{id})} @$fields;
+
+my $field_id = no_spaces_hashget(%fields_names_id_map, $field_name);
+
+if ($field_id !~ m/customfield_/) {
+    die "Can't dump $field_name: id is ' $field_id'";
+}
+
+$field_id =~ s,.*_,,;
+
+my $field_config_html = capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/ConfigureCustomField!default.jspa?customFieldId=${field_id}");
+my $field_json;
+for (@$fields) {
+    if ( $_->{id} eq "customfield_${field_id}") {
+        $field_json = $_;
+        last;
+    }
+}
+
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse(decode_utf8 $field_config_html);
+
+my $issuetypes = $json->decode(scalar capturex("jkd", "rest", "issuetype"));
+my $projects = $json->decode(scalar capturex("jkd", "rest", "project"));
+
+my @field_issuetypes;
+my @field_projects;
+my $field_defaut_value;
+my @field_options;
+
+$dom->find('dd[class="context-issue-type"] a[href^="EditIssueType!default.jspa"]')->each(
+    sub {
+        my $href = $_->attr('href');
+        (my $issuetype_id = $href) =~ s,.*?=(\d+).*,$1,;
+        push @field_issuetypes, map {$_->{name}} grep {$_->{id} eq $issuetype_id} @$issuetypes;
+    });
+
+$dom->find('a[href^="/plugins/servlet/project-config/"] > span[data-project-id]')->each(
+    sub {
+        $_ = $_->parent;
+        my $href = encode_utf8 $_->attr('href');
+        my $title = encode_utf8 $_->attr('title');
+        # say STDERR "href is $href, title is $title";
+        push @field_projects, $title;
+    });
+
+my $default_value_div = $dom->at("td[id='customfield_${field_id}-value-default'] > div");
+if ($default_value_div) {
+    $field_defaut_value = encode_utf8 $default_value_div->text;
+}
+
+$dom->find("td[id='customfield_${field_id}-value-options'] > ul > li")->each(
+    sub {
+        if ($_->at('ul')) {
+            my @sub_options = map {encode_utf8 $_->text} $_->find('ul > li')->each;
+            push @field_options, {encode_utf8($_->text) => \@sub_options};
+        } else {
+            push @field_options, encode_utf8 $_->text;
+        }
+    }
+);
+
+$field_json->{issuetypes} = \@field_issuetypes;
+$field_json->{projects} = \@field_projects;
+$field_json->{default_value} = $field_defaut_value;
+$field_json->{options} = \@field_options;
+
+print JSON->new->utf8(0)->pretty(1)->encode($field_json);
