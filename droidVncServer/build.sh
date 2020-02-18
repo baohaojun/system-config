@@ -53,7 +53,7 @@ fi
 rsync -a ~/src/github/Wrench/droidVncServer ./vendor
 
 (
-    android-set-product aosp_arm64-userdebug
+    android-set-product aosp_arm64-user
     cd vendor/droidVncServer
 
     mma -j20 "$@"
