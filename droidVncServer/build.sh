@@ -1,5 +1,27 @@
 #!/bin/bash
 
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
 
 set -e
 ## start code-generator "^\\s *#\\s *"
@@ -58,4 +80,4 @@ rsync -a ~/src/github/Wrench/droidVncServer ./vendor
 
     mma -j20 "$@"
 )
-rsync -a ./vendor/droidVncServer ~/src/github/Wrench/
+rsync -a ./vendor/droidVncServer $(dirname $abs0)/..
