@@ -350,7 +350,12 @@ M.wait_for_scene = function(scene, settings)
    end
    if type(scene) == 'string' then
       M.g_find_scene_debug = true
-
+      if find_scene(scene) then
+         return true
+      else
+         return false
+      end
+   end
    error(("Can't wait for scene: %s"):format(scene))
 end
 

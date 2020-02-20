@@ -27,6 +27,7 @@ map['com.netease.mail/com.netease.mobimail.activity.RegisterActivity'] = 'No-Pos
 map['com.netease.onmyoji/com.netease.mpay.MpayLoginActivity'] = 'Enter-Key'
 map['com.netease.onmyoji/com.netease.onmyoji.Client'] = 'Enter-Key'
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'Find-Button'
+map['com.tencent.mm/com.tencent.mm.chatroom.ui.ChatroomInfoUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.LoginPasswordUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.SimpleLoginUI'] = 'Enter-Key'
 map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSMainUI'] = 'Enter-Key'
