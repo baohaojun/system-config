@@ -12,6 +12,7 @@ map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.DragDropMin
 map['com.amazon.kindle/com.amazon.identity.auth.device.AuthPortalUIActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.kcp.oob.MainActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.kcp.reader.StandAloneBookReaderActivity'] = 'No-Post'
+map['com.amazon.kindle/com.amazon.kcp.search.enhancedsearch.ReaderSearchActivity'] = 'No-Post'
 map['com.android.chrome/com.google.android.apps.chrome.Main'] = 'No-Post'
 map['com.android.contacts/com.android.contacts.activities.DialtactsActivity'] = 'No-Post'
 map['com.android.settings/com.android.settings.NotificationAccessSettingsActivity'] = 'No-Post'
