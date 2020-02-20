@@ -93,7 +93,15 @@ fi
 
 set -o pipefail
 
-curl -f -s -u "${gerrit_user}:${gerrit_web_password}" "$g_url" "$@" |
+if test "$jkd_verbose" = 1; then
+    curl_f=(
+        debug-run curl-f
+    )
+else
+    curl_f=(curl-f)
+fi
+
+"${curl_f[@]}" -s -u "${gerrit_user}:${gerrit_web_password}" "$g_url" "$@" |
     if test "${raw}" = true; then
         cat
     else

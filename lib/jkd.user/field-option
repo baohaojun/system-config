@@ -1,0 +1,273 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+Usage: field-option [GLOBAL-OPS]... ACTION [ACTION-OPS]... ARGS...
+
+ACTION can be one of:
+
+1. add :: add all options in ARGV, in that order. if an option already exist, drop it.
+
+          extra option: -e|--exactly, will remove those not in ARGV.
+
+2. delete :: delete all options in ARGV
+
+3. reorder :: reorder the options as they are given in the ARGV
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# f:field-name i:field-id
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $field_id = "";
+my $field_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--field-id=FIELD-ID';
+    if (length('--field-id=FIELD-ID') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--field-name=FIELD-NAME';
+    if (length('--field-name=FIELD-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'field-id|i=s' => \$field_id,
+    'field-name|f=s' => \$field_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $action = $ARGV[0];
+shift @ARGV;
+
+# addValue=yyy
+# fieldConfigId=13623
+# selectedParentOptionId=
+# addSelectValue=true
+# Add=Add
+
+# post to secure/admin/EditCustomFieldOptions!add.jspa
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+if ($field_name) {
+    if ($field_id) {
+        die "Can't specify both field name and id";
+    }
+
+    my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field"));
+    grep {
+        if ($_->{name} eq $field_name) {
+            $field_id = $_->{id};
+        }
+    } @$fields_json;
+    if (not $field_id) {
+        die "Can't get field id from $field_name";
+    }
+
+    $field_id =~ s,.*_,,;
+}
+
+my $tmp_html = "$ENV{HOME}/tmp/field-option.$$.html";
+
+if ($ENV{jkd_verbose} == 1) {
+    $tmp_html =~ s,\.$$,,;
+} else {
+    use AtExit;
+    *clean_tmp = sub {
+        unlink $tmp_html if -e $tmp_html;
+        unlink "$tmp_html.head" if -e "$tmp_html.head";
+    };
+
+    atexit(\&clean_tmp);
+}
+
+use Mojo::DOM;
+
+my $html_result =
+    capturex("jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/EditCustomFieldOptions!default.jspa?fieldConfigId=${field_id}");
+my $dom = Mojo::DOM->new->parse(decode_utf8 $html_result);
+my @option_ids = map {$_->attr('href')} $dom->find('a[href^="EditCustomFieldOptions!remove.jspa"]')->each;
+
+
+map {$_ =~ s,.*selectedValue=(\d+).*,$1,} @option_ids;
+
+say STDERR "option_ids is @option_ids" if ($ENV{jkd_verbose});
+my %option_value_id_map;
+my %option_id_value_map;
+
+map {
+    my $option_json = $json->decode(scalar capturex("jkd", "rest", "customFieldOption/$_"));
+    my $value = $option_json->{value};
+    $option_value_id_map{$value} = $_;
+    $option_id_value_map{$_} = $value;
+} @option_ids;
+
+sub delete_options(@) {
+    my @params_values = map {
+        ('--data-urlencode', $_)
+    } (
+        "fieldConfigId=$field_id",
+        "selectedParentOptionId=",
+        "confirm=true",
+        "Delete=Delete",
+    );
+
+    for (@_) {
+        my $option_id = $option_value_id_map{$_};
+        if (not $option_id) {
+            die "Can't find option $_";
+        }
+        my $html_result =
+            capturex('debug-run', "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/EditCustomFieldOptions!remove.jspa", "-X", "POST", "-L", "-D", "$tmp_html.head",
+                     @params_values,
+                     '--data-urlencode', "selectedValue=${option_id}"
+                 );
+    }
+
+}
+
+if ($action eq "add") {
+    (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -P '?"$comment_doc"' \
+    # eexactly
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("posix_default");
+
+
+
+    my $exactly = 0;
+
+    my $handler_help = sub {
+        print "$comment_doc";
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-e, ';
+        printf "%-24s", '--[no]exactly';
+        if (length('--[no]exactly') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        my $exit_value = 0;
+        if (@_ && $_[0] ne "help" && $_[1] != 1) {
+            $exit_value = shift @_;
+            print "@_\n";
+        }
+
+        exit($exit_value);
+    };
+
+    GetOptions (
+        'exactly|e!' => \$exactly,
+        'help|h!' => \&$handler_help,
+    );
+
+
+    ## end generated code
+
+    my %params_values = (
+        fieldConfigId => $field_id,
+        selectedParentOptionId => "",
+        addSelectValue => "true",
+        Add => "Add"
+    );
+    my @params_values;
+
+    @params_values = map {
+        ('--data-urlencode', sprintf("%s=%s", $_, $params_values{$_}))
+    } keys %params_values;
+
+    for (@ARGV) {
+        if ($option_value_id_map{$_}) {
+            say STDERR "option $_ already exist";
+            next;
+        }
+        my $html_result =
+            capturex('debug-run', "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/EditCustomFieldOptions!add.jspa", "-X", "POST", "-L", "-D", "$tmp_html.head",
+                     @params_values, "--data-urlencode", "addValue=$_", "-o", "$tmp_html"
+                 );
+    }
+    if ($exactly) {
+        my %argv_map = map {$_ => 1} @ARGV;
+        my @to_remove = grep {not $argv_map{$_}} keys %option_value_id_map;
+        delete_options(@to_remove);
+    }
+} elsif ($action eq "delete") {
+    delete_options(@ARGV);
+} elsif ($action eq "reorder") {
+    # newOptionPosition_13436=3
+    # newOptionPosition_13435=1
+    # newOptionPosition_15410=2
+
+    my @params_values = map {
+        ('--data-urlencode', $_)
+    } (
+        "id=",
+        "fieldConfigId=${field_id}",
+        "selectedParentOptionId=",
+        "moveOptionsToPosition=Move",
+    );
+
+    for my $new_pos (1 .. @ARGV) {
+        my $option_name = $ARGV[$new_pos - 1];
+        my $option_id = $option_value_id_map{$option_name};
+        push @params_values, '--data-urlencode', "newOptionPosition_${option_id}=${new_pos}";
+    }
+
+    my $html_result =
+        capturex('debug-run', "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/ConfigureCustomFieldOptions.jspa", "-X", "POST", "-L", "-D", "$tmp_html.head",
+                 @params_values, "-o", "${tmp_html}");
+
+} else {
+    die "Can't work with action: '$action'";
+}

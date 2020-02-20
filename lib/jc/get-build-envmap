@@ -1,9 +1,15 @@
 #!/usr/bin/env perl
 use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
 
+use Encode;
 use JSON;
+
+my $json = JSON->new->utf8(0);
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl b:build-url
+# generate-getopt -s perl b:build-url sshell
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -13,31 +19,49 @@ Getopt::Long::Configure("default");
 
 
 my $build_url = "";
+my $shell = 0;
 
 my $handler_help = sub {
-  print ;
-  print "\n\n选项和参数：\n";
-  printf "%6s", '-b, ';
-  printf "%-24s", '--build-url=BUILD-URL';
-  if (length('--build-url=BUILD-URL') > 24 and length() > 0) {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-b, ';
+    printf "%-24s", '--build-url=BUILD-URL';
+    if (length('--build-url=BUILD-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--[no]shell';
+    if (length('--[no]shell') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
-  exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
-            'build-url|b=s' => \$build_url,
-            'help|h!' => \&$handler_help,
-           );
+    'build-url|b=s' => \$build_url,
+    'shell|s!' => \$shell,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
 
-my $build_json = decode_json(qx(jc curl ${build_url}api/json));
+
+
+my $build_json = $json->decode(scalar capturex("jc", "curl", "${build_url}api/json"));
 
 my %envmap;
 for (@{$build_json->{actions}}) {
@@ -48,4 +72,12 @@ for (@{$build_json->{actions}}) {
   }
 }
 
-print encode_json \%envmap;
+if ($shell) {
+    use String::ShellQuote;
+    use Encode;
+    for (keys %envmap) {
+        printf "export %s=%s\n", shell_quote($_), shell_quote($envmap{$_});
+    }
+} else {
+    say STDERR JSON->new->utf8(0)->pretty(1)->encode(\%envmap);
+}

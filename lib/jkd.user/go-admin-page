@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-if true; then
-    set -x
-    exec >& ~/tmp/${0##*/}.$$.log
-    . aterr bash -c "declare -x -p; ew ~/tmp/${0##*/}.$$.log; rm -f ~/tmp/${0##*/}.$$.log"
-fi
-
 declare -A admin_pages=(
     [screens]=secure/admin/ViewFieldScreens.jspa
     [dynamic-forms]=secure/admin/DFConfiguration.jspa

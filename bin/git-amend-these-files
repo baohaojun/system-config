@@ -1,9 +1,13 @@
 #!/bin/bash
 set -e
 
-files=$(
-    git diff HEAD --name-only
-     )
+if test $# != 0; then
+    files="$*"
+else
+    files=$(
+        git diff HEAD --name-only
+         )
+fi
 
 for f in $files; do
     target_commit=$(select-output-line -p "Which commit do you want to amend for $f?" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $f | pn 1)
@@ -19,7 +23,7 @@ for f in $files; do
         git commit --amend --no-edit
         continue
     else
-        piggy_file=$(select-output-line -p "Which file to piggy" git diff --name-only $(git-remote-branch))
+        piggy_file=$(select-output-line -p "Which file to piggy" git diff --name-only $(git-remote-branch) HEAD)
         if test -e "${piggy_file}"; then
             target_commit=$(f=$piggy_file; select-output-line -p "Which commit do you want to amend for $f?" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $f | pn 1)
         fi
@@ -33,4 +37,18 @@ for f in $files; do
         git commit --fixup=$target_commit
     fi
 done
+
+if test $# != 0; then
+    if git-any-changes; then
+        need_revert=true
+        git add .
+        git commit -m "temp"
+    fi
+fi
+
 git rebase --no-ff -i --autosquash $(git-remote-branch)
+
+if test "${need_revert}"; then
+    git reset --soft HEAD^
+    git reset HEAD .
+fi

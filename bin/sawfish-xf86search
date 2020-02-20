@@ -6,10 +6,17 @@ exit
 top_window=$(sawfish-top-window)
 
 
-if test "$top_window" = Wrench; then
-    s_how=button3 s
-elif test "$top_window" = Emacs; then
-    sawfish-send-focused-window-event XF86Search
-else
-    find-or-exec Search beagle-search
-fi
+case "${top_window}" in
+    Wrench)
+        s_how=button3 s
+        ;;
+    Emacs)
+        sawfish-send-focused-window-event XF86Search
+        ;;
+    XTerm)
+        sawfish-send-focused-window-event F2
+        ;;
+    *)
+        find-or-exec Search beagle-search
+        ;;
+esac

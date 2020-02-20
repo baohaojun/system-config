@@ -124,6 +124,7 @@ my @field_projects;
 my $field_defaut_value;
 my @field_options;
 
+
 $dom->find('dd[class="context-issue-type"] a[href^="EditIssueType!default.jspa"]')->each(
     sub {
         my $href = $_->attr('href');
@@ -142,7 +143,7 @@ $dom->find('a[href^="/plugins/servlet/project-config/"] > span[data-project-id]'
 
 my $default_value_div = $dom->at("td[id='customfield_${field_id}-value-default'] > div");
 if ($default_value_div) {
-    $field_defaut_value = encode_utf8 $default_value_div->text;
+    ($field_defaut_value = encode_utf8 $default_value_div->text) =~ s,\s,,g;
 }
 
 $dom->find("td[id='customfield_${field_id}-value-options'] > ul > li")->each(
@@ -160,5 +161,23 @@ $field_json->{issuetypes} = \@field_issuetypes;
 $field_json->{projects} = \@field_projects;
 $field_json->{default_value} = $field_defaut_value;
 $field_json->{options} = \@field_options;
+
+
+my $field_description;
+my $field_search_template;
+
+my $field_edit_html = capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/EditCustomField!default.jspa?id=${field_id}");
+$dom = Mojo::DOM->new->parse(decode_utf8 $field_edit_html);
+
+$field_description = encode_utf8 $dom->at('textarea[name="description"]')->text;
+
+my $search_option = $dom->at('select[name="searcher"] > option:checked');
+if ($search_option) {
+    $field_search_template = encode_utf8 ${search_option}->attr('value');
+}
+
+
+$field_json->{description} = $field_description;
+$field_json->{search_template} = $field_search_template;
 
 print JSON->new->utf8(0)->pretty(1)->encode($field_json);

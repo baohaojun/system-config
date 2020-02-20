@@ -5,6 +5,7 @@ use v5.10; # for say
 use Encode;
 use JSON;
 
+my $json = JSON->new->utf8(0);
 
 my $type_map = {
     'string' => 'com.atlassian.jira.plugin.system.customfieldtypes:textfield',
@@ -23,8 +24,15 @@ sub get_types() {
 }
 
 
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+See also import-field-from-json.
+# {%/org-mode%}
+EOFc83131117f09
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P n:name d:description t:type '?"one of " . get_types()'
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# n:name d:description t:type '?"one of " . get_types()'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -38,7 +46,7 @@ my $name = "";
 my $type = "";
 
 my $handler_help = sub {
-    print ;
+    print "$comment_doc";
     print "\n\n选项和参数：\n";
     printf "%6s", '-d, ';
     printf "%-24s", '--description=DESCRIPTION';
