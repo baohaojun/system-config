@@ -1,7 +1,5 @@
 #!/bin/bash
 
-s-dicts "$(getclip-android)"
-exit
 
 top_window=$(sawfish-top-window)
 
@@ -17,6 +15,7 @@ case "${top_window}" in
         sawfish-send-focused-window-event F2
         ;;
     *)
-        find-or-exec Search beagle-search
+        s-dicts "$(getclip-android)"
+        exit
         ;;
 esac

@@ -6,15 +6,13 @@ use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
-This is just like jkd curl, except we allow to pass some json data.
 
-Another way is just use jkd curl --data '"JSON DATA"'.
 # {%/org-mode%}
 EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# a:api @:json
+# i:issuetype-name
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -23,23 +21,14 @@ Getopt::Long::Configure("posix_default");
 
 
 
-my $api = "";
-my $json = "";
+my $issuetype_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-a, ';
-    printf "%-24s", '--api=API';
-    if (length('--api=API') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
-    print "\n";
-    printf "%6s", '';
-    printf "%-24s", '--json=JSON';
-    if (length('--json=JSON') > 24 and length() > 0) {
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -56,15 +45,9 @@ my $handler_help = sub {
 };
 
 GetOptions (
-    'api|a=s' => \$api,
-    'json=s' => \$json,
+    'issuetype-name|i=s' => \$issuetype_name,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
-
-use Encode;
-use JSON;
-
-runx "jkd", "rest", "-a", "$api", "--", "-X", "POST", "--data", decode_utf8($json), "-H", 'Content-Type: application/json';
