@@ -75,9 +75,16 @@ fi
 rsync -a ~/src/github/Wrench/droidVncServer ./vendor
 
 (
-    android-set-product aosp_arm64-user
-    cd vendor/droidVncServer
-
-    mma -j20 "$@"
+    if [[ $* =~ ' -q' ]]; then
+        true
+    else
+        android-set-product aosp_arm64-user
+    fi
+    (
+        cd vendor/droidVncServer
+        printf -- "-*- mode: compilation -*-\nUsing short format, Entering directory \`%s'\n" ${abs0%/*}/..
+        mma -j20 "$@" 2>&1
+    ) | tee build.log
+    e build.log&
 )
 rsync -a ./vendor/droidVncServer $(dirname $abs0)/..
