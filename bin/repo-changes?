@@ -124,7 +124,7 @@ my-rfa $verbose -j 4 "$@" -- "$(cat <<'EOF552bc89ae4fe'
     if test "$head_rev" != "$rev"; then
         need_bail=true
 
-        if test $need_bail = true; then
+        if test $need_bail != true; then
             if [[ $branch =~ /tags/ ]]; then
                 git fetch $remote $branch >/dev/null 2>&1
             else

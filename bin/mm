@@ -226,7 +226,7 @@ time (
     top_dir=$(readlink -f $top_dir/..)
 
     oldpwd=$PWD
-    if test "$(ap .git/..)" = bootable/bootloader/lk; then
+    if test "$(ap .git/.. 2>/dev/null)" = bootable/bootloader/lk; then
         exec android-make lk
     fi
     cd $top_dir/

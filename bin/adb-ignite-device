@@ -7,6 +7,7 @@ if test $(basename $0) = adb-ignite-device -o $(basename $0) = adb-power-on; the
 
     for try in $(seq 1 3); do
         if my-adb dumpsys power | grep mWakefulness=Asleep; then
+            log "need power key on"
             adb-key 26
             sleep 1
         fi
