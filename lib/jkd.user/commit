@@ -132,4 +132,8 @@ EOF
         ;;
 esac
 
-git commit -m "${msg}" --edit
+if ! git status -s |grep '^[a-z]' -P -i; then
+    git-interactive-add
+fi
+
+debug-run git commit -m "${msg}" --edit
