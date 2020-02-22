@@ -85,6 +85,5 @@ rsync -a ~/src/github/Wrench/droidVncServer ./vendor
         printf -- "-*- mode: compilation -*-\nUsing short format, Entering directory \`%s'\n" ${abs0%/*}/..
         mma -j20 "$@" 2>&1
     ) | tee build.log
-    e build.log&
 )
 rsync -a ./vendor/droidVncServer $(dirname $abs0)/..

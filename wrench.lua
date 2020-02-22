@@ -862,8 +862,6 @@ M.update_screen_size = function()
 
    M.m_window_displays = adb_pipe"dumpsys window displays" or ""
 
-   -- mStableFullscreen=(0,0)-(1080,2160)
-
    if M.m_window_displays:match("Display: mDisplayId=[1-9]") then
       local lines = split("\n", M.m_window_displays, true)
       local i, begin_0 = nil, 1
@@ -875,19 +873,18 @@ M.update_screen_size = function()
       end
       M.m_window_displays = M.join("\n", { table.unpack(lines, begin_0) })
    end
-   local screen_size_re = "mStableFullscreen=.-[])].-[])]"
-   local mStableFullscreen = M.m_window_displays:match(screen_size_re) or
+   local screen_size_re = "cur=%d+x%d+"
+   local curScreenSize = M.m_window_displays:match(screen_size_re) or
       M.m_window_dump:match(screen_size_re)
-   -- log("mStableFullscreen is %s", mStableFullscreen)
-   if M.last_screen_size ~= mStableFullscreen then
-      M.last_screen_size = mStableFullscreen
-      app_width = M.last_screen_size:match('mStableFullscreen=.-[])].-[[(](%d+,%d+)')
-      app_height = app_width:match(',(%d+)')
-      app_width = app_width:match('(%d+),')
+   log("curScreenSize is %s", curScreenSize)
+   if M.last_screen_size ~= curScreenSize then
+      M.last_screen_size = curScreenSize
+
+      app_width, app_height = get_xy_from_dump(M.m_window_displays, "app")
       M.mCurrentRotation = M.m_window_dump:match("mCurrentRotation=.-(%d+)")
 
-      real_width, real_height = get_xy_from_dump(M.m_window_displays, "cur")
-      -- log("M.real_height is %d, app_width is %d, app_height is %d", M.real_height, app_width, app_height)
+      M.real_width, M.real_height = get_xy_from_dump(M.m_window_displays, "cur")
+      log("M.real_height is %d, app_width is %d, app_height is %d", M.real_height, app_width, app_height)
       ime_app_width, ime_app_height = get_xy_from_dump(M.m_window_displays, "app")
 
       update_screen_ratios()
@@ -1445,11 +1442,13 @@ M.wrench_run = function (file, argType)
 end
 
 M.wrenchThumbUp = function()
-   if not M.ExtMods then
+   if not M.ExtMods.descriptions then
       M.ExtMods = wrench_run("ext/.ls-modules.lua")
       if not M.ExtMods then
          log("无法加载 ext/.ls-modules.lua")
       end
+   else
+      log("ExtMods already on")
    end
 
    if not M.ExtMods.descriptions then
