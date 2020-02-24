@@ -135,7 +135,13 @@ for (@fields_to_print) {
         $fields_results{$_} = $value;
     }
 }
-
-if (%fields_results) {
+if (@fields_to_print == 1) {
+    my $val = $fields_results{$fields_to_print[0]};
+    if (ref $val) {
+        print $j->pretty->encode($val);
+    } else {
+        print $val;
+    }
+} elsif (%fields_results) {
     print $j->pretty->encode (\%fields_results);
 }

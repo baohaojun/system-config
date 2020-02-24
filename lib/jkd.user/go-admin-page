@@ -218,7 +218,7 @@ EOFe9576f8668e0
 
             jkd webget "${current_url}" > ${tmp_html}
             query_str=$(
-                misc html-query -f "${tmp_html}" -q 'a[data-track-click=issue.viewworkflow]' -a href
+                misc html-query -f "${tmp_html}" -q 'a[data-track-click=issue.viewworkflow]' -a href | perl -pe 's,\+,\%20,g'
                      )
             bhj-notify "go-admin-page.$$" "query_str is $query_str"
         fi

@@ -19,7 +19,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# f:html-file
+# f:html-file i:screenscheme-id
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -29,6 +29,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $html_file = "";
+my $screenscheme_id = "";
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -36,6 +37,14 @@ my $handler_help = sub {
     printf "%6s", '-f, ';
     printf "%-24s", '--html-file=HTML-FILE';
     if (length('--html-file=HTML-FILE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--screenscheme-id=SCREENSCHEME-ID';
+    if (length('--screenscheme-id=SCREENSCHEME-ID') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -53,6 +62,7 @@ my $handler_help = sub {
 
 GetOptions (
     'html-file|f=s' => \$html_file,
+    'screenscheme-id|i=s' => \$screenscheme_id,
     'help|h!' => \&$handler_help,
 );
 
@@ -65,7 +75,10 @@ my $html_text;
 if ($html_file) {
     $html_text = decode_utf8 read_file($html_file);
 } else {
-    $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/ManageIssueTypeSchemes!default.jspa");
+    if (not $screenscheme_id) {
+        die "Must specify the screenscheme id";
+    }
+    $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/ConfigureFieldScreenScheme.jspa?id=${screenscheme_id}");
 }
 
 
@@ -74,32 +87,22 @@ my $dom = Mojo::DOM->new->parse($html_text);
 if ($ENV{jkd_verbose}) {
     say STDERR encode_utf8 $html_text;
 }
-my %issuetype_scheme;
+my %screenscheme;
 
-$dom->find('strong[data-scheme-field="name"]')->each
+$dom->find('*[class="screen-issue-operation"]')->each
     (
         sub {
-            my $iss_name = encode_utf8 $_->text;
-            my @issuetypes = map {
-                my $issue_type = encode_utf8 $_->text;
-                $issue_type;
-            } $_->parent->parent->find('td[data-scheme-field="options"] span[class="issue-type-name"]')->each;
+            my $scene_name = encode_utf8 $_->text;
 
+            my $screen_elem = $_->parent->parent->at('a[href^="ConfigureFieldScreen.jspa"]');
+            (my $screen_id = $screen_elem->attr('href')) =~ s,.*id=(\d+),$1,;
+            (my $screen_name) = encode_utf8 $screen_elem->text;
 
-            my @projects = map {
-                (my $proj_key = $_->attr('href')) =~ s,.*/project-config/(.*?)/.*,$1,;
-                my $proj_name = encode_utf8 $_->text;
-                {
-                    key => encode_utf8 $proj_key,
-                    name => $proj_name,
-                };
-            } $_->parent->parent->find('td[data-scheme-field="projects"] a[href^="/plugins/servlet/project-config/"]')->each;
-
-            $issuetype_scheme{$iss_name} = {
-                issuetypes => \@issuetypes,
-                projects => \@projects,
+            $screenscheme{$scene_name} = {
+                name => $screen_name,
+                id => $screen_id,
             };
         }
     );
 
-print JSON->new->utf8(0)->pretty(1)->encode(\%issuetype_scheme);
+print JSON->new->utf8(0)->pretty(1)->encode(\%screenscheme);

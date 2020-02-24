@@ -65,7 +65,7 @@ my $html_text;
 if ($html_file) {
     $html_text = decode_utf8 read_file($html_file);
 } else {
-    $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/ManageIssueTypeSchemes!default.jspa");
+    $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/ViewIssueTypeScreenSchemes.jspa");
 }
 
 
@@ -74,17 +74,13 @@ my $dom = Mojo::DOM->new->parse($html_text);
 if ($ENV{jkd_verbose}) {
     say STDERR encode_utf8 $html_text;
 }
-my %issuetype_scheme;
+my %issuetype_screenscheme;
 
 $dom->find('strong[data-scheme-field="name"]')->each
     (
         sub {
             my $iss_name = encode_utf8 $_->text;
-            my @issuetypes = map {
-                my $issue_type = encode_utf8 $_->text;
-                $issue_type;
-            } $_->parent->parent->find('td[data-scheme-field="options"] span[class="issue-type-name"]')->each;
-
+            (my $iss_id = $_->parent->attr('href')) =~ s,.*id=(\d+),$1,;
 
             my @projects = map {
                 (my $proj_key = $_->attr('href')) =~ s,.*/project-config/(.*?)/.*,$1,;
@@ -93,13 +89,13 @@ $dom->find('strong[data-scheme-field="name"]')->each
                     key => encode_utf8 $proj_key,
                     name => $proj_name,
                 };
-            } $_->parent->parent->find('td[data-scheme-field="projects"] a[href^="/plugins/servlet/project-config/"]')->each;
+            } $_->parent->parent->parent->find('td a[href^="/plugins/servlet/project-config/"]')->each;
 
-            $issuetype_scheme{$iss_name} = {
-                issuetypes => \@issuetypes,
+            $issuetype_screenscheme{$iss_name} = {
                 projects => \@projects,
+                id => $iss_id,
             };
         }
     );
 
-print JSON->new->utf8(0)->pretty(1)->encode(\%issuetype_scheme);
+print JSON->new->utf8(0)->pretty(1)->encode(\%issuetype_screenscheme);
