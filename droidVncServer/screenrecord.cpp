@@ -339,6 +339,43 @@ sp<FrameOutput> frameOutput;
 sp<IGraphicBufferProducer> encoderInputSurface;
 sp<IBinder> dpy;
 
+int pipefd[2];
+pid_t cpid;
+char buf;
+
+int
+open_screen_record()
+{
+    if (pipe(pipefd) == -1) {
+        perror("pipe");
+        exit(EXIT_FAILURE);
+    }
+
+    cpid = fork();
+    if (cpid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (cpid == 0) {    /* 子プロセスがパイプから読み込む */
+        close(pipefd[0]);  /* 使用しない write 側はクローズする */
+        dup2(pipefd[1], 1);
+        close(pipefd[1]);
+
+        char cmdline[1024];
+        snprintf(cmdline, sizeof(cmdline), "screenrecord --size %dx%d --output-format raw-frames -", gVideoWidth, gVideoHeight);
+        system(cmdline);
+
+
+        write(STDOUT_FILENO, "\n", 1);
+        _exit(EXIT_SUCCESS);
+
+    } else {            /* 親プロセスは argv[1] をパイプへ書き込む */
+        close(pipefd[1]);          /* 使用しない read 側はクローズする */
+        return(pipefd[0]);
+    }
+}
+
 /*
  * Main "do work" start point.
  *
@@ -389,51 +426,7 @@ static status_t recordScreen() {
     fprintf(stderr, "%s:%d: gVideoWidth is %d\n", __FILE__, __LINE__, gVideoWidth);
 
 
-    // We're not using an encoder at all.  The "encoder input surface" we hand to
-    // SurfaceFlinger will just feed directly to us.
-    frameOutput = new FrameOutput();
-    err = frameOutput->createInputSurface(gVideoWidth, gVideoHeight, &encoderInputSurface);
-    if (err != NO_ERROR) {
-        fprintf(stderr, "%s:%d: got an error\n", __FILE__, __LINE__);
-        return err;
-    }
-
-    // Draw the "info" page by rendering a frame with GLES and sending
-    // it directly to the encoder.
-    // TODO: consider displaying this as a regular layer to avoid b/11697754
-    if (gWantInfoScreen) {
-        Overlay::drawInfoPage(encoderInputSurface);
-    }
-
-    // Configure optional overlay.
-    sp<IGraphicBufferProducer> bufferProducer;
-
-    if (gWantFrameTime) {
-        // Send virtual display frames to an external texture.
-        overlay = new Overlay();
-        err = overlay->start(encoderInputSurface, &bufferProducer);
-        if (err != NO_ERROR) {
-            fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
-            return err;
-        }
-        if (gVerbose) {
-            printf("Bugreport overlay created\n");
-            fflush(stdout);
-        }
-    } else {
-        // Use the encoder's input surface as the virtual display surface.
-        bufferProducer = encoderInputSurface;
-    }
-
-    // Configure virtual display.
-    err = prepareVirtualDisplay(mainDpyInfo, bufferProducer, &dpy);
-    if (err != NO_ERROR) {
-        fprintf(stderr, "%s:%d: err is %d\n", __FILE__, __LINE__, err);
-        return err;
-    }
-
-    frameOutput->prepareToCopy();
-
+    open_screen_record();
     screenFormat &format = screenformat;
 
     format.bitsPerPixel = 32;
@@ -556,8 +549,24 @@ int closeScreenRecord()
     return 0;
 }
 
+static unsigned char * buff_3;
+static unsigned char * buff_4;
 unsigned char *readBufferFlinger(void)
 {
+    int n_pixels = gVideoWidth * gVideoHeight;
+
+    if (buff_3 == NULL) {
+        buff_3 = (unsigned char *)malloc(3 * n_pixels);
+    }
+
+    if (buff_4 == NULL) {
+        buff_4 = (unsigned char *)malloc(4 * n_pixels);
+    }
+
+    if (buff_3 == NULL || buff_4 == NULL) {
+        fprintf(stderr, "%s:%d: oom?\n", __FILE__, __LINE__);
+        exit(1);
+    }
     while (!gStopRequested) {
         // Poll for frames, the same way we do for MediaCodec.  We do
         // all of the work on the main thread.
@@ -566,15 +575,25 @@ unsigned char *readBufferFlinger(void)
         // stop was requested, but this will do for now.  (It almost
         // works because wait() wakes when a signal hits, but we
         // need to handle the edge cases.)
-        status_t err = frameOutput->copyFrame(250000);
-        if (err == ETIMEDOUT) {
-            err = NO_ERROR;
-            continue;
-        } else if (err != NO_ERROR) {
-            ALOGE("Got error %d from copyFrame()", err);
-            break;
+        int n_total_read = 0;
+        int n_1_read;
+        while ((n_1_read = read(pipefd[0], buff_3 + n_total_read, 3 * n_pixels - n_total_read)) > 0) {
+            n_total_read += n_1_read;
+            if (n_total_read >= 3 * n_pixels) {
+                break;
+            }
         }
-        return frameOutput->getPixelBuf();
+
+        unsigned char* p3 = buff_3;
+        unsigned char* p4 = buff_4;
+        for (int i = 0; i < n_pixels; i++) {
+            *p4++ = *p3++;
+            *p4++ = *p3++;
+            *p4++ = *p3++;
+            *p4++ = 255;
+        }
+
+        return buff_4;
     }
     return NULL;
 }

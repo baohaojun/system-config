@@ -126,9 +126,9 @@ M.configs = {
 dofile_res, vnc_mode = pcall(dofile, configDir .. package.config:sub(1, 1) .. "vnc-mode.lua")
 if dofile_res then
    if vnc_mode.mode == "演示模式" then
-      M.configs["vnc-server-command"] = "/data/data/com.android.shell/androidvncserver -s 50"
+      M.configs["vnc-server-command"] = "/data/data/com.android.shell/androidvncserver -s 30"
    else
-      M.configs["vnc-server-command"] = "/data/data/com.android.shell/androidvncserver -s 100"
+      M.configs["vnc-server-command"] = "/data/data/com.android.shell/androidvncserver -s 60"
    end
    M.configs["allow-vnc-resize"] = "true"
    M.configs["phone-width"] = vnc_mode.width

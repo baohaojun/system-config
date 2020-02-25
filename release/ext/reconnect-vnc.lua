@@ -6,11 +6,12 @@
 local mode
 if M.ext_args then
    mode = M.ext_args[1]
-else
+end
+if not mode then
    mode = select_args{"你希望采用什么模式连接手机VNC？", "演示模式", "高清模式"}
 end
 
-log("mode is %s", mode)
+log("mode is %s, real_width is %d, real_height is %d", mode, M.real_width, M.real_height)
 M.update_screen_size()
 local configDir = os.getenv("WRENCH_CONFIG_DIR")
 local mode_file = io.open(configDir .. package.config:sub(1, 1) .. "vnc-mode.lua", "w")
