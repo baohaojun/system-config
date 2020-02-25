@@ -3,6 +3,6 @@ set -e
 
 set -x
 
-jc curl "${1}"consoleText > ~/tmp/jc.console.txt
-echo ~/tmp/jc.console.txt
-putclip ~/tmp/jc.console.txt
+. atexit rm ~/tmp/jc.console.$$.txt -f
+jc curl "${1%console}"consoleText > ~/tmp/jc.console.$$.txt
+ew ~/tmp/jc.console.$$.txt
