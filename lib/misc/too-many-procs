@@ -67,6 +67,7 @@ fi
 procs_info=$(ps aux | grep "${proc_name}" -P)
 n_procs=$(echo "${procs_info}" | wc -l)
 if test "${n_procs}" -gt "${max_procs}"; then
+    echo "Too many processes: max is ${max_procs} ${proc_name}, got: ${n_procs}"
     bhj-notify too-many-procs "${n_procs} $proc_name"
     for x in $(seq 1 3); do
         procs_info=$(ps aux | grep "${proc_name}" -P | grep -v 'grep.*-P')

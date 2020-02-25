@@ -1,0 +1,79 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # u:dir-url
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o u:h \
+                      --long dir-url:,help \
+                      -n $(basename -- $0) -- "$@")
+declare dir_url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -u|--dir-url)
+            dir_url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-u, '
+            printf %-24s '--dir-url=DIR_URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+# url is like ${scm_artifactory_url}artifactory/REPO-KEY/PATH
+
+if test -z "${dir_url}"; then
+    die "Must specify the dir url"
+fi
+
+dir_url=$(echo "${dir_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
+if ! artifactory is-dir -u "${dir_url}"; then
+    dir_url=$(dirname "${dir_url}")
+fi
+
+api_url=$(
+    echo "${dir_url}" | perl -pe 's,(/artifactory/),${1}api/storage/,'
+       )
+
+my-curl() {
+    curl-f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
+}
+
+json=$(
+    my-curl "${api_url}"
+    )
+
+IFS=$'\n'
+
+echo "${json}" | jq '.children|.[] | "\(.folder):\(.uri)"' -r
