@@ -43,4 +43,5 @@ map['com.twitter.android/com.twitter.android.search.SearchActivity'] = 'No-Post'
 map['com.twitter.android/com.twitter.app.main.MainActivity'] = 'No-Post'
 map['com.weico.international/com.weico.international.activity.SinaMessageLoginActivity'] = 'No-Post'
 map['com.weico.international/com.weico.international.activity.v4.SmsLoginActivity'] = 'No-Post'
+map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'No-Post'
 return map
