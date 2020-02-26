@@ -1,0 +1,160 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+This script can be used to assign permission to some users.
+
+For e.g., use a jira issue to do it, with some fields:
+
+1. jira issue name (used to decide the permission's name)
+
+2. artifactory url (if it's a DIR, then should use DIR/**; if it's a
+   FILE, then FILE by itself is enough)
+
+3. list of users (groups are not supported)
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# n:permission-name a:artifactory-urls='()' u:users='()'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my @artifactory_urls = ();
+my $permission_name = "";
+my @users = ();
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--artifactory-urls=ARTIFACTORY-URLS';
+    if (length('--artifactory-urls=ARTIFACTORY-URLS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--permission-name=PERMISSION-NAME';
+    if (length('--permission-name=PERMISSION-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--users=USERS';
+    if (length('--users=USERS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'artifactory-urls|a=s' => \@artifactory_urls,
+    'permission-name|n=s' => \$permission_name,
+    'users|u=s' => \@users,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+# {
+#   "name" : "Any Remote",
+#   "includesPattern" : "**",
+#   "excludesPattern" : "",
+#   "repositories" : [ "ANY REMOTE" ],
+#   "principals" : {
+#     "users" : {
+#       "UXXX" : [ "r", "w", "n" ],
+#     },
+#     "groups" : {
+#       "GXXX" : [ "r", "w" ],
+#     }
+#   }
+# }
+
+@users = split(" ", join(" ", @users));
+@artifactory_urls = split(" ", join(" ", @artifactory_urls));
+
+map {$_ =~ s,webapp/#/artifacts/browse/tree/.*?/,,} @artifactory_urls;
+if (not @artifactory_urls) {
+    die "Must specify artifactory_urls";
+}
+
+if (not @users) {
+    die "Must specify users";
+}
+
+my @include_patters = map {
+    (my $pattern = $_) =~ s,.*://.*?/artifactory/.*?/+,,;
+    die "pattern for $_ is empty!" unless $pattern;
+    die "pattern for $_ contains ','" if $pattern =~ m/,/;
+
+    if (runx(EXIT_ANY, "artifactory", "is-dir", "-u", "$_") == 0) {
+        $pattern =~ s,/*$,/**,;
+    }
+
+    $pattern
+} @artifactory_urls;
+
+my %users_perm = map {
+    (
+        $_ => [ "r" ]
+    )
+} @users;
+
+my %permission_json = (
+    name => $permission_name,
+    includesPattern => join(",", @include_patters),
+    excludesPattern => "",
+    repositories => ["ANY REMOTE", "ANY LOCAL"],
+    principals => {
+        users => \%users_perm,
+        groups => {},
+    }
+);
+
+use URI::Escape;
+$permission_name = uri_escape("$permission_name");
+my $json_data = decode_utf8 (JSON->new->utf8(0)->pretty(1)->encode(\%permission_json));
+
+runx("debug-run",
+     "artifactory",
+     "my-curl",
+     "$ENV{scm_artifactory_url}artifactory/api/security/permissions/${permission_name}",
+     "-X",
+     "PUT",
+     "--data",
+     "$json_data",
+     "-L",
+     "-H",
+     'Content-Type: application/json'
+ );

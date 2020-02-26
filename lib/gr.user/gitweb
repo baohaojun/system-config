@@ -20,7 +20,7 @@ EOFe9576f8668e0
     # a:action '?"one of download-url, browse-url, of"' \
     # p:project=@empty@ \
     # b:branch=@empty@ \
-    # f:file=@empty@
+    # f:file
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o a:b:f:p:h \
@@ -28,7 +28,7 @@ TEMP=$(POSIXLY_CORRECT=true getopt -o a:b:f:p:h \
                       -n $(basename -- $0) -- "$@")
 declare action=
 declare branch=@empty@
-declare file=@empty@
+declare file=
 declare project=@empty@
 eval set -- "$TEMP"
 while true; do
@@ -96,9 +96,11 @@ else
      )
 fi
 
-if test "${file}" != @empty@; then
-    f=$file
-else
+if test -z "${action}"; then
+    action=of
+fi
+
+if test -z "${file}" -a -e "$1"; then
     f=$( # file
         gitp "$1"
      )
@@ -119,6 +121,8 @@ case "$action" in
     b*)
         if test -z "$b"; then
             echo "${scm_gerrit_url}gitweb?p=$p.git"
+        elif test -z "$f"; then
+            echo "${scm_gerrit_url}gitweb?p=$p.git;a=log;h=refs/heads/$b"
         else
             echo "${scm_gerrit_url}gitweb?p=$p.git;a=blob;f=$f;hb=refs/heads/$b"
         fi
