@@ -27,7 +27,7 @@ flock -n 9
     if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
         start-cuty& # do not watch weibo for too long.
         which_wrench=$(
-            emacsclient -e '(shell-command-to-string "which Wrench.sh")'|em str2text
+            emacsclient -e '(shell-command-to-string "which Wrench.sh")' | em str2text
                     )
         if ! [[ $which_wrench =~ $ANDROID_SERIAL ]]; then
             (Wrench.sh -xs || true)&
@@ -37,8 +37,6 @@ flock -n 9
             (Wrench.sh -xs || true)&
             exit 0
         fi
-    else
-        my-adb sc-shell fuser -k /data/data/com.android.shell/var/watch-my-window.lock || true
     fi
 
     # this script checks if wrench notification is working
