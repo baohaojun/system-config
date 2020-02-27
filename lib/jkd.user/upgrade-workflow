@@ -81,7 +81,7 @@ use feature 'signatures';
 sub switch_workflow($old_workflow, $new_workflow) {
     # step 1: workflow 当前在用的话，要将它卸载
     my $wf_scheme =
-        $json->decode(scalar capturex("jkd", "workflowscheme2json"));
+        $json->decode(scalar capturex("jkd", "export-workflowschemes"));
 
     for my $scheme (@$wf_scheme) {
         my %it_wf_map = %{$scheme->{issuetypes_workflow}};

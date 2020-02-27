@@ -49,10 +49,14 @@ _extra_map['`\''] = ('‘’',)
 _extra_map['``\''] = ('“”',)
 _extra_map['`]'] = ('「」',)
 _extra_map['[\''] = ('「」',)
+_extra_map['[]'] = ('「」',)
+_extra_map['[]]'] = ('『』',)
 _extra_map['``]'] = ('『』',)
 _extra_map['`]]'] = ('『』',)
 _extra_map['[[\''] = ('『』',)
 _extra_map['[\'\''] = ('『』',)
+_extra_map['[[]'] = ('『』',)
+
 
 for c in _extra_map:
     g_quail_map[c + " "] = _extra_map[c]

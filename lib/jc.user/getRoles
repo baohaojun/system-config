@@ -1,8 +1,19 @@
 #!/usr/bin/env perl
 use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl t:role-type='"projectRoles"' '?"one of globalRoles, projectRoles(default), slaveRoles"'
+# generate-getopt -s perl \
+# t:role-type='"projectRoles"' '?"one of globalRoles, projectRoles(default), slaveRoles"' \
+# vverbose
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -12,6 +23,7 @@ Getopt::Long::Configure("default");
 
 
 my $role_type = "projectRoles";
+my $verbose = 0;
 
 my $handler_help = sub {
     print ;
@@ -23,6 +35,14 @@ my $handler_help = sub {
         printf "%30s", "";
     }
     printf "%s", "one of globalRoles, projectRoles(default), slaveRoles";
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
 
     my $exit_value = 0;
@@ -36,10 +56,20 @@ my $handler_help = sub {
 
 GetOptions (
     'role-type|t=s' => \$role_type,
+    'verbose|v!' => \$verbose,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
 
-system "jc", "curl", "role-strategy/strategy/getAllRoles?type=${role_type}"
+my $roles_json = $json->decode(scalar capturex("jc", "curl", "role-strategy/strategy/getAllRoles?type=${role_type}"));
+if ($verbose) {
+    for (keys %$roles_json) {
+        $roles_json->{$_} = $json->decode(scalar capturex(
+            "jc", "getRole", "-n", decode_utf8 "$_"));
+    }
+}
+
+
+print JSON->new->utf8(0)->pretty(1)->encode($roles_json);

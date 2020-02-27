@@ -68,6 +68,7 @@ declare -A function_url_map=(
     ["Config Gerrit Trigger"]=gerrit-trigger/
     ["select-a-job"]=xxx
     ["Gerrit Manual Trigger"]=gerrit_manual_trigger/
+    ["roles"]=role-strategy/
 )
 
 

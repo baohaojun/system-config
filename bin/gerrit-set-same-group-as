@@ -38,18 +38,32 @@ for x in $remove_groups; do
     echo remove: $x
 done
 
-if yes-or-no-p "确认把 $change_user 的 gerrit 分组设成跟 $template_user 一样（add：$add_groups；del：$remove_groups）？"; then
-    for x in $add_groups; do
-        log add $x
-        ssh-gerrit --admin set-members "'$x'" -a "$change_user"
-    done
 
-    for x in $remove_groups; do
-        log delete $x
-        if test "$x" = "Registered Users" -o "$x" = "Anonymous Users" ||
-                [[ $x =~ ^useri?d?/ ]]; then
-            continue
+if test "${add_groups}" -o "${remove_groups}"; then
+    if yes-or-no-p "确认把 $change_user 的 gerrit 分组设成跟 $template_user 一样（add：$add_groups；del：$remove_groups）？"; then
+        if test "${add_groups}"; then
+            add_args=()
+            for x in $add_groups; do
+                log add $x
+                add_args+=("$(quote-args "$x")")
+            done
+
+            ssh-gerrit --admin set-members "${add_args[@]}" -a "${change_user}"
         fi
-        ssh-gerrit --admin set-members "'$x'" -r "$change_user"
-    done
+
+        if test "${remove_groups}"; then
+            del_args=()
+            for x in $remove_groups; do
+                log delete $x
+                if test "$x" = "Registered Users" -o "$x" = "Anonymous Users" ||
+                        [[ $x =~ ^useri?d?/ ]]; then
+                    continue
+                fi
+                del_args+=("$(quote-args "$x")")
+            done
+            ssh-gerrit --admin set-members "${del_args[@]}" -r "${change_user}"
+        fi
+    fi
+else
+    log "They are already in the same groups: $change_user = $template_user"
 fi

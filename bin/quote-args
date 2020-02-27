@@ -1,6 +1,9 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
 
-for x in "$@"; do
-    printf "%q " "$x"
-done
+use String::ShellQuote;
+
+print join(" ", shell_quote(@ARGV));

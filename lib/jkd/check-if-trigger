@@ -125,10 +125,8 @@ my $changelog_time;
 check_changes:
 for my $changelog (reverse @{$json_issue->{changelog}{histories}}) {
     for my $item (@{$changelog->{items}}) {
-        if ($item->{field} eq ${field_name} && (
-            $item->{toString} eq ${field_value} ||
-                not ${field_value})
-        ) {
+        if ( ($item->{field} eq ${field_name}) &&
+                ( ($item->{toString} eq ${field_value}) || (not ${field_value}) ) ) {
             say STDERR encode_utf8("we found field in changelog: ${field_name}: ${field_value}") if $debug;
             $field_value = $item->{toString};
             $changelog_time = $changelog->{created};

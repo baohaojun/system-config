@@ -1,0 +1,116 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# i:issuetype-name d:dump-dir='"$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/issuetypes"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $dump_dir = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/issuetypes";
+my $issuetype_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--dump-dir=DUMP-DIR';
+    if (length('--dump-dir=DUMP-DIR') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'dump-dir|d=s' => \$dump_dir,
+    'issuetype-name|i=s' => \$issuetype_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+$dump_dir = "$dump_dir/$issuetype_name";
+runx("mkdir", "-p", "$dump_dir");
+
+chdir($dump_dir);
+
+$ENV{CACHED_RUN_EXTRA_ENVVARS} = "scm_jira_url";
+
+my $issuetypeschemes_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-issuetypeschemes | tee issuetypeschemes.json"));
+
+my $fieldconfigschemes_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfigschemes | tee fieldconfigschemes.json"));
+
+my $screenschemes_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-screenschemes | tee screenschemes.json"));
+
+my $workflowschemes_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-workflowschemes | tee workflowschemes.json"));
+
+my $project_name;
+use Data::Dumper;
+map {
+    $_ = $issuetypeschemes_json->{$_};
+    if (grep {$issuetype_name eq $_} @{$_->{issuetypes}} ) {
+        if (@{$_->{projects}} > 1) {
+            die "Found too many projects " . Dumper($_->{projects});
+        } elsif (@{$_->{projects}} == 1) {
+            $project_name = $_->{projects}[0]{name};
+        }
+    }
+} keys %{$issuetypeschemes_json};
+
+my $fieldconfigscheme_id;
+my $fieldconfigscheme_name;
+map {
+    my @projects = @{$fieldconfigschemes_json->{$_}{projects}};
+    if (grep {$project_name eq $_->{name}} @projects) {
+        $fieldconfigscheme_id = $fieldconfigschemes_json->{$_}{id};
+        $fieldconfigscheme_name = $_;
+    }
+} keys %$fieldconfigschemes_json;
+
+my $fcs_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfigscheme -i $fieldconfigscheme_id"));
+
+my $screenscheme_id;
+my $screenscheme_name;

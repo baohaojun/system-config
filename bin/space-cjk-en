@@ -9,7 +9,7 @@ BEGIN {
     our $box = decode_utf8 "⃣";
     $box = qr($box);
     our $symbols_always_add_space = qr((?:[=~])*);
-    our $symbols_always_add_space_around = qr((?:[-/])*);
+    our $symbols_always_add_space_around = qr((?:[-/])*(?!\d));
     our $symbols_thinner_with_space = qr((?:-|[]/=~.()\${}[])*); # why $?
 }
 
