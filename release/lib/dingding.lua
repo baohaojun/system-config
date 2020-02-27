@@ -21,8 +21,17 @@ M.open_dd_search = function()
       elseif M.m_focused_window ~= M.dd_home then
          adb_back_from_activity()
       else
-         local found_grey = find_scene("dd-xiaoxi-weixuanzhong")
+         if find_scene("dd-xiaoxi-sousuo") then
+            jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
+            return
+         end
          local found_duihua = find_scene("dd-xiaoxi-xuanzhong")
+
+         local found_grey
+         if not found_duihua then
+            found_grey = find_scene("dd-xiaoxi-weixuanzhong")
+         end
+
          if not found_grey and not found_duihua then
             if i >= 4 then
                M.g_find_scene_debug = true
