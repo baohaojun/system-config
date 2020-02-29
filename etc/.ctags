@@ -70,7 +70,7 @@
 
 --langdef=sh
 --langmap=sh:.sh.SH.bsh.bash.ksh.zsh
---regex-sh=/^[ \t]*(([[:alnum:]]|-|_)+)[ \t]*\([ \t]*\)/\1/f,function/
+--regex-sh=/^[ \t]*(([[:alnum:]]|-|_|\?)+)[ \t]*\([ \t]*\)/\1/f,function/
 --regex-sh=/^[ \t]*function[ \t]+(([[:alnum:]]|_|-)+)[ \t]*\([ \t]*\)/\1/f,function/
 --regex-sh=/^[ \t]*declare([ \t]+|([ \t]+-[A-Za-z]+)*[ \t]+)(([[:alnum:]]|_)+)/\3/d,declare/
 --regex-sh=/^[ \t]*##[ \t]*([[:alnum:]]+)/\1/n,note/
