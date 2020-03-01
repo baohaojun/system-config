@@ -214,6 +214,9 @@ EOF
     )
 then
     output=$(echo "${output}" | pn 2 | tr '\n' ' ')
+    for d in $output; do
+        cd $d && git fetch $(repo-remote)
+    done || true&
     myscr -n "GitPush" bash -c "hint GitPush failed: $output; bash"
     exit -1
 else
