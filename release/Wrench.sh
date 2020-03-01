@@ -182,7 +182,7 @@ EOF
     if test "$(which Wrench)" = ~/.cache/build-wrench.$postfix/Wrench; then
         path_args=()
     fi
-    . reset-env WRENCH_INSTANCE ${wrench_adb_map[$postfix]} "${path_args[@]}"
+    . reset-env WRENCH_INSTANCE ${wrench_adb_map[$postfix]} "${path_args[@]}" ANDROID_SERIAL $ANDROID_SERIAL
 
     if test "$system" = true; then
         (
