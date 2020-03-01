@@ -77,25 +77,28 @@ chdir($dump_dir);
 $ENV{CACHED_RUN_EXTRA_ENVVARS} = "scm_jira_url";
 
 my $issuetypeschemes_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-issuetypeschemes | tee issuetypeschemes.json"));
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-issuetypeschemes | tee issuetypeschemes.json"));
 
 my $fieldconfigschemes_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfigschemes | tee fieldconfigschemes.json"));
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-fieldconfigschemes | tee fieldconfigschemes.json"));
 
 my $issuetypescreenschemes_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-issuetypescreenschemes | tee issuetypescreenschemes.json"));
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-issuetypescreenschemes | tee issuetypescreenschemes.json"));
 
 my $workflowschemes_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-workflowschemes | tee workflowschemes.json"));
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-workflowschemes | tee workflowschemes.json"));
 
 my $project_name;
 use Data::Dumper;
+my $issuetypescheme_name;
 map {
+    my $name = $_;
     $_ = $issuetypeschemes_json->{$_};
     if (grep {$issuetype_name eq $_} @{$_->{issuetypes}} ) {
         if (@{$_->{projects}} > 1) {
             die "Found too many projects " . Dumper($_->{projects});
         } elsif (@{$_->{projects}} == 1) {
+            $issuetypescheme_name = $name;
             $project_name = $_->{projects}[0]{name};
         }
     }
@@ -111,8 +114,11 @@ map {
     }
 } keys %$fieldconfigschemes_json;
 
-my $fcs_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfigscheme -i $fieldconfigscheme_id"));
+my $fcs_json = {};
+if ($fieldconfigscheme_id) {
+    $fcs_json =
+        $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-fieldconfigscheme -i $fieldconfigscheme_id"));
+}
 
 my $fieldconfig_id;
 my $fieldconfig_name;
@@ -125,7 +131,9 @@ map {
 } keys %$fcs_json;
 
 my $fieldconfig_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfig -i $fieldconfig_id"));
+    $fieldconfig_id ?
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-fieldconfig -i $fieldconfig_id")) :
+    {};
 
 my $issuetypescreenscheme_id;
 my $issuetypescreenscheme_name;
@@ -139,7 +147,9 @@ map {
 } keys %$issuetypescreenschemes_json;
 
 my $issuetypescreenscheme_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-issuetypescreenscheme -i $issuetypescreenscheme_id"));
+    $issuetypescreenscheme_id ?
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-issuetypescreenscheme -i $issuetypescreenscheme_id")) :
+    {};
 
 my $screenscheme_id;
 my $screenscheme_name;
@@ -151,8 +161,9 @@ map {
     }
 } keys %$issuetypescreenscheme_json;
 
-my $screenscheme_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-screenscheme -i $screenscheme_id"));
+my $screenscheme_json = $screenscheme_id ?
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd export-screenscheme -i $screenscheme_id")) :
+    {};
 
 my $workflow_id;
 my $workflow_name;
@@ -163,7 +174,10 @@ map {
     }
 } @$workflowschemes_json;
 
-runx(map {decode_utf8 $_} ("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml"));
+if ($workflow_name) {
+    runx(map {decode_utf8 $_} ("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml"));
+}
+
 
 my %screens;
 
@@ -173,9 +187,9 @@ map {
 } keys %$screenscheme_json;
 
 my $workflow_api_json =
-    $json->decode(scalar capture("debug-run cached-run jkd rest workflow"));
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd rest workflow"));
 my $screens_api_json =
-    $json->decode(scalar capture("debug-run cached-run jkd rest screens"));
+    $json->decode(scalar capture("debug-run cached-run -e scm_jira_url jkd rest screens"));
 
 my %screen_ids_and_names = map {
     (
@@ -184,13 +198,72 @@ my %screen_ids_and_names = map {
     )
 } @$screens_api_json;
 
-my $workflow_xml = decode_utf8 read_file("${workflow_name}.workflow.xml");
-use Mojo::DOM;
-my $dom = Mojo::DOM->new->parse($workflow_xml);
-$dom->find('meta[name="jira.fieldscreen.id"]')->each(
-    sub {
-        my $id = $_->text;
-        my $name = $screen_ids_and_names{$id};
-        $screens{$name} = 1;
+my $workflow_xml = "";
+if ($workflow_name) {
+    $workflow_xml = read_file("${workflow_name}.workflow.xml");
+    use Mojo::DOM;
+    my $dom = Mojo::DOM->new->parse(decode_utf8 $workflow_xml);
+    $dom->find('meta[name="jira.fieldscreen.id"]')->each(
+        sub {
+            my $id = $_->text;
+            if ($id) {
+                my $name = $screen_ids_and_names{$id};
+                $screens{$name} = 1 if $name;
+            }
+        }
+    );
+}
+
+map {
+    $screens{$_} =
+        $json->decode(scalar capturex("debug-run", "cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", decode_utf8("$_")));
+} keys %screens;
+
+
+# fields: get from the screens
+
+my %wanted_fields;
+map {
+    my $screen = $screens{$_};
+    my $tabs = $screen->{tabs};
+    map {
+        map {
+            $wanted_fields{$_->{name}} = 1;
+        } @{$_->{fields}}
+    } @$tabs;
+} keys %screens;
+
+my $issuetype_complete_data = {
+    issuetype => $issuetype_name,
+    issuetypescheme => $issuetypescheme_name,
+    project => $project_name,
+    fieldconfigscheme_name => $fieldconfigscheme_name,
+    fieldconfig_name => $fieldconfig_name,
+    fieldconfig_json => $fieldconfig_json,
+    screenscheme_name => $screenscheme_name,
+    screenscheme => $screenscheme_json,
+    workflow => $workflow_xml,
+    screens => \%screens,
+    fields => \%wanted_fields,
+};
+
+map {
+    delete $fieldconfig_json->{$_}{screens};
+    if (not $wanted_fields{$_} and not $fieldconfig_json->{$_}{required}) {
+        delete $fieldconfig_json->{$_};
     }
-);
+} keys %$fieldconfig_json;
+
+print JSON->new->utf8(0)->canonical->pretty(1)->encode($issuetype_complete_data);
+
+my $comment = <<~'EOFc83131117f09';
+# {%org-mode%}
+接下来要做的事情：
+
+1. 计算出哪些 screens 要处理
+2. 计算出哪些 fields 要处理
+3. 在两边都导出 issuetype
+4. 如果在目标环境上，某些 issuetype、字段、screen、scheme 不存在，要允许导入
+5. 如果在目标环境上，如果某些模块已经存在，要允许对比其差异，如果有需要的话，就导入。
+# {%/org-mode%}
+EOFc83131117f09

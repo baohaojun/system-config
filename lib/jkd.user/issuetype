@@ -1,0 +1,151 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+* action = create
+- create an issuetype
+* action = update
+- update an issuetype
+* action = print
+- print an issuetype (i.e., the json)
+
+* action = create-scheme
+- create an issuetype scheme
+* action = update-scheme
+* action = list-schemes
+* action = get-scheme
+- print the scheme that the issuetype belongs to
+* action = add-to-scheme
+- add the issue to the scheme
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:action \
+ # n:issuetype-name \
+# d:issuetype-description \
+# t:issuetype-type '?"one of standard, subtask"' \
+ # s:issuetype-scheme \
+ # p:associated-projects
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+my $action = "";
+my $associated_projects = "";
+my $issuetype_description = "";
+my $issuetype_name = "";
+my $issuetype_scheme = "";
+my $issuetype_type = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--associated-projects=ASSOCIATED-PROJECTS';
+    if (length('--associated-projects=ASSOCIATED-PROJECTS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--issuetype-description=ISSUETYPE-DESCRIPTION';
+    if (length('--issuetype-description=ISSUETYPE-DESCRIPTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--issuetype-scheme=ISSUETYPE-SCHEME';
+    if (length('--issuetype-scheme=ISSUETYPE-SCHEME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-t, ';
+    printf "%-24s", '--issuetype-type=ISSUETYPE-TYPE';
+    if (length('--issuetype-type=ISSUETYPE-TYPE') > 24 and length("one of standard, subtask") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "one of standard, subtask";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'associated-projects|p=s' => \$associated_projects,
+    'issuetype-description|d=s' => \$issuetype_description,
+    'issuetype-name|n=s' => \$issuetype_name,
+    'issuetype-scheme|s=s' => \$issuetype_scheme,
+    'issuetype-type|t=s' => \$issuetype_type,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+if (not $action) {
+    $action = shift @ARGV;
+}
+
+my $issuetypes_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest issuetype"));
+
+if ($action eq "print") {
+    map {
+        if ($_->{name} eq $issuetype_name) {
+            print JSON->new->utf8(0)->pretty(1)->encode($_);
+            exit
+        }
+    } @$issuetypes_json;
+} elsif ($action eq "create") {
+
+    my %issuetype = (
+        name => $issuetype_name,
+        description => $issuetype_description,
+        type => $issuetype_type,
+    );
+
+    runx("jkd", "rest", "issuetype", "--", "-X", "POST", "-H", 'Content-Type: application/json', "--data", decode_utf8(JSON->new->utf8(0)->pretty(1)->encode(\%issuetype)));
+} elsif ($action eq "get-scheme") {
+
+}
