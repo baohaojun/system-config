@@ -20,6 +20,7 @@ map['com.android.settings/com.android.settings.NotificationAccessSettingsActivit
 map['com.baidu.netdisk/com.baidu.netdisk.uiframe.container.CommonActivity'] = 'No-Post'
 map['com.bjgas.shop/com.bjgas.shop.MainActivity'] = 'No-Post'
 map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'No-Post'
+map['com.google.android.googlequicksearchbox/com.google.android.apps.gsa.searchnow.SearchNowActivity'] = 'No-Post'
 map['com.gotokeep.keep/com.gotokeep.keep.su.social.search.activity.SearchActivity'] = 'No-Post'
 map['com.instagram.android/com.instagram.nux.activity.SignedOutFragmentActivity'] = 'No-Post'
 map['com.netease.cloudmusic/com.netease.cloudmusic.activity.SearchActivity'] = 'No-Post'
