@@ -213,6 +213,7 @@ EOF
         grep "^hello.*failed$"
     )
 then
+    output=$(echo "${output}" | pn 2 | tr '\n' ' ')
     myscr -n "GitPush" bash -c "hint GitPush failed: $output; bash"
     exit -1
 else
