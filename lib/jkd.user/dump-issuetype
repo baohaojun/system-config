@@ -7,6 +7,8 @@ use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
 use Encode;
 use JSON;
 
+use File::Slurp;
+
 my $json = JSON->new->utf8(0);
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
@@ -80,8 +82,8 @@ my $issuetypeschemes_json =
 my $fieldconfigschemes_json =
     $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfigschemes | tee fieldconfigschemes.json"));
 
-my $screenschemes_json =
-    $json->decode(scalar capture("debug-run cached-run jkd export-screenschemes | tee screenschemes.json"));
+my $issuetypescreenschemes_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-issuetypescreenschemes | tee issuetypescreenschemes.json"));
 
 my $workflowschemes_json =
     $json->decode(scalar capture("debug-run cached-run jkd export-workflowschemes | tee workflowschemes.json"));
@@ -112,5 +114,83 @@ map {
 my $fcs_json =
     $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfigscheme -i $fieldconfigscheme_id"));
 
+my $fieldconfig_id;
+my $fieldconfig_name;
+
+map {
+    if ($_ eq $issuetype_name) {
+        $fieldconfig_id = $fcs_json->{$_}{id};
+        $fieldconfig_name = $fcs_json->{$_}{name};
+    }
+} keys %$fcs_json;
+
+my $fieldconfig_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-fieldconfig -i $fieldconfig_id"));
+
+my $issuetypescreenscheme_id;
+my $issuetypescreenscheme_name;
+
+map {
+    my @projects = @{$issuetypescreenschemes_json->{$_}{projects}};
+     if (grep {$project_name eq $_->{name}} @projects) {
+        $issuetypescreenscheme_id = $issuetypescreenschemes_json->{$_}{id};
+        $issuetypescreenscheme_name = $_;
+    }
+} keys %$issuetypescreenschemes_json;
+
+my $issuetypescreenscheme_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-issuetypescreenscheme -i $issuetypescreenscheme_id"));
+
 my $screenscheme_id;
 my $screenscheme_name;
+
+map {
+    if ($issuetype_name eq $_) {
+        $screenscheme_id = $issuetypescreenscheme_json->{$_}{id};
+        $screenscheme_name = $issuetypescreenscheme_json->{$_}{name};
+    }
+} keys %$issuetypescreenscheme_json;
+
+my $screenscheme_json =
+    $json->decode(scalar capture("debug-run cached-run jkd export-screenscheme -i $screenscheme_id"));
+
+my $workflow_id;
+my $workflow_name;
+
+map {
+    if ($_->{issuetypes_workflow}{$issuetype_name} and grep {$project_name eq $_} @{$_->{projects}}) {
+        $workflow_name = $_->{issuetypes_workflow}{$issuetype_name};
+    }
+} @$workflowschemes_json;
+
+runx(map {decode_utf8 $_} ("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml"));
+
+my %screens;
+
+map {
+    my $screen_name = $screenscheme_json->{$_}{name};
+    $screens{$screen_name} = 1;
+} keys %$screenscheme_json;
+
+my $workflow_api_json =
+    $json->decode(scalar capture("debug-run cached-run jkd rest workflow"));
+my $screens_api_json =
+    $json->decode(scalar capture("debug-run cached-run jkd rest screens"));
+
+my %screen_ids_and_names = map {
+    (
+        $_->{id} => $_->{name},
+        $_->{name} => $_->{id},
+    )
+} @$screens_api_json;
+
+my $workflow_xml = decode_utf8 read_file("${workflow_name}.workflow.xml");
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($workflow_xml);
+$dom->find('meta[name="jira.fieldscreen.id"]')->each(
+    sub {
+        my $id = $_->text;
+        my $name = $screen_ids_and_names{$id};
+        $screens{$name} = 1;
+    }
+);

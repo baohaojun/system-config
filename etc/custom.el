@@ -26,6 +26,7 @@
  '(clipmon-mode t)
  '(company-idle-delay nil)
  '(compilation-message-face (quote default))
+ '(cperl-auto-newline nil)
  '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
  '(custom-safe-themes
    (quote

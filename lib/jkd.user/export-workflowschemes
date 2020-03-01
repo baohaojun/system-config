@@ -37,11 +37,11 @@ my @workflow_schemes;
 my %link_to_workflow;
 use URI::Query;
 sub link_to_workflow_name($) {
-    my $href = $_[0];
+    my $href = encode_utf8 $_[0];
     if (not $link_to_workflow{$href}) {
         (my $query = $href) =~ s,.*\?,,;
         my $qq = URI::Query->new(${query});
-        $link_to_workflow{$href} = ${$qq->hash}{workflowName};
+        $link_to_workflow{$href} = decode_utf8 ${$qq->hash}{workflowName};
     }
 
     return $link_to_workflow{$href};

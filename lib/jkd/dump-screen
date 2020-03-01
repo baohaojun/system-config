@@ -7,6 +7,8 @@ use IPC::System::Simple qw(system systemx capture capturex);
 use Encode;
 use JSON;
 
+my $json = JSON->new->utf8(0);
+
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
 
@@ -69,17 +71,16 @@ if (not ${screen_name}) {
     die "You must specify screen name";
 }
 
-my $screens_json = decode_json(capturex("jkd", "rest", "screens"));
+my $screens_json = $json->decode(scalar capturex("jkd", "rest", "screens"));
 my ($screen_id, $screen_description);
 
-my $screen_name_unicode = decode_utf8 $screen_name;
 my $screen_tabs = [];
 my $screen_obj = {
     tabs => ${screen_tabs},
 };
 
 for (@$screens_json) {
-    if ($_->{name} eq $screen_name_unicode) {
+    if ($_->{name} eq $screen_name) {
         $screen_obj->{name} = $_->{name};
         $screen_obj->{id} = $screen_id = $_->{id};
         $screen_obj->{description} = $_->{description};
@@ -89,8 +90,13 @@ for (@$screens_json) {
 
 say STDERR "screen id is $screen_id" if $debug;
 
-my @tab_ids = split "\n", qx(jkd rest screens/${screen_id}/tabs | jq '.[]|.id' -r);
-my @tab_names = split "\n", qx(jkd rest screens/${screen_id}/tabs | jq '.[]|.name' -r);
+my $tabs_json = $json->decode(scalar capture("jkd rest screens/${screen_id}/tabs"));
+my @tab_ids;
+my @tab_names;
+map {
+    push @tab_ids, $_->{id};
+    push @tab_names, $_->{name};
+} @$tabs_json;
 
 say STDERR "tab ids is @tab_ids" if $debug;
 
@@ -102,14 +108,14 @@ if (@tab_ids != @tab_names) {
 for (0 .. (@tab_ids - 1)) {
     my $id = $tab_ids[$_];
     my $name = $tab_names[$_];
-    my $fields = decode_json(qx(jkd rest screens/${screen_id}/tabs/${id}/fields));
+    my $fields = $json->decode(scalar capture("jkd rest screens/${screen_id}/tabs/${id}/fields"));
 
     push @$screen_tabs, {
         id => $id,
-        name => decode_utf8($name),
+        name => $name,
         fields => $fields,
     };
 }
 
 @$screen_tabs = sort {$a->{name} cmp $b->{name}} @$screen_tabs;
-print JSON->new->utf8(1)->pretty(1)->encode($screen_obj);
+print JSON->new->utf8(0)->pretty(1)->encode($screen_obj);

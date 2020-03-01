@@ -134,8 +134,14 @@ my @cur_at_end;
 
 my $at_someone_regexp = qr(\@\@(\S+?)( | |$|\n));
 
+my %cue_screens = (
+    "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" => 1,
+    "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI" => 1,
+    "com.tencent.mm/com.tencent.mm.ui.LauncherUI" => 1,
+);
+
 my $how_to_post = 'nil';
-if ($text =~ m/$at_someone_regexp/ and qx(adb-top-activity) =~ m,com.alibaba.android.rimet/,) {
+if ($text =~ m/$at_someone_regexp/ and $cue_screens{qx(adb-top-activity)}) {
     while ($text =~ s,$at_someone_regexp,,) {
         my $pre = $`;
         my $post = $';

@@ -1,9 +1,9 @@
 #!/bin/bash
 activity=$(adb shell dumpsys window|grep mFocusedWindow|perl -npe 's/.*?(\S+)}$/$1/')
 if test $(basename $0) = adb-top-activity; then
-    echo $activity
+    echo -n $activity
     if is-tty-io; then
-        echo $activity | putclip
+        echo -n $activity | putclip
     fi
     exit
 fi

@@ -2,7 +2,7 @@
 use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
-use IPC::System::Simple qw(system systemx capture capturex);
+use IPC::System::Simple qw(system systemx run runx capture capturex);
 
 use JSON;
 
@@ -17,8 +17,14 @@ use XML::Quote qw(:all);
 
 将 workflow.xml 文件中的 ids（custom field、screen 等）改成对应的 names。
 
-* action name2id
+* action = name2id
 将 workflow.xml 文件中的 names（custom field、screen 等）改成对应的 ids。
+
+* action = export
+export the specified workflow as xml
+
+* action = import
+import the specified workflow from xml file
 
 * hint
 
@@ -87,6 +93,20 @@ GetOptions (
 
 
 ## end generated code
+if (not $action) {
+    $action = shift @ARGV;
+}
+
+if ($action eq "list") {
+    run("jkd rest workflow|jq '.[]|.name' -r ");
+    exit(0);
+} elsif ($action eq "export") {
+    runx("jkd", "export-workflow-as-xml", @ARGV);
+    exit;
+} elsif ($action eq "import") {
+    runx("jkd", "import-workflow-from-xml", @ARGV);
+    exit;
+}
 
 use Mojo::DOM;
 use File::Slurp;

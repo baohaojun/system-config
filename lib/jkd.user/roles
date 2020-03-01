@@ -69,7 +69,66 @@ done
 
 ## end generated code
 
+if test -z "${action}"; then
+    action=$1
+    shift
+fi
+
 list-roles() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # sshort '?"list the name only"'
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o sh \
+                          --long short,help,no-short \
+                          -n $(basename -- $0) -- "$@")
+    declare short=false
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -s|--short|--no-short)
+                if test "$1" = --no-short; then
+                    short=false
+                else
+                    short=true
+                fi
+                shift
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %06s '-s, '
+                printf %-24s '--[no-]short'
+                echo "list the name only"
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
     IFS=$'\n'
 
     roles_json=$(
@@ -78,6 +137,10 @@ list-roles() {
     role_names=$(
         echo "${roles_json}" | jq 'keys|.[]' -r
               )
+    if test "${short}" = true; then
+        echo "${role_names}"
+        exit
+    fi
 
     echo '['
     first=true
