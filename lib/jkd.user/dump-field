@@ -99,7 +99,7 @@ my %fields_names_id_map = map {($_->{name} => $_->{id})} @$fields;
 my $field_id = no_spaces_hashget(%fields_names_id_map, $field_name);
 
 if ($field_id !~ m/customfield_/) {
-    die "Can't dump $field_name: id is ' $field_id'";
+    die "Can't dump $field_name: id is '$field_id', not customfield_!";
 }
 
 $field_id =~ s,.*_,,;

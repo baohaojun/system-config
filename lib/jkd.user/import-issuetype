@@ -138,6 +138,33 @@ if (not $to_jira_json->{fieldconfigscheme}) {
     die sprintf("can't work with different fieldconfigscheme: %s v.s. %s", $to_jira_json->{fieldconfigscheme}, $from_fieldconfigscheme);
 }
 
+my $from_fields_list =
+    $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "rest", "field"));
+my %from_fields_name_id;
+
+map {
+    my $name = $_->{name};
+    my $id = $_->{id};
+    $from_fields_name_id{$name} = $id;
+} @$from_fields_list;
+
+my $to_fields_list =
+    $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "rest", "field"));
+
+my %to_fields_name_id;
+map {
+    my $name = $_->{name};
+    my $id = $_->{id};
+    $to_fields_name_id{$name} = $id;
+} @$to_fields_list;
+
+map {
+    my $field_name = $_;
+    if ($from_fields_name_id{$field_name} and not $to_fields_name_id{$field_name}) {
+        say STDERR "You need to create $field_name";
+    }
+} keys %{$from_jira_json->{fields}};
+
 my $from_frieldconfig = $from_jira_json->{fieldconfig};
 my $fieldconfigs =
     $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigs"));
