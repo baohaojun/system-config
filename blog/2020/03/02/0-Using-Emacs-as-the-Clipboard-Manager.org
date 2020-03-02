@@ -1,0 +1,41 @@
+#+title: Using Emacs as the Clipboard Manager
+# bhj-tags: emacs
+
+There is already a clipboard manager for Emacs, https://github.com/bburns/clipmon, but there is a serious bug with X-windows:
+
+#+BEGIN_QUOTE
+Warning (2015-12-24): in an X-windows system with clipmon-mode on, bringing up a graphical menu (e.g. Shift+Mouse-1) will cause Emacs to hang. See http://debbugs.gnu.org/cgi/bugreport.cgi?bug=22214. X-windows starts a timer when checking the contents of the clipboard, which interferes with the clipmon timer.
+#+END_QUOTE
+
+So I cooked up my own solution. In addition to the same functionality as clipmon, I also added a feature to paste anywhere from Emacs the clipboard manager.
+
+* kill-ring as clipboard manager
+
+My solution is fairly simple: rewrite Glipper, adapt it for Emacs. Glipper is a Clipboard manager for GNOME, it's written in Python.
+
+I updated its source code, so that when there is changes to the clipboard, it will run emacsclient to save the clipboard text in Emacs.
+
+The source code is here [[https://github.com/baohaojun/system-config/raw/master/bin/glipper.cli][glipper.cli]].
+
+* Global Emacs Clipboard Manager
+
+Here, the word “global” means I can use Emacs as clipboard manager in any window, for e.g., Terminal, Browser, and so on.
+
+I have a global hotkey for this function “Super-h y”.
+
+I'm using sawfish as my window manager, so the implementation is straight forward, when I press "Super-h y":
+
+1. sawfish will remember THE CURRENT WINDOW
+2. sawfish will pop-up the Emacs window
+3. Run an Emacs script with emacsclient, which will do the following
+
+   - switch to buffer =*em kill-ring*=
+   - set up recursive-edit and browse-kill-ring, so that when a kill-ring entry is /yanked/, the script will return THE YANKED TEXT
+
+4. switch back to the REMEMEBERED WINDOW, paste THE YANKED TEXT
+
+The source code is in [[https://github.com/baohaojun/system-config/raw/master/lib/em/kill-ring][kill-ring]].
+
+*Note*: to use my code directly, you will need to use my [[https://github.com/baohaojun/system-config][system-config]] project.
+
+Here's a screen record:
