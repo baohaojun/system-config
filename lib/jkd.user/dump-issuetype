@@ -19,7 +19,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# i:issuetype-name d:dump-dir='"$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/issuetypes"'
+# i:issuetype-name d:dump-dir='"$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/issuetypes"' vverbose
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -30,6 +30,7 @@ Getopt::Long::Configure("posix_default");
 
 my $dump_dir = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/issuetypes";
 my $issuetype_name = "";
+my $verbose = 0;
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -50,6 +51,14 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -63,6 +72,7 @@ my $handler_help = sub {
 GetOptions (
     'dump-dir|d=s' => \$dump_dir,
     'issuetype-name|i=s' => \$issuetype_name,
+    'verbose|v!' => \$verbose,
     'help|h!' => \&$handler_help,
 );
 
@@ -249,6 +259,13 @@ my $issuetype_complete_data = {
     screens => \%screens,
     fields => \%wanted_fields,
 };
+
+if ($verbose) {
+    $issuetype_complete_data->{issuetypeschemes} = $issuetypescreenschemes_json;
+    $issuetype_complete_data->{fieldconfigschemes} = $fieldconfigschemes_json;
+    $issuetype_complete_data->{issuetypescreenschemes} = $issuetypescreenschemes_json;
+    $issuetype_complete_data->{workflowschemes} = $workflowschemes_json;
+}
 
 map {
     delete $fieldconfig_json->{$_}{screens};

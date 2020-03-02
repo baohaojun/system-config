@@ -113,13 +113,20 @@ if (not @users) {
     die "Must specify users";
 }
 
+my @repos;
 my @include_patters = map {
-    (my $pattern = $_) =~ s,.*://.*?/artifactory/.*?/+,,;
+    if ($_ !~ m,/artifactory/,) {
+        $_ = "$ENV{scm_artifactory_url}artifactory/$_";
+    }
+    (my $pattern = $_) =~ s,.*://.*?/artifactory/(.*?)/+,,;
+    push @repos, $1;
     die "pattern for $_ is empty!" unless $pattern;
     die "pattern for $_ contains ','" if $pattern =~ m/,/;
 
-    if (runx(EXIT_ANY, "artifactory", "is-dir", "-u", "$_") == 0) {
+    if ((my $ret = runx(EXIT_ANY, "artifactory", "is-dir", "-u", "$_")) == 0) {
         $pattern =~ s,/*$,/**,;
+    } elsif ($ret != 1) {
+        die "$_ not exists? error code is $ret";
     }
 
     $pattern
@@ -135,7 +142,7 @@ my %permission_json = (
     name => $permission_name,
     includesPattern => join(",", @include_patters),
     excludesPattern => "",
-    repositories => ["ANY REMOTE", "ANY LOCAL"],
+    repositories => \@repos,
     principals => {
         users => \%users_perm,
         groups => {},

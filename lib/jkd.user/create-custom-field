@@ -93,7 +93,7 @@ GetOptions (
 ## end generated code
 
 if (not $type_map->{$type}) {
-    die sprintf "Your type (%s) is not supported: (%s)", $type_map->{$type}, join(" ", keys %$type_map);
+    $type_map->{$type} = $type;
 }
 
 my $fields_json = decode_json(qx(jkd rest field));
@@ -121,5 +121,5 @@ my $json_obj = {
 
 use autodie qw(:all);
 
-system("jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
+system("debug-run", "jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
 system("jkd", "go", "field", "-e", "-m", "$name");

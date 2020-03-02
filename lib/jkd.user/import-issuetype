@@ -80,4 +80,72 @@ GetOptions (
 if ($from_jira_url) {
     die "Can't specify both from_jira_url and from_jira_json" if $from_jira_json;
     $from_jira_json =
+        scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "dump-issuetype", "-i", "$issuetype_name");
 }
+
+$from_jira_json = $json->decode($from_jira_json);
+
+my $to_jira_json =
+    $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", "$issuetype_name"));
+
+# my $issuetype_complete_data = {
+#     issuetype => $issuetype_name,
+#     issuetypescheme => $issuetypescheme_name,
+#     issuetypeschemes => $issuetypescreenschemes_json,
+#     project => $project_name,
+#     fieldconfigscheme_name => $fieldconfigscheme_name,
+#     fieldconfig => $fieldconfig_name,
+#     fieldconfig_json => $fieldconfig_json,
+#     screenscheme => $screenscheme_name,
+#     screenscheme_json => $screenscheme_json,
+#     workflowscheme => $workflowscheme_name,
+#     workflow => $workflow_xml,
+#     screens => \%screens,
+#     fields => \%wanted_fields,
+# }
+
+my $issuetypes_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest issuetype"));
+
+my $from_issuetype = $from_jira_json->{issuetype};
+if (not grep {$from_issuetype eq $_->{name}} @$issuetypes_json) {
+    say STDERR "need create issuetype: $from_issuetype";
+}
+
+my $from_issuetypescheme = $from_jira_json->{issuetypescheme};
+if (not $to_jira_json->{issuetypescheme}) {
+    # maybe need create the scheme
+    if (not $to_jira_json->{issuetypeschemes}{$from_issuetypescheme}) {
+        say STDERR "Need create issuetypescheme: $from_issuetypescheme";
+    }
+} elsif ($to_jira_json->{issuetypescheme} ne $from_issuetypescheme) {
+    die sprintf( "Can't work with different issuetype scheme: %s v.s. %s", $to_jira_json->{issuetypescheme}, $from_issuetypescheme);
+}
+
+my $from_project = $from_jira_json->{project};
+if (not $to_jira_json->{project}) {
+    say STDERR "Need to associate project";
+} elsif ($to_jira_json->{project} ne $from_project) {
+    die sprintf("Can't work with different project: %s v.s. %s", $to_jira_json->{project}, $from_project);
+}
+
+my $from_fieldconfigscheme = $from_jira_json->{fieldconfigscheme};
+if (not $to_jira_json->{fieldconfigscheme}) {
+    if (not $to_jira_json->{fieldconfigschemes}{$from_fieldconfigscheme}) {
+        say STDERR "Need to create fieldconfigscheme: $from_fieldconfigscheme";
+    }
+} elsif ($to_jira_json->{fieldconfigscheme} ne $from_fieldconfigscheme) {
+    die sprintf("can't work with different fieldconfigscheme: %s v.s. %s", $to_jira_json->{fieldconfigscheme}, $from_fieldconfigscheme);
+}
+
+my $from_frieldconfig = $from_jira_json->{fieldconfig};
+my $fieldconfigs =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigs"));
+if (not grep {$from_frieldconfig eq $_->{name}} @$fieldconfigs) {
+    say STDERR "Field config $from_frieldconfig not exist, create it!";
+}
+
+my $screens =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest screens"));
+
+my %from_screens = keys %{$from_jira_json->{screens}};
