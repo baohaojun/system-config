@@ -167,9 +167,11 @@ my $screenscheme_json = $screenscheme_id ?
 
 my $workflow_id;
 my $workflow_name;
+my $workflowscheme_name;
 
 map {
     if ($_->{issuetypes_workflow}{$issuetype_name} and grep {$project_name eq $_} @{$_->{projects}}) {
+        $workflowscheme_name = $_->{name};
         $workflow_name = $_->{issuetypes_workflow}{$issuetype_name};
     }
 } @$workflowschemes_json;
@@ -242,6 +244,7 @@ my $issuetype_complete_data = {
     fieldconfig_json => $fieldconfig_json,
     screenscheme_name => $screenscheme_name,
     screenscheme => $screenscheme_json,
+    workflowscheme => $workflowscheme_name,
     workflow => $workflow_xml,
     screens => \%screens,
     fields => \%wanted_fields,
