@@ -1,47 +1,61 @@
 -- 在聊天的时候，@某人
 -- 主要是为钉钉而开发，在钉钉里要 @某个人的话，非常麻烦
 
+local ce = {}
+
+M.cue_funcs = {
+   ['com.alibaba.android.rimet'] = function ()
+      find_scene(ce.cue_all_scene)
+      local cue_all = true
+      if ce.who:lower() ~= "all" and ce.who ~= "所有人" then
+         cue_all = false
+      end
+
+      ce.click_1 = function()
+         if cue_all then
+            log("cue_all is %s", cue_all)
+            click_scene(ce.cue_all_scene, {skip_refind = true})
+         else
+            log("cue_all is %s", cue_all)
+            jump_out_of("dd/cue-multi")
+            wrench_post(ce.who, "No-Post")
+            click_scene(ce.cue_all_scene, {skip_refind = true})
+            jump_out_of("dd/cue-queding")
+         end
+      end
+
+   end,
+
+   ['com.tencent.mm'] = function ()
+      wrench_post(ce.who, "No-Post")
+      ce.click_1 = function()
+         click_scene(ce.search_button, {skip_refind = true, x = -430, y = 220})
+      end
+   end
+}
+
 M.wrench_cue = function(who)
-   current_win = adb_top_window()
-   current_pkg = current_win:gsub("/.*", "")
+   ce.who = who
+   ce.current_win = adb_top_window()
+   ce.current_pkg = ce.current_win:gsub("/.*", "")
 
    wrench_post("@", "No-Post")
 
-   search_button = current_pkg .. ".cue-search"
-   cue_all_scene = current_pkg .. ".cue-all"
+   ce.search_button = ce.current_pkg .. ".cue-search"
+   ce.cue_all_scene = ce.current_pkg .. ".cue-all"
 
-   wait_for_scene(search_button)
+   wait_for_scene(ce.search_button)
 
    wait_ime = function()
-      log("waiting for ime: %s", current_pkg)
-      return wait_input_target_n_ok(1, current_pkg)
+      log("waiting for ime: %s", ce.current_pkg)
+      return wait_input_target_n_ok(1, ce.current_pkg)
    end
 
-   find_scene(cue_all_scene)
-   jump_from_to(search_button, wait_ime)
-
-   local cue_all = true
-   if who:lower() ~= "all" and who ~= "所有人" then
-      cue_all = false
+   jump_from_to(ce.search_button, wait_ime)
+   ce.is_back_to_chat = function()
+      return adb_top_window() == ce.current_win
    end
 
-
-   is_back_to_chat = function()
-      return adb_top_window() == current_win
-   end
-
-   click_1 = function()
-      if cue_all then
-         log("cue_all is %s", cue_all)
-         click_scene(cue_all_scene, {skip_refind = true})
-      else
-         log("cue_all is %s", cue_all)
-         jump_out_of("dd/cue-multi")
-         wrench_post(who, "No-Post")
-         click_scene(cue_all_scene, {skip_refind = true})
-         jump_out_of("dd/cue-queding")
-      end
-   end
-
-   jump_from_to(true, is_back_to_chat, {action = click_1})
+   M.cue_funcs[ce.current_pkg](ce.cue_all_scene, ce.who)
+   jump_from_to(true, ce.is_back_to_chat, {action = ce.click_1})
 end

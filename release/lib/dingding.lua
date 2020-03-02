@@ -89,17 +89,18 @@ M.dingding_open_homepage = function()
    end
 end
 
-M.click_dingding_pics = function(npics)
+M.click_pics = function(npics, pkg_prefix, cols)
+   cols = cols or 4
    local pic_share_buttons = {}
 
-   local click_2x1_x = scene_x("dingding-fatu-x2y1")
-   local click_2x1_y = scene_y("dingding-fatu-x2y1")
+   local click_2x1_x = scene_x(pkg_prefix .. "fatu-x2y1")
+   local click_2x1_y = scene_y(pkg_prefix .. "fatu-x2y1")
 
-   local click_3x1_x = scene_x("dingding-fatu-x3y1")
-   local click_3x1_y = scene_y("dingding-fatu-x3y1")
+   local click_3x1_x = scene_x(pkg_prefix .. "fatu-x3y1")
+   local click_3x1_y = scene_y(pkg_prefix .. "fatu-x3y1")
 
-   local click_2x2_x = scene_x("dingding-fatu-x2y2")
-   local click_2x2_y = scene_y("dingding-fatu-x2y2")
+   local click_2x2_x = scene_x(pkg_prefix .. "fatu-x2y2")
+   local click_2x2_y = scene_y(pkg_prefix .. "fatu-x2y2")
 
    local cell_height = math.floor(click_2x2_y - click_2x1_y)
    local cell_width = math.floor(click_3x1_x - click_2x1_x)
@@ -117,10 +118,13 @@ M.click_dingding_pics = function(npics)
       adb_event("sleep .2 " .. button .. " sleep .1")
 
       if i == 1 then
-         jump_from_to("dingding-yuantu-weixuanzhong", "dingding-yuantu-yixuanzhong")
+         jump_from_to(pkg_prefix .. "yuantu-weixuanzhong", pkg_prefix .. "yuantu-yixuanzhong")
       end
-
    end
+end
+
+M.click_dingding_pics = function(npics)
+   click_pics(npics, "dingding-")
 end
 
 M.picture_to_dingding_chat = function(pics, ...)

@@ -320,79 +320,9 @@ M.picture_to_weixin_chat = function(pics, ...)
    local input_method, ime_height = close_ime()
    local post_button = ('%d %d'):format(right_button_x, 1920 - 50)
    local chatWindow = adb_top_window()
-   for i = 1, #pics do
-      local ext = last(pics[i]:gmatch("%.[^.]+"))
-      local target = pics[i]
-      if i == 1 then
-         for n = 1,10 do
-            local window = adb_top_window()
-            log("doing first picture for n = %d, window is %s", n, window)
-            if window == chatWindow then
-               chatWindow = window
-               adb_event(post_button .. " sleep .3")
-               if adb_top_window():match("PopupWindow") then -- weixin may suggest with popup window a picture just created
-                  debug("got popup window?")
-                  adb_event("key back sleep .1 adb-tap 123 1853")
-                  wait_top_activity(chatWindow)
-               end
-               adb_event("adb-tap 203 1430") -- click the "album" button
+   jump_from_to("wx/qita-gongneng", "wx/qita-xiangce")
+   jump_from_to("wx/qita-xiangce", "wx/" .. "yuantu-weixuanzhong")
 
-               debug("chatWindow: clicked")
-               wait_top_activity(W.weixinAlbumPreviewActivity)
-            elseif window == W.weixinAlbumPreviewActivity then
-               log("got into album preview for n = %d", n)
-               adb_event("adb-tap 521 398") -- to get into image preview
-               sleep(.2)
-            elseif window == W.weixinImagePreviewActivity then
-               log("got into image preview for n = %d", n)
-               adb_event("sleep .1 adb-key back")
-               if wait_top_activity(W.weixinAlbumPreviewActivity) == W.weixinAlbumPreviewActivity then
-                  sleep(.2)
-                  log("get back into album preview from image preview")
-                  break
-               elseif adb_top_window() == W.weixinImagePreviewActivity then
-                  log("still in image preview at %d", n)
-                  adb_event("key back")
-               else
-                  log("got into %s at n = %d", adb_top_window(), n)
-               end
-            end
-         end
-      end
-      local pic_share_buttons = {
-         "adb-tap 316 260", "adb-tap 614 281", "adb-tap 1000 260",
-         "adb-tap 268 629", "adb-tap 652 645", "adb-tap 1004 632",
-         "adb-tap 301 1008", "adb-tap 612 996", "adb-tap 1006 992",
-      }
-
-      if real_height >= 2160 and not M.pic_to_weixin_chat_share_buttons then
-         pic_share_buttons = {
-            ['cols'] = 4, ['rows'] = 3,
-            ['first'] = "adb-tap 239 218", -- (1, 1)
-            ['last'] = "adb-tap 1050 742", -- (3, 4)
-            ['wanted'] = 9, ['start'] = 1,
-         }
-         M.pic_to_weixin_chat_share_buttons = calc_buttons(pic_share_buttons)
-      end
-      if M.pic_to_weixin_chat_share_buttons then
-         pic_share_buttons = M.pic_to_weixin_chat_share_buttons
-      end
-      local i_button = pic_share_buttons[i]
-      log("click image button %d", i)
-      adb_event(i_button)
-   end
-   for n = 1, 10 do
-      if adb_top_window() ~= W.weixinImagePreviewActivity then
-         adb_event("sleep .1 adb-tap 944 1894 sleep .1")
-         wait_top_activity(W.weixinImagePreviewActivity)
-         if n == 10 then
-            prompt_user("没有等到 weixinImagePreviewActivity，无法完成此操作")
-            return
-         end
-      else
-         break
-      end
-   end
    adb_event("sleep .2 adb-tap 423 1861 adb-tap 490 1862 sleep .1 ")
    if yes_or_no_p("Confirm to send these images?") then
       tap_top_right()
