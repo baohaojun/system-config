@@ -11,18 +11,29 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # w:workflow-name f:workflow-filename
+    # w:workflow-name f:workflow-filename \
+    # cconvert-to-names
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o f:w:h \
-                      --long workflow-filename:,workflow-name:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o cf:w:h \
+                      --long convert-to-names,workflow-filename:,workflow-name:,help,no-convert-to-names \
                       -n $(basename -- $0) -- "$@")
+declare convert_to_names=false
 declare workflow_filename=
 declare workflow_name=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -c|--convert-to-names|--no-convert-to-names)
+            if test "$1" = --no-convert-to-names; then
+                convert_to_names=false
+            else
+                convert_to_names=true
+            fi
+            shift
+
+            ;;
         -f|--workflow-filename)
             workflow_filename=$2
             shift 2
@@ -38,6 +49,9 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--[no-]convert-to-names'
+            echo
             printf %06s '-f, '
             printf %-24s '--workflow-filename=WORKFLOW_FILENAME'
             echo
@@ -66,5 +80,10 @@ workflow_name=$(
 
 . ${scm_common_libdir}/jkd.user/websudo
 
-echo Fetching XML...
+log Fetching XML...
 curl-f -s -b "$COOKIES" -H "$HEADER" -d "os_cookie=true" -d "webSudoIsPost=true" --output ${workflow_filename:-/dev/stdout} "${scm_jira_url}secure/admin/workflows/ViewWorkflowXml.jspa?workflowMode=live&workflowName=$(uri-escape "${workflow_name}")"
+
+if test "${convert_to_names}" = true; then
+    debug-run jkd workflow -f $workflow_filename -a id2name > $workflow_filename.names
+    mv $workflow_filename.names $workflow_filename
+fi

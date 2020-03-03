@@ -187,7 +187,7 @@ map {
 } @$workflowschemes_json;
 
 if ($workflow_name) {
-    runx(map {decode_utf8 $_} ("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml"));
+    runx(map {decode_utf8 $_} ("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml", "-c"));
 }
 
 
@@ -219,7 +219,7 @@ if ($workflow_name) {
         sub {
             my $id = $_->text;
             if ($id) {
-                my $name = $screen_ids_and_names{$id};
+                my $name = encode_utf8 $id;
                 $screens{$name} = 1 if $name;
             }
         }
@@ -249,22 +249,23 @@ my $issuetype_complete_data = {
     issuetype => $issuetype_name,
     issuetypescheme => $issuetypescheme_name,
     project => $project_name,
-    fieldconfigscheme_name => $fieldconfigscheme_name,
-    fieldconfig_name => $fieldconfig_name,
+    fieldconfigscheme => $fieldconfigscheme_name,
+    fieldconfig => $fieldconfig_name,
     fieldconfig_json => $fieldconfig_json,
-    screenscheme_name => $screenscheme_name,
-    screenscheme => $screenscheme_json,
+    screenscheme => $screenscheme_name,
+    screenscheme_json => $screenscheme_json,
     workflowscheme => $workflowscheme_name,
-    workflow => $workflow_xml,
+    workflow_xml => $workflow_xml,
+    workflow => $workflow_name,
     screens => \%screens,
     fields => \%wanted_fields,
 };
 
 if ($verbose) {
-    $issuetype_complete_data->{issuetypeschemes} = $issuetypescreenschemes_json;
-    $issuetype_complete_data->{fieldconfigschemes} = $fieldconfigschemes_json;
-    $issuetype_complete_data->{issuetypescreenschemes} = $issuetypescreenschemes_json;
-    $issuetype_complete_data->{workflowschemes} = $workflowschemes_json;
+    $issuetype_complete_data->{issuetypeschemes_json} = $issuetypescreenschemes_json;
+    $issuetype_complete_data->{fieldconfigschemes_json} = $fieldconfigschemes_json;
+    $issuetype_complete_data->{issuetypescreenschemes_json} = $issuetypescreenschemes_json;
+    $issuetype_complete_data->{workflowschemes_json} = $workflowschemes_json;
 }
 
 map {

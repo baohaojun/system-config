@@ -33,9 +33,9 @@ EOFc83131117f09
 # generate-getopt -s perl -P '?"$comment_doc"' \
 # a:action \
  # n:issuetype-name \
-# d:issuetype-description \
-# t:issuetype-type '?"one of standard, subtask"' \
- # s:issuetype-scheme \
+# d:issuetype-description='""' \
+# t:issuetype-type='"standard"' '?"one of standard, subtask"' \
+ # s:issuetypescheme-name \
  # p:associated-projects
 ## end code-generator
 ## start generated code
@@ -43,12 +43,14 @@ use Getopt::Long;
 
 Getopt::Long::Configure("posix_default");
 
+
+
 my $action = "";
 my $associated_projects = "";
 my $issuetype_description = "";
 my $issuetype_name = "";
-my $issuetype_scheme = "";
-my $issuetype_type = "";
+my $issuetype_type = "standard";
+my $issuetypescheme_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -85,14 +87,6 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
-    printf "%6s", '-s, ';
-    printf "%-24s", '--issuetype-scheme=ISSUETYPE-SCHEME';
-    if (length('--issuetype-scheme=ISSUETYPE-SCHEME') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
-    print "\n";
     printf "%6s", '-t, ';
     printf "%-24s", '--issuetype-type=ISSUETYPE-TYPE';
     if (length('--issuetype-type=ISSUETYPE-TYPE') > 24 and length("one of standard, subtask") > 0) {
@@ -100,6 +94,14 @@ my $handler_help = sub {
         printf "%30s", "";
     }
     printf "%s", "one of standard, subtask";
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--issuetypescheme-name=ISSUETYPESCHEME-NAME';
+    if (length('--issuetypescheme-name=ISSUETYPESCHEME-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
 
     my $exit_value = 0;
@@ -116,8 +118,8 @@ GetOptions (
     'associated-projects|p=s' => \$associated_projects,
     'issuetype-description|d=s' => \$issuetype_description,
     'issuetype-name|n=s' => \$issuetype_name,
-    'issuetype-scheme|s=s' => \$issuetype_scheme,
     'issuetype-type|t=s' => \$issuetype_type,
+    'issuetypescheme-name|s=s' => \$issuetypescheme_name,
     'help|h!' => \&$handler_help,
 );
 
@@ -129,6 +131,10 @@ if (not $action) {
 
 my $issuetypes_json =
     $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest issuetype"));
+my $issuetype_id;
+grep {
+    $issuetype_id = $_->{id} if $issuetype_name eq $_->{name}
+} @$issuetypes_json;
 
 if ($action eq "print") {
     map {
@@ -148,4 +154,36 @@ if ($action eq "print") {
     runx("jkd", "rest", "issuetype", "--", "-X", "POST", "-H", 'Content-Type: application/json', "--data", decode_utf8(JSON->new->utf8(0)->pretty(1)->encode(\%issuetype)));
 } elsif ($action eq "get-scheme") {
 
+} elsif ($action eq "add-to-scheme") {
+    my $issuetypescheme_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-issuetypescheme", "-n", "$issuetypescheme_name"));
+
+    my @selectedOptions = map {
+        $_->{id}
+    } @{$issuetypescheme_json->{issuetypes}};
+
+    unless (grep {$issuetype_id eq $_} @selectedOptions) {
+        say STDERR "Add issuetype_id: $issuetype_id";
+        push @selectedOptions, $issuetype_id;
+    }
+
+    my $selectedOptions = join('&', map {"selectedOptions=$_"} @selectedOptions);
+    my $issuetypescheme_id = $issuetypescheme_json->{id};
+    my $issuetypescheme_description = $issuetypescheme_json->{description};
+    my $issuetypescheme_default = $issuetypescheme_json->{default};
+
+    my @params_values = (
+        "schemeId=${issuetypescheme_id}",
+        "fieldId=issuetype",
+            "projectId=",
+            "name=${issuetypescheme_name}",
+            "description=${issuetype_description}",
+            "defaultOption=${issuetypescheme_default}",
+            "save=Save",
+    );
+
+
+    runx("debug-run",
+        "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/ConfigureOptionSchemes.jspa?$selectedOptions", "-X", "POST",
+        map { ('--data-urlencode', decode_utf8($_)) } @params_values);
 }

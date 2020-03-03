@@ -1,0 +1,124 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1;                    # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+use Encode;
+use JSON;
+
+my $json = JSON->new->utf8(0);
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+* action = create
+
+create the field config.
+
+* action = add-to-scheme
+
+add to scheme for issuetype (need specify ISSUETYPE and FIELDCONFIGSCHEME_NAME).
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:action n:fieldconfig-name d:fieldconfig-description \
+# i:issuetype s:fieldconfigscheme-name
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "";
+my $fieldconfig_description = "";
+my $fieldconfig_name = "";
+my $fieldconfigscheme_name = "";
+my $issuetype = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--fieldconfig-description=FIELDCONFIG-DESCRIPTION';
+    if (length('--fieldconfig-description=FIELDCONFIG-DESCRIPTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--fieldconfig-name=FIELDCONFIG-NAME';
+    if (length('--fieldconfig-name=FIELDCONFIG-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--fieldconfigscheme-name=FIELDCONFIGSCHEME-NAME';
+    if (length('--fieldconfigscheme-name=FIELDCONFIGSCHEME-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issuetype=ISSUETYPE';
+    if (length('--issuetype=ISSUETYPE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'fieldconfig-description|d=s' => \$fieldconfig_description,
+    'fieldconfig-name|n=s' => \$fieldconfig_name,
+    'fieldconfigscheme-name|s=s' => \$fieldconfigscheme_name,
+    'issuetype|i=s' => \$issuetype,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+if ($action eq "create") {
+    my @params_values = (
+        'inline=true',
+        "decorator=dialog",
+        "fieldLayoutName=$fieldconfig_name",
+        "fieldLayoutDescription=$fieldconfig_description",
+    );
+
+    my $create_html =
+        capturex("jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddFieldConfiguration.jspa", "-X", "POST",
+                 map { ('--data-urlencode', decode_utf8($_)) } @params_values);
+
+    if ($create_html =~ m,A field configuration with this name already exists.,) {
+        die "The field already exists!";
+    }
+} elsif ($action eq "add-to-scheme") {
+    # curl 'http://jira-test.ep.chehejia.com/secure/admin/AddIssueTypeToFieldConfigurationAssociation.jspa' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0' -H 'Accept: text/html, */*; q=0.01' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-AUSERNAME: chjscm' -H 'X-Requested-With: XMLHttpRequest' -H 'Origin: http://jira-test.ep.chehejia.com' -H 'Connection: keep-alive' -H 'Referer: http://jira-test.ep.chehejia.com/secure/admin/ConfigureFieldLayoutScheme!default.jspa?atl_token=B7CW-WWCH-KIEP-9TON_c30f2af0efc57068eda60625fa8a49dce2767045_lin&id=12100' -H 'Cookie: _ga=GA1.2.409562527.1579144440; atlassian.xsrf.token=B7CW-WWCH-KIEP-9TON_c30f2af0efc57068eda60625fa8a49dce2767045_lin; JSESSIONID=8058873A84E7A94D20BEC4A79A043DE0; seraph.rememberme.cookie=23301%3A7370c4bfe5170a82a8b7696e87517d9b20edcb66; _gid=GA1.2.553385383.1583142837; WikiCookie=33f97d3bf1e2756a623ce78f426efc95; chj_it_sso=wD26WIZ1wbzdY0mUHf-avwAAAAAACIABYmFvaGFvanVu' --data 'inline=true&decorator=dialog&id=12100&issueTypeId=12001&fieldConfigurationId=13104&atl_token=B7CW-WWCH-KIEP-9TON_c30f2af0efc57068eda60625fa8a49dce2767045_lin'
+
+}

@@ -80,6 +80,7 @@ $dom->find('span[data-scheme-field="name"] a[href^="/secure/admin/ConfigureField
     (
         sub {
             (my $fieldconfig_name = encode_utf8 $_->text) =~ s,(^\s+|\s+$),,g;
+            (my $fieldconfig_id = $_->attr('href')) =~ s,.*id=,,;
 
             my $fieldconfig_desciption = "";
             if (my $desc_elem = $_->parent->parent->at('div[data-scheme-field="description"]')) {
@@ -89,6 +90,7 @@ $dom->find('span[data-scheme-field="name"] a[href^="/secure/admin/ConfigureField
             push @fieldconfigs, {
                 name => $fieldconfig_name,
                 description => $fieldconfig_desciption,
+                id => $fieldconfig_id,
             };
         }
     );

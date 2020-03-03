@@ -19,7 +19,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# f:html-file i:fieldconfig-id
+# f:html-file i:fieldconfig-id n:fieldconfig-name '?"must specify one and only one of name or id"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -28,23 +28,32 @@ Getopt::Long::Configure("posix_default");
 
 
 
-my $html_file = "";
 my $fieldconfig_id = "";
+my $fieldconfig_name = "";
+my $html_file = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-f, ';
-    printf "%-24s", '--html-file=HTML-FILE';
-    if (length('--html-file=HTML-FILE') > 24 and length() > 0) {
+    printf "%6s", '-i, ';
+    printf "%-24s", '--fieldconfig-id=FIELDCONFIG-ID';
+    if (length('--fieldconfig-id=FIELDCONFIG-ID') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
     printf "%s", ;
     print "\n";
-    printf "%6s", '-i, ';
-    printf "%-24s", '--fieldconfig-id=FIELDCONFIG-ID';
-    if (length('--fieldconfig-id=FIELDCONFIG-ID') > 24 and length() > 0) {
+    printf "%6s", '-n, ';
+    printf "%-24s", '--fieldconfig-name=FIELDCONFIG-NAME';
+    if (length('--fieldconfig-name=FIELDCONFIG-NAME') > 24 and length("must specify one and only one of name or id") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "must specify one and only one of name or id";
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--html-file=HTML-FILE';
+    if (length('--html-file=HTML-FILE') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -61,14 +70,29 @@ my $handler_help = sub {
 };
 
 GetOptions (
-    'html-file|f=s' => \$html_file,
     'fieldconfig-id|i=s' => \$fieldconfig_id,
+    'fieldconfig-name|n=s' => \$fieldconfig_name,
+    'html-file|f=s' => \$html_file,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
 use File::Slurp;
+
+if (not $fieldconfig_id) {
+    if (not $fieldconfig_name) {
+        die "Must specify one of id or name";
+    }
+    my $fieldconfigs =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigs"));
+    grep {
+        if ($fieldconfig_name eq $_->{name}) {
+            $fieldconfig_id = $_->{id};
+        }
+    } @$fieldconfigs;
+    die "Can't find fieldconfig $fieldconfig_name" unless $fieldconfig_id;
+}
 
 my $html_text;
 
