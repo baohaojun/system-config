@@ -1572,8 +1572,12 @@ if (not defined &$sub_command) {
 
         if (-x $lib_command) {
             do {
-                use autodie qw(:all);
-                system("$lib_command", @ARGV);
+                use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+                my @args = ("$lib_command", @ARGV);
+                if ($ENV{JKD_TRACE} eq 'true') {
+                    @args = ('debug-run', @args);
+                }
+                runx(@args);
                 exit;
             }
         }
