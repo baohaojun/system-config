@@ -1,0 +1,169 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+* action = import
+import status from json
+* action = list
+list all statuses from the webpage.
+
+it's because the api/2/status api won't list those used by an inactive new workflow.
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:action n:status-name d:status-description j:status-json
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "";
+my $status_description = "";
+my $status_json = "";
+my $status_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+print "\n\n选项和参数：\n";
+printf "%6s", '-a, ';
+printf "%-24s", '--action=ACTION';
+if (length('--action=ACTION') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-d, ';
+printf "%-24s", '--status-description=STATUS-DESCRIPTION';
+if (length('--status-description=STATUS-DESCRIPTION') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-j, ';
+printf "%-24s", '--status-json=STATUS-JSON';
+if (length('--status-json=STATUS-JSON') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-n, ';
+printf "%-24s", '--status-name=STATUS-NAME';
+if (length('--status-name=STATUS-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+       $exit_value = shift @_;
+       print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+'action|a=s' => \$action,
+'status-description|d=s' => \$status_description,
+'status-json|j=s' => \$status_json,
+'status-name|n=s' => \$status_name,
+'help|h!' => \&$handler_help,
+    );
+
+
+## end generated code
+
+if ($action eq "import") {
+    $status_json = $json->decode(encode_utf8 $status_json);
+
+    my $workflows =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest workflow"));
+
+    my $scribble_found = grep {$_->{name} eq "draft.scribble"} @$workflows;
+    if (not $scribble_found) {
+
+        runx(
+            "jkd", "workflow", "-a", "create", "-n", "draft.scribble", "-d", 'draft, used for adding status'
+        );
+    }
+
+
+    my @params_values = (
+        "createGlobalTransition=false",
+        "description=" . $status_json->{description},
+        "name=" . $status_name,
+        "statusCategoryId=" . $status_json->{statusCategory}{id},
+        "workflowName=" . 'draft.scribble',
+    );
+
+    runx(
+        "jkd", "webcurl", "$ENV{scm_jira_url}rest/workflowDesigner/latest/workflows/statuses/create", "-X", "POST",
+        "-H", 'Accept: application/json, text/javascript, */*; q=0.01',
+        map { ('--data-urlencode', $_) } @params_values);
+} elsif ($action eq 'list') {
+    my $html =
+        decode_utf8 (scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "webget", "$ENV{scm_jira_url}secure/admin/ViewStatuses.jspa"));
+    use Mojo::DOM;
+    my $dom = Mojo::DOM->new->parse($html);
+
+    my $statuscategory_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest statuscategory"));
+
+    my %statuscategory = map {
+        ($_->{name} => $_)
+    } @$statuscategory_json;
+
+    my @statuses;
+
+    $dom->find('section[class="aui-page-panel-content"] b')->each
+        (
+            sub {
+                (my $status_name = $_->text) =~ s,(^\s+|\s+$),,g;
+                my $description = "";
+                if (my $desc_elem = $_->parent->at('p[class="description"]')) {
+                    ($description = $desc_elem->text) =~ s,(^\s+|\s+$),,g;
+                }
+
+                my $category_elem = $_->parent->parent->at('span[data-tooltip]');
+                my $category_name = $category_elem->text;
+
+                my $edit_elem = $_->parent->parent->at('a[id^="edit_"]');
+                say STDERR "empty id for $status_name" unless $edit_elem;
+                (my $id = $edit_elem->attr('id')) =~ s,.*_,,;
+
+                push @statuses, {
+                    id => $id,
+                    name => $status_name,
+                    description => $description,
+                    statusCategory => $statuscategory{$category_name},
+                };
+            }
+        );
+
+    print JSON->new->utf8(0)->pretty(1)->encode(\@statuses);
+} else {
+    die "Can't work with action '$action'";
+}

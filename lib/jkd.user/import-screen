@@ -3,6 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -62,4 +71,95 @@ GetOptions (
 
 ## end generated code
 
-say STDERR "import screen: $screen_name";
+my $source_screen_dump = $json->decode(encode_utf8 $screen_json);
+
+my $screens_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest screens"));
+
+if (not grep {$_->{name} eq $screen_name} @$screens_json) {
+    # need to create the screen
+    my @params_values = (
+        'inline=true',
+        'decorator=dialog',
+        "fieldScreenName=$screen_name",
+        "fieldScreenDescription=" . $source_screen_dump->{description},
+    );
+
+    say STDERR "Need to create the screen first";
+
+    runx(
+        "debug-run", "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddFieldScreen.jspa", "-X", "POST",
+        map { ('--data-urlencode', $_) } @params_values);
+}
+
+my $target_screen_dump =
+    $json->decode(scalar capture("cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "$screen_name"));
+
+my %source_tabs;
+my %target_tabs;
+
+map { $source_tabs{$_->{name}} = 1 } @{$source_screen_dump->{tabs}};
+map { $target_tabs{$_->{name}} = 1 } @{$target_screen_dump->{tabs}};
+
+for my $tab_name (keys %source_tabs) {
+    if (not $target_tabs{$tab_name}) {
+        runx("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-tab");
+    } else {
+        say STDERR "No need to add again: ", ${tab_name};
+    }
+}
+
+for my $tab_name (keys %target_tabs) {
+    if (not $source_tabs{$tab_name}) {
+        runx("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-tab");
+    } else {
+        say STDERR "No need to delete: ", ($tab_name);
+    }
+}
+
+for my $tab_name (keys %source_tabs) {
+    my @source_fields;
+    my %source_fields_tab_map;
+
+    my @target_fields;
+    my %target_fields_tab_map;
+
+    map {
+        if ($_->{name} eq $tab_name) {
+            map {
+                push @source_fields, $_->{name};
+                $source_fields_tab_map{$_->{name}} = $tab_name;
+            } @{$_->{fields}}
+        }
+    } @{$source_screen_dump->{tabs}};
+
+    map {
+        if ($_->{name} eq $tab_name) {
+            map {
+                push @target_fields, $_->{name};
+                $target_fields_tab_map{$_->{name}} = $tab_name;
+            } @{$_->{fields}}
+        }
+    } @{$target_screen_dump->{tabs}};
+
+    my $need_to_sync = 0;
+
+    for (@source_fields) {
+        if (not $target_fields_tab_map{$_}) {
+            $need_to_sync = 1;
+        }
+    }
+
+    for (@target_fields) {
+        if (not $source_fields_tab_map{$_}) {
+            $need_to_sync = 1;
+        }
+    }
+
+    if ($need_to_sync) {
+        runx("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "delete-fields");
+        runx("jkd", "screen-tab", "-s", "$screen_name", "-t", "$tab_name", "add-fields", @source_fields);
+    } else {
+        say STDERR "No need to sync fields for: ", $tab_name;
+    }
+}

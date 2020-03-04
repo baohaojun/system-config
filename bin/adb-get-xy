@@ -79,7 +79,7 @@ export standard_width
 ## end generated code
 
 window_dump=$(
-    my-adb dumpsys window
+    my-adb dumpsys window | perl -ne 'print if m/Display: mDisplayId=0/..m/init=/'
            )
 
 true_size=$(echo "$window_dump"|perl -ne 'print "app=${1}x${2}" if m/mStableFullscreen=.*?(\d+),(\d+)[])]\s*$/')

@@ -4,6 +4,7 @@ set -e
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P i:old-issue '?"The old jira issue to copy from"' \
     # @:old-jira-url='${scm_jira_url}' '?"The jira url for the old issue, default is \$scm_jira_url"' \
+    # @:old-json \
     # r:replace-regexp '?"默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"' \
     # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14504 = \"1.0.0\" 或 .customfield_14108 = (.value = \"HU\")"' \
     # @force-prod \
@@ -12,13 +13,14 @@ set -e
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o j:i:r:h \
-                      --long debug,force-prod,jq-expression:,old-issue:,old-jira-url:,replace-regexp:,screen-filter:,help,no-debug,no-force-prod \
+                      --long debug,force-prod,jq-expression:,old-issue:,old-jira-url:,old-json:,replace-regexp:,screen-filter:,help,no-debug,no-force-prod \
                       -n $(basename -- $0) -- "$@")
 declare debug=true
 declare force_prod=false
 declare jq_expression=.
 declare old_issue=
 declare old_jira_url=${scm_jira_url}
+declare old_json=
 declare replace_regexp=
 declare screen_filter=
 eval set -- "$TEMP"
@@ -58,6 +60,11 @@ while true; do
             shift 2
 
             ;;
+        --old-json)
+            old_json=$2
+            shift 2
+
+            ;;
         -r|--replace-regexp)
             replace_regexp=$2
             shift 2
@@ -92,6 +99,9 @@ while true; do
             echo
             printf "%30s" ""
             echo "The jira url for the old issue, default is \$scm_jira_url"
+            printf "%06s" " "
+            printf %-24s '--old-json=OLD_JSON'
+            echo
             printf %06s '-r, '
             printf %-24s '--replace-regexp=REPLACE_REGEXP'
             echo
@@ -130,14 +140,17 @@ case "${scm_jira_url}" in
         ;;
 esac
 
-if test -z "${old_issue}"; then
+if test -z "${old_issue}" -a -z "${old_json}"; then
     die "Must specify the old jira issue to copy from, for e.g., EF-251"
 fi
 
-old_json=$(
-    set -x
-    jkd -j ${old_jira_url} print-issue -i ${old_issue} --json
-        )
+if test -z "${old_json}"; then
+
+    old_json=$(
+        set -x
+        jkd -j ${old_jira_url} print-issue -i ${old_issue} --json
+            )
+fi
 
 $debug echo old json is "${old_json}"
 
@@ -149,14 +162,14 @@ if test "${old_jira_url}"; then
 fi
 
 old_json=$(
-    echo "${old_json}" |jq "${jq_expression}" | perl -pe "${replace_regexp}"
+    echo "${old_json}" |jq "${jq_expression}" | perl -pe "${replace_regexp}" |jq 'del(..|.id?)'
         )
 
 jira_key=$(
     jkd c -p EF -t "【智能与系统-车机】版本发布 Workflow" \
         --fields-json "${old_json}" |
         tee /dev/stderr |
-        perl -ne 'print if s,POST response code:201result:,,' | jq .key -r
+        perl -ne 'print if s,POST.*response code:201result:,,' | jq .key -r
         )
 
 $debug created jira: $jira_key

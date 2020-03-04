@@ -3,12 +3,13 @@
 # 显示用户的 ldap 组名及其描述
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P u:user g:group-regexp mmost-relevant-group=true
+# generate-getopt -P u:user g:group-regexp mmost-relevant-group=true aall-groups
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o g:mu:h \
-                      --long group-regexp:,most-relevant-group,user:,help,no-most-relevant-group \
+TEMP=$(POSIXLY_CORRECT=true getopt -o ag:mu:h \
+                      --long all-groups,group-regexp:,most-relevant-group,user:,help,no-all-groups,no-most-relevant-group \
                       -n $(basename -- $0) -- "$@")
+declare all_groups=false
 declare group_regexp=
 declare most_relevant_group=true
 declare user=
@@ -16,6 +17,15 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -a|--all-groups|--no-all-groups)
+            if test "$1" = --no-all-groups; then
+                all_groups=false
+            else
+                all_groups=true
+            fi
+            shift
+
+            ;;
         -g|--group-regexp)
             group_regexp=$2
             shift 2
@@ -40,6 +50,9 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
+            printf %06s '-a, '
+            printf %-24s '--[no-]all-groups'
+            echo
             printf %06s '-g, '
             printf %-24s '--group-regexp=GROUP_REGEXP'
             echo
@@ -67,6 +80,10 @@ done
 
 if test -z "${user}"; then
     die "You must specify the user!"
+fi
+
+if test "${all_groups}" = true; then
+    most_relevant_group=false
 fi
 
 groups=$(
@@ -105,5 +122,5 @@ EOF47b005703faf
 
 )"
     else
-        cat
+        perl -pe 's,CN=(\S*)\s*,$1 ,g';
     fi

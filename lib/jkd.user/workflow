@@ -25,7 +25,8 @@ export the specified workflow as xml
 
 * action = import
 import the specified workflow from xml file
-
+* action = create
+create an empty workflow with the specified name and description
 * hint
 
 To assign workflow to issuetype: admin -> project -> workflows -> ...
@@ -34,7 +35,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# a:action f:workflow-xml kkeep-running
+# a:action f:workflow-xml kkeep-running n:workflow-name d:workflow-description
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -45,51 +46,71 @@ Getopt::Long::Configure("posix_default");
 
 my $action = "";
 my $keep_running = 0;
+my $workflow_description = "";
+my $workflow_name = "";
 my $workflow_xml = "";
 
 my $handler_help = sub {
     print "$comment_doc";
-    print "\n\n选项和参数：\n";
-    printf "%6s", '-a, ';
-    printf "%-24s", '--action=ACTION';
-    if (length('--action=ACTION') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+print "\n\n选项和参数：\n";
+printf "%6s", '-a, ';
+printf "%-24s", '--action=ACTION';
+if (length('--action=ACTION') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '-k, ';
-    printf "%-24s", '--[no]keep-running';
-    if (length('--[no]keep-running') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-k, ';
+printf "%-24s", '--[no]keep-running';
+if (length('--[no]keep-running') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '-f, ';
-    printf "%-24s", '--workflow-xml=WORKFLOW-XML';
-    if (length('--workflow-xml=WORKFLOW-XML') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-d, ';
+printf "%-24s", '--workflow-description=WORKFLOW-DESCRIPTION';
+if (length('--workflow-description=WORKFLOW-DESCRIPTION') > 24 and length() > 0) {
     print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-n, ';
+printf "%-24s", '--workflow-name=WORKFLOW-NAME';
+if (length('--workflow-name=WORKFLOW-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-f, ';
+printf "%-24s", '--workflow-xml=WORKFLOW-XML';
+if (length('--workflow-xml=WORKFLOW-XML') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
-        $exit_value = shift @_;
-        print "@_\n";
+       $exit_value = shift @_;
+       print "@_\n";
     }
 
     exit($exit_value);
 };
 
 GetOptions (
-    'action|a=s' => \$action,
-    'keep-running|k!' => \$keep_running,
-    'workflow-xml|f=s' => \$workflow_xml,
-    'help|h!' => \&$handler_help,
-);
+'action|a=s' => \$action,
+'keep-running|k!' => \$keep_running,
+'workflow-description|d=s' => \$workflow_description,
+'workflow-name|n=s' => \$workflow_name,
+'workflow-xml|f=s' => \$workflow_xml,
+'help|h!' => \&$handler_help,
+    );
 
 
 ## end generated code
@@ -106,6 +127,17 @@ if ($action eq "list") {
 } elsif ($action eq "import") {
     runx("jkd", "import-workflow-from-xml", @ARGV);
     exit;
+} elsif ($action eq "create") {
+    my @params_values = (
+        "inline=true",
+        "decorator=dialog",
+        "newWorkflowName=" . decode_utf8($workflow_name),
+        "description=" . decode_utf8($workflow_description),
+    );
+    runx(
+        "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/workflows/AddWorkflow.jspa", "-X", "POST",
+        map { ('--data-urlencode', $_) } @params_values);
+    exit;
 }
 
 use Mojo::DOM;
@@ -116,7 +148,7 @@ my $dom = Mojo::DOM->new->parse($xml_str);
 
 my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field"));
 my $screens_json = $json->decode(scalar capturex("jkd", "rest", "screens"));
-my $status_json = $json->decode(scalar capturex("jkd", "rest", "status"));
+my $status_json = $json->decode(scalar capturex("jkd", "status", "list"));
 
 my %datatype_json_map = (
     field => $fields_json,
