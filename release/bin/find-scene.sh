@@ -308,6 +308,11 @@ is-scene() {
     return 1
 }
 
+new-clip() {
+    scene=$1
+    clip 2png > ${resdir}/${scene}.png
+}
+
 add-alias() {
     scene=$1
 

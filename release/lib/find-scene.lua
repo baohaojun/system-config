@@ -93,6 +93,7 @@ M.debug_scene_actions = {
    "关闭场景查找功能的调试开关", -- 6
    "☠☠☠☠☠☠☠☠☠", -- 7
    "将 failed XXX.png 添加为 alias", -- 8
+   "我已经将新的场景放进剪贴板，用它更新一下", -- 9
 }
 
 M.get_debug_action = function(desc)
@@ -123,6 +124,8 @@ M.debug_find_scene = function(desc, scene)
          error("You have choosed to start over")
       elseif action == M.debug_scene_actions[8] then
          system(("find-scene.sh add-alias %s"):format(scene))
+      elseif action == M.debug_scene_actions[9] then
+         system(("find-scene.sh new-clip %s"):format(scene))
       end
    end
    return ret_val, should_ret
