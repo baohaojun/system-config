@@ -101,8 +101,15 @@ elif test "${default}" = false; then
         scm_jira_url=${scm_jira_staging_url}
         firefox_instance=2
         terminal_name=staging
+        SC_EXTRA_PS1=${SC_EXTRA_PS1/testing/${terminal_name}}
     elif test "${jira_env}" = test; then
         scm_jira_url=${scm_jira_test_url}
+    elif test "${jira_env}" = prod; then
+        if yes-or-no-p "确认一定要修改成prod环境吗？非常危除！"; then
+            scm_jira_url=${scm_jira_prod_url}
+            terminal_name='prod!!!'
+            SC_EXTRA_PS1=${SC_EXTRA_PS1/testing/${terminal_name}}
+        fi
     else
         die "Can't handle jira env: ${jira_env}"
     fi
