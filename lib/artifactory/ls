@@ -11,13 +11,14 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # u:dir-url
+    # u:dir-url rrecursive
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o u:h \
-                      --long dir-url:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o u:rh \
+                      --long dir-url:,recursive,help,no-recursive \
                       -n $(basename -- $0) -- "$@")
 declare dir_url=
+declare recursive=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -27,6 +28,15 @@ while true; do
             shift 2
 
             ;;
+        -r|--recursive|--no-recursive)
+            if test "$1" = --no-recursive; then
+                recursive=false
+            else
+                recursive=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e "${comment_doc}"
@@ -34,6 +44,9 @@ while true; do
             echo Options and arguments:
             printf %06s '-u, '
             printf %-24s '--dir-url=DIR_URL'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--[no-]recursive'
             echo
             exit
             shift
@@ -58,8 +71,12 @@ if test -z "${dir_url}"; then
 fi
 
 dir_url=$(echo "${dir_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
-if ! artifactory is-dir -u "${dir_url}"; then
-    dir_url=$(dirname "${dir_url}")
+if artifactory is-dir -u "${dir_url}"; then
+    dir_url=$(echo -n "${dir_url}" | perl -pe 's,/*$,,')
+elif test $? = 1; then
+    exec echo "${dir_url}"
+else
+    die "$dir_url not exist?"
 fi
 
 api_url=$(
@@ -74,6 +91,18 @@ json=$(
     my-curl "${api_url}"
     )
 
-IFS=$'\n'
-
-echo "${json}" | jq '.children|.[] | "\(.folder):\(.uri)"' -r
+echo "${json}" | jq '.children|.[] | "\(.folder) \(.uri)"' -r |
+    while read folder uri; do
+        (
+            if test "$folder" = true; then
+                echo $dir_url${uri}/
+                if test "${recursive}" = true; then
+                    artifactory ls -r -u "${dir_url}${uri}"
+                fi
+            elif test "${folder}" = false; then
+                echo $dir_url${uri}
+            else
+                die "folder info '$folder' not expected";
+            fi
+        ) </dev/null
+    done
