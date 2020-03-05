@@ -1,0 +1,114 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+* action = update
+- update the field
+* action = import
+- import (create) the field
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:action f:field-name j:json-data
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "";
+my $field_name = "";
+my $json_data = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--field-name=FIELD-NAME';
+    if (length('--field-name=FIELD-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--json-data=JSON-DATA';
+    if (length('--json-data=JSON-DATA') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'field-name|f=s' => \$field_name,
+    'json-data|j=s' => \$json_data,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $fields_json = $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest field"));
+
+if ($action eq "update") {
+    my $field_id;
+    map {
+        if ($_->{name} eq "$field_name") {
+            ($field_id = $_->{id}) =~ s,.*_,,;
+        }
+    } @$fields_json;
+
+    $json_data = $json->decode(encode_utf8 $json_data);
+
+    my $searcher = $json_data->{search_template} || "-1";
+    my @params_values = (
+        'name=' . $json_data->{name},
+        "description=" . $json_data->{description},
+        "searcher=${searcher}",
+        "id=${field_id}",
+        "fieldType=",
+        "redirectURI=",
+        "Update=Update",
+    );
+
+    runx(
+        "debug-run", "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/EditCustomField.jspa", "-X", "POST",
+        map { ('--data-urlencode', $_) } @params_values
+    );
+}

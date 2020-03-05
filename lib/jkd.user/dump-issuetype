@@ -3,13 +3,17 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-use File::Slurp;
+my $json = JSON->new->utf8->canonical->pretty;
 
-my $json = JSON->new->utf8(0);
+use File::Slurp;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -187,15 +191,17 @@ map {
 } @$workflowschemes_json;
 
 if ($workflow_name) {
-    runx(map {decode_utf8 $_} ("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml", "-c"));
+    runx("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml", "-c")
 }
 
 
 my %screens;
 
 map {
-    my $screen_name = $screenscheme_json->{$_}{name};
-    $screens{$screen_name} = 1;
+    if (ref $screenscheme_json->{$_}) {
+        my $screen_name = $screenscheme_json->{$_}{name};
+        $screens{$screen_name} = 1;
+    }
 } keys %$screenscheme_json;
 
 my $workflow_api_json =
@@ -212,15 +218,16 @@ my %screen_ids_and_names = map {
 
 my $workflow_xml = "";
 if ($workflow_name) {
-    $workflow_xml = read_file("${workflow_name}.workflow.xml");
+    $workflow_xml = decode_utf8 read_file("${workflow_name}.workflow.xml");
     use Mojo::DOM;
-    my $dom = Mojo::DOM->new->parse(decode_utf8 $workflow_xml);
+    my $dom = Mojo::DOM->new->parse($workflow_xml);
     $dom->find('meta[name="jira.fieldscreen.id"]')->each(
         sub {
             my $id = $_->text;
             if ($id) {
-                my $name = encode_utf8 $id;
+                my $name = $id;
                 $screens{$name} = 1 if $name;
+                say STDERR "found screen from xml: $name";
             }
         }
     );
@@ -228,7 +235,7 @@ if ($workflow_name) {
 
 map {
     $screens{$_} =
-        $json->decode(scalar capturex("debug-run", "cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", decode_utf8("$_")));
+        $json->decode(scalar capturex("debug-run", "cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "$_"));
 } keys %screens;
 
 
@@ -254,6 +261,7 @@ my $issuetype_complete_data = {
     fieldconfig_json => $fieldconfig_json,
     screenscheme => $screenscheme_name,
     screenscheme_json => $screenscheme_json,
+    issuetypescreenscheme => $issuetypescreenscheme_name,
     workflowscheme => $workflowscheme_name,
     workflow_xml => $workflow_xml,
     workflow => $workflow_name,
@@ -275,7 +283,7 @@ map {
     }
 } keys %$fieldconfig_json;
 
-print JSON->new->utf8(0)->canonical->pretty(1)->encode($issuetype_complete_data);
+print decode_utf8 ($json->encode($issuetype_complete_data));
 
 my $comment = <<~'EOFc83131117f09';
 # {%org-mode%}

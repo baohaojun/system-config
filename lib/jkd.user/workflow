@@ -2,23 +2,28 @@
 use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
-use IPC::System::Simple qw(system systemx run runx capture capturex);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 
 use JSON;
 
-my $json = JSON->new;
-use Encode;
+my $json = JSON->new->utf8->canonical->pretty;
 
 use XML::Quote qw(:all);
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
-* action = id2name
+* action = id2name / name2id
 
-将 workflow.xml 文件中的 ids（custom field、screen 等）改成对应的 names。
+- 将 workflow.xml 文件中的 ids（custom field、screen 等）改成对应的 names。
+- 将 workflow.xml 文件中的 names（custom field、screen 等）改成对应的 ids。
 
-* action = name2id
-将 workflow.xml 文件中的 names（custom field、screen 等）改成对应的 ids。
+workflow xml 数据可以通过 WORKFLOW_XML 参数从文件中传入，也可以通过
+ XML_STR 参数直接作为命令行参数传入
 
 * action = export
 export the specified workflow as xml
@@ -35,7 +40,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# a:action f:workflow-xml kkeep-running n:workflow-name d:workflow-description
+# a:action f:workflow-xml kkeep-running n:workflow-name d:workflow-description x:xml-str
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -49,6 +54,7 @@ my $keep_running = 0;
 my $workflow_description = "";
 my $workflow_name = "";
 my $workflow_xml = "";
+my $xml_str = "";
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -93,6 +99,14 @@ if (length('--workflow-xml=WORKFLOW-XML') > 24 and length() > 0) {
 }
 printf "%s", ;
 print "\n";
+printf "%6s", '-x, ';
+printf "%-24s", '--xml-str=XML-STR';
+if (length('--xml-str=XML-STR') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -109,6 +123,7 @@ GetOptions (
 'workflow-description|d=s' => \$workflow_description,
 'workflow-name|n=s' => \$workflow_name,
 'workflow-xml|f=s' => \$workflow_xml,
+'xml-str|x=s' => \$xml_str,
 'help|h!' => \&$handler_help,
     );
 
@@ -131,8 +146,8 @@ if ($action eq "list") {
     my @params_values = (
         "inline=true",
         "decorator=dialog",
-        "newWorkflowName=" . decode_utf8($workflow_name),
-        "description=" . decode_utf8($workflow_description),
+        "newWorkflowName=" . $workflow_name,
+        "description=" . $workflow_description,
     );
     runx(
         "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/workflows/AddWorkflow.jspa", "-X", "POST",
@@ -143,12 +158,20 @@ if ($action eq "list") {
 use Mojo::DOM;
 use File::Slurp;
 
-my $xml_str = read_file($workflow_xml);
+if ($workflow_xml) {
+    if ($xml_str) {
+        die "Must not specify both xml_str and workflow_xml";
+    }
+    $xml_str = decode_utf8(read_file($workflow_xml));
+} else {
+    $xml_str = ($xml_str);
+}
+
 my $dom = Mojo::DOM->new->parse($xml_str);
 
 my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field"));
 my $screens_json = $json->decode(scalar capturex("jkd", "rest", "screens"));
-my $status_json = $json->decode(scalar capturex("jkd", "status", "list"));
+my $status_json = $json->decode(scalar capturex("jkd", "status", "-a", "list"));
 
 my %datatype_json_map = (
     field => $fields_json,

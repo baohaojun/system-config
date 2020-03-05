@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+my $html_text =
+    decode_utf8(scalar capture("cached-run -e scm_jira_url jkd webget $ENV{scm_jira_url}secure/admin/ViewFieldScreenSchemes.jspa"));
+
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($html_text);
+
+            # <tr data-field-screen-scheme-id="10102">
+            #     <td>
+            #         <strong class="field-screen-scheme-name">XXX</strong>
+
+my @screenschemes;
+$dom->find('tr[data-field-screen-scheme-id] strong[class="field-screen-scheme-name"]')->each(
+    sub {
+        my $name = $_->text;
+        my $id = $_->parent->parent->attr("data-field-screen-scheme-id");
+        push @screenschemes, {
+            name => $name,
+            id => $id,
+        };
+    }
+);
+
+print decode_utf8($json->encode(\@screenschemes));

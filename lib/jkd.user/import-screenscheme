@@ -1,0 +1,174 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# j:json-data f:json-file
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $json_data = "";
+my $json_file = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--json-data=JSON-DATA';
+    if (length('--json-data=JSON-DATA') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--json-file=JSON-FILE';
+    if (length('--json-file=JSON-FILE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'json-data|j=s' => \$json_data,
+    'json-file|f=s' => \$json_file,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use File::Slurp;
+
+if ($json_file) {
+    if ($json_data) {
+        die "Can't specify both json file and data";
+    } else {
+        $json_data = read_file($json_file);
+    }
+} else {
+    $json_data = encode_utf8($json_data);
+}
+
+my $screenscheme_json = $json->decode($json_data);
+
+my $screenschemes_json = $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-screenschemes"));
+my $screenscheme_name = $screenscheme_json->{name};
+
+if (grep {$_->{name} eq $screenscheme_name} @$screenschemes_json) {
+    # screenscheme already exist
+    say STDERR "screenscheme $screenscheme_name already exist";
+} else {
+
+    my @params_values = (
+        'inline=true',
+        'decorator=dialog',
+        'fieldScreenSchemeName=' . $screenscheme_name,
+        'fieldScreenSchemeDescription=' . $screenscheme_json->{description},
+        'fieldScreenId=' . $screenscheme_json->{Default}{id},
+    );
+
+    runx(
+        "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddFieldScreenScheme.jspa", "-X", "POST",
+        map { ('--data-urlencode', $_) } @params_values
+    );
+    $screenschemes_json = $json->decode(scalar capture("cached-run -r -e scm_jira_url jkd export-screenschemes"));
+}
+
+my $screenscheme_id;
+grep {
+    $screenscheme_id = $_->{id} if $_->{name} eq $screenscheme_name
+} @$screenschemes_json;
+
+my $to_screenscheme_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-screenscheme -i $screenscheme_id"));
+
+my $screens_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest screens"));
+my %screens_name_id = map {
+    ($_->{name}, $_->{id})
+} @$screens_json;
+
+my %op_ids =(
+    Default => "",
+    "Create Issue" => 0,
+    "Edit Issue" => 1,
+    "View Issue" => 2,
+);
+for (keys %$screenscheme_json) {
+    if (ref $screenscheme_json->{$_}) {
+        my $scene = $_;
+        my $screen_name = $screenscheme_json->{$_}{name};
+        my $screen_id = $screens_name_id{$screen_name};
+        my @params_values;
+
+        my $url;
+        if ($to_screenscheme_json->{$_}) {
+
+            @params_values = (
+                "fieldScreenId=${screen_id}",
+                'issueOperationId=' . $op_ids{$_},
+                "id=${screenscheme_id}",
+                'Update=Update',
+            );
+            $url = "$ENV{scm_jira_url}secure/admin/EditFieldScreenSchemeItem.jspa";
+        } else {
+            @params_values = (
+                "inline=true",
+                "decorator=dialog",
+                "id=${screenscheme_id}",
+                "issueOperationId=" . $op_ids{$_},
+                "fieldScreenId=${screen_id}",
+            );
+            $url = "$ENV{scm_jira_url}secure/admin/AddFieldScreenSchemeItem.jspa";
+        }
+
+        runx(
+            "jkd", "webcurl", $url, "-X", "POST",
+            map { ('--data-urlencode', $_) } @params_values
+        );
+    }
+}
+
+for (keys %$to_screenscheme_json) {
+    if (ref $to_screenscheme_json->{$_} and not $screenscheme_json->{$_}) {
+        say STDERR "delete: $_";
+        my $op_id = $op_ids{$_};
+        runx(
+            "jkd", "webget", "$ENV{scm_jira_url}secure/admin/DeleteFieldScreenSchemeItem.jspa?id=${screenscheme_id}&issueOperationId=${op_id}", "-L"
+        )
+    }
+}

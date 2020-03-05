@@ -110,7 +110,6 @@ if ($action eq "import") {
         );
     }
 
-
     my @params_values = (
         "createGlobalTransition=false",
         "description=" . $status_json->{description},

@@ -80,6 +80,7 @@ $dom->find('strong[data-scheme-field="name"]')->each
     (
         sub {
             my $iss_name = encode_utf8 $_->text;
+            my $iss_id = $_->parent->parent->attr('data-id');
             my @issuetypes = map {
                 my $issue_type = encode_utf8 $_->text;
                 $issue_type;
@@ -96,6 +97,7 @@ $dom->find('strong[data-scheme-field="name"]')->each
             } $_->parent->parent->find('td[data-scheme-field="projects"] a[href^="/plugins/servlet/project-config/"]')->each;
 
             $issuetype_scheme{$iss_name} = {
+                id => $iss_id,
                 issuetypes => \@issuetypes,
                 projects => \@projects,
             };

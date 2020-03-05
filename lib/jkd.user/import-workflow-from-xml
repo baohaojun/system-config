@@ -11,14 +11,15 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # w:workflow-name f:workflow-filename
+    # w:workflow-name f:workflow-filename x:xml-str
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o f:w:h \
-                      --long workflow-filename:,workflow-name:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:w:x:h \
+                      --long workflow-filename:,workflow-name:,xml-str:,help \
                       -n $(basename -- $0) -- "$@")
 declare workflow_filename=
 declare workflow_name=
+declare xml_str=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -33,6 +34,11 @@ while true; do
             shift 2
 
             ;;
+        -x|--xml-str)
+            xml_str=$2
+            shift 2
+
+            ;;
         -h|--help)
             set +x
             echo -e "${comment_doc}"
@@ -43,6 +49,9 @@ while true; do
             echo
             printf %06s '-w, '
             printf %-24s '--workflow-name=WORKFLOW_NAME'
+            echo
+            printf %06s '-x, '
+            printf %-24s '--xml-str=XML_STR'
             echo
             exit
             shift
@@ -62,6 +71,14 @@ done
 
 . ${scm_common_libdir}/jkd.user/websudo
 
+if test -z "${xml_str}"; then
+    xml_str=$(
+        cat "${workflow_filename}"
+           )
+elif test "${workflow_filename}"; then
+    die "Can't specify both xml_str and workflow_filename"
+fi
+
 echo Importing XML...
 
 output=$(
@@ -70,7 +87,7 @@ output=$(
            --data-urlencode "description=" \
            --data-urlencode "definition=inline" \
            --data-urlencode "filePath=" \
-           --data-urlencode "workflowXML=$(cat ${workflow_filename})" \
+           --data-urlencode "workflowXML=$xml_str" \
            --data-urlencode "Import=Import" \
            "${scm_jira_url}secure/admin/workflows/ImportWorkflowFromXml.jspa"
       )

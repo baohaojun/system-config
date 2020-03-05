@@ -3,13 +3,16 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
-use File::Slurp;
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+use File::Slurp;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -19,7 +22,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# @:wf-name @:new-wf-name @:scheme-id @scheme-active
+# @:wf-name @:new-wf-name @:scheme-id @scheme-active @:issuetype-name
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -28,6 +31,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $issuetype_name = "";
 my $new_wf_name = "";
 my $scheme_active = 0;
 my $scheme_id = "";
@@ -36,6 +40,14 @@ my $wf_name = "";
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '';
     printf "%-24s", '--new-wf-name=NEW-WF-NAME';
     if (length('--new-wf-name=NEW-WF-NAME') > 24 and length() > 0) {
@@ -79,6 +91,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'issuetype-name=s' => \$issuetype_name,
     'new-wf-name=s' => \$new_wf_name,
     'scheme-active!' => \$scheme_active,
     'scheme-id=s' => \$scheme_id,
@@ -110,6 +123,15 @@ for (keys %{$scheme_json->{issueTypeMappings}}) {
     if ($scheme_json->{issueTypeMappings}{$_} eq $wf_name) {
         $scheme_json->{issueTypeMappings}{$_} = $new_wf_name;
     }
+}
+
+if ($issuetype_name) {
+    my $issuetypes_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest issuetype"));
+    my $issuetype_id;
+    map {$issuetype_id = $_->{id} if $issuetype_name eq $_->{name}} @$issuetypes_json;
+
+    $scheme_json->{issueTypeMappings}{$issuetype_id} = $new_wf_name;
 }
 
 my %new_scheme_json = map {$_, $scheme_json->{$_}} ('defaultWorkflow', 'issueTypeMappings');

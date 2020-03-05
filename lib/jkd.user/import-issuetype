@@ -3,11 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -81,10 +85,10 @@ if (not $from_jira_url) {
     die "Must specify the from_jira_url";
 } else {
     $from_jira_json = $from_jira_json ||
-        scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "dump-issuetype", "-i", "$issuetype_name");
+        decode_utf8 (scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "dump-issuetype", "-i", "$issuetype_name"));
 }
 
-$from_jira_json = $json->decode($from_jira_json);
+$from_jira_json = $json->decode(encode_utf8 $from_jira_json);
 
 my $to_jira_json =
     $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-v", "-i", "$issuetype_name"));
@@ -122,7 +126,7 @@ if (not $to_jira_json->{issuetypescheme}) {
         die "Need create issuetypescheme: $from_issuetypescheme";
     } else {
         say STDERR "Need add issuetype to issuetypescheme";
-        runx("jkd", "issuetype", "-a", "add-to-scheme", "-n", decode_utf8 ("${issuetype_name}"), "-s", decode_utf8 ("${from_issuetypescheme}"));
+        runx("jkd", "issuetype", "-a", "add-to-scheme", "-n", "${issuetype_name}", "-s", "${from_issuetypescheme}");
     }
 } elsif ($to_jira_json->{issuetypescheme} ne $from_issuetypescheme) {
     die sprintf( "Can't work with different issuetype scheme: %s v.s. %s", $to_jira_json->{issuetypescheme}, $from_issuetypescheme);
@@ -141,7 +145,7 @@ my $fieldconfigs =
 if (not grep {$from_frieldconfig eq $_->{name}} @$fieldconfigs) {
     say STDERR "Field config $from_frieldconfig not exist, create it!";
     runx (
-        "jkd", "fieldconfig", "-a", "create", "-n", decode_utf8 ("${from_frieldconfig}")
+        "jkd", "fieldconfig", "-a", "create", "-n", "${from_frieldconfig}"
     )
 }
 
@@ -180,6 +184,34 @@ map {
     my $field_name = $_;
     if ($from_fields_name_id{$field_name} and not $to_fields_name_id{$field_name}) {
         say STDERR "You need to create $field_name";
+        my %answers = (
+            update => "update existing field",
+            create => "create new field",
+        );
+        my $ans = decode_utf8 (
+            scalar capturex (
+                "select-args", "-p", "What do you want to do with $field_name", (map {$answers{$_}} keys %answers)
+            )
+        );
+
+        my $from_field_dump = decode_utf8 (
+            scalar capturex (
+                "cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "dump-field", "-f", "$field_name"
+            )
+        );
+        if ($ans eq $answers{update}) {
+            my $old_field_name = decode_utf8 (scalar capturex (
+                "select-args", "-p", "Which existing field do you want?", map {$_->{name}} @$to_fields_list
+            ));
+
+            runx (
+                "jkd", "field", "-a", "update", "-f", "问题发起人", "-j", "$from_field_dump"
+            );
+        } else {
+            runx (
+                "jkd", "import-field", "-j", "$from_field_dump"
+            );
+        }
     }
 } keys %{$from_jira_json->{fields}};
 
@@ -188,6 +220,65 @@ my $screens =
 
 my %from_screens = %{$from_jira_json->{screens}};
 for my $screen (keys %from_screens) {
-    my $screen_json = JSON->new->utf8(0)->pretty(1)->encode($from_screens{$screen});
-    runx("jkd", "import-screen", "-s", decode_utf8("$screen"), "-j", decode_utf8("$screen_json"));
+    my $screen_json = decode_utf8 $json->encode($from_screens{$screen});
+    runx("jkd", "import-screen", "-s", ("$screen"), "-j", ("$screen_json"));
 }
+
+my $from_screenscheme = $from_jira_json->{screenscheme};
+my $to_screenschemes =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-screenschemes"));
+
+runx (
+    "jkd", "import-screenscheme", "-j", decode_utf8 ($json->encode($from_jira_json->{screenscheme_json}))
+);
+
+my $from_issuetypescreenscheme = $from_jira_json->{issuetypescreenscheme};
+runx (
+    "jkd", "attach-issuetypescreenscheme", "--issuetype-screenscheme", "$from_issuetypescreenscheme", "--screenscheme", "$from_screenscheme", "--issuetype", "$issuetype_name"
+);
+
+my %from_statuses;
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($from_jira_json->{workflow_xml});
+$dom->find ('meta[name="jira.status.id"]')->each (
+    sub {
+        if (my $status = $_->text) {
+            say STDERR "Need ensure status: $status";
+            $from_statuses{$status} = 1;
+        }
+    }
+);
+
+my $from_statuses_json =
+    $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "status", "-a", "list"));
+my $to_statuses_json =
+    $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "status", "-a", "list"));
+
+my %from_statuses_name_json_map =
+    map {
+        ($_->{name}, $_)
+    } @$from_statuses_json;
+
+my %to_statuses_name_json_map =
+    map {
+        ($_->{name}, $_)
+    } @$to_statuses_json;
+
+for my $status_name (keys %from_statuses) {
+    if (not $to_statuses_name_json_map{$status_name}) {
+        my $json = decode_utf8 ($json->encode ($from_statuses_name_json_map{$status_name}));
+        runx (
+            "jkd", "status", "-a", "import", "-n", "$status_name", "-j", "$json"
+        );
+    }
+}
+
+my $workflow_name = $from_jira_json->{workflow};
+my $workflow_xml = $from_jira_json->{workflow_xml};
+$workflow_xml = decode_utf8 capturex (
+   "jkd", "workflow", "-a", "name2id", "-x", "$workflow_xml"
+);
+
+runx (
+    "jkd", "upgrade-workflow", "-w", "$workflow_name", "-x", "$workflow_xml", "-i", $issuetype_name, "-s", $from_jira_json->{workflowscheme}
+);

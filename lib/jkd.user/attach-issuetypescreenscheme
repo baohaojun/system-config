@@ -1,0 +1,118 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# @:issuetype-screenscheme @:screenscheme @:issuetype
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $issuetype = "";
+my $issuetype_screenscheme = "";
+my $screenscheme = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--issuetype=ISSUETYPE';
+    if (length('--issuetype=ISSUETYPE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--issuetype-screenscheme=ISSUETYPE-SCREENSCHEME';
+    if (length('--issuetype-screenscheme=ISSUETYPE-SCREENSCHEME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--screenscheme=SCREENSCHEME';
+    if (length('--screenscheme=SCREENSCHEME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'issuetype=s' => \$issuetype,
+    'issuetype-screenscheme=s' => \$issuetype_screenscheme,
+    'screenscheme=s' => \$screenscheme,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+my $issuetype_screenschemes_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-issuetypescreenschemes"));
+my $issuetype_screenscheme_id = $issuetype_screenschemes_json->{$issuetype_screenscheme}{id};
+
+my $screenschemes_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-screenschemes"));
+my $screenscheme_id;
+
+map {
+    $screenscheme_id = $_->{id} if $_->{name} eq $screenscheme;
+} @$screenschemes_json;
+
+my $issuetypes_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest issuetype"));
+
+my $issuetype_id;
+map {
+    $issuetype_id = $_->{id} if $_->{name} eq $issuetype
+} @$issuetypes_json;
+
+
+my @params_values = (
+    "inline=true",
+    "decorator=dialog",
+    "id=${issuetype_screenscheme_id}",
+    "issueTypeId=${issuetype_id}",
+    "fieldScreenSchemeId=${screenscheme_id}",
+);
+
+runx(
+    "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueTypeScreenScreenSchemeAssociation.jspa", "-X", "POST",
+    map { ('--data-urlencode', $_) } @params_values
+);

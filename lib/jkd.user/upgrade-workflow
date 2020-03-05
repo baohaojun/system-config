@@ -3,6 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -15,7 +24,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# w:workflow-name f:workflow-xml-file
+# w:workflow-name f:workflow-xml-file x:xml-str i:issuetype-name s:workflow-scheme
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -24,12 +33,23 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $issuetype_name = "";
 my $workflow_name = "";
+my $workflow_scheme = "";
 my $workflow_xml_file = "";
+my $xml_str = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-w, ';
     printf "%-24s", '--workflow-name=WORKFLOW-NAME';
     if (length('--workflow-name=WORKFLOW-NAME') > 24 and length() > 0) {
@@ -38,9 +58,25 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--workflow-scheme=WORKFLOW-SCHEME';
+    if (length('--workflow-scheme=WORKFLOW-SCHEME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-f, ';
     printf "%-24s", '--workflow-xml-file=WORKFLOW-XML-FILE';
     if (length('--workflow-xml-file=WORKFLOW-XML-FILE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-x, ';
+    printf "%-24s", '--xml-str=XML-STR';
+    if (length('--xml-str=XML-STR') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -57,19 +93,17 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'issuetype-name|i=s' => \$issuetype_name,
     'workflow-name|w=s' => \$workflow_name,
+    'workflow-scheme|s=s' => \$workflow_scheme,
     'workflow-xml-file|f=s' => \$workflow_xml_file,
+    'xml-str|x=s' => \$xml_str,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
 
-
-use Encode;
-use JSON;
-
-my $json = JSON->new->utf8(0);
 
 my $workflow_exists = (runx(EXIT_ANY, "jkd", "exists-name", "-a", "workflow", "$workflow_name") == 0);
 
@@ -80,10 +114,10 @@ my $done_switch;
 use feature 'signatures';
 sub switch_workflow($old_workflow, $new_workflow) {
     # step 1: workflow 当前在用的话，要将它卸载
-    my $wf_scheme =
+    my $wf_schemes =
         $json->decode(scalar capturex("jkd", "export-workflowschemes"));
 
-    for my $scheme (@$wf_scheme) {
+    for my $scheme (@$wf_schemes) {
         my %it_wf_map = %{$scheme->{issuetypes_workflow}};
         my %wf_it_map = map {$it_wf_map{$_}, $_} %it_wf_map;
 
@@ -106,7 +140,7 @@ if ($workflow_exists) {
     runx("jkd", "wf-delete", "-w", "$workflow_name");
 }
 
-runx("jkd", "import-workflow-from-xml", "-w", "$workflow_name", "-f", "$workflow_xml_file");
+runx("jkd", "import-workflow-from-xml", "-w", "$workflow_name", "-f", "$workflow_xml_file", "-x", "$xml_str");
 
 if ($workflow_exists) {
     if ($done_switch) {
@@ -115,3 +149,22 @@ if ($workflow_exists) {
 
     runx("jkd", "wf-delete", "-w", "$temp_workflow");
 }
+
+sub attach_workflow() {
+    if ($workflow_scheme and $issuetype_name) {
+        # step 1: workflow 当前在用的话，要将它卸载
+        my $wf_schemes =
+            $json->decode(scalar capturex("jkd", "export-workflowschemes"));
+
+        for my $scheme (@$wf_schemes) {
+            if ($scheme->{name} eq $workflow_scheme) {
+                runx("jkd", "wfs-switch-wf", "--scheme-id", $scheme->{id},
+                     ( $scheme->{active} ? "--scheme-active" : "--noscheme-active" ),
+                     "--issuetype-name", $issuetype_name, "--new-wf-name", "$workflow_name");
+                next;
+            }
+        }
+    }
+}
+
+attach_workflow();
