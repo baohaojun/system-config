@@ -42,7 +42,7 @@ proc log str {
 
 set local_ip [qx get-my-ip]
 log_user 0
-spawn ssh -o ControlMaster=auto -o ControlPath='tramp.%C' -o ControlPersist=no -e none js;
+spawn ssh -o ControlMaster=auto -o ControlPath=$home/.cache/tramp.%C -o ControlPersist=no -e none js;
 
 expect "Opt>" {
     # log "Seend Opt>, sending $js_target\n";

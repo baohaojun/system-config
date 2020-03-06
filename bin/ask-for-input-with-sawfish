@@ -103,7 +103,22 @@ fuser "${INPUT_LOCK_FILE}"|
 fi
 
 title=$(echo "$prompt" | tail -n 1)
-text=$prompt
+text=$(echo "${prompt}" | perl -ne "$(
+cat <<'EOF0f633b1d530b' | . .replace-%% --
+# {%perl-mode%}
+push @lines, $_;
+END {
+    my $max = 30;
+    if ($. > $max) {
+        @lines = @lines[0 .. ${max}/2, ($. - ${max}/2) .. $.];
+        $lines[$max/2] = sprintf("... (too many of lines, %d omitted) ...\n", $. - $max);
+    }
+    print @lines;
+}
+# {%/perl-mode%}
+EOF0f633b1d530b
+
+)")
 
 if test "$secret" = true; then
     ztype='--entry --hide-text'
@@ -111,7 +126,7 @@ else
     ztype=--entry
 fi
 
-unset WINDOWID
+unset WINDOWID # or else the yad will be attached to the XTERM window if started from XTERM, i.e., make it modal
 (
     sawfish-window \
         mark \

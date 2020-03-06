@@ -81,9 +81,9 @@ workflow_name=$(
 . ${scm_common_libdir}/jkd.user/websudo
 
 log Fetching XML...
-curl-f -s -b "$COOKIES" -H "$HEADER" -d "os_cookie=true" -d "webSudoIsPost=true" --output ${workflow_filename:-/dev/stdout} "${scm_jira_url}secure/admin/workflows/ViewWorkflowXml.jspa?workflowMode=live&workflowName=$(uri-escape "${workflow_name}")"
+curl-f -s -b "$COOKIES" -H "$HEADER" -d "os_cookie=true" -d "webSudoIsPost=true" --output "${workflow_filename:-/dev/stdout}" "${scm_jira_url}secure/admin/workflows/ViewWorkflowXml.jspa?workflowMode=live&workflowName=$(uri-escape "${workflow_name}")"
 
 if test "${convert_to_names}" = true; then
-    debug-run jkd workflow -f $workflow_filename -a id2name > $workflow_filename.names
-    mv $workflow_filename.names $workflow_filename
+    debug-run jkd workflow -f "$workflow_filename" -a id2name > "$workflow_filename.names"
+    mv "$workflow_filename.names" "$workflow_filename"
 fi
