@@ -1,0 +1,129 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+* action = list
+list all groups or the specified group
+
+* action = add
+add user into group
+
+* action = del
+delete user from group
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# g:group-name a:action u:users='()'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "";
+my $group_name = "";
+my @users = ();
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-g, ';
+    printf "%-24s", '--group-name=GROUP-NAME';
+    if (length('--group-name=GROUP-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--users=USERS';
+    if (length('--users=USERS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'group-name|g=s' => \$group_name,
+    'users|u=s' => \@users,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+use URI::Escape;
+
+my $saved_group_name = $group_name;
+if ($group_name) {
+    $group_name = uri_escape_utf8("$group_name");
+}
+
+if ($action eq "list") {
+    print decode_utf8 (
+        $json->encode(
+            $json->decode(scalar capturex("artifactory", "my-curl", "$ENV{scm_artifactory_url}artifactory/ui/groups/$group_name"))));
+} elsif ($action eq "add" or $action eq "del") {
+    my $group_json =
+        $json->decode(scalar capturex("artifactory", "my-curl", "$ENV{scm_artifactory_url}artifactory/ui/groups/$group_name"));
+
+    if ($action eq "add") {
+        push @{$group_json->{usersInGroup}}, @users;
+    } else {
+        my %users = map {
+            ($_, 1)
+        } @users;
+
+        @{$group_json->{usersInGroup}} =
+            grep {
+                not $users{$_}
+            } @{$group_json->{usersInGroup}};
+    }
+    my $group_text = decode_utf8 $json->encode($group_json);
+    runx(
+        'debug-run', "artifactory", "my-curl", "$ENV{scm_artifactory_url}artifactory/ui/groups/$group_name", "-X", "PUT",
+        "-H", 'Content-Type: application/json',
+        "--data", "${group_text}"
+    );
+    runx(
+        "artifactory", "groups", "-a", "list", "-g", "$saved_group_name"
+    );
+
+} else {
+    die "Can't handle action $action"
+}
