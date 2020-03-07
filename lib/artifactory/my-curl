@@ -1,4 +1,10 @@
 #!/bin/bash
 set -e
 
+if [[ $1 =~ / ]] && ! [[ $1 =~ ^${scm_artifactory_url} ]]; then
+    url=${scm_artifactory_url}artifactory/${1#/}
+    shift
+    set -- "$url" "$@"
+fi
+
 curl-f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"

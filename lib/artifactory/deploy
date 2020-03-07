@@ -80,6 +80,9 @@ done
 ## end generated code
 
 source $scm_tools_topdir/.venv/bin/activate
+export ARTIFACTORY_API_USER_PASSWORD=$(
+    git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password
+       )
 
 python ${scm_tools_topdir}/artifactory_utils/deploy2artifactory.py upload-folder \
                -s "${source_dir}" \
