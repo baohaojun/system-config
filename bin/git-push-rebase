@@ -161,7 +161,6 @@ fi
 if test "$force_even_if_merged" = false &&
         test ! -e .git/sc-not-merged &&
         ! git submodule foreach 'if test -e .git/sc-not-merged; then echo yes.hello.world; fi' | grep yes.hello.world -q; then
-    log "We have no .git/sc-not-merged found, $(type git)"
     exit
 fi
 
