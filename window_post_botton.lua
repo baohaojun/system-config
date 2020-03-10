@@ -17,6 +17,7 @@ map['com.amazon.kindle/com.amazon.kcp.search.enhancedsearch.ReaderSearchActivity
 map['com.android.chrome/com.google.android.apps.chrome.Main'] = 'No-Post'
 map['com.android.contacts/com.android.contacts.activities.DialtactsActivity'] = 'No-Post'
 map['com.android.settings/com.android.settings.NotificationAccessSettingsActivity'] = 'No-Post'
+map['com.android.settings/com.android.settings.wifi.WifiSettingsActivity'] = 'No-Post'
 map['com.baidu.netdisk/com.baidu.netdisk.uiframe.container.CommonActivity'] = 'No-Post'
 map['com.bjgas.shop/com.bjgas.shop.MainActivity'] = 'No-Post'
 map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'No-Post'
@@ -50,4 +51,5 @@ map['com.weico.international/com.weico.international.activity.profile.SearchMyWe
 map['com.weico.international/com.weico.international.activity.SinaMessageLoginActivity'] = 'No-Post'
 map['com.weico.international/com.weico.international.activity.v4.SmsLoginActivity'] = 'No-Post'
 map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'No-Post'
+map['smt_launcher'] = 'No-Post'
 return map
