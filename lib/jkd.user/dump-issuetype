@@ -191,7 +191,7 @@ map {
 } @$workflowschemes_json;
 
 if ($workflow_name) {
-    runx("debug-run", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml", "-c")
+    runx("debug-run", "cached-run", "-e", "scm_jira_url", "jkd", "workflow", "export", "-w", "${workflow_name}", "-f", "${workflow_name}.workflow.xml", "-c")
 }
 
 

@@ -1,0 +1,83 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # u:url '?"要下载的文件的 url 地址，用户必须自己确保这是一个文件，否则行为未定义"' \
+    # d:download-dir=. '?"下载到哪个目录，默认为当前目录"' \
+    # n:file-name '?"如不指定，使用 url 中包含的文件名"' \
+    #
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:n:u:h \
+                      --long download-dir:,file-name:,url:,help \
+                      -n $(basename -- $0) -- "$@")
+declare download_dir=.
+declare file_name=
+declare url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--download-dir)
+            download_dir=$2
+            shift 2
+
+            ;;
+        -n|--file-name)
+            file_name=$2
+            shift 2
+
+            ;;
+        -u|--url)
+            url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-d, '
+            printf %-24s '--download-dir=DOWNLOAD_DIR'
+            echo
+            printf "%30s" ""
+            echo "下载到哪个目录，默认为当前目录"
+            printf %06s '-n, '
+            printf %-24s '--file-name=FILE_NAME'
+            echo "如不指定，使用 url 中包含的文件名"
+            printf %06s '-u, '
+            printf %-24s '--url=URL'
+            echo "要下载的文件的 url 地址，用户必须自己确保这是一个文件，否则行为未定义"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+mkdir -p "${download_dir}"
+
+if test -z "${file_name}"; then
+   file_name=$(basename $url);
+fi
+
+artifactory my-curl "$url" > "${download_dir}/${file_name}"
