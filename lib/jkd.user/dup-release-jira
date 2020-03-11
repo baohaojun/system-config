@@ -164,9 +164,12 @@ fi
 old_json=$(
     echo "${old_json}" |jq "${jq_expression}" | perl -pe "${replace_regexp}" |jq 'del(..|.id?)'
         )
+project=$(
+    echo "${old_json}" | jq '.Project|.key' -r
+       )
 
 jira_key=$(
-    jkd c -p EF -t "【智能与系统-车机】版本发布 Workflow" \
+    jkd c -p "${project}" -t "【智能与系统-车机】版本发布 Workflow" \
         --fields-json "${old_json}" |
         tee /dev/stderr |
         perl -ne 'print if s,POST.*response code:201result:,,' | jq .key -r

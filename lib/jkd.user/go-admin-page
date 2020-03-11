@@ -133,22 +133,48 @@ EOFe9576f8668e0
 
 
     ## end generated code
+    if test -z "${match_field_name}"; then
+        if test $# = 1; then
+            match_field_name=$1
+            match_field_name_set=true
+        else
+            misc die "Can't work with extra args: '$*'"
+        fi
+    elif test "$#" != 0; then
+        misc die "Can't work with extra args: '$*'"
+    else
+        match_field_name_set=true
+    fi
 
-    if test "${match_field_name}"; then
+
+
+    if test "${match_field_name_set}" = true; then
         field_id=$(
             jkd sel-id -a field -i "${match_field_name}"
                 )
     fi
 
+    declare -A path_map=(
+        ['configure options']="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${field_id#*_}"
+        ['edit name and description']="secure/admin/EditCustomField!default.jspa?id=${field_id#*_}"
+        ['add field']='secure/admin/CreateCustomField!default.jspa'
+        ['list fields']='secure/admin/ViewCustomFields.jspa'
+    )
+
     if test "${configure_options}" = true; then
-        path="secure/admin/ConfigureCustomField!default.jspa?customFieldId=${field_id#*_}"
+        path=${path_map['configure options']}
     elif test "${edit_name_and_description}" = true; then
-        path="secure/admin/EditCustomField!default.jspa?id=${field_id#*_}"
+        path=${path_map['edit name and description']}
         bhj-notify go-admin-page "You may also need to edit from: project -> select PROJECT NAME -> fields -> edit (with a PEN icon)"
     elif test "${add_field}" = true; then
-        path='secure/admin/CreateCustomField!default.jspa'
+        path=${path_map['add field']}
+    elif test "${match_field_name_set}" = true; then
+        action=$(
+            select-args -p "你想要执行哪个操作？" "${!path_map[@]}"
+              )
+        path=${path_map[$action]}
     else
-        path=secure/admin/ViewCustomFields.jspa
+        path=${path_map['list fields']}
     fi
 elif test "${which_page}" = open; then
     path=$1
@@ -257,6 +283,26 @@ elif [[ $path =~ hint: ]]; then
     EMACS=t yes-or-no-p -y "$path"
     bhj-notify "go-admin-page" "$path"
     exit
+fi
+
+if test "${which_page}" = screens -a $# = 0 && [[ $current_url =~ /browse/ ]]; then
+    issue_id=$(
+        echo $current_url | perl -pe 's,.*/browse/((.*?)-\d+).*,$1,'
+            )
+    issue_type=$(
+        jkd print-issue -i $issue_id -f issuetype | jq '.name' -r
+              )
+
+    screen=$(
+        IFS=$'\n'
+        screens=(
+            $(
+                cached-run -e scm_jira_url jkd dump-issuetype -i "$issue_type" | jq '.screens|keys|.[]' -r
+            )
+        )
+        select-args -p "which screen?" "${screens[@]}"
+          )
+    set -- "${screen}"
 fi
 
 if test "${which_page}" = screens -a "$#" != 0; then
