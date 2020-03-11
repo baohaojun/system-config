@@ -83,7 +83,7 @@ if test "${window_name}" = myscr -a "${window_class}" = xterm; then
 elif [[ $window_class =~ firefox ]]; then
     if test "$(sawfish-top-window-wmclass)" = Prompt:Firefox:; then
         true
-    elif [[  "$(sawfish-top-window-name)" =~ ^(パスワードを入力してください|Password Required)$ ]]; then
+    elif [[  "$(sawfish-top-window-name)" =~ ^(パスワードを入力してください|Password Required)( - Mozilla Firefox)?$ ]]; then
         true
     else
         url=$(get-firefox-tab-url --no-with-xkeytool|tr -d '"')
@@ -114,7 +114,7 @@ fi
 IFS=$'\n'
 passwords=$(
     cd ~/.password-store/
-    find "${window_class}/${window_name}" -name "*.gpg" \( -type f -o -type l \)|perl -pe 's,\.gpg$,,'
+    find "${window_class}/${window_name}/" -name "*.gpg" \( -type f -o -type l \)|perl -pe 's,\.gpg$,,'
          )
 
 declare -A password_map

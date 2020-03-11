@@ -75,7 +75,7 @@ case "${to_type}" in
         true
         ;;
     "英文名字")
-        comp-mail -d "${name}" -g '' --group "${group}" -m '^sAMAccountName:' | pn 2
+        comp-mail -d "${name}" -g '' --group "${group}" -m '^sAMAccountName:' | pn 2|rm-last-nl
         true
         ;;
     "邮箱地址")

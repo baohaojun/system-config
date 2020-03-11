@@ -187,9 +187,9 @@ for c in $all_choices; do
     fi
     if test "${all_groups[$c]}"; then
         if test "${print_prefix_too}" = true; then
-            echo $c ${choice_info[$c-prefix]}
+            echo -n $c ${choice_info[$c-prefix]}
         else
-            echo $c
+            echo -n $c
         fi
         if test "${open_in_browser}" = true; then
             of -w GG $c
