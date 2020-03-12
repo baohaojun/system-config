@@ -103,9 +103,20 @@ This is simple using Perl's “reflection”.
 
 #+name: global-args
 #+BEGIN_SRC perl
+  #!/usr/bin/env perl
   use strict;
-  use String::ShellQuote;
-  use IPC::System::Simple qw(systemx capturex);
+  use v5.10.1; # for say and switch
+  use autodie qw(:all);
+  use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+  binmode(STDOUT, ":utf8");
+  binmode(STDERR, ":utf8");
+  use Encode;
+  use utf8;
+  @ARGV = map {decode_utf8 $_} @ARGV;
+
+  use JSON;
+
+  my $json = JSON->new->utf8->canonical->pretty;
 
   ## start code-generator "^\\s *#\\s *"
   # generate-getopt -P -s perl -p jkd \
@@ -617,7 +628,7 @@ This is simple using Perl's “reflection”.
               my @fields_to_edit;
               if ($edit_issue_json_obj) {
                   my @command = (
-                      "select-args-n", "-p", decode_utf8("请输入你想要编辑的域"),
+                      "select-args-n", "-p", "请输入你想要编辑的域",
                       map {
                           sprintf "%s: %s", $_, $it->{fields}{$_}{name}
                       }
@@ -641,9 +652,9 @@ This is simple using Perl's “reflection”.
                       if ($field_key eq 'project' || $field_key eq 'issuetype') {
                           next;
                       }
-                      my $field_name = encode_utf8($it->{fields}{$field_key}{name} or "$field_key (field has no name)");
+                      my $field_name = ($it->{fields}{$field_key}{name} or "$field_key (field has no name)");
 
-                      say STDERR "field ${field_name}'s value is ", encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
+                      say STDERR "field ${field_name}'s value is ", ($edit_issue_json_obj->{fields}{$field_key} || "");
 
                       if ($print_schemes) {
                           print "--field-value $field_name= ";
@@ -666,7 +677,7 @@ This is simple using Perl's “reflection”.
 
 
                       if ($schema_type eq 'string') {
-                          my $init_text = encode_utf8($edit_issue_json_obj->{fields}{$field_key} || "");
+                          my $init_text = ($edit_issue_json_obj->{fields}{$field_key} || "");
                           if ($field_key eq "description") {
                               say STDERR "special treatment for description";
                               $init_text = jira_to_org $init_text;
@@ -679,12 +690,12 @@ This is simple using Perl's “reflection”.
                           my $command = join(" ", shell_quote(@command));
                           say STDERR "command is $command";
 
-                          my $result_text = qx($command);
+                          my $result_text = decode_utf8 qx($command);
                           if ($field_key eq "description") {
                               $result_text = org_to_jira $result_text;
                           }
 
-                          $required_fields->{$field_key} = decode_utf8 $result_text;
+                          $required_fields->{$field_key} = $result_text;
                       } elsif ($selection_types{$schema_type}) {
                           my %allowed_values_map;
                           map {
@@ -699,7 +710,7 @@ This is simple using Perl's “reflection”.
                               $select_command = "select-args";
                           }
                           my @command = (
-                              $select_command, "-p", decode_utf8("请输入你想要选择的 " . "$field_name"),
+                              $select_command, "-p", ("请输入你想要选择的 " . "$field_name"),
                               keys %allowed_values_map
                               );
                           my $command = join(" ", shell_quote(@command));
@@ -707,7 +718,7 @@ This is simple using Perl's “reflection”.
                           $required_fields->{$field_key} = [] if $schema_type eq "array";
                           for (split "\n", $values) {
                               next unless $_;
-                              say "Adding option for $field_name: ", encode_utf8 $_;
+                              say "Adding option for $field_name: ", $_;
                               die "invalid $_" unless ${allowed_values_map{$_}};
                               if ($schema_type eq "array") {
                                   push @{$required_fields->{$field_key}}, {id => $allowed_values_map{$_}};
@@ -718,10 +729,10 @@ This is simple using Perl's “reflection”.
                           }
                       } else {
                           my $jsonParser = JSON->new->allow_nonref;
-                          my $json = $jsonParser->utf8->pretty->encode($it->{fields}{$field_key});
+                          my $jsonText = decode_utf8($json->encode($it->{fields}{$field_key}));
                           say <<EOF;
 
-  $json
+  $jsonText
 
   Don't know how to deal with ${field_name}, please input with json.
 
@@ -1088,7 +1099,7 @@ This is simple using Perl's “reflection”.
 
       my $issue_type_json;
       if (not $issue_type or not $issue_type =~ m/^\d+$/) {
-          $issue_type_json = from_json(capturex("jkd", "select-issuetype", "-p", "${project}", "--json"));
+          $issue_type_json = from_json(capturex("jkd", "select-issuetype", "-i", "$issue_type", "-p", "${project}", "--json"));
           $issue_type = $issue_type_json->{id};
       }
 
@@ -1097,14 +1108,14 @@ This is simple using Perl's “reflection”.
       for (@field_value) {
           if (m/(.*?)=(.*)/) {
               my ($field, $value) = ($1, $2);
-              $required_fields{$field} = decode_utf8 $value;
+              $required_fields{$field} = $value;
           } else {
               die "$_ not format of FIELD=VALUE?"
           }
       }
 
       if ($fields_json) {
-          $fields_json = capturex("jkd", "customfield-json-names2ids", "-n", decode_utf8("$fields_json"), "-f", decode_utf8(to_json($issue_type_json->{fields})));
+          $fields_json = capturex("jkd", "customfield-json-names2ids", "-n", ("$fields_json"), "-f", decode_utf8(to_json($issue_type_json->{fields})));
 
           my $required_fields = decode_json $fields_json;
           %required_fields = %$required_fields;
@@ -1149,9 +1160,13 @@ This is simple using Perl's “reflection”.
               };
           my $response = $ua->request($request);
 
-          say "POST \@${try} response code:" . $response->code, "result: ", $response->content;
+          say STDERR "POST \@${try} response code:" . $response->code, "result: ", $response->content;
 
-          last if $response->is_success;
+
+          if ($response->is_success){
+              print $response->content;
+              exit 0;
+          }
 
           my $errors = decode_json($response->content)->{errors};
           for (keys %$errors) {
@@ -1160,6 +1175,7 @@ This is simple using Perl's “reflection”.
               delete $required_fields{$_};
           }
       }
+      die "Can't create issue";
   }
 #+END_SRC
 
