@@ -121,9 +121,18 @@ $dom->find('span[class="field-name"]')->each
             if ($_->parent->at('span[class="aui-lozenge status-required"]')) {
                 $required = JSON::true;
             }
+            my $position = -1;
+
+            if (my $visibility_elem = $_->parent->parent->at('a[href^="EditFieldLayoutHide.jspa"]')) {
+                my $visibility_href = $visibility_elem->attr('href');
+                ($position = $visibility_href) =~ s,.*hide=(\d+).*,$1,;
+            } else {
+                # say STDERR "Can't find position for $field_name";
+            }
 
             $fieldconfig{$field_name} = {
-                required => $required
+                required => $required,
+                position => $position,
             };
 
             if (my $renderer_elem = $_->parent->at('span[class="field-renderer"]')) {

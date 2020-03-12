@@ -11,18 +11,25 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # p:project @json '?"print json format (expand fields of the issuetype)"'
+    # p:project @json '?"print json format (expand fields of the issuetype)"' \
+    # i:init-input
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o p:h \
-                      --long json,project:,help,no-json \
+TEMP=$(POSIXLY_CORRECT=true getopt -o i:p:h \
+                      --long init-input:,json,project:,help,no-json \
                       -n $(basename -- $0) -- "$@")
+declare init_input=
 declare json=false
 declare project=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -i|--init-input)
+            init_input=$2
+            shift 2
+
+            ;;
         --json|--no-json)
             if test "$1" = --no-json; then
                 json=false
@@ -42,6 +49,9 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
+            printf %06s '-i, '
+            printf %-24s '--init-input=INIT_INPUT'
+            echo
             printf "%06s" " "
             printf %-24s '--[no-]json'
             echo "print json format (expand fields of the issuetype)"
@@ -82,7 +92,7 @@ issuefields=(
 
 issuetype_id=$(
     select-args -i "$*" \
-    "-O" "select-jira-issuetype" "-p" "Which issue type do you want to use?" \
+    "-O" "select-jira-issuetype" -i "${init_input}" "-p" "Which issue type do you want to use?" \
     "${issuefields[@]}" | pn 1 | tr -d ':\n'
             )
 

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+misc diff-texts \
+     "$(
+cat "$1" | misc json-sorted | jq 'del(..|.id?) | del(..|.self?)'
+)" \
+     "$(
+cat "$2" | misc json-sorted | jq 'del(..|.id?) | del(..|.self?)'
+)"
