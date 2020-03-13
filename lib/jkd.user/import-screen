@@ -21,7 +21,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# s:screen-name j:screen-json
+# s:screen-name j:screen-json d:screen-description
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -30,12 +30,21 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $screen_description = "";
 my $screen_json = "";
 my $screen_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--screen-description=SCREEN-DESCRIPTION';
+    if (length('--screen-description=SCREEN-DESCRIPTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-j, ';
     printf "%-24s", '--screen-json=SCREEN-JSON';
     if (length('--screen-json=SCREEN-JSON') > 24 and length() > 0) {
@@ -63,6 +72,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'screen-description|d=s' => \$screen_description,
     'screen-json|j=s' => \$screen_json,
     'screen-name|s=s' => \$screen_name,
     'help|h!' => \&$handler_help,
@@ -70,8 +80,6 @@ GetOptions (
 
 
 ## end generated code
-
-my $source_screen_dump = $json->decode(encode_utf8 $screen_json);
 
 my $screens_json =
     $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest screens"));
@@ -82,7 +90,7 @@ if (not grep {$_->{name} eq $screen_name} @$screens_json) {
         'inline=true',
         'decorator=dialog',
         "fieldScreenName=$screen_name",
-        "fieldScreenDescription=" . $source_screen_dump->{description},
+        "fieldScreenDescription=" . $screen_description,
     );
 
     say STDERR "Need to create the screen first";
@@ -91,6 +99,14 @@ if (not grep {$_->{name} eq $screen_name} @$screens_json) {
         "debug-run", "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddFieldScreen.jspa", "-X", "POST",
         map { ('--data-urlencode', $_) } @params_values);
 }
+
+if (not $screen_json) {
+    exit(0);
+} else {
+    say STDERR "screen json is '$screen_json'"
+}
+
+my $source_screen_dump = $json->decode(encode_utf8 $screen_json);
 
 my $target_screen_dump =
     $json->decode(scalar capture("cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "$screen_name"));

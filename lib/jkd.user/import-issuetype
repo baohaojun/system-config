@@ -221,7 +221,7 @@ my $screens =
 my %from_screens = %{$from_jira_json->{screens}};
 for my $screen (keys %from_screens) {
     my $screen_json = decode_utf8 $json->encode($from_screens{$screen});
-    runx("jkd", "import-screen", "-s", ("$screen"), "-j", ("$screen_json"));
+    runx("jkd", "import-screen", "-s", "$screen", "-d", $from_jira_json->{screens}{$screen}{description}, "-j", ("$screen_json"));
 }
 
 my $from_screenscheme = $from_jira_json->{screenscheme};
