@@ -9,6 +9,8 @@ use Encode;
 use utf8;
 @ARGV = map {decode_utf8 $_} @ARGV;
 
+use File::Slurp;
+
 use JSON;
 
 my $json = JSON->new->utf8->canonical->pretty;
@@ -19,12 +21,23 @@ my $json = JSON->new->utf8->canonical->pretty;
 2. 删除原 workflow，因此当前未被使用，因此可以删除
 3. 将新的 xml 导入至原 workflow
 4. 激活原 workflow，从而完成在线更新
+
+* 参数说明：
+
+- issuetype :: 在给哪个 issuetype 升级 workflow（必须指定）
+- workflow_name :: 在用的是哪个 workflow（如不指定，则使用 issuetype 自动计算）
+- workflow_scheme :: 在哪个 workflow_scheme 中配置（如不指定，则使用 issuetype 自动计算）
+- workflow_xml_file :: workflow xml 保存的位置（也可以使用下面的 xml-str 参数，直接传入 xml 文本数据）
+- xml-str :: workflow xml 数据
+- xml-using-names :: xml 中在使用的是各个字段、状态的名字，而不是数字 id。
+
+
 # {%/org-mode%}
 EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# w:workflow-name f:workflow-xml-file x:xml-str i:issuetype-name s:workflow-scheme
+# w:workflow-name f:workflow-xml-file x:xml-str i:issuetype-name s:workflow-scheme @xml-using-names=1
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -38,6 +51,7 @@ my $workflow_name = "";
 my $workflow_scheme = "";
 my $workflow_xml_file = "";
 my $xml_str = "";
+my $xml_using_names = 1;
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -82,6 +96,14 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]xml-using-names';
+    if (length('--[no]xml-using-names') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -98,12 +120,25 @@ GetOptions (
     'workflow-scheme|s=s' => \$workflow_scheme,
     'workflow-xml-file|f=s' => \$workflow_xml_file,
     'xml-str|x=s' => \$xml_str,
+    'xml-using-names!' => \$xml_using_names,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
 
+if (not $workflow_name) {
+    my $workflow_scheme_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-workflowschemes"));
+
+    map {
+        my $wf = $_->{issuetypes_workflow}{$issuetype_name};
+        if ($wf) {
+            $workflow_name = $wf;
+            $workflow_scheme = $_->{name};
+        }
+    } @$workflow_scheme_json;
+}
 
 my $workflow_exists = (runx(EXIT_ANY, "jkd", "exists-name", "-a", "workflow", "$workflow_name") == 0);
 
@@ -140,7 +175,17 @@ if ($workflow_exists) {
     runx("jkd", "wf-delete", "-w", "$workflow_name");
 }
 
-runx("jkd", "import-workflow-from-xml", "-w", "$workflow_name", "-f", "$workflow_xml_file", "-x", "$xml_str");
+if (not $xml_str) {
+    $xml_str = read_file($workflow_xml_file);
+}
+
+if ($xml_using_names) {
+    $xml_str = decode_utf8 capturex (
+        "jkd", "workflow", "-a", "name2id", "-x", "$xml_str"
+    );
+}
+
+runx("jkd", "import-workflow-from-xml", "-w", "$workflow_name", "-x", "$xml_str");
 
 if ($workflow_exists) {
     if ($done_switch) {

@@ -97,9 +97,13 @@ runx(
 );
 
 my @issuetype_dumps;
+
+my %json_data;
+my %xml_data;
 for my $j ($j1, $j2) {
     $ENV{scm_jira_url} = $j;
     my @command = (
+        "cached-run", "-e", "scm_jira_url",
         "jkd", "-j", "$j", "dump-issuetype", "-i", "$issuetype_name"
     );
 
@@ -112,6 +116,21 @@ for my $j ($j1, $j2) {
                           join(" ", shell_quote($issuetype_json_file))
                       );
     run($command);
+
+    my $issuetype_json =
+        $json->decode(scalar capturex("cat", $issuetype_json_file));
+
+    my $workflow_xml = $issuetype_json->{workflow_xml};
+    (my $workflow_xml_file = $issuetype_json_file) =~ s,\.json$,.workflow.xml,;
+
+    use File::Slurp;
+    write_file($workflow_xml_file, encode_utf8 $workflow_xml);
+
+    $json_data{$j} = $issuetype_json_file;
+    $xml_data{$j} = $workflow_xml_file;
 }
 
-runx("meld", @issuetype_dumps);
+run("cd $ENV{HOME}/src/jenkins-tasks; save.-to-git");
+
+runx("misc", "diff-json", $json_data{$j1}, $json_data{$j2});
+runx("meld", $xml_data{$j1}, $xml_data{$j2});

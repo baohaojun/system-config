@@ -275,9 +275,6 @@ for my $status_name (keys %from_statuses) {
 
 my $workflow_name = $from_jira_json->{workflow};
 my $workflow_xml = $from_jira_json->{workflow_xml};
-$workflow_xml = decode_utf8 capturex (
-   "jkd", "workflow", "-a", "name2id", "-x", "$workflow_xml"
-);
 
 runx (
     "jkd", "upgrade-workflow", "-w", "$workflow_name", "-x", "$workflow_xml", "-i", $issuetype_name, "-s", $from_jira_json->{workflowscheme}

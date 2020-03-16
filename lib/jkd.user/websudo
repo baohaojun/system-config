@@ -42,7 +42,8 @@ web-curl() {
 }
 
 sudo-isok() {
-    web-curl -L ${scm_jira_url}secure/admin/ViewIssueTypes.jspa
+    web-curl -L ${scm_jira_url}secure/admin/ViewIssueTypes.jspa -o $cache_dir/sudo-isok.html
+    cat $cache_dir/sudo-isok.html
 }
 
 for sudo_try in $(seq 1 2); do
@@ -60,6 +61,6 @@ for sudo_try in $(seq 1 2); do
     fi
 done
 
-log "Can't get admin access"
+log "Can't get admin access, check $cache_dir"
 echo "${view_issue_types}" > $cache_dir/ViewIssueTypes.html
 return 1
