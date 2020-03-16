@@ -48,12 +48,6 @@ set -x
 
 export SELECT_HISTORY_ORDER=true
 
-if true; then
-    set -x
-    exec >& ~/tmp/${0##*/}.$$.log
-    . atexit bash -c "declare -x -p; ew ~/tmp/${0##*/}.$$.log; rm -f ~/tmp/${0##*/}.$$.log"
-fi
-
 sawfish-window mark -t abbrevs.$$ -s
 . atexit sawfish-window mark -t abbrevs.$$ -r
 
