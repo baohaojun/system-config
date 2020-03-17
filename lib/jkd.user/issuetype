@@ -44,7 +44,9 @@ EOFc83131117f09
  # s:issuetypescheme-name \
 # p:associated-projects \
 # @:field-name  \
-# @:field-json
+# @:field-json \
+# @:j1='$ENV{scm_jira_url}' \
+# @:j2 '?"另一个作为对比的 jira 环境的 url"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -61,6 +63,8 @@ my $issuetype_description = "";
 my $issuetype_name = "";
 my $issuetype_type = "standard";
 my $issuetypescheme_name = "";
+my $j1 = $ENV{scm_jira_url};
+my $j2 = "";
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -129,6 +133,22 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--j1=J1';
+    if (length('--j1=J1') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--j2=J2';
+    if (length('--j2=J2') > 24 and length("另一个作为对比的 jira 环境的 url") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "另一个作为对比的 jira 环境的 url";
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -148,6 +168,8 @@ GetOptions (
     'issuetype-name|n=s' => \$issuetype_name,
     'issuetype-type|t=s' => \$issuetype_type,
     'issuetypescheme-name|s=s' => \$issuetypescheme_name,
+    'j1=s' => \$j1,
+    'j2=s' => \$j2,
     'help|h!' => \&$handler_help,
 );
 
@@ -309,6 +331,63 @@ if ($action eq "print") {
     my $workflow =
         decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-workflow", "-n", "$issuetype_name"));
     runx("jkd", "go", "workflows", "-e", "$workflow");
+} elsif ($action eq "diff-fieldconfig") {
+    my $fieldconfig =
+        decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-fieldconfig", "-n", "$issuetype_name"));
+    my $fc_json1 =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-fieldconfig", "-n", "$fieldconfig"));
+    my $fc_json2 =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$j2", "export-fieldconfig", "-n", "$fieldconfig"));
+    my %fieldconfig1 = %$fc_json1;
+    my %fieldconfig2 = %$fc_json2;
+
+    my $fields_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest field"));
+    my %builtin_fields;
+
+    map {
+        $builtin_fields{$_->{name}} = 1 if $_->{id} !~ m/customfield_/;
+    } @$fields_json;
+
+    for my $field1 (sort keys %fieldconfig1) {
+        my $desc1 = $fieldconfig1{$field1}{description};
+        next unless (defined $fieldconfig2{$field1} and not $builtin_fields{$field1});
+
+        my $desc2 = $fieldconfig2{$field1}{description};
+
+        if ($desc1 ne $desc2) {
+            say STDERR "Working with $field1 ($desc1 <> $desc2)";
+            my $field1_dump =
+                $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$j1", "dump-field", "-f", $field1));
+            my $field2_dump =
+                $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$j2", "dump-field", "-f", $field1));
+
+            my $desc1_dump = $field1_dump->{description};
+            my $desc2_dump = $field2_dump->{description};
+
+            my %desc_map = (
+                fc1 => $desc1,
+                fc2 => $desc2,
+                field1 => $desc1_dump,
+                field2 => $desc2_dump,
+            );
+
+            say STDERR decode_utf8($json->encode(\%desc_map));
+
+            my $ans =
+                decode_utf8(scalar capturex("select-args", "-p", "$field1，你想使用谁的 description？", sort keys %desc_map));
+
+            my $field_json = $field1_dump;
+            if (defined $desc_map{$ans}) {
+                $field_json->{description} = $desc_map{$ans};
+            } else {
+                $field_json->{description} = $ans;
+            }
+
+            runx("jkd", "-j", "$j1", "issuetype", "-n", "$issuetype_name", "-a", "update-field", "--field-name", "$field1", "--field-json", decode_utf8($json->encode($field_json)));
+            runx("jkd", "-j", "$j2", "issuetype", "-n", "$issuetype_name", "-a", "update-field", "--field-name", "$field1", "--field-json", decode_utf8($json->encode($field_json)));
+        }
+    }
 } else {
     die "Can't work with action: $action, don't know how";
 }
