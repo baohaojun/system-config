@@ -305,6 +305,10 @@ if ($action eq "print") {
             map { ('--data-urlencode', $_) } @params_values
         );
     }
+} elsif ($action eq "edit-workflow") {
+    my $workflow =
+        decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-workflow", "-n", "$issuetype_name"));
+    runx("jkd", "go", "workflows", "-e", "$workflow");
 } else {
     die "Can't work with action: $action, don't know how";
 }
