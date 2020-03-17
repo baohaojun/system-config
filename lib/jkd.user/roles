@@ -1,8 +1,19 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 
-declare comment_doc=$(
-    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
 * action = list
 
@@ -14,235 +25,134 @@ declare comment_doc=$(
 
 - 特殊值 ALL：加入所有 roles
 - 若不指定 role，会让你手动选择
+* action = query
+查询 USER 在哪些 ROLES 里
 # {%/org-mode%}
-EOFe9576f8668e0
-        )
+EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P '?"${comment_doc}"' \
-    # a:action p:project
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:action p:project  r:role-name u:user-name
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o a:p:h \
-                      --long action:,project:,help \
-                      -n $(basename -- $0) -- "$@")
-declare action=
-declare project=
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
+use Getopt::Long;
 
-        -a|--action)
-            action=$2
-            shift 2
+Getopt::Long::Configure("posix_default");
 
-            ;;
-        -p|--project)
-            project=$2
-            shift 2
 
-            ;;
-        -h|--help)
-            set +x
-            echo -e "${comment_doc}"
-            echo
-            echo Options and arguments:
-            printf %06s '-a, '
-            printf %-24s '--action=ACTION'
-            echo
-            printf %06s '-p, '
-            printf %-24s '--project=PROJECT'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
+
+my $action = "";
+my $project = "";
+my $role_name = "";
+my $user_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project=PROJECT';
+    if (length('--project=PROJECT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--role-name=ROLE-NAME';
+    if (length('--role-name=ROLE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--user-name=USER-NAME';
+    if (length('--user-name=USER-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'project|p=s' => \$project,
+    'role-name|r=s' => \$role_name,
+    'user-name|u=s' => \$user_name,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
 
-if test -z "${action}"; then
-    action=$1
-    shift
-fi
-
-list-roles() {
-    declare comment_doc=$(
-        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
-# {%org-mode%}
-
-# {%/org-mode%}
-EOFe9576f8668e0
-            )
-
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P '?"${comment_doc}"' \
-        # sshort '?"list the name only"'
-    ## end code-generator
-    ## start generated code
-    TEMP=$(POSIXLY_CORRECT=true getopt -o sh \
-                          --long short,help,no-short \
-                          -n $(basename -- $0) -- "$@")
-    declare short=false
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-
-            -s|--short|--no-short)
-                if test "$1" = --no-short; then
-                    short=false
-                else
-                    short=true
-                fi
-                shift
-
-                ;;
-            -h|--help)
-                set +x
-                echo -e "${comment_doc}"
-                echo
-                echo Options and arguments:
-                printf %06s '-s, '
-                printf %-24s '--[no-]short'
-                echo "list the name only"
-                exit
-                shift
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error: $(. bt; echo; bt | indent-stdin)"
-                ;;
-        esac
-    done
-
-
-    ## end generated code
-
-    IFS=$'\n'
-
-    roles_json=$(
-        jkd rest project/${project}/role
-              )
-    role_names=$(
-        echo "${roles_json}" | jq 'keys|.[]' -r
-              )
-    if test "${short}" = true; then
-        echo "${role_names}"
-        exit
-    fi
-
-    echo '['
-    first=true
-    for role in ${role_names}; do
-        if test "${first}" = true; then
-            first=false
-        else
-            echo ,
-        fi
-        role_id=$(
-            echo "${roles_json}" | jq '."'"${role}"'"' -r | perl -pe 's,.*/,,'
-               )
-        jkd rest project/${project}/role/"${role_id}" | jq .
-    done
-
-    echo ']'
+if (not $action) {
+    $action = shift @ARGV;
 }
 
-add-user() {
-    declare comment_doc=$(
-        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
-# {%org-mode%}
+sub list_roles() {
 
-# {%/org-mode%}
-EOFe9576f8668e0
-            )
+    my $roles_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest project/${project}/role"));
 
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P '?"${comment_doc}"' \
-        # r:role-name u:user-name
-    ## end code-generator
-    ## start generated code
-    TEMP=$(POSIXLY_CORRECT=true getopt -o r:u:h \
-                          --long role-name:,user-name:,help \
-                          -n $(basename -- $0) -- "$@")
-    declare role_name=
-    declare user_name=
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
+    my %roles;
+    for (keys %$roles_json) {
+        (my $role_id = $roles_json->{$_}) =~ s,.*/,,;
+        my $role_details =
+            $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest project/${project}/role/${role_id}"));
+        $roles{$_} = $role_details;
+    }
 
-            -r|--role-name)
-                role_name=$2
-                shift 2
-
-                ;;
-            -u|--user-name)
-                user_name=$2
-                shift 2
-
-                ;;
-            -h|--help)
-                set +x
-                echo -e "${comment_doc}"
-                echo
-                echo Options and arguments:
-                printf %06s '-r, '
-                printf %-24s '--role-name=ROLE_NAME'
-                echo
-                printf %06s '-u, '
-                printf %-24s '--user-name=USER_NAME'
-                echo
-                exit
-                shift
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error: $(. bt; echo; bt | indent-stdin)"
-                ;;
-        esac
-    done
-
-
-    ## end generated code
-
-    IFS=$'\n'
-    if test "${role_name}" = ALL; then
-        set -- $(jkd rest project/${project}/role | jq 'keys|.[]' -r)
-    elif test -z "${role_name}"; then
-        set -- $(jkd sel-name --jkd "roles -a list -p $project")
-    else
-        set -- "${role_name}"
-    fi
-
-    for role in "$@"; do
-        role_id=$(
-            jkd rest project/${project}/role | jq '."'"${role}"'"' -r | perl -pe 's,.*/,,'
-               )
-        log role_id is $role_id
-        if jkd rest project/${project}/role/"${role_id}" | jq '.actors|.[]|.name' -r | grep -q -P "^\Q${user_name}\E$"; then
-            log "${user_name} already in ${role}"
-            continue
-        fi
-        debug-run jkd rest -a project/${project}/role/${role_id} -- -X POST --data '{"user" : ["'"${user_name}"'"]}' -H 'Content-Type: application/json'
-    done
+    print decode_utf8($json->encode(\%roles));
 }
 
-if test "${action}" = list; then
-    list-roles "$@"
-elif test "${action}" = add-user; then
-    add-user "$@"
-fi
+die "Must specify project" unless $project;
+
+if ($action eq "list") {
+    list_roles;
+} else {
+    my $roles_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd roles -a list -p $project"));
+
+    if ($action eq "add-user") {
+
+        die "No such role: $role_name" unless $roles_json->{$role_name};
+
+        if (grep {$_->{name} eq $user_name} @{$roles_json->{$role_name}{actors}}) {
+            say STDERR "$user_name already in role $role_name";
+            exit (0);
+        }
+
+        my $role_id = $roles_json->{$role_name}{id};
+        my $user_json = {
+            user => [$user_name],
+        };
+
+        runx "debug-run", "jkd", "rest", "-a", "project/${project}/role/${role_id}",
+            "--", "-X", "POST", "--data",
+            decode_utf8($json->encode($user_json)), "-H", 'Content-Type: application/json';
+    } elsif ($action eq "query") {
+        for (keys %$roles_json) {
+            my $role_name = $_;
+            if (grep {$_->{name} eq $user_name} @{$roles_json->{$role_name}{actors}}) {
+                say "$role_name";
+            }
+        }
+    }
+}

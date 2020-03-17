@@ -9,11 +9,12 @@ current_groups=$(
     ssh-gerrit --admin ls-groups --user "$change_user"
               )
 
+IFS=$'\n'
 if [[ "$template_user" =~ ^- ]]; then
     add_groups=
-    remove_groups=$(echo ${template_user#-} | tr ' ' '\n')
+    remove_groups=$(echo "${template_user#-}" )
 elif [[ $template_user =~ ^\+ ]]; then
-    add_groups=$(echo ${template_user#+} | tr ' ' '\n')
+    add_groups=$(echo "${template_user#+}")
     remove_groups=
 else
     to_groups=$(

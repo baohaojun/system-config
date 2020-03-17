@@ -19,12 +19,18 @@ my $json = JSON->new->utf8->canonical->pretty;
 - update the field
 * action = import
 - import (create) the field
+* action = sync-to
+将指定的字段的配置（json）同步到其他环境
+
+* 参数说明
+
+- issuetype :: 这个参数主要用于获取对应的 fieldconfig
 # {%/org-mode%}
 EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# a:action f:field-name j:json-data
+# a:action f:field-name j:json-data i:issuetype
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -35,6 +41,7 @@ Getopt::Long::Configure("posix_default");
 
 my $action = "";
 my $field_name = "";
+my $issuetype = "";
 my $json_data = "";
 
 my $handler_help = sub {
@@ -51,6 +58,14 @@ my $handler_help = sub {
     printf "%6s", '-f, ';
     printf "%-24s", '--field-name=FIELD-NAME';
     if (length('--field-name=FIELD-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issuetype=ISSUETYPE';
+    if (length('--issuetype=ISSUETYPE') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -77,6 +92,7 @@ my $handler_help = sub {
 GetOptions (
     'action|a=s' => \$action,
     'field-name|f=s' => \$field_name,
+    'issuetype|i=s' => \$issuetype,
     'json-data|j=s' => \$json_data,
     'help|h!' => \&$handler_help,
 );
@@ -84,17 +100,22 @@ GetOptions (
 
 ## end generated code
 
+
 my $fields_json = $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest field"));
 
 if ($action eq "update") {
+    $json_data = $json->decode(encode_utf8 $json_data);
+    if (not $field_name) {
+        $field_name = $json_data->{name};
+        die "Can't find field name" unless $field_name;
+    }
+
     my $field_id;
     map {
         if ($_->{name} eq "$field_name") {
             ($field_id = $_->{id}) =~ s,.*_,,;
         }
     } @$fields_json;
-
-    $json_data = $json->decode(encode_utf8 $json_data);
 
     my $searcher = $json_data->{search_template} || "-1";
     my @params_values = (
@@ -111,4 +132,30 @@ if ($action eq "update") {
         "debug-run", "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/EditCustomField.jspa", "-X", "POST",
         map { ('--data-urlencode', $_) } @params_values
     );
+} elsif ($action eq "sync-to") {
+    my %jira_envs = (
+        $ENV{scm_jira_test2_url} => 1,
+        $ENV{scm_jira_test1_url} => 1,
+        $ENV{scm_jira_prod_url} => 1,
+    );
+
+    my $field_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-field", "-f", $field_name));
+
+    for (keys %jira_envs) {
+        if ($_ ne $ENV{scm_jira_url}) {
+            if ($issuetype) {
+
+                runx("debug-run", "jkd", "-j", "$_", "issuetype",
+                     "-n", $issuetype,
+                     "-a", "update-field",
+                     "--field-name", $field_name,
+                     "--field-json", decode_utf8($json->encode($field_json)));
+
+            } else {
+                runx("debug-run", "jkd", "-j", "$_", "field", "-a", "update", "-j", decode_utf8($json->encode($field_json)));
+            }
+
+        }
+    }
 }

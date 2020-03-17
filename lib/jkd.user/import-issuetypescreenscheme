@@ -1,0 +1,89 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# s:issuetypescreenscheme-name j:issuetypescreenscheme-json
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $issuetypescreenscheme_json = "";
+my $issuetypescreenscheme_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--issuetypescreenscheme-json=ISSUETYPESCREENSCHEME-JSON';
+    if (length('--issuetypescreenscheme-json=ISSUETYPESCREENSCHEME-JSON') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--issuetypescreenscheme-name=ISSUETYPESCREENSCHEME-NAME';
+    if (length('--issuetypescreenscheme-name=ISSUETYPESCREENSCHEME-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'issuetypescreenscheme-json|j=s' => \$issuetypescreenscheme_json,
+    'issuetypescreenscheme-name|s=s' => \$issuetypescreenscheme_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+die "specify both json and name!" unless $issuetypescreenscheme_name and $issuetypescreenscheme_json;
+
+$issuetypescreenscheme_json =
+    $json->decode(encode_utf8 $issuetypescreenscheme_json);
+
+map {
+    my $issuetype = $_;
+    my $screenscheme = $issuetypescreenscheme_json->{$_}{name};
+    say STDERR "working with $issuetype";
+    runx(
+        EXIT_ANY, "debug-run",
+        "cached-run", "-e", "scm_jira_url", "-r", "jkd",
+        "attach-issuetypescreenscheme", "--screenscheme", $screenscheme,
+        "--issuetype", $issuetype, "--issuetype-screenscheme", $issuetypescreenscheme_name
+    ) unless $issuetype eq "Default";
+} keys %$issuetypescreenscheme_json;

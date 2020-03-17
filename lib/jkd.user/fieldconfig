@@ -1,13 +1,17 @@
 #!/usr/bin/env perl
 use strict;
-use v5.10.1;                    # for say and switch
+use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -18,6 +22,15 @@ create the field config.
 * action = add-to-scheme
 
 add to scheme for issuetype (need specify ISSUETYPE and FIELDCONFIGSCHEME_NAME).
+
+* action = export
+dump the field config
+
+only the required fields will be shown
+
+* action = edit
+
+* action = list
 # {%/org-mode%}
 EOFc83131117f09
 
@@ -41,7 +54,7 @@ my $issuetype = "";
 
 my $handler_help = sub {
     print "$comment_doc";
-    print "\n\n选项和参数：\n";
+    print "\n\n  选项和参数：\n";
     printf "%6s", '-a, ';
     printf "%-24s", '--action=ACTION';
     if (length('--action=ACTION') > 24 and length() > 0) {
@@ -113,12 +126,49 @@ if ($action eq "create") {
 
     my $create_html =
         capturex("jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddFieldConfiguration.jspa", "-X", "POST",
-                 map { ('--data-urlencode', decode_utf8($_)) } @params_values);
+                 map { ('--data-urlencode', $_) } @params_values);
 
     if ($create_html =~ m,A field configuration with this name already exists.,) {
         die "The field already exists!";
     }
 } elsif ($action eq "add-to-scheme") {
-    # curl 'http://jira-test.ep.chehejia.com/secure/admin/AddIssueTypeToFieldConfigurationAssociation.jspa' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:73.0) Gecko/20100101 Firefox/73.0' -H 'Accept: text/html, */*; q=0.01' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-AUSERNAME: chjscm' -H 'X-Requested-With: XMLHttpRequest' -H 'Origin: http://jira-test.ep.chehejia.com' -H 'Connection: keep-alive' -H 'Referer: http://jira-test.ep.chehejia.com/secure/admin/ConfigureFieldLayoutScheme!default.jspa?atl_token=B7CW-WWCH-KIEP-9TON_c30f2af0efc57068eda60625fa8a49dce2767045_lin&id=12100' -H 'Cookie: _ga=GA1.2.409562527.1579144440; atlassian.xsrf.token=B7CW-WWCH-KIEP-9TON_c30f2af0efc57068eda60625fa8a49dce2767045_lin; JSESSIONID=8058873A84E7A94D20BEC4A79A043DE0; seraph.rememberme.cookie=23301%3A7370c4bfe5170a82a8b7696e87517d9b20edcb66; _gid=GA1.2.553385383.1583142837; WikiCookie=33f97d3bf1e2756a623ce78f426efc95; chj_it_sso=wD26WIZ1wbzdY0mUHf-avwAAAAAACIABYmFvaGFvanVu' --data 'inline=true&decorator=dialog&id=12100&issueTypeId=12001&fieldConfigurationId=13104&atl_token=B7CW-WWCH-KIEP-9TON_c30f2af0efc57068eda60625fa8a49dce2767045_lin'
 
+} else {
+    my $field_configs_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigs"));
+
+    if (not $fieldconfig_name) {
+        $fieldconfig_name =
+            decode_utf8(scalar capturex("select-args", "-p", "请输入你想操作的 fieldconfig 的名字", "-o", "--", map {$_->{name}} @$field_configs_json));
+    }
+
+    my $field_config_id = (grep { $_ } map {$_->{name} eq $fieldconfig_name ?  $_->{id} : 0} @$field_configs_json)[0];
+
+    if ($action eq "export") {
+        my $field_config_json =
+            $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfig -i $field_config_id"));
+
+        map {
+            delete $field_config_json->{$_} unless $field_config_json->{$_}{required};
+        } keys %$field_config_json;
+
+        print decode_utf8($json->encode($field_config_json));
+    } elsif ($action =~ m/^(optional|required|switch)$/) {
+        my $field_config_json =
+            $json->decode(scalar capture("cached-run -e scm_jira_url -r jkd export-fieldconfig -i $field_config_id "));
+
+        for ( @ARGV ) {
+            my $url_path_prefix = "secure/admin/EditFieldLayoutRequire.jspa?id=${field_config_id}&require=";
+            my $position = $field_config_json->{$_}{position};
+            die "Can't find field $_ in fieldconfig" unless $position;
+
+            runx(
+                "jkd", "webcurl", "-L", "$ENV{scm_jira_url}$url_path_prefix${position}", "-o", "/dev/null"
+            );
+        }
+    } elsif ($action eq "edit") {
+        runx("firefox", "$ENV{scm_jira_url}secure/admin/ConfigureFieldLayout!default.jspa?id=${field_config_id}");
+    } else {
+        die "Don't know how to work with action: $action";
+    }
 }

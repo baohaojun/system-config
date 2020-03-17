@@ -223,12 +223,13 @@ function maybe-decode() {
     fi
 }
 
+export match_regexp
 function maybe-filter() {
     if test -x ~/.local-config/bin/comp-mail-filter; then
         ~/.local-config/bin/comp-mail-filter
     else
         cat
-    fi | grep -P "${match_regexp}" -i
+    fi | perl -ne 'print if m,$ENV{match_regexp},i'
 }
 
 if test -z "${pass}"; then

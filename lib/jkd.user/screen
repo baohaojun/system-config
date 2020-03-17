@@ -1,0 +1,159 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1;                    # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+* action = new
+new screen, allow copy from with --copy
+
+* action = delete-tabs
+
+delete a specified tab
+
+* action = delete-fields
+
+delete specified fields
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# s:screen-name d:screen-description a:action @:copy
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "";
+my $copy = "";
+my $screen_description = "";
+my $screen_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--copy=COPY';
+    if (length('--copy=COPY') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--screen-description=SCREEN-DESCRIPTION';
+    if (length('--screen-description=SCREEN-DESCRIPTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--screen-name=SCREEN-NAME';
+    if (length('--screen-name=SCREEN-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'copy=s' => \$copy,
+    'screen-description|d=s' => \$screen_description,
+    'screen-name|s=s' => \$screen_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+if (not $action) {
+    $action = shift @ARGV;
+}
+
+if ($action eq "new") {
+    my $copy_screen_json = "";
+    if ($copy) {
+        $copy_screen_json =
+            $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "$copy"));
+        if (not $screen_description) {
+            $screen_description = $copy_screen_json->{description};
+        }
+        $copy_screen_json = decode_utf8($json->encode($copy_screen_json));
+    }
+
+    runx("jkd", "import-screen", "-s", "$screen_name", "-d", "$screen_description", "-j", "$copy_screen_json");
+} else {
+    my $screen_dump =
+        $json->decode(scalar capture("cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "$screen_name"));
+
+    my $screen_id = $screen_dump->{id};
+    if ($action eq "delete-tabs") {
+        for my $tab_name (@ARGV) {
+            my $tab_id;
+            map {
+                $tab_id = $_->{id} if $tab_name eq $_->{name};
+            } @{$screen_dump->{tabs}};
+
+            unless ($tab_id) {
+                say STDERR "$tab_name not found";
+                next;
+            }
+            say STDERR "delete: $tab_name $tab_id";
+            runx "jkd", "rest", "-a", "screens/${screen_id}/tabs/${tab_id}", "--", "-X", "DELETE";
+        }
+    } elsif ($action eq "delete-fields") {
+        for my $field_name (@ARGV) {
+            my ($tab_id, $field_id);
+            map {
+                my $this_tab_id = $_->{id};
+                my $fields = $_->{fields};
+                map {
+                    if ($_->name eq $field_name) {
+                        $tab_id = $this_tab_id;
+                        $field_id = $_->{id};
+                    }
+                } keys %$fields;
+            } @{$screen_dump->{tabs}};
+
+            runx(
+                "jkd", "rest", "screens/${screen_id}/tabs/${tab_id}/fields/${field_id}", "--", "-X", "DELETE"
+            );
+        }
+    } else {
+        die "don't know how to work with action: $action"
+    }
+}

@@ -80,6 +80,30 @@ sub no_spaces_convert($) {
     return $_[0];
 }
 
+sub no_spaces_hash_convert(\%) {
+    my $hash = $_[0];
+    map {
+        (my $key = $_) =~ s, | ,,g;
+        $hash->{$key} = $hash->{$_}
+    } keys %$hash;
+}
+
+sub no_spaces_hashget(\%$) {
+    my ($hash, $key) = @_;
+
+    if ($hash->{$key}) {
+        return $hash->{$key};
+    }
+
+    if ($hash->{no_spaces_hash_convert_done} != 'true') {
+        no_spaces_hash_convert %$hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    $hash->{$key} = $hash->{no_spaces_convert $key};
+    return $hash->{$key};
+}
+
 $named_json = from_json($named_json);
 $fields_map = from_json($fields_map);
 
@@ -103,13 +127,11 @@ for (keys %$fields_map) {
 
 
 for (keys %$named_json) {
-    my $name = no_spaces_convert $_;
-    say STDERR "working with specified name: $name: $name_field_map{$name}";
+    my $id = no_spaces_hashget %name_field_map, $_;
 
-    if ($name_field_map{$name} and $name_field_map{$name} ne $_) {
-        say STDERR "update $name with $name_field_map{$name}";
-        $named_json->{$name_field_map{$name}} = $named_json->{$_};
-        delete $named_json->{$_};
+    if ($id) {
+        $named_json->{$id} = $named_json->{$_};
+        delete $named_json->{$_} if $_ ne $id;
     }
 }
 

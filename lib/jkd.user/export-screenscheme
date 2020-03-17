@@ -23,7 +23,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# i:screenscheme-id
+# i:screenscheme-id s:screenscheme-name '?"name 和 id 必须指定一个"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -33,13 +33,22 @@ Getopt::Long::Configure("posix_default");
 
 
 my $screenscheme_id = "";
+my $screenscheme_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
-    print "\n\n选项和参数：\n";
+    print "\n\n  选项和参数：\n";
     printf "%6s", '-i, ';
     printf "%-24s", '--screenscheme-id=SCREENSCHEME-ID';
     if (length('--screenscheme-id=SCREENSCHEME-ID') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--screenscheme-name=SCREENSCHEME-NAME';
+    if (length('--screenscheme-name=SCREENSCHEME-NAME') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -57,6 +66,7 @@ my $handler_help = sub {
 
 GetOptions (
     'screenscheme-id|i=s' => \$screenscheme_id,
+    'screenscheme-name|s=s' => \$screenscheme_name,
     'help|h!' => \&$handler_help,
 );
 
@@ -67,8 +77,16 @@ use File::Slurp;
 my $html_text;
 
 if (not $screenscheme_id) {
-    die "Must specify the screenscheme id";
+    my $screenschemes_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-screenschemes"));
+
+    map {
+        $screenscheme_id = $_->{id} if $screenscheme_name eq $_->{name};
+    } @$screenschemes_json;
+
+    die "Can't get screenscheme id from name: $screenscheme_name" unless $screenscheme_id;
 }
+
 $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/ConfigureFieldScreenScheme.jspa?id=${screenscheme_id}");
 
 my $dom = Mojo::DOM->new->parse($html_text);

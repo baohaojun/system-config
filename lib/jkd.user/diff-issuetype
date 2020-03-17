@@ -1,0 +1,136 @@
+#!/usr/bin/env perl
+use strict;
+use String::ShellQuote;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# @:j1='$ENV{scm_jira_url}' @:j2 i:issuetype-name
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $issuetype_name = "";
+my $j1 = $ENV{scm_jira_url};
+my $j2 = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--j1=J1';
+    if (length('--j1=J1') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--j2=J2';
+    if (length('--j2=J2') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'issuetype-name|i=s' => \$issuetype_name,
+    'j1=s' => \$j1,
+    'j2=s' => \$j2,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+if (not ${j2}) {
+    die "Must specify --j2";
+}
+
+if (not $issuetype_name) {
+    die "Must specify issuetype_name";
+}
+
+runx(
+    "mkdir", "-p", "$ENV{HOME}/src/jenkins-tasks/jira/$j1/issuetypes",
+    "$ENV{HOME}/src/jenkins-tasks/jira/$j2/issuetypes"
+);
+
+my @issuetype_dumps;
+
+my %json_data;
+my %xml_data;
+for my $j ($j1, $j2) {
+    $ENV{scm_jira_url} = $j;
+    my @command = (
+        "cached-run", "-e", "scm_jira_url",
+        "jkd", "-j", "$j", "dump-issuetype", "-i", "$issuetype_name"
+    );
+
+    my $issuetype_json_file = "$ENV{HOME}/src/jenkins-tasks/jira/$j/issuetypes/$issuetype_name.json";
+    push @issuetype_dumps, $issuetype_json_file;
+
+    my $command = sprintf("%s | %s > %s",
+                          join(" ", shell_quote(@command)),
+                          join(" ", shell_quote("jq", 'del(..|.id?)')),
+                          join(" ", shell_quote($issuetype_json_file))
+                      );
+    run($command);
+
+    my $issuetype_json =
+        $json->decode(scalar capturex("cat", $issuetype_json_file));
+
+    my $workflow_xml = $issuetype_json->{workflow_xml};
+    (my $workflow_xml_file = $issuetype_json_file) =~ s,\.json$,.workflow.xml,;
+
+    use File::Slurp;
+    write_file($workflow_xml_file, encode_utf8 $workflow_xml);
+
+    $json_data{$j} = $issuetype_json_file;
+    $xml_data{$j} = $workflow_xml_file;
+}
+
+run("cd $ENV{HOME}/src/jenkins-tasks; save.-to-git");
+
+runx("misc", "diff-json", $json_data{$j1}, $json_data{$j2});
+runx("meld", $xml_data{$j1}, $xml_data{$j2});

@@ -2,5 +2,21 @@
 my-adb start-activity com.android.settings/com.android.settings.DevelopmentSettings
 sleep 1
 Wrench 'adb_top_window()'
-adb-tap 905 1561 adb-tap 898 1410
-adb-key BACK
+onmyoji -o eval "$(
+cat <<'EOFac79843c1a25' | . .replace-%% --
+# {%sh-mode%}
+if fs misc-show-pointer-loc-on; then
+    jump-from-to misc-show-pointer-loc-on misc-show-pointer-loc-off \
+                 debug-Wrench Wrench-tap-xys --x-tap-loc right --px -20 misc-show-pointer-loc-off
+    jump-from-to misc-show-touch-ops-on misc-show-touch-ops-off \
+                 debug-Wrench Wrench-tap-xys --x-tap-loc right --px -20 misc-show-touch-ops-off
+else
+    jump-from-to misc-show-pointer-loc-off misc-show-pointer-loc-on \
+                 debug-Wrench Wrench-tap-xys --x-tap-loc right --px -20 misc-show-pointer-loc-off
+    jump-from-to misc-show-touch-ops-off misc-show-touch-ops-on \
+                 debug-Wrench Wrench-tap-xys --x-tap-loc right --px -20 misc-show-touch-ops-off
+fi
+# {%/sh-mode%}
+EOFac79843c1a25
+
+)"
