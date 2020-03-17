@@ -2,7 +2,7 @@
 
 set -x
 exec &> ~/.cache/watch-my-window.log
-exec >> ~/today/watch-my-window.log
+exec >> ~/.cache/watch-my-window.permanent.log
 
 if ! screen-is-on; then
     echo "$(date): screen-locked"
