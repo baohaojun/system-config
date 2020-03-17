@@ -158,7 +158,6 @@ $dom->find('span[class="field-name"]')->each
             } $_->parent->parent->find('a[href^="/secure/admin/ConfigureFieldScreen.jspa"]')->each;
 
             $fieldconfig{$field_name}{screens} = \@screens;
-
         }
     );
 

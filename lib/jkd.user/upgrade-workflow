@@ -28,16 +28,21 @@ my $json = JSON->new->utf8->canonical->pretty;
 - workflow_name :: 在用的是哪个 workflow（如不指定，则使用 issuetype 自动计算）
 - workflow_scheme :: 在哪个 workflow_scheme 中配置（如不指定，则使用 issuetype 自动计算）
 - workflow_xml_file :: workflow xml 保存的位置（也可以使用下面的 xml-str 参数，直接传入 xml 文本数据）
-- xml-str :: workflow xml 数据
-- xml-using-names :: xml 中在使用的是各个字段、状态的名字，而不是数字 id。
-
-
+- xml-str :: workflow xml 数据 （也可不指定，则使用下面的 from-jira-url 和 issuetype 计算）
+- from-jira-url （如果没有指定 xml 数据，则从本参数和 issuetype 参数计算得到 xml 数据）
+- xml-using-names :: xml 中在使用的是各个字段、状态的名字，而不是数字 id，默认为真
 # {%/org-mode%}
 EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# w:workflow-name f:workflow-xml-file x:xml-str i:issuetype-name s:workflow-scheme @xml-using-names=1
+# w:workflow-name \
+# f:workflow-xml-file \
+# x:xml-str \
+# i:issuetype-name \
+# s:workflow-scheme \
+# @xml-using-names=1 \
+# @:from-jira-url
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -46,6 +51,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $from_jira_url = "";
 my $issuetype_name = "";
 my $workflow_name = "";
 my $workflow_scheme = "";
@@ -55,87 +61,96 @@ my $xml_using_names = 1;
 
 my $handler_help = sub {
     print "$comment_doc";
-    print "\n\n选项和参数：\n";
-    printf "%6s", '-i, ';
-    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
-    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+print "\n\n选项和参数：\n";
+printf "%6s", '';
+printf "%-24s", '--from-jira-url=FROM-JIRA-URL';
+if (length('--from-jira-url=FROM-JIRA-URL') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '-w, ';
-    printf "%-24s", '--workflow-name=WORKFLOW-NAME';
-    if (length('--workflow-name=WORKFLOW-NAME') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-i, ';
+printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '-s, ';
-    printf "%-24s", '--workflow-scheme=WORKFLOW-SCHEME';
-    if (length('--workflow-scheme=WORKFLOW-SCHEME') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-w, ';
+printf "%-24s", '--workflow-name=WORKFLOW-NAME';
+if (length('--workflow-name=WORKFLOW-NAME') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '-f, ';
-    printf "%-24s", '--workflow-xml-file=WORKFLOW-XML-FILE';
-    if (length('--workflow-xml-file=WORKFLOW-XML-FILE') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-s, ';
+printf "%-24s", '--workflow-scheme=WORKFLOW-SCHEME';
+if (length('--workflow-scheme=WORKFLOW-SCHEME') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '-x, ';
-    printf "%-24s", '--xml-str=XML-STR';
-    if (length('--xml-str=XML-STR') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-f, ';
+printf "%-24s", '--workflow-xml-file=WORKFLOW-XML-FILE';
+if (length('--workflow-xml-file=WORKFLOW-XML-FILE') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '';
-    printf "%-24s", '--[no]xml-using-names';
-    if (length('--[no]xml-using-names') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '-x, ';
+printf "%-24s", '--xml-str=XML-STR';
+if (length('--xml-str=XML-STR') > 24 and length() > 0) {
     print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '';
+printf "%-24s", '--[no]xml-using-names';
+if (length('--[no]xml-using-names') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
-        $exit_value = shift @_;
-        print "@_\n";
+       $exit_value = shift @_;
+       print "@_\n";
     }
 
     exit($exit_value);
 };
 
 GetOptions (
-    'issuetype-name|i=s' => \$issuetype_name,
-    'workflow-name|w=s' => \$workflow_name,
-    'workflow-scheme|s=s' => \$workflow_scheme,
-    'workflow-xml-file|f=s' => \$workflow_xml_file,
-    'xml-str|x=s' => \$xml_str,
-    'xml-using-names!' => \$xml_using_names,
-    'help|h!' => \&$handler_help,
-);
+'from-jira-url=s' => \$from_jira_url,
+'issuetype-name|i=s' => \$issuetype_name,
+'workflow-name|w=s' => \$workflow_name,
+'workflow-scheme|s=s' => \$workflow_scheme,
+'workflow-xml-file|f=s' => \$workflow_xml_file,
+'xml-str|x=s' => \$xml_str,
+'xml-using-names!' => \$xml_using_names,
+'help|h!' => \&$handler_help,
+    );
 
 
 ## end generated code
 
-if (not $workflow_name) {
+if (not $workflow_name or not $workflow_scheme) {
     my $workflow_scheme_json =
         $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-workflowschemes"));
 
     map {
         my $wf = $_->{issuetypes_workflow}{$issuetype_name};
         if ($wf) {
-            $workflow_name = $wf;
-            $workflow_scheme = $_->{name};
+            $workflow_name = $workflow_name || $wf;
+            $workflow_scheme = $workflow_scheme || $_->{name};
         }
     } @$workflow_scheme_json;
 }
@@ -150,7 +165,7 @@ use feature 'signatures';
 sub switch_workflow($old_workflow, $new_workflow) {
     # step 1: workflow 当前在用的话，要将它卸载
     my $wf_schemes =
-        $json->decode(scalar capturex("jkd", "export-workflowschemes"));
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-workflowschemes"));
 
     for my $scheme (@$wf_schemes) {
         my %it_wf_map = %{$scheme->{issuetypes_workflow}};
@@ -176,7 +191,17 @@ if ($workflow_exists) {
 }
 
 if (not $xml_str) {
-    $xml_str = read_file($workflow_xml_file);
+    if ($workflow_xml_file) {
+        $xml_str = decode_utf8 read_file($workflow_xml_file);
+    } elsif ($from_jira_url) {
+        say STDERR "get xml from $from_jira_url";
+        $xml_str =
+            decode_utf8(scalar capturex("debug-run", "cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "export-workflow-as-xml", "-i", "$issuetype_name", "-c"));
+        say STDERR "got xml from $from_jira_url";
+    } else {
+        die "Can't get $xml_str"
+    }
+
 }
 
 if ($xml_using_names) {
@@ -199,7 +224,7 @@ sub attach_workflow() {
     if ($workflow_scheme and $issuetype_name) {
         # step 1: workflow 当前在用的话，要将它卸载
         my $wf_schemes =
-            $json->decode(scalar capturex("jkd", "export-workflowschemes"));
+            $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-workflowschemes"));
 
         for my $scheme (@$wf_schemes) {
             if ($scheme->{name} eq $workflow_scheme) {

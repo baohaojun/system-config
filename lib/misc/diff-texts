@@ -60,4 +60,5 @@ fi
 echo "$1" | "${pipe_filter[@]}" > ~/tmp/diff-texts.$$.1
 echo "$2" | "${pipe_filter[@]}" > ~/tmp/diff-texts.$$.2
 
-meld ~/tmp/diff-texts.$$.?
+diff -c ~/tmp/diff-texts.$$.1 ~/tmp/diff-texts.$$.2 | less
+meld ~/tmp/diff-texts.$$.1 ~/tmp/diff-texts.$$.2 || true

@@ -3,11 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -26,6 +30,8 @@ my $json = JSON->new->utf8(0);
 - print the scheme that the issuetype belongs to
 * action = add-to-scheme
 - add the issue to the scheme
+* action = edit-fieldconfig
+* action = get-workflow
 # {%/org-mode%}
 EOFc83131117f09
 
@@ -36,7 +42,9 @@ EOFc83131117f09
 # d:issuetype-description='""' \
 # t:issuetype-type='"standard"' '?"one of standard, subtask"' \
  # s:issuetypescheme-name \
- # p:associated-projects
+# p:associated-projects \
+# @:field-name  \
+# @:field-json
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -47,6 +55,8 @@ Getopt::Long::Configure("posix_default");
 
 my $action = "";
 my $associated_projects = "";
+my $field_json = "";
+my $field_name = "";
 my $issuetype_description = "";
 my $issuetype_name = "";
 my $issuetype_type = "standard";
@@ -66,6 +76,22 @@ my $handler_help = sub {
     printf "%6s", '-p, ';
     printf "%-24s", '--associated-projects=ASSOCIATED-PROJECTS';
     if (length('--associated-projects=ASSOCIATED-PROJECTS') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--field-json=FIELD-JSON';
+    if (length('--field-json=FIELD-JSON') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--field-name=FIELD-NAME';
+    if (length('--field-name=FIELD-NAME') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -116,6 +142,8 @@ my $handler_help = sub {
 GetOptions (
     'action|a=s' => \$action,
     'associated-projects|p=s' => \$associated_projects,
+    'field-json=s' => \$field_json,
+    'field-name=s' => \$field_name,
     'issuetype-description|d=s' => \$issuetype_description,
     'issuetype-name|n=s' => \$issuetype_name,
     'issuetype-type|t=s' => \$issuetype_type,
@@ -139,7 +167,7 @@ grep {
 if ($action eq "print") {
     map {
         if ($_->{name} eq $issuetype_name) {
-            print JSON->new->utf8(0)->pretty(1)->encode($_);
+            print decode_utf8($json->encode($_));
             exit
         }
     } @$issuetypes_json;
@@ -151,7 +179,7 @@ if ($action eq "print") {
         type => $issuetype_type,
     );
 
-    runx("jkd", "rest", "issuetype", "--", "-X", "POST", "-H", 'Content-Type: application/json', "--data", decode_utf8(JSON->new->utf8(0)->pretty(1)->encode(\%issuetype)));
+    runx("jkd", "rest", "issuetype", "--", "-X", "POST", "-H", 'Content-Type: application/json', "--data", decode_utf8($json->encode(\%issuetype)));
 } elsif ($action eq "get-scheme") {
 
 } elsif ($action eq "add-to-scheme") {
@@ -185,5 +213,98 @@ if ($action eq "print") {
 
     runx("debug-run",
         "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/ConfigureOptionSchemes.jspa?$selectedOptions", "-X", "POST",
-        map { ('--data-urlencode', decode_utf8($_)) } @params_values);
+        map { ('--data-urlencode', $_) } @params_values);
+} elsif ($action eq "get-workflow") {
+    my $workflow_schemes_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-workflowschemes"));
+
+    my @workflows;
+
+    map {
+        my $workflow = $_->{issuetypes_workflow}{$issuetype_name};
+        push @workflows, "$workflow" if $workflow;
+    } @$workflow_schemes_json;
+
+    die ("Not exactly 1 workflow for issuetype: $issuetype_name " . join(" ", @workflows)) unless @workflows == 1;
+
+    print $workflows[0];
+} elsif ($action eq "get-project") {
+    my $isss_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-issuetypeschemes"));
+    my @projects;
+
+    map {
+        my $iss = $isss_json->{$_};
+        if (grep {$issuetype_name eq $_} @{$iss->{issuetypes}}) {
+            push @projects, map {$_->{key}} @{$iss->{projects}};
+        }
+    } keys %$isss_json;
+
+    die ("Not exactly 1 project in $ENV{scm_jira_url} for $issuetype_name: " . join(" ", @projects)) unless @projects == 1;
+    print $projects[0];
+} elsif ($action eq "get-fieldconfig" || $action eq "get-fieldconfig-id") {
+    my $project =
+        decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-project", "-n", "$issuetype_name"));
+
+    my $fcss_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigschemes"));
+    my $fcs_id;
+    map {
+        my $fcs = $fcss_json->{$_};
+        if (grep {$_->{key} eq $project} @{$fcs->{projects}}) {
+            $fcs_id = $fcs->{id};
+        }
+    } keys %$fcss_json;
+
+    die "Can't find fieldconfig scheme for $project" unless $fcs_id;
+
+    my $fcs_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-fieldconfigscheme", "-i", "${fcs_id}"));
+
+    my $fc = $fcs_json->{$issuetype_name}{name};
+    my $fc_id = $fcs_json->{$issuetype_name}{id};
+    die "can't find fieldconfig for $issuetype_name" unless $fc;
+    if ($action eq "get-fieldconfig") {
+        print $fc;
+    } else {
+        print $fc_id;
+    }
+} elsif ($action eq "update-field") {
+    my $fc =
+        decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-fieldconfig", "-n", "$issuetype_name"));
+    my $fc_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-fieldconfig", "-n", "$fc"));
+
+    $field_json = $json->decode(encode_utf8 $field_json);
+    my $field_dump =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-field", "-f", $field_name));
+
+    (my $field_json_description = $field_json->{description}) =~ s,\r\n,,g;
+    (my $field_dump_description = $field_dump->{description}) =~ s,\r\n,,g;
+    (my $fc_field_description = $fc_json->{$field_name}{description}) =~ s,\r\n,,g;
+
+    if ($field_dump_description ne $field_json_description) {
+        say STDERR "Need update field itself: " .  decode_utf8($json->encode($field_dump_description));
+        runx("jkd", "field", "-a", "update", "-j", decode_utf8($json->encode($field_json)));
+    }
+
+    my $fc_id =
+        decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-fieldconfig-id", "-n", "$issuetype_name"));
+
+    if ($fc_field_description ne $field_json_description and $fc_field_description) {
+        say STDERR "Need update field in fieldconfig: " . decode_utf8($json->encode($fc_field_description));
+        my @params_values = (
+            "description=",
+            "position=" . $fc_json->{$field_name}{position},
+            "id=${fc_id}",
+            "Update=Update",
+        );
+
+        runx(
+            "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/EditFieldLayoutItem.jspa", "-X", "POST",
+            map { ('--data-urlencode', $_) } @params_values
+        );
+    }
+} else {
+    die "Can't work with action: $action, don't know how";
 }

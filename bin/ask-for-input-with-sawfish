@@ -108,11 +108,20 @@ cat <<'EOF0f633b1d530b' | . .replace-%% --
 # {%perl-mode%}
 push @lines, $_;
 END {
+    use Encode;
     my $max = 30;
     if ($. > $max) {
         @lines = @lines[0 .. ${max}/2, ($. - ${max}/2) .. $.];
         $lines[$max/2] = sprintf("... (too many of lines, %d omitted) ...\n", $. - $max);
     }
+
+    map {
+        $_ = decode_utf8 $_;
+        if (length($_) > 80) {
+            $_ = substr($_, 0, 40) . "..." . substr($_, length($_) - 40)
+        }
+        $_ = encode_utf8 $_;
+    } @lines;
     print @lines;
 }
 # {%/perl-mode%}
