@@ -114,6 +114,12 @@ if (not $jkd_password) {
     &$handler_help(1, "Must specify the jira password")
 }
 
+if ($jkd_jiraurl =~ m/^\w+$/) {
+    my $new_jkd_jiraurl = $ENV{"scm_jira_${jkd_jiraurl}_url"};
+    die "Can't find jira url scm_jira_${jkd_jiraurl}_url from env" unless $new_jkd_jiraurl;
+    $jkd_jiraurl = $new_jkd_jiraurl;
+}
+
 $ENV{scm_jira_url} = $jkd_jiraurl;
 $ENV{scm_jira_user} = $jkd_username; # for lib scripts
 $ENV{scm_jira_password} = $jkd_password;
@@ -145,6 +151,7 @@ my $jira = JIRA::REST->new({
     username => "$jkd_username",
     password => "$jkd_password"
                          });
+
 use v5.10;
 use HTTP::Request::Common;
 use LWP::UserAgent;
@@ -360,7 +367,7 @@ sub jkd_q(@) {
     use URI::Escape;
     if ($jql eq $unset_jql) {
         if (@ARGV) {
-            $jql = uri_escape(join(" ", @ARGV));
+            $jql = uri_escape_utf8(join(" ", @ARGV));
         } else {
             die "Must specify jql"
         }
@@ -368,13 +375,13 @@ sub jkd_q(@) {
         if (@ARGV) {
             die "Extra args: ", join(" ", @ARGV);
         } else {
-            $jql = uri_escape($jql);
+            $jql = uri_escape_utf8($jql);
         }
     }
 
     my $jql_content = get("rest/api/2/search?jql=$jql")->content;
     if ($print_all) {
-        print "${jql_content}";
+        print decode_utf8 "${jql_content}";
         exit 0;
     }
 
