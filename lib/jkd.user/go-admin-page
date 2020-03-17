@@ -270,11 +270,12 @@ EOFe9576f8668e0
                      )
 
         if test "${edit_workflow}" = true; then
-            viewMode=draft
+            path="secure/admin/workflows/EditWorkflowDispatcher.jspa?wfName=$(uri-escape ${workflow_name})"
         else
             viewMode=live
+            path="secure/admin/workflows/ViewWorkflowSteps.jspa?workflowMode=${viewMode}&workflowName=$(uri-escape ${workflow_name})"
         fi
-        path="secure/admin/workflows/ViewWorkflowSteps.jspa?workflowMode=${viewMode}&workflowName=$(uri-escape ${workflow_name})"
+
     fi
 fi
 
