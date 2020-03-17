@@ -313,7 +313,7 @@ if ($action eq "print") {
     my $fc_id =
         decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-fieldconfig-id", "-n", "$issuetype_name"));
 
-    if ($fc_field_description ne $field_json_description and $fc_field_description) {
+    if ($fc_field_description ne $field_json_description and defined $fc_field_description) {
         say STDERR "Need update field in fieldconfig: " . decode_utf8($json->encode($fc_field_description));
         my @params_values = (
             "description=",

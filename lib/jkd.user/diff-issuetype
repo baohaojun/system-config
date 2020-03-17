@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 use strict;
+use File::Slurp;
 use String::ShellQuote;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
@@ -23,7 +24,8 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# @:j1='$ENV{scm_jira_url}' @:j2 i:issuetype-name
+# @:j1='$ENV{scm_jira_url}' @:j2 i:issuetype-name \
+# @fix-fields
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -32,6 +34,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $fix_fields = 0;
 my $issuetype_name = "";
 my $j1 = $ENV{scm_jira_url};
 my $j2 = "";
@@ -39,6 +42,14 @@ my $j2 = "";
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]fix-fields';
+    if (length('--[no]fix-fields') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-i, ';
     printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
     if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
@@ -74,6 +85,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'fix-fields!' => \$fix_fields,
     'issuetype-name|i=s' => \$issuetype_name,
     'j1=s' => \$j1,
     'j2=s' => \$j2,
@@ -123,7 +135,6 @@ for my $j ($j1, $j2) {
     my $workflow_xml = $issuetype_json->{workflow_xml};
     (my $workflow_xml_file = $issuetype_json_file) =~ s,\.json$,.workflow.xml,;
 
-    use File::Slurp;
     write_file($workflow_xml_file, encode_utf8 $workflow_xml);
 
     $json_data{$j} = $issuetype_json_file;
@@ -132,5 +143,52 @@ for my $j ($j1, $j2) {
 
 run("cd $ENV{HOME}/src/jenkins-tasks; save.-to-git");
 
-runx("misc", "diff-json", $json_data{$j1}, $json_data{$j2});
-runx("meld", $xml_data{$j1}, $xml_data{$j2});
+my $json_1 =
+    $json->decode(scalar read_file($json_data{$j1}));
+my $json_2 =
+    $json->decode(scalar read_file($json_data{$j2}));
+if ($fix_fields) {
+    my %fieldconfig1 = %{$json_1->{fieldconfig_json}};
+    my %fieldconfig2 = %{$json_2->{fieldconfig_json}};
+
+    for my $field1 (keys %fieldconfig1) {
+        my $desc1 = $fieldconfig1{$field1}{description};
+        my $desc2 = $fieldconfig2{$field1}{description};
+
+        if ($desc1 ne $desc2) {
+            say STDERR "Working with $field1";
+            my $field1_dump =
+                $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$j1", "dump-field", "-f", $field1));
+            my $field2_dump =
+                $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$j2", "dump-field", "-f", $field1));
+
+            my $desc1_dump = $field1_dump->{description};
+            my $desc2_dump = $field2_dump->{description};
+
+            my %desc_map = (
+                fc1 => $desc1,
+                fc2 => $desc2,
+                field1 => $desc1_dump,
+                field2 => $desc2_dump,
+            );
+
+            say STDERR decode_utf8($json->encode(\%desc_map));
+
+            my $ans =
+                decode_utf8(scalar capturex("select-args", "-p", "$field1，你想使用谁的 description？", sort keys %desc_map));
+
+            my $field_json = $field1_dump;
+            if (defined $desc_map{$ans}) {
+                $field_json->{description} = $desc_map{$ans};
+            } else {
+                $field_json->{description} = $ans;
+            }
+
+            runx("jkd", "-j", "$j1", "issuetype", "-n", "$issuetype_name", "-a", "update-field", "--field-name", "$field1", "--field-json", decode_utf8($json->encode($field_json)));
+            runx("jkd", "-j", "$j2", "issuetype", "-n", "$issuetype_name", "-a", "update-field", "--field-name", "$field1", "--field-json", decode_utf8($json->encode($field_json)));
+        }
+    }
+} else {
+    runx("misc", "diff-json", $json_data{$j1}, $json_data{$j2});
+    runx("meld", $xml_data{$j1}, $xml_data{$j2});
+}
