@@ -160,6 +160,13 @@ if (not $to_jira_json->{fieldconfigscheme}) {
     die sprintf("can't work with different fieldconfigscheme: %s v.s. %s", $to_jira_json->{fieldconfigscheme}, $from_fieldconfigscheme);
 }
 
+if (not $to_jira_json->{fieldconfig}) {
+    say STDERR "Need to add fieldconfig";
+    runx(
+        "jkd", "fieldconfig", "-a", "add-to-scheme", "-s", "$from_fieldconfigscheme", "-n", "$from_frieldconfig", "-i", "$from_issuetype"
+    );
+}
+
 my $from_fields_list =
     $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$from_jira_url", "rest", "field"));
 my %from_fields_name_id;

@@ -152,6 +152,25 @@ if ($fix_fields) {
     my %fieldconfig2 = %{$json_2->{fieldconfig_json}};
 
     for my $field1 (keys %fieldconfig1) {
+        my $required1 = $fieldconfig1{$field1}{required};
+        my $required2 = $fieldconfig2{$field1}{required};
+
+
+        if ($required1 != $required2) {
+            my $ans =
+                decode_utf8(scalar capturex("select-args", "-p", "$field1，optional or required？", "optional", "required"));
+
+            if ($required1 && $ans eq "optional" or not $required1 and $ans eq "required") {
+                say STDERR "switch it for $j1 $field1";
+                runx("jkd", "-j", "$j1", "fieldconfig", "-a", "$ans", "-i", "${issuetype_name}", ${field1});
+            }
+
+            if ($required2 && $ans eq "optional" or not $required2 and $ans eq "required") {
+                say STDERR "switch it for $j2 $field1";
+                runx("jkd", "-j", "$j2", "fieldconfig", "-a", "$ans", "-i", "${issuetype_name}", ${field1});
+            }
+        }
+
         my $desc1 = $fieldconfig1{$field1}{description};
         my $desc2 = $fieldconfig2{$field1}{description};
 
@@ -187,6 +206,7 @@ if ($fix_fields) {
             runx("jkd", "-j", "$j1", "issuetype", "-n", "$issuetype_name", "-a", "update-field", "--field-name", "$field1", "--field-json", decode_utf8($json->encode($field_json)));
             runx("jkd", "-j", "$j2", "issuetype", "-n", "$issuetype_name", "-a", "update-field", "--field-name", "$field1", "--field-json", decode_utf8($json->encode($field_json)));
         }
+
     }
 } else {
     runx("misc", "diff-json", $json_data{$j1}, $json_data{$j2});

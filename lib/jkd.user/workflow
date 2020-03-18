@@ -200,7 +200,7 @@ sub id2name($$) {
         } else {
             $extra_msg = "Please remove extra ones!"
         }
-        die "Can't find exactly 1 ${datatype} name for $id: '@matched_names' ($extra_msg)" unless $keep_running;
+        die "Can't find exactly 1 ${datatype} name in $ENV{scm_jira_url} for $id: '@matched_names' ($extra_msg)" unless $keep_running;
     }
 
     return $matched_names[0];

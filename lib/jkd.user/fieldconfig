@@ -164,8 +164,13 @@ if ($action eq "create") {
         $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigs"));
 
     if (not $fieldconfig_name) {
-        $fieldconfig_name =
-            decode_utf8(scalar capturex("select-args", "-p", "请输入你想操作的 fieldconfig 的名字", "-o", "--", map {$_->{name}} @$field_configs_json));
+        if ($issuetype) {
+            $fieldconfig_name =
+                decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-fieldconfig", "-n", "$issuetype"));
+        } else {
+            $fieldconfig_name =
+                decode_utf8(scalar capturex("select-args", "-p", "请输入你想操作的 fieldconfig 的名字", "-o", "--", map {$_->{name}} @$field_configs_json));
+        }
     }
 
     my $field_config_id = (grep { $_ } map {$_->{name} eq $fieldconfig_name ?  $_->{id} : 0} @$field_configs_json)[0];
