@@ -101,7 +101,8 @@ if (not $field_name) {
     die "You must specify the field name!"
 }
 
-my $json_issue = decode_json(qx(jkd rest 'rest/api/2/issue/${issue}/?expand=changelog'));
+my $json_issue =
+    $json->decode(scalar capture("jkd rest 'rest/api/2/issue/${issue}/?expand=changelog'"));
 
 sub no_spaces_equal($$) {
     my @pair = @_;
@@ -171,12 +172,14 @@ my $build_msg = "${build_msg_prefix}: $ENV{BUILD_URL} \@$ENV{NODE_NAME}";
 say STDERR "add comment: $build_msg";
 system("jkd", "comment", "-i", "$issue", "-c", "${build_msg}");
 
-my $new_changelog = qx(jkd get 'rest/api/2/issue/${issue}/?expand=changelog');
+my $new_changelog = qx(jkd rest 'rest/api/2/issue/${issue}/?expand=changelog');
 if (not $new_changelog) {
     die "Can't get change log!";
+} else {
+    $new_changelog = decode_utf8 $new_changelog;
 }
 
-$json_issue = decode_json($new_changelog);
+$json_issue = decode_json(encode_utf8 $new_changelog);
 
 say STDERR decode_utf8($json->encode($json_issue)) if $debug;
 
