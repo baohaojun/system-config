@@ -721,7 +721,7 @@ sub jkd_e(@) {
             });
     } else {
         my $issue_fields_obj = decode_json get("rest/api/2/issue/${issue_to_edit}?expand=names")->content;
-        my $fields_json_obj = decode_json $fields_json;
+        my $fields_json_obj = decode_json(encode_utf8($fields_json));
         update_names_with_fields($fields_json_obj, $issue_fields_obj->{names});
         %edited_fields = %$fields_json_obj;
     }
@@ -992,7 +992,7 @@ sub jkd_c(@) { # create issue
     if ($fields_json) {
         $fields_json = capturex("jkd", "customfield-json-names2ids", "-n", ("$fields_json"), "-f", decode_utf8(to_json($issue_type_json->{fields})));
 
-        my $required_fields = decode_json $fields_json;
+        my $required_fields = decode_json (encode_utf8 $fields_json);
         %required_fields = %$required_fields;
         $required_fields{project} = {
             key => $project,
@@ -1485,10 +1485,10 @@ sub jkd_tri(@) {
             print $response->content;
             exit;
         }
-        $transition_json_obj = decode_json $response->content;
+        $transition_json_obj = decode_json (encode_utf8 $response->content);
     }
 
-    my $fields_json_obj = decode_json $fields_json;
+    my $fields_json_obj = decode_json (encode_utf8 $fields_json);
     my $transition_name = $transition;
 
     unless ($transition =~ m/^\d+$/) {
