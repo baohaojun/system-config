@@ -388,6 +388,14 @@ if ($action eq "print") {
             runx("jkd", "-j", "$j2", "issuetype", "-n", "$issuetype_name", "-a", "update-field", "--field-name", "$field1", "--field-json", decode_utf8($json->encode($field_json)));
         }
     }
+} elsif ($action eq "edit-fieldconfig") {
+    my $field_config_id =
+        decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-fieldconfig-id", "-n", "$issuetype_name"));
+
+    runx(
+        "of", "$ENV{scm_jira_url}secure/admin/ConfigureFieldLayout!default.jspa?id=${field_config_id}"
+    );
+
 } else {
     die "Can't work with action: $action, don't know how";
 }

@@ -21,6 +21,8 @@ my $json = JSON->new->utf8->canonical->pretty;
 - import (create) the field
 * action = sync-to
 将指定的字段的配置（json）同步到其他环境
+* action = screens
+print the screens that this field is attached
 
 * 参数说明
 
@@ -30,7 +32,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# a:action f:field-name j:json-data i:issuetype
+# a:action f:field-name j:json-data i:issuetype @:j2
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -42,6 +44,7 @@ Getopt::Long::Configure("posix_default");
 my $action = "";
 my $field_name = "";
 my $issuetype = "";
+my $j2 = "";
 my $json_data = "";
 
 my $handler_help = sub {
@@ -71,6 +74,14 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--j2=J2';
+    if (length('--j2=J2') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-j, ';
     printf "%-24s", '--json-data=JSON-DATA';
     if (length('--json-data=JSON-DATA') > 24 and length() > 0) {
@@ -93,6 +104,7 @@ GetOptions (
     'action|a=s' => \$action,
     'field-name|f=s' => \$field_name,
     'issuetype|i=s' => \$issuetype,
+    'j2=s' => \$j2,
     'json-data|j=s' => \$json_data,
     'help|h!' => \&$handler_help,
 );
@@ -103,19 +115,19 @@ GetOptions (
 
 my $fields_json = $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest field"));
 
+my $field_id;
+map {
+    if ($_->{name} eq "$field_name") {
+        ($field_id = $_->{id}) =~ s,.*_,,;
+    }
+} @$fields_json;
+
 if ($action eq "update") {
     $json_data = $json->decode(encode_utf8 $json_data);
     if (not $field_name) {
         $field_name = $json_data->{name};
         die "Can't find field name" unless $field_name;
     }
-
-    my $field_id;
-    map {
-        if ($_->{name} eq "$field_name") {
-            ($field_id = $_->{id}) =~ s,.*_,,;
-        }
-    } @$fields_json;
 
     my $searcher = $json_data->{search_template} || "-1";
     my @params_values = (
@@ -158,4 +170,80 @@ if ($action eq "update") {
 
         }
     }
+} elsif ($action eq "screens") {
+    my $screens_html =
+        decode_utf8(scalar capturex("debug-run", "cached-run", "-e", "scm_jira_url",
+                                    "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AssociatedScreensForCustomField.jspa?customFieldId=customfield_${field_id}"));
+
+
+    use Mojo::DOM;
+    my $dom = Mojo::DOM->new->parse($screens_html);
+
+    my @screens;
+    # say STDERR "$screens_html";
+    $dom->find('a[href^="ConfigureFieldScreen.jspa"]')->each(
+        sub {
+            say STDERR "$_";
+            push @screens, $_->text;
+        }
+    );
+
+    print decode_utf8($json->encode(\@screens));
+
+} elsif ($action eq "change-type") {
+    my $type = $ARGV[0];
+    if (not $type) {
+        die "Must specify the type or j2 to get the type" if not $j2;
+
+        my $field_dump_j2 =
+            $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$j2", "dump-field", "-f", "$field_name"));
+        $type = $field_dump_j2->{schema}{custom};
+        die "Can't get type from $j2" unless $type;
+    }
+
+    my $screens = $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "field", "-a", "screens", "-f", "$field_name"));
+    my @screens = @$screens;
+    my %screen_jsons;
+
+    for (@screens) {
+        $screen_jsons{$_} =
+            $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd",
+                                          "dump-screen", "-s", $_));
+    }
+
+    my $field_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-field", "-f", "${field_name}"));
+
+    $field_json->{name} = "$field_name.type.changed.to.${type}";
+    runx(
+        "jkd", "field", "-a", "update", "-f", "$field_name", "-j", decode_utf8($json->encode($field_json))
+    );
+
+    my $field_types_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd",
+                                      "webcurl", "$ENV{scm_jira_url}rest/globalconfig/1/customfieldtypes"));
+
+    my $field_search_key;
+    map {
+        $field_search_key = $_->{searchers}[0] if $type eq $_->{key};
+    } @{$field_types_json->{types}};
+
+    $field_json->{name} = $field_name;
+    $field_json->{schema}{custom} = $type;
+    $field_json->{search_template} = $field_search_key;
+
+    my $new_field_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "import-field", "-j", decode_utf8($json->encode($field_json))));
+
+    for (@screens) {
+        runx(
+            "jkd", "screen", "-a", "add-fields", "-j", decode_utf8($json->encode($screen_jsons{$_})), "--after-field", $field_json->{id}, $new_field_json->{id}
+        );
+
+        runx(
+            "jkd", "screen", "-a", "delete-fields", "-j", decode_utf8($json->encode($screen_jsons{$_})), $field_json->{id}
+        );
+    }
+
+    say STDERR "new search key is $field_search_key";
 }

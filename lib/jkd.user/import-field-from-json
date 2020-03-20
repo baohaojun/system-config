@@ -96,6 +96,5 @@ if (grep {$_->{name} eq $field_name} @$fields_json) {
     );
 
     my $new_field_json = JSON->new->utf8(0)->pretty(1)->encode(\%new_field_data);
-    my $new_field_result = $json->decode(scalar capturex("jkd", "post", "-a", "field", "--json", decode_utf8($new_field_json)));
-
+    runx("jkd", "post", "-a", "field", "--json", decode_utf8($new_field_json))
 }

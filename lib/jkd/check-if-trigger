@@ -1,8 +1,17 @@
 #!/usr/bin/env perl
 use strict;
-use v5.10; # for say
+use v5.10.1; # for say and switch
 use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P i:issue f:field-name='"status"' v:field-value @debug \
@@ -92,10 +101,7 @@ if (not $field_name) {
     die "You must specify the field name!"
 }
 
-$field_name = decode_utf8($field_name);
-$field_value = decode_utf8($field_value);
-
-my $json_issue = decode_json(qx(jkd get 'rest/api/2/issue/${issue}/?expand=changelog'));
+my $json_issue = decode_json(qx(jkd rest 'rest/api/2/issue/${issue}/?expand=changelog'));
 
 sub no_spaces_equal($$) {
     my @pair = @_;
@@ -110,11 +116,10 @@ if (@match_jsonpath_value) {
         use JSON::Path 'jpath_map';
 
         # All books in the store
-        my $jpath   = JSON::Path->new($key);
+        my $jpath = JSON::Path->new($key);
 
-
-        unless (no_spaces_equal(encode_utf8 $jpath->value($json_issue), $value)) {
-            say STDERR sprintf("{%s: %s} not equal to %s", $key, encode_utf8($jpath->value($json_issue)), $value) ;
+        unless (no_spaces_equal(decode_utf8($jpath->value($json_issue)), $value)) {
+            say STDERR sprintf("{%s: %s} not equal to %s", $key, $jpath->value($json_issue), $value) ;
             exit 42;
         }
     }
@@ -129,12 +134,12 @@ for my $changelog (reverse @{$json_issue->{changelog}{histories}}) {
             $item->{toString} eq ${field_value} ||
                 not ${field_value})
         ) {
-            say STDERR encode_utf8("we found field in changelog: ${field_name}: ${field_value}") if $debug;
+            say STDERR ("we found field in changelog: ${field_name}: ${field_value}") if $debug;
             $field_value = $item->{toString};
             $changelog_time = $changelog->{created};
             last check_changes;
         } else {
-            say STDERR encode_utf8(
+            say STDERR (
                 sprintf("field not matched (yet): wanted field (%s), found field (%s) : value (%s) ",
                         ${field_name},
                         $item->{field},
@@ -145,7 +150,7 @@ for my $changelog (reverse @{$json_issue->{changelog}{histories}}) {
 }
 
 if ($field_value and not ${changelog_time}) {
-    say STDERR encode_utf8 "Should not build it, field not matched: ${field_value}";
+    say STDERR "Should not build it, field not matched: ${field_value}";
     exit 42;
 }
 
@@ -156,7 +161,7 @@ my $comments_pattern = qr(\Q${build_msg_prefix}\E);
 for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
     my $msg = $comment->{body};
     if ($msg =~ m,$comments_pattern,) {
-        say STDERR encode_utf8 "There is already a build building it: $msg, we are $ENV{BUILD_URL}";
+        say STDERR "There is already a build building it: $msg, we are $ENV{BUILD_URL}";
         exit 42;
     }
 }
@@ -173,11 +178,11 @@ if (not $new_changelog) {
 
 $json_issue = decode_json($new_changelog);
 
-say STDERR JSON->new->allow_nonref->utf8->pretty->encode($json_issue) if $debug;
+say STDERR decode_utf8($json->encode($json_issue)) if $debug;
 
 for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
     my $msg = $comment->{body};
-    say STDERR encode_utf8 "checking $msg against $comments_pattern" if $debug;
+    say STDERR "checking $msg against $comments_pattern" if $debug;
 
     if ($msg =~ m,$comments_pattern,) {
         if ($msg eq $build_msg) {

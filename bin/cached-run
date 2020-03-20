@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+saved_args=("$@")
+
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
 # {%org-mode%}
@@ -84,6 +86,9 @@ done
 ## end generated code
 
 export renew_caches
+if test "${FORCE_RENEW_CACHES}" = true; then
+    renew_caches=${FORCE_RENEW_CACHES}
+fi
 
 cache_dir=$(absp "${cache_dir}")
 mkdir -p "$cache_dir"
@@ -105,6 +110,10 @@ if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
         test "$(cat "${cmd_md5_file_prefix}.cmd")" = "$(get-env-and-cmd)"; then
     if test "${renew_caches}" != true; then
         cat "${cmd_md5_file_prefix}.out"
+        (
+            sleep 1
+            FORCE_RENEW_CACHES=true setsid nohup cached-run "${saved_args[@]}"
+        ) >/dev/null 2>&1&
         exit
     fi
 fi

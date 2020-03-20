@@ -4,7 +4,7 @@ sw mark -t kill-ring -s
 
 paste-it() {
     sw mark -t kill-ring -r
-    putclip "${clip}"
+    putclip -- "${clip}"
     xdotool-delayed-key "shift+Insert"
 }
 
