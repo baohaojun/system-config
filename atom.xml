@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Using Emacs as the Clipboard Manager]]></title>
+    <link href="http://baohaojun.github.io/blog/2020/03/02/0-Using-Emacs-as-the-Clipboard-Manager.html"/>
+    <updated>2020-03-02T19:57:34+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2020/03/02/0-Using-Emacs-as-the-Clipboard-Manager.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[七个习惯感悟（三）「双赢思维，知彼解己，统合综效」]]></title>
     <link href="http://baohaojun.github.io/blog/2019/12/20/7-habits-3.html"/>
     <updated>2019-12-20T06:27:25+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html"/>
     <updated>2018-07-06T18:01:02+08:00</updated>
     <id>http://baohaojun.github.io/blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[“后来的我们”观后瞎扯]]></title>
-    <link href="http://baohaojun.github.io/blog/2018/05/02/0-after-watching-a-movie.html"/>
-    <updated>2018-05-06T18:16:11+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2018/05/02/0-after-watching-a-movie.html</id>
   </entry>
 </feed>
