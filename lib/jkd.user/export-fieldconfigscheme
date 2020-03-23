@@ -3,11 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 use Mojo::DOM;
 
@@ -85,18 +89,18 @@ if ($html_file) {
 my $dom = Mojo::DOM->new->parse($html_text);
 
 if ($ENV{jkd_verbose}) {
-    say STDERR encode_utf8 $html_text;
+    say STDERR $html_text;
 }
 my %fieldconfigscheme;
 
 $dom->find('strong[data-scheme-field="issue-type"]')->each
     (
         sub {
-            my $scene_name = encode_utf8 $_->text;
+            my $scene_name = $_->text;
 
             my $fieldconfig_elem = $_->parent->parent->at('a[data-scheme-field="field-configuration"]');
             (my $fieldconfig_id = $fieldconfig_elem->attr('href')) =~ s,.*id=(\d+),$1,;
-            (my $fieldconfig_name) = encode_utf8 $fieldconfig_elem->text;
+            (my $fieldconfig_name) = $fieldconfig_elem->text;
 
             $fieldconfigscheme{$scene_name} = {
                 name => $fieldconfig_name,
@@ -105,4 +109,4 @@ $dom->find('strong[data-scheme-field="issue-type"]')->each
         }
     );
 
-print JSON->new->utf8(0)->pretty(1)->encode(\%fieldconfigscheme);
+print decode_utf8($json->encode(\%fieldconfigscheme));

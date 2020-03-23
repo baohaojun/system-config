@@ -3,11 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 use Mojo::DOM;
 
@@ -72,19 +76,19 @@ if ($html_file) {
 my $dom = Mojo::DOM->new->parse($html_text);
 
 if ($ENV{jkd_verbose}) {
-    say STDERR encode_utf8 $html_text;
+    say STDERR $html_text;
 }
 my @fieldconfigs;
 
 $dom->find('span[data-scheme-field="name"] a[href^="/secure/admin/ConfigureFieldLayout!default.jspa"]')->each
     (
         sub {
-            (my $fieldconfig_name = encode_utf8 $_->text) =~ s,(^\s+|\s+$),,g;
+            (my $fieldconfig_name = $_->text) =~ s,(^\s+|\s+$),,g;
             (my $fieldconfig_id = $_->attr('href')) =~ s,.*id=,,;
 
             my $fieldconfig_desciption = "";
             if (my $desc_elem = $_->parent->parent->at('div[data-scheme-field="description"]')) {
-                ($fieldconfig_desciption = encode_utf8 $desc_elem->text) =~ s,(^\s+|\s+$),,g;
+                ($fieldconfig_desciption = $desc_elem->text) =~ s,(^\s+|\s+$),,g;
             }
 
             push @fieldconfigs, {
@@ -95,4 +99,4 @@ $dom->find('span[data-scheme-field="name"] a[href^="/secure/admin/ConfigureField
         }
     );
 
-print JSON->new->utf8(0)->canonical->pretty(1)->encode(\@fieldconfigs);
+print decode_utf8($json->encode(\@fieldconfigs));

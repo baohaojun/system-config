@@ -3,11 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 use Mojo::DOM;
 
@@ -79,13 +83,13 @@ my %fieldconfig_scheme;
 $dom->find('strong[data-scheme-field="name"]')->each
     (
         sub {
-            my $fcs_name = encode_utf8 $_->text;
+            my $fcs_name = $_->text;
 
             my @projects = map {
                 (my $proj_key = $_->attr('href')) =~ s,.*/project-config/(.*?)/.*,$1,;
-                my $proj_name = encode_utf8 $_->text;
+                my $proj_name = $_->text;
                 {
-                    key => encode_utf8 $proj_key,
+                    key => $proj_key,
                     name => $proj_name,
                 };
             } $_->parent->parent->parent->find('a[href^="/plugins/servlet/project-config/"]')->each;
@@ -100,4 +104,4 @@ $dom->find('strong[data-scheme-field="name"]')->each
         }
     );
 
-print JSON->new->utf8(0)->pretty(1)->encode(\%fieldconfig_scheme);
+print decode_utf8($json->encode(\%fieldconfig_scheme));

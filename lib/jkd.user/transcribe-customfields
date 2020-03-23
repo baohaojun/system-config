@@ -1,11 +1,17 @@
 #!/usr/bin/env perl
 use strict;
-use v5.10; # for say
+use v5.10.1; # for say and switch
 use autodie qw(:all);
-use IPC::System::Simple qw(system systemx capture capturex);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
-
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -79,7 +85,7 @@ GetOptions (
 
 ## end generated code
 
-my $json = decode_json(qx(cat));
+my $json_data = decode_json(qx(cat));
 
 my $from_jira_fields_json = decode_json
     capturex(
@@ -112,7 +118,7 @@ use Data::Dumper;
 for (@$from_jira_fields_json) {
     my $id = $_->{id};
     if ($id =~ m,customfield_,) {
-        my $name = no_spaces_convert encode_utf8($_->{name});
+        my $name = no_spaces_convert ($_->{name});
 
         $from_2way_map{$id} = $name;
         $from_2way_map{$name} = $id;
@@ -122,7 +128,7 @@ for (@$from_jira_fields_json) {
 for (@$to_jira_fields_json) {
     my $id = $_->{id};
     if ($id =~ m,customfield_,) {
-        my $name = no_spaces_convert encode_utf8($_->{name});
+        my $name = no_spaces_convert ($_->{name});
 
         $to_2way_map{$id} = $name;
         $to_2way_map{$name} = $id;
@@ -150,7 +156,7 @@ if ($screen_filter) {
 
 use Data::Dumper;
 
-for my $id (keys %$json) {
+for my $id (keys %$json_data) {
     if ($screen_filter and not $screen_filter_passed{$id}) {
         next;
     }
@@ -162,15 +168,15 @@ for my $id (keys %$json) {
         my $to_id = $to_2way_map{$name};
         die "Can't get custom field for $name $id in $to_jira_url" unless $to_id;
         say STDERR "convert $name from $id to $to_id";
-        $result{$to_id} = $json->{$id};
+        $result{$to_id} = $json_data->{$id};
 
         if (ref($result{$to_id}) eq "HASH") {
             delete $result{$to_id}->{self};
             delete $result{$to_id}->{id};
         }
     } else {
-        $result{$id} = $json->{$id};
+        $result{$id} = $json_data->{$id};
     }
 }
 
-print JSON->new->utf8(1)->pretty(1)->encode(\%result);
+print decode_utf8($json->encode(\%result));

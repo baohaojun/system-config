@@ -3,11 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -135,24 +139,24 @@ $dom->find('dd[class="context-issue-type"] a[href^="EditIssueType!default.jspa"]
 $dom->find('a[href^="/plugins/servlet/project-config/"] > span[data-project-id]')->each(
     sub {
         $_ = $_->parent;
-        my $href = encode_utf8 $_->attr('href');
-        my $title = encode_utf8 $_->attr('title');
+        my $href = $_->attr('href');
+        my $title = $_->attr('title');
         # say STDERR "href is $href, title is $title";
         push @field_projects, $title;
     });
 
 my $default_value_div = $dom->at("td[id='customfield_${field_id}-value-default'] > div");
 if ($default_value_div) {
-    ($field_defaut_value = encode_utf8 $default_value_div->text) =~ s,\s,,g;
+    ($field_defaut_value = $default_value_div->text) =~ s,\s,,g;
 }
 
 $dom->find("td[id='customfield_${field_id}-value-options'] > ul > li")->each(
     sub {
         if ($_->at('ul')) {
-            my @sub_options = map {encode_utf8 $_->text} $_->find('ul > li')->each;
-            push @field_options, {encode_utf8($_->text) => \@sub_options};
+            my @sub_options = map {$_->text} $_->find('ul > li')->each;
+            push @field_options, {($_->text) => \@sub_options};
         } else {
-            push @field_options, encode_utf8 $_->text;
+            push @field_options, $_->text;
         }
     }
 );
@@ -169,15 +173,15 @@ my $field_search_template;
 my $field_edit_html = capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/EditCustomField!default.jspa?id=${field_id}");
 $dom = Mojo::DOM->new->parse(decode_utf8 $field_edit_html);
 
-$field_description = encode_utf8 $dom->at('textarea[name="description"]')->text;
+$field_description = $dom->at('textarea[name="description"]')->text;
 
 my $search_option = $dom->at('select[name="searcher"] > option:checked');
 if ($search_option) {
-    $field_search_template = encode_utf8 ${search_option}->attr('value');
+    $field_search_template = ${search_option}->attr('value');
 }
 
 
 $field_json->{description} = $field_description;
 $field_json->{search_template} = $field_search_template;
 
-print JSON->new->utf8(0)->pretty(1)->encode($field_json);
+print decode_utf8($json->encode($field_json));

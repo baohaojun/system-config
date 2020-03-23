@@ -1,9 +1,17 @@
 #!/usr/bin/env perl
 use strict;
-use v5.10; # for say
+use v5.10.1; # for say and switch
 use autodie qw(:all);
-use IPC::System::Simple qw(system systemx capture capturex);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -54,7 +62,6 @@ GetOptions (
 ## end generated code
 
 use File::Slurp;
-use JSON;
 
 my $dyn_json = decode_json(capturex("cat", "${dyn_file}"));
 
@@ -75,7 +82,7 @@ sub no_spaces_convert($) {
 
 map {
     my $id = $_->{id};
-    my $name = no_spaces_convert encode_utf8 $_->{name};
+    my $name = no_spaces_convert $_->{name};
 
     $id =~ s,.*_,,;
     $field_id_name_map2{$name} = $id;
@@ -84,11 +91,11 @@ map {
 } @$field_json;
 
 for (@{$dyn_json->{exportData}}) {
-    my $name = no_spaces_convert encode_utf8 $_->{customFieldName};
+    my $name = no_spaces_convert $_->{customFieldName};
     my $id = $field_id_name_map2{$name};
 
     die "Can't find id for $name" unless $id;
     $_->{customFieldId} = int($id);
 }
 
-print JSON->new->utf8(1)->pretty(1)->encode($dyn_json);
+print decode_utf8($json->encode($dyn_json));

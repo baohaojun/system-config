@@ -3,11 +3,15 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 use Mojo::DOM;
 
@@ -116,7 +120,7 @@ my %fieldconfig;
 $dom->find('span[class="field-name"]')->each
     (
         sub {
-            (my $field_name = encode_utf8 $_->text) =~ s,(^\s+|\s+$),,g;
+            (my $field_name = $_->text) =~ s,(^\s+|\s+$),,g;
             my $required = JSON::false;
             if ($_->parent->at('span[class="aui-lozenge status-required"]')) {
                 $required = JSON::true;
@@ -136,18 +140,18 @@ $dom->find('span[class="field-name"]')->each
             };
 
             if (my $renderer_elem = $_->parent->at('span[class="field-renderer"]')) {
-                $fieldconfig{$field_name}{renderer} = encode_utf8 $renderer_elem->text;
+                $fieldconfig{$field_name}{renderer} = $renderer_elem->text;
             }
 
             if (my $desc_elem = $_->parent->at('p[class="field-description fieldDescription"]')) {
-                $fieldconfig{$field_name}{description} = encode_utf8 $desc_elem->content;
+                $fieldconfig{$field_name}{description} = $desc_elem->content;
                 while ($desc_elem = $desc_elem->next) {
-                    $fieldconfig{$field_name}{description} .= encode_utf8 $desc_elem->to_string;
+                    $fieldconfig{$field_name}{description} .= $desc_elem->to_string;
                 }
             }
 
             my @screens = map {
-                my $screen_name = encode_utf8 $_->text;
+                my $screen_name = $_->text;
                 (my $screen_id = $_->attr('href')) =~ s,.*id=(\d+).*,$1,;
 
                 {
@@ -161,4 +165,4 @@ $dom->find('span[class="field-name"]')->each
         }
     );
 
-print JSON->new->utf8(0)->pretty(1)->encode(\%fieldconfig);
+print decode_utf8($json->encode(\%fieldconfig));

@@ -3,11 +3,16 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 use Mojo::DOM;
 
@@ -106,14 +111,14 @@ if ($html_file) {
 my $dom = Mojo::DOM->new->parse($html_text);
 
 if ($ENV{jkd_verbose}) {
-    say STDERR encode_utf8 $html_text;
+    say STDERR $html_text;
 }
 my @issuetypes;
 
 $dom->find('ul[id="selectedOptions"] span[class="issue-type-name"]')->each
     (
         sub {
-            my $issuetype_name = encode_utf8 $_->text;
+            my $issuetype_name = $_->text;
             (my $issuetype_id = $_->parent->attr('id')) =~ s,.*_,,;
             push @issuetypes, {
                 name => $issuetype_name,
@@ -126,7 +131,7 @@ my $default = "";
 if (my $default_elem = $dom->at('select[id="default-issue-type-select"] option[selected="selected"]')) {
     $default = $default_elem->attr('value');
 }
-my $issuetypescheme_description = encode_utf8 $dom->at('input[id="issue-type-scheme-description"]')->attr('value') || "";
+my $issuetypescheme_description = $dom->at('input[id="issue-type-scheme-description"]')->attr('value') || "";
 my $issuetypescheme = {
     name => $issuetypescheme_name,
     description => $issuetypescheme_description,
@@ -135,4 +140,4 @@ my $issuetypescheme = {
     default => $default,
 };
 
-print JSON->new->utf8(0)->pretty(1)->encode($issuetypescheme);
+print decode_utf8($json->encode($issuetypescheme));

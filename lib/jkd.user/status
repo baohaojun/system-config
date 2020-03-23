@@ -162,7 +162,7 @@ if ($action eq "import") {
             }
         );
 
-    print JSON->new->utf8(0)->pretty(1)->encode(\@statuses);
+    print decode_utf8($json->encode(\@statuses))
 } else {
     die "Can't work with action '$action'";
 }
