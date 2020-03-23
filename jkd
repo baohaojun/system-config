@@ -312,7 +312,7 @@ sub select_args(@) {
         );
 
     my $command = join(" ", shell_quote(@command));
-    my $res = qx($command);
+    my $res = decode_utf8 (qx($command));
 
     return $res;
 }
@@ -479,12 +479,12 @@ use File::Slurp;
 
 sub org_to_jira($) {
     my $text = shell_quote($_[0]);
-    return qx(ejwo --o2j --text $text </dev/null);
+    return scalar decode_utf8(qx(ejwo --o2j --text $text </dev/null));
 }
 
 sub jira_to_org($) {
     my $text = shell_quote($_[0]);
-    return qx(ejwo --j2o --text $text </dev/null);
+    return scalar decode_utf8(qx(ejwo --j2o --text $text </dev/null));
 }
 
 sub work_with_all_fields($$\%$) {
@@ -1111,7 +1111,7 @@ sub jkd_comment(@) {
     if ($once) {
         my $jira_issue = $jira->GET("/issue/$issue");
         for (@{$jira_issue->{fields}{comment}{comments}}) {
-            if (encode_utf8 $_->{body} eq "$comment") {
+            if ($_->{body} eq "$comment") {
                 say "$comment already exists";
                 exit 0;
             }
@@ -1201,14 +1201,14 @@ sub jkd_get_comment(@) {
     my $jira_issue = $jira->GET("/issue/$issue");
     if ($comment) {
         for (@{$jira_issue->{fields}{comment}{comments}}) {
-            if (encode_utf8 $_->{body} eq "$comment") {
+            if ($_->{body} eq "$comment") {
                 exit 0;
             }
         }
         exit 1;
     }
 
-    print encode_utf8 $jira_issue->{fields}{comment}{comments}[$nth_comment]{body};
+    print $jira_issue->{fields}{comment}{comments}[$nth_comment]{body};
 }
 
 sub jkd_assign(@) {
@@ -1341,7 +1341,7 @@ sub jkd_mits(@) {
     if (not $sprint) {
         if (not $board or $board !~ m/^\d+$/) {
             my $json_boards = decode_json get("rest/agile/1.0/board/")->content;
-            $board = select_args("-i", $board, "-p", "which board do you want? (should be scrum, not kanban)", sort {$a cmp $b} map {sprintf "%s: %s", $_->{id}, encode_utf8 $_->{name}} @{$json_boards->{values}});
+            $board = select_args("-i", $board, "-p", "which board do you want? (should be scrum, not kanban)", sort {$a cmp $b} map {sprintf "%s: %s", $_->{id}, $_->{name}} @{$json_boards->{values}});
             $board =~ s,:.*,,;
         }
         if ($board) {
@@ -1384,7 +1384,7 @@ sub update_names_with_fields($$) {
         }
 
         if ($name) {
-            $name = getNormalizedName encode_utf8 $name;
+            $name = getNormalizedName $name;
 
             $name_field_map{$name} = $_;
             say STDERR "Created a map: $name: $name_field_map{$name}" if $jkd_verbose;
@@ -1395,7 +1395,7 @@ sub update_names_with_fields($$) {
 
     for (keys %$named_obj) {
 
-        my $name = getNormalizedName encode_utf8 $_;
+        my $name = getNormalizedName $_;
         say STDERR "working with specified name: $name: $name_field_map{$name}";
 
 
@@ -1405,6 +1405,41 @@ sub update_names_with_fields($$) {
             delete $named_obj->{$_};
         }
     }
+}
+
+sub no_spaces_equal($$) {
+    my @pair = @_;
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($) {
+    map {s, | ,,g} @_;
+    return $_[0];
+}
+
+sub no_spaces_hash_convert(\%) {
+    my $hash = $_[0];
+    map {
+        (my $key = $_) =~ s, | ,,g;
+        $hash->{$key} = $hash->{$_}
+    } keys %$hash;
+}
+
+sub no_spaces_hashget(\%$) {
+    my ($hash, $key) = @_;
+
+    if ($hash->{$key}) {
+        return $hash->{$key};
+    }
+
+    if ($hash->{no_spaces_hash_convert_done} != 'true') {
+        no_spaces_hash_convert %$hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    $hash->{$key} = $hash->{no_spaces_convert $key};
+    return $hash->{$key};
 }
 
 sub jkd_tri(@) {
@@ -1485,7 +1520,7 @@ sub jkd_tri(@) {
             print $response->content;
             exit;
         }
-        $transition_json_obj = decode_json (encode_utf8 $response->content);
+        $transition_json_obj = decode_json($response->content);
     }
 
     my $fields_json_obj = decode_json (encode_utf8 $fields_json);
@@ -1493,11 +1528,13 @@ sub jkd_tri(@) {
 
     unless ($transition =~ m/^\d+$/) {
         my $json_obj = $transition_json_obj;
+
         $transition = select_args("-p", "如何变更当前 issue：${issue}", "-i", "$transition", map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
-        $transition_name = $transition;
         say "transition is $transition";
         $transition =~ s,^id=(\d+):.*,$1, or
-            die "Invalid transition $transition";
+            die "Invalid transition $transition_name";
+
+        $transition_name = $transition;
     }
 
     my $transition_fields_obj;
