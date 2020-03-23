@@ -1002,6 +1002,9 @@ This is simple using Perl's “reflection”.
   }
 
   sub jkd_c(@) { # create issue
+      if ($ENV{JKD_TRACE} eq "true") {
+          runx("debug-run", "log", "jkd", "c", @_);
+      }
 
       ## start code-generator "^\\s *#\\s *"
       # generate-getopt -s perl -l \
@@ -1122,9 +1125,8 @@ This is simple using Perl's “reflection”.
       }
 
       if ($fields_json) {
-          $fields_json = capturex("jkd", "customfield-json-names2ids", "-n", ("$fields_json"), "-f", decode_utf8(to_json($issue_type_json->{fields})));
+          my $required_fields = $json->decode(scalar capturex("jkd", "customfield-json-names2ids", "-n", ("$fields_json"), "-f", decode_utf8(to_json($issue_type_json->{fields}))));
 
-          my $required_fields = decode_json (encode_utf8 $fields_json);
           %required_fields = %$required_fields;
           $required_fields{project} = {
               key => $project,
