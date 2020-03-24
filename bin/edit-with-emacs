@@ -89,13 +89,9 @@ done
 
 ## end generated code
 
-
 if test "${io_only}" != true; then
     top_window=$(sawfish-top-window)
-    top_window_id=$(sawfish-client -e '(window-id (input-focus))')
-
     mkdir -p ~/tmp/edit-with-emacs
-
 fi
 
 next_file=~/tmp/edit-with-emacs/$(get-next-file -p "emacs-edit-%d.org")
@@ -105,6 +101,10 @@ if test "$top_window" = QtCreator; then
 elif test "${top_window}" = XTerm; then
     exec sawfish-events-delayed .1 "F1"
 else
+    sawfish-window mark -s -t edit-with-emacs.$$ &>/dev/null
+
+    . atexit bash -c "sawfish-window mark -r -t edit-with-emacs.$$ &>/dev/null"
+
     if test "$1" = region; then
         sawfish-events-delayed .1 "C-c"
     elif test "${io_only}" != true; then
@@ -116,6 +116,7 @@ else
     else
         getclip > $next_file
     fi
+
     if test "${jira}" = true; then
         cat $next_file | ejwo | tee-with-tmp $next_file
     elif test "${html}" = true; then
@@ -123,18 +124,15 @@ else
     elif test "${markdown}" = true; then
         cat $next_file | ejwo --syntax markdown | tee-with-tmp $next_file
     else
-        ew $next_file
+        ew $next_file &>/dev/null
     fi
 
     if test "${io_only}" = true; then
         exit
     fi
     cat $next_file| putclip
-    if find-or-exec -e --window-id $top_window_id; then
-        exec sawfish-events-delayed .1 "S-Insert"
-    else
-        bhj-notify qtcreator-edit-with-emacs "Failed to find old window (id: $top_window_id; class: ${top_window})"
-    fi
-fi
 
-exec find-or-exec QtCreator
+    sawfish-window mark -r -t edit-with-emacs.$$ &>/dev/null ||
+        misc die "Can't find the old window in edit-with-emacs.$$"
+    exec sawfish-events-delayed .1 "S-Insert"
+fi

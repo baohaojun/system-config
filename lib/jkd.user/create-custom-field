@@ -1,28 +1,24 @@
 #!/usr/bin/env perl
 use strict;
-use v5.10; # for say
-
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+my $types_json =
+    $json->decode(scalar capture("cached-run -e scm_jira_url jkd webcurl $ENV{scm_jira_url}rest/globalconfig/1/customfieldtypes"));
 
-my $type_map = {
-    'string' => 'com.atlassian.jira.plugin.system.customfieldtypes:textfield',
-    'textarea' => 'com.atlassian.jira.plugin.system.customfieldtypes:textarea',
-    'dyn-radio' => 'com.intenso.jira.plugin.dynamic-forms:dynamic-radiobutton-customfield',
-    'multi-check' => 'com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes',
-    'Radio Buttons' => 'com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons',
-};
-
-$type_map->{'Text Field (single line)'} = $type_map->{string};
-$type_map->{'Text Field (multi-line)'} = $type_map->{textarea};
-$type_map->{'Deviniti [Dynamic Forms] - Dynamic Radio Buttons'} = $type_map->{'dyn-radio'};
 
 sub get_types() {
-    return join(" ", keys %$type_map);
+    return join("\n    ", map {$_->{name}} @{$types_json->{types}});
 }
-
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -32,7 +28,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# n:name d:description t:type '?"one of " . get_types()'
+# n:name d:description t:type '?"one of the types specified in rest/globalconfig/1/customfieldtypes (need admin permission)"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -66,11 +62,11 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '-t, ';
     printf "%-24s", '--type=TYPE';
-    if (length('--type=TYPE') > 24 and length("one of " . get_types()) > 0) {
+    if (length('--type=TYPE') > 24 and length("one of the types specified in rest/globalconfig/1/customfieldtypes (need admin permission)") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "one of " . get_types();
+    printf "%s", "one of the types specified in rest/globalconfig/1/customfieldtypes (need admin permission)";
     print "\n";
 
     my $exit_value = 0;
@@ -92,8 +88,31 @@ GetOptions (
 
 ## end generated code
 
-if (not $type_map->{$type}) {
-    $type_map->{$type} = $type;
+if (not $name) {
+    $name =
+        decode_utf8(scalar capturex("get-stdin", "-p", "What is your field name?"));
+}
+
+use String::ShellQuote;
+
+$name =
+    decode_utf8(scalar capture(sprintf("echo -n %s | space-cjk-en", shell_quote($name))));
+
+if (not $description) {
+    $description =
+        decode_utf8(scalar capture("ewe --html --io-only"));
+}
+
+my $searcherKey;
+if (not $type) {
+    my $type_name =
+        decode_utf8(scalar capturex("select-args", "Which type do you want?", map {$_->{name}} @{$types_json->{types}}));
+    map {
+        if ($_->{name} eq $type_name) {
+            $type = $_->{key};
+            $searcherKey = $_->{searchers}[0];
+        }
+    } @{$types_json->{types}};
 }
 
 my $fields_json = decode_json(qx(jkd rest field));
@@ -107,19 +126,19 @@ sub nospace_strcmp($$) {
 }
 
 for (@$fields_json) {
-    if (nospace_strcmp encode_utf8($_->{name}), $name) {
-        say STDERR "$name already exists: ", encode_utf8($_->{name});
+    if (nospace_strcmp $_->{name}, $name) {
+        say STDERR "$name already exists: ", ($_->{name});
         exit;
     }
 }
 
 my $json_obj = {
-    name => decode_utf8($name),
-    description => decode_utf8($description),
-    "type" => decode_utf8($type_map->{$type}),
+    name => ($name),
+    description => ($description),
+    type => $type,
+    searcherKey => $searcherKey,
 };
 
-use autodie qw(:all);
 
-system("debug-run", "jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
-system("jkd", "go", "field", "-e", "-m", "$name");
+runx("debug-run", "jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
+runx("jkd", "go", "field", "-e", "-m", "$name");

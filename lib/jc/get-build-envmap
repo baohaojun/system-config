@@ -3,11 +3,16 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl b:build-url sshell
 ## end code-generator
@@ -79,5 +84,5 @@ if ($shell) {
         printf "export %s=%s\n", shell_quote($_), shell_quote($envmap{$_});
     }
 } else {
-    say STDERR JSON->new->utf8(0)->pretty(1)->encode(\%envmap);
+    print decode_utf8($json->encode(\%envmap));
 }

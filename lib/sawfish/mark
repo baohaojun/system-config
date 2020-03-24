@@ -2,7 +2,8 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P t:mark-to-var sset-mark rretrive-and-reset @with-mark
+# generate-getopt -P t:mark-to-var sset-mark rretrive-and-reset \
+    # @with-mark '?"带着 mark 执行指定的命令（执行前 mark 当前窗口，执行结束返回到该窗口）"'
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o t:rsh \
@@ -64,18 +65,18 @@ while true; do
             echo
             printf "%06s" " "
             printf %-24s '--[no-]with-mark'
-            echo
+            echo "带着 mark 执行指定的命令（执行前 mark 当前窗口，执行结束返回到该窗口）"
             exit
             shift
             ;;
         --)
             shift
             break
-   ;;
-   *)
-       die "internal error: $(. bt; echo; bt | indent-stdin)"
-       ;;
-   esac
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
 done
 
 

@@ -281,7 +281,7 @@ sub get_queue_env_from_url($) {
 
 sub get_build_env_from_url($) {
     my $build_url = $_[0];
-    $build_url_envmap{$build_url} = decode_json(qx(jc get-build-envmap -b $build_url)) unless $build_url_envmap{$build_url};
+    $build_url_envmap{$build_url} = decode_json(qx(debug-run jc get-build-envmap -b $build_url)) unless $build_url_envmap{$build_url};
     return $build_url_envmap{$build_url};
 }
 
