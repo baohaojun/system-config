@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+export ARTIFACTORY_API_USER_PASSWORD=$(
+    git config -f $scm_secrets_conf ldap.${ARTIFACTORY_API_USER}.password
+                             )
+"$@"
