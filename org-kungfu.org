@@ -271,9 +271,7 @@ And this is the real get1page subroutine.
               }
               $_->{src} = $src;
 
-              if ($_->{class} eq 'emoji') {
-                  $should_emojify = 1;
-              }
+              $should_emojify = 1;
           }
       );
 

@@ -319,9 +319,7 @@ sub rewrite_html_for_update() {
             }
             $_->{src} = $src;
 
-            if ($_->{class} eq 'emoji') {
-                $should_emojify = 1;
-            }
+            $should_emojify = 1;
         }
     );
 
