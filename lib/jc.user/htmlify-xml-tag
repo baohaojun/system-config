@@ -64,9 +64,13 @@ my $xml_str = read_file($xml_file);
 my $dom = Mojo::DOM->new->parse($xml_str);
 $dom->find($tag_name)->
   each(
-       sub {
+      sub {
+          my @extra_args_simple = ();
+          if ($_->parent->tag =~ m/RandomStringParameterDefinition/) {
+              @extra_args_simple = ("-s");
+          }
          my $text = $_->text;
-         my @command = shell_quote("emacs-fix-fence", "--text", $text, "-f", "nxml", "-t", "$to_mode", "-p", "cat");
+         my @command = shell_quote("emacs-fix-fence", "--text", $text, "-f", "nxml", "-t", "$to_mode", "-p", "cat", @extra_args_simple);
          my $command = join(" ", @command);
          my $fenced_text = qx($command);
 
