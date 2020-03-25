@@ -379,13 +379,15 @@ sub jkd_q(@) {
         }
     }
 
-    my $jql_content = get("rest/api/2/search?jql=$jql")->content;
+    my $jql_content =
+        $json->decode(scalar capturex("jkd", "rest", "rest/api/2/search?jql=$jql"));
+
     if ($print_all) {
-        print decode_utf8 "${jql_content}";
+        print decode_utf8($json->encode(${jql_content}));
         exit 0;
     }
 
-    my $jql_ret = decode_json $jql_content;
+    my $jql_ret = $jql_content;
     my @issues;
     for my $issue (@{$jql_ret->{issues}}) {
         push @issues, sprintf "%s: %s (%s)", $issue->{key}, $issue->{fields}{summary}, $issue->{fields}{status}{name};
