@@ -154,5 +154,7 @@ if ($action eq "list") {
                 say "$role_name";
             }
         }
+    } else {
+        die "Can't handle action: '$action'";
     }
 }
