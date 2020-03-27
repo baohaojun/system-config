@@ -255,6 +255,42 @@ This is simple using Perl's “reflection”.
       password => "$jkd_password"
                            });
 
+
+  sub no_spaces_equal($$) {
+      my @pair = @_;
+      map {s, | ,,g} @pair;
+      return $pair[0] eq $pair[1];
+  }
+
+  sub no_spaces_convert($) {
+      map {s, | ,,g} @_;
+      return $_[0];
+  }
+
+  sub no_spaces_hash_convert(\%) {
+      my $hash = $_[0];
+      map {
+          (my $key = $_) =~ s, | ,,g;
+          $hash->{$key} = $hash->{$_}
+      } keys %$hash;
+  }
+
+  sub no_spaces_hashget(\%$) {
+      my ($hash, $key) = @_;
+
+      if ($hash->{$key}) {
+          return $hash->{$key};
+      }
+
+      if ($hash->{no_spaces_hash_convert_done} != 'true') {
+          no_spaces_hash_convert %$hash;
+          $hash->{no_spaces_hash_convert_done} = 'true';
+      }
+
+      $hash->{$key} = $hash->{no_spaces_convert $key};
+      return $hash->{$key};
+  }
+
 #+END_SRC
 
 #+name: the-ultimate-script
@@ -950,59 +986,6 @@ This is simple using Perl's “reflection”.
       say "PUT response code:" . $response->code, "result: ", $response->content;
   }
 
-  sub jkd_select_issue_type(@) {
-      ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l p:project t:issue-type
-      ## end code-generator
-      ## start generated code
-      use Getopt::Long;
-
-      Getopt::Long::Configure("default");
-
-      local @ARGV = @_;
-
-      my $issue_type = "";
-      my $project = "";
-
-      my $handler_help = sub {
-          print ;
-          print "\n\n选项和参数：\n";
-          printf "%6s", '-t, ';
-          printf "%-24s", '--issue-type=ISSUE-TYPE';
-          if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
-              print "\n";
-              printf "%30s", "";
-          }
-          printf "%s", ;
-          print "\n";
-          printf "%6s", '-p, ';
-          printf "%-24s", '--project=PROJECT';
-          if (length('--project=PROJECT') > 24 and length() > 0) {
-              print "\n";
-              printf "%30s", "";
-          }
-          printf "%s", ;
-          print "\n";
-
-          exit(0);
-      };
-
-      GetOptions (
-          'issue-type|t=s' => \$issue_type,
-          'project|p=s' => \$project,
-          'help|h!' => \&$handler_help,
-          );
-
-
-      ## end generated code
-
-      my %jkd_project_issue_types_name_id_map = jkd_get_issue_types("-p", $project);
-      my $issue_type_name = select_args("-p", "Which type of issue do you want?", "-i", $issue_type, "-O", "select-issue-type", sort {$a cmp $b} keys %jkd_project_issue_types_name_id_map);
-      my $issue_type_id = $jkd_project_issue_types_name_id_map{$issue_type_name};
-      say STDERR "issue_type_id is $issue_type_id, issue_type_name is '$issue_type_name'";
-      return $issue_type_id;
-  }
-
   sub jkd_c(@) { # create issue
       if ($ENV{JKD_TRACE} eq "true") {
           runx("debug-run", "log", "jkd", "c", @_);
@@ -1111,7 +1094,7 @@ This is simple using Perl's “reflection”.
 
       my $issue_type_json;
       if (not $issue_type or not $issue_type =~ m/^\d+$/) {
-          $issue_type_json = from_json(capturex("jkd", "select-issuetype", "-i", "$issue_type", "-p", "${project}", "--json"));
+          $issue_type_json = from_json(capturex("jkd", "select-issuetype", "-i", "$issue_type", "-p", "${project}", "--json-data"));
           $issue_type = $issue_type_json->{id};
       }
 
@@ -1230,41 +1213,6 @@ This is simple using Perl's “reflection”.
                 delete $named_obj->{$_};
             }
         }
-    }
-
-    sub no_spaces_equal($$) {
-        my @pair = @_;
-        map {s, | ,,g} @pair;
-        return $pair[0] eq $pair[1];
-    }
-
-    sub no_spaces_convert($) {
-        map {s, | ,,g} @_;
-        return $_[0];
-    }
-
-    sub no_spaces_hash_convert(\%) {
-        my $hash = $_[0];
-        map {
-            (my $key = $_) =~ s, | ,,g;
-            $hash->{$key} = $hash->{$_}
-        } keys %$hash;
-    }
-
-    sub no_spaces_hashget(\%$) {
-        my ($hash, $key) = @_;
-
-        if ($hash->{$key}) {
-            return $hash->{$key};
-        }
-
-        if ($hash->{no_spaces_hash_convert_done} != 'true') {
-            no_spaces_hash_convert %$hash;
-            $hash->{no_spaces_hash_convert_done} = 'true';
-        }
-
-        $hash->{$key} = $hash->{no_spaces_convert $key};
-        return $hash->{$key};
     }
 
     sub jkd_tri(@) {
