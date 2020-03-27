@@ -27,7 +27,7 @@ use JSON;
 
 my $json = JSON->new->utf8(0);
 
-my $workflowscheme_html = decode_utf8 scalar capturex('jkd', '-u', "$ENV{scm_jira_admin_user}", 'webget', "$ENV{scm_jira_url}secure/admin/ViewWorkflowSchemes.jspa");
+my $workflowscheme_html = decode_utf8 scalar capturex("cached-run", "-e", "scm_jira_url", 'jkd', '-u', "$ENV{scm_jira_admin_user}", 'webget', "$ENV{scm_jira_url}secure/admin/ViewWorkflowSchemes.jspa");
 
 use Mojo::DOM;
 my $dom = Mojo::DOM->new->parse($workflowscheme_html);

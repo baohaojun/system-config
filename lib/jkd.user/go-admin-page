@@ -384,4 +384,5 @@ else
     unset FIREFOX_TAB_NUMBER
 fi
 
+bhj-notify go-admin-page ${scm_jira_url}${path}
 firefox ${FIREFOX_PROFILE_ARG} $firefox_new_tab ${scm_jira_url}${path}

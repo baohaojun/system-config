@@ -1,103 +1,156 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 
-declare comment_doc=$(
-    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
 
 # {%/org-mode%}
-EOFe9576f8668e0
-        )
+EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P '?"${comment_doc}"' \
-    # p:project @json '?"print json format (expand fields of the issuetype)"' \
-    # i:init-input
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# p:project \
+# i:issue-type \
+# @json-data
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o i:p:h \
-                      --long init-input:,json,project:,help,no-json \
-                      -n $(basename -- $0) -- "$@")
-declare init_input=
-declare json=false
-declare project=
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
+use Getopt::Long;
 
-        -i|--init-input)
-            init_input=$2
-            shift 2
+Getopt::Long::Configure("posix_default");
 
-            ;;
-        --json|--no-json)
-            if test "$1" = --no-json; then
-                json=false
-            else
-                json=true
-            fi
-            shift
 
-            ;;
-        -p|--project)
-            project=$2
-            shift 2
 
-            ;;
-        -h|--help)
-            set +x
-            echo -e "${comment_doc}"
-            echo
-            echo Options and arguments:
-            printf %06s '-i, '
-            printf %-24s '--init-input=INIT_INPUT'
-            echo
-            printf "%06s" " "
-            printf %-24s '--[no-]json'
-            echo "print json format (expand fields of the issuetype)"
-            printf %06s '-p, '
-            printf %-24s '--project=PROJECT'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
+my $issue_type = "";
+my $json_data = 0;
+my $project = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issue-type=ISSUE-TYPE';
+    if (length('--issue-type=ISSUE-TYPE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]json-data';
+    if (length('--[no]json-data') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project=PROJECT';
+    if (length('--project=PROJECT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'issue-type|i=s' => \$issue_type,
+    'json-data!' => \$json_data,
+    'project|p=s' => \$project,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
 
-if test -z "${project}"; then
-    die "Must specify the project"
-fi
+sub no_spaces_equal($$) {
+    my @pair = @_;
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
 
-json_str=$(
-    jkd rest "issue/createmeta?projectKeys=${project}&expand=projects.issuetypes.fields"
-        )
+sub no_spaces_convert($) {
+    map {s, | ,,g} @_;
+    return $_[0];
+}
 
-IFS=$'\n'
+sub no_spaces_hash_convert(\%) {
+    my $hash = $_[0];
+    map {
+        (my $key = $_) =~ s, | ,,g;
+        $hash->{$key} = $hash->{$_}
+    } keys %$hash;
+}
 
-issuefields=(
-    $(
-        echo "$json_str" | jq '.projects|.[]|.issuetypes|.[]|"\(.id): \(.name)"' -r
-    )
-)
+sub no_spaces_hashget(\%$) {
+    my ($hash, $key) = @_;
 
-issuetype_id=$(
-    select-args -i "$*" \
-    "-O" "select-jira-issuetype" -i "${init_input}" "-p" "Which issue type do you want to use?" \
-    "${issuefields[@]}" | pn 1 | tr -d ':\n'
-            )
+    if ($hash->{$key}) {
+        return $hash->{$key};
+    }
 
-if test "${json}" = false; then
-    echo -n $issuetype_id
-else
-    echo "${json_str}" | jq '.projects|.[]|.issuetypes|.[]|if .id == "'${issuetype_id}'" then . else null end|values'
-fi
+    if ($hash->{no_spaces_hash_convert_done} != 'true') {
+        no_spaces_hash_convert %$hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    $hash->{$key} = $hash->{no_spaces_convert $key};
+    return $hash->{$key};
+}
+
+die "Must specify the project" unless $project;
+
+my $createmeta_json =
+    $json->decode(scalar capturex("jkd", "rest", "issue/createmeta?projectKeys=${project}&expand=projects.issuetypes.fields"));
+
+my %issuetype_name_id_map;
+my @issuetypes = @{$createmeta_json->{projects}[0]{issuetypes}};
+map {
+    $issuetype_name_id_map{$_->{name}} = $_->{id}
+} @issuetypes;
+
+my $id = no_spaces_hashget(%issuetype_name_id_map, $issue_type);
+
+sub print_it() {
+    if ($json_data) {
+        map {
+            if ($_->{id} eq $id) {
+                print decode_utf8($json->encode($_));
+            }
+        } @issuetypes;
+    } else {
+        print $id;
+    }
+}
+if ($id) {
+    print_it();
+    exit 0;
+}
+
+$issue_type =
+    decode_utf8(scalar capturex("select-args", "-O", "select-jira-issuetype", "-i", "${issue_type}", "-p", "Which issue type do you want to use?",
+                            sort {$a cmp $b} map {$_->{name}} @issuetypes));
+
+$id = no_spaces_hashget(%issuetype_name_id_map, $issue_type);
+die "Can't get issuetype id from $issue_type" unless $id;
+print_it();

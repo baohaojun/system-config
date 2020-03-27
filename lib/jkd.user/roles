@@ -124,13 +124,20 @@ sub list_roles() {
 
 die "Must specify project" unless $project;
 
-if ($action eq "list") {
+sub is_exact_action($) {
+    our %exact_actions;
+    my $target_action = $_[0];
+    $exact_actions{$target_action} = 1;
+    return $action eq $target_action;
+}
+
+if (is_exact_action "list") {
     list_roles;
 } else {
     my $roles_json =
         $json->decode(scalar capture("cached-run -e scm_jira_url jkd roles -a list -p $project"));
 
-    if ($action eq "add-user") {
+    if (is_exact_action "add-user") {
 
         die "No such role: $role_name" unless $roles_json->{$role_name};
 
@@ -147,7 +154,7 @@ if ($action eq "list") {
         runx "debug-run", "jkd", "rest", "-a", "project/${project}/role/${role_id}",
             "--", "-X", "POST", "--data",
             decode_utf8($json->encode($user_json)), "-H", 'Content-Type: application/json';
-    } elsif ($action eq "query") {
+    } elsif (is_exact_action "query") {
         for (keys %$roles_json) {
             my $role_name = $_;
             if (grep {$_->{name} eq $user_name} @{$roles_json->{$role_name}{actors}}) {
@@ -155,6 +162,7 @@ if ($action eq "list") {
             }
         }
     } else {
-        die "Can't handle action: '$action'";
+        our %exact_actions;
+        die "Can't handle action: '$action', must be one of: " . join(", ", sort keys %exact_actions) . "\n";
     }
 }

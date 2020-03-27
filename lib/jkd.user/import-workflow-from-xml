@@ -11,12 +11,13 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # w:workflow-name f:workflow-filename x:xml-str
+    # w:workflow-name f:workflow-filename x:xml-str cconvert-names-to-ids
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o f:w:x:h \
-                      --long workflow-filename:,workflow-name:,xml-str:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o cf:w:x:h \
+                      --long convert-names-to-ids,workflow-filename:,workflow-name:,xml-str:,help,no-convert-names-to-ids \
                       -n $(basename -- $0) -- "$@")
+declare convert_names_to_ids=false
 declare workflow_filename=
 declare workflow_name=
 declare xml_str=
@@ -24,6 +25,15 @@ eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -c|--convert-names-to-ids|--no-convert-names-to-ids)
+            if test "$1" = --no-convert-names-to-ids; then
+                convert_names_to_ids=false
+            else
+                convert_names_to_ids=true
+            fi
+            shift
+
+            ;;
         -f|--workflow-filename)
             workflow_filename=$2
             shift 2
@@ -44,6 +54,9 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
+            printf %06s '-c, '
+            printf %-24s '--[no-]convert-names-to-ids'
+            echo
             printf %06s '-f, '
             printf %-24s '--workflow-filename=WORKFLOW_FILENAME'
             echo
@@ -79,6 +92,23 @@ elif test "${workflow_filename}"; then
     die "Can't specify both xml_str and workflow_filename"
 fi
 
+if test "${convert_names_to_ids}" = true; then
+    xml_str=$(
+        jkd workflow -a name2id -x "$xml_str"
+           )
+fi
+
+json_layout=$(
+    echo "${xml_str}" | perl -ne 'print if m,<!-- start of jira workflow layout, .. m,end of jira workflow layout -->,' |
+        perl -ne 'print unless (m,<!-- start of jira workflow layout, || m,end of jira workflow layout -->,)'
+           )
+
+xml_str=$(
+    echo "${xml_str}" | perl -ne 'print unless m,<!-- start of jira workflow layout, .. m,end of jira workflow layout -->,'
+       )
+
+
+
 echo Importing XML...
 
 output=$(
@@ -95,5 +125,7 @@ output=$(
 if echo "${output}" | grep 'A workflow with this name already exists.' -q; then
     die "这个 Workflow 已存在！"
 fi
+
+jkd webcurl "${scm_jira_url}rest/workflowDesigner/latest/workflows" -X POST --data "${json_layout}" "-H" 'Content-Type: application/json'
 
 # name=hello-world&description=&definition=inline&filePath=&workflowXML=XML&Import=Import

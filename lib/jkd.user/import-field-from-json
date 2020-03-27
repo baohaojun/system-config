@@ -17,7 +17,8 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# j:json-data f:json-file
+# j:json-data @:j2 '?"from jira url"' \
+# f:field-name '?"field name, used together with J2, to calculate JSON-DATA"'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -26,23 +27,32 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $field_name = "";
+my $j2 = "";
 my $json_data = "";
-my $json_file = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-j, ';
-    printf "%-24s", '--json-data=JSON-DATA';
-    if (length('--json-data=JSON-DATA') > 24 and length() > 0) {
+    printf "%6s", '-f, ';
+    printf "%-24s", '--field-name=FIELD-NAME';
+    if (length('--field-name=FIELD-NAME') > 24 and length("field name, used together with J2, to calculate JSON-DATA") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "field name, used together with J2, to calculate JSON-DATA";
     print "\n";
-    printf "%6s", '-f, ';
-    printf "%-24s", '--json-file=JSON-FILE';
-    if (length('--json-file=JSON-FILE') > 24 and length() > 0) {
+    printf "%6s", '';
+    printf "%-24s", '--j2=J2';
+    if (length('--j2=J2') > 24 and length("from jira url") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "from jira url";
+    print "\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--json-data=JSON-DATA';
+    if (length('--json-data=JSON-DATA') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -59,8 +69,9 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'field-name|f=s' => \$field_name,
+    'j2=s' => \$j2,
     'json-data|j=s' => \$json_data,
-    'json-file|f=s' => \$json_file,
     'help|h!' => \&$handler_help,
 );
 
@@ -69,18 +80,20 @@ GetOptions (
 
 use File::Slurp;
 
-if ($json_file) {
-    if ($json_data) {
-        die "Can't specify both json file and data";
+if (not $json_data) {
+    if (not $j2 or not $field_name) {
+        die "Must specify either json-data or j2 and field-name";
     } else {
-        $json_data = read_file($json_file);
+        $json_data = capturex("cached-run", "-e", "scm_jira_url", "jkd", "-j", "$j2", "dump-field", "-f", $field_name);
     }
+} else {
+    $json_data = encode_utf8 $json_data;
 }
 
 my $field_json = $json->decode($json_data);
 
-my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field"));
-my $field_name = $field_json->{name};
+my $fields_json = $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "rest", "field"));
+$field_name = $field_json->{name};
 
 if (grep {$_->{name} eq $field_name} @$fields_json) {
     # field already exist
@@ -96,5 +109,6 @@ if (grep {$_->{name} eq $field_name} @$fields_json) {
     );
 
     my $new_field_json = JSON->new->utf8(0)->pretty(1)->encode(\%new_field_data);
-    runx("jkd", "post", "-a", "field", "--json", decode_utf8($new_field_json))
+    runx("jkd", "post", "-a", "field", "--json", decode_utf8($new_field_json));
+    capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-field", "-f", $field_name);
 }

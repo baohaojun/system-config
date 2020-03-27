@@ -107,3 +107,76 @@ echo "${output_xml}" |
     else
         cat
     fi > "${workflow_filename:-/dev/stdout}"
+
+export workflow_name
+
+cat<<EOF >> "${workflow_filename:-/dev/stdout}"
+<!-- start of jira workflow layout
+$(jkd -u $scm_jira_admin_user webcurl "${scm_jira_url}rest/workflowDesigner/latest/workflows?name=$(urlify "${workflow_name}")&draft=false" |
+
+perl -ne "$(
+cat <<'EOF9bbcf4caf489' | . .replace-%% --
+# {%perl-mode%}
+#!/usr/bin/env perl
+BEGIN {
+    use strict;
+    use v5.10.1;                # for say and switch
+    use autodie qw(:all);
+    use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+    use Encode;
+    use utf8;
+    @ARGV = map {decode_utf8 $_} @ARGV;
+    binmode(STDOUT, ":utf8");
+    binmode(STDERR, ":utf8");
+    my @lines;
+    use JSON;
+
+}
+
+push @lines, $_;
+
+END {
+    my $json = JSON->new->utf8->canonical->pretty;
+    my $text = join("", @lines);
+    my $layout_json_out =
+        $json->decode(encode_utf8($text));
+
+    my %layout_in = (
+        draft => JSON::false,
+        name => $ENV{workflow_name},
+        layout => {
+            statuses => [],
+            transitions => [],
+        }
+    );
+
+    for (@{$layout_json_out->{layout}{statuses}}) {
+        my $stat = $_;
+
+        my %stat_hash = map {
+            ($_ => $stat->{$_})
+        } ("id", "x", "y");
+
+        push @{$layout_in{layout}{statuses}}, \%stat_hash;
+    }
+
+    for (@{$layout_json_out->{layout}{transitions}}) {
+        my $trans = $_;
+
+        my %trans_hash = map {
+                ($_ => $trans->{$_})
+            } ("id","sourceAngle","targetAngle","sourceId","targetId");
+        push @{$layout_in{layout}{transitions}},
+            \%trans_hash;
+    };
+
+    print decode_utf8($json->encode(\%layout_in));
+}
+# {%/perl-mode%}
+EOF9bbcf4caf489
+
+)"
+)
+
+end of jira workflow layout -->
+EOF
