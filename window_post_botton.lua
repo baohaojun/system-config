@@ -52,6 +52,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.SayHiWithSnsPermissionUI'] 
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'Find-Button'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'Find-Button'
 map['com.tencent.mm/com.tencent.mm.ui.LauncherUI'] = 'Find-Button'
+map['com.tencent.mm/com.tencent.mm.ui.transmit.SelectConversationUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.ui.transmit.SendAppMessageWrapperUI'] = 'No-Post'
 map['com.tencent.mobileqq/com.tencent.mobileqq.activity.LoginActivity'] = 'Enter-Key'
 map['com.tencent.qqlive/com.tencent.qqlive.ona.activity.SearchPagerActivity'] = 'No-Post'
