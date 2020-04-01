@@ -16,6 +16,7 @@ This is simple using Perl's “reflection”.
 
     (my $sub_command = "jkd_" . shift) =~ s,-,_,g;
 
+    $ENV{PERL5LIB} = join(":", "$ENV{scm_common_libdir}/jkd.pm", $ENV{PERL5LIB});
 
     if (not defined &$sub_command) {
         my $lib_command;
