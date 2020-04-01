@@ -129,20 +129,28 @@ GetOptions (
 
 
 ## end generated code
+
+sub is_exact_action($) {
+    our %exact_actions;
+    my $target_action = $_[0];
+    $exact_actions{$target_action} = 1;
+    return $action eq $target_action;
+}
+
 if (not $action) {
     $action = shift @ARGV;
 }
 
-if ($action eq "list") {
+if (is_exact_action "list") {
     run("jkd rest workflow|jq '.[]|.name' -r ");
     exit(0);
-} elsif ($action eq "export") {
+} elsif (is_exact_action "export") {
     runx("jkd", "export-workflow-as-xml", @ARGV);
     exit;
-} elsif ($action eq "import") {
+} elsif (is_exact_action "import") {
     runx("jkd", "import-workflow-from-xml", @ARGV);
     exit;
-} elsif ($action eq "create") {
+} elsif (is_exact_action "create") {
     my @params_values = (
         "inline=true",
         "decorator=dialog",
@@ -152,6 +160,9 @@ if ($action eq "list") {
     runx(
         "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/workflows/AddWorkflow.jspa", "-X", "POST",
         map { ('--data-urlencode', $_) } @params_values);
+    capturex(
+        "cached-run", "-e", "scm_jira_url", "-r", "jkd", "rest", "workflow"
+    );
     exit;
 }
 
@@ -252,7 +263,7 @@ my %meta_field_name_json_map = (
 #     671:              <arg name="selectedCustomField">14509</arg>
 #     676:              <arg name="selectedFields">field::14509;condition::changedInTransition...</arg>
 
-if ($action eq "id2name") {
+if (is_exact_action "id2name") {
     $dom->find('arg')->each
         (
             sub {
@@ -288,7 +299,7 @@ if ($action eq "id2name") {
                 }
             }
         );
-} elsif ($action eq "name2id") {
+} elsif (is_exact_action "name2id") {
     $dom->find('arg')->each
         (
             sub {
@@ -333,7 +344,8 @@ if ($action eq "id2name") {
             }
         );
 } else {
-    die "Can't handle your action: '$action'";
+    our %exact_actions;
+    die "Can't work with action: $action, don't know how, must be one of:\n  " . join(",\n  ", sort {$a cmp $b} keys %exact_actions) . "\n";
 }
 
 print $dom;

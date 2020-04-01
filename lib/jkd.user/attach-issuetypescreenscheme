@@ -22,7 +22,8 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# @:issuetype-screenscheme @:screenscheme @:issuetype \
+# @:issuetype-screenscheme '?"必须指定这个参数或 project 参数中的一个"' \
+# @:screenscheme @:issuetype \
 # @:project
 ## end code-generator
 ## start generated code
@@ -50,11 +51,11 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--issuetype-screenscheme=ISSUETYPE-SCREENSCHEME';
-    if (length('--issuetype-screenscheme=ISSUETYPE-SCREENSCHEME') > 24 and length() > 0) {
+    if (length('--issuetype-screenscheme=ISSUETYPE-SCREENSCHEME') > 24 and length("必须指定这个参数或 project 参数中的一个") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "必须指定这个参数或 project 参数中的一个";
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--project=PROJECT';

@@ -69,7 +69,7 @@ my $html_text;
 if ($html_file) {
     $html_text = decode_utf8 read_file($html_file);
 } else {
-    $html_text = decode_utf8 capturex("debug-run", "jkd", "webget", "$ENV{scm_jira_url}secure/admin/ViewFieldLayouts.jspa");
+    $html_text = decode_utf8 capturex("cached-run", "-e", "scm_jira_url", "jkd", "webget", "$ENV{scm_jira_url}secure/admin/ViewFieldLayouts.jspa");
 }
 
 

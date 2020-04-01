@@ -1,4 +1,8 @@
 #!/usr/bin/env perl
+BEGIN {
+    push @INC, "$ENV{scm_common_libdir}/jkd.pm";
+}
+use jkd;
 use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
@@ -44,7 +48,7 @@ EOFc83131117f09
 # d:issuetype-description='""' \
 # t:issuetype-type='"standard"' '?"one of standard, subtask"' \
  # s:issuetypescheme-name \
-# p:associated-projects \
+# p:associated-project \
 # @:field-name  \
 # @:field-json \
 # @:j1='$ENV{scm_jira_url}' \
@@ -58,7 +62,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $action = "";
-my $associated_projects = "";
+my $associated_project = "";
 my $field_json = "";
 my $field_name = "";
 my $issuetype_description = "";
@@ -80,8 +84,8 @@ my $handler_help = sub {
     printf "%s", ;
     print "\n";
     printf "%6s", '-p, ';
-    printf "%-24s", '--associated-projects=ASSOCIATED-PROJECTS';
-    if (length('--associated-projects=ASSOCIATED-PROJECTS') > 24 and length() > 0) {
+    printf "%-24s", '--associated-project=ASSOCIATED-PROJECT';
+    if (length('--associated-project=ASSOCIATED-PROJECT') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -163,7 +167,7 @@ my $handler_help = sub {
 
 GetOptions (
     'action|a=s' => \$action,
-    'associated-projects|p=s' => \$associated_projects,
+    'associated-project|p=s' => \$associated_project,
     'field-json=s' => \$field_json,
     'field-name=s' => \$field_name,
     'issuetype-description|d=s' => \$issuetype_description,
@@ -260,6 +264,22 @@ if (is_exact_action "print") {
 } elsif (is_exact_action "get-scheme") {
 
 } elsif (is_exact_action "add-to-scheme") {
+    if (not $issuetypescheme_name) {
+        if ($associated_project) {
+            my $issuetypeschemes_json =
+                $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-issuetypeschemes"));
+            map {
+                my $scheme = $_;
+                if (grep { $associated_project eq $_->{key} or $associated_project eq $_->{name} } @{$issuetypeschemes_json->{$scheme}{projects}}) {
+                    die "more than 1 scheme? $scheme : $issuetypescheme_name" if $issuetypescheme_name;
+                    $issuetypescheme_name = $scheme;
+                }
+            } keys %{$issuetypeschemes_json};
+        }
+        else {
+            die "Must specify either issuetypescheme_name or associated_project";
+        }
+    }
     my $issuetypescheme_json =
         $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-issuetypescheme", "-n", "$issuetypescheme_name"));
 
@@ -422,18 +442,17 @@ if (is_exact_action "print") {
         decode_utf8(scalar capturex("debug-run", "select-args", "-p", "Which screen do you want?", keys %{$issuetype_json->{screens}}));
 
     runx("jkd", "go", "screen", "$screen_name");
+} elsif (is_exact_action "new-screen") {
+    my $issuetype_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", $issuetype_name));
+    my $associated_project = $issuetype_json->{project};
+
+
 } elsif (is_exact_action "use-workflow") {
     my $project =
         decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-project", "-n", "$issuetype_name"));
 
-    my $projects_json =
-        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "rest", "project"));
-
-    my $project_name;
-    map {
-        $project_name = $_->{name} if $project eq $_->{key};
-    } @$projects_json;
-
+    my $project_name = name2name (['rest', 'project'], $project);
     my $workflowscheme_json =
         $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-workflowschemes"));
 
@@ -449,8 +468,154 @@ if (is_exact_action "print") {
     }
 
     runx("jkd", "wfs-switch-wf", '--issuetype-name', $issuetype_name, "--new-wf-name", $workflow_name, "--scheme-id", $workflow_scheme_id, "--scheme-active");
+} elsif (is_exact_action "new") {
+    if (not $issuetype_id) {
+        my $issuetype_style =
+            decode_utf8(scalar capturex("select-args", "-p", "Which kind of issuetype do you want?", "standard", "sub-task"));
 
+        $issuetype_style = ($issuetype_style eq "standard") ? "" : "jira_subtask";
+        my $description =
+            decode_utf8(scalar capture("ask-for-input-with-sawfish -p 'issuetype description?'"));
+
+        my @params_values = (
+            "inline=true",
+            "decorator=dialog",
+            "name=${issuetype_name}",
+            "description=${description}",
+            "style=${issuetype_style}",
+        );
+
+        runx ("jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueType.jspa", "-X", "POST",
+              map { ('--data-urlencode', $_) } @params_values);
+        my $issuetypes_json =
+            $json->decode(scalar capturex("cached-run", "-r", "-e", "scm_jira_url", "jkd", "rest", "issuetype"));
+        map {
+            if ($issuetype_name eq $_->{name}) {
+                $issuetype_id = $_->{id};
+            }
+        } @$issuetypes_json;
+    }
+
+    my $issuetype_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd",
+                                      "dump-issuetype", "-i", "$issuetype_name"));
+    if (not $issuetype_json->{project}) {
+        if (not $associated_project) {
+            $associated_project =
+                $json->decode(scalar capturex("jkd", "sel-name", "-a", "project"));
+        }
+        runx ("jkd", "issuetype", "-a", "add-to-scheme", "-p", $associated_project, "-n", $issuetype_name);
+    } else {
+        $associated_project = $issuetype_json->{project};
+    }
+
+    my $project_key = name2key (['rest', 'project'], $associated_project);
+
+    if (not $issuetype_json->{fieldconfig}) {
+        my $fieldconfig_name = "${project_key}.${issuetype_name}.fieldconfig";
+        my $fieldconfigs_json =
+            $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-fieldconfigs"));
+        if (not grep {$fieldconfig_name eq $_->{name}} @$fieldconfigs_json) {
+            my $description =
+                decode_utf8(scalar capture("ask-for-input-with-sawfish -p 'fieldconfig description?'"));
+
+            my @params_values = (
+                "inline=true",
+                "decorator=dialog",
+                "fieldLayoutName=${fieldconfig_name}",
+                "fieldLayoutDescription=${description}",
+            );
+
+            runx ("jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddFieldConfiguration.jspa", "-X", "POST",
+                  map { ('--data-urlencode', $_) } @params_values);
+
+            $fieldconfigs_json =
+                $json->decode(scalar capturex("cached-run", "-r", "-e", "scm_jira_url", "jkd", "export-fieldconfigs"));
+        }
+
+        my $fieldconfig_id;
+        map {
+            if ($fieldconfig_name eq $_->{name}) {
+                $fieldconfig_id = $_->{id};
+            }
+        } @$fieldconfigs_json;
+
+        my $fieldconfigschemes_json =
+            $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-fieldconfigschemes"));
+        my $fieldconfigscheme_id;
+        map {
+            my $scheme = $fieldconfigschemes_json->{$_};
+            my $projects = $scheme->{projects};
+            if (grep {$project_key eq $_->{key}} @$projects) {
+                $fieldconfigscheme_id = $scheme->{id};
+            }
+        } keys %$fieldconfigschemes_json;
+
+        my @params_values = (
+            "inline=true",
+            "decorator=dialog",
+            "id=${fieldconfigscheme_id}",
+            "issueTypeId=${issuetype_id}",
+            "fieldConfigurationId=${fieldconfig_id}",
+        );
+
+        runx (
+            "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueTypeToFieldConfigurationAssociation.jspa", "-X", "POST",
+            map { ('--data-urlencode', $_) } @params_values
+        );
+    }
+
+    my $screenscheme_id;
+
+    if (not %{$issuetype_json->{screens}}) {
+        my $screen_name = "${project_key}.${issuetype_name}.默认面板";
+        my $screen_id = name2id (['rest', 'screens'], $screen_name);
+        if (not $screen_id) {
+            my $description =
+                decode_utf8(scalar capture("ask-for-input-with-sawfish -p 'screen description for $screen_name?'"));
+            runx ("jkd", "create-screen", "-n", "$screen_name", "-d", "$description");
+            $screen_id = name2id (['rest', 'screens'], $screen_name);
+        }
+        $issuetype_json->{screens} = {
+            $screen_name =>
+                $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "${screen_name}")),
+        }
+    }
+
+    if (not $issuetype_json->{screenscheme}) {
+        my $screenscheme_name = "${project_key}.${issuetype_name}.面板方案";
+        $screenscheme_id = name2id (['export-screenschemes'], $screenscheme_name);
+        if (not $screenscheme_id) {
+            my $screen_name =
+                decode_utf8(scalar capturex("select-args", "-p", "which screen to use as default?", sort {$a cmp $b} keys %{$issuetype_json->{screens}}));
+
+            runx (
+                "jkd", "create-screenscheme", "--screen-name", "$screen_name", "--screenscheme-name", "$screenscheme_name"
+            );
+
+            $screenscheme_id = name2id (['export-screenschemes'], $screenscheme_name);
+        }
+        runx (
+            "jkd", "attach-issuetypescreenscheme", "--issuetype", "$issuetype_name", "--project", "$project_key", "--screenscheme", "$screenscheme_name"
+        );
+    }
+
+    if (not $issuetype_json->{workflow}) {
+        my $workflow_name = "${project_key}.${issuetype_name}.workflow";
+        if ($workflow_name !~ m,^\p{ascii}*$,) {
+            $workflow_name =
+                decode_utf8(scalar capturex('pinyin?', "-1", $workflow_name));
+        }
+        if ($workflow_name !~ m,^\p{ascii}*$,) {
+            $workflow_name =
+                decode_utf8(scalar capturex("get-stdin", "-p", "请修改 workflow_name，确保其每个字符都是 ascii 字符", '--init-text', $workflow_name));
+        }
+        if (not name_exists (['rest', 'workflow'], $workflow_name)) {
+            runx ("jkd", "workflow", "-a", "create", "-n", "$workflow_name");
+        }
+        runx ("jkd", "issuetype", "-a", "use-workflow", "-n", $issuetype_name, "$workflow_name");
+    }
 } else {
     our %exact_actions;
-    die "Can't work with action: $action, don't know how, must be one of " . join(", ", sort {$a cmp $b} keys %exact_actions);
+    die "Can't work with action: $action, don't know how, must be one of:\n  " . join(",\n  ", sort {$a cmp $b} keys %exact_actions) . "\n";
 }

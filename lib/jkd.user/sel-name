@@ -122,11 +122,11 @@ fi
 if test -z "${json}"; then
     if test "${api}"; then
         json=$(
-            jkd rest "$api"
+            cached-run -e scm_jira_url jkd rest "$api"
             )
     else
         json=$(
-            jkd $jkd
+            cached-run -e scm_jira_url jkd $jkd
             )
     fi
 fi

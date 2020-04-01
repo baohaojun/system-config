@@ -107,3 +107,5 @@ runx(
     "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddFieldScreenScheme.jspa", "-X", "POST",
     map { ('--data-urlencode', $_) } @params_values
 );
+
+capturex("cached-run", "-e", "scm_jira_url", "-r", "jkd", "export-screenschemes");

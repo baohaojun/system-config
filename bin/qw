@@ -1,17 +1,20 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
+use strict;
+use Shell::Parser;
 
-# 把一段 bash 命令变成 perl 的字符串数组
+my $parser = new Shell::Parser handlers => { default => \&dumpnode };
+$parser->parse(join '', <>);
 
-my $first_line = 1;
-while (<>) {
-  my @arr;
-  for (split) {
-    push @arr, "\"$_\"";
-  }
-  if ($first_line) {
-    $first_line = 0;
-  } else {
-    print "\n";
-  }
-  printf "%s", join(", ", @arr);
+sub dumpnode {
+    my $self = shift;
+    my %args = @_;
+    my $token = $args{token};
+    my $type = $args{type};
+    if (${type} eq "text" and ${token} =~ m,\S,) {
+        if (${token} =~ m,^",) {
+            printf "%s, ", $token;
+        } else {
+            printf '"%s", ', ${token};
+        }
+    }
 }

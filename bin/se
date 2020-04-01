@@ -105,7 +105,7 @@ elif test "${default}" = false; then
     elif test "${jira_env}" = test; then
         scm_jira_url=${scm_jira_test_url}
     elif test "${jira_env}" = prod; then
-        if yes-or-no-p "确认一定要修改成prod环境吗？非常危除！"; then
+        if yes-or-no-p "确认一定要修改成 prod 环境吗？非常危险！"; then
             scm_jira_url=${scm_jira_prod_url}
             terminal_name='prod!!!'
             SC_EXTRA_PS1=${SC_EXTRA_PS1/testing/${terminal_name}}

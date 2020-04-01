@@ -101,8 +101,21 @@ if (not $field_name) {
     die "You must specify the field name!"
 }
 
-my $json_issue =
-    $json->decode(scalar capture("jkd rest 'rest/api/2/issue/${issue}/?expand=changelog'"));
+my $json_issue;
+
+for (1..3) {
+    local $@;
+    eval {
+        $json_issue =
+            $json->decode(scalar capture("debug-run jkd rest 'rest/api/2/issue/${issue}/?expand=changelog' | jq .|tee /dev/stderr"));
+    };
+
+    my $ret = $@;
+    last unless $ret;
+    runx("ding", "--title", "check-if-trigger failed to get issue details", "--text", "check build log at $ENV{BUILD_URL}\n\n$ret") if $_ == 1;
+    sleep(3);
+    die "Can't get issue details: $ret";
+}
 
 sub no_spaces_equal($$) {
     my @pair = @_;
