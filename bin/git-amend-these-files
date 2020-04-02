@@ -9,8 +9,12 @@ else
          )
 fi
 
+skip_done=false
 for f in $files; do
-    target_commit=$(select-output-line -p "Which commit do you want to amend for $f?" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $f | pn 1)
+    target_commit=$(select-output-line -p "Which commit do you want to amend for $f? (skip\! to skip)" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $f | pn 1)
+    if test "${target_commit}" = skip; then
+        continue
+    fi
     if test "${target_commit}" && yes-or-no-p -y "$(git log -1 --name-status $target_commit)"$'\n\n'"use $target_commit which changed $f?"; then
         true
     elif yes-or-no-p "$(git diff HEAD $f;
@@ -23,10 +27,18 @@ for f in $files; do
         git commit --amend --no-edit
         continue
     else
-        piggy_file=$(select-output-line -p "Which file to piggy" git diff --name-only $(git-remote-branch) HEAD)
+        piggy_file=$(select-output-line -p "Which file or commit to piggy (skip\! to skip)" bash -c "git diff --name-only $(git-remote-branch) HEAD; git log --pretty='%H: %s' $(git-remote-branch)..HEAD")
+        if test "${piggy_file}" = skip; then
+            skip_done=true
+            continue
+        fi
+
         if test -e "${piggy_file}"; then
             target_commit=$(f=$piggy_file; select-output-line -p "Which commit do you want to amend for $f?" git log --pretty='%h %s' $(git-remote-branch)..HEAD -- $f | pn 1)
+        elif [[ $piggy_file =~ ^[0-9a-f]{40}: ]]; then
+            target_commit=${piggy_file%%:*}
         fi
+
         if test -z "${target_commit}"; then
             die "Can't amend $file, not committed after sync from upstream"
         fi
@@ -38,7 +50,7 @@ for f in $files; do
     fi
 done
 
-if test $# != 0; then
+if test $# != 0 -o "${skip_done}" = true; then
     if git-any-changes; then
         need_revert=true
         git add .

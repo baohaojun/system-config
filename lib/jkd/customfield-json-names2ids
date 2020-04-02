@@ -2,10 +2,17 @@
 use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
-use IPC::System::Simple qw(system systemx capture capturex);
-
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
