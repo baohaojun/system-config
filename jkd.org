@@ -412,7 +412,7 @@ This is simple using Perl's “reflection”.
       }
 
           my $response = get($api);
-          print $response->content;
+          print decode_utf8($response->content);
   }
 
   sub select_args(@) {
@@ -910,7 +910,7 @@ This is simple using Perl's “reflection”.
               };
           my $response = $ua->request($request);
 
-          say "PUT \@${try} response code:" . $response->code, "result: ", $response->content;
+          say "PUT \@${try} response code:" . $response->code, "result: ", decode_utf8($response->content);
 
           last if $response->is_success;
 
@@ -984,7 +984,7 @@ This is simple using Perl's “reflection”.
           };
       my $response = $ua->request($request);
 
-      say "PUT response code:" . $response->code, "result: ", $response->content;
+      say "PUT response code:" . $response->code, "result: ", decode_utf8($response->content);
   }
 
   sub jkd_c(@) { # create issue
@@ -1155,11 +1155,11 @@ This is simple using Perl's “reflection”.
               };
           my $response = $ua->request($request);
 
-          say STDERR "POST \@${try} response code:" . $response->code, "result: ", $response->content;
+          say STDERR "POST \@${try} response code:" . $response->code, "result: ", decode_utf8($response->content);
 
 
           if ($response->is_success){
-              print $response->content;
+              print decode_utf8($response->content);
               exit 0;
           }
 
@@ -1291,7 +1291,7 @@ This is simple using Perl's “reflection”.
         if ($transition !~ m/^\d+$/ or $fields_json ne "{}") {
             my $response = get("rest/api/2/issue/${issue}/transitions?expand=transitions.fields");
             if ($print_trans) {
-                print $response->content;
+                print decode_utf8($response->content);
                 exit;
             }
             $transition_json_obj = decode_json($response->content);
@@ -1344,7 +1344,7 @@ This is simple using Perl's “reflection”.
                 last;
             };
 
-            say "PUT response code:" . $response->code, "result: ", $response->content;
+            say "PUT response code:" . $response->code, "result: ", decode_utf8($response->content);
 
             my $errors = decode_json($response->content)->{errors};
             for (keys %$errors) {
@@ -1614,7 +1614,7 @@ This is simple using Perl's “reflection”.
         };
         my $response = $ua->request($request);
 
-        say "POST response code:" . $response->code, "result: ", $response->content;
+        say "POST response code:" . $response->code, "result: ", decode_utf8($response->content);
 
 
     }
@@ -1683,7 +1683,7 @@ This is simple using Perl's “reflection”.
 
       if ($response->code < 200 || $response->code >= 300) {
           use HTTP::Status;
-          say sprintf("PUT error! response code: %d (meaning: %s), content: %s", $response->code, status_message($response->code), $response->content);
+          say sprintf("PUT error! response code: %d (meaning: %s), content: %s", $response->code, status_message($response->code), decode_utf8($response->content));
       }
   }
 
