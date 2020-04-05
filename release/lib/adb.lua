@@ -578,11 +578,12 @@ PATH=/data/data/com.android.shell/bin:$PATH
 touch not-started.$$
 setsid nohup setsid /system/bin/sh -c 'set -x
 rm 'not-started.$$'
+ime enable com.wrench.inputmethod.pinyin/.PinyinIME
+ime set com.wrench.inputmethod.pinyin/.PinyinIME
 if test "$(cat /sdcard/Wrench/usb_online)" = watching-ime; then
     exit
 fi
 echo watching-ime > /sdcard/Wrench/usb_online
-ime set com.wrench.inputmethod.pinyin/.PinyinIME
 while test -e /sdcard/Wrench/usb_online; do
     sleep 5
 done
