@@ -1648,6 +1648,17 @@ to the value of `temporary-file-directory'."
       (when (= new-indentation old-indentation)
         (setq found t)))))
 
+(defun bhj-backward-to-less-indentation ()
+  (interactive)
+  (let ((old-indentation (save-excursion (back-to-indentation) (current-column)))
+        new-indentation found)
+    (set-mark (point))
+    (while (not found)
+      (forward-line -1)
+      (setq new-indentation (save-excursion (back-to-indentation) (current-column)))
+      (when (< new-indentation old-indentation)
+        (setq found t)))))
+
 (defun bhj-string-contains-each-other (str1 str2)
   (or (string-match-p (regexp-quote str1) str2)
       (string-match-p (regexp-quote str2) str1)))
