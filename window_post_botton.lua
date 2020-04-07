@@ -46,6 +46,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.account.ui.LoginPasswordUI'] = 'No-Pos
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.SimpleLoginUI'] = 'Enter-Key'
 map['com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.base.stub.UIEntryStub'] = 'No-Post'
+map['com.tencent.mm/com.tencent.mm.plugin.brandservice.ui.timeline.preload.ui.TmplWebViewTooLMpUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSChattingConvUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSMainUI'] = 'Enter-Key'
 map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.SayHiWithSnsPermissionUI'] = 'No-Post'
