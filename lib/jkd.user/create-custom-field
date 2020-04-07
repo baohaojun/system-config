@@ -141,4 +141,5 @@ my $json_obj = {
 
 
 runx("debug-run", "jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
+capturex("cached-run", "-e", "scm_jira_url", "-r", "jkd", "rest", "field");
 runx("jkd", "go", "field", "-e", "-m", "$name");

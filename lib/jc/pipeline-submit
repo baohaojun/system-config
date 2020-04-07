@@ -1,0 +1,443 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+use File::Slurp;
+
+my $json = JSON->new->utf8->canonical->pretty->allow_blessed;
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# u:base-uri a:action='"click"' '?"can be one of: click print-json print-html"' \
+# @:form-input ='"input[name=\"proceed\"][type=\"submit\"]"' \
+# @:click-button-name='"proceed"' '?"对应的是 input 元素的 name 属性"' \
+# @:click-button-text '?"如指定，会对比按钮的文字是否匹配（更严格地检查，以确保是在操作正确的表格。对应的是 input 元素的 value 属性）"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "click";
+my $base_uri = "";
+my $click_button_name = "proceed";
+my $click_button_text = "";
+my $form_input = "input[name=\"proceed\"][type=\"submit\"]";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length("can be one of: click print-json print-html") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "can be one of: click print-json print-html";
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--base-uri=BASE-URI';
+    if (length('--base-uri=BASE-URI') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--click-button-name=CLICK-BUTTON-NAME';
+    if (length('--click-button-name=CLICK-BUTTON-NAME') > 24 and length("对应的是 input 元素的 name 属性") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "对应的是 input 元素的 name 属性";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--click-button-text=CLICK-BUTTON-TEXT';
+    if (length('--click-button-text=CLICK-BUTTON-TEXT') > 24 and length("如指定，会对比按钮的文字是否匹配（更严格地检查，以确保是在操作正确的表格。对应的是 input 元素的 value 属性）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "如指定，会对比按钮的文字是否匹配（更严格地检查，以确保是在操作正确的表格。对应的是 input 元素的 value 属性）";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--form-input=FORM-INPUT';
+    if (length('--form-input=FORM-INPUT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'base-uri|u=s' => \$base_uri,
+    'click-button-name=s' => \$click_button_name,
+    'click-button-text=s' => \$click_button_text,
+    'form-input=s' => \$form_input,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+die "must specify base_uri" unless $base_uri;
+
+
+use HTML::Form;
+
+my $html_text =
+    decode_utf8(capture("jc curl $base_uri" ));
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($html_text);
+write_file("/home/bhj/tmp/dom-1.html", encode_utf8("$html_text"));
+write_file("/home/bhj/tmp/dom0.html", encode_utf8("$dom"));
+
+if ($action eq "print-html") {
+    print $dom;
+    exit 0;
+}
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+sub hasClassName($e, $class) {
+    return grep {$class eq $_} split (" ", ($e && $e->{class}));
+}
+
+$dom->find('form')->each(
+    sub {
+        my $class = $_->attr('class');
+        if (grep {$_ eq 'no-json'} split(" ", $class)) {
+            return;
+        }
+        $_->child_nodes->last->append("<input type=hidden name=json value=init>");
+    }
+);
+
+my $form_pl_id = 0;
+my $iota = 0;
+
+my %formDom;
+my @doms;
+my %groupingNode;
+
+$dom->descendant_nodes->each(
+    sub {
+        $_->{form_pl_id} = $form_pl_id++;
+    }
+);
+
+sub applyNameRef($s, $e, $id) {
+    $groupingNode{$dom->at("#$id")->{form_pl_id}} = 1;
+    my $x = $s->next;
+
+    while ($x->{form_pl_id} != $e->{form_pl_id}) {
+        $x->{nameRef} ||= $id;
+        $x = $x->next;
+    }
+}
+
+write_file("/home/bhj/tmp/dom.html", encode_utf8("$dom"));
+
+$dom->find('tr[class~="optional-block-start"]')->each(
+    sub {
+        my $checkbox = $_->child_nodes->[0]->child_nodes->[0];
+        $checkbox->{id} = "cb" . $iota++;
+        $_->{ref} = $checkbox->{id};
+    }
+);
+
+$dom->find("tr[class~='row-set-end']")->each(
+    sub {
+        my $e = $_;
+        my $end = $e;
+
+        my $depth = 0;
+        while (1) {
+            $depth++ if (hasClassName($e, "row-set-end"));
+            $depth-- if (hasClassName($e, "row-set-start"));
+            last if ($depth == 0);
+            $e = $e->previous;
+            if (not $e) {
+                say STDERR "e get to empty for " . $end;
+                return;
+            }
+        }
+        my $start = $e;
+        my $ref = $start->{ref};
+        if (not $ref) {
+            $start->{id} = $ref = "rowSetStart" . ($iota++);
+        }
+        applyNameRef($start, $end, $ref);
+    }
+);
+
+$dom->find("[class~='to-be-removed']")->each(
+    sub {
+        $_->remove;
+    }
+);
+
+write_file("/home/bhj/tmp/dom2.html", encode_utf8("$dom"));
+
+sub shortenName($name) {
+    if($name =~ m,^\[,) {
+        return substr($name, 1, -1);
+    }
+
+    $name =~ s,.*\.,,;
+    return $name;
+}
+
+sub findFormParent($e, $form, $isStatic = 0) {
+    if (not $form) {
+        $form = $e->ancestors('form')->[0];
+    }
+
+    while ($e->tag ne "form") {
+        my $nameRef = $e->attr('nameRef');
+        if ($nameRef) {
+            $e = $form->at("#$nameRef");
+        } else {
+            my $p = $e->parent;
+            if (not $e->parent) {
+                exit 1;
+            }
+            say STDERR sprintf ("found parent %s(name: %s) for %s(name: %s)", $p->tag, $p->attr ('name'), $e->tag, $e->attr ('name'));
+
+            $e = $e->parent;
+        }
+
+        if (!$isStatic && $e->attr("field-disabled")) {
+            return undef;
+        }
+
+        my $name = $e->attr('name');
+        if ($name) {
+            if(uc ($e->tag) eq "INPUT" && !$isStatic && !( defined $e->{checked} xor hasClassName($e, "negative"))) {
+                return undef;
+            }
+            return $e;
+        }
+    }
+
+    return $form;
+}
+
+sub buildFormTree($form) {
+    sub addProperty($parent, $name, $value) {
+        $name = shortenName($name);
+        if ($parent->{$name}) {
+            if (ref $parent->{$name} ne "ARRAY") {
+                say STDERR "made $name into array";
+                if ($name eq 'connections') {
+                    say STDERR sprintf("addProperty(%s, %s, %s)", decode_utf8($json->encode($parent)), $name, decode_utf8($json->encode($value)));
+                }
+                $parent->{$name} = [ $parent->{$name} ];
+            }
+            push @{$parent->{$name}}, $value;
+        } else {
+            $parent->{$name} = $value;
+        }
+        say STDERR "after add: " . decode_utf8($json->encode($parent));
+    }
+    sub findParent($e, $form) {
+        my $p = findFormParent($e, $form);
+        if (not $p) {
+            return {};
+        }
+
+        my $m = $formDom{$p->{form_pl_id}};
+        if (not $m) {
+            $formDom{$p->{form_pl_id}} = {};
+            addProperty(findParent($p, $form), $p->attr('name'), $formDom{$p->{form_pl_id}}) if $p->{form_pl_id} !=$form->{form_pl_id};
+        }
+        return $formDom{$p->{form_pl_id}}
+    }
+
+    my $jsonElement;
+
+    for ($form->descendant_nodes->each) {
+        my $e = $_;
+        next unless $e->val || $e->{value};
+        next if $e->tag eq "option";
+        if ($e->attr('name') eq "json") {
+            $jsonElement = $e;
+            next;
+        }
+        if (uc $e->tag eq "FIELDSET") {
+            next;
+        }
+
+        if (lc $e->tag eq "select" && $e->attr('multiple')) {
+            my @values = @{$e->val};
+            addProperty(findParent($e, $form),$e->attr('name'), \@values);
+            next;
+        }
+        my $p;
+        my $r;
+        my $type = lc($e->attr('type') || "");
+        if ($type =~ m,^(button|submit),) {
+            # do nothing
+        } elsif ($type eq "checkbox") {
+            $p = findParent($e, $form);
+
+            my $checked = ((defined $e->{checked}) xor hasClassName($e, "negative")) ? JSON::true : JSON::false;
+            if (not $groupingNode{$e->{form_pl_id}}) {
+                my $v = $e->attr("json");
+                if ($v) {
+                    addProperty($p, $e->attr('name'), $v) if ($checked);
+                } else {
+                    addProperty($p, $e->attr('name'), $checked);
+                }
+            } else {
+                if ($checked) {
+                    $formDom{$e->{form_pl_id}} = {};
+                    addProperty($p, $e->attr('name'), $formDom{$e->{form_pl_id}});
+                }
+            }
+
+        } elsif ($type eq "file") {
+            $p = findParent($e);
+            if ($e->attr("jsonAware")) {
+                my $on = $e->attr('originalName');
+                if ($on) {
+                    addProperty($p,$on,$e->attr('name'));
+                } else {
+                    my $uniqName = "file" . ($iota++);
+                    addProperty($p, $e->attr('name'), $uniqName);
+                    $e->attr('originalName' => $e->attr('name'));
+                    $e->attr('name' => $uniqName);
+                }
+            }
+
+            $form->attr('enctype' => "multipart/form-data");
+            $form->attr('encoding' => "multipart/form-data");
+        } elsif ($type eq "radio") {
+            if (defined $e->attr('checked')) {
+                $r = 0;
+                (my $strip_name = $e->attr('name')) =~ s,^(removeme)*,,;
+                $p = findParent($e, $form);
+                if ($groupingNode{$e->{form_pl_id}}) {
+                    $formDom{$e->{form_pl_id}} = {value => $e->val};
+                    addProperty($p, $strip_name, $formDom{$e->{form_pl_id}});
+                } else {
+                    addProperty($p, $strip_name, $e->val);
+                }
+            }
+        } elsif ($type eq "passwordx") {
+            die "Can't handle password?" . $e;
+        } else {
+            $p = findParent($e, $form);
+            addProperty($p, $e->attr('name'), $e->val || $e->{value});
+            if (hasClassName($e, "complex-password-field")) {
+                die "Can't handle password" . $e;
+            }
+        }
+
+    }
+    my $formDomJson = decode_utf8($json->encode($formDom{$form->{form_pl_id}}));
+    if ($action eq "print-json") {
+        say "$formDomJson";
+        exit 0;
+    }
+    $jsonElement->attr('value' => $formDomJson);
+}
+
+sub no_spaces_equal($a, $b) {
+    my @pair = ($a, $b);
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($a) {
+    $a =~ s, | ,,g;
+    return $a;
+}
+
+sub no_spaces_hash_convert($hash) {
+    map {
+        (my $key = $_) =~ s, | ,,g;
+        $hash->{$key} = $hash->{$_}
+    } keys %$hash;
+}
+
+sub no_spaces_hashget($hash, $key) {
+    if ($hash->{$key}) {
+        return $hash->{$key};
+    }
+
+    if ($hash->{no_spaces_hash_convert_done} != 'true') {
+        no_spaces_hash_convert %$hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    $hash->{$key} = $hash->{no_spaces_convert $key};
+    return $hash->{$key};
+}
+
+if (my $submit_button = $dom->at("${form_input}")) {
+    my $button_text = $submit_button->attr('value');
+    if ($click_button_text) {
+        die "Can't find your button ($click_button_text), what we found is: $button_text" if not no_spaces_equal($button_text, $click_button_text);
+    } elsif ($action eq "click") {
+        die "必须指定 --click-button-text 参数，用于与实际参数对比：'$button_text'";
+    }
+} else {
+    die "Can't find the specified form input";
+}
+
+
+my $form = $dom->at("form ${form_input}")->ancestors('form')->[0];
+buildFormTree($form);
+
+my @forms = HTML::Form->parse($dom->to_string, $base_uri);
+for my $form (@forms) {
+    my @inputs = $form->inputs;
+
+    for (@inputs) {
+        if ($_->{name} eq "${click_button_name}") {
+
+            use LWP::UserAgent;
+            my $ua = LWP::UserAgent->new;
+
+            my $request = $form->click($click_button_name);
+            (my $crumb = $ENV{JC_CRUMB}) =~ m,(.*?):(.*),;
+
+            $request->header($1, $2);
+
+            $request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
+            say STDERR Dumper($request);
+            my $response = $ua->request($request);
+            use Data::Dumper;
+            say STDERR  Dumper($response);
+            print $response->content;
+        }
+    }
+}
