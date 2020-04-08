@@ -1,0 +1,145 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+my $unset_jql = '!unset!';
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl q:jql='"$unset_jql"' pprint-all \
+# nfield-names=1 '?"用各个 field 的名字也作为 key 打印一遍"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $field_names = 1;
+my $jql = "$unset_jql";
+my $print_all = 0;
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--[no]field-names';
+    if (length('--[no]field-names') > 24 and length("用各个 field 的名字也作为 key 打印一遍") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "用各个 field 的名字也作为 key 打印一遍";
+    print "\n";
+    printf "%6s", '-q, ';
+    printf "%-24s", '--jql=JQL';
+    if (length('--jql=JQL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--[no]print-all';
+    if (length('--[no]print-all') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'field-names|n!' => \$field_names,
+    'jql|q=s' => \$jql,
+    'print-all|p!' => \$print_all,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use URI::Escape;
+if ($jql eq $unset_jql) {
+    if (@ARGV) {
+        $jql = uri_escape_utf8(join(" ", @ARGV));
+    } else {
+        die "Must specify jql"
+    }
+} else {
+    if (@ARGV) {
+        die "Extra args: ", join(" ", @ARGV);
+    } else {
+        $jql = uri_escape_utf8($jql);
+    }
+}
+
+my $jql_content =
+    $json->decode(scalar capturex("jkd", "rest", "rest/api/2/search?jql=$jql"));
+
+if ($print_all) {
+    if ($field_names) {
+        my $fields_json =
+            $json->decode(scalar capturex("jkd", "rest", "field"));
+        my %field_id_name_map;
+        map {
+            $field_id_name_map{$_->{id}} = $_->{name};
+        } @{$fields_json};
+
+        for my $issue (@{$jql_content->{issues}}) {
+            my $fields = $issue->{fields};
+
+            for my $id (keys %$fields) {
+                if (defined $fields->{$id}) {
+                    my $name = $field_id_name_map{$id};
+                    $fields->{$name} = $fields->{$id} unless defined $fields->{$name} or not $name;
+                } else {
+                    delete $fields->{$id};
+                }
+            }
+        }
+    }
+    print decode_utf8($json->encode(${jql_content}));
+    exit 0;
+}
+
+my $jql_ret = $jql_content;
+my @issues;
+for my $issue (@{$jql_ret->{issues}}) {
+    push @issues, sprintf "%s: %s (%s)", $issue->{key}, $issue->{fields}{summary}, $issue->{fields}{status}{name};
+}
+
+my $selected_issue = select_args("-p", "which issue do you want?", "--", "-1", sort {$a cmp $b} @issues);
+
+$selected_issue =~ s,:.*,,s;
+say STDERR "You selected: $selected_issue";
+
+my $action = select_args("-p", "what actions do you want?", "putclip issue-key", "open it in browser", "transit it to another state");
+
+if ($action eq "putclip issue-key") {
+    system("putclip", $selected_issue);
+} elsif ($action eq "open it in browser") {
+    system("of", "$ENV{scm_jira_url}browse/${selected_issue}");
+} elsif ($action eq "transit it to another state") {
+    jkd_tri("-i", "${selected_issue}");
+} else {
+    die "Can't do the action: $action"
+}

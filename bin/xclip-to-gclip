@@ -1,3 +1,6 @@
 #!/bin/bash
 
-xclip -o -selection primary | xclip -i -selection clipboard
+(
+    xclip -o -selection primary | xclip -i -selection clipboard
+    xclip -o -selection primary | xclip -i -selection primary
+)&
