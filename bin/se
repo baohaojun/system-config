@@ -99,6 +99,7 @@ elif test "${default}" = false; then
     . ~/src/ep-tools/common_utils/etc/global-settings.rc
     if test "${jira_env}" = sync; then
         scm_jira_url=${scm_jira_staging_url}
+        scm_jenkins_url=${scm_jenkins_sync_url}
         firefox_instance=2
         terminal_name=staging
         SC_EXTRA_PS1=${SC_EXTRA_PS1/testing/${terminal_name}}

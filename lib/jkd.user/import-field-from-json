@@ -3,11 +3,14 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 use JSON;
 
-my $json = JSON->new->utf8(0);
+my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -108,7 +111,7 @@ if (grep {$_->{name} eq $field_name} @$fields_json) {
         searcherKey => $field_json->{search_template},
     );
 
-    my $new_field_json = JSON->new->utf8(0)->pretty(1)->encode(\%new_field_data);
-    runx("jkd", "post", "-a", "field", "--json", decode_utf8($new_field_json));
+    my $new_field_json = decode_utf8($json->encode(\%new_field_data));
+    runx("jkd", "post", "-a", "field", "--json", $new_field_json);
     capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-field", "-f", $field_name);
 }

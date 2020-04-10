@@ -105,8 +105,12 @@ GetOptions (
 ## end generated code
 
 if ($url and not $query) {
-  $url =~ s,.*//.*?/.*?(\d+).*,$1,;
-  $query = "change:$url";
+    my $url_prefix_re = qr(^[^/]+://[^/]+/(?:#/c/)?);
+    if ($url =~ m,$url_prefix_re(\d+)/?$,) {
+        $query = "change:$1"
+    } else {
+        die "Invalid gerrit review url format: $url"
+    }
 }
 
 use URI::Escape;

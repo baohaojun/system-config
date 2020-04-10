@@ -16,7 +16,7 @@ my $json = JSON->new->utf8->canonical->pretty;
 
 my $unset_jql = '!unset!';
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl q:jql='"$unset_jql"' pprint-all \
+# generate-getopt -s perl q:jql='"$unset_jql"' pprint-all='$ENV{BUILD_URL}' \
 # nfield-names=1 '?"用各个 field 的名字也作为 key 打印一遍"'
 ## end code-generator
 ## start generated code
@@ -28,7 +28,7 @@ Getopt::Long::Configure("default");
 
 my $field_names = 1;
 my $jql = "$unset_jql";
-my $print_all = 0;
+my $print_all = $ENV{BUILD_URL};
 
 my $handler_help = sub {
     print ;

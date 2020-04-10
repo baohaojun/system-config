@@ -26,7 +26,8 @@ EOFc83131117f09
 # u:base-uri a:action='"click"' '?"can be one of: click print-json print-html"' \
 # @:form-input ='"input[name=\"proceed\"][type=\"submit\"]"' \
 # @:click-button-name='"proceed"' '?"对应的是 input 元素的 name 属性"' \
-# @:click-button-text '?"如指定，会对比按钮的文字是否匹配（更严格地检查，以确保是在操作正确的表格。对应的是 input 元素的 value 属性）"'
+# @:click-button-text '?"如指定，会对比按钮的文字是否匹配（更严格地检查，以确保是在操作正确的表格。对应的是 input 元素的 value 属性）"' \
+# @:expected-http-code=302
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -39,6 +40,7 @@ my $action = "click";
 my $base_uri = "";
 my $click_button_name = "proceed";
 my $click_button_text = "";
+my $expected_http_code = 302;
 my $form_input = "input[name=\"proceed\"][type=\"submit\"]";
 
 my $handler_help = sub {
@@ -77,6 +79,14 @@ my $handler_help = sub {
     printf "%s", "如指定，会对比按钮的文字是否匹配（更严格地检查，以确保是在操作正确的表格。对应的是 input 元素的 value 属性）";
     print "\n";
     printf "%6s", '';
+    printf "%-24s", '--expected-http-code=EXPECTED-HTTP-CODE';
+    if (length('--expected-http-code=EXPECTED-HTTP-CODE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
     printf "%-24s", '--form-input=FORM-INPUT';
     if (length('--form-input=FORM-INPUT') > 24 and length() > 0) {
         print "\n";
@@ -99,6 +109,7 @@ GetOptions (
     'base-uri|u=s' => \$base_uri,
     'click-button-name=s' => \$click_button_name,
     'click-button-text=s' => \$click_button_text,
+    'expected-http-code=s' => \$expected_http_code,
     'form-input=s' => \$form_input,
     'help|h!' => \&$handler_help,
 );
@@ -115,8 +126,8 @@ my $html_text =
     decode_utf8(capture("jc curl $base_uri" ));
 use Mojo::DOM;
 my $dom = Mojo::DOM->new->parse($html_text);
-write_file("/home/bhj/tmp/dom-1.html", encode_utf8("$html_text"));
-write_file("/home/bhj/tmp/dom0.html", encode_utf8("$dom"));
+# write_file("/home/bhj/tmp/dom-1.html", encode_utf8("$html_text"));
+# write_file("/home/bhj/tmp/dom0.html", encode_utf8("$dom"));
 
 if ($action eq "print-html") {
     print $dom;
@@ -163,7 +174,7 @@ sub applyNameRef($s, $e, $id) {
     }
 }
 
-write_file("/home/bhj/tmp/dom.html", encode_utf8("$dom"));
+# write_file("/home/bhj/tmp/dom.html", encode_utf8("$dom"));
 
 $dom->find('tr[class~="optional-block-start"]')->each(
     sub {
@@ -204,7 +215,7 @@ $dom->find("[class~='to-be-removed']")->each(
     }
 );
 
-write_file("/home/bhj/tmp/dom2.html", encode_utf8("$dom"));
+# write_file("/home/bhj/tmp/dom2.html", encode_utf8("$dom"));
 
 sub shortenName($name) {
     if($name =~ m,^\[,) {
@@ -362,6 +373,8 @@ sub buildFormTree($form) {
         }
 
     }
+    (my $crumb = $ENV{JC_CRUMB}) =~ m,(.*?):(.*),;
+    $formDom{$form->{form_pl_id}}{$1} = $2;
     my $formDomJson = decode_utf8($json->encode($formDom{$form->{form_pl_id}}));
     if ($action eq "print-json") {
         say "$formDomJson";
@@ -410,7 +423,7 @@ if (my $submit_button = $dom->at("${form_input}")) {
         die "必须指定 --click-button-text 参数，用于与实际参数对比：'$button_text'";
     }
 } else {
-    die "Can't find the specified form input";
+    die "Can't find the specified form input: ${form_input}";
 }
 
 
@@ -433,10 +446,11 @@ for my $form (@forms) {
             $request->header($1, $2);
 
             $request->authorization_basic($ENV{scm_jenkins_user}, $ENV{scm_jenkins_password});
-            say STDERR Dumper($request);
             my $response = $ua->request($request);
-            use Data::Dumper;
-            say STDERR  Dumper($response);
+            say STDERR "http_code: ", $response->code;
+            if ($response->code != $expected_http_code) {
+                die sprintf "Can't get the expected code %s: got %s", $expected_http_code, $response->code;
+            }
             print $response->content;
         }
     }

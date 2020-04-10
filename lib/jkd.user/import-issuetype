@@ -286,3 +286,5 @@ my $workflow_xml = $from_jira_json->{workflow_xml};
 runx (
     "jkd", "upgrade-workflow", "-w", "$workflow_name", "-x", "$workflow_xml", "-i", $issuetype_name, "-s", $from_jira_json->{workflowscheme}
 );
+
+runx "jkd", "diff-issuetype", "-i", "${issuetype_name}", "--j2", "${from_jira_url}", "--fix-fields"
