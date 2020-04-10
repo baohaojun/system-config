@@ -1390,7 +1390,7 @@ sub jkd_tri(@) {
         $transition = select_args("-p", "如何变更当前 issue：${issue}", "-i", "$transition", map {sprintf "id=%s: name=%s", $_->{id}, $_->{name}} @{$json_obj->{transitions}});
         say "transition is $transition";
         $transition =~ s,^id=(\d+):.*,$1, or
-            die "Invalid transition $transition_name";
+            die "Invalid transition $transition_name for $ENV{scm_jira_url}browse/${issue}";
 
         $transition_name = $transition;
     }
