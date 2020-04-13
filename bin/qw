@@ -11,6 +11,10 @@ use utf8;
 @ARGV = map {decode_utf8 $_} @ARGV;
 
 use Shell::Parser;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -20,7 +24,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# uun-quote
+# uun-quote vverbose
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -30,6 +34,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $un_quote = 0;
+my $verbose = 0;
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -37,6 +42,14 @@ my $handler_help = sub {
     printf "%6s", '-u, ';
     printf "%-24s", '--[no]un-quote';
     if (length('--[no]un-quote') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -54,6 +67,7 @@ my $handler_help = sub {
 
 GetOptions (
     'un-quote|u!' => \$un_quote,
+    'verbose|v!' => \$verbose,
     'help|h!' => \&$handler_help,
 );
 
@@ -81,9 +95,10 @@ $parser->parse(join '', <>);
 sub dumpnode {
     my $self = shift;
     my %args = @_;
+    say STDERR decode_utf8($json->encode(\%args)) if $verbose;
     my $token = $args{token};
     my $type = $args{type};
-    if (${type} eq "text" and ${token} =~ m,\S,) {
+    if (${token} =~ m,\S,) {
         if (${token} =~ m,^".*"$,) {
             printf "%s, ", $token;
 

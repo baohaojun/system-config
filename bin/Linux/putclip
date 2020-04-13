@@ -134,9 +134,6 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
                 ssh -i $identity_file -o StrictHostKeyChecking=no ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port \
                     "remote-${b0} ${file_arg}"
 
-            if test "${b0}" = putfile; then
-                putclip "~/tmp/remote-putfile/${file_arg}"
-            fi
             exit 0
         fi
 

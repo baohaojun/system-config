@@ -6,7 +6,7 @@ EMACS=t
 . ~/system-config/bin/set-ssh-agent
 
 
-file=~/tmp/remote-putfile/"$1"
+file=~/tmp/remote-putfile/"$(echo "$1" | perl -pe 's,[:#],.,g')"
 
 dir=$(dirname "$file")
 mkdir -p "$dir"
@@ -19,6 +19,5 @@ fi
 
 tar xv
 
-putclip "$(up "${file%%/*}")"
+putclip "${file}"
 bhj-notify remote-putfile "You received a file ${file}"
-
