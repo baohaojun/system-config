@@ -102,7 +102,7 @@ sub no_spaces_hashget(\%$) {
         return $hash->{$key};
     }
 
-    if ($hash->{no_spaces_hash_convert_done} != 'true') {
+    if ($hash->{no_spaces_hash_convert_done} ne 'true') {
         no_spaces_hash_convert %$hash;
         $hash->{no_spaces_hash_convert_done} = 'true';
     }

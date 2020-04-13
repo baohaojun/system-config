@@ -1,0 +1,71 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # r:repo-name b:branch-name
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o b:r:h \
+                      --long branch-name:,repo-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare branch_name=
+declare repo_name=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -b|--branch-name)
+            branch_name=$2
+            shift 2
+
+            ;;
+        -r|--repo-name)
+            repo_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-b, '
+            printf %-24s '--branch-name=BRANCH_NAME'
+            echo
+            printf %06s '-r, '
+            printf %-24s '--repo-name=REPO_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+set -x
+if test -z "${branch_name}"; then
+    branch_name=$(
+        select-output-line "git ls-remote --heads ${scm_gerrit_admin_ssh_url}${repo_name} | perl -pe 's,.*refs/heads/,,'"
+               )
+fi
+
+ssh-gerrit create-branch "${repo_name}" "refs/backup/${branch_name}.$(today)" "${branch_name}"
+git push ${scm_gerrit_admin_ssh_url}${repo_name} :"${branch_name}"

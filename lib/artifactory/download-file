@@ -80,4 +80,8 @@ if test -z "${file_name}"; then
    file_name=$(basename $url);
 fi
 
+if [[ $url =~ ^$scm_artifactory_prod_url ]]; then
+    scm_artifactory_url=${scm_artifactory_prod_url}
+fi
+
 artifactory my-curl "$url" > "${download_dir}/${file_name}"
