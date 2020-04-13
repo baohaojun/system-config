@@ -95,7 +95,7 @@ else
     fi
 
     if test -z "${meta_dir}"; then
-        meta_dir=~/tmp/$project
+        meta_dir=~/src/gerrit-update-meta/$project
     fi
 fi
 

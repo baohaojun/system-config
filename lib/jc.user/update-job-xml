@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+if test ! -e "$1"; then
+    die "Must specify the job xml!"
+fi
+
+jc create-job "$(echo "$1" | perl -pe 's,.*/,,; s,.xml$,,')" < "$1"
