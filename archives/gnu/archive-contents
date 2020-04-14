@@ -877,7 +877,7 @@
 		  (:keywords "gnome" "c" "coding style")
 		  (:url . "http://elpa.gnu.org/packages/gnome-c-style.html"))])
  (gnorb .
-	[(1 6 5)
+	[(1 6 6)
 	 ((cl-lib
 	   (0 5)))
 	 "Glue code between Gnus, Org, and BBDB" tar
@@ -1274,7 +1274,7 @@
 	      ("Michael Abraham Shulman" . "viritrilbia@gmail.com"))
 	     (:keywords "convenience" "faces" "languages" "tools"))])
  (modus-operandi-theme .
-		       [(0 6 0)
+		       [(0 7 0)
 			((emacs
 			  (26 1)))
 			"Accessible light theme (WCAG AAA)" single
@@ -1284,7 +1284,7 @@
 			 (:maintainer "Protesilaos Stavrou" . "info@protesilaos.com")
 			 (:url . "https://gitlab.com/protesilaos/modus-themes"))])
  (modus-vivendi-theme .
-		      [(0 6 0)
+		      [(0 7 0)
 		       ((emacs
 			 (26 1)))
 		       "Accessible dark theme (WCAG AAA)" single
@@ -1396,7 +1396,7 @@
 	       ("Felix Lee <felix8a@gmail.com>, Michal Nazarewicz" . "mina86@mina86.com"))
 	      (:maintainer "Michal Nazarewicz" . "mina86@mina86.com"))])
  (oauth2 .
-	 [(0 12)
+	 [(0 13)
 	  nil "OAuth 2.0 Authorization Protocol" single
 	  ((:url . "http://elpa.gnu.org/packages/oauth2.html")
 	   (:keywords "comm")
@@ -1465,7 +1465,7 @@
 	      ("Ian Dunn" . "dunni@gnu.org"))
 	     (:keywords "convenience" "text" "org"))])
  (orgalist .
-	   [(1 11)
+	   [(1 12)
 	    ((emacs
 	      (24 4)))
 	    "Manage Org-like lists in non-Org buffers" single
@@ -1549,7 +1549,7 @@
 	     ("Phillip Lord" . "phillip.lord@russet.org.uk"))
 	    (:url . "http://elpa.gnu.org/packages/persist.html"))])
  (phps-mode .
-	    [(0 3 38)
+	    [(0 3 39)
 	     ((emacs
 	       (26)))
 	     "Major mode for PHP with Semantic integration" tar
@@ -1575,7 +1575,7 @@
 	   ("Mario Lang" . "mlang@delysid.org"))
 	  (:maintainer "Mario Lang" . "mlang@delysid.org"))])
  (posframe .
-	   [(0 6 0)
+	   [(0 7 0)
 	    ((emacs
 	      (26)))
 	    "Pop a posframe (just a frame) at point" single
@@ -1623,7 +1623,7 @@
 	  (:maintainer "Toby Cubitt" . "toby-predictive@dr-qubit.org")
 	  (:url . "http://www.dr-qubit.org/emacs.php"))])
  (rainbow-mode .
-	       [(1 0 3)
+	       [(1 0 4)
 		nil "Colorize color names in buffers" single
 		((:url . "http://elpa.gnu.org/packages/rainbow-mode.html")
 		 (:keywords "faces")
@@ -1812,6 +1812,18 @@
 	  (:authors
 	   ("Jan Moringen" . "scymtym@users.sourceforge.net"))
 	  (:keywords "rudel" "collaboration"))])
+ (scanner .
+	  [(0 1)
+	   ((emacs
+	     (25 1))
+	    (dash
+	     (2 12 0)))
+	   "Scan documents and images" tar
+	   ((:url . "https://gitlab.com/rstocker/scanner.git")
+	    (:maintainer "Raffael Stocker" . "r.stocker@mnet-mail.de")
+	    (:authors
+	     ("Raffael Stocker" . "r.stocker@mnet-mail.de"))
+	    (:keywords "hardware" "multimedia"))])
  (scroll-restore .
 		 [(1 0)
 		  nil "restore original position after scrolling" single
@@ -2224,7 +2236,7 @@
 	  (:maintainer "Ingo Lohmar" . "i.lohmar@gmail.com")
 	  (:url . "https://github.com/ilohmar/wconf"))])
  (web-server .
-	     [(0 1 1)
+	     [(0 1 2)
 	      ((emacs
 		(24 3)))
 	      "Emacs Web Server" tar
