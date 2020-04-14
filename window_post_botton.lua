@@ -1,4 +1,5 @@
 local map = {}
+map['cn.gov.tax.its/cn.gov.tax.its.MainActivity'] = 'No-Post'
 map['com.aibang.bjtraffic/com.uicps.activity.UICPSWebActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.AddRobotActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'Find-Button'
