@@ -715,9 +715,12 @@ might be bad."
     (unless (string= sc--git-directory "")
       (shell-command-to-string
        (format
-        "cd %s && nohup sc--after-save %s >/dev/null 2>&1&"
-        (shell-quote-argument sc--git-directory)
-        (shell-quote-argument (buffer-file-localname)))))))
+        "nohup setsid bash -c %s"
+        (shell-quote-argument
+         (format
+          "cd %s && nohup sc--after-save %s >/dev/null 2>&1"
+          (shell-quote-argument sc--git-directory)
+          (shell-quote-argument (buffer-file-localname)))))))))
 
 ;;;###autoload
 (defun indent-same-space-as-prev-line (n-prev &optional from-bol)

@@ -61,7 +61,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
   (when (and (boundp 'global-emojify-mode)
              global-emojify-mode)
     (global-emojify-mode 1))
-  (shell-command-to-string "sawfish-client -e '(maximize-window (input-focus))'&"))
+  (shell-command-to-string "setsid sawfish-client -e '(maximize-window (input-focus))'"))
 
 
 (defvar bhj-english-fonts '("JetBrains Mono" "Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
