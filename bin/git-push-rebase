@@ -424,8 +424,8 @@ fi
             exit 0
         fi
         if grep 'fetch first|non-fast-forward' -P .git/sc-git-push.log; then
-            timeout 10 git fetch $(repo-remote) ||
-                tsocks1 git fetch $(repo-remote)
+            timeout 10 git fetch $(repo-remote) $(repo-branch) -v||
+                tsocks1 git fetch $(repo-remote) $(repo-branch) -v
             myscr -n push-$(bp) -w '
                 git-interactive-add -b "$(git merge-base $(repo-remote-branch) HEAD)" -r "$(repo-remote-branch)";
                 if yes-or-no-p "Merge?"; then
