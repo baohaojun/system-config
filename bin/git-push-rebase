@@ -431,6 +431,8 @@ fi
                 if yes-or-no-p "Merge?"; then
                     git merge $(repo-remote-branch);
                 fi'
+        else
+            log "don't know what is wrong with $PWD push"
         fi
         echo try $try failed in $PWD
         if test "$try" = 1 && tsocks1 git push $origin HEAD:refs/heads/$branch; then
