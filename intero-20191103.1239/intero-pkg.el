@@ -1,2 +1,0 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "intero" "20191103.1239" "Complete development mode for Haskell" '((flycheck "0.25") (company "0.8") (emacs "24.4") (haskell-mode "13.0")) :commit "30d8e7330c9b20c2905035bc417fa8645e7b4b85" :keywords '("haskell" "tools") :authors '(("Chris Done" . "chrisdone@fpcomplete.com")) :maintainer '("Chris Done" . "chrisdone@fpcomplete.com") :url "https://github.com/commercialhaskell/intero")

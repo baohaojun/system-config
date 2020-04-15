@@ -1,2 +1,0 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "find-file-in-project" "20200110.1353" "Find file/directory and review Diff/Patch/Commit efficiently everywhere" '((ivy "0.10.0") (emacs "24.4")) :commit "d879f3fd08dfe6683df8d4fb1f92c90dde03a74c" :keywords '("project" "convenience") :authors '(("Phil Hagelberg, Doug Alcorn, and Will Farrington")) :maintainer '("Chen Bin" . "chenbin.sh@gmail.com") :url "https://github.com/technomancy/find-file-in-project")

@@ -1549,7 +1549,7 @@
 	     ("Phillip Lord" . "phillip.lord@russet.org.uk"))
 	    (:url . "http://elpa.gnu.org/packages/persist.html"))])
  (phps-mode .
-	    [(0 3 39)
+	    [(0 3 40)
 	     ((emacs
 	       (26)))
 	     "Major mode for PHP with Semantic integration" tar
