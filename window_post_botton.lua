@@ -73,6 +73,7 @@ map['com.weico.international/com.weico.international.activity.SinaMessageLoginAc
 map['com.weico.international/com.weico.international.activity.v4.SmsLoginActivity'] = 'No-Post'
 map['com.weico.international/com.weico.international.ui.search.SearchActivity'] = 'No-Post'
 map['com.xiaomi.smarthome/com.xiaomi.miot.store.ui.MiotStoreMainActivity'] = 'No-Post'
+map['lixiang'] = 'No-Post'
 map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'No-Post'
 map['smt_launcher'] = 'No-Post'
 return map
