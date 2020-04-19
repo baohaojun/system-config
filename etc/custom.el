@@ -11,6 +11,7 @@
    [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
+ '(auth-source-save-behavior nil)
  '(auth-sources '((:source "~/.authinfo" :host t :protocol t)))
  '(auto-save-file-name-transforms
    '(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)

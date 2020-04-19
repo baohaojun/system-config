@@ -53,8 +53,8 @@
 (eval-after-load 'org
   '(progn
      (defadvice org-make-link-regexps (after bhj/org-link-tweak activate)
-       (setq org-plain-link-re (fix-link-re org-plain-link-re))
-       (setq org-any-link-re (fix-link-re org-any-link-re)))
+       (setq org-link-plain-re (fix-link-re org-link-plain-re))
+       (setq org-link-any-re (fix-link-re org-link-any-re)))
      (org-defkey org-mode-map [?\e (shift return)] 'org-insert-todo-heading)
      (require 'org-jira)
      (require 'bhj-defines)
