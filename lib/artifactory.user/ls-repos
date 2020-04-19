@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+artifactory rest /api/storageinfo|jq '.repositoriesSummaryList|.[]|.repoKey' -r
