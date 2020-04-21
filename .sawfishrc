@@ -315,6 +315,8 @@
       (setq alist (update-firefox-keys alist from-key firefox-keys))))
   alist)
 
+(defun ok-xxx ()
+  (message "hello world"))
 
 (setq global-emacs-remap-alist
       '(("C-a" . '((t "Home")))
@@ -336,7 +338,7 @@
         ("M-F" . '((t "C-S-Right")))
         ("C-s" . '((Firefox "C-f") (Firefox-esr "C-f")
                    (Iceweasel "C-f")
-                   (Okular "F3")
+                   (okular "M-e" "f")
                    (Gjiten "M-s" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "ISO_Left_Tab" "Home" "S-End" "RET")
                    (t "C-g")))
         ("C-v" . '((qpdfview "SPC") (t "Next")))
@@ -353,7 +355,7 @@
         ("M-d" . '((t "C-S-Right" "DEL")))
         ("M->" . '((qpdfview "End")
                    (t "C-End")))
-        ("C-r" . '((Firefox "C-g") (Firefox-esr "C-g") (Iceweasel "C-g") (Okular "S-F3") (t "C-S-g")))
+        ("C-r" . '((Firefox "C-g") (Firefox-esr "C-g") (Iceweasel "C-g") (okular "S-F3") (t "C-S-g")))
         ("C-k" . '((t "S-End" "DEL")))
         ("M-BS" . '((t "C-S-Left" "DEL")))
         ("C-p" . '((t "Up")))
@@ -716,7 +718,7 @@ EOF856ceee4ab57
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
       br-class "iceweasel|Navigator|firefox|epiphany-browser|chromium|Download|Google-chrome" ;; br = browser
-      dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|Okular|AcroRd32.exe|kindle.exe|Gimp|Display-|acroread|evince|Gnumeric|mupdf" ;; dc = doc
+      dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|okular|AcroRd32.exe|kindle.exe|Gimp|Display-|acroread|evince|Gnumeric|mupdf" ;; dc = doc
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager
       bhj-cycle-groups (list im-class
