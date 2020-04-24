@@ -1127,15 +1127,18 @@ criteria can be provided via the optional match-string argument "
 
 (defun shell-setsid (&rest command-and-args)
   "Start a process with COMMAND-AND-ARGS with setsid in emacs."
-  (shell-command
-   (format "setsid bash -c %s\\& >/dev/null 2>&1"
-           (shell-quote-argument
-            (string-join
-             (mapcar
-              (lambda (str)
-                (shell-quote-argument str))
-              command-and-args)
-             " ")))))
+  (let ((command-str
+         (format
+          "setsid nohup %s >~/tmp/shell-setsid.log 2>&1"
+          (string-join
+           (mapcar
+            (lambda (str)
+              (shell-quote-argument str))
+            command-and-args)
+           " "))))
+    (when (file-remote-p default-directory)
+      (message "running remote command %s, maybe won't work!" command-str))
+    (shell-command-to-string command-str)))
 
 ;;;###autoload
 (defun bhj-do-search (&optional program word)
@@ -1148,7 +1151,11 @@ criteria can be provided via the optional match-string argument "
                  (current-word))))
   (unless program
     (setq program "s"))
-  (shell-setsid program word))
+  (let ((default-directory
+          (if (file-remote-p default-directory)
+              "/"
+            default-directory)))
+    (shell-setsid program word)))
 
 ;;;###autoload
 (defun bhj-open-android-doc-on-java-buffer ()

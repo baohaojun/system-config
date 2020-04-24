@@ -175,6 +175,10 @@ if test "$prog" = search-japanese; then
     url="https://www.google.co.uk/search?q=$fill+英语"
 fi
 
+if test "${prog}" = search-jira; then
+    url=${scm_jira_url}browse/$fill
+fi
+
 if test "$prog" = search-jisho; then
     url="http://jisho.org/search?utf8=✓&keyword=$fill"
     pat=//jisho.org/

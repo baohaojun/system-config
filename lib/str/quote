@@ -56,12 +56,20 @@ done
 
 ## end generated code
 
+if test "$#" = 0; then
+    bhj-notify "str quote" "quote STDIN"
+    set -- "$(cat)"
+fi
+
 case "${format}" in
     emacs)
         emacs-quote-string "$1"
         ;;
     lua)
         str.quote.lua "$1"
+        ;;
+    shell)
+        perl -e 'use String::ShellQuote; print shell_quote(@ARGV)' "$1"
         ;;
     *)
         die "Can't work with '${format}'"

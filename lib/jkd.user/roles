@@ -137,16 +137,22 @@ if (is_exact_action "list") {
     my $roles_json =
         $json->decode(scalar capture("cached-run -e scm_jira_url jkd roles -a list -p $project"));
 
-    if (is_exact_action "add-user") {
+    if (is_exact_action ("add-user") || is_exact_action("del-user")) {
 
         die "No such role: $role_name" unless $roles_json->{$role_name};
+        my $role_id = $roles_json->{$role_name}{id};
 
         if (grep {$_->{name} eq $user_name} @{$roles_json->{$role_name}{actors}}) {
+            if (is_exact_action "del-user") {
+                runx "debug-run", "jkd", "rest", "-a", "project/${project}/role/${role_id}?user=${user_name}", "--", "-X", "DELETE";
+                exit 0;
+            }
             say STDERR "$user_name already in role $role_name";
             exit (0);
+        } elsif (is_exact_action "del-user") {
+            die "Can't find user $user_name in $role_name";
         }
 
-        my $role_id = $roles_json->{$role_name}{id};
         my $user_json = {
             user => [$user_name],
         };

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exec 2> ~/tmp/repo-xml-sel.log
+set -x
+
 opts=()
 while true; do
     if test "$#" -gt 1; then
@@ -18,20 +21,44 @@ if test ! -e "$xml"; then
     die "Can't find $xml"
 fi
 
-# 注意：我们目前只支持一层 include 文件
-xmls=(
-    "$xml"
-    $(
-        cd "$(dirname  "$xml")"
+declare -A xml_already_included
+get-included-xmls() {
+    local xml=$1
+    (
+        cd "$(dirname "$xml")"
         if git_dir=$(lookup-file -e .git/..); then
             cd "$git_dir"
-            for x in $(xmlstarlet sel -t -m //include -v @name -n "$xml"); do
-                if ! readlink -f "$x"; then
-                    bark "include 文件有问题"
-                    kill $$
-                fi
-            done
         fi
+        for x in $(xmlstarlet sel -t -m //include -v @name -n "$xml"); do
+            if [[ $PWD =~ /.repo$ ]] && test -d manifests; then
+                x=manifests/$x
+            fi
+            if ! readlink -f "$x"; then
+                bark "include 文件有问题"
+                kill $$
+            fi
+        done
+    )
+}
+
+
+if [[ $xml =~ .repo/manifest.xml$ ]] && test ! -L $xml; then
+    xmls=(
+        $(get-included-xmls "$xml")
+    )
+else
+    xmls=(
+        "$xml"
+    )
+fi
+
+# 注意：我们目前只支持一层 include 文件
+xmls=(
+    "${xmls[@]}"
+    $(
+        for xml in "${xmls[@]}"; do
+            get-included-xmls "$xml"
+        done
     )
 )
 

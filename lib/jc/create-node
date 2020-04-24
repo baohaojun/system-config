@@ -1,57 +1,102 @@
-#!/bin/bash
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 
-set -e
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt n:node-name f:from-node
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# f:from-node n:node-name i:ip-addr
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o f:n:h \
-               --long from-node:,node-name:,help \
-               -n $(basename -- $0) -- "$@")
-declare from_node=
-declare node_name=
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
+use Getopt::Long;
 
-        -f|--from-node)
-            from_node=$2
-            shift 2
+Getopt::Long::Configure("posix_default");
 
-            ;;
-        -n|--node-name)
-            node_name=$2
-            shift 2
 
-            ;;
-        -h|--help)
-            set +x
-            echo -e
-            echo
-            echo Options and arguments:
-            printf %06s '-f, '
-            printf %-24s '--from-node=FROM_NODE'
-            echo
-            printf %06s '-n, '
-            printf %-24s '--node-name=NODE_NAME'
-            echo
-            exit
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
+
+my $from_node = "";
+my $ip_addr = "";
+my $node_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--from-node=FROM-NODE';
+    if (length('--from-node=FROM-NODE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--ip-addr=IP-ADDR';
+    if (length('--ip-addr=IP-ADDR') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--node-name=NODE-NAME';
+    if (length('--node-name=NODE-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'from-node|f=s' => \$from_node,
+    'ip-addr|i=s' => \$ip_addr,
+    'node-name|n=s' => \$node_name,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
 
-jc curl computer/createItem -X POST --data "name=${node_name}&mode=copy&from=${from_node}"
+die "Must specify from-node" unless $from_node;
 
-jc update computer/"${node_name}"/config.xml
+die "Must specify ip-addr" unless $ip_addr;
+
+if (not $node_name) {
+    ($node_name = $from_node) =~ s,(.*-)(\d+.\d+.\d+.\d+)$,$1$ip_addr,;
+}
+
+my $from_xml =
+    decode_utf8(scalar capturex("jc", "get-node", "$from_node"));
+
+use Mojo::DOM;
+my $dom = Mojo::DOM->new->parse($from_xml);
+
+$dom->at('slave name')->replace("<name>$node_name</name>");
+$dom->at('slave launcher host')->replace("<host>$ip_addr</host>");
+
+runx "jc", "curl", "computer/createItem", "-X", "POST", "--data", "name=${node_name}&mode=copy&from=${from_node}";
+
+use File::Slurp;
+write_file("/tmp/create-node.$$.xml", {binmode => ':utf8'}, $dom);
+run "jc update computer/${node_name}/config.xml < /tmp/create-node.$$.xml; rm -f /tmp/create-node.$$.xml";
+runx "of", "$ENV{scm_jenkins_url}computer/${node_name}";

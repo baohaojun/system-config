@@ -10,7 +10,9 @@ export ADD_HOW_MUCH=${1}
 
 if [[ $ADD_HOW_MUCH =~ ^[+|-][0-9]+ ]]; then
     current_url=$(echo $current_url| perl -pe 's,(.*)(\d+)(.*),$1 . ($2 + $ENV{ADD_HOW_MUCH}) . $3,e')
-
+elif test "${1}" = dup; then
+    firefox --new-tab $current_url
+    exit 0
 else
     jira_regexp=$(
         declare -x -p | perl -ne 'push @u, $1 if m,^declare -x scm_jira.*url.*="(.*)",; END {print join("|", @u)}'

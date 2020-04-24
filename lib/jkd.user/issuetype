@@ -37,6 +37,7 @@ my $json = JSON->new->utf8->canonical->pretty;
 * action = edit-fieldconfig
 * action = get-workflow
 * action = edit-screen
+* action = edit-screenscheme
 edit a screen that is bound to this issuetype
 # {%/org-mode%}
 EOFc83131117f09
@@ -442,6 +443,23 @@ if (is_exact_action "print") {
         decode_utf8(scalar capturex("debug-run", "select-args", "-p", "Which screen do you want?", keys %{$issuetype_json->{screens}}));
 
     runx("jkd", "go", "screen", "$screen_name");
+} elsif (is_exact_action "edit-screenscheme") {
+    my $issuetype_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", $issuetype_name));
+
+    my $screenscheme_name = $issuetype_json->{screenscheme};
+    my $screenscheme_id = name2id(["export-screenschemes"], $screenscheme_name);
+
+    runx "of", "$ENV{scm_jira_url}secure/admin/ConfigureFieldScreenScheme.jspa?id=${screenscheme_id}";
+} elsif (is_exact_action "edit-field") {
+
+    my $issuetype_json =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", $issuetype_name));
+
+    my $field =
+        decode_utf8(scalar capturex("select-args", "-p", "which field to edit?", sort keys %{$issuetype_json->{fieldconfig_json}} ));
+
+    runx "jkd", "edit-field", "-a", "edit", "-n", "$field";
 } elsif (is_exact_action "new-screen") {
     my $issuetype_json =
         $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", $issuetype_name));
