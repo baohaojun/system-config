@@ -284,6 +284,27 @@ if (is_exact_action "id2name") {
 
                     $text =~ s,^field::(\d+);,field::${name};,;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                } elsif ($_->{name} eq "failureMessageField") {
+                    my $text = $_->text;
+                    my $name = id2name($text, 'field');
+                    die "bad name $name: it matches ;!" if $name =~ m/;/;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
+                } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression") {
+                    (my $text = $_->text) =~ s,^\%\{|\}$,,g;
+                    my $name = id2name($text, 'field');
+                    die "bad name $name: it matches ;!" if $name =~ m/;/;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
+                } elsif ($_->{name} =~ m,^(failureMessage)$,) {
+                    my $text = $_->text;
+                    my %id_name_map;
+                    while ($text =~ m,\%\{(\d+)\},g) {
+                        my $id = $1;
+                        my $name = id2name($id, 'field');
+                        $id_name_map{$id} = $name;
+                        die "bad name $name: it matches ;!" if $name =~ m/[%{}]/;
+                    }
+                    $text =~ s:\%\{(\d+)}:sprintf('%{%s}', $id_name_map{$1}):ge;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
                 }
             }
         );
@@ -327,6 +348,24 @@ if (is_exact_action "id2name") {
                     my $id = fields_name2id_number_only $1;
 
                     $text =~ s,^field::(.*?);,field::${id};,;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                } elsif ($_->{name} eq "failureMessageField") {
+                    my $text = $_->text;
+                    my $id = fields_name2id_number_only($text);
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, $id));
+                } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression") {
+                    (my $text = $_->text) =~ s,^\%\{|\}$,,g;
+                    my $id = fields_name2id_number_only $text;
+                    $_->replace(sprintf('<arg name="%s">\%{%s}</arg>', $_->{name}, $id));
+                } elsif ($_->{name} =~ m,^(failureMessage)$,) {
+                    my $text = $_->text;
+                    my %name_id_map;
+                    while ($text =~ m,\%\{(.*?)\},g) {
+                        my $name = $1;
+                        my $id = fields_name2id_number_only $name;
+                        $name_id_map{$name} = $id;
+                    }
+                    $text =~ s:\%\{(\d+)}:sprintf('%{%s}', $name_id_map{$1}):ge;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
                 }
             }
