@@ -183,6 +183,7 @@ sub switch_workflow($old_workflow, $new_workflow) {
 }
 
 if ($workflow_exists) {
+    say STDERR "switch it out using: $temp_workflow";
     runx("jkd", "export-workflow-as-xml", "-w", "${workflow_name}", "-f", $backup_xml);
     runx("jkd", "import-workflow-from-xml", "-w", "$temp_workflow", "-f", "$backup_xml");
 
