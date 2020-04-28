@@ -107,7 +107,7 @@ get-env-and-cmd() {
 }
 
 if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
-        test "$(cat "${cmd_md5_file_prefix}.cmd")" = "$(get-env-and-cmd)"; then
+        test "$(cat "${cmd_md5_file_prefix}.cmd")" = "$(get-env-and-cmd "$@")"; then
     if test "${renew_caches}" != true; then
         cat "${cmd_md5_file_prefix}.out"
         (
@@ -118,7 +118,7 @@ if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
     fi
 fi
 
-get-env-and-cmd > "${cmd_md5_file_prefix}.cmd"
+get-env-and-cmd "$@" > "${cmd_md5_file_prefix}.cmd"
 . atexit rm -f "${cmd_md5_file_prefix}.out.$$"
 
 set -o pipefail

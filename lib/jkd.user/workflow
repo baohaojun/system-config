@@ -356,7 +356,7 @@ if (is_exact_action "id2name") {
                 } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression") {
                     (my $text = $_->text) =~ s,^\%\{|\}$,,g;
                     my $id = fields_name2id_number_only $text;
-                    $_->replace(sprintf('<arg name="%s">\%{%s}</arg>', $_->{name}, $id));
+                    $_->replace(sprintf('<arg name="%s">%{%s}</arg>', $_->{name}, $id));
                 } elsif ($_->{name} =~ m,^(failureMessage)$,) {
                     my $text = $_->text;
                     my %name_id_map;

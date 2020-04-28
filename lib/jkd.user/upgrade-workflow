@@ -157,7 +157,7 @@ if (not $workflow_name or not $workflow_scheme) {
 
 my $workflow_exists = (runx(EXIT_ANY, "jkd", "exists-name", "-a", "workflow", "$workflow_name") == 0);
 
-my $backup_xml = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/workflows/${workflow_name}.bak.xml";
+my $backup_xml = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/workflows.${workflow_name}.bak.xml";
 my $temp_workflow = "$workflow_name.$$";
 
 my $done_switch;
