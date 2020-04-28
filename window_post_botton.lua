@@ -11,6 +11,8 @@ map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.PicVi
 map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.LaunchHomeActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.contact.organization.view.UserContactActivity'] = 'Enter-Key'
+map['com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpWithPwdActivity'] = 'No-Post'
+map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.DragDropMiniAppActivity'] = 'Find-Button'
 map['com.amazon.kindle/com.amazon.identity.auth.device.AuthPortalUIActivity'] = 'No-Post'
