@@ -37,6 +37,6 @@ fi
 dconf write "/org/gnome/desktop/input-sources/xkb-options" "['ctrl:swap_lalt_lctl','ctrl:swap_ralt_rctl']"
 
 if grep 'XKBOPTIONS=""' -q /etc/default/keyboard; then
-    sudo perl -pe 's,XKBOPTIONS="",XKBOPTIONS="ctrl:swap_lalt_lctl,ctrl:swap_ralt_rctl,caps:swapescape",' \
+    sudo perl -pe 's,XKBOPTIONS="",XKBOPTIONS="ctrl:swap_lalt_lctl\,ctrl:swap_ralt_rctl\,caps:swapescape",' \
          -i /etc/default/keyboard
 fi
