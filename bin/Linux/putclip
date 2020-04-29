@@ -149,9 +149,15 @@ else
     (
         rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
         xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
-        if test "$(xclip -o -selection clipboard)" != "$(xclip -o)"; then
-            sleep .1
-            xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
-        fi
+        for x in $(seq 1 3); do
+            if test "$(xclip -o -selection clipboard)" != "$(xclip -o)"; then
+                log "clip not sync: @$x"
+                if test "${x}" = 3; then
+                    bhj-notify putclip "2 clips not sync!"
+                fi
+                sleep .$x
+                xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
+            fi
+        done
     )
 fi

@@ -157,7 +157,7 @@ if (not $workflow_name or not $workflow_scheme) {
 
 my $workflow_exists = (runx(EXIT_ANY, "jkd", "exists-name", "-a", "workflow", "$workflow_name") == 0);
 
-my $backup_xml = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/workflows/${workflow_name}.bak.xml";
+my $backup_xml = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/workflows.${workflow_name}.bak.xml";
 my $temp_workflow = "$workflow_name.$$";
 
 my $done_switch;
@@ -183,6 +183,7 @@ sub switch_workflow($old_workflow, $new_workflow) {
 }
 
 if ($workflow_exists) {
+    say STDERR "switch it out using: $temp_workflow";
     runx("jkd", "export-workflow-as-xml", "-w", "${workflow_name}", "-f", $backup_xml);
     runx("jkd", "import-workflow-from-xml", "-w", "$temp_workflow", "-f", "$backup_xml");
 

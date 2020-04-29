@@ -1,0 +1,141 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # p:project-2nd-dir-name '?"比如，xx/yy"' \
+    # gcreate-groups=true '?"create 3 groups: admin/sme/dev"' \
+    # mupdate-meta=true '?"设置 gerrit project meta"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o gp:mh \
+                      --long create-groups,project-2nd-dir-name:,update-meta,help,no-create-groups,no-update-meta \
+                      -n $(basename -- $0) -- "$@")
+declare create_groups=true
+declare project_2nd_dir_name=
+declare update_meta=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -g|--create-groups|--no-create-groups)
+            if test "$1" = --no-create-groups; then
+                create_groups=false
+            else
+                create_groups=true
+            fi
+            shift
+
+            ;;
+        -p|--project-2nd-dir-name)
+            project_2nd_dir_name=$2
+            shift 2
+
+            ;;
+        -m|--update-meta|--no-update-meta)
+            if test "$1" = --no-update-meta; then
+                update_meta=false
+            else
+                update_meta=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %06s '-g, '
+            printf %-24s '--[no-]create-groups'
+            echo "create 3 groups: admin/sme/dev"
+            printf %06s '-p, '
+            printf %-24s '--project-2nd-dir-name=PROJECT_2ND_DIR_NAME'
+            echo
+            printf "%30s" ""
+            echo "比如，xx/yy"
+            printf %06s '-m, '
+            printf %-24s '--[no-]update-meta'
+            echo "设置 gerrit project meta"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+set -x
+if test "$(echo ${project_2nd_dir_name} | perl -pe 's,[^/],,g')" != /; then
+    die "Must contain 1 and only 1 /: $project_2nd_dir_name"
+fi
+
+project_name=All-$(echo ${project_2nd_dir_name} | perl -pe 's,/,-,; $_ = uc $_;')
+
+parent_project_name=${project_name%-*}
+
+gr create-project ${project_name} -p ${parent_project_name} --permissions-only
+
+grp_prefix=$(git config -f $scm_secrets_conf gerrit.group.prefix)
+
+if test "${create_groups}" = true; then
+    gr mkgrps --prefix "${grp_prefix}" --project ${project_2nd_dir_name}
+fi
+
+
+
+tmpdir=~/tmp/new-seconndary-project.$$
+mkdir -p $tmpdir
+
+clean_up() {
+    if test "${atexit_ret}" = 0; then
+        rm -rf $tmpdir
+    fi
+}
+
+. atexit clean_up
+log tmpdir is $tmpdir
+
+if test "${update_meta}" = true; then
+    gerrit-update-meta -s -p ${scm_gerrit_admin_ssh_url}"${project_name}" -d $tmpdir
+    (
+        cd $tmpdir
+        grp_prefix=${grp_prefix}${project_name#All-}
+        cat <<'EOF' | . .replace-%% -- > project.config
+[access]
+        inheritFrom = [%parent_project_name%]
+[access "refs/heads/*"]
+        label-Code-Review = -2..+2 group [%grp_prefix%]-SME
+        label-Code-Review = -1..+1 group [%grp_prefix%]-DEV
+        label-Verified = -1..+1 group [%grp_prefix%]-DEV
+        submit = group [%grp_prefix%]-DEV
+        label-Sonar-Verified = -1..+1 group [%grp_prefix%]-SME
+[access "refs/*"]
+        read = group [%grp_prefix%]-DEV
+        create = group [%grp_prefix%]-ADMIN
+[submit]
+        action = fast forward only
+EOF
+    )
+    gerrit-meta-fix-groups
+    git add .
+    git commit -m 'init permission' -s
+    git push
+fi

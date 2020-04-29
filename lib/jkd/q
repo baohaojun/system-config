@@ -7,6 +7,11 @@ binmode(STDOUT, ":utf8");
 binmode(STDERR, ":utf8");
 use Encode;
 use utf8;
+
+BEGIN {
+    push @INC, "$ENV{scm_common_libdir}/jkd.pm";
+}
+use jkd;
 @ARGV = map {decode_utf8 $_} @ARGV;
 
 use JSON;

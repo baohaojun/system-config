@@ -137,8 +137,8 @@ fi
     done
 
     select_all="All of the above! 老子想批处理一下！"
-    saved_selected_info=$(
-        select-args -1 -a "$select_all" -p "你想查看哪封邮件？" "$(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r)" </dev/tty
+    IFS=$'\n' saved_selected_info=$(
+        select-args -1 -a "$select_all" -p "你想查看哪封邮件？" $(for x in "${!maildir_file_map[@]}"; do echo "$x"; done|sort -r) </dev/tty
                        )
 
     if test "$saved_selected_info" = "$select_all"; then
