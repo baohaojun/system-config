@@ -1,0 +1,87 @@
+#!/bin/bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # p:project '?"创建项目相关的管理分组"' \
+    # @:prefix '?"组名的前缀"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o p:h \
+                      --long prefix:,project:,help \
+                      -n $(basename -- $0) -- "$@")
+declare prefix=
+declare project=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --prefix)
+            prefix=$2
+            shift 2
+
+            ;;
+        -p|--project)
+            project=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf "%06s" " "
+            printf %-24s '--prefix=PREFIX'
+            echo "组名的前缀"
+            printf %06s '-p, '
+            printf %-24s '--project=PROJECT'
+            echo "创建项目相关的管理分组"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "${prefix}"; then
+    die "Must specify prefix, such as XXX-"
+fi
+
+prefix=${prefix%-}-
+
+project=${project#/}
+project_group_prefix=${prefix}${project//\//-}
+project_group_prefix=${project_group_prefix^^}
+
+declare -A include_postfixes=(
+    [ADMIN]=ADMIN
+    [SME]=ADMIN
+    [DEV]=SME
+)
+
+for postfix in ADMIN SME DEV; do
+    include=${include_postfixes[$postfix]}
+    if test $postfix != ADMIN; then
+        extra_args="-g ${project_group_prefix%-}-${include} -o ${project_group_prefix%-}-ADMIN"
+    fi
+    debug-run gr create-group ${project_group_prefix%-}-${postfix} $extra_args
+done

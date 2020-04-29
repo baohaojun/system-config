@@ -12,6 +12,7 @@ use JSON;
 
 my $json = JSON->new->utf8->canonical->pretty;
 
+use String::ShellQuote;
 
 use strict;
 use warnings;
@@ -20,7 +21,7 @@ use Carp;
 use Exporter;
 BEGIN { @jkd::ISA = 'Exporter' }
 
-@jkd::EXPORT = qw(name2id name2key name2name name_exists);
+@jkd::EXPORT = qw(name2id name2key name2name name_exists select_args);
 
 use feature 'signatures';
 no warnings "experimental::signatures";
@@ -62,6 +63,74 @@ sub name_exists($jkd_cmds, $name) {
         return 1 if $_->{name} eq $name || ($_->{key} && $_->{key} eq $name);
     } @$jsonArray;
     return undef;
+}
+
+sub select_args(@) {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -s perl -l -P p:prompt O:order-name i:init-input
+    ## end code-generator
+    ## start generated code
+    use Getopt::Long;
+
+    Getopt::Long::Configure("posix_default");
+
+    local @ARGV = @_;
+
+    my $init_input = "";
+    my $order_name = "";
+    my $prompt = "";
+
+    my $handler_help = sub {
+        print ;
+        print "\n\n选项和参数：\n";
+        printf "%6s", '-i, ';
+        printf "%-24s", '--init-input=INIT-INPUT';
+        if (length('--init-input=INIT-INPUT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-O, ';
+        printf "%-24s", '--order-name=ORDER-NAME';
+        if (length('--order-name=ORDER-NAME') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+        printf "%6s", '-p, ';
+        printf "%-24s", '--prompt=PROMPT';
+        if (length('--prompt=PROMPT') > 24 and length() > 0) {
+            print "\n";
+            printf "%30s", "";
+        }
+        printf "%s", ;
+        print "\n";
+
+        exit(0);
+    };
+
+    GetOptions (
+        'init-input|i=s' => \$init_input,
+        'order-name|O=s' => \$order_name,
+        'prompt|p=s' => \$prompt,
+        'help|h!' => \&$handler_help,
+        );
+
+
+    ## end generated code
+
+    my @command = (
+        "select-args", "-p", "$prompt", "-i", "$init_input",
+        "-O", "$order_name",
+        @ARGV
+        );
+
+    my $command = join(" ", shell_quote(@command));
+    my $res = decode_utf8 (qx($command));
+
+    return $res;
 }
 
 1;

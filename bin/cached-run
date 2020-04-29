@@ -21,14 +21,17 @@ EOFe9576f8668e0
 # generate-getopt -P '?"${comment_doc}"' \
     # d:cache-dir='${CACHED_RUN_SAVE_DIR:-~/.cache/system-config/cached-run}' \
     # e:extra-envvars='${CACHED_RUN_EXTRA_ENVVARS}' '?"额外的会影响运行结果的环境变量，将其作为命令行的一部分，在取 cache 的时候进行对比"' \
-    # rrenew-caches='"${renew_caches:-false}"' '?"更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"'
+    # rrenew-caches='"${renew_caches:-false}"' '?"更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"' \
+    # @renew-cache-bg=true '?"运行完成后在后台刷新 cache，默认为 true"' \
+
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o d:e:rh \
-                      --long cache-dir:,extra-envvars:,renew-caches,help,no-renew-caches \
+                      --long cache-dir:,extra-envvars:,renew-cache-bg,renew-caches,help,no-renew-cache-bg,no-renew-caches \
                       -n $(basename -- $0) -- "$@")
 declare cache_dir=${CACHED_RUN_SAVE_DIR:-~/.cache/system-config/cached-run}
 declare extra_envvars=${CACHED_RUN_EXTRA_ENVVARS}
+declare renew_cache_bg=true
 declare renew_caches="${renew_caches:-false}"
 eval set -- "$TEMP"
 while true; do
@@ -42,6 +45,15 @@ while true; do
         -e|--extra-envvars)
             extra_envvars=$2
             shift 2
+
+            ;;
+        --renew-cache-bg|--no-renew-cache-bg)
+            if test "$1" = --no-renew-cache-bg; then
+                renew_cache_bg=false
+            else
+                renew_cache_bg=true
+            fi
+            shift
 
             ;;
         -r|--renew-caches|--no-renew-caches)
@@ -66,6 +78,9 @@ while true; do
             echo
             printf "%30s" ""
             echo "额外的会影响运行结果的环境变量，将其作为命令行的一部分，在取 cache 的时候进行对比"
+            printf "%06s" " "
+            printf %-24s '--[no-]renew-cache-bg'
+            echo "运行完成后在后台刷新 cache，默认为 true"
             printf %06s '-r, '
             printf %-24s '--[no-]renew-caches'
             echo "更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"
@@ -111,6 +126,9 @@ if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
     if test "${renew_caches}" != true; then
         cat "${cmd_md5_file_prefix}.out"
         (
+            if test "${renew_cache_bg}" != true; then
+                exit
+            fi
             sleep 1
             FORCE_RENEW_CACHES=true setsid nohup cached-run "${saved_args[@]}"
         ) >/dev/null 2>&1&
