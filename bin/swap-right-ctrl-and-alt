@@ -1,7 +1,23 @@
 #!/bin/bash
 
-if ! grep -q swap_ralt_rctl /usr/share/X11/xkb/symbols/ctrl; then
-   cat <<EOF | sudo tee -a /usr/share/X11/xkb/symbols/ctrl
+declare -a prefixes=(
+    /usr/
+    /usr/local/
+    ""
+)
+
+for x11_prefix in "${prefixes[@]}"; do
+    if test -e "${x11_prefix}"share/X11/xkb/symbols/ctrl; then
+        break
+    fi
+done
+
+if test -z "${x11_prefix}"; then
+    die "Can't find x11 in ${prefixes[@]}"
+fi
+
+if ! grep -q swap_ralt_rctl ${x11_prefix}share/X11/xkb/symbols/ctrl; then
+   cat <<EOF | sudo tee -a ${x11_prefix}share/X11/xkb/symbols/ctrl
 
 // Swap the functions of the right Alt key and the right Ctrl key.
 partial modifier_keys
@@ -11,25 +27,25 @@ xkb_symbols "swap_ralt_rctl" {
 };
 EOF
 else
-    log "already found in /usr/share/X11/xkb/symbols/ctrl"
+    log "already found in ${x11_prefix}share/X11/xkb/symbols/ctrl"
 fi
 
-if ! grep -q 'swap_ralt_rctl' /usr/share/X11/xkb/rules/evdev.lst; then
+if ! grep -q 'swap_ralt_rctl' ${x11_prefix}share/X11/xkb/rules/evdev.lst; then
     sudo perl -pe '
 if (m/swap_lalt_lctl/) {
    print "ctrl:swap_ralt_rctl  Swap Right Alt key with Right Ctrl key\n";
 }
-' -i /usr/share/X11/xkb/rules/evdev.lst
+' -i ${x11_prefix}share/X11/xkb/rules/evdev.lst
 else
-    log "already found ctrl:swap_ralt_rctl in /usr/share/X11/xkb/rules/evdev.lst"
+    log "already found ctrl:swap_ralt_rctl in ${x11_prefix}share/X11/xkb/rules/evdev.lst"
 fi
 
-if ! grep -q 'swap_ralt_rctl' /usr/share/X11/xkb/rules/evdev; then
+if ! grep -q 'swap_ralt_rctl' ${x11_prefix}share/X11/xkb/rules/evdev; then
     sudo perl -pe '
 if (m/swap_lalt_lctl/) {
    print "ctrl:swap_ralt_rctl = +ctrl(swap_ralt_rctl)\n";
 }
-' -i /usr/share/X11/xkb/rules/evdev
+' -i ${x11_prefix}share/X11/xkb/rules/evdev
 else
     log "already found in evdev"
 fi
