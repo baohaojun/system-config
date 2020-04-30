@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=SnoreSettings
-Comment=Settings client for applications using libsnore.
-Icon=snore
-Exec=snoresettings
-Categories=Qt;Settings;Qt;Utility;DesktopSettings;

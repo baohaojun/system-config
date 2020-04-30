@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=SnoreNotify
-Comment=A daemon redirecting desktop notifications to one or multiple additional backends.
-Icon=snore
-Exec=snorenotify
-Categories=Qt;Settings;Qt;Utility;DesktopSettings;
