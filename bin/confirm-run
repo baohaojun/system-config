@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+debug-args "$@" 1>&2
+
+if yes-or-no-p -- "$@"; then
+    "$@"
+fi
