@@ -17,6 +17,9 @@ if test "$uname" = CYGWIN_NT; then
     fi
 else
     . ~/system-config/.bashrc-linux
+    if test "$uname" = FreeBSD; then
+        . ~/system-config/.bashrc-freebsd
+    fi
 fi
 
 if test "${uname}" = Darwin; then
