@@ -424,6 +424,7 @@ fi
             exit 0
         fi
         if grep 'fetch first|non-fast-forward' -P .git/sc-git-push.log; then
+            log "Need to merge it: $PWD"
             timeout 10 git fetch $(repo-remote) $(repo-branch) -v||
                 tsocks1 git fetch $(repo-remote) $(repo-branch) -v
             myscr -n push-$(bp) -w '
