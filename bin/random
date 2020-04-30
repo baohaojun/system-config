@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 open(my $randf, "<", "/dev/urandom")
     or die "can not open random";

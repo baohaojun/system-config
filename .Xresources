@@ -15,7 +15,7 @@ xterm*utf8Title: true
 xterm*fontMenu*fontdefault*Label: Default
 xterm*faceName:JetBrains Mono:antialias=True:pixelsize=20
 xterm*boldFont:Sans:style=Bold:pixelsize=20
-xterm*faceNameDoublesize:WenQuanYi Zen Hei:antialias=True:pixelsize=20
+xterm*faceNameDoublesize:Microsoft YaHei:antialias=True:pixelsize=20
 xterm*xftAntialias: true
 XTerm*preeditType: Root
 XTerm*allowSendEvents: true
