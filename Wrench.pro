@@ -33,9 +33,14 @@ win32 {
 }
 
 unix {
-  !macx {
+!macx {
+freebsd {
+    INCLUDEPATH += /usr/local/include/lua53
+    LIBS += -llua-5.3 -lX11
+} else {
     INCLUDEPATH += /usr/include/lua5.2
     LIBS += -llua5.2 -lX11
+}
   } else {
     INCLUDEPATH += ./macx
     LIBS += -L./macx -llua
@@ -234,5 +239,3 @@ FORMS    += wrenchmainwindow.ui \
 
 RESOURCES += Wrench.qrc \
              qvncviewer.qrc
-
-

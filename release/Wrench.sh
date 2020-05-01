@@ -5,6 +5,9 @@ if ! [[ $LANG =~ en_US ]]; then
 fi
 
 memory=$(free | grep ^Mem: | pn 2)
+if test -z "${memory}"; then # freebsd
+    memory=8000000000
+fi
 ulimit -v $((memory / 2))
 
 ## start code-generator "^\\s *#\\s *"
