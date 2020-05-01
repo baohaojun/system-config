@@ -1,7 +1,0 @@
-assemblies_dir=/home/bhj/external/local/lib/mono
-Libraries=${assemblies_dir}/gac/Mono.Cecil/0.9.4.0__0738eb9f132ed756/Mono.Cecil.dll
-
-Name: Mono Internal -- Do not use.
-Description: Mono Internal Libraries -- Do not use 
-Version: 2.10.8.1
-Libs: -r:Mono.Cecil.dll

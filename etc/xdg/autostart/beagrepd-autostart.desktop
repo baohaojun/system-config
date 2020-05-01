@@ -1,8 +1,0 @@
-[Desktop Entry]
-Exec=beagrepd --replace
-Name=Beagrep Search Daemon
-Terminal=false
-Type=Application
-StartupNotify=false
-X-KDE-autostart-phase=2
-X-KDE-autostart-after=panel

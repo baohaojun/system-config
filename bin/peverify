@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /home/bhj/external/local/bin/pedump $MONO_OPTIONS --verify metadata,code "$@"

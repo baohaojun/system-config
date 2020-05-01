@@ -1,3 +1,0 @@
-#!/bin/sh
-umask 077
-exec /home/bhj/external/local/bin/mono $MONO_OPTIONS /home/bhj/external/local/lib/mono/4.0/sn.exe "$@"

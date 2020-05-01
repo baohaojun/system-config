@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /home/bhj/external/local/bin/mono $MONO_OPTIONS /home/bhj/external/local/lib/mono/2.0/gacutil.exe "$@"

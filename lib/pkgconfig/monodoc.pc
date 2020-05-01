@@ -1,9 +1,0 @@
-prefix=/home/bhj/external/local
-exec_prefix=${prefix}
-libdir=/home/bhj/external/local/lib
-sourcesdir=${libdir}/monodoc/sources
-
-Name: Monodoc
-Description: Monodoc - Mono Documentation Tools
-Version: 2.10.8.1
-Libs: /r:${prefix}/lib/mono/monodoc/monodoc.dll 

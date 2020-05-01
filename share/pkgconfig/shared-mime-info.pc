@@ -1,8 +1,0 @@
-prefix=/home/bhj/external/local
-
-Name: shared-mime-info
-Description: Freedesktop common MIME database
-Version: 1.0
-Requires:
-Libs:
-Cflags:

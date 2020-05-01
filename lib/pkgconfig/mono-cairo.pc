@@ -1,9 +1,0 @@
-prefix=/home/bhj/external/local
-exec_prefix=${prefix}
-libdir=${prefix}/lib
-includedir=${prefix}/include
-
-Name: Mono.Cairo
-Description: Cairo bindings for Mono
-Version: 2.10.8.1
-Libs: -r:${prefix}/lib/mono/2.0/Mono.Cairo.dll
