@@ -60,6 +60,7 @@ for $start_p (sort @start_p) {
 
     $start_p = $saved_pid;
 
+    sub add_childrens($);
     sub add_childrens($) {
         my ($parent) = @_;
         for (keys %ppid_map) {
@@ -74,6 +75,7 @@ for $start_p (sort @start_p) {
     add_childrens($start_p);
 }
 
+sub print_branch($$);
 sub print_branch($$) {
     my ($pid, $indent) = @_;
     printf "$indent %d %d %s\n", $pid, $ppid_map{$pid}, $command_map{$pid};
@@ -84,3 +86,8 @@ sub print_branch($$) {
 }
 
 print_branch(1, "");
+
+# use Data::Dumper;
+# print Dumper(\%ppid_map);
+# print Dumper(\%command_map);
+# print Dumper(\%print_children_map);
