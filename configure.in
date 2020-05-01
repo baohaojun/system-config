@@ -46,9 +46,9 @@ if test "x$MONO" = "xno"; then
         AC_MSG_ERROR([You need to install the Mono runtime])
 fi
 
-AC_PATH_PROG(MCS, gmcs, no)
+AC_PATH_PROG(MCS, mcs, no)
 if test "x$MCS" = "xno"; then
-        AC_MSG_ERROR([You need to install the Mono gmcs compiler])
+        AC_MSG_ERROR([You need to install the Mono mcs compiler])
 fi
 
 AC_MSG_CHECKING([for mono.pc])
