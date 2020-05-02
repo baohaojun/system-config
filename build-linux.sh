@@ -130,19 +130,19 @@ done
     set -o pipefail
 
     (
-        ln -sf $oldpwd/release/* $oldpwd/linux/binaries/* .
+        ln -sf $oldpwd/release/* $oldpwd/$(uname | perl -ne 'print lc $_')/binaries/* .
     ) 2>&1 |
         if echo $SHELLOPTS | grep -q xtrace; then
             cat
         else
-            cat >/dev/null 2>&1
+            cat &>/dev/null
         fi
 )
 
 (
     if test "$DOING_WRENCH_RELEASE"; then
         mkdir -p ~/src/github/$release_dir
-        command rsync -L $oldpwd/linux/binaries/* Wrench $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/Wrench/release-exclude.txt
+        command rsync -L $oldpwd/$(uname | perl -ne 'print lc $_')/binaries/* Wrench $oldpwd/release/ $oldpwd/*.lua ~/src/github/$release_dir -av --delete --exclude-from=$HOME/src/github/Wrench/release-exclude.txt
         (
             cd ~/src/github/$release_dir
             git-mark-need-merge

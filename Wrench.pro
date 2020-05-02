@@ -35,8 +35,8 @@ win32 {
 unix {
 !macx {
 freebsd {
-    INCLUDEPATH += /usr/local/include/lua53
-    LIBS += -llua-5.3 -lX11
+    INCLUDEPATH += /usr/local/include/lua52
+    LIBS += -llua-5.2 -lX11
 } else {
     INCLUDEPATH += /usr/include/lua5.2
     LIBS += -llua5.2 -lX11

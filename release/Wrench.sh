@@ -180,7 +180,7 @@ EOF
     fi
     rsync ${wrench_dir} ~/.cache/build-wrench.$postfix -a --chmod=D0755
     path_args=(
-        PATH ${HOME}/system-config/bin/Linux:${HOME}/.cache/build-wrench.$postfix:"$PATH"
+        PATH ${HOME}/system-config/bin/$(uname):${HOME}/.cache/build-wrench.$postfix:"$PATH"
     )
     if test "$(which Wrench)" = ~/.cache/build-wrench.$postfix/Wrench; then
         path_args=()
