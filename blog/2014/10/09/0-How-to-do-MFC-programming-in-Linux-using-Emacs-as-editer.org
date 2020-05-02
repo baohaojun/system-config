@@ -28,7 +28,7 @@ MFC相关的一些头文件给弄到Linux底下来。
 怎么做的全部写成了一个脚本，然后现在写文章的时候看一下脚本就全想起来了：
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 # ./fix-compile.h '(cd ~/src/tools/SmartisanTestFrame/branch_DailyDev/TestFrame; cat /home/bhj/src/tools/SmartisanTestFrame/branch_DailyDev/TestFrame/TestFrameDlg.cpp | /usr/bin/clang -cc1 -fsyntax-only -x c++ -I/home/bhj/.cache/vc/include -I/home/bhj/.cache/vc/atlmfc/include -I/home/bhj/.cache/vc/sdk/include -I/home/bhj/src/tools/SmartisanTestFrame/branch_DailyDev/Public/Smartisan/ -I/usr/include/x86_64-linux-gnu/qt5/QtConcurrent -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGLExtensions -I/usr/include/x86_64-linux-gnu/qt5/QtPlatformSupport -I/usr/include/x86_64-linux-gnu/qt5/QtPrintSupport -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtXml -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/c++/4.9 -I/usr/include/x86_64-linux-gnu/c++/4.9 -I/usr/include/c++/4.9/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.9/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -code-completion-at -:711:61 -)'
 
@@ -53,7 +53,7 @@ clang去补齐，然后把 =file not found= 的错误全部揪出来，用一个
 =fix-it.sh= 脚本是这样的：
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 for x in $(find . -iname $1); do
     ln -s "$(basename "$x")" "$(dirname "$x")"/$1 -v
     exit 0

@@ -19,7 +19,7 @@
 所以，最后解决这个问题的思路很简单，我用一个环境变量记录一下登录之后有没有重新设置过dvp布局，如果没有的话，我第一次运行xdotool的脚本，就会重新设置一下，然后把那个环境变量给置上，这样下次就不需要重新设dvp了：
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 while query-keyboard-state >/dev/null 2>&1; do
     sleep .1;
 done

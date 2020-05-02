@@ -19,7 +19,7 @@ learn the Linux autokey tool, plus I believe it gives me more control).
 Without further ado, here's the [[https://github.com/baohaojun/system-config/raw/master/bin/record-key-macro][recording script]]:
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 exec > "${1:-$HOME/.key-macro}"
 function synth-key() {
@@ -46,7 +46,7 @@ done
 And here's the [[https://github.com/baohaojun/system-config/raw/master/bin/play-key-macro][playing script]]: 
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 function synth-key() {
     echo "$1"

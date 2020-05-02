@@ -20,7 +20,7 @@ shell编程中相应的是 =$(basename $0)= 了）。
 
 这个脚本的位置在 [[https://github.com/baohaojun/system-config/raw/master/bin/adb-send-weixin][adb-send-weixin]]：
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 export USE_BUFFER_NAME=send-to-$(basename $0).org
 (
@@ -100,7 +100,7 @@ adb-long-press/adb-tap等操作把贴到手机应用程序里并发送出去。
 本的位置在[[https://github.com/baohaojun/system-config/raw/master/bin/adb-get-xy][adb-get-xy]]。
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 adb getevent -l |perl -ne '
     if (m/ABS_MT_POSITION_/) {
@@ -148,7 +148,7 @@ emacsclient把正在进行weixin编辑的Emacs buffer调到前面来。
 这是一段sawfish脚本，对我的Linux桌面管理器是sawfish。见 [[https://github.com/baohaojun/system-config/raw/master/bin/find-or-exec][find-or-exec]] 。
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -229,7 +229,7 @@ pbcopy/pbpaste实现了putclip/getclip。
 在Linux下的putclip功能最复杂，也最强大。见 [[https://github.com/baohaojun/system-config/raw/master/bin/Linux/putclip][putclip]] 。
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 if echo $SHELLOPTS | grep xtrace; then
     export SHELLOPTS
 fi
@@ -279,7 +279,7 @@ xclip），命令行和GUI能结合得更好。然后在Emacs下，直接操作x
 
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$#" = 0; then
     set -- "$(ask-for-input-with-emacs)"
@@ -470,7 +470,7 @@ java程序会打开adb push上来的weixin内容文件(/sdcard/putclip.txt），
 [[https://github.com/baohaojun/system-config/raw/master/bin/adb-long-press][adb-long-press]]）：
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 seconds=550
 if test $# = 5 -o $# = 3; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -e ~/.config/dvp; then
     setxkbmap -layout us
     rm ~/.config/dvp;

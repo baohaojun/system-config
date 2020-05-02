@@ -106,7 +106,7 @@ EditMode；验证完了回到acroread继续阅读，按一下BS想看一下上�
 switch-caps-led的代码如下：
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 toggle=-
 if test "$1" = on; then

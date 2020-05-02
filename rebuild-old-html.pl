@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use URI::Encode qw(uri_encode uri_decode);
 use strict;

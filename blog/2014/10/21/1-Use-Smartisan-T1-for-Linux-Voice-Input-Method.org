@@ -44,7 +44,7 @@ Hello world, 今天给大家演示一下，用smartisan t1王手机，给linux p
 然后在Linux上的脚本是这样的：
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 while true; do
     adb 'while test ! -e /sdcard/voice-ime.txt; do sleep .5; done; mv /sdcard/voice-ime.txt /sdcard/voice-ime.out;'
     adb pull /sdcard/voice-ime.out /tmp/voice-ime.txt

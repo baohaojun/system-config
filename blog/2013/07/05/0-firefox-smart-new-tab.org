@@ -51,7 +51,7 @@ sawfish user, then maybe you can check xdotool.
 The whole script:
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 putclip ""
 
 script=$(cat <<EOF

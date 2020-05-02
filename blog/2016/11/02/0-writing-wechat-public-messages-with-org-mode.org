@@ -34,7 +34,7 @@
 另外还有一个地方需要特殊处理，那就是微信公众号对 =<pre>= 标签处理有问题，不会保留里面的换行，必须把换行替换成 =<br/>= 才可以。这个我也在 =css-inline= 里处理了。
 
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 echo hello
 #+END_SRC
 

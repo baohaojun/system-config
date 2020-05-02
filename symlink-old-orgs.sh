@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in $(find . -maxdepth 1 -name '*.org' -type f); do git log --pretty=format:"%ai $x%n" $x|tail -n 1; done > ~/.logs/$(basename $0).out
 cat ~/.logs/$(basename $0).out | while read date time tz name; do

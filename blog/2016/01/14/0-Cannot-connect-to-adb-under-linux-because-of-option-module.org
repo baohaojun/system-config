@@ -70,7 +70,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="29a9", RUN+="/home/bhj/system-config/bin/rmmo
 最后， =rmmod-option= 这个脚本是这样的：
 
 #+BEGIN_SRC sh
-  #!/bin/bash
+  #!/usr/bin/env bash
 
   me=$(readlink -f $0)
   if test ! -e "$me"; then

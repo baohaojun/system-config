@@ -175,7 +175,7 @@ HEAD则是说，把你当前branch（可为匿名）的HEAD（也就是最新版
 下面是tbranch的实现，请把它拷到你的/usr/bin/下：
 
 #+begin_src sh
-#!/bin/bash
+#!/usr/bin/env bash
 repo forall . -c 'echo $REPO_RREV'
 #+end_src
 

@@ -16,7 +16,7 @@ Bash自带的更方便！
 
 #+NAME: ~/system-config/.bash_completion.d/re
 #+BEGIN_SRC sh
-#!/bin/bash
+#!/usr/bin/env bash
 
 function _re()
 {

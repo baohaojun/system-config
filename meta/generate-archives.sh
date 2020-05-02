@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 old_year=0
 old_month=-1
