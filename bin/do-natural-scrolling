@@ -34,5 +34,5 @@ done <<<"$(xinput -list | grep 'Mouse|Touchpad' -P)"
 
 for id in "${!device_id_name_map[@]}"; do
     name=${device_id_name_map[$id]}
-    xinput set-prop "$id" "libinput Natural Scrolling Enabled" 1
+    xinput set-prop "$id" "libinput Natural Scrolling Enabled" $(get-about-me natural-scroll-dir 1)
 done
