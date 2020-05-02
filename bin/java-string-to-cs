@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mkdir -p /tmp/$$.java-string-to-cs
 
 cd /tmp/$$.java-string-to-cs

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mkdir -p ~/.cache/system-config/logs
 if test "$#" = 1; then
     set -- "$1" .

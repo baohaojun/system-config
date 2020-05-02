@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 me=$(basename $0)
 

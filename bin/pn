@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test "$#" = 1 && [[ $1 =~ ^[0-9]+$ ]]; then
     perl -ne 'BEGIN {$sep = qr((?:\s| )+); $n = '"$1"' - 1;} s,^$sep,,; @x = split($sep, $_); print $x[$n] . "\n";'
     exit

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 function die() {
@@ -19,7 +19,7 @@ fi
 
 mkdir -p ~/system-config/bin/$(uname)/ext/debug
 /bin/cat <<EOF > ~/system-config/bin/$(uname)/ext/debug/$1
-#!/bin/bash
+#!/usr/bin/env bash
 mkdir -p ~/.cache/system-config/logs/start-debug.log/
 
 (
