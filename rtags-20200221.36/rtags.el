@@ -5405,7 +5405,7 @@ the user enter missing field manually."
       (make-directory dir t))
     (let ((default-directory dir))
       (with-temp-buffer
-        (insert "#!/bin/bash -x\n"
+        (insert "#!/usr/bin/env bash -x\n"
                 (format "FILE=\"rtags-%s.tar.bz2\"\n" rtags-package-version)
                 (format "URL=\"https://github.com/Andersbakken/rtags/releases/download/v%s/$FILE\"\n" rtags-package-version)
                 "ARGS=\"-L -o $FILE\"\n"
