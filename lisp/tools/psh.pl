@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 # psh.pl --- A simple perl shell
 # Last modify Time-stamp: <Ye Wenbin 2007-04-15 23:38:08>
 # Version: v 0.0 2005/10/23 14:52:44

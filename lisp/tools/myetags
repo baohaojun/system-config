@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 # myetags --- Create or update TAGS
 # Version: v 0.0 2007/02/14 17:06:42
 # Author: Ye Wenbin <wenbinye@163.com>

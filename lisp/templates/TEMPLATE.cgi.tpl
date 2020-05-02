@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 # (>>>FILE<<<) --- (>>>DESC<<<)
 # Version: 0.01 (>>>VC_DATE<<<)
 # Author: (>>>USER_NAME<<<) <(>>>AUTHOR<<<)>

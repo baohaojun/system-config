@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use Module::Build;
 my $class = Module::Build->subclass(
