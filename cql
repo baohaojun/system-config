@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/src/github/org-kungfu/org-kungfu.org::cql][cql]]
 set -e
 get-config() {

@@ -877,7 +877,7 @@ This is simple using Perl's “reflection”.
 
 #+name: old-code
 #+BEGIN_SRC sh
-  #!/bin/bash
+  #!/usr/bin/env bash
 
   # Given a page, I will edit this
 #+END_SRC
@@ -1087,7 +1087,7 @@ Here's how to use the following tool: =./cql 'title ~ "集成" and type = page'=
 Please note the double quotes around ~集成~, they are required, there will be an error if the string =集成= is unquoted.
 
 #+name: cql
-#+BEGIN_SRC sh :tangle ./cql :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ./cql :comments link :shebang "#!/usr/bin/env bash" :noweb yes
   set -e
   get-config() {
       git config -f ~/.config/org-kungfu/config.ini "$@"
@@ -1166,7 +1166,7 @@ Please note the double quotes around ~集成~, they are required, there will be 
     :END:
 
 #+name: jql
-#+BEGIN_SRC sh :tangle ./jql :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ./jql :comments link :shebang "#!/usr/bin/env bash" :noweb yes
   hint "Please use jkd q -p -q JQL"
   exit 0
 #+END_SRC

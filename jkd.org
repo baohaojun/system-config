@@ -97,7 +97,7 @@ This is simple using Perl's “reflection”.
 
 #+name: old-code
 #+BEGIN_SRC sh
-  #!/bin/bash
+  #!/usr/bin/env bash
 
   # Given a page, I will edit this
 #+END_SRC
