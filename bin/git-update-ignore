@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 my $output = qx(git st -s . | grep '??'|pn 2|grep -v .gitignore);

@@ -51,7 +51,17 @@ if test "$opts"; then
     opts=${opts%,},
     export MORE_OPTS_VARS=$(echo "${opts}" | perl -npe 's/(^|,(?!$))/$1\$VAR_/g; s,\%,,g')
 fi
-ps -eo pid,ppid,etime,${opts}command | perl -ne '
+
+if test "$(uname)" = FreeBSD; then
+    export COLUMNS=10000
+    command_col=args
+    ps_switches=-axeo
+else
+    ps_switches=-eo
+    command_col=command
+fi
+
+ps ${ps_switches} pid,ppid,etime,${opts}${command_col} | perl -ne '
 BEGIN{
     $found = 0;
     @args=split(" ", $ENV{"ARGS"});

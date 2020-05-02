@@ -1,4 +1,4 @@
-#!/usr/bin/expect -f
+#!/usr/bin/env expect-f
 
 # this script will log into bbs automatically, maybe even post an
 # article to a specified board.

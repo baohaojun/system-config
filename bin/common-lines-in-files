@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 my $file1 = $ARGV[0];
 my $file2 = $ARGV[1];

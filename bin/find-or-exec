@@ -136,7 +136,7 @@ EOFf8df153f3112
         while read wid desktop pid class user name; do
             if [[ ${class,,} =~ ${to_match,,} ]]; then
                 if test $pid != 0 -a "${process_pattern}"; then
-                    if ! (ls -l /proc/$pid/exe; cat /proc/$pid/cmdline) | tr '\0' ' ' | grep -P "$process_pattern"; then
+                    if ! (ls -l /proc/$pid/exe /proc/$pid/file; cat /proc/$pid/cmdline) | tr '\0' ' ' | grep -P "$process_pattern"; then
                         continue
                     fi
                 fi

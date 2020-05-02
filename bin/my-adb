@@ -15,7 +15,7 @@ if test "$MULTIPLE_ADBDEVICES_OK" != true; then
     )
 fi
 
-if test "$(which adb)" != ~/system-config/bin/Linux/adb &&
+if test "$(which adb)" != ~/system-config/bin/$(uname)/adb &&
         test "$(readlink -f $(which adb))" != "$(readlink -f ~/system-config/bin/Linux/adb)"; then
     current_adb_version=$(
         $(which adb) version | grep '^Revision'
