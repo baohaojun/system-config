@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # An ncurses based UI to quickly select a git commit from a 'git log --online'
 # output and press a key on it to perform a single action (Checkout, reword
 # changelog, edit patch, etc).  Opens up vim editor when needed. Inspired by a
@@ -91,7 +91,7 @@ function press_any_key() {
 
 ##### GIT-EDIT-COMMIT
 cat > /tmp/igec.py <<END0
-#!/bin/bash
+#!/usr/bin/env bash
 strstr() {
   [ "\${1#*\$2*}" = "\$1" ] && return 1
   return 0
@@ -108,7 +108,7 @@ chmod +x /tmp/igec.py
 
 ##### GIT-EDIT-PATCH
 cat > /tmp/gep.py <<END2
-#!/bin/bash
+#!/usr/bin/env bash
 
 EDITOR=/tmp/igec.py git rebase -i \$1^
 
@@ -128,7 +128,7 @@ chmod +x /tmp/gep.py
 
 ##### GIT-REWORD-COMMIT
 cat > /tmp/igrc.py <<END3
-#!/bin/bash
+#!/usr/bin/env bash
 strstr() {
   [ "\${1#*\$2*}" = "\$1" ] && return 1
   return 0
@@ -146,7 +146,7 @@ chmod +x /tmp/igrc.py
 
 ##### DROP COMMIT FROM REBASE
 cat > /tmp/drop-commit.sh <<END2
-#!/bin/bash
+#!/usr/bin/env bash
 
 COMMIT=\$(cat /tmp/commit)
 grep -v \$COMMIT .git/rebase-merge/git-rebase-todo > /tmp/gitreb
