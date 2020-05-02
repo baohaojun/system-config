@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # 这个脚本会把两个 CSV 文件用类似 sql join 的操作合并成一个。使用时除
 # 指定两个 csv 文件之外，还需要指定一个 column name，这个列名必须是两

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # 这个文件会把一个 csv 文件转化成一个 bash 文件
 # 假设：csv 文件的第一行是 header，会给出每一列的名字

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 use Encode;
 open(my $tbl, "<", glob("~/system-config/etc/uc-to-py.tbl")) or die "can't open pinyin table";

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 my $regex_stem = qr/0*(\d+):0*(\d+):0*(\d+)\.(\d+)/;

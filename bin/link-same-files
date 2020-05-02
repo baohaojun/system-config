@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # find . -type f |xargs -d '\n' bash -c 'stat -c %s:%n "$@"' true > ~/1.txt
 

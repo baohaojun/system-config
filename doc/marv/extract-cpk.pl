@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 
 my $num_re = qr(-?\d+(?:\.\d+)?|0x[a-fA-F0-9]+);

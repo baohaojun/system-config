@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $seq = $ARGV[0];
 $kbd = $ARGV[1] || "kbddvp.dll";

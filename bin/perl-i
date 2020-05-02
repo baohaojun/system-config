@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+switch=${0##*-}
+perl -${switch} "$@"

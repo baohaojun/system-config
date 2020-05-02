@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $start = $ARGV[0];
 @ARGV = ();

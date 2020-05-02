@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $map{"Q"} = "10";
 $map{"D"} = "20";
