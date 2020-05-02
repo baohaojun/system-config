@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export REG_DIR="$PWD"
 export PATH="$PWD/bin:$PATH"
