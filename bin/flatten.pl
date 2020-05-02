@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 my $state_normal = 0;
 my $state_string = 1;

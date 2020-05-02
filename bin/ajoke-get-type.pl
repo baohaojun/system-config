@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use String::ShellQuote;
 use strict;
 use BhjJava; # will chdir to beagrep src

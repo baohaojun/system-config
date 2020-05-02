@@ -772,7 +772,7 @@ August 23, 1999, Shigio YAMAGUCHI
 	* copyright notice of Tama Communications Corporation added.
 	* Henry Spencer's regex(3) imported.
 	* gtags.el: now detect XEmacs.
-	* htags: rewrite header #!/usr/bin/perl -> #!/usr/bin/env perl
+	* htags: rewrite header #!/usr/bin/env perl -> #!/usr/bin/env perl
 	* find.c: USEFIND undefined by default.
 
 March 22, 1999, Shigio YAMAGUCHI

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 use Getopt::Long;
 use Digest::MD5 qw(md5_hex);

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # Given a snippet of java code, is able to list the exceptions that
 # are possible to be thrown. Does this by grep-gtags querying the

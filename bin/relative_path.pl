@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 sub relative_url($$) {
   my ($s, $t)  = @_;
