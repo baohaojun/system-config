@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## 编译 bootloader，比如 lk 或 abl（根据代码自动判断）
 (

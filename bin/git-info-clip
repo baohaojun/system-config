@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # http://github.com/baohaojun/system-config/raw/master/bin/Linux/
 
 ## start code-generator "^\\s *#\\s *"

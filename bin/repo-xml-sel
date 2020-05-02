@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 exec 2> ~/tmp/repo-xml-sel.log
 set -x

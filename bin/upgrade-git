@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 . aterr hint "Git 版本升级失败。请自己上网搜一下如何升级 git 版本"

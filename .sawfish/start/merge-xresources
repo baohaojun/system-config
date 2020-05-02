@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 xrdb -merge ~/system-config/.Xresources
 if test -e ~/.config/system-config/.Xresources; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ps.pl $1|grep -v ps-uptime|
 perl -e '

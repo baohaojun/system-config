@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $(basename $0) = build-beagrep-debs; then
     yes-or-no-p -y "Please use 'sudo ps-killall strace' if it seems stuck" || true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if test $# != 2; then
     die "Error: Usage $(basename $0) OTA.ZIP FLASHING_DIR"

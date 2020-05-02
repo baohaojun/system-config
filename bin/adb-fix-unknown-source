@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb -r start-activity com.android.settings/com.android.settings.PackageInstallerSettingsActivity
 adb-tap 908 602
 adb-tap 439 801

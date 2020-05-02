@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-project).git
 
 command=(

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -e ~/.config/system-config/rdesktop-grabbing-keys -o "$1" = off; then
     rm ~/.config/system-config/rdesktop-grabbing-keys -f;
     sawfish_cmd=$(cat <<EOF

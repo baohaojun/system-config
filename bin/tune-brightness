@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 x=$(cat /sys/class/backlight/acpi_video0/brightness)

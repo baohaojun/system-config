@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test $# = 1 -a -z "$1"; then
     set -- $(my-adb cat /proc/cmdline|grep -o 'androidboot.serialno=\S*' -P|perl -npe 's/.*=//')
 fi

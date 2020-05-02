@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 chm=$(readlink -f "$1")
 dir=~/.cache/system-config/for-code-reading/chm/"$chm"

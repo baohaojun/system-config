@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -z "$GTK_IM_MODULE" -a "$SAVED_GTK_IM_MODULE"; then
     export GTK_IM_MODULE=$SAVED_GTK_IM_MODULE

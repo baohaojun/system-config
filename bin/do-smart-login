@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in $(seq 1 1); do
     wget -O - 2>/dev/null http://localhost/smart/api/org/searchProject?token=token\&name=$(echo -n "$2"|urlify|perl -npe 's/ /%20/g')\&limit=100\&page=$x

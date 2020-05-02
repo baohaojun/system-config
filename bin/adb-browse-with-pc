@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -e ~/.config/system-config/bhj/weixin-adb-serial; then
     export ANDROID_SERIAL=$(cat ~/.config/system-config/bhj/weixin-adb-serial)
 fi

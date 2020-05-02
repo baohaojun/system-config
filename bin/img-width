@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 size=$(identify "$1" |perl -npe 's/.*?(\d+x\d+).*/$1/')
 if test $(basename $0) = img-width; then
     echo ${size%x*}

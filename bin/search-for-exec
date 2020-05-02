@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 progs=$(
     (echo "$PATH"|tr : \\n; echo; echo ~/src/github/smartcm/scm-helpers; echo ~/src/github/smartcm/sse-helpers) |

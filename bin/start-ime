@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ~/system-config/gcode/scim-cs/ime-py/ime-server.py

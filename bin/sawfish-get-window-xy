@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -z "$1" -o "$1" = s; then
     sawfish-ask-for-input -p "move your mouse to point 1 and press return"

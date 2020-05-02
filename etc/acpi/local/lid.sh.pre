@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 exec >~bhj/.cache/system-config/logs/lid.sh.log 2>&1
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 ssh-to-phone echo x
 ssh phone mkdir -p /sdcard/crossdict/ahd

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 getclip > ~/.cache/system-config/$(basename $0)-clip.txt
 xclip -o -selection primary > ~/.cache/system-config/$(basename $0)-prim.txt

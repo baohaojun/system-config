@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # see http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.4 for some scan code ref.
 # also see wikipedia, the scancode page
 

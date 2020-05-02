@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test "$(numlockx status)" = "Numlock is on"; then
     sawfish-client -e '(keypad-number-off)'
     bhj-notify toggle-number-lock "Numlock turned off"

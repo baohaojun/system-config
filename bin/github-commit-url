@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function github-git-to-https () {
     perl -npe 's,git\@github.com:,https://github.com/,'

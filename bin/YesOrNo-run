@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if ! yes-or-no-p "running: $(command debug-args "$@")"; then
     die "Can't run it, you must input yes"

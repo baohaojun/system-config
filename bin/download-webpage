@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 running=$(ps.pl $(basename $0)| wc -l);
 function wget() {
     command wget -N --tries=1 "$@"

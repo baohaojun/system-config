@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 dir=$(eval echo ~${SUDO_USER}/.cache/system-config/etc-hosts/)
 mkdir -p $dir

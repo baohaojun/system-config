@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 git log --pretty='%H %ae' | grep "$1" | tail -n 1 | pn 1

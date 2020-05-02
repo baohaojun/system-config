@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 test -L ~/system-config/gcode/offline.wikipedia/$1.py || set -- en "$@"
 lang=$1
 shift

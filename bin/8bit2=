@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test ~/system-config/gcode/playground/java/Mail8Bit2QuotedPrintable.class -ot ~/system-config/gcode/playground/java/Mail8Bit2QuotedPrintable.java; then
     (

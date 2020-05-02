@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function edit()
 {
     if ! [[ -r "$1" ]]; then

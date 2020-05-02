@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "${THE_FIREFOX}"; then
     the_firefox=${THE_FIREFOX}

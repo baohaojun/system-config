@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "git clone $(git-remote-url) -b $(git-tracking-branch) --single-branch --depth=1" |
     if test -e ~/.local-config/bin/git-url-rewrite; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # . aterr bhj-notify kindle-scroll "Error running kindle-scroll"
 
 exec >& ~/tmp/kindle-scroll.log

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 me=$(readlink -f $0)
 if test ! -e "$me"; then

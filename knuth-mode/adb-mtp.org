@@ -95,7 +95,7 @@
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/adb-mtp :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/system-config/bin/adb-mtp :comments link :shebang "#!/usr/bin/env bash" :noweb yes
 set -e
 
 <<old-code>>

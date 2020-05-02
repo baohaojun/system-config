@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 ## 快速重编跟 selinux 相关的文件（最新安卓版本上已经不支持此脚本）

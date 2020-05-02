@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cat <<EOF
 system-config 里的 yes-or-no-p 是灵感来自于 emacs 的一个同名命令。

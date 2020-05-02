@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd ~/system-config/gcode/ajoke/external/ctags-exuberant
 autoreconf -i
 true;CFLAGS='-g -O0 -DDEBUG' ./configure

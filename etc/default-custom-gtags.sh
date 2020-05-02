@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd $(dirname $0)
 if test -z "$DOING_CUSTOM_GTAGS_UPDATE"; then
     export DOING_CUSTOM_GTAGS_UPDATE=true

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 val=$(my-adb "dd if=\$(echo /dev/block/platform/*/by-name/alterable) bs=1 count=1 skip=3 2>/dev/null|od -d -An"|perl -npe 's/\s//g')
 if test "$(basename $0)" = adb-uart-on; then

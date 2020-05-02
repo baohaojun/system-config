@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 host=$1
 shift
 args=()

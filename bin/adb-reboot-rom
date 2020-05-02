@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 my-adb forward tcp:${FORWARD_PORT:-54321} localreserved:scitd
 my-adb bash -x stcmd-subcase.sh reboot-rom

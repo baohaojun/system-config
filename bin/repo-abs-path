@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 git config remote.$(repo-remote).url | perl -npe '
     s,^\w+://([^:/]+)(:\d+)?/*,/, or
     s,.*?:/*,/,;'

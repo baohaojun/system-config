@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 dir=~/tmp/$(basename $0)
 mkdir -p $dir
 

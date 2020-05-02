@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . /c/ssh-agent.log
 ssh root@bhj3 perl -npe 's/^up/#up/' -i /etc/tinyproxy/tinyproxy.conf && ssh root@bhj3 /etc/init.d/tinyproxy restart&
 

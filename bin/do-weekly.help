@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #usage: do-weekly.help rule_of_matching file_to_save
 cat <<EOF

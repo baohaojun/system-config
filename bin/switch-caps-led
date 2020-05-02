@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 light=$(basename $0 | perl -npe 's/.*?-(.*?)-.*/$1/')
 toggle=-

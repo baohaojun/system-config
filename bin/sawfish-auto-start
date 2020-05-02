@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "${BHJ_IN_VNC}" = true; then
     exit 0

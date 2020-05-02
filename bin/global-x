@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'

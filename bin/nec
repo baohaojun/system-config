@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # nec stands for "no emacs copy", stop emacs from messing with the clipboard (when I want to copy richtext).
 

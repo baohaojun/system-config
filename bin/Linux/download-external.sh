@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 mkdir -p ~/external/bin/Linux/ext/`uname -m` \
     ~/external/bin/Linux/ext/media-wiki-templates/ \

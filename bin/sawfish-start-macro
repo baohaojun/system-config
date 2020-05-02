@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 rm -f ~/.cache/system-config/sawfish-macro
 while true; do
     key=$(sawfish-client -e '(let ((event (read-event))) (message (format nil "%s" (event-name event))))')

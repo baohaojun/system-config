@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -- "$(readlink -f "$1")"
 cd "$(dirname "$1")"

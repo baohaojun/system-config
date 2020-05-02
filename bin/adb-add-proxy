@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 adb-tap 902 435
 adb-tap 262 549
 sendtext-android $(get-my-ip eth0)

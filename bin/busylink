@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 busybox 2>&1 | perl -ne '
 BEGIN{

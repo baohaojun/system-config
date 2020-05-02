@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -x
 cd ~/system-config/bin/windows/redirect_vc6

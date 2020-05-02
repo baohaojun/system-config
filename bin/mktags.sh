@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export PATH=~/tools/emacswin/bin/:/bin:/usr/bin:"$PATH"
 rm TAGS

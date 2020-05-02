@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if ! grep -q 'nameserver 8.8.8.8' /etc/resolv.conf; then
     old_resolv_conf=$(
         cat /etc/resolv.conf

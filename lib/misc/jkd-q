@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 jkd q -q 'project = EF and issuetype = "【智能与系统-车机】版本发布Workflow" order by key desc' -p|jq '.issues[]|.key + ": " + .fields.summary + ", " + .fields.status.name'|less

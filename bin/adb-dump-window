@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # dump the important info about the phone screen
     # mOverscanScreen=(0,0) 1080x2242

@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/usr/bin/env bash 
 
 #exec 2>>~/emacsedit.log
 set -x

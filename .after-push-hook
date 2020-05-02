@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 if test -e ~/.local-config/.system-config-private-after-push-hook; then

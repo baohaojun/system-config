@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 exit 0 # 日，手机 root 权限弄丢了
 
 # 这个脚本把锤子科技的 ideapills 里的条目输出成一个 org-mode 文本文件

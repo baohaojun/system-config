@@ -65,7 +65,7 @@
 ** 最终的版本：
 
    #+name: the-ultimate-script
-   #+BEGIN_SRC sh :tangle ~/system-config/bin/org2html :comments link :shebang "#!/bin/bash" :noweb yes
+   #+BEGIN_SRC sh :tangle ~/system-config/bin/org2html :comments link :shebang "#!/usr/bin/env bash" :noweb yes
      set -e
 
      ## start code-generator "^\\s *#\\s *"

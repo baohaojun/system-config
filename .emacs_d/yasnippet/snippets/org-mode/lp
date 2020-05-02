@@ -4,7 +4,7 @@
 # --
 
 #+name: the-ultimate-script
-#+BEGIN_SRC shell :tangle ${1:~/src/github/smartcm/sse-helpers/patch-all} :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC shell :tangle ${1:~/src/github/smartcm/sse-helpers/patch-all} :comments link :shebang "#!/usr/bin/env bash" :noweb yes
   echo hello world
 
 #+END_SRC

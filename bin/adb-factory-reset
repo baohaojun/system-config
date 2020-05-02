@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 my-adb '
 mkdir -p /cache/recovery/

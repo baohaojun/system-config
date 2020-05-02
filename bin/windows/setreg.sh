@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . regfuncs.sh
 q=`cygpath -alw ~`
 

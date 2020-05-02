@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P f:properties-file=/dev/stdout @:format '?"(pass|prop|nxml), default is prop. prop is used to save a prop.txt; pass is used when triggering another job."'
 ## end code-generator

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo mplayer.remote "$@" >> ~/.cache/system-config/logs/rsync-mplayer.log 2>&1
 if test "$PULSE_SERVER"; then
     for x in "$@"; do

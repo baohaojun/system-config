@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -z "$SSH_CLIENT"; then
     export LOCALIP=localhost
     export LOCALPORT=${LOCALPORT:-$(cat /etc/ssh/sshd_config |grep ^Port|pn 2)}

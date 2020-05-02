@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$REPO_REMOTE"; then
     echo $REPO_REMOTE

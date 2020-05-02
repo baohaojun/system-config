@@ -974,7 +974,7 @@ to include them in the output file as well.
 
 In the Org-mode file:
 : #+name: hello-world
-: #+begin_src sh :tangle hello :exports none :noweb yes :shebang "#!/bin/bash"
+: #+begin_src sh :tangle hello :exports none :noweb yes :shebang "#!/usr/bin/env bash"
 :   <<hello-world-prefix>>
 :   echo "|                       hello world 2                         |"
 :   <<hello-world-postfix>>
@@ -982,7 +982,7 @@ In the Org-mode file:
 
 HTML export of code:
 #+name: hello-world
-#+begin_src sh :tangle hello.sh :exports code :noweb yes :shebang "#!/bin/bash"
+#+begin_src sh :tangle hello.sh :exports code :noweb yes :shebang "#!/usr/bin/env bash"
   <<hello-world-prefix>>
   echo "|                       hello world                         |"
   <<hello-world-postfix>>

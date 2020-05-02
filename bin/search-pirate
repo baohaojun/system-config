@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 test $# = 0 && set -- "$(getclip)"
 #https://oldpiratebay.org/search.php?q=ohashi+miku&Torrent_sort=seeders.desc

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 xrandr_out=$(xrandr)
 lvds=$(echo "$xrandr_out" | grep '^LVDS' | pn 1)
 

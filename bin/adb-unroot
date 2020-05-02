@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb setprop service.adb.root 0
 my-adb "cd /data/local/tmp; nohup bash -c 'stop adbd; start adbd'"
 sleep 1

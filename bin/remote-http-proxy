@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 out=$(
     echo export http_proxy=http://'${REMOTEIP}':19999

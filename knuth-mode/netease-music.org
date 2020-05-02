@@ -220,7 +220,7 @@
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/netease-music :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/system-config/bin/netease-music :comments link :shebang "#!/usr/bin/env bash" :noweb yes
   set -e
 
   me=$(readlink -f $BASH_SOURCE)

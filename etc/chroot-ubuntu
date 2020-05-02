@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mount /dev/sda1 /home
 mount /home/bhj /home/trusty/home/bhj-chroot -o bind
 mount /home/bhj/src /home/trusty/home/bhj/src -o bind

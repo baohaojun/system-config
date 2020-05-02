@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 phone_size=$(adb shell dumpsys window|grep -o 'init=\S+' -P)
 hint phone_size is $phone_size
 

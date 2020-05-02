@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 debug-args "$@" > ~/tmp/n.txt 2>&1
 

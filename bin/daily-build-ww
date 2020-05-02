@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 exec 9>~/.cache/system-config/logs/$(basename $0).lock
 
 set -e

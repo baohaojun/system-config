@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 repo_path=$(echo /$REPO_PATH | perl -npe 's,/+,/,; s,/$,,')
 printf '$repo_info{$android_path . "%s"}{"remote"} = "%s";\n' $repo_path "$REPO_REMOTE"

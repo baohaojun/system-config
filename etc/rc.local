@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # from system-config
 set -x
 

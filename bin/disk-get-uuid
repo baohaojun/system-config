@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for x in /dev/disk/by-uuid/*; do
     y=$(readlink -f $x);
     if test $y = "$1"; then

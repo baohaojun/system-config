@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$(my-adb getprop persist.sys.usb.config)" != mtp,adb || yes-or-no-p "Restart mtp,adb?"; then
     my-adb -r shell setprop persist.sys.usb.config mtp,adb

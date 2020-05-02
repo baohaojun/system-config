@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 jobname_escaped="$(uri-escape "$1")"

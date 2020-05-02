@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 sn=$(my-adb devices|grep 'device$'|pn 1)
 if test "$sn"; then
     for n in $sn; do

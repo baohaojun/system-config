@@ -19,7 +19,7 @@
 
 #+name: old-code :noweb yes
 #+BEGIN_SRC sh
-  #!/bin/bash
+  #!/usr/bin/env bash
 
   set -ex
 
@@ -64,7 +64,7 @@
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/src/github/cm-home/by-host/build1/etc/rc.local.chroot-smartcm :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/src/github/cm-home/by-host/build1/etc/rc.local.chroot-smartcm :comments link :shebang "#!/usr/bin/env bash" :noweb yes
 set -e
 
 <<old-code>>

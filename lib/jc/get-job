@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 jc curl job/"$(uri-escape "$1")"/config.xml |

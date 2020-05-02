@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 host=$1
 mkdir -p ~/.config/system-config/remote-protocol
 protocol=$(cat ~/.config/system-config/remote-protocol/$host 2>/dev/null)

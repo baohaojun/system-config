@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 cd ~/external/bin/Linux/ext/android-sdk-linux/platform-tools
 if test ! -e the-true-adb; then

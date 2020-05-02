@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 y=; for x in $(cat ~/1.txt); do
     (
 	set -ex; 

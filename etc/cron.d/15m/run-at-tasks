@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 h=$(date +%H)
 m=$(date +%M | perl -npe 's/^0+//')

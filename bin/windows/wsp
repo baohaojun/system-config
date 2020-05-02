@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #wsp stands for Win32 Short Path
 
 cygpath -asm "${1:-.}"

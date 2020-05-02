@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 . .funlock ~/system-config/.sawfish/start/.run-dir-once.lock
 

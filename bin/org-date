@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # given a date (2017-10-20), change it to en: 20, Oct, 2017 or cn: 2017 年 10 月 20 日
 
 if test "$#" = 2 -a "$1" = en -o "$1" = cn; then

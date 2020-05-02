@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## 修改 kernel 代码后快速编译、更新 boot.img
 (

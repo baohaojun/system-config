@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 my-adb -r dd if=/dev/block/mmcblk0 of=/data/gpt bs=1024 count=1024

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 cd ~/system-config/cache/kanji-pinyin-lookup/
 for x in *; do

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 code_reading_dirs=(
     /usr/include/ /usr/share/qt5/doc/ /usr/lib /usr/share/java /var/lib/gems/ ~/src/android

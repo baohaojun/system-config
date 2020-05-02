@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 adir=$(
     cd $(lookup-file-dir .repo) >/dev/null 2>&1

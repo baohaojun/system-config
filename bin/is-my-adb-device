@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if my-adb devices | grep 'device$' -q; then
     true
 else

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if test "$SYSTEM_CONFIG_INITED" != true; then
     . ~/system-config/.bashrc

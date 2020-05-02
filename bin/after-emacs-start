@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 keep-phone-lighted&
 if test -e ~/.local-config/bin/after-emacs-start; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $(basename $0) = adb-ignite-device; then
     if my-adb dumpsys power | grep mWakefulness=Asleep; then

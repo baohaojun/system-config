@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 putclip "$1"
 
 for x in C-f C-v ESC RET; do

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export TAP=adb-tap
 if test "$1"; then

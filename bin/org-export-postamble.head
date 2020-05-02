@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export ORG_FILE_NAME=$1
 website=http://baohaojun.github.io/
 START_DIR=${START_DIR:-$PWD}

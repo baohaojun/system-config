@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export PATH=~/src/github/lww-out/debug:$PATH
 export OLDHOME=~

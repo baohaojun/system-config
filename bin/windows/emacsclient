@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -e ~/external/emacs-nt; then
     if test $# = 1; then
         set -- "$(ulp "$1")"

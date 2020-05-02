@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$REPO_BRANCH"; then
     echo "$REPO_BRANCH"

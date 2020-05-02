@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 perl -ne 'if (m!<title>! .. m!</title>!) {
      chomp;

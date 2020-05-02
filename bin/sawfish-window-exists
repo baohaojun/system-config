@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$(sawfish-find-window "$@")" = '"yes"'; then
    exit 0

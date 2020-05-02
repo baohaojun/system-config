@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 echo head is at $(git rev-parse HEAD)
 repo sync -c -n $(repo-project)

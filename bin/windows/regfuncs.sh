@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function qq_cmdout () #put " at begin and end of cmd output, which should be 1 line
 {
     echo -n \"

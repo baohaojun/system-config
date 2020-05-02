@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # [[file:~/system-config/knuth-mode/adb-install-debian.org::*%E6%9C%80%E7%BB%88%E7%9A%84%E7%89%88%E6%9C%AC%EF%BC%9A][the-ultimate-script]]
 
@@ -200,7 +200,7 @@ function prepare-chroot() {
     fi
 }
 
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 

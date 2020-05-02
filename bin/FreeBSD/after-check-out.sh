@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ~/system-config/bin/after-co-ln-s.sh
 . ~/system-config/.bashrc

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 sound-on
 vt=$(ps aux |grep  gdm.*gnome-session|grep tty|pn 7|perl -npe 's/tty//')
 command sudo chvt ${vt:-7}

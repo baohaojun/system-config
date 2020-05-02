@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 unset FORCE_SYSTEM_CONFIG
 unset SYSTEM_CONFIG_INITED
 for x in $(set |grep '^\w.*\(\)' -P|pn 1); do

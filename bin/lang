@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set-lang() {
     export LANG=$1.UTF-8

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 git log -1 "$@" | perl -ne 'if (m/^AuthorDate:/) {s/.*?: //; print; exit}'
 

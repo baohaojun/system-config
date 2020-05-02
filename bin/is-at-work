@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if (. ensure-at-work && false); then
     exit 1

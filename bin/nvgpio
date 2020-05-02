@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 grp=0x`ascii $1|grep prints\ as|grep -o 'hex ..'|grep -o '..$'`
 start=0x61

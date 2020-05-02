@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for x in "$@"; do
     if test $(basename $0) = zgp; then
         cat $x | gzip > $x.gz

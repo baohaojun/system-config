@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 head=refs/heads/from-mac/
 mac=$(get-mac)

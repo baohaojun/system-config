@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function adb() {
     if test $# = 4 -a "$1" = shell -a "$2" = su -a "$3" = -c; then

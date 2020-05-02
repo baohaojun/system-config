@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . .gitx
 TEMP=$(getopt -o r:b: --long rev:branch: -n $(basename $0) -- "$@")
 branch=

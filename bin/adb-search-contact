@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 putclip-android "$1"
 my-adb start-activity com.android.contacts/com.android.contacts.activities.DialtactsActivity
 adb-tap 438 1863

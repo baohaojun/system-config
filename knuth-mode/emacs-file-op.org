@@ -95,7 +95,7 @@ emacs-file-op echo x1 x2 '>' fx
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/emacs-file-op :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/system-config/bin/emacs-file-op :comments link :shebang "#!/usr/bin/env bash" :noweb yes
 set -e
 
 <<old-code>>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $(basename $0) = adb-ignite-device -o $(basename $0) = adb-power-on; then
     adb shell am force-stop com.smartisanos.updater || true

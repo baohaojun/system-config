@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P @start-ss @:password @:port
@@ -67,7 +67,7 @@ if test "${start_ss}" = true; then
     touch /etc/rc.local
     chmod +x /etc/rc.local
     cat > /etc/rc.local <<EOF
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd /root
 s=s

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #http://work.alibaba-inc.com/work/search?keywords=%E5%85%83%E4%BB%B2&type=person&offset=0&tabIndex=1
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test "$1"; then
     echo export "PS1HOSTNAME='$1'" >> ~/.bashrc; true
     reset-env PS1HOSTNAME "$1"

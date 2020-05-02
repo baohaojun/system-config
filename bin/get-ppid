@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$#" = 0; then
     ps h -o ppid $(ps h -o ppid $$|tail -n 1)

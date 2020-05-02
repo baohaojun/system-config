@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # us letter: 215.9 mm × 279.4 mm
 # a4: 210 mm x 297

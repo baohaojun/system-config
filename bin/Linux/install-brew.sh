@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # make sure to not use sudo to install into /home/linuxbrew
 command sudo -k

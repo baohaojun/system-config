@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [[ "$1" =~ ^/scp: ]]; then
     my-rsync "$1" ~/tmp

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 prog1=
 prog2=
 for p in $(type -a $1 | grep 'is /'|pn 3); do

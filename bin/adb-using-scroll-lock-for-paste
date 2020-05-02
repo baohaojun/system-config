@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -e ~/.config/system-config/adb-scroll-lock-is-paste; then
     adb-key SCROLL_LOCK
 else

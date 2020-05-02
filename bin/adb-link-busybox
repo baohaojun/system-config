@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 if my-adb shell 'cd /data/data/com.android.shell/bin; test -e zcat && echo yes' |grep -q yes; then

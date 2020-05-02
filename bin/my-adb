@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$1" = -s -o "$1" = devices -o "$1" = devices\?; then
     export MULTIPLE_ADBDEVICES_OK=true

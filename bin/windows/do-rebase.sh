@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -x
 chmod 777 "$TMP"
 me=$(whoami)

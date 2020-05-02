@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 default_query="(reporter = baohaojun or assignee = baohaojun) AND status not in (done, Cancelled, 问题挂起) and project = EP"

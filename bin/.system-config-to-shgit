@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd ~/system-config/
 ssh shgit mkdir git/system-config.git -p

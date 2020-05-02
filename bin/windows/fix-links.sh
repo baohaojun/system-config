@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 (
     for x in $(find ~/system-config/bin/windows/ -maxdepth 1 -type l); do
         if readlink -m "$x" | grep '/Program Files/' -i; then

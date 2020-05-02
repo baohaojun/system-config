@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -e ~/.config/system-config/is-recording-desktop; then
     exit 0

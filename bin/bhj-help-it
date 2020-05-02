@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$EMACS" = t -a "$RESTARTED_IN_BACKGROUND" != true; then
     unset EMACS

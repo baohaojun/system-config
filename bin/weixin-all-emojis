@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 x=72
 y=1240
 Y=1717 # these are for weixin

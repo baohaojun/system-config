@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 mv workspace w.1
 mkdir /Chroot/jenkins/$(basename $PWD)/ -p

@@ -22,7 +22,7 @@
 
 #+name: old-code
 #+BEGIN_SRC sh :noweb yes
-    #!/bin/bash
+    #!/usr/bin/env bash
 
     set -e
 
@@ -244,7 +244,7 @@
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/sync-mobile-org :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/system-config/bin/sync-mobile-org :comments link :shebang "#!/usr/bin/env bash" :noweb yes
 set -e
 
 <<old-code>>

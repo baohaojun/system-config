@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if id |grep '^uid=0\b -P -q'; then
     "$@"
 else

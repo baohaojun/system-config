@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function is-prime() {
     local x=$1
     sqrt=$((x/2))

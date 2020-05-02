@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # my-adb -r echo x
 
 . ~/src/github/smartcm/scm-helpers/.adb-get-screen-size

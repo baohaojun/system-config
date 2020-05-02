@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ -e /etc/bash.bashrc ] ; then
     . /etc/bash.bashrc
 fi

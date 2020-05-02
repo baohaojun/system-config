@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test "x`cat ~/.1+ 2>/dev/null`" = x; then
         echo 0 > ~/.1+
 fi

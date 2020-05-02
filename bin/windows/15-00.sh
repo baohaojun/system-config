@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 bhj-notify "Prepare go off work" "Check if you have any unfinished things to do before go off work"
 

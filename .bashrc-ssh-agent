@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -z "$LOCALPORT" -o "$LOCALPORT" = 22; then
     agent_file=~/.config/system-config/ssh-agent

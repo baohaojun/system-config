@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/system-config/knuth-mode/cowbuilder-boot.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
-#!/bin/bash
+#!/usr/bin/env bash
 
 # mount /dev/sda1 /home
 # mount /home/bhj /home/trusty/home/bhj-chroot -o bind
@@ -38,7 +38,7 @@ cowboot_dir=/boot/$cowname/boot
 
 sudo mkdir -p /$cowname
 cat <<EOF46c312a0e349|sudo tee /$cowname/chroot-cow
-#!/bin/bash
+#!/usr/bin/env bash
 set -x
 setupcon dvp
 mount -o remount,rw /

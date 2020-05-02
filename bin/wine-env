@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function wine() {
     cat > build.bat<<EOF
 set path=$(for x in ~/.wine/drive_c/Qt*/Qt*/*/mingw*/bin; do

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 touch ~/.sdim/use_cand_as_comp=false
 rm -f ~/.sdim/use_cand_as_comp=true

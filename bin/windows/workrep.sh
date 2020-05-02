@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd ~/WorkWiKi/
 WRFILE=WeeklyReport`date|awk '{print $2$3$6}'`
 cat ~/WorkWiKi/WeeklyReport >> $WRFILE

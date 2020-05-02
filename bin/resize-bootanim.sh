@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cat <<EOF > desc.txt
 $1 $2 24
 p 1 0 part0

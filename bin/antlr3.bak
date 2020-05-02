@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -e ~/external/antlrworks-1.4.3.jar; then
     exec java -cp ~/external/antlrworks-1.4.3.jar org.antlr.Tool "$@";

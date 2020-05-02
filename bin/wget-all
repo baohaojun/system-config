@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 recur='-r -l1'
 if test "$(arg1-arg2 -- "-l0" "$@")" = ''; then
     recur=-p

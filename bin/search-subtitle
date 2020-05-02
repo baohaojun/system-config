@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 test $# = 0 && set -- "$(getclip)"
 

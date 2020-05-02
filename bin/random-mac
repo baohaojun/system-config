@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set --
 for x in $(seq 1 6); do
     set -- "$@" $(printf %02x $(random 256))

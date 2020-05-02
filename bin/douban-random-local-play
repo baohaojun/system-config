@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd ~/Music/like/
 n=$(find . -name '*.mp3'|wc -l)
 

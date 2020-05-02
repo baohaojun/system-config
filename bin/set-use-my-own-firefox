@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in ~/.local/share/applications/userapp-Firefox-*.desktop; do
     if test -e $x; then

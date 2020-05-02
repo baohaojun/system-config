@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cat <<EOF
 ; {%emacs-lisp-mode%}
 (let (org-export-with-toc

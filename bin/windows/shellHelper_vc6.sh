@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/usr/bin/env bash 
 . ~/system-config/.bashrc-windows
 set -e
 (echo -n \>; for x in "$@"; do 

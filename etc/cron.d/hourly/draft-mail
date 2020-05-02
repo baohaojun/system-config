@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if find ~/News/drafts/drafts -type f | grep -q .; then
     bhj-notify draft-mail "You have got draft mails to working on"
 fi

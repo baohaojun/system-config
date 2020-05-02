@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if lookup-file -e .git/ >/dev/null 2>&1; then
     git remote -v | pn 1 | sort -u
 fi

@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/usr/bin/env bash 
 
 findexec.exe -F 1 -t emacs@&
 findexec.exe -F 1 -p puemacs&

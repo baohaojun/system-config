@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 perl -ne 'while (m/href\s*=\s*(.)(.*?)\1/g) {
     print "$2\n";

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . ~/system-config/.bashrc </dev/null
 echo running remote-edit-secure: ${SSH_ORIGINAL_COMMAND} 1>&2
 

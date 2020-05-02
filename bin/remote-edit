@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $# = 2; then
     emacsclient -n /scp:$USER@"$1":"$2"

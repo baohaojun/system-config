@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . .usb0
 sudo ifconfig $USB0 192.168.15.33
 if test $(ip-or-name kindle) = kindle; then

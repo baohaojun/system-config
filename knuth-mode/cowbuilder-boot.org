@@ -18,7 +18,7 @@
 
 #+name: chroot-cow
 #+BEGIN_SRC sh :noweb yes
-  #!/bin/bash
+  #!/usr/bin/env bash
   set -x
   setupcon dvp
   mount -o remount,rw /
@@ -68,7 +68,7 @@
 
 #+name: old-code
 #+BEGIN_SRC sh :noweb yes
-  #!/bin/bash
+  #!/usr/bin/env bash
 
   # mount /dev/sda1 /home
   # mount /home/bhj /home/trusty/home/bhj-chroot -o bind
@@ -194,7 +194,7 @@
 #+END_SRC
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/cowbuilder-boot :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/system-config/bin/cowbuilder-boot :comments link :shebang "#!/usr/bin/env bash" :noweb yes
 set -e
 
 <<old-code>>

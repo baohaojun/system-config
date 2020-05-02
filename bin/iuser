@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 sudo bash -c "for x in /proc/*/fd; do
     ls -l \$x/* 2>/dev/null | grep \"$1\"
 done"

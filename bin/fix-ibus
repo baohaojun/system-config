@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ps-killall /ibus
 PATH=/usr/bin:$PATH
 ibus-daemon -d -x

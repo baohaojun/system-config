@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 cd ~/Pictures/
 rsync bhj-mac:Desktop/*.png . -v

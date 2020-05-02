@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 adb forward tcp:5901 tcp:5901
 adb shell /data/androidvncserver&

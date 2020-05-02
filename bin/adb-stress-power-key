@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for x in $(seq 1 ${1:-1000}); do
     adb-ignite-device
     sleep .1

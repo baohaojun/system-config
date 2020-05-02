@@ -53,7 +53,7 @@ s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
 ** 最终的版本：
 
    #+name: the-ultimate-script
-   #+BEGIN_SRC sh :tangle ~/system-config/bin/org2pdf :comments link :shebang "#!/bin/bash" :noweb yes
+   #+BEGIN_SRC sh :tangle ~/system-config/bin/org2pdf :comments link :shebang "#!/usr/bin/env bash" :noweb yes
      set -e
 
 

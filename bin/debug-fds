@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ls -l /proc/$$/fd > ~/.cache/system-config/logs/debug-fds 2>&1
 
 if (echo shit); then

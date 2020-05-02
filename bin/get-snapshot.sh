@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 ## 如果指定了 N 个文件、目录，选出里面最新的一个；

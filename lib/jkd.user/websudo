@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 if test "${scm_jira_user}" != "${scm_jira_admin_user}"; then

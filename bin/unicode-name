@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 (grep -P "^$1;" -i ~/system-config/.emacs_d/UnicodeData.txt | awk -F\; '{print $2}'|grep . || echo private-$1)|rm-last-nl

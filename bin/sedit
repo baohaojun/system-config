@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 exec >/dev/null 2>&1
 
 dir=$(lookup-file "$1"|tee /dev/stderr|head -n 1)

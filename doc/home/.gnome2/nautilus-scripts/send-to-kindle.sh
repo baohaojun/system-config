@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 me=baohaojun@gmail.com
 mek=baohaojun@free.kindle.com

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $# != 2; then
     die "Error: Usage $(basename $0) search-words input-words"

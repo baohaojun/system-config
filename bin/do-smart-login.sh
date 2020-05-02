@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 curl -c ~/.cache/system-config/logs/cookie.txt -L -v 'https://login.alibaba-inc.com/ssoLogin.htm?APP_NAME=smart&BACK_URL=http://smart.corp.taobao.com/&CONTEXT_PATH=site' > 2.txt
 perl -npe 's/\s+/ /gm' 2.txt |
 perl -ne '

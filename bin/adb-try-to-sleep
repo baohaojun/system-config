@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -x /system/bin/toolbox; then
     while test $(cat /sys/class/power_supply/usb/online) = 1; do sleep 1; done

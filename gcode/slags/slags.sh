@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 for x in $(find . -name '*.jar' -type f); do

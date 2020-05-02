@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 adb-of mailto:bug@smartisan.com
 sleep 1
 adb-tap 160 1662

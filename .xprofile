@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if ps -o cmd $$ | grep 'sawfish'; then
     gnome-keyring-daemon > ~/.config/system-config/.gnome-keyring.$$
     . ~/.config/system-config/.gnome-keyring.$$

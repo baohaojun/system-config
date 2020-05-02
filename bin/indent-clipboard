@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/usr/bin/env bash
 indented_text=$(getclip | indent-stdin)
 echo "${indented_text}" | putclip

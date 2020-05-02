@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 clip 2html | pandoc --wrap=none -f html  -t org -

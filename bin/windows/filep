@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #\\bible\Public\user\tools-team\extra-release
 
 File=${1:-.}

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script makes it easier to manage cli version, user, and password settings for various CLIs
 # Customize this for your installation. Be careful on upgrades or rename it to something else.
 #

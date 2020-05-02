@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # usage [source dir] [target dir]
 check-program exiftool libimage-exiftool-perl || exit 1
 check-program exiv2 exiv2 || exit 1

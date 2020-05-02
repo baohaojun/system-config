@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/usr/bin/env bash --login
 rm ~/.ido.last
 
 . ~/system-config/.bashrc-windows

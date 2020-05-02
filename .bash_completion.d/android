@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ## Bash completion for the Android SDK tools.
 ##
 ## Copyright (c) 2009 Matt Brubeck

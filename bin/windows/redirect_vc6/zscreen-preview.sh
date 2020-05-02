@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mkdir -p ~/images/
 mv "$1" ~/images/
 cygpath -au ~/images/"$(basename "$1")"|tr -d '\n' > ~/.zscreen.history
