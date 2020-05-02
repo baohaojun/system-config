@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -ex
 tmpdir=~/tmp/build-adb-client
 if test "$1" = debug; then

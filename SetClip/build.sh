@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 me=$(readlink -f $BASH_SOURCE)

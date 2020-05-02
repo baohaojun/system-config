@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 me=$(readlink -f $BASH_SOURCE)
 if test ! -e "$me"; then

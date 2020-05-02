@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in ~/src/github/Wrench-linux ~/src/github/Wrench-macos/Wrench.app/Contents/MacOS/ ~/src/github/Wrench-windows; do
     (

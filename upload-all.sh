@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 shortVersion=$(perl -ne 'print $1 if m!Wrench聊天小扳手 (.*)</string>!' wrenchmainwindow.ui|perl -npe 's/ .*//')
 cd ~/tmp
 my-adb start-activity com.baidu.netdisk/com.baidu.netdisk.ui.MainActivity

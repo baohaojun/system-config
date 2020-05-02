@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 resdir=.
 if test "${WRENCH_APP_DIR}"; then

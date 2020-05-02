@@ -38,7 +38,7 @@ openssl pkcs8 -topk8 -nocrypt -in "$in" -out "$der" -outform der
 
 pbinhex=/tmp/pbinhex.$$
 cat > $pbinhex <<END
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 \$str = '';
 while (1) {

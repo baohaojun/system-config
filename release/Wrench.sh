@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if ! [[ $LANG =~ en_US ]]; then
     exec en_US Wrench.sh "$@"
