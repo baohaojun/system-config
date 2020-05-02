@@ -33,22 +33,22 @@ while getopts "eH:lPp:s:h" opt; do
         h)
             echo
             echo
-            printf %06s%s '-e ' 'export-all'
+            printf %6s%s '-e ' 'export-all'
             printf %-24s ''
             echo ''
-            printf %06s%s '-H ' 'global-help'
+            printf %6s%s '-H ' 'global-help'
             printf %-24s 'GLOBAL_HELP'
             echo ''
-            printf %06s%s '-l ' 'is-local'
+            printf %6s%s '-l ' 'is-local'
             printf %-24s ''
             echo ''
-            printf %06s%s '-P ' 'posixly-correct'
+            printf %6s%s '-P ' 'posixly-correct'
             printf %-24s ''
             echo ''
-            printf %06s%s '-p ' 'prefix'
+            printf %6s%s '-p ' 'prefix'
             printf %-24s 'PREFIX'
             echo ''
-            printf %06s%s '-s ' 'style'
+            printf %6s%s '-s ' 'style'
             printf %-24s 'STYLE'
             echo ''
             shift
@@ -57,22 +57,22 @@ while getopts "eH:lPp:s:h" opt; do
         *)
             echo
             echo
-            printf %06s%s '-e ' 'export-all'
+            printf %6s%s '-e ' 'export-all'
             printf %-24s ''
             echo ''
-            printf %06s%s '-H ' 'global-help'
+            printf %6s%s '-H ' 'global-help'
             printf %-24s 'GLOBAL_HELP'
             echo ''
-            printf %06s%s '-l ' 'is-local'
+            printf %6s%s '-l ' 'is-local'
             printf %-24s ''
             echo ''
-            printf %06s%s '-P ' 'posixly-correct'
+            printf %6s%s '-P ' 'posixly-correct'
             printf %-24s ''
             echo ''
-            printf %06s%s '-p ' 'prefix'
+            printf %6s%s '-p ' 'prefix'
             printf %-24s 'PREFIX'
             echo ''
-            printf %06s%s '-s ' 'style'
+            printf %6s%s '-s ' 'style'
             printf %-24s 'STYLE'
             echo ''
             exit 2
@@ -277,9 +277,9 @@ done
             short=${short_opts_map[$long]}
             short=${short/:/}
             if test "$short"; then
-                echo printf "%06s" "'-$short, '"
+                echo printf "%6s" "'-$short, '"
             else
-                echo 'printf "%06s" " "'
+                echo 'printf "%6s" " "'
             fi
             long_output=$(
                 if test "${var_type_map[$long]}" = boolean; then

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl @ask-to-whom @:send-to @:extra-send-text @:image
