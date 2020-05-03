@@ -45,7 +45,19 @@ flock -n 9
         ((notification_port += WRENCH_INSTANCE)) || true
     fi
 
-    if expect -c "spawn timeout 2 telnet localhost $notification_port; exit [lindex [wait] 3]"; then
+    if timeout 2 python3 -c "$(
+cat <<'EOFd729818fb0ba' | . .replace-%% --
+# {%python-mode%}
+print("hello \n")
+import socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(("localhost", [%notification_port%]))
+sock = sock.makefile()
+print(sock.readline())
+print(sock.readline())
+# {%/python-mode%}
+EOFd729818fb0ba
+)"; then
         bhj-notify check-notification.sh "this should not happen"
     else
         ret=$?
