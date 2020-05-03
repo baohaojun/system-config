@@ -157,8 +157,14 @@ function compile_fcitx() {
 function compile_ibus_sdim() {
     cd ~/system-config/gcode/ibus-sdim/
     ./autogen.sh
-    make
-    sudo make DESTDIR=/ install
+    if test "$(uname)" = FreeBSD; then
+        make_prefix=g
+    else
+        make_prefix=
+    fi
+
+    ${make_prefix}make
+    sudo ${make_prefix}make DESTDIR=/ install
     git clean -xfd
 }
 

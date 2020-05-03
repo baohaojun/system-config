@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
-sudo /usr/sbin/jnettop -i $(select-output-line -o get-network-devs)
+real_jnettop=/usr/sbin/jnettop
+if test ! -e "${real_jnettop}"; then
+    real_jnettop=/usr/local/bin/jnettop
+fi
+
+sudo ${real_jnettop} -i $(select-output-line -o get-network-devs)
