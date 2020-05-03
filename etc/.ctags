@@ -38,7 +38,6 @@
 --regex-orgmode=/^[ \t]*([^ \t()]+)\(\)[ \t]*\{/\1/f,function/
 --regex-orgmode=/^[ \t]*sub[ \t]+([^ \t()]+)\(.*\)[ \t]*\{/\1/f,function/
 --regex-orgmode=/^[ \t]*declare([ \t]+|([ \t]+-[a-zA-Z]+)*[ \t]+)(([[:alnum:]]|_)+)/\3/d,declare/
---regex-orgmode=/<%(.*?)%>/\1/s,stem/
 
 --langdef=Clojure
 --langmap=Clojure:.clj
