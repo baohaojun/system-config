@@ -22,7 +22,11 @@
 import os
 import sys
 import optparse
+from gi import require_version
+require_version('IBus', '1.0')
+
 from gi.repository import IBus
+
 from gi.repository import GObject
 import re
 patt = re.compile (r'<\?.*\?>\n')
@@ -58,10 +62,10 @@ if (not options.xml) and options.debug:
     if not os.access ( os.path.expanduser('~/.ibus/sdims'), os.F_OK):
         os.system ('mkdir -p ~/.ibus/sdims')
     logfile = os.path.expanduser('~/.ibus/sdims/debug.log')
-    sys.stdout = open (logfile,'a',0)
-    sys.stderr = open (logfile,'a',0)
+    sys.stdout = open (logfile,'a',1)
+    sys.stderr = open (logfile,'a',1)
     from time import strftime
-    print '--- ', strftime('%Y-%m-%d: %H:%M:%S'), ' ---'
+    print('--- ', strftime('%Y-%m-%d: %H:%M:%S'), ' ---', "\n")
 
 
 
@@ -114,7 +118,7 @@ class IMApp:
     def __bus_destroy_cb(self, bus=None):
         if self.destroied:
             return
-        print "finalizing:)"
+        print("finalizing:)\n")
         self.__factory.do_destroy()
         self.destroied = True
         self.__mainloop.quit()
@@ -141,7 +145,7 @@ def indent(elem, level=0):
 
 def main():
     if options.xml:
-        print """
+        print("""
 <engines>
     <engine>
         <name>SDIM</name>
@@ -154,7 +158,7 @@ def main():
         <description>Shadow Dance Input Method</description>
     </engine>
 </engines>
-""" % (icon_dir + "/sdim.png")
+""" % (icon_dir + "/sdim.png"))
         return 0
 
     if options.daemon :

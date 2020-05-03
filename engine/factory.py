@@ -22,6 +22,9 @@
 # $Id: $
 #
 
+from gi import require_version
+require_version('IBus', '1.0')
+
 from gi.repository import IBus
 import table
 import os
@@ -42,7 +45,7 @@ engine_base_path = "/com/redhat/IBus/engines/sdim/%s/engine/"
 class EngineFactory (IBus.Factory):
     """Sdim IM Engine Factory"""
     def __init__ (self, bus, icon=""):
-        print 'hello world, init'
+        print("hello world, init\n")
         # init factory
         self.bus = bus
         super(EngineFactory,self).__init__ (connection=bus.get_connection(),
@@ -52,8 +55,8 @@ class EngineFactory (IBus.Factory):
     def do_create_engine(self, engine_name):
         # because we need db to be past to Engine
         # the type (engine_name) == dbus.String
-        print 'hello world, engine is', engine_name
-        name = engine_name.encode ('utf8')
+        print('hello world, engine is', engine_name, "\n")
+        name = engine_name
         self.engine_path = engine_base_path % path_patt.sub ('_', name)
         try:
             engine = table.tabengine(self.bus,
@@ -62,7 +65,7 @@ class EngineFactory (IBus.Factory):
             #return engine.get_dbus_object()
             return engine
         except:
-            print "fail to create engine %s" % engine_name
+            print("fail to create engine %s" % engine_name, "\n")
             import traceback
             traceback.print_exc ()
             raise Exception("Can not create engine %s" % engine_name)

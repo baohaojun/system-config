@@ -30,9 +30,10 @@ def _str_percent_decode(str):
 
 
 import os
+from gi import require_version
+require_version('IBus', '1.0')
+
 from gi.repository import IBus
-from curses import ascii
-#from ibus import Property
 import keysyms
 import re
 
@@ -43,7 +44,7 @@ N_ = lambda a : a
 import dbus
 import socket
 import errno
-
+import traceback
 class KeyEvent:
     all_mods = [
         '', #no modifier
@@ -64,12 +65,17 @@ class KeyEvent:
             return
 
         try:
-            self.name = chr(self.code)
-            if self.name == ' ':
-                self.name = 'space'
+            if self.code < 0x80:
+                self.name = chr(self.code)
+                if self.name == ' ':
+                    self.name = 'space'
+                else:
+                    self.mask &= ~IBus.ModifierType.SHIFT_MASK
             else:
-                self.mask &= ~IBus.ModifierType.SHIFT_MASK
+                self.name = keysyms.keycode_to_name(self.code).lower()
         except:
+            print("bad key: code is %x\n", self.code)
+            traceback.print_exc()
             self.name = keysyms.keycode_to_name(self.code).lower()
 
         if self.name in ("control_l",
@@ -109,7 +115,7 @@ class tabengine (IBus.Engine):
         except socket.error as serr:
             if serr.errno != errno.ECONNREFUSED:
                 raise serr
-            print "Failed to connect to sdim server"
+            print("Failed to connect to sdim server\n")
             os.system("~/system-config/gcode/ime-py/ime-server.py >/dev/null 2>&1&")
             import time
             for i in range(1, 30):
@@ -120,7 +126,7 @@ class tabengine (IBus.Engine):
                 except socket.error as serr:
                     if serr.errno != errno.ECONNREFUSED:
                         raise serr
-                    print "Still not connected to sdim server @" + str(i)
+                    print("Still not connected to sdim server @" + str(i), "\n")
 
         self.sock = self.sock.makefile("rwb", 0)
 
@@ -130,7 +136,7 @@ class tabengine (IBus.Engine):
             self.sock = None
 
     def __init__ (self, bus, obj_path):
-        print 'obj_path is', obj_path
+        print('obj_path is', obj_path, "\n")
         super(tabengine,self).__init__ (connection=bus.get_connection(),
                                         object_path=obj_path)
         self._bus = bus
@@ -143,7 +149,7 @@ class tabengine (IBus.Engine):
         self._lookup_table.set_page_size(tabengine._page_size)
 
         self._name = 'sdim'
-        print 'name is', self._name
+        print('name is', self._name, "\n")
         self._config_section = "engine/%s" % self._name
 
         # config module
@@ -273,14 +279,15 @@ class tabengine (IBus.Engine):
 
     def _really_process_key (self, key):
         try:
-            self.sock.write("keyed " + key + "\n")
+            self.sock.write(("keyed " + key + "\n").encode('UTF-8'))
         except:
+            traceback.print_exc()
             self.do_connect()
             return
         self.clear_data()
         while True:
             try:
-                line = self.sock.readline()
+                line = self.sock.readline().decode('UTF-8')
             except:
                 self.do_connect()
                 self._aux_str = "Error with sock connection"

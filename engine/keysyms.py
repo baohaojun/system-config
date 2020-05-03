@@ -1500,7 +1500,7 @@ EuroSign = 0x20ac
 
 __name_to_keycode = {}
 __keycode_to_name = {}
-for key, value in vars().items():
+for key, value in vars().copy().items():
     if key.startswith("__") or \
        key in ("name_to_keycode", "keycode_to_name", "VoidSymbol"):
         continue
@@ -1513,10 +1513,9 @@ def name_to_keycode(name):
     return __name_to_keycode.get(name, VoidSymbol)
 
 def keycode_to_name(code):
-    if __keycode_to_name.has_key(code):
+    if code in __keycode_to_name:
         return __keycode_to_name[code]
     if code <  0xffff:
         return "0x%04x" % code
     else:
         return "0x%06x" % code
-
