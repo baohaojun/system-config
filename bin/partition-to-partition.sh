@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in *.human; do
     marvell-human-to-partition $x > ${x%.human}

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # use evtest to see key code for keymap
 
 if id | grep 'uid=0\b'; then

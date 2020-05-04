@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$http_proxy" -o "$ALL_PROXY"; then
     hint 你的Proxy环境变量有问题

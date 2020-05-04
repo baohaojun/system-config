@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $(basename $0) = extract-version; then
     echo -n "$1" | perl -npe 's/[^.\d]+/./g; s/\.+/./g; s/^\.|\.$//g'

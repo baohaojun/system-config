@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -ex
 test $PWD = ~ && cd ~/system-config/
 remote=origin

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 wlan0=wlan0
 if test -e ~/.config/system-config/start-ap; then

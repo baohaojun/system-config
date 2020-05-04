@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 (repo-push-url "${1:-$(repo-remote)}" | perl -npe 's,ssh://(.*?)/.*,$1,; s/:.*//; s/.*@//')

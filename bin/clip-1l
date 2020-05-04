@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ## this script join the clipboard to 1 line.
 
 ## some times, when you are in tmux edit mode, for e.g., you select

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test $(basename $0) = screenshot; then
     sleep 1
 fi

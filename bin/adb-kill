@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb ps | grep "$@" | tee /dev/stderr | while read u p pp ignore; do
     echo killing $u $p $pp $ignore;
     my-adb shell kill $p </dev/null || true

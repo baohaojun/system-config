@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 dev=${ANDROID_SERIAL:-$(my-adb devices? | pn 1)}
 mkdir -p ~/today/forever/gpt-$dev

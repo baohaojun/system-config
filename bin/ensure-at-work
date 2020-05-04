@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -e ~/src/github/smartcm/bin/ensure-at-work; then
     . ~/src/github/smartcm/bin/ensure-at-work

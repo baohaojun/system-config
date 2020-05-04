@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 repo forall $(repo-project) -c 'echo $REPO_LREV'

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 js=$1
 for x in $(find ~/.mozilla/ -name $js); do

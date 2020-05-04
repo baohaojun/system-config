@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #~/system-config/bin/windows/NetworkTest.exe& #this is ssh2Emacs
 cd ~/system-config/doc

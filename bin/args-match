@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 to_match=$1
 shift

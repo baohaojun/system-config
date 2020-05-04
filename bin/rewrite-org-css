@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 perl -ne 's/^(\s+)(\.org-link \{)/$1a, $2/;
            s/^(\s+)(\.org-link-visited \{)/$1a:visited, $2/;

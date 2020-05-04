@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 alias sc=~/system-config/bin/sc
 
 if test "$FORCE_SYSTEM_CONFIG" != true -a -e ~/.config/system-config/no-system-config ||

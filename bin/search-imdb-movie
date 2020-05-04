@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 # http://www.imdb.com/search/title?sort=num_votes,asc&title_type=feature&user_rating=7.0,10&year=2010,2010&num_votes=10000,100000000

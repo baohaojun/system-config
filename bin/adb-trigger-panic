@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 bs=4096
 if my-adb -r 'test -e /data/s.wap.reset && echo -n yes && echo '$$ | grep "yes$$" || yes-or-no-p "should do reset"; then
     my-adb -r "touch /data/s.wap.reset";

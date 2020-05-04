@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #search for AndroidManifest.xml
 function apkgname() {

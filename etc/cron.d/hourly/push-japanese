@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -x
 cd ~/.local-config/japanese/
 if git-any-changes; then

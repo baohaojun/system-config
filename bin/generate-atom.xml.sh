@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 exec >atom.xml
 site=http://baohaojun.github.io/

@@ -630,7 +630,7 @@
 * 最终脚本
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/system-config/bin/generate-getopt :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/system-config/bin/generate-getopt :comments link :shebang "#!/usr/bin/env bash" :noweb yes
 
   # All bash scripts should start with ~set -e~ to fail early and loudly.
   set -e

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if ! which aptitude >/dev/null 2>&1; then
     sudo apt-get -y install aptitude
 fi

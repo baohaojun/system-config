@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 of /Applications/KeyRemap4MacBook.app/
 of /Applications/PCKeyboardHack.app/

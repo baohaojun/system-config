@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 while (<>) {
     s/./ ord($&) < 128 ? $& : "\\x" . sprintf("%02x", ord($&))/ge;

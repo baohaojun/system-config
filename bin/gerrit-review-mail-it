@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$REMOTEIP"; then
    ssh-restricted "$REMOTEIP" gerrit-review-mail-it "$@"

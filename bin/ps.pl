@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export MY_PID=$$
 if test $(basename $0) = ps.pl0; then
     export MATCH_PROG_ONLY=true

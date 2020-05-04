@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd ~/tmp
 for y in 0 1; do
     for x in $(seq 1 254); do

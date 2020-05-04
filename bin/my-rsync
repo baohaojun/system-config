@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function rsync() {
     local x
     local -a args=()

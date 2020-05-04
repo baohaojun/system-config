@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # gtags will call sort, which will use a lot of space for large
 # projects.  And if TMPDIR is on /tmp, which is tmpfs using RAM, then

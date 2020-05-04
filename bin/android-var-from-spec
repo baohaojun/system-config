@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test "$1" = config; then
     exec echo $(android-var-from-spec TARGET_PRODUCT)$(
         android-var-from-spec TARGET_PRODUCT_SMARTISAN_EXTRA_ENV)-$(

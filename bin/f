@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # f means Find File in the currect dir. ~f hello world~ will find all
 # files having both hello and world in its file name. If more than 1

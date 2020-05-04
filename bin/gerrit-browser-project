@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 TEMP=$(getopt -o p: --long port: -n $(basename $0) -- "$@")
 port=

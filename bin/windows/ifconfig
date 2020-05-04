@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 adapter_name_matcher='wlan0|eth0'
 if test "${1:0:1}" != /; then

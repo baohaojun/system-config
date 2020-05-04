@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # push the current playing music to my phone
 set -e
 pid=$(ps.pl mplayer.like|pn 1);

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 sleep 35
 if ! ps.pl nm-applet; then
     exec nm-applet

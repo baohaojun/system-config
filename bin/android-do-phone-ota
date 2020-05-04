@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if test -z "$ANDROID_SERIAL"; then
     export ANDROID_SERIAL=$(my-adb devices?|pn 1)

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopts h:host='${scm_gerrit_server}' p:port u:user @admin

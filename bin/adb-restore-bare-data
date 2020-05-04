@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 cd ~/today/forever/data-f9e6c95/data/
 if test ! -e ../debian.tgz; then

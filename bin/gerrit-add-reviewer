@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 hint "这条命令已经不再维护，请使用 gerrit-push-review 并加 reviewer。
 

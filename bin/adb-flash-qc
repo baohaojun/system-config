@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #alterable.bin emmc_appsboot.mbn NON-HLOS.bin rpm.mbn sbl1.mbn sdi.mbn splash.img tz.mbn udisk.bin
 # NON-HLOS.bin                  /dev/block/platform/msm_sdcc.1/by-name/modem
 # sbl1.mbn                              /dev/block/platform/msm_sdcc.1/by-name/sbl1

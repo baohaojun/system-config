@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $b64_index {"+"} = 62;
 $b64_index {"/"} = 63;

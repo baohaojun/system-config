@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 read -a cmd -s -r #read will notice the \r at eol and count it if testing with
 		  #telnet(1), so please use nc(1).
 function driver_die() {

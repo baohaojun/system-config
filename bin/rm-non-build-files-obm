@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 git ls-tree -r HEAD --name-only |tee mark| xargs touch

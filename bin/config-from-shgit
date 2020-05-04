@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for x in $(
     ssh shgit bash -c 'true; cd /home/hjbao/git/submodules; find . -name "*.git"'|
     cut -b 3-|

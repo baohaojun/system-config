@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export APPVER='5.0'
 export Basemake='C:\Program Files\Microsoft SDK\Include\BKOffice.Mak'
 export Bkoffice='C:\Program Files\Microsoft SDK\'

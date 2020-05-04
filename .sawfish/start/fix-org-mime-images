@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test ! -e /tmp/file:; then
     ln -s / /tmp/file:
 fi

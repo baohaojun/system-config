@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 IFS=$'\t\n'
 for x in $(ps.pl "$@"); do

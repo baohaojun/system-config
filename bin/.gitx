@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -z "$SSH_AUTH_SOCK" -a -e ~/.config/system-config/ssh-agent; then
     . ~/system-config/bin/set-ssh-agent
 fi

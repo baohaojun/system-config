@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test "$1" = e; then
     ew ~/system-config/etc/udev/rules.d/90-bhj-personal.rules
 else

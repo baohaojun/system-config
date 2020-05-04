@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test $(basename $0) = ssh-passwd; then
     exec en_US ssh -o PreferredAuthentications=password "$@"
 elif test "$(basename $0)" = ssh-pubkey; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 url=${1:-$(getclip)}
 adb-ignite-device&
 if echo "$url" | grep -q "v.qq.com/"; then

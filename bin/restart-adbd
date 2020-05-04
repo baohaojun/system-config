@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 adbd_ppid=$(my-adb ps |grep adbd|pn 3)
 

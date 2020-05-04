@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "${REPO_PATH}"; then
     echo "${REPO_PATH}"

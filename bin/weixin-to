@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if my-adb dumpsys power | grep mWakefulness=Asleep; then
     adb-ignite-device
 fi

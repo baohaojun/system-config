@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 y=
 for x in "$@"; do
     y="$y \"$(mp $x)\""

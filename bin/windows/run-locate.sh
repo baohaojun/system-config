@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mkdir -p ~/.cache/system-config/.run-locate
 file=~/.cache/system-config/.run-locate/"$1"
 

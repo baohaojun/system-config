@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $(basename $0) = maildir-base64-decode-iconv; then
     echo -n "$2" | base64 -d

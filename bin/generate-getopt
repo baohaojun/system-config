@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/system-config/knuth-mode/generate-getopt.org::the-ultimate-script][the-ultimate-script]]
 # All bash scripts should start with ~set -e~ to fail early and loudly.
 set -e

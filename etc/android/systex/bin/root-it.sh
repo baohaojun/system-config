@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -x
 export PATH=/system-root/bin:/sbin:/system/bin:/system/xbin:/vendor/bin

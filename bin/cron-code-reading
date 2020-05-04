@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . ~/system-config/.bashrc
 export PATH=/usr/local/bin:$PATH
 function do_it() {

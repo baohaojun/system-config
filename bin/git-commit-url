@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 git_url=$(git-remote-url|perl -npe 's,git\@github.com:,https://github.com/,')
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export BHJ_URLIFY=true
 exec 2>/dev/null

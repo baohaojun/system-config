@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 taburl=$(firefox-get-tab-url)
 

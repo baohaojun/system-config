@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/src/github/baohaojun.github.com/blog/2018/08/27/sc-complete.org::the-ultimate-script][the-ultimate-script]]
 emacs-complete() {
     txt=~/.cache/system-config/ec.txt

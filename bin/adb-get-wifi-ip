@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cat=cat
 if is-tty-io; then
     cat=putclip

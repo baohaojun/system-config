@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if test $# = 1; then
     adb-push "$1" /data/boot.img && adb shell dd if=/data/boot.img of=/dev/block/platform/msm_sdcc.1/by-name/boot

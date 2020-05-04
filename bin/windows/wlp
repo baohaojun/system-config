@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #wlp stands for Win32 Long Path
 
 cygpath -alm "${1:-.}"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 android_manifest=$(lookup-file -e AndroidManifest.xml)
 

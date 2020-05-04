@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # find dict word html files stored as md5/hex and sort them and write
 # them into a .dz file

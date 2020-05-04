@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cpu_number=$(my-adb -r cat /proc/cpuinfo|grep '^processor'|wc -l)
 if test $(basename $0) = test-freq-current-temp.sh; then

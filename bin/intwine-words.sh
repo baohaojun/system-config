@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 out=$(
 perl -e '
 $done = 0; 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$1" = "File.OpenFile"; then
     set -- "$1" "$(cygpath -alw "$2")"

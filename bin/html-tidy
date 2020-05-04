@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 tidy -w -i 2>/dev/null

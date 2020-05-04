@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ew ~/system-config/gcode/java-test/Test.java
 cd ~/system-config/gcode/java-test/
 javac Test.java

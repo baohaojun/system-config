@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cat > /tmp/loginfix.sh <<EOF
-#!/bin/bash
+#!/usr/bin/env bash
 exec > ~bhj/.cache/system-config/logs/fix-login.sh 2>&1
 set -x
 rm /Users/*/Library/Preferences/ByHost/com.apple.loginwindow.* -v

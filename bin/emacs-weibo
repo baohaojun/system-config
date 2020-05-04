@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 emacs.client -d -e '(weibo)'
 exit 

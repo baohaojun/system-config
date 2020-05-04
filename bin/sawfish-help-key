@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test $(basename $0) = sawfish-help-key-ask-map; then
     map=$(EMACS=t select-args -o global-keymap window-keymap s-h-keymap)
 else

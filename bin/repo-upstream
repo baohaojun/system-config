@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 repo_info=$(readlink -f $(lookup-file -e ".repo/repo_info.sh"))
 cd -P .

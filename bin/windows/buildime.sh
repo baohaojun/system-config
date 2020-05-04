@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e 
 cd /q/gcode/scim-cs/scim
 seq=$1

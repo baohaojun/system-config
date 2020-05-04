@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 activity=$(adb-top-activity)
 if test "$activity" = com.tencent.mobileqq/cooperation.qzone.QzoneGPUPluginProxyActivity; then
     adb-tap 952 155

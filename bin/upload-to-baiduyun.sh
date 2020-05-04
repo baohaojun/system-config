@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb start-activity com.baidu.netdisk/com.baidu.netdisk.ui.MainActivity
 
 my-adb 'mkdir -p /sdcard/0/; rm /sdcard/0/*'

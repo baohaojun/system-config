@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$EMACS" != t; then
     if test -e /etc/bash_completion; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 text=$1
 file=$2

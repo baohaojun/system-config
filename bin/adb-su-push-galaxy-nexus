@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test $(my-adb devices|grep .|wc -l) = 2 && my-adb devices|grep -q : && yes-or-no-p -y "are you sure to use wifi adb?"; then
     true

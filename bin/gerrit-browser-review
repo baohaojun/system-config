@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 test $# = 0 && set -- $(git log -1 HEAD|grep 'change-id:' -i |pn 2)
 

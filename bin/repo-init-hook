@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -e no-local-manifest; then
     cat manifest.xml > manifest.xml.new

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if test "$(basename $0)" = gerrit-pull-config; then
     git fetch $(repo-remote) refs/meta/config

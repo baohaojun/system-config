@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd ~/jira-projects/
 issues=$(jira -a getProjectList|perl -ne 'print unless (1..2)'|awk -F, '{print $1}')

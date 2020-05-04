@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # print the beagrep dir
 . ~/system-config/etc/bash.d/cd_beagrep

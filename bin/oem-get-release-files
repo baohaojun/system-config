@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # 这个脚本需要在oem高通prebuilt release目录下运行，不是代码目录。

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # return true if doing something for the 1st time in specified seconds.
 

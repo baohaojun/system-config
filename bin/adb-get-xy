@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/system-config/knuth-mode/adb-get-xy.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 ## start code-generator "^\\s *#\\s *"

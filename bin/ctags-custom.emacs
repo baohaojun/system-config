@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # DEFUN ("recursive-edit", Frecursive_edit, Srecursive_edit, 0, 0, "",
 
 for x in "$@"; do

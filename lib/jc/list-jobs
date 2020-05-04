@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 jc curl api/json | perl -e "$(
 cat <<'EOF97e7afd434f1'

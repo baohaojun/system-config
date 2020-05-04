@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #把system-config下载回来，并全部拷到~下
 #cd ~
 #svn co http://system-config.googlecode.com/svn/trunk

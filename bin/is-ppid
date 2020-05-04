@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 child=${2:-$$}
 parent=$1
 

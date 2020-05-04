@@ -1,4 +1,4 @@
-#!/bin/bash -i
+#!/usr/bin/env bash -i
 
 if test $(basename $0) = start-rndis; then
     init_rndis() {

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export PATH=.:/c/WINDOWS/system32:/c/WINDOWS:.
 unset  TEXMFCNF   TEXMFTEMP  TEXMFVAR PERL5LIB TLROOT

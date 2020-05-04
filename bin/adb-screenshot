@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 exec 1>&2 # must not change this line, because onmyoji depend on it for orientation.
 

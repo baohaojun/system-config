@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 TEMP=$(getopt -o x:y:X:Y: -n $(basename $0) -- "$@")
 x=4

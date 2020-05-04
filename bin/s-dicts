@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "$(debug-args "$@")" > ~/.cache/system-config/logs/s-dicts.log
 

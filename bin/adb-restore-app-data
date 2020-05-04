@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # 这个脚本是给 adb-sync-phones 用的
 

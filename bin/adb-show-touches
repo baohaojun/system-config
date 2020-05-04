@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb start-activity com.android.settings/com.android.settings.DevelopmentSettings
 sleep 1
 Wrench 'adb_top_window()'

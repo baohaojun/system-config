@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 umask 0077
 tmp=~/.cache/system-config/.bash_history.$$
 (

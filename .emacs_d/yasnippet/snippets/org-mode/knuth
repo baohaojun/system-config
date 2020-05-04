@@ -64,7 +64,7 @@
 ** 最终的版本：
 
 #+name: the-ultimate-script
-#+BEGIN_SRC sh :tangle ~/src/github/smartcm/sync-push-to-simt :comments link :shebang "#!/bin/bash" :noweb yes
+#+BEGIN_SRC sh :tangle ~/src/github/smartcm/sync-push-to-simt :comments link :shebang "#!/usr/bin/env bash" :noweb yes
 
   # All bash scripts should start with ~set -e~ to fail early and loudly.
   set -e

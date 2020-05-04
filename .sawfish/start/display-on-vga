@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 xrandr_out=$(xrandr)
 if echo "$xrandr_out" | grep LVDS -q && echo "$xrandr_out" | grep -P -e 'VGA.*\bconnect'; then

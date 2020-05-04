@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 head_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)

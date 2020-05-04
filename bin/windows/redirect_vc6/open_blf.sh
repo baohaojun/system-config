@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -x
 cd "$(dirname "$1")"
 here=$(pwd)

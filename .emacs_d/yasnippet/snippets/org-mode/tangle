@@ -2,4 +2,4 @@
 # name: tangle
 # key: tangle
 # --
-:tangle ${1:`(buffer-file-name)`.sh} :comments link :shebang "#!/bin/bash" :noweb yes
+:tangle ${1:`(buffer-file-name)`.sh} :comments link :shebang "#!/usr/bin/env bash" :noweb yes

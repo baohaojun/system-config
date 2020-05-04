@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if which shutdown | grep /windows/system -iq; then
     shutdown /r /t 000
 else

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 test $# = 0 && set -- ""
 for x in "$@"; do 
     repo forall $x -c 'git merge `repo-remote`/`tbranch`'

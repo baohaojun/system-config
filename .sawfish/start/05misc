@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo sawfish starting sub programs
 touch /tmp/bhj-notify-not-working
 touch ~/.cache/system-config/logs/screen-on

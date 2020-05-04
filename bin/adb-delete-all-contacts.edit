@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in $(seq 1 ${1:-10}); do
     adb-tap 446 789

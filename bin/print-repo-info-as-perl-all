@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
 cat <<'EOF' | grep -v "sh-mode%\}" -P
 # {%sh-mode%}
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 me=$(readlink -f $BASH_SOURCE)

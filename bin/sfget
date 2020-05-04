@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo  lftp -c \"debug 8\; pget -n 15 \'"$1"\' -o `echo "$1"|perl -npe 's!.*/!!;s!\?.*!!'`\"|sh
 
 

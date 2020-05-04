@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . regfuncs.sh
 
 regSetVal -s set '\HKEY_CLASSES_ROOT\.mff\' 'mff_auto_file'

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 project=$(repo-remote-url | perl -npe 's,.*//.*?/,,')
 host=$(gerrit-review-host "$(repo-host)")

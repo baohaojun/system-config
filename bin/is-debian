@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if ! which lsb_release >/dev/null 2>&1; then
     sudo apt-get install -y lsb-release 1>&2
 fi

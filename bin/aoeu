@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # 这个脚本像 am 脚本一样，可以用来切换键盘布局。但是，它只能用在

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for x in $(seq 1 5); do
     sawfish-send-focused-window-event "C-z" 0 C-z BS C-d
 done

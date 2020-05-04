@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # 这个脚本会把 csv 文件的格式统一成 perl 输出的格式。这样做的原因是一
 # 些用户用 office 保存的 csv，它的引号、转义等使用规则与 perl 不一样，

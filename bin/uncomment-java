@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . ~/system-config/.bashrc-linux
 cat >/tmp/$$.java
 java -cp ~/system-config/bin/Linux/ext/`uname -m`/uncomment-java.jar:$CLASSPATH UncommentJava /tmp/$$.java

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ip=$(curl -s ddns.oray.com/checkip|sed -e 's/.*Current IP Address: \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/')
 if test -z "$ip"; then

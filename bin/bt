@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 bt() {
     (
         for i in $(seq 0 $((${#FUNCNAME[@]} - 1))); do

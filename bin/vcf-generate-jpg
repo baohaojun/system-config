@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 sub debug(@) {
     print STDERR "@_\n";

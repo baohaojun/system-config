@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "$@" | tr : \\n |
     while read jar; do
         if test -e $jar; then

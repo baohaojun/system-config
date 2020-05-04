@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/system-config/knuth-mode/sawfish-window-custom-menu.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
@@ -6,7 +6,7 @@ if echo $SHELLOPTS | grep -q xtrace; then
     exec 2> ~/tmp/sawfish-window-custom-menu.org.log
 fi
 
-#!/bin/bash
+#!/usr/bin/env bash
 top_window=${SC_FORCE_TOP_WINDOW:-$(sawfish-top-window)}
 top_window=${top_window,,}
 

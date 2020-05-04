@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 url='http://map.sogou.com/#lq='"`echo \"$@\"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf(\"%%%02x\", ord($1))#seg; s# #+#g'`" 
 echo "$url"|tee /dev/tty|putclip

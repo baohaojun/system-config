@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 host=pub
 TEMP=$(getopt -o h: --long host: -n $(basename $0) -- "$@")

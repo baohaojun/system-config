@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # 这个脚本：输入参数是一个 build_url，输出是一个 build_dir（在 jenkins master 上名为类似“jobs/JOB_NAME/build/NNN”的一个目录）
 

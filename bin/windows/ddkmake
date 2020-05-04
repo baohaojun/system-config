@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export PATH="/c/WINDDK/3790~1.183/bin/x86:/c/WINDDK/3790~1.183/bin:/c/WINDDK/3790~1.183/bin/x86/drvfast/scripts:/c/gnuserv:/d/tools/emacswin/bin:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/scripts:/c/ntutils:/c/Program Files/RSA Security/RSA SecurID Software Token/:/c/Program Files/Rational/ClearCase/bin:/c/Program Files/Rational/common:/d/Profiles/zch07g_cc_albd/bin:/c/cygwin/usr/X11R6/bin:/c/cygwin/bin"
 
 export ATL_INC_PATH='C:\WINDDK\3790~1.183\inc'

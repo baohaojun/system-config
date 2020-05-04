@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 hanzi=$1
 md5=$(echo $hanzi|md5sum|cut -b 1)

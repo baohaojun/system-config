@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 rm -f .config/system-config/.bashrc-path
 . ~/system-config/.bashrc

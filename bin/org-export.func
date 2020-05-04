@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function org_export_generate_tags() {
     the_ORG_FILE_NAME=$1
     echo "arg1 is $the_ORG_FILE_NAME" > ~/.cache/system-config/logs/relative_url.log

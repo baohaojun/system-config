@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 me=$(readlink -f $BASH_SOURCE)
@@ -28,11 +28,11 @@ while read line; do
     id=$(echo $line | perl -ne 'print "$1" if m/id=(\d+)/')
     name=$(echo $line | perl -ne 'print "$1" if m/↳ (.*?)\s+id=/')
     device_id_name_map[$id]=$name
-done <<<"$(xinput -list | grep 'Mouse|Touchpad' -P)"
+done <<<"$(xinput -list | grep 'Mouse|Touchpad|pointer' -P)"
 
 . aterr bhj-notify do-natural-scrolling "Failed to do-natural-scrolling, please check errors"
 
 for id in "${!device_id_name_map[@]}"; do
     name=${device_id_name_map[$id]}
-    xinput set-prop "$id" "libinput Natural Scrolling Enabled" $(get-about-me natural-scroll-dir 1)
+    xinput set-prop "$id" "libinput Natural Scrolling Enabled" ${1:-$(get-about-me natural-scroll-dir 1)} || true
 done

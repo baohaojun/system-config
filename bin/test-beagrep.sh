@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -ex
 tmpd=$(wlp /tmp/$$.test-beagrep)

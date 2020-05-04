@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # find out which repo-switch branch we are currently on.
 set -e

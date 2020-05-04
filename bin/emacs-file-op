@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/system-config/knuth-mode/emacs-file-op.org::the-ultimate-script][the-ultimate-script]]
 set -e
 

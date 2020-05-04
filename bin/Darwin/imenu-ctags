@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 tmp=~/.cache/system-config/imenu-ctags.input.$$
 cat > $tmp
 ~/system-config/bin/imenu-ctags "$@" $tmp < $tmp

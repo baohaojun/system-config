@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function vcenv6_func () {
     local vc_bat_file;

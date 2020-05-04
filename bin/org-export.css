@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #find blog -name '*.html' -type f |sort | while read html; do (( i = i % 8 + 1)); echo $i; perl -npe "s,/css/org.css,/css/$( (cd css; find . -type f -name '*.css'|grep -v default.css|cut -b 3-)|head -n $i | tail -n 1 )," -i $html; done
 
 if test "$ORG_EXPORT_CSS"; then

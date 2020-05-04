@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # 434f 4d49 4d45 422e 4e49
 
 $args = join("", @ARGV);

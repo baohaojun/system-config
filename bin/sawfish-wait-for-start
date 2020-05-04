@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 seconds=${1:-60}
 bhj-notify "sawfish-wait-for-start" "please move your mouse to left end of screen"
 

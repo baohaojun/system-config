@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "\$0 is $0"
 #make sure PATH is sane
 export PATH=/bin:$PATH

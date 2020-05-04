@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 branch=$(repo-branch "$@")
 if test ${#branch} = 40; then

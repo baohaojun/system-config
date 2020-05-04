@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cat ~/.cache/system-config/sawfish-macro |
     while read key; do

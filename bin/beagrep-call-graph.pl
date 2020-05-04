@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 my $gtags = glob("~/.cache/system-config/for-code-reading/$ENV{PWD}/GTAGS");

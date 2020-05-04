@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 set -e
@@ -108,27 +108,27 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--[no-]ask-replacer'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]beagrep'
             echo "使用 beagrep 来搜索匹配的需要替换的文件列表"
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--change-files=CHANGE_FILES...'
             echo
             printf "%30s" ""
             echo "要修改哪些文件，可一次指定多个或指定多次（但不能混用），默认会自己搜索匹配的文件"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]perl-re'
             echo "by default, use grep -P (perl regexp)"
-            printf %06s '-P, '
+            printf %6s '-P, '
             printf %-24s '--postpend=POSTPEND'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prepend=PREPEND'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]use-git'
             echo "要不要执行 git 检查"
             exit

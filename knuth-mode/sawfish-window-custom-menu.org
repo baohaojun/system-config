@@ -28,7 +28,7 @@
       exec 2> ~/tmp/sawfish-window-custom-menu.org.log
   fi
 
-  #!/bin/bash
+  #!/usr/bin/env bash
   top_window=${SC_FORCE_TOP_WINDOW:-$(sawfish-top-window)}
   top_window=${top_window,,}
 
@@ -118,7 +118,7 @@
 ** 最终的版本：
 
    #+name: the-ultimate-script
-   #+BEGIN_SRC sh :tangle ~/system-config/bin/sawfish-window-custom-menu :comments link :shebang "#!/bin/bash" :noweb yes
+   #+BEGIN_SRC sh :tangle ~/system-config/bin/sawfish-window-custom-menu :comments link :shebang "#!/usr/bin/env bash" :noweb yes
      <<old-code>>
      <<read-only>>
    #+END_SRC

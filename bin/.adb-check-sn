@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -z "$ANDROID_SERIAL"; then
     if test "$(my-adb devices?|wc -l)" = 1; then
         ANDROID_SERIAL=$(my-adb devices? | pn 1)

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 x=$(select-output-line -o '
     (
         cd ~/system-config/bin;

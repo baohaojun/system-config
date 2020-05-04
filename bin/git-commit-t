@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test $# = 0 -o "$1" = ""; then
     shift
     set -- $(git log -1 | grep "Ticket:" | pn 2 | head -n 1) "$@"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -x
 
 ip_b4=$(from-mac|cut -b 21-37 |md5sum |pn 1|perl -npe 's/^/((x=0x/; s/$/%100)); if test \$x -lt 0; then ((x=-x)); fi; echo \$x/'|bash)

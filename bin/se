@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 . aterr bhj-notify -- "$0" "failed to run $0"
 

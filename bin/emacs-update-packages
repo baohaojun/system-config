@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd ~/.emacs.d/elpa
 if test ! -d .git; then

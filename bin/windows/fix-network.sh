@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 wlan0_ip=$(ifconfig wlan0 | perl -ne '
 BEGIN {

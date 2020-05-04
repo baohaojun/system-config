@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd /d/tools/cygwin/repo
 cat setup-2.ini|grep 'install:\|source:' | perl -npe 's!.*:\s+(.*?)\s+.*!$1!' |sort -u >setup.1

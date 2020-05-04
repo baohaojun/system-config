@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/usr/bin/env bash 
 
 argv=( "$@" )
 for ((x=0; x<${#argv[@]}; x++)); do 

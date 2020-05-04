@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 sawfish-client -e "(progn
                      (display-message)
                      (bhj-draw-notification t)

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if test "$#" = 0; then
     if test "${EMACS}"; then

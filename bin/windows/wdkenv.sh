@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #call C:\WINDOWS\system32\cmd.exe /k C:\WinDDK\6001.18002\bin\setenv.bat C:\WinDDK\6001.18002\ fre x86 WXP
 function wdkenv_func () {

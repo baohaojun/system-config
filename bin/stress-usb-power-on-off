@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 n=0
 while true; do

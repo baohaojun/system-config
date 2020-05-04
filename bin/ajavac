@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 . ~/system-config/.bashrc
 build_env=`lookup-file -e build/envsetup.sh || echo ~/src/android/build/envsetup.sh`

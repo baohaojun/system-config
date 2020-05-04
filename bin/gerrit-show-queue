@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ssh smartisan gerrit show-queue -w |perl -ne 'print if s/.*\((.*)\)/$1/'|
 perl -ne '
      chomp;

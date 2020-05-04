@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 beagrep -e "DEFUN.*\b$1\b"

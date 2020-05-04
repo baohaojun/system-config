@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 getclip | base64 -d | iconv -f gbk -t utf8 > /tmp/decode-bbs.txt 2>/dev/null ||
     getclip | base64 -d > /tmp/decode-bbs.txt 2>/dev/null
 

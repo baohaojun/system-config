@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 instr=$(android-select-instrumentation "$1")
 classes=$(cd $(lookup-file -e "bin/classes")

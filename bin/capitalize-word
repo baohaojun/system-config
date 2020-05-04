@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 op=$(basename $0)
 for x in "$@"; do
     echo -n "$x" | perl -npe '@a = split("_", $_); $_ = join("", map {'$op' } @a)'

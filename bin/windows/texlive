@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export TEXDIR=/z/texlive
 export TEXDIRW=/q/.tlportable2009
 export TEXMFCONFIG=/q/.tlportable2009/texmf-config

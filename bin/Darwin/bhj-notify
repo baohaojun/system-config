@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 label=$1
 shift
 

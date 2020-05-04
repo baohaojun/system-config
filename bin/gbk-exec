@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 loc=zh_CN.GBK
 if test $(basename $0) = big5-exec; then
     loc=zh_TW.BIG5

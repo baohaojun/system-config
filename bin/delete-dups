@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 size=${1:--size +10M}
 

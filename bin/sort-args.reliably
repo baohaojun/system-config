@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function sort-args() {
     ## start code-generator "^\\s *#\\s *"

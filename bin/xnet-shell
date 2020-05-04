@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 port=8087
 export http_proxy=http://localhost:$port
 export https_proxy=http://localhost:$port

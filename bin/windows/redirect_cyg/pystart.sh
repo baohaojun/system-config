@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 debug=false
 if [[ "$1" == -x ]]

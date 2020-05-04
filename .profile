@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if ! . ~/system-config/etc/check-system-config; then
     return 0
 fi

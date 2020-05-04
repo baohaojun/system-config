@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 if test $# = 0; then
     set -- $(select-output-line git reflog | pn 1)

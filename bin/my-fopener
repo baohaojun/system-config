@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in /proc/*; do 
     if sudo ls $x/fd/ -l 2>/dev/null | grep $1; then

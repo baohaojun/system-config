@@ -129,7 +129,7 @@ if (not $private_section) {
 
 if (! -d $private_profile_dir || ! -d $private_firefox_dir || "$rsync") {
     system("debug-run", "rsync", "$default_profile_dir/", "$private_profile_dir", "-acv", "--delete");
-    system("debug-run rsync ~/external/firefox ${private_home_dir} -a --delete");
+    system("debug-run rsync ~/external/firefox/ ${private_home_dir}/firefox -a --delete");
     system("debug-run rsync ~/.local-config/etc/firefox-icons.${private_instance}/ ${private_firefox_dir}/browser/chrome/icons/default -a");
 }
 

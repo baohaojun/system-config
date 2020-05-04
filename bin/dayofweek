@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 date | cut -b 1-3

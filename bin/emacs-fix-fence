@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 init_text=emacs-fix-fence.$$
 
@@ -95,7 +95,7 @@ unescape-html() {
     xmlstarlet unesc - | tr -d \\r
 }
 
-add_at_start[nxml-bash]='<![CDATA[#!/bin/bash
+add_at_start[nxml-bash]='<![CDATA[#!/usr/bin/env bash
 '
 add_at_end[nxml-bash]='#!end-of-fence]]>'
 

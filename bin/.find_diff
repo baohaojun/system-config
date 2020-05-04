@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export pattern_dir="$1"
 function find_diff() {

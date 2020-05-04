@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 perl -npe 's!/usr/local!\@prefix\@!g' .globalrc > gcode/ajoke/external/global/gtags.conf.in
 function die() {

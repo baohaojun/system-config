@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo hello "$@" >> ~/devcmd.log
 echo '$1' is "$1" >> ~/devcmd.log
 echo '$2' is "$2" >> ~/devcmd.log

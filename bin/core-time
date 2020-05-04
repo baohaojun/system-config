@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for x in "$@"; do
     perl -e 'use POSIX qw(ctime); print ctime('`echo $x|perl -npe "s/.*-//"`')'

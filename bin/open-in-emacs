@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mkdir -p ~/.cache/system-config/open-in-emacs.d/
 cat > ~/.cache/system-config/open-in-emacs.d/open-in-emacs.$$.txt
 e ~/.cache/system-config/open-in-emacs.d/open-in-emacs.$$.txt

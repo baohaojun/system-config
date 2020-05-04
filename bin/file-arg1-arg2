@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 my (%h1, %h2);
 my ($fn1, $fn2) = @ARGV;
 open($f1, "<", $fn1) or die "not open ~/$fn1";

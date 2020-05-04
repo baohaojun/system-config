@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb -r setprop persist.sys.usb.config mtp,adb;
 
 my-adb -w am startservice -n com.android.providers.media/.MtpService

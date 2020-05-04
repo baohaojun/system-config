@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb service call iphonesubinfo 1|pn 2 \' |perl -pe 's,[^\d],,g'

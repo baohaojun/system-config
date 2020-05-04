@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 my-adb -w reboot bootloader
 fastboot wait-for-device
 fastboot flash partition dummy_gpt_both0.bin

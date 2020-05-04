@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 . ~/system-config/etc/.fix-java-version
 

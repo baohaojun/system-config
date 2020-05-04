@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sawfish-client -e '(bind-keys window-keymap "Button1-Click" '\''raise-and-pass-through-click)'
 synclient TouchpadOff=0

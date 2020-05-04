@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ssh-exp root@${1:-home} "
 set -x
 mkdir -p .ssh

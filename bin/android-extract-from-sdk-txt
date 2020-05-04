@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 last_txt=~/src/android/frameworks/base/api/current.txt

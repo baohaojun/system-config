@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test "$(basename -- "$1")" = emacs.exe -o "$(basename -- "$1")" = runemacs.exe; then
     # so that I can choose to run another emacs-nt installation

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 unset EMACS
 unset INSIDE_EMACS
 "$@"

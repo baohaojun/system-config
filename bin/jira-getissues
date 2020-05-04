@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mkdir -p ~/jira-issues/
 cd ~/jira-issues/ || exit
 

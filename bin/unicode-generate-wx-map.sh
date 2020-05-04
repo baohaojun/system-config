@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 diff unicode.ord wx.ord | perl -ne '{print if 2..-1}; END{ print "1c1\n"}' |
 perl -ne '
     our $unicode;

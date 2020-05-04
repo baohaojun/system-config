@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 wroute=/cygdrive/c/WINDOWS/system32/route
 function route() {
     if test $# = 0 -o $# = 1 -a "$1" = -n; then

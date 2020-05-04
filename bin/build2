@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 pcre=
 if test "$#" = 1 -a -e "$1"; then

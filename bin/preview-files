@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 td=/tmp/$(basename $0).$$
 mkdir $td
 cp "$@" $td/ -av

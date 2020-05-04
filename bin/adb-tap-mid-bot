@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 adb-tap 560 1840

@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for x in `getclip`; do of $x; done

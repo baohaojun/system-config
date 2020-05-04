@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are being executed

@@ -2,7 +2,7 @@
 # name: scmhook
 # key: scmhook
 # --
-#!/bin/bash
+#!/usr/bin/env bash
 
 # 此脚本运行在 repo 代码顶层目录下
 # 以 source 的方式运行

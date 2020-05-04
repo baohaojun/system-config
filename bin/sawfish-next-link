@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 url=$(firefox-get-tab-url)
 
 sawfish-browser-input ISO_Left_Tab

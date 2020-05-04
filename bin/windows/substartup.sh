@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd ~/system-config/bin/windows/startup
 rm *.stackdump */*.stackdump -f

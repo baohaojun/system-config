@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 . ~/system-config/.bashrc
 . ~/system-config/bin/set-ssh-agent || true

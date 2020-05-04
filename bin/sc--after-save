@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 touch sc-not-merged
 touch ~/tmp/github.backup
 if [[ $PWD =~ ${HOME}/src/gerrit-fetch-review ]]; then

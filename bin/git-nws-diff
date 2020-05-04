@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test "$1" = diff -o "$1" = diff-index; then
     cmd=$1
     shift

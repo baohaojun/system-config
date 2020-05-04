@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 TEMP=$(getopt -o h: --long host: -n $(basename $0) -- "$@")
 host=localhost
 eval set -- "$TEMP"

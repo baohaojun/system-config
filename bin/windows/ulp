@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #ulp stands for Unix Long Path
 if test "${1:0:1}" = / -a ! -e "$1"; then
     echo -n "$1"

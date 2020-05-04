@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 export ABC_REMOTE_HOST=build
 unset SSH_AUTH_SOCK
 unset SSH_AGENT_PID

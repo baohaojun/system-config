@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # [[file:~/system-config/knuth-mode/my-rfa.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 

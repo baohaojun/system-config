@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 eval "
 if test \"\$$1\" = true; then
    $1=$2

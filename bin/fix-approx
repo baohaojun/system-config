@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # W: Failed to fetch http://mirrors.aliyun.com/debian/dists/unstable/main/i18n/Translation-enIndex  MD5Sum mismatch
 

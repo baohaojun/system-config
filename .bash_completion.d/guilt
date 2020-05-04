@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function _guilt_series()
 {
     local IFS=$'\t\n'

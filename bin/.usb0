@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if test -e ~/.config/system-config/about_me/usb0; then
    . ~/.config/system-config/about_me/usb0
 else

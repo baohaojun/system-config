@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . ~/.renew-xauth >/dev/null 2>&1
 if ! test "$DBUS_SESSION_BUS_ADDRESS"; then
     exit 0;

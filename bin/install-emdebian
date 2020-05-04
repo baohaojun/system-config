@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 sudo bash -c 'echo "deb http://mirrors.aliyun.com/debian/ squeeze main" > /etc/apt/sources.list.d/emdebian.list'
 sudo bash -c 'echo "deb http://www.emdebian.org/debian/ squeeze main" >> /etc/apt/sources.list.d/emdebian.list'
 sudo apt-get update

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 xrandr=$(xrandr)
 if test $(echo "$xrandr"|pn 2 | grep '^connected$'|wc -l) = 1; then
