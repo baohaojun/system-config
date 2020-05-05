@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use v5.10;
 use strict;
 use Encode;
 use String::ShellQuote;
@@ -8,7 +9,11 @@ my $filename = $ARGV[0];
 chomp(my $stdin = qx(readlink -f /dev/stdin));
 if (@ARGV > 1) { # this is for mac, where it can't readlink the /dev/stdin
     $stdin = $ARGV[1];
+} elsif ( $stdin eq "/dev/fd/0" ) {
+    system("bhj-notify imenu-ctags 'Not running on Linux? Try to use ~/system-config/bin/Darwin/imenu-ctags'");
+    die "Can't find out the stdin file's name";
 }
+
 @ARGV = ();
 
 my $point = 1;
@@ -27,6 +32,7 @@ if ($ENV{DEBUG} eq 'true') {
     open($debug, ">", glob("~/.cache/system-config/logs/$logfile.log"))
         or die "Can not open debug log file ~/.cache/system-config/logs/$logfile.log";
 }
+
 sub debug(@) {
     print $debug "@_\n";
 }
