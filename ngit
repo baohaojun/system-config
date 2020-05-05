@@ -34,10 +34,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--match-subject-re=MATCH_SUBJECT_RE'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--start-item=START_ITEM'
             echo
             exit
