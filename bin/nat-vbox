@@ -31,10 +31,10 @@ function nat-vbox() {
                 echo -e
                 echo
                 echo Options and arguments:
-                printf %06s '-i, '
+                printf %6s '-i, '
                 printf %-24s '--input-dev=INPUT_DEV'
                 echo
-                printf %06s '-o, '
+                printf %6s '-o, '
                 printf %-24s '--output-dev=OUTPUT_DEV'
                 echo "外网"
                 exit

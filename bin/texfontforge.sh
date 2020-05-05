@@ -48,10 +48,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--font-file=FONT_FILE'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--font-name=FONT_NAME'
             echo
             exit

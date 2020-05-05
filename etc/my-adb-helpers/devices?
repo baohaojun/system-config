@@ -64,25 +64,25 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-x, '
+            printf %6s '-x, '
             printf %-24s '--[no-]debug'
             echo use shell set -x for debug
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--device-type=DEVICE_TYPE'
             echo
             printf "%30s" ""
             echo 想要查看哪种类型的设备？可以指定 adb、fastboot 或 both。
-            printf %06s '-1, '
+            printf %6s '-1, '
             printf %-24s '--[no-]make-sure-only-1-device'
             echo
             printf "%30s" ""
             echo 确保只有一个设备（如果设置了 ANDROID_SERIAL 环境变量，确保这个设备在线）
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prompt-set-device=PROMPT_SET_DEVICE'
             echo
             printf "%30s" ""
             echo 设置 ANDROID_SERIAL 环境变量时的提示信息
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]set-device'
             echo 需要时，通过 reset-env 脚本设置 ANDROID_SERIAL 变量
             exit

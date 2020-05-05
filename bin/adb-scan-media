@@ -25,7 +25,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-q, '
+            printf %6s '-q, '
             printf %-24s '--[no-]quiet'
             echo
             exit

@@ -23,7 +23,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--issue=ISSUE'
             echo
             exit

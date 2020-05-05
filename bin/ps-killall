@@ -48,13 +48,13 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]group'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--path-to-exe=PATH_TO_EXE'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--signal=SIGNAL'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--withenv=WITHENV'
             echo
             exit

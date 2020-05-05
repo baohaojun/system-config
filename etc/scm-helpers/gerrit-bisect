@@ -37,15 +37,15 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-H, '
+            printf %6s '-H, '
             printf %-24s '--gerrit-host=GERRIT_HOST'
             echo
             printf "%30s" ""
             echo "Gerrit 服务器主机名，应允许通过 ssh HOST gerrit query 命令查询 patch 信息"
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--output-csv=OUTPUT_CSV'
             echo "指定输出到某个 csv 文件，默认打印到终端上"
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--patches-csv=PATCHES_CSV'
             echo
             printf "%30s" ""

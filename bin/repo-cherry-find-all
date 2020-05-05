@@ -129,22 +129,22 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--from=FROM'
             echo '从哪个分支挑 patch'
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--jobs=JOBS'
             echo
-            printf %06s '-F, '
+            printf %6s '-F, '
             printf %-24s '--[no-]local-from'
             echo '把 from 分支当成一个本地分支，不要自动加上 remotes/$(repo-remote)/ 前缀'
-            printf %06s '-T, '
+            printf %6s '-T, '
             printf %-24s '--[no-]local-to'
             echo '把 to 分支当成一个本地分支，不要自动加上 remotes/$(repo-remote)/ 前缀'
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--remote=REMOTE'
             echo '使用哪个 remote'
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to=TO'
             echo '往哪个分支合入 patch'
             printf "%06s" " "

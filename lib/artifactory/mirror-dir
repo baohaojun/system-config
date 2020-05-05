@@ -48,13 +48,13 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--dir-url=DIR_URL'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--[no-]dry-run'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--mirror-to-dir=MIRROR_TO_DIR'
             echo
             exit

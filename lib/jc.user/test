@@ -63,7 +63,7 @@ while true; do
             echo -e "$comment"
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--job-config-file=JOB_CONFIG_FILE'
             echo
             exit

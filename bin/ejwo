@@ -78,7 +78,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]debug'
             echo "for debug, do not remove tmp files ${tmp_file}\*"
             printf "%06s" " "

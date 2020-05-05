@@ -29,10 +29,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--output-dir=OUTPUT_DIR'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--url=URL'
             echo
             exit

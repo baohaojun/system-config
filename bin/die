@@ -35,10 +35,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--[no-]mail-cms'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--[no-]notify'
             echo
             exit

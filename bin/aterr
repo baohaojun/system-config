@@ -52,7 +52,7 @@ else
                 printf "%06s" " "
                 printf %-24s '--[no-]die'
                 echo "允许用 --no-die 设置不要抛出异常。在多重 aterr 时慎用。"
-                printf %06s '-i, '
+                printf %6s '-i, '
                 printf %-24s '--ignored-errno=IGNORED_ERRNO'
                 echo
                 printf "%30s" ""

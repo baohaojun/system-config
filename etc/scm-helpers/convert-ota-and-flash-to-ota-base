@@ -70,20 +70,20 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--flashing-dir=FLASHING_DIR'
             echo
             printf "%30s" ""
             echo "对应的刷机包目录"
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--ota-file=OTA_FILE'
             echo "想重新生成的 ota base 文件对应的 ota 包"
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--ref-base-file=REF_BASE_FILE'
             echo
             printf "%30s" ""
             echo "供参考用的 ota base 包（方便计算一些参数，比如 system.img 的大小等）"
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--[no-]use-get-vmlinux'
             echo "允许用刷机包目录计算ota相关文件（因为指定刷机包目录更方便）"
             exit

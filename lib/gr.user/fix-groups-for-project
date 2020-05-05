@@ -32,7 +32,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
             exit

@@ -44,7 +44,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--extra-chars=EXTRA_CHARS'
             echo
             printf "%30s" ""
@@ -52,7 +52,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]uc'
             echo "Use up case: %XX instead of %xx"
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--[no-]un-urlify'
             echo
             exit

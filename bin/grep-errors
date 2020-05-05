@@ -46,10 +46,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--complition-dir=COMPLITION_DIR'
             echo
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--max-line-length=MAX_LINE_LENGTH'
             echo
             exit

@@ -30,10 +30,10 @@ function repo-info-from-manifest() {
                 echo -e
                 echo
                 echo Options and arguments:
-                printf %06s '-u, '
+                printf %6s '-u, '
                 printf %-24s '--manifest-project=MANIFEST_PROJECT'
                 echo
-                printf %06s '-m, '
+                printf %6s '-m, '
                 printf %-24s '--manifest-xml=MANIFEST_XML'
                 echo
                 exit

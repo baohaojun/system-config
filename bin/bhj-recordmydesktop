@@ -37,10 +37,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]wait-for-start'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--window-class=WINDOW_CLASS'
             echo
             exit

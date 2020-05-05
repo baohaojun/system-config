@@ -35,13 +35,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--change-to-name=CHANGE_TO_NAME'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--from-name-pattern=FROM_NAME_PATTERN'
             echo
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--manifest-file=MANIFEST_FILE'
             echo
             exit

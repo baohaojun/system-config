@@ -55,15 +55,15 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--[no-]create-groups'
             echo "create 3 groups: admin/sme/dev"
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project-2nd-dir-name=PROJECT_2ND_DIR_NAME'
             echo
             printf "%30s" ""
             echo "比如，xx/yy"
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--[no-]update-meta'
             echo "设置 gerrit project meta"
             exit

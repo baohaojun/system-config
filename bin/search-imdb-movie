@@ -50,22 +50,22 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-R, '
+            printf %6s '-R, '
             printf %-24s '--RATE=RATE'
             echo
-            printf %06s '-V, '
+            printf %6s '-V, '
             printf %-24s '--VOTE=VOTE'
             echo
-            printf %06s '-Y, '
+            printf %6s '-Y, '
             printf %-24s '--YEAR=YEAR'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--rate=RATE'
             echo
-            printf %06s '-v, '
+            printf %6s '-v, '
             printf %-24s '--vote=VOTE'
             echo
-            printf %06s '-y, '
+            printf %6s '-y, '
             printf %-24s '--year=YEAR'
             echo
             exit

@@ -166,12 +166,12 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]do-here'
             echo "在当前 Git HEAD 上开始 Cherry-Pick 工作"
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--fail-function=FAIL_FUNCTION'
             echo
             printf "%30s" ""
             echo "指定 Cherry-Pick 有冲突时执行的操作。参考 --ok-function"
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--ok-function=OK_FUNCTION'
             echo
             printf "%30s" ""
@@ -181,7 +181,7 @@ while true; do
             echo
             printf "%30s" ""
             echo "提前判断一个 Patch 需要不需要 Cherry-Pick，用于自动挑 Patch"
-            printf %06s '-S, '
+            printf %6s '-S, '
             printf %-24s '--skip-function=SKIP_FUNCTION'
             echo
             printf "%30s" ""

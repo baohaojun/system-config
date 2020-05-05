@@ -23,7 +23,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--target_revision=TARGET_REVISION'
             echo
             exit

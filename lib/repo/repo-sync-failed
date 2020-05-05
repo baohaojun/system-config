@@ -37,7 +37,7 @@ set -e
                 printf "%06s" " "
                 printf %-24s '--project=PROJECT'
                 echo
-                printf %06s '-i, '
+                printf %6s '-i, '
                 printf %-24s '--[no-]std-input'
                 echo "read repo sync failed log from stdin"
                 exit

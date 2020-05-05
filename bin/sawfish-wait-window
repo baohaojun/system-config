@@ -27,10 +27,10 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--time=TIME'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--window=WINDOW'
             echo
             exit

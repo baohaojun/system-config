@@ -31,7 +31,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-l, '
+            printf %6s '-l, '
             printf %-24s '--log-file=LOG_FILE'
             echo
             exit

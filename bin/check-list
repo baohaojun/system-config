@@ -40,10 +40,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--args-to-select=ARGS_TO_SELECT'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--func-to-call=FUNC_TO_CALL'
             echo
             exit

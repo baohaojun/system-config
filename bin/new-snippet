@@ -37,13 +37,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--mode=MODE'
             echo "可以加 -mode，也可以不加，默认是 fundamental"
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--name=NAME'
             echo "Snippet 的名字"
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--snippet=SNIPPET'
             echo "Snippet 的内容"
             exit

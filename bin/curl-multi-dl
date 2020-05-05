@@ -41,16 +41,16 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--[no-]continue-transfer'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--number-of-threads=NUMBER_OF_THREADS'
             echo
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--output=OUTPUT'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--size=SIZE'
             echo
             exit

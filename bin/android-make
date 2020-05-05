@@ -94,22 +94,22 @@ EOF
                 echo -e
                 echo
                 echo Options and arguments:
-                printf %06s '-c, '
+                printf %6s '-c, '
                 printf %-24s '--config=CONFIG'
                 echo "使用哪个安卓编译配置？比如 aosp_arm-userdebug（参考安卓 lunch 用法）"
-                printf %06s '-j, '
+                printf %6s '-j, '
                 printf %-24s '--jobs=JOBS'
                 echo "指定使用多少个进程来执行并行编译"
-                printf %06s '-k, '
+                printf %6s '-k, '
                 printf %-24s '--[no-]keep'
                 echo "keep building：出错之后继续编译，把能编的全编完，方便解决编译错误"
-                printf %06s '-d, '
+                printf %6s '-d, '
                 printf %-24s '--make-dir=MAKE_DIR'
                 echo "编译一个单独的目录（参考安卓 mmma 的用法"
-                printf %06s '-q, '
+                printf %6s '-q, '
                 printf %-24s '--[no-]quick'
                 echo "$(quick-help)"
-                printf %06s '-v, '
+                printf %6s '-v, '
                 printf %-24s '--[no-]verbose'
                 echo "编译的时候打印所有使用的命令"
                 exit

@@ -59,17 +59,17 @@ while true; do
             echo
             printf "%30s" ""
             echo "删除在旧版本上已经存在的 change-ids"
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--new-version=NEW_VERSION'
             echo
             printf "%30s" ""
             echo "新版本的 git revision"
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--old-version=OLD_VERSION'
             echo
             printf "%30s" ""
             echo "旧版本的 git revision"
-            printf %06s '-v, '
+            printf %6s '-v, '
             printf %-24s '--[no-]verbose'
             echo "调试选项，verbose 打印输出"
             exit

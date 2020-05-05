@@ -23,7 +23,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--var-dir=VAR_DIR'
             echo
             exit

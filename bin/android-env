@@ -133,24 +133,24 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]debug'
             echo "调试此脚本"
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--jobs=JOBS'
             echo "使用多少个线程进行编译（默认是你的机器的 CPU 线程数）"
-            printf %06s '-k, '
+            printf %6s '-k, '
             printf %-24s '--[no-]keep-building'
             echo "即使出错了，也继续编译没有出错的模块"
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--make-flags=MAKE_FLAGS'
             echo "其他想要传给 make 命令的标志和参数"
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--only-module=ONLY_MODULE...'
             echo
             printf "%30s" ""
             echo "$(mmm-o-help)"
-            printf %06s '-q, '
+            printf %6s '-q, '
             printf %-24s '--[no-]quick'
             echo "$(quick-help)"
-            printf %06s '-v, '
+            printf %6s '-v, '
             printf %-24s '--[no-]verbose'
             echo "编译的时候打印所使用的详细编译命令"
             exit

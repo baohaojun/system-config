@@ -58,10 +58,10 @@ while true; do
             echo -e "$b0 OPTIONS REV1 [REV2]"
             echo
             echo Options and arguments:
-            printf %06s '-1, '
+            printf %6s '-1, '
             printf %-24s '--[no-]one-by-one'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--start-with=START_WITH'
             echo "start reworking with which commit (in reverse order, 1 means the oldest patch)"
             exit

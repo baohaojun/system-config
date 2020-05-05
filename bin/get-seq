@@ -29,10 +29,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--max=MAX'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--what=WHAT'
             echo
             exit

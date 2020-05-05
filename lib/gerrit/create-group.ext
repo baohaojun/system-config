@@ -36,15 +36,15 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--group-type=GROUP_TYPE'
             echo "sme or dev or admin"
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--include-group=INCLUDE_GROUP'
             echo
             printf "%30s" ""
             echo "默认为空，如果首字母为~，则为 select-args 初始输入"
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
             exit

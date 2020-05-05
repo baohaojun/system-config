@@ -23,7 +23,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--for=FOR'
             echo
             exit

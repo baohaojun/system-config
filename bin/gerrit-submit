@@ -32,13 +32,13 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--branch=BRANCH'
             echo
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--change-id=CHANGE_ID'
             echo
-            printf %06s '-h, '
+            printf %6s '-h, '
             printf %-24s '--host=HOST'
             echo
             exit

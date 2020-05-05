@@ -74,16 +74,16 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--api=API'
             echo
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--init-input=INIT_INPUT'
             echo
             printf "%06s" " "
             printf %-24s '--jkd=JKD'
             echo "运行此 jkd 命令，得到一个 json 数据"
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--json=JSON'
             echo
             exit
@@ -201,10 +201,10 @@ EOFe9576f8668e0
                 echo -e "${comment_doc}"
                 echo
                 echo Options and arguments:
-                printf %06s '-f, '
+                printf %6s '-f, '
                 printf %-24s '--from=FROM'
                 echo
-                printf %06s '-t, '
+                printf %6s '-t, '
                 printf %-24s '--to=TO'
                 echo
                 exit

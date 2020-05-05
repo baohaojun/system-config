@@ -69,19 +69,19 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]edit'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--s=S'
             echo size
             printf "%06s" " "
             printf %-24s '--[no-]system-screencap'
             echo
-            printf %06s '-x, '
+            printf %6s '-x, '
             printf %-24s '--x=X'
             echo
-            printf %06s '-y, '
+            printf %6s '-y, '
             printf %-24s '--y=Y'
             echo
             exit

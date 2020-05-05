@@ -23,7 +23,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--client=CLIENT'
             echo
             exit

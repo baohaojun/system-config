@@ -55,19 +55,19 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--args=ARGS'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--[no-]force-tty'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]history'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prompt=PROMPT'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]secret'
             echo
             exit

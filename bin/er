@@ -24,7 +24,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--remote=REMOTE'
             echo
             exit

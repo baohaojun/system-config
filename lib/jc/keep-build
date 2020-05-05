@@ -36,7 +36,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--build-url=BUILD_URL'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--[no-]un-keep'
             echo
             exit

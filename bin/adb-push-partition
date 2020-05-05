@@ -19,13 +19,13 @@ while getopts "efdh" opt; do
         h)
             echo
             echo
-            printf %06s%s '-e ' 'edit'
+            printf %6s%s '-e ' 'edit'
             printf %-24s ''
             echo ''
-            printf %06s%s '-f ' 'fastboot'
+            printf %6s%s '-f ' 'fastboot'
             printf %-24s ''
             echo ''
-            printf %06s%s '-d ' 'root'
+            printf %6s%s '-d ' 'root'
             printf %-24s ''
             echo ''
             shift
@@ -34,13 +34,13 @@ while getopts "efdh" opt; do
         *)
             echo
             echo
-            printf %06s%s '-e ' 'edit'
+            printf %6s%s '-e ' 'edit'
             printf %-24s ''
             echo ''
-            printf %06s%s '-f ' 'fastboot'
+            printf %6s%s '-f ' 'fastboot'
             printf %-24s ''
             echo ''
-            printf %06s%s '-d ' 'root'
+            printf %6s%s '-d ' 'root'
             printf %-24s ''
             echo ''
             exit 2

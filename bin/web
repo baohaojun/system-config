@@ -47,10 +47,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--[no-]match-history'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--[no-]print-only'
             echo
             exit

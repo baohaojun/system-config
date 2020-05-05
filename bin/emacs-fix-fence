@@ -56,19 +56,19 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--from-mode=FROM_MODE'
             echo "当前的文件是什么 emacs mode，比如 nxml（jenkins config）"
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--pipe-cmd=PIPE_CMD'
             echo "使用什么 pipe 命令（cat 或 cdata，后者会使用 xmlstarlet unesc -，默认根据 to-mode 配置是否匹配 cdata 自动计算）"
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]simple-fence'
             echo "用更简短的 fence，比如不用“<![CDATA[<!--start html-->”，只用“<![CDATA[”"
             printf "%06s" " "
             printf %-24s '--text=TEXT'
             echo "使用指定的文本。若无指定，默认从 stdin 读取文本"
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to-mode=TO_MODE'
             echo "想要加 fence 的是什么模式，比如 html（jenkins config descriptions）"
             exit

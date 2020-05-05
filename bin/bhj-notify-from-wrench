@@ -51,13 +51,13 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--content=CONTENT'
             echo
-            printf %06s '-h, '
+            printf %6s '-h, '
             printf %-24s '--headline=HEADLINE'
             echo
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--icon=ICON'
             echo
             printf "%06s" " "
@@ -66,7 +66,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--pkg=PKG'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--shell=SHELL'
             echo
             exit

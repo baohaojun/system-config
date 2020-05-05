@@ -171,10 +171,10 @@ while true; do
             echo -e "$(sol-help)"
             echo
             echo Options and arguments:
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--[no-]ORDERED'
             echo "Should use history for list order"
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--always-selections=ALWAYS_SELECTIONS...'
             echo
             printf "%30s" ""
@@ -190,7 +190,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--exclude=EXCLUDE'
             echo "不要选中这个参数中给定的选项"
-            printf %06s '-1, '
+            printf %6s '-1, '
             printf %-24s '--[no-]hint-1-entry'
             echo "只有一个选项的时候，不用选，但要提示"
             printf "%06s" " "
@@ -198,21 +198,21 @@ while true; do
             echo
             printf "%30s" ""
             echo "提前运行以打印一些历史选项，for .select-args-loop"
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--init=INIT'
             echo "初始输入的匹配字符串，跟它匹配才会列出"
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--max-history=MAX_HISTORY'
             echo
             printf "%30s" ""
             echo "如果保存历史输入，最多保存几个历史输入，默认是 100 条，-1 代表无上限"
-            printf %06s '-O, '
+            printf %6s '-O, '
             printf %-24s '--order-name=ORDER_NAME'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prompt=PROMPT'
             echo "让用户选择时给的提示"
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--select-dist-word=SELECT_DIST_WORD'
             echo
             printf "%30s" ""
@@ -225,7 +225,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]use-file'
             echo "把参数写到文件中，而不是从命令行上传递"
-            printf %06s '-v, '
+            printf %6s '-v, '
             printf %-24s '--[no-]verbose'
             echo "调试选项，打印更多输出"
             exit

@@ -73,16 +73,16 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--[no-]dups-only'
             echo "只检查重复提交的文件。必须与 REVISION 合用"
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--review-base=REVIEW_BASE'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--revision=REVISION'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]selective-review'
             echo
             exit

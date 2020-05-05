@@ -82,10 +82,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]all-builds-and-queues'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--build-number=BUILD_NUMBER'
             echo
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--build-url=BUILD_URL'
             echo "什么也不指定的话，就使用当前的 BUILD_URL"
             printf "%06s" " "
@@ -94,10 +94,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]delete'
             echo
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--job-name=JOB_NAME'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]rebuild'
             echo
             exit

@@ -56,19 +56,19 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--base=BASE'
             echo
-            printf %06s '-B, '
+            printf %6s '-B, '
             printf %-24s '--branch=BRANCH'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--dir=DIR'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--[no-]force'
             echo
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--out-manifest=OUT_MANIFEST'
             echo
             exit

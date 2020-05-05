@@ -133,7 +133,7 @@ function check-shasum-or-download() {
             h)
                 echo
                 echo
-                printf %06s%s '-a ' 'algo'
+                printf %6s%s '-a ' 'algo'
                 printf %-24s 'ALGO'
                 echo ''
                 shift
@@ -142,7 +142,7 @@ function check-shasum-or-download() {
             *)
                 echo
                 echo
-                printf %06s%s '-a ' 'algo'
+                printf %6s%s '-a ' 'algo'
                 printf %-24s 'ALGO'
                 echo ''
                 exit 2

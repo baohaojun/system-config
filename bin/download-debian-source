@@ -43,13 +43,13 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--mirror=MIRROR'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--package=PACKAGE'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--release=RELEASE'
             echo
             printf "%06s" " "

@@ -25,7 +25,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--lock-time=LOCK_TIME'
             echo
             exit

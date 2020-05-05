@@ -103,19 +103,19 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]debug'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]exact-match'
             echo "找到的 group 必须是这个仓库自身的，不能往上级去找"
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--group-type=GROUP_TYPE'
             echo
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--[no-]open-in-browser'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]print-prefix-too'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
             echo
             printf "%06s" " "

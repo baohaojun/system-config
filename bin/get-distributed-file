@@ -40,10 +40,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]from-head'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--number-chars=NUMBER_CHARS'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--stem=STEM'
             echo
             exit

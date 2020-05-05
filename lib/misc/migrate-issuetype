@@ -43,13 +43,13 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--issuetype-name=ISSUETYPE_NAME'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--jira-url=JIRA_URL'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project-key=PROJECT_KEY'
             echo
             exit

@@ -33,10 +33,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--n-spaces=N_SPACES'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]skip-line-1'
             echo
             exit

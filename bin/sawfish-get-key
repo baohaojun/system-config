@@ -22,7 +22,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prompt=PROMPT'
             echo
             exit

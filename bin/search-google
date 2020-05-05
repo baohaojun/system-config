@@ -43,7 +43,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--pat=PAT'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--[no-]print-url'
             echo
             exit

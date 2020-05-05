@@ -53,10 +53,10 @@ while true; do
             echo -e "$b0 FILE PROGRAM or $b0 -f FILE -p PROGRAM"
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--file=FILE'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--program=PROGRAM'
             echo
             exit

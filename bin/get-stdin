@@ -52,7 +52,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]empty-ok'
             echo
             printf "%06s" " "
@@ -61,10 +61,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--init-text=INIT_TEXT'
             echo
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--mode=MODE'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prompt=PROMPT'
             echo
             exit

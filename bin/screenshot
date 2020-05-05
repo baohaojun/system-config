@@ -70,19 +70,19 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--[no-]current'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]delay'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]edit'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--[no-]full'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]selected'
             echo
             exit

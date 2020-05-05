@@ -40,13 +40,13 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--[no-]default_no'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--timeout=TIMEOUT'
             echo
-            printf %06s '-y, '
+            printf %6s '-y, '
             printf %-24s '--[no-]yes'
             echo
             exit

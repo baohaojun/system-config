@@ -23,7 +23,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--build-url=BUILD_URL'
             echo
             exit

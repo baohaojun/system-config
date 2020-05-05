@@ -57,19 +57,19 @@ while true; do
             echo -e '第三方邮件服务器 postfix 转发设置'
             echo
             echo Options and arguments:
-            printf %06s '-h, '
+            printf %6s '-h, '
             printf %-24s '--host=HOST'
             echo '第三方邮件服务器主机名'
-            printf %06s '-P, '
+            printf %6s '-P, '
             printf %-24s '--password=PASSWORD...'
             echo '第三方邮件服务器登录密码'
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--port=PORT'
             echo '第三方邮件服务器端口'
             printf "%06s" " "
             printf %-24s '--[no-]print-config'
             echo "打印当前设置"
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--user=USER...'
             echo '第三方邮件服务器登录用户'
             exit

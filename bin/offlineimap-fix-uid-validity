@@ -38,10 +38,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--[no-]dry-run'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--[no-]force'
             echo
             exit

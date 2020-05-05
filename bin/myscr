@@ -101,25 +101,25 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]bg'
             echo "把新的窗口放在“后台”"
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]debug'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]keep-env'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--session-name=SESSION_NAME'
             echo
             printf "%06s" " "
             printf %-24s '--socket=SOCKET'
             echo
-            printf %06s '-S, '
+            printf %6s '-S, '
             printf %-24s '--start-cmd=START_CMD'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--[no-]wait-exit'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--window-name=WINDOW_NAME'
             echo
             printf "%06s" " "

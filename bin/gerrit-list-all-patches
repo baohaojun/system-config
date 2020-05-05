@@ -51,18 +51,18 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--after=AFTER'
             echo
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--before=BEFORE'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--extra-query-flags=EXTRA_QUERY_FLAGS'
             echo
             printf "%30s" ""
             echo '额外的 Gerrit Query 的查询标记，比如 --files'
-            printf %06s '-q, '
+            printf %6s '-q, '
             printf %-24s '--query-args=QUERY_ARGS'
             echo '额外的 gerrit query 的参数，比如 branch:trident-rom'
             exit

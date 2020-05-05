@@ -50,16 +50,16 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]is-script'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--meta-dir=META_DIR'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]recursive'
             echo
             exit

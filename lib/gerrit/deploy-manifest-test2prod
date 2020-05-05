@@ -52,7 +52,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]do-sync'
             echo
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--manifest-branch-name=MANIFEST_BRANCH_NAME'
             echo
             printf "%06s" " "

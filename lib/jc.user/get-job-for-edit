@@ -38,10 +38,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--extra-save=EXTRA_SAVE'
             echo
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--output-file=OUTPUT_FILE'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--task=TASK'
             echo
             exit

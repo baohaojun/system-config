@@ -29,10 +29,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--p=P'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to-adb=TO_ADB'
             echo
             exit

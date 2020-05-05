@@ -26,7 +26,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--opts=OPTS'
             echo
             exit

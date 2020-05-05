@@ -43,7 +43,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--prefix=PREFIX'
             echo "组名的前缀"
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo "创建项目相关的管理分组"
             exit

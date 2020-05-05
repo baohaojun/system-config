@@ -45,13 +45,13 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--group=GROUP'
             echo "因为有些员工同名同姓，所以允许指定分组，这样可以减少冲突的情况"
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--name=NAME'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to-type=TO_TYPE'
             echo "one of 中文名字，英文名字，邮箱地址"
             exit

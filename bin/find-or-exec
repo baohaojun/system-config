@@ -41,10 +41,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]error-exit'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--process-pattern=PROCESS_PATTERN'
             echo
             printf "%06s" " "

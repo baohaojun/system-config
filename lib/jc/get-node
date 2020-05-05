@@ -23,7 +23,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--node-name=NODE_NAME'
             echo
             exit

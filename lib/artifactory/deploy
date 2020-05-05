@@ -51,16 +51,16 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--properties=PROPERTIES'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--repo-key=REPO_KEY'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--source-dir=SOURCE_DIR'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--target-dir=TARGET_DIR'
             echo
             exit

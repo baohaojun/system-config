@@ -84,13 +84,13 @@
               echo -e
               echo
               echo Options and arguments:
-              printf %06s '-d, '
+              printf %6s '-d, '
               printf %-24s '--dirs=DIRS'
               echo
-              printf %06s '-j, '
+              printf %6s '-j, '
               printf %-24s '--jobs=JOBS'
               echo
-              printf %06s '-v, '
+              printf %6s '-v, '
               printf %-24s '--[no-]verbose'
               echo
               exit

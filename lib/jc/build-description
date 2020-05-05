@@ -44,18 +44,18 @@ while true; do
             echo -e "Note: When setting current build, need only set -d"
             echo
             echo Options and arguments:
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--build-number=BUILD_NUMBER'
             echo
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--build-url=BUILD_URL'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--description=DESCRIPTION'
             echo
             printf "%30s" ""
             echo "when not specified, print current description (i.e., get)"
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--job-name=JOB_NAME'
             echo
             exit

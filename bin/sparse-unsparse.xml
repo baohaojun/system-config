@@ -51,16 +51,16 @@ while true; do
             echo -e 把高通 system_NNN.img 等稀疏文件拼成 system.img 文件，一个可以 mount 的 ext4 文件系统
             echo
             echo Options and arguments:
-            printf %06s '-o, '
+            printf %6s '-o, '
             printf %-24s '--out=OUT'
             echo '最终输出文件路径'
             printf "%06s" " "
             printf %-24s '--[no-]padding'
             echo '在最后补齐文件系统的大小，默认为 true，一般用于 mount；如果为使用 fastboot 而重新拼接此分区文件，可指定 --no-padding，因为后面没有补齐也没事儿'
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--part=PART'
             echo '指定对应哪个分区的稀疏文件，可选 system、userdata、cache、persist 等'
-            printf %06s '-x, '
+            printf %6s '-x, '
             printf %-24s '--xml=XML'
             echo '使用哪个 unsparse.xml 文件中的文件块区域信息。不指定的话会自动查找当前目录下所有相关.xml 文件'
             exit

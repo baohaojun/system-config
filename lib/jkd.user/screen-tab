@@ -68,10 +68,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--screen-name=SCREEN_NAME'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--tab-name=TAB_NAME'
             echo
             exit
@@ -268,19 +268,19 @@ EOFe9576f8668e0
                 echo -e "${comment_doc}"
                 echo
                 echo Options and arguments:
-                printf %06s '-e, '
+                printf %6s '-e, '
                 printf %-24s '--[no-]empty-first'
                 echo
-                printf %06s '-f, '
+                printf %6s '-f, '
                 printf %-24s '--from-screen=FROM_SCREEN'
                 echo
-                printf %06s '-m, '
+                printf %6s '-m, '
                 printf %-24s '--[no-]move-tab'
                 echo "如果在别的 tab 上，将其移动到指定的 tab"
-                printf %06s '-o, '
+                printf %6s '-o, '
                 printf %-24s '--[no-]only-if-missing'
                 echo "只添加尚未添加的字段"
-                printf %06s '-w, '
+                printf %6s '-w, '
                 printf %-24s '--[no-]which-tab'
                 echo "先选择要同步到哪个 tab"
                 exit
@@ -390,13 +390,13 @@ EOFe9576f8668e0
                 echo -e "${comment_doc}"
                 echo
                 echo Options and arguments:
-                printf %06s '-m, '
+                printf %6s '-m, '
                 printf %-24s '--[no-]force-move'
                 echo "如果已经在别的 tab，将它 move 过来"
-                printf %06s '-o, '
+                printf %6s '-o, '
                 printf %-24s '--[no-]only-if-missing'
                 echo "只添加尚未添加的字段"
-                printf %06s '-w, '
+                printf %6s '-w, '
                 printf %-24s '--[no-]which-tab'
                 echo "先选择要同步到哪个 tab"
                 exit

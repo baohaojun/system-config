@@ -70,7 +70,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]existing-ok'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
             echo
             printf "%06s" " "

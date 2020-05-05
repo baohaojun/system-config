@@ -47,15 +47,15 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--download-dir=DOWNLOAD_DIR'
             echo
             printf "%30s" ""
             echo "下载到哪个目录，默认为当前目录"
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--file-name=FILE_NAME'
             echo "如不指定，使用 url 中包含的文件名"
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--url=URL'
             echo "要下载的文件的 url 地址，用户必须自己确保这是一个文件，否则行为未定义"
             exit

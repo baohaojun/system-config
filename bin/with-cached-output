@@ -33,7 +33,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--cache-input=CACHE_INPUT'
             echo
             exit

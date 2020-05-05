@@ -40,13 +40,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--gerrit-server-url=GERRIT_SERVER_URL'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--gerrit-user=GERRIT_USER'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--gerrit-web-password=GERRIT_WEB_PASSWORD'
             echo
             exit

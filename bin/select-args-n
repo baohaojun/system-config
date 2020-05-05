@@ -51,10 +51,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--extra-sa-args=EXTRA_SA_ARGS...'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prompt=PROMPT'
             echo
             exit

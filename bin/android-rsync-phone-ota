@@ -127,7 +127,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]debug'
             echo
             printf "%06s" " "
@@ -136,10 +136,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]hack'
             echo
-            printf %06s '-G, '
+            printf %6s '-G, '
             printf %-24s '--[no-]no-gapps'
             echo
-            printf %06s '-x, '
+            printf %6s '-x, '
             printf %-24s '--skip-partitions=SKIP_PARTITIONS'
             echo
             printf "%06s" " "
@@ -148,7 +148,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]system-only'
             echo
-            printf %06s '-v, '
+            printf %6s '-v, '
             printf %-24s '--[no-]verbose'
             echo
             exit

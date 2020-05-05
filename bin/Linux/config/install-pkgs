@@ -65,7 +65,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]check-only'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]exit-on-err'
             echo
             printf "%06s" " "

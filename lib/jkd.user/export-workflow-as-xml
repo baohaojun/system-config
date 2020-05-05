@@ -56,16 +56,16 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--[no-]convert-to-names'
             echo
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--issuetype-name=ISSUETYPE_NAME'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--workflow-filename=WORKFLOW_FILENAME'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--workflow-name=WORKFLOW_NAME'
             echo
             exit

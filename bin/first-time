@@ -24,7 +24,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--seconds=SECONDS'
             echo
             exit

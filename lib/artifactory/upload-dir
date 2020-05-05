@@ -38,10 +38,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--dir-to-upload=DIR_TO_UPLOAD'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--upload-url=UPLOAD_URL'
             echo
             exit

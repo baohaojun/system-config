@@ -77,27 +77,27 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]decode'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]exact-query-input'
             echo "不要修改我的 query input"
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--glob=GLOB'
             echo "默认为「*」，在要搜索的名字前后添加此参数。如需精确搜索，请使用 -g \"\""
             printf "%06s" " "
             printf %-24s '--group=GROUP'
             echo "在某个组中搜索此用户"
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--match-regexp=MATCH_REGEXP'
             echo
             printf "%30s" ""
             echo "只输出匹配正则表达式 MATCH_REGEXP（默认为「.」）的行"
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--pass=PASS'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--user=USER...'
             echo
             exit

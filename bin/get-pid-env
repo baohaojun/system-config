@@ -38,13 +38,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--env-value-regexp=ENV_VALUE_REGEXP'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--pid-or-regexp=PID_OR_REGEXP'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]use-sudo'
             echo
             exit

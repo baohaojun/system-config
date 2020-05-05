@@ -39,13 +39,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--group=GROUP'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]use-regexp'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--user=USER'
             echo
             exit

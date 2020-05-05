@@ -83,10 +83,10 @@ s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
                  echo
                  echo
                  echo Options and arguments:
-                 printf %06s '-c, '
+                 printf %6s '-c, '
                  printf %-24s '--color=COLOR'
                  echo
-                 printf %06s '-s, '
+                 printf %6s '-s, '
                  printf %-24s '--style=STYLE'
                  echo
                  exit

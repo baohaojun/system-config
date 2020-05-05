@@ -35,13 +35,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-A, '
+            printf %6s '-A, '
             printf %-24s '--after=AFTER'
             echo
-            printf %06s '-B, '
+            printf %6s '-B, '
             printf %-24s '--before=BEFORE'
             echo
-            printf %06s '-C, '
+            printf %6s '-C, '
             printf %-24s '--context=CONTEXT'
             echo
             exit

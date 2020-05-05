@@ -70,10 +70,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--cache-dir=CACHE_DIR'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--extra-envvars=EXTRA_ENVVARS'
             echo
             printf "%30s" ""
@@ -81,7 +81,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]renew-cache-bg'
             echo "运行完成后在后台刷新 cache，默认为 true"
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]renew-caches'
             echo "更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"
             exit

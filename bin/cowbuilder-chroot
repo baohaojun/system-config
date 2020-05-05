@@ -37,13 +37,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--chroot-subdir=CHROOT_SUBDIR'
             echo
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--cow=COW'
             echo
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--extra-mount=EXTRA_MOUNT'
             echo
             exit

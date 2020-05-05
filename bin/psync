@@ -109,7 +109,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--[no-]checksum'
             echo
             printf "%06s" " "
@@ -118,16 +118,16 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]follow-symlink'
             echo
-            printf %06s '-S, '
+            printf %6s '-S, '
             printf %-24s '--[no-]git-st'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]gitp'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]reverse'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--target-dir=TARGET_DIR'
             echo
             exit

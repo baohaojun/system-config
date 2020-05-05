@@ -43,7 +43,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]exact'
             echo
             printf "%06s" " "

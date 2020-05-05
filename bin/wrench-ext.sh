@@ -29,10 +29,10 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--chat=CHAT'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--text=TEXT'
             echo
             exit

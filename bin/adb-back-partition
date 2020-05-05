@@ -21,7 +21,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--to-dir=TO_DIR'
             echo
             exit

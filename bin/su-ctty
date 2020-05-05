@@ -29,10 +29,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--command=COMMAND'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--user=USER'
             echo
             exit

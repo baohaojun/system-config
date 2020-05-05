@@ -38,10 +38,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--max-procs=MAX_PROCS'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--proc-name=PROC_NAME'
             echo
             exit

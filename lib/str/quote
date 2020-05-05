@@ -37,7 +37,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--format=FORMAT'
             echo "one of lua, emacs"
             exit

@@ -29,10 +29,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--old-job-name-or-url=OLD_JOB_NAME_OR_URL'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to-new-job-name=TO_NEW_JOB_NAME'
             echo
             exit

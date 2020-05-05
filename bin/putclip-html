@@ -22,7 +22,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--mode=MODE'
             echo
             exit

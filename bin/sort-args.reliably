@@ -31,10 +31,10 @@ function sort-args() {
                 echo
                 echo
                 echo Options and arguments:
-                printf %06s '-t, '
+                printf %6s '-t, '
                 printf %-24s '--save-to-var=SAVE_TO_VAR'
                 echo
-                printf %06s '-g, '
+                printf %6s '-g, '
                 printf %-24s '--[no-]set-global'
                 echo
                 exit

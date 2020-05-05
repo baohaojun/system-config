@@ -28,10 +28,10 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--remote-name=REMOTE_NAME'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--remote-url=REMOTE_URL'
             echo
             exit

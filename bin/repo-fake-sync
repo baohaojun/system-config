@@ -41,7 +41,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]clear-all'
             echo "删除所有文件或目录（i.e., rm -rf ./*）"
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--manifest-xml=MANIFEST_XML'
             echo
             printf "%30s" ""

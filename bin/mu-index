@@ -46,7 +46,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]both'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--mu-dir=MU_DIR'
             echo
             printf "%06s" " "

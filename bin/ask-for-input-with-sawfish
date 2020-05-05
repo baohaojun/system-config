@@ -44,13 +44,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-k, '
+            printf %6s '-k, '
             printf %-24s '--[no-]do-kill'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prompt=PROMPT'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]secret'
             echo
             exit

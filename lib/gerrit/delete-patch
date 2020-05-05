@@ -29,10 +29,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--change=CHANGE'
             echo
-            printf %06s '-q, '
+            printf %6s '-q, '
             printf %-24s '--query=QUERY'
             echo
             exit

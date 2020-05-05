@@ -64,19 +64,19 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--description=DESCRIPTION'
             echo
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--[no-]do-commit'
             echo
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--move-to-board=MOVE_TO_BOARD'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--summary=SUMMARY'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--type=TYPE'
             echo "one of Story,任务,Improvement,Bug,Epic,New Feature,Technical task,WBS,子任务,文档,测试,过程问题,问题跟踪,"
             exit

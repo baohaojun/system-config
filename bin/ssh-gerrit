@@ -47,13 +47,13 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]admin'
             echo
-            printf %06s '-h, '
+            printf %6s '-h, '
             printf %-24s '--host=HOST'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--port=PORT'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--user=USER'
             echo
             exit

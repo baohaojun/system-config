@@ -138,19 +138,19 @@ while true; do
             printf "%06s" " "
             printf %-24s '--issuetype-regexp=ISSUETYPE_REGEXP'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--prod-jira-url=PROD_JIRA_URL'
             echo
             printf "%06s" " "
             printf %-24s '--project-key=PROJECT_KEY'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--screens-regexp=SCREENS_REGEXP'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--test-jira-url=TEST_JIRA_URL'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--workflow-regexp=WORKFLOW_REGEXP'
             echo
             exit

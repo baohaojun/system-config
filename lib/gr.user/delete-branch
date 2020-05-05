@@ -38,10 +38,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--branch-name=BRANCH_NAME'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--repo-name=REPO_NAME'
             echo
             exit

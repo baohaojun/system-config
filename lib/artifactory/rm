@@ -32,7 +32,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--dir-url=DIR_URL'
             echo
             exit

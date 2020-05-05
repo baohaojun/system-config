@@ -36,7 +36,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-2, '
+            printf %6s '-2, '
             printf %-24s '--[no-]to-test2'
             echo
             exit

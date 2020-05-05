@@ -56,13 +56,13 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--[no-]add_it'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--[no-]force-even-if-merged'
             echo
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--[no-]no-submodule'
             echo
             exit

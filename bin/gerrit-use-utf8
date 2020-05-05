@@ -38,16 +38,16 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--database=DATABASE'
             echo
-            printf %06s '-h, '
+            printf %6s '-h, '
             printf %-24s '--host=HOST'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--password=PASSWORD'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--tables=TABLES'
             echo
             exit

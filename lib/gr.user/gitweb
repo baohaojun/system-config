@@ -59,16 +59,16 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--action=ACTION'
             echo "one of download-url, browse-url, of"
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--branch=BRANCH'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--file=FILE'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
             exit

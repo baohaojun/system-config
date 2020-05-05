@@ -44,12 +44,12 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--access-point=ACCESS_POINT'
             echo
             printf "%30s" ""
             echo "Specify which rest api to call"
-            printf %06s '-x, '
+            printf %6s '-x, '
             printf %-24s '--[no-]xtrace'
             echo
             exit

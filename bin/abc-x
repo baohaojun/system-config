@@ -217,19 +217,19 @@ abc-grep() {
                     echo
                     echo
                     echo Options and arguments:
-                    printf %06s '-b, '
+                    printf %6s '-b, '
                     printf %-24s '--base-build=BASE_BUILD'
                     echo
-                    printf %06s '-e, '
+                    printf %6s '-e, '
                     printf %-24s '--entry=ENTRY'
                     echo
-                    printf %06s '-r, '
+                    printf %6s '-r, '
                     printf %-24s '--[no-]remote'
                     echo
-                    printf %06s '-s, '
+                    printf %6s '-s, '
                     printf %-24s '--[no-]silent'
                     echo
-                    printf %06s '-t, '
+                    printf %6s '-t, '
                     printf %-24s '--[no-]tags'
                     echo
                     exit

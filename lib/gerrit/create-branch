@@ -51,19 +51,19 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--branch=BRANCH'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]empty'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--from=FROM'
             echo
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--manifest-branch=MANIFEST_BRANCH'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
             exit

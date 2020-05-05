@@ -24,7 +24,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--with-env=WITH_ENV'
             echo
             exit

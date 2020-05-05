@@ -38,10 +38,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--group-name=GROUP_NAME'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--user-name=USER_NAME'
             echo
             exit

@@ -34,7 +34,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--replace-regexp=REPLACE_REGEXP'
             echo
             exit

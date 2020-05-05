@@ -104,15 +104,15 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]backup-only'
             echo '只从源手机上备份下来，不要还原到目标手机上（适用于备份）'
-            printf %06s '-n, '
+            printf %6s '-n, '
             printf %-24s '--[no-]dry-run'
             echo '干跑一下摸个底，不要真跑'
-            printf %06s '-x, '
+            printf %6s '-x, '
             printf %-24s '--exclude-regexp=EXCLUDE_REGEXP'
             echo
             printf "%30s" ""
             echo '不要装匹配这个正则表达式的包'
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--from-adb=FROM_ADB'
             echo
             printf "%06s" " "
@@ -123,13 +123,13 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]only-missing'
             echo '只安装还没有安装的 App，不要重装已安装的 App'
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--package-regexp=PACKAGE_REGEXP'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]recovery-only'
             echo '只把之前备份的文件恢复到目标手机上'
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to-adb=TO_ADB'
             echo
             exit

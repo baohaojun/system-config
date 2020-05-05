@@ -134,12 +134,12 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]draft'
             echo "提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事"
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--patch-topic=PATCH_TOPIC'
             echo
             printf "%30s" ""
             echo "要全局多个 repo push 或一个 repo 下 push 多个 patch 的时候，加个 topic，方便 review"
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--push-rev=PUSH_REV'
             echo "要 push 哪个 revision，默认是 HEAD"
             printf "%06s" " "
@@ -155,10 +155,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]skip-gerrit'
             echo "不要提到 gerrit 上 review，直接往 refs/heads/ 上 push"
-            printf %06s '-R, '
+            printf %6s '-R, '
             printf %-24s '--[no-]skip-local-review'
             echo "提交前不要做 local review（鼓励做 local review！）"
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--to-branch=TO_BRANCH'
             echo "提到哪个分支上，若不指定，默认是 git 当前在跟踪的分支或 repo manifest 中设置的分支"
             exit

@@ -48,18 +48,18 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--action=ACTION'
             echo "可以取 3 个值，分别是 show-added（显示增加的仓库），show-deleted（显示删除的仓库），foreach（在有差异的仓库里运行－ｅ参数指定的命令）"
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--execute-command=EXECUTE_COMMAND'
             echo
             printf "%30s" ""
             echo "在每一个前后版本有差异的 repo 里运行一条命令，运行时会传两个命令行参数，分别是前后两个版本的 git commit sha1 值"
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--from-xml=FROM_XML'
             echo "前一个发布版本的 manifest 快照"
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to-xml=TO_XML'
             echo "后一个发布版本的 manifest 快照"
             exit

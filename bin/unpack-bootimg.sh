@@ -28,10 +28,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--boot-img=BOOT_IMG'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--unpack-dir=UNPACK_DIR'
             echo
             exit

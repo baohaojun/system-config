@@ -88,16 +88,16 @@ while true; do
             echo -e "$(nj-help)"
             echo
             echo Options and arguments:
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--jobs=JOBS'
             echo "多进程编译，默认为 8 个进程"
-            printf %06s '-k, '
+            printf %6s '-k, '
             printf %-24s '--[no-]keep-building'
             echo "出错了也继续编译其他模块"
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--ninja-file=NINJA_FILE'
             echo "使用哪个 ninja 文件，会使用安卓编译系统里默认的那个"
-            printf %06s '-v, '
+            printf %6s '-v, '
             printf %-24s '--[no-]verbose'
             echo "编译的过程中打印执行的命令"
             exit

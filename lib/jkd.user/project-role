@@ -54,16 +54,16 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--action=ACTION'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--role=ROLE'
             echo
-            printf %06s '-u, '
+            printf %6s '-u, '
             printf %-24s '--user=USER'
             echo
             exit

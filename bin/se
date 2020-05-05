@@ -51,18 +51,18 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]default'
             echo
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--firefox-instance=FIREFOX_INSTANCE'
             echo
             printf "%30s" ""
             echo "one of 1, 2"
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--jira-env=JIRA_ENV'
             echo "one of test, sync"
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--terminal-name=TERMINAL_NAME'
             echo
             printf "%30s" ""

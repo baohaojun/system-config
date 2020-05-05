@@ -80,25 +80,25 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--[no-]all'
             echo
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--[no-]codename'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]description'
             echo
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--[no-]id'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]release'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]short'
             echo
-            printf %06s '-v, '
+            printf %6s '-v, '
             printf %-24s '--[no-]version'
             echo
             exit

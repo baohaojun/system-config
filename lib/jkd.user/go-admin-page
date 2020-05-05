@@ -103,19 +103,19 @@ EOFe9576f8668e0
                 echo -e "${comment_doc}"
                 echo
                 echo Options and arguments:
-                printf %06s '-a, '
+                printf %6s '-a, '
                 printf %-24s '--[no-]add-field'
                 echo
-                printf %06s '-c, '
+                printf %6s '-c, '
                 printf %-24s '--[no-]configure-options'
                 echo
-                printf %06s '-e, '
+                printf %6s '-e, '
                 printf %-24s '--[no-]edit-name-and-description'
                 echo
-                printf %06s '-i, '
+                printf %6s '-i, '
                 printf %-24s '--field-id=FIELD_ID'
                 echo
-                printf %06s '-m, '
+                printf %6s '-m, '
                 printf %-24s '--match-field-name=MATCH_FIELD_NAME'
                 echo
                 exit
@@ -215,7 +215,7 @@ EOFe9576f8668e0
                 echo -e "${comment_doc}"
                 echo
                 echo Options and arguments:
-                printf %06s '-e, '
+                printf %6s '-e, '
                 printf %-24s '--[no-]edit-workflow'
                 echo
                 exit

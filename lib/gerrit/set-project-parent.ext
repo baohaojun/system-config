@@ -30,12 +30,12 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--parent-project=PARENT_PROJECT'
             echo
             printf "%30s" ""
             echo "也可以只指定一个正则表达式"
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--project-regexp=PROJECT_REGEXP'
             echo
             printf "%30s" ""

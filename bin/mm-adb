@@ -59,7 +59,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]push-again'
             echo
-            printf %06s '-q, '
+            printf %6s '-q, '
             printf %-24s '--[no-]quick'
             echo "是不是使用 mm -q 快速使用 ninja 编译"
             exit

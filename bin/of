@@ -45,13 +45,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--command=COMMAND'
             echo
             printf "%06s" " "
             printf %-24s '--[no-]last'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--web=WEB'
             echo "jira, GG(gerrit group), GP(gerrit project)"
             exit

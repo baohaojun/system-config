@@ -86,12 +86,12 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]force-prod'
             echo
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--jq-expression=JQ_EXPRESSION'
             echo
             printf "%30s" ""
             echo "传给 jq 的表达式，比如可以用于改变版本号：.customfield_14504 = \"1.0.0\" 或 .customfield_14108 = (.value = \"HU\")"
-            printf %06s '-i, '
+            printf %6s '-i, '
             printf %-24s '--old-issue=OLD_ISSUE'
             echo "The old jira issue to copy from"
             printf "%06s" " "
@@ -102,7 +102,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--old-json=OLD_JSON'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--replace-regexp=REPLACE_REGEXP'
             echo
             printf "%30s" ""

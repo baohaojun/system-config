@@ -32,7 +32,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--cache-time=CACHE_TIME'
             echo
             exit

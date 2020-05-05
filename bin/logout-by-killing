@@ -86,7 +86,7 @@ else
                 echo
                 echo
                 echo Options and arguments:
-                printf %06s '-w, '
+                printf %6s '-w, '
                 printf %-24s '--[no-]wait'
                 echo
                 exit

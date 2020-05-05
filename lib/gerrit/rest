@@ -44,7 +44,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--access-point=ACCESS_POINT'
             echo
             printf "%30s" ""

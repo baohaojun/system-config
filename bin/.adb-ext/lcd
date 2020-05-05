@@ -33,10 +33,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--[no-]all-dev'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--window=WINDOW'
             echo
             exit

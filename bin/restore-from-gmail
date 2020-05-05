@@ -23,7 +23,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--which-backup=WHICH_BACKUP...'
             echo
             exit

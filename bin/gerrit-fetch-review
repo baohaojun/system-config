@@ -104,24 +104,24 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-H, '
+            printf %6s '-H, '
             printf %-24s '--GERRIT-HOST=GERRIT_HOST'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--REPO-REMOTE=REPO_REMOTE'
             echo
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--[no-]auto'
             echo
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--[no-]cherry-pick'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--diff-patch-sets=DIFF_PATCH_SETS'
             echo
             printf "%30s" ""
             echo -d "1 2" to diff patch-set 1 and patch-set 2
-            printf %06s '-C, '
+            printf %6s '-C, '
             printf %-24s '--[no-]do-checkout'
             echo
             printf "%06s" " "
@@ -130,10 +130,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]ff'
             echo
-            printf %06s '-m, '
+            printf %6s '-m, '
             printf %-24s '--[no-]multiple-patches'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--patch-set=PATCH_SET'
             echo
             exit

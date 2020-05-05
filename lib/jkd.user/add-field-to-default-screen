@@ -34,7 +34,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--screen-name=SCREEN_NAME'
             echo
             exit

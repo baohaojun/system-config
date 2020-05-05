@@ -13,7 +13,7 @@ while getopts "n:h" opt; do
         h)
             echo
             echo
-            printf %06s%s '-n ' 'n-minutes'
+            printf %6s%s '-n ' 'n-minutes'
             printf %-24s 'N_MINUTES'
             echo ''
             shift
@@ -22,7 +22,7 @@ while getopts "n:h" opt; do
         *)
             echo
             echo
-            printf %06s%s '-n ' 'n-minutes'
+            printf %6s%s '-n ' 'n-minutes'
             printf %-24s 'N_MINUTES'
             echo ''
             exit 2

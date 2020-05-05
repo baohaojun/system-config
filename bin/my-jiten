@@ -47,10 +47,10 @@ while true; do
             printf "%06s" " "
             printf %-24s '--char-kana=CHAR_KANA'
             echo
-            printf %06s '-k, '
+            printf %6s '-k, '
             printf %-24s '--kana=KANA'
             echo
-            printf %06s '-w, '
+            printf %6s '-w, '
             printf %-24s '--word=WORD'
             echo
             exit

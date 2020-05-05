@@ -58,13 +58,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--special-tag=SPECIAL_TAG'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--start-program=START_PROGRAM'
             echo
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--window-class=WINDOW_CLASS'
             echo
             exit

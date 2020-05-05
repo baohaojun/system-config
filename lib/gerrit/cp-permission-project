@@ -63,13 +63,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-f, '
+            printf %6s '-f, '
             printf %-24s '--from=FROM'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]replace-first'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--to=TO'
             echo
             exit

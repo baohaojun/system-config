@@ -39,19 +39,19 @@ function rdesktop() {
             h)
                 echo
                 echo
-                printf %06s%s '-d ' 'display'
+                printf %6s%s '-d ' 'display'
                 printf %-24s 'DISPLAY'
                 echo ''
-                printf %06s%s '-g ' 'geometry'
+                printf %6s%s '-g ' 'geometry'
                 printf %-24s 'GEOMETRY'
                 echo ''
-                printf %06s%s '-k ' 'kbd'
+                printf %6s%s '-k ' 'kbd'
                 printf %-24s 'KBD'
                 echo ''
-                printf %06s%s '-p ' 'pass'
+                printf %6s%s '-p ' 'pass'
                 printf %-24s 'PASS'
                 echo ''
-                printf %06s%s '-u ' 'user'
+                printf %6s%s '-u ' 'user'
                 printf %-24s 'USER'
                 echo ''
                 shift
@@ -60,19 +60,19 @@ function rdesktop() {
             *)
                 echo
                 echo
-                printf %06s%s '-d ' 'display'
+                printf %6s%s '-d ' 'display'
                 printf %-24s 'DISPLAY'
                 echo ''
-                printf %06s%s '-g ' 'geometry'
+                printf %6s%s '-g ' 'geometry'
                 printf %-24s 'GEOMETRY'
                 echo ''
-                printf %06s%s '-k ' 'kbd'
+                printf %6s%s '-k ' 'kbd'
                 printf %-24s 'KBD'
                 echo ''
-                printf %06s%s '-p ' 'pass'
+                printf %6s%s '-p ' 'pass'
                 printf %-24s 'PASS'
                 echo ''
-                printf %06s%s '-u ' 'user'
+                printf %6s%s '-u ' 'user'
                 printf %-24s 'USER'
                 echo ''
                 exit 2

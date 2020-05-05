@@ -25,7 +25,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-l, '
+            printf %6s '-l, '
             printf %-24s '--lock-name=LOCK_NAME'
             echo
             exit

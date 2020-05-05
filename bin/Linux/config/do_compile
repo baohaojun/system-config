@@ -38,7 +38,7 @@ function compile_beagrep() {
                 echo -e
                 echo
                 echo Options and arguments:
-                printf %06s '-i, '
+                printf %6s '-i, '
                 printf %-24s '--[no-]install-first'
                 echo
                 exit
@@ -234,7 +234,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-c, '
+            printf %6s '-c, '
             printf %-24s '--[no-]do-clean'
             echo
             printf "%06s" " "

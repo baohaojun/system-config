@@ -41,10 +41,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-a, '
+            printf %6s '-a, '
             printf %-24s '--abbrev=ABBREV'
             echo "one of UNASSIGNED，"
-            printf %06s '-q, '
+            printf %6s '-q, '
             printf %-24s '--query=QUERY'
             echo "default is $default_query"
             exit

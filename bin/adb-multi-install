@@ -93,28 +93,28 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]downgrade'
             echo
-            printf %06s '-g, '
+            printf %6s '-g, '
             printf %-24s '--[no-]grant'
             echo
-            printf %06s '-j, '
+            printf %6s '-j, '
             printf %-24s '--jobs=JOBS'
             echo
-            printf %06s '-l, '
+            printf %6s '-l, '
             printf %-24s '--[no-]lock'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--[no-]partial'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]replace'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]sdcard'
             echo
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--[no-]test'
             echo
             exit

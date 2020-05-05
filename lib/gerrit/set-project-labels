@@ -96,7 +96,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf %06s '-l, '
+            printf %6s '-l, '
             printf %-24s '--complete-list=COMPLETE_LIST'
             echo
             printf "%06s" " "
@@ -108,7 +108,7 @@ while true; do
             printf "%06s" " "
             printf %-24s '--[no-]new-project'
             echo
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
             printf "%06s" " "

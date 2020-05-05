@@ -47,10 +47,10 @@ if test $(basename $0) = get-about-me; then
                 echo -e
                 echo
                 echo Options and arguments:
-                printf %06s '-d, '
+                printf %6s '-d, '
                 printf %-24s '--default=DEFAULT'
                 echo
-                printf %06s '-p, '
+                printf %6s '-p, '
                 printf %-24s '--[no-]prompt-for-input'
                 echo
                 exit
