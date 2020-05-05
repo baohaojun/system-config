@@ -414,7 +414,7 @@ fi
 
     function failed-to-push() {
         bhj-notify git-push-rebase "you need to merge it in $PWD" >/dev/null 2>&1
-        die "you need to merge it!"
+        die "you need to merge it (maybe)!"
     }
 
     . aterr failed-to-push
