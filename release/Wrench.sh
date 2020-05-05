@@ -114,7 +114,7 @@ while true; do
             printf %6s '-1, '
             printf %-24s '--[no-]one-phone'
             echo "此参数仅供内部使用"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]silent'
             echo "静默模式，不要显示窗口"
             printf %6s '-s, '

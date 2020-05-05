@@ -164,7 +164,7 @@ function find-scene() {
                 echo -e
                 echo
                 echo Options and arguments:
-                printf "%06s" " "
+                printf "%6s" " "
                 printf %-24s '--at-xy=AT_XY'
                 echo
                 printf %6s '-d, '
@@ -173,7 +173,7 @@ function find-scene() {
                 printf %6s '-s, '
                 printf %-24s '--scene=SCENE'
                 echo
-                printf "%06s" " "
+                printf "%6s" " "
                 printf %-24s '--scene-dir=SCENE_DIR'
                 echo
                 exit
