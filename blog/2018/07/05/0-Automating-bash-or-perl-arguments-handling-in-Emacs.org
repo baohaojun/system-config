@@ -83,10 +83,10 @@ Here's the detailed steps:
                  echo -e
                  echo
                  echo Options and arguments:
-                 printf %06s '-d, '
+                 printf %6s '-d, '
                  printf %-24s '--[no-]debug'
                  echo
-                 printf %06s '-s, '
+                 printf %6s '-s, '
                  printf %-24s '--serial=SERIAL'
                  echo
                  exit
