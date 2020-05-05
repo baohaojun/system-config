@@ -34,9 +34,15 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function catp()
     {
+        if test -w "${FILE}"; then
+            how_to=' > '
+        else
+            how_to=' | sudo tee '
+        fi
+
         cat <<EOF98db9599d6e4
 mkdir -p "${FILE%/*}"
-cat <<'EOFe14737c1e5cd' > "${FILE/${HOME}/\${HOME\}}"
+cat <<'EOFe14737c1e5cd' ${how_to} "${FILE/${HOME}/\${HOME\}}"
 $(cat "$FILE")
 EOFe14737c1e5cd
 EOF98db9599d6e4

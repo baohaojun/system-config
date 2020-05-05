@@ -172,7 +172,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
             (error
              (if (yes-or-no-p "Failed to connect to sdim server, (re)start it?")
                  (progn
-                   (shell-command-to-string "setsid nohup ~/system-config/gcode/ime-py/ime-server.py </dev/null >/dev/null 2>&1")
+                   (shell-command-to-string "setsid setsid nohup ~/system-config/gcode/ime-py/ime-server.py </dev/null >/dev/null 2>&1")
                    (error "Started sdim server for you, please try to re-activate SDIM again"))
                (error "Failed to connect sdim server, please start it with: ~/system-config/gcode/ime-py/ime-server.py")))))))
 

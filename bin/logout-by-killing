@@ -14,7 +14,7 @@ if id | grep 'uid=0\b' -P; then
         echo "Can't determine your uid: $uid"
         exit 1
     fi
-    ps -eo uid,pid | grep "^\s*$uid\s+" -P | pn 2 |
+    ps -axeo uid,pid | grep "^\s*$uid\s+" -P | pn 2 |
         while read pid; do
             if test "$pid" = "$screen_pid"; then
                 continue
@@ -37,7 +37,13 @@ if id | grep 'uid=0\b' -P; then
                 sleep 3
             fi
 
-            pid_display=$(cat /proc/$pid/environ | tr '\0' '\n' | grep ^DISPLAY=)
+            pid_display=$(
+                if test -e /proc/$pid/environ; then
+                    cat /proc/$pid/environ | tr '\0' '\n' | grep ^DISPLAY=
+                else
+                    procstat -e $pid | grep -o -P '\bDISPLAY=\S+'
+                fi
+                       )
 
             if test "$pid_display" != "DISPLAY=$DISPLAY"; then
                 echo should not kill $pid, DISPLAY not match: "$pid_display != DISPLAY=$DISPLAY"
@@ -100,7 +106,13 @@ else
     ## end generated code
 
     MY_PPID=$(ps -o ppid -h $$|perl -npe 's/\s//g')
-    screen_pid=$(ps.pl tmux.first.new.session|grep '^\s*\d+\s+1\s+' -P|pn 1)
+    screen_pid=$(
+        if test "$(uname)" = FreeBSD; then
+            ps.pl tmux.server
+        else
+            ps.pl tmux.first.new.session
+        fi | grep '^\s*\d+\s+1\s+' -P|pn 1
+              )
 
     sudo setsid env DISPLAY=$DISPLAY SCREEN_PID=$screen_pid PATH=$PATH OLDUSER=${1:-$USER} WAIT=$wait MY_PPID=$MY_PPID bash $xdebug $0
 fi

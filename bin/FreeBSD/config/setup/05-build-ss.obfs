@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+git-get -u https://github.com/shadowsocks/simple-obfs.git \
+        -d ~/src/reading/simple-obfs
+cd ~/src/reading/simple-obfs
+git reset --hard f3916e78df4b7eed6555d5a7c51b091fe8493ba4
+
+. .pure
+./autogen.sh
+./configure --with-ev=/usr/local
+
+make || true
+sudo make install || true
+ps-killall ss-local || true

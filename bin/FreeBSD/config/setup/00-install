@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -e
+
+sudo mkdir -p "/etc/pkg"
+cat <<'EOFe14737c1e5cd' |sudo tee "/etc/pkg/FreeBSD.conf"
+# $FreeBSD: releng/12.1/usr.sbin/pkg/FreeBSD.conf.quarterly 346780 2019-04-27 04:00:50Z cperciva $
+#
+# To disable this repository, instead of modifying or removing this file,
+# create a /usr/local/etc/pkg/repos/FreeBSD.conf file:
+#
+#   mkdir -p /usr/local/etc/pkg/repos
+#   echo "FreeBSD: { enabled: no }" > /usr/local/etc/pkg/repos/FreeBSD.conf
+#
+
+# http://pkg0.twn.freebsd.org/
+FreeBSD: {
+  url: "pkg+http://mirrors.ustc.edu.cn/freebsd-pkg/${ABI}/quarterly",
+  mirror_type: "srv",
+  signature_type: "fingerprints",
+  fingerprints: "/usr/share/keys/pkg",
+  enabled: yes
+}
+EOFe14737c1e5cd
+
+cd ~/system-config/bin/FreeBSD/config/pkgs
+sudo pkg install *

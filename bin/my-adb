@@ -15,21 +15,6 @@ if test "$MULTIPLE_ADBDEVICES_OK" != true; then
     )
 fi
 
-if test "$(which adb)" != ~/system-config/bin/$(uname)/adb &&
-        test "$(readlink -f $(which adb))" != "$(readlink -f ~/system-config/bin/Linux/adb)"; then
-    current_adb_version=$(
-        $(which adb) version | grep '^Revision'
-                       )
-    sc_adb_version=$(
-        ~/system-config/bin/Linux/adb version | grep '^Revision'
-                  )
-    if test "$current_adb_version" != "$sc_adb_version"; then
-        bark "你的 adb 不是 system-config 里提供的（从谷歌 sdk 中获取的）版本，系统里使用多个不同版本的 adb 的话，可能会有兼容性问题"
-        bark "你正在使用的版本是：$(which adb)（$current_adb_version）；system-config 提供的版本是：（$sc_adb_version）"
-        bark "如果确认没有兼容性问题，请无视此警告。如果不希望使用 system-config 封装过的 adb，请运行 unalias adb 并把这个命令添加到你的 ~/.bashrc 的最后。"
-    fi
-fi
-
 myname=$(basename $0)
 
 function die() {

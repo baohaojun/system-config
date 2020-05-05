@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+
+sudo cp ~/system-config/etc/tsocks.conf /usr/local/etc/
+
+mkdir -p "/usr/local/etc/devd"
+cat <<'EOFe14737c1e5cd'  | sudo tee  "/usr/local/etc/devd/adb.conf"
+notify 100 {
+        match "vendor" "0x31ce";
+        match "product" "0x1001";
+        action "logger hello: $cdev $product $vendor $device-name $sernum";
+        action "usb_devaddr=`echo $cdev | sed 's#^ugen##'` && \
+                chown root:wheel /dev/usb/${usb_devaddr}.* && \
+                chmod 0660 /dev/usb/${usb_devaddr}.* ";
+};
+EOFe14737c1e5cd
+
+sudo pw groupmod operator -m bhj
+sudo auto-append-line '^%wheel ALL=(ALL) ALL' '%wheel ALL=(ALL) ALL' /usr/local/etc/sudoers system-config

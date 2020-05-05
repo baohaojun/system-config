@@ -1,34 +1,126 @@
 #!/usr/bin/env bash
 
 set -e
-function die() {
-    echo Error: "$@"
-    exit -1
-}
 
-if test $# != 1; then
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # pparallel=true '?"以并行的方式运行"' \
+    # d:dir '?"运行哪个目录下的文件"' \
+    # llock=true '?"要不要用文件锁防止多跑"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:lph \
+                      --long dir:,lock,parallel,help,no-lock,no-parallel \
+                      -n $(basename -- $0) -- "$@")
+declare dir=
+declare lock=true
+declare parallel=true
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--dir)
+            dir=$2
+            shift 2
+
+            ;;
+        -l|--lock|--no-lock)
+            if test "$1" = --no-lock; then
+                lock=false
+            else
+                lock=true
+            fi
+            shift
+
+            ;;
+        -p|--parallel|--no-parallel)
+            if test "$1" = --no-parallel; then
+                parallel=false
+            else
+                parallel=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-d, '
+            printf %-24s '--dir=DIR'
+            echo "运行哪个目录下的文件"
+            printf %6s '-l, '
+            printf %-24s '--[no-]lock'
+            echo "要不要用文件锁防止多跑"
+            printf %6s '-p, '
+            printf %-24s '--[no-]parallel'
+            echo "以并行的方式运行"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "$dir"; then
+    if test $# != 1; then
+        die "Error: Usage $(basename $0) dir"
+    fi
+
+    dir=$1
+fi
+
+if test ! -d "$dir"; then
     die "Error: Usage $(basename $0) dir"
 fi
 
-if test ! -d "$1"; then
-    die "Error: Usage $(basename $0) dir"
-fi
 
-cd "$1"
+cd "$dir"
 
 (
-    if ! flock -n 9; then
-        cat <<EOF > .lock-failed
+    if test "${lock}" = true; then
+        if ! flock -n 9; then
+            cat <<EOF > .lock-failed
 Can't lock .$(basename $0).lock because of:
 $(fuser .$(basename $0).lock)
 EOF
-        exit
-    else
-        echo start running > .log
+            exit
+        else
+            echo start running > .log
+        fi
     fi
 
-    for x in $PWD/*; do
+    for x in $(
+                  for x in *; do
+                      echo $PWD/$x
+                  done | sort
+              ); do
         echo run $x >> .log
-        (cd /tmp; $x || true&)
+        if test "${parallel}" = true; then
+            (cd /tmp; $x || true&)
+        else
+            (
+                cd /tmp; $x
+            )
+        fi
     done
 ) 9> .$(basename $0).lock

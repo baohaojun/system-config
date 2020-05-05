@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+cd ~/src/github/Wrench
+(
+    cd SnoreNotify
+    ./build-freebsd.sh
+)
+./build-linux.sh
