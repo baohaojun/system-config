@@ -53,8 +53,10 @@ import socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect(("localhost", [%notification_port%]))
 sock = sock.makefile()
-print(sock.readline())
-print(sock.readline())
+line = sock.readline()
+if line: # we are already connected
+    print(sock.readline()) # will block
+exit(1)
 # {%/python-mode%}
 EOFd729818fb0ba
 )"; then

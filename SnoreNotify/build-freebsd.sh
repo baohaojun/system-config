@@ -26,6 +26,9 @@ make -j8
 sudo make install
 (
     cd $(pkg-config --variable=libdir Qt5Core)/mkspecs/modules
+    if test -e qt_LibsnoreQt5.pri; then
+        exit
+    fi
     for x in /usr/local/mkspecs/modules/qt_Libsnore*; do
         test -e "$x" || die "Can't open $x?"
     done

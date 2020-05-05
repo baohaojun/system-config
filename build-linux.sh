@@ -3,15 +3,16 @@ set -e
 
 echo Entering directory \`$PWD\'
 ## start code-generator "^\\s *#\\s *"
-# generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/.cache/build-wrench ddo-debug
+# generate-getopts  r:release_dir=Wrench-debian b:build-dir=~/.cache/build-wrench ddo-debug sstart-it
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o b:dr:h \
-                      --long build-dir:,do-debug,release_dir:,help,no-do-debug \
+TEMP=$(POSIXLY_CORRECT=true getopt -o b:dr:sh \
+                      --long build-dir:,do-debug,release_dir:,start-it,help,no-do-debug,no-start-it \
                       -n $(basename -- $0) -- "$@")
 declare build_dir=~/.cache/build-wrench
 declare do_debug=false
 declare release_dir=Wrench-debian
+declare start_it=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -35,19 +36,31 @@ while true; do
             shift 2
 
             ;;
+        -s|--start-it|--no-start-it)
+            if test "$1" = --no-start-it; then
+                start_it=false
+            else
+                start_it=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-b, '
+            printf %6s '-b, '
             printf %-24s '--build-dir=BUILD_DIR'
             echo
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]do-debug'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--release_dir=RELEASE_DIR'
+            echo
+            printf %6s '-s, '
+            printf %-24s '--[no-]start-it'
             echo
             exit
             shift
@@ -147,6 +160,10 @@ done
             cd ~/src/github/$release_dir
             git-mark-need-merge
         )
+        exit
+    fi
+
+    if test "${start_it}" != true; then
         exit
     fi
 
