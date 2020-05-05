@@ -86,7 +86,7 @@ while true; do
             printf %6s '-g, '
             printf %-24s '--glob=GLOB'
             echo "默认为「*」，在要搜索的名字前后添加此参数。如需精确搜索，请使用 -g \"\""
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--group=GROUP'
             echo "在某个组中搜索此用户"
             printf %6s '-m, '

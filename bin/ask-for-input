@@ -61,7 +61,7 @@ while true; do
             printf %6s '-t, '
             printf %-24s '--[no-]force-tty'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]history'
             echo
             printf %6s '-p, '

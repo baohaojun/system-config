@@ -22,7 +22,7 @@ while true; do
             echo -e ssh-quote OPTIONS HOST cmds...
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--ssh-args=SSH_ARGS'
             echo
             exit

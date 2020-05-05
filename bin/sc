@@ -69,7 +69,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--home=HOME'
             echo "指定使用哪个目录作为临时的 HOME 目录（绿色安装，不要影响用户默认环境）"
             exit

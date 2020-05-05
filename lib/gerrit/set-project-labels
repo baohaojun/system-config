@@ -99,22 +99,22 @@ while true; do
             printf %6s '-l, '
             printf %-24s '--complete-list=COMPLETE_LIST'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]debug'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--dev-group=DEV_GROUP'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]new-project'
             echo
             printf %6s '-p, '
             printf %-24s '--project=PROJECT'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--sme-group=SME_GROUP'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]special-labels'
             echo
             exit

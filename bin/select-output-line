@@ -179,21 +179,21 @@ while true; do
             echo
             printf "%30s" ""
             echo "这个参数给出的选项，永远出现在列表里"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]ask-for-input'
             echo "如果没有输入选项，直接调用 ask-for-input 程序让用户输入，一般跟 select-from-history-too 联用"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--dot-sep-init=DOT_SEP_INIT'
             echo
             printf "%30s" ""
             echo "用 . 把初始输入切割开"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--exclude=EXCLUDE'
             echo "不要选中这个参数中给定的选项"
             printf %6s '-1, '
             printf %-24s '--[no-]hint-1-entry'
             echo "只有一个选项的时候，不用选，但要提示"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--history-forerunner=HISTORY_FORERUNNER'
             echo
             printf "%30s" ""
@@ -217,12 +217,12 @@ while true; do
             echo
             printf "%30s" ""
             echo "选中参数的时候，按照与这个参数的字符串距离排序"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]select-from-history-too'
             echo
             printf "%30s" ""
             echo "是否也允许从历史中选择（默认只从给定的参数、输出中选择）"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]use-file'
             echo "把参数写到文件中，而不是从命令行上传递"
             printf %6s '-v, '

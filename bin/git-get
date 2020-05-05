@@ -104,28 +104,28 @@ while true; do
             printf %6s '-b, '
             printf %-24s '--branch=BRANCH'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--clone-args=CLONE_ARGS'
             echo
             printf %6s '-c, '
             printf %-24s '--create=CREATE'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--depth=DEPTH'
             echo "默认下载全部历史记当，如果指定的话，只下载深度为 DEPTH 个历史提交"
             printf %6s '-d, '
             printf %-24s '--dir=DIR'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]mirror'
             echo
             printf %6s '-r, '
             printf %-24s '--reference=REFERENCE'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--retry-regexp=RETRY_REGEXP'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]single-branch'
             echo
             printf %6s '-u, '

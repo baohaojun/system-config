@@ -59,7 +59,7 @@ while true; do
             printf %6s '-b, '
             printf %-24s '--base=BASE'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--find-what=FIND_WHAT'
             echo "$(help-find-what)"
             printf %6s '-o, '

@@ -65,7 +65,7 @@ while true; do
             printf %6s '-s, '
             printf %-24s '--[no-]simple-fence'
             echo "用更简短的 fence，比如不用“<![CDATA[<!--start html-->”，只用“<![CDATA[”"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--text=TEXT'
             echo "使用指定的文本。若无指定，默认从 stdin 读取文本"
             printf %6s '-t, '

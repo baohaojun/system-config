@@ -66,7 +66,7 @@ while true; do
             printf %6s '-p, '
             printf %-24s '--port=PORT'
             echo '第三方邮件服务器端口'
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]print-config'
             echo "打印当前设置"
             printf %6s '-u, '

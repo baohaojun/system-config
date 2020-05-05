@@ -27,7 +27,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--format=FORMAT'
             echo "(pass|prop|nxml), default is prop. prop is used to save a prop.txt; pass is used when triggering another job."
             printf %6s '-f, '

@@ -75,7 +75,7 @@ while true; do
             printf %6s '-s, '
             printf %-24s '--s=S'
             echo size
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]system-screencap'
             echo
             printf %6s '-x, '

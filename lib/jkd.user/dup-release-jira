@@ -80,10 +80,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]debug'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]force-prod'
             echo
             printf %6s '-j, '
@@ -94,12 +94,12 @@ while true; do
             printf %6s '-i, '
             printf %-24s '--old-issue=OLD_ISSUE'
             echo "The old jira issue to copy from"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--old-jira-url=OLD_JIRA_URL'
             echo
             printf "%30s" ""
             echo "The jira url for the old issue, default is \$scm_jira_url"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--old-json=OLD_JSON'
             echo
             printf %6s '-r, '
@@ -107,7 +107,7 @@ while true; do
             echo
             printf "%30s" ""
             echo "默认为空，会传给 perl -pe \"$replace_regexp\"，比如 s,0.9.10,0.9.23,"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--screen-filter=SCREEN_FILTER'
             echo
             printf "%30s" ""

@@ -46,16 +46,16 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-reset'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--jobs=JOBS'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--reset-style=RESET_STYLE'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]sync'
             echo
             exit

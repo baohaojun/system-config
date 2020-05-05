@@ -40,7 +40,7 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--prefix=PREFIX'
             echo "组名的前缀"
             printf %6s '-p, '

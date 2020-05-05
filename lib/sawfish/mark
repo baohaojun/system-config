@@ -63,7 +63,7 @@ while true; do
             printf %6s '-s, '
             printf %-24s '--[no-]set-mark'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]with-mark'
             echo "带着 mark 执行指定的命令（执行前 mark 当前窗口，执行结束返回到该窗口）"
             exit

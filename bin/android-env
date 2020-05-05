@@ -130,7 +130,7 @@ while true; do
             echo -e "$(mmm-help)"
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]debug'
             echo "调试此脚本"
             printf %6s '-j, '

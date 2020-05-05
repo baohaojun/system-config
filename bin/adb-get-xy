@@ -45,16 +45,16 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--print-format=PRINT_FORMAT'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]scaling'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--standard-height=STANDARD_HEIGHT'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--standard-width=STANDARD_WIDTH'
             echo
             exit

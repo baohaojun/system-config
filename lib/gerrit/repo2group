@@ -100,7 +100,7 @@ while true; do
             echo -e "$comment_doc"
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]debug'
             echo
             printf %6s '-e, '
@@ -112,13 +112,13 @@ while true; do
             printf %6s '-o, '
             printf %-24s '--[no-]open-in-browser'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]print-prefix-too'
             echo
             printf %6s '-r, '
             printf %-24s '--repo-project-name=REPO_PROJECT_NAME'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--try-prefixes=TRY_PREFIXES'
             echo
             exit

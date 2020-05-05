@@ -53,10 +53,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]list'
             echo "list which files are updated in last build"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]push-again'
             echo
             printf %6s '-q, '

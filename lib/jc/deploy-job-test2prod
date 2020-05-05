@@ -35,7 +35,7 @@ while true; do
             printf %6s '-j, '
             printf %-24s '--job-name=JOB_NAME'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]prod2test'
             echo
             exit

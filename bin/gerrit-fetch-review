@@ -124,10 +124,10 @@ while true; do
             printf %6s '-C, '
             printf %-24s '--[no-]do-checkout'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-review'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]ff'
             echo
             printf %6s '-m, '

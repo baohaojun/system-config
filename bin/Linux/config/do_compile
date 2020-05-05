@@ -237,7 +237,7 @@ while true; do
             printf %6s '-c, '
             printf %-24s '--[no-]do-clean'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]sudo'
             echo
             exit

@@ -49,7 +49,7 @@ while true; do
             echo
             printf "%30s" ""
             echo "其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]uc'
             echo "Use up case: %XX instead of %xx"
             printf %6s '-u, '

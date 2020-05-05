@@ -98,7 +98,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]bg'
             echo "把新的窗口放在“后台”"
             printf %6s '-d, '
@@ -110,7 +110,7 @@ while true; do
             printf %6s '-s, '
             printf %-24s '--session-name=SESSION_NAME'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--socket=SOCKET'
             echo
             printf %6s '-S, '
@@ -122,7 +122,7 @@ while true; do
             printf %6s '-n, '
             printf %-24s '--window-name=WINDOW_NAME'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]with-tty'
             echo
             exit

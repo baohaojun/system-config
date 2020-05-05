@@ -107,10 +107,10 @@ while true; do
             printf %6s '-p, '
             printf %-24s '--[no-]print-info'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--reference=REFERENCE'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--repo-url=REPO_URL'
             echo
             printf %6s '-u, '

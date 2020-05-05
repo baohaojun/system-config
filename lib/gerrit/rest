@@ -49,7 +49,7 @@ while true; do
             echo
             printf "%30s" ""
             echo "Specify which rest api to call"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]raw'
             echo
             exit

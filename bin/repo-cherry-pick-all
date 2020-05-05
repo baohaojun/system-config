@@ -160,10 +160,10 @@ while true; do
             echo -e "$(repo-cherry-pick-all-help)"
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-fetch-first'
             echo "要先从服务器上 Fetch 一下，看有没有最新提交，默认是 true"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-here'
             echo "在当前 Git HEAD 上开始 Cherry-Pick 工作"
             printf %6s '-f, '
@@ -176,7 +176,7 @@ while true; do
             echo
             printf "%30s" ""
             echo "如果 Patch 没有冲突，该执行什么操作。主要用于服务器自动处理"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--should-function=SHOULD_FUNCTION'
             echo
             printf "%30s" ""
@@ -186,10 +186,10 @@ while true; do
             echo
             printf "%30s" ""
             echo "指定跳过某 Patch 时执行的操作。参考 --ok-function"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]squash-reverts'
             echo "自动处理 Reverted Patches，主要用于整理 Patch 列表。有一些被 Revert 掉的逻辑改动，可以整个从维护的 Patch 列表中删除，节省下次 Rebase 工作"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--target-branch=TARGET_BRANCH'
             echo
             printf "%30s" ""

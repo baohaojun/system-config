@@ -61,16 +61,16 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]html'
             echo "edit html with org-mode"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]io-only'
             echo "仅作 input/output，不作拷贝粘贴"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]jira'
             echo "edit jira with org-mode"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]markdown'
             echo "edit markdown with org-mode"
             exit

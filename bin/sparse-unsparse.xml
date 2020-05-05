@@ -54,7 +54,7 @@ while true; do
             printf %6s '-o, '
             printf %-24s '--out=OUT'
             echo '最终输出文件路径'
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]padding'
             echo '在最后补齐文件系统的大小，默认为 true，一般用于 mount；如果为使用 fastboot 而重新拼接此分区文件，可指定 --no-padding，因为后面没有补齐也没事儿'
             printf %6s '-p, '

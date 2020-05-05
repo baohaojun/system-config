@@ -35,15 +35,15 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--errout-regexp=ERROUT_REGEXP'
             echo
             printf "%30s" ""
             echo "stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--times=TIMES'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--wait-secs=WAIT_SECS'
             echo "default is 60"
             exit

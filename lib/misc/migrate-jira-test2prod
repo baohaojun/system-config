@@ -135,13 +135,13 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--issuetype-regexp=ISSUETYPE_REGEXP'
             echo
             printf %6s '-p, '
             printf %-24s '--prod-jira-url=PROD_JIRA_URL'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--project-key=PROJECT_KEY'
             echo
             printf %6s '-s, '

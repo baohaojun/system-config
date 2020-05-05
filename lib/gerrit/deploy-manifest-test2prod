@@ -49,16 +49,16 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-sync'
             echo
             printf %6s '-m, '
             printf %-24s '--manifest-branch-name=MANIFEST_BRANCH_NAME'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]prod2test'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--repo-sync-dir=REPO_SYNC_DIR'
             echo
             exit

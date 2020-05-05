@@ -130,10 +130,10 @@ while true; do
             printf %6s '-d, '
             printf %-24s '--[no-]debug'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-system'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]hack'
             echo
             printf %6s '-G, '
@@ -142,10 +142,10 @@ while true; do
             printf %6s '-x, '
             printf %-24s '--skip-partitions=SKIP_PARTITIONS'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--system-image=SYSTEM_IMAGE'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]system-only'
             echo
             printf %6s '-v, '

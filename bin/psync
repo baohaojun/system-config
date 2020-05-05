@@ -112,16 +112,16 @@ while true; do
             printf %6s '-c, '
             printf %-24s '--[no-]checksum'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]delete'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]follow-symlink'
             echo
             printf %6s '-S, '
             printf %-24s '--[no-]git-st'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]gitp'
             echo
             printf %6s '-r, '

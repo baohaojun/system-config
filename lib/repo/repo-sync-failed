@@ -34,7 +34,7 @@ set -e
                 echo -e
                 echo
                 echo Options and arguments:
-                printf "%06s" " "
+                printf "%6s" " "
                 printf %-24s '--project=PROJECT'
                 echo
                 printf %6s '-i, '

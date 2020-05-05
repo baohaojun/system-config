@@ -24,7 +24,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--sep=SEP'
             echo
             exit

@@ -39,10 +39,10 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]find-bbs-screen'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]use-current-screen-window'
             echo
             exit

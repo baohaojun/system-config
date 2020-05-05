@@ -59,19 +59,19 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]check-first'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]check-only'
             echo
             printf %6s '-e, '
             printf %-24s '--[no-]exit-on-err'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--extra-apt-args=EXTRA_APT_ARGS'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--max-retry=MAX_RETRY'
             echo
             exit

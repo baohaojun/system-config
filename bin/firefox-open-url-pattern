@@ -46,7 +46,7 @@ while true; do
             printf %6s '-e, '
             printf %-24s '--[no-]exact'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]special'
             echo
             exit

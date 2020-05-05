@@ -69,10 +69,10 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]dry-run'
             echo "只检查，不实现"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]existing-ok'
             echo
             printf %6s '-d, '

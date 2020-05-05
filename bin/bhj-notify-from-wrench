@@ -60,10 +60,10 @@ while true; do
             printf %6s '-i, '
             printf %-24s '--icon=ICON'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--info=INFO'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--pkg=PKG'
             echo
             printf %6s '-s, '

@@ -47,7 +47,7 @@ while true; do
             printf %6s '-p, '
             printf %-24s '--process-pattern=PROCESS_PATTERN'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--window-id=WINDOW_ID'
             echo
             exit

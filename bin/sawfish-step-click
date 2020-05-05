@@ -59,19 +59,19 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--end-pos=END_POS'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]skip-last'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--start-pos=START_POS'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--xstep=XSTEP'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--ystep=YSTEP'
             echo
             exit

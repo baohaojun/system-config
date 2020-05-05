@@ -41,10 +41,10 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]boundary'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--char-kana=CHAR_KANA'
             echo
             printf %6s '-k, '

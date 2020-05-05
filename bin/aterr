@@ -49,7 +49,7 @@ else
                 echo -e
                 echo
                 echo Options and arguments:
-                printf "%06s" " "
+                printf "%6s" " "
                 printf %-24s '--[no-]die'
                 echo "允许用 --no-die 设置不要抛出异常。在多重 aterr 时慎用。"
                 printf %6s '-i, '

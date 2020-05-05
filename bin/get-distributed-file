@@ -37,7 +37,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]from-head'
             echo
             printf %6s '-n, '

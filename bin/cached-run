@@ -78,7 +78,7 @@ while true; do
             echo
             printf "%30s" ""
             echo "额外的会影响运行结果的环境变量，将其作为命令行的一部分，在取 cache 的时候进行对比"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]renew-cache-bg'
             echo "运行完成后在后台刷新 cache，默认为 true"
             printf %6s '-r, '

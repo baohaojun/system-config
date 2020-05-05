@@ -80,7 +80,7 @@ while true; do
             printf %6s '-i, '
             printf %-24s '--init-input=INIT_INPUT'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--jkd=JKD'
             echo "运行此 jkd 命令，得到一个 json 数据"
             printf %6s '-j, '

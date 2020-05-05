@@ -81,19 +81,19 @@ while true; do
             printf %6s '-d, '
             printf %-24s '--[no-]debug'
             echo "for debug, do not remove tmp files ${tmp_file}\*"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]j2o'
             echo "convert jira to org"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]o2j'
             echo "convert org text to jira"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--syntax=SYNTAX'
             echo "One of jira or markdown"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--text=TEXT'
             echo "The input text, default is read from stdin"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]tidy-html-for-markdown'
             echo
             printf "%30s" ""

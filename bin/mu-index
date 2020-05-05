@@ -43,13 +43,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]both'
             echo
             printf %6s '-d, '
             printf %-24s '--mu-dir=MU_DIR'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]rebuild'
             echo
             exit

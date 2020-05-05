@@ -79,7 +79,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]all-builds-and-queues'
             echo
             printf %6s '-n, '
@@ -88,10 +88,10 @@ while true; do
             printf %6s '-b, '
             printf %-24s '--build-url=BUILD_URL'
             echo "什么也不指定的话，就使用当前的 BUILD_URL"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]debug'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]delete'
             echo
             printf %6s '-j, '

@@ -84,19 +84,19 @@
                   echo -e
                   echo
                   echo Options and arguments:
-                  printf "%06s" " "
+                  printf "%6s" " "
                   printf %-24s '--album=ALBUM'
                   echo
-                  printf "%06s" " "
+                  printf "%6s" " "
                   printf %-24s '--artist=ARTIST'
                   echo
-                  printf "%06s" " "
+                  printf "%6s" " "
                   printf %-24s '--song-id=SONG_ID'
                   echo
-                  printf "%06s" " "
+                  printf "%6s" " "
                   printf %-24s '--song-name=SONG_NAME'
                   echo
-                  printf "%06s" " "
+                  printf "%6s" " "
                   printf %-24s '--url=URL'
                   echo
                   exit

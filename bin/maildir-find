@@ -63,10 +63,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--after=AFTER'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--before=BEFORE'
             echo
             printf %6s '-b, '

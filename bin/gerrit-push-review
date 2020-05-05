@@ -128,10 +128,10 @@ while true; do
             echo -e "$(gpr-help)"
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-rebase'
             echo "要不要先 rebase 到远程服务器分支，默认是要 rebase"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]draft'
             echo "提一个 draft review，打个草稿，继续完善，暂时不开放给其他同事"
             printf %6s '-t, '
@@ -142,17 +142,17 @@ while true; do
             printf %6s '-r, '
             printf %-24s '--push-rev=PUSH_REV'
             echo "要 push 哪个 revision，默认是 HEAD"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--repo-remote=REPO_REMOTE'
             echo
             printf "%30s" ""
             echo "提给哪个 repo remote，默认是 REPO_REMOTE 变量或 git remote 或 repo manifest 中设置的 remote（依此顺序）"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--review-push-url=REVIEW_PUSH_URL'
             echo
             printf "%30s" ""
             echo "使用自己制定的 push url，不要让脚本自动计算（适于用：自动计算结果有误；测试等）"
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]skip-gerrit'
             echo "不要提到 gerrit 上 review，直接往 refs/heads/ 上 push"
             printf %6s '-R, '

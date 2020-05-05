@@ -48,7 +48,7 @@ while true; do
             printf %6s '-c, '
             printf %-24s '--command=COMMAND'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]last'
             echo
             printf %6s '-w, '

@@ -52,7 +52,7 @@ while true; do
             printf %6s '-r, '
             printf %-24s '--release=RELEASE'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--repository=REPOSITORY'
             echo
             exit

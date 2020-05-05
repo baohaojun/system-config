@@ -48,13 +48,13 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]bare'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]cat'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]fix-emojis-only'
             echo
             exit

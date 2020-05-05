@@ -48,7 +48,7 @@ while true; do
             printf %6s '-a, '
             printf %-24s '--action=ACTION'
             echo
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]do-update'
             echo
             exit
