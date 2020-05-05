@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 if test "$#" = 1 && [[ "$1" =~ file:///.*% ]]; then
     set -- "$(echo "$1"|un-urlify|perl -npe 's,^file:/*,/,')"
     if test ! -e "$1"; then
@@ -10,7 +11,8 @@ if test "$#" = 1 && [[ "$1" =~ file:///.*% ]]; then
     set -x
     exec >> ~/tmp/1.txt 2>&1
 fi
-/usr/bin/exo-open "$@"
+
+2nd exo-open "$@"
 
 if [[ $1 =~ /Maildir/ ]]; then
     exec 2>~/tmp/1.txt

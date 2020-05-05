@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+set -e
 prog1=
 prog2=
-for p in $(type -a $1 | grep 'is /'|pn 3); do
+for p in $(type -a $1 | grep -P '(is|は) /'|pn 3); do
     prog=$(readlink -f "$p")
 
     if [[ $prog =~ /debug/ ]]; then
@@ -21,5 +22,7 @@ shift
 echo prog1 is $prog1 prog2 is $prog2, "$@" >> ~/.cache/system-config/logs/$(basename $0).log
 
 if test "$prog2"; then
-   exec "$prog2" "$@"
+    exec "$prog2" "$@"
+else
+    die "Can't find 2nd program for $prog1"
 fi
