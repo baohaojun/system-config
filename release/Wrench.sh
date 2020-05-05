@@ -102,25 +102,25 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--[no-]do-debug'
             echo "调试选项"
-            printf %06s '-x, '
+            printf %6s '-x, '
             printf %-24s '--[no-]exclusive'
             echo "只给当前这一个 adb device 用，不要连接其他 adb device"
-            printf %06s '-k, '
+            printf %6s '-k, '
             printf %-24s '--[no-]kill'
             echo "干掉当前 adb device 对应的 Wrench 进程"
-            printf %06s '-1, '
+            printf %6s '-1, '
             printf %-24s '--[no-]one-phone'
             echo "此参数仅供内部使用"
             printf "%06s" " "
             printf %-24s '--[no-]silent'
             echo "静默模式，不要显示窗口"
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]system'
             echo "设置 Sawfish 桌面系统和 Emacs 的 PATH 环境变量，全局使用这个 Wrench"
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--[no-]test'
             echo
             exit

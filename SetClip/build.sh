@@ -48,7 +48,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-t, '
+            printf %6s '-t, '
             printf %-24s '--build-type=BUILD_TYPE'
             echo
             exit

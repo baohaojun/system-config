@@ -44,13 +44,13 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf %06s '-p, '
+            printf %6s '-p, '
             printf %-24s '--platforms=PLATFORMS'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--ReleaseVersion=RELEASEVERSION'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]smb'
             echo
             exit

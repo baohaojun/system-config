@@ -36,7 +36,7 @@ function picture-matches() {
                 echo -e
                 echo
                 echo Options and arguments:
-                printf %06s '-t, '
+                printf %6s '-t, '
                 printf %-24s '--default-tolerance=DEFAULT_TOLERANCE'
                 echo
                 exit
@@ -167,10 +167,10 @@ function find-scene() {
                 printf "%06s" " "
                 printf %-24s '--at-xy=AT_XY'
                 echo
-                printf %06s '-d, '
+                printf %6s '-d, '
                 printf %-24s '--dir=DIR'
                 echo
-                printf %06s '-s, '
+                printf %6s '-s, '
                 printf %-24s '--scene=SCENE'
                 echo
                 printf "%06s" " "
@@ -266,13 +266,13 @@ is-scene() {
                 echo -e
                 echo
                 echo Options and arguments:
-                printf %06s '-s, '
+                printf %6s '-s, '
                 printf %-24s '--scene=SCENE'
                 echo
-                printf %06s '-x, '
+                printf %6s '-x, '
                 printf %-24s '--scene-x=SCENE_X'
                 echo
-                printf %06s '-y, '
+                printf %6s '-y, '
                 printf %-24s '--scene-y=SCENE_Y'
                 echo
                 exit

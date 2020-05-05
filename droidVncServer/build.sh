@@ -46,7 +46,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--build-dir=BUILD_DIR'
             echo
             exit
