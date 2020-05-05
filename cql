@@ -38,10 +38,10 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-q, '
+            printf %6s '-q, '
             printf %-24s '--cql-str=CQL_STR'
             echo
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--extra-args=EXTRA_ARGS'
             echo
             exit
