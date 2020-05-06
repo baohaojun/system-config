@@ -1,4 +1,4 @@
-#!/usr/bin/expect
+#!/usr/bin/env expect
 
 
 if {[info exists env(JS_TARGET)]} {
@@ -111,6 +111,7 @@ expect "Opt>" {
 
 expect_background "Opt>" {
     send "exit\n";
+    interact
     wait
     exit
 }

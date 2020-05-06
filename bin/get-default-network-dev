@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+if test "$(uname)" = Linux; then
+    route -n | grep '^\Q0.0.0.0\E' -P|sort -n -k 6|head -n 1 |pn 8
+elif test "$(uname)" = FreeBSD; then
+    route show default | grep interface: | pn 2
+else
+    die "Don't know how to decide default network device"
+fi

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import pynliner
 import sys
 import os
@@ -6,8 +6,8 @@ import re
 
 markdown_css = open(os.path.expanduser("~/system-config/etc/markdown-here.css")).read() + \
     open(os.path.expanduser("~/src/github/baohaojun.github.com/css/adwaita.css")).read()
-str = open(sys.argv[1]).read()
 
+str = open(sys.argv[1]).read()
 if str.find(".footpara:nth-child(2) { display: inline; }") >= 0:
     str = str.replace(".footpara:nth-child(2) { display: inline; }", markdown_css)
 else:
@@ -18,8 +18,7 @@ else:
                       </style>
                       """ + str
 
-str = str.decode('utf-8')
-str = pynliner.fromString(str).encode('utf-8')
+str = pynliner.fromString(str)
 
 in_pre = 0
 for line in str.split("\n"):

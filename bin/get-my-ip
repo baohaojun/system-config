@@ -25,7 +25,7 @@ fi
 b0=$(basename $0)
 
 if test $# = 0; then
-    net=$(route -n | grep '^\Q0.0.0.0\E' -P|sort -n -k 6|head -n 1 |pn 8)
+    net=$(get-default-network-dev)
 else
     net=$1
 fi
