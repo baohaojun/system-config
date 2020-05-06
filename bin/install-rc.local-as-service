@@ -81,6 +81,7 @@ EOF
     killall ss-server
 fi
 
+apt-get install -y shadowsocks-libev simple-obfs
 if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
     echo need install rc.local service 1>&2
     cat <<EOF | tee /etc/systemd/system/rc-local.service
