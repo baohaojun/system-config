@@ -13,8 +13,8 @@ if test $(basename $0) = is-tty-io; then
             exit 1
         fi
     fi
-    test "$(readlink -f /proc/$$/fd/0)" = "$(readlink -f /proc/$$/fd/1)" &&
-    test "$(readlink -f /proc/$$/fd/0)" != /dev/null
+    test "$(readlink-fd -p $$ -f 0)" = "$(readlink-fd -p $$ -f 1)" &&
+    test "$(readlink-fd -p $$ -f 0)" != /dev/null
 elif test $(basename $0) = is-null-output; then
-    test "$(readlink -f /proc/$$/fd/1)" = /dev/null
+    test "$(readlink-fd -p $$ -f 1)" = /dev/null
 fi
