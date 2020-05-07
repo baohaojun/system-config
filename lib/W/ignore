@@ -1,0 +1,81 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+Not implemented yet, will only open up the my-wrench-ext.lua in emacs for editing.
+
+Given app-name, ignore those phone notifications sent from app-name.
+
+Given msg-re, ignore those phone notifications matched by msg-re.
+
+Given both, ignore those notifications matched both by app-name and msg-re.
+
+If already ignored before, the behavior is undefined (most likely, still ignored).
+
+There is no way to un-ignore currently.
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:app-name r:msg-re
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $app_name = "";
+my $msg_re = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--app-name=APP-NAME';
+    if (length('--app-name=APP-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--msg-re=MSG-RE';
+    if (length('--msg-re=MSG-RE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'app-name|a=s' => \$app_name,
+    'msg-re|r=s' => \$msg_re,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+run("e ~/.local-config/Wrench-config/my-wrench-ext.lua");

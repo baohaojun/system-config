@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if test "$#" = 0; then
-    ps h -o ppid $(ps h -o ppid $$|tail -n 1)
+    ps -o ppid $(ps h -o ppid $$|tail -n 1)
 else
-    ps h -o ppid "$1"
-fi | perl -pe 's,\s,,g'
+    ps -o ppid "$1"
+fi | perl -pe 's,[^\d],,g'

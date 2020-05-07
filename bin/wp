@@ -226,7 +226,7 @@ EOF98db9599d6e4
     }
 
     if is-in-emacs; then
-        if [[ "$(ps h -o cmd "$(get-ppid $$)")" =~ "emacs -mm" ]]; then
+        if [[ "$(ps -o command "$(get-ppid $$)")" =~ "emacs -mm" ]]; then
             export NEED_PUTCLIP=true # 直接被 emacs 调用，性质如同直接在命令行上执行，需放入 clipboard
         fi
     fi

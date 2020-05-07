@@ -52,7 +52,7 @@
 
 (eval-after-load 'org
   '(progn
-     (defadvice org-make-link-regexps (after bhj/org-link-tweak activate)
+     (defadvice org-link-make-regexps (after bhj/org-link-tweak activate)
        (setq org-link-plain-re (fix-link-re org-link-plain-re))
        (setq org-link-any-re (fix-link-re org-link-any-re)))
      (org-defkey org-mode-map [?\e (shift return)] 'org-insert-todo-heading)

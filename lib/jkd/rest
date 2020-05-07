@@ -13,13 +13,15 @@ EOFe9576f8668e0
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
     # a:access-point '?"Specify which rest api to call"' \
+    # f:output-format '?"set to json if require json output, will retry if not json (for e.g., empty)"' \
     # xxtrace
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o a:xh \
-                      --long access-point:,xtrace,help,no-xtrace \
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:f:xh \
+                      --long access-point:,output-format:,xtrace,help,no-xtrace \
                       -n $(basename -- $0) -- "$@")
 declare access_point=
+declare output_format=
 declare xtrace=false
 eval set -- "$TEMP"
 while true; do
@@ -27,6 +29,11 @@ while true; do
 
         -a|--access-point)
             access_point=$2
+            shift 2
+
+            ;;
+        -f|--output-format)
+            output_format=$2
             shift 2
 
             ;;
@@ -49,6 +56,11 @@ while true; do
             echo
             printf "%30s" ""
             echo "Specify which rest api to call"
+            printf %6s '-f, '
+            printf %-24s '--output-format=OUTPUT_FORMAT'
+            echo
+            printf "%30s" ""
+            echo "set to json if require json output, will retry if not json (for e.g., empty)"
             printf %6s '-x, '
             printf %-24s '--[no-]xtrace'
             echo
@@ -96,9 +108,23 @@ fi
 
 set -o pipefail
 
-output=$(curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@")
-if [[ $output =~ \\u ]]; then # perl json module can't do this...
-    echo "${output}" | jq .
-else
-    echo "${output}"
+max_try=1
+if test "${output_format}" = json; then
+    max_try=3
 fi
+
+for try in $(seq 1 $max_try); do
+    output=$(curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@")
+    if test "${output_format}" = json -a -z "${output}"; then
+        sleep $((try * 3))
+        continue
+    fi
+    if [[ $output =~ \\u ]]; then # perl json module can't do this...
+        echo "${output}" | jq .
+    else
+        echo "${output}"
+    fi
+    exit
+done
+
+die "Can't get output?"
