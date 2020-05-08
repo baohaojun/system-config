@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 
 import glib, gtk
 import sys
@@ -9,7 +9,7 @@ def test_clipboard():
     # print "Targets available:", ", ".join(map(str, targets))
     for target in targets:
         if sys.argv[0].find("getclip-formats") >= 0:
-            print target
+            print(target)
             continue
 
         if target == 'text/html' and sys.argv[0].find("2html") >= 0:

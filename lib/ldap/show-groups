@@ -3,14 +3,14 @@
 # 显示用户的 ldap 组名及其描述
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P u:user g:group-regexp mmost-relevant-group=true aall-groups
+# generate-getopt -P u:user g:group-regexp=. mmost-relevant-group=true aall-groups
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o ag:mu:h \
                       --long all-groups,group-regexp:,most-relevant-group,user:,help,no-all-groups,no-most-relevant-group \
                       -n $(basename -- $0) -- "$@")
 declare all_groups=false
-declare group_regexp=
+declare group_regexp=.
 declare most_relevant_group=true
 declare user=
 eval set -- "$TEMP"

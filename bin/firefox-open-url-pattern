@@ -133,7 +133,8 @@ function current_url_matches() {
     fi
 }
 
-if test $(uname) != Linux; then
+
+if ! [[ $(uname) =~ Linux|FreeBSD ]]; then
     exec firefox "$url"
 fi
 

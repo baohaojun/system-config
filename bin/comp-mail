@@ -236,7 +236,7 @@ if test -z "${pass}"; then
     pass=$(git config -f "${scm_secrets_conf}" ldap.password)
 fi
 
-ldapsearch -LLL -b "${scm_ldap_dc}" \
+cached-run ldapsearch -LLL -b "${scm_ldap_dc}" \
     -P 3 \
     -H "${scm_ldap_url}" \
     -D "$user" \
