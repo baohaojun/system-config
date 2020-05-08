@@ -1,4 +1,5 @@
 local map = {}
+map['cmb.pb/com.cmb.zh.ui.mbank.im.activitys.chat.PublicChatActivity'] = 'Find-Button'
 map['cn.gov.tax.its/cn.gov.tax.its.MainActivity'] = 'No-Post'
 map['com.aibang.bjtraffic/com.uicps.activity.UICPSWebActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailDetailActivity'] = 'No-Post'
@@ -63,6 +64,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSChattingConvUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSMainUI'] = 'Enter-Key'
 map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.SayHiWithSnsPermissionUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'Find-Button'
+map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'Find-Button'
 map['com.tencent.mm/com.tencent.mm.ui.LauncherUI'] = 'Find-Button'
 map['com.tencent.mm/com.tencent.mm.ui.transmit.SelectConversationUI'] = 'No-Post'

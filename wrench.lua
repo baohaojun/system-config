@@ -816,11 +816,20 @@ M.space_cjk_en = function(text)
       return text
    end
 
+   local extra_cjk_arg = ""
+   if text:match("^|%-") then
+      text = text:sub(3)
+      extra_cjk_arg = " -d "
+   elseif text:match("^|%+") then
+      text = text:sub(3)
+      extra_cjk_arg = " -s "
+   end
+
    local textFile = io.open(M.dataDirFile("space-cjk-en.txt"), "w")
    textFile:write(text)
    textFile:close()
 
-   local output = io.popen("space-cjk-en " .. M.dataDirFile("space-cjk-en.txt"))
+   local output = io.popen("space-cjk-en " .. extra_cjk_arg .. M.dataDirFile("space-cjk-en.txt"))
    text = output:read("*a")
    output:close()
    return text;
