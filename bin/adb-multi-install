@@ -147,7 +147,22 @@ function install-1() {
         (
             flock 9
             set -- $(basename $1)
-            my-adb sc-shell bash -e -c "mv /data/data/com.android.shell/$1 /data/local/tmp; pm install $adb_install_test $adb_install_downgrade $adb_install_grant $adb_install_lock $adb_install_partial $adb_install_replace $adb_install_sdcard /data/local/tmp/$1"
+            my-adb sc-shell bash -e -c "$(
+cat <<EOFd0830fa6bf0c
+# {%sh-mode%}
+pm install \
+   $adb_install_test \
+   $adb_install_downgrade \
+   $adb_install_grant \
+   $adb_install_lock \
+   $adb_install_partial \
+   $adb_install_replace \
+   $adb_install_sdcard \
+   /data/data/com.android.shell/$1
+# {%/sh-mode%}
+EOFd0830fa6bf0c
+
+)"
         ) 9> ~/tmp/adb-multi-install.lock
     else
         exit 1

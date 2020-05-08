@@ -47,7 +47,7 @@
  '(fci-rule-color "#003f8e")
  '(fence-edit-blocks
    '(("^[[:blank:]]*\\(?:```\\|~~~\\)[ ]?\\([^[:space:]]+\\|{[^}]*}\\)?\\(?:[[:space:]]*?\\)$" "^[[:blank:]]*\\(?:```\\|~~~\\)\\s *?$" 1)
-     ("<!\\[CDATA\\[#!.*/bin/bash" "]]>" sh)
+     ("<!\\[CDATA\\[#!.*/bin/\\(env \\)?bash" "]]>" sh)
      ("<!\\[CDATA\\[<!--start html-->" "<!--end html-->" html)
      ("<!--start nxml-->" "<!--end nxml-->" nxml)
      ("{%\\(.*?\\)-mode%}" ".*{%/#1-mode%}" 1)))
