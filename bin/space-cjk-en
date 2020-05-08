@@ -1,12 +1,77 @@
 #!/usr/bin/env perl
-
-use Encode;
 use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+- -d :: delete all spaces (including thin spaces)
+- -s :: convert all spaces to single SPC
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# ddelete sconvert-to-space
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $convert_to_space = 0;
+my $delete = 0;
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--[no]convert-to-space';
+    if (length('--[no]convert-to-space') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--[no]delete';
+    if (length('--[no]delete') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'convert-to-space|s!' => \$convert_to_space,
+    'delete|d!' => \$delete,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
 
 my $thin_space = chr(0x2009);
 
 BEGIN {
-    our $box = decode_utf8 "⃣";
+    our $box = "⃣";
     $box = qr($box);
     our $symbols_always_add_space = qr((?:[=~])*);
     our $symbols_always_add_space_around = qr((?:[-/])*(?!\d));
@@ -20,6 +85,17 @@ our $symbols_always_add_space_around;
 
 while (<>) {
     $_ = decode_utf8 $_;
+    if ($delete) {
+        s,$thin_space| ,,g;
+        print;
+        next;
+    }
+
+    if ($convert_to_space) {
+        s,($thin_space| )+, ,g;
+        print;
+        next;
+    }
 
     s/(\p{CJK})\s*($symbols_always_add_space_around)(\s+)([a-z0-9])/"$1$thin_space$2" . ($3 ? $thin_space : "") . $4/gie;
     s/([a-z0-9])(\s+)($symbols_always_add_space_around)\s*(\p{CJK})/$1 . ($2 ? $thin_space : "" ) . "$3$thin_space$4"/gie;
@@ -36,5 +112,5 @@ while (<>) {
 
     s/^(\*+ (?:NEXT|TODO|DONE|PROJECT|CANCELLED|WAITING|DELEGATED|HOLD)+)$thin_space/$1 /; # fix org head
     s/^(\*+)$thin_space/$1 /; # fix org head
-    print encode_utf8($_);
+    print ($_);
 }
