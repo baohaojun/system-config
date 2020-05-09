@@ -89,7 +89,9 @@ case "$web" in
         exit
         ;;
     GG|gerrit-group)
-        of ${scm_gerrit_url}#/admin/groups/$1
+        url=${scm_gerrit_url}#/admin/groups/$1
+        putclip "$url"
+        of "${url}"
         exit
         ;;
     '')

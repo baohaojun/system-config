@@ -67,12 +67,12 @@ GetOptions (
 
 my $jkd_verbose = $ENV{jkd_verbose};
 
-my $json_issue = $json->decode(scalar capturex("jkd", "rest", "issue/$issue?expand=names"));
+my $json_issue = $json->decode(scalar capturex("jkd", "rest", "-f", "json", "issue/$issue?expand=names"));
 my $parent_json_issue = {};
 if ($json_issue->{fields}{parent}) {
     my $issue = $json_issue->{fields}{parent}{key};
     $parent_json_issue =
-        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest issue/$issue?expand=names"));
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest -f json issue/$issue?expand=names"));
 }
 
 
