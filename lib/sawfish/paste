@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
 putclip -- "$*"
-
 xdotool-when-keyboard-clear key "shift+Insert"

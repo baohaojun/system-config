@@ -98,7 +98,7 @@ if test "${b0}" = putfile; then
     fi
 fi
 
-if test "$EMACS" = t -o "$REMOTEIP"; then
+if test "$REMOTEIP"; then
     if test "${b0}" != putfile; then
         rm-last-nl > /tmp/$$.putclip
         set -- /tmp/$$.putclip
@@ -106,47 +106,35 @@ if test "$EMACS" = t -o "$REMOTEIP"; then
     export FILE=$1
     input_file=$1
     (
-        if test "$REMOTEIP" = ""; then
-            prefix=""
-            arg_handler=echo
-        else
-            . ~/system-config/bin/set-ssh-agent
-            portarg="#$LOCALPORT"
-            if test "$LOCALPORT" = def; then
-                portarg=
-            fi
-            remote_port=${REMOTEPORT:-22}
-            identity_file=~/.ssh/id_rsa
-            if test -e ~/.ssh/id_rsa_remote_edit; then
-                identity_file=~/.ssh/id_rsa_remote_edit
-            fi
-
-            file_arg="/${REMOTEPROTOCOL:-scp}:$(whoami)@$LOCALIP$portarg:$FILE"
-
-            if test "${b0}" = putfile; then
-                (
-                    cd "$(dirname "${input_file}")"
-                    tar c "$(basename "${input_file}")"
-                )
-            else
-                cat ${input_file}
-            fi |
-                ssh -i $identity_file -o StrictHostKeyChecking=no ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port \
-                    "remote-${b0} ${file_arg}"
-
-            exit 0
+        . ~/system-config/bin/set-ssh-agent
+        portarg="#$LOCALPORT"
+        if test "$LOCALPORT" = def; then
+            portarg=
+        fi
+        remote_port=${REMOTEPORT:-22}
+        identity_file=~/.ssh/id_rsa
+        if test -e ~/.ssh/id_rsa_remote_edit; then
+            identity_file=~/.ssh/id_rsa_remote_edit
         fi
 
-        $prefix emacsclient --eval "
-(let ((default-directory \"/tmp/\"))
-(view-file \"$FILE\")
-(kill-new (filter-buffer-substring (point-min) (point-max)))
-(View-quit))"
-        $prefix rm $FILE
-        xclip -o -selection clipboard|xclip -i
-    ) >~/.cache/system-config/logs/${b0}.log 2>&1&
+        file_arg="/${REMOTEPROTOCOL:-scp}:$(whoami)@$LOCALIP$portarg:$FILE"
+
+        if test "${b0}" = putfile; then
+            (
+                cd "$(dirname "${input_file}")"
+                tar c "$(basename "${input_file}")"
+            )
+        else
+            cat ${input_file}
+        fi |
+            ssh -i $identity_file -o StrictHostKeyChecking=no ${REMOTEUSER:-$USER}@$REMOTEIP -p $remote_port \
+                "remote-${b0} ${file_arg}"
+    )
+
 else
     (
+        # txt=$(cat |tee ~/tmp/putclip.txt)
+        # exec <<<"$txt"
         rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
         xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
         for x in $(seq 1 3); do
