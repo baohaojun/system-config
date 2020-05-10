@@ -57,16 +57,16 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-e, '
+            printf %6s '-e, '
             printf %-24s '--[no-]exact'
             echo
-            printf %06s '-r, '
+            printf %6s '-r, '
             printf %-24s '--[no-]readlink'
             echo
-            printf %06s '-s, '
+            printf %6s '-s, '
             printf %-24s '--[no-]select'
             echo
-            printf %06s '-P, '
+            printf %6s '-P, '
             printf %-24s '--[no-]use-cd-P'
             echo
             exit
