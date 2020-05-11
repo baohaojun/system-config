@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 #
 # (C) 2007 Sven Rech.
 # Licensed under the GNU GPL.
@@ -11,9 +11,11 @@ import getopt, sys
 from os.path import abspath, join, basename
 import os
 
+if os.uname()[0] == "FreeBSD":
+        sys.path.insert(0, os.environ['scm_common_libdir'])
+
 import glipper, glipper.defs
 from glipper.Clipboards import *
-sys.path.insert(0, glipper.PLUGINS_DIR)
 
 try:
         # attempt to set a name for killall
@@ -36,10 +38,9 @@ if hasattr(locale, 'bind_textdomain_codeset'):
         locale.bind_textdomain_codeset(GETTEXT_DOMAIN,'UTF-8')
 locale.textdomain(GETTEXT_DOMAIN)
 
-import gobject, gtk, gconf
+import gobject, gtk
 import glipper
 from glipper.Clipboards import *
-from glipper.PluginsManager import *
 from gettext import gettext as _
 import pipes
 
@@ -53,10 +54,7 @@ class History(gobject.GObject):
                 self.history = []
                 get_glipper_clipboards().connect('new-item', self.on_new_item)
 
-                self.max_elements = glipper.GCONF_CLIENT.get_int(glipper.GCONF_MAX_ELEMENTS)
-                if self.max_elements == None:
-                        self.max_elements = 20
-                glipper.GCONF_CLIENT.notify_add(glipper.GCONF_MAX_ELEMENTS, lambda x, y, z, a: self.on_max_elements_changed (z.value))
+                self.max_elements = 20
 
         def get_history(self):
                 return self.history
@@ -150,12 +148,7 @@ class History(gobject.GObject):
                 file.close()
 
         def on_max_elements_changed (self, value):
-                if value is None or value.type != gconf.VALUE_INT:
-                        return
-                self.max_elements = value.get_int()
-                if len(self.history) > self.max_elements:
-                        self.history = self.history[0:self.max_elements]
-                        self.emit('changed', self.history)
+                return
 
 history = History()
 

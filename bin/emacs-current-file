@@ -26,19 +26,27 @@ b0=$(basename $0)
 
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt b:save-to-buffer=nil
+# generate-getopt s:save-to-buffer=nil \
+    # b:which-buffer '?"要获取的是哪个 Buffer，默认是当前 Buffer"' \
+
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o b:h \
-               --long save-to-buffer:,help \
+TEMP=$( getopt -o s:b:h \
+               --long save-to-buffer:,which-buffer:,help \
                -n $(basename -- $0) -- "$@")
 declare save_to_buffer=nil
+declare which_buffer=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
-        -b|--save-to-buffer)
+        -s|--save-to-buffer)
             save_to_buffer=$2
+            shift 2
+
+            ;;
+        -b|--which-buffer)
+            which_buffer=$2
             shift 2
 
             ;;
@@ -47,9 +55,14 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %6s '-b, '
+            printf %6s '-s, '
             printf %-24s '--save-to-buffer=SAVE_TO_BUFFER'
             echo
+            printf %6s '-b, '
+            printf %-24s '--which-buffer=WHICH_BUFFER'
+            echo
+            printf "%30s" ""
+            echo "要获取的是哪个 Buffer，默认是当前 Buffer"
             exit
             shift
             ;;
@@ -73,13 +86,17 @@ cat <<'EOF16e1379802c6' | . .replace-%%
 ;;;;  real script start here
 (let ((buffers (buffer-list))
       buf)
-  (if (string= "<%b0%>" "emacs-current-file")
-      (while buffers
-        (setq buf (car buffers)
-              buffers (cdr buffers))
-        (when (buffer-file-name buf)
-          (setq buffers nil)))
-    (setq buf (window-buffer (selected-window))))
+  (cond
+   ((not (string= "<%which_buffer%>" ""))
+    (setq buf (get-buffer "<%which_buffer%>")))
+   ((string= "<%b0%>" "emacs-current-file")
+    (while buffers
+      (setq buf (car buffers)
+            buffers (cdr buffers))
+      (when (buffer-file-name buf)
+        (setq buffers nil))))
+   (t
+    (setq buf (window-buffer (selected-window)))))
   (when (not (null '<%save_to_buffer%>))
     (setq <%save_to_buffer%> buf))
   (message "current-file %s" (buffer-name buf))
