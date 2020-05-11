@@ -40,6 +40,7 @@ map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'No
 map['com.google.android.googlequicksearchbox/com.google.android.apps.gsa.searchnow.SearchNowActivity'] = 'No-Post'
 map['com.gotokeep.keep/com.gotokeep.keep.su.social.search.activity.SearchActivity'] = 'No-Post'
 map['com.instagram.android/com.instagram.nux.activity.SignedOutFragmentActivity'] = 'No-Post'
+map['com.jingdong.app.mall/com.jd.lib.search.view.Activity.SearchActivity'] = 'No-Post'
 map['com.netease.cloudmusic/com.netease.cloudmusic.activity.SearchActivity'] = 'No-Post'
 map['com.netease.mail/com.netease.mobimail.activity.AddAccountActivity'] = 'No-Post'
 map['com.netease.mail/com.netease.mobimail.activity.ExplorerActivity'] = 'No-Post'
