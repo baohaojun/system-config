@@ -663,7 +663,7 @@ sub ok_edit_html_with_org(@) {
         };
         atexit(\&clean_tmpdir);
         if ($edit_html_buffer) {
-            System("emacs-current-text -b buffer-ehbwo-$$ > content.html");
+            System("emacs-current-text -s buffer-ehbwo-$$ > content.html");
         } else {
             System("cat > content.html");
         }

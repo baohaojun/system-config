@@ -73,7 +73,7 @@ For e.g., if there's a wiki space named Hello, and there's a page named World un
 
 First, some helper functions.
 
-#+name: download-a-page
+#+name: download-a-page1
 #+BEGIN_SRC perl
   use v5.10;
   use HTTP::Request::Common;
@@ -121,7 +121,7 @@ First, some helper functions.
 
 And this is the real get1page subroutine.
 
-#+name: download-a-page
+#+name: download-a-page2
 #+BEGIN_SRC perl
   sub ok_get1page(@) { # download a page's html, save it, test if org needs update.
       ## start code-generator "^\\s *#\\s *"
@@ -682,7 +682,7 @@ Now, this emacs-lisp script first.
           };
           atexit(\&clean_tmpdir);
           if ($edit_html_buffer) {
-              System("emacs-current-text -b buffer-ehbwo-$$ > content.html");
+              System("emacs-current-text -s buffer-ehbwo-$$ > content.html");
           } else {
               System("cat > content.html");
           }
@@ -1012,7 +1012,8 @@ This is simple using Perl's “reflection”.
 #+BEGIN_SRC perl :tangle ./org-kungfu :comments link :shebang "#!/usr/bin/env perl" :noweb yes
   <<global-args>>
   <<perl-lib-funcs>>
-  <<download-a-page>>
+  <<download-a-page1>>
+  <<download-a-page2>>
   <<upload-page-attachment>>
   <<e>>
   <<create1page>>
