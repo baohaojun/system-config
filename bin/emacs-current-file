@@ -79,13 +79,16 @@ done
 
 ## end generated code
 
+tmp_file=/tmp/$b0.$$
+. atexit rm -f "$tmp_file"
 
 emacsclient -e "$(
 cat <<'EOF16e1379802c6' | . .replace-%%
 ; {%emacs-lisp-mode%}
 ;;;;  real script start here
 (let ((buffers (buffer-list))
-      buf)
+      buf
+      text)
   (cond
    ((not (string= "<%which_buffer%>" ""))
     (setq buf (get-buffer "<%which_buffer%>")))
@@ -100,27 +103,34 @@ cat <<'EOF16e1379802c6' | . .replace-%%
   (when (not (null '<%save_to_buffer%>))
     (setq <%save_to_buffer%> buf))
   (message "current-file %s" (buffer-name buf))
-  (or (and
-       (string= "<%b0%>" "emacs-current-file")
-       (buffer-file-name buf))
-      (and
-       (string= "<%b0%>" "emacs-current-text")
-       (with-current-buffer buf
-         (buffer-substring-no-properties (point-min) (point-max))))
-      (and
-       (string= "<%b0%>" "emacs-current-selection")
-       (with-current-buffer buf
-         (buffer-substring-no-properties (point) (mark))))
-      (and
-       (string= "<%b0%>" "emacs-current-buffer")
-       (buffer-name buf))
-      (and
-       (string= "<%b0%>" "emacs-current-mode")
-       (with-current-buffer buf
-         major-mode))))
+  (setq text (or (and
+                  (string= "<%b0%>" "emacs-current-file")
+                  (buffer-file-name buf))
+                 (and
+                  (string= "<%b0%>" "emacs-current-text")
+                  (with-current-buffer buf
+                    (buffer-substring-no-properties (point-min) (point-max))))
+                 (and
+                  (string= "<%b0%>" "emacs-current-selection")
+                  (with-current-buffer buf
+                    (buffer-substring-no-properties (point) (mark))))
+                 (and
+                  (string= "<%b0%>" "emacs-current-buffer")
+                  (buffer-name buf))
+                 (and
+                  (string= "<%b0%>" "emacs-current-mode")
+                  (with-current-buffer buf
+                    major-mode)))
+        )
+  (with-temp-buffer
+    (insert text)
+    (write-file "[%tmp_file%]")
+    (kill-buffer)))
 ; {%/emacs-lisp-mode%}
 EOF16e1379802c6
 
-)" | (
-   em str2text
+)" > ~/tmp/emacs-current-file.log 2>&1
+
+(
+    cat $tmp_file
 )
