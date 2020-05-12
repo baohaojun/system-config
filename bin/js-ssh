@@ -72,9 +72,10 @@ expect "Opt>" {
                         }
                         -re "exit123456" {
                             log_user 0
-                            send "exit\n";
+                            send "exit\r\n";
                             expect "Opt>" {
                                 send "exit\n";
+                                interact
                                 wait
                                 exit
                             }
@@ -108,9 +109,8 @@ expect "Opt>" {
         exit 1
     }
 }
-
 expect_background "Opt>" {
-    send "exit\n";
+    send "exit\r\n";
     interact
     wait
     exit

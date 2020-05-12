@@ -20,6 +20,7 @@
  '(bbyac-max-chars 80)
  '(beacon-color "#ff9da4")
  '(before-save-hook '(confirm-risky-remote-edit cleanup-buffer-safe))
+ '(browse-kill-ring-display-duplicates nil)
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(clipmon-mode t)

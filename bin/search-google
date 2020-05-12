@@ -177,6 +177,8 @@ fi
 
 if test "${prog}" = search-jira; then
     url=${scm_jira_url}browse/$fill
+elif test "${prog}" = search-jql; then
+    url=${scm_jira_url}issues/?jql=$fill
 fi
 
 if test "$prog" = search-jisho; then
