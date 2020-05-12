@@ -56,6 +56,7 @@ map['com.sonelli.juicessh/com.sonelli.juicessh.activities.TerminalEmulatorActivi
 map['com.ss.android.ugc.aweme/com.ss.android.ugc.aweme.crossplatform.activity.CrossPlatformActivity'] = 'No-Post'
 map['com.taobao.taobao/com.taobao.weex.WXActivity'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.chatroom.ui.ChatroomInfoUI'] = 'No-Post'
+map['com.tencent.mm/com.tencent.mm.chatroom.ui.ModRemarkRoomNameUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.LoginPasswordUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.SimpleLoginUI'] = 'Enter-Key'
 map['com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI'] = 'No-Post'
