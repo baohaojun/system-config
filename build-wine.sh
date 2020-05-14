@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 cd $(dirname $(readlink -f $0))
@@ -29,7 +29,7 @@ while true; do
             echo
             echo
             echo Options and arguments:
-            printf "%06s" " "
+            printf "%6s" " "
             printf %-24s '--[no-]build-snore'
             echo
             exit

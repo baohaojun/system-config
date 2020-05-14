@@ -928,7 +928,7 @@ pcode() {
 	PPROXY_DEST="$host:$port"; export PPROXY_DEST
 	check_perl /usr/bin/perl
 
-	cod='#!/usr/bin/perl
+	cod='#!/usr/bin/env perl
 
 # A hack to glue stunnel to a Web or SOCKS proxy, UltraVNC repeater for
 # client connections.

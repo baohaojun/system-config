@@ -2,3 +2,4 @@
 failed-*.png
 x.png
 *.failed.png
+*.core

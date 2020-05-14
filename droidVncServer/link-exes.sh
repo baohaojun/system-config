@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd ~/src/github/Wrench/droidVncServer
 for x in androidvncserver-* screencap-*; do

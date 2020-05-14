@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 me=$(readlink -f $BASH_SOURCE)
 if test ! -e "$me"; then
@@ -46,7 +46,7 @@ while true; do
             echo -e
             echo
             echo Options and arguments:
-            printf %06s '-d, '
+            printf %6s '-d, '
             printf %-24s '--build-dir=BUILD_DIR'
             echo
             exit

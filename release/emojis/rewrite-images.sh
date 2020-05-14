@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function n_to_unicode_char() {
     for x in "$@"; do
