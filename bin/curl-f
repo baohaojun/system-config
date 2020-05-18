@@ -9,9 +9,7 @@ set -e
 exec {STDOUT_DUP}>&1
 exec {STDERR_NEW}>/tmp/curl-f.$$.err
 . atexit rm -f /tmp/curl-f.$$.err
-output_file=>(cat >&${STDOUT_DUP})
-
-curl --write-out '%{stderr}http_code: %{http_code}' "$@" -o /dev/fd/1 2>&${STDERR_NEW} >"${output_file}"
+curl --write-out '%{stderr}http_code: %{http_code}' "$@" -o /dev/fd/1 2>&${STDERR_NEW} > >(cat >&${STDOUT_DUP})
 
 http_code=$(cat /tmp/curl-f.$$.err | perl -ne 'print $1 if m,http_code: (\d+),')
 cat /tmp/curl-f.$$.err | perl -ne 'print unless m/http_code: /' 1>&2
