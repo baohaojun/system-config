@@ -47,7 +47,7 @@ spawn ssh -o ControlMaster=auto -o ControlPath=$home/.cache/tramp.%C -o ControlP
 expect "Opt>" {
     # log "Seend Opt>, sending $js_target\n";
     send -- "$js_target\r\n";
-    expect "\n";
+    expect "*"; # clear the Opt> which could match again below.
 
     expect -re "\\$" {
         if {$argc != 0} {
