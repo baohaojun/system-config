@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 cd ~/system-config/
 for x in $(seq 1 10); do
-    if ps.pl sslocal; then
+    if ps.pl ss-local; then
         break
     fi
     sleep 2
