@@ -184,12 +184,7 @@ M.picture_to_dingding_chat = function(pics, ...)
    jump_from_to("dingding-xiangce-button", "dingding-paishe-zhaopian")
 
    click_dingding_pics(#pics)
-   if yes_or_no_p"Confirm to send these pictures to dingding" then
-      jump_from_to("dingding-tupian-fasong", "dingding-xiangce-button")
-   else
-      adb_event("key back")
-   end
-
+   jump_from_to("dingding-tupian-fasong", "dingding-xiangce-button")
    adb_event("key back")
 end
 
@@ -220,34 +215,22 @@ end
 M.wrench_picture = function (...)
    local pics = upload_pics(...)
    local window = adb_top_window()
-   if window == W.weixinLauncherActivity and yes_or_no_p("发送给当前微信聊天窗口") then
+   if window == W.weixinLauncherActivity then
       return picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mm/com.tencent.mm.plugin.scanner.ui.BaseScanUI" then
       return M.picture_to_weixin_scan(pics)
    elseif window:match("^com.tencent.mm/com.tencent.mm.ui.chatting") then
-      if yes_or_no_p("发送给当前微信聊天窗口") then
-         return picture_to_weixin_chat(pics)
-      end
+      return picture_to_weixin_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.ChatActivity" then
-      if yes_or_no_p("发送给当前 QQ 聊天窗口") then
-         return picture_to_qq_chat(pics)
-      end
+      return picture_to_qq_chat(pics)
    elseif window == "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" then
-      if yes_or_no_p("发送给当前钉钉聊天窗口") then
-         return picture_to_dingding_chat(pics)
-      end
+      return picture_to_dingding_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity" then
-      if yes_or_no_p("发送给当前 QQ 聊天窗口") then
-         return picture_to_qq_chat(pics)
-      end
+      return picture_to_qq_chat(pics)
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then
-      if yes_or_no_p("发送给当前微博私信聊天窗口") then
-         return picture_to_weibo_chat(pics)
-      end
+      return picture_to_weibo_chat(pics)
    elseif window == W.weiboCommentActivity or window == W.weiboForwardActivity then
-      if yes_or_no_p("发送给当前微博回复窗口") then
-         return picture_to_weibo_comment(pics)
-      end
+      return picture_to_weibo_comment(pics)
    end
    if yes_or_no_p("不知道此窗口（" .. window .. "）下如何分享图片，如需继续上传，请点击确认后选择把图片发给谁，否则请点取消") then
       local how_to_send = M.select_args_with_history("how-to-send-pic",
