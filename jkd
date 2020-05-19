@@ -916,7 +916,7 @@ sub jkd_c(@) { # create issue
     }
 
     my $ua = LWP::UserAgent->new;
-    say "json is ", encode_json { fields => \%required_fields } if $jkd_verbose;
+    say "json is:\n", decode_utf8($json->encode({ fields => \%required_fields })) if $jkd_verbose;
 
     for (my $try = 0; $try < 3; $try++) {
         my $request = POST jkd_url_for_api("rest/api/2/issue"),
@@ -1508,9 +1508,6 @@ if (not defined &$sub_command) {
 $sub_command = \&{$sub_command};
 &$sub_command(@ARGV);
 
-# Local Variables: #
-# eval: (read-only-mode 1) #
-# End: #
 # Local Variables: #
 # eval: (read-only-mode 1) #
 # End: #
