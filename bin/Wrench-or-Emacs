@@ -4,6 +4,26 @@ top_window=$(
     sawfish-top-window
           )
 
+if test "${top_window}" = Gimp && [[ "$(getclip)" =~ \.(png|jpg)$ ]]; then
+    pic_file=$(getclip)
+    find-or-exec Emacs
+    sleep 1
+    if test -e "${pic_file}"; then
+        emacsclient -e "$(
+cat <<'EOF277ef8294e42' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(progn
+  (sanityinc/toggle-delete-other-windows)
+  (switch-to-file (expand-file-name "~/src/github/projects/chat.org"))
+  (delete-region (point-min) (point-max))
+  (insert "image:[%pic_file%]"))
+; {%/emacs-lisp-mode%}
+EOF277ef8294e42
+)"
+        exit
+    fi
+fi
+
 if test "${top_window}" != Emacs -o "$(emacs-current-file | perl -pe 's,.*/,,')" != chat.org; then
     find-or-exec Emacs
     emacsclient -e "$(

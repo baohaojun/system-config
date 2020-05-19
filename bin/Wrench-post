@@ -78,34 +78,16 @@ if (not $image) {
     }
 }
 
-if ($image) {
-    my $post_text = sprintf("wrench_picture(%s)", quote_lua_str($image));
-    say STDERR "sending image: $post_text";
-
-    system("Wrench.sh", $post_text);
-
-    exit 0;
+sub getText() {
+    my $text;
+    if (@ARGV) {
+        $text = join(" ", @ARGV);
+    } else {
+        $text = join("", <>);
+    }
+    $text =~ s,\s*$,,;              # get rid of empty lines at the end.
+    return $text;
 }
-
-my $text;
-if (@ARGV) {
-    $text = join(" ", @ARGV);
-} else {
-    $text = join("", <>);
-}
-
-$text =~ s,\s*$,,;              # get rid of empty lines at the end.
-
-use File::Slurp;
-
-append_file("$ENV{HOME}/.cache/system-config/Wrench-post.history",
-            <<EOF
-----------------------------------------------------------------
-$text
-
-
-EOF
-        );
 
 if ($ask_to_whom or $send_to) {
   my $whom;
@@ -116,7 +98,7 @@ if ($ask_to_whom or $send_to) {
   }
 
   if ($whom eq 'pengyouquan@@wx' or $whom eq '朋友圈@@wx' ) {
-      my $post_text = sprintf("wrench_share_to_weixin(%s)", quote_lua_str($text));
+      my $post_text = sprintf("wrench_share_to_weixin(%s)", quote_lua_str(getText()));
       system("Wrench.sh", $post_text);
       exit 0;
   }
@@ -129,6 +111,28 @@ if ($ask_to_whom or $send_to) {
     exit 1;
   }
 }
+
+if ($image) {
+    my $post_text = sprintf("wrench_picture(%s)", quote_lua_str($image));
+    say STDERR "sending image: $post_text";
+
+    system("Wrench.sh", $post_text);
+
+    exit 0;
+}
+
+my $text = getText();
+
+use File::Slurp;
+
+append_file("$ENV{HOME}/.cache/system-config/Wrench-post.history",
+            <<EOF
+----------------------------------------------------------------
+$text
+
+
+EOF
+        );
 
 my @cur_at_end;
 
