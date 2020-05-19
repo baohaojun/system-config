@@ -1,1 +1,8 @@
-/usr/local/bin/glocate
+#!/usr/bin/env bash
+set -e
+
+if test ! -e ~/.cache/system-config/locatedb; then
+    die "You have not updated db yet"
+fi
+
+glocate -d ~/.cache/system-config/locatedb "$@"
