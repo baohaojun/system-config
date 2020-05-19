@@ -30,5 +30,6 @@ cat ~/.cache/system-config/.where | sort > "$target_dir"/.where
 cd "$target_dir"
 
 git add .
+git commit -m 'auto' && git pull --no-edit && git push || true
 
 log "Done working with $PWD"
