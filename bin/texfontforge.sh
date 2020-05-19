@@ -3,8 +3,8 @@
 set -e
 this_script=$(readlink -f $0)
 
-tex_config=/usr/share/texlive/texmf-dist/web2c/texmf.cnf
-tex_dir=$(cat /usr/share/texlive/texmf-dist/web2c/texmf.cnf | grep '^TEXMFVAR\s*=' -P|perl -npe 's/.*=\s*//; s,^~/,$ENV{HOME}/,; s,(.*)/.*,$1,')
+tex_config=$(kpsepath base|tr : '\n'|tr -d '!'|grep 'dist/web2c$' -P | tr -d '\n')/texmf.cnf
+tex_dir=$(cat "${tex_config}" | grep '^TEXMFVAR\s*=' -P|perl -npe 's/.*=\s*//; s,^~/,$ENV{HOME}/,; s,(.*)/.*,$1,')
 
 var_dir=${tex_dir}/texmf-var
 config_dir=${tex_dir}/texmf-config
@@ -16,6 +16,9 @@ TMPD=tmp.$$
 if test $# = 0; then
     (texfontforge.sh -n simsun -f ~/.fonts/msyh.ttf)
     (texfontforge.sh -n simhei -f ~/.fonts/msyhbd.ttf)
+    if test "$(uname)" = FreeBSD; then
+        (texfontforge.sh -n cyberb -f ~/.fonts/Cyberbit.ttf)
+    fi
     exit
 fi
 
@@ -79,7 +82,11 @@ done
     rm -rf $TMPD
     mkdir $TMPD
     cd $TMPD
-    cp /usr/share/latex-cjk-common/utils/subfonts/subfonts.pe .
+    subfonts_pe=/usr/local/share/texmf-dist/source/latex/cjk/utils/subfonts/subfonts.pe
+    if test ! -e "${subfonts_pe}"; then
+        subfonts_pe=/usr/share/latex-cjk-common/utils/subfonts/subfonts.pe
+    fi
+    cp "$subfonts_pe" .
     ln -s ../${font_name}.ttf .
 
     kpsewhich Unicode.sfd
