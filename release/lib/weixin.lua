@@ -323,10 +323,10 @@ M.picture_to_weixin_chat = function(pics, ...)
    jump_from_to("wx/qita-gongneng", "wx/qita-xiangce")
 
    if #pics == 1 then
-      forget_scene("wx/maybe-this-picture")
+      jump_from_to(true, "wx/maybe-this-picture")
    end
 
-   if find_scene("wx/maybe-this-picture") then
+   if #pics == 1 and find_scene("wx/maybe-this-picture") then
       jump_from_to("wx/maybe-this-picture", "wx/tupian-fasong", {x = -100, y = 200})
       jump_from_to("wx/yuantu-weixuanzhong@2", "wx/yuantu-yixuanzhong@2")
       jump_from_to("wx/tupian-fasong", "wx-open-microphone")

@@ -94,6 +94,8 @@ M.debug_scene_actions = {
    "☠☠☠☠☠☠☠☠☠", -- 7
    "将 failed XXX.png 添加为 alias", -- 8
    "我已经将新的场景放进剪贴板，用它更新一下", -- 9
+   "假装场景匹配已经成功了，继续下一步", -- 10
+   "假装场景匹配已经失败了，继续下一步", -- 11
 }
 
 M.get_debug_action = function(desc)
@@ -109,7 +111,15 @@ M.debug_find_scene = function(desc, scene)
    if M.g_find_scene_debug then
       show_scene_for_dbg(scene)
       local action = M.get_debug_action(desc)
-      if action == M.debug_scene_actions[3] then
+      if action == M.debug_scene_actions[10] then
+         ret_val = 1
+         should_ret = 1
+         M.g_scene_debug_fake_result = 1
+      elseif action == M.debug_scene_actions[11] then
+         M.g_scene_debug_fake_result = 0
+         ret_val = nil
+         should_ret = 1
+      elseif action == M.debug_scene_actions[3] then
          update_scene(scene);
       elseif action == M.debug_scene_actions[4] then
          ret_val = find_scene(scene)
@@ -176,7 +186,7 @@ M.find_scene = function(scene, times)
          if scene_xy ~= "" then
             break
          elseif i == times then
-            debug_desc = ("无法找到新的场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会重新查找，请确认）？"):format(scene, scene, scene)
+            debug_desc = ("无法找到未知场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会重新查找，请确认）？"):format(scene, scene, scene)
             ret_val, should_ret = debug_find_scene(debug_desc, scene)
             if should_ret then
                return ret_val
@@ -202,7 +212,7 @@ M.find_scene = function(scene, times)
       return true
    else
       log("! found scene: %s at %s %s", scene, s_x, s_y)
-      debug_desc = ("无法找到旧的场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会忘掉它，当成新场景处理，请手动切换到此场景）？"):format(scene, scene, scene)
+      debug_desc = ("无法找到已知场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会忘掉它，当成新场景处理，请手动切换到此场景）？"):format(scene, scene, scene)
       ret_val, should_ret = debug_find_scene(debug_desc, scene)
       if should_ret then
          return ret_val
@@ -266,6 +276,11 @@ M.swipe_scene = function (scene, settings)
 end
 
 M.click_scene = function (scene, settings)
+   if type(scene) ~= 'string' then
+      log("Can't click scene: %s", scene)
+      return
+   end
+
    log("Click scene: %s", scene)
    settings = settings or {}
 
@@ -325,9 +340,10 @@ M.jump_from_to = function(from_scene, to_scene, settings)
       end
    end
    log("Can't jump from %s to %s", tostring(from_scene), tostring(to_scene))
-   if not  M.g_find_scene_debug then
+   if not M.g_find_scene_debug and not M.g_scene_debug_fake_result then
       M.g_find_scene_debug = true
       M.jump_from_to(from_scene, to_scene, settings)
+      M.g_scene_debug_fake_result = nil
    else
       error("Can't jump from " .. tostring(from_scene) .. " to " .. tostring(to_scene))
    end

@@ -207,11 +207,15 @@ end
 
 M.debugging = debugging
 
+M.debug_module = M.debug
 M.debug = function(fmt, ...)
    print(string.format(fmt, ...))
 end
 
 M.split = function(pat, str, allow_null)
+   if not str then
+      error("str must not be empty " .. debug_module.traceback())
+   end
    local start = 1
    if pat == ' ' then
       pat = "%s+"

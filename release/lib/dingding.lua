@@ -168,7 +168,9 @@ M.picture_to_dingding_chat = function(pics, ...)
    end
 
    jump_from_to(dd_extra_button, "dingding-xiangce-button")
-   forget_scene("dd/maybe-this-picture")
+   if #pics == 1 then
+      jump_from_to(true, "dd/maybe-this-picture")
+   end
    if find_scene("dd/maybe-this-picture") then
       local pkg_prefix = "dingding-"
       jump_from_to("dd/maybe-this-picture", "dingding-tupian-fasong", {x = -100, y = 200})
