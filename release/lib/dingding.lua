@@ -89,8 +89,10 @@ M.dingding_open_homepage = function()
    end
 end
 
-M.click_pics = function(npics, pkg_prefix, cols)
-   cols = cols or 4
+M.click_pics = function(npics, pkg_prefix, extra_args)
+   extra_args = extra_args or {cols = 4, pic1_is_button = true}
+   cols = extra_args.cols or 4
+   pic1_is_button = extra_args.pic1_is_button or false
    local pic_share_buttons = {}
 
    local click_2x1_x = scene_x(pkg_prefix .. "fatu-x2y1")
@@ -105,12 +107,22 @@ M.click_pics = function(npics, pkg_prefix, cols)
    local cell_height = math.floor(click_2x2_y - click_2x1_y)
    local cell_width = math.floor(click_3x1_x - click_2x1_x)
 
-   for i = 1, npics do
-      local col = i % 4
-      local row = math.floor(i / 4)
+   local click_1x1_x = click_2x1_x - cell_width
+   local click_1x1_y = click_2x1_y
 
-      local tap_x = cell_width * (col - 1) + click_2x1_x + 14
-      local tap_y = cell_height * row + click_2x1_y + 20
+   for i = 1, npics do
+      local col, rowt
+
+      if pic1_is_button then
+         col = i % 4 + 1
+         row = math.floor(i / 4) + 1
+      else
+         col = (i - 1) % 4 + 1
+         row = math.floor((i - 1) / 4) + 1
+      end
+
+      local tap_x = cell_width * (col - 1) + click_1x1_x + 14
+      local tap_y = cell_height * (row - 1) + click_1x1_y + 20
 
       pic_share_buttons[i] = ("adb-tap-XY %d %d"):format(tap_x, tap_y)
       log("dingding tap: %d %s", i, pic_share_buttons[i])
@@ -156,6 +168,17 @@ M.picture_to_dingding_chat = function(pics, ...)
    end
 
    jump_from_to(dd_extra_button, "dingding-xiangce-button")
+   forget_scene("dd/maybe-this-picture")
+   if find_scene("dd/maybe-this-picture") then
+      local pkg_prefix = "dingding-"
+      jump_from_to("dd/maybe-this-picture", "dingding-tupian-fasong", {x = -100, y = 200})
+      -- error("hello world")
+      jump_from_to(pkg_prefix .. "yuantu-weixuanzhong", pkg_prefix .. "yuantu-yixuanzhong")
+      jump_from_to("dingding-tupian-fasong", "dingding-xiangce-button")
+      adb_event("key back")
+      return
+   end
+
    jump_from_to("dingding-xiangce-button", "dingding-paishe-zhaopian")
 
    click_dingding_pics(#pics)

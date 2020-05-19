@@ -321,12 +321,22 @@ M.picture_to_weixin_chat = function(pics, ...)
    local post_button = ('%d %d'):format(right_button_x, 1920 - 50)
    local chatWindow = adb_top_window()
    jump_from_to("wx/qita-gongneng", "wx/qita-xiangce")
-   jump_from_to("wx/qita-xiangce", "wx/" .. "yuantu-weixuanzhong")
 
-   adb_event("sleep .2 adb-tap 423 1861 adb-tap 490 1862 sleep .1 ")
-   if yes_or_no_p("Confirm to send these images?") then
-      tap_top_right()
+   if #pics == 1 then
+      forget_scene("wx/maybe-this-picture")
    end
+
+   if find_scene("wx/maybe-this-picture") then
+      jump_from_to("wx/maybe-this-picture", "wx/tupian-fasong", {x = -100, y = 200})
+      jump_from_to("wx/yuantu-weixuanzhong@2", "wx/yuantu-yixuanzhong@2")
+      jump_from_to("wx/tupian-fasong", "wx-open-microphone")
+      return
+   else
+      jump_from_to("wx/qita-xiangce", "wx/" .. "yuantu-weixuanzhong")
+      click_pics(#pics, "wx/", {pic1_is_button = false})
+   end
+
+   jump_out_of("wx/tupian-fasong")
    window = wait_top_activity(chatWindow)
    if window == W.weixinImagePreviewActivity then
       adb_event("sleep .1 adb-tap 59 1871 sleep .1 adb-tap 927 148")
