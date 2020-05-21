@@ -142,6 +142,10 @@ uc_project=${repo_project_name^^}
 try_postfixes=$(
     echo "${uc_project//-/--}"-${group_type} | perl -pe 's,/,-,g'
 
+    if [[ $uc_project =~ ^ALL- ]]; then
+        echo ${uc_project#ALL-}-${group_type}
+    fi
+
     if test "${exact_match}" = true; then
         exit 0
     fi

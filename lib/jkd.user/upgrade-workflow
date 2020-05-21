@@ -162,6 +162,8 @@ my $temp_workflow = "$workflow_name.$$";
 
 my $done_switch;
 use feature 'signatures';
+no warnings "experimental::signatures";
+
 sub switch_workflow($old_workflow, $new_workflow) {
     # step 1: workflow 当前在用的话，要将它卸载
     my $wf_schemes =

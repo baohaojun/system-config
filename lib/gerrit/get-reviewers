@@ -1,0 +1,96 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# @:reporter
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $reporter = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--reporter=REPORTER';
+    if (length('--reporter=REPORTER') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'reporter=s' => \$reporter,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+my @reviewers = @ARGV;
+
+if ($reporter) {
+    my $reporter_ldap_group =
+        decode_utf8(scalar capturex("cached-run", "ldap", "show-groups", "-u", "$reporter"));
+
+    my @reviewers_groups =
+        map {
+            decode_utf8(scalar capturex("cached-run", "ldap", "show-groups", "-u", "$_"))
+        } @reviewers;
+    use String::Approx "adistr";
+    my @reviewers_dist = map {
+        abs(adistr($reporter_ldap_group, $_)) +
+            abs(adistr($_, $reporter_ldap_group))
+        } @reviewers_groups;
+
+
+
+    my %reviewers_dist_map =
+        map {
+            ($reviewers[$_], $reviewers_dist[$_])
+        } 0 .. (@reviewers - 1);
+
+    @reviewers = sort {
+        $reviewers_dist_map{$a} <=> $reviewers_dist_map{$b};
+    } @reviewers;
+
+    say STDERR "all reviewers: " . decode_utf8($json->encode(\@reviewers));
+    @reviewers = grep {$reviewers_dist_map{$_} == $reviewers_dist_map{$reviewers[0]}} @reviewers;
+    say STDERR "closest reviewers: " . decode_utf8($json->encode(\@reviewers));
+}
+print $reviewers[int(rand(@reviewers))];
