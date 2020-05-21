@@ -70,6 +70,7 @@ map['com.tencent.mm/com.tencent.mm.plugin.brandservice.ui.timeline.preload.ui.Tm
 map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSChattingConvUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.fts.ui.FTSMainUI'] = 'Enter-Key'
 map['com.tencent.mm/com.tencent.mm.plugin.profile.ui.SayHiWithSnsPermissionUI'] = 'No-Post'
+map['com.tencent.mm/com.tencent.mm.plugin.setting.ui.setting.EditSignatureUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.sns.ui.SnsCommentDetailUI'] = 'Find-Button'
 map['com.tencent.mm/com.tencent.mm.plugin.webview.ui.tools.WebViewUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI'] = 'Find-Button'
