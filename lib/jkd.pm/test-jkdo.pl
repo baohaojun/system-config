@@ -13,3 +13,9 @@ BEGIN {
     push @INC, "$ENV{scm_common_libdir}/jkd.pm";
 }
 use Jkdo;
+my $ef_jira = Jkdo->new({key => 'EF-300'});
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+print decode_utf8($json->encode($ef_jira));
