@@ -33,6 +33,8 @@ map['com.android.settings/com.android.settings.NotificationAccessSettingsActivit
 map['com.android.settings/com.android.settings.Settings'] = 'Find-Button'
 map['com.android.settings/com.android.settings.wifi.WifiSettingsActivity'] = 'No-Post'
 map['com.android.vending/com.android.vending.AssetBrowserActivity'] = 'No-Post'
+map['com.azure.authenticator/com.azure.authenticator.ui.MainActivity'] = 'No-Post'
+map['com.azure.authenticator/com.microsoft.onlineid.internal.ui.WebFlowActivity'] = 'No-Post'
 map['com.baidu.netdisk/com.baidu.netdisk.uiframe.container.CommonActivity'] = 'No-Post'
 map['com.bjgas.shop/com.bjgas.shop.MainActivity'] = 'No-Post'
 map['com.ecitic.bank.mobile/com.ecitic.bank.mobile.ui.CBWebviewActivity'] = 'No-Post'
