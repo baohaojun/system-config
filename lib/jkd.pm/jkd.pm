@@ -21,10 +21,48 @@ use Carp;
 use Exporter;
 BEGIN { @jkd::ISA = 'Exporter' }
 
-@jkd::EXPORT = qw(name2id name2key name2name name_exists select_args);
+@jkd::EXPORT = qw(
+
+                     name2id name2key name2name name_exists
+                     select_args no_spaces_equal no_spaces_convert
+                     no_spaces_hash_convert no_spaces_hashget
+
+             );
 
 use feature 'signatures';
 no warnings "experimental::signatures";
+
+sub no_spaces_equal($a, $b) {
+    my @pair = ($a, $b);
+    map {s, | ,,g} @pair;
+    return $pair[0] eq $pair[1];
+}
+
+sub no_spaces_convert($a) {
+    $a =~ s, | ,,g;
+    return $a;
+}
+
+sub no_spaces_hash_convert($hash) {
+    map {
+        (my $key = $_) =~ s, | ,,g;
+        $hash->{$key} = $hash->{$_}
+    } keys %$hash;
+}
+
+sub no_spaces_hashget($hash, $key) {
+    if ($hash->{$key}) {
+        return $hash->{$key};
+    }
+
+    if (not defined $hash->{no_spaces_hash_convert_done}) {
+        no_spaces_hash_convert $hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    $hash->{$key} = $hash->{no_spaces_convert $key};
+    return $hash->{$key};
+}
 
 sub name2id($jkd_cmds, $name) {
     my $jsonArray =

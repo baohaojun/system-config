@@ -28,13 +28,15 @@ b0=$(basename $0)
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt s:save-to-buffer=nil \
     # b:which-buffer '?"要获取的是哪个 Buffer，默认是当前 Buffer"' \
+    # v:variable-name '?"要打印出哪个变量的值？"' \
 
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o s:b:h \
-               --long save-to-buffer:,which-buffer:,help \
+TEMP=$( getopt -o s:v:b:h \
+               --long save-to-buffer:,variable-name:,which-buffer:,help \
                -n $(basename -- $0) -- "$@")
 declare save_to_buffer=nil
+declare variable_name=
 declare which_buffer=
 eval set -- "$TEMP"
 while true; do
@@ -42,6 +44,11 @@ while true; do
 
         -s|--save-to-buffer)
             save_to_buffer=$2
+            shift 2
+
+            ;;
+        -v|--variable-name)
+            variable_name=$2
             shift 2
 
             ;;
@@ -58,6 +65,11 @@ while true; do
             printf %6s '-s, '
             printf %-24s '--save-to-buffer=SAVE_TO_BUFFER'
             echo
+            printf %6s '-v, '
+            printf %-24s '--variable-name=VARIABLE_NAME'
+            echo
+            printf "%30s" ""
+            echo "要打印出哪个变量的值？"
             printf %6s '-b, '
             printf %-24s '--which-buffer=WHICH_BUFFER'
             echo
@@ -120,7 +132,11 @@ cat <<'EOF16e1379802c6' | . .replace-%%
                  (and
                   (string= "<%b0%>" "emacs-current-mode")
                   (with-current-buffer buf
-                    major-mode)))
+                    (symbol-name major-mode)))
+                 (and
+                  (string= "<%b0%>" "emacs-current-var")
+                  (with-current-buffer buf
+                    (format "%s" [%variable_name%]))))
         )
   (with-temp-buffer
     (insert text)

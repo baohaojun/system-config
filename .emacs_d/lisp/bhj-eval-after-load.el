@@ -321,3 +321,8 @@ passed via standard input." t nil)
      (ajoke--push-marker-ring)))
 (eval-after-load 'counsel
   '(setq-default ivy-initial-inputs-alist nil))
+
+(eval-after-load 'cperl-mode
+  (add-hook 'cperl-mode-hook
+            (lambda ()
+              (setq imenu-create-index-function #'ajoke--create-index-function))))
