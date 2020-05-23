@@ -1,4 +1,21 @@
 #!/usr/bin/env perl
+use v5.10;
+
+my $comment = <<~'EOFc83131117f09';
+# {%org-mode%}
+这个脚本会调用 ctags-exuberant，然后把它的输出处理一下
+
+注意：它也有可能调用其他程序，不一定是 ctags-exuberant，比如它会调用 javad 等等。
+
+此外，它对我约定好的 =*** XXX YYY ***= 这样的行，也会专门抽取出来，打
+印出去，以支持我自己的代码结构跳转。
+
+它还有两种使用模式，其一是给 beatags 使用（会传到很多参数），其二是给 emacs 下的 imenu 使用（会从 STDIN 读取源码？同时，为了支持 Mac、FreeBSD 等系统，还会把这个文件也当作参数传进来）。
+
+上面说的 =*** XXX YYY ***= 主要用于 imenu 跳转，对 beatags 并无太大意义。
+# {%/org-mode%}
+EOFc83131117f09
+
 
 use strict;
 use File::Path qw(make_path);
@@ -40,7 +57,7 @@ sub check_dir_custom_parser($) {
     return $dir_custom_parser_map{$dir};
 }
 
-if (not grep {$_ eq "--filter"} @ARGV) {
+if (not grep {$_ eq "--filter"} @ARGV) { # 给 imenu 用的
     use IPC::Open2;
     $|++;
 
@@ -49,10 +66,43 @@ if (not grep {$_ eq "--filter"} @ARGV) {
     }
     my $ctags_pid = open2(my $read, my $write, "ctags-exuberant", @ARGV);
     my $is_java = grep {$_ eq "--language-force=java"} @ARGV;
+
+    my @special_comments;
+    my $last_file;
+
     while (<$read>) {
         ($tag, $type, $line_num, $file) = m/^\s*(\S+)\s+(.*?)\s+(\d+)\s+(\S+)/;
+
+        if ($file ne $last_file) {
+            local $_;
+            $last_file = $file;
+            @special_comments = ();
+            if (-r $file) {
+                open(my $src, "<$file") or
+                    die "Can't open $file";
+                my $line = 0;
+                while (<$src>) {
+                    $line++;
+                    if (m/\*\*\*\s+(\w+.*?)\s+\*\*\*/) {
+                        (my $tag = $1) =~ s,\s,-,g;
+                        push @special_comments, {
+                            lineNum => $line,
+                            text => "$tag special-comment $line $file $_",
+                        };
+                    }
+                }
+                close($src);
+            }
+        }
         if ($file ne $old_file) {
             $package = "";
+        }
+
+        # *** global data ***
+
+        while(@special_comments && $special_comments[0]{line} < $line_num) {
+            my $data = shift @special_comments;
+            print $data->{text};
         }
         if ($is_java or $file =~ m/\.java|\.aidl/) {
 
