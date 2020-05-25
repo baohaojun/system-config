@@ -275,12 +275,13 @@ fi
 if test "${dev_group}"; then
     allow-group-on-label "${dev_group}" "label-Verified" 1
 
-    k=submit
-    g=${dev_group}
-    if ! git config --get-all -f project.config access.'refs/*'.${k} "^group $g$"; then
-        git config --add -f project.config access.'refs/*'.submit \
-            "group ${g}"
-    fi
+    for k in read submit; do
+        g=${dev_group}
+        if ! git config --get-all -f project.config access.'refs/*'.${k} "^group $g$"; then
+            git config --add -f project.config access.'refs/*'.${k} \
+                "group ${g}"
+        fi
+    done
 fi
 
 gerrit-meta-fix-groups

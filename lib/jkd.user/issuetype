@@ -183,9 +183,11 @@ GetOptions (
 
 ## end generated code
 
-sub is_exact_action($) {
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+sub is_exact_action($target_action) {
     our %exact_actions;
-    my $target_action = $_[0];
     $exact_actions{$target_action} = 1;
     return $action eq $target_action;
 }
@@ -201,7 +203,7 @@ grep {
     $issuetype_id = $_->{id} if $issuetype_name eq $_->{name}
 } @$issuetypes_json;
 
-sub get_project() {
+sub get_project($print_result = 1) {
     my $isss_json =
         $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-issuetypeschemes"));
     my @projects;
@@ -214,7 +216,8 @@ sub get_project() {
     } keys %$isss_json;
 
     die ("Not exactly 1 project in $ENV{scm_jira_url} for $issuetype_name: " . join(" ", @projects)) unless @projects == 1;
-    print $projects[0];
+    print $projects[0] if $print_result;
+    return $projects[0];
 }
 
 sub get_fieldconfig() {
@@ -316,11 +319,17 @@ if (is_exact_action "print") {
     my $workflow_schemes_json =
         $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-workflowschemes"));
 
+    my $project = get_project(0);
+    my $project_json =
+        $json->decode(scalar capture("cached-run -e scm_jira_url jkd rest project/${project}"));
+    my $project_name = $project_json->{name};
+
     my @workflows;
 
     map {
         my $workflow = $_->{issuetypes_workflow}{$issuetype_name};
-        push @workflows, "$workflow" if $workflow;
+        my @projects = @{$_->{projects}};
+        push @workflows, "$workflow" if $workflow and @projects == 1 and $projects[0] eq $project_name;
     } @$workflow_schemes_json;
 
     die ("Not exactly 1 workflow for issuetype: $issuetype_name " . join(" ", @workflows)) unless @workflows == 1;
