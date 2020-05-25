@@ -141,5 +141,5 @@ $ENV{FIREFOX_PROFILE_ARG} = "-P ${private_profile_name}";
 if ($execute) {
     system(@ARGV);
 } else {
-    system("nohup firefox $args &>/dev/null &");
+    system("nohup firefox $args &> ~/tmp/nohup.log &");
 }

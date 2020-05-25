@@ -19,6 +19,11 @@ if [regexp {^\d+$} $js_target] {
 
 # close [open "|bhj-notify hello $js_target '$js_execute'"]
 
+proc exit_opt {} {
+    send "exit\r\n";
+    exit
+}
+
 proc qx cmd {
     set fh [open "|$cmd"]
     set res [read $fh]
@@ -49,7 +54,7 @@ expect "MFA auth" {
     send "$auth\r\n";
     expect "$auth";
     exp_continue
-} "Opt>" {
+} "Opt> " {
     # log "Seend Opt>, sending $js_target\n";
     send -- "$js_target\r\n";
     expect "$js_target*"; # clear the Opt> which could match again below.
@@ -69,7 +74,7 @@ expect "MFA auth" {
                 expect -re ": EOF.*\n" {
                     # log_user 1;
                     # set -x; export SHELLOPTS;
-                    send "( $js_execute ); \\\necho -n exit; read -p 123456; exit;\n";
+                    send "( $js_execute ); \\\necho -n exit; read -p 123456; exit;\r\n";
 
                     expect {
                         -re "echo -n exit; read -p 123456" {
@@ -80,12 +85,13 @@ expect "MFA auth" {
                         -re "exit123456" {
                             log_user 0
                             send "exit\r\n";
-                            expect "Opt>" {
-                                send "exit\n";
-                                interact
-                                wait
-                                exit
+                            expect "Opt> " {
+                                exit_opt
                             }
+                        }
+                        -re "Opt> " {
+                            close [open "|bhj-notify js-ssh Strange, exit123456 not seen"]
+                            exit_opt
                         }
                         timeout {
                             send_user "timed out>\n";
@@ -105,7 +111,7 @@ expect "MFA auth" {
     } -re " Would you like to check for updates.*:" {
         send "n\n"
         exp_continue
-    } -re "Opt>" {
+    } -re "Opt> " {
         close [open "|bhj-notify js-ssh Cannot connect, please use strace to debug"]
         log_user 1
         sleep 1
@@ -116,11 +122,8 @@ expect "MFA auth" {
         exit 1
     }
 }
-expect_background "Opt>" {
-    send "exit\r\n";
-    interact
-    wait
-    exit
+expect_background "Opt> " {
+    exit_opt
 }
 # -re "(.)" {
 #     log $expect_out(1,string)

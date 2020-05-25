@@ -74,8 +74,11 @@ BEGIN {
     our $box = "⃣";
     $box = qr($box);
     our $symbols_always_add_space = qr((?:[=~])*);
+
     our $symbols_always_add_space_around = qr((?:[-/])*(?!\d));
-    our $symbols_thinner_with_space = qr((?:-|[]/=~.()\${}[])*); # why $?
+
+    # 如果已经看到前后有空格的话，将空格改成一个 thin_space，否则不要改
+    our $symbols_thinner_with_space = qr((?:-|[]/=~.:()\${}[])*); # why $?
 }
 
 our $box;
