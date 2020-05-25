@@ -2,6 +2,6 @@
 # name: code
 # key: code
 # --
-#+begin_${1:lang} ${2:options}
+#+begin_${1:src} ${2:options}
 $0
 #+end_$1
