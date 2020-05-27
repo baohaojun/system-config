@@ -45,6 +45,7 @@
     ("js" . "javascript")
     ("c" . "c++")
     ("objc" . "ObjectiveC")
+    ("cperl" . "perl")
     ("makefile-gmake" . "make")
     ("csharp" . "C#"))
   "Map from Emacs major modes to ctags languages")
