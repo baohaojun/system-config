@@ -2,6 +2,6 @@
 # name: code
 # key: code
 # --
-#+begin_${1:src} ${2:options}
+#+begin_src ${1:sh}
 $0
-#+end_$1
+#+end_src
