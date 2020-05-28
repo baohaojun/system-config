@@ -1,0 +1,151 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+- set-owner
+- add-members
+- delete-members
+- include-groups
+- exclude-groups (un-include groups)
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# g:group-name o:owner-group \
+# a:action '?"执行什么操作"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $action = "";
+my $group_name = "";
+my $owner_group = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--action=ACTION';
+    if (length('--action=ACTION') > 24 and length("执行什么操作") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "执行什么操作";
+    print "\n";
+    printf "%6s", '-g, ';
+    printf "%-24s", '--group-name=GROUP-NAME';
+    if (length('--group-name=GROUP-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-o, ';
+    printf "%-24s", '--owner-group=OWNER-GROUP';
+    if (length('--owner-group=OWNER-GROUP') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'action|a=s' => \$action,
+    'group-name|g=s' => \$group_name,
+    'owner-group|o=s' => \$owner_group,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+my $group_json =
+    $json->decode(scalar capturex("gr", "rest", "a/groups/$group_name/detail"));
+my $group_id = $group_json->{id};
+
+if ($action eq "set-owner") {
+    my $owner_group_json =
+        $json->decode(scalar capturex("gr", "rest", "a/groups/$owner_group"));
+
+    my $owner_data = {
+        owner => $owner_group_json->{id}
+    };
+
+    runx(
+        "debug-run", "gr", "rest", "-a", "a/groups/$group_id/owner", "--",
+        "-X", "PUT",
+        "-H", 'Content-Type: application/json; charset=UTF-8',
+        "-d", decode_utf8($json->encode($owner_data)));
+} elsif ($action eq "delete-members") {
+    if (not @ARGV) {
+        @ARGV = map { $_->{email} } @{$group_json->{members}};
+    }
+
+    runx(
+        "debug-run", "gr", "rest", "-a", "a/groups/$group_id/members.delete", "--",
+            "-X", "POST",
+            "-H", 'Content-Type: application/json; charset=UTF-8',
+        "-d", decode_utf8($json->encode({
+            members => \@ARGV
+        })));
+} elsif ($action eq "add-members") {
+    runx(
+        "debug-run", "gr", "rest", "-a", "a/groups/$group_id/members.add", "--",
+        "-X", "POST",
+        "-H", 'Content-Type: application/json; charset=UTF-8',
+        "-d", decode_utf8($json->encode({
+            members => \@ARGV
+        })));
+} elsif ($action eq "include-groups") {
+    runx(
+        "debug-run", "gr", "rest", "-a", "a/groups/$group_id/groups.add", "--",
+        "-X", "POST",
+        "-H", 'Content-Type: application/json; charset=UTF-8',
+        "-d", decode_utf8($json->encode({
+            groups => \@ARGV
+        })));
+} elsif ($action eq "exclude-groups" || $action eq "delete-groups") {
+    if (not @ARGV) {
+        @ARGV = map {
+            $_->{name}
+        } @{$group_json->{includes}};
+    }
+
+    runx(
+        "debug-run", "gr", "rest", "-a", "a/groups/$group_id/groups.delete", "--",
+        "-X", "POST",
+        "-H", 'Content-Type: application/json; charset=UTF-8',
+        "-d", decode_utf8($json->encode({
+            groups => \@ARGV
+        })));
+} else {
+    die "Can't handle $action, don't know how.";
+}

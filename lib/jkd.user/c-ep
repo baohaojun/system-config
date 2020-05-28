@@ -100,8 +100,7 @@ if test -z "${description}"; then
 fi
 
 jkd c -p EP -t "${type}" --field-value Summary="${summary}" --field-value Description="${description}" 2>&1 | tee ~/tmp/c-ep.log
-
-issue=$(cat ~/tmp/c-ep.log | perl -ne 'print "$1\n" if m,(EP-\d+),')
+issue=$(cat ~/tmp/c-ep.log | perl -ne 'print "$1\n" if m,(EP-\d+),' | sort -u)
 firefox --new-tab ${scm_jira_url}browse/$issue
 
 putclip ${scm_jira_url}browse/$issue

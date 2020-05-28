@@ -25,19 +25,21 @@ EOFe9576f8668e0
     # p:project \
     # @:sme-group \
     # @:dev-group \
+    # @:readonly-group \
     # @debug \
     # @new-project \
     # @special-labels=true
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o l:p:h \
-                      --long complete-list:,debug,dev-group:,new-project,project:,sme-group:,special-labels,help,no-debug,no-new-project,no-special-labels \
+                      --long complete-list:,debug,dev-group:,new-project,project:,readonly-group:,sme-group:,special-labels,help,no-debug,no-new-project,no-special-labels \
                       -n $(basename -- $0) -- "$@")
 declare complete_list="${default_complete_list_of_labels[*]}"
 declare debug=false
 declare dev_group=
 declare new_project=false
 declare project=
+declare readonly_group=
 declare sme_group=
 declare special_labels=true
 eval set -- "$TEMP"
@@ -77,6 +79,11 @@ while true; do
             shift 2
 
             ;;
+        --readonly-group)
+            readonly_group=$2
+            shift 2
+
+            ;;
         --sme-group)
             sme_group=$2
             shift 2
@@ -110,6 +117,9 @@ while true; do
             echo
             printf %6s '-p, '
             printf %-24s '--project=PROJECT'
+            echo
+            printf "%6s" " "
+            printf %-24s '--readonly-group=READONLY_GROUP'
             echo
             printf "%6s" " "
             printf %-24s '--sme-group=SME_GROUP'
@@ -213,10 +223,12 @@ declare -A handled_keys
 tmpd=gerrit-set-project-labels.$$
 if test "${debug}" != true; then
     . atexit rm -rf "$PWD/$tmpd"
+else
+    . atexit putclip "$PWD/$tmpd"
 fi
 
 gerrit-update-meta -s \
-                   -d $tmpd \
+                   -d "$tmpd" \
                    -p ${scm_gerrit_admin_ssh_url}"${project}"
 
 cd $tmpd
@@ -277,6 +289,16 @@ if test "${dev_group}"; then
 
     for k in read submit; do
         g=${dev_group}
+        if ! git config --get-all -f project.config access.'refs/*'.${k} "^group $g$"; then
+            git config --add -f project.config access.'refs/*'.${k} \
+                "group ${g}"
+        fi
+    done
+fi
+
+if test "${readonly_group}"; then
+    for k in read; do
+        g=${readonly_group}
         if ! git config --get-all -f project.config access.'refs/*'.${k} "^group $g$"; then
             git config --add -f project.config access.'refs/*'.${k} \
                 "group ${g}"
