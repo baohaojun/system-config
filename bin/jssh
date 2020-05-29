@@ -60,6 +60,7 @@ if (/^$RE{net}{IPv4}$/) {
 fi
 
 if true; then # allow to debug.
+    # export JS_DEBUG=true
     if test "${JS_EXECUTE}" && ! is-tty-io; then
         js-ssh | tee ~/tmp/jssh.tee | tr -d '\b\r' | perl -ne '
 BEGIN{my $print};

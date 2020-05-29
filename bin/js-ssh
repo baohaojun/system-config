@@ -7,6 +7,12 @@ if {[info exists env(JS_TARGET)]} {
     set js_target 162
 }
 
+if {[info exists env(JS_DEBUG)]} {
+    set js_debug 1
+} else {
+    set js_debug 0
+}
+
 if {[info exists env(JS_EXECUTE)]} {
     set js_execute $env(JS_EXECUTE);
 } else {
@@ -19,7 +25,15 @@ if [regexp {^\d+$} $js_target] {
 
 # close [open "|bhj-notify hello $js_target '$js_execute'"]
 
+proc debug str {
+    global js_debug
+    if {$js_debug == 1} {
+        send_error $str
+    }
+}
+
 proc exit_opt {} {
+    debug "about to exit!\n"
     send "exit\r\n";
     exit
 }
@@ -34,6 +48,23 @@ proc qx cmd {
     return $res
 }
 
+proc multi_send {str quote} {
+    set sent_aline 0
+    set str [string map {"\r" {}} $str]
+    set lines [split $str "\n"]
+    foreach l $lines {
+        if {$sent_aline == 1} {
+            expect -timeout 1 $quote {
+                debug "seen quote: will next send '$l'\n"
+            }
+        }
+        debug "sending: $l\n";
+        send $l
+        send "\n"
+        set sent_aline 1
+    }
+}
+
 set home $env(HOME)
 
 proc log str {
@@ -46,7 +77,10 @@ proc log str {
 # log "got argv: $argv\n"
 
 set local_ip [qx get-my-ip]
-log_user 0
+if {$js_debug == 0} {
+    log_user 0
+}
+
 spawn ssh -o ControlMaster=auto -o ControlPath=$home/.cache/tramp.%C -o ControlPersist=no -e none js;
 
 expect "MFA auth" {
@@ -70,11 +104,11 @@ expect "MFA auth" {
             send "REMOTEPROTOCOL=jssh PS1HOSTNAME=js-$js_target REMOTEIP=$local_ip REMOTEUSER=$env(USER) "
             send "exec bash -c 'sc=system-config/bin/sc; for d in /apps/scm/prod ~; do f=\${d}/\${sc}; if test -e \${f}; then \${f} try; break; fi; done\n"
             send ": EOF'\n";
-            if { $js_execute ne {} } {
+                if { $js_execute ne {} } {
                 expect -re ": EOF.*\n" {
                     # log_user 1;
                     # set -x; export SHELLOPTS;
-                    send "( $js_execute ); \\\necho -n exit; read -p 123456; exit;\r\n";
+                    multi_send "stty sane; ( $js_execute \r\n); echo -n exit; read -p 123456; exit;" "\n>"; #  "( $js_execute ); \\\necho -n exit; read -p 123456; exit;\r\n";
 
                     expect {
                         -re "echo -n exit; read -p 123456" {
@@ -83,7 +117,7 @@ expect "MFA auth" {
                             exp_continue;
                         }
                         -re "exit123456" {
-                            log_user 0
+                                log_user 0
                             send "exit\r\n";
                             expect "Opt> " {
                                 exit_opt
@@ -99,12 +133,12 @@ expect "MFA auth" {
                         }
                     }
                 }
-            } else {
-                expect -re ": EOF.*\n" {
-                    log_user 1
+                } else {
+                    expect -re ": EOF.*\n" {
+                        log_user 1
+                    }
                 }
             }
-        }
     } -re " Would you like to update.*:" {
         send "n\n"
         exp_continue
