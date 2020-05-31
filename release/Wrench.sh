@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-if ! [[ $LANG =~ en_US ]]; then
+if test "$RUNNING_EN_US" != true; then
+    export RUNNING_EN_US=true
     exec en_US Wrench.sh "$@"
 fi
 
