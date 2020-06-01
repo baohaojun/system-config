@@ -19,6 +19,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpWithPwdActiv
 map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.DragDropMiniAppActivity'] = 'Find-Button'
+map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.miniapp.activity.MiniAppInternalActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.identity.auth.device.AuthPortalUIActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.kcp.oob.MainActivity'] = 'No-Post'
 map['com.amazon.kindle/com.amazon.kcp.reader.StandAloneBookReaderActivity'] = 'No-Post'
