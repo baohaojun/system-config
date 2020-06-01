@@ -816,7 +816,7 @@ They are added to `markdown-code-lang-modes'")
 (defvar lsp--session nil
   "Contain the `lsp-session' for the current Emacs instance.")
 
-(defvar lsp--tcp-port 10000)
+(defvar lsp--tcp-port 8080)
 
 (defvar-local lsp--document-symbols nil
   "The latest document symbols.")
@@ -6270,7 +6270,7 @@ returned by COMMAND is available via `executable-find'"
       (condition-case _err
           (progn
             (delete-process (open-network-stream "*connection-test*" nil host port :type 'plain))
-            (cl-incf port))
+            )
         (file-error (setq success t))))
     port))
 
@@ -6283,7 +6283,7 @@ process listening for TCP connections on the provided port."
   (list
    :connect (lambda (filter sentinel name environment-fn)
               (let* ((host "localhost")
-                     (port (lsp--find-available-port host (cl-incf lsp--tcp-port)))
+                     (port (lsp--find-available-port host lsp--tcp-port))
                      (command (funcall command-fn port))
                      (final-command (if (consp command) command (list command)))
                      (_ (unless (executable-find (cl-first final-command))
