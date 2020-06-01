@@ -116,7 +116,7 @@ EOF
               ); do
         echo run $x >> .log
         if test "${parallel}" = true; then
-            (cd /tmp; $x || true&)
+            (cd /tmp; $x 2>&1 | tee .$x.log || true&)
         else
             (
                 cd /tmp; $x

@@ -105,34 +105,31 @@ expect "MFA auth" {
             send "exec bash -c 'sc=system-config/bin/sc; for d in /apps/scm/prod ~; do f=\${d}/\${sc}; if test -e \${f}; then \${f} try; break; fi; done\n"
             send ": EOF'\n";
                 if { $js_execute ne {} } {
-                expect -re ": EOF.*\n" {
-                    # log_user 1;
-                    # set -x; export SHELLOPTS;
-                    multi_send "stty sane; ( $js_execute \r\n); echo -n exit; read -p 123456; exit;" "\n>"; #  "( $js_execute ); \\\necho -n exit; read -p 123456; exit;\r\n";
+                    expect -re ": EOF.*\n" {
+                        log_user 1;
+                        # set -x; export SHELLOPTS;
+                        multi_send "stty sane; ( $js_execute \r\n); echo -n exit; read -p 123456; exit;" "\n>"; #  "( $js_execute ); \\\necho -n exit; read -p 123456; exit;\r\n";
 
-                    expect {
-                        -re "echo -n exit; read -p 123456" {
-                            # send_error "hello seen read 123456\n"
-                            log_user 1;
-                            exp_continue;
-                        }
-                        -re "exit123456" {
-                                log_user 0
-                            send "exit\r\n";
-                            expect "Opt> " {
+                        expect {
+                            -re "echo -n exit; read -p 123456" {
+                                # send_error "hello seen read 123456\n"
+                                log_user 1;
+                                exp_continue;
+                            }
+                            -re "exit123456" {
+                                # log_user 0
+                                exit
+                            }
+                            -re "Opt> " {
+                                close [open "|bhj-notify js-ssh Strange, exit123456 not seen"]
                                 exit_opt
                             }
-                        }
-                        -re "Opt> " {
-                            close [open "|bhj-notify js-ssh Strange, exit123456 not seen"]
-                            exit_opt
-                        }
-                        timeout {
-                            send_user "timed out>\n";
-                            exp_continue;
+                            timeout {
+                                send_user "timed out>\n";
+                                exp_continue;
+                            }
                         }
                     }
-                }
                 } else {
                     expect -re ": EOF.*\n" {
                         log_user 1

@@ -67,7 +67,4 @@ else
             perl -ne 'print "$1\n" if m/(?:inet addr:|^\s*inet\s+)(\d+\S+)/'|
             grep -v 127.0.0.1)
     echo -n $ip
-    if is-tty-io; then
-        putclip "$ip"
-    fi
 fi

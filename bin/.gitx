@@ -231,7 +231,7 @@ print $_ . "\n";
             command git fetch "$@" $(select-output-line -o -m 1 git remote)
             exit
         elif test "$1" = fetch -a "$#" -ge 2; then
-            if test "$2" = -a; then
+            if [[ "$*" =~ " -a" ]]; then
                 shift 2
                 set -- "fetch" -v "$@"
                 for remote in $(command git remote); do
