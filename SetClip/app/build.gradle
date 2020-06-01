@@ -10,6 +10,7 @@ android {
         ndk {
             moduleName "wrench-jni"
         }
+        minSdkVersion 21
     }
 
     buildTypes {
@@ -28,4 +29,8 @@ android {
             path "src/main/jni/Android.mk"
         }
     }
+}
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }
