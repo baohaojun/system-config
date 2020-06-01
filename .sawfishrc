@@ -656,8 +656,11 @@ EOF856ceee4ab57
   ;;(message (format nil "doing event %s for %s" event (event-name (current-event))))
   (if (not bhj-current-window-is-gtk?)
       (synthesize-event event window)
-    (let ((current-key (string-replace ".*-" "" (event-name (current-event))))
-          (current-key-xdo-release))
+    (let* ((current-event (current-event))
+           (current-key (if current-event
+                            (string-replace ".*-" "" (event-name current-event))
+                          ""))
+           (current-key-xdo-release))
       (when (string= current-key "")
         (setq current-key "-"))
       (setq event (rewrite-event-for-xdotool event)

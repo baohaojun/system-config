@@ -135,7 +135,7 @@ if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
                 exit
             fi
             sleep 1
-            FORCE_RENEW_CACHES=true setsid setsid nohup cached-run "${saved_args[@]}"
+            FORCE_RENEW_CACHES=true setsid nohup cached-run "${saved_args[@]}"
         ) >/dev/null 2>&1&
         exit
     fi

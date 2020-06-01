@@ -73,7 +73,7 @@ if (@ARGV > 1 and $0 =~ m!(^|/)e$!) {
   @ARGV = ($file);
 }
 
-if ($ARGV[0] =~ m/^\+\d+$/) {
+if ($ARGV[0] =~ m/^\+\d+(:\d+)?$/) {
   my $line = substr($ARGV[0], 1);
   shift @ARGV;
   $ARGV[0] .= ":$line";
