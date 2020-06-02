@@ -199,6 +199,9 @@ sub edit_1($) {
     $file =~ m,:$, and chop($file);
 
     my $line=1;
+    if (! -e $file && $file =~ m,:$,) {
+        $file =~ s,:$,,;
+    }
     $file =~ s,:(\d+(:\d+)?)$,, and $line = $1;
 
     if (`uname` =~ m/cygwin/i) {

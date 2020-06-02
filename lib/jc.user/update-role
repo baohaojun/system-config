@@ -1,5 +1,48 @@
 #!/usr/bin/env perl
 use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+my @permissions = (
+    "com.cloudbees.plugins.credentials.CredentialsProvider.Create",
+    "com.cloudbees.plugins.credentials.CredentialsProvider.Delete",
+    "com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains",
+    "com.cloudbees.plugins.credentials.CredentialsProvider.Update",
+    "com.cloudbees.plugins.credentials.CredentialsProvider.View",
+    "com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl.ManualTrigger",
+    "com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl.Retrigger",
+    "hudson.model.Item.Build",
+    "hudson.model.Item.Cancel",
+    "hudson.model.Item.Configure",
+    "hudson.model.Item.Create",
+    "hudson.model.Item.Delete",
+    "hudson.model.Item.Discover",
+    "hudson.model.Item.Move",
+    "hudson.model.Item.Read",
+    "hudson.model.Item.Workspace",
+    "hudson.model.Run.Delete",
+    "hudson.model.Run.Replay",
+    "hudson.model.Run.Update",
+    "hudson.scm.SCM.Tag",
+    "jenkins.metrics.api.Metrics.HealthCheck",
+    "jenkins.metrics.api.Metrics.ThreadDump",
+    "jenkins.metrics.api.Metrics.View",
+    "org.jfrog.hudson.ArtifactoryPlugin.Promote",
+    "org.jfrog.hudson.ArtifactoryPlugin.Release",
+);
+
+my $permissions_list = decode_utf8($json->encode(\@permissions));
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl \
@@ -7,6 +50,7 @@ use strict;
 # n:role-name '?"比如 SEC_DEV"' \
 # p:role-projects-pattern '?"比如 jobA|jobB|jobPatternC。也可以用 +|jobPatternD 来表示增加一个正则表达式"' \
 # g:add-group='()' '?"如需添加多个，允许多次指定此参数"' \
+# @:add-perm='()' '?"+PERM 代表添加权限、-PERM 代表删除权限，权限列表见\n$permissions_list"' \
 
 ## end code-generator
 ## start generated code
@@ -17,6 +61,7 @@ Getopt::Long::Configure("default");
 
 
 my @add_group = ();
+my @add_perm = ();
 my $role_name = "";
 my $role_projects_pattern = "";
 my $role_type = "projectRoles";
@@ -31,6 +76,14 @@ my $handler_help = sub {
         printf "%30s", "";
     }
     printf "%s", "如需添加多个，允许多次指定此参数";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--add-perm=ADD-PERM';
+    if (length('--add-perm=ADD-PERM') > 24 and length("+PERM 代表添加权限、-PERM 代表删除权限，权限列表见\n$permissions_list") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "+PERM 代表添加权限、-PERM 代表删除权限，权限列表见\n$permissions_list";
     print "\n";
     printf "%6s", '-n, ';
     printf "%-24s", '--role-name=ROLE-NAME';
@@ -68,6 +121,7 @@ my $handler_help = sub {
 
 GetOptions (
     'add-group|g=s' => \@add_group,
+    'add-perm=s' => \@add_perm,
     'role-name|n=s' => \$role_name,
     'role-projects-pattern|p=s' => \$role_projects_pattern,
     'role-type|t=s' => \$role_type,
@@ -107,7 +161,7 @@ if ($new_pattern) {
             $new_pattern
         );
 
-    system("jc", "curl", "role-strategy/strategy/addRole", "--data", "$updateRoleData", "-X", "POST");
+    system("debug-run", "jc", "curl", "role-strategy/strategy/addRole", "--data", "$updateRoleData", "-X", "POST");
 }
 
 for my $sid (@{$role_json->{sids}}, @add_group) {
