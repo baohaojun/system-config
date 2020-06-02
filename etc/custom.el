@@ -100,6 +100,7 @@
        (make-local-variable 'ajoke-symbol-chars)
        (setq ajoke-symbol-chars "-A-Za-z0-9_"))))
  '(longlines-auto-wrap nil)
+ '(lsp-after-diagnostics-hook nil)
  '(magit-use-overlays nil)
  '(makefile-mode-hook
    '((lambda nil

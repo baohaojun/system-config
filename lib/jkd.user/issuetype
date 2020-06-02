@@ -215,7 +215,11 @@ sub get_project($print_result = 1) {
         }
     } keys %$isss_json;
 
-    die ("Not exactly 1 project in $ENV{scm_jira_url} for $issuetype_name: " . join(" ", @projects)) unless @projects == 1;
+    unless (@projects == 1) {
+        @projects = (
+            decode_utf8(scalar capturex("jkd", "sel-name", "-a", "project"))
+        );
+    }
     print $projects[0] if $print_result;
     return $projects[0];
 }
@@ -529,7 +533,7 @@ if (is_exact_action "print") {
     if (not $issuetype_json->{project}) {
         if (not $associated_project) {
             $associated_project =
-                $json->decode(scalar capturex("jkd", "sel-name", "-a", "project"));
+                decode_utf8(scalar capturex("jkd", "sel-name", "-a", "project"));
         }
         runx ("jkd", "issuetype", "-a", "add-to-scheme", "-p", $associated_project, "-n", $issuetype_name);
     } else {

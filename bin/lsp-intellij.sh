@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-bhj-notify "hello" "world"
+bhj-notify "hello" "lsp-intellij is started"
 
-sleep 3600
+bash
