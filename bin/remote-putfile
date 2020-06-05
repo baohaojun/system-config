@@ -17,7 +17,7 @@ if ! [[ "$(readlink -m "${file}")" =~ ~/tmp/remote-putfile/ ]]; then
     die "Can't putfile $1, it's too dangerous to write files out of ~/tmp/remote-putfile/"
 fi
 
-tar xv
+tar xv -f /dev/stdin
 
 putclip "${file}"
 bhj-notify remote-putfile "You received a file ${file}"
