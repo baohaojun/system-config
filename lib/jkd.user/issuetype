@@ -341,7 +341,7 @@ if (is_exact_action "print") {
     print $workflows[0];
 } elsif (is_exact_action "get-project") {
     get_project();
-} elsif (is_exact_action "get-fieldconfig" || is_exact_action "get-fieldconfig-id") {
+} elsif (is_exact_action ("get-fieldconfig") || is_exact_action ("get-fieldconfig-id")) {
     get_fieldconfig();
 } elsif (is_exact_action "update-field") {
     my $fc =
