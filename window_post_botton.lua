@@ -42,6 +42,7 @@ map['com.baidu.netdisk/com.baidu.netdisk.uiframe.container.CommonActivity'] = 'N
 map['com.bjgas.shop/com.bjgas.shop.MainActivity'] = 'No-Post'
 map['com.chehejia.oc.m01/com.chehejia.oc.m01.view.gui.user.login.forget.pwd.ForgetPwdActivity'] = 'No-Post'
 map['com.chehejia.oc.m01/com.chehejia.oc.m01.view.gui.user.login.inputphone.InputPhoneActivity'] = 'No-Post'
+map['com.chehejia.oc.m01/com.chehejia.oc.m01.view.gui.user.login.securitycode.pwd.ShortMsgPwdActivity'] = 'No-Post'
 map['com.chehejia.oc.m01/com.chehejia.oc.m01.view.gui.user.usercenter.setting.IdentityVeriActivity'] = 'No-Post'
 map['com.chehejia.oc.m01/com.chehejia.oc.m01.view.gui.user.verified.view.VerifiedActivity'] = 'No-Post'
 map['com.ecitic.bank.mobile/com.ecitic.bank.mobile.ui.CBWebviewActivity'] = 'No-Post'
