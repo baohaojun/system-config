@@ -78,7 +78,9 @@ port=$port
 nohup \${s}\${s}-\${s}erver --plugin obf\${s}-\${s}erver --plugin-opt\${s} "obf\${s}=http" -p "\${port}" -k "\${password}"&
 EOF
     chmod +x /etc/rc.local
-    killall ss-server
+    killall ss-server || trrue
+    killall obfs-server || true
+    rm /etc/init.d/shadowsocks-libev -f
 fi
 
 apt-get install -y shadowsocks-libev simple-obfs
