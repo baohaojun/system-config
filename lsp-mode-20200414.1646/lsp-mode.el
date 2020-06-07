@@ -816,7 +816,7 @@ They are added to `markdown-code-lang-modes'")
 (defvar lsp--session nil
   "Contain the `lsp-session' for the current Emacs instance.")
 
-(defvar lsp--tcp-port 8080)
+(defvar lsp--tcp-port 9999)
 
 (defvar-local lsp--document-symbols nil
   "The latest document symbols.")
@@ -6264,15 +6264,8 @@ returned by COMMAND is available via `executable-find'"
 
 (defun lsp--find-available-port (host starting-port)
   "Find available port on HOST starting from STARTING-PORT."
-  (let ((success nil)
-        (port starting-port))
-    (while (and (not success))
-      (condition-case _err
-          (progn
-            (delete-process (open-network-stream "*connection-test*" nil host port :type 'plain))
-            )
-        (file-error (setq success t))))
-    port))
+  starting-port
+)
 
 (defun lsp-tcp-connection (command-fn)
   "Returns a connection property list similar to `lsp-stdio-connection'.
