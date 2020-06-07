@@ -1,0 +1,1 @@
+../../../src/github/lsp-intellij/lsp-intellij.el

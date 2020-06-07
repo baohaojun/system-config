@@ -101,6 +101,7 @@
        (setq ajoke-symbol-chars "-A-Za-z0-9_"))))
  '(longlines-auto-wrap nil)
  '(lsp-after-diagnostics-hook nil)
+ '(lsp-log-io t)
  '(magit-use-overlays nil)
  '(makefile-mode-hook
    '((lambda nil

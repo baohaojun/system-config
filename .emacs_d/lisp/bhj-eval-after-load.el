@@ -326,3 +326,6 @@ passed via standard input." t nil)
   (add-hook 'cperl-mode-hook
             (lambda ()
               (setq imenu-create-index-function #'ajoke--create-index-function))))
+
+(with-eval-after-load 'lsp-mode
+  (require 'lsp-intellij))
