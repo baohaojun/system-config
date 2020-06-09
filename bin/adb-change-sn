@@ -6,13 +6,33 @@ if test $# = 0; then
     set -- $ANDROID_SERIAL
 fi
 unset ANDROID_SERIAL
-my-adb -r shell 'cd /data; setsid setsid nohup sh -x -c "
+
+adb_serial=${1:-222222}
+
+
+my-adb -r shell "$(
+cat <<'EOF01ee82b4300e' | . .replace-%% --
+# {%sh-mode%}
+cd /data; setsid setsid nohup sh -x -c "$(
+cat <<'EOF06db2409cf49'
+# {%sh-mode%}
        usb=$(getprop persist.sys.usb.config)
-       x='${1:-222222}'
-       setprop persist.usb.serialno \$x
+       adb_serial="[%adb_serial%]"
+       setprop persist.usb.serialno
        if test -e /sys/class/android_usb/android0/iSerial; then
-           echo \$x > /sys/class/android_usb/android0/iSerial
+           echo $adb_serial > /sys/class/android_usb/android0/iSerial
        elif test -e /config/usb_gadget/g1/strings/0x409/serialnumber; then
-           echo \$x > /config/usb_gadget/g1/strings/0x409/serialnumber
+           echo $adb_serial > /config/usb_gadget/g1/strings/0x409/serialnumber
        fi
-       setprop persist.sys.usb.config \$usb"'
+       setprop persist.sys.usb.config $usb
+       stop adbd
+       start adbd
+# {%/sh-mode%}
+EOF06db2409cf49
+
+)"
+# {%/sh-mode%}
+EOF01ee82b4300e
+
+)"
+reset-env ANDROID_SERIAL "${adb_serial}"

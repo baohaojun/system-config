@@ -41,7 +41,7 @@ EOFc83131117f09
 # x:xml-str \
 # i:issuetype-name \
 # s:workflow-scheme \
-# @xml-using-names=1 \
+# @xml-using-names=1 '?"默认为真"' \
 # @:from-jira-url
 ## end code-generator
 ## start generated code
@@ -182,10 +182,12 @@ sub switch_workflow($old_workflow, $new_workflow) {
             next;
         }
     }
+    # update the cache!
+    capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-workflowschemes");
 }
 
 if ($workflow_exists) {
-    say STDERR "switch it out using: $temp_workflow";
+    say STDERR "TRACE: switch it out using: $temp_workflow";
     runx("jkd", "export-workflow-as-xml", "-w", "${workflow_name}", "-f", $backup_xml);
     runx("jkd", "import-workflow-from-xml", "-w", "$temp_workflow", "-f", "$backup_xml");
 
@@ -217,9 +219,11 @@ runx("jkd", "import-workflow-from-xml", "-w", "$workflow_name", "-x", "$xml_str"
 
 if ($workflow_exists) {
     if ($done_switch) {
+        say STDERR "TRACE: switch it back: $workflow_name";
         switch_workflow($temp_workflow, $workflow_name);
     }
 
+    say STDERR "TRACE: delete temp workflow: $temp_workflow";
     runx("jkd", "wf-delete", "-w", "$temp_workflow");
 }
 
