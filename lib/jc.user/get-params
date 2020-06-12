@@ -49,4 +49,14 @@ done
 
 
 ## end generated code
-jc curl "${build_url}/api/json"|jq '..|.parameters?|.[]?|.name? + "=" + (.value?|tostring)'|sort | grep -v '"separator-'
+jc curl "${build_url}/api/json"|jq '..|.parameters?|.[]?|.name? + "=" + (.value?|tostring)' -r |sort | grep -v '"separator-' |perl -pe "$(
+cat <<'EOFf260df3adb89' | . .replace-%% --
+# {%perl-mode%}
+BEGIN {
+    use String::ShellQuote;
+}
+s/(.*?)=(.*)$/sprintf "%s=%s", shell_quote($1), shell_quote($2)/e
+# {%/perl-mode%}
+EOFf260df3adb89
+
+)"
