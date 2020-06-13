@@ -128,8 +128,9 @@ GetOptions (
     'help|h!' => \&$handler_help,
 );
 
-
 ## end generated code
+
+@add_perm = split(' ', join(" ", @add_perm));
 
 use autodie qw(:all);
 use JSON;
