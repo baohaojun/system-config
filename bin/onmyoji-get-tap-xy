@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# [[file:~/system-config/knuth-mode/onmyoji-get-tap-xy.org::the-ultimate-script][the-ultimate-script]]
+set -e
+
+#!/usr/bin/env bash
+
+(sleep 5) >/dev/null 2>&1 & # to make it safe with Lenovo A360t?
+adb-tty getevent -l "$@" </dev/tty | perl -ne "$(cat <<'EOF04cdaedc86bf'
+BEGIN {
+    use v5.10;
+    $mCurrentRotation = 0;
+    $xy = qx(my-adb dumpsys window);
+    $xy =~ m/cur=(\d+)x(\d+)/;
+    $cur_width = $1;
+    $cur_height = $2;
+
+    if ($xy =~ m/mCurrentRotation=(\d)/) {
+        $mCurrentRotation = $1;
+    }
+}
+if (m/ABS_MT_POSITION_/) {
+    chomp;
+    @fields = split;
+    ($name, $val) = @fields[2,3];
+    $val = hex($val);
+    # print "$name: $val\r\n";
+    if ($name =~ m/ABS_MT_POSITION_X/) {
+        $val_x = $val;
+    } elsif ($name =~ m/ABS_MT_POSITION_Y/) {
+        $val_y = $val;
+    }
+}
+
+if (m/SYN_REPORT/) {
+
+    if ($mCurrentRotation % 2 == 1) {
+        ($x, $y) = ($val_y, $val_x);
+    } else {
+        ($x, $y) = ($val_x, $val_y);
+    }
+
+    if ($mCurrentRotation == 1) {
+        $y = $cur_height - $y;
+    }
+
+    if ($mCurrentRotation == 2) {
+        ($x, $y) = ($cur_width - $x, $cur_height - $y);
+    }
+
+    if ($mCurrentRotation == 3) {
+        $x = $cur_width - $x;
+    }
+
+    print "$x $y\r\n";
+}
+
+EOF04cdaedc86bf
+  )"
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+# the-ultimate-script ends here

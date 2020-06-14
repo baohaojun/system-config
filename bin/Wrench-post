@@ -1,4 +1,14 @@
 #!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl @ask-to-whom @:send-to @:extra-send-text @:image
@@ -136,7 +146,7 @@ EOF
 
 my @cur_at_end;
 
-my $at_someone_regexp = qr(\@\@(\S+?)( | |$|\n));
+my $at_someone_regexp = qr((\@\@(\w+)(\s| )?)+);
 
 my %cue_screens = (
     "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" => 1,
@@ -149,15 +159,23 @@ if ($text =~ m/$at_someone_regexp/ and $cue_screens{qx(adb-top-activity)}) {
     while ($text =~ s,$at_someone_regexp,,) {
         my $pre = $`;
         my $post = $';
-        my $at_whom = $1;
+        my $at_whom = $&;
 
         if ($pre) {
             my $post_text = sprintf("wrench_post(%s, %s)", quote_lua_str($`), '"no-post"');
             system("Wrench.sh", $post_text);
         }
 
+        my @at_whom = ();
+        my @at_format = ();
+        while ($at_whom =~ m,(\w+),g) {
+            push @at_whom, $1;
+            push @at_format, "%s";
+        }
+        my $at_format = join(", ", @at_format);
 
-        my $command = sprintf("wrench_cue(%s)", quote_lua_str($at_whom));
+
+        my $command = sprintf("wrench_cue($at_format)", map {quote_lua_str $_} (@at_whom));
         system("Wrench.sh", $command);
         $text = $post;
     }

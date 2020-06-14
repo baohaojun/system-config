@@ -4,9 +4,12 @@ set -e
 
 #!/usr/bin/env bash
 
-
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -e @scaling=false @:print-format @:standard-width=1080 @:standard-height=1920
+# generate-getopt -e \
+    # @scaling=unset \
+    # @:print-format \
+    # @:standard-width=1080 \
+    # @:standard-height=1920
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o h \
@@ -97,7 +100,7 @@ if test "$init_size" != "init=1080x1920"; then
 fi
 
 if test "$scaling" = false -a "$true_size" != "app=1080x1920"; then
-    echo "Need scaling: mStableFullscreen($true_size), using scaling"
+    log "Need scaling: mStableFullscreen($true_size), using scaling"
     scaling=true
 fi
 
