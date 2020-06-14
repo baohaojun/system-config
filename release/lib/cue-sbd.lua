@@ -18,8 +18,12 @@ M.cue_funcs = {
          else
             log("cue_all is %s", cue_all)
             jump_out_of("dd/cue-multi")
-            wrench_post(ce.who, "No-Post")
-            click_scene(ce.cue_all_scene, {skip_refind = true})
+            for n = 1, #ce.who_list do
+               local who = ce.who_list[n]
+               wrench_post(who, "No-Post")
+               sleep(.5)
+               click_scene(ce.cue_all_scene, {skip_refind = true})
+            end
             jump_out_of("dd/cue-queding")
          end
       end
@@ -34,8 +38,9 @@ M.cue_funcs = {
    end
 }
 
-M.wrench_cue = function(who)
+M.wrench_cue = function(who, ...)
    ce.who = who
+   ce.who_list = {who, ...}
    ce.current_win = adb_top_window()
    ce.current_pkg = ce.current_win:gsub("/.*", "")
 
