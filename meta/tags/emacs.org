@@ -1,4 +1,10 @@
 #+title: Emacs the editor
+ * 2020
+  - 2020-03
+   * 2020-03-02
+
+     [[../../blog/2020/03/02/0-Using-Emacs-as-the-Clipboard-Manager.org][Using Emacs as the Clipboard Manager]]
+
  * 2018
   - 2018-07
    * 2018-07-05

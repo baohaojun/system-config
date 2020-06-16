@@ -12,6 +12,12 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
   <entry>
+    <title type="html"><![CDATA[Android App development under FreeBSD]]></title>
+    <link href="http://baohaojun.github.io/blog/2020/06/16/0-Android-App-development-under-FreeBSD.html"/>
+    <updated>2020-31-16T18:06:58+08:00</updated>
+    <id>http://baohaojun.github.io/blog/2020/06/16/0-Android-App-development-under-FreeBSD.html</id>
+  </entry>
+  <entry>
     <title type="html"><![CDATA[Using Emacs as the Clipboard Manager]]></title>
     <link href="http://baohaojun.github.io/blog/2020/03/02/0-Using-Emacs-as-the-Clipboard-Manager.html"/>
     <updated>2020-03-02T19:57:34+08:00</updated>
@@ -64,11 +70,5 @@
     <link href="http://baohaojun.github.io/blog/2019/01/09/0-Jenkins-Mac-Keychain.html"/>
     <updated>2019-01-09T11:10:40+08:00</updated>
     <id>http://baohaojun.github.io/blog/2019/01/09/0-Jenkins-Mac-Keychain.html</id>
-  </entry>
-  <entry>
-    <title type="html"><![CDATA[Automating bash/perl arguments handling in Emacs]]></title>
-    <link href="http://baohaojun.github.io/blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html"/>
-    <updated>2018-07-06T18:01:02+08:00</updated>
-    <id>http://baohaojun.github.io/blog/2018/07/05/0-Automating-bash-or-perl-arguments-handling-in-Emacs.html</id>
   </entry>
 </feed>

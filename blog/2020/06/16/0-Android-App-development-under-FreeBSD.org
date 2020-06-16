@@ -1,0 +1,141 @@
+#+title: Android App development under FreeBSD
+# bhj-tags: android
+I started using FreeBSD around May 2020. Don't know why, maybe just got a bit tired with Linux, and needed something new (I've been using Linux for ~15 years, at 10th year, I made a video about [[https://www.youtube.com/watch?v=qp2b3-Guej0][my Linux daily usage]]).
+
+So far I'm quite happy about FreeBSD experience. At one point, it was painful and I asked myself why are you doing this, man? I was about to give up, but then I take a deep breath and tried again, since deep down my heart I kind of know why I'm painful: it's because I mixed the FreeBSD Quarterly version and the Latest version. The second time, I sticked with Quarterly.
+
+All in all, FreeBSD is very stable! I loved it when I found the laptop (ThinkPad T440p) can sleep and wakeup reliably -- on the other hand, X Window on Linux often fail to wake up, forcing me to restart the desktop session and losing all the open windows.
+
+** Android App development under FreeBSD
+
+Android App development under FreeBSD is very painful, but not impossible. After a lot of Googling, I have come through a relatively smooth method.
+
+TL;DR:
+
+1. Install Linux Binary Compatibility
+2. Install Linux version of Android Studio, make it run with LBC
+
+   Need decompile and recompile a certain Android jar file.
+3. Downgrade adb on FreeBSD
+4. Updated lsp-intellij and lsp-intellij-server, so that I can use Emacs for Android App development
+5. A workaround for using both Emacs (lsp-intellij) and AndroidStudio for App development
+
+*** Install Linux Binary Compatibility
+
+You'd better have read the LBC document, and have a basic understanding about how it works (see below).
+
+*** Hacking android jars and android studio
+ 1. Find a simple Android App source code (for e.g., copy from a Linux system).
+
+ 2. Get the android sdk downloaded through gradle (by running =./gradlew aR=), then it fails, complaining about unknown platform: FreeBSD
+
+ 3. patch the sdk common.jar (=find ~/.gradle/ -name 'common*.jar'|grep android=) according to http://zewaren.net/android-1.html, but with jd-gui:
+
+    - open the jar file with jd-gui
+    - save the SdkConstants.java to ~/
+    - javac ~/SdkConstants.java -cp $(find ~/.gradle/ -name 'common*.jar'|grep android)
+    - mkdir com/android -p;
+    - mv ~/SdkConstants.class ./com/android/;
+    - jar uf $(find ~/.gradle/ -name 'common*.jar'|grep android) com/android/SdkConstants.class
+
+ 4. Work around an mkdir error in aapt2:
+
+    - =sudo ln -s /home/ /compat/linux/home=
+
+    This is found out through running aapt2 with truss: aapt2 will =mkdir("/home")= and fail, so, I just desparately made a symlink for it.
+
+    =/compat/linux= has a filesystem union for linux binaries, but, sometimes the union seems to be broken, for e.g., if you run this command:
+
+    ~PATH=/compat/linux/bin:/compat/linux/usr/bin/:$PATH bash -c 'ls /dev'~
+
+    You will see nothing except =/dev/shm=. But if you run:
+
+    ~PATH=/compat/linux/bin:/compat/linux/usr/bin/:$PATH bash -c 'ls /dev/null'~
+
+    Then, you can see that =/dev/null= is output. This is confusing for some programs: If you =ls /dev=, =/dev/null= is not there; but if you =ls /dev/null=, it is there! The reason aapt2 try to mkdir("/home") is kind of like that too, I think.
+
+ 5. run =linux-env ./gradlew aR= again, and this time, it works.
+
+    =linux-env= is a simple script I wrote:
+
+    #+begin_src sh
+      #!/usr/bin/env bash
+      set -e
+
+      PATH=/compat/linux/bin:$PATH
+      "$@"
+    #+end_src
+
+ 6. Now, I can also run AndroidStudio, can generate an Android App Project.
+
+    - export JAVA_HOME=/usr/local/openjdk8/
+    - Gradle sync will fail, complaining:
+
+          > Process 'command '/home/bhj/android-studio/jre/bin/java'' finished with non-zero exit value 1
+
+      To fix this, inside AndroidStudio, set the jre that gradle uses to the same as /usr/local/openjdk8.
+
+    Then, gradle will fail again, complaining =Unknown platform 'FreeBSD'=. But we already know how to fix this: start AndroidStudio with =linux-env ~/android-studio/bin/studio.sh=.
+
+*** Fix adb devices go missing
+
+Here the problem is that my phone's adb connection will suddenly be gone when doing adb push or adb install.
+
+When I'm using android-studio and then later running adb push, I find the adb device will be gone all at once.
+
+But another tool that I'm using, won't make adb device disappear. The tool's C++ adb code is copied from adb version 1.0.39, and the current adb(1) version I'm using is 1.0.41, so I doubted that maybe it's because of the higher adb version is not compatible with my phone.
+
+In other words:
+
+- If I use the adb binary directly, that is, 1.0.41 adb client with 1.0.41 adb server (adb fork-server), adb push will disconnect my adb.
+- If I use 1.0.39 adb client with 1.0.41 adb server, adb push won't disconnect my adb.
+
+Seems the bug must be in the adb 1.0.41 client/server protocol, so I decided to downgrade my adb binary.
+
+After some googling, I found that I can install older version of adb with portdowngrade, so I googled for freebsd's adb port revision for adb-1.0.39, and downgraded it. One problem when compiling: I must replace android_pubkey.c with current version to fix a build error:
+
+ #+begin_src sh
+   sudo cp \
+        /usr/ports/devel/android-tools-adb/work/platform_system_core-platform-tools-29.0.4/libcrypto_utils/android_pubkey.c \
+        /usr/ports/adb-1.0.39/android-tools-adb/work/platform_system_core-android-8.1.0_r2/adb/../libcrypto_utils/android_pubkey.c
+
+ #+end_src
+
+After that, my adb device connection is quite stable now.
+
+*** Update lsp-intellij and lsp-intellij-server
+
+I use Emacs for almost everything.
+
+There is a project [[https://github.com/Ruin0x11/lsp-intellij][lsp-intellij]] that allow me to use Emacs together with AndroidStudio (which is based on [[https://www.jetbrains.org/intellij/sdk/docs/products/android_studio.html][Intellij]]), but it has long been unmaintained: it supported lsp-mode version
+4.1, and can't be used in current version anymore.
+
+I verified using old version of everything (thanks to github!), and saw that lsp-intellij does work in that version. That gave me confidence to make it work under current version of lsp-mode (6.2.1).
+
+It's very dirty for now, but it does work (auto-completion, syntax error hint, etc). Maybe I will clean it up later.
+
+[[./../../../../images/lsp-intellij.png][file:./../../../../images/lsp-intellij.png]]
+
+For details check out the source code:
+
+- https://github.com/baohaojun/intellij-lsp-server/
+- https://github.com/baohaojun/lsp-intellij/
+- https://github.com/baohaojun/elpa/tree/master/lsp-mode-20200414.1646
+
+*** Work around for using both AndroidStudio and Emacs
+
+Once I start lsp, the AndroidStudio window for the App project will be hidden -- I can't open it again, unless I kill AndroidStudio and restart it, but then, I can't use lsp in Emacs unless I restart lsp, which will close the AndroidStudio window.
+
+Lsp-intellij just formid you to edit a single file in parallel.
+
+For now, I can only think of a workaround for this:
+
+1. Copy the project files with a hardlink:
+
+   #+begin_src sh
+     cp AppProject AppProject.shadow -avl
+   #+end_src
+
+2. Open AppProject.shadow in AndroidStudio
+
+3. When I need to import a class, for e.g., this is not supported by lsp-intellij, so I switch to the AndroidStudio AppProject.shadow, and do the import there, then I switch back to Emacs.

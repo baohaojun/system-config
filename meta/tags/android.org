@@ -1,4 +1,10 @@
 #+title: Android development
+ * 2020
+  - 2020-06
+   * 2020-06-16
+
+     [[../../blog/2020/06/16/0-Android-App-development-under-FreeBSD.org][Android App development under FreeBSD]]
+
  * 2013
   - 2013-03
    * 2013-03-11
