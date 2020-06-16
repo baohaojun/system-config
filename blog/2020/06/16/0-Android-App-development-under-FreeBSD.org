@@ -79,16 +79,14 @@ You'd better have read the LBC document, and have a basic understanding about ho
 
 *** Fix adb devices go missing
 
-Here the problem is that my phone's adb connection will suddenly be gone when doing adb push or adb install.
+Here the problem is that my phone's adb connection will suddenly be gone when doing adb push or adb install (which involes pushing the apk file first).
 
-When I'm using android-studio and then later running adb push, I find the adb device will be gone all at once.
-
-But another tool that I'm using, won't make adb device disappear. The tool's C++ adb code is copied from adb version 1.0.39, and the current adb(1) version I'm using is 1.0.41, so I doubted that maybe it's because of the higher adb version is not compatible with my phone.
+But [[https://github.com/baohaojun/Wrench/][another tool]] that I'm using, won't make adb device disappear when installing apk. The tool's C++ adb client code is copied from adb version 1.0.39, and the current freebsd =adb= version is 1.0.41, so I doubted that maybe it's because of the higher adb version is not compatible with my phone.
 
 In other words:
 
 - If I use the adb binary directly, that is, 1.0.41 adb client with 1.0.41 adb server (adb fork-server), adb push will disconnect my adb.
-- If I use 1.0.39 adb client with 1.0.41 adb server, adb push won't disconnect my adb.
+- If I use my tool's 1.0.39 adb client with 1.0.41 adb server, adb push won't disconnect my adb.
 
 Seems the bug must be in the adb 1.0.41 client/server protocol, so I decided to downgrade my adb binary.
 
