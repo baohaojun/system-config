@@ -137,3 +137,9 @@ For now, I can only think of a workaround for this:
 2. Open AppProject.shadow in AndroidStudio
 
 3. When I need to import a class, for e.g., this is not supported by lsp-intellij, so I switch to the AndroidStudio AppProject.shadow, and do the import there, then I switch back to Emacs.
+
+** Further plan
+
+1. Clean up lsp-intellij and lsp-mode code changes, find a way that is standard with the lsp-mode people.
+
+2. Study whether I can add more lsp feature to lsp-intellij, such as managing imports, code refactory, minor fixes, and so on.
