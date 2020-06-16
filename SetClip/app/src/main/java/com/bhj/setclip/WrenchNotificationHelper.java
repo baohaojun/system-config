@@ -131,7 +131,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         if (n.tickerText != null) {
             extra.putString("tickerText", n.tickerText.toString());
         }
-        
+
         extra.putString("key", sbn.getKey());
         extra.putString("pkg", sbn.getPackageName());
 
@@ -214,7 +214,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
     private boolean mConnected = false;
     private static int MOOD_NOTIFICATIONS = R.layout.layout_main;
     private NotificationManager mNotificationManager;
-    
+
     private PendingIntent makeMoodIntent(int moodId) {
         PendingIntent contentIntent =
             PendingIntent.getActivity(
@@ -464,7 +464,7 @@ public class WrenchNotificationHelper extends NotificationListenerService {
                                             }
                                         }
                                     }).start ();
-                            } 
+                            }
                         } catch (IOException eLoop) {
                             Log.e("bhj", String.format("%s:%d: ", "WrenchNotificationHelper.java", 377), eLoop);
                         }
@@ -488,11 +488,10 @@ public class WrenchNotificationHelper extends NotificationListenerService {
         if (!mConnected) {
             return;
         }
-        
+
         String pkg = sbn.getPackageName();
         if ("android".equals(pkg) ||
             "com.github.shadowsocks".equals(pkg) ||
-            "com.bhj.setclip".equals(pkg) ||
             "com.android.systemui".equals(pkg)) {
             return;
         }

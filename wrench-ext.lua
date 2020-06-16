@@ -30,7 +30,6 @@ local ignored_pkgs = {
    "com.google.android.apps.maps",
    "android",
    "com.android.settings",
-   "com.bhj.setclip",
    "com.android.systemui",
    "com.github.shadowsocks",
 }
