@@ -433,9 +433,6 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
    elseif window == "com.google.android.apps.plus/com.google.android.apps.plus.phone.sharebox.PlusShareboxActivity" then
       wrench_google_plus(window)
       return
-   elseif window == "com.smartisanos.notes/com.smartisanos.notes.NotesActivity" then
-      wrench_smartisan_notes(window)
-      return
    elseif window == W.smartisan_mail_compose or
       window == "com.android.email/com.android.email.activity.Welcome" or
       window == "com.android.email/com.android.email2.ui.MailActivityEmail" or

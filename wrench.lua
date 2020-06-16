@@ -90,7 +90,6 @@ W.weiboAlbumActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PhotoAlbumActiv
 W.weiboImagePreviewActivity = "com.sina.weibo/com.sina.weibo.photoalbum.ImagePagerActivity"
 W.weiboPicFilterActivity = "com.sina.weibo/com.sina.weibo.photoalbum.PicFilterActivity"
 W.weiboChatActivity = "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity"
-W.notePicPreview = "com.smartisanos.notes/com.smartisanos.notes.Convert2PicturePreviewActivity"
 
 emojis = require"emojis"
 img_to_emoji_map = {}
@@ -578,10 +577,6 @@ M.wrench_google_plus = function (window)
    adb_event{467, 650, 'key', 'scroll_lock', 932, 1818}
 end
 
-M.wrench_smartisan_notes = function (window)
-   adb_event{'key', 'scroll_lock', 940, 140, 933, 117, 323, 1272, 919, 123}
-end
-
 M.wrench_mail = function (window)
    if window == 'com.android.email/com.android.email.activity.Welcome' or window == 'com.android.email/com.android.email2.ui.MailActivityEmail' then
       adb_tap_mid_bot()
@@ -1026,36 +1021,6 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    system("bash ./check-notification.sh " .. android_serial)
    adb_quick_input{"input keyevent UNKNOWN"}
    return ("brand is %s, adb serial is %s"):format(brand, android_serial)
-end
-
-M.get_a_note = function(text)
-   if text then
-      push_text(text)
-   end
-   notesActivity = 'com.smartisanos.notes/com.smartisanos.notes.NotesActivity'
-   adb_am("am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei share-to-note 1")
-   wait_input_target(notesActivity)
-   adb_event(
-      [[
-            adb-tap 958 135
-            sleep 1
-            adb-tap 958 135
-            sleep 1
-            adb-tap 344 1636
-            sleep 1
-            adb-tap 711 151
-   ]])
-   if wait_top_activity(W.notePicPreview) ~= W.notePicPreview then
-      log("Seems to have a problem with Smartisan Notes")
-   end
-
-   while (wait_top_activity_match("com.smartisanos.notes")):match("com.smartisanos.notes/") do
-      adb_event("key back sleep .5")
-      if not (adb_top_window()):match("com.smartisanos.notes/") then
-         break
-      end
-   end
-   adb_get_last_pic('notes', true)
 end
 
 M.adb_get_last_pic = function(which, remove)
