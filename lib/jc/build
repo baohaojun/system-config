@@ -254,8 +254,9 @@ for (@{$json_obj->{actions}}) {
 }
 
 map {
-  my ($name, $value) = split "=", $_;
-  $params_map{$name} = $value;
+    m,(.*?)=(.*),s;
+    my ($name, $value) = ($1, $2);
+    $params_map{$name} = $value;
 } @params;
 
 if ($extra_environ_params) {

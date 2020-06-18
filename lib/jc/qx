@@ -1,0 +1,75 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+这个脚本会同步运行一个 jenkins job，然后，把 jenkins job 最后一次运行
+生成的 ipc-pipe.json 文件打印在 stdout 上。
+
+它自己只接收一个参数，即运行的 job 的 job-name，其余命令行参数均不处理，但是会一并传递给 jc build 命令，并在这个命令最后加上以下 3 个参数：
+
+=-j $job_name -s=
+
+因此，并不需要指定两次 job_name 参数。
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# j:job-name
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $job_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--job-name=JOB-NAME';
+    if (length('--job-name=JOB-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'job-name|j=s' => \$job_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $jc_build_output =
+    decode_utf8(scalar capturex("jc", "build", @ARGV, "-s", "-j", "$job_name"));
+
+runx("jc", "curl", "job/$job_name/lastSuccessfulBuild/artifact/pipeline-ipc.json");

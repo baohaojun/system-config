@@ -4,7 +4,7 @@ set -e
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"Note: When setting current build, need only set -d"' \
     # j:job-name n:build-number \
-    # b:build-url \
+    # b:build-url '?"如不指定，默认使用当前 BUILD_URL"' \
     # d:description='"@NULL@"' '?"when not specified, print current description (i.e., get)"'
 ## end code-generator
 ## start generated code
@@ -49,7 +49,7 @@ while true; do
             echo
             printf %6s '-b, '
             printf %-24s '--build-url=BUILD_URL'
-            echo
+            echo "如不指定，默认使用当前 BUILD_URL"
             printf %6s '-d, '
             printf %-24s '--description=DESCRIPTION'
             echo
