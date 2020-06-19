@@ -179,6 +179,7 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void afterTextChanged(Editable s) { // should send text after 1 sec
+                                handler.removeCallbacksAndMessages(null);
                                 if (s.toString().isEmpty()) {
                                     return;
                                 }
@@ -188,7 +189,7 @@ public class MainActivity extends Activity {
                                     public void run() {
                                         sendText(text);
                                     }
-                                }, 1000);
+                                }, 5000);
 
                             }
                         };
