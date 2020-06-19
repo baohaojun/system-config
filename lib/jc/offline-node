@@ -2,19 +2,27 @@
 set -e
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P n:node-name
+# generate-getopt -P n:node-name='${NODE_NAME}' '?"将哪台 slave 下线，默认是当前 NODE_NAME"' \
+    # r:offline-reason=offline-by-jc '?"指定下线的原因，默认是 offline-by-jc"' \
+
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o n:h \
-                      --long node-name:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o n:r:h \
+                      --long node-name:,offline-reason:,help \
                       -n $(basename -- $0) -- "$@")
-declare node_name=
+declare node_name=${NODE_NAME}
+declare offline_reason=offline-by-jc
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
         -n|--node-name)
             node_name=$2
+            shift 2
+
+            ;;
+        -r|--offline-reason)
+            offline_reason=$2
             shift 2
 
             ;;
@@ -25,7 +33,12 @@ while true; do
             echo Options and arguments:
             printf %6s '-n, '
             printf %-24s '--node-name=NODE_NAME'
+            echo "将哪台 slave 下线，默认是当前 NODE_NAME"
+            printf %6s '-r, '
+            printf %-24s '--offline-reason=OFFLINE_REASON'
             echo
+            printf "%30s" ""
+            echo "指定下线的原因，默认是 offline-by-jc"
             exit
             shift
             ;;
@@ -43,7 +56,7 @@ done
 ## end generated code
 
 if test "$(jc curl computer/${node_name}/api/json | jq .offline)" = false; then
-    jc curl computer/${node_name}/toggleOffline -X POST --data-urlencode "offlineMessage=offline by jc" --data-urlencode "Submit=Mark this node temporarily offline"
+    jc curl computer/${node_name}/toggleOffline -X POST --data-urlencode "offlineMessage=${offline_reason}" --data-urlencode "Submit=Mark this node temporarily offline"
 else
     log "${node_name} already offline"
 fi

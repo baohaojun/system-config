@@ -1,0 +1,105 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# s:submit-button '?"比如：「Mark this node temporarily offline」"' \
+# p:params='()' '?"比如：「offlineMessage=/data too small」，可指定多个"' \
+# a:api-path '?"比如：「computer/\${NODE_NAME}/toggleOffline」"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $api_path = "";
+my @params = ();
+my $submit_button = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--api-path=API-PATH';
+    if (length('--api-path=API-PATH') > 24 and length("比如：「computer/\${NODE_NAME}/toggleOffline」") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "比如：「computer/\${NODE_NAME}/toggleOffline」";
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--params=PARAMS';
+    if (length('--params=PARAMS') > 24 and length("比如：「offlineMessage=/data too small」，可指定多个") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "比如：「offlineMessage=/data too small」，可指定多个";
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--submit-button=SUBMIT-BUTTON';
+    if (length('--submit-button=SUBMIT-BUTTON') > 24 and length("比如：「Mark this node temporarily offline」") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "比如：「Mark this node temporarily offline」";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'api-path|a=s' => \$api_path,
+    'params|p=s' => \@params,
+    'submit-button|s=s' => \$submit_button,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+(my $jc_crumb = $ENV{JC_CRUMB}) =~ s,.*?:,,;
+my %params_map;
+
+map {
+    m,(.*?)=(.*),s;
+    my ($name, $value) = ($1, $2);
+    $params_map{$name} = $value;
+} @params;
+
+$params_map{"Jenkins-Crumb"} = $jc_crumb;
+
+my $json_str = decode_utf8($json->encode(\%params_map));
+
+push @params, "json=$json_str", "Submit=$submit_button", "Jenkins-Crumb=$jc_crumb";
+
+use URI::Encode qw(uri_encode uri_decode);
+
+runx("debug-run", "jc", "curl", "$api_path", "-X", "POST", "--data-raw", join("&", map { uri_encode($_) } @params));
