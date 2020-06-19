@@ -8,8 +8,19 @@ mkdir -p ${tmpdir}
 to_file=${tmpdir}/"$(bp "$file")"
 adb pull "${file}" "${to_file}"
 putclip "${to_file}"
-if EMACS=t yes-or-no-p -y "use emacs to open ${to_file}?"; then
-    e "${to_file}"
+
+how_to_open=$(
+    select-args \
+        --ask-for-input -1 --select-from-history-too -o -p "how to open this file?" \
+        'e %f' \
+        'firefox --new-tab %f' \
+        'of %f'
+           )
+
+if [[ $how_to_open =~ %f ]]; then
+    how_to_open=${how_to_open/\%f/'"${to_file}"'}
 else
-    of "${to_file}"
+    how_to_open="$how_to_open \${to_file}"
 fi
+
+eval "${how_to_open}"
