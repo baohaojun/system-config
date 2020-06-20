@@ -20,7 +20,7 @@ how_to_open=$(
 if [[ $how_to_open =~ %f ]]; then
     how_to_open=${how_to_open/\%f/'"${to_file}"'}
 else
-    how_to_open="$how_to_open \${to_file}"
+    how_to_open="$how_to_open \"\${to_file}\""
 fi
 
 eval "${how_to_open}"

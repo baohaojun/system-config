@@ -73,7 +73,7 @@ if xml_command=$(xmlstarlet sel -T -t -m //command  -c //command "${from_xml}" 2
     jc htmlify-xml-tag -t command -f $to_xml-$$.xml --to-mode bash
 fi
 
-if xmlstarlet sel -T -t -m '//definition[@class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"]/script' -c . "${from_xml}" &>/dev/null; then
+if xmlstarlet sel -T -t -m '//definition[@class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"]/script|//groovyScript/script' -c . "${from_xml}" &>/dev/null; then
     jc htmlify-xml-tag -t script -f $to_xml-$$.xml --to-mode groovy
 fi
 
