@@ -55,15 +55,11 @@ done
 
 dir_url=$(echo "${dir_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
 api_url=$(
-    echo "${dir_url}" | perl -pe 's,(/artifactory/),${1}api/storage/,'
+    echo "${dir_url}" | perl -pe 's,(.*?/artifactory/),api/storage/,' | perl -pe 's,^http.?://.*?/,,' | urlify
        )
 
-my-curl() {
-    curl-f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
-}
-
 json=$(
-    my-curl "${api_url}"
+    artifactory my-curl "${api_url}"
     )
 
 if echo "$json" | jq '.children|.[]' &>/dev/null; then

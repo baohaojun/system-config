@@ -3,9 +3,19 @@ use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
-use String::ShellQuote;
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
 
+use String::ShellQuote;
 use File::Slurp;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P p:params='()' '?"可以指定多个，格式为 name=value，目前不支持文件格式参数"' \
@@ -164,9 +174,6 @@ GetOptions (
 ## end generated code
 
 use Encode;
-use JSON;
-
-my $json = JSON->new->utf8(0);
 
 # curl -X POST JENKINS_URL/job/JOB_NAME/build \
 #   --user USER:TOKEN \
@@ -382,7 +389,7 @@ my $old_last_build_json_str = eval {capture "jc curl $job_url/lastBuild/api/json
 my $old_last_build_json = $json->decode($old_last_build_json_str);
 my $old_last_build_id = $old_last_build_json->{id} || 0;
 
-my $request = POST $job_build_url,
+my $request = POST $job_build_url, # the url contains the params
   'Content-Type' => 'application/x-www-form-urlencoded',
   "charset" => "utf-8",
   $crumb_header => $crumb_value;

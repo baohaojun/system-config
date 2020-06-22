@@ -22,7 +22,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# mmanual-only=1 '?"只显示手动的权限，不显示jira自动生成的权限"' \
+# n:repo-name c:copy-from-repo '?"从哪个 Repo 拷贝配置"' \
 
 ## end code-generator
 ## start generated code
@@ -32,18 +32,27 @@ Getopt::Long::Configure("posix_default");
 
 
 
-my $manual_only = 1;
+my $copy_from_repo = "";
+my $repo_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-m, ';
-    printf "%-24s", '--[no]manual-only';
-    if (length('--[no]manual-only') > 24 and length("只显示手动的权限，不显示jira自动生成的权限") > 0) {
+    printf "%6s", '-c, ';
+    printf "%-24s", '--copy-from-repo=COPY-FROM-REPO';
+    if (length('--copy-from-repo=COPY-FROM-REPO') > 24 and length("从哪个 Repo 拷贝配置") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "只显示手动的权限，不显示jira自动生成的权限";
+    printf "%s", "从哪个 Repo 拷贝配置";
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--repo-name=REPO-NAME';
+    if (length('--repo-name=REPO-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
 
     my $exit_value = 0;
@@ -56,28 +65,17 @@ my $handler_help = sub {
 };
 
 GetOptions (
-    'manual-only|m!' => \$manual_only,
+    'copy-from-repo|c=s' => \$copy_from_repo,
+    'repo-name|n=s' => \$repo_name,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
 
+my $json_copy =
+    $json->decode(scalar capturex("artifactory", "my-curl", "api/repositories/${copy_from_repo}"));
 
-my $perms =
-    $json->decode(scalar capture("cached-run artifactory my-curl api/security/permissions"));
+$json_copy->{key} = $repo_name;
 
-if ($manual_only) {
-    @{$perms} = grep {$_->{name} !~ m,Deliver To,} @{$perms}
-}
-
-use URI::Escape;
-for (@$perms) {
-    my $url = $_->{uri};
-    my $details =
-        $json->decode(scalar capturex("cached-run", "artifactory", "my-curl", $url));
-
-    $_->{details} = $details;
-}
-
-say decode_utf8($json->encode($perms));
+runx("debug-run", "artifactory", "my-curl", "api/repositories/${repo_name}", "-X", "PUT", "-H", 'Content-Type: application/json', "-d",  decode_utf8($json->encode($json_copy)));

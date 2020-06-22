@@ -81,11 +81,11 @@ if ! artifactory is-dir -u "${dir_url}"; then
 fi
 
 api_url=$(
-    echo "${dir_url}" | perl -pe 's,(/artifactory/),${1}api/storage/,'
+    echo "${dir_url}" | perl -pe 's,(.*?/artifactory/),api/storage/,' | urlify
        )
 
 my-curl() {
-    curl-f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
+    artifactory my-curl "$@"
 }
 
 json=$(

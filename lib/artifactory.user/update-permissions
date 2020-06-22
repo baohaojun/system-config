@@ -67,3 +67,5 @@ my $uri = $json_data->{uri};
 my $details = decode_utf8($json->encode($json_data->{details}));
 
 runx("debug-run", "artifactory", "my-curl", "-X", "PUT", "$uri", "-d", "$details", "-H", 'Content-Type: application/json');
+capture(EXIT_ANY, "c artifactory ls-permissions &>/dev/null");
+run ("hint -t 5 '请确认 ldap 域组是否已经在 artifactory 里同步'");
