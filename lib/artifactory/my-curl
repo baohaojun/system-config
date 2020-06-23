@@ -7,4 +7,4 @@ if [[ $1 =~ / ]] && ! [[ $1 =~ ^${scm_artifactory_url} ]]; then
     set -- "$url" "$@"
 fi
 
-curl-f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
+curl-f -s -u "${scm_artifactory_user}:${scm_artifactory_password:-$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password)}" "$@"
