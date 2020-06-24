@@ -120,7 +120,7 @@ public class Input {
                 String jarFile = "/data/data/com.android.shell/am.jar";
                 loadAm(jarFile);
             } catch (Throwable e) {
-                System.out.println("Error initAm " + e.getMessage());
+                System.out.println("Error initAm (maybe should upgrade am.jar from new sdk)" + e.getMessage());
                 e.printStackTrace();
             }
         }
