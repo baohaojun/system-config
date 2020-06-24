@@ -96,6 +96,12 @@ fi
 
 cd "$dir"
 
+for x in *; do
+    if test "$x" = '*'; then
+        exit 0
+    fi
+done
+
 (
     if test "${lock}" = true; then
         if ! flock -n 9; then
@@ -114,9 +120,12 @@ EOF
                       echo $PWD/$x
                   done | sort
               ); do
+        if test ! -x $x; then
+            continue
+        fi
         echo run $x >> .log
         if test "${parallel}" = true; then
-            (cd /tmp; $x 2>&1 | tee .$x.log || true&)
+            (cd /tmp; $x 2>&1 | tee ${x%/*}/.${x##*/}.log || true&)
         else
             (
                 cd /tmp; $x

@@ -224,6 +224,17 @@ sub get_project($print_result = 1) {
     return $projects[0];
 }
 
+sub new_screen($screen_name) {
+    my $screen_id = name2id (['rest', 'screens'], $screen_name);
+    if (not $screen_id) {
+        my $description =
+            decode_utf8(scalar capture("ask-for-input-with-sawfish -p 'screen description for $screen_name?'"));
+        runx ("jkd", "create-screen", "-n", "$screen_name", "-d", "$description");
+        $screen_id = name2id (['rest', 'screens'], $screen_name);
+    }
+
+}
+
 sub get_fieldconfig() {
     my $project =
         decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-project", "-n", "$issuetype_name"));
@@ -478,7 +489,13 @@ if (is_exact_action "print") {
         $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", $issuetype_name));
     my $associated_project = $issuetype_json->{project};
 
+    my $project_key = name2key(["rest", "project"], $associated_project);
+    my $screen_name_postfix =
+        decode_utf8(scalar capture("ask-for-input-with-sawfish -p 'screen name postfix?'"));
+    my $screen_name = "${project_key}.${issuetype_name}.${screen_name_postfix}";
 
+    new_screen($screen_name);
+    run("hint -t 1 '请使用 jkd create-custom-field 来创建字段'");
 } elsif (is_exact_action "use-workflow") {
     my $project =
         decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-project", "-n", "$issuetype_name"));
@@ -500,6 +517,7 @@ if (is_exact_action "print") {
 
     runx("jkd", "wfs-switch-wf", '--issuetype-name', $issuetype_name, "--new-wf-name", $workflow_name, "--scheme-id", $workflow_scheme_id, "--scheme-active");
 } elsif (is_exact_action "new") {
+
     if (not $issuetype_id) {
         my $issuetype_style =
             decode_utf8(scalar capturex("select-args", "-p", "Which kind of issuetype do you want?", "standard", "sub-task"));
@@ -600,13 +618,7 @@ if (is_exact_action "print") {
 
     if (not %{$issuetype_json->{screens}}) {
         my $screen_name = "${project_key}.${issuetype_name}.默认面板";
-        my $screen_id = name2id (['rest', 'screens'], $screen_name);
-        if (not $screen_id) {
-            my $description =
-                decode_utf8(scalar capture("ask-for-input-with-sawfish -p 'screen description for $screen_name?'"));
-            runx ("jkd", "create-screen", "-n", "$screen_name", "-d", "$description");
-            $screen_id = name2id (['rest', 'screens'], $screen_name);
-        }
+        new_screen($screen_name);
         $issuetype_json->{screens} = {
             $screen_name =>
                 $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "${screen_name}")),
