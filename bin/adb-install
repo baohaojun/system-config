@@ -43,7 +43,12 @@ phone_size=$(my-adb dumpsys window|grep -o 'init=\S+' -P)
             fi
         fi
     done
-) &>/dev/null&
+) 2>&1 |
+    if is-jenkins; then
+        cat
+    else
+        cat &>/dev/null
+    fi &
 
 args=(
     "$@"

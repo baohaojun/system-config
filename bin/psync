@@ -193,41 +193,7 @@ EOFb52d0b099efd
 fi
 
 if test $# = 0 -o $# = 1; then
-    cd ~/system-config/
-
-    function do_1() {
-        (
-            echo working with "$@"
-            cd "$2" || exit
-            psync "$1" .
-        )
-    }
-    export -f do_1
-
-    function do_x() {
-        . ~/system-config/etc/github-projects
-        (
-            echo ~/system-config/
-            echo ~/external/local/
-            for x in "${github_projects[@]}" "${smartcm_projects[@]}"; do
-                echo ~/src/github/$x
-            done
-        ) | xargs -P 5 -n 1 bash -c "do_1 $x \$@" true
-    }
-
-    if test $# = 1; then
-        x=$1
-        do_x
-        exit
-    fi
-
-    if test "$ABC_REMOTE_HOST"; then
-        x=$ABC_REMOTE_HOST
-        do_x
-        exit
-    fi
-    x=cmdev
-    do_x
+    die "Can't do system-config sync, please use misc sync-system-config-to"
     exit
 fi
 

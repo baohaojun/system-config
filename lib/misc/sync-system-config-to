@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -e
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # t:to-host
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o t:h \
+                      --long to-host:,help \
+                      -n $(basename -- $0) -- "$@")
+declare to_host=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -t|--to-host)
+            to_host=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-t, '
+            printf %-24s '--to-host=TO_HOST'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+cd ~/system-config/
+
+function do_1() {
+    (
+        echo working with "$@"
+        cd "$2" || exit
+        psync "$1" .
+    )
+}
+export -f do_1
+
+if test -z "${to_host}"; then
+    die "Must specify --to-host"
+fi
+
+. ~/system-config/etc/github-projects
+(
+    echo ~/system-config/
+    echo ~/external/local/
+    for x in "${github_projects[@]}" "${smartcm_projects[@]}"; do
+        echo ~/src/github/$x
+    done
+) | xargs -P 5 -n 1 bash -c "do_1 $to_host \$@" true
