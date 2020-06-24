@@ -946,7 +946,14 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    end
 
    sdk_version = adb_pipe("getprop ro.build.version.sdk")
-   check_apk_installed("Setclip.apk", "Setclip.apk.md5", "需要安装小扳手辅助 App")
+
+   setclip_apk_sdk = ("Setclip-sdk%s.apk"):format(sdk_version)
+   if file_exists(setclip_apk_sdk) then
+      check_apk_installed(setclip_apk_sdk, setclip_apk_sdk .. ".md5", "需要安装小扳手辅助 App " .. setclip_apk_sdk)
+   else
+      check_apk_installed("Setclip.apk", "Setclip.apk.md5", "需要安装小扳手辅助 App Setclip.apk")
+   end
+
    am_jar_sdk = ("am-sdk%s.jar"):format(sdk_version)
    if file_exists(am_jar_sdk) then
       check_file_push_and_renamed(am_jar_sdk, am_jar_sdk .. ".md5", "am.jar")
