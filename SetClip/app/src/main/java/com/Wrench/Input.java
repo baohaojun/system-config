@@ -117,17 +117,10 @@ public class Input {
     private static void initAm() {
         if (mAm == null) {
             try {
-                loadAm("/system/framework/am.jar");
-            } catch (ClassNotFoundException e) {
                 String jarFile = "/data/data/com.android.shell/am.jar";
-                try {
-                    loadAm(jarFile);
-                } catch (Throwable e2) {
-                    System.out.println("Error " + e2.getMessage());
-                    e2.printStackTrace();
-                }
+                loadAm(jarFile);
             } catch (Throwable e) {
-                System.out.println("Error " + e.getMessage());
+                System.out.println("Error initAm " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -179,7 +172,7 @@ public class Input {
                 initAm();
                 mAmRun.invoke(mAm, (Object)args);
             } catch (Throwable e) {
-                System.out.println("Error " + e.getMessage());
+                System.out.println("Error in mAmRun? " + e.getMessage());
                 e.printStackTrace();
                 mAm = null;
             }

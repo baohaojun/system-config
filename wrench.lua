@@ -201,6 +201,7 @@ end
 debugging = function(fmt, ...)
    if M.is_debugging then
       log(fmt, ...)
+      M.debug(fmt, ...)
    end
 end
 
@@ -299,6 +300,7 @@ M.adb_do = function(func, cmds)
 end
 
 M.adb_shell = function (cmds)
+   M.debugging("cmds is %s", cmds)
    if qt_adb_pipe then
       return adb_pipe(cmds)
    end
@@ -343,6 +345,8 @@ M.adb_am = function(cmd)
    if type(cmd) ~= 'string' then
       cmd = join(' ', cmd)
    end
+
+   M.debugging("am: %s", cmd)
    if adb_quick_am ~= nil then
       local res = adb_quick_am{cmd}
       if res ~= "input ok\n" then
@@ -941,11 +945,17 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
       M.update_apps()
    end
 
+   sdk_version = adb_pipe("getprop ro.build.version.sdk")
    check_apk_installed("Setclip.apk", "Setclip.apk.md5", "需要安装小扳手辅助 App")
-   check_file_pushed("am.jar", "am.jar.md5")
+   am_jar_sdk = ("am-sdk%s.jar"):format(sdk_version)
+   if file_exists(am_jar_sdk) then
+      check_file_push_and_renamed(am_jar_sdk, am_jar_sdk .. ".md5", "am.jar")
+   else
+      check_file_pushed("am.jar", "am.jar.md5")
+   end
+
    check_file_pushed("busybox", "busybox.md5")
 
-   sdk_version = adb_pipe("getprop ro.build.version.sdk")
    brand = adb_pipe("getprop ro.product.brand"):gsub("\n.*", "")
    model = adb_pipe("getprop ro.product.model"):gsub("\n.*", "")
    arm_arch = adb_pipe("/data/data/com.android.shell/busybox uname -m 2>/dev/null || uname -m")

@@ -101,12 +101,19 @@ else
               app/build/outputs/apk/release/app-release-aligned.apk
 fi
 
-adb uninstall com.bhj.setclip
-adb install ${apk}
+adb install -r ${apk} ||
+    (
+        adb uninstall com.bhj.setclip &&
+            adb install ${apk}
+    )
 
 . .before-install-hook
 
 my-adb 'rm -f /sdcard/setclip-apk.txt; am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getapk 1'
 sleep 1
 my-adb kill app_process || true
-my-adb sh /sdcard/setclip-apk.txt app_process /system/bin/ com.Wrench.Input
+if ! adb shell test -e /sdcard/setclip-apk.txt; then
+    hint "小扳手没有权限写 /sdcard/ 目录？新版安卓上需在系统设置中手动设置一下小扳手的权限"
+else
+    my-adb sh /sdcard/setclip-apk.txt app_process /system/bin/ com.Wrench.Input
+fi

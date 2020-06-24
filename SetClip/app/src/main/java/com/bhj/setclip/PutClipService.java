@@ -121,7 +121,7 @@ public class PutClipService extends Service {
 
                                 // ** New value
                                 // TODO hh
-                                // [2017-08-22 周二 22:13]
+                                // [2017-08-22 周二 22:13]
                                 // ** End of edit
 
                                 try {
@@ -411,11 +411,11 @@ public class PutClipService extends Service {
                     PackageInfo pi = pm.getPackageInfo("com.bhj.setclip", 0);
 
                     FileWriter f = new FileWriter(new File(sdcard, "setclip-apk.txt.1"));
-                    f.write(String.format("if test -e %s; then CLASSPATH=%s LD_LIBRARY_PATH=%s \"$@\"; else echo %s not found; fi", pi.applicationInfo.sourceDir, pi.applicationInfo.sourceDir, pi.applicationInfo.nativeLibraryDir, pi.applicationInfo.sourceDir));
+                    f.write(String.format("if test -e %s; then CLASSPATH=%s LD_LIBRARY_PATH=%s:/system/app/miui/lib/arm64/ \"$@\"; else echo %s not found; fi", pi.applicationInfo.sourceDir, pi.applicationInfo.sourceDir, pi.applicationInfo.nativeLibraryDir, pi.applicationInfo.sourceDir));
                     f.close();
                     new File(sdcard, "setclip-apk.txt.1").renameTo(new File(sdcard, "setclip-apk.txt"));
-                }
-                catch (Throwable e) {
+                } catch (Throwable e) {
+                    Toast.makeText(PutClipService.this, String.format("%s", "小扳手没有权限写 /sdcard/ 目录？新版安卓上需在系统设置中手动设置一下小扳手的权限"), Toast.LENGTH_LONG).show();
                     Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 134), e);
                 }
 
