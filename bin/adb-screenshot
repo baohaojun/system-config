@@ -114,14 +114,15 @@ Y=$(($y + $H))
 x=$((x < 0 ? 0 : x))
 y=$((y < 0 ? 0 : y))
 
+if test -z "$1"; then
+    mkdir -p ~/tmp/weekly
+    set -- ~/tmp/weekly/$(now.).jpg
+fi
+
 if test "${system_screencap}" = true; then
     adb shell screencap /sdcard/screen.png
     sd_file=screen.png
 else
-    if test -z "$1"; then
-        mkdir -p ~/tmp/weekly
-        set -- ~/tmp/weekly/$(now.).jpg
-    fi
     sd_file=$(basename "$1").jpg
     adb shell /data/data/com.android.shell/screencap \
         -x $x -y $y -X $X -Y $Y /sdcard/$sd_file
