@@ -106,16 +106,21 @@ function git()
                                     command git status -s | ./.git-status-filter
                                 else
                                     command git status -s
-                                fi
+                                fi 2>&1
                              )
                             if test "$y"; then
                                 echo $x not clean 1>&2
-                                command git status -s
+                                command git status -s 2>&1
                                 echo ---------------- 1>&2
+                                if test "${giti}" = true; then
+                                    (
+                                        myscr -n "${x##*/}" -w bash -c "hint $x not clean; cd $x; bash"
+                                    )
+                                fi
                                 exit 0
                             fi
                             y=$(
-                                command git diff --name-status $(git-remote-branch) |
+                                command git diff --name-status $(git-remote-branch) 2>&1|
                                     if test -e .git-status-filter; then
                                         ./.git-status-filter
                                     else
@@ -124,8 +129,13 @@ function git()
                              )
                             if test "$y"; then
                                 echo $x not clean with $(git-remote-branch) 1>&2
-                                command git diff --name-status $(git-remote-branch)
+                                command git diff --name-status $(git-remote-branch) 2>&1
                                 echo ---------------- 1>&2
+                                if test "${giti}" = true; then
+                                    (
+                                        myscr -n "${x##*/}" -w bash -c "hint $x not clean; cd $x; bash"
+                                    )
+                                fi
                             fi
                         )
                     fi

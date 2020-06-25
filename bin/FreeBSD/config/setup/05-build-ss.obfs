@@ -8,8 +8,9 @@ git reset --hard f3916e78df4b7eed6555d5a7c51b091fe8493ba4
 
 . .pure
 ./autogen.sh
-./configure --with-ev=/usr/local
 
-make || true
-sudo make install || true
+LDFLAGS=-L/usr/local/lib CFLAGS=-I/usr/local/include ./configure
+
+make || true # can't make man page
+sudo make install || true # can't make man page
 ps-killall ss-local || true

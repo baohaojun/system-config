@@ -20,3 +20,4 @@ core.*.[0-9]*
 nohup.out
 .factorypath
 
+.lock-failed
