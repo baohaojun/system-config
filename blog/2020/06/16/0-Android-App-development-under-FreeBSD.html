@@ -113,8 +113,8 @@ So far I'm quite happy about FreeBSD experience. At one point, it was painful an
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 All in all, FreeBSD is very stable! I loved it when I found the laptop (ThinkPad T440p) can sleep and wakeup reliably &#x2013; on the other hand, X Window on Linux often fail to wake up, forcing me to restart the desktop session and losing all the open windows.
 </p>
-<div class="outline-2" id="outline-container-orgf1a635d">
-<h2 id="orgf1a635d" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">1</span> Android App development under FreeBSD</h2>
+<div class="outline-2" id="outline-container-orgee66df1">
+<h2 id="orgee66df1" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">1</span> Android App development under FreeBSD</h2>
 <div class="outline-text-2" id="text-1">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 Android App development under FreeBSD is very painful, but not impossible. After a lot of Googling, I have come through a relatively smooth method.
@@ -135,16 +135,16 @@ Need decompile and recompile a certain Android jar file.
 <li style="margin: 0.5em 0">A workaround for using both Emacs (lsp-intellij) and AndroidStudio for App development</li>
 </ol>
 </div>
-<div class="outline-3" id="outline-container-orgf110b93">
-<h3 id="orgf110b93" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.1</span> Install Linux Binary Compatibility</h3>
+<div class="outline-3" id="outline-container-org8ebfded">
+<h3 id="org8ebfded" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.1</span> Install Linux Binary Compatibility</h3>
 <div class="outline-text-3" id="text-1-1">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 You'd better have read the LBC document, and have a basic understanding about how it works (see below).
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org236f6a9">
-<h3 id="org236f6a9" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.2</span> Hacking android jars and android studio</h3>
+<div class="outline-3" id="outline-container-orga44fed2">
+<h3 id="orga44fed2" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.2</span> Hacking android jars and android studio</h3>
 <div class="outline-text-3" id="text-1-2">
 <ol class="org-ol" style="margin: 1.2em 0; padding-left: 2em">
 <li style="margin: 0.5em 0">Find a simple Android App source code (for e.g., copy from a Linux system).</li>
@@ -153,7 +153,7 @@ You'd better have read the LBC document, and have a basic understanding about ho
 
 <ul class="org-ul" style="margin: 0; padding-left: 1em">
 <li style="margin: 0.5em 0">open the jar file with jd-gui</li>
-<li style="margin: 0.5em 0">save the SdkConstants.java to ~/</li>
+<li style="margin: 0.5em 0">save the SdkConstants.java (package: <code style="background: transparent; font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline; color: #7f7f7f">com.android</code>) to ~/</li>
 <li style="margin: 0.5em 0">javac ~/SdkConstants.java -cp $(find ~/.gradle/ -name 'common*.jar'|grep android)</li>
 <li style="margin: 0.5em 0">mkdir com/android -p;</li>
 <li style="margin: 0.5em 0">mv ~/SdkConstants.class ./com/android/;</li>
@@ -190,7 +190,7 @@ run <code style="background: transparent; font-size: 0.85em; font-family: Consol
 <code style="background: transparent; font-size: 0.85em; font-family: Consolas, Inconsolata, Courier, monospace; margin: 0 0.15em; padding: 0 0.3em; white-space: pre-wrap; border: 1px solid #EAEAEA; background-color: #F8F8F8; border-radius: 3px; display: inline; color: #7f7f7f">linux-env</code> is a simple script I wrote:
 </p>
 <div class="org-src-container">
-<pre class="src src-sh" style="background: transparent; color: inherit; border: 2pt solid #7E0D0C; padding: 5pt; overflow: auto; font-family: Consolas, Inconsolata, Courier, monospace; font-size: 1em; line-height: 1.2em; margin: 1.2em 0"><span class="org-comment-delimiter" style="font-style: italic; color: #204A87">#</span><span class="org-comment" style="font-style: italic; color: #204A87">!/usr/bin/</span><span class="org-keyword" style="color: #A52A2A; font-weight: bold">env</span><span class="org-comment" style="font-style: italic; color: #204A87"> bash</span><br/><span class="org-builtin" style="color: #A020F0">set</span> -e<br/><br/><span class="org-variable-name" style="color: #0084C8; font-weight: bold">PATH</span>=/compat/linux/bin:$<span class="org-variable-name" style="color: #0084C8; font-weight: bold">PATH</span><br/><span class="org-string" style="color: #4E9A06">"$@"</span><br/></pre>
+<pre class="src src-sh" style="background: transparent; color: inherit; border: 2pt solid #7E0D0C; padding: 5pt; overflow: auto; font-family: Consolas, Inconsolata, Courier, monospace; font-size: 1em; line-height: 1.2em; margin: 1.2em 0"><span class="org-comment-delimiter" style="color: #204A87">#</span><span class="org-comment" style="color: #204A87">!/usr/bin/</span><span class="org-keyword" style="color: #A52A2A; font-weight: bold">env</span><span class="org-comment" style="color: #204A87"> bash</span><br/><span class="org-builtin" style="color: #A020F0">set</span> -e<br/><br/><span class="org-variable-name" style="color: #0084C8; font-weight: bold">PATH</span>=/compat/linux/bin:$<span class="org-variable-name" style="color: #0084C8; font-weight: bold">PATH</span><br/><span class="org-string" style="color: #4E9A06">"$@"</span><br/></pre>
 </div></li>
 <li style="margin: 0.5em 0"><p style="margin-top: 10px; margin-bottom: 10px; margin: 0.5em 0">
 Now, I can also run AndroidStudio, can generate an Android App Project.
@@ -205,6 +205,9 @@ Gradle sync will fail, complaining:
 </p>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0.5em 0">
 To fix this, inside AndroidStudio, set the jre that gradle uses to the same as /usr/local/openjdk8.
+</p>
+<p style="margin-top: 10px; margin-bottom: 10px; margin: 0.5em 0">
+(Project Structure -&gt; SDK Location -&gt; JDK Location).
 </p></li>
 </ul>
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0.5em 0">
@@ -213,8 +216,8 @@ Then, gradle will fail again, complaining <code style="background: transparent; 
 </ol>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org0e18ef2">
-<h3 id="org0e18ef2" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.3</span> Fix adb devices go missing</h3>
+<div class="outline-3" id="outline-container-orgde14c5d">
+<h3 id="orgde14c5d" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.3</span> Fix adb devices go missing</h3>
 <div class="outline-text-3" id="text-1-3">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 Here the problem is that my phone's adb connection will suddenly be gone when doing adb push or adb install (which involes pushing the apk file first).
@@ -243,8 +246,8 @@ After that, my adb device connection is quite stable now.
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-orgc475c2e">
-<h3 id="orgc475c2e" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.4</span> Update lsp-intellij and lsp-intellij-server</h3>
+<div class="outline-3" id="outline-container-org9005a9c">
+<h3 id="org9005a9c" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.4</span> Update lsp-intellij and lsp-intellij-server</h3>
 <div class="outline-text-3" id="text-1-4">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 I use Emacs for almost everything.
@@ -273,8 +276,8 @@ For details check out the source code:
 </ul>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org91069a3">
-<h3 id="org91069a3" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.5</span> Work around for using both AndroidStudio and Emacs</h3>
+<div class="outline-3" id="outline-container-org3282eaf">
+<h3 id="org3282eaf" style="margin: 1.3em 0 1em; padding: 0; font-size: 1.3em; color: #0084C8; font-weight: bold"><span class="section-number-3">1.5</span> Work around for using both AndroidStudio and Emacs</h3>
 <div class="outline-text-3" id="text-1-5">
 <p style="margin-top: 10px; margin-bottom: 10px; margin: 0 0 1.2em 0">
 Once I start lsp, the AndroidStudio window for the App project will be hidden &#x2013; I can't open it again, unless I kill AndroidStudio and restart it, but then, I can't use lsp in Emacs unless I restart lsp, which will close the AndroidStudio window.
@@ -298,8 +301,8 @@ Copy the project files with a hardlink:
 </div>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org7cc3827">
-<h2 id="org7cc3827" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">2</span> Further plan</h2>
+<div class="outline-2" id="outline-container-orge6ecfe7">
+<h2 id="orge6ecfe7" style='font-family: "Trebuchet MS", Trebuchet, Arial, Verdana, Sans-serif; letter-spacing: 0.2em; margin: 1.3em 0 1em; padding: 0; font-size: 1.4em; border-bottom: 1px solid #eee; color: #00578E; font-weight: bold'><span class="section-number-2">2</span> Further plan</h2>
 <div class="outline-text-2" id="text-2">
 <ol class="org-ol" style="margin: 1.2em 0; padding-left: 2em">
 <li style="margin: 0.5em 0">Clean up lsp-intellij and lsp-mode code changes, find a way that is standard with the lsp-mode people.</li>

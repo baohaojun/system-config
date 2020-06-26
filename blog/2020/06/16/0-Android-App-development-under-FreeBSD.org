@@ -32,7 +32,7 @@ You'd better have read the LBC document, and have a basic understanding about ho
  3. patch the sdk common.jar (=find ~/.gradle/ -name 'common*.jar'|grep android=) according to http://zewaren.net/android-1.html, but with jd-gui:
 
     - open the jar file with jd-gui
-    - save the SdkConstants.java to ~/
+    - save the SdkConstants.java (package: =com.android=) to ~/
     - javac ~/SdkConstants.java -cp $(find ~/.gradle/ -name 'common*.jar'|grep android)
     - mkdir com/android -p;
     - mv ~/SdkConstants.class ./com/android/;
@@ -74,6 +74,8 @@ You'd better have read the LBC document, and have a basic understanding about ho
           > Process 'command '/home/bhj/android-studio/jre/bin/java'' finished with non-zero exit value 1
 
       To fix this, inside AndroidStudio, set the jre that gradle uses to the same as /usr/local/openjdk8.
+
+      (Project Structure -> SDK Location -> JDK Location).
 
     Then, gradle will fail again, complaining =Unknown platform 'FreeBSD'=. But we already know how to fix this: start AndroidStudio with =linux-env ~/android-studio/bin/studio.sh=.
 
