@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -e
+
+fix-1-file() {
+    local jar_file=$1
+    rm -f ~/tmp/SdkConstants.java
+    while test ! -e ~/tmp/SdkConstants.java; do
+        hint "Now will open $jar_file with jd-gui, and you need save SdkConstants.java to ~/tmp/SdkConstants.java"
+        jd-gui $jar_file
+    done
+
+    perl -pe 's,\Qos.startsWith("Linux"))\E,os.startsWith("Linux") || os.startsWith("FreeBSD")),' -i \
+         ~/tmp/SdkConstants.java
+
+    javac ~/tmp/SdkConstants.java -cp $jar_file
+    (
+        cd ~/tmp/
+        rm -rf com/android
+        mkdir -p com/android
+        mv SdkConstants.class com/android
+        jar uf $jar_file com/android/SdkConstants.class
+        touch $jar_file.fixed
+    )
+}
+
+sdk_common_files=$(
+    find ~/.gradle/caches/modules-2/files-2.1/com.android.tools/common -name "common*.jar"
+               )
+
+for sdk_common_file in $sdk_common_files; do
+    if test -e $sdk_common_file.fixed; then
+        hint -t 1 "$sdk_common_file is already fixed"
+        continue
+    fi
+
+    fix-1-file $sdk_common_file
+done
