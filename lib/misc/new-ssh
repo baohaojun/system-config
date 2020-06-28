@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # @:host=home '?"可指定为 USER@SSH-SERVER"' \
+    # @:user '?"ssh 连接的 user，如果 host 里已带，则不用指定"' \
+    # @:ssh-port=22 '?"ssh 服务器的端口"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o h \
+                      --long host:,ssh-port:,user:,help \
+                      -n $(basename -- $0) -- "$@")
+declare host=home
+declare ssh_port=22
+declare user=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        --host)
+            host=$2
+            shift 2
+
+            ;;
+        --ssh-port)
+            ssh_port=$2
+            shift 2
+
+            ;;
+        --user)
+            user=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf "%6s" " "
+            printf %-24s '--host=HOST'
+            echo "可指定为 USER@SSH-SERVER"
+            printf "%6s" " "
+            printf %-24s '--ssh-port=SSH_PORT'
+            echo "ssh 服务器的端口"
+            printf "%6s" " "
+            printf %-24s '--user=USER'
+            echo "ssh 连接的 user，如果 host 里已带，则不用指定"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+authorized_keys=$(cat ~/.ssh/authorized_keys|grep -v command=)
+
+if [[ $host =~ @ ]]; then
+    if test "${user}"; then
+        die "Can't specify both $user and $host, don't know who's the user"
+    fi
+
+    user=${host%@*}
+    host=${host#*@}
+fi
+
+if test -z "${user}"; then
+    user=${USER}
+fi
+
+ssh-tty ${user}@"$host" -p "${ssh_port}" bash -c "$(
+cat <<'EOF29494224a64f' | . .replace-%% --
+# {%sh-mode%}
+set -xe
+mkdir -p ~/.ssh
+cat <<EOF > ~/.ssh/authorized_keys
+[%authorized_keys%]
+EOF
+
+# {%/sh-mode%}
+EOF29494224a64f
+
+)"
