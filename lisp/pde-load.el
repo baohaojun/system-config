@@ -117,7 +117,6 @@
   (global-set-key "\C-xan" 'tempo-forward-mark)
   (global-set-key "\C-xap" 'tempo-backward-mark)
   (global-set-key "\C-xam" 'tempo-complete-tag)
-  (global-set-key " " 'tempo-x-space)
   )
 
 (provide 'pde-load)
