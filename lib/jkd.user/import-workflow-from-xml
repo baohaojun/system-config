@@ -122,6 +122,8 @@ output=$(
            "${scm_jira_url}secure/admin/workflows/ImportWorkflowFromXml.jspa"
       )
 
+log "Finished importing: ${workflow_name}"
+
 if echo "${output}" | grep 'A workflow with this name already exists.' -q; then
     die "这个 Workflow 已存在！"
 fi
@@ -131,6 +133,9 @@ json_layout=$(
     echo "$json_layout" | jq '.name = env.workflow_name'
            )
 
+log "update workflow layout json"
 jkd webcurl "${scm_jira_url}rest/workflowDesigner/latest/workflows" -X POST --data "${json_layout}" "-H" 'Content-Type: application/json'
+log "done update workflow layout json"
+
 
 # name=hello-world&description=&definition=inline&filePath=&workflowXML=XML&Import=Import

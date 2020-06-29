@@ -65,7 +65,7 @@ GetOptions (
 
 
 my $perms =
-    $json->decode(scalar capture("cached-run artifactory my-curl api/security/permissions"));
+    $json->decode(scalar capture("cached-run -e scm_artifactory_url artifactory my-curl api/security/permissions"));
 
 if ($manual_only) {
     @{$perms} = grep {$_->{name} !~ m,Deliver To,} @{$perms}
@@ -75,7 +75,7 @@ use URI::Escape;
 for (@$perms) {
     my $url = $_->{uri};
     my $details =
-        $json->decode(scalar capturex("cached-run", "artifactory", "my-curl", $url));
+        $json->decode(scalar capturex("cached-run", "-e", "scm_artifactory_url", "artifactory", "my-curl", $url));
 
     $_->{details} = $details;
 }

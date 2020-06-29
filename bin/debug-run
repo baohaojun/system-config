@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
 set -e
-log "running: $(command debug-args "$@")"
+
+if test "${DEBUG_RUN_REEXEC}" = true; then
+re_exec_str=$(
+    declare -x -p
+    command debug-args "$@"
+           )
+
+md5=$(echo "${re_exec_str}" | md5sum | pn 1)
+
+md5_dir=${md5:0:2}
+md5_file=~/.cache/system-config/debug-run/${md5_dir}/${md5:2}.sh
+mkdir -p "$(dirname "${md5_file}")"
+echo "${re_exec_str}" > "$md5_file"
+
+log "running: $(command debug-args "$@") (re-exec: bash -xe ${md5_file})"
+else
+    log "running: $(command debug-args "$@")"
+fi
 "$@"
