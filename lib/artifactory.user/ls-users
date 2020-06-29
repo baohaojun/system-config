@@ -22,7 +22,8 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# d:json-data
+
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -31,19 +32,11 @@ Getopt::Long::Configure("posix_default");
 
 
 
-my $json_data = "";
+
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-d, ';
-    printf "%-24s", '--json-data=JSON-DATA';
-    if (length('--json-data=JSON-DATA') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
-    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -55,23 +48,24 @@ my $handler_help = sub {
 };
 
 GetOptions (
-    'json-data|d=s' => \$json_data,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
 
-$json_data = $json->decode(encode_utf8 $json_data);
-my $uri = $json_data->{uri};
 
-my $old_details = decode_utf8(scalar capturex("debug-run", "artifactory", "my-curl", $uri));
-my $new_details = decode_utf8($json->encode($json_data->{details}));
+my $users =
+    $json->decode(scalar capture("cached-run -e scm_artifactory_url artifactory my-curl api/security/users"));
 
-runx(EXIT_ANY, "misc", "diff-json", $old_details, $new_details);
+use URI::Escape;
+for (@$users) {
+    my $name = $_->{name};
+    say STDERR "checking details for $name";
+    my $details =
+        $json->decode(scalar capturex("cached-run", "-e", "scm_artifactory_url", "artifactory", "my-curl", "api/security/users/${name}"));
 
-runx("yes-or-no-p", "更新指定的权限配置：" . $json_data->{name});
+    $_->{details} = $details;
+}
 
-runx("debug-run", "artifactory", "my-curl", "-X", "PUT", "$uri", "-d", "$new_details", "-H", 'Content-Type: application/json');
-capture(EXIT_ANY, "c artifactory ls-permissions &>/dev/null");
-run ("hint -t 5 '请确认 ldap 域组是否已经在 artifactory 里同步'");
+say decode_utf8($json->encode($users));

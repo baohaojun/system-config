@@ -69,6 +69,7 @@ declare -A function_url_map=(
     ["select-a-job"]=xxx
     ["Gerrit Manual Trigger"]=gerrit_manual_trigger/
     ["roles"]=role-strategy/
+    ["credentials"]=credentials/store/system/domain/_/
 )
 
 
