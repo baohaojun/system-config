@@ -11,13 +11,16 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # p:pipe-filter='(${json_filter:-cat})'
+    # p:pipe-filter='(${json_filter:-cat})' \
+    # fuse-file '?"为真：传入的两个参数都是文件；否则都是文件"' \
+
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o p:h \
-                      --long pipe-filter:,help \
+TEMP=$(POSIXLY_CORRECT=true getopt -o p:fh \
+                      --long pipe-filter:,use-file,help,no-use-file \
                       -n $(basename -- $0) -- "$@")
 declare -a pipe_filter=(${json_filter:-cat})
+declare use_file=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -25,6 +28,15 @@ while true; do
         -p|--pipe-filter)
             pipe_filter=("${pipe_filter[@]}" "$2")
             shift 2
+
+            ;;
+        -f|--use-file|--no-use-file)
+            if test "$1" = --no-use-file; then
+                use_file=false
+            else
+                use_file=true
+            fi
+            shift
 
             ;;
         -h|--help)
@@ -35,6 +47,9 @@ while true; do
             printf %6s '-p, '
             printf %-24s '--pipe-filter=PIPE_FILTER...'
             echo
+            printf %6s '-f, '
+            printf %-24s '--[no-]use-file'
+            echo "为真：传入的两个参数都是文件；否则都是文件"
             exit
             shift
             ;;
@@ -57,8 +72,14 @@ if test $# != 2; then
 fi
 
 . atexit rm ~/tmp/diff-texts.$$.*
-echo "$1" | "${pipe_filter[@]}" > ~/tmp/diff-texts.$$.1
-echo "$2" | "${pipe_filter[@]}" > ~/tmp/diff-texts.$$.2
+
+if test "${use_file}" = true; then
+    command=cat
+else
+    command=echo
+fi
+$command "$1" | "${pipe_filter[@]}" > ~/tmp/diff-texts.$$.1
+$command "$2" | "${pipe_filter[@]}" > ~/tmp/diff-texts.$$.2
 
 diff -c ~/tmp/diff-texts.$$.1 ~/tmp/diff-texts.$$.2 | less
 meld ~/tmp/diff-texts.$$.1 ~/tmp/diff-texts.$$.2 || true

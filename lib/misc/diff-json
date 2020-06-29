@@ -1,10 +1,81 @@
 #!/usr/bin/env bash
 set -e
 
-misc diff-texts \
-     "$(
-cat "$1" | misc json-sorted | jq 'del(..|.id?) | del(..|.self?) | del(..|.position?)' | perl -pe 's,\\r\\n,\\n,g'
-)" \
-     "$(
-cat "$2" | misc json-sorted | jq 'del(..|.id?) | del(..|.self?) | del(..|.position?)' | perl -pe 's,\\r\\n,\\n,g'
-)"
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # fuse-file '?"为真：传入的两个参数都是文件；否则都是文件"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o fh \
+                      --long use-file,help,no-use-file \
+                      -n $(basename -- $0) -- "$@")
+declare use_file=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--use-file|--no-use-file)
+            if test "$1" = --no-use-file; then
+                use_file=false
+            else
+                use_file=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-f, '
+            printf %-24s '--[no-]use-file'
+            echo "为真：传入的两个参数都是文件；否则都是文件"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${use_file}" = true || test -f "$1" -a -f "$2"; then
+    command=cat
+    f1=$1
+    f2=$2
+else
+    command=echo
+    f1=f1
+    f2=f2
+fi
+
+$command "$1" | misc json-sorted |
+    jq 'del(..|.id?) | del(..|.self?) | del(..|.position?)' |
+    perl -pe 's,\\r\\n,\\n,g' |
+    tee "$f1".txt
+
+$command "$2" | misc json-sorted |
+    jq 'del(..|.id?) | del(..|.self?) | del(..|.position?)' |
+    perl -pe 's,\\r\\n,\\n,g' |
+    tee "$f2".txt
+
+. atexit rm "$f1".txt "$f2".txt
+
+misc diff-texts -f "$f1".txt "$f2".txt

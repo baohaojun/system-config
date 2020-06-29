@@ -130,9 +130,11 @@ GetOptions (
 
 ## end generated code
 
-sub is_exact_action($) {
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+sub is_exact_action($target_action) {
     our %exact_actions;
-    my $target_action = $_[0];
     $exact_actions{$target_action} = 1;
     return $action eq $target_action;
 }
@@ -190,9 +192,7 @@ my %datatype_json_map = (
     status => $status_json,
 );
 
-sub id2name($$) {
-    my ($id, $datatype) = @_;
-
+sub id2name($id, $datatype) {
     my $names_ids_json = $datatype_json_map{$datatype};
 
     my @matched_names;
@@ -217,8 +217,7 @@ sub id2name($$) {
     return $matched_names[0];
 }
 
-sub name2id($$) {
-    my ($name, $datatype) = @_;
+sub name2id($name, $datatype) {
     my $names_ids_json = $datatype_json_map{$datatype};
 
     if (not $name) {
@@ -246,8 +245,8 @@ sub name2id($$) {
     return $matched_ids[0];
 }
 
-sub fields_name2id_number_only($) {
-    (my $id = name2id($_[0], 'field')) =~ s,customfield_,,;
+sub fields_name2id_number_only($name) {
+    (my $id = name2id($name, 'field')) =~ s,customfield_,,;
     return $id
 }
 
@@ -284,16 +283,17 @@ if (is_exact_action "id2name") {
 
                     $text =~ s,^field::(\d+);,field::${name};,;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
-                } elsif ($_->{name} eq "failureMessageField") {
+                } elsif ($_->{name} eq "failureMessageField" && $_->text ne "none") {
                     my $text = $_->text;
                     my $name = id2name($text, 'field');
                     die "bad name $name: it matches ;!" if $name =~ m/;/;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
                 } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression") {
-                    (my $text = $_->text) =~ s,^\%\{|\}$,,g;
-                    my $name = id2name($text, 'field');
-                    die "bad name $name: it matches ;!" if $name =~ m/;/;
-                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
+                    if ((my $text = $_->text) =~ s,^\%\{|\}$,,g) {
+                        my $name = id2name($text, 'field');
+                        die "bad name $name: it matches ;!" if $name =~ m/;/;
+                        $_->replace(sprintf('<arg name="%s">%%{%s}</arg>', $_->{name}, xml_quote $name));
+                    }
                 } elsif ($_->{name} =~ m,^(failureMessage)$,) {
                     my $text = $_->text;
                     my %id_name_map;
@@ -304,6 +304,27 @@ if (is_exact_action "id2name") {
                         die "bad name $name: it matches ;!" if $name =~ m/[%{}]/;
                     }
                     $text =~ s:\%\{(\d+)}:sprintf('%{%s}', $id_name_map{$1}):ge;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                } elsif ($_->{name} eq "field") {
+                    my $text = $_->text;
+                    my $name = id2name($text, 'field');
+                    die "bad name $name: it matches ;!" if $name =~ m/;/;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
+                } elsif ($_->{name} eq "selectedCustomField") {
+                    my $text = $_->text;
+                    my $name = id2name($text, 'field');
+                    die "bad name $name: it matches ;!" if $name =~ m/;/;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
+                } elsif ($_->{name} eq "emailBody") {
+                    my $text = $_->text;
+                    sub big_field_id2name($id) {
+                        if ($id >= 10000) {
+                            return id2name($id, 'field');
+                        } else {
+                            return $id;
+                        }
+                    }
+                    $text =~ s:\%\{(\d{5})\}:sprintf('%{%s}', big_field_id2name($1)):eg;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
                 }
             }
@@ -349,14 +370,15 @@ if (is_exact_action "id2name") {
 
                     $text =~ s,^field::(.*?);,field::${id};,;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
-                } elsif ($_->{name} eq "failureMessageField") {
+                } elsif ($_->{name} eq "failureMessageField" && $_->text ne "none") {
                     my $text = $_->text;
                     my $id = fields_name2id_number_only($text);
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, $id));
                 } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression") {
-                    (my $text = $_->text) =~ s,^\%\{|\}$,,g;
-                    my $id = fields_name2id_number_only $text;
-                    $_->replace(sprintf('<arg name="%s">%{%s}</arg>', $_->{name}, $id));
+                    if ( (my $text = $_->text) =~ s,^\%\{|\}$,,g) {
+                        my $id = fields_name2id_number_only $text;
+                        $_->replace(sprintf('<arg name="%s">%{%s}</arg>', $_->{name}, $id));
+                    }
                 } elsif ($_->{name} =~ m,^(failureMessage)$,) {
                     my $text = $_->text;
                     my %name_id_map;
@@ -366,6 +388,29 @@ if (is_exact_action "id2name") {
                         $name_id_map{$name} = $id;
                     }
                     $text =~ s:\%\{(\d+)}:sprintf('%{%s}', $name_id_map{$1}):ge;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                } elsif ($_->{name} eq "field") {
+                    my $text = $_->text;
+                    my $id = name2id($text, 'field');
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, $id));
+                } elsif ($_->{name} eq "selectedCustomField") {
+                    my $text = $_->text;
+                    my $id = fields_name2id_number_only($text);
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, $id));
+                } elsif ($_->{name} eq "emailBody") {
+                    my $text = $_->text;
+                    sub big_field_name2id($id) {
+                        if ($id =~ m,^\d{5}$,) {
+                            if ($id >= 10000) {
+                                die "Found a big $id, it should be a name";
+                            } else {
+                                return $id;
+                            }
+                        } else {
+                            return fields_name2id_number_only($id);
+                        }
+                    }
+                    $text =~ s:\%\{(.*?)\}:sprintf('%{%s}', big_field_name2id($1)):eg;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
                 }
             }

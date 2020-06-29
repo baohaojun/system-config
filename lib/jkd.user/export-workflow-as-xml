@@ -98,12 +98,15 @@ fi
 
 log Fetching XML...
 output_xml=$(
-curl-f -s -b "$COOKIES" -H "$HEADER" -d "os_cookie=true" -d "webSudoIsPost=true" "${scm_jira_url}secure/admin/workflows/ViewWorkflowXml.jspa?workflowMode=live&workflowName=$(uri-escape "${workflow_name}")"
+    debug-run curl-f -s -b "$COOKIES" -H "$HEADER" -d "os_cookie=true" -d "webSudoIsPost=true" "${scm_jira_url}secure/admin/workflows/ViewWorkflowXml.jspa?workflowMode=live&workflowName=$(uri-escape "${workflow_name}")"
           )
 
-echo "${output_xml}" |
+workflows_dir=~/src/jenkins-tasks/jira/${scm_jira_url}/workflows/
+
+mkdir -p "${workflows_dir}"
+echo "${output_xml}" | tee "${workflows_dir}/${workflow_name}.id.xml" |
     if test "${convert_to_names}" = true; then
-        debug-run jkd workflow -f /dev/stdin -a id2name
+        debug-run jkd workflow -f /dev/stdin -a id2name | tee "${workflows_dir}/${workflow_name}.name.xml"
     else
         cat
     fi > "${workflow_filename:-/dev/stdout}"
@@ -111,6 +114,8 @@ echo "${output_xml}" |
 export workflow_name
 
 cat<<EOF >> "${workflow_filename:-/dev/stdout}"
+
+
 <!-- start of jira workflow layout
 $(jkd -u $scm_jira_admin_user webcurl "${scm_jira_url}rest/workflowDesigner/latest/workflows?name=$(urlify "${workflow_name}")&draft=false" |
 

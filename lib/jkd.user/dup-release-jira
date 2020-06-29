@@ -9,11 +9,13 @@ set -e
     # j:jq-expression=. '?"传给 jq 的表达式，比如可以用于改变版本号：.customfield_14504 = \"1.0.0\" 或 .customfield_14108 = (.value = \"HU\")"' \
     # @force-prod \
     # @debug='(true hint)' \
-    # @:screen-filter '?"比如「EF:发布需求.Tabbed」"'
+    # @:screen-filter '?"比如「EF:发布需求.Tabbed」"' \
+    # @:tri-numbers=3 '?"tri（状态流转）多少次？默认是 3 次"' \
+
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o j:i:r:h \
-                      --long debug,force-prod,jq-expression:,old-issue:,old-jira-url:,old-json:,replace-regexp:,screen-filter:,help,no-debug,no-force-prod \
+                      --long debug,force-prod,jq-expression:,old-issue:,old-jira-url:,old-json:,replace-regexp:,screen-filter:,tri-numbers:,help,no-debug,no-force-prod \
                       -n $(basename -- $0) -- "$@")
 declare debug=true
 declare force_prod=false
@@ -23,6 +25,7 @@ declare old_jira_url=${scm_jira_url}
 declare old_json=
 declare replace_regexp=
 declare screen_filter=
+declare tri_numbers=3
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -75,6 +78,11 @@ while true; do
             shift 2
 
             ;;
+        --tri-numbers)
+            tri_numbers=$2
+            shift 2
+
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -112,6 +120,11 @@ while true; do
             echo
             printf "%30s" ""
             echo "比如「EF:发布需求.Tabbed」"
+            printf "%6s" " "
+            printf %-24s '--tri-numbers=TRI_NUMBERS'
+            echo
+            printf "%30s" ""
+            echo "tri（状态流转）多少次？默认是 3 次"
             exit
             shift
             ;;
@@ -148,7 +161,7 @@ if test -z "${old_json}"; then
 
     old_json=$(
         set -x
-        jkd -j ${old_jira_url} print-issue -i ${old_issue} --json
+        jkd -j ${old_jira_url} print-issue -i ${old_issue}
             )
 fi
 
@@ -170,8 +183,8 @@ project=$(
 
 jira_key=$(
     jkd c -p "${project}" -t "【智能与系统-车机】版本发布 Workflow" \
-        --fields-json "${old_json}" |
-        tee /dev/stderr |
+        --fields-json "${old_json}" 2>&1|
+        tee /dev/stderr ~/tmp/dup-release-jira.txt|
         perl -ne 'print if s,POST.*response code:201result:,,' | jq .key -r
         )
 
@@ -180,15 +193,10 @@ if test -z "${jira_key}"; then
     die "Can't create jira issue"
 fi
 
-jkd tri -i $jira_key --fields-json "${old_json}" -t "【系统部】发布需求符合要求"
-$debug transitioned jira: 1
-
-jkd tri -i $jira_key --fields-json "${old_json}"
-$debug transitioned jira: 2
-
-jkd tri -i $jira_key --fields-json "${old_json}"
-$debug transitioned jira: 3
-
+for n in $(seq 1 ${tri_numbers}); do
+    jkd tri -i $jira_key --fields-json "${old_json}"
+    $debug transitioned jira: $n
+done
 echo "jira_key is $jira_key"
 
 firefox "${scm_jira_url}browse/${jira_key}"

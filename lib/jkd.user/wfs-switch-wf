@@ -167,7 +167,7 @@ if ($scheme_active) {
 
     if ($dom->at("select")) {
         runx(EXIT_ANY, "firefox", "$migrate_url");
-        run("yes-or-no-p completed migration?");
+        run("yes-or-no-p '请在 firefox 中确认 workflow migration（状态重命名）是否已完成?'");
         exit 0;
     }
 

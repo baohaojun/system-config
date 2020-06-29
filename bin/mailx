@@ -124,7 +124,7 @@ fi
 
 test -z "${body[0]}" && body=("=")
 
-the_mailx=/usr/bin/heirloom-mailx
+the_mailx=$(which heirloom-mailx || true)
 if test -e /opt/local/bin/mailx; then
     the_mailx=/opt/local/bin/mailx;
 fi
@@ -285,7 +285,7 @@ elif test $b0 = mailx; then
     fi
 
     (
-        if test -e /etc/postfix/sasl_passwd; then
+        if test -e /etc/postfix/sasl_passwd -o -e /usr/local/etc/postfix/sasl_passwd; then
             printf "$the_mailx -S from=$(get-about-me mail) -S smtp=localhost:25 "
         else
             printf "$the_mailx $send_as -Ssmtp-auth=login -S from=$(get-about-me mail) $STARTTLS -S smtp=$scheme$(get-about-me smtp):$(get-about-me smtp-port) -S smtp-auth-user=$(get-about-me mail) -S smtp-auth-password=%q " "$auth"
