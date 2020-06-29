@@ -211,4 +211,6 @@ if ($fix_fields) {
 } else {
     runx("misc", "diff-json", $json_data{$j1}, $json_data{$j2});
     runx("meld", $xml_data{$j1}, $xml_data{$j2});
+    say STDERR "To force no caching, exit 1";
+    exit(1);
 }

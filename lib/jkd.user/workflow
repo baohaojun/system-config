@@ -174,7 +174,6 @@ if ($workflow_xml) {
         die "Must not specify both xml_str and workflow_xml";
     }
     $xml_str = decode_utf8(read_file($workflow_xml));
-    say STDERR "xml_str is :::${xml_str}:::";
 } else {
     $xml_str = ($xml_str);
 }
@@ -307,6 +306,11 @@ if (is_exact_action "id2name") {
                     }
                     $text =~ s:\%\{(\d+)}:sprintf('%{%s}', $id_name_map{$1}):ge;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                } elsif ($_->{name} eq "field") {
+                    my $text = $_->text;
+                    my $name = id2name($text, 'field');
+                    die "bad name $name: it matches ;!" if $name =~ m/;/;
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
                 }
             }
         );
@@ -370,6 +374,10 @@ if (is_exact_action "id2name") {
                     }
                     $text =~ s:\%\{(\d+)}:sprintf('%{%s}', $name_id_map{$1}):ge;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $text));
+                } elsif ($_->{name} eq "field") {
+                    my $text = $_->text;
+                    my $id = name2id($text, 'field');
+                    $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, $id));
                 }
             }
         );
