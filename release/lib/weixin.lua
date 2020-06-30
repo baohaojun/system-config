@@ -282,6 +282,7 @@ M.weixin_text_share = function(window, text)
       text = text:gsub("\n", "​\n")
       putclip(text)
    end
+   click_scene("wx/zheyike", {["skip_refind"] = true})
    adb_event("adb-key scroll_lock sleep .2")
    if yes_or_no_p("Share to wechat?") then
       wrench_post(nil, 'Find-Button')
