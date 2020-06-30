@@ -181,8 +181,12 @@ project=$(
     echo "${old_json}" | jq '.Project|.key' -r
        )
 
+issuetype=$(
+    echo "${old_json}" | jq '."Issue Type"|.name' -r
+         )
+
 jira_key=$(
-    jkd c -p "${project}" -t "【智能与系统-车机】版本发布 Workflow" \
+    jkd c -p "${project}" -t "${issuetype}" \
         --fields-json "${old_json}" 2>&1|
         tee /dev/stderr ~/tmp/dup-release-jira.txt|
         perl -ne 'print if s,POST.*response code:201result:,,' | jq .key -r
