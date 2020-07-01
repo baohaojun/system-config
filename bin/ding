@@ -1,0 +1,233 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+my @SAVED_ARGV = @ARGV;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P \
+# @:ding-robot='$ENV{scm_default_robot} || "robot"' \
+# '?"此处可以输入多个 robot，以空格分割"' \
+# @:title='"（此通知没有标题）"' \
+# @:text='"（此通知没有文本）"' \
+# vverbose \
+# fformat=1 '?"重新格式化文本，以达到分段的效果"' \
+# @:ding-url \
+# @:ding-secret \
+# a:at-people='()' '?"指定在群里＠提醒某人，可以指定多次，也可以一次指定多个（用英文逗号或空格分割）"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my @at_people = ();
+my $ding_robot = $ENV{scm_default_robot} || "robot";
+my $ding_secret = "";
+my $ding_url = "";
+my $format = 1;
+my $text = "（此通知没有文本）";
+my $title = "（此通知没有标题）";
+my $verbose = 0;
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--at-people=AT-PEOPLE';
+    if (length('--at-people=AT-PEOPLE') > 24 and length("指定在群里＠提醒某人，可以指定多次，也可以一次指定多个（用英文逗号或空格分割）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定在群里＠提醒某人，可以指定多次，也可以一次指定多个（用英文逗号或空格分割）";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--ding-robot=DING-ROBOT';
+    if (length('--ding-robot=DING-ROBOT') > 24 and length("此处可以输入多个 robot，以空格分割") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "此处可以输入多个 robot，以空格分割";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--ding-secret=DING-SECRET';
+    if (length('--ding-secret=DING-SECRET') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--ding-url=DING-URL';
+    if (length('--ding-url=DING-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--[no]format';
+    if (length('--[no]format') > 24 and length("重新格式化文本，以达到分段的效果") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "重新格式化文本，以达到分段的效果";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--text=TEXT';
+    if (length('--text=TEXT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--title=TITLE';
+    if (length('--title=TITLE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'at-people|a=s' => \@at_people,
+    'ding-robot=s' => \$ding_robot,
+    'ding-secret=s' => \$ding_secret,
+    'ding-url=s' => \$ding_url,
+    'format|f!' => \$format,
+    'text=s' => \$text,
+    'title=s' => \$title,
+    'verbose|v!' => \$verbose,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my @invalid_at_people;
+
+if (@at_people) {
+    @at_people = split(/[, ]+/, join(" ", @at_people));
+    map {
+        my $name = $_;
+        my $telephone = capturex(
+            EXIT_ANY, "comp-mail", "-d", "$_", "-m", "telephoneNumber", "-g", ''
+        );
+        ($_ = $telephone) =~ s,telephoneNumber:\s*,,;
+
+        if ($_ !~ m/^\d+$/) {
+            push @invalid_at_people, "$name: '$_'\n";
+            $text .= " \@$name(?)";
+        }
+    } @at_people;
+
+    if (@invalid_at_people) {
+        runx(EXIT_ANY, "ding", "--title", "invalid at people found in ding msg", "--text", join("\n", @invalid_at_people));
+    }
+
+    @at_people = grep {m/^\d+$/} @at_people;
+}
+
+if ($ENV{scm_force_ding_robot}) {
+    $ding_robot = decode_utf8 "$ENV{scm_force_ding_robot}";
+    $ENV{scm_force_ding_robot} = "";
+}
+
+if (not $ding_url) {
+    if ($ding_robot =~ m, ,) {
+        for (split(" ", $ding_robot)) {
+            runx("debug-run", "ding", @SAVED_ARGV, "--ding-robot", $_);
+        }
+        exit;
+    }
+    chomp($ding_url = qx(git config -f $ENV{scm_secrets_conf} ding.${ding_robot}.url));
+}
+
+if (not $ding_secret) {
+    $ding_secret = qx(git config -f $ENV{scm_secrets_conf} ding.${ding_robot}.secret || true);
+}
+
+if ($ding_secret) {
+    chomp(my $extra = qx(ding-sign.py $ding_secret));
+    $ding_url .= $extra;
+    say STDERR "Added secret: $ding_url";
+}
+
+say "robot is $ding_robot, url is $ding_url" if $verbose;
+
+use HTTP::Request::Common;
+use LWP::UserAgent;
+use JSON;
+use Encode;
+my $ua = LWP::UserAgent->new;
+
+my $thin_space = ' ';
+
+if ($ENV{BUILD_URL} and $text !~ m,$ENV{BUILD_URL},) {
+    $text .= "\n\n（本消息发送自：$ENV{BUILD_URL}）";
+}
+
+if ($format) {
+    $text =~ s,(^(?!#)\S.*$)\n\n,#### $1\n\n#### ${thin_space}\n\n,mg;
+}
+
+$text = "## **$title**\n\n#### ${thin_space}\n\n##### \n\n$text";
+
+
+say STDERR "text is $text";
+
+if (@at_people) {
+    $text = join(" ", map {"\@$_"} @at_people) . " " . $text;
+}
+
+my $ding_msg = {
+    msgtype => "markdown",
+    markdown => {
+        title => "$title",
+        text => $text
+    },
+};
+
+if (@at_people) {
+    $ding_msg->{at} = {
+        atMobiles => \@at_people,
+        isAtAll => JSON::false,
+    };
+}
+
+my $request = POST $ding_url,
+    Content_Type => 'application/json; charset=utf-8',
+    Content => encode_json $ding_msg;
+
+my $response = $ua->request($request);
+
+use v5.10;
+
+say "response code: ", $response->code, ", content: ", $response->content;
