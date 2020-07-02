@@ -239,7 +239,6 @@ EOFe9576f8668e0
         if test && [[ $current_url =~ workflowName= ]]; then
             query_str=${current_url}
         elif [[ $current_url =~ /browse/ ]]; then
-            firefox_new_tab=--new-tab
             tmp_html=~/tmp/x.$$.html
             . atexit rm -f $tmp_html
 
@@ -288,7 +287,6 @@ elif [[ $path =~ hint: ]]; then
 fi
 
 if test "${which_page}" = screens -a $# = 0 && [[ $current_url =~ /browse/ ]]; then
-    firefox_new_tab=--new-tab
     issue_id=$(
         echo $current_url | perl -pe 's,.*/browse/((.*?)-\d+).*,$1,'
             )
@@ -385,4 +383,4 @@ else
 fi
 
 bhj-notify go-admin-page ${scm_jira_url}${path}
-firefox ${FIREFOX_PROFILE_ARG} $firefox_new_tab ${scm_jira_url}${path}
+firefox ${FIREFOX_PROFILE_ARG} --new-tab ${scm_jira_url}${path}

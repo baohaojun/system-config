@@ -37,6 +37,10 @@ fi
 
 $the_firefox ${FIREFOX_PROFILE_ARG} "$@"
 
+if [[ $* =~ -new-tab ]]; then
+    sawfish-send-focused-window-event "C-Next"
+fi
+
 # it's not needed after i installed Always Right: https://addons.mozilla.org/en-US/firefox/addon/always-right/
 # if echo " $*" | grep -e ' --new-tab'; then
 #     sawfish-send-focused-window-event "M-1" "C-Prior"

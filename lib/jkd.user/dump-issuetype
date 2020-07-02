@@ -110,7 +110,8 @@ map {
     $_ = $issuetypeschemes_json->{$_};
     if (grep {$issuetype_name eq $_} @{$_->{issuetypes}} ) {
         if (@{$_->{projects}} > 1) {
-            die "Found too many projects " . Dumper($_->{projects});
+            $issuetypescheme_name = $name;
+            $project_name = decode_utf8(scalar capturex("select-args", "-o", "-p", "选择哪个 Project？", map {$_->{name}} @{$_->{projects}}));
         } elsif (@{$_->{projects}} == 1) {
             $issuetypescheme_name = $name;
             $project_name = $_->{projects}[0]{name};
