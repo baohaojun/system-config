@@ -217,7 +217,7 @@ sub get_project($print_result = 1) {
 
     unless (@projects == 1) {
         @projects = (
-            decode_utf8(scalar capturex("jkd", "sel-name", "-a", "project"))
+            decode_utf8(scalar capturex("jkd", "sel-key", "-a", "project"))
         );
     }
     print $projects[0] if $print_result;
@@ -344,7 +344,7 @@ if (is_exact_action "print") {
     map {
         my $workflow = $_->{issuetypes_workflow}{$issuetype_name};
         my @projects = @{$_->{projects}};
-        push @workflows, "$workflow" if $workflow and @projects == 1 and $projects[0] eq $project_name;
+        push @workflows, "$workflow" if $workflow and grep {$_ eq $project_name} @projects;
     } @$workflow_schemes_json;
 
     die ("Not exactly 1 workflow for issuetype: $issuetype_name " . join(" ", @workflows)) unless @workflows == 1;
@@ -500,7 +500,7 @@ if (is_exact_action "print") {
     my $project =
         decode_utf8(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "issuetype", "-a", "get-project", "-n", "$issuetype_name"));
 
-    my $project_name = name2name (['rest', 'project'], $project);
+    my $project_name = key2name (['rest', 'project'], $project);
     my $workflowscheme_json =
         $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "export-workflowschemes"));
 

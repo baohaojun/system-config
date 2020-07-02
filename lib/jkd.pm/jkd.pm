@@ -23,7 +23,7 @@ BEGIN { @jkd::ISA = 'Exporter' }
 
 @jkd::EXPORT = qw(
 
-                     name2id name2key name2name name_exists
+                     name2id name2key key2name name_exists
                      select_args no_spaces_equal no_spaces_convert
                      no_spaces_hash_convert no_spaces_hashget
 
@@ -84,12 +84,12 @@ sub name2key($jkd_cmds, $name) {
     return undef;
 }
 
-sub name2name($jkd_cmds, $name) {
+sub key2name($jkd_cmds, $name) {
     my $jsonArray =
         $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", @$jkd_cmds));
 
     map {
-        return $_->{name} if $_->{name} eq $name || ($_->{key} && $_->{key} eq $name);
+        return $_->{name} if $_->{key} eq $name;
     } @$jsonArray;
     return undef;
 }

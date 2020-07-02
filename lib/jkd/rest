@@ -115,7 +115,7 @@ fi
 
 for try in $(seq 1 $max_try); do
     if ! output=$(curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@"); then
-        die "curl failed with output: '$output'"
+        die "curl $j_url $* failed with output: '$output'"
     fi
     if test "${output_format}" = json -a -z "${output}"; then
         sleep $((try * 3))

@@ -71,5 +71,4 @@ if ($verbose) {
     }
 }
 
-
 print JSON->new->utf8(0)->pretty(1)->encode($roles_json);
