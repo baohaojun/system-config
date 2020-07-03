@@ -3,7 +3,7 @@ use strict;
 use v5.10;
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P -s perl l:label @online-only
+# generate-getopt -P -s perl l:label @online-only j:json-map-code
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -12,12 +12,21 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $json_map_code = "";
 my $label = "";
 my $online_only = 0;
 
 my $handler_help = sub {
     print ;
     print "\n\n选项和参数：\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--json-map-code=JSON-MAP-CODE';
+    if (length('--json-map-code=JSON-MAP-CODE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-l, ';
     printf "%-24s", '--label=LABEL';
     if (length('--label=LABEL') > 24 and length() > 0) {
@@ -35,10 +44,17 @@ my $handler_help = sub {
     printf "%s", ;
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
+    'json-map-code|j=s' => \$json_map_code,
     'label|l=s' => \$label,
     'online-only!' => \$online_only,
     'help|h!' => \&$handler_help,
@@ -50,6 +66,13 @@ GetOptions (
 use JSON;
 
 my $nodes_json = decode_json(qx(jc curl computer/api/json));;
+if ($json_map_code) {
+    use JSON::Path 'jpath_map';
+    map {
+        eval "${json_map_code}"
+    } JSON::Path->new('$.computer[*]')->values($nodes_json);
+    exit 0;
+}
 
 for (@{$nodes_json->{computer}}) {
     if ($label) {

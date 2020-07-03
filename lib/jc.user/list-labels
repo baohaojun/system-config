@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+my $nodes_json = decode_json(qx(jc curl computer/api/json));
+
+my %labels;
+map {
+    my $nodeName = $_->{displayName};
+    map {
+        $labels{$_->{name}} = 1 unless $_->{name} eq $nodeName;
+    } @{$_->{assignedLabels}}
+} @{$nodes_json->{computer}};
+
+map {
+    say $_;
+} sort keys %labels;
