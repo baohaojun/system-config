@@ -109,6 +109,11 @@ fi
 set -o pipefail
 
 max_try=1
+if test -z "${output_format}" -a "$#" = 0; then
+    # let's be bold, if we found any special cases later, fix it then.
+    output_format=json
+fi
+
 if test "${output_format}" = json; then
     max_try=3
 fi
@@ -117,15 +122,15 @@ for try in $(seq 1 $max_try); do
     if ! output=$(curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@"); then
         die "curl $j_url $* failed with output: '$output'"
     fi
-    if test "${output_format}" = json -a -z "${output}"; then
+
+    if test "${output_format}" = json && ! output=$(echo "${output}" | jq .); then
         sleep $((try * 3))
+        if test "${try}" = "$max_try"; then
+            die "Can't get json data for $j_url: output is '$output'"
+        fi
         continue
     fi
-    if [[ $output =~ \\u ]]; then # perl json module can't do this...
-        echo "${output}" | jq .
-    else
-        echo "${output}"
-    fi
+    echo "${output}"
     exit
 done
 
