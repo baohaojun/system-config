@@ -3,7 +3,7 @@ M.dd_activity = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.ac
 M.dd_search_activity = "com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchActivity"
 M.dd_home = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.LaunchHomeActivity"
 
-M.open_dd_search = function()
+M.open_dd = function(target_activity) -- target_activity can be one of ["search", "home"]
    local top_window, i
    local max_times = 6
    for i = 1, max_times do
@@ -11,7 +11,7 @@ M.open_dd_search = function()
          start_app("com.alibaba.android.rimet")
       end
 
-      if M.m_focused_window == M.dd_search_activity then
+      if target_activity == "search" and M.m_focused_window == M.dd_search_activity then
          log("found dd search window")
          if find_scene("dd-sousuo-shanchu") then
             jump_out_of("dd-sousuo-shanchu")
@@ -21,15 +21,23 @@ M.open_dd_search = function()
       elseif M.m_focused_window ~= M.dd_home then
          adb_back_from_activity()
       else
-         if find_scene("dd-xiaoxi-sousuo") then
-            jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
-            return
+         if target_activity == "search" then
+            if find_scene("dd-xiaoxi-sousuo") then
+               jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
+               return
+            end
          end
          local found_duihua = find_scene("dd-xiaoxi-xuanzhong")
+         if found_duihua and target_activity == "home" then
+            return
+         end
 
          local found_grey
          if not found_duihua then
             found_grey = find_scene("dd-xiaoxi-weixuanzhong")
+            if found_grey and target_activity == "home" then
+               return
+            end
          end
 
          if not found_grey and not found_duihua then
@@ -54,39 +62,9 @@ end
 
 M.wrench_find_dingding_contact = function(friend_name)
    putclip_nowait(friend_name)
-   open_dd_search()
+   open_dd("search")
    adb_event"key scroll_lock key enter sleep .8"
    click_scene("dd-NiKeNengXiangZhao", {y = 200, x = 100})
-end
-
-M.dingding_open_homepage = function()
-   local dingding_splash = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.SplashActivity"
-   local dingding_home = "com.alibaba.android.rimet/com.alibaba.android.rimet.biz.home.activity.HomeActivity"
-   adb_am("am start -n " .. dingding_splash)
-   wait_top_activity_match("com.alibaba.android.rimet/")
-   for i = 1, 20 do
-      sleep(.1)
-      local window = adb_top_window()
-      if window then
-         log("dd: window is %s at %d", window, i)
-      end
-      if window and window ~= dingding_splash and window ~= dingding_home then
-         if window == "com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpWithPwdActivity" then
-            log("You need to sign in dingding")
-            break
-         end
-         log("dd: window is %s at %d", window, i)
-         adb_event"key back sleep .1"
-         sleep(.1)
-         adb_am("am start -n " .. dingding_splash)
-         wait_top_activity_match("com.alibaba.android.rimet/")
-      elseif window == dingding_splash then
-         adb_event"adb-tap 863 222"
-      elseif window == dingding_home then
-         break
-      end
-
-   end
 end
 
 M.click_pics = function(npics, pkg_prefix, extra_args)
@@ -258,6 +236,13 @@ M.wrench_picture = function (...)
       end
    end
    return #pics .. " pictures sent"
+end
+
+M.ding_search_and_select = function(name)
+   wrench_post(name)
+   wait_for_scene("dd/jianqun-weixuanzhong")
+   jump_from_to("dd/jianqun-weixuanzhong", "dd/jianqun-yixuanzhong")
+   jump_from_to("dd/jianqun-sousuo-close", "dd/jianqun-sousuo-hint")
 end
 
 
