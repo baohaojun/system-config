@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+
+@ARGV = ('dd-jianqun', @ARGV);
+
+map {
+    $_ = capturex("str", "quote", "-f", "lua", "$_")
+} @ARGV;
+
+my $wrench_command = sprintf("call_ext(%s)", join(",", @ARGV));
+
+runx("debug-run", "Wrench.sh", $wrench_command);

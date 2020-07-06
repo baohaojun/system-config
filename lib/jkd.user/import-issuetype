@@ -287,6 +287,6 @@ runx (
     "jkd", "upgrade-workflow", "-w", "$workflow_name", "-x", "$workflow_xml", "-i", $issuetype_name, "-s", $from_jira_json->{workflowscheme}
 );
 
-say STDERR "Will not fix fields (descriptions, required, etc.)";
+say STDERR "Will now fix fields (descriptions, required, etc.)";
 runx "jkd", "diff-issuetype", "-i", "${issuetype_name}", "--j2", "${from_jira_url}", "--fix-fields";
 say STDERR "Done fixing fields, yay!";
