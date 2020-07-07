@@ -110,8 +110,12 @@ map {
     $_ = $issuetypeschemes_json->{$_};
     if (grep {$issuetype_name eq $_} @{$_->{issuetypes}} ) {
         if (@{$_->{projects}} > 1) {
-            $issuetypescheme_name = $name;
-            $project_name = decode_utf8(scalar capturex("select-args", "-o", "-p", "选择哪个 Project？", map {$_->{name}} @{$_->{projects}}));
+            my $not_this_one = "以上都不是";
+            my $selected_project = decode_utf8(scalar capturex("select-args", "-o", "-p", "选择哪个 Project？", $not_this_one, map {$_->{name}} @{$_->{projects}}));
+            if ($selected_project ne $not_this_one) {
+                $issuetypescheme_name = $name;
+                $project_name = $selected_project;
+            }
         } elsif (@{$_->{projects}} == 1) {
             $issuetypescheme_name = $name;
             $project_name = $_->{projects}[0]{name};

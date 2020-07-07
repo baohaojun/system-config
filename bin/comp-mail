@@ -12,16 +12,19 @@ fi
         # ddecode g:glob='"*"' '?"默认为「*」，在要搜索的名字前后添加此参数。如需精确搜索，请使用 -g \"\""' \
         # m:match-regexp=. '?"只输出匹配正则表达式 MATCH_REGEXP（默认为「.」）的行"' \
         # eexact-query-input '?"不要修改我的 query input，比如「description=*系统软件*」"' \
-        # @:group '?"在某个组中搜索此用户"'
+        # @:group '?"在某个组中搜索此用户"' \
+        # 1in-1-line '?"用一行显示"' \
+
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o deg:m:p:u:h \
-               --long decode,exact-query-input,glob:,group:,match-regexp:,pass:,user:,help,no-decode,no-exact-query-input \
+TEMP=$( getopt -o deg:1m:p:u:h \
+               --long decode,exact-query-input,glob:,group:,in-1-line,match-regexp:,pass:,user:,help,no-decode,no-exact-query-input,no-in-1-line \
                -n $(basename -- $0) -- "$@")
 declare decode=false
 declare exact_query_input=false
 declare glob="*"
 declare group=
+declare in_1_line=false
 declare match_regexp=.
 declare pass=
 declare user=${scm_ldap_user:-$(get-about-me ldap-user)}
@@ -57,6 +60,15 @@ while true; do
             shift 2
 
             ;;
+        -1|--in-1-line|--no-in-1-line)
+            if test "$1" = --no-in-1-line; then
+                in_1_line=false
+            else
+                in_1_line=true
+            fi
+            shift
+
+            ;;
         -m|--match-regexp)
             match_regexp=$2
             shift 2
@@ -89,6 +101,9 @@ while true; do
             printf "%6s" " "
             printf %-24s '--group=GROUP'
             echo "在某个组中搜索此用户"
+            printf %6s '-1, '
+            printf %-24s '--[no-]in-1-line'
+            echo "用一行显示"
             printf %6s '-m, '
             printf %-24s '--match-regexp=MATCH_REGEXP'
             echo
@@ -171,50 +186,6 @@ if test "${group}"; then
     query="(&($group)${query})"
 fi
 
-function get-display() {
-    perl -ne '
-BEGIN{
-    @f = @ARGV;
-    @ARGV=();
-    $str = "";
-    $mail_str = "";
-
-    sub print_it() {
-        if ($mail_str) {
-            print "$mail_str";
-            if ($str) {
-                print ":$str\n";
-            }
-            print "\n";
-        }
-    }
-}
-
-END {
-    print_it;
-}
-
-chomp;
-if (m/^dn: /) { # restart
-    print_it;
-    $str = "";
-    $mail_str = "";
-} elsif (m/^displayName: (.*)$/) {
-    $mail_str = "\"$1\" $mail_str";
-} elsif (m/^mail: (.*)$/) {
-    $mail_str = "$mail_str<$1>";
-} else {
-    m/(.*?): (.*)/ or next;
-    ($key, $val) = ($1, $2);
-    for $f (@f) {
-        if ($key =~ m/$f/i) {
-            $str = "$str\n($key: $val)"
-        }
-    }
-}
-' "${disps[@]}"
-}
-
 function maybe-decode() {
     if test $decode = true; then
         decode-ldap-output
@@ -229,7 +200,29 @@ function maybe-filter() {
         ~/.local-config/bin/comp-mail-filter
     else
         cat
-    fi | perl -ne 'print if m,$ENV{match_regexp},i'
+    fi | perl -ne "$(
+cat <<'EOFaacfa71a65e1' | . .replace-%% --
+# {%perl-mode%}
+if ("[%in_1_line%]" eq "true" and $ENV{match_regexp}) {
+    if (m,^dn\b,) {
+        printf "%s\n", join(" : ", @fields) if @fields;
+        @fields = ();
+    } elsif (m,$ENV{match_regexp},i) {
+        chomp;
+        (my $val = $_) =~ s,.*?\s+,,;
+        push @fields, $val;
+    }
+} else {
+    print if m,$ENV{match_regexp},i
+}
+
+END {
+    printf "%s\n", join(" : ", @fields) if @fields;
+}
+# {%/perl-mode%}
+EOFaacfa71a65e1
+
+)"
 }
 
 if test -z "${pass}"; then

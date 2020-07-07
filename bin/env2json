@@ -1,0 +1,90 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10; # for say
+
+use JSON;
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P \
+# '?"将指定的环境变量列表用 JSON 格式打印出来"' \
+# e:env-names='()' '?"打印哪些变量"' \
+# r:envname-regexp '?"变量名匹配指定的正则表达式 ENVNAME_REGEXP 的变量，全部打印"' \
+# f:json-file '?"输出 json 保存到指定的文件，注意，如果文件里原先有内容的话，先读取原来的内容"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my @env_names = ();
+my $envname_regexp = "";
+my $json_file = "";
+
+my $handler_help = sub {
+    print "将指定的环境变量列表用 JSON 格式打印出来";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-e, ';
+    printf "%-24s", '--env-names=ENV-NAMES';
+    if (length('--env-names=ENV-NAMES') > 24 and length("打印哪些变量") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "打印哪些变量";
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--envname-regexp=ENVNAME-REGEXP';
+    if (length('--envname-regexp=ENVNAME-REGEXP') > 24 and length("变量名匹配指定的正则表达式 ENVNAME_REGEXP 的变量，全部打印") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "变量名匹配指定的正则表达式 ENVNAME_REGEXP 的变量，全部打印";
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--json-file=JSON-FILE';
+    if (length('--json-file=JSON-FILE') > 24 and length("输出 json 保存到指定的文件，注意，如果文件里原先有内容的话，先读取原来的内容") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "输出 json 保存到指定的文件，注意，如果文件里原先有内容的话，先读取原来的内容";
+    print "\n";
+
+    exit(0);
+};
+
+GetOptions (
+    'env-names|e=s' => \@env_names,
+    'envname-regexp|r=s' => \$envname_regexp,
+    'json-file|f=s' => \$json_file,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my %to_print_map;
+use File::Slurp;
+if (-s $json_file) {
+    my $json_saved = decode_json(read_file($json_file));
+
+    %to_print_map = %{$json_saved};
+}
+
+
+for (@env_names) {
+    $to_print_map{$_} = $ENV{$_};
+}
+
+if ($envname_regexp) {
+    $envname_regexp = qr($envname_regexp);
+    for (keys %ENV) {
+        $to_print_map{$_} = $ENV{$_} if m/$envname_regexp/;
+    }
+}
+
+say encode_json \%to_print_map;
+
+if ($json_file) {
+    write_file($json_file, encode_json(\%to_print_map));
+}

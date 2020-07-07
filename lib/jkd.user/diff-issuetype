@@ -158,7 +158,7 @@ if ($fix_fields) {
 
         if ($required1 != $required2) {
             my $ans =
-                decode_utf8(scalar capturex("select-args", "-p", "$field1，optional or required？", "optional", "required"));
+                decode_utf8(scalar capturex("select-args", "-p", "$field1，$required1 (j1) or $required2 (j2)？", "optional", "required"));
 
             if ($required1 && $ans eq "optional" or not $required1 and $ans eq "required") {
                 say STDERR "switch it for $j1 $field1";
