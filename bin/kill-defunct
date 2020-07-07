@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+for x in $(ps.pl "<defunct>" | pn 1); do
+    cd /proc/$x/task &&
+        kill * || true
+done
