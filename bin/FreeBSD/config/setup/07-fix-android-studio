@@ -24,7 +24,7 @@ fix-1-file() {
 }
 
 sdk_common_files=$(
-    find ~/.gradle/caches/modules-2/files-2.1/com.android.tools/common -name "common*.jar"
+    find ~/.gradle/caches/modules-2/files-2.1/com.android.tools/common -name "common*.jar" | grep -v -e '-sources.jar'
                )
 
 for sdk_common_file in $sdk_common_files; do

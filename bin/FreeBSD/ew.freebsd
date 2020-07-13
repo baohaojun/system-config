@@ -2,4 +2,4 @@
 set -e
 
 PATH=$(echo "$PATH" | perl -pe 's,/compat/linux/bin:,,')
-ew "$@"
+sawfish-window mark -t ew.freebsd --with-mark ew "$@"

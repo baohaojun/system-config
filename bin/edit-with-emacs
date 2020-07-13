@@ -100,6 +100,9 @@ if test "$top_window" = QtCreator; then
     exec sawfish-events-delayed .1 "C-S-s" "M-t" "e" "Up" "Up" "RET"
 elif test "${top_window}" = XTerm; then
     exec sawfish-events-delayed .1 "F1"
+elif test "${top_window}" = jetbrains-studio; then
+    bhj-notify "edit-with-emacs" "top_window is ${top_window}"
+    exec sawfish-events-delayed .1 "M-S-F1"
 else
     sawfish-window mark -s -t edit-with-emacs.$$ &>/dev/null
 

@@ -277,7 +277,7 @@
     (when (eq keymap global-keymap)
       (unbind-keys window-keymap key))))
 
-(setq emacs-style-window-class-re "rdesktop|wrench|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|xterm")
+(setq emacs-style-window-class-re "rdesktop|wrench|jetbrains-studio|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|xterm")
 (defvar global-emacs-remap-alist nil
   "Window specific remap list")
 
