@@ -93,7 +93,7 @@ fi
 
 export kill_withenv
 
-ps.pl -o pgid $match | grep -v $(basename $0) | tee /dev/stderr |
+ps.pl -o pgid $match | tee /dev/stderr |
     if test "$kill_group" = true; then
         pn 4 | sort -u | perl -npe 's/^/-/'
     else
