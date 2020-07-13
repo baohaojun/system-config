@@ -8,6 +8,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -18,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
@@ -26,8 +28,10 @@ import android.provider.ContactsContract.Contacts.Entity;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PutClipService extends Service {
+public class PutClipService extends Service implements MediaScannerConnection.MediaScannerConnectionClient {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -249,6 +253,8 @@ public class PutClipService extends Service {
         new File(wrenchDir, "apps.txt").renameTo(new File(wrenchDir, "apps.info"));
     }
 
+    MediaScannerConnection mMediaScanner;
+    String mPicToScan;
     @Override
     public int onStartCommand(Intent intent,  int flags,  int startId)  {
         try {
@@ -260,7 +266,14 @@ public class PutClipService extends Service {
             String toastText = intent.getStringExtra("toast");
             if (picName != null) {
                 Uri picUri = Uri.parse("file://" + picName);
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, picUri));
+                if (mMediaScanner == null) {
+                    mMediaScanner = new MediaScannerConnection(getApplicationContext(), this);
+                    mMediaScanner.connect();
+                    mPicToScan = picName;
+                } else {
+                    mMediaScanner.scanFile(picName, getMimeType(picName));
+                }
+                // sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, picUri));
             } else if (toastText != null) {
                 Toast.makeText(PutClipService.this, String.format("%s", toastText), Toast.LENGTH_SHORT).show();
             } else if (intent.getIntExtra("watch-clipboard", 0) == 1) {
@@ -493,4 +506,25 @@ public class PutClipService extends Service {
     }
 
     private static File sdcard = Environment.getExternalStorageDirectory();
+
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
+
+    @Override
+    public void onMediaScannerConnected() {
+        if (mPicToScan != null) {
+            mMediaScanner.scanFile(mPicToScan, getMimeType(mPicToScan));
+        }
+    }
+
+    @Override
+    public void onScanCompleted(String s, Uri uri) {
+        Log.e("bhj", String.format("%s:%d: onScanCompleted, %s %s", "PutClipService.java", 515, s, uri));
+    }
 }
