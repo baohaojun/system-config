@@ -204,19 +204,20 @@ function maybe-filter() {
 cat <<'EOFaacfa71a65e1' | . .replace-%% --
 # {%perl-mode%}
 if ("[%in_1_line%]" eq "true" and $ENV{match_regexp}) {
-    if (m,^dn\b,) {
+    if (m,^dn\b,) { # 下一条记录开始了
         printf "%s\n", join(" : ", @fields) if @fields;
         @fields = ();
     } elsif (m,$ENV{match_regexp},i) {
         chomp;
         (my $val = $_) =~ s,.*?\s+,,;
+        $val =~ s:.*?OU=(.*?),.*:$1:; # dirty hack to make department short.
         push @fields, $val;
     }
 } else {
     print if m,$ENV{match_regexp},i
 }
 
-END {
+END { # 打印最后一条记录
     printf "%s\n", join(" : ", @fields) if @fields;
 }
 # {%/perl-mode%}

@@ -4,7 +4,7 @@ use v5.10.1; # for say and switch
 use autodie qw(:all);
 use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
 
-@ARGV = ('dd-jianqun', @ARGV);
+@ARGV = ('dd-zhuanfa', @ARGV);
 
 map {
     $_ = capturex("str", "quote", "-f", "lua", "$_")

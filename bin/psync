@@ -28,14 +28,17 @@ sync_saved_args=("$@")
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt rreverse @follow-symlink Sgit-st \
     # t:target-dir @delete cchecksum \
-    # @gitp='("" --gitp)'
+    # @gitp='("" --gitp)' \
+    # p:dir-prefix '?"上传目录的 prefix，比如jsftp"' \
+
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o cSrt:h \
-               --long checksum,delete,follow-symlink,git-st,gitp,reverse,target-dir:,help,no-checksum,no-delete,no-follow-symlink,no-git-st,no-gitp,no-reverse \
+TEMP=$( getopt -o cp:Srt:h \
+               --long checksum,delete,dir-prefix:,follow-symlink,git-st,gitp,reverse,target-dir:,help,no-checksum,no-delete,no-follow-symlink,no-git-st,no-gitp,no-reverse \
                -n $(basename -- $0) -- "$@")
 declare checksum=false
 declare delete=false
+declare dir_prefix=
 declare follow_symlink=false
 declare git_st=false
 declare gitp=
@@ -61,6 +64,11 @@ while true; do
                 delete=true
             fi
             shift
+
+            ;;
+        -p|--dir-prefix)
+            dir_prefix=$2
+            shift 2
 
             ;;
         --follow-symlink|--no-follow-symlink)
@@ -115,6 +123,9 @@ while true; do
             printf "%6s" " "
             printf %-24s '--[no-]delete'
             echo
+            printf %6s '-p, '
+            printf %-24s '--dir-prefix=DIR_PREFIX'
+            echo "上传目录的 prefix，比如jsftp"
             printf "%6s" " "
             printf %-24s '--[no-]follow-symlink'
             echo
@@ -340,7 +351,7 @@ EOF0ecb2235bec3
                 set -x
                 js_username=$(git config -f $scm_secrets_conf sftp.js.username) || die "Must specify sftp.js.username in \${scm_secrets_conf}"
                 js_port=$(git config -f $scm_secrets_conf sftp.js.port || echo 2222)
-                lftp sftp://${js_username}:@js:${js_port}/${sftp_host}/ -e "cd $jsftp_target_dir; ${lftp_command} $source_file .${extra_file_arg};" || true
+                lftp "sftp://${js_username}:@js:${js_port}/${dir_prefix}${sftp_host}/" -e "cd $jsftp_target_dir; ${lftp_command} $source_file .${extra_file_arg};" || true
             )
         done
         jssh $host --execute "rm -f $jsftp_tmpdir"
