@@ -144,7 +144,19 @@ if test "${repo_init_print_info}" = true; then
                 fi
                 echo --reference $(up $ref)
             fi
-             ) | perl -npe 's,ssh://172.16.0.9:29418/|scode:,smartisan:,g; s,smartisan:/,smartisan:,g; s,-b refs/heads/,-b ,'
+             ) | perl -npe "$(
+cat <<'EOFe7f172780f03' | . .replace-%% --
+# {%perl-mode%}
+s,\bs:,$ENV{scm_gerrit_admin_ssh_url},g;
+s,-b refs/heads/,-b ,;
+
+END {
+    print '    # 注意每个 ssh://USERNAME@ 都要改成自己的用户名'
+}
+# {%/perl-mode%}
+EOFe7f172780f03
+
+)" | perl -pe 's, -, \\\n    -,g'
          )
     echo "$print"
     if is-tty-io </dev/stdout && ! is-jenkins; then
