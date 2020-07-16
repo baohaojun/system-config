@@ -15,6 +15,9 @@ $program_to_run = "bash" unless $program_to_run;
 my $f1 = shift @ARGV;
 my $f2 = shift @ARGV;
 
+die "Can't find $f1" unless -e $f1;
+die "Can't find $f2" unless -e $f2;
+
 sub debug(@) {
   print STDERR "@_\n";
 }
