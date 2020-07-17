@@ -66,7 +66,7 @@ fi
     save-it() {
         save.-to-git -m "auto commit at $(now), before jc get-job"
         rm $task.xml -f
-        jc get-job-for-edit -t "$task" --extra-save "$task.before-edit.xml"
+        jc get-job-for-edit -t "$task" --extra-save "$task.local-original.xml"
         save.-to-git -m "auto commit at $(now), before edit"
     }
 

@@ -63,16 +63,16 @@ function jc-create-job() {
         jc create-job $task < $task.xml
     fi
 
-    rm $task.before-update.xml -f
-    if ! jc get-job-for-edit -t $task -o $task.before-update.xml 2>&1; then
+    rm $task.from-jenkins.xml -f
+    if ! jc get-job-for-edit -t $task -o $task.from-jenkins.xml 2>&1; then
         bhj-notify jc "Can't get-job: $task"
         exit 1
     fi
 
-    if ! diff -w $task.before-update.xml $task.before-edit.xml; then
-        meld $task.before-update.xml $task.before-edit.xml
+    if ! diff -w $task.from-jenkins.xml $task.local-original.xml; then
+        meld $task.from-jenkins.xml $task.local-original.xml
         if EMACS=t yes-or-no-p "Do you want to merge with meld?"; then
-            meld $task.xml $task.before-update.xml
+            meld $task.xml $task.from-jenkins.xml
             if ! EMACS=t yes-or-no-p "Is the xml correctly updated?"; then
                 bhj-notify jc "Can't update the xml, please retry"
                 exit 1
@@ -87,7 +87,7 @@ function jc-create-job() {
             cat $task.xml | jc create-job $task
         fi
     )
-    jc get-job-for-edit -t "$task" --extra-save "$task.before-edit.xml"
+    jc get-job-for-edit -t "$task" --extra-save "$task.local-original.xml"
 }
 echo jc-create-or-update "$1"
 jc-create-job "$1"
