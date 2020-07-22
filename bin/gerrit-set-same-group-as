@@ -41,7 +41,7 @@ done
 
 
 if test "${add_groups}" -o "${remove_groups}"; then
-    if yes-or-no-p "确认把 $change_user 的 gerrit 分组设成跟 $template_user 一样（add：$add_groups；del：$remove_groups）？"; then
+    if test "$(set -- $add_groups $remove_groups; echo $#)" = 1 || yes-or-no-p "确认把 $change_user 的 gerrit 分组设成跟 $template_user 一样（add：$add_groups；del：$remove_groups）？"; then
         if test "${add_groups}"; then
             add_args=()
             for x in $add_groups; do

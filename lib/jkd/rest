@@ -123,7 +123,11 @@ for try in $(seq 1 $max_try); do
         die "curl $j_url $* failed with output: '$output'"
     fi
 
-    if test "${output_format}" = json && ! output=$(echo "${output}" | jq .); then
+    if test "${output_format}" = json && {
+            test -z "$output" ||
+            ! output=$(echo "${output}" | jq .)
+        }; then
+        log "Failed to get json output"
         sleep $((try * 3))
         if test "${try}" = "$max_try"; then
             die "Can't get json data for $j_url: output is '$output'"

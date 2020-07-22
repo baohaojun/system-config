@@ -245,6 +245,81 @@ allow-group-on-label() {
     fi
 }
 
+allow-permission() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # b:branch g:group p:permission
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o b:g:p:h \
+                          --long branch:,group:,permission:,help \
+                          -n $(basename -- $0) -- "$@")
+    declare branch=
+    declare group=
+    declare permission=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -b|--branch)
+                branch=$2
+                shift 2
+
+                ;;
+            -g|--group)
+                group=$2
+                shift 2
+
+                ;;
+            -p|--permission)
+                permission=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %6s '-b, '
+                printf %-24s '--branch=BRANCH'
+                echo
+                printf %6s '-g, '
+                printf %-24s '--group=GROUP'
+                echo
+                printf %6s '-p, '
+                printf %-24s '--permission=PERMISSION'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if ! git config --get-all -f project.config "access.${branch}.${permission}" "^group $group$"; then
+        git config --add -f project.config "access.${branch}.${permission}" \
+            "group ${group}"
+    fi
+}
+
 if test "${special_labels}" = true; then
    for k in "$@"; do
        handled_keys[$k]=1
@@ -286,6 +361,10 @@ fi
 
 if test "${dev_group}"; then
     allow-group-on-label "${dev_group}" "label-Verified" 1
+    allow-permission -b "refs/for/refs/heads/*" -g "${dev_group}" -p push
+    allow-permission -b "refs/for/refs/heads/*" -g "${dev_group}" -p pushMerge
+    allow-permission -b "refs/heads/*" -g "${dev_group}" -p read
+    allow-permission -b "refs/heads/*" -g "${dev_group}" -p submit
 
     for k in read submit; do
         g=${dev_group}
