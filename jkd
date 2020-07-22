@@ -144,14 +144,6 @@ if (not $jkd_jiraurl) {
 }
 
 use File::Path;
-use JIRA::REST;
-
-my $jira = JIRA::REST->new({
-    url      => "$jkd_jiraurl",
-    username => "$jkd_username",
-    password => "$jkd_password"
-                         });
-
 
 sub no_spaces_equal($$) {
     my @pair = @_;
@@ -1002,7 +994,7 @@ sub jkd_comment(@) {
     ## end generated code
 
     if ($once) {
-        my $jira_issue = $jira->GET("/issue/$issue");
+        my $jira_issue = $json->decode(scalar capture("jkd rest issue/$issue"));
         for (@{$jira_issue->{fields}{comment}{comments}}) {
             if ($_->{body} eq "$comment") {
                 say "$comment already exists";
@@ -1091,7 +1083,7 @@ sub jkd_get_comment(@) {
 
 
     ## end generated code
-    my $jira_issue = $jira->GET("/issue/$issue");
+    my $jira_issue = $json->decode(scalar capture("jkd rest issue/$issue"));
     if ($comment) {
         for (@{$jira_issue->{fields}{comment}{comments}}) {
             if ($_->{body} eq "$comment") {
