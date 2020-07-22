@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-ssh-gerrit ls-groups --user "$1"
+ssh-gerrit --admin ls-groups --user "$1"
 exit

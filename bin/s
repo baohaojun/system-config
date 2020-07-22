@@ -17,7 +17,8 @@ fi
 use_clip=false
 if test $# = 1 -a "$1" = '' || test $# = 0; then
     use_clip=true
-    if sawfish-top-window |grep -qi kindle.exe; then
+    export S_TOP_WINDOW=$(sawfish-top-window)
+    if [[ ${S_TOP_WINDOW,,} =~ kindle.exe ]]; then
         set -- $(getclip |
                      # print except the last line
                      perl -ne "$(

@@ -36,8 +36,7 @@ if test "${FIREFOX_TAB_NUMBER}"; then
 fi
 
 $the_firefox ${FIREFOX_PROFILE_ARG} "$@"
-
-if [[ $* =~ -new-tab ]]; then
+if [[ $* =~ -new-tab ]] && test "${S_TOP_WINDOW}" -a "${S_TOP_WINDOW,,}" != firefox; then
     sawfish-send-focused-window-event "C-Next"
 fi
 
