@@ -22,7 +22,10 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# d:json-data
+# d:json-data '?"直接指定新的 permission 数据"' \
+# n:new-group '?"指定新的 group，这个 group 要获得与 existing-group 一样的权限"' \
+# e:existing-group '?"现有的 group，作为权限分配的标准"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -31,18 +34,36 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $existing_group = "";
 my $json_data = "";
+my $new_group = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-d, ';
-    printf "%-24s", '--json-data=JSON-DATA';
-    if (length('--json-data=JSON-DATA') > 24 and length() > 0) {
+    printf "%6s", '-e, ';
+    printf "%-24s", '--existing-group=EXISTING-GROUP';
+    if (length('--existing-group=EXISTING-GROUP') > 24 and length("现有的 group，作为权限分配的标准") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "现有的 group，作为权限分配的标准";
+    print "\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--json-data=JSON-DATA';
+    if (length('--json-data=JSON-DATA') > 24 and length("直接指定新的 permission 数据") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "直接指定新的 permission 数据";
+    print "\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--new-group=NEW-GROUP';
+    if (length('--new-group=NEW-GROUP') > 24 and length("指定新的 group，这个 group 要获得与 existing-group 一样的权限") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定新的 group，这个 group 要获得与 existing-group 一样的权限";
     print "\n";
 
     my $exit_value = 0;
@@ -55,12 +76,31 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'existing-group|e=s' => \$existing_group,
     'json-data|d=s' => \$json_data,
+    'new-group|n=s' => \$new_group,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
+
+if ($existing_group) {
+    die "must specify new_group" unless $new_group;
+    die "must not specify json_data with existing_group" if $json_data;
+
+    my $permissions = $json->decode(scalar capturex("c", "-e", "scm_artifactory_url", "artifactory", "ls-permissions", ));
+    map {
+        my $details = $_->{details};
+        if (grep {$_ eq $existing_group} keys %{$details->{principals}{groups}}) {
+            $details->{principals}{groups}{$new_group} =
+                $details->{principals}{groups}{$existing_group};
+            runx("artifactory", "update-permissions", "-d", decode_utf8($json->encode($_)));
+        }
+    } @$permissions;
+
+    exit;
+}
 
 $json_data = $json->decode(encode_utf8 $json_data);
 my $uri = $json_data->{uri};
