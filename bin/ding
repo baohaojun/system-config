@@ -207,6 +207,10 @@ if (@at_people) {
     $text = join(" ", map {"\@$_"} @at_people) . " " . $text;
 }
 
+use HTML::Entities;
+$title = encode_entities($title);
+$text = encode_entities($text);
+
 my $ding_msg = {
     msgtype => "markdown",
     markdown => {

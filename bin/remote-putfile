@@ -20,4 +20,11 @@ fi
 tar xv -f /dev/stdin
 
 putclip "${file}"
+hook=$(
+    echo "${file}" | perl -pe 's,tmp/remote-putfile,tmp/remote-putfile.hooks,; s,$,.sh,'
+    )
+
+if test -e "${hook}"; then
+    "${hook}" "${file}"
+fi
 bhj-notify remote-putfile "You received a file ${file}"
