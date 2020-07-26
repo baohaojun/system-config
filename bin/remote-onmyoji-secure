@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+
+(
+    . ~/system-config/.bashrc
+    who=xbs;
+    declare -x ANDROID_SERIAL="162c850"
+    ps-killall -e ANDROID_SERIAL=$ANDROID_SERIAL onmyoji
+    adb-kill onmyoji
+    mkdir -p ~/tmp/no-play;
+    touch ~/tmp/no-play/$who.$(today);
+    cd ~/tmp/no-play/
+    (
+        setsid setsid nohup bash -xc "sleep 1800; rm -f ~/tmp/no-play/$who.$(today)"
+    )
+)
