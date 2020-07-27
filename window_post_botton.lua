@@ -85,6 +85,7 @@ map['com.teamviewer.teamviewer.market.mobile/com.teamviewer.remotecontrollib.act
 map['com.teamviewer.teamviewer.market.mobile/com.teamviewer.remotecontrolviewlib.activity.RCClientActivity'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.chatroom.ui.ChatroomInfoUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.chatroom.ui.ModRemarkRoomNameUI'] = 'No-Post'
+map['com.tencent.mm/com.tencent.mm.framework.app.UIPageFragmentActivity'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.LoginPasswordUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.RegByMobileRegAIOUI'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.plugin.account.ui.SimpleLoginUI'] = 'Enter-Key'
