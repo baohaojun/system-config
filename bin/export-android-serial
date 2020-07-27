@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if test -z "$ANDROID_SERIAL"; then
-    export ANDROID_SERIAL=$(select-output-line my-adb devices?|pn 1)
+    export ANDROID_SERIAL=$(select-output-line -o my-adb devices?|pn 1)
 fi
 if test "$ANDROID_SERIAL"; then
     reset-env ANDROID_SERIAL $ANDROID_SERIAL
