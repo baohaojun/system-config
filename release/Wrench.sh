@@ -153,7 +153,7 @@ select-output-line() {
 
 if test "$exclusive" = true; then
     if test -z "$ANDROID_SERIAL"; then
-        export ANDROID_SERIAL=$(select-output-line -p "Select the adb device" my-adb devices?|pn 1)
+        export ANDROID_SERIAL=$(select-output-line -o -p "Select the adb device" my-adb devices?|pn 1)
     fi
 
     postfix=${ANDROID_SERIAL}${DISPLAY//:/.}
