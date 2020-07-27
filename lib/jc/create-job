@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
+if test -e "$1" && [[ $1 =~ .xml$ ]]; then
+    exec < "$1"
+    set -- "${1%.xml}"
+    set -- "${1##*/}"
+elif [[ $1 =~ .xml$ ]]; then
+    misc die create-job "can't create job for xml file $1, file not exist?"
+fi
+
 jobname_escaped="$(uri-escape "$1")"
 
 if jc get-job "$1" &>/dev/null; then
