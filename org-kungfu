@@ -350,7 +350,7 @@ sub rewrite_html_for_update() {
 
                     use File::Fetch;
                     my $ff = File::Fetch->new(uri => uri_decode $png_file);
-                    if ($ff->scheme eq "file") {
+                    if ($ff && $ff->scheme eq "file") {
                         my $new_file = sprintf "%s/%s", $ff->path, $ff->file;
 
                         say STDERR "png changed from $png_file to $new_file";
