@@ -117,6 +117,10 @@ if test "${is_script}" = true; then
 fi
 
 start_recursive_shell update-meta
+while git-any-changes -r refs/meta/config; do
+    hint "你还有改动尚未提交到 gerrit"
+    start_recursive_shell update-meta
+done
 
 if test "${recursive}" = true; then
     if test "$project" = ${scm_gerrit_admin_ssh_url}All-Projects; then

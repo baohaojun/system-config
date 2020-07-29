@@ -82,11 +82,16 @@ else
     sudo=
 fi
 
+uname=$(uname)
 for p in "${processes[@]}"; do
     if test "$p" = $$; then
         continue
     fi
-    if test -r "/proc/$p/environ" &>/dev/null || test "$use_sudo" = true; then
-        echo -n "$p "; $sudo cat /proc/$p/environ | tr '\000' '\n' | grep -P -e "${env_value_regexp}" || echo
-    fi
+
+    echo -n "$p ";
+    if test "${uname}" = FreeBSD; then
+        $sudo procstat -e $p | perl -pe 's, (\w+=),\n$1,g';
+    elif test -r "/proc/$p/environ" &>/dev/null || test "$use_sudo" = true; then
+        $sudo cat /proc/$p/environ | tr '\000' '\n'
+    fi | grep -P -e "${env_value_regexp}" || echo
 done | grep -v '^\d+ $' -P

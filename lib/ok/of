@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+if test ! -e page-id.txt; then
+    cd "$OLDPWD";
+fi
+
+if test -e page-id.txt; then
+    of ${scm_confluence_site}/pages/viewpage.action?pageId=$(cat page-id.txt)
+else
+    misc die "Can't work without page-id.txt"
+fi

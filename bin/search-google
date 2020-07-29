@@ -231,10 +231,10 @@ fi&
 if test "$EMACS" = t; then
     true
 else
-    echo "$url"|
-    if is-tty-io; then
-        tee /dev/tty|putclip
-    else
-        cat
-    fi
+    echo "$url" |
+        if is-tty-io; then
+            tee /dev/tty|putclip
+        else
+            cat
+        fi
 fi

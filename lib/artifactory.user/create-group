@@ -67,5 +67,12 @@ $group_json = $json->decode(encode_utf8($group_json));
 
 use URI::Escape;
 my $group_name = uri_escape_utf8 $group_json->{name};
+my $method = 'PUT';
+if ($0 =~ m,update-group,) {
+    $method = 'POST';
+    $group_json = $group_json->{details};
+}
 
-runx("debug-run", "artifactory", "my-curl", "api/security/groups/${group_name}", "-X", "PUT", "-H", 'Content-Type: application/json', "-d",  decode_utf8($json->encode($group_json)));
+runx("debug-run", "artifactory", "my-curl", "api/security/groups/${group_name}", "-X", "$method", "-H", 'Content-Type: application/json', "-d",  decode_utf8($json->encode($group_json)));
+
+run("c -e scm_artifactory_url  artifactory ls-groups >/dev/null");

@@ -95,9 +95,8 @@ unescape-html() {
     xmlstarlet unesc - | tr -d \\r
 }
 
-add_at_start[nxml-bash]='<![CDATA[#!/usr/bin/env bash
-'
-add_at_end[nxml-bash]='#!end-of-fence]]>'
+add_at_start[nxml-bash]='<!--{%sh-mode%}--><![CDATA['
+add_at_end[nxml-bash]=']]><!--{/%sh-mode%}-->'
 
 add_at_start[nxml-bash-simple]='<![CDATA['
 add_at_end[nxml-bash-simple]=']]>'

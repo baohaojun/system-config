@@ -112,6 +112,7 @@ while (<>) {
     # - [X] 已完成 XXX：像这种，不能被换成窄空格
 
     s/([a-z0-9]$symbols_thinner_with_space)(?:(?<=\d\.)|(?<=\[X\]))(?: |$thin_space)(\p{CJK})/$1 $2/gi; # $(ap) 相关的
+    s/(^\s+:CUSTOM_ID:)(?: |$thin_space)(\p{CJK})/$1 $2/gi; # $(ap) 相关的
 
     s/^(\*+ (?:DOING|TODO|DONE|PROJECT|CANCELLED|WAITING|DELEGATED|HOLD)+)$thin_space/$1 /; # fix org head
     s/^(\*+)$thin_space/$1 /; # fix org head

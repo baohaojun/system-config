@@ -217,6 +217,12 @@ print $_ . "\n";
         fi
 
         # git co -B
+        if test "$2" = -t && test "$1" = co -o "$1" = checkout; then
+            if test "$#" = 2; then
+                git checkout "$(select-output-line git tag)"
+                exit
+            fi
+        fi
         if test "$2" = -B && test "$1" = co -o "$1" = checkout; then
             if test "$#" = 2; then
                 git checkout -B "$(git-choose-branch remotes/ )"
