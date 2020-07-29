@@ -818,6 +818,26 @@ This is simple using Perl's “reflection”.
     my $sub_command = "ok_" . shift;
 
     if (not defined &$sub_command) {
+        my $lib_command;
+
+        for ("ok/") {
+            ($lib_command = $sub_command) =~ s,^ok_,$_,;
+            $lib_command =~ s,_,-,g;
+
+            $lib_command = "$ENV{scm_common_libdir}/$lib_command";
+
+            if (-x $lib_command) {
+                do {
+                    use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+                    my @args = ("$lib_command", @ARGV);
+                    if ($ENV{OK_TRACE} eq 'true') {
+                        @args = ('debug-run', @args);
+                    }
+                    runx(@args);
+                    exit;
+                }
+            }
+        }
         say "Can't find sub-command: $sub_command";
         &$handler_help();
     }
@@ -1003,6 +1023,9 @@ This is simple using Perl's “reflection”.
 
   use File::Path;
   make_path($ok_topdir);
+  use POSIX;
+  $ENV{OLDPWD} = getcwd;
+
   chdir($ok_topdir)
       or die "Can't chdir: $ok_topdir";
 
