@@ -57,6 +57,7 @@ if test "${extract_url}" = true || [[ "$(sawfish-top-window)" =~ Firefox ]]; the
     old_text=$(getclip)
 
     new_text=$(extract-urls-from-text "${old_text}" | grep . || true)
+    new_text=$(echo "${new_text}" | perl -pe 's,plugins/servlet/mobile#issue/,browse/,')
     if test "${new_text}"; then
         putclip "${new_text}"
     fi
