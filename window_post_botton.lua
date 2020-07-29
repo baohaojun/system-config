@@ -10,6 +10,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsg
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConfirmCreatingConversationActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConversationSearchActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConversationSettingsActivity'] = 'No-Post'
+map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.creategroup.CreateGroupActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.MsgForwardActivity'] = 'Enter-Key'
 map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.PicViewActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.LaunchHomeActivity'] = 'No-Post'
