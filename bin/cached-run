@@ -23,13 +23,15 @@ EOFe9576f8668e0
     # e:extra-envvars='${CACHED_RUN_EXTRA_ENVVARS}' '?"额外的会影响运行结果的环境变量，将其作为命令行的一部分，在取 cache 的时候进行对比"' \
     # rrenew-caches='"${renew_caches:-false}"' '?"更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"' \
     # @renew-cache-bg=true '?"运行完成后在后台刷新 cache，默认为 true"' \
+    # @edit
 
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o d:e:rh \
-                      --long cache-dir:,extra-envvars:,renew-cache-bg,renew-caches,help,no-renew-cache-bg,no-renew-caches \
+                      --long cache-dir:,edit,extra-envvars:,renew-cache-bg,renew-caches,help,no-edit,no-renew-cache-bg,no-renew-caches \
                       -n $(basename -- $0) -- "$@")
 declare cache_dir=${CACHED_RUN_SAVE_DIR:-~/.cache/system-config/cached-run}
+declare edit=false
 declare extra_envvars=${CACHED_RUN_EXTRA_ENVVARS}
 declare renew_cache_bg=true
 declare renew_caches="${renew_caches:-false}"
@@ -40,6 +42,15 @@ while true; do
         -d|--cache-dir)
             cache_dir=$2
             shift 2
+
+            ;;
+        --edit|--no-edit)
+            if test "$1" = --no-edit; then
+                edit=false
+            else
+                edit=true
+            fi
+            shift
 
             ;;
         -e|--extra-envvars)
@@ -72,6 +83,9 @@ while true; do
             echo Options and arguments:
             printf %6s '-d, '
             printf %-24s '--cache-dir=CACHE_DIR'
+            echo
+            printf "%6s" " "
+            printf %-24s '--[no-]edit'
             echo
             printf %6s '-e, '
             printf %-24s '--extra-envvars=EXTRA_ENVVARS'
@@ -131,6 +145,9 @@ if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
     if test "${renew_caches}" != true; then
         cat "${cmd_md5_file_prefix}.out"
         (
+            if test "$edit" = true; then
+                e "${cmd_md5_file_prefix}.out" || true
+            fi &>/dev/null&
             if test "${renew_cache_bg}" != true; then
                 exit
             fi
@@ -146,4 +163,13 @@ get-env-and-cmd "$@" > "${cmd_md5_file_prefix}.cmd"
 
 set -o pipefail
 "$@" | tee "${cmd_md5_file_prefix}.out.$$"
+if test "${FORCE_RENEW_CACHES}" = true &&
+        ! diff -q "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out"; then
+    diff=$(diff "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out")
+    bhj-notify cached-run "${diff}"&
+fi &>/dev/null
+
 mv "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out"
+if test "$edit" = true; then
+    e "${cmd_md5_file_prefix}.out" || true
+fi &>/dev/null&
