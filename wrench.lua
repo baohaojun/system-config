@@ -867,7 +867,7 @@ M.get_xy_from_dump = function(dump, prefix)
 end
 
 M.update_screen_size = function()
-   M.m_window_dump = adb_pipe("dumpsys window policy; dumpsys window windows") or ""
+   M.m_window_dump = adb_pipe("dumpsys window policy; dumpsys window windows; dumpsys window displays") or ""
    M.m_focused_app = M.m_window_dump:match("mFocusedApp=Token.-(%S+)%s+%S+}") or ""
    M.m_focused_window = M.m_window_dump:match("mFocusedWindow=.-(%S+)}") or ""
 
