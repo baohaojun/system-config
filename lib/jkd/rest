@@ -120,6 +120,7 @@ fi
 
 for try in $(seq 1 $max_try); do
     if ! output=$(curl-f -s -u "${scm_jira_user}:${scm_jira_password}" "$j_url" "$@"); then
+        echo "${output}"
         die "curl $j_url $* failed with output: '$output'"
     fi
 

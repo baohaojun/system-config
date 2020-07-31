@@ -23,9 +23,10 @@ BEGIN { @jkd::ISA = 'Exporter' }
 
 @jkd::EXPORT = qw(
 
-                     name2id name2key key2name name_exists
-                     select_args no_spaces_equal no_spaces_convert
+                     name2id name2key key2name name_exists select_args
+                     no_spaces_equal no_spaces_convert
                      no_spaces_hash_convert no_spaces_hashget
+                     update_names_with_fields getNormalizedName
 
              );
 
@@ -170,6 +171,48 @@ sub select_args(@) {
 
     return $res;
 }
+
+sub getNormalizedName($name) {
+    $name =~ s, | ,,g;
+    return $name;
+}
+
+sub update_names_with_fields($named_obj, $fields_map) {
+    my %name_field_map;
+
+    # say STDERR sprintf("update_names_with_fields(%s, %s)",
+    #                    decode_utf8($json->encode($named_obj)),
+    #                    decode_utf8($json->encode($fields_map))
+    #                ) if $ENV{jkd_verbose};
+
+    for (keys %$fields_map) {
+        my $name = $fields_map->{$_};
+
+        if (ref $name) {
+            $name = $name->{name};
+        }
+
+        if ($name) {
+            $name = getNormalizedName $name;
+
+            $name_field_map{$name} = $_;
+            say STDERR "Created a map: $name: $name_field_map{$name}" if $ENV{jkd_verbose};
+        }
+
+    }
+
+
+    for (keys %$named_obj) {
+        my $name = getNormalizedName $_;
+        if ($name_field_map{$name} and $name_field_map{$name} ne $_) {
+            say STDERR "update $name with $name_field_map{$name}";
+            $named_obj->{$name_field_map{$name}} = $named_obj->{$_};
+            delete $named_obj->{$_};
+        }
+    }
+}
+
+
 
 1;
 __END__
