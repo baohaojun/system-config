@@ -12,7 +12,7 @@ if [[ ${SSH_ORIGINAL_COMMAND} =~ ^remote-putclip\ * ]]; then
     if test ${#text} -gt 102400; then
         text=${text:0:102400}...
     fi
-    putclip "${text}"
+    putclip -- "${text}"
     exit 0
 elif [[ ${SSH_ORIGINAL_COMMAND} =~ ^remote-putfile\ * ]]; then
     cat | remote-putfile "${SSH_ORIGINAL_COMMAND#remote-putfile }"

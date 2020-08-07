@@ -194,3 +194,6 @@ for my $sid (@{$role_json->{sids}}, @add_group) {
   say STDERR "assign $sid to $role_name";
   system "jc", "curl", "role-strategy/strategy/assignRole", "--data", "$assign_data", "-X", "POST";
 }
+
+run("c jc getRoles -v &>/dev/null &");
+run("c jc getRole -n $role_name");
