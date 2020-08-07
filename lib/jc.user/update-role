@@ -50,7 +50,8 @@ my $permissions_list = decode_utf8($json->encode(\@permissions));
 # n:role-name '?"比如 SEC_DEV"' \
 # p:role-projects-pattern '?"比如 jobA|jobB|jobPatternC。也可以用 +|jobPatternD 来表示增加一个正则表达式"' \
 # g:add-group='()' '?"如需添加多个，允许多次指定此参数"' \
-# @:add-perm='()' '?"+PERM 代表添加权限、-PERM 代表删除权限，权限列表见\n$permissions_list"' \
+# @:add-perm='()' '?"权限列表见\n$permissions_list"' \
+# @:del-perm='()' '?"删除权限列表"' \
 
 ## end code-generator
 ## start generated code
@@ -62,6 +63,7 @@ Getopt::Long::Configure("default");
 
 my @add_group = ();
 my @add_perm = ();
+my @del_perm = ();
 my $role_name = "";
 my $role_projects_pattern = "";
 my $role_type = "projectRoles";
@@ -79,11 +81,19 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--add-perm=ADD-PERM';
-    if (length('--add-perm=ADD-PERM') > 24 and length("+PERM 代表添加权限、-PERM 代表删除权限，权限列表见\n$permissions_list") > 0) {
+    if (length('--add-perm=ADD-PERM') > 24 and length("权限列表见\n$permissions_list") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "+PERM 代表添加权限、-PERM 代表删除权限，权限列表见\n$permissions_list";
+    printf "%s", "权限列表见\n$permissions_list";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--del-perm=DEL-PERM';
+    if (length('--del-perm=DEL-PERM') > 24 and length("删除权限列表") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "删除权限列表";
     print "\n";
     printf "%6s", '-n, ';
     printf "%-24s", '--role-name=ROLE-NAME';
@@ -122,11 +132,13 @@ my $handler_help = sub {
 GetOptions (
     'add-group|g=s' => \@add_group,
     'add-perm=s' => \@add_perm,
+    'del-perm=s' => \@del_perm,
     'role-name|n=s' => \$role_name,
     'role-projects-pattern|p=s' => \$role_projects_pattern,
     'role-type|t=s' => \$role_type,
     'help|h!' => \&$handler_help,
 );
+
 
 ## end generated code
 
@@ -152,7 +164,15 @@ if ($role_projects_pattern =~ s,^\+,,) {
 } else {
     $new_pattern = $role_projects_pattern;
 }
-if ($new_pattern || @add_perm) {
+if ($new_pattern || @add_perm || @del_perm) {
+    for (@del_perm) {
+        delete $role_json->{permissionIds}{$_};
+    }
+
+    for (@add_perm) {
+        $role_json->{permissionIds}{$_} = JSON::true;
+    }
+
     $new_pattern ||= $role_json->{pattern};
     my $updateRoleData = sprintf
         (

@@ -27,6 +27,7 @@ BEGIN { @jkd::ISA = 'Exporter' }
                      no_spaces_equal no_spaces_convert
                      no_spaces_hash_convert no_spaces_hashget
                      update_names_with_fields getNormalizedName
+                     getRealNameFromApi getRealHashKey reWriteHashKeysWithApi
 
              );
 
@@ -47,7 +48,8 @@ sub no_spaces_convert($a) {
 sub no_spaces_hash_convert($hash) {
     map {
         (my $key = $_) =~ s, | ,,g;
-        $hash->{$key} = $hash->{$_}
+        $hash->{$key} = $hash->{$_};
+        $hash->{no_spaces_hash_keys}{$key} = $_;
     } keys %$hash;
 }
 
@@ -63,6 +65,46 @@ sub no_spaces_hashget($hash, $key) {
 
     $hash->{$key} = $hash->{no_spaces_convert $key};
     return $hash->{$key};
+}
+
+sub getRealHashKey($hash, $key) {
+    if ($hash->{$key}) {
+        return $key;
+    }
+
+    if (not defined $hash->{no_spaces_hash_convert_done}) {
+        no_spaces_hash_convert $hash;
+        $hash->{no_spaces_hash_convert_done} = 'true';
+    }
+
+    return $hash->{no_spaces_hash_keys}{no_spaces_convert $key};
+}
+
+sub getRealNameFromApi($name, $api) {
+    my $jsonResult =
+        $json->decode(scalar capturex("jkd", "rest", $api));
+    my %hash = map {
+        ($_->{name} => 1)
+    } @$jsonResult;
+
+    return getRealHashKey(\%hash, $name);
+}
+
+sub reWriteHashKeysWithApi($hash, $api) {
+    my $jsonResult =
+        $json->decode(scalar capturex("jkd", "rest", $api));
+    my %apiHash = map {
+        ($_->{name} => 1)
+    } @$jsonResult;
+
+
+    for (keys %$hash) {
+        my $realName = getRealHashKey(\%apiHash, $_);
+        if ($realName ne $_) {
+            $hash->{$realName} = $hash->{$_};
+            delete $hash->{$_};
+        }
+    }
 }
 
 sub name2id($jkd_cmds, $name) {
