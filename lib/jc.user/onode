@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+of "${scm_jenkins_url}"computer/$1
