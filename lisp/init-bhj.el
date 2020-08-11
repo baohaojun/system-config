@@ -14,6 +14,7 @@
 (defun fix-cjk-spaces ()
   "Fix cjk spaces."
   (interactive)
+
   (let ((my-point (point))
         (current-line-num (line-number-at-pos))
         (is-eol (looking-at "$"))
@@ -22,10 +23,13 @@
     (when (region-active-p)
       (setq my-start (min (mark) (point))
             my-end (max (mark) (point))))
-    (shell-command-on-region my-start my-end "fix-cjk-spaces" nil t)
+    (save-mark-and-excursion
+      (save-restriction
+        (shell-command-on-region my-start my-end "fix-cjk-spaces" nil t)))
     (if is-eol
         (progn
-          (goto-line current-line-num)
+          (goto-char (point-min))
+          (forward-line (1- current-line-num))
           (goto-char (line-end-position)))
       (goto-char (min my-point (point-max))))))
 
