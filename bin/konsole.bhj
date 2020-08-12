@@ -6,13 +6,10 @@ if test "$default_terminal"; then
     exit
 fi
 
-if test -e ~/.local-config/etc/baohaojun; then
-    xterm -e myscr "$@" &
-    exit
-fi
-
 if test -e ~/.config/system-config/term-program; then
     ~/.config/system-config/term-program "$@"
+elif test -e ~/.local-config/etc/baohaojun; then
+    xterm -e myscr "$@" &
 elif which xterm >/dev/null 2>&1; then
     xterm -e myscr
 else

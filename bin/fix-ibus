@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 ps-killall /ibus
 PATH=/usr/bin:$PATH
-ibus-daemon -d -x
+ibus-daemon -d -x -v &> ~/tmp/ibus.log
 ps-killall ibus-sdim
 python3 /home/bhj/system-config/gcode/scim-cs/ime-py/ime-server.py &
-

@@ -182,44 +182,29 @@ for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
 
 my $build_msg = "${build_msg_prefix}: $ENV{BUILD_URL} \@$ENV{NODE_NAME}";
 
-say STDERR "add comment: $build_msg";
-system("jkd", "comment", "-i", "$issue", "-c", "${build_msg}");
 
 my $new_changelog;
 for (1..3) {
-    $new_changelog = qx(jkd rest 'rest/api/2/issue/${issue}/?expand=changelog');
-    if (not $new_changelog) {
-        die "Can't get change log!";
-    } else {
-        $new_changelog = decode_utf8 $new_changelog;
-    }
+    say STDERR "add comment: $build_msg";
+    system("jkd", "comment", "-i", "$issue", "-c", "${build_msg}");
 
-    eval {
-        $json_issue = decode_json(encode_utf8 $new_changelog);
-    };
+    $json_issue = $json->decode(scalar capturex("jkd", "rest", "rest/api/2/issue/${issue}/?expand=changelog"));
+    say STDERR decode_utf8($json->encode($json_issue)) if $debug;
 
-    if ($@) {
-        runx("ding", "--title", "新的 jira changelog 获取失败", "--text", "check build log\@$ENV{BUILD_URL}", "-a", "baohaojun");
-        say STDERR "new_changelog is " . decode_utf8($json->encode($new_changelog));
-        sleep(3);
-    } else {
-        last;
-    }
-}
+    for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
+        my $msg = $comment->{body};
+        say STDERR "checking $msg against $comments_pattern" if $debug;
 
-say STDERR decode_utf8($json->encode($json_issue)) if $debug;
-
-for my $comment (@{$json_issue->{fields}{comment}{comments}}) {
-    my $msg = $comment->{body};
-    say STDERR "checking $msg against $comments_pattern" if $debug;
-
-    if ($msg =~ m,$comments_pattern,) {
-        if ($msg eq $build_msg) {
-            say STDERR "Yes! We are the first one to add comment, we win!";
-            exit 0
+        if ($msg =~ m,$comments_pattern,) {
+            if ($msg eq $build_msg) {
+                say STDERR "Yes! We are the first one to add comment, we win!";
+                exit 0
+            } else {
+                say STDERR "There is already a build building it: $msg";
+                exit 42
+            }
         } else {
-            say STDERR "There is already a build building it: $msg";
-            exit 42
+            say STDERR "$msg not matched: $comments_pattern";
         }
     }
 }
