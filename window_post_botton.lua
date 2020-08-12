@@ -15,6 +15,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.MsgForw
 map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.im.activities.PicViewActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.rimet.biz.LaunchHomeActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.search.activity.GlobalSearchActivity'] = 'No-Post'
+map['com.alibaba.android.rimet/com.alibaba.android.search.activity.MsgListActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.track.activity.TrackActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.contact.organization.view.UserContactActivity'] = 'Enter-Key'
 map['com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpWithPwdActivity'] = 'No-Post'
