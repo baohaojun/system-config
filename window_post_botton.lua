@@ -76,6 +76,7 @@ map['com.netease.mail/com.netease.mobimail.activity.RegisterActivity'] = 'No-Pos
 map['com.netease.onmyoji/com.netease.mpay.MpayLoginActivity'] = 'Enter-Key'
 map['com.netease.onmyoji/com.netease.onmyoji.Client'] = 'Enter-Key'
 map['com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity'] = 'Find-Button'
+map['com.sinovatech.unicom.ui/com.sinovatech.unicom.separatemodule.search.NewSearchActivity'] = 'No-Post'
 map['com.smartisanos.bug2go/com.smartisanos.bug2go.ui.ConsumptionSubmitActivity'] = 'No-Post'
 map['com.smartisanos.notes/com.smartisanos.notes.NotesActivity'] = 'No-Post'
 map['com.sonelli.juicessh/com.sonelli.juicessh.activities.ManageConnectionActivity'] = 'No-Post'
