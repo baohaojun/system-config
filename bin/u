@@ -35,10 +35,10 @@ else
     elif [[ $current_url/ =~ $jira_regexp ]]; then
         exec jkd go "$@"
     elif [[ $current_url/ =~ ${scm_artifactory_prod_server}|${scm_artifactory_test_server} ]]; then
-        if [[ $current_url =~ /webapp/ ]]; then
-            current_url=$(echo "${current_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
+        if [[ $current_url =~ /(webapp|ui)/ ]]; then
+            current_url=$(echo "${current_url}" | perl -pe 's,(artifactory/webapp/#/artifacts/browse|ui/repos)/tree/General/,artifactory/,'|urlify -u)
         else
-            current_url=$(echo "${current_url}" | perl -pe 's,(/artifactory)/,$1/webapp/#/artifacts/browse/tree/General/,')
+            current_url=$(echo "${current_url}" | perl -pe 's:(/artifactory)/(.*):"/ui/repos/tree/General/" . join("\%2F", split("/", $2)):e')
         fi
         bhj-notify firefox "${current_url}"
     else

@@ -7,6 +7,7 @@ declare -A admin_pages=(
     [webhooks]=plugins/servlet/webhooks
     [project]=plugins/servlet/project-config/'$(get-project-key)'/summary
     [bro]='go to brother page'
+    [screenschemes]='secure/admin/ViewFieldScreenSchemes.jspa'
     ["fields"]=fields
     [create-issue]=projects/'$(get-project-key)'
     ["admin-issues"]=secure/admin/ViewIssueTypes.jspa

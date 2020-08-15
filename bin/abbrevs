@@ -136,4 +136,6 @@ expand_text=$(
     fi
            )
 sawfish-window mark -t abbrevs.$$ -r
-sawfish-window paste "${expand_text}"
+if test "${expand_text}"; then
+    sawfish-window paste "${expand_text}"
+fi

@@ -42,4 +42,4 @@ done
 
 ## end generated code
 
-jkd curl -X DELETE ${scm_jira_url}rest/api/2/issue/${issue}
+debug-run jkd curl issue/${issue} -X DELETE

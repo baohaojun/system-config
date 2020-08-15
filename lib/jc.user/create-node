@@ -8,6 +8,12 @@ binmode(STDERR, ":utf8");
 use Encode;
 use utf8;
 @ARGV = map {decode_utf8 $_} @ARGV;
+my @saved_argv = @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -17,7 +23,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# f:from-node n:node-name i:ip-addr
+# f:from-node n:node-name i:ip-addr x:xml-data
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -29,6 +35,7 @@ Getopt::Long::Configure("posix_default");
 my $from_node = "";
 my $ip_addr = "";
 my $node_name = "";
+my $xml_data = "";
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -57,6 +64,14 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '-x, ';
+    printf "%-24s", '--xml-data=XML-DATA';
+    if (length('--xml-data=XML-DATA') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -71,32 +86,44 @@ GetOptions (
     'from-node|f=s' => \$from_node,
     'ip-addr|i=s' => \$ip_addr,
     'node-name|n=s' => \$node_name,
+    'xml-data|x=s' => \$xml_data,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
+use File::Slurp;
+use Mojo::DOM;
+my $dom;
+unless (@saved_argv) {
+    say STDERR "will read json data from stdin";
+    $xml_data = decode_utf8(scalar capturex("cat"));
 
-die "Must specify from-node" unless $from_node;
+    use Mojo::DOM;
+    $dom = Mojo::DOM->new->parse($xml_data);
+    $node_name = $dom->at("name")->text;
 
-die "Must specify ip-addr" unless $ip_addr;
+    runx 'jc', 'curl', "computer/doCreateItem?name=${node_name}&type=hudson.slaves.DumbSlave", '-X', 'POST', "-d", "json={}", "-H", "Content-Type:application/x-www-form-urlencoded";
+} else {
+    die "Must specify from-node" unless $from_node;
 
-if (not $node_name) {
-    ($node_name = $from_node) =~ s,(.*-)(\d+.\d+.\d+.\d+)$,$1$ip_addr,;
+    die "Must specify ip-addr" unless $ip_addr;
+
+    if (not $node_name) {
+        ($node_name = $from_node) =~ s,(.*-)(\d+.\d+.\d+.\d+)$,$1$ip_addr,;
+    }
+
+    my $from_xml =
+        decode_utf8(scalar capturex("jc", "get-node", "$from_node"));
+
+    $dom = Mojo::DOM->new->parse($from_xml);
+
+    $dom->at('slave name')->replace("<name>$node_name</name>");
+    $dom->at('slave launcher host')->replace("<host>$ip_addr</host>");
+
+    runx "jc", "curl", "computer/createItem", "-X", "POST", "--data", "name=${node_name}&mode=copy&from=${from_node}";
 }
 
-my $from_xml =
-    decode_utf8(scalar capturex("jc", "get-node", "$from_node"));
-
-use Mojo::DOM;
-my $dom = Mojo::DOM->new->parse($from_xml);
-
-$dom->at('slave name')->replace("<name>$node_name</name>");
-$dom->at('slave launcher host')->replace("<host>$ip_addr</host>");
-
-runx "jc", "curl", "computer/createItem", "-X", "POST", "--data", "name=${node_name}&mode=copy&from=${from_node}";
-
-use File::Slurp;
 write_file("/tmp/create-node.$$.xml", {binmode => ':utf8'}, $dom);
 run "jc update computer/${node_name}/config.xml < /tmp/create-node.$$.xml; rm -f /tmp/create-node.$$.xml";
 runx "of", "$ENV{scm_jenkins_url}computer/${node_name}";

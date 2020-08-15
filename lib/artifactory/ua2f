@@ -1,0 +1,70 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+Given a webapp url, convert it to file download url
+
+A webapp url is like this:
+
+${scm_artifactory_url}ui/repos/tree/General/Repo_Name%2Fdir1%2Fdir2%2Ffilename.txt
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# u:webapp-url
+## end code-generator
+## start generated code
+    use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $webapp_url = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--webapp-url=WEBAPP-URL';
+    if (length('--webapp-url=WEBAPP-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'webapp-url|u=s' => \$webapp_url,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+if ((my $file_url = $webapp_url) =~ s,ui/repos/tree/General,artifactory,) {
+    $file_url =~ s,%2F,/,gi;
+    print $file_url;
+    exit 0;
+}
+
+say STDERR "Error: not webapp-url? $webapp_url";
+exit 1;

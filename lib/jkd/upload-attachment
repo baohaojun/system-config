@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # i:jira-issue f:attachment-file
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:i:h \
+                      --long attachment-file:,jira-issue:,help \
+                      -n $(basename -- $0) -- "$@")
+declare attachment_file=
+declare jira_issue=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--attachment-file)
+            attachment_file=$2
+            shift 2
+
+            ;;
+        -i|--jira-issue)
+            jira_issue=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-f, '
+            printf %-24s '--attachment-file=ATTACHMENT_FILE'
+            echo
+            printf %6s '-i, '
+            printf %-24s '--jira-issue=JIRA_ISSUE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+jkd rest -a issue/${jira_issue}/attachments -- -X POST -F file=@"$(readlink -f "${attachment_file}")"  -H "X-Atlassian-Token: no-check"

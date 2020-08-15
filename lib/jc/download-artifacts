@@ -80,7 +80,7 @@ runx(
 );
 
 for (@{$build_json->{artifacts}}) {
-    my $file_name = $_->{fileName};
+    my $file_name = $_->{relativePath};
     my $target_file = "${download_to_dir}/${file_name}";
     (my $target_dir = $target_file) =~ s,(.*)/.*,$1,;
 

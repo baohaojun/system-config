@@ -162,7 +162,12 @@ get-env-and-cmd "$@" > "${cmd_md5_file_prefix}.cmd"
 . atexit rm -f "${cmd_md5_file_prefix}.out.$$"
 
 set -o pipefail
-"$@" | tee "${cmd_md5_file_prefix}.out.$$"
+if ! "$@" | tee "${cmd_md5_file_prefix}.out.$$"; then
+    bhj-notify cached-run "Failed to run $*"
+    exit 1
+else
+    bhj-notify cached-run "Done running $*"
+fi
 if test "${FORCE_RENEW_CACHES}" = true &&
         ! diff -q "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out"; then
     diff=$(diff "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out")

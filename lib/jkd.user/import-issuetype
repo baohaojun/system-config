@@ -21,7 +21,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# f:from-jira-url i:issuetype-name j:from-jira-json
+# f:from-jira-url i:issuetype-name j:from-jira-json @:skip-import
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -33,6 +33,7 @@ Getopt::Long::Configure("posix_default");
 my $from_jira_json = "";
 my $from_jira_url = "";
 my $issuetype_name = "";
+my $skip_import = "";
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -61,6 +62,14 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--skip-import=SKIP-IMPORT';
+    if (length('--skip-import=SKIP-IMPORT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -75,6 +84,7 @@ GetOptions (
     'from-jira-json|j=s' => \$from_jira_json,
     'from-jira-url|f=s' => \$from_jira_url,
     'issuetype-name|i=s' => \$issuetype_name,
+    'skip-import=s' => \$skip_import,
     'help|h!' => \&$handler_help,
 );
 
@@ -236,7 +246,7 @@ my $to_screenschemes =
     $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-screenschemes"));
 
 runx (
-    "jkd", "import-screenscheme", "-j", decode_utf8 ($json->encode($from_jira_json->{screenscheme_json}))
+    "debug-run", "jkd", "import-screenscheme", "-j", decode_utf8 ($json->encode($from_jira_json->{screenscheme_json}))
 );
 
 my $from_issuetypescreenscheme = $from_jira_json->{issuetypescreenscheme};
@@ -244,6 +254,10 @@ runx (
     "jkd", "attach-issuetypescreenscheme", "--issuetype-screenscheme", "$from_issuetypescreenscheme", "--screenscheme", "$from_screenscheme", "--issuetype", "$issuetype_name"
 );
 
+# *** workflow and statuses ***
+if ($skip_import =~ m,workflow,) {
+    exit;
+}
 my %from_statuses;
 use Mojo::DOM;
 my $dom = Mojo::DOM->new->parse($from_jira_json->{workflow_xml});

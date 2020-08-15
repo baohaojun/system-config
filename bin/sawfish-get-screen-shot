@@ -9,5 +9,8 @@ if test ${0##*/} = sawfish-get-screen-shot-whole; then
 else
     tmux capture-pane
 fi
-tmux saveb /tmp/screen-exchange
-cat /tmp/screen-exchange
+tmux saveb /tmp/screen-exchange.$$
+cat /tmp/screen-exchange.$$
+
+# should used rm, but afraid breaks compatibility.
+mv /tmp/screen-exchange.$$ /tmp/screen-exchange
