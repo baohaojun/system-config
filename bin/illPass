@@ -64,7 +64,7 @@ window_name=${window_name,,}
 
 add_newline_and_notify=false
 
-if test "${window_name}" = myscr -a "${window_class}" = xterm; then
+if test "${window_name}" = myscr && [[ "${window_class}" =~ xterm ]]; then
     add_newline_and_notify=true
     screen_text_reversed=$(
         tmux capture-pane;
