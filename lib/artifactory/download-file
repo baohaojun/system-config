@@ -80,10 +80,17 @@ if test -z "${file_name}"; then
    file_name=$(basename $url);
 fi
 
+url=$(artifactory p2u "$url")
+url=$(artifactory ua2f -u "$url" -a)
+
 if [[ $url =~ ^$scm_artifactory_prod_url ]]; then
     scm_artifactory_url=${scm_artifactory_prod_url}
 elif [[ $url =~ ^$scm_artifactory_test_url ]]; then
     scm_artifactory_url=${scm_artifactory_test_url}
+fi
+
+if artifactory is-dir -u "$url"; then
+    die "it's not a file: $url"
 fi
 
 artifactory my-curl "$url" > "${download_dir}/${file_name}"

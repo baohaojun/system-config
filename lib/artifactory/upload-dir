@@ -64,6 +64,9 @@ my-curl() {
     curl -f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
 }
 
+upload_url=$(artifactory p2u "${upload_url}")
+upload_url=$(artifactory ua2f -u "${upload_url}" -a)
+
 if ! [[ $upload_url =~ $scm_artifactory_test_server ]]; then
     yes-or-no-p "Are you sure to upload to $upload_url?"
 fi

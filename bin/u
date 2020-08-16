@@ -36,9 +36,9 @@ else
         exec jkd go "$@"
     elif [[ $current_url/ =~ ${scm_artifactory_prod_server}|${scm_artifactory_test_server} ]]; then
         if [[ $current_url =~ /(webapp|ui)/ ]]; then
-            current_url=$(echo "${current_url}" | perl -pe 's,(artifactory/webapp/#/artifacts/browse|ui/repos)/tree/General/,artifactory/,'|urlify -u)
+            current_url=$(artifactory ua2f -u "${current_url}")
         else
-            current_url=$(echo "${current_url}" | perl -pe 's:(/artifactory)/(.*):"/ui/repos/tree/General/" . join("\%2F", split("/", $2)):e')
+            current_url=$(artifactory uf2a -u "${current_url}")
         fi
         bhj-notify firefox "${current_url}"
     else

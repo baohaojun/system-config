@@ -53,7 +53,9 @@ done
 
 # url is like ${scm_artifactory_url}artifactory/REPO-KEY/PATH
 
-dir_url=$(echo "${dir_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
+dir_url=$(artifactory p2u "${dir_url}")
+dir_url=$(artifactory ua2f -a -u "${dir_url}")
+
 api_url=$(
     echo "${dir_url}" | perl -pe 's,(.*?/artifactory/),api/storage/,' | perl -pe 's,^http.?://.*?/,,' | urlify
        )

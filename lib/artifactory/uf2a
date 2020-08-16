@@ -21,7 +21,9 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# u:file-url
+# u:file-url \
+# aallow-both-url '?"此开关令 -u 参数同时允许使用 webapp url 和 file url（不会出错）"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -30,39 +32,52 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $allow_both_url = 0;
 my $file_url = "";
 
 my $handler_help = sub {
     print "$comment_doc";
-print "\n\n选项和参数：\n";
-printf "%6s", '-u, ';
-printf "%-24s", '--file-url=FILE-URL';
-if (length('--file-url=FILE-URL') > 24 and length() > 0) {
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--[no]allow-both-url';
+    if (length('--[no]allow-both-url') > 24 and length("此开关令 -u 参数同时允许使用 webapp url 和 file url（不会出错）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "此开关令 -u 参数同时允许使用 webapp url 和 file url（不会出错）";
     print "\n";
-    printf "%30s", "";
-}
-printf "%s", ;
-print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--file-url=FILE-URL';
+    if (length('--file-url=FILE-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
-       $exit_value = shift @_;
-       print "@_\n";
+        $exit_value = shift @_;
+        print "@_\n";
     }
 
     exit($exit_value);
 };
 
 GetOptions (
-'file-url|u=s' => \$file_url,
-'help|h!' => \&$handler_help,
-    );
+    'allow-both-url|a!' => \$allow_both_url,
+    'file-url|u=s' => \$file_url,
+    'help|h!' => \&$handler_help,
+);
 
 
 ## end generated code
 if ((my $webapp_url = $file_url) =~ s:^([^/]+\://[^/]+/)(artifactory)(/.+?)(/.*):"${1}ui/repos/tree/General${3}" . join("%2F", split("/", $4)):e) {
     print $webapp_url;
     exit 0;
+} elsif ($allow_both_url) {
+    print $file_url;
+    exit;
 }
 
 say STDERR "Error: not file download url? $file_url";

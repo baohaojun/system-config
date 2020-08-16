@@ -104,7 +104,7 @@ GetOptions (
 @users = split(" ", join(" ", @users));
 @artifactory_urls = split(" ", join(" ", @artifactory_urls));
 
-map {$_ =~ s,webapp/#/artifacts/browse/tree/.*?/,,} @artifactory_urls;
+map {$_ = decode_utf8(scalar capturex("artifactory", "ua2f", "-u", "$_", "-a", ))} @artifactory_urls;
 if (not @artifactory_urls) {
     die "Must specify artifactory_urls";
 }

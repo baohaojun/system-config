@@ -51,10 +51,11 @@ done
 
 ## end generated code
 
-dir_url=$(echo "${dir_url}" | perl -pe 's,webapp/#/artifacts/browse/tree/General/,,')
+dir_url=$(artifactory p2u "${dir_url}")
+dir_url=$(artifactory ua2f -a -u "${dir_url}")
 if test -z "${dir_url}"; then
     die "Must specify dir_url"
 fi
-if yes-or-no-p "Remove $dir_url"; then
+if ! [[ $dir_url =~ ${scm_artifactory_prod_url} ]] || yes-or-no-p "Remove $dir_url"; then
   artifactory  my-curl "${dir_url}" -X DELETE
 fi

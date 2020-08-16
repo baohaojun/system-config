@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+输入一个 PATHNAME 参数，输出是一个 artifactory file download url
+
+如果 PATHNAME 看上去已经是一个 url（://），则不操作，输出 PATHNAME 本身。
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+for pathname in "${@}"; do
+    if ! [[ "${pathname}" =~ :// ]]; then
+        if ! [[ $pathname =~ ^/?artifactory/ ]]; then
+            pathname=artifactory/${pathname#/}
+        fi
+        pathname=${scm_artifactory_url}${pathname#/}
+    fi
+
+    echo $pathname
+done

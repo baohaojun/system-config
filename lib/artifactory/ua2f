@@ -21,20 +21,31 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# u:webapp-url
+# u:webapp-url \
+# aallow-both-url '?"此开关令 -u 参数同时允许使用 webapp url 和 file url（不会出错）"' \
+
 ## end code-generator
 ## start generated code
-    use Getopt::Long;
+use Getopt::Long;
 
 Getopt::Long::Configure("posix_default");
 
 
 
+my $allow_both_url = 0;
 my $webapp_url = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--[no]allow-both-url';
+    if (length('--[no]allow-both-url') > 24 and length("此开关令 -u 参数同时允许使用 webapp url 和 file url（不会出错）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "此开关令 -u 参数同时允许使用 webapp url 和 file url（不会出错）";
+    print "\n";
     printf "%6s", '-u, ';
     printf "%-24s", '--webapp-url=WEBAPP-URL';
     if (length('--webapp-url=WEBAPP-URL') > 24 and length() > 0) {
@@ -54,6 +65,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'allow-both-url|a!' => \$allow_both_url,
     'webapp-url|u=s' => \$webapp_url,
     'help|h!' => \&$handler_help,
 );
@@ -63,6 +75,9 @@ GetOptions (
 if ((my $file_url = $webapp_url) =~ s,ui/repos/tree/General,artifactory,) {
     $file_url =~ s,%2F,/,gi;
     print $file_url;
+    exit 0;
+} elsif ($allow_both_url) {
+    print $webapp_url;
     exit 0;
 }
 
