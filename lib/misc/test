@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -e
+
+declare -A test_failed_scripts=()
+
+export TESTDIR=~/tmp/test/misc
+rm -fr "$TESTDIR"
+mkdir -p "$TESTDIR"
+
+declare -A test_specified_scripts
+test_only_specified_scripts=false
+
+if test $# != 0; then
+    for x in "$@"; do
+        test_specified_scripts[$x]=1
+    done
+    test_only_specified_scripts=true
+fi
+
+for x in ${scm_common_libdir} ${scm_local_libdir}; do
+    for y in "" ".user"; do
+        test_dir=${x}/misc${y}/.test
+        for test_file in ${test_dir}/*; do
+            if test -e "${test_file}"; then
+                test_name=${test_file##*/}
+                if test "${test_only_specified_scripts}" = true -a ! "${test_specified_scripts[${test_name%.t}]}"; then
+                    continue
+                fi
+                log testing "${test_file}"
+                if ! "${test_file}"; then
+                    test_failed_scripts[$test_file]=1
+                fi
+            fi
+        done
+    done
+done
+
+for test_failed in "${!test_failed_scripts[@]}"; do
+    echo FAILED: $test_failed
+done

@@ -303,7 +303,7 @@ list_of_files=(
     "$@" $(
         if test $# == 0; then
             if test "$revision" = ""; then
-                git status -s .|grep '^.\S' -P | cut -b 4-;
+                git status -uall -s .|grep '^.\S' -P | cut -b 4-;
             else
                 gitp=$(gitp .)
                 case "$gitp" in

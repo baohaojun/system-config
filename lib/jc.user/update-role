@@ -8,6 +8,7 @@ binmode(STDERR, ":utf8");
 use Encode;
 use utf8;
 @ARGV = map {decode_utf8 $_} @ARGV;
+my @saved_args = @ARGV;
 
 use Data::Dumper;
 use JSON;
@@ -50,8 +51,11 @@ my $permissions_list = decode_utf8($json->encode(\@permissions));
 # n:role-name '?"比如 SEC_DEV"' \
 # p:role-projects-pattern '?"比如 jobA|jobB|jobPatternC。也可以用 +|jobPatternD 来表示增加一个正则表达式"' \
 # g:add-group='()' '?"如需添加多个，允许多次指定此参数"' \
+# @:del-group='()' '?"删除指定的用户/组，允许指定多次"' \
 # @:add-perm='()' '?"权限列表见\n$permissions_list"' \
 # @:del-perm='()' '?"删除权限列表"' \
+# @:json-data '?"不使用其它参数，直接使用 json 数据"' \
+# @delete-role '?"删除指定的 role"' \
 
 ## end code-generator
 ## start generated code
@@ -63,7 +67,10 @@ Getopt::Long::Configure("default");
 
 my @add_group = ();
 my @add_perm = ();
+my @del_group = ();
 my @del_perm = ();
+my $delete_role = 0;
+my $json_data = "";
 my $role_name = "";
 my $role_projects_pattern = "";
 my $role_type = "projectRoles";
@@ -88,12 +95,36 @@ my $handler_help = sub {
     printf "%s", "权限列表见\n$permissions_list";
     print "\n";
     printf "%6s", '';
+    printf "%-24s", '--del-group=DEL-GROUP';
+    if (length('--del-group=DEL-GROUP') > 24 and length("删除指定的用户/组，允许指定多次") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "删除指定的用户/组，允许指定多次";
+    print "\n";
+    printf "%6s", '';
     printf "%-24s", '--del-perm=DEL-PERM';
     if (length('--del-perm=DEL-PERM') > 24 and length("删除权限列表") > 0) {
         print "\n";
         printf "%30s", "";
     }
     printf "%s", "删除权限列表";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]delete-role';
+    if (length('--[no]delete-role') > 24 and length("删除指定的 role") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "删除指定的 role";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--json-data=JSON-DATA';
+    if (length('--json-data=JSON-DATA') > 24 and length("不使用其它参数，直接使用 json 数据") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "不使用其它参数，直接使用 json 数据";
     print "\n";
     printf "%6s", '-n, ';
     printf "%-24s", '--role-name=ROLE-NAME';
@@ -132,7 +163,10 @@ my $handler_help = sub {
 GetOptions (
     'add-group|g=s' => \@add_group,
     'add-perm=s' => \@add_perm,
+    'del-group=s' => \@del_group,
     'del-perm=s' => \@del_perm,
+    'delete-role!' => \$delete_role,
+    'json-data=s' => \$json_data,
     'role-name|n=s' => \$role_name,
     'role-projects-pattern|p=s' => \$role_projects_pattern,
     'role-type|t=s' => \$role_type,
@@ -141,6 +175,36 @@ GetOptions (
 
 
 ## end generated code
+
+if ("${json_data}") {
+    die "Must not specify other args" unless (@saved_args <= 2);
+    if ($json_data !~ m,^\s*\{,s) {
+        $json_data = "{$json_data}"
+    }
+
+    $json_data = $json->decode(
+        encode_utf8($json_data)
+    );
+    my @roles = keys %$json_data;
+    die "Must specify exactly 1 role: " . join(", ", @roles) unless (@roles == 1);
+    $role_name = $roles[0];
+
+    my $old_json = $json->decode(scalar capturex("jc", "getRole", "-n", "$role_name", ));
+    my $new_json = $json_data->{$role_name};
+    use Array::Utils qw(:all);
+
+    @add_group = array_minus(@{$new_json->{sids}}, @{$old_json->{sids}});
+    @del_group = array_minus(@{$old_json->{sids}}, @{$new_json->{sids}});
+
+    $role_projects_pattern = $new_json->{pattern};
+    my @new_perms = keys(%{$new_json->{permissionIds}});
+    my @old_perms = keys(%{$old_json->{permissionIds}});
+    say STDERR "new_perms is @new_perms, old_perms is @old_perms";
+    @add_perm = array_minus(@new_perms, @old_perms);
+    @del_perm = array_minus(@old_perms, @new_perms);
+
+    say STDERR "add_perm is @add_perm";
+}
 
 @add_perm = split(' ', join(" ", @add_perm));
 
@@ -155,8 +219,11 @@ say STDERR JSON->new->utf8(1)->pretty(1)->encode($role_json);
 my $removeRoleData = sprintf "type=%s&roleNames=%s", ${role_type}, ${role_name};
 
 
+if ($delete_role) {
+    runx ("jc", "curl", "role-strategy/strategy/removeRoles", "--data", "$removeRoleData", "-X", "POST");
+    exit 0;
+}
 
-# system("jc", "curl", "role-strategy/strategy/removeRoles", "--data", "$removeRoleData", "-X", "POST");
 
 my $new_pattern;
 if ($role_projects_pattern =~ s,^\+,,) {
@@ -195,5 +262,5 @@ for my $sid (@{$role_json->{sids}}, @add_group) {
   system "jc", "curl", "role-strategy/strategy/assignRole", "--data", "$assign_data", "-X", "POST";
 }
 
-run("c jc getRoles -v &>/dev/null &");
-run("c jc getRole -n $role_name");
+run("jc getRole -n $role_name");
+capture("c jc getRoles -v &>/dev/null &");

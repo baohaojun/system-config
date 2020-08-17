@@ -23,18 +23,20 @@ EOFe9576f8668e0
     # e:extra-envvars='${CACHED_RUN_EXTRA_ENVVARS}' '?"额外的会影响运行结果的环境变量，将其作为命令行的一部分，在取 cache 的时候进行对比"' \
     # rrenew-caches='"${renew_caches:-false}"' '?"更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"' \
     # @renew-cache-bg=true '?"运行完成后在后台刷新 cache，默认为 true"' \
+    # vverbose '?"显示更多信息（通过 bhj-notify）"' \
     # @edit
 
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o d:e:rh \
-                      --long cache-dir:,edit,extra-envvars:,renew-cache-bg,renew-caches,help,no-edit,no-renew-cache-bg,no-renew-caches \
+TEMP=$(POSIXLY_CORRECT=true getopt -o d:e:rvh \
+                      --long cache-dir:,edit,extra-envvars:,renew-cache-bg,renew-caches,verbose,help,no-edit,no-renew-cache-bg,no-renew-caches,no-verbose \
                       -n $(basename -- $0) -- "$@")
 declare cache_dir=${CACHED_RUN_SAVE_DIR:-~/.cache/system-config/cached-run}
 declare edit=false
 declare extra_envvars=${CACHED_RUN_EXTRA_ENVVARS}
 declare renew_cache_bg=true
 declare renew_caches="${renew_caches:-false}"
+declare verbose=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -76,6 +78,15 @@ while true; do
             shift
 
             ;;
+        -v|--verbose|--no-verbose)
+            if test "$1" = --no-verbose; then
+                verbose=false
+            else
+                verbose=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e "${comment_doc}"
@@ -98,6 +109,9 @@ while true; do
             printf %6s '-r, '
             printf %-24s '--[no-]renew-caches'
             echo "更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"
+            printf %6s '-v, '
+            printf %-24s '--[no-]verbose'
+            echo "显示更多信息（通过 bhj-notify）"
             exit
             shift
             ;;
@@ -122,6 +136,8 @@ fi
 export renew_caches
 if test "${FORCE_RENEW_CACHES}" = true; then
     renew_caches=${FORCE_RENEW_CACHES}
+elif test "${renew_caches}" = true; then
+    export FORCE_RENEW_CACHES=true
 fi
 
 cache_dir=$(absp "${cache_dir}")
@@ -158,23 +174,38 @@ if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
     fi
 fi
 
+if test "${verbose}" = true; then
+    exec 2>> ~/tmp/cached-run.log
+    log running "${saved_args[*]}"
+    set -x
+fi
+
 get-env-and-cmd "$@" > "${cmd_md5_file_prefix}.cmd"
 . atexit rm -f "${cmd_md5_file_prefix}.out.$$"
 
 set -o pipefail
 if ! "$@" | tee "${cmd_md5_file_prefix}.out.$$"; then
-    bhj-notify cached-run "Failed to run $*"
+    log cached-run "Failed to run $*" || true
     exit 1
-else
-    bhj-notify cached-run "Done running $*"
+elif test "${verbose}" = true; then
+    if test "${CACHED_RUN_VERBOSE_OUTPUT}"; then
+        log "extra output: $(eval "${CACHED_RUN_VERBOSE_OUTPUT}")"
+    fi
+    log cached-run "Done running $*"$'\n'"@${cmd_md5_file_prefix}.out.$$" || true
 fi
-if test "${FORCE_RENEW_CACHES}" = true &&
-        ! diff -q "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out"; then
-    diff=$(diff "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out")
-    bhj-notify cached-run "${diff}"&
-fi &>/dev/null
+. aterr log cached-run.err "Failed running $*"
+if test ! -e "${cmd_md5_file_prefix}.out"; then
+    FORCE_RENEW_CACHES=true
+fi
 
-mv "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out"
+if test "${FORCE_RENEW_CACHES}" = true &&
+        ! diff=$(diff "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out"); then
+    echo "$diff" > ${cmd_md5_file_prefix}.diff
+    mv "${cmd_md5_file_prefix}.out.$$" "${cmd_md5_file_prefix}.out"
+elif test "${verbose}" = true; then
+    log cached-run "no diff between cache and real result"
+fi
+
 if test "$edit" = true; then
     e "${cmd_md5_file_prefix}.out" || true
 fi &>/dev/null&
