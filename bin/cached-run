@@ -23,7 +23,7 @@ EOFe9576f8668e0
     # e:extra-envvars='${CACHED_RUN_EXTRA_ENVVARS}' '?"额外的会影响运行结果的环境变量，将其作为命令行的一部分，在取 cache 的时候进行对比"' \
     # rrenew-caches='"${renew_caches:-false}"' '?"更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"' \
     # @renew-cache-bg=true '?"运行完成后在后台刷新 cache，默认为 true"' \
-    # vverbose '?"显示更多信息（通过 bhj-notify）"' \
+    # vverbose '?"显示更多信息"' \
     # @edit
 
 ## end code-generator
@@ -111,7 +111,7 @@ while true; do
             echo "更新 cache 结果（本次所有子进程包括自己 cached-run 均当作 cache 不存在）"
             printf %6s '-v, '
             printf %-24s '--[no-]verbose'
-            echo "显示更多信息（通过 bhj-notify）"
+            echo "显示更多信息"
             exit
             shift
             ;;
@@ -196,6 +196,7 @@ fi
 . aterr log cached-run.err "Failed running $*"
 if test ! -e "${cmd_md5_file_prefix}.out"; then
     FORCE_RENEW_CACHES=true
+    touch "${cmd_md5_file_prefix}.out"
 fi
 
 if test "${FORCE_RENEW_CACHES}" = true &&

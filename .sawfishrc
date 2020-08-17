@@ -110,6 +110,8 @@
       br-class)
      ((string-match dc-class class 0 t)
       dc-class)
+     ((string-match term-class class 0 t)
+      term-class)
      (t
       class))))
 
@@ -721,13 +723,12 @@ EOF856ceee4ab57
 (require 'sawfish.wm.commands.x-cycle)
 
 (setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
+      term-class "XTerm|Lxterminal"
       br-class "iceweasel|Navigator|firefox|epiphany-browser|chromium|Download|Google-chrome" ;; br = browser
       dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|okular|AcroRd32.exe|kindle.exe|Gimp|Display-|acroread|evince|Gnumeric|mupdf" ;; dc = doc
       mg-class "meld|gimp|gitk|tkdiff|rdesktop" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager
-      bhj-cycle-groups (list im-class
-                             br-class
-                             dc-class))
+      )
 
 (define-cycle-command-pair
   'cycle-class-bhj 'cycle-class-bhj-backwards

@@ -5,7 +5,9 @@ use strict;
 # generate-getopt -s perl -P j:job-name '?"也可以指定 job url"' \
 # p:test-path '?"比如 \$..causes.*.userId，查找是谁启动的；\$..parameters.*.value，参数"' \
 # s:short-cut '?"简写，可以用 who 查责任人，params 查参数"' \
-# v:test-value '?"比如 baohaojun"'
+# v:test-value '?"比如 baohaojun"' \
+# e:eval '?"使用指定的表达示进行判断，而不是默认的正则表达式匹配"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -14,6 +16,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $eval = "";
 my $job_name = "";
 my $short_cut = "";
 my $test_path = "";
@@ -22,6 +25,14 @@ my $test_value = "";
 my $handler_help = sub {
     print ;
     print "\n\n选项和参数：\n";
+    printf "%6s", '-e, ';
+    printf "%-24s", '--eval=EVAL';
+    if (length('--eval=EVAL') > 24 and length("使用指定的表达示进行判断，而不是默认的正则表达式匹配") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "使用指定的表达示进行判断，而不是默认的正则表达式匹配";
+    print "\n";
     printf "%6s", '-j, ';
     printf "%-24s", '--job-name=JOB-NAME';
     if (length('--job-name=JOB-NAME') > 24 and length("也可以指定 job url") > 0) {
@@ -55,10 +66,17 @@ my $handler_help = sub {
     printf "%s", "比如 baohaojun";
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
+    'eval|e=s' => \$eval,
     'job-name|j=s' => \$job_name,
     'short-cut|s=s' => \$short_cut,
     'test-path|p=s' => \$test_path,
@@ -93,7 +111,17 @@ my $jpath = JSON::Path->new('$..builds.*');
 
 for ($jpath->values($job_json)) {
     my $jpath2 = JSON::Path->new($test_path);
-    if (grep {$_ =~ m/\Q$test_value\E/i} $jpath2->values($_)) {
+    if (grep {
+        if ($eval) {
+            eval $eval
+        } else {
+            if (ref $_ eq "JSON::PP::Boolean") {
+                $_ = $_ ? "true" : "false";
+            }
+
+            $_ =~ m/\Q$test_value\E/i
+        }
+    } $jpath2->values($_)) {
         print "$job_url" . $_->{number} . "\n";
     }
 }
