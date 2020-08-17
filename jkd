@@ -15,6 +15,11 @@ use JSON;
 
 my $json = JSON->new->utf8->canonical->pretty;
 
+BEGIN {
+    push @INC, "$ENV{scm_common_libdir}/jkd.pm";
+}
+use jkd;
+
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P -s perl -p jkd \
 # '?subcmd_help()' \
@@ -145,41 +150,6 @@ if (not $jkd_jiraurl) {
 
 use File::Path;
 
-sub no_spaces_equal($$) {
-    my @pair = @_;
-    map {s, | ,,g} @pair;
-    return $pair[0] eq $pair[1];
-}
-
-sub no_spaces_convert($) {
-    map {s, | ,,g} @_;
-    return $_[0];
-}
-
-sub no_spaces_hash_convert(\%) {
-    my $hash = $_[0];
-    map {
-        (my $key = $_) =~ s, | ,,g;
-        $hash->{$key} = $hash->{$_}
-    } keys %$hash;
-}
-
-sub no_spaces_hashget(\%$) {
-    my ($hash, $key) = @_;
-
-    if ($hash->{$key}) {
-        return $hash->{$key};
-    }
-
-    if ($hash->{no_spaces_hash_convert_done} ne 'true') {
-        no_spaces_hash_convert %$hash;
-        $hash->{no_spaces_hash_convert_done} = 'true';
-    }
-
-    $hash->{$key} = $hash->{no_spaces_convert $key};
-    return $hash->{$key};
-}
-
 use v5.10;
 use HTTP::Request::Common;
 use LWP::UserAgent;
@@ -272,77 +242,6 @@ sub jkd_get(@) {
 
         my $response = get($api);
         print decode_utf8($response->content);
-}
-
-sub select_args(@) {
-    if ($jkd_verbose) {
-        say STDERR "select-args ", join(" ", shell_quote(@_));
-    }
-    ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -s perl -l -P p:prompt O:order-name i:init-input
-    ## end code-generator
-    ## start generated code
-    use Getopt::Long;
-
-    Getopt::Long::Configure("posix_default");
-
-    local @ARGV = @_;
-
-    my $init_input = "";
-    my $order_name = "";
-    my $prompt = "";
-
-    my $handler_help = sub {
-        print ;
-        print "\n\n选项和参数：\n";
-        printf "%6s", '-i, ';
-        printf "%-24s", '--init-input=INIT-INPUT';
-        if (length('--init-input=INIT-INPUT') > 24 and length() > 0) {
-            print "\n";
-            printf "%30s", "";
-        }
-        printf "%s", ;
-        print "\n";
-        printf "%6s", '-O, ';
-        printf "%-24s", '--order-name=ORDER-NAME';
-        if (length('--order-name=ORDER-NAME') > 24 and length() > 0) {
-            print "\n";
-            printf "%30s", "";
-        }
-        printf "%s", ;
-        print "\n";
-        printf "%6s", '-p, ';
-        printf "%-24s", '--prompt=PROMPT';
-        if (length('--prompt=PROMPT') > 24 and length() > 0) {
-            print "\n";
-            printf "%30s", "";
-        }
-        printf "%s", ;
-        print "\n";
-
-        exit(0);
-    };
-
-    GetOptions (
-        'init-input|i=s' => \$init_input,
-        'order-name|O=s' => \$order_name,
-        'prompt|p=s' => \$prompt,
-        'help|h!' => \&$handler_help,
-        );
-
-
-    ## end generated code
-
-    my @command = (
-        "select-args", "-p", "$prompt", "-i", "$init_input",
-        "-O", "$order_name",
-        @ARGV
-        );
-
-    my $command = join(" ", shell_quote(@command));
-    my $res = decode_utf8 (qx($command));
-
-    return $res;
 }
 
 sub jkd_get_issue_type_fields(@) {
