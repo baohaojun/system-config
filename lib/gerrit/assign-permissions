@@ -1,0 +1,222 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+my $saved_args = join(" ", @ARGV);
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+这条脚本用于给 gerrit 仓库分配权限，参考 gr assign-permissions --help
+
+#+begin_src sh
+  gr assign-permissions \
+     -r repo_name \
+     -b branch_pattern \
+     -g groups \
+     -p permission_values \
+     --exclusive
+#+end_src
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+    # r:repo-name '?"repo 的名字"' \
+    # b:branch-patterns='()' '?"分支的模式，比如 refs/heads/release/*（匹配 release/ 下所有分支）或 refs/heads/master"' \
+    # g:groups='()' '?"指定给哪些 groups 分配权限，可指定多次，如果是 admin/dev/sme 的话，需要转化为该仓库对应的组"' \
+    # p:permission-values='()' '?"可指定多次，比如 submit 或 \"label-Code-Review = -2..+2\""' \
+    # @exclusive '?"是否指定为exclusive权限（参考google: gerrit exclusive permission"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my @branch_patterns = ();
+my $exclusive = 0;
+my @groups = ();
+my @permission_values = ();
+my $repo_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-b, ';
+    printf "%-24s", '--branch-patterns=BRANCH-PATTERNS';
+    if (length('--branch-patterns=BRANCH-PATTERNS') > 24 and length("分支的模式，比如 refs/heads/release/*（匹配 release/ 下所有分支）或 refs/heads/master") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "分支的模式，比如 refs/heads/release/*（匹配 release/ 下所有分支）或 refs/heads/master";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]exclusive';
+    if (length('--[no]exclusive') > 24 and length("是否指定为exclusive权限（参考google: gerrit exclusive permission") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "是否指定为exclusive权限（参考google: gerrit exclusive permission";
+    print "\n";
+    printf "%6s", '-g, ';
+    printf "%-24s", '--groups=GROUPS';
+    if (length('--groups=GROUPS') > 24 and length("指定给哪些 groups 分配权限，可指定多次，如果是 admin/dev/sme 的话，需要转化为该仓库对应的组") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定给哪些 groups 分配权限，可指定多次，如果是 admin/dev/sme 的话，需要转化为该仓库对应的组";
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--permission-values=PERMISSION-VALUES';
+    if (length('--permission-values=PERMISSION-VALUES') > 24 and length("可指定多次，比如 submit 或 \"label-Code-Review = -2..+2\"") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "可指定多次，比如 submit 或 \"label-Code-Review = -2..+2\"";
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--repo-name=REPO-NAME';
+    if (length('--repo-name=REPO-NAME') > 24 and length("repo 的名字") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "repo 的名字";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'branch-patterns|b=s' => \@branch_patterns,
+    'exclusive!' => \$exclusive,
+    'groups|g=s' => \@groups,
+    'permission-values|p=s' => \@permission_values,
+    'repo-name|r=s' => \$repo_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my %special_groups = (
+    dev => 1,
+    admin => 1,
+    sme => 1,
+);
+
+@groups = split(' ', join(" ", @groups));
+my %groups;
+map {
+    if ($_ =~ m,^user/,) {
+        (my $user = $_) =~ s,user/,,;
+        my $user_json = $json->decode(scalar capturex("gr", "rest", "-a", "a/accounts/$user/", ));
+        my $name = encode_utf8 $user_json->{name};
+        (my $mailname = encode_utf8 $user_json->{email}) =~ s,\@.*,,;
+        my $username = $user;
+
+        if ($name ne $username || $name ne $mailname) {
+            $groups{"user/$name ($user)"} = 1;
+        } else {
+            $groups{"user/$user ($user)"} = 1;
+        }
+    } else {
+        $groups{$_} = 1;
+    }
+} @groups;
+
+@groups = keys %groups;
+
+map {
+    if ($special_groups{lc $_}) {
+        $_ = capturex("gr", "repo2group", "-r", "$repo_name", "-e", "-g", uc($_));
+    }
+} @groups;
+
+use File::Path qw(make_path remove_tree);
+my $tmp_dir = "$ENV{PWD}/gr-assign-permissions-$$";
+make_path($tmp_dir);
+chdir($tmp_dir);
+
+use AtExit;
+*clean_tmpdir = sub {
+    if ($ENV{TESTDIR}) {
+        # runx("bash"); # for debug
+    }
+    chdir "/";
+    remove_tree $tmp_dir;
+};
+atexit(\&clean_tmpdir);
+
+runx("gerrit-update-meta", "-s", "-d", "$tmp_dir", "-p", "$ENV{scm_gerrit_admin_ssh_url}${repo_name}", );
+
+my %perms;
+for my $branch_pattern (@branch_patterns) {
+    for my $perm_val (@permission_values) {
+        (my $perm = $perm_val) =~ s,\s*=\s*(.*),,;
+        $perms{$perm} = 1;
+        (my $val = ($perm_val =~ m/=\s*\S/) ? $perm_val : "") =~ s,.*?=\s*,,;
+        if ($val) {
+            $val =~ s,\s*$, ,;
+        }
+
+        for my $group (@groups) {
+            my $config_regexp = quotemeta("${val}group ${group}");
+            my $existing_config =
+                decode_utf8(scalar capturex(
+                    EXIT_ANY, "debug-run",
+                    "git", "config", "--get-all", "-f", "project.config",
+                    "access.${branch_pattern}.${perm}", "^${config_regexp}\$",  ));
+            if (not $existing_config) {
+                runx(
+                    "git", "config", "--add", "-f", "project.config", "access.${branch_pattern}.${perm}", "${val}group ${group}",
+                )
+            }
+        }
+        if ($exclusive) {
+            my $exclusive_perms = decode_utf8(scalar capturex(
+                EXIT_ANY,
+                "git", "config", "-f", "project.config",
+                "access.${branch_pattern}.exclusiveGroupPermissions"));
+            my %existing_exclusive_perms;
+            for (split(' ', $exclusive_perms)) {
+                $existing_exclusive_perms{$_} = 1;
+            }
+
+            map {
+                $existing_exclusive_perms{$_} = 1
+            } keys %perms;
+
+            runx("git", "config", "-f", "project.config",
+                 "access.${branch_pattern}.exclusiveGroupPermissions",
+                 join(" ", sort {$a cmp $b} keys %existing_exclusive_perms));
+        }
+    }
+}
+
+run "gerrit-meta-fix-groups";
+
+run "git add .";
+runx "git", "commit", "-m", "gr assign-permissions $saved_args", "-s", "--allow-empty";
+$ENV{HOME} = "/";
+runx "git", "push", "$ENV{scm_gerrit_admin_ssh_url}${repo_name}", "HEAD:refs/meta/config";
