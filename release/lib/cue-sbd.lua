@@ -24,10 +24,9 @@ M.cue_funcs = {
                sleep(.5)
                click_scene(ce.cue_all_scene, {skip_refind = true})
             end
-            jump_out_of("dd/cue-queding")
+            click_scene("dd/cue-queding", {skip_refind = true})
          end
       end
-
    end,
 
    ['com.tencent.mm'] = function ()
@@ -58,7 +57,11 @@ M.wrench_cue = function(who, ...)
 
    jump_from_to(ce.search_button, wait_ime)
    ce.is_back_to_chat = function()
-      return adb_top_window() == ce.current_win
+      if (ce.current_pkg == 'com.alibaba.android.rimet') then
+         return not find_scene "dd/at-sbd-title"
+      else
+         return adb_top_window() == ce.current_win
+      end
    end
 
    M.cue_funcs[ce.current_pkg](ce.cue_all_scene, ce.who)
