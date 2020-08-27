@@ -64,6 +64,7 @@ M.wrench_find_dingding_contact = function(friend_name)
    putclip_nowait(friend_name)
    open_dd("search")
    adb_event"key scroll_lock key enter sleep .8"
+   wait_for_scene("dd-NiKeNengXiangZhao")
    click_scene("dd-NiKeNengXiangZhao", {y = 200, x = 100})
 end
 
