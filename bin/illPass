@@ -200,6 +200,6 @@ sawfish-window mark -t illPass -r
 xdotool-when-keyboard-clear type --clearmodifiers "${password}"
 
 if test "${add_newline_and_notify}" = true; then
-    xdotool-when-keyboard-clear type --clearmodifiers $'\n'
+    xdotool-when-keyboard-clear type --clearmodifiers $'\r'
     bhj-notify illPass "Have inputed your password ${which_password}!"
 fi

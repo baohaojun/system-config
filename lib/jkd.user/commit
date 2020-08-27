@@ -117,8 +117,6 @@ EOF
 
 
 
-DO-NOT-CHERRYPICK
-
 Issue-Id: ${issue}
 Bug-Introduced-Phase: coding
 Root-Cause: refactor

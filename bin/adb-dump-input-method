@@ -1,0 +1,40 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+my $adb_window_dump = decode_utf8(scalar capturex("my-adb", "dumpsys input_method; dumpsys window policy; dumpsys window windows"));
+my @dump = split("\n", $adb_window_dump);
+my $current_input_method;
+my $looking_at_input_method;
+my $looking_at_input_method_package;
+for (@dump) {
+    if ($_ =~ m,mCurMethodId=,) {
+        ($current_input_method = $_) =~ s,(.*mCurMethodId=|/.*),,g;
+        say STDERR "current_input_method is $current_input_method";
+    }
+    if (not $looking_at_input_method and $_ =~ m,^\s*Window #?\d* ?Window\{[a-f0-9]+.*\sInputMethod,) {
+        $looking_at_input_method = 1;
+    }
+
+    if ($looking_at_input_method) {
+        if (m,package=,) {
+            ($looking_at_input_method_package = $_) =~ s,(.*package=|\s.*),,g;
+        }
+        if (m,^\s*mHasSurface,) {
+            if (m,mHasSurface=true,) {
+                say STDERR "input method is active";
+                exit 0;
+            } else {
+                say STDERR "input method is not active";
+                exit 1;
+            }
+        }
+    }
+}

@@ -193,8 +193,7 @@ if ("${json_data}") {
     my $new_json = $json_data->{$role_name};
     use Array::Utils qw(:all);
 
-    @add_group = array_minus(@{$new_json->{sids}}, @{$old_json->{sids}});
-    @del_group = array_minus(@{$old_json->{sids}}, @{$new_json->{sids}});
+    @add_group = @{$new_json->{sids}};
 
     $role_projects_pattern = $new_json->{pattern};
     my @new_perms = keys(%{$new_json->{permissionIds}});
@@ -253,7 +252,15 @@ if ($new_pattern || @add_perm || @del_perm) {
     system("debug-run", "jc", "curl", "role-strategy/strategy/addRole", "--data", "$updateRoleData", "-X", "POST");
 }
 
-for my $sid (@{$role_json->{sids}}, @add_group) {
+if (not $json_data) {
+    @add_group = (@add_group, @{$role_json->{sids}});
+}
+
+if (@del_group) {
+    @add_group = array_minus(@add_group, @del_group);
+}
+
+for my $sid (@add_group) {
   my $assign_data = sprintf(
                             "type=%s&roleName=%s&sid=%s",
                             $role_type, $role_name, $sid
@@ -262,5 +269,5 @@ for my $sid (@{$role_json->{sids}}, @add_group) {
   system "jc", "curl", "role-strategy/strategy/assignRole", "--data", "$assign_data", "-X", "POST";
 }
 
-run("jc getRole -n $role_name");
+run("jc getRole -n $role_name|jq .");
 capture("c jc getRoles -v &>/dev/null &");

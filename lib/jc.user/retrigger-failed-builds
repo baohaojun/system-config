@@ -93,11 +93,7 @@ my $job_json = qx(jc curl ${job_url}api/json);
 $job_json = decode_json $job_json;
 use v5.10;
 
-my %gerrit_params_map = (
-    GERRIT_CHANGE_NUMBER => {},
-    GERRIT_TOPIC => {},
-);
-
+my %gerrit_params_map;
 for (@{$job_json->{builds}}) {
     my $build_url = $_->{url};
     (my $job_name = $build_url) =~ s,.*?/job/(.*?)/.*,$1,;
@@ -105,26 +101,7 @@ for (@{$job_json->{builds}}) {
 
     my $build_date = DateTime->from_epoch(epoch => $build_json->{timestamp}/1000)->ymd();
 
-    my $gerrit_change_number;
-    my $gerrit_topic;
 
-    map {
-        if ($_->{parameters}) {
-            map {
-                if ($_->{name} eq "GERRIT_CHANGE_NUMBER" and $_->{value}) {
-                    $gerrit_change_number = $_->{value};
-                    $gerrit_params_map{GERRIT_CHANGE_NUMBER}{$_->{value}} = {
-                        BUILD_NUMBER => $build_json->{number},
-                    } unless $gerrit_params_map{GERRIT_CHANGE_NUMBER}{$_->{value}};
-                } elsif ($_->{name} eq "GERRIT_TOPIC" and $_->{value}) {
-                    $gerrit_topic = $_->{value};
-                    $gerrit_params_map{GERRIT_TOPIC}{$_->{value}} = {
-                        BUILD_NUMBER => $build_json->{number},
-                    } unless $gerrit_params_map{GERRIT_TOPIC}{$_->{value}};
-                }
-            } @{$_->{parameters}}
-        }
-    } @{$build_json->{actions}};
 
     if ($build_json->{result} && $build_json->{result} ne "SUCCESS") {
         if ($build_json->{number} < $min_build_number && $min_build_number) {
@@ -134,22 +111,6 @@ for (@{$job_json->{builds}}) {
 
         if ($build_date lt $min_date) {
             printf STDERR "build %d too old (before $min_date) do not retrigger\n", $build_json->{number};
-            next;
-        }
-
-        if ($gerrit_change_number &&
-            $gerrit_params_map{GERRIT_CHANGE_NUMBER}{$gerrit_change_number}{BUILD_NUMBER} != $build_json->{number}) {
-            say STDERR sprintf("#%d already rebuilt by #%d",
-                               $build_json->{number},
-                               $gerrit_params_map{GERRIT_CHANGE_NUMBER}{$gerrit_change_number}{BUILD_NUMBER});
-            next;
-        }
-
-        if ($gerrit_topic &&
-            $gerrit_params_map{GERRIT_TOPIC}{$gerrit_topic}{BUILD_NUMBER} != $build_json->{number}) {
-            say STDERR sprintf("#%d already rebuilt by #%d",
-                               $build_json->{number},
-                               $gerrit_params_map{GERRIT_TOPIC}{$gerrit_topic}{BUILD_NUMBER});
             next;
         }
         say "retrigger: $build_url, result: ", $build_json->{result};

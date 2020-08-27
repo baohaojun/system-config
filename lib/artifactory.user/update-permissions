@@ -105,7 +105,7 @@ if ($existing_group) {
 $json_data = $json->decode(encode_utf8 $json_data);
 my $uri = $json_data->{uri};
 
-my $old_details = decode_utf8(scalar capturex("debug-run", "artifactory", "my-curl", $uri));
+my $old_details = decode_utf8(scalar capturex(EXIT_ANY,"debug-run", "artifactory", "my-curl", $uri)) || "{}";
 my $new_details = decode_utf8($json->encode($json_data->{details}));
 
 runx(EXIT_ANY, "misc", "diff-json", $old_details, $new_details);

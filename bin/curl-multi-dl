@@ -104,7 +104,7 @@ size=$(pretty $size | pn 2)
 (
     while true; do
         echo
-        if fuser ~/.cache/system-config/logs/$(basename $0).lock.$$; then
+        if fuser ~/.cache/system-config/logs/$(basename $0).lock.$$ | grep .; then
             sleep 1
         else
             break

@@ -1,0 +1,156 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# p:project-name '?"新的顶层项目名字，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $project_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project-name=PROJECT-NAME';
+    if (length('--project-name=PROJECT-NAME') > 24 and length("新的顶层项目名字，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "新的顶层项目名字，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'project-name|p=s' => \$project_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+sub project_exists($proj) {
+    my $output = decode_utf8(
+        scalar capturex(
+            EXIT_ANY,
+            "git", "ls-remote", "$ENV{scm_gerrit_admin_ssh_url}$proj",
+        ));
+    return $EXITVAL == 0;
+}
+
+sub group_exists($group) {
+    my $output = decode_utf8(
+        scalar capturex(
+            EXIT_ANY,
+            "gr", "rest", "a/groups/${group}",
+        ));
+    return $EXITVAL == 0;
+}
+
+(my $parent_project = $project_name) =~ s,(.*)-.*,$1,;
+
+if ($parent_project !~ m,-,) {
+    $parent_project = "All-Projects";
+}
+
+$ENV{scm_gerrit_user} = $ENV{scm_gerrit_admin_user};
+
+# 1. 创建仓库
+if (not project_exists($project_name)) {
+    runx("ssh-gerrit", "--admin", "create-project", "${project_name}", "-p", "${parent_project}", "--permissions-only");
+}
+
+# 2. 创建相关的 groups
+(my $group_prefix = $ENV{scm_gerrit_repo_group_prefixes}) =~ s,.* ,,;
+my %groups;
+
+my @group_types = ("ADMIN", "SME", "DEV");
+map {
+    (my $group = "${group_prefix}-${project_name}-$_") =~ s,-All-,,;
+    $groups{$_} = $group;
+} @group_types;
+
+for my $group_type (@group_types) {
+    my $group = $groups{$group_type};
+    my $owner_group;
+    my @include_group_args;
+    if ($group_type eq "ADMIN") {
+        ($owner_group = $group) =~ s,(.*)-(.*)-(ADMIN),$1-$3,g;
+        if (not group_exists($owner_group)) {
+            $owner_group = $group;
+            @include_group_args = ("-g", "${owner_group}");
+        }
+    } else {
+        $owner_group = $groups{ADMIN};
+        if ($group_type eq "SME") {
+            @include_group_args = ("-g", "$groups{ADMIN}");
+        } else {
+            @include_group_args = ("-g", "$groups{SME}");
+        }
+    }
+
+    if (not group_exists($group)) {
+        runx("gr", "create-group", "$group", "-o", "$owner_group", @include_group_args);
+    }
+}
+
+# 3. 设置相关的权限
+
+# [access]
+#       inheritFrom = All-XYZ
+# [access "refs/heads/*"]
+#       label-Code-Review = -2..+2 group CHJ-XYZ-BASE-SME
+#       label-Code-Review = -1..+1 group CHJ-XYZ-BASE-DEV
+#       label-Verified = -1..+1 group CHJ-XYZ-BASE-DEV
+#       submit = group CHJ-XYZ-BASE-DEV
+#       label-Sonar-Verified = -1..+1 group CHJ-XYZ-BASE-SME
+# [access "refs/*"]
+#       read = group CHJ-XYZ-BASE-DEV
+#       create = group CHJ-XYZ-BASE-ADMIN
+# [submit]
+#       action = fast forward only
+
+runx(
+    "gr", "assign-permissions", "-r", "${project_name}", "-b", "refs/heads/*", "-p", "label-Code-Review = -2..+2", "-g", "$groups{SME}",
+);
+
+runx(
+    "gr", "assign-permissions", "-r", "${project_name}", "-b", "refs/heads/*", "-p", "label-Code-Review = -1..+1", "-g", "$groups{DEV}",
+    "-p", "label-Verified = -1..+1", "-p", "submit",
+);
+
+runx(
+    "gr", "assign-permissions", "-r", "${project_name}", "-b", "refs/*", "-p", "read", "-g", "$groups{DEV}",
+);
