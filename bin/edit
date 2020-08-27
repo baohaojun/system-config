@@ -2,48 +2,76 @@
 use String::ShellQuote;
 use strict;
 
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl ddebug-mode p:protocol='$ENV{REMOTEPROTOCOL}" || "ssh'
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# ddebug-mode \
+# p:protocol='$ENV{REMOTEPROTOCOL} || "ssh"' '?"用什么远程协议"' \
+# @warning=0 '?"常用在命令行上操作时，显示一些警告"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
 
+Getopt::Long::Configure("posix_default");
+
+
+
 my $debug_mode = 0;
-my $protocol = "$ENV{REMOTEPROTOCOL}" || "ssh";
+my $protocol = $ENV{REMOTEPROTOCOL} || "ssh";
+my $warning = 0;
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--[no]debug-mode';
+    if (length('--[no]debug-mode') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--protocol=PROTOCOL';
+    if (length('--protocol=PROTOCOL') > 24 and length("用什么远程协议") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "用什么远程协议";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]warning';
+    if (length('--[no]warning') > 24 and length("常用在命令行上操作时，显示一些警告") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "常用在命令行上操作时，显示一些警告";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
 
 GetOptions (
-            'debug-mode|d!' => \$debug_mode,
-            'protocol|p=s' => \$protocol,
-            'help|h!' => \&handler_help,
-           );
+    'debug-mode|d!' => \$debug_mode,
+    'protocol|p=s' => \$protocol,
+    'warning!' => \$warning,
+    'help|h!' => \&$handler_help,
+);
 
-
-
-sub handler_help {
-  print ;
-  print "\n\n选项和参数：\n";
-  printf "%6s", '-d, ';
-  printf "%-24s", '--[no]debug-mode';
-  if (length('--[no]debug-mode') > 24 and length() > 0) {
-    print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-  printf "%6s", '-p, ';
-  printf "%-24s", '--protocol=PROTOCOL';
-  if (length('--protocol=PROTOCOL') > 24 and length() > 0) {
-    print "\n";
-    printf "%30s", "";
-  }
-  printf "%s", ;
-  print "\n";
-
-  exit(0);
-}
 
 ## end generated code
-
 
 my $log_;
 if ($debug_mode) {
@@ -158,7 +186,7 @@ sub edit_1($) {
         } else {
           system("bhj-notify hello 'This mail has no link'")
         }
-      } elsif ($file =~ m,/src/gerrit-fetch-review/, and system("yes-or-no-p", "Do you want to edit gerrit-review file") != 0) {
+      } elsif ($warning and $file =~ m,/src/gerrit-fetch-review/, and system("yes-or-no-p", "Do you want to edit gerrit-review file") != 0) {
         print "Please double check your edit file, should not be under ~/src/gerrit-fetch-review";
         exit;
       }

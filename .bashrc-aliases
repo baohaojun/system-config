@@ -49,6 +49,7 @@ if test -e ~/.local-config/.bashrc-aliases; then
     . ~/.local-config/.bashrc-aliases
 fi
 
+alias e='e --warning'
 if test -e ~/.config/system-config/vim-is-evil; then
     alias vi=e
     alias vim=e

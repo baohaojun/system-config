@@ -164,12 +164,18 @@ for (my $try = 0; $try < $max_tries; $try++) {
         my $new_status = $new_json->{fields}{status}{name};
         my $new_changelogs_n = $new_json->{changelog}{total};
         if ($new_status ne $old_status) {
+            say STDERR "状态已发生改变，退出";
             last;
         } elsif ($new_changelogs_n != $old_changelogs_n) {
             runx("ding", "-a", "baohaojun", "--title", "jkd tri didn't change status", "--text", "jkd tri didn't change status");
             last;
+        } else {
+            say STDERR "no new change log, continue";
         }
     }
+
+    say STDERR "result is $result";
+    next unless $result; # result 有可能是空的
 
     $result = $json->decode($result);
     my $errors = $result->{errors};

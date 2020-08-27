@@ -22,7 +22,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-
+# g:groups='()' '?"列出哪些 groups，如果不指定，默认是所有 groups"' \
 
 ## end code-generator
 ## start generated code
@@ -32,11 +32,19 @@ Getopt::Long::Configure("posix_default");
 
 
 
-
+my @groups = ();
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-g, ';
+    printf "%-24s", '--groups=GROUPS';
+    if (length('--groups=GROUPS') > 24 and length("列出哪些 groups，如果不指定，默认是所有 groups") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "列出哪些 groups，如果不指定，默认是所有 groups";
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -48,15 +56,31 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'groups|g=s' => \@groups,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
 
+use URI::Encode qw(uri_encode uri_decode);
 
-my $groups =
-    $json->decode(scalar capture("cached-run -e scm_artifactory_url artifactory my-curl api/security/groups"));
+my $groups;
+if (@groups) {
+    $groups = [
+        map {
+            {
+                name => "$_",
+                    uri => "$ENV{scm_artifactory_url}artifactory/api/security/groups/" . uri_encode($_),
+            }
+        } split(" ", join(" ", @groups))
+    ]
+} else {
+    $groups =
+        $json->decode(
+            scalar capture(
+                "cached-run -e scm_artifactory_url artifactory my-curl api/security/groups"));
+}
 
 use URI::Escape;
 for (@$groups) {

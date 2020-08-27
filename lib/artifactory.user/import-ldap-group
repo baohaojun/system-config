@@ -1,0 +1,110 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# u:username '?"把哪个用户的 ldap 组给 import 进来"' \
+# g:group-name '?"import 哪个 group，默认用 ldap show-groups 计算"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $group_name = "";
+my $username = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-g, ';
+    printf "%-24s", '--group-name=GROUP-NAME';
+    if (length('--group-name=GROUP-NAME') > 24 and length("import 哪个 group，默认用 ldap show-groups 计算") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "import 哪个 group，默认用 ldap show-groups 计算";
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--username=USERNAME';
+    if (length('--username=USERNAME') > 24 and length("把哪个用户的 ldap 组给 import 进来") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "把哪个用户的 ldap 组给 import 进来";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'group-name|g=s' => \$group_name,
+    'username|u=s' => \$username,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+unless ($group_name) {
+    ($group_name =
+     lc decode_utf8(scalar capturex("ldap", "show-groups", "-u", "${username}")))
+        =~ s,\s+:.*,,ms;
+}
+
+my $ldap_output =
+    decode_utf8(scalar capturex("c", "comp-mail", "-d", "$username", ));
+
+my ($group_dn, $group_base_dn);
+
+if ($ldap_output =~ m/memberOf:+\s*(CN=${group_name},(OU=.*?),.*)/i) {
+    ($group_dn, $group_base_dn) = ($1, $2);
+}
+
+(my $group_description =
+ decode_utf8(scalar capturex("comp-mail", "-d", "cn=${group_name}", "-e", )))
+    =~ s,.*description:*\s*(.*?)\s*\n.*,$1,ms;
+runx("yes-or-no-p",  "group info\n $group_name\n $group_dn\n $group_base_dn\n $group_description", );
+
+my $ldap_json_data =
+    {
+        'name' => "${group_name}",
+        'autoJoin' => JSON::false,
+        'realm' => 'ldap',
+        'description' => "${group_description}",
+        'realmAttributes' => "ldapGroupName=${group_name};groupsStrategy=STATIC;groupDn=${group_dn}"
+    };
+
+runx(
+    "debug-run", "artifactory", "create-group", "-j",
+    decode_utf8($json->encode($ldap_json_data))
+);

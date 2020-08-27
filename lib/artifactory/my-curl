@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ $1 =~ / ]] && ! [[ $1 =~ ^${scm_artifactory_url} ]]; then
+if [[ $1 =~ / ]] && ! [[ $1 =~ ^(${scm_artifactory_url}|${scm_artifactory_url%/}:443/) ]]; then
     url=${scm_artifactory_url}artifactory/${1#/}
     shift
     set -- "$url" "$@"

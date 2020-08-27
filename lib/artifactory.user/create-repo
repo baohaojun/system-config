@@ -23,6 +23,7 @@ EOFc83131117f09
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
 # n:repo-name c:copy-from-repo '?"从哪个 Repo 拷贝配置"' \
+# d:description
 
 ## end code-generator
 ## start generated code
@@ -33,6 +34,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $copy_from_repo = "";
+my $description = "";
 my $repo_name = "";
 
 my $handler_help = sub {
@@ -45,6 +47,14 @@ my $handler_help = sub {
         printf "%30s", "";
     }
     printf "%s", "从哪个 Repo 拷贝配置";
+    print "\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--description=DESCRIPTION';
+    if (length('--description=DESCRIPTION') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
     print "\n";
     printf "%6s", '-n, ';
     printf "%-24s", '--repo-name=REPO-NAME';
@@ -66,6 +76,7 @@ my $handler_help = sub {
 
 GetOptions (
     'copy-from-repo|c=s' => \$copy_from_repo,
+    'description|d=s' => \$description,
     'repo-name|n=s' => \$repo_name,
     'help|h!' => \&$handler_help,
 );
@@ -77,5 +88,8 @@ my $json_copy =
     $json->decode(scalar capturex("artifactory", "my-curl", "api/repositories/${copy_from_repo}"));
 
 $json_copy->{key} = $repo_name;
+
+die "Must specify description" unless $description;
+$json_copy->{description} = $description;
 
 runx("debug-run", "artifactory", "my-curl", "api/repositories/${repo_name}", "-X", "PUT", "-H", 'Content-Type: application/json', "-d",  decode_utf8($json->encode($json_copy)));
