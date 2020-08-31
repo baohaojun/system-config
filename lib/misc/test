@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
+if test "${scm_jira_url}" = "${scm_jira_prod_url}"; then
+    die "You must not run test in prod url"
+fi
+
 declare -A test_failed_scripts=()
 
-export TESTDIR=~/tmp/test/misc
-rm -fr "$TESTDIR"
+export TESTDIR=~/tmp/test/misc.$$
+. atexit rm -rf "${TESTDIR}"
 mkdir -p "$TESTDIR"
+export WORKSPACE=${TESTDIR}
 
+cd "${TESTDIR}"
 declare -A test_specified_scripts
 test_only_specified_scripts=false
 

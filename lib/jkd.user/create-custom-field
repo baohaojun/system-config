@@ -105,8 +105,15 @@ if (not $description) {
 
 my $searcherKey;
 if (not $type) {
-    my $type_name =
-        decode_utf8(scalar capturex("select-args", "Which type do you want?", map {$_->{name}} @{$types_json->{types}}));
+    my $type_name;
+
+    while (1) {
+        $type_name = decode_utf8(scalar capturex("select-args", "Which type do you want?", map {$_->{name}} @{$types_json->{types}}));
+        if (runx(EXIT_ANY, "yes-or-no-p", "use $type_name?", ) == 0) {
+            last;
+        }
+    }
+
     map {
         if ($_->{name} eq $type_name) {
             $type = $_->{key};
