@@ -105,7 +105,7 @@ M.get_debug_action = function(desc)
    return ans
 end
 
-M.debug_find_scene = function(desc, scene)
+M.debug_find_scene_maybe = function(desc, scene)
    local should_ret = nil
    local ret_val = nil
    if M.g_find_scene_debug then
@@ -187,7 +187,7 @@ M.find_scene = function(scene, times)
             break
          elseif i == times then
             debug_desc = ("无法找到未知场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会重新查找，请确认）？"):format(scene, scene, scene)
-            ret_val, should_ret = debug_find_scene(debug_desc, scene)
+            ret_val, should_ret = debug_find_scene_maybe(debug_desc, scene)
             if should_ret then
                return ret_val
             end
@@ -202,18 +202,45 @@ M.find_scene = function(scene, times)
    s_x = scene_xy:gsub(" .*", "")
    s_y = scene_xy:gsub(".* ", "")
 
+   local found_it = false
    if system(("find-scene.sh is-scene -x %s -y %s -s %s"):format(s_x, s_y, scene)) then
-      log("found scene: %s at %s %s", scene, s_x, s_y)
       debug_desc = ("已找到场景：%s，要不要将 failed %s.png 替换为 %s.png？"):format(scene, scene, scene)
-      ret_val, should_ret = debug_find_scene(debug_desc, scene)
+      found_it = true
+   elseif M.scenes_map[scene .. "@1"] then
+      for i = 1, 100 do
+         family_scene_xy = M.scenes_map[scene .. "@" .. i]
+         if not family_scene_xy then
+            break
+         end
+
+         if family_scene_xy ~= saved_scene_xy then
+            s_x = family_scene_xy:gsub(" .*", "")
+            s_y = family_scene_xy:gsub(".* ", "")
+            if system(("find-scene.sh is-scene -x %s -y %s -s %s"):format(s_x, s_y, scene)) then
+               M.scenes_map[scene] = family_scene_xy
+               found_it = true
+               debug_desc = ("已找到场景别名：%s（%d），要不要将 failed %s.png 替换为 %s.png？"):format(scene, i, scene, scene)
+               break
+            end
+         end
+      end
+   end
+
+   if found_it then
+      log("found scene: %s at %s %s", scene, s_x, s_y)
+      ret_val, should_ret = debug_find_scene_maybe(debug_desc, scene)
       if should_ret then
          return ret_val
       end
+      if M.scenes_map[scene] ~= saved_scene_xy then
+         save_scenes()
+      end
       return true
    else
+
       log("! found scene: %s at %s %s", scene, s_x, s_y)
       debug_desc = ("无法找到已知场景：%s，要不要将 failed %s.png 替换为 %s.png（如果选否，会忘掉它，当成新场景处理，请手动切换到此场景）？"):format(scene, scene, scene)
-      ret_val, should_ret = debug_find_scene(debug_desc, scene)
+      ret_val, should_ret = debug_find_scene_maybe(debug_desc, scene)
       if should_ret then
          return ret_val
       end

@@ -80,7 +80,7 @@ static int l_adb_install(lua_State* L)
         lua_error(L);
     }
 
-    QString res = AdbClient::doAdbShell("pm install -r " + tmpApk);
+    QString res = AdbClient::doAdbShell("pm install -r -g " + tmpApk);
     if (res == "") {
         lua_pushstring(L, "adb install failed");
         lua_error(L);

@@ -695,7 +695,7 @@ M.adb_install = function(apk)
    if qt_adb_install then
       return qt_adb_install{apk}
    else
-      return io.popen(the_true_adb .. " install -r " .. apk):read("*a")
+      return io.popen(the_true_adb .. " install -g -r " .. apk):read("*a")
    end
 end
 

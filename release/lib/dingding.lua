@@ -123,31 +123,13 @@ M.picture_to_dingding_chat = function(pics, ...)
       pics = {pics, ...}
    end
 
-   adb_shell(
-      [[
-            for x in /sdcard/Wrench-DingDing/*; do
-               if test -e "$x"; then
-                  rm -rf "$x";
-                  am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
-               fi;
-            done;
-            mkdir /sdcard/Wrench-DingDing/;
-            cp /sdcard/DCIM/Camera/000-wrench-* /sdcard/Wrench-DingDing/;
-            for x in /sdcard/Wrench-DingDing/000-wrench-*; do
-                if test -e "$x"; then
-                    am startservice --user 0 -n com.bhj.setclip/.PutClipService --es picture "$x";
-                fi;
-            done
-
-   ]])
-
    local dd_extra_button="dingding-liaotian-gengduo-gongneng"
    if ime_is_active() then
       dd_extra_button = dd_extra_button .. "@ime"
    end
 
    jump_from_to(dd_extra_button, "dingding-xiangce-button")
-   if #pics == 1 then
+   if #pics == 0 then
       jump_from_to(true, "dd/maybe-this-picture")
    end
    if find_scene("dd/maybe-this-picture") then
