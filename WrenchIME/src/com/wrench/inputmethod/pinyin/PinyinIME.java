@@ -52,6 +52,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.Writer;
+
+
 /**
  * Main class of the Pinyin input method.
  */
@@ -234,19 +243,47 @@ public class PinyinIME extends InputMethodService {
         resetToIdleState(false);
     }
 
+    private static File sdcard = android.os.Environment.getExternalStorageDirectory();
+
+    private void writeFile(String str, File file) throws IOException {
+        FileWriter f = new FileWriter(file);
+        f.write(str);
+        f.close();
+        File txt = new File(sdcard, "putclip.txt.1");
+        txt.renameTo(new File(sdcard, "putclip.txt"));
+    }
+
+    private void writeFile(String str) throws IOException {
+        FileWriter f = new FileWriter(new File(sdcard, "putclip.txt.1"));
+        f.write(str);
+        f.close();
+        File txt = new File(sdcard, "putclip.txt.1");
+        txt.renameTo(new File(sdcard, "putclip.txt"));
+
+        writeFile(str, new File(sdcard, "putclip.txt.1"));
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (processKey(event, 0 != event.getRepeatCount())) return true;
 
         if (event.getKeyCode() == KeyEvent.KEYCODE_SCROLL_LOCK) {
-	    try {
-		ClipboardManager mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-		String str = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();
-		InputConnection ic = getCurrentInputConnection();
-		ic.commitText(str, 1);
+            try {
+                ClipboardManager mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                String str = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();
+                InputConnection ic = getCurrentInputConnection();
+                ic.commitText(str, 1);
                 return true;
-	    } catch (Exception e) {
-	    }
+            } catch (Exception e) {
+            }
+        } else if (event.getKeyCode() == KeyEvent.KEYCODE_GUIDE) {
+            try {
+                ClipboardManager mClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                String str = mClipboard.getPrimaryClip().getItemAt(0).getText().toString();
+                writeFile(str);
+                return true;
+            } catch (Exception e) {
+            }
         }
 
         return super.onKeyDown(keyCode, event);
