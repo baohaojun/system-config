@@ -49,15 +49,14 @@ done
 EOFd79e06b367a3
 )"
 )"
-elif test "$b0" = getclip-android -o "$b0" = getphone-android; then
-    cmd="${b0%-*}"
+elif test "$b0" = getclip-android; then
 
     command adb shell sh -c "$(
 printf %q "$(
 cat <<'EOFb1b66edbb725' | . .replace-%% --
 # {%sh-mode%}
 rm -f /sdcard/putclip.txt
-am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei '<%cmd%>' 1 >/dev/null 2>&1&
+input keyevent GUIDE
 for x in $(seq 1 20); do
     if test -e /sdcard/putclip.txt; then
         cat /sdcard/putclip.txt

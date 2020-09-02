@@ -25,7 +25,7 @@ EOFc83131117f09
 # u:username='"$ENV{scm_jumpserver_user}"' \
 # p:password \
 # a:api '?"api 接口地址，比如 api/v1/assets/assets/"' \
-# f:favorite '?"指定一个IP地址，将其所属的机器添加到收藏夹"' \
+# f:favorite '?"指定一个IP地址，将其所属的机器添加到收藏夹，最后打印其主机名字"' \
 
 ## end code-generator
 ## start generated code
@@ -137,13 +137,14 @@ if (not $login_reply) {
 }
 
 my $token = $login_reply->{token};
+my @debug_run = ();
 
 if ($api) {
     my $api_reply =
         $json->decode(scalar capturex(
-            "debug-run", "curl-f", "-s", "$ENV{scm_jumpserver_url}$api", "-H", "Authorization: Bearer $token",  @ARGV
+            @debug_run, "curl-f", "-s", "$ENV{scm_jumpserver_url}$api", "-H", "Authorization: Bearer $token",  @ARGV
         ));
-    print decode_utf8($json->encode($api_reply));
+    say STDERR decode_utf8($json->encode($api_reply));
 }
 
 if ($favorite) {
@@ -154,11 +155,27 @@ if ($favorite) {
         map {($_->{id}, $_->{hostname})}
         grep {$_->{ip} eq "$favorite"}
         @{$list_of_assets->{results}};
-    print "$id, $hostname\n";
 
     my $data = {
         asset => $id
     };
 
-    runx("debug-run", "jumpserver.rest", "-a", "api/v1/assets/favorite-assets/", "--", "-X", "POST", "-H", 'Content-Type: application/json; charset=utf-8', "--data-raw",  decode_utf8($json->encode($data)))
+    my $nodes =
+        $json->decode(scalar capturex("jumpserver.rest", "-a", "api/v1/perms/users/nodes/children/tree/?cache_policy=2", ));
+    my $fav_folder;
+    grep {
+        if ($_->{meta}{node}{value} eq "收藏夹") {
+            $fav_folder = $_->{meta}{node}{id};
+        }
+    } @{$nodes};
+
+    my $fav_hosts =
+        $json->decode(scalar capturex("jumpserver.rest", "-u", "baohaojun", "-a",
+                                      "api/v1/perms/users/nodes/${fav_folder}/assets/?limit=1000&offset=0"));
+
+    runx(@debug_run, "jumpserver.rest", "-a", "api/v1/assets/favorite-assets/", "--", "-X", "POST", "-H", 'Content-Type: application/json; charset=utf-8', "--data-raw",  decode_utf8($json->encode($data))) if not grep {
+        $hostname eq $_->{hostname}
+    } @{$fav_hosts->{results}};
+
+    print "${hostname}";
 }

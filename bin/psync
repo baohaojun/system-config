@@ -29,7 +29,7 @@ sync_saved_args=("$@")
 # generate-getopt rreverse @follow-symlink Sgit-st \
     # t:target-dir @delete cchecksum \
     # @gitp='("" --gitp)' \
-    # p:dir-prefix '?"上传目录的 prefix，比如jsftp"' \
+    # p:dir-prefix='收藏夹/' '?"上传目录的 prefix，比如「收藏夹」"' \
 
 ## end code-generator
 ## start generated code
@@ -38,7 +38,7 @@ TEMP=$( getopt -o cp:Srt:h \
                -n $(basename -- $0) -- "$@")
 declare checksum=false
 declare delete=false
-declare dir_prefix=
+declare dir_prefix=收藏夹/
 declare follow_symlink=false
 declare git_st=false
 declare gitp=
@@ -125,7 +125,7 @@ while true; do
             echo
             printf %6s '-p, '
             printf %-24s '--dir-prefix=DIR_PREFIX'
-            echo "上传目录的 prefix，比如jsftp"
+            echo "上传目录的 prefix，比如「收藏夹」"
             printf "%6s" " "
             printf %-24s '--[no-]follow-symlink'
             echo
@@ -242,6 +242,7 @@ ln -s / $jsftp_tmpdir;
 mkdir -p $jsftp_target_dir;
 echo target: \$(readlink -f $jsftp_target_dir)
 echo host: \$(hostname)
+echo ip: \$(echo \$SSH_CONNECTION | pn 3)
 # {%/sh-mode%}
 " 2>&1 | tr -d '\r' |
             tee ~/tmp/$b0.$$
@@ -251,7 +252,11 @@ echo host: \$(hostname)
     jsftp_target_dir=.jsftp.$$/$( # this dir is under /tmp already when using lftp sftp://
         cat ~/tmp/$b0.$$ | perl -ne 'print $1 if m,^target: (.*),'
                     )
-    sftp_host=$(cat ~/tmp/$b0.$$ | grep '^host: '|pn 2)
+    jsftp_target_ip=$(
+        cat ~/tmp/$b0.$$ | perl -ne 'print $1 if m,^ip: (.*),'
+                   )
+
+    sftp_host=$(jumpserver.rest -f $jsftp_target_ip)
 
     if test -z "${sftp_host}"; then
         die "Can't sync when host is empty, too bad!"
