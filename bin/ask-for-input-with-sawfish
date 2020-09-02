@@ -140,5 +140,5 @@ unset WINDOWID # or else the yad will be attached to the XTERM window if started
     sawfish-window \
         mark \
         --with-mark \
-        yad $ztype --geometry=640x480+50+50 --no-markup --text="$text" --title="$title"
+        yad $ztype --geometry=640x480+50+50 --no-markup --text="$text" --title="$title" | space-cjk-en
 ) 9>/dev/null | rm-last-nl

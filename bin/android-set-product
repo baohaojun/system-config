@@ -62,6 +62,11 @@ if test $# != 0; then
     fi
 else
     . build/envsetup.sh >/dev/null 2>&1
+    if test -z "$LUNCH_MENU_CHOICES"; then
+        LUNCH_MENU_CHOICES=(
+            $(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
+        )
+    fi
     products=$(for x in "${LUNCH_MENU_CHOICES[@]}"; do echo ${x%-*}; done)
     product=$(select-args -p "请选择你要编译的产品" -o -- ${products[@]})
     variant=$(select-args -p "请选择你要编译的选项" -o -- userdebug user eng )

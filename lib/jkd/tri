@@ -174,10 +174,17 @@ for (my $try = 0; $try < $max_tries; $try++) {
         }
     }
 
-    say STDERR "result is $result";
+    say STDERR "result is " . decode_utf8($json->encode($result));
     next unless $result; # result 有可能是空的
+    next if $result eq "\n";
+    eval {
+        $result = $json->decode($result);
+    };
 
-    $result = $json->decode($result);
+    if ($@) {
+        say STDERR "$result is not json format? $@";
+        next;
+    }
     my $errors = $result->{errors};
     for (keys %$errors) {
         # say STDERR "delete $_ and try again: $try";

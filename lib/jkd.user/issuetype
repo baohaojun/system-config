@@ -20,7 +20,9 @@ my $json = JSON->new->utf8->canonical->pretty;
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
 * action = create
-- create an issuetype
+- create an issuetype only,
+* action = new
+- create an issuetype, and init it (fields/screens/workflows, etc.)
 * action = update
 - update an issuetype
 * action = print
@@ -516,14 +518,13 @@ if (is_exact_action "print") {
     }
 
     runx("jkd", "wfs-switch-wf", '--issuetype-name', $issuetype_name, "--new-wf-name", $workflow_name, "--scheme-id", $workflow_scheme_id, "--scheme-active");
-} elsif (is_exact_action "new") {
-
+} elsif (is_exact_action "new") { # *** new issuetype ***
     if (not $issuetype_id) {
         my $issuetype_style =
             decode_utf8(scalar capturex("select-args", "-p", "Which kind of issuetype do you want?", "standard", "sub-task"));
 
         $issuetype_style = ($issuetype_style eq "standard") ? "" : "jira_subtask";
-        my $description =
+        my $description = $issuetype_description ||
             decode_utf8(scalar capture("ask-for-input-with-sawfish -p 'issuetype description?'"));
 
         my @params_values = (
@@ -534,7 +535,7 @@ if (is_exact_action "print") {
             "style=${issuetype_style}",
         );
 
-        runx ("jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueType.jspa", "-X", "POST",
+        runx ("debug-run", "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueType.jspa", "-X", "POST",
               map { ('--data-urlencode', $_) } @params_values);
         my $issuetypes_json =
             $json->decode(scalar capturex("cached-run", "-r", "-e", "scm_jira_url", "jkd", "rest", "issuetype"));
@@ -553,7 +554,7 @@ if (is_exact_action "print") {
             $associated_project =
                 decode_utf8(scalar capturex("jkd", "sel-name", "-a", "project"));
         }
-        runx ("jkd", "issuetype", "-a", "add-to-scheme", "-p", $associated_project, "-n", $issuetype_name);
+        runx ("debug-run", "jkd", "issuetype", "-a", "add-to-scheme", "-p", $associated_project, "-n", $issuetype_name);
     } else {
         $associated_project = $issuetype_json->{project};
     }
@@ -612,6 +613,7 @@ if (is_exact_action "print") {
             "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueTypeToFieldConfigurationAssociation.jspa", "-X", "POST",
             map { ('--data-urlencode', $_) } @params_values
         );
+        runx("hint", "现在你需要添加字段、修改面板，然后测试一下", );
     }
 
     my $screenscheme_id;

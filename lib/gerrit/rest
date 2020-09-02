@@ -85,7 +85,9 @@ else
     fi
 
     if ! [[ $access_point =~ /($|\?) ]]; then
-        access_point=${access_point}/
+        if ! [[ $access_point =~ (\&|\?) ]]; then
+            access_point=${access_point}/
+        fi
     fi
 
     g_url="${gerrit_server_url}${access_point}"

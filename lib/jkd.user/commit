@@ -11,7 +11,9 @@ EOFe9576f8668e0
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
-    # u:url i:issue t:type=feature \
+    # u:url '?"指定一个jira url，而不是一个jira issue key"' \
+    # i:issue '?"指定一个jira issue key"' \
+    # t:type=feature \
     # m:module=build
 ## end code-generator
 ## start generated code
@@ -53,7 +55,7 @@ while true; do
             echo Options and arguments:
             printf %6s '-i, '
             printf %-24s '--issue=ISSUE'
-            echo
+            echo "指定一个jira issue key"
             printf %6s '-m, '
             printf %-24s '--module=MODULE'
             echo
@@ -62,7 +64,7 @@ while true; do
             echo
             printf %6s '-u, '
             printf %-24s '--url=URL'
-            echo
+            echo "指定一个jira url，而不是一个jira issue key"
             exit
             shift
             ;;

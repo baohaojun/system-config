@@ -17,7 +17,8 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# p:project-name '?"新的顶层项目名字，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）"' \
+# p:project-name '?"新的顶层项目名字，必填，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）"' \
+# d:description '?"新项目的描述，必填"' \
 
 ## end code-generator
 ## start generated code
@@ -27,18 +28,27 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $description = "";
 my $project_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-p, ';
-    printf "%-24s", '--project-name=PROJECT-NAME';
-    if (length('--project-name=PROJECT-NAME') > 24 and length("新的顶层项目名字，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）") > 0) {
+    printf "%6s", '-d, ';
+    printf "%-24s", '--description=DESCRIPTION';
+    if (length('--description=DESCRIPTION') > 24 and length("新项目的描述，必填") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "新的顶层项目名字，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）";
+    printf "%s", "新项目的描述，必填";
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project-name=PROJECT-NAME';
+    if (length('--project-name=PROJECT-NAME') > 24 and length("新的顶层项目名字，必填，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "新的顶层项目名字，必填，比如 All-XX-YY（会从 All-XX 继承）；或 All-XX（会从 All-Projects 继承）";
     print "\n";
 
     my $exit_value = 0;
@@ -51,6 +61,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'description|d=s' => \$description,
     'project-name|p=s' => \$project_name,
     'help|h!' => \&$handler_help,
 );
@@ -60,6 +71,8 @@ GetOptions (
 
 use feature 'signatures';
 no warnings "experimental::signatures";
+
+die "Must specify description" unless $description;
 
 sub project_exists($proj) {
     my $output = decode_utf8(
@@ -87,9 +100,10 @@ if ($parent_project !~ m,-,) {
 
 $ENV{scm_gerrit_user} = $ENV{scm_gerrit_admin_user};
 
+use String::ShellQuote;
 # 1. 创建仓库
 if (not project_exists($project_name)) {
-    runx("ssh-gerrit", "--admin", "create-project", "${project_name}", "-p", "${parent_project}", "--permissions-only");
+    runx("debug-run", "ssh-gerrit", "--admin", "create-project", "${project_name}", "-d", shell_quote("${description}"), "-p", "${parent_project}", "--permissions-only");
 }
 
 # 2. 创建相关的 groups
@@ -104,16 +118,17 @@ map {
 
 for my $group_type (@group_types) {
     my $group = $groups{$group_type};
+    my @owner_group_args;
     my $owner_group;
     my @include_group_args;
     if ($group_type eq "ADMIN") {
         ($owner_group = $group) =~ s,(.*)-(.*)-(ADMIN),$1-$3,g;
-        if (not group_exists($owner_group)) {
-            $owner_group = $group;
+        if (group_exists($owner_group)) {
+            @owner_group_args = ("-o", "$owner_group", );
             @include_group_args = ("-g", "${owner_group}");
         }
     } else {
-        $owner_group = $groups{ADMIN};
+        @owner_group_args = ("-o", $groups{ADMIN});
         if ($group_type eq "SME") {
             @include_group_args = ("-g", "$groups{ADMIN}");
         } else {
@@ -122,7 +137,7 @@ for my $group_type (@group_types) {
     }
 
     if (not group_exists($group)) {
-        runx("gr", "create-group", "$group", "-o", "$owner_group", @include_group_args);
+        runx("debug-run", "gr", "create-group", "$group", @owner_group_args, @include_group_args);
     }
 }
 
