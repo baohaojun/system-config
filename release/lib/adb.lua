@@ -46,7 +46,7 @@ M.wait_input_target_n = function(n_loop, ...)
          if window:match(activity) or (window:match("^PopupWindow:") and M.m_focused_app:match(activity)) then
             local adb_window_dump = split("\n", M.m_window_dump)
             for x = 1, #adb_window_dump do
-               if adb_window_dump[x]:match("mInputMethodTarget=") then
+               if adb_window_dump[x]:match("mInputMethodTarget") then
                   local input_method, ime_height, ime_connected = adb_get_input_window_dump()
                   if ime_connected then
                      local fields = split(" ", adb_window_dump[x])

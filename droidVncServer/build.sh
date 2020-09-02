@@ -86,4 +86,4 @@ rsync -a ~/src/github/Wrench/droidVncServer ./vendor
         mma -j20 "$@" 2>&1
     ) | tee build.log
 )
-rsync -a ./vendor/droidVncServer $(dirname $abs0)/..
+rsync -a out/vendor/droidVncServer $(dirname $abs0)/..
