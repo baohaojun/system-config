@@ -34,7 +34,7 @@ This is simple using Perl's “reflection”.
                     if ($ENV{JKD_TRACE} eq 'true') {
                         @args = ('debug-run', @args);
                     }
-                    runx(@args);
+                    die "Can't run jkd " . join(" ", shell_quote(@args)) if runx(EXIT_ANY, @args) != 0;
                     exit;
                 }
             }
