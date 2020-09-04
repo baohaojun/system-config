@@ -2,13 +2,17 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P @:times=3 @:wait-secs=60 '?"default is 60"' @:errout-regexp '?"stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"'
+    # generate-getopt -P @:times=3 @:wait-secs=60 '?"default is 60"' \
+        # @:errout-regexp '?"stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"' \
+        # @:ignore-regexp '?"出错之后忽略不处理，并正常退出的正则表达式"' \
+
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
-                      --long errout-regexp:,times:,wait-secs:,help \
+                      --long errout-regexp:,ignore-regexp:,times:,wait-secs:,help \
                       -n $(basename -- $0) -- "$@")
 declare errout_regexp=
+declare ignore_regexp=
 declare times=3
 declare wait_secs=60
 eval set -- "$TEMP"
@@ -17,6 +21,11 @@ while true; do
 
         --errout-regexp)
             errout_regexp=$2
+            shift 2
+
+            ;;
+        --ignore-regexp)
+            ignore_regexp=$2
             shift 2
 
             ;;
@@ -40,6 +49,11 @@ while true; do
             echo
             printf "%30s" ""
             echo "stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"
+            printf "%6s" " "
+            printf %-24s '--ignore-regexp=IGNORE_REGEXP'
+            echo
+            printf "%30s" ""
+            echo "出错之后忽略不处理，并正常退出的正则表达式"
             printf "%6s" " "
             printf %-24s '--times=TIMES'
             echo
@@ -83,11 +97,15 @@ tmp_err=/tmp/run-with-retry.err.$$
             exit
         else
             ret=$?
-            if grep -q -P -e "${errout_regexp}" "$tmp_out" "$tmp_err"; then
+            if test "${errout_regexp}" && grep -q -P -e "${errout_regexp}" "$tmp_out" "$tmp_err"; then
                 log need retry $*, output matched pattern
                 redo-output
                 sleep "${wait_secs}"
                 continue
+            elif test "$ignore_regexp" && grep -q -P -q "${ignore_regexp}" "$tmp_out" "$tmp_err"; then
+                log "ignored this error, exit normally"
+                redo-output
+                exit 0
             else
                 log should not retry $*, output not matched pattern
                 redo-output

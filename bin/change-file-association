@@ -93,6 +93,8 @@ fi
 
 if test -e "$1"; then
     mime=$(xdg-mime query filetype "$1")
+elif echo "$1" | grep -P '^\w+://'; then
+    mime=x-scheme-handler/${1%%://*}
 else
     mime=$(cd /tmp; touch $$.$1; xdg-mime query filetype $$.$1; rm $$.$1)
 fi
