@@ -1,6 +1,21 @@
 #!/usr/bin/env perl
 # [[file:~/src/github/org-kungfu/org-kungfu.org::the-ultimate-script][the-ultimate-script]]
+#!/usr/bin/env perl
 use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P -s perl -p ok \
@@ -152,7 +167,7 @@ sub get($) {
     my $ua = LWP::UserAgent->new;
     my $api = $_[0];
     my $url = kungfu_url_for_api($api);
-    say STDERR "$url" if $ok_verbose;
+    say STDERR "ok curl " . shell_quote($api) if $ok_verbose;
     my $response = $ua->request(GET $url);
     if ($response->code != 200) {
         die "Can't get $api: code is " . $response->code . ", content is " . $response->content;
@@ -161,9 +176,14 @@ sub get($) {
     return $response;
 }
 
+sub get_json($) {
+    my $response = get($_[0]);
+    return $json->decode($response->content);
+}
+
 sub ok_curl(@) {
     my $response = get($_[0]);
-    print $response->content;
+    print decode_utf8($response->content);
 }
 
 sub get_page_info($$) {
@@ -171,7 +191,7 @@ sub get_page_info($$) {
     my $page_api = "rest/api/content/${page_id}?expand=${expand}";
 
     my $response = get($page_api);
-    my $page_object = decode_json $response->content;
+    my $page_object = $json->decode($response->content);
     return $page_object;
 }
 sub ok_get1page(@) { # download a page's html, save it, test if org needs update.
@@ -212,7 +232,7 @@ sub ok_get1page(@) { # download a page's html, save it, test if org needs update
     my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,ancestors";
 
     my $response = get($page_api);
-    my $page_object = decode_json $response->content;
+    my $page_object = $json->decode($response->content);
 
     my @dirs = (".");
     my $path = "";
@@ -229,13 +249,13 @@ sub ok_get1page(@) { # download a page's html, save it, test if org needs update
     chdir($path)
         or die "Can't chdir $path";
 
-    system("git add .; git commit -m 'save to git before download from confluence'");
+    system("git add .; git commit --allow-empty -m 'save to git before download from confluence'");
 
     write_file("content.html", encode_utf8 $page_object->{body}{editor}{value});
 
     my $current_version = 0;
     if (-e "version.txt") {
-        $current_version = qx(cat version.txt);
+    $current_version = decode_utf8(scalar capture("cat version.txt"));
     }
 
     my $need_update_org = 0;
@@ -246,7 +266,7 @@ sub ok_get1page(@) { # download a page's html, save it, test if org needs update
         rewrite_html_after_download();
         $need_update_org = 1;
     }
-    system("git add .; git commit -m 'save to git after rewrite'");
+    system("git add .; git commit --allow-empty -m 'save to git after rewrite'");
     write_file("version.txt", $page_object->{version}{number});
 
     return $need_update_org;
@@ -269,7 +289,9 @@ sub download_all_attachments($) {
     my ($page_id) = @_;
     my ($api_path) = "rest/api/content/${page_id}/child/attachment";
     my $response = get($api_path);
-    my $object = decode_json $response->content;
+    my $object = $json->decode($response->content);
+
+    our $attachments_json = $object;
 
     for my $attachment (@{$object->{results}}) {
         my $download_path = $attachment->{_links}{download};
@@ -327,12 +349,12 @@ sub rewrite_html_for_update() {
     );
 
     if ($should_emojify) {
-        my $page_id = qx(cat page-id.txt);
+    my $page_id = decode_utf8(scalar capture("cat page-id.txt"));
         my %existing_attachments;
         my $attachment_nextlink = "rest/api/content/${page_id}/child/attachment";
 
         do {
-            my $attachments_json = decode_json get($attachment_nextlink)->content;
+            my $attachments_json = $json->decode(encode_utf8(get($attachment_nextlink)->content));
             for (@{$attachments_json->{results}}) {
                 my $title = $_->{title};
                 $existing_attachments{$title} = 1;
@@ -344,7 +366,18 @@ sub rewrite_html_for_update() {
         $dom->find('img')->each(
             sub {
                 my $png_file = $_->{src};
-                if ($png_file =~ m,^(\./)download/attachments/$page_id/,) {
+                if ($png_file =~ m,^(\.?/)download/thumbnails/$page_id/,) {
+                    $png_file =~ s,download/thumbnails/,download/attachments/,;
+                    $_->{src} = $png_file;
+                }
+
+                if ($png_file =~ m,^(\.?/)download/attachments/$page_id/,) {
+                    unless ($_->{class} eq "emoji") {
+                        $_->replace(
+                            sprintf("<a href='%s' title='点击查看大图'>%s</a>", $_->{src}, $_->to_string)
+                        );
+                    }
+
                     return;
                 }
 
@@ -376,12 +409,18 @@ sub rewrite_html_for_update() {
                 }
 
                 my $attach_file = "$attach_dir/$png_file_basename";
-                if (! $existing_attachments{$png_file_basename}) {
+                if (! $existing_attachments{$png_file_basename} || runx(EXIT_ANY, "diff", "-q", "${png_file}", "${attach_file}") != 0) {
                     system("cp", "$png_file", "$attach_file");
-                    ok_upload1attachment("-p", "$page_id", "-f", encode_utf8 "$attach_file");
+                    ok_upload1attachment("-p", "$page_id", "-f", "$attach_file");
                     $existing_attachments{$png_file_basename} = 1;
                 }
                 $_->{src} = "/$attach_file";
+
+                unless ($_->{class} eq 'emoji') {
+                    $_->replace(
+                        sprintf("<a href='%s' title='点击查看大图'>%s</a>", $_->{src}, $_->to_string)
+                    );
+                }
             }
         )
     }
@@ -457,7 +496,7 @@ sub ok_update1page(@) {
     my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,title";
 
     my $response = get($page_api);
-    my $page_object = decode_json $response->content;
+    my $page_object = $json->decode($response->content);
 
     $page_object->{body}{editor}{value} = decode_utf8 read_file($html_file);
     $page_object->{version}{number}++;
@@ -469,18 +508,18 @@ sub ok_update1page(@) {
     my $request = PUT kungfu_url_for_api("rest/api/content/${page_id}"),
         'Content-Type' => 'application/json',
         "charset" => "utf-8",
-        Content => encode_json $page_object;
+        Content => $json->encode($page_object);
 
     my $response = $ua->request($request);
     if ($response->code != 200) {
         say "PUT response code:" . $response->code;
-        say "response content:" . $response->content;
-        die "Can't upload page: " . encode_json $page_object;
+        say "response content:" . decode_utf8($response->content);
+        die "Can't upload page: " . decode_utf8($json->encode($page_object));
     }
 
     if (not $quietly) {
         System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
-        system("git add .; git commit -m 'save to git after upload to confluence'");
+        system("git add .; git commit --allow-empty -m 'save to git after upload to confluence'");
     }
 }
 sub ok_upload1attachment(@) {
@@ -532,20 +571,45 @@ sub ok_upload1attachment(@) {
     my $ua = LWP::UserAgent->new;
     my $api = sprintf "rest/api/content/%d/child/attachment", $page_id;
 
-    my $request = POST kungfu_url_for_api($api),
-        "X-Atlassian-Token" => "nocheck",
-        Content_Type => 'form-data',
-        Content => [
-            file => ["$filename"],
-        ];
+    (my $file_basename = $filename) =~ s,.*/,,;
+    my $attachment_id;
+    our $attachments_json;
+
+    if (not $attachments_json) {
+        $attachments_json = get_json($api);
+    }
+
+    say STDERR decode_utf8($json->encode($attachments_json)) if $ok_verbose;
+    my $request;
+    if (grep {
+        $_->{title} eq $file_basename && ($attachment_id = $_->{id})
+    } @{$attachments_json->{results}}) {
+        $api .= "/${attachment_id}/data";
+        $request = POST kungfu_url_for_api($api),
+            "X-Atlassian-Token" => "nocheck",
+            Content_Type => 'form-data',
+            Content => [
+                file => ["$filename"],
+            ];
+    } else {
+        $request = POST kungfu_url_for_api($api),
+            "X-Atlassian-Token" => "nocheck",
+            Content_Type => 'form-data',
+            Content => [
+                file => ["$filename"],
+                minorEdit => "true",
+            ];
+    }
 
     my $response = $ua->request($request);
     say "POST response code:" . $response->code;
     if ($response->code != 200) {
-        die "Can't post $filename to $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+        die "Can't POST $filename to $api: code is " . $response->code . ", content is:\n\n" . decode_utf8($response->content) . "\n"
     }
 
     return $response;
+
+
 }
 
 sub ok_ehbwo() { # edit current emacs buffer's html as org-mode, requires system-config
@@ -560,7 +624,7 @@ sub ok_erwo(@) { # edit region (comments) with org-mode, requires system-config
     chdir "$ENV{HOME}/tmp"
         or die "Can't chdir to ~/tmp";
 
-    my $selected_text = qx(emacs-current-selection -b buffer-erwo-$$);
+        my $selected_text = decode_utf8(scalar capture(qq(emacs-current-selection -b buffer-erwo-$$)));
     my @selected_lines = split("\n", $selected_text);
     my $first_prefix;
     for (@selected_lines) {
@@ -761,7 +825,11 @@ sub get_page_id_maybe_from_url($$) {
     }
 
     if (not $page_id) {
-        die "Must specify the page_id"
+        our %path_id_map;
+        (my $path = $url) =~ s,.*?://.*?/,,;
+        unless ($page_id = $path_id_map{$path}) {
+            die "Must specify the page_id: $path $url"
+        }
     }
     return $page_id;
 }
@@ -895,9 +963,9 @@ sub ok_create1page(@) {
     EOF
 
     $create_page_json_str =~ s,^\s*#.*,,mg;
-    my $create_page_json_obj = decode_json $create_page_json_str;
+    my $create_page_json_obj = $json->decode(encode_utf8 $create_page_json_str);
 
-    $create_page_json_obj->{title} = decode_utf8 $title;
+    $create_page_json_obj->{title} = $title;
     $create_page_json_obj->{space}{key} = $space;
     $create_page_json_obj->{ancestors}[0]{id} = $page_id;
 
@@ -908,14 +976,14 @@ sub ok_create1page(@) {
         'Content-Type' => 'application/json',
         'Accept' => 'application/json',
         "charset" => "utf-8",
-        Content => encode_json $create_page_json_obj;
+        Content => ($json->encode($create_page_json_obj));
 
     my $response = $ua->request($request);
     say "POST response code:" . $response->code;
     if ($response->code != 200) {
-        die "Can't get $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+        die "Can't get $api: code is " . $response->code . ", content is:\n\n" . decode_utf8($response->content) . "\n"
     }
-    my $created_obj = decode_json $response->content;
+    my $created_obj = $json->decode($response->content);
     ok_e("-p", $created_obj->{id});
 }
 
@@ -1053,15 +1121,15 @@ sub ok_np(@) {
             $cql_str = $cql_query;
         }
 
-        $cql_str = uri_encode(decode_utf8 $cql_str);
+        $cql_str = uri_encode($cql_str);
         my $page_api = "rest/api/search?cql=$cql_str&expand=content.ancestors";
 
         my $response = get($page_api);
 
-        my $cql_object = decode_json $response->content;
+        my $cql_object = $json->decode($response->content);
 
-        my %id_path_map;
-        my %path_id_map;
+        our %id_path_map;
+        our %path_id_map;
         my @paths;
         for my $result (@{$cql_object->{results}}) {
             # my @dirs = (".");
@@ -1075,7 +1143,7 @@ sub ok_np(@) {
             # push @dirs, ${title};
             # $path = join('/', @dirs);
 
-            my $path = encode_utf8
+            my $path =
                 join("/",
                      map {
                          s,/,%,g; $_;
@@ -1090,6 +1158,8 @@ sub ok_np(@) {
             $path =~ s,\@\@\@\w+\@\@\@,,g;
             $id_path_map{$result->{content}{id}} = $path;
             $path_id_map{$path} = $result->{content}{id};
+
+            say STDERR "path $path => $path_id_map{$path}" if $ok_verbose;
             push @paths, $path;
         }
 
@@ -1099,7 +1169,7 @@ sub ok_np(@) {
             );
 
         my $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
-        my $path_sel = qx($select_command);
+        my $path_sel = decode_utf8(scalar capture(qq($select_command)));
 
         my %actions_desc_name_map = (
             "edit it" => "edit-me",
@@ -1115,16 +1185,17 @@ sub ok_np(@) {
             );
 
         $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
-        my $action_desc = qx($select_command);
+        my $action_desc = decode_utf8(scalar capture($select_command));
         my $page_id = $path_id_map{$path_sel};
         if ($actions_desc_name_map{$action_desc} eq "edit-me") {
+            say STDERR "ok_e -p $page_id" if $ok_verbose;
             ok_e("-p", $page_id);
         } elsif ($actions_desc_name_map{$action_desc} eq "open-it") {
             System("of ${ok_wikiurl}pages/viewpage.action?pageId=${page_id}");
         } elsif ($actions_desc_name_map{$action_desc} eq "putclip-url") {
             System("putclip ${ok_wikiurl}pages/viewpage.action?pageId=${page_id}");
         }else {
-            my $page_title = qx(ask-for-input-with-emacs -p 'Please input your new page title');
+        my $page_title = decode_utf8(scalar capture(qq(ask-for-input-with-emacs -p 'Please input your new page title')));
             if ($actions_desc_name_map{$action_desc} eq "edit-baby") {
                 ok_create1page("-p", $page_id, "-t", $page_title);
             } elsif ($actions_desc_name_map{$action_desc} eq "edit-bro") {

@@ -95,7 +95,7 @@ First, some helper functions.
       my $ua = LWP::UserAgent->new;
       my $api = $_[0];
       my $url = kungfu_url_for_api($api);
-      say STDERR "$url" if $ok_verbose;
+      say STDERR "ok curl " . shell_quote($api) if $ok_verbose;
       my $response = $ua->request(GET $url);
       if ($response->code != 200) {
           die "Can't get $api: code is " . $response->code . ", content is " . $response->content;
@@ -104,9 +104,14 @@ First, some helper functions.
       return $response;
   }
 
+  sub get_json($) {
+      my $response = get($_[0]);
+      return $json->decode($response->content);
+  }
+
   sub ok_curl(@) {
       my $response = get($_[0]);
-      print $response->content;
+      print decode_utf8($response->content);
   }
 
   sub get_page_info($$) {
@@ -114,7 +119,7 @@ First, some helper functions.
       my $page_api = "rest/api/content/${page_id}?expand=${expand}";
 
       my $response = get($page_api);
-      my $page_object = decode_json $response->content;
+      my $page_object = $json->decode($response->content);
       return $page_object;
   }
 #+END_SRC
@@ -161,7 +166,7 @@ And this is the real get1page subroutine.
       my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,ancestors";
 
       my $response = get($page_api);
-      my $page_object = decode_json $response->content;
+      my $page_object = $json->decode($response->content);
 
       my @dirs = (".");
       my $path = "";
@@ -178,13 +183,13 @@ And this is the real get1page subroutine.
       chdir($path)
           or die "Can't chdir $path";
 
-      system("git add .; git commit -m 'save to git before download from confluence'");
+      system("git add .; git commit --allow-empty -m 'save to git before download from confluence'");
 
       write_file("content.html", encode_utf8 $page_object->{body}{editor}{value});
 
       my $current_version = 0;
       if (-e "version.txt") {
-          $current_version = qx(cat version.txt);
+      $current_version = decode_utf8(scalar capture("cat version.txt"));
       }
 
       my $need_update_org = 0;
@@ -195,7 +200,7 @@ And this is the real get1page subroutine.
           rewrite_html_after_download();
           $need_update_org = 1;
       }
-      system("git add .; git commit -m 'save to git after rewrite'");
+      system("git add .; git commit --allow-empty -m 'save to git after rewrite'");
       write_file("version.txt", $page_object->{version}{number});
 
       return $need_update_org;
@@ -218,7 +223,9 @@ And this is the real get1page subroutine.
       my ($page_id) = @_;
       my ($api_path) = "rest/api/content/${page_id}/child/attachment";
       my $response = get($api_path);
-      my $object = decode_json $response->content;
+      my $object = $json->decode($response->content);
+
+      our $attachments_json = $object;
 
       for my $attachment (@{$object->{results}}) {
           my $download_path = $attachment->{_links}{download};
@@ -276,12 +283,12 @@ And this is the real get1page subroutine.
       );
 
       if ($should_emojify) {
-          my $page_id = qx(cat page-id.txt);
+      my $page_id = decode_utf8(scalar capture("cat page-id.txt"));
           my %existing_attachments;
           my $attachment_nextlink = "rest/api/content/${page_id}/child/attachment";
 
           do {
-              my $attachments_json = decode_json get($attachment_nextlink)->content;
+              my $attachments_json = $json->decode(encode_utf8(get($attachment_nextlink)->content));
               for (@{$attachments_json->{results}}) {
                   my $title = $_->{title};
                   $existing_attachments{$title} = 1;
@@ -293,7 +300,18 @@ And this is the real get1page subroutine.
           $dom->find('img')->each(
               sub {
                   my $png_file = $_->{src};
-                  if ($png_file =~ m,^(\./)download/attachments/$page_id/,) {
+                  if ($png_file =~ m,^(\.?/)download/thumbnails/$page_id/,) {
+                      $png_file =~ s,download/thumbnails/,download/attachments/,;
+                      $_->{src} = $png_file;
+                  }
+
+                  if ($png_file =~ m,^(\.?/)download/attachments/$page_id/,) {
+                      unless ($_->{class} eq "emoji") {
+                          $_->replace(
+                              sprintf("<a href='%s' title='点击查看大图'>%s</a>", $_->{src}, $_->to_string)
+                          );
+                      }
+
                       return;
                   }
 
@@ -325,12 +343,18 @@ And this is the real get1page subroutine.
                   }
 
                   my $attach_file = "$attach_dir/$png_file_basename";
-                  if (! $existing_attachments{$png_file_basename}) {
+                  if (! $existing_attachments{$png_file_basename} || runx(EXIT_ANY, "diff", "-q", "${png_file}", "${attach_file}") != 0) {
                       system("cp", "$png_file", "$attach_file");
-                      ok_upload1attachment("-p", "$page_id", "-f", encode_utf8 "$attach_file");
+                      ok_upload1attachment("-p", "$page_id", "-f", "$attach_file");
                       $existing_attachments{$png_file_basename} = 1;
                   }
                   $_->{src} = "/$attach_file";
+
+                  unless ($_->{class} eq 'emoji') {
+                      $_->replace(
+                          sprintf("<a href='%s' title='点击查看大图'>%s</a>", $_->{src}, $_->to_string)
+                      );
+                  }
               }
           )
       }
@@ -406,7 +430,7 @@ And this is the real get1page subroutine.
       my $page_api = "rest/api/content/${page_id}?expand=body.editor,version,title";
 
       my $response = get($page_api);
-      my $page_object = decode_json $response->content;
+      my $page_object = $json->decode($response->content);
 
       $page_object->{body}{editor}{value} = decode_utf8 read_file($html_file);
       $page_object->{version}{number}++;
@@ -418,18 +442,18 @@ And this is the real get1page subroutine.
       my $request = PUT kungfu_url_for_api("rest/api/content/${page_id}"),
           'Content-Type' => 'application/json',
           "charset" => "utf-8",
-          Content => encode_json $page_object;
+          Content => $json->encode($page_object);
 
       my $response = $ua->request($request);
       if ($response->code != 200) {
           say "PUT response code:" . $response->code;
-          say "response content:" . $response->content;
-          die "Can't upload page: " . encode_json $page_object;
+          say "response content:" . decode_utf8($response->content);
+          die "Can't upload page: " . decode_utf8($json->encode($page_object));
       }
 
       if (not $quietly) {
           System("of ${ok_wikiurl}/pages/viewpage.action?pageId=${page_id}");
-          system("git add .; git commit -m 'save to git after upload to confluence'");
+          system("git add .; git commit --allow-empty -m 'save to git after upload to confluence'");
       }
   }
 #+END_SRC
@@ -489,20 +513,45 @@ Here's the script to upload page attachment. Only allow to upload 1 file at a ti
         my $ua = LWP::UserAgent->new;
         my $api = sprintf "rest/api/content/%d/child/attachment", $page_id;
 
-        my $request = POST kungfu_url_for_api($api),
-            "X-Atlassian-Token" => "nocheck",
-            Content_Type => 'form-data',
-            Content => [
-                file => ["$filename"],
-            ];
+        (my $file_basename = $filename) =~ s,.*/,,;
+        my $attachment_id;
+        our $attachments_json;
+
+        if (not $attachments_json) {
+            $attachments_json = get_json($api);
+        }
+
+        say STDERR decode_utf8($json->encode($attachments_json)) if $ok_verbose;
+        my $request;
+        if (grep {
+            $_->{title} eq $file_basename && ($attachment_id = $_->{id})
+        } @{$attachments_json->{results}}) {
+            $api .= "/${attachment_id}/data";
+            $request = POST kungfu_url_for_api($api),
+                "X-Atlassian-Token" => "nocheck",
+                Content_Type => 'form-data',
+                Content => [
+                    file => ["$filename"],
+                ];
+        } else {
+            $request = POST kungfu_url_for_api($api),
+                "X-Atlassian-Token" => "nocheck",
+                Content_Type => 'form-data',
+                Content => [
+                    file => ["$filename"],
+                    minorEdit => "true",
+                ];
+        }
 
         my $response = $ua->request($request);
         say "POST response code:" . $response->code;
         if ($response->code != 200) {
-            die "Can't post $filename to $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+            die "Can't POST $filename to $api: code is " . $response->code . ", content is:\n\n" . decode_utf8($response->content) . "\n"
         }
 
         return $response;
+
+
     }
 
   #+END_SRC
@@ -576,7 +625,7 @@ Now, this emacs-lisp script first.
       chdir "$ENV{HOME}/tmp"
           or die "Can't chdir to ~/tmp";
 
-      my $selected_text = qx(emacs-current-selection -b buffer-erwo-$$);
+          my $selected_text = decode_utf8(scalar capture(qq(emacs-current-selection -b buffer-erwo-$$)));
       my @selected_lines = split("\n", $selected_text);
       my $first_prefix;
       for (@selected_lines) {
@@ -737,7 +786,11 @@ Now, this emacs-lisp script first.
       }
 
       if (not $page_id) {
-          die "Must specify the page_id"
+          our %path_id_map;
+          (my $path = $url) =~ s,.*?://.*?/,,;
+          unless ($page_id = $path_id_map{$path}) {
+              die "Must specify the page_id: $path $url"
+          }
       }
       return $page_id;
   }
@@ -904,7 +957,22 @@ This is simple using Perl's “reflection”.
 
 #+name: global-args
 #+BEGIN_SRC perl
+  #!/usr/bin/env perl
   use strict;
+  use v5.10.1; # for say and switch
+  use autodie qw(:all);
+  use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+  binmode(STDOUT, ":utf8");
+  binmode(STDERR, ":utf8");
+  use Encode;
+  use utf8;
+  @ARGV = map {decode_utf8 $_} @ARGV;
+
+  use Data::Dumper;
+  use JSON;
+
+  my $json = JSON->new->utf8->canonical->pretty;
+
 
   ## start code-generator "^\\s *#\\s *"
   # generate-getopt -P -s perl -p ok \
@@ -1068,20 +1136,20 @@ Currently, I will not download an attachment file again if it already exist. Lat
    :ID:       73dc3d06-2f21-41a7-926c-5fc84100f750
    :END:
 ** CANCELLED [#B] It should be easy to copy a page to another place.
-   CLOSED: [2019-03-20 水 08:28]
+   CLOSED: [2019-03-20 水 08:28]
    :PROPERTIES:
    :ID:       86e67d79-654f-4d79-9e6e-7d5e82176b8c
    :END:
    :LOGBOOK:
-   - State "CANCELLED"  from "TODO"       [2019-03-20 水 08:28]
+   - State "CANCELLED"  from "TODO"       [2019-03-20 水 08:28]
    :END:
 ** DONE [#B] It should be easy to create a page.
-   CLOSED: [2019-03-20 水 08:28]
+   CLOSED: [2019-03-20 水 08:28]
    :PROPERTIES:
    :ID:       1816ca54-3f7e-42a3-a7de-5c947354c1e2
    :END:
    :LOGBOOK:
-   - State "DONE"       from "TODO"       [2019-03-20 水 08:28]
+   - State "DONE"       from "TODO"       [2019-03-20 水 08:28]
    :END:
 
 When I want to create a page, I would like to create it at the following locations:
@@ -1094,9 +1162,9 @@ When I want to create a page, I will be asked the title of the page.
 It should be easy for me to find that Recently contributed Page, using query, or allow me to just input a wiki page's Url.
 
 *** DONE Should be easy to query the pages that I contributed recently.
-    CLOSED: [2019-03-20 水 08:28]
+    CLOSED: [2019-03-20 水 08:28]
     :LOGBOOK:
-    - State "DONE"       from "TODO"       [2019-03-20 水 08:28]
+    - State "DONE"       from "TODO"       [2019-03-20 水 08:28]
     :END:
 
 1. Use cql to query the pages
@@ -1184,9 +1252,9 @@ Please note the double quotes around ~集成~, they are required, there will be 
 #+END_SRC
 
 *** DONE BTW, I also want a simple script for working with jira
-    CLOSED: [2019-05-05 日 08:57]
+    CLOSED: [2019-05-05 日 08:57]
     :LOGBOOK:
-    - State "DONE"       from "TODO"       [2019-05-05 日 08:57]
+    - State "DONE"       from "TODO"       [2019-05-05 日 08:57]
     :END:
 
 #+name: jql
@@ -1197,9 +1265,9 @@ Please note the double quotes around ~集成~, they are required, there will be 
 
 
 *** DONE How to ask for input
-    CLOSED: [2019-05-05 日 08:57]
+    CLOSED: [2019-05-05 日 08:57]
     :LOGBOOK:
-    - State "DONE"       from "TODO"       [2019-05-05 日 08:57]
+    - State "DONE"       from "TODO"       [2019-05-05 日 08:57]
     :END:
 
 When I want to create a page, I need to ask the user, where do you want to create the page? With the following 3 questions:
@@ -1298,15 +1366,15 @@ Here, I will be using system-config's select-args to ask for input, because it p
               $cql_str = $cql_query;
           }
 
-          $cql_str = uri_encode(decode_utf8 $cql_str);
+          $cql_str = uri_encode($cql_str);
           my $page_api = "rest/api/search?cql=$cql_str&expand=content.ancestors";
 
           my $response = get($page_api);
 
-          my $cql_object = decode_json $response->content;
+          my $cql_object = $json->decode($response->content);
 
-          my %id_path_map;
-          my %path_id_map;
+          our %id_path_map;
+          our %path_id_map;
           my @paths;
           for my $result (@{$cql_object->{results}}) {
               # my @dirs = (".");
@@ -1320,7 +1388,7 @@ Here, I will be using system-config's select-args to ask for input, because it p
               # push @dirs, ${title};
               # $path = join('/', @dirs);
 
-              my $path = encode_utf8
+              my $path =
                   join("/",
                        map {
                            s,/,%,g; $_;
@@ -1335,6 +1403,8 @@ Here, I will be using system-config's select-args to ask for input, because it p
               $path =~ s,\@\@\@\w+\@\@\@,,g;
               $id_path_map{$result->{content}{id}} = $path;
               $path_id_map{$path} = $result->{content}{id};
+
+              say STDERR "path $path => $path_id_map{$path}" if $ok_verbose;
               push @paths, $path;
           }
 
@@ -1344,7 +1414,7 @@ Here, I will be using system-config's select-args to ask for input, because it p
               );
 
           my $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
-          my $path_sel = qx($select_command);
+          my $path_sel = decode_utf8(scalar capture(qq($select_command)));
 
           my %actions_desc_name_map = (
               "edit it" => "edit-me",
@@ -1360,16 +1430,17 @@ Here, I will be using system-config's select-args to ask for input, because it p
               );
 
           $select_command = join " ", map {$_ = shell_quote($_)} @select_command;
-          my $action_desc = qx($select_command);
+          my $action_desc = decode_utf8(scalar capture($select_command));
           my $page_id = $path_id_map{$path_sel};
           if ($actions_desc_name_map{$action_desc} eq "edit-me") {
+              say STDERR "ok_e -p $page_id" if $ok_verbose;
               ok_e("-p", $page_id);
           } elsif ($actions_desc_name_map{$action_desc} eq "open-it") {
               System("of ${ok_wikiurl}pages/viewpage.action?pageId=${page_id}");
           } elsif ($actions_desc_name_map{$action_desc} eq "putclip-url") {
               System("putclip ${ok_wikiurl}pages/viewpage.action?pageId=${page_id}");
           }else {
-              my $page_title = qx(ask-for-input-with-emacs -p 'Please input your new page title');
+          my $page_title = decode_utf8(scalar capture(qq(ask-for-input-with-emacs -p 'Please input your new page title')));
               if ($actions_desc_name_map{$action_desc} eq "edit-baby") {
                   ok_create1page("-p", $page_id, "-t", $page_title);
               } elsif ($actions_desc_name_map{$action_desc} eq "edit-bro") {
@@ -1459,9 +1530,9 @@ Here, I will be using system-config's select-args to ask for input, because it p
       EOF
 
       $create_page_json_str =~ s,^\s*#.*,,mg;
-      my $create_page_json_obj = decode_json $create_page_json_str;
+      my $create_page_json_obj = $json->decode(encode_utf8 $create_page_json_str);
 
-      $create_page_json_obj->{title} = decode_utf8 $title;
+      $create_page_json_obj->{title} = $title;
       $create_page_json_obj->{space}{key} = $space;
       $create_page_json_obj->{ancestors}[0]{id} = $page_id;
 
@@ -1472,14 +1543,14 @@ Here, I will be using system-config's select-args to ask for input, because it p
           'Content-Type' => 'application/json',
           'Accept' => 'application/json',
           "charset" => "utf-8",
-          Content => encode_json $create_page_json_obj;
+          Content => ($json->encode($create_page_json_obj));
 
       my $response = $ua->request($request);
       say "POST response code:" . $response->code;
       if ($response->code != 200) {
-          die "Can't get $api: code is " . $response->code . ", content is:\n\n" . $response->content . "\n"
+          die "Can't get $api: code is " . $response->code . ", content is:\n\n" . decode_utf8($response->content) . "\n"
       }
-      my $created_obj = decode_json $response->content;
+      my $created_obj = $json->decode($response->content);
       ok_e("-p", $created_obj->{id});
   }
 
