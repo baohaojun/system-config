@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 package jkd;
 
+use Config::GitLike;
 use strict;
 use v5.10.1; # for say and switch
 use autodie qw(:all);
@@ -28,7 +29,7 @@ BEGIN { @jkd::ISA = 'Exporter' }
                      no_spaces_hash_convert no_spaces_hashget
                      update_names_with_fields getNormalizedName
                      getRealNameFromApi getRealHashKey reWriteHashKeysWithApi
-
+                     get_config_val
              );
 
 use feature 'signatures';
@@ -88,6 +89,17 @@ sub getRealNameFromApi($name, $api) {
     } @$jsonResult;
 
     return getRealHashKey(\%hash, $name);
+}
+
+sub get_config_val($config_name) {
+    my ($config_file) = $ENV{scm_secrets_conf};
+
+    if (-e $config_file) {
+        my $secret_conf = Config::GitLike->load_file($config_file);
+        return $secret_conf->{"${config_name}"};
+    }
+
+    die "can't get config";
 }
 
 sub reWriteHashKeysWithApi($hash, $api) {

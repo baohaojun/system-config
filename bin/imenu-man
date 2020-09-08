@@ -33,7 +33,7 @@ while (<>) {
            ))) ||
         ($last_indent == $current_indent && $last_line =~ m/^\s*\S+$/))
        ) {
-      if ($last_line =~ m/^\s*(\w+)/) {
+      if ($last_line =~ m/^\s*(\$?\w+\S*(\s+\S+){0,3})/) {
         $last_word = $1;
         if ( $last_indent <= 0) {
           $type = "section";

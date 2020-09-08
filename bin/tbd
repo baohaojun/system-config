@@ -1,0 +1,172 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+use URI;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# a:app-name='"gerrithook"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $app_name = "gerrithook";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--app-name=APP-NAME';
+    if (length('--app-name=APP-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'app-name|a=s' => \$app_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+BEGIN {
+    push @INC, "$ENV{scm_common_libdir}/jkd.pm";
+}
+use jkd;
+
+my $appId = get_config_val("teambition.${app_name}.appid");
+my $secret = get_config_val("teambition.${app_name}.secret");
+my $username = get_config_val("teambition.${app_name}.username");
+my $redirect_url = get_config_val("teambition.${app_name}.url");
+my $password = get_config_val("teambition.${app_name}.password");
+
+use JSON::WebToken;
+use DateTime;
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+sub getAppAccessToken() {
+    my $claims = {
+        iat => DateTime->now->epoch,
+        exp => DateTime->now->add(hours => 1)->epoch,
+        _appId => $appId
+    };
+
+    my $jwt = encode_jwt $claims, $secret;
+    return $jwt;
+}
+
+sub getAuthCode() {
+    $ENV{TBD_APP_ID}="$appId";
+    $ENV{TBD_PASSWORD}="$password";
+    $ENV{TBD_REDIRECT_URL}="$redirect_url";
+    $ENV{TBD_USERNAME}="$username";
+    my $code_url = URI->new(decode_utf8(scalar capturex("tbd-sso.py")));
+    use URI::QueryParam;
+    my $code = $code_url->query_param('code');
+    return $code;
+}
+
+sub getUserAccessToken() {
+    my $url = "https://open.teambition.com/api/oauth/userAccessToken";
+
+    my $body = {
+          'grantType' => 'authorizationCode',
+          'code' => getAuthCode(),
+          'expires' => 86400
+      };
+
+    my $appToken = getAppAccessToken();
+    runx("debug-run", "curl-f", "-s",
+         "-H", 'Content-Type: application/json',
+         "-H", "Authorization: Bearer $appToken",
+         $url,
+         "--data-raw",
+         decode_utf8($json->encode($body))
+     )
+}
+
+sub addTaskComment($args) {
+    my $task = $args->{task};
+    my $url = "https://open.teambition.com/api/task/comment/create";
+
+    my $body = {
+          'comment' => 'xxxx',
+          'taskId' => $task,
+          'creatorId' => get_config_val("teambition.${app_name}.userid"),
+      };
+
+    my $org_id = get_config_val("teambition.${app_name}.enterpriseid");
+    my $appToken = getAppAccessToken();
+    runx(
+        "debug-run", "curl-f", "-s",
+        "-H", 'Content-Type: application/json',
+        "-H", "Authorization: Bearer $appToken",
+        "-H", "X-Tenant-Id: $org_id",
+        "-H", "X-Tenant-Type: organization",
+        $url,
+        "--data-raw", decode_utf8($json->encode($body)),
+        "-X", "POST"
+    )
+}
+
+sub queryProjects() {
+    my $url = "https://open.teambition.com/api/project/query";
+
+    my $org_id = get_config_val("teambition.${app_name}.enterpriseid");
+    my $appToken = getAppAccessToken();
+    my $body = {
+        userId => get_config_val("teambition.${app_name}.userid"),
+    };
+    runx(
+        "debug-run", "curl-f", "-s",
+        "-H", 'Content-Type: application/json',
+        "-H", "Authorization: Bearer $appToken",
+        "-H", "X-Tenant-Id: $org_id",
+        "-H", "X-Tenant-Type: organization",
+        $url, "-X", "POST",
+        "--data-raw", decode_utf8($json->encode($body))
+    )
+}
+
+# queryProjects();
+
+# addTaskComment({task => "5f571f933f020400443e5fcb"});
+
+getUserAccessToken;
