@@ -91,6 +91,7 @@ map['com.ss.android.ugc.aweme/com.ss.android.ugc.aweme.crossplatform.activity.Cr
 map['com.taobao.taobao/com.taobao.message.activity.ChatActivity'] = 'Find-Button'
 map['com.taobao.taobao/com.taobao.tao.purchase.activity.PurchaseActivity'] = 'No-Post'
 map['com.taobao.taobao/com.taobao.weex.WXActivity'] = 'No-Post'
+map['com.teambition.teambition/com.teambition.account.resetpw.PasswordResetActivity'] = 'No-Post'
 map['com.teamviewer.teamviewer.market.mobile/com.teamviewer.remotecontrollib.activity.MainActivity'] = 'No-Post'
 map['com.teamviewer.teamviewer.market.mobile/com.teamviewer.remotecontrolviewlib.activity.RCClientActivity'] = 'No-Post'
 map['com.tencent.mm/com.tencent.mm.chatroom.ui.ChatroomInfoUI'] = 'No-Post'
