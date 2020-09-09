@@ -1,0 +1,79 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl i:issue-id a:assign-to
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("default");
+
+
+
+my $assign_to = "";
+my $issue_id = "";
+
+my $handler_help = sub {
+    print ;
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--assign-to=ASSIGN-TO';
+    if (length('--assign-to=ASSIGN-TO') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-i, ';
+    printf "%-24s", '--issue-id=ISSUE-ID';
+    if (length('--issue-id=ISSUE-ID') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'assign-to|a=s' => \$assign_to,
+    'issue-id|i=s' => \$issue_id,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $json_data = {
+    name => $assign_to
+};
+
+runx("debug-run", "jkd", "curl", "issue/${issue_id}/assignee", "-X", "PUT",
+     "-H", 'Content-Type: application/json',
+     "--data-raw", decode_utf8($json->encode($json_data))
+ );

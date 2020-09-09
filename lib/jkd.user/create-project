@@ -1,0 +1,49 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+my $data = {
+    'key' => 'TJS',
+    'name' => 'TJS',
+    'lead' => 'baohaojun',
+    'description' => 'Test Jira Scripts',
+    'projectTypeKey' => 'software',
+    'projectTemplateKey' => 'com.pyxis.greenhopper.jira:basic-software-development-template',
+};
+
+# {
+#     "key": "EX",
+#     "name": "Example",
+#     "projectTypeKey": "business",
+#     "projectTemplateKey": "com.atlassian.jira-core-project-templates:jira-core-project-management",
+#     "description": "Example Project description",
+#     "lead": "Charlie",
+#     "url": "http://atlassian.com",
+#     "assigneeType": "PROJECT_LEAD",
+#     "avatarId": 10200,
+#     "issueSecurityScheme": 10001,
+#     "permissionScheme": 10011,
+#     "notificationScheme": 10021,
+#     "categoryId": 10120
+# }
+
+runx(
+    "debug-run", "jkd", "curl", "project", "-X", "POST",
+     "-H", 'Content-Type: application/json',
+    "--data-raw", decode_utf8($json->encode($data))
+ );
