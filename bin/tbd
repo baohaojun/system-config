@@ -167,6 +167,6 @@ sub queryProjects() {
 
 # queryProjects();
 
-# addTaskComment({task => "5f571f933f020400443e5fcb"});
+addTaskComment({task => "5f571f933f020400443e5fcb"});
 
-getUserAccessToken;
+# getUserAccessToken;
