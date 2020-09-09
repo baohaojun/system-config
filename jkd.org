@@ -261,7 +261,6 @@ This is simple using Perl's “reflection”.
   <<global-args>>
   <<create-1-issue>>
   <<comment-issue>>
-  <<assign-1-issue>>
   <<mv-issue-to-sprint>>
   <<transition-1-issue>>
   <<subcmd-helps>>
@@ -1237,72 +1236,3 @@ This is simple using Perl's “reflection”.
 
     }
   #+END_SRC
-* 指定 reviewer
-
-#+name: assign-1-issue
-#+BEGIN_SRC perl
-  sub jkd_assign(@) {
-      ## start code-generator "^\\s *#\\s *"
-      # generate-getopt -s perl -l i:issue-id a:assign-to
-      ## end code-generator
-      ## start generated code
-      use Getopt::Long;
-
-      Getopt::Long::Configure("default");
-
-      local @ARGV = @_;
-
-      my $assign_to = "";
-      my $issue_id = "";
-
-      my $handler_help = sub {
-          print ;
-          print "\n\n选项和参数：\n";
-          printf "%6s", '-a, ';
-          printf "%-24s", '--assign-to=ASSIGN-TO';
-          if (length('--assign-to=ASSIGN-TO') > 24 and length() > 0) {
-              print "\n";
-              printf "%30s", "";
-          }
-          printf "%s", ;
-          print "\n";
-          printf "%6s", '-i, ';
-          printf "%-24s", '--issue-id=ISSUE-ID';
-          if (length('--issue-id=ISSUE-ID') > 24 and length() > 0) {
-              print "\n";
-              printf "%30s", "";
-          }
-          printf "%s", ;
-          print "\n";
-
-          exit(0);
-      };
-
-      GetOptions (
-          'assign-to|a=s' => \$assign_to,
-          'issue-id|i=s' => \$issue_id,
-          'help|h!' => \&$handler_help,
-          );
-
-
-      ## end generated code
-
-      my $ua = LWP::UserAgent->new;
-
-      my $request = PUT jkd_url_for_api("rest/api/2/issue/${issue_id}/assignee"),
-          'Content-Type' => 'application/json',
-          'Accept' => 'application/json',
-          "charset" => "utf-8",
-          Content => encode_json {
-              name => $assign_to
-      };
-
-      my $response = $ua->request($request);
-
-      if ($response->code < 200 || $response->code >= 300) {
-          use HTTP::Status;
-          say sprintf("PUT error! response code: %d (meaning: %s), content: %s", $response->code, status_message($response->code), decode_utf8($response->content));
-      }
-  }
-
-#+END_SRC
