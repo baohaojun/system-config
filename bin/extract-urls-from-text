@@ -14,7 +14,7 @@ use File::Slurp;
 use Encode;
 
 my $text = decode_utf8 join(" ", @ARGV);
-my $finder = URI::Find->new( sub { print encode_utf8 $_[1] . "\n" } );
+my $finder = URI::Find->new( sub { print encode_utf8 $_[1] . "\n\n" } );
 $finder->find(\$text );
 # {%/perl-mode%}
 EOF63aa0d87444c

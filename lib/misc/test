@@ -7,6 +7,13 @@ fi
 
 declare -A test_failed_scripts=()
 
+save-testdir() {
+    rm -rf ~/tmp/test/misc.save
+    cp "${TESTDIR}" ~/tmp/test/misc.save -a
+}
+
+export -f save-testdir
+
 export TESTDIR=~/tmp/test/misc.$$
 . atexit rm -rf "${TESTDIR}"
 mkdir -p "$TESTDIR"

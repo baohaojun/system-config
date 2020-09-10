@@ -32,7 +32,9 @@ if test -e $gitdir/objects/info/alternates; then
     exit 0
 fi
 if test -d "$1/.git"; then
-    echo "$(readlink -f "$1")"/.git/objects
+    echo "$(readlink -f "$1")"/.git/objects > $gitdir/objects/info/alternates
+elif test -d "$1/objects"; then
+    echo "$(readlink -f "$1")"/objects > $gitdir/objects/info/alternates
 else
-    echo "$(readlink -f "$1")"/objects
-fi > $gitdir/objects/info/alternates
+    die "Can't set alternates for $gitdir"
+fi

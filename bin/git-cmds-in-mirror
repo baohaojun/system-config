@@ -13,7 +13,7 @@ fi
 
 cd $(lookup-file-dir .git)
 
-mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-project).git
+mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-abs-path).git
 
 if git_log=$(git --git-dir "$mirror_dir" --work-tree "$PWD" "$@"); then
     echo "$git_log"
@@ -21,5 +21,3 @@ if git_log=$(git --git-dir "$mirror_dir" --work-tree "$PWD" "$@"); then
 fi
 
 exit 1
-
-
