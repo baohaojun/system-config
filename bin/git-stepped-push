@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+## 在 gerrit 下一次 push 太多 patch 会失败，所以要改成一步一步的 push
+
+set -e
+## start code-generator "^\\s *#\\s *"
+# generate-getopt r:remote-url \
+    # b:branch \
+    # s:size-1=10000 '?"一次 push 多少个 patches"' \
+
+## end code-generator
+## start generated code
+TEMP=$( getopt -o b:r:s:h \
+               --long branch:,remote-url:,size-1:,help \
+               -n $(basename -- $0) -- "$@")
+declare branch=
+declare remote_url=
+declare size_1=10000
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -b|--branch)
+            branch=$2
+            shift 2
+
+            ;;
+        -r|--remote-url)
+            remote_url=$2
+            shift 2
+
+            ;;
+        -s|--size-1)
+            size_1=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e
+            echo
+            echo Options and arguments:
+            printf %6s '-b, '
+            printf %-24s '--branch=BRANCH'
+            echo
+            printf %6s '-r, '
+            printf %-24s '--remote-url=REMOTE_URL'
+            echo
+            printf %6s '-s, '
+            printf %-24s '--size-1=SIZE_1'
+            echo "一次 push 多少个 patches"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test -z "${remote_url}"; then
+    remote_url=s:qualcomm/$(ap)
+fi
+
+remote_rev=$(
+    git ls-remote ${remote_url} | while read r_rev r_branch; do
+        if test "${r_branch}" = refs/heads/$branch; then
+            echo $r_rev
+            exit
+        fi
+    done
+          )
+
+log_start=
+if test "${remote_rev}"; then
+    log_start="${remote_rev}.."
+fi
+
+num_commits=$(git log ${log_start}${branch} --pretty=%H|wc -l)
+pushed_n=${size_1}
+while true; do
+    echo pushing: ${pushed_n}/${num_commits}
+    git push -f ${remote_url} $(git log ${log_start}${branch} --pretty=%H | tail -n ${pushed_n} | head -n 1):refs/heads/$branch.step/${pushed_n}
+    git push -f ${remote_url} $(git log ${log_start}${branch} --pretty=%H | tail -n ${pushed_n} | head -n 1):refs/heads/$branch
+    if test "${pushed_n}" -gt ${num_commits}; then
+        break
+    fi
+
+    ((pushed_n += size_1)) || true
+done
+
+git push -f ${remote_url} HEAD:refs/heads/$branch
+step_branches=$(
+    git ls-remote --heads ${remote_url} | grep '\.step/' | pn 2
+             )
+
+for b in ${step_branches}; do
+    git push "${remote_url}" :$b
+done
