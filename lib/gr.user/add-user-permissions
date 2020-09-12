@@ -1,0 +1,95 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+给某用户添加与另一位用户相同的权限
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# u:user-gerrit-account '?"要添加的用户账号（比如：LastName FirstName (AccountName)）"' \
+# s:same-as '?"指定跟谁的权限相同，格式同 -u"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $same_as = "";
+my $user_gerrit_account = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--same-as=SAME-AS';
+    if (length('--same-as=SAME-AS') > 24 and length("指定跟谁的权限相同，格式同 -u") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定跟谁的权限相同，格式同 -u";
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--user-gerrit-account=USER-GERRIT-ACCOUNT';
+    if (length('--user-gerrit-account=USER-GERRIT-ACCOUNT') > 24 and length("要添加的用户账号（比如：LastName FirstName (AccountName)）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "要添加的用户账号（比如：LastName FirstName (AccountName)）";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'same-as|s=s' => \$same_as,
+    'user-gerrit-account|u=s' => \$user_gerrit_account,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $git_config =
+    decode_utf8(scalar capture("git config -f project.config -l"));
+
+while ($git_config =~ m,^(.*?)=(.*)group user/\Q${same_as}\E$,gm) {
+    my ($config_name, $val_prefix) = ($1, $2);
+
+    my $new_val = "${val_prefix}group user/${user_gerrit_account}";
+    my $config_regexp = quotemeta("${new_val}");
+    my $existing_config =
+        decode_utf8(scalar capturex(
+            EXIT_ANY, "debug-run",
+            "git", "config", "--get-all", "-f", "project.config",
+            "$config_name", "^${config_regexp}\$",  ));
+    if (not $existing_config) {
+        runx(
+            "debug-run", "git", "config", "--add", "-f", "project.config", "${config_name}", "${new_val}",
+        )
+    } else {
+        say STDERR "$config_name = $new_val already configured";
+    }
+}

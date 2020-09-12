@@ -32,7 +32,7 @@ fi
 
 if test "${b0}" = get-mac; then
     case $(uname) in
-        Darwin|Linux)
+        Darwin|Linux|FreeBSD)
             ifconfig $net | grep -B 1 -P -e '^\s+ether\s+'|perl -ne '
             # {%perl-mode%}
             if (m/^p2p\d+:/) {
