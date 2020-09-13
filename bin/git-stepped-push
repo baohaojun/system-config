@@ -86,7 +86,25 @@ num_commits=$(git log ${log_start}${branch} --pretty=%H|wc -l)
 pushed_n=${size_1}
 while true; do
     echo pushing: ${pushed_n}/${num_commits}
-    git push -f ${remote_url} $(git log ${log_start}${branch} --pretty=%H | tail -n ${pushed_n} | head -n 1):refs/heads/$branch.step/${pushed_n}
+
+    (
+        # 每次都创建一个临时分支，以避免大型的分支 Merge 操作导致的版本回退，即这样的一种情况
+
+        # 第 N 次推了第 N 万个 Patch
+        # 第 N+1 次推了第 N+1 万个 Patch
+
+        # 但是 N+1 推完之后，服务器上存在的 Patch 数目其实反而变少了，
+        # 因为第 N 万个和 N+1 万个之间有一个超级巨大的 Merge 操作（一
+        # 下 Merge 了很多 commits，然后导致 git log 出来的 commits 不
+        # 是 *线性* 的，而 Gerrit/Git 在计算 commits 数据、数据量的时
+        # 候，会拿现有的 branches 去计算差异，如果没有这些临时分支，只
+        # 有一个目标分支的话，计算出来的差异反而变大了，从而导致又有可
+        # 能 push 失败）
+
+        git push -f ${remote_url} $(git log ${log_start}${branch} --pretty=%H | tail -n ${pushed_n} | head -n 1):refs/heads/$branch.step/${pushed_n}
+
+    )
+
     git push -f ${remote_url} $(git log ${log_start}${branch} --pretty=%H | tail -n ${pushed_n} | head -n 1):refs/heads/$branch
     if test "${pushed_n}" -gt ${num_commits}; then
         break
