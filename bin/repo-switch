@@ -136,7 +136,13 @@ done
 if test "${repo_init_print_info}" = true; then
     print=$(
         echo repo init $(repo_init_extra_info) -u $(cd .repo/manifests && git-remote-url) -b $(cd "$repo_dir"/manifests >/dev/null 2>&1 && git config branch.default.merge) \
-             -m $(readlink -f .repo/manifest.xml|perl -npe 's,.*.repo/manifests/,,') --repo-url $(cd .repo/repo && git-remote-url) $(
+             -m $(
+            if test -L .repo/manifest.xml; then
+                readlink .repo/manifest.xml|perl -npe 's,^manifests/,,'
+            else
+                echo "default.xml?"
+            fi
+             ) --repo-url $(cd .repo/repo && git-remote-url) $(
             ref=$(cd .repo/manifests.git; git config repo.reference || true)
             if test "$ref"; then
                 if test "$(readlink -f ~/src/android-mirror)" = "$(readlink -f "$ref")"; then
@@ -151,7 +157,8 @@ s,\bs:,$ENV{scm_gerrit_admin_ssh_url},g;
 s,-b refs/heads/,-b ,;
 
 END {
-    print '    # 注意每个 ssh://USERNAME@ 都要改成自己的用户名'
+    print "    # 注意上面的 -u 和 --repo-url 参数的 ssh://...@ 是给 CI/CD 自动化脚本使用的\n";
+    print "    # 你需要将 ... 改成自己的 gerrit 用户名";
 }
 # {%/perl-mode%}
 EOFe7f172780f03

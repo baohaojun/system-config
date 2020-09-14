@@ -18,7 +18,31 @@ text=$(echo -n "$text"|perl -npe 's/(^(「)|(「|,|　|（|\.|……」|』、�
     text=$(echo -n "$text" | perl -npe 's/^\s*//; s/\s*$//')
     if [[ $text =~ ^https?:// ]]; then
       u of "$text"
-    elif echo "$text" | perl -ne 'exit 1 unless m/^\p{ASCII}*$/'; then
+    elif echo "$text" | perl -ne "$(
+cat <<'EOF857b9558c0d3' | . .replace-%% --
+# {%perl-mode%}
+#!/usr/bin/env perl
+BEGIN {
+    use strict;
+    use v5.10.1;                # for say and switch
+    use autodie qw(:all);
+    use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+    binmode(STDOUT, ":utf8");
+    binmode(STDERR, ":utf8");
+    binmode(STDIN, ":utf8");
+    use Encode;
+    use utf8;
+    @ARGV = map {decode_utf8 $_} @ARGV;
+
+    use feature 'signatures';
+    no warnings "experimental::signatures";
+}
+
+exit 1 unless m/^\p{Latin}*$/
+# {%/perl-mode%}
+EOF857b9558c0d3
+
+)"; then
         if [[ $text =~ ^[A-Z]+-[0-9]+ ]]; then
             of -w jira "${text%:}"
         else

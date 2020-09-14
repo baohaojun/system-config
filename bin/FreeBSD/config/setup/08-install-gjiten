@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+
+mkdir -p ~/tmp/08-install-gjiten
+
+cd ~/tmp/08-install-gjiten
+wget -c \
+     http://gjiten.sourceforge.net/gjiten-2.6.tar.gz
+
+if test "$(md5sum gjiten-2.6.tar.gz |pn 1)" != 44a5d9640e37d8b0547f9c7e3d7ac67a; then
+    die "Can't get correct gjiten"
+fi
+
+rm gjiten-2.6 -rf
+tar xfv gjiten-2.6.tar.gz
+
+cd gjiten-2.6
+./autogen.sh || true
+
+perl -ne 'print unless m,\QGNOME_COMPILE_WARNINGS(maximum)\E,' -i configure
+
+./configure
+
+make
+sudo make install
+sudo bash -c '
+mkdir -p /usr/share/gjiten/dics/
+iconv -c -f EUC-JP -t UTF-8 /usr/local/share/dict/edict/kanjidic > /usr/share/gjiten/dics/kanjidic
+iconv -c -f EUC-JP -t UTF-8 /usr/local/share/dict/edict/edict > /usr/share/gjiten/dics/edict
+iconv -c -f EUC-JP -t UTF-8 /usr/local/share/dict/edict/compdic > /usr/share/gjiten/dics/compdic
+'
