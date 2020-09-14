@@ -256,7 +256,7 @@ echo ip: \$(echo \$SSH_CONNECTION | pn 3)
         cat ~/tmp/$b0.$$ | perl -ne 'print $1 if m,^ip: (.*),'
                    )
 
-    sftp_host=$(jumpserver.rest -f $jsftp_target_ip)
+    sftp_host=$(debug-run jumpserver.rest -f $jsftp_target_ip)
 
     if test -z "${sftp_host}"; then
         die "Can't sync when host is empty, too bad!"

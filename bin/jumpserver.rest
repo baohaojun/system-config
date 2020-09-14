@@ -26,6 +26,7 @@ EOFc83131117f09
 # p:password \
 # a:api '?"api 接口地址，比如 api/v1/assets/assets/"' \
 # f:favorite '?"指定一个IP地址，将其所属的机器添加到收藏夹，最后打印其主机名字"' \
+# vverbose
 
 ## end code-generator
 ## start generated code
@@ -39,6 +40,7 @@ my $api = "";
 my $favorite = "";
 my $password = "";
 my $username = "$ENV{scm_jumpserver_user}";
+my $verbose = 0;
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -53,11 +55,11 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '-f, ';
     printf "%-24s", '--favorite=FAVORITE';
-    if (length('--favorite=FAVORITE') > 24 and length("指定一个IP地址，将其所属的机器添加到收藏夹") > 0) {
+    if (length('--favorite=FAVORITE') > 24 and length("指定一个IP地址，将其所属的机器添加到收藏夹，最后打印其主机名字") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "指定一个IP地址，将其所属的机器添加到收藏夹";
+    printf "%s", "指定一个IP地址，将其所属的机器添加到收藏夹，最后打印其主机名字";
     print "\n";
     printf "%6s", '-p, ';
     printf "%-24s", '--password=PASSWORD';
@@ -70,6 +72,14 @@ my $handler_help = sub {
     printf "%6s", '-u, ';
     printf "%-24s", '--username=USERNAME';
     if (length('--username=USERNAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--[no]verbose';
+    if (length('--[no]verbose') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -90,11 +100,18 @@ GetOptions (
     'favorite|f=s' => \$favorite,
     'password|p=s' => \$password,
     'username|u=s' => \$username,
+    'verbose|v!' => \$verbose,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
+
+my @debug_run = ();
+if ($verbose) {
+    @debug_run = ("debug-run");
+    say STDERR "running with debug";
+}
 
 die "Must specify the jumpserver username" unless $username;
 if (not $password) {
@@ -129,7 +146,7 @@ if (-e $cookie_file) {
 
 if (not $login_reply) {
     $login_reply = $json->decode(scalar capturex(
-        "debug-run", "curl-f", "-X", "POST", "-s",
+        "curl-f", "-X", "POST", "-s",
         "$ENV{scm_jumpserver_url}api/v1/authentication/auth/", "-H", 'Content-Type: application/json', "-d", decode_utf8($json->encode($login_data)),
     ));
 
@@ -137,19 +154,17 @@ if (not $login_reply) {
 }
 
 my $token = $login_reply->{token};
-my @debug_run = ();
-
 if ($api) {
     my $api_reply =
         $json->decode(scalar capturex(
             @debug_run, "curl-f", "-s", "$ENV{scm_jumpserver_url}$api", "-H", "Authorization: Bearer $token",  @ARGV
         ));
-    say STDERR decode_utf8($json->encode($api_reply));
+    say decode_utf8($json->encode($api_reply));
 }
 
 if ($favorite) {
     my $list_of_assets =
-        $json->decode(scalar capturex("jumpserver.rest", "-a", 'api/v1/perms/users/assets/?cache_policy=1&draw=4&limit=9999&offset=0', ));
+        $json->decode(scalar capturex(@debug_run, "jumpserver.rest", "-a", 'api/v1/perms/users/assets/?cache_policy=1&draw=4&limit=9999&offset=0', ));
 
     my ($id, $hostname) =
         map {($_->{id}, $_->{hostname})}
@@ -161,7 +176,7 @@ if ($favorite) {
     };
 
     my $nodes =
-        $json->decode(scalar capturex("jumpserver.rest", "-a", "api/v1/perms/users/nodes/children/tree/?cache_policy=2", ));
+        $json->decode(scalar capturex(@debug_run, "jumpserver.rest", "-a", "api/v1/perms/users/nodes/children/tree/?cache_policy=2", ));
     my $fav_folder;
     grep {
         if ($_->{meta}{node}{value} eq "收藏夹") {
@@ -170,10 +185,10 @@ if ($favorite) {
     } @{$nodes};
 
     my $fav_hosts =
-        $json->decode(scalar capturex("jumpserver.rest", "-u", "baohaojun", "-a",
+        $json->decode(scalar capturex(@debug_run, "jumpserver.rest", "-u", "baohaojun", "-a",
                                       "api/v1/perms/users/nodes/${fav_folder}/assets/?limit=1000&offset=0"));
 
-    runx(@debug_run, "jumpserver.rest", "-a", "api/v1/assets/favorite-assets/", "--", "-X", "POST", "-H", 'Content-Type: application/json; charset=utf-8', "--data-raw",  decode_utf8($json->encode($data))) if not grep {
+    capturex(@debug_run, "jumpserver.rest", "-a", "api/v1/assets/favorite-assets/", "--", "-X", "POST", "-H", 'Content-Type: application/json; charset=utf-8', "--data-raw",  decode_utf8($json->encode($data))) if not grep {
         $hostname eq $_->{hostname}
     } @{$fav_hosts->{results}};
 
