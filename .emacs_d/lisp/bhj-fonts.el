@@ -52,6 +52,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
           (set-fontset-font t 'symbol (font-spec :family "JetBrains Mono")))
       (error nil))
     (set-fontset-font t 'symbol (font-spec :family "Unifont") nil 'append)
+    (set-fontset-font
+     t '(#x2009 . #x2009) (font-spec :family "B&H LucidaBright"))
     (set-fontset-font t nil (font-spec :family "DejaVu Sans"))
 
     ;; Set Chinese font
