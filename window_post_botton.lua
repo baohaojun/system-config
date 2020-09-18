@@ -1,5 +1,6 @@
 local map = {}
 map['输入密码'] = 'No-Post'
+map['cmb.pb/cmb.pb.app.h5container.NewPBWebViewActivity'] = 'No-Post'
 map['cmb.pb/com.cmb.zh.ui.mbank.im.activitys.chat.PublicChatActivity'] = 'Find-Button'
 map['cn.gov.tax.its/cn.gov.tax.its.MainActivity'] = 'No-Post'
 map['cn.mucang.xiaomi.android.wz/cn.mucang.peccancy.addcar.AddCarActivity'] = 'No-Post'
