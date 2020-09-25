@@ -32,9 +32,6 @@ done
 
 sudo ntpdate-debian || true
 sudo hwclock --set --date "$(today) $(date +%H:%M:%S)" || true
-if test $(date +%H) -ge 17; then
-    prepare-for-auto-boot --boot-real 06:05 || true
-fi
 
 sleep 3
 export MYSCR_SOCKET=o${DISPLAY##*:}
