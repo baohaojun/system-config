@@ -29,7 +29,9 @@ my $json = JSON->new->utf8->canonical->pretty;
 # ssynchronized '?"同步编译，直到编译结束才 exit，并通过 exit value 体现其结果"' \
 # vverbose '?"实时输出本次 build 的终端输出"' \
 # ddebug '?"调试选项，打印出 build 相关的一些信息"' \
-# @:save-build-url-to '?"Specify a file where the new build url will be saved"'
+# @:save-build-url-to '?"Specify a file where the new build url will be saved"' \
+# @rest-retry=1 '?"有时候 Jenkins rest api 调用会返回 502 proxy error，要不要 retry，默认要"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -39,14 +41,15 @@ Getopt::Long::Configure("posix_default");
 
 
 my $debug = 0;
-my $extra_environ_params = "";
 my $extra_environ_params_regexp = "";
+my $extra_environ_params = "";
 my $extra_params_from_build_url = "";
 my $gerrit_trigger = "";
 my $job_name_or_url = "";
 my @params = ();
 my $print_params_only = 0;
 my $rebuild_url = "";
+my $rest_retry = 1;
 my $save_build_url_to = "";
 my $synchronized = 0;
 my $verbose = 0;
@@ -63,20 +66,20 @@ my $handler_help = sub {
     printf "%s", "调试选项，打印出 build 相关的一些信息";
     print "\n";
     printf "%6s", '';
-    printf "%-24s", '--extra-environ-params=EXTRA-ENVIRON-PARAMS';
-    if (length('--extra-environ-params=EXTRA-ENVIRON-PARAMS') > 24 and length("额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值") > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", "额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值";
-    print "\n";
-    printf "%6s", '';
     printf "%-24s", '--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP';
     if (length('--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP') > 24 and length("参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入") > 0) {
         print "\n";
         printf "%30s", "";
     }
     printf "%s", "参考 extra_environ_params 的帮助，环境变量中所有名字匹配指定正则表达式的变量，全部作为 build 的参数传入";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--extra-environ-params=EXTRA-ENVIRON-PARAMS';
+    if (length('--extra-environ-params=EXTRA-ENVIRON-PARAMS') > 24 and length("额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "额外传递指定的环境变量列表作为 build 的参数，可指定多个，以空格分格；build 参数名即环境变量名；build 参数值即环境变量的值";
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--extra-params-from-build-url=EXTRA-PARAMS-FROM-BUILD-URL';
@@ -127,6 +130,14 @@ my $handler_help = sub {
     printf "%s", "指定要 rebuild 的 url（不适合于直接用 jc rebuild，可能因为它是个 gerrit trigger）。如有需要，用它计算 JOB_URL 和 EXTRA_PARAMS_FROM_BUILD_URL";
     print "\n";
     printf "%6s", '';
+    printf "%-24s", '--[no]rest-retry';
+    if (length('--[no]rest-retry') > 24 and length("有时候 Jenkins rest api 调用会返回 502 proxy error，要不要 retry，默认要") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "有时候 Jenkins rest api 调用会返回 502 proxy error，要不要 retry，默认要";
+    print "\n";
+    printf "%6s", '';
     printf "%-24s", '--save-build-url-to=SAVE-BUILD-URL-TO';
     if (length('--save-build-url-to=SAVE-BUILD-URL-TO') > 24 and length("Specify a file where the new build url will be saved") > 0) {
         print "\n";
@@ -151,19 +162,26 @@ my $handler_help = sub {
     printf "%s", "实时输出本次 build 的终端输出";
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
     'debug|d!' => \$debug,
-    'extra-environ-params=s' => \$extra_environ_params,
     'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
+    'extra-environ-params=s' => \$extra_environ_params,
     'extra-params-from-build-url=s' => \$extra_params_from_build_url,
     'gerrit-trigger=s' => \$gerrit_trigger,
     'job-name-or-url|j=s' => \$job_name_or_url,
     'params|p=s' => \@params,
     'print-params-only!' => \$print_params_only,
     'rebuild-url=s' => \$rebuild_url,
+    'rest-retry!' => \$rest_retry,
     'save-build-url-to=s' => \$save_build_url_to,
     'synchronized|s!' => \$synchronized,
     'verbose|v!' => \$verbose,
@@ -441,8 +459,36 @@ while (1) {
         if ($verbose) {
             system("jc console -b $build_url");
         }
+
+        my $max_continuous_errors = 0;
         while (1) {
-            my $build_json = $json->decode(scalar capture("jc curl ${build_url}api/json"));
+            my $build_json;
+            chomp (my $temp_err = decode_utf8(scalar capturex("mktemp")));
+
+            while (1) {
+                eval {
+                    $build_json = $json->decode(scalar capture("jc curl ${build_url}api/json 2>$temp_err"));
+                };
+                if ($@) {
+                    $max_continuous_errors ++;
+                    my $error_txt = decode_utf8(scalar capturex("cat", "$temp_err"));
+                    die "Too many errors: " . $error_txt if $max_continuous_errors > 60;
+                    if ($error_txt =~ m,The proxy server could not handle the request,) {
+                        say STDERR "Retry, it's proxy error";
+                        sleep(10);
+                        if (not $rest_retry) {
+                            die "Proxy error and rest-retry not set, die";
+                        }
+                    } else {
+                        die "Can't retry for unknown error: " . $error_txt;
+                    }
+                } else {
+                    $max_continuous_errors = 0;
+                    last;
+                }
+            }
+
+
             if ($build_json->{result}) {
                 if ($build_json->{result} eq 'SUCCESS') {
                     exit 0;

@@ -22,7 +22,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# d:json-data '?"直接指定新的 permission 数据"' \
+# d:json-data '?"直接指定新的 permission 数据，可以用$(getclip)，可以只拷贝 details"' \
 # n:new-group '?"指定新的 group，这个 group 要获得与 existing-group 一样的权限"' \
 # e:existing-group '?"现有的 group，作为权限分配的标准"' \
 
@@ -51,11 +51,11 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '-d, ';
     printf "%-24s", '--json-data=JSON-DATA';
-    if (length('--json-data=JSON-DATA') > 24 and length("直接指定新的 permission 数据") > 0) {
+    if (length('--json-data=JSON-DATA') > 24 and length("直接指定新的 permission 数据，可以用$(getclip)，但是只需要拷贝 details") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "直接指定新的 permission 数据";
+    printf "%s", "直接指定新的 permission 数据，可以用$(getclip)，但是只需要拷贝 details";
     print "\n";
     printf "%6s", '-n, ';
     printf "%-24s", '--new-group=NEW-GROUP';
@@ -103,6 +103,17 @@ if ($existing_group) {
 }
 
 $json_data = $json->decode(encode_utf8 $json_data);
+
+use URI::Escape;
+if (not $json_data->{details}) {
+    $json_data = {
+        details => $json_data,
+    }
+}
+
+$json_data->{name} = $json_data->{details}{name};
+$json_data->{uri} = ("$ENV{scm_artifactory_url}artifactory/api/security/permissions/" . uri_escape($json_data->{details}{name}));
+
 my $uri = $json_data->{uri};
 
 my $old_details = decode_utf8(scalar capturex(EXIT_ANY,"debug-run", "artifactory", "my-curl", $uri)) || "{}";

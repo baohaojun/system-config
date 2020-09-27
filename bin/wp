@@ -40,9 +40,10 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
             how_to=' | sudo tee '
         fi
 
+        HOME_FILE="${FILE/${HOME}/\${HOME\}}"
         cat <<EOF98db9599d6e4
-mkdir -p "${FILE%/*}"
-cat <<'EOFe14737c1e5cd' ${how_to} "${FILE/${HOME}/\${HOME\}}"
+mkdir -p "${HOME_FILE%/*}"
+cat <<'EOFe14737c1e5cd' ${how_to} "${HOME_FILE}"
 $(cat "$FILE")
 EOFe14737c1e5cd
 EOF98db9599d6e4

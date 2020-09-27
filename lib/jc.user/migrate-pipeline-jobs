@@ -1,0 +1,159 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1;                    # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+这个脚本允许把一个 jenkins pipeline 和它依赖的 jobs 一起从测试环境移植到生产环境。
+
+在参数里，需要指定该 pipeline 的某次 build 地址，然后会从其 console log 里提取出需要移植哪些 jobs。
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# f:from-env '?"从哪个环境移植 Jobs，可以是 prod、test、test2 等"' \
+# t:to-env '?"参考 --from-env"' \
+# b:pipeline-build-url '?"从哪个 pipeline 的编译 url 里提取需要 migrate 的 jobs 列表"' \
+# @dry-run '?"快速过一遍需要处理哪些 Jobs"' \
+# j:jobs-to-migrate='()' '?"命令行指定要 migrate 哪些 jobs"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $dry_run = 0;
+my $from_env = "";
+my @jobs_to_migrate = ();
+my $pipeline_build_url = "";
+my $to_env = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]dry-run';
+    if (length('--[no]dry-run') > 24 and length("快速过一遍需要处理哪些 Jobs") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "快速过一遍需要处理哪些 Jobs";
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--from-env=FROM-ENV';
+    if (length('--from-env=FROM-ENV') > 24 and length("从哪个环境移植 Jobs，可以是 prod、test、test2 等") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "从哪个环境移植 Jobs，可以是 prod、test、test2 等";
+    print "\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--jobs-to-migrate=JOBS-TO-MIGRATE';
+    if (length('--jobs-to-migrate=JOBS-TO-MIGRATE') > 24 and length("命令行指定要 migrate 哪些 jobs") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "命令行指定要 migrate 哪些 jobs";
+    print "\n";
+    printf "%6s", '-b, ';
+    printf "%-24s", '--pipeline-build-url=PIPELINE-BUILD-URL';
+    if (length('--pipeline-build-url=PIPELINE-BUILD-URL') > 24 and length("从哪个 pipeline 的编译 url 里提取需要 migrate 的 jobs 列表") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "从哪个 pipeline 的编译 url 里提取需要 migrate 的 jobs 列表";
+    print "\n";
+    printf "%6s", '-t, ';
+    printf "%-24s", '--to-env=TO-ENV';
+    if (length('--to-env=TO-ENV') > 24 and length("参考 --from-env") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "参考 --from-env";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'dry-run!' => \$dry_run,
+    'from-env|f=s' => \$from_env,
+    'jobs-to-migrate|j=s' => \@jobs_to_migrate,
+    'pipeline-build-url|b=s' => \$pipeline_build_url,
+    'to-env|t=s' => \$to_env,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my %jobs_migrated;
+
+if ($pipeline_build_url) {
+    my $pipeline_build_log =
+        decode_utf8(scalar capturex("jc", "curl", "${pipeline_build_url}consoleText", ));
+
+    while ($pipeline_build_log =~ m,Scheduling project: (\S+),g) {
+        push @jobs_to_migrate, $1;
+    }
+
+    (my $pipeline_job = $pipeline_build_url) =~ s,.*?/job/(.*?)/.*,$1,;
+    push @jobs_to_migrate, $pipeline_job;
+}
+
+
+sub migrate_1_job($job) {
+    runx("jc", "ue", "-j", "$job", "--jenkins-env", "$from_env", );
+    runx(EXIT_ANY, "jc", "ue", "-j", "$job", "--jenkins-env", "$to_env", );
+    chdir("$ENV{HOME}/src/jenkins-tasks/.sites");
+    if (runx(EXIT_ANY, "diff", "-q", "$from_env/${job}.xml", "${to_env}/${job}.xml") == 0) {
+        say STDERR "$from_env to $to_env $job 没有差异";
+        return;
+    }
+    runx(EXIT_ANY, "meld", "$from_env/${job}.xml", "${to_env}/${job}.xml");
+
+    runx(EXIT_ANY, "debug-run", "diff", "-w", "$from_env/${job}.xml", "${to_env}/${job}.xml");
+
+    sleep(1);
+
+    if (runx(EXIT_ANY, "yes-or-no-p", "Merged from $from_env to $to_env $job?") == 0) {
+        run("jc -j $to_env create-job ${job} < ${to_env}/${job}.xml");
+    } else {
+        if (runx(EXIT_ANY, "yes-or-no-p", "Retry to merge $from_env to $to_env $job?") == 0) {
+            migrate_1_job($job);
+        }
+    }
+}
+
+$ENV{EMACS} = 't';
+for (@jobs_to_migrate) {
+    next if $jobs_migrated{$_};
+    $jobs_migrated{$_} = 1;
+
+    say STDERR "Need to migrate: $_";
+    next if $dry_run;
+
+    runx(EXIT_ANY, "hint", "Will merge $_ now");
+    migrate_1_job($_);
+}

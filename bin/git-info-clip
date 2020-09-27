@@ -2,13 +2,16 @@
 # http://github.com/baohaojun/system-config/raw/master/bin/Linux/
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @blob
+# generate-getopt @blob '?"查看 blob 的地址"' \
+    # @log-url '?"查看 git log 的地址"' \
+
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o h \
-               --long blob,help,no-blob \
+               --long blob,log-url,help,no-blob,no-log-url \
                -n $(basename -- $0) -- "$@")
-blob=false
+declare blob=false
+declare log_url=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -20,15 +23,28 @@ while true; do
                 blob=true
             fi
             shift
+
+            ;;
+        --log-url|--no-log-url)
+            if test "$1" = --no-log-url; then
+                log_url=false
+            else
+                log_url=true
+            fi
+            shift
+
             ;;
         -h|--help)
             set +x
-            echo
+            echo -e
             echo
             echo Options and arguments:
             printf "%6s" " "
             printf %-24s '--[no-]blob'
-            echo
+            echo "查看 blob 的地址"
+            printf "%6s" " "
+            printf %-24s '--[no-]log-url'
+            echo "查看 git log 的地址"
             exit
             shift
             ;;
@@ -62,6 +78,8 @@ git_proj_http=$(repo-remote-url|perl -npe 's,(git\@)?github.com:,https://github.
 
 if test "$blob" = true; then
     where=blob
+elif test "${log_url}" = true; then
+    where=commits
 else
     where=raw
 fi

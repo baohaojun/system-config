@@ -1,0 +1,105 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+最终会调用外部全局的 ue 命令
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# s:JENKINS-SERVER='$ENV{scm_jenkins_url}' \
+# @edit='("--no-edit" "--edit" "--edit")' '?"要不要打开编辑器进行编辑"' \
+# @:jenkins-env '?"使用哪个 jenkins env，可以是 prod、test、test2 等"' \
+# j:job-name '?"要编辑的是哪个 job"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $edit = "--edit";
+my $jenkins_env = "";
+my $JENKINS_SERVER = $ENV{scm_jenkins_url};
+my $job_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '';
+    printf "%-24s", '--[no]edit';
+    if (length('--[no]edit') > 24 and length("要不要打开编辑器进行编辑") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "要不要打开编辑器进行编辑";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--jenkins-env=JENKINS-ENV';
+    if (length('--jenkins-env=JENKINS-ENV') > 24 and length("使用哪个 jenkins env，可以是 prod、test、test2 等") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "使用哪个 jenkins env，可以是 prod、test、test2 等";
+    print "\n";
+    printf "%6s", '-s, ';
+    printf "%-24s", '--JENKINS-SERVER=JENKINS-SERVER';
+    if (length('--JENKINS-SERVER=JENKINS-SERVER') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-j, ';
+    printf "%-24s", '--job-name=JOB-NAME';
+    if (length('--job-name=JOB-NAME') > 24 and length("要编辑的是哪个 job") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "要编辑的是哪个 job";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'edit!' => \&handler_edit,
+    'jenkins-env=s' => \$jenkins_env,
+    'JENKINS-SERVER|s=s' => \$JENKINS_SERVER,
+    'job-name|j=s' => \$job_name,
+    'help|h!' => \&$handler_help,
+);
+sub handler_edit {
+    my ($opt_name, $opt_value) = @_;
+    $edit = $opt_value ? "--edit" : "--no-edit";
+}
+
+## end generated code
+
+my @jenkins_env_args =
+     (
+        "-j", $jenkins_env ? $ENV{"scm_jenkins_${jenkins_env}_url"} : "$JENKINS_SERVER"
+    );
+
+runx("debug-run", "ue", @jenkins_env_args, $edit, "-e", "${job_name}");
