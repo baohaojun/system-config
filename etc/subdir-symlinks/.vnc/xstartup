@@ -4,6 +4,7 @@
 # unset SESSION_MANAGER
 # exec /etc/X11/xinit/xinitrc
 rm -rf ~/tmp/no-play
+bash -x adb-charge-switch &> ~/tmp/adb-charge-switch.log || true
 
 [ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
