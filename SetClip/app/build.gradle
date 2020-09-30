@@ -11,6 +11,7 @@ android {
             moduleName "wrench-jni"
         }
         minSdkVersion 21
+        targetSdkVersion 25
     }
 
     buildTypes {
