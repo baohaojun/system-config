@@ -9,6 +9,7 @@ set -e
     adb-kill onmyoji
     mkdir -p ~/tmp/no-play;
     touch ~/tmp/no-play/$who.$(today);
+    touch ~/tmp/xbs/reset-yuhun
     cd ~/tmp/no-play/
     (
         setsid setsid nohup bash -xc "sleep 1800; rm -f ~/tmp/no-play/$who.$(today)"
