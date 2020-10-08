@@ -126,7 +126,7 @@ void AdbStateThread::onDisconnected()
                 emit adbStateInfo("info", "小扳手辅助apk安装成功");
             }
         }
-        mAdbInput = AdbClient::doAdbPipe("if test -e /sdcard/setclip-apk.txt; then sh /sdcard/setclip-apk.txt app_process /system/bin/ com.Wrench.Input 2>/dev/null; else echo apk not found?; fi");
+        mAdbInput = AdbClient::doAdbPipe("if test -e /sdcard/setclip-apk.txt; then sh /sdcard/setclip-apk.txt app_process /system/bin/ com.Wrench.Input > /data/data/com.android.shell/wrench.log 2>&1; else echo apk not found?; fi");
         mAdbInputFinished = false;
         connect(mAdbInput->getSock(), SIGNAL(readyRead()), this, SLOT(onInputDataReady()));
         connect(mAdbInput->getSock(), SIGNAL(readChannelFinished()), this, SLOT(inputServerFinished()));
