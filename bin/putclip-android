@@ -36,7 +36,7 @@ if test $b0 = putclip-android; then
 printf %q  "$(
 cat <<'EOFd79e06b367a3' | . .replace-%% --
 # {%sh-mode%}
-echo <%text%> > /sdcard/putclip.txt
+echo -n <%text%> > /sdcard/putclip.txt
 am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei '$cmd' 1 >/dev/null 2>&1&
 for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
     if test ! -e /sdcard/putclip.txt; then
