@@ -136,7 +136,7 @@ my $text = getText();
 use File::Slurp;
 
 append_file("$ENV{HOME}/.cache/system-config/Wrench-post.history",
-            <<EOF
+            encode_utf8 <<EOF
 ----------------------------------------------------------------
 $text
 
@@ -160,6 +160,7 @@ if ($text =~ m/$at_someone_regexp/ and $cue_screens{qx(adb-top-activity)}) {
         my $pre = $`;
         my $post = $';
         my $at_whom = $&;
+        # say STDERR "at_whom is $at_whom";
 
         if ($pre) {
             my $post_text = sprintf("wrench_post(%s, %s)", quote_lua_str($`), '"no-post"');
