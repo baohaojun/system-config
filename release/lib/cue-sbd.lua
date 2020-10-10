@@ -22,7 +22,7 @@ M.cue_funcs = {
                local who = ce.who_list[n]
                wrench_post(who, "No-Post")
                sleep(.5)
-               click_scene(ce.cue_all_scene, {skip_refind = true})
+               click_scene("dd/cue-1st-choice", {skip_refind = true})
             end
             click_scene("dd/cue-queding", {skip_refind = true})
          end
