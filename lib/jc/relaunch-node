@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # n:node-name='${NODE_NAME}' '?"要重启哪台 jenkins slave 服务器，默认是当前的 node。"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o n:h \
+                      --long node-name:,help \
+                      -n $(basename -- $0) -- "$@")
+declare node_name=${NODE_NAME}
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -n|--node-name)
+            node_name=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-n, '
+            printf %-24s '--node-name=NODE_NAME'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if is-jenkins; then
+    run_it=smartcm-daemonize
+else
+    run_it=
+fi
+$run_it bash -c "$(
+cat <<'EOF68749c7045fc' | . .replace-%% --
+# {%sh-mode%}
+set -x
+exec > /tmp/relaunch-node.log 2>&1
+for method in doDisconnect launchSlaveAgent; do
+    jc curl ${scm_jenkins_url}computer/[%node_name%]/$method -X POST
+    sleep 1
+done
+sleep 3
+# {%/sh-mode%}
+EOF68749c7045fc
+
+)"

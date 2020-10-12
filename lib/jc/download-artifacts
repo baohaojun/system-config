@@ -22,7 +22,9 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# b:build-url d:download-to-dir='"."'
+# b:build-url d:download-to-dir='"."' \
+# m:match-regexp='".*"' '?"要下载的 artifacts 文件名的正则表达式，默认为=.*=（匹配所有文件）"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -33,6 +35,7 @@ Getopt::Long::Configure("posix_default");
 
 my $build_url = "";
 my $download_to_dir = ".";
+my $match_regexp = ".*";
 
 my $handler_help = sub {
     print "$comment_doc";
@@ -53,6 +56,14 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
+    printf "%6s", '-m, ';
+    printf "%-24s", '--match-regexp=MATCH-REGEXP';
+    if (length('--match-regexp=MATCH-REGEXP') > 24 and length("要下载的 artifacts 文件名的正则表达式，默认为=.*=（匹配所有文件）") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "要下载的 artifacts 文件名的正则表达式，默认为=.*=（匹配所有文件）";
+    print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
@@ -66,6 +77,7 @@ my $handler_help = sub {
 GetOptions (
     'build-url|b=s' => \$build_url,
     'download-to-dir|d=s' => \$download_to_dir,
+    'match-regexp|m=s' => \$match_regexp,
     'help|h!' => \&$handler_help,
 );
 
@@ -79,6 +91,8 @@ runx(
     "mkdir", "-p", "$download_to_dir"
 );
 
+my $filename_re = qr($match_regexp);
+
 for (@{$build_json->{artifacts}}) {
     my $file_name = $_->{relativePath};
     my $target_file = "${download_to_dir}/${file_name}";
@@ -87,6 +101,9 @@ for (@{$build_json->{artifacts}}) {
     runx(
         "mkdir", "-p", "$target_dir"
     );
-
-    runx("debug-run", "jc", "curl", "${build_url}/artifact/${file_name}", "-o", "$target_file");
+    if ($file_name =~ m,$filename_re,) {
+        runx("debug-run", "jc", "curl", "${build_url}/artifact/${file_name}", "-o", "$target_file");
+    } else {
+        say STDERR "$file_name not match $match_regexp, skip";
+    }
 }
