@@ -1,4 +1,5 @@
 local map = {}
+map['输入密码'] = 'No-Post'
 map['cmb.pb/cmb.pb.app.h5container.NewPBWebViewActivity'] = 'No-Post'
 map['cmb.pb/com.cmb.zh.ui.mbank.im.activitys.chat.PublicChatActivity'] = 'Find-Button'
 map['cn.com.hsbc.hsbcchina/mobilez.client.activity.HomeActivity'] = 'No-Post'
@@ -50,6 +51,7 @@ map['com.android.settings/com.android.settings.Settings'] = 'Find-Button'
 map['com.android.settings/com.android.settings.wifi.WifiSettingsActivity'] = 'No-Post'
 map['com.android.settings/com.oppo.settings.SettingsActivity'] = 'No-Post'
 map['com.android.vending/com.android.vending.AssetBrowserActivity'] = 'No-Post'
+map['com.autonavi.minimap/com.autonavi.map.activity.NewMapActivity'] = 'No-Post'
 map['com.azure.authenticator/com.azure.authenticator.ui.MainActivity'] = 'No-Post'
 map['com.azure.authenticator/com.microsoft.onlineid.internal.ui.WebFlowActivity'] = 'No-Post'
 map['com.baidu.netdisk/com.baidu.netdisk.uiframe.container.CommonActivity'] = 'No-Post'
@@ -141,5 +143,4 @@ map['com.xiaomi.smarthome/com.xiaomi.miot.store.ui.MiotStoreMainActivity'] = 'No
 map['lixiang'] = 'No-Post'
 map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'No-Post'
 map['smt_launcher'] = 'No-Post'
-map['输入密码'] = 'No-Post'
 return map
