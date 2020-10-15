@@ -1,0 +1,106 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# p:project u:user a:access-type='"read"' \
+# r:ref-name='"refs/heads/master"'
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $access_type = "read";
+my $project = "";
+my $ref_name = "refs/heads/master";
+my $user = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--access-type=ACCESS-TYPE';
+    if (length('--access-type=ACCESS-TYPE') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--project=PROJECT';
+    if (length('--project=PROJECT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--ref-name=REF-NAME';
+    if (length('--ref-name=REF-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--user=USER';
+    if (length('--user=USER') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'access-type|a=s' => \$access_type,
+    'project|p=s' => \$project,
+    'ref-name|r=s' => \$ref_name,
+    'user|u=s' => \$user,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+use URI::Encode qw(uri_encode uri_decode);
+
+
+($project = uri_encode($project)) =~ s,/,%2F,g;
+($ref_name = uri_encode($ref_name)) =~ s,/,%2F,g;
+
+runx("debug-run", "gr", "curl", "a/projects/$project/check.access?account=${user}&ref=${ref_name}&perm=${access_type}", );

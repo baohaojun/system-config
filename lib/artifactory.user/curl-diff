@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+text1=$(
+    artifactory my-curl "$1"
+     )
+text2=$(
+    artifactory my-curl "$2"
+     )
+misc diff-json "${text1}" "${text2}"

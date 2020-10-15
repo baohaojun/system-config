@@ -84,12 +84,12 @@ for x in $(seq 1 2); do
             )
             if test "$out" != "${empty_clipboard}"; then
                 echo out became "'$out'" at $x/$y >> ~/.cache/system-config/logs/$(basename $0).log
-                echo -n ${out%/}
+                echo -n ${out}
                 exit 0
             fi
         done
     else
-        echo -n ${out%/}
+        echo -n ${out}
         exit 0
     fi
 done

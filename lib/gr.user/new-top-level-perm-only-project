@@ -169,3 +169,7 @@ runx(
 runx(
     "gr", "assign-permissions", "-r", "${project_name}", "-b", "refs/*", "-p", "read", "-g", "$groups{DEV}",
 );
+
+runx(
+    "gr", "assign-permissions", "-r", "${project_name}", "-b", "refs/*", "-p", "read = deny", "-g", "Registered Users",
+);

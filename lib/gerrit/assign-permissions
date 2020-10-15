@@ -37,7 +37,7 @@ EOFc83131117f09
     # r:repo-name '?"repo 的名字"' \
     # b:branch-patterns='()' '?"分支的模式，比如 refs/heads/release/*（匹配 release/ 下所有分支）或 refs/heads/master"' \
     # g:groups='()' '?"指定给哪些 groups 分配权限，可指定多次，如果是 admin/dev/sme 的话，需要转化为该仓库对应的组"' \
-    # p:permission-values='()' '?"可指定多次，比如 submit 或 \"label-Code-Review = -2..+2\""' \
+    # p:permission-values='()' '?"可指定多次，比如 submit 或 \"read = deny\" 或 \"label-Code-Review = -2..+2\""' \
     # @exclusive '?"是否指定为exclusive权限（参考google: gerrit exclusive permission"' \
 
 ## end code-generator
@@ -83,11 +83,11 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '-p, ';
     printf "%-24s", '--permission-values=PERMISSION-VALUES';
-    if (length('--permission-values=PERMISSION-VALUES') > 24 and length("可指定多次，比如 submit 或 \"label-Code-Review = -2..+2\"") > 0) {
+    if (length('--permission-values=PERMISSION-VALUES') > 24 and length("可指定多次，比如 submit 或 \"read = deny\" 或 \"label-Code-Review = -2..+2\"") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", "可指定多次，比如 submit 或 \"label-Code-Review = -2..+2\"";
+    printf "%s", "可指定多次，比如 submit 或 \"read = deny\" 或 \"label-Code-Review = -2..+2\"";
     print "\n";
     printf "%6s", '-r, ';
     printf "%-24s", '--repo-name=REPO-NAME';
@@ -125,7 +125,6 @@ my %special_groups = (
     sme => 1,
 );
 
-@groups = split(' ', join(" ", @groups));
 my %groups;
 map {
     if ($_ =~ m,^user/,) {

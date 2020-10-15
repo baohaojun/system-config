@@ -4,11 +4,13 @@ set -e
 function sc-check-darwin() {
     if test "$(uname)" = Darwin; then
         extra_path=(
-            /usr/local/Cellar/coreutils/8.30/libexec/gnubin
-            /usr/local/Cellar/gnu-getopt/1.1.6/bin
-            /usr/local/Cellar/bash/4.4.23/bin
+            /usr/local/opt/coreutils/libexec/gnubin
+            /usr/local/opt/gnu-getopt/bin
+            /usr/local/opt/bash/bin
             /usr/local/opt/grep/libexec/gnubin
             /usr/local/opt/findutils/libexec/gnubin
+            /usr/local/opt/curl/bin
+            /usr/local/bin
         )
         export SC_PATH_PREFIX=$(
             for x in "${extra_path[@]}"; do
