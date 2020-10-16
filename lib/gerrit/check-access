@@ -22,7 +22,10 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# p:project b:branch u:user
+# p:project b:branch '?"for e,g, refs/for/refs/heads/master (refs/for/master does not work)"' \
+# u:user \
+# a:access-type='"read"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -31,6 +34,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $access_type = "read";
 my $branch = "";
 my $project = "";
 my $user = "";
@@ -38,13 +42,21 @@ my $user = "";
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
-    printf "%6s", '-b, ';
-    printf "%-24s", '--branch=BRANCH';
-    if (length('--branch=BRANCH') > 24 and length() > 0) {
+    printf "%6s", '-a, ';
+    printf "%-24s", '--access-type=ACCESS-TYPE';
+    if (length('--access-type=ACCESS-TYPE') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
     printf "%s", ;
+    print "\n";
+    printf "%6s", '-b, ';
+    printf "%-24s", '--branch=BRANCH';
+    if (length('--branch=BRANCH') > 24 and length("for e,g, refs/for/refs/heads/master (refs/for/master does not work)") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "for e,g, refs/for/refs/heads/master (refs/for/master does not work)";
     print "\n";
     printf "%6s", '-p, ';
     printf "%-24s", '--project=PROJECT';
@@ -73,6 +85,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'access-type|a=s' => \$access_type,
     'branch|b=s' => \$branch,
     'project|p=s' => \$project,
     'user|u=s' => \$user,
@@ -86,4 +99,4 @@ use URI::Escape;
 ($project = uri_escape("$project")) =~ s,/,\%2F,g;
 ($branch = uri_escape("$branch")) =~ s,/,\%2F,g;
 
-runx("gr", "rest", "a/projects/${project}/check.access?account=${user}&ref=${branch}", );
+runx("gr", "rest", "a/projects/${project}/check.access?account=${user}&ref=${branch}&perm=${access_type}", );

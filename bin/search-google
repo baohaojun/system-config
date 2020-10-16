@@ -218,16 +218,24 @@ if test "$BHJ_URLIFY" = true; then
     exit
 fi
 
-if test -z "$pat" && [[ $url =~ ^https?:// ]]; then
-    pat=$(echo "$url" | grep -o '^https?://.*?/' -P)
+if test -z "$pat"; then
+    if  [[ $url =~ ^https?://.*/dict/.* ]]; then
+        pat=$(echo "$url" | grep -o '^https?://.*?/' -P)
+    else
+        pat="$url"
+    fi
 fi
 
-if test "$pat"; then
+if test "$pat" = "$url"; then
+    export FIREFOX_SWITCH_TO_NEW_TAB=true
+    private-firefox -- -new-tab "$url"
+elif test "$pat"; then
     firefox-open-url-pattern "$pat" "$url"
 else
     find-or-exec firefox firefox
     firefox "$url"
 fi&
+
 if test "$EMACS" = t; then
     true
 else

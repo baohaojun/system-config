@@ -38,7 +38,7 @@ BEGIN {
     no warnings "experimental::signatures";
 }
 
-exit 1 unless m/^\p{Latin}*$/
+exit 1 unless m/^(\p{Latin}|\p{Space})*$/
 # {%/perl-mode%}
 EOF857b9558c0d3
 
