@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+if ($ARGV[0] =~ m,^(\d+):(\d+):(\d+)$,) {
+    my ($h, $m, $s) = ($1, $2, $3);
+    print ($h * 3600 + $m * 60 + $s);
+}
