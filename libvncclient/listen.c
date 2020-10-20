@@ -40,6 +40,8 @@
 #include <sys/time.h>
 #include <rfb/rfbclient.h>
 
+#define max(a,b) (((a)>(b))?(a):(b))
+
 /*
  * listenForIncomingConnections() - listen for incoming connections from
  * servers, and fork a new process to deal with each connection.
@@ -64,23 +66,23 @@ listenForIncomingConnections(rfbClient* client)
     return;
 
   rfbClientLog("%s -listen: Listening on port %d\n",
-	  client->programName,client->listenPort);
+          client->programName,client->listenPort);
   rfbClientLog("%s -listen: Command line errors are not reported until "
-	  "a connection comes in.\n", client->programName);
+          "a connection comes in.\n", client->programName);
 
-#ifdef LIBVNCSERVER_IPv6 /* only try that if we're IPv6-capable, otherwise we may try to bind to the same port which would make all that listening fail */ 
+#ifdef LIBVNCSERVER_IPv6 /* only try that if we're IPv6-capable, otherwise we may try to bind to the same port which would make all that listening fail */
   /* only do IPv6 listen of listen6Port is set */
   if (client->listen6Port > 0)
     {
       listen6Socket = ListenAtTcpPortAndAddress(client->listen6Port, client->listen6Address);
 
       if (listen6Socket < 0)
-	return;
+        return;
 
       rfbClientLog("%s -listen: Listening on IPV6 port %d\n",
-		   client->programName,client->listenPort);
+                   client->programName,client->listenPort);
       rfbClientLog("%s -listen: Command line errors are not reported until "
-		   "a connection comes in.\n", client->programName);
+                   "a connection comes in.\n", client->programName);
     }
 #endif
 
@@ -92,10 +94,10 @@ listenForIncomingConnections(rfbClient* client)
 
     /* TODO: callback for discard any events (like X11 events) */
 
-    FD_ZERO(&fds); 
+    FD_ZERO(&fds);
 
     if(listenSocket >= 0)
-      FD_SET(listenSocket, &fds);  
+      FD_SET(listenSocket, &fds);
     if(listen6Socket >= 0)
       FD_SET(listen6Socket, &fds);
 
@@ -103,33 +105,33 @@ listenForIncomingConnections(rfbClient* client)
 
     if (r > 0) {
       if (FD_ISSET(listenSocket, &fds))
-	client->sock = AcceptTcpConnection(client->listenSock); 
+        client->sock = AcceptTcpConnection(client->listenSock);
       else if (FD_ISSET(listen6Socket, &fds))
-	client->sock = AcceptTcpConnection(client->listen6Sock);
+        client->sock = AcceptTcpConnection(client->listen6Sock);
 
       if (client->sock < 0)
-	return;
+        return;
       if (!SetNonBlocking(client->sock))
-	return;
+        return;
 
       /* Now fork off a new process to deal with it... */
 
       switch (fork()) {
 
-      case -1: 
-	rfbClientErr("fork\n"); 
-	return;
+      case -1:
+        rfbClientErr("fork\n");
+        return;
 
       case 0:
-	/* child - return to caller */
-	close(listenSocket);
-	close(listen6Socket);
-	return;
+        /* child - return to caller */
+        close(listenSocket);
+        close(listen6Socket);
+        return;
 
       default:
-	/* parent - go round and listen again */
-	close(client->sock); 
-	break;
+        /* parent - go round and listen again */
+        close(client->sock);
+        break;
       }
     }
   }
@@ -163,27 +165,27 @@ listenForIncomingConnectionsNoFork(rfbClient* client, int timeout)
       client->listenSock = ListenAtTcpPortAndAddress(client->listenPort, client->listenAddress);
 
       if (client->listenSock < 0)
-	return -1;
+        return -1;
 
       rfbClientLog("%s -listennofork: Listening on port %d\n",
-		   client->programName,client->listenPort);
+                   client->programName,client->listenPort);
       rfbClientLog("%s -listennofork: Command line errors are not reported until "
-		   "a connection comes in.\n", client->programName);
+                   "a connection comes in.\n", client->programName);
     }
 
-#ifdef LIBVNCSERVER_IPv6 /* only try that if we're IPv6-capable, otherwise we may try to bind to the same port which would make all that listening fail */ 
+#ifdef LIBVNCSERVER_IPv6 /* only try that if we're IPv6-capable, otherwise we may try to bind to the same port which would make all that listening fail */
   /* only do IPv6 listen of listen6Port is set */
   if (client->listen6Port > 0 && client->listen6Sock < 0)
     {
       client->listen6Sock = ListenAtTcpPortAndAddress(client->listen6Port, client->listen6Address);
 
       if (client->listen6Sock < 0)
-	return -1;
+        return -1;
 
       rfbClientLog("%s -listennofork: Listening on IPV6 port %d\n",
-		   client->programName,client->listenPort);
+                   client->programName,client->listenPort);
       rfbClientLog("%s -listennofork: Command line errors are not reported until "
-		   "a connection comes in.\n", client->programName);
+                   "a connection comes in.\n", client->programName);
     }
 #endif
 
@@ -202,22 +204,22 @@ listenForIncomingConnectionsNoFork(rfbClient* client, int timeout)
   if (r > 0)
     {
       if (FD_ISSET(client->listenSock, &fds))
-	client->sock = AcceptTcpConnection(client->listenSock); 
+        client->sock = AcceptTcpConnection(client->listenSock);
       else if (FD_ISSET(client->listen6Sock, &fds))
-	client->sock = AcceptTcpConnection(client->listen6Sock);
+        client->sock = AcceptTcpConnection(client->listen6Sock);
 
       if (client->sock < 0)
-	return -1;
+        return -1;
       if (!SetNonBlocking(client->sock))
-	return -1;
+        return -1;
 
       if(client->listenSock >= 0) {
-	close(client->listenSock);
-	client->listenSock = -1;
+        close(client->listenSock);
+        client->listenSock = -1;
       }
       if(client->listen6Sock >= 0) {
-	close(client->listen6Sock);
-	client->listen6Sock = -1;
+        close(client->listen6Sock);
+        client->listen6Sock = -1;
       }
       return r;
     }
@@ -225,5 +227,3 @@ listenForIncomingConnectionsNoFork(rfbClient* client, int timeout)
   /* r is now either 0 (timeout) or -1 (error) */
   return r;
 }
-
-

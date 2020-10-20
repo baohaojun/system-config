@@ -84,7 +84,6 @@ typedef uint32_t in_addr_t;
 #define strncasecmp _strnicmp
 #endif
 
-#define max(a,b) (((a)>(b))?(a):(b))
 #ifdef LIBVNCSERVER_HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -138,37 +137,37 @@ typedef struct {
     uint8_t depth;		/* 8 to 32 */
 
     rfbBool bigEndian;		/* True if multi-byte pixels are interpreted
-				   as big endian, or if single-bit-per-pixel
-				   has most significant bit of the byte
-				   corresponding to first (leftmost) pixel. Of
-				   course this is meaningless for 8 bits/pix */
+                                   as big endian, or if single-bit-per-pixel
+                                   has most significant bit of the byte
+                                   corresponding to first (leftmost) pixel. Of
+                                   course this is meaningless for 8 bits/pix */
 
     uint8_t trueColour;		/* If false then we need a "colour map" to
-				   convert pixels to RGB.  If true, xxxMax and
-				   xxxShift specify bits used for red, green
-				   and blue */
+                                   convert pixels to RGB.  If true, xxxMax and
+                                   xxxShift specify bits used for red, green
+                                   and blue */
 
     /* the following fields are only meaningful if trueColour is true */
 
     uint16_t redMax;		/* maximum red value (= 2^n - 1 where n is the
-				   number of bits used for red). Note this
-				   value is always in big endian order. */
+                                   number of bits used for red). Note this
+                                   value is always in big endian order. */
 
     uint16_t greenMax;		/* similar for green */
 
     uint16_t blueMax;		/* and blue */
 
     uint8_t redShift;		/* number of shifts needed to get the red
-				   value in a pixel to the least significant
-				   bit. To find the red value from a given
-				   pixel, do the following:
-				   1) Swap pixel value according to bigEndian
-				      (e.g. if bigEndian is false and host byte
-				      order is big endian, then swap).
-				   2) Shift right by redShift.
-				   3) AND with redMax (in host byte order).
-				   4) You now have the red value between 0 and
-				      redMax. */
+                                   value in a pixel to the least significant
+                                   bit. To find the red value from a given
+                                   pixel, do the following:
+                                   1) Swap pixel value according to bigEndian
+                                      (e.g. if bigEndian is false and host byte
+                                      order is big endian, then swap).
+                                   2) Shift right by redShift.
+                                   3) AND with redMax (in host byte order).
+                                   4) You now have the red value between 0 and
+                                      redMax. */
 
     uint8_t greenShift;		/* similar for green */
 
@@ -439,7 +438,7 @@ typedef struct {
 #define rfbEncodingUltraZip              0xFFFF0009
 
 /* Xvp pseudo-encoding */
-#define rfbEncodingXvp 			 0xFFFFFECB
+#define rfbEncodingXvp                   0xFFFFFECB
 
 /*
  * Special encoding numbers:
@@ -575,7 +574,7 @@ typedef struct {
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  * KeyboardLedState Encoding.  The X coordinate contains the Locked Modifiers
- * so that a remote troubleshooter can identify that the users 'Caps Lock' 
+ * so that a remote troubleshooter can identify that the users 'Caps Lock'
  * is set...   (It helps a *lot* when the users are untrained)
  */
 #define rfbKeyboardMaskShift        1
@@ -777,7 +776,7 @@ typedef struct {
  *-- The "gradient" filter pre-processes pixel data with a simple algorithm
  * which converts each color component to a difference between a "predicted"
  * intensity and the actual intensity. Such a technique does not affect
- * uncompressed data size, but helps to compress photo-like images better. 
+ * uncompressed data size, but helps to compress photo-like images better.
  * Pseudo-code for converting intensities to differences is the following:
  *
  *   P[i,j] := V[i-1,j] + V[i,j-1] - V[i-1,j-1];
@@ -998,7 +997,7 @@ typedef struct _rfbFileTransferMsg {
 /*  FileTransfer Content types and Params defines */
 #define rfbDirContentRequest	1 /*  Client asks for the content of a given Server directory */
 #define rfbDirPacket			2 /*  Full directory name or full file name. */
-								  /*  Null content means end of Directory */
+                                                                  /*  Null content means end of Directory */
 #define rfbFileTransferRequest	3 /*  Client asks the server for the transfer of a given file */
 #define rfbFileHeader			4 /*  First packet of a file transfer, containing file's features */
 #define rfbFilePacket			5 /*  One chunk of the file */
@@ -1011,13 +1010,13 @@ typedef struct _rfbFileTransferMsg {
 #define rfbFileChecksums		12 /*  The zipped checksums of the destination file (Delta Transfer) */
 #define rfbFileTransferAccess	14 /*  Request FileTransfer authorization */
 
-								/*  rfbDirContentRequest client Request - content params  */
+                                                                /*  rfbDirContentRequest client Request - content params  */
 #define rfbRDirContent			1 /*  Request a Server Directory contents */
 #define rfbRDrivesList			2 /*  Request the server's drives list */
 #define rfbRDirRecursiveList	3 /*  Request a server directory content recursive sorted list */
 #define rfbRDirRecursiveSize	4 /*  Request a server directory content recursive size */
 
-								/*  rfbDirPacket & rfbCommandReturn  server Answer - content params */
+                                                                /*  rfbDirPacket & rfbCommandReturn  server Answer - content params */
 #define rfbADirectory			1 /*  Reception of a directory name */
 #define rfbAFile				2 /*  Reception of a file name  */
 #define rfbADrivesList			3 /*  Reception of a list of drives */
@@ -1027,10 +1026,10 @@ typedef struct _rfbFileTransferMsg {
 #define rfbAFileDelete			7 /*  Response to a delete file command  */
 #define rfbAFileRename			8 /*  Response to a rename file command  */
 #define rfbADirRename			9 /*  Response to a rename dir command  */
-#define rfbADirRecursiveListItem	10 
-#define rfbADirRecursiveSize		11 
+#define rfbADirRecursiveListItem	10
+#define rfbADirRecursiveSize		11
 
-								/*  rfbCommand Command - content params */
+                                                                /*  rfbCommand Command - content params */
 #define rfbCDirCreate			1 /*  Request the server to create the given directory */
 #define rfbCDirDelete			2 /*  Request the server to delete the given directory */
 #define rfbCFileCreate			3 /*  Request the server to create the given file */
@@ -1038,15 +1037,15 @@ typedef struct _rfbFileTransferMsg {
 #define rfbCFileRename			5 /*  Request the server to rename the given file  */
 #define rfbCDirRename			6 /*  Request the server to rename the given directory */
 
-								/*  Errors - content params or "size" field */
+                                                                /*  Errors - content params or "size" field */
 #define rfbRErrorUnknownCmd     1  /*  Unknown FileTransfer command. */
 #define rfbRErrorCmd			0xFFFFFFFF/*  Error when a command fails on remote side (ret in "size" field) */
 
 #define sz_rfbBlockSize			8192  /*  Size of a File Transfer packet (before compression) */
 #define rfbZipDirectoryPrefix   "!UVNCDIR-\0" /*  Transfered directory are zipped in a file with this prefix. Must end with "-" */
-#define sz_rfbZipDirectoryPrefix 9 
+#define sz_rfbZipDirectoryPrefix 9
 #define rfbDirPrefix			"[ "
-#define rfbDirSuffix			" ]"		
+#define rfbDirSuffix			" ]"
 
 
 
@@ -1067,9 +1066,9 @@ typedef struct _rfbTextChatMsg {
 #define sz_rfbTextChatMsg 8
 
 #define rfbTextMaxSize		4096
-#define rfbTextChatOpen		0xFFFFFFFF 
-#define rfbTextChatClose	0xFFFFFFFE  
-#define rfbTextChatFinished 0xFFFFFFFD  
+#define rfbTextChatOpen		0xFFFFFFFF
+#define rfbTextChatClose	0xFFFFFFFE
+#define rfbTextChatFinished 0xFFFFFFFD
 
 
 /*-----------------------------------------------------------------------------
@@ -1095,9 +1094,9 @@ typedef struct _rfbTextChatMsg {
 
 typedef struct {
     uint8_t type;			/* always rfbXvp */
-	uint8_t pad;
-	uint8_t version;	/* xvp extension version */
-	uint8_t code;      	/* xvp message code */
+        uint8_t pad;
+        uint8_t version;	/* xvp extension version */
+        uint8_t code;           /* xvp message code */
 } rfbXvpMsg;
 
 #define sz_rfbXvpMsg (4)
@@ -1113,14 +1112,14 @@ typedef struct {
 
 /*-----------------------------------------------------------------------------
  * Modif sf@2002
- * ResizeFrameBuffer - The Client must change the size of its framebuffer  
+ * ResizeFrameBuffer - The Client must change the size of its framebuffer
  */
 
 typedef struct _rfbResizeFrameBufferMsg {
     uint8_t type;			/* always rfbResizeFrameBuffer */
-	uint8_t pad1;
-	uint16_t framebufferWidth;	/*  FrameBuffer width */
-	uint16_t framebufferHeigth;	/*  FrameBuffer height */
+        uint8_t pad1;
+        uint16_t framebufferWidth;	/*  FrameBuffer width */
+        uint16_t framebufferHeigth;	/*  FrameBuffer height */
 } rfbResizeFrameBufferMsg;
 
 #define sz_rfbResizeFrameBufferMsg 6
@@ -1136,11 +1135,11 @@ typedef struct _rfbResizeFrameBufferMsg {
 
 typedef struct {
     uint8_t type;			/* always rfbReSizeFrameBuffer */
-	uint8_t pad1;
-	uint16_t desktop_w;	/* Desktop width */
-	uint16_t desktop_h;	/* Desktop height */
-	uint16_t buffer_w;	/* FrameBuffer width */
-	uint16_t buffer_h;	/* Framebuffer height */
+        uint8_t pad1;
+        uint16_t desktop_w;	/* Desktop width */
+        uint16_t desktop_h;	/* Desktop height */
+        uint16_t buffer_w;	/* FrameBuffer width */
+        uint16_t buffer_h;	/* Framebuffer height */
     uint16_t pad2;
 
 } rfbPalmVNCReSizeFrameBufferMsg;
@@ -1160,19 +1159,19 @@ typedef union {
     rfbSetColourMapEntriesMsg scme;
     rfbBellMsg b;
     rfbServerCutTextMsg sct;
-	rfbResizeFrameBufferMsg rsfb;
-	rfbPalmVNCReSizeFrameBufferMsg prsfb; 
-	rfbFileTransferMsg ft;
-	rfbTextChatMsg tc;
+        rfbResizeFrameBufferMsg rsfb;
+        rfbPalmVNCReSizeFrameBufferMsg prsfb;
+        rfbFileTransferMsg ft;
+        rfbTextChatMsg tc;
         rfbXvpMsg xvp;
 } rfbServerToClientMsg;
 
 
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * RDV Cache Encoding.  
+ * RDV Cache Encoding.
  * special is not used at this point, can be used to reset cache or other specials
- * just put it to make sure we don't have to change the encoding again.  
+ * just put it to make sure we don't have to change the encoding again.
  */
 
 typedef struct {
@@ -1358,7 +1357,7 @@ typedef struct _rfbSetScaleMsg {
 
 /*-----------------------------------------------------------------------------
  * Copyright (C) 2001 Harakan Software
- * PalmVNC 1.4 & 2.? SetScale Factor message 
+ * PalmVNC 1.4 & 2.? SetScale Factor message
  * SetScaleFactor - tell the RFB server to alter the scale factor for the
  * client buffer.
  */
@@ -1392,7 +1391,7 @@ typedef struct _rfbSetServerInputMsg {
 
 typedef struct _rfbSetSWMsg {
     uint8_t type;			/* always rfbSetSW */
-    uint8_t status;		
+    uint8_t status;
     uint16_t x;
     uint16_t y;
 } rfbSetSWMsg;
@@ -1414,16 +1413,16 @@ typedef union {
     rfbKeyEventMsg ke;
     rfbPointerEventMsg pe;
     rfbClientCutTextMsg cct;
-	rfbSetScaleMsg ssc;
-	rfbPalmVNCSetScaleFactorMsg pssf;
-	rfbSetServerInputMsg sim;
-	rfbFileTransferMsg ft;
-	rfbSetSWMsg sw;
-	rfbTextChatMsg tc;
+        rfbSetScaleMsg ssc;
+        rfbPalmVNCSetScaleFactorMsg pssf;
+        rfbSetServerInputMsg sim;
+        rfbFileTransferMsg ft;
+        rfbSetSWMsg sw;
+        rfbTextChatMsg tc;
         rfbXvpMsg xvp;
 } rfbClientToServerMsg;
 
-/* 
+/*
  * vncauth.h - describes the functions provided by the vncauth library.
  */
 
@@ -1431,10 +1430,10 @@ typedef union {
 #define CHALLENGESIZE 16
 
 //extern "C" {
-	int rfbEncryptAndStorePasswd(char *passwd, char *fname);
-	char *rfbDecryptPasswdFromFile(char *fname);
-	void rfbRandomBytes(unsigned char *bytes);
-	void rfbEncryptBytes(unsigned char *bytes, char *passwd);
+        int rfbEncryptAndStorePasswd(char *passwd, char *fname);
+        char *rfbDecryptPasswdFromFile(char *fname);
+        void rfbRandomBytes(unsigned char *bytes);
+        void rfbEncryptBytes(unsigned char *bytes, char *passwd);
 //}
 
 #endif
