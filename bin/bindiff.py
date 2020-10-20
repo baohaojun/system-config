@@ -10,10 +10,10 @@ parser.add_option("-2", "--seek2", dest="seek2", default=0, type="int", help="Se
 (options, args) = parser.parse_args(args=sys.argv[1:])
 
 if len(args) != 2:
-    print "Error: see usage"
+    print("Error: see usage")
 
-file1 = open(args[0])
-file2 = open(args[1])
+file1 = open(args[0], mode='br')
+file2 = open(args[1], mode='br')
 
 file1.seek(options.seek1)
 file2.seek(options.seek2)
@@ -26,19 +26,19 @@ while True:
 
     if not all((len(contentFile1), len(contentFile2))):
         if len(contentFile1):
-            print '%s has %d (or more) remaining' % (args[0], len(contentFile1))
+            print('%s has %d (or more) remaining' % (args[0], len(contentFile1)))
         if len(contentFile2):
-            print '%s has %d (or more) remaining' % (args[1], len(contentFile2))
+            print('%s has %d (or more) remaining' % (args[1], len(contentFile2)))
         break
 
     if contentFile1 != contentFile2:
         for x in range(min(len(contentFile1), len(contentFile2))):
             if contentFile1[x]!=contentFile2[x]:
-                print 'diff on pos %08x:%08x 1:%s 2:%s' % (
+                print('diff on pos %08x:%08x 1:%s 2:%s' % (
                     y*blockSize+x + options.seek1,
-                    y*blockSize+x + options.seek2, `contentFile1[x]`, `contentFile2[x]`)
+                    y*blockSize+x + options.seek2, repr(contentFile1[x]), repr(contentFile2[x])))
 
     if len(contentFile1) != len(contentFile2):
-        print 'size mismatch: %d:%d' % (len(contentFile1), len(contentFile2))
+        print('size mismatch: %d:%d' % (len(contentFile1), len(contentFile2)))
 
     y+=1

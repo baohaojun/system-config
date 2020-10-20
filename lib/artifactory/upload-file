@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # u:upload-url f:file-to-upload \
+    # n:new-name '?"不指定的话，通过 file-to-upload 计算"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:n:u:h \
+                      --long file-to-upload:,new-name:,upload-url:,help \
+                      -n $(basename -- $0) -- "$@")
+declare file_to_upload=
+declare new_name=
+declare upload_url=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--file-to-upload)
+            file_to_upload=$2
+            shift 2
+
+            ;;
+        -n|--new-name)
+            new_name=$2
+            shift 2
+
+            ;;
+        -u|--upload-url)
+            upload_url=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-f, '
+            printf %-24s '--file-to-upload=FILE_TO_UPLOAD'
+            echo
+            printf %6s '-n, '
+            printf %-24s '--new-name=NEW_NAME'
+            echo "不指定的话，通过 file-to-upload 计算"
+            printf %6s '-u, '
+            printf %-24s '--upload-url=UPLOAD_URL'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+my-curl() {
+    curl -f -s -u ${scm_artifactory_user}:$(git config -f $scm_secrets_conf ldap.${scm_artifactory_user}.password) "$@"
+}
+
+upload_url=$(artifactory p2u "${upload_url}")
+upload_url=$(artifactory ua2f -u "${upload_url}" -a)
+
+if test -z "${new_name}"; then
+    new_name=$(basename -- "${file_to_upload}")
+fi
+
+(
+    my-curl -X PUT "${upload_url%/}/${new_name}" -T "$file_to_upload" -v
+)

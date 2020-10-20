@@ -31,6 +31,7 @@ my $json = JSON->new->utf8->canonical->pretty;
 # ddebug '?"调试选项，打印出 build 相关的一些信息"' \
 # @:save-build-url-to '?"Specify a file where the new build url will be saved"' \
 # @rest-retry=1 '?"有时候 Jenkins rest api 调用会返回 502 proxy error，要不要 retry，默认要"' \
+# @:execute-with-url '?"指定要执行的命令，其中 %B 会替换为下游 build 的 build_url。只有在同步执行（指定 -s）的时候有效"' \
 
 ## end code-generator
 ## start generated code
@@ -41,6 +42,7 @@ Getopt::Long::Configure("posix_default");
 
 
 my $debug = 0;
+my $execute_with_url = "";
 my $extra_environ_params_regexp = "";
 my $extra_environ_params = "";
 my $extra_params_from_build_url = "";
@@ -64,6 +66,14 @@ my $handler_help = sub {
         printf "%30s", "";
     }
     printf "%s", "调试选项，打印出 build 相关的一些信息";
+    print "\n";
+    printf "%6s", '';
+    printf "%-24s", '--execute-with-url=EXECUTE-WITH-URL';
+    if (length('--execute-with-url=EXECUTE-WITH-URL') > 24 and length("指定要执行的命令，其中 %B 会替换为下游 build 的 build_url。只有在同步执行（指定 -s）的时候有效") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定要执行的命令，其中 %B 会替换为下游 build 的 build_url。只有在同步执行（指定 -s）的时候有效";
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--extra-environ-params-regexp=EXTRA-ENVIRON-PARAMS-REGEXP';
@@ -173,6 +183,7 @@ my $handler_help = sub {
 
 GetOptions (
     'debug|d!' => \$debug,
+    'execute-with-url=s' => \$execute_with_url,
     'extra-environ-params-regexp=s' => \$extra_environ_params_regexp,
     'extra-environ-params=s' => \$extra_environ_params,
     'extra-params-from-build-url=s' => \$extra_params_from_build_url,
@@ -190,6 +201,10 @@ GetOptions (
 
 
 ## end generated code
+
+if ($execute_with_url and not $synchronized) {
+    die "execute_with_url 必须在同步执行的时候才能使用";
+}
 
 use Encode;
 
@@ -454,6 +469,11 @@ while (1) {
 
     if ($build_url) {
         say STDERR "building at $build_url" if $debug;
+        if ($execute_with_url) {
+            $execute_with_url =~ s,\%B,$build_url,g;
+            say STDERR "execute_with_url: $execute_with_url";
+            run(EXIT_ANY, "${execute_with_url}");
+        }
         write_file($save_build_url_to, "$build_url") if $save_build_url_to;
 
         if ($verbose) {

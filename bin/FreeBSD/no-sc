@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 set -e
 export PATH=/usr/local/bin/:/usr/bin:$PATH
+
+if test "$(id -u)" = 0; then
+    umask 022
+fi
+
 "$@"

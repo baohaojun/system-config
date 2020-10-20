@@ -227,7 +227,7 @@
   # generate-getopt ggnu p:phone
   ## end code-generator
   ## start generated code
-  TEMP=$(getopt -o p:g --long phone:,gnu  -n $(basename -- $0) -- "$@")
+  TEMP=$(getopt -o p:g --long phone:,gnu  -n "$(basename -- "$0")" -- "$@")
   phone=
   gnu=false
   eval set -- "$TEMP"
@@ -268,7 +268,7 @@
                 fi
             ) getopt -o $(string-join '' $(for x in "${long_opts_sorted[@]}"; do x="${short_opts_map[$x]}"; if test "$x" -a "$x" != :; then echo $x; fi; done) h) \\
      --long $(string-join , $(for x in "${long_opts_sorted[@]}"; do echo ${long_opts_map[$x]}; done) help; output-no-long-opts) \\
-     -n \$(basename -- \$0) -- "\$@")
+     -n "\$(basename -- "\$0")" -- "\$@")
   #+END_SRC
 
 ** 输出变量初始值
