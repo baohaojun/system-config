@@ -125,6 +125,7 @@ if ($pipeline_build_url) {
 
 sub migrate_1_job($job) {
     runx("jc", "ue", "-j", "$job", "--jenkins-env", "$from_env", );
+    runx(EXIT_ANY, "rm", "-f", "${to_env}/${job}.xml");
     runx(EXIT_ANY, "jc", "ue", "-j", "$job", "--jenkins-env", "$to_env", );
     chdir("$ENV{HOME}/src/jenkins-tasks/.sites");
     if (runx(EXIT_ANY, "diff", "-q", "$from_env/${job}.xml", "${to_env}/${job}.xml") == 0) {

@@ -85,19 +85,18 @@ GetOptions (
 
 ## end generated code
 
-my $json_data = decode_json(qx(cat));
+my $json_data = $json->decode(scalar capture("cat|tee /dev/stderr"));
 
-my $from_jira_fields_json = decode_json
-    capturex(
-        "jkd", "-j", "${from_jira_url}",
+my $from_jira_fields_json = $json->decode(scalar capturex(
+        "debug-run", "jkd", "-j", "${from_jira_url}",
         "rest", "field"
-    );
+    ));
 
-my $to_jira_fields_json = decode_json
+my $to_jira_fields_json = $json->decode(scalar
     capturex(
         "jkd", "-j", "${to_jira_url}",
         "rest", "field"
-    );
+    ));
 
 sub no_spaces_equal($$) {
     my @pair = @_;
@@ -139,11 +138,11 @@ my %result;
 
 my %screen_filter_passed;
 if ($screen_filter) {
-    my $screen_json = decode_json
+    my $screen_json = $json->decode(scalar
         capturex(
             "jkd", "-j", "${from_jira_url}",
             "dump-screen", "-s", "$screen_filter"
-        );
+        ));
 
     for (@$screen_json) {
         my $fields = $_->{fields};
