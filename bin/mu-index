@@ -80,7 +80,7 @@ cat <<'EOFba23472b1552'
 ; {%emacs-lisp-mode%}
 (progn
   (mu4e-update-mail-and-index t)
-  (mu4e~request-contacts))
+  (mu4e~request-contacts-maybe))
 ; {%/emacs-lisp-mode%}
 EOFba23472b1552
 

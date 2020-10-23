@@ -1,4 +1,9 @@
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
+(cond
+ ((file-exists-p "/usr/share/emacs/site-lisp/mu4e/")
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/"))
+ ((file-exists-p "/usr/local/share/emacs/site-lisp/mu4e/")
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")))
+
 (require 'mu4e)
 
 (defun bhj-mu4e-view-with-thunderbird ()
