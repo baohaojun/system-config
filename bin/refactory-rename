@@ -297,7 +297,7 @@ function rename-files() {
     shift
     (
         cd -- "$dir";
-        for x in $(get-files-this-dir); do
+        for x in $(get-files-this-dir|sort -u); do
             if test -d "$x"; then
                 test -L "$x" || rename-files "$x" "$@"
             fi
@@ -317,7 +317,7 @@ function rename-files() {
                     if test "${#change_files[@]}" = 0; then
                         git mv "$x" "$y"
                     else
-                        mv "$x" "$y"
+                        mv "$x" "$y" -v
                     fi
                 fi
 
