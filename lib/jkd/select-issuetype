@@ -19,6 +19,7 @@ my $json = JSON->new->utf8->canonical->pretty;
 # {%/org-mode%}
 EOFc83131117f09
 
+my $jkd_verbose = "$ENV{jkd_verbose}";
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
 # p:project \
@@ -122,6 +123,8 @@ die "Must specify the project" unless $project;
 
 my $createmeta_json =
     $json->decode(scalar capturex("jkd", "rest", "issue/createmeta?projectKeys=${project}&expand=projects.issuetypes.fields"));
+
+say STDERR "create meta is " . decode_utf8($json->encode($createmeta_json)) if $jkd_verbose;
 
 my %issuetype_name_id_map;
 my @issuetypes = @{$createmeta_json->{projects}[0]{issuetypes}};

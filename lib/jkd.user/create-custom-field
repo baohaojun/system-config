@@ -122,7 +122,7 @@ if (not $type) {
     } @{$types_json->{types}};
 }
 
-my $fields_json = decode_json(qx(jkd rest field));
+my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field", ));
 
 sub nospace_strcmp($$) {
     my @args = @_;
