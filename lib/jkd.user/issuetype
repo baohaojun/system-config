@@ -462,8 +462,9 @@ if (is_exact_action "print") {
     );
 
 } elsif (is_exact_action "edit-screen") {
+    # *** edit-screen ***
     my $issuetype_json =
-        $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", $issuetype_name));
+        $json->decode(scalar capturex("debug-run", "cached-run", "-e", "scm_jira_url", "jkd", "dump-issuetype", "-i", $issuetype_name));
 
     my $screen_name =
         decode_utf8(scalar capturex("debug-run", "select-args", "-p", "Which screen do you want?", keys %{$issuetype_json->{screens}}));
