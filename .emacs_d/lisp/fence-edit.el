@@ -318,7 +318,7 @@ The edit buffer is expected to be the current buffer."
     (set-buffer-modified-p nil)
     (with-current-buffer (marker-buffer beg)
       (cond
-       ((buffer-file-name) (save-buffer))
+       ((buffer-file-name) (let ((write-file-functions nil)) (save-buffer)))
        (fence-edit-mark-beg (fence-edit-save))))))
 
 (defun fence-edit-exit ()
