@@ -12,6 +12,12 @@ use utf8;
 use feature 'signatures';
 no warnings "experimental::signatures";
 
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -110,6 +116,9 @@ GetOptions (
 
 my %jobs_migrated;
 
+chdir("$ENV{HOME}/src/jenkins-tasks/");
+runx("save.-to-git", "-m", "save before migrate-pipeline-jobs");
+
 if ($pipeline_build_url) {
     my $pipeline_build_log =
         decode_utf8(scalar capturex("jc", "curl", "${pipeline_build_url}consoleText", ));
@@ -120,12 +129,13 @@ if ($pipeline_build_url) {
 
     (my $pipeline_job = $pipeline_build_url) =~ s,.*?/job/(.*?)/.*,$1,;
     push @jobs_to_migrate, $pipeline_job;
+    say STDERR "Need to migrate jobs: " . decode_utf8($json->encode(\@jobs_to_migrate));
 }
 
 
 sub migrate_1_job($job) {
+    runx(EXIT_ANY, "rm", "-f", "${from_env}/${job}.xml", "${to_env}/${job}.xml");
     runx("jc", "ue", "-j", "$job", "--jenkins-env", "$from_env", );
-    runx(EXIT_ANY, "rm", "-f", "${to_env}/${job}.xml");
     runx(EXIT_ANY, "jc", "ue", "-j", "$job", "--jenkins-env", "$to_env", );
     chdir("$ENV{HOME}/src/jenkins-tasks/.sites");
     if (runx(EXIT_ANY, "diff", "-q", "$from_env/${job}.xml", "${to_env}/${job}.xml") == 0) {
