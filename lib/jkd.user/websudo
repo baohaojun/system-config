@@ -37,6 +37,22 @@ web-curl() {
         debug_run=debug-run
     fi
 
+    if test $# = 1; then
+        local old_arg=$1
+        if [[ $1 =~ atl_token=$ ]]; then
+            atl_token=$(cat $COOKIES | grep atlassian.xsrf.token | pn 7)
+            set -- "$1${atl_token}"
+        fi
+
+        if ! [[ $1 =~ ^http ]]; then
+            set -- "${scm_jira_url}$1"
+        fi
+
+        if test "$old_arg" != "$1"; then
+            log "changed url from $old_arg to $1"
+        fi
+    fi
+
     $debug_run \
     curl-f -s -b "$COOKIES" -H "$HEADER" "$@"
 }
