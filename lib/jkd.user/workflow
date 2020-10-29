@@ -237,6 +237,13 @@ sub name2id($name, $datatype) {
                 system("jkd", "go", "workflow");
             }
         } else {
+            our %matched_ids_map;
+            my $matched_ids = join(".", sort {$a cmp $b} @matched_ids);
+            if (not $matched_ids_map{$matched_ids}) {
+                $matched_ids_map{$matched_ids} = decode_utf8(scalar capturex("select-args", "-p", "请选择你想要的 id，或直接 Ctrl-C 退出线下处理（比如删掉多余的 ids）", @matched_ids));
+            }
+
+            return $matched_ids_map{$matched_ids};
             $extra_msg = "Please remove extra ones!"
         }
         die "Can't find exactly 1 id for ${datatype} name $name: '@matched_ids' ($extra_msg)" unless $keep_running;
