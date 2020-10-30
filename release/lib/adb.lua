@@ -374,6 +374,8 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       elseif pkg == "com.tencent.mm" then
          -- text = text:gsub("\n", "​\n")
          putclip(emoji_for_weixin(text))
+      elseif pkg == "com.ss.android.lark" then
+         putclip(emoji_for_fs(text))
       elseif pkg == "com.sina.weibo"  then
          putclip(emoji_for_weibo(text))
       elseif pkg == "com.alibaba.android.rimet" then

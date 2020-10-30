@@ -168,3 +168,12 @@ M.ding_search_and_select = function(name)
    jump_from_to("fs/jianqun-weixuanzhong", "fs/jianqun-yixuanzhong")
    jump_from_to("fs/jianqun-sousuo-close", "fs/jianqun-sousuo-hint")
 end
+
+M.emoji_for_fs = function(text)
+   return emoji_rewrite(text, fs_emojis_remap)
+end
+
+dofile_res, M.fs_emojis_remap = pcall(dofile, "fs-emojis-remap.lua")
+if not dofile_res then
+   M.fs_emojis_remap = {}
+end
