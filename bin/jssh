@@ -39,6 +39,10 @@ export JS_EXECUTE=$(
     done
        )
 
+if test -e ~/.local-config/.ssssh/exec-$host; then
+    log "source env for $host"
+    . ~/.local-config/.ssssh/exec-$host
+fi
 host=${host#js-}
 
 export JS_HOST_SAVE="$host"
