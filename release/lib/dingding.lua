@@ -186,6 +186,8 @@ M.wrench_picture = function (...)
       return picture_to_qq_chat(pics)
    elseif window == "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" then
       return picture_to_dingding_chat(pics)
+   elseif window == M.fs_chat_activity then
+      return picture_to_feishu_chat(pics)
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.SplashActivity" then
       return picture_to_qq_chat(pics)
    elseif window == "com.sina.weibo/com.sina.weibo.weiyou.DMSingleChatActivity" then

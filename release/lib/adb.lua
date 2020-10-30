@@ -717,6 +717,8 @@ M.wrench_call = function(number)
          find_zidanduanxin_friend(who)
       elseif where == "dd" then
          wrench_find_dingding_contact(who)
+      elseif where == "fs" then
+         wrench_find_feishu_contact(who)
       elseif where == "coffee" then
          get_coffee(who)
       elseif where == "mail" then

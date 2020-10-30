@@ -265,10 +265,12 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
             wrenchSock = NULL;
             qDebug() << "prepare to reconnect wrenchSock";
         }
-        qDebug() << "connect to localhost 28888";
+
+        int port = 28888 + QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0").toInt();
+        qDebug() << "connect to localhost " << port;
         wrenchSock = new QTcpSocket();
-        wrenchSock->connectToHost("localhost", 28888 + QProcessEnvironment::systemEnvironment().value("WRENCH_INSTANCE", "0").toInt(), QIODevice::ReadWrite);
-        wrenchSock->waitForConnected();
+        wrenchSock->connectToHost("127.0.0.1", port, QIODevice::ReadWrite);
+        qDebug() << wrenchSock->waitForConnected();
     }
 
     QString res;
@@ -284,10 +286,15 @@ QString LuaExecuteThread::adbQuickInputAm(QString arg)
 
             wrenchSock->write(action.toUtf8() + "\n");
             wrenchSock->flush();
+            bool timeout = false;
             if (!wrenchSock->waitForReadyRead(2000)) {
+                timeout = true;
                 emit gotSomeLog("info", QString("命令超时： ") + action);
             }
             res = wrenchSock->readLine();
+            if (timeout) {
+                emit gotSomeLog("info", QString("命令超时返回： ") + res);
+            }
         }
     } else if (arg.startsWith("am ")) {
         wrenchSock->write(arg.toUtf8() + "\n");

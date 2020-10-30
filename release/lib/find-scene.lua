@@ -311,8 +311,8 @@ M.click_scene = function (scene, settings)
    log("Click scene: %s", scene)
    settings = settings or {}
 
-   x_plus = settings.x or M.get_scene_w(scene)
-   y_plus = settings.y or M.get_scene_h(scene)
+   x_plus = settings.x or M.get_scene_w(scene) / 2
+   y_plus = settings.y or M.get_scene_h(scene) / 2
    click_times = settings.click_times or 1
    click_wait = settings.click_wait or .1
 
@@ -327,11 +327,14 @@ M.click_scene = function (scene, settings)
    local xy = scenes_map[scene]
    xy = split(" ", xy)
    for n = 1, click_times do
-      log("click %s +(%d %d) @%d", scene, x_plus, y_plus, n)
+      local click_x = xy[1] + x_plus
+      local click_y = xy[2] + y_plus
+
+      log("click %s +(%d %d) = input tap %s %s @%d", scene, x_plus, y_plus, click_x, click_y, n)
       if settings.long_press then
-         adb_long_press_XY(xy[1] + x_plus, xy[2] + y_plus, settings.long_press)
+         adb_long_press_XY(click_x, click_y, settings.long_press)
       else
-         adb_tap_XY(xy[1] + x_plus, xy[2] + y_plus)
+         adb_tap_XY(click_x, click_y)
       end
       if n < click_times then
          sleep(click_wait)
@@ -352,7 +355,7 @@ M.jump_from_to = function(from_scene, to_scene, settings)
          return
       end
 
-      if find_scene(from_scene) then
+      if settings.skip_refind or find_scene(from_scene) then
          settings.skip_refind = 1
          if action then
             action()

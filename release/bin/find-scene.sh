@@ -15,13 +15,13 @@ fi
 function picture-matches() {
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P t:default-tolerance=15
+    # generate-getopt -P t:default-tolerance=unset
     ## end code-generator
     ## start generated code
     TEMP=$(POSIXLY_CORRECT=true getopt -o t:h \
                           --long default-tolerance:,help \
-                          -n $(basename -- $0) -- "$@")
-    declare default_tolerance=15
+                          -n "$(basename -- "$0")" -- "$@")
+    declare default_tolerance=unset
     eval set -- "$TEMP"
     while true; do
         case "$1" in
@@ -54,6 +54,15 @@ function picture-matches() {
 
 
     ## end generated code
+
+    if test "${default_tolerance}" = unset; then
+        if test -e $1.tol; then
+            default_tolerance=$(cat $1.tol)
+            # log "scene tol changed to $default_tolerance"
+        else
+            default_tolerance=15
+        fi
+    fi
 
     if test ! -e "$1" -o ! -e "$2"; then
         die "Usage: picture-matches FILE1.PNG FILE2.PNG"

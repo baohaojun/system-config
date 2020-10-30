@@ -1196,7 +1196,8 @@ M.set_ext_args = function(...)
 end
 
 M.start_app = function(to_start, keyed_args)
-   if not to_start:match("/") then
+   if not to_start:match("/") or to_start:match("/$") then
+      to_start = to_start:gsub("/$", "") -- to make it work with M.fs_pkg
       pkg = to_start
       local app_table = M.app_table or M.get_app_table()
       if app_table[pkg] then
