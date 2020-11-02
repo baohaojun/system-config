@@ -329,7 +329,7 @@ function adb() {
         fi
         exit
     elif test $# -gt 1 -a "$1" = shell; then
-        if ! is-tty-io;then
+        if ! is-tty-io || ! ps -o stat= -p $$ | grep -P '\+' -q;then
             set -o pipefail
             if test $myname = adb -o $myname = my-adb; then
                 exec adb-quote "$@" | tr -d '\r'
