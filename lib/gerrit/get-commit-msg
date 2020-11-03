@@ -1,5 +1,21 @@
 #!/usr/bin/env perl
 use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl c:change u:url f:format='"raw"' '?"可以指定 raw 或 base64，后者可直接用于 jc build"'
@@ -61,7 +77,7 @@ if (not $change and $url) {
 }
 
 use JSON;
-my $change_json = decode_json(qx(gr q -q change:$change -e CURRENT_REVISION));
+my $change_json = $json->decode(scalar capturex("debug-run", "gr", "q", "-q", "change:$change", "-e", "CURRENT_REVISION"));
 
 my $id = $change_json->[0]{id};
 my $revision = $change_json->[0]{current_revision};
@@ -74,4 +90,4 @@ if ($format eq "base64") {
 }
 
 
-print qx(gr rest -a a/changes/$id/revisions/$revision/files/%2fCOMMIT_MSG/content|$program);
+run("debug-run gr rest -a a/changes/$id/revisions/$revision/files/%2fCOMMIT_MSG/content|$program")

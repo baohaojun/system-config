@@ -193,6 +193,12 @@ if ("${json_data}") {
     my $new_json = $json_data->{$role_name};
     use Array::Utils qw(:all);
 
+    runx(EXIT_ANY, "misc", "diff-json",
+         decode_utf8($json->encode($old_json)),
+         decode_utf8($json->encode($new_json)));
+
+    runx("yes-or-no-p", "更新指定的角色配置：" . $role_name);
+
     @add_group = @{$new_json->{sids}};
 
     $role_projects_pattern = $new_json->{pattern};
@@ -268,6 +274,8 @@ for my $sid (@add_group) {
   say STDERR "assign $sid to $role_name";
   system "jc", "curl", "role-strategy/strategy/assignRole", "--data", "$assign_data", "-X", "POST";
 }
+
+
 
 run("jc getRole -n $role_name|jq .");
 capture("c jc getRoles -v &>/dev/null &");
