@@ -162,7 +162,7 @@ M.need_confirm = function(fmt, ...)
    end
 end
 
-M.ding_search_and_select = function(name)
+M.feishu_search_and_select = function(name)
    wrench_post(name)
    wait_for_scene("fs/jianqun-weixuanzhong")
    jump_from_to("fs/jianqun-weixuanzhong", "fs/jianqun-yixuanzhong")

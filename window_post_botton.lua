@@ -25,6 +25,7 @@ map['com.alibaba.android.rimet/com.alibaba.android.user.contact.organization.vie
 map['com.alibaba.android.rimet/com.alibaba.android.user.login.NewUserLoginActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.login.SignUpWithPwdActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.personstatus.WorkingStatusDetailActivity'] = 'No-Post'
+map['com.alibaba.android.rimet/com.alibaba.android.user.personstatus.WorkingStatusEditReplyContentActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.profile.namecard.UserBusinessProfileActivityV2'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.user.settings.activity.ChangePwdActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.lightapp.runtime.activity.CommonWebViewActivity'] = 'No-Post'
