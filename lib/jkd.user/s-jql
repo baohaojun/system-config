@@ -17,4 +17,5 @@ use URI::QueryParam;
 
 my $u = URI->new("$ENV{scm_jira_url}issues/");
 $u->query_param(jql => join(" ", @ARGV));
+say STDERR "$u";
 runx("firefox", $u);

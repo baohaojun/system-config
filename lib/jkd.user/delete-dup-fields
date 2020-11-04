@@ -1,10 +1,17 @@
 #!/usr/bin/env perl
 use strict;
-use v5.10; # for say
+use v5.10.1; # for say and switch
 use autodie qw(:all);
-
-use JSON;
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -14,7 +21,7 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# pprint-only
+# pprint-only n:delete-names='()'
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -23,11 +30,20 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my @delete_names = ();
 my $print_only = 0;
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-n, ';
+    printf "%-24s", '--delete-names=DELETE-NAMES';
+    if (length('--delete-names=DELETE-NAMES') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
     printf "%6s", '-p, ';
     printf "%-24s", '--[no]print-only';
     if (length('--[no]print-only') > 24 and length() > 0) {
@@ -47,6 +63,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'delete-names|n=s' => \@delete_names,
     'print-only|p!' => \$print_only,
     'help|h!' => \&$handler_help,
 );
@@ -54,13 +71,33 @@ GetOptions (
 
 ## end generated code
 
+use Data::Dumper;
+use JSON;
 
-my $fields_json = decode_json(qx(jkd get field));
+my $json = JSON->new->utf8->canonical->pretty;
+
+my $fields_json = $json->decode(scalar capturex("jkd", "get", "field", ));
 
 my %name_id_map;
+
+my %delete_names;
+if (@delete_names) {
+    map {
+        $delete_names{$_} = 1
+    } @delete_names;
+} else {
+    map {
+        $delete_names{$_->{name}} = 1
+    } @$fields_json;
+}
+
 for (@$fields_json) {
-    my $name = encode_utf8 $_->{name};
+
+
+    my $name = $_->{name};
     my $id = $_->{id};
+
+    next unless $delete_names{$name};
 
     if (not $name_id_map{$name}) {
         $name_id_map{$name} = $id;
@@ -69,6 +106,7 @@ for (@$fields_json) {
         my $delete_id = $id1;
         if ($id gt $id1) {
             $delete_id = $id;
+            $name_id_map{$name} = $id1;
         }
 
         $delete_id =~ s,.*_,,;
