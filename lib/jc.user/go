@@ -70,6 +70,7 @@ declare -A function_url_map=(
     ["Gerrit Manual Trigger"]=gerrit_manual_trigger/
     ["roles"]=role-strategy/
     ["credentials"]=credentials/store/system/domain/_/
+    ["select-a-node"]=xxx
 )
 
 
@@ -86,6 +87,11 @@ if test "${which_func}" = select-a-job; then
     job=$(select-args -i "$1" -o -p "Which job do you want?" $jobs)
 
     url=job/${job}
+elif test "${which_func}" = select-a-node; then
+    nodes=$(cached-run -e scm_jenkins_url jc -j ${jenkins_url} list-nodes)
+    node=$(select-args -i "$1" -o -p "Which node do you want?" $nodes)
+
+    url=computer/${node}
 elif test "${which_func}" = "Gerrit Trigger this change"; then
     gerrit_url=$(echo ${original_url} | perl -pe 's,(/c/(.*?/\+/)?\d+/?).*,$1,')
     jc gerrit-trigger -s Gerrit -u ${gerrit_url} &> ~/tmp/gerrit-trigger.txt
