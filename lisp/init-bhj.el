@@ -84,6 +84,21 @@ Returns (point) if current-char is visible."
             (goto-char (line-end-position)))
         (goto-char (min my-point (point-max)))))))
 
+(defun bhj-quote-it ()
+  "Quote it."
+  (interactive)
+  (when (region-active-p)
+    (save-restriction
+      (narrow-to-region (point) (mark))
+      (goto-char (point-min))
+      (insert "「")
+      (goto-char (point-max))
+      (search-backward-regexp "[^ \n]")
+      (forward-char)
+      (insert "」\n--------------------------------\n"))))
+
+
+
 (add-hook 'before-save-hook #'fix-cjk-spaces)
 
 (define-key global-map (kbd "s-SPC") #'fix-cjk-spaces)
