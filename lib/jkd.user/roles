@@ -27,6 +27,8 @@ my $json = JSON->new->utf8->canonical->pretty;
 - 若不指定 role，会让你手动选择
 * action = query
 查询 USER 在哪些 ROLES 里
+* action = del-user
+将指定用户从指定 role 里删除
 # {%/org-mode%}
 EOFc83131117f09
 

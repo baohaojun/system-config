@@ -130,8 +130,8 @@ map {
     if ($_ =~ m,^user/,) {
         (my $user = $_) =~ s,user/,,;
         my $user_json = $json->decode(scalar capturex("gr", "rest", "-a", "a/accounts/$user/", ));
-        my $name = encode_utf8 $user_json->{name};
-        (my $mailname = encode_utf8 $user_json->{email}) =~ s,\@.*,,;
+        my $name = $user_json->{name};
+        (my $mailname = $user_json->{email}) =~ s,\@.*,,;
         my $username = $user;
 
         if ($name ne $username || $name ne $mailname) {

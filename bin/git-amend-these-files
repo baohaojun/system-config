@@ -56,6 +56,50 @@ done
 
 ## end generated code
 
+if test "${list_changed_only}" = true; then
+    git restore --staged .
+    if ! git-any-changes; then
+        exit
+    fi
+   changed_files=$(
+       git diff --name-only HEAD
+                )
+
+   commited_files=$(
+       git diff --name-only $(repo-remote)/$(repo-branch)..HEAD
+                 )
+   declare -A changed_files_map
+   for f in $changed_files; do
+       changed_files_map[$f]=1
+   done
+
+   declare -A commited_files_map
+   for f in $commited_files; do
+       log "$f is committed"
+       commited_files_map[$f]=1
+   done
+
+   for f in "${!changed_files_map[@]}"; do
+       log "checking $f"
+       if test "${commited_files_map[$f]}" = 1; then
+           (
+               echo "**************** current changes ****************"
+               echo
+               git diff HEAD "${f}"
+               echo
+               echo "**************** old changes ****************"
+               echo
+               git log $(repo-branch)..HEAD -p "${f}"
+           ) | less
+           if yes-or-no-p "amend $f"; then
+               git-amend-these-files "$f"
+           fi
+       fi
+   done
+
+   exit
+fi
+
 
 if test $# != 0; then
     files="$*"

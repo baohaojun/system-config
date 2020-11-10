@@ -19,6 +19,12 @@ if {[info exists env(JS_EXECUTE)]} {
     set js_execute {}
 }
 
+if {[info exists env(JS_NO_SYSTEM_CONFIG)]} {
+    set js_no_system_config 1
+} else {
+    set js_no_system_config 0
+}
+
 if [regexp {^\d+$} $js_target] {
     set js_target .4.$js_target
 }
@@ -102,7 +108,12 @@ expect "MFA auth" {
             log_user 1
         } else {
             send "REMOTEPROTOCOL=jssh PS1HOSTNAME=js-$js_target REMOTEIP=$local_ip REMOTEUSER=$env(USER) "
-            send "exec bash -c 'sc=system-config/bin/sc; for d in /apps/scm/prod ~; do f=\${d}/\${sc}; if test -e \${f}; then \${f} try; break; fi; done\n"
+            if {$js_no_system_config == 0} {
+                send "exec bash -c 'sc=system-config/bin/sc; for d in /apps/scm/prod ~; do f=\${d}/\${sc}; if test -e \${f}; then \${f} try; break; fi; done\n"
+            } else {
+                send "exec bash -c 'bash\n"
+            }
+
             send ": EOF'\n";
                 if { $js_execute ne {} } {
                     expect -re ": EOF.*\n" {

@@ -1,0 +1,112 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# e:email p:password \
+# f:full-name \
+# u:username \
+#
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $email = "";
+my $full_name = "";
+my $password = "";
+my $username = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-e, ';
+    printf "%-24s", '--email=EMAIL';
+    if (length('--email=EMAIL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--full-name=FULL-NAME';
+    if (length('--full-name=FULL-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--password=PASSWORD';
+    if (length('--password=PASSWORD') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--username=USERNAME';
+    if (length('--username=USERNAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'email|e=s' => \$email,
+    'full-name|f=s' => \$full_name,
+    'password|p=s' => \$password,
+    'username|u=s' => \$username,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+my @params_values = (
+    "email=${email}",
+    "selectedApplications=jira-softwareselectedApplications=jira-software",
+    "Create=Create user",
+    "password=$password",
+    "fullname=${full_name}",
+    "username=${username}",
+    "password=${password}"
+);
+
+runx "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/user/AddUser.jspa", "-X", "POST", "-H", 'Content-Type: application/x-www-form-urlencoded', map { ('--data-urlencode', $_) } @params_values;

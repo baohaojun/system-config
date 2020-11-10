@@ -107,6 +107,7 @@ putclip ${scm_jira_url}browse/$issue
 
 if test "${do_commit}" = true; then
     jkd commit -t "${type,,}" -i ${issue}
+    jkd tri -i "${issue}" -t Done
 fi
 
 if test "${move_to_board}"; then
