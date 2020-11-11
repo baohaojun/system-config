@@ -50,9 +50,11 @@ xterm -e myscr bash -c '
 # {%sh-mode%}
 for adb_serial in 9dbe919 162c850; do
     if ! adb -s $adb_serial true; then
-        mail-bhj -s "$adb_serial not found" --no-input || true
+        if sleep 120 && ! adb -s $adb_serial true; then
+            mail-bhj -s "$adb_serial not found" --no-input || true
+        fi
     fi
-done
+done &
 
 exec 9< ~/system-config/etc/subdir-symlinks/.vnc/xstartup
 
