@@ -13,13 +13,13 @@ EOFe9576f8668e0
 # generate-getopt -P '?"${comment_doc}"' \
     # u:url '?"要下载的文件的 url 地址，用户必须自己确保这是一个文件，否则行为未定义"' \
     # d:download-dir=. '?"下载到哪个目录，默认为当前目录"' \
-    # n:file-name '?"如不指定，使用 url 中包含的文件名"' \
+    # n:file-name '?"如不指定，使用 url 中包含的文件名。如果 file-name 中带有目录信息，则下载到 download-dir 的子目录下"' \
     #
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o d:n:u:h \
                       --long download-dir:,file-name:,url:,help \
-                      -n $(basename -- $0) -- "$@")
+                      -n "$(basename -- "$0")" -- "$@")
 declare download_dir=.
 declare file_name=
 declare url=
@@ -54,7 +54,7 @@ while true; do
             echo "下载到哪个目录，默认为当前目录"
             printf %6s '-n, '
             printf %-24s '--file-name=FILE_NAME'
-            echo "如不指定，使用 url 中包含的文件名"
+            echo "如不指定，使用 url 中包含的文件名。如果 file-name 中带有目录信息，则下载到 download-dir 的子目录下"
             printf %6s '-u, '
             printf %-24s '--url=URL'
             echo "要下载的文件的 url 地址，用户必须自己确保这是一个文件，否则行为未定义"

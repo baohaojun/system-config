@@ -236,11 +236,6 @@ if test ! -d $dir; then
 
                 exit 1
             )
-
-            if test "${scm_gerrit_server}" && [[ "$url" =~ ${scm_gerrit_server} ]]; then
-                gitdir=$(git rev-parse --git-dir);
-                scp -p -P ${scm_gerrit_port} ${scm_gerrit_user}@${scm_gerrit_server}:hooks/commit-msg ${gitdir}/hooks/
-            fi || true
         }
 
         if ! (
@@ -290,6 +285,13 @@ fi
 (
     cd $dir
     git submodule update --init "${extra_submod_update_args[@]}" || true
+
+    if test "${scm_gerrit_server}" && [[ "$url" =~ ${scm_gerrit_server} ]]; then
+        gitdir=$(git rev-parse --git-dir);
+        if ! grep -q 'Change-Id' ${gitdir}/hooks/commit-msg &>/dev/null; then
+            debug-run scp -p -P ${scm_gerrit_port} ${scm_gerrit_user}@${scm_gerrit_server}:hooks/commit-msg ${gitdir}/hooks/
+        fi
+    fi || true
 )
 
 (

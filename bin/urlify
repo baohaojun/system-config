@@ -3,13 +3,16 @@ set -e
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt uun-urlify \
         # @uc '?"Use up case: %XX instead of %xx"' \
-        # e:extra-chars=: '?"其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"'
+        # e:extra-chars=: '?"其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"' \
+        # @is-url=true '?"检查一下输入是不是一个 url，如果是的话，不要修改 url 的路径之前的部分"' \
+
 ## end code-generator
 ## start generated code
 TEMP=$( getopt -o e:uh \
-               --long extra-chars:,uc,un-urlify,help,no-uc,no-un-urlify \
-               -n $(basename -- $0) -- "$@")
+               --long extra-chars:,is-url,uc,un-urlify,help,no-is-url,no-uc,no-un-urlify \
+               -n "$(basename -- "$0")" -- "$@")
 declare extra_chars=:
+declare is_url=true
 declare uc=false
 declare un_urlify=false
 eval set -- "$TEMP"
@@ -19,6 +22,15 @@ while true; do
         -e|--extra-chars)
             extra_chars=$2
             shift 2
+
+            ;;
+        --is-url|--no-is-url)
+            if test "$1" = --no-is-url; then
+                is_url=false
+            else
+                is_url=true
+            fi
+            shift
 
             ;;
         --uc|--no-uc)
@@ -50,6 +62,9 @@ while true; do
             printf "%30s" ""
             echo "其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"
             printf "%6s" " "
+            printf %-24s '--[no-]is-url'
+            echo "检查一下输入是不是一个 url，如果是的话，不要修改 url 的路径之前的部分"
+            printf "%6s" " "
             printf %-24s '--[no-]uc'
             echo "Use up case: %XX instead of %xx"
             printf %6s '-u, '
@@ -59,14 +74,14 @@ while true; do
             shift
             ;;
         --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error: $(. bt; echo; bt | indent-stdin)"
-            ;;
-    esac
-done
+           shift
+           break
+           ;;
+           *)
+               die "internal error: $(. bt; echo; bt | indent-stdin)"
+               ;;
+           esac
+    done
 
 
 ## end generated code
@@ -90,8 +105,18 @@ fi |
     rm-last-nl | perl -npe "$(
 cat <<'EOFac2c09ecde21' | . .replace-%% --
 # {%perl-mode%}
-s#([^-/=_0-9a-zA-Z. ]|[<%extra-chars%>])#<%case%> sprintf("%%%02x", ord($1))#seg;
-s/ /+/g;
+my $extra_chars = '[%extra_chars%]';
+my $is_url = '[%is_url%]';
+
+my $url_prefix;
+if ($is_url eq 'true') {
+    use URI;
+    $_ = URI->new($_);
+} else {
+    s#([^-/=_0-9a-zA-Z. ]|[$extra_chars])#<%case%> sprintf("%%%02x", ord($1))#seg;
+    s/ /+/g;
+}
+
 # {%/perl-mode%}
 EOFac2c09ecde21
 )"
