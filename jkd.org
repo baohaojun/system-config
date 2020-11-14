@@ -579,9 +579,13 @@ This is simple using Perl's “reflection”.
   Don't know how to deal with ${field_name}, please input with json.
 
   EOF
-                          while (1) {
-                              $required_fields->{$field_key} = eval 'decode_json(qx(ask-for-input -p "what is your input json?"))';
-                              last unless $@;
+                          if ($field_key eq "reporter") {
+                              $required_fields->{$field_key} = "$ENV{scm_jira_user}";
+                          } else {
+                              while (1) {
+                                  $required_fields->{$field_key} = eval 'decode_json(qx(ask-for-input -p "what is your input json for $field_key?"))';
+                                  last unless $@;
+                              }
                           }
                       }
                   }
@@ -674,11 +678,12 @@ This is simple using Perl's “reflection”.
       my %edited_fields;
 
       if ($fields_json eq "{}") {
-          work_with_all_fields(
+          work_with_all_fields (
               $issue_project, $issue_type_id, %edited_fields,
               {
                   edit_issue_json_obj => $json_issue,
-              });
+              }
+          );
       } else {
           my $issue_fields_obj = decode_json get("rest/api/2/issue/${issue_to_edit}?expand=names")->content;
           my $fields_json_obj = decode_json(encode_utf8($fields_json));
@@ -923,12 +928,12 @@ This is simple using Perl's “reflection”.
           };
       }
 
-      if ($assign_to_myself and exists $required_fields{assignee}) {
+      say STDERR "required_fields is " . decode_utf8($json->encode(\%required_fields)) if $jkd_verbose;
+
+      if ($assign_to_myself) {
           $required_fields{assignee} = {
               name => $ENV{scm_jira_user}
-          };
-      } else {
-          delete $required_fields{assignee};
+          } unless exists $required_fields{assignee};
       }
 
       my $ua = LWP::UserAgent->new;
