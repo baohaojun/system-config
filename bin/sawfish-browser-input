@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 for x in "$@"; do
-    sawfish-send-window-event '(- |^)(Mozilla Firefox|Chromium|Iceweasel)\$' "$x"
+    sawfish-send-window-event '(- |— |^)(Mozilla Firefox|Chromium|Iceweasel)\$' "$x"
     sleep ${SAWFISH_BROWSER_INPUT_SLEEP:-.2}
 done
