@@ -119,19 +119,60 @@ my %jobs_migrated;
 chdir("$ENV{HOME}/src/jenkins-tasks/");
 runx("save.-to-git", "-m", "save before migrate-pipeline-jobs");
 
-if ($pipeline_build_url) {
-    my $pipeline_build_log =
-        decode_utf8(scalar capturex("jc", "curl", "${pipeline_build_url}consoleText", ));
+my %seen_builds;
+my %seen_jobs;
 
-    while ($pipeline_build_log =~ m,Scheduling project: (\S+),g) {
-        push @jobs_to_migrate, $1;
+sub add_job_to_migrate($job) {
+    if (not $seen_jobs{$job}) {
+        say STDERR "add job: $job";
+        push @jobs_to_migrate, $job;
+        $seen_jobs{$job} = 1;
     }
-
-    (my $pipeline_job = $pipeline_build_url) =~ s,.*?/job/(.*?)/.*,$1,;
-    push @jobs_to_migrate, $pipeline_job;
-    say STDERR "Need to migrate jobs: " . decode_utf8($json->encode(\@jobs_to_migrate));
 }
 
+sub add_build_to_migrate($job, $build_num) {
+    if (not $seen_builds{"$job/$build_num"}) {
+        $seen_builds{"$job/$build_num"} = 1;
+        get_jobs_from_build_log("job/$job/$build_num");
+    }
+}
+
+sub get_jobs_from_build_log($build_url) {
+    say STDERR "get_jobs_from_build_log: $build_url";
+    my $build_log =
+        decode_utf8(scalar capturex("jc", "curl", "${build_url}consoleText", ));
+
+    while ($build_log =~ m,Scheduling project: (\S+),g) {
+        add_job_to_migrate($1);
+    }
+
+    # 14:31:40 Waiting for the completion of EP-Tools-Upload-Folder-To-Artifactory
+    # 14:31:50 EP-Tools-Upload-Folder-To-Artifactory #135 completed. Result was SUCCESS
+    # 14:31:50 Build step 'Trigger/call builds on other projects' changed build result to SUCCES
+
+    while ($build_log =~ m,Waiting for the completion of (\S+),g) {
+        add_job_to_migrate($1);
+    }
+
+    while ($build_log =~ m,(\S+) #(\d+) completed. Result was,g) {
+        add_job_to_migrate($1);
+        add_build_to_migrate($1, $2);
+    }
+
+    while ($build_log =~ m,Starting building: (\S+) #(\d+),) {
+        add_job_to_migrate($1);
+        add_build_to_migrate($1, $2);
+    }
+
+    (my $job = $build_url) =~ s,(?:.*?/)?job/(.*?)/.*,$1,;
+    add_job_to_migrate($job);
+}
+
+if ($pipeline_build_url) {
+    get_jobs_from_build_log($pipeline_build_url);
+}
+
+say STDERR "Need to migrate jobs: " . decode_utf8($json->encode(\@jobs_to_migrate));
 
 sub migrate_1_job($job) {
     runx(EXIT_ANY, "rm", "-f", "${from_env}/${job}.xml", "${to_env}/${job}.xml");
