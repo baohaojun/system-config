@@ -45,6 +45,11 @@ if ( $lc_mode eq "man" ) {
 } elsif (-x "$ENV{HOME}/system-config/etc/imenu/$lc_mode") {
   system("$ENV{HOME}/system-config/etc/imenu/$lc_mode $stdin > ~/.imenu-ctags.$$");
 } else {
+    my %mode_map = (
+        cperl => "perl",
+    );
+
+    $mode = $mode_map{$mode} if $mode_map{$mode};
     system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin > ~/.imenu-ctags.$$");
     # system("ctags-ajoke --c-kinds=+p --language-force=$mode -xu --extra=+q $stdin 2>&1|tee ~/.imenu-ctags.$$ ~/.imenu-ctagsx");
 }
