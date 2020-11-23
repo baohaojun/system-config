@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # j:jira-home t:save-to-dir n:file-name
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o n:j:t:h \
+                      --long file-name:,jira-home:,save-to-dir:,help \
+                      -n "$(basename -- "$0")" -- "$@")
+declare file_name=
+declare jira_home=
+declare save_to_dir=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -n|--file-name)
+            file_name=$2
+            shift 2
+
+            ;;
+        -j|--jira-home)
+            jira_home=$2
+            shift 2
+
+            ;;
+        -t|--save-to-dir)
+            save_to_dir=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-n, '
+            printf %-24s '--file-name=FILE_NAME'
+            echo
+            printf %6s '-j, '
+            printf %-24s '--jira-home=JIRA_HOME'
+            echo
+            printf %6s '-t, '
+            printf %-24s '--save-to-dir=SAVE_TO_DIR'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+sudo cp ${jira_home}/database/h2db.mv.db "${save_to_dir}"/${file_name}.mv.db -iv
