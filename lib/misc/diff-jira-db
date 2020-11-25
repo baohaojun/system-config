@@ -52,7 +52,93 @@ done
 
 ## end generated code
 
+get-1-file() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # nnext-file
+
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o nh \
+                          --long next-file,help,no-next-file \
+                          -n "$(basename -- "$0")" -- "$@")
+    declare next_file=false
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -n|--next-file|--no-next-file)
+                if test "$1" = --no-next-file; then
+                    next_file=false
+                else
+                    next_file=true
+                fi
+                shift
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %6s '-n, '
+                printf %-24s '--[no-]next-file'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    (
+        cd $save_to_dir
+        if test "$#" = 0; then
+            select-args -p "Which file do you want?" $(ls *.mv.db | sort)
+        elif [[ $1 =~ ^[0-9]+$ ]]; then
+            if test "$next_file" = true; then
+                set -- "$(($1 + 1))"
+            fi
+            ls *.mv.db | sort |head -n "$1" | tail -n 1
+        else
+            file=$(
+                select-args -p "Which file do you want" $(ls *.mv.db | grep -P "$1")
+                )
+            if test "${next_file}" = true; then
+                ls *.mv.db | perl -ne 'chomp; if ($_ eq "'"$file"'") {print scalar <>; exit}'
+            else
+                echo "$file"
+            fi
+        fi | perl -pe 's,.mv.db$,,'
+    )
+}
+
+if test "$#" = 0; then
+    set -- "$(get-1-file)" "$(get-1-file)"
+elif test "$#" = 1; then
+    set -- "$(get-1-file "$1")" "$(get-1-file -n  "$1")"
+    hint "new args: $*"
+fi
+
 misc dump-jira-db -t "${save_to_dir}" -n "$1" > "$1".sql
 misc dump-jira-db -t "${save_to_dir}" -n "$2" > "$2".sql
 
-diff "$1".sql "$2".sql
+diff "$1".sql "$2".sql | less
+log misc diff-jira-db -t "${save_to_dir}" "$1" "$2"

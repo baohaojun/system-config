@@ -70,4 +70,4 @@ done
 
 ## end generated code
 
-sudo cp ${jira_home}/database/h2db.mv.db "${save_to_dir}"/${file_name}.mv.db -iv
+sudo cp ${jira_home}/database/h2db.mv.db "${save_to_dir}"/$(now.).${file_name}.mv.db -iv

@@ -153,6 +153,10 @@ if test "${default}" != true; then
     top_window=$(sawfish-top-window)
     if [[ $top_window =~ Firefox ]]; then
         current_url=$(get-firefox-tab-url)
+        if [[ $1 =~ 1|2 ]]; then
+            private-firefox -i "$1" -- --new-tab "${current_url}"
+            exit
+        fi
         for match_key in "${!url_switch_map[@]}"; do
             if [[ $match_key =~ ^\$ ]]; then
                 match_url=$(eval echo $match_key)
