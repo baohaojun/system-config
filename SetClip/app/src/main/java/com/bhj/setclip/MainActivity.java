@@ -26,6 +26,8 @@ import android.app.NotificationManager;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -120,6 +122,20 @@ public class MainActivity extends Activity {
         // In this sample, we'll use this text for the title of the notification
         CharSequence title = "Wrench Input";
         if (! text.isEmpty()) {
+            try {
+                File WrenchDir = new File(sdcard, "Wrench");
+                File capsuleDir = new File(WrenchDir, "capsule");
+                File capsuleFile = new File(capsuleDir, "capsule.txt");
+
+                capsuleDir.mkdirs();
+                FileWriter fw = new FileWriter(capsuleFile, true);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.append(text + "\n\n");
+                    bw.flush();
+                    bw.close();
+            } catch (IOException e) {
+                Log.e("bhj", String.format("%s:%d: ", "MainActivity.java", 133), e);
+            }
             Notification.Builder notifBuidler = new Notification.Builder(this) // the context to use
                     .setSmallIcon(R.drawable.ic_launcher)  // the status icon
                     .setWhen(System.currentTimeMillis())  // the timestamp for the notification
