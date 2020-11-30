@@ -18,17 +18,7 @@ my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
-这条脚本用于给 gerrit 仓库分配权限，参考 gr assign-permissions --help
-
-#+begin_src sh
-  gr assign-permissions \
-     -r repo_name \
-     -b branch_pattern \
-     -g groups \
-     -p permission_values \
-     --exclusive
-#+end_src
-
+这条脚本用于给 gerrit 仓库配置 gerrit label 检查项
 # {%/org-mode%}
 EOFc83131117f09
 

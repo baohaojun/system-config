@@ -234,7 +234,7 @@ if ($job_url !~ m,://.*/job/, ) {
   $job_url = "$ENV{scm_jenkins_url}job/$job_url"
 }
 
-(my $job_name = $job_url) =~ s,.*?/job/(.*)/.*,$1,;
+(my $job_name = $job_url) =~ s,.*?/job/(.*)(/.*|$),$1,;
 
 (my $job_api_url = $job_url) =~ s,/*$,/api/json,;
 $job_api_url = shell_quote $job_api_url;
@@ -475,6 +475,7 @@ while (1) {
 
     if ($build_url) {
         (my $build_number = $build_url) =~ s,.*/job/.*?/(\d+).*,$1,;
+        say STDERR "building at $build_url";
         say STDERR "Starting building: ${job_name} #${build_number}";
         if ($execute_with_url) {
             $execute_with_url =~ s,\%B,$build_url,g;

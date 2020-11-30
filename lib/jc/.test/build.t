@@ -76,11 +76,15 @@ set -x
 EOF86c1be707507
            )
 
+    cd $TESTDIR
     echo "${job_xml}" > test-jc.xml
 
     jc create-job test-jc.xml
-    jc build -j test-jc -s -v
+    jc build -j test-jc -s -v 2>&1 | tee build.log
 
+    grep -P "^Scheduling project: test-jc" build.log
+    grep -P "^building at ${scm_jira_url}job/test-jc/\d+/$" build.log
+    grep -P "^Starting building: test-jc #\d+$" build.log
 }
 
 test-1-command 'for x in $(seq 1 10); do sleep 1; done'
