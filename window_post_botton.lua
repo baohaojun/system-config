@@ -9,6 +9,7 @@ map['com.adobe.reader/com.adobe.creativesdk.foundation.internal.auth.AdobeAuthSi
 map['com.aibang.bjtraffic/com.uicps.activity.UICPSWebActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailDetailActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.alimei.mail.activity.MailLoginActivity'] = 'No-Post'
+map['com.alibaba.android.rimet/com.alibaba.android.dingtalk.doccore.ui.activity.EditorToolBarCommonActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.AddRobotActivity'] = 'No-Post'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity'] = 'Find-Button'
 map['com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ConfirmCreatingConversationActivity'] = 'No-Post'
