@@ -101,10 +101,12 @@ else
               app/build/outputs/apk/release/app-release-aligned.apk
 fi
 
-adb install -r ${apk} ||
+adb install -g -r ${apk} ||
+    adb install -r ${apk}
     (
         adb uninstall com.bhj.setclip &&
-            adb install ${apk}
+            adb install -g -r ${apk} ||
+                adb install ${apk}
     )
 
 . .before-install-hook
