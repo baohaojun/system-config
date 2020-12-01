@@ -3,7 +3,7 @@
 (defvar emoji-hash-table (make-hash-table :test 'equal) "The hash table for emojis.")
 (defvar emoji-names () "The names of the emojis.")
 (defvar emoji-history nil "History of emojis input.")
-(defvar emoji-regexp nil "The regexp for finding emojis.")
+(defvar emoji-regexp-sh-quoted nil "The emojis regexp quoted for shortening")
 (defvar emoji-alist nil "The alist for emojis.")
 
 (defun setup-emoji-hash ()
@@ -18,8 +18,7 @@
           (load "~/.local-config/etc/wrench-icons.el"))
       (load wrench-emojis-file)))
   (setq emoji-alist emojis-string-list)
-  (setq emoji-regexp nil)
-  (let (emoji-regexp-list)
+  (let (emoji-regexp-list emoji-regexp)
     (while emojis-string-list
       (let* ((emoji (caar emojis-string-list))
              (key (concat " " emoji " " (caddar emojis-string-list)))
@@ -39,16 +38,20 @@
         (puthash key emoji emoji-hash-table)
         (setq emoji-names (cons key emoji-names)))
       (setq emojis-string-list (cdr emojis-string-list)))
-    (setq emoji-regexp (string-join (nreverse (sort emoji-regexp-list #'string<)) "\\|"))
-    (setq emoji-regexp (replace-regexp-in-string "\\([][]\\)" "\\\\\\1" emoji-regexp)))
+    (setq emoji-regexp (string-join (nreverse (sort emoji-regexp-list #'string<)) "|"))
+    (setq emoji-regexp-sh-quoted (shell-quote-argument emoji-regexp)))
   (setq emoji-names (reverse emoji-names)))
+
+(defun active-emoji-regexp ()
+  "Run a helper perl script to calculate active emojis in the current buffer as a regexp."
+  (shell-command-on-region-to-string (concat "DEBUG_RUN_REEXEC=true debug-run active-emoji-regexp " emoji-regexp-sh-quoted " 2>~/tmp/active-emoji-regexp.log") (point-min) (point-max)))
 
 (defun org2pdf-emojify ()
   (interactive)
   (unless emoji-alist
     (setup-emoji-hash))
   (replace-regexp
-   emoji-regexp
+   (active-emoji-regexp)
    '(replace-eval-replacement
      replace-quote
      (format
@@ -60,7 +63,7 @@
   (unless emoji-alist
     (setup-emoji-hash))
   (replace-regexp
-   emoji-regexp
+   (active-emoji-regexp)
    '(replace-eval-replacement
      replace-quote
      (format

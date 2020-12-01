@@ -123,6 +123,20 @@ if (not $private_section) {
             $profile_ini->newval("${private_section}", "IsRelative", 1);
             $profile_ini->RewriteConfig();
             last;
+        } else {
+            my $section = "Profile$_";
+            if ($profile_ini->val($section, "Path") eq "${private_profile_dir}") {
+                for (($_ + 1) .. 100) {
+                    if (not $profile_ini->SectionExists("Profile$_")) {
+                        last;
+                    }
+                    if ($profile_ini->val("Profile$_", "Path") eq "${private_profile_dir}") {
+                        say STDERR "Delete section: Profile$_";
+                        $profile_ini->DeleteSection("Profile$_");
+                    }
+                }
+                last;
+            }
         }
     }
 }

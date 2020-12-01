@@ -1,0 +1,36 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+my $emoji_regexp_total = $ARGV[0];
+@ARGV = ();
+my @emojis = map {quotemeta $_} split("\\|", $emoji_regexp_total);
+$emoji_regexp_total = join("|", @emojis);
+say STDERR "emoji total: $emoji_regexp_total";
+my $emoji_regexp_total_re = qr($emoji_regexp_total);
+
+my %matched_texts;
+
+while(<>) {
+    $_ = decode_utf8($_);
+    while (m,$emoji_regexp_total_re,g) {
+        $matched_texts{$&} = 1;
+    }
+}
+
+if (%matched_texts) {
+    (my $output = join("\\|", keys %matched_texts)) =~ s,(\[|\]),\\$1,g;
+    print $output;
+} else {
+    print "No emojis found in it";
+}

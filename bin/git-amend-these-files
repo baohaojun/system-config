@@ -89,7 +89,7 @@ if test "${list_changed_only}" = true; then
                echo
                echo "**************** old changes ****************"
                echo
-               git log $(repo-branch)..HEAD -p "${f}"
+               git log $(repo-remote-branch)..HEAD -p "${f}"
            ) | less
            if yes-or-no-p "amend $f"; then
                git-amend-these-files "$f"

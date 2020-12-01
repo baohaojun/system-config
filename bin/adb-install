@@ -21,6 +21,39 @@ touch $mark_file
         fi
     }
 
+    function unlock-HUAWEI() {
+        if test "${adb_top_activity}" = com.android.packageinstaller/com.android.packageinstaller.PackageInstallerActivity; then
+            adb shell input tap 774 2103
+            sleep 1
+            adb shell input tap 528 1962
+            sleep 1
+        elif test "${adb_top_activity}" = com.android.packageinstaller/com.android.packageinstaller.InstallSuccess; then
+            exit
+        fi
+    }
+
+    function unlock-HUAWEI/ALP-TL00() {
+        if test "${adb_top_activity}" = com.android.packageinstaller/com.android.packageinstaller.PackageInstallerActivity; then
+            adb shell input tap 1070 2385
+            sleep 1
+            adb shell input tap 528 1962
+            sleep 1
+        elif test "${adb_top_activity}" = com.android.packageinstaller/com.android.packageinstaller.InstallSuccess; then
+            exit
+        fi
+    }
+
+    function unlock-SMARTISAN() {
+        if test "$adb_top_activity" =  警告 -o "$adb_top_activity" = "Warning"; then
+            if test "$phone_size" != init=1080x1920; then
+                adb-tap 736 1086
+            else
+                adb-tap 747 1186
+            fi
+            break
+        fi
+    }
+
     brand=$(
         adb shell getprop ro.product.brand
          )
@@ -37,17 +70,19 @@ touch $mark_file
         adb_top_activity=$(adb-top-activity)
         if test "$(type -t "unlock-${brand}/${model}")" = function; then
             "unlock-${brand}/${model}"
+        elif test "$(type -t "unlock-${brand}")" = function; then
+            "unlock-${brand}"
         else
-            if test "$adb_top_activity" =  警告 -o "$adb_top_activity" = "Warning"; then
-                if test "$phone_size" != init=1080x1920; then
-                    adb-tap 736 1086
-                else
-                    adb-tap 747 1186
-                fi
-                break
+            if test -t "report-adb-install-error" = function; then
+                report-adb-install-error "${brand}" "${model}" "不知道怎么安装，请配置一下 ~/system-config/bin/adb-install 文件"
             fi
+            die "Don't know how to install $brand/$model"
         fi
     done
+
+    if test -t "report-adb-install-error" = function; then
+        report-adb-install-error "${brand}" "${model}" "adb install 没有成功，怀疑是没有打开 adb shell input tap 操作的权限，请确认 adb shell input tap 命令是否工作"
+    fi
 ) 2>&1 |
     if is-jenkins; then
         cat

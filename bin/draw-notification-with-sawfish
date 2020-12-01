@@ -103,6 +103,10 @@ fi
 
 exec >/dev/null 2>&1
 tmp_head=/tmp/$(basename $0).$$.head
+tmp_content=/tmp/$(basename $0).$$.content
+tmp_icon=/tmp/$(basename $0).$$.icon
+
+. atexit rm -f "${tmp_head}" "${tmp_content}" "${tmp_icon}"
 
 echo -n "$headline" > $tmp_head
 
@@ -120,11 +124,9 @@ EOF
 
 if test -z "$content"; then
     sawfish-client -e "(bhj-draw-notification t nil $read_head)"
-    rm $tmp_head
     exit
 fi
 
-tmp_content=/tmp/$(basename $0).$$.content
 
 if test "${wrap}" = true; then
     content=$(echo -n "$content" | wrap) ||
@@ -148,7 +150,6 @@ EOF
 )
 
 if test "$icon" -a -r "$icon"; then
-    tmp_icon=/tmp/$(basename $0).$$.icon
 
     echo -n "$icon" > $tmp_icon
 
@@ -177,9 +178,6 @@ fi
 
     md5=$(cat "$tmp_head" | md5sum | pn 1)
     md5file=~/.cache/system-config/logs/bhj-notify.$md5
-    rm -f "$tmp_icon" "$tmp_content" "$tmp_head"
-
-
 
     fuser -k "$md5file" || true
 
