@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+check-and-fix-init() {
+    if test "$1" = init; then
+        if test -d .repo/manifests; then
+            (
+                cd .repo/manifests
+                git-set-alternates ||
+                    log "Error: Can't set git alternates"
+            )
+        fi
+    fi
+}
+
+check-and-fix-init "$1"
+
+repo "$@"
+
+check-and-fix-init "$1"
