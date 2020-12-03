@@ -101,16 +101,18 @@ if test -z "$headline"; then
     content="$*"
 fi
 
-exec >/dev/null 2>&1
-tmp_head=/tmp/$(basename $0).$$.head
-tmp_content=/tmp/$(basename $0).$$.content
-tmp_icon=/tmp/$(basename $0).$$.icon
+exec &> ~/tmp/draw-notification-with-sawfish.log
+(
+    set -x
+    tmp_head=/tmp/$(basename $0).$$.head
+    tmp_content=/tmp/$(basename $0).$$.content
+    tmp_icon=/tmp/$(basename $0).$$.icon
 
-. atexit rm -f "${tmp_head}" "${tmp_content}" "${tmp_icon}"
+    . atexit rm -f "${tmp_head}" "${tmp_content}" "${tmp_icon}"
 
-echo -n "$headline" > $tmp_head
+    echo -n "$headline" > $tmp_head
 
-read_head=$(cat <<EOF
+    read_head=$(cat <<EOF
 (progn
   (let* ((file (open-file "$tmp_head" 'read))
          (str "")
@@ -120,24 +122,24 @@ read_head=$(cat <<EOF
     (close-file file)
     str))
 EOF
-)
+             )
 
-if test -z "$content"; then
-    sawfish-client -e "(bhj-draw-notification t nil $read_head)"
-    exit
-fi
+    if test -z "$content"; then
+        sawfish-client -e "(bhj-draw-notification t nil $read_head)"
+        exit
+    fi
 
 
-if test "${wrap}" = true; then
-    content=$(echo -n "$content" | wrap) ||
-    (
-        myscr bash -c 'read -p "Can not wrap. Your emacs has problem? Please check!"' >/dev/null 2>&1 || true
-    )
-fi
+    if test "${wrap}" = true; then
+        content=$(echo -n "$content" | wrap) ||
+            (
+                myscr bash -c 'read -p "Can not wrap. Your emacs has problem? Please check!"' >/dev/null 2>&1 || true
+            )
+    fi
 
-echo -n "${content}" > $tmp_content
+    echo -n "${content}" > $tmp_content
 
-read_content=$(cat <<EOF
+    read_content=$(cat <<EOF
 (progn
   (let* ((file (open-file "$tmp_content" 'read))
          (str "")
@@ -147,13 +149,13 @@ read_content=$(cat <<EOF
     (close-file file)
     str))
 EOF
-)
+                )
 
-if test "$icon" -a -r "$icon"; then
+    if test "$icon" -a -r "$icon"; then
 
-    echo -n "$icon" > $tmp_icon
+        echo -n "$icon" > $tmp_icon
 
-    read_icon=$(cat <<EOF
+        read_icon=$(cat <<EOF
 (progn
   (let* ((file (open-file "$tmp_icon" 'read))
          (str "")
@@ -163,31 +165,32 @@ if test "$icon" -a -r "$icon"; then
     (close-file file)
     str))
 EOF
-    )
-else
-    read_icon='"~/system-config/.sawfish/Kill.png"'
-fi
+                 )
+    else
+        read_icon='"~/system-config/.sawfish/Kill.png"'
+    fi
 
 
-(
-    sawfish-client -e "
+    (
+        sawfish-client -e "
 (progn
   (bind-keys window-keymap \"Button1-Click\" '(system \"sawfish-clean-screen&\"))
   (bind-keys global-keymap \"Button1-Click\" '(system \"sawfish-clean-screen&\"))
   (bhj-draw-notification nil (make-image $read_icon) $read_head $read_content))"
 
-    md5=$(cat "$tmp_head" | md5sum | pn 1)
-    md5file=~/.cache/system-config/logs/bhj-notify.$md5
+        md5=$(cat "$tmp_head" | md5sum | pn 1)
+        md5file=~/.cache/system-config/logs/bhj-notify.$md5
 
-    fuser -k "$md5file" || true
+        fuser -k "$md5file" || true
 
-    (
-        set -e
-        sleep 10 > $md5file
-        rm $md5file
-        draw-notification-with-sawfish --headline "$headline"
-        sawfish-client -e "(unbind-keys global-keymap \"Button1-Click\")
+        (
+            set -e
+            sleep 10 > $md5file
+            rm $md5file
+            draw-notification-with-sawfish --headline "$headline"
+            sawfish-client -e "(unbind-keys global-keymap \"Button1-Click\")
                            (bind-keys window-keymap \"Button1-Click\" 'raise-and-pass-through-click))"
 
-    )&
+        )&
+    )
 )&

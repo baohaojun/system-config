@@ -143,11 +143,6 @@ fi
 cache_dir=$(absp "${cache_dir}")
 mkdir -p "$cache_dir"
 
-cmd_md5=$(echo "$*" | md5sum | pn 1)
-cmd_md5_file_prefix=${cache_dir}/${cmd_md5:0:2}/${cmd_md5:2}
-
-mkdir -p "${cmd_md5_file_prefix%/*}"
-
 get-env-and-cmd() {
     for x in $extra_envvars; do
         declare -x -p "$x" 2>/dev/null || true
@@ -155,6 +150,11 @@ get-env-and-cmd() {
 
     echo -n "$*"
 }
+
+cmd_md5=$(get-env-and-cmd "$@" | md5sum | pn 1)
+cmd_md5_file_prefix=${cache_dir}/${cmd_md5:0:2}/${cmd_md5:2}
+
+mkdir -p "${cmd_md5_file_prefix%/*}"
 
 if test -e "${cmd_md5_file_prefix}.cmd" -a -e "${cmd_md5_file_prefix}.out" &&
         test "$(cat "${cmd_md5_file_prefix}.cmd")" = "$(get-env-and-cmd "$@")"; then

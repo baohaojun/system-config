@@ -124,6 +124,10 @@ output=$(
 
 log "Finished importing: ${workflow_name}"
 
+if echo "${output}" | grep 'Error parsing workflow XML'; then
+    die "Workflow XML 格式错误！"
+fi
+
 if echo "${output}" | grep 'A workflow with this name already exists.' -q; then
     die "这个 Workflow 已存在！"
 fi

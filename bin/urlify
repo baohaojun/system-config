@@ -4,7 +4,7 @@ set -e
     # generate-getopt uun-urlify \
         # @uc '?"Use up case: %XX instead of %xx"' \
         # e:extra-chars=: '?"其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"' \
-        # @is-url=true '?"检查一下输入是不是一个 url，如果是的话，不要修改 url 的路径之前的部分"' \
+        # @is-url=auto '?"检查一下输入是不是一个 url，如果是的话，不要修改 url 的路径之前的部分，默认是 auto，会猜测其是不是"' \
 
 ## end code-generator
 ## start generated code
@@ -12,7 +12,7 @@ TEMP=$( getopt -o e:uh \
                --long extra-chars:,is-url,uc,un-urlify,help,no-is-url,no-uc,no-un-urlify \
                -n "$(basename -- "$0")" -- "$@")
 declare extra_chars=:
-declare is_url=true
+declare is_url=auto
 declare uc=false
 declare un_urlify=false
 eval set -- "$TEMP"
@@ -63,7 +63,7 @@ while true; do
             echo "其他希望改写成 %xx 形式的字符，默认不会改写的字符是：[-/=_0-9a-zA-Z. ]"
             printf "%6s" " "
             printf %-24s '--[no-]is-url'
-            echo "检查一下输入是不是一个 url，如果是的话，不要修改 url 的路径之前的部分"
+            echo "检查一下输入是不是一个 url，如果是的话，不要修改 url 的路径之前的部分，默认是 auto，会猜测其是不是"
             printf "%6s" " "
             printf %-24s '--[no-]uc'
             echo "Use up case: %XX instead of %xx"
@@ -74,14 +74,14 @@ while true; do
             shift
             ;;
         --)
-           shift
-           break
-           ;;
-           *)
-               die "internal error: $(. bt; echo; bt | indent-stdin)"
-               ;;
-           esac
-    done
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
 
 
 ## end generated code
@@ -108,15 +108,25 @@ cat <<'EOFac2c09ecde21' | . .replace-%% --
 my $extra_chars = '[%extra_chars%]';
 my $is_url = '[%is_url%]';
 
+use URI;
 my $url_prefix;
+
 if ($is_url eq 'true') {
-    use URI;
     $_ = URI->new($_);
 } else {
-    s#([^-/=_0-9a-zA-Z. ]|[$extra_chars])#<%case%> sprintf("%%%02x", ord($1))#seg;
-    s/ /+/g;
+    my $use_re = 1;
+    if ($is_url eq 'auto') {
+        my $url = URI->new($_);
+        if ($url->scheme) {
+            $_ = $url;
+            $use_re = 0;
+        }
+    }
+    if ($use_re) {
+        s#([^-/=_0-9a-zA-Z. ]|[$extra_chars])#<%case%> sprintf("%%%02x", ord($1))#seg;
+        s/ /+/g;
+    }
 }
-
 # {%/perl-mode%}
 EOFac2c09ecde21
 )"

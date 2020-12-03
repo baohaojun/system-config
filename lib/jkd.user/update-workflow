@@ -1,0 +1,25 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+my $workflowFile = $ARGV[0];
+if (! -e $workflowFile) {
+    die "Must specify workflow File";
+}
+
+(my $workflowName = $workflowFile) =~ s,.xml$,,;
+$workflowName =~ s,.*/,,;
+
+my $jkd_command = decode_utf8(scalar capturex(EXIT_ANY, "lookup-file", "-e", "jkd.sh", )) || "jkd";
+
+runx("debug-run", "$jkd_command", "upgrade-workflow.2", "-w", "$workflowName", "-f", "$workflowFile", );

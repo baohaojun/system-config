@@ -16,13 +16,17 @@ use File::Slurp;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
+把指定的 workflow scheme 里的某 issuetype 的 workflow，替换为 new-wf-name。
 
+如果指定 --global，则把 jira 全局所有使用 wf-name 的地方，通通换成 new-wf-name（其他 scheme、issuetype 参数，全都自动计算）。
 # {%/org-mode%}
 EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# @:wf-name @:new-wf-name @:scheme-id @scheme-active @:issuetype-name
+# @:wf-name @:new-wf-name @:scheme-id @scheme-active @:issuetype-name \
+# @global
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -31,6 +35,7 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $global = 0;
 my $issuetype_name = "";
 my $new_wf_name = "";
 my $scheme_active = 0;
@@ -39,69 +44,91 @@ my $wf_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
-    print "\n\n选项和参数：\n";
-    printf "%6s", '';
-    printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
-    if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+print "\n\n选项和参数：\n";
+printf "%6s", '';
+printf "%-24s", '--[no]global';
+if (length('--[no]global') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '';
-    printf "%-24s", '--new-wf-name=NEW-WF-NAME';
-    if (length('--new-wf-name=NEW-WF-NAME') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '';
+printf "%-24s", '--issuetype-name=ISSUETYPE-NAME';
+if (length('--issuetype-name=ISSUETYPE-NAME') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '';
-    printf "%-24s", '--[no]scheme-active';
-    if (length('--[no]scheme-active') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '';
+printf "%-24s", '--new-wf-name=NEW-WF-NAME';
+if (length('--new-wf-name=NEW-WF-NAME') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '';
-    printf "%-24s", '--scheme-id=SCHEME-ID';
-    if (length('--scheme-id=SCHEME-ID') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '';
+printf "%-24s", '--[no]scheme-active';
+if (length('--[no]scheme-active') > 24 and length() > 0) {
     print "\n";
-    printf "%6s", '';
-    printf "%-24s", '--wf-name=WF-NAME';
-    if (length('--wf-name=WF-NAME') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '';
+printf "%-24s", '--scheme-id=SCHEME-ID';
+if (length('--scheme-id=SCHEME-ID') > 24 and length() > 0) {
     print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
+printf "%6s", '';
+printf "%-24s", '--wf-name=WF-NAME';
+if (length('--wf-name=WF-NAME') > 24 and length() > 0) {
+    print "\n";
+    printf "%30s", "";
+}
+printf "%s", ;
+print "\n";
 
     my $exit_value = 0;
     if (@_ && $_[0] ne "help" && $_[1] != 1) {
-        $exit_value = shift @_;
-        print "@_\n";
+       $exit_value = shift @_;
+       print "@_\n";
     }
 
     exit($exit_value);
 };
 
 GetOptions (
-    'issuetype-name=s' => \$issuetype_name,
-    'new-wf-name=s' => \$new_wf_name,
-    'scheme-active!' => \$scheme_active,
-    'scheme-id=s' => \$scheme_id,
-    'wf-name=s' => \$wf_name,
-    'help|h!' => \&$handler_help,
-);
+'global!' => \$global,
+'issuetype-name=s' => \$issuetype_name,
+'new-wf-name=s' => \$new_wf_name,
+'scheme-active!' => \$scheme_active,
+'scheme-id=s' => \$scheme_id,
+'wf-name=s' => \$wf_name,
+'help|h!' => \&$handler_help,
+    );
 
 
 ## end generated code
 
+if ($global) {
+    my $wf_schemes =
+        $json->decode(scalar capturex("debug-run", "cached-run", "-e", "scm_jira_url", "jkd", "export-workflowschemes"));
+
+    for my $scheme (@$wf_schemes) {
+        for my $issuetype_name (grep {$scheme->{issuetypes_workflow}{$_} eq $wf_name} keys %{$scheme->{issuetypes_workflow}}) {
+                runx("debug-run", "jkd", "wfs-switch-wf", "--scheme-id", $scheme->{id},
+                     ( $scheme->{active} ? "--scheme-active" : "--noscheme-active" ),
+                     "--issuetype-name", $issuetype_name, "--new-wf-name", "$new_wf_name");
+            }
+    }
+    exit;
+}
 
 my $scheme_json;
 my $scheme_update_api;

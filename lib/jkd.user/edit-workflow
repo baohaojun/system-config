@@ -1,0 +1,94 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# u:url
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $url = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-u, ';
+    printf "%-24s", '--url=URL';
+    if (length('--url=URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'url|u=s' => \$url,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+use URI;
+use URI::QueryParam;
+$url = URI->new($url);
+my $host_url = URI->new($url);
+$host_url->path_query("/");
+
+print $host_url;
+for my $key ($url->query_param) {
+    if ($key =~ m,^(workflowName|wfName|name)$,) {
+        my $workflow = $url->query_param($key);
+        my $workDir = "$ENV{HOME}/src/jenkins-tasks/.sites/" . $url->host;
+        runx("mkdir", "-p", $workDir);
+        my $workflowFile = "$workDir/$workflow.xml";
+
+        if ($ENV{scm_jira_user} ne $ENV{scm_jira_admin_user}) {
+            say STDERR "jira user not admin? this is probably not good!";
+        }
+        runx("debug-run", "jkd", "-j", "${host_url}", "export-workflow-as-xml", "-w", "${workflow}", "-c", "-f", "$workflowFile.before-edit.xml", );
+        if (-e $workflowFile && runx(EXIT_ANY, "diff", "-q", "$workflowFile", "$workflowFile.before-edit.xml", ) != 0) {
+            runx(EXIT_ANY, "meld", "$workflowFile", "$workflowFile.before-edit.xml");
+            if (runx(EXIT_ANY, "yes-or-no-p", "Replace with server version?",) == 0 ) {
+                runx("save.-to-git", "-m", "auto commit at $(now), before jkd edit-workflow", );
+                runx("cp", "$workflowFile.before-edit.xml", "$workflowFile", );
+                runx("save.-to-git", "-m", "auto commit at $(now), after jkd edit-workflow", );
+            } else {
+                runx("bhj-notify", "edit-workflow", "do not replace", );
+                say STDERR "Should not replace, exit";
+                exit;
+            }
+        }
+        runx("e", "${workflowFile}");
+    }
+}

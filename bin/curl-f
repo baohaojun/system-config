@@ -9,14 +9,19 @@ set -e
 exec {STDOUT_DUP}>&1
 exec {STDERR_NEW}>/tmp/curl-f.$$.err
 . atexit rm -f /tmp/curl-f.$$.err
-curl --write-out '%{stderr}http_code: %{http_code}' "$@" -o /dev/fd/1 2>&${STDERR_NEW} > >(cat >&${STDOUT_DUP})
+if curl --write-out '%{stderr}http_code: %{http_code}' "$@" -o /dev/fd/1 2>&${STDERR_NEW} > >(cat >&${STDOUT_DUP}); then
 
-http_code=$(cat /tmp/curl-f.$$.err | perl -ne 'print $1 if m,http_code: (\d+),')
-cat /tmp/curl-f.$$.err | perl -ne 'print unless m/http_code: /' 1>&2
+    http_code=$(cat /tmp/curl-f.$$.err | perl -ne 'print $1 if m,http_code: (\d+),')
+    cat /tmp/curl-f.$$.err | perl -ne 'print unless m/http_code: /' 1>&2
 
-exec {STDOUT_DUP}>&-
+    exec {STDOUT_DUP}>&-
 
-if [ $http_code -ge 400 ] && [ $http_code -lt 600 ]; then
-    echo $'\n'"HTTP $http_code" >&2
-    exit 22
+    if [ $http_code -ge 400 ] && [ $http_code -lt 600 ]; then
+        echo $'\n'"HTTP $http_code" >&2
+        exit 22
+    fi
+else
+    export curl_ret_code=$?
+    log Curl Error: $(curl-exit-code-2-text -c $curl_ret_code)
+    exit $curl_ret_code
 fi

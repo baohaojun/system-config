@@ -2,7 +2,7 @@
 set -e
 
 export CACHED_RUN_VERBOSE_OUTPUT='echo $r'
-rm ~/tmp/cached-run.log
+rm ~/tmp/cached-run.log -f
 
 export r=$(random)
 res1=$(c -rv bash -c 'echo $r')
