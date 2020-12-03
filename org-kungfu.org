@@ -348,7 +348,7 @@ And this is the real get1page subroutine.
                       ok_upload1attachment("-p", "$page_id", "-f", "$attach_file");
                       $existing_attachments{$png_file_basename} = 1;
                   }
-                  $_->{src} = "/$attach_file";
+                  ($_->{src} = "/$attach_file") =~ s,(?<!:)/+,/,g;
 
                   unless ($_->{class} eq 'emoji') {
                       $_->replace(
