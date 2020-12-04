@@ -25,6 +25,7 @@ EOFc83131117f09
 # generate-getopt -s perl -P '?"$comment_doc"' \
 # u:username '?"把哪个用户的 ldap 组给 import 进来"' \
 # g:group-name '?"import 哪个 group，默认用 ldap show-groups 计算"' \
+# aauto-match '?"自动匹配哪个 ldap 组，比如指定「软件中心」，计算出其ad-department-NUMBER"' \
 
 ## end code-generator
 ## start generated code
@@ -34,12 +35,21 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $auto_match = 0;
 my $group_name = "";
 my $username = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-a, ';
+    printf "%-24s", '--[no]auto-match';
+    if (length('--[no]auto-match') > 24 and length("自动匹配哪个 ldap 组，比如指定「软件中心」，计算出其ad-department-NUMBER") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "自动匹配哪个 ldap 组，比如指定「软件中心」，计算出其ad-department-NUMBER";
+    print "\n";
     printf "%6s", '-g, ';
     printf "%-24s", '--group-name=GROUP-NAME';
     if (length('--group-name=GROUP-NAME') > 24 and length("import 哪个 group，默认用 ldap show-groups 计算") > 0) {
@@ -67,6 +77,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'auto-match|a!' => \$auto_match,
     'group-name|g=s' => \$group_name,
     'username|u=s' => \$username,
     'help|h!' => \&$handler_help,
@@ -75,7 +86,13 @@ GetOptions (
 
 ## end generated code
 
-unless ($group_name) {
+if ($group_name) {
+    if ($auto_match) {
+        $group_name = decode_utf8(scalar capturex("ldap", "sel-group", "${group_name}", ));
+        chomp($group_name = lc $group_name);
+        say STDERR "group name is $group_name";
+    }
+} else {
     ($group_name =
      lc decode_utf8(scalar capturex("ldap", "show-groups", "-u", "${username}")))
         =~ s,\s+:.*,,ms;

@@ -126,6 +126,13 @@ elif test "${default}" = false; then
             terminal_name='prod!!!'
             SC_EXTRA_PS1=${SC_EXTRA_PS1/testing/${terminal_name}}
         fi
+    elif test "${jira_env}" = k8s; then
+        scm_jira_url=${scm_jira_test_url}
+        scm_jenkins_url=${scm_jenkins_k8s_url}
+        scm_jenkins_server=${scm_jenkins_k8s_server}
+        firefox_instance=1
+        terminal_name=k8s
+        SC_EXTRA_PS1=${SC_EXTRA_PS1/testing/${terminal_name}}
     else
         die "Can't handle jira env: ${jira_env}"
     fi

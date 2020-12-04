@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+export EMACS=t
+
+group_name=$(
+    select-output-line --ask-for-input -1 --select-from-history-too -o -p "请选择你想要的域组" -i "$*" \
+                       c comp-mail -d -e 'cn=AD-Department-*' -m description | perl -pe 's,description:: ,,'
+     )
+
+group_info=$(
+    select-output-line --ask-for-input -1 --select-from-history-too -o -p "请选择你想要的信息" \
+                       c comp-mail -d -e "description=$group_name" -m '^cn|^description' | pn 2
+          )
+echo $group_info
