@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+这个脚本的目的是把 Jenkins Job 运行过程中的异常情况记下来，最终一次性的发一个报警。
+
+之前的做法是，每次发生异常都发一个钉钉通知，这种操作非常危险，容易导致发送钉钉通知的 IP 地址被封。。。
+
+做法是把报警先存在一个临时文件里，然后在最后统一放出去。
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # a:action=note '?"可以是 note（先记下来）或 send（最后发出去）"' \
+
+## end code-generator
+## start generated code
+
+## end generated code
+
+tmpfile=/tmp/${JOB_NAME}.${BUILD_NUMBER}.warning-at-exit.txt
+if test "${action}" = note; then
+    echo "$*" >> $tmpfile
+elif test "${action}" = send -a -e "${tmpfile}"; then
+    ding --title "$JOB_NAME 异常报警" --text "$(cat $tmpfile)
+
+check build log@$BUILD_URL"
+
+    rm $tmpfile -f
+fi

@@ -439,6 +439,7 @@ say STDERR "Scheduling project: ${job_name}";
 
 my $response = $ua->request($request);
 
+# say STDERR "user is $ENV{scm_jenkins_user}, pass is $ENV{scm_jenkins_password}, crumb is $jenkins_crumb";
 die sprintf("invalid request result: code = %d, content = '%s'", $response->code, $response->content) if ($response->code < 200 or $response->code >= 300);
 
 say STDERR "Location is ", $response->header('Location') if $verbose;

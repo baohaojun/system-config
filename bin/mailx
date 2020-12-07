@@ -127,6 +127,8 @@ test -z "${body[0]}" && body=("=")
 the_mailx=$(which heirloom-mailx || true)
 if test -e /opt/local/bin/mailx; then
     the_mailx=/opt/local/bin/mailx;
+elif test "$(uname)" = FreeBSD; then
+    the_mailx=/usr/local/bin/mailx
 fi
 
 if test $(basename $0) = gnus-mailx; then

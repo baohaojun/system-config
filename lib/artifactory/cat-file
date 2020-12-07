@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+
+tmpdir=/tmp/artifactory.cat-file.$$
+. atexit rm -rf $tmpdir
+
+artifactory download-file -u "$1" -d "$tmpdir" -n $$.txt
+cat $tmpdir/$$.txt
