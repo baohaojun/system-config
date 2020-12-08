@@ -490,23 +490,22 @@ This is simple using Perl's “reflection”.
               $required_fields->{assignee} = {name => $ENV{scm_jira_user}} if exists $it->{fields}{assignee} and not $edit_issue_json_obj;
 
               for my $field_key (@fields_to_edit) {
+                  my $field_name = ($it->{fields}{$field_key}{name} or "$field_key (field has no name)");
+
+                  say STDERR "field ${field_name}'s value is ", ($edit_issue_json_obj->{fields}{$field_key} || "");
+
+                  if ($print_schemes) {
+                      print "--field-value $field_name= ";
+                      next;
+                  }
+
+                  if ($required_fields->{$field_name}) {
+                      $required_fields->{$field_key} = $required_fields->{$field_name};
+                      delete $required_fields->{$field_name} unless ${field_key} eq ${field_name};
+                      next;
+                  }
                   if ($it->{fields}{$field_key}{required}) {
                       if ($field_key eq 'project' || $field_key eq 'issuetype') {
-                          next;
-                      }
-                      my $field_name = ($it->{fields}{$field_key}{name} or "$field_key (field has no name)");
-
-                      say STDERR "field ${field_name}'s value is ", ($edit_issue_json_obj->{fields}{$field_key} || "");
-
-                      if ($print_schemes) {
-                          print "--field-value $field_name= ";
-                          next;
-                      }
-
-
-                      if ($required_fields->{$field_name}) {
-                          $required_fields->{$field_key} = $required_fields->{$field_name};
-                          delete $required_fields->{$field_name} unless ${field_key} eq ${field_name};
                           next;
                       }
 
@@ -519,7 +518,7 @@ This is simple using Perl's “reflection”.
 
 
                       if ($schema_type eq 'string') {
-                          my $init_text = ($edit_issue_json_obj->{fields}{$field_key} || "");
+                          my $init_text = ($edit_issue_json_obj->{fields}{$field_key} || $required_fields->{$field_key});
                           if ($field_key eq "description") {
                               say STDERR "special treatment for description";
                               $init_text = jira_to_org $init_text;
@@ -896,7 +895,7 @@ This is simple using Perl's “reflection”.
       my %required_fields;
 
       for (@field_value) {
-          if (m/(.*?)=(.*)/) {
+          if (m/(.*?)=(.*)/s) {
               my ($field, $value) = ($1, $2);
               $required_fields{$field} = $value;
           } else {
