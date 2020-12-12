@@ -29,7 +29,7 @@ BEGIN { @jkd::ISA = 'Exporter' }
                      no_spaces_hash_convert no_spaces_hashget
                      update_names_with_fields getNormalizedName
                      getRealNameFromApi getRealHashKey reWriteHashKeysWithApi
-                     get_config_val
+                     get_config_val jkd_jira_to_hash jkd_value_from_json_obj
              );
 
 use feature 'signatures';
@@ -266,7 +266,46 @@ sub update_names_with_fields($named_obj, $fields_map) {
     }
 }
 
+sub jkd_value_from_json_obj($json_obj) {
+    if (not ref $json_obj) {
+        return $json_obj;
+    } elsif (ref ($json_obj) eq "HASH") {
+        return $json_obj->{name} ||
+            $json_obj->{key} ||
+            $json_obj->{value} ||
+            die "Can't get field value from " . decode_utf8($json->encode($json_obj));
+    } elsif (ref ($json_obj) eq "ARRAY") {
+        my @val_array = map {
+            jkd_value_from_json_obj($_)
+        } @$json_obj;
+        return \@val_array;
+    } else {
+        die "Can't get field value from " . decode_utf8($json->encode($json_obj));
+    }
+}
 
+sub jkd_jira_to_hash($jira_key, $jira_fields) {
+    my %ret_params;
+    my %jira_field_to_var = map { ($jira_fields->{$_}, $_)} keys %$jira_fields;
+
+    my $jira_json =
+        $json->decode(scalar capturex(
+            "debug-run", "jkd", "print-issue", "-i", "$jira_key",
+            map{ ("-f", $jira_fields->{$_}) } keys %$jira_fields
+        ));
+
+    for my $var_name (keys %$jira_fields) {
+        my $field_name = $jira_fields->{$var_name};
+
+        $ret_params{$var_name} = jkd_value_from_json_obj $jira_json->{$field_name};
+    }
+
+    my $args = {};
+    %$args = %ret_params;
+    $args->{jira_key} = $jira_key;
+
+    return $args;
+}
 
 1;
 __END__

@@ -1,0 +1,77 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# r:repo-name p:parent-project
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $parent_project = "";
+my $repo_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-p, ';
+    printf "%-24s", '--parent-project=PARENT-PROJECT';
+    if (length('--parent-project=PARENT-PROJECT') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--repo-name=REPO-NAME';
+    if (length('--repo-name=REPO-NAME') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'parent-project|p=s' => \$parent_project,
+    'repo-name|r=s' => \$repo_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+die "must specify repo name" unless $repo_name;
+die "must specify parent project" unless $parent_project;
+
+runx("gr", "create-project", "$repo_name", "-p", "$parent_project", );
+runx("gr", "new-repo-create-groups", "-r", "$repo_name", );

@@ -15,27 +15,31 @@ my $json = JSON->new->utf8->canonical->pretty;
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
-* action = new
-new screen, allow copy from with --copy
+请勿使用此脚本！应直接使用 jkd screen-tab！
 
-* action = delete-tabs
+# * action = new
+# new screen, allow copy from with --copy
 
-delete a specified tab
+# * action = delete-tabs
 
-* action = delete-fields
+# delete a specified tab
 
-delete specified fields
+# * action = delete-fields
 
-* action = add-fields
+# delete specified fields
 
-add specified fields to specified tab (if tab not specified, calculate it from the AFTER-FIELD argument).
+# * action = add-fields
+
+# add specified fields to specified tab (if tab not specified, calculate it from the AFTER-FIELD argument).
+
+请勿使用此脚本！应直接使用 jkd screen-tab！
 # {%/org-mode%}
 EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
 # s:screen-name d:screen-description a:action @:copy \
-# f:field-name t:tab-name @:after-field \
+# t:tab-name @:after-field \
 # j:screen-json
 ## end code-generator
 ## start generated code
@@ -48,7 +52,6 @@ Getopt::Long::Configure("posix_default");
 my $action = "";
 my $after_field = "";
 my $copy = "";
-my $field_name = "";
 my $screen_description = "";
 my $screen_json = "";
 my $screen_name = "";
@@ -76,14 +79,6 @@ my $handler_help = sub {
     printf "%6s", '';
     printf "%-24s", '--copy=COPY';
     if (length('--copy=COPY') > 24 and length() > 0) {
-        print "\n";
-        printf "%30s", "";
-    }
-    printf "%s", ;
-    print "\n";
-    printf "%6s", '-f, ';
-    printf "%-24s", '--field-name=FIELD-NAME';
-    if (length('--field-name=FIELD-NAME') > 24 and length() > 0) {
         print "\n";
         printf "%30s", "";
     }
@@ -135,7 +130,6 @@ GetOptions (
     'action|a=s' => \$action,
     'after-field=s' => \$after_field,
     'copy=s' => \$copy,
-    'field-name|f=s' => \$field_name,
     'screen-description|d=s' => \$screen_description,
     'screen-json|j=s' => \$screen_json,
     'screen-name|s=s' => \$screen_name,
@@ -209,6 +203,7 @@ if ($action eq "new") {
         }
         $json->decode(scalar capture("cached-run", "-e", "scm_jira_url", "jkd", "dump-screen", "-s", "$screen_name"));
     } elsif ($action eq "add-fields") {
+        say STDERR "running add-fields";
         my ($tab_id, $after_field_id);
         if (not $tab_name) {
             die "Must specify after_field when not using tab_name" unless $after_field;
@@ -218,8 +213,13 @@ if ($action eq "new") {
             map {
                 if ($_->{name} eq $tab_name) {
                     $tab_id = $_->{id};
-                    $after_field_id = $_->{fields}[-1]{id};
-                    $after_field = $_->{fields}[-1]{name};
+                    if (@{$_->{fields}} > 0) {
+                        $after_field_id = $_->{fields}[-1]{id};
+                        $after_field = $_->{fields}[-1]{name};
+                    } else {
+                        $after_field_id = 0;
+                        $after_field = "";
+                    }
                 }
             } @{$screen_dump->{tabs}};
         }
@@ -240,6 +240,7 @@ if ($action eq "new") {
                 fieldId => $field_id,
             );
             runx(
+                "debug-run",
                 "jkd", "post", "-a", "screens/${screen_id}/tabs/${tab_id}/fields", "--json", decode_utf8($json->encode(\%field_data))
             );
 

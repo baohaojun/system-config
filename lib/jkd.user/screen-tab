@@ -18,6 +18,10 @@ screen-tab -s SCREEN-NAME -t TAB-NAME ACTION ARGS...
 
 列出所有该 tab 下的 fields
 
+* action = list-tabs
+
+列出所有 tabs
+
 * action = delete-fields
 
 删除所有该 tab 下的 fields
@@ -90,6 +94,9 @@ done
 
 ## end generated code
 
+action=$1
+shift
+
 IFs=$'\n'
 
 screen_id=$(
@@ -105,8 +112,31 @@ EOF28c4b7fc74d2
          )
 
 tabs_json=$(
-    jkd rest screens/${screen_id}/tabs
+    cached-run -e scm_jira_url jkd rest screens/${screen_id}/tabs
          )
+
+tabs_ids=(
+    $(
+        echo "${tabs_json}" | jq '.[]|.id' -r
+    )
+)
+
+tabs_names=(
+    $(
+        echo "${tabs_json}" | jq '.[]|.name' -r
+    )
+)
+
+if test "${action}" = list-tabs; then
+    echo "${tabs_json}" | jq '.[]|.name' -r
+    exit
+fi
+
+tab_name=$(
+    select-args \
+        --ask-for-input -i "${tab_name}" -1 -o -p "请选择你要的 tab 名" \
+        "${tabs_names[@]}"
+        )
 
 tab_id=$(
     echo "${tabs_json}" | jq "$(
@@ -121,18 +151,6 @@ EOF28c4b7fc74d2
       )
 
 declare -A field_tab_map
-
-tabs_ids=(
-    $(
-        echo "${tabs_json}" | jq '.[]|.id' -r
-    )
-)
-
-tabs_names=(
-    $(
-        echo "${tabs_json}" | jq '.[]|.name' -r
-    )
-)
 
 declare -A tabs_name_id_map
 declare -A tabs_id_name_map
@@ -187,9 +205,6 @@ add-field-to-tab() {
         jkd rest screens/${screen_id}/tabs/${tab_id}/fields -- -X POST --data '{"fieldId" : "'"${f_id}"'"}' -H 'Content-Type: application/json'
     done
 }
-
-action=$1
-shift
 
 list-fields() {
     jkd rest screens/${screen_id}/tabs/${tab_id}/fields

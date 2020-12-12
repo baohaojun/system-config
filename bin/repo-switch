@@ -154,6 +154,7 @@ if test "${repo_init_print_info}" = true; then
 cat <<'EOFe7f172780f03' | . .replace-%% --
 # {%perl-mode%}
 s,\bs:,$ENV{scm_gerrit_admin_ssh_url},g;
+s,ssh://s/,$ENV{scm_gerrit_admin_ssh_url},g;
 s,-b refs/heads/,-b ,;
 
 END {

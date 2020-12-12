@@ -24,8 +24,10 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-    # r:repo-name '?"repo 的名字"' \
-    # l:label-names='()' '?"检查项的名字，必须是列表中的一个：Build-Verified CommitMessage-Verified Jira-Verified UT-Verified Sonar-Verified StaticAnalysis-Verified"' \
+# r:repo-name '?"repo 的名字"' \
+# l:label-names='()' '?"检查项的名字，必须是列表中的一个：Build-Verified CommitMessage-Verified Jira-Verified UT-Verified Sonar-Verified StaticAnalysis-Verified"' \
+# d:delete-labels='()' '?"要删除的 Labels 列表"' \
+
 
 ## end code-generator
 ## start generated code
@@ -35,12 +37,21 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my @delete_labels = ();
 my @label_names = ();
 my $repo_name = "";
 
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--delete-labels=DELETE-LABELS';
+    if (length('--delete-labels=DELETE-LABELS') > 24 and length("要删除的 Labels 列表") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "要删除的 Labels 列表";
+    print "\n";
     printf "%6s", '-l, ';
     printf "%-24s", '--label-names=LABEL-NAMES';
     if (length('--label-names=LABEL-NAMES') > 24 and length("检查项的名字，必须是列表中的一个：Build-Verified CommitMessage-Verified Jira-Verified UT-Verified Sonar-Verified StaticAnalysis-Verified") > 0) {
@@ -68,6 +79,7 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'delete-labels|d=s' => \@delete_labels,
     'label-names|l=s' => \@label_names,
     'repo-name|r=s' => \$repo_name,
     'help|h!' => \&$handler_help,
@@ -131,6 +143,22 @@ sub add_1_key_val($key, $val) {
     }
 }
 
+sub del_1_key_val($key, $val) {
+    my $config_regexp = quotemeta("${val}");
+    my $existing_config =
+        decode_utf8(scalar capturex(
+            EXIT_ANY, "debug-run",
+            "git", "config", "--get-all", "-f", "project.config",
+            "{$key}", "^${config_regexp}\$", ));
+    if (not $existing_config) {
+        runx(
+            "debug-run", "git", "config", "--unset-all", "-f", "project.config", "$key",
+        )
+    } else {
+        say STDERR "$key : $val already exist, no need to add again";
+    }
+}
+
 sub add_1_label($label) {
     if (not $label_config_map->{$label}) {
         die "Unknown label: $label, don't know how to add it";
@@ -149,6 +177,10 @@ sub add_1_label($label) {
 
     add_1_key_val("access.refs/heads/*.label-${label}", '-1..+1 group Non-Interactive Users');
     add_1_key_val("access.refs/heads/*.label-${label}", '-1..+1 group Administrators');
+}
+
+sub delete_1_label($label) {
+
 }
 
 for (@label_names) {

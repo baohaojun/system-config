@@ -289,6 +289,11 @@ for x in $(find ~/system-config/.sc-symlinks/ -type l); do
     if test ! -e "$x"; then
         continue
     fi
+
+    if [[ $x =~ /by-user/ ]] && ! [[ $x =~ /by-user/$USER/ ]]; then
+        continue
+    fi
+
     base=$(basename "$x");
     if test "$(readlink -f ~/"$base")" = "$(readlink -f "$x")"; then
         # echo already linked system-config\'s version of  ~/"$base"

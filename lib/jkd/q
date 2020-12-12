@@ -98,7 +98,7 @@ if ($jql eq $unset_jql) {
 }
 
 my $jql_content =
-    $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "rest", "rest/api/2/search?jql=$jql"));
+    $json->decode(scalar capturex("cached-run", "-e", "scm_jira_url", "jkd", "rest", "rest/api/2/search?jql=$jql&maxResults=500"));
 
 if ($print_all) {
     if ($field_names) {
