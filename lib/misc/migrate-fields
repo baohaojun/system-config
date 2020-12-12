@@ -312,7 +312,7 @@ sub check_1_field($) {
             if (do {
                 no autodie;
                 say STDERR "try to create $original_name with jkd";
-                system("jkd", "create-custom-field", "-t", "$type", "-d", "$description", "-n", "$original_name") == 0
+                system("jkd", "create-custom-field", "--type", "$type", "-d", "$description", "-n", "$original_name") == 0
             })  {
                 say STDERR "created it using jkd";
             } else {

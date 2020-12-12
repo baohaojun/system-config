@@ -28,7 +28,10 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# n:name d:description t:type '?"one of the types specified in rest/globalconfig/1/customfieldtypes (need admin permission)"'
+# n:name d:description @:type '?"one of the types specified in rest/globalconfig/1/customfieldtypes (need admin permission)"' \
+# S:add-to-screen-name='()' '?"将新字段添加到此面板，可指定多个"' \
+# T:add-to-screen-tab-name='()' '?"将新字段添加到对应面板的 Tab 页，可指定多个"' \
+#
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -37,6 +40,8 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my @add_to_screen_name = ();
+my @add_to_screen_tab_name = ();
 my $description = "";
 my $name = "";
 my $type = "";
@@ -44,6 +49,22 @@ my $type = "";
 my $handler_help = sub {
     print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-S, ';
+    printf "%-24s", '--add-to-screen-name=ADD-TO-SCREEN-NAME';
+    if (length('--add-to-screen-name=ADD-TO-SCREEN-NAME') > 24 and length("将新字段添加到此面板，可指定多个") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "将新字段添加到此面板，可指定多个";
+    print "\n";
+    printf "%6s", '-T, ';
+    printf "%-24s", '--add-to-screen-tab-name=ADD-TO-SCREEN-TAB-NAME';
+    if (length('--add-to-screen-tab-name=ADD-TO-SCREEN-TAB-NAME') > 24 and length("将新字段添加到对应面板的 Tab 页，可指定多个") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "将新字段添加到对应面板的 Tab 页，可指定多个";
+    print "\n";
     printf "%6s", '-d, ';
     printf "%-24s", '--description=DESCRIPTION';
     if (length('--description=DESCRIPTION') > 24 and length() > 0) {
@@ -60,7 +81,7 @@ my $handler_help = sub {
     }
     printf "%s", ;
     print "\n";
-    printf "%6s", '-t, ';
+    printf "%6s", '';
     printf "%-24s", '--type=TYPE';
     if (length('--type=TYPE') > 24 and length("one of the types specified in rest/globalconfig/1/customfieldtypes (need admin permission)") > 0) {
         print "\n";
@@ -79,14 +100,23 @@ my $handler_help = sub {
 };
 
 GetOptions (
+    'add-to-screen-name|S=s' => \@add_to_screen_name,
+    'add-to-screen-tab-name|T=s' => \@add_to_screen_tab_name,
     'description|d=s' => \$description,
     'name|n=s' => \$name,
-    'type|t=s' => \$type,
+    'type=s' => \$type,
     'help|h!' => \&$handler_help,
 );
 
 
 ## end generated code
+
+if (@add_to_screen_name != @add_to_screen_tab_name) {
+    die sprintf("Must specify the same number of screens and tabs, you specified %d screens and %d tabs",
+                 scalar @add_to_screen_name,
+                 scalar @add_to_screen_tab_name
+             );
+}
 
 if (not $name) {
     $name =
@@ -149,4 +179,17 @@ my $json_obj = {
 
 runx("debug-run", "jkd", "post", "-a", "rest/api/2/field", "--json", encode_json($json_obj));
 capturex("cached-run", "-e", "scm_jira_url", "-r", "jkd", "rest", "field");
+
+for (1..@add_to_screen_name) {
+    my $add_to_screen_name = $add_to_screen_name[$_ - 1];
+    my $add_to_screen_tab_name = $add_to_screen_tab_name[$_ - 1];
+    if (not $add_to_screen_tab_name) {
+        $add_to_screen_tab_name = decode_utf8(scalar capturex(
+            "select-output-line", "--ask-for-input", "-1", "-o", "-p", "请选项要使用 ${add_to_screen_name} 的哪个 tab",
+            "--", "cached-run", "-e", "scm_jira_url", "jkd", "screen-tab", "-s", "${add_to_screen_name}", "list-tabs",
+        ));
+    }
+    runx("jkd", "screen-tab", "-s", "$add_to_screen_name", "-t", "$add_to_screen_tab_name", "add-fields", "$name" );
+}
+
 runx("jkd", "go", "field", "-e", "-m", "$name");

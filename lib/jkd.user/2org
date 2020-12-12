@@ -1,0 +1,132 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+BEGIN {
+    push @INC, "$ENV{scm_common_libdir}/perl";
+}
+use jkd;
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+如fields未指定，默认显示的是：
+
+- Summary
+- Description
+- Issue Type
+- Reporter
+- Assignee
+- Created
+- Due Date
+- Epic Link
+- Priority
+- Comments
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# q:jql '?"用来查询的 jql"' \
+# f:fields='()' '?"显示哪些 fields，可指定多次"' \
+
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $jql = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-q, ';
+    printf "%-24s", '--jql=JQL';
+    if (length('--jql=JQL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'jql|q=s' => \$jql,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+my $jql_issues_json =
+    $json->decode(scalar capturex("c", "-e", "scm_jira_url", "jkd", "q", "-q", "$jql", "-p", ));
+
+my @fields = (
+    "Summary",
+    "Description",
+    "Issue Type",
+    "Reporter",
+    "Assignee",
+    "Created",
+    "Due Date",
+    "Epic Link",
+    "Priority",
+    "Status",
+    "Resolution",
+);
+
+sub get_field_value($ifv, $field_name) {
+    return jkd_value_from_json_obj($ifv->{$field_name});
+}
+
+for my $issue (@{$jql_issues_json->{issues}}) {
+    my $ifv = $issue->{fields}; # issue field values
+    my $status = get_field_value($ifv, "Status");
+    my $key = $issue->{key};
+    for my $field (@fields) {
+
+        my $value = get_field_value($ifv, $field);
+        if ($field eq "Summary") {
+            say <<EOF
+* TODO $value
+- URL :: $ENV{scm_jira_url}browse/$key
+EOF
+        } elsif ($field eq "Description") {
+            say <<EOF
+** Description
+# {%text-mode%}
+$value
+# {%/text-mode%}
+
+** Other Info
+EOF
+        } else {
+            say "- $field :: $value";
+        }
+    }
+}

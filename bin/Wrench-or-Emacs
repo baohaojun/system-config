@@ -32,6 +32,7 @@ cat <<'EOF6a5a109f8722'
 (progn
   (sanityinc/toggle-delete-other-windows)
   (switch-to-file (expand-file-name "~/src/github/projects/chat.org"))
+  (paredit-mode 0)
   (mark-whole-buffer))
 ; {%/emacs-lisp-mode%}
 EOF6a5a109f8722
