@@ -49,10 +49,15 @@ fi
 xterm -e myscr bash -c '
 # {%sh-mode%}
 for adb_serial in 9dbe919 162c850; do
-    if ! adb -s $adb_serial true; then
-        if sleep 120 && ! adb -s $adb_serial true; then
+    if ! adb -s $adb_serial shell true; then
+        (
+            for x in $(seq 1 10); do
+                if sleep 1m && adb -s $adb_serial shell true; then
+                    exit
+                fi
+            done
             mail-bhj -s "$adb_serial not found" --no-input || true
-        fi
+        )&
     else
         adb-quote "
 echo 1 > /sys/class/power_supply/battery/input_suspend

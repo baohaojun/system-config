@@ -148,14 +148,15 @@ for (my $try = 0; $try < $max_tries; $try++) {
     say STDERR "request is " . decode_utf8($json->encode($request_data)) if $jkd_verbose;
 
     my $result =
-        scalar capturex(
-            EXIT_ANY,
-            "jkd", "rest", "issue/${issue}/transitions", "-X", "POST",
-            "-H", "Content-Type: application/json",
-            "-H", "Accept: application/json",
-            "-d", decode_utf8($json->encode(
-                $request_data
-            )));
+        decode_utf8(
+            scalar capturex(
+                EXIT_ANY,
+                "jkd", "rest", "issue/${issue}/transitions", "-X", "POST",
+                "-H", "Content-Type: application/json",
+                "-H", "Accept: application/json",
+                "-d", decode_utf8($json->encode(
+                    $request_data
+                ))));
 
     if ($EXITVAL == 0) {
         say STDERR "Tri to '$transition_name' 成功了，正常退出";
@@ -174,11 +175,11 @@ for (my $try = 0; $try < $max_tries; $try++) {
         }
     }
 
-    say STDERR "result is " . decode_utf8($json->encode($result));
+    say STDERR "result is $result";
     next unless $result; # result 有可能是空的
     next if $result eq "\n";
     eval {
-        $result = $json->decode($result);
+        $result = $json->decode(encode_utf8 $result);
     };
 
     if ($@) {
