@@ -97,7 +97,7 @@ function readlink() {
 }
 
 function find() {
-    command find 2>/dev/null "$@"|xargs ls -td|grep -v '^\.$' -P
+    command find 2>/dev/null "$@" -print0|xargs -0 ls -td|grep -v '^\.$' -P
 }
 
 # builtin cd -P . >/dev/null 2>&1
