@@ -18,69 +18,98 @@ function rdesktop() {
     display=" connected"
 
     ## start code-generator "^\\s *#\\s *"
-    # generate-getopts  d:display= k:kbd=en-dvp u:user p:pass g:geometry
+        # generate-getopts  d:display= \
+            # k:kbd=en-dvp \
+            # u:user \
+            # p:pass \
+            # g:geometry \
+            # fuse-freerdp=true '?"使用 freerdp"' \
+
     ## end code-generator
     ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o d:g:k:p:fu:h \
+                          --long display:,geometry:,kbd:,pass:,use-freerdp,user:,help,no-use-freerdp \
+                          -n "$(basename -- "$0")" -- "$@")
+    declare display=
+    declare geometry=
+    declare kbd=en-dvp
+    declare pass=
+    declare use_freerdp=true
+    declare user=
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
 
-    display=
-    geometry=
-    kbd=en-dvp
-    pass=
-    user=
-    OPTIND=1
-    while getopts "d:g:k:p:u:h" opt; do
-        case "$opt" in
+            -d|--display)
+                display=$2
+                shift 2
 
-            d) display=$OPTARG ;;
-            g) geometry=$OPTARG ;;
-            k) kbd=$OPTARG ;;
-            p) pass=$OPTARG ;;
-            u) user=$OPTARG ;;
-            h)
-                echo
-                echo
-                printf %6s%s '-d ' 'display'
-                printf %-24s 'DISPLAY'
-                echo ''
-                printf %6s%s '-g ' 'geometry'
-                printf %-24s 'GEOMETRY'
-                echo ''
-                printf %6s%s '-k ' 'kbd'
-                printf %-24s 'KBD'
-                echo ''
-                printf %6s%s '-p ' 'pass'
-                printf %-24s 'PASS'
-                echo ''
-                printf %6s%s '-u ' 'user'
-                printf %-24s 'USER'
-                echo ''
+                ;;
+            -g|--geometry)
+                geometry=$2
+                shift 2
+
+                ;;
+            -k|--kbd)
+                kbd=$2
+                shift 2
+
+                ;;
+            -p|--pass)
+                pass=$2
+                shift 2
+
+                ;;
+            -f|--use-freerdp|--no-use-freerdp)
+                if test "$1" = --no-use-freerdp; then
+                    use_freerdp=false
+                else
+                    use_freerdp=true
+                fi
                 shift
-                exit 0
+
+                ;;
+            -u|--user)
+                user=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf %6s '-d, '
+                printf %-24s '--display=DISPLAY'
+                echo
+                printf %6s '-g, '
+                printf %-24s '--geometry=GEOMETRY'
+                echo
+                printf %6s '-k, '
+                printf %-24s '--kbd=KBD'
+                echo
+                printf %6s '-p, '
+                printf %-24s '--pass=PASS'
+                echo
+                printf %6s '-f, '
+                printf %-24s '--[no-]use-freerdp'
+                echo "使用 freerdp"
+                printf %6s '-u, '
+                printf %-24s '--user=USER'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
                 ;;
             *)
-                echo
-                echo
-                printf %6s%s '-d ' 'display'
-                printf %-24s 'DISPLAY'
-                echo ''
-                printf %6s%s '-g ' 'geometry'
-                printf %-24s 'GEOMETRY'
-                echo ''
-                printf %6s%s '-k ' 'kbd'
-                printf %-24s 'KBD'
-                echo ''
-                printf %6s%s '-p ' 'pass'
-                printf %-24s 'PASS'
-                echo ''
-                printf %6s%s '-u ' 'user'
-                printf %-24s 'USER'
-                echo ''
-                exit 2
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
                 ;;
         esac
     done
 
-    shift $((OPTIND - 1))
 
     ## end generated code
 
@@ -100,10 +129,20 @@ function rdesktop() {
     fi
 
     if test -z "$geometry"; then
-        geometry=$(EMACS=t select-output-line -p "使用哪个连接？" 'xrandr | grep "$display" -A 1 |grep -P "\+"' |pn 1 | tail -n 1)
+        geometry=$(
+            EMACS=t select-output-line -o -p "使用哪个连接？" 'xrandr | grep "$display" -A 1 |grep -P "\+"' |
+                pn 1 |
+                tail -n 1 |
+                perl -pe 's:(\d+)x(\d+):sprintf("%dx%d", $1, $2-80):e'
+                )
+        log "geometry is $geometry"
     fi
 
-    setsid /usr/bin/rdesktop -K -a 24 -g "$geometry" $host -u $user -p $pass "$@"&
+    if test "${use_freerdp}" = true; then
+        xfreerdp "/size:$geometry" /u:$user /p:"${pass}" /kbd:0x19360409 /v:${host}
+    else
+        setsid /usr/bin/rdesktop -K -a 24 -g "$geometry" $host -u $user -p $pass "$@"&
+    fi
 }
 
 if echo $SHELLOPTS | grep -q xtrace; then
