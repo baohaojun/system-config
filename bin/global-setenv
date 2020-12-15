@@ -57,6 +57,7 @@ cat <<'EOF3ca1586eb1f1'
 # {%perl-mode%}
 next unless m,^declare -x (\w+)="[^"]*"$,;
 next if $1 eq "WINDOWID";
+next if $1 eq "SC_EXTRA_PS1";
 s,^declare -x ,(setenv ",;
 s,=," ,;
 s,$,),;

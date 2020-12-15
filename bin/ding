@@ -10,18 +10,31 @@ use utf8;
 @ARGV = map {decode_utf8 $_} @ARGV;
 
 my @SAVED_ARGV = @ARGV;
+if ($ENV{USE_FEISHU_FOR_DING} eq 'true') {
+    runx("debug-run", "feishu-ding", @SAVED_ARGV);
+    if ($ENV{STOP_USING_DINGDING} eq 'true') {
+        exit(0);
+    }
+}
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P \
+# generate-getopt -s perl -P '?"$comment_doc"' \
 # @:ding-robot='$ENV{scm_default_robot} || "robot"' \
 # '?"此处可以输入多个 robot，以空格分割"' \
 # @:title='"（此通知没有标题）"' \
 # @:text='"（此通知没有文本）"' \
 # vverbose \
 # fformat=1 '?"重新格式化文本，以达到分段的效果"' \
-# @:ding-url \
-# @:ding-secret \
+# @:ding-url '?"内部参数，请勿指定，可通过 ding-robot 计算"' \
+# @:ding-secret '?"内部参数，不需指定，可通过 ding-robot 计算"' \
 # a:at-people='()' '?"指定在群里＠提醒某人，可以指定多次，也可以一次指定多个（用英文逗号或空格分割）"'
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -40,7 +53,7 @@ my $title = "（此通知没有标题）";
 my $verbose = 0;
 
 my $handler_help = sub {
-    print ;
+    print "$comment_doc";
     print "\n\n选项和参数：\n";
     printf "%6s", '-a, ';
     printf "%-24s", '--at-people=AT-PEOPLE';
@@ -60,19 +73,19 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--ding-secret=DING-SECRET';
-    if (length('--ding-secret=DING-SECRET') > 24 and length() > 0) {
+    if (length('--ding-secret=DING-SECRET') > 24 and length("内部参数，不需指定，可通过 ding-robot 计算") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "内部参数，不需指定，可通过 ding-robot 计算";
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--ding-url=DING-URL';
-    if (length('--ding-url=DING-URL') > 24 and length() > 0) {
+    if (length('--ding-url=DING-URL') > 24 and length("内部参数，请勿指定，可通过 ding-robot 计算") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "内部参数，请勿指定，可通过 ding-robot 计算";
     print "\n";
     printf "%6s", '-f, ';
     printf "%-24s", '--[no]format';
