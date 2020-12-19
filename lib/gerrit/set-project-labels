@@ -14,6 +14,8 @@ default_complete_list_of_labels=(
 declare comment_doc=$(
     cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
 # {%org-mode%}
+这个脚本没有很好的模块化，以后不再建议使用。。。
+
 set-project-labels -p PROJECT [-l COMPLETE-LIST] [ON-LABELS]...
 # {%/org-mode%}
 EOFe9576f8668e0

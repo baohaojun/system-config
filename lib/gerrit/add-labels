@@ -1,0 +1,213 @@
+#!/usr/bin/env perl
+use strict;
+use v5.10.1; # for say and switch
+use autodie qw(:all);
+use IPC::System::Simple qw(run runx capture capturex $EXITVAL EXIT_ANY);
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
+use Encode;
+use utf8;
+@ARGV = map {decode_utf8 $_} @ARGV;
+my $saved_args = join(" ", @ARGV);
+
+use Data::Dumper;
+use JSON;
+
+my $json = JSON->new->utf8->canonical->pretty;
+
+
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+这条脚本用于给 gerrit 仓库配置 gerrit label 检查项
+
+根据脚本的名字（add-labels 或 del-labels，添加或删除检查项）。
+
+需要操作的检查项保存在 label-names 参数里，可以指定多个。
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# r:repo-name '?"repo 的名字"' \
+# l:label-names='()' '?"检查项的名字，必须是列表中的一个：Build-Verified CommitMessage-Verified Jira-Verified UT-Verified Sonar-Verified StaticAnalysis-Verified"' \
+
+
+## end code-generator
+## start generated code
+    use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my @label_names = ();
+my $repo_name = "";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-l, ';
+    printf "%-24s", '--label-names=LABEL-NAMES';
+    if (length('--label-names=LABEL-NAMES') > 24 and length("检查项的名字，必须是列表中的一个：Build-Verified CommitMessage-Verified Jira-Verified UT-Verified Sonar-Verified StaticAnalysis-Verified") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "检查项的名字，必须是列表中的一个：Build-Verified CommitMessage-Verified Jira-Verified UT-Verified Sonar-Verified StaticAnalysis-Verified";
+    print "\n";
+    printf "%6s", '-r, ';
+    printf "%-24s", '--repo-name=REPO-NAME';
+    if (length('--repo-name=REPO-NAME') > 24 and length("repo 的名字") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "repo 的名字";
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'label-names|l=s' => \@label_names,
+    'repo-name|r=s' => \$repo_name,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+
+use File::Path qw(make_path remove_tree);
+my $tmp_dir = "$ENV{PWD}/gr-assign-permissions-$$";
+make_path($tmp_dir);
+chdir($tmp_dir);
+
+use AtExit;
+*clean_tmpdir = sub {
+    if ($ENV{TESTDIR}) {
+        # runx("bash"); # for debug
+    }
+    chdir "/";
+    remove_tree $tmp_dir;
+};
+atexit(\&clean_tmpdir);
+
+runx("gerrit-update-meta", "-s", "-d", "$tmp_dir", "-p", "$ENV{scm_gerrit_admin_ssh_url}${repo_name}", );
+
+use feature 'signatures';
+no warnings "experimental::signatures";
+
+my $label_config_map = {
+    "Build-Verified" => {
+        function => "MaxWithBlock",
+        value => [
+            "-1 Issues found",
+            "0 No score",
+            "+1 Verified",
+        ],
+        defaultValue => 0,
+    },
+};
+
+for ("CommitMessage-Verified", "Jira-Verified", "UT-Verified", "Sonar-Verified", "StaticAnalysis-Verified") {
+    $label_config_map->{$_} =
+        $label_config_map->{"Build-Verified"};
+}
+
+sub add_1_key_val($key, $val) {
+    my $config_regexp = quotemeta("${val}");
+    my $existing_config =
+        decode_utf8(scalar capturex(
+            EXIT_ANY, "debug-run",
+            "git", "config", "--get-all", "-f", "project.config",
+            "{$key}", "^${config_regexp}\$", ));
+    if (not $existing_config) {
+        runx(
+            "debug-run", "git", "config", "--add", "-f", "project.config", "$key", "${val}",
+        )
+    } else {
+        say STDERR "$key : $val already exist, no need to add again";
+    }
+}
+
+sub del_1_key_val($key, $val) {
+    my $config_regexp = quotemeta("${val}");
+    my $existing_config =
+        decode_utf8(scalar capturex(
+            EXIT_ANY, "debug-run",
+            "git", "config", "--get-all", "-f", "project.config",
+            "{$key}", "^${config_regexp}\$", ));
+    if ($existing_config) {
+        runx(
+            "debug-run", "git", "config", "--unset-all", "-f", "project.config", "$key",
+        )
+    } else {
+        say STDERR "$key : $val not exist, no need to add again";
+    }
+}
+
+sub add_1_label($label) {
+    if (not $label_config_map->{$label}) {
+        die "Unknown label: $label, don't know how to add it";
+    }
+
+    for my $key (keys %{$label_config_map->{$label}}) {
+        if (ref ($label_config_map->{$label}{$key}) eq "ARRAY") {
+            for my $val (@{$label_config_map->{$label}{$key}}) {
+                add_1_key_val("label.${label}.${key}", "$val");
+            }
+        } else {
+            my $val = $label_config_map->{$label}{$key};
+            runx("git", "config", "-f", "project.config", "label.${label}.${key}", "$val", );
+        }
+    }
+
+    add_1_key_val("access.refs/heads/*.label-${label}", '-1..+1 group Non-Interactive Users');
+    add_1_key_val("access.refs/heads/*.label-${label}", '-1..+1 group Administrators');
+}
+
+sub delete_1_label($label) {
+    # [label "CommitMessage-Verified"]
+    #     function = NoOp
+
+    if (not $label_config_map->{$label}) {
+        die "Unknown label: $label, don't know how to add it";
+    }
+
+    # should make sure not to mess up with section location, this is bad:
+    # 1. delete the who
+    runx("git", "config", "-f", "project.config", "label.${label}.function", "NoOp", );
+
+    for my $key (keys %{$label_config_map->{$label}}) {
+        if (ref ($label_config_map->{$label}{$key}) eq "ARRAY") {
+            for my $val (@{$label_config_map->{$label}{$key}}) {
+                add_1_key_val("label.${label}.${key}", "$val");
+            }
+        } else {
+            my $val = $label_config_map->{$label}{$key};
+            runx("git", "config", "-f", "project.config", "label.${label}.${key}", "$val", );
+        }
+    }
+
+    add_1_key_val("access.refs/heads/*.label-${label}", '-1..+1 group Non-Interactive Users');
+    add_1_key_val("access.refs/heads/*.label-${label}", '-1..+1 group Administrators');
+
+}
+
+for (@label_names) {
+    say STDERR "Add label: $_";
+    add_1_label($_);
+}
+
+run "gerrit-meta-fix-groups";
+
+run "git add .";
+runx "git", "commit", "-m", "gr add-label $saved_args", "-s", "--allow-empty";
+$ENV{HOME} = "/";
+runx "git", "push", "$ENV{scm_gerrit_admin_ssh_url}${repo_name}", "HEAD:refs/meta/config";

@@ -10,12 +10,6 @@ use utf8;
 @ARGV = map {decode_utf8 $_} @ARGV;
 
 my @SAVED_ARGV = @ARGV;
-if ($ENV{USE_FEISHU_FOR_DING} eq 'true') {
-    runx("debug-run", "feishu-ding", @SAVED_ARGV);
-    if ($ENV{STOP_USING_DINGDING} eq 'true') {
-        exit(0);
-    }
-}
 
 (my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
 # {%org-mode%}
@@ -171,6 +165,35 @@ if (@at_people) {
 if ($ENV{scm_force_ding_robot}) {
     $ding_robot = decode_utf8 "$ENV{scm_force_ding_robot}";
     $ENV{scm_force_ding_robot} = "";
+}
+
+if ($ENV{USE_FEISHU_FOR_DING} eq 'true') {
+    # with a robot, I need a feishu group name
+    # with a feishu group name, I need a group chat_id
+    # feishu group name might be changed, but the id won't
+
+    # AppAutoTest # CaoPeng、LiLei
+    # daily_build Daily Build 状态通知群
+    # DesayMCU
+    # gerrit-chart
+    # GerritPatchesDepLvl0
+    # git_merge_robot
+    # M01_VerifyBuild
+    # OtaPackage
+    # OtaTestResult
+    # OtaWeekly
+    # release_workflow
+    # robot
+    # robot_prod
+    # robot_test
+    # test-sign
+    # XcuCiCd
+    # XcuDaily
+
+    runx("debug-run", "feishu-notify", @SAVED_ARGV);
+    if ($ENV{STOP_USING_DINGDING} eq 'true') {
+        exit(0);
+    }
 }
 
 if (not $ding_url) {

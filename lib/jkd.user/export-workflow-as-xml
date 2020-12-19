@@ -155,7 +155,7 @@ END {
         }
     );
 
-    for (@{$layout_json_out->{layout}{statuses}}) {
+    for (sort {$a->{id} cmp $b->{id}} @{$layout_json_out->{layout}{statuses}}) {
         my $stat = $_;
 
         my %stat_hash = map {
@@ -165,7 +165,7 @@ END {
         push @{$layout_in{layout}{statuses}}, \%stat_hash;
     }
 
-    for (@{$layout_json_out->{layout}{transitions}}) {
+    for (sort {$a->{id} cmp $b->{id}} @{$layout_json_out->{layout}{transitions}}) {
         my $trans = $_;
 
         my %trans_hash = map {

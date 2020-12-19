@@ -122,7 +122,10 @@ output=$(
            "${scm_jira_url}secure/admin/workflows/ImportWorkflowFromXml.jspa"
       )
 
-log "Finished importing: ${workflow_name}"
+echo "${output}" > ~/tmp/import-workflow-from-xml.log
+echo "${xml_str}" > ~/tmp/import-workflow-from-xml.xml
+log "Finished importing: ${workflow_name}, saved output to ~/tmp/import-workflow-from-xml.log:"
+
 
 if echo "${output}" | grep 'Error parsing workflow XML'; then
     die "Workflow XML 格式错误！"

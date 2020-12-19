@@ -185,15 +185,109 @@ my $dom = Mojo::DOM->new->parse($xml_str);
 my $fields_json = $json->decode(scalar capturex("jkd", "rest", "field"));
 my $screens_json = $json->decode(scalar capturex("jkd", "rest", "screens"));
 my $status_json = $json->decode(scalar capturex("jkd", "status", "-a", "list"));
+my $roles_json = $json->decode(scalar capturex("jkd", "rest", "role"));
 
 my %datatype_json_map = (
     field => $fields_json,
     screens => $screens_json,
     status => $status_json,
+    role => $roles_json,
+);
+
+my %built_in_fields_id_name_map = (
+    "00000" => "Summary",
+    "00001" => "Description",
+    "00003" => "Assignee",
+    "00006" => "Reporter",
+    "00012" => "Due date",
+    "00017" => "Priority",
+    "00068" => "Original estimate (minutes)",
+    "00024" => "Remaining estimate (minutes)",
+    "00025" => "Total time spent (minutes)",
+    "00140" => "Add to time spent (minutes)",
+    "00094" => "Components",
+    "00074" => "Fix versions",
+    "00077" => "Affected versions",
+    "00070" => "Environment",
+    "00016" => "Issue status",
+    "00113" => "Issue status (delayed writing)",
+    "00154" => "Execute transition",
+    "00155" => "Execute transition (delayed execution)",
+    "00028" => "Resolution",
+    "00112" => "Date and time of resolution",
+    "00080" => "Labels",
+    "00167" => "New labels",
+    "00106" => "Attachments (current attachments will be replaced)",
+    "00105" => "Attachments (only new attachments will be added)",
+    "00103" => "Security level",
+    "00109" => "Last comment",
+    "00130" => "Last comment's visibility restrictions",
+    "00129" => "New comment",
+    "00174" => "New comment (sends email notifications)",
+    "00133" => "Watchers",
+    "00136" => "New watchers",
+    "00058" => "Ephemeral number 1",
+    "00059" => "Ephemeral number 2",
+    "00060" => "Ephemeral number 3",
+    "00064" => "Ephemeral number 4",
+    "00065" => "Ephemeral number 5",
+    "00061" => "Ephemeral string 1",
+    "00062" => "Ephemeral string 2",
+    "00063" => "Ephemeral string 3",
+    "00066" => "Ephemeral string 4",
+    "00067" => "Ephemeral string 5",
+);
+
+my %built_in_fields_name_id_map = (
+    "Summary" => "00000",
+    "Description" => "00001",
+    "Assignee" => "00003",
+    "Reporter" => "00006",
+    "Due date" => "00012",
+    "Priority" => "00017",
+    "Original estimate (minutes)" => "00068",
+    "Remaining estimate (minutes)" => "00024",
+    "Total time spent (minutes)" => "00025",
+    "Add to time spent (minutes)" => "00140",
+    "Components" => "00094",
+    "Fix versions" => "00074",
+    "Affected versions" => "00077",
+    "Environment" => "00070",
+    "Issue status" => "00016",
+    "Issue status (delayed writing)" => "00113",
+    "Execute transition" => "00154",
+    "Execute transition (delayed execution)" => "00155",
+    "Resolution" => "00028",
+    "Date and time of resolution" => "00112",
+    "Labels" => "00080",
+    "New labels" => "00167",
+    "Attachments (current attachments will be replaced)" => "00106",
+    "Attachments (only new attachments will be added)" => "00105",
+    "Security level" => "00103",
+    "Last comment" => "00109",
+    "Last comment's visibility restrictions" => "00130",
+    "New comment" => "00129",
+    "New comment (sends email notifications)" => "00174",
+    "Watchers" => "00133",
+    "New watchers" => "00136",
+    "Ephemeral number 1" => "00058",
+    "Ephemeral number 2" => "00059",
+    "Ephemeral number 3" => "00060",
+    "Ephemeral number 4" => "00064",
+    "Ephemeral number 5" => "00065",
+    "Ephemeral string 1" => "00061",
+    "Ephemeral string 2" => "00062",
+    "Ephemeral string 3" => "00063",
+    "Ephemeral string 4" => "00066",
+    "Ephemeral string 5" => "00067",
 );
 
 sub id2name($id, $datatype) {
     my $names_ids_json = $datatype_json_map{$datatype};
+
+    if ($built_in_fields_id_name_map{$id} && $datatype eq "field") {
+        return $built_in_fields_id_name_map{$id};
+    }
 
     my @matched_names;
     for (@{$names_ids_json}) {
@@ -211,13 +305,19 @@ sub id2name($id, $datatype) {
         } else {
             $extra_msg = "Please remove extra ones!"
         }
-        die "Can't find exactly 1 ${datatype} name in $ENV{scm_jira_url} for $id: '@matched_names' ($extra_msg)" unless $keep_running;
+        my $err_msg = "Can't find exactly 1 ${datatype} name in $ENV{scm_jira_url} for $id: '@matched_names' ($extra_msg)";
+        runx("bhj-notify", "jkd workflow", $err_msg);
+        die $err_msg unless $keep_running;
     }
 
     return $matched_names[0];
 }
 
 sub name2id($name, $datatype) {
+    if ($built_in_fields_name_id_map{$name} && $datatype eq "field") {
+        return $built_in_fields_name_id_map{$name};
+    }
+
     my $names_ids_json = $datatype_json_map{$datatype};
 
     if (not $name) {
@@ -246,7 +346,9 @@ sub name2id($name, $datatype) {
             return $matched_ids_map{$matched_ids};
             $extra_msg = "Please remove extra ones!"
         }
-        die "Can't find exactly 1 id for ${datatype} name $name: '@matched_ids' ($extra_msg)" unless $keep_running;
+        my $err_msg = "Can't find exactly 1 id for ${datatype} name $name: '@matched_ids' ($extra_msg)";
+        runx("bhj-notify", "jkd workflow", $err_msg);
+        die $err_msg unless $keep_running;
     }
 
     return $matched_ids[0];
@@ -295,7 +397,7 @@ if (is_exact_action "id2name") {
                     my $name = id2name($text, 'field');
                     die "bad name $name: it matches ;!" if $name =~ m/;/;
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, xml_quote $name));
-                } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression") {
+                } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression" || $_->{name} eq "textToParse") {
                     if ((my $text = $_->text) =~ s,^\%\{|\}$,,g) {
                         my $name = id2name($text, 'field');
                         die "bad name $name: it matches ;!" if $name =~ m/;/;
@@ -337,8 +439,7 @@ if (is_exact_action "id2name") {
             }
         );
 
-    $dom->find('meta')->each
-        (
+    $dom->find('meta')->each(
             sub {
                 for my $meta_name (keys %meta_field_name_json_map) {
                     if ($_->{name} eq $meta_name and $_->text) {
@@ -348,6 +449,7 @@ if (is_exact_action "id2name") {
                 }
             }
         );
+
 } elsif (is_exact_action "name2id") {
     $dom->find('arg')->each
         (
@@ -381,7 +483,7 @@ if (is_exact_action "id2name") {
                     my $text = $_->text;
                     my $id = fields_name2id_number_only($text);
                     $_->replace(sprintf('<arg name="%s">%s</arg>', $_->{name}, $id));
-                } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression") {
+                } elsif ($_->{name} eq "rightTextExpression" || $_->{name} eq "leftTextExpression" || $_->{name} eq "textToParse") {
                     if ( (my $text = $_->text) =~ s,^\%\{|\}$,,g) {
                         my $id = fields_name2id_number_only $text;
                         $_->replace(sprintf('<arg name="%s">%{%s}</arg>', $_->{name}, $id));

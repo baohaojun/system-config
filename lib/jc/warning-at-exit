@@ -19,6 +19,40 @@ EOFe9576f8668e0
 
 ## end code-generator
 ## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:h \
+                      --long action:,help \
+                      -n "$(basename -- "$0")" -- "$@")
+declare action=note
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -a|--action)
+            action=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-a, '
+            printf %-24s '--action=ACTION'
+            echo "可以是 note（先记下来）或 send（最后发出去）"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
 
 ## end generated code
 
