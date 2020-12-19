@@ -82,7 +82,7 @@ if ($html_file) {
     if (not $fieldconfigscheme_id) {
         die "Must specify the fieldconfigscheme id";
     }
-    $html_text = decode_utf8 capturex("jkd", "webget", "$ENV{scm_jira_url}secure/admin/ConfigureFieldLayoutScheme!default.jspa?id=${fieldconfigscheme_id}");
+    $html_text = decode_utf8 capturex("debug-run", "jkd", "webget", "$ENV{scm_jira_url}secure/admin/ConfigureFieldLayoutScheme!default.jspa?id=${fieldconfigscheme_id}");
 }
 
 

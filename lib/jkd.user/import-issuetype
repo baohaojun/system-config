@@ -149,13 +149,17 @@ if (not $to_jira_json->{project}) {
     die sprintf("Can't work with different project: %s v.s. %s", $to_jira_json->{project}, $from_project);
 }
 
-my $from_frieldconfig = $from_jira_json->{fieldconfig};
+my $from_fieldconfig = $from_jira_json->{fieldconfig};
+if (not $from_fieldconfig && runx("yes-or-no-p", "from field config is null; create field config?")) {
+    $from_fieldconfig = "$from_project.$from_issuetype.fieldconfig"
+}
+
 my $fieldconfigs =
     $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigs"));
-if (not grep {$from_frieldconfig eq $_->{name}} @$fieldconfigs) {
-    say STDERR "Field config $from_frieldconfig not exist, create it!";
+if (not grep {$from_fieldconfig eq $_->{name}} @$fieldconfigs) {
+    say STDERR "Field config $from_fieldconfig not exist, create it!";
     runx (
-        "jkd", "fieldconfig", "-a", "create", "-n", "${from_frieldconfig}"
+        "jkd", "fieldconfig", "-a", "create", "-n", "${from_fieldconfig}"
     )
 }
 
@@ -170,10 +174,11 @@ if (not $to_jira_json->{fieldconfigscheme}) {
     die sprintf("can't work with different fieldconfigscheme: %s v.s. %s", $to_jira_json->{fieldconfigscheme}, $from_fieldconfigscheme);
 }
 
-if (not $to_jira_json->{fieldconfig}) {
+if (not $to_jira_json->{fieldconfig} || $to_jira_json->{fieldconfig} eq "Default Field Config") {
+
     say STDERR "Need to add fieldconfig";
     runx(
-        "jkd", "fieldconfig", "-a", "add-to-scheme", "-s", "$from_fieldconfigscheme", "-n", "$from_frieldconfig", "-i", "$from_issuetype"
+        "jkd", "fieldconfig", "-a", "add-to-scheme", "-s", "$from_fieldconfigscheme", "-n", "$from_fieldconfig", "-i", "$from_issuetype"
     );
 }
 

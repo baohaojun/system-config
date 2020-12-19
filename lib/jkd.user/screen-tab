@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+set -x
 
 IFS=$'\n'
 
@@ -45,18 +46,35 @@ EOFe9576f8668e0
 # generate-getopt -P '?"${comment_doc}"' \
     # s:screen-name \
     # t:tab-name \
+    # mmatch-and-select-tab-name '?"选择使用哪个 tab"' \
     # j:screen-json
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o s:t:h \
-                      --long screen-name:,tab-name:,help \
-                      -n $(basename -- $0) -- "$@")
+TEMP=$(POSIXLY_CORRECT=true getopt -o mj:s:t:h \
+                      --long match-and-select-tab-name,screen-json:,screen-name:,tab-name:,help,no-match-and-select-tab-name \
+                      -n "$(basename -- "$0")" -- "$@")
+declare match_and_select_tab_name=false
+declare screen_json=
 declare screen_name=
 declare tab_name=
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 
+        -m|--match-and-select-tab-name|--no-match-and-select-tab-name)
+            if test "$1" = --no-match-and-select-tab-name; then
+                match_and_select_tab_name=false
+            else
+                match_and_select_tab_name=true
+            fi
+            shift
+
+            ;;
+        -j|--screen-json)
+            screen_json=$2
+            shift 2
+
+            ;;
         -s|--screen-name)
             screen_name=$2
             shift 2
@@ -72,6 +90,14 @@ while true; do
             echo -e "${comment_doc}"
             echo
             echo Options and arguments:
+            printf %6s '-m, '
+            printf %-24s '--[no-]match-and-select-tab-name'
+            echo
+            printf "%30s" ""
+            echo "选择使用哪个 tab"
+            printf %6s '-j, '
+            printf %-24s '--screen-json=SCREEN_JSON'
+            echo
             printf %6s '-s, '
             printf %-24s '--screen-name=SCREEN_NAME'
             echo
@@ -132,11 +158,13 @@ if test "${action}" = list-tabs; then
     exit
 fi
 
-tab_name=$(
-    select-args \
-        --ask-for-input -i "${tab_name}" -1 -o -p "请选择你要的 tab 名" \
-        "${tabs_names[@]}"
-        )
+if test "${match_and_select_tab_name}" = true; then
+    tab_name=$(
+        select-args \
+            --ask-for-input -i "${tab_name}" -1 -o -p "请选择你要的 tab 名" \
+            "${tabs_names[@]}" || echo "${tab_name}"
+            )
+fi
 
 tab_id=$(
     echo "${tabs_json}" | jq "$(
