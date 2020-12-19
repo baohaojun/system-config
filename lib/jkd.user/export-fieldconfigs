@@ -99,4 +99,10 @@ $dom->find('span[data-scheme-field="name"] a[href^="/secure/admin/ConfigureField
         }
     );
 
+push @fieldconfigs, {
+    'description' => '',
+    'id' => '',
+    'name' => 'Default Field Configuration'
+};
+
 print decode_utf8($json->encode(\@fieldconfigs));

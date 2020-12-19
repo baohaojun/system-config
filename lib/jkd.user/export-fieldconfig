@@ -90,12 +90,14 @@ if (not $fieldconfig_id) {
     }
     my $fieldconfigs =
         $json->decode(scalar capture("cached-run -e scm_jira_url jkd export-fieldconfigs"));
+    my $found_field_config;
     grep {
         if ($fieldconfig_name eq $_->{name}) {
             $fieldconfig_id = $_->{id};
+            $found_field_config = 1;
         }
     } @$fieldconfigs;
-    die "Can't find fieldconfig $fieldconfig_name" unless $fieldconfig_id;
+    die "Can't find fieldconfig $fieldconfig_name" unless $found_field_config;
 }
 
 my $html_text;
@@ -104,7 +106,7 @@ if ($html_file) {
     $html_text = decode_utf8 read_file($html_file);
 } else {
     if (not $fieldconfig_id) {
-        die "Must specify the fieldconfig id";
+        runx("yes-or-no-p", "Must specify the fieldconfig id, are you sure to edit default field config");
     }
     $html_text = decode_utf8 capturex("debug-run", "jkd", "webget", "$ENV{scm_jira_url}secure/admin/ConfigureFieldLayout!default.jspa?id=${fieldconfig_id}");
 }

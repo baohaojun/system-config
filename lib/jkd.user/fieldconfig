@@ -156,7 +156,7 @@ if ($action eq "create") {
     );
 
     runx(
-        "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueTypeToFieldConfigurationAssociation.jspa", "-X", "POST",
+        "debug-run", "jkd", "webcurl", "$ENV{scm_jira_url}secure/admin/AddIssueTypeToFieldConfigurationAssociation.jspa", "-X", "POST",
         map { ('--data-urlencode', $_) } @params_values
     );
 } else {
