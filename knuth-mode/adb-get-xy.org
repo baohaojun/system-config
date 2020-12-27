@@ -77,8 +77,11 @@
 
       # print "$val_x -> $x, $val_y -> $y\r\n";
 
-      $x = int($x * $standard_width / $app_width);
-      $y = int($y * $standard_height / $app_height);
+      if ($ENV{scaling} ne "unset") {
+          $x = int($x * $standard_width / $app_width);
+          $y = int($y * $standard_height / $app_height);
+      }
+
       if ($ENV{print_tap}) {
           my $print_str = "$ENV{print_tap}($x, $y)";
           if ($ENV{print_format}) {
@@ -108,7 +111,7 @@
 
   ## start code-generator "^\\s *#\\s *"
   # generate-getopt -e \
-      # @scaling=unset \
+      # @scaling=unset '?"unset: 不处理缩放；false: 强制不需要缩放；true: 强制需要缩放"' \
       # @:print-format \
       # @:standard-width=1080 \
       # @:standard-height=1920
@@ -116,11 +119,11 @@
   ## start generated code
   TEMP=$( getopt -o h \
                  --long print-format:,scaling,standard-height:,standard-width:,help,no-scaling \
-                 -n $(basename -- $0) -- "$@")
-  print_format=${print_format:-}
-  scaling=${scaling:-false}
-  standard_height=${standard_height:-1920}
-  standard_width=${standard_width:-1080}
+                 -n "$(basename -- "$0")" -- "$@")
+  declare -x print_format=${print_format:-}
+  declare -x scaling=${scaling:-unset}
+  declare -x standard_height=${standard_height:-1920}
+  declare -x standard_width=${standard_width:-1080}
   eval set -- "$TEMP"
   while true; do
       case "$1" in
@@ -128,6 +131,7 @@
           --print-format)
               print_format=$2
               shift 2
+
               ;;
           --scaling|--no-scaling)
               if test "$1" = --no-scaling; then
@@ -136,14 +140,17 @@
                   scaling=true
               fi
               shift
+
               ;;
           --standard-height)
               standard_height=$2
               shift 2
+
               ;;
           --standard-width)
               standard_width=$2
               shift 2
+
               ;;
           -h|--help)
               set +x
@@ -155,7 +162,7 @@
               echo
               printf "%6s" " "
               printf %-24s '--[no-]scaling'
-              echo
+              echo "unset: 不处理缩放；false: 强制不需要缩放；true: 强制需要缩放"
               printf "%6s" " "
               printf %-24s '--standard-height=STANDARD_HEIGHT'
               echo
@@ -176,11 +183,6 @@
   done
 
 
-  export print_format
-  export scaling
-  export standard_height
-  export standard_width
-
   ## end generated code
 
   window_dump=$(
@@ -190,7 +192,10 @@
   true_size=$(echo "$window_dump"|perl -ne 'print "app=${1}x${2}" if m/mStableFullscreen=.*?(\d+),(\d+)[])]\s*$/')
   init_size=$(echo "$window_dump"|grep -o -P 'init=\d+x\d+')
 
-  if test "$init_size" != "init=1080x1920"; then
+  if test "${scaling}" = unset; then
+      export print_tap=tap # for onmyoji
+      export print_format="tap %d %d"
+  elif test "$init_size" != "init=1080x1920"; then
       export print_tap=adb_tap_${init_size#init=}
       if test "$print_format" = Wrench; then
           export print_format="Wrench \"$print_tap(%d, %d)\""
