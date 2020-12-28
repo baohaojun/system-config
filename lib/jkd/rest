@@ -129,7 +129,7 @@ for try in $(seq 1 $max_try); do
             ! output=$(echo "${output}" | jq .)
         }; then
         log "Failed to get json output"
-        sleep $((try * 3))
+        sleep $((try * 10))
         if test "${try}" = "$max_try"; then
             die "Can't get json data for $j_url: output is '$output'"
         fi

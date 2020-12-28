@@ -17,7 +17,59 @@ use JSON;
 
 my $json = JSON->new->utf8->canonical->pretty;
 
-my $fileinfo = {};
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFc83131117f09
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# b:base-url='"$ENV{BUILD_URL}artifacts/"'
+## end code-generator
+## start generated code
+use Getopt::Long;
+
+Getopt::Long::Configure("posix_default");
+
+
+
+my $base_url = "$ENV{BUILD_URL}artifact/";
+
+my $handler_help = sub {
+    print "$comment_doc";
+    print "\n\n选项和参数：\n";
+    printf "%6s", '-b, ';
+    printf "%-24s", '--base-url=BASE-URL';
+    if (length('--base-url=BASE-URL') > 24 and length() > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", ;
+    print "\n";
+
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
+};
+
+GetOptions (
+    'base-url|b=s' => \$base_url,
+    'help|h!' => \&$handler_help,
+);
+
+
+## end generated code
+
+
+my $fileinfo = {
+    base_url => $base_url,
+    files => [],
+};
 for my $file (@ARGV) {
     next unless -e $file;
 
@@ -25,11 +77,11 @@ for my $file (@ARGV) {
         $atime,$mtime,$ctime,$blksize,$blocks)
         = stat($file);
 
-    $fileinfo->{$file} = {
+    push @{$fileinfo->{files}}, {
         size => $size,
         mtime => $mtime,
-    }
-}
-;
+        name => $file,
+    };
+};
 
 print decode_utf8($json->encode($fileinfo));

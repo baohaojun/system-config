@@ -186,7 +186,7 @@ issuetype=$(
          )
 
 jira_key=$(
-    jkd c -p "${project}" -t "${issuetype}" \
+    debug-run jkd c -p "${project}" -t "${issuetype}" \
         --fields-json "${old_json}" 2>&1|
         tee /dev/stderr ~/tmp/dup-release-jira.txt|
         perl -ne 'print if s,POST.*response code:201result:,,' | jq .key -r

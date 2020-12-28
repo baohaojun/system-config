@@ -304,12 +304,13 @@ my $workflow_xml = $from_jira_json->{workflow_xml};
 
 my @id_lines;
 my %id_lines;
-while ($workflow_xml =~ m,^.*\b\d{5}\b.*$,mg) {
-    push @id_lines, $& unless $id_lines{$&};
-    $id_lines{$&} = 1;
+while ($workflow_xml =~ m,^\s*(.*\b\d{5}\b.*?)\s*$,mg) {
+    push @id_lines, $1 unless $id_lines{$1};
+    $id_lines{$1} = 1;
 }
 
 if (@id_lines) {
+    say STDERR "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     say STDERR join("\n", @id_lines);
     runx("yes-or-no-p", "Continue to run? seems id2name is not complete");
 }
