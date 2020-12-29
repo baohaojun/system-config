@@ -31,6 +31,7 @@ else
               )
 fi
 
+unset IFS
 for x in $add_groups; do
     echo add: $x
 done
