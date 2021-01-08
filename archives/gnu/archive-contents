@@ -131,7 +131,7 @@
 	   ("John Wiegley" . "jwiegley@gmail.com"))
 	  (:keywords "async"))])
  (auctex .
-	 [(13 0 0)
+	 [(13 0 1)
 	  ((emacs
 	    (24 3))
 	   (cl-lib
@@ -652,9 +652,9 @@
 	      (:maintainer "Markus Triska" . "triska@metalevel.at")
 	      (:url . "https://www.metalevel.at/ediprolog/"))])
  (eev .
-      [(20201013)
+      [(20210102)
        ((emacs
-	 (24 1)))
+	 (24 4)))
        "Support for e-scripts (eepitch blocks, elisp hyperlinks, etc)" tar
        ((:url . "http://angg.twu.net/#eev")
 	(:maintainer "Eduardo Ochs" . "eduardoochs@gmail.com")
@@ -728,7 +728,7 @@
 		     (:keywords "languages" "lisp")
 		     (:url . "http://elpa.gnu.org/packages/elisp-benchmarks.html"))])
  (emms .
-       [(6 2)
+       [(6 3)
 	((cl-lib
 	  (0 5))
 	 (seq
@@ -973,12 +973,12 @@
 	   ("Thien-Thi Nguyen" . "ttn@gnu.org"))
 	  (:keywords "games" "processes"))])
  (gnus-mock .
-	    [(0 4 5)
+	    [(0 5)
 	     nil "Mock Gnus installation for testing" tar
 	     ((:maintainer "Eric Abrahamsen" . "eric@ericabrahamsen.net")
 	      (:authors
 	       ("Eric Abrahamsen" . "eric@ericabrahamsen.net"))
-	      (:url . "http://elpa.gnu.org/packages/gnus-mock.html"))])
+	      (:url . "https://elpa.gnu.org/packages/gnus-mock.html"))])
  (gpastel .
 	  [(0 5 0)
 	   ((emacs
@@ -1192,6 +1192,18 @@
 	  (:authors
 	   ("Ivan Kanis" . "ivan@kanis.fr"))
 	  (:maintainer "Ivan Kanis" . "ivan@kanis.fr"))])
+ (kiwix .
+	[(1 0 1)
+	 ((emacs
+	   (24 4))
+	  (request
+	   (0 3 0)))
+	 "Searching offline Wikipedia through Kiwix." tar
+	 ((:url . "https://github.com/stardiviner/kiwix.el")
+	  (:maintainer "stardiviner" . "numbchild@gmail.com")
+	  (:authors
+	   ("stardiviner" . "numbchild@gmail.com"))
+	  (:keywords "kiwix" "wikipedia"))])
  (kmb .
       [(0 1)
        ((emacs
@@ -2250,15 +2262,14 @@
 	  ("Oleh Krehel" . "ohwoeowho@gmail.com"))
 	 (:keywords "convenience"))])
  (tramp .
-	[(2 4 4 4)
+	[(2 5 0)
 	 ((emacs
-	   (24 4)))
+	   (25 1)))
 	 "Transparent Remote Access, Multiple Protocol" tar
-	 ((:url . "https://savannah.gnu.org/projects/tramp")
+	 ((:url . "https://www.gnu.org/software/tramp/")
 	  (:maintainer "Michael Albinus" . "michael.albinus@gmx.de")
 	  (:authors
-	   ("Kai Großjohann" . "kai.grossjohann@gmx.net")
-	   ("Michael Albinus" . "michael.albinus@gmx.de"))
+	   ("Kai Großjohann" . "kai.grossjohann@gmx.net"))
 	  (:keywords "comm" "processes"))])
  (tramp-theme .
 	      [(0 2)
