@@ -289,6 +289,13 @@ map {
 } keys %$fieldconfig_json;
 
 print decode_utf8 ($json->encode($issuetype_complete_data));
+my $issuetype_json_file = "$ENV{HOME}/src/jenkins-tasks/jira/$ENV{scm_jira_url}/issuetypes/$issuetype_name.dump.json";
+use File::Basename;
+my $issuetype_json_dir = dirname($issuetype_json_file);
+runx("mkdir", "-p", "$issuetype_json_dir", );
+open my $fh, ">:encoding(UTF-8)", "${issuetype_json_file}";
+print $fh decode_utf8($json->encode($issuetype_complete_data));
+close $fh;
 
 my $comment = <<~'EOFc83131117f09';
 # {%org-mode%}

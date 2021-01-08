@@ -165,8 +165,32 @@ sub queryProjects() {
     )
 }
 
+sub tql($args) {
+
+}
+
+sub queryTask() {
+    my $url = "https://open.teambition.com/api/task/query";
+
+    my $org_id = get_config_val("teambition.${app_name}.enterpriseid");
+    my $appToken = getAppAccessToken();
+    my $body = {
+        userId => get_config_val("teambition.${app_name}.userid"),
+    };
+    runx(
+        "debug-run", "curl-f", "-s",
+        "-H", 'Content-Type: application/json',
+        "-H", "Authorization: Bearer $appToken",
+        "-H", "X-Tenant-Id: $org_id",
+        "-H", "X-Tenant-Type: organization",
+        sprintf("%s?userId=%s&organizationId=%s&condition=%s", $url, $body->{userId}, $org_id, "creator"), "-X", "GET",
+    )
+}
+
+queryTask();
+
 # queryProjects();
 
-addTaskComment({task => "5f571f933f020400443e5fcb"});
+# addTaskComment({task => "EPDEV-1"});
 
 # getUserAccessToken;

@@ -6,14 +6,18 @@ set -e
 # 果发现当前目录是一个 shallow 的 git 仓库的话，会改成调用 mirror 下的
 # git 数据。
 
-if ! lookup-file -e .git/shallow >/dev/null 2>&1 && git_log=$(git "$@"); then
-    echo "$git_log"
-    exit 0
+if test "${REPO_PATH_NON_EXIST}" = true; then
+    mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/${REPO_MANIFEST_PREFIX}${REPO_PROJECT_NAME}.git
+else
+    if ! lookup-file -e .git/shallow >/dev/null 2>&1 && git_log=$(git "$@"); then
+        echo "$git_log"
+        exit 0
+    fi
+
+    cd $(lookup-file-dir .git)
+
+    mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-abs-path).git
 fi
-
-cd $(lookup-file-dir .git)
-
-mirror_dir=${scm_gerrit_mirror_dir:-~/src/android-mirror}/$(repo-abs-path).git
 
 if git_log=$(git --git-dir "$mirror_dir" --work-tree "$PWD" "$@"); then
     echo "$git_log"

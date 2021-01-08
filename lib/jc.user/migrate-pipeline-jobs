@@ -114,6 +114,8 @@ GetOptions (
 
 ## end generated code
 
+$ENV{SC_EXTRA_PS1}="";
+
 my %jobs_migrated;
 
 chdir("$ENV{HOME}/src/jenkins-tasks/");
@@ -138,11 +140,15 @@ sub add_build_to_migrate($job, $build_num) {
 }
 
 sub get_jobs_from_build_log($build_url) {
+    if ($build_url !~ m,/$,) {
+        $build_url = "$build_url/";
+    }
     say STDERR "get_jobs_from_build_log: $build_url";
     my $build_log =
-        decode_utf8(scalar capturex("jc", "curl", "${build_url}consoleText", ));
+        decode_utf8(scalar capturex("debug-run", "jc", "-j", "$from_env", "curl", "${build_url}consoleText", ));
 
     while ($build_log =~ m,Scheduling project: (\S+),g) {
+        say STDERR "add project: $1";
         add_job_to_migrate($1);
     }
 
@@ -159,7 +165,7 @@ sub get_jobs_from_build_log($build_url) {
         add_build_to_migrate($1, $2);
     }
 
-    while ($build_log =~ m,Starting building: (\S+) #(\d+),) {
+    while ($build_log =~ m,Starting building: (\S+) #(\d+),g) {
         add_job_to_migrate($1);
         add_build_to_migrate($1, $2);
     }
@@ -177,12 +183,14 @@ say STDERR "Need to migrate jobs: " . decode_utf8($json->encode(\@jobs_to_migrat
 sub migrate_1_job($job) {
     runx(EXIT_ANY, "rm", "-f", "${from_env}/${job}.xml", "${to_env}/${job}.xml");
     runx("jc", "ue", "-j", "$job", "--jenkins-env", "$from_env", );
-    runx(EXIT_ANY, "jc", "ue", "-j", "$job", "--jenkins-env", "$to_env", );
+    runx(EXIT_ANY, "debug-run", "jc", "ue", "-j", "$job", "--jenkins-env", "$to_env", );
     chdir("$ENV{HOME}/src/jenkins-tasks/.sites");
-    if (runx(EXIT_ANY, "diff", "-q", "$from_env/${job}.xml", "${to_env}/${job}.xml") == 0) {
+    if (runx(EXIT_ANY, "debug-run", "diff", "-w", "-B", "$from_env/${job}.xml", "${to_env}/${job}.xml") == 0) {
         say STDERR "$from_env to $to_env $job 没有差异";
         return;
     }
+    runx(EXIT_ANY, "hint", "Will merge $_ now");
+
     runx(EXIT_ANY, "meld", "$from_env/${job}.xml", "${to_env}/${job}.xml");
 
     runx(EXIT_ANY, "debug-run", "diff", "-w", "$from_env/${job}.xml", "${to_env}/${job}.xml");
@@ -206,6 +214,5 @@ for (@jobs_to_migrate) {
     say STDERR "Need to migrate: $_";
     next if $dry_run;
 
-    runx(EXIT_ANY, "hint", "Will merge $_ now");
     migrate_1_job($_);
 }

@@ -190,7 +190,31 @@ if ($ENV{USE_FEISHU_FOR_DING} eq 'true') {
     # XcuCiCd
     # XcuDaily
 
-    runx("debug-run", "feishu-notify", @SAVED_ARGV);
+    my @feishu_group_args;
+    if ($ding_robot) {
+        chomp(my $feishu_group = qx(set -x; git config -f $ENV{scm_secrets_conf} ding.${ding_robot}.feishu-group || true));
+
+        if ($feishu_group) {
+            @feishu_group_args = (
+                "-g", $feishu_group
+            );
+        }
+    }
+
+    use String::ShellQuote;
+    my $notification_maintainer = $ENV{NOTIFICATION_MAINTAINER} || "baohaojun";
+
+    if (@feishu_group_args) {
+        runx(EXIT_ANY, "debug-run", "feishu-notify", @SAVED_ARGV, "--ding-robot", "robot_prod", @feishu_group_args);
+        if ($EXITVAL != 0) {
+            my $command = join(" ", shell_quote("feishu-notify", @SAVED_ARGV, "--ding-robot", "robot_prod", @feishu_group_args));
+            runx(EXIT_ANY, "feishu-notify", "--title", "failed to notify with feishu, please fix it", "--text", "command: $command", "--to", "${notification_maintainer}", );
+        }
+    } else {
+        my $command = join(" ", shell_quote("ding", @SAVED_ARGV));
+        runx(EXIT_ANY, "feishu-notify", "--title", "failed to notify with feishu, can't get feishu group, please fix it", "--text", "command: $command", "--to", "${notification_maintainer}", );
+    }
+
     if ($ENV{STOP_USING_DINGDING} eq 'true') {
         exit(0);
     }
