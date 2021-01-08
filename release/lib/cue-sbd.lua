@@ -29,6 +29,39 @@ M.cue_funcs = {
       end
    end,
 
+   ['com.ss.android.lark'] = function ()
+      find_scene(ce.cue_all_scene)
+      local cue_all = true
+      if ce.who:lower() ~= "all" and ce.who ~= "所有人" then
+         cue_all = false
+      end
+
+      ce.click_1 = function()
+         if cue_all then
+            log("cue_all is %s", cue_all)
+            click_scene(ce.cue_all_scene, {skip_refind = true})
+         else
+            log("cue_all is %s", cue_all)
+            jump_out_of("feishu/cue-multi")
+            for n = 1, #ce.who_list do
+               local who = ce.who_list[n]
+               wrench_post(who, "No-Post")
+               sleep(.5)
+               if n == 1 then
+                  click_scene("feishu/cue-1st-choice", {skip_refind = true})
+               else
+                  click_scene("feishu/cue-2nd-choice", {skip_refind = true})
+               end
+               for i = 1, #who do
+                  adb_event("key DEL")
+               end
+               sleep(.5)
+            end
+            click_scene("feishu/cue-queding", {skip_refind = true})
+         end
+      end
+   end,
+
    ['com.tencent.mm'] = function ()
       wrench_post(ce.who, "No-Post")
       ce.click_1 = function()
