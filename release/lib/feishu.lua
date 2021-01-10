@@ -6,7 +6,7 @@ M.fs_chat_activity = "com.ss.android.lark/com.ss.android.lark.chatwindow.ChatWin
 
 M.open_fs = function(target_activity) -- target_activity can be one of ["search", "home"]
    local top_window, i
-   local max_times = 6
+   local max_times = 20
    for i = 1, max_times do
       if not top_activity_match(M.fs_pkg) then
          start_app(M.fs_pkg)
@@ -42,7 +42,9 @@ M.open_fs = function(target_activity) -- target_activity can be one of ["search"
          end
 
          if not found_grey and not found_duihua then
-            if i >= 4 then
+            if M.m_focused_window == M.fs_home then
+               click_scene("feishu/plus-eclipsed", {skip_refind = true})
+            elseif i >= 15 then
                M.g_find_scene_debug = true
             else
                adb_back_from_activity()

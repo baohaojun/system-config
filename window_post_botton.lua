@@ -96,6 +96,7 @@ map['com.sonelli.juicessh/com.sonelli.juicessh.activities.TerminalEmulatorActivi
 map['com.ss.android.lark/com.ss.android.lark.chatsetting.impl.group.info.edit.LarkGroupInfoEditActivity'] = 'No-Post'
 map['com.ss.android.lark/com.ss.android.lark.chatwindow.ChatWindowActivity'] = 'Find-Button'
 map['com.ss.android.lark/com.ss.android.lark.create.groupchat.impl.select_member.GroupCreateActivity'] = 'No-Post'
+map['com.ss.android.lark/com.ss.android.lark.member_manage.impl.atselector.AtSelectActivity'] = 'No-Post'
 map['com.ss.android.lark/com.ss.android.lark.search.impl.func.global.SearchActivity'] = 'No-Post'
 map['com.ss.android.ugc.aweme/com.ss.android.ugc.aweme.crossplatform.activity.CrossPlatformActivity'] = 'No-Post'
 map['com.taobao.taobao/com.taobao.message.activity.ChatActivity'] = 'Find-Button'
