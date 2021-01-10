@@ -152,6 +152,7 @@ my %cue_screens = (
     "com.alibaba.android.rimet/com.alibaba.android.dingtalkim.activities.ChatMsgActivity" => 1,
     "com.tencent.mm/com.tencent.mm.ui.chatting.ChattingUI" => 1,
     "com.tencent.mm/com.tencent.mm.ui.LauncherUI" => 1,
+    "com.ss.android.lark/com.ss.android.lark.chatwindow.ChatWindowActivity" => 1,
 );
 
 my $how_to_post = 'nil';
