@@ -2,17 +2,19 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-    # generate-getopt -P @:times=3 @:wait-secs=60 '?"default is 60"' \
+    # generate-getopt -P @:times=3 @:wait-secs=60 '?"失败的话重试等待多久 default is 60"' \
         # @:errout-regexp '?"stdout/stderr 匹配这个正则表达式的时候，就重试。正则的语法是 PCRE"' \
         # @:ignore-regexp '?"出错之后忽略不处理，并正常退出的正则表达式"' \
+        # @json-output '?"要求输出必须是 json 格式数据"' \
 
 ## end code-generator
 ## start generated code
 TEMP=$(POSIXLY_CORRECT=true getopt -o h \
-                      --long errout-regexp:,ignore-regexp:,times:,wait-secs:,help \
-                      -n $(basename -- $0) -- "$@")
+                      --long errout-regexp:,ignore-regexp:,json-output,times:,wait-secs:,help,no-json-output \
+                      -n "$(basename -- "$0")" -- "$@")
 declare errout_regexp=
 declare ignore_regexp=
+declare json_output=false
 declare times=3
 declare wait_secs=60
 eval set -- "$TEMP"
@@ -27,6 +29,15 @@ while true; do
         --ignore-regexp)
             ignore_regexp=$2
             shift 2
+
+            ;;
+        --json-output|--no-json-output)
+            if test "$1" = --no-json-output; then
+                json_output=false
+            else
+                json_output=true
+            fi
+            shift
 
             ;;
         --times)
@@ -55,11 +66,14 @@ while true; do
             printf "%30s" ""
             echo "出错之后忽略不处理，并正常退出的正则表达式"
             printf "%6s" " "
+            printf %-24s '--[no-]json-output'
+            echo "要求输出必须是 json 格式数据"
+            printf "%6s" " "
             printf %-24s '--times=TIMES'
             echo
             printf "%6s" " "
             printf %-24s '--wait-secs=WAIT_SECS'
-            echo "default is 60"
+            echo "失败的话重试等待多久 default is 60"
             exit
             shift
             ;;
@@ -90,6 +104,13 @@ tmp_err=/tmp/run-with-retry.err.$$
 
     for retry in $(seq 1 "${times}"); do
         if ("$@") > "$tmp_out" 2> "$tmp_err"; then
+            if test "${json_output}" = true; then
+                if ! cat "$tmp_out" | grep '\S' -P -q && cat "${tmp_out}" | jq . >/dev/null; then
+                    log "output blank or not json format?"
+                    ret=1
+                    continue
+                fi
+            fi
             redo-output
             if test "${retry}" -gt 1; then
                 mail-cms -o -e -s "Retried to run $* and OK@${retry}" || true

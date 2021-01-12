@@ -38,7 +38,8 @@ EOFc83131117f09
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -s perl -P '?"$comment_doc"' \
-# s:screen-name d:screen-description a:action @:copy \
+# s:screen-name d:screen-description a:action \
+# @:copy '?"从哪个 screen 进行拷贝"' \
 # t:tab-name @:after-field \
 # j:screen-json
 ## end code-generator
@@ -78,11 +79,11 @@ my $handler_help = sub {
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--copy=COPY';
-    if (length('--copy=COPY') > 24 and length() > 0) {
+    if (length('--copy=COPY') > 24 and length("从哪个 screen 进行拷贝") > 0) {
         print "\n";
         printf "%30s", "";
     }
-    printf "%s", ;
+    printf "%s", "从哪个 screen 进行拷贝";
     print "\n";
     printf "%6s", '-d, ';
     printf "%-24s", '--screen-description=SCREEN-DESCRIPTION';
