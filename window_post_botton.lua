@@ -1,5 +1,4 @@
 local map = {}
-map['输入密码'] = 'No-Post'
 map['cmb.pb/cmb.pb.app.h5container.NewPBWebViewActivity'] = 'No-Post'
 map['cmb.pb/com.cmb.zh.ui.mbank.im.activitys.chat.PublicChatActivity'] = 'Find-Button'
 map['cn.com.hsbc.hsbcchina/mobilez.client.activity.HomeActivity'] = 'No-Post'
@@ -101,6 +100,7 @@ map['com.ss.android.lark/com.ss.android.lark.member_manage.impl.atselector.AtSel
 map['com.ss.android.lark/com.ss.android.lark.search.impl.func.global.SearchActivity'] = 'No-Post'
 map['com.ss.android.ugc.aweme/com.ss.android.ugc.aweme.crossplatform.activity.CrossPlatformActivity'] = 'No-Post'
 map['com.taobao.taobao/com.taobao.message.activity.ChatActivity'] = 'Find-Button'
+map['com.taobao.taobao/com.taobao.search.searchdoor.SearchDoorActivity'] = 'No-Post'
 map['com.taobao.taobao/com.taobao.tao.purchase.activity.PurchaseActivity'] = 'No-Post'
 map['com.taobao.taobao/com.taobao.weex.WXActivity'] = 'No-Post'
 map['com.teambition.teambition/com.teambition.account.resetpw.PasswordResetActivity'] = 'No-Post'
@@ -154,4 +154,5 @@ map['lixiang'] = 'No-Post'
 map['org.mozilla.firefox/org.mozilla.fenix.HomeActivity'] = 'No-Post'
 map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'No-Post'
 map['smt_launcher'] = 'No-Post'
+map['输入密码'] = 'No-Post'
 return map
