@@ -104,6 +104,10 @@ if test -z "${file}" -a -e "$1"; then
     f=$( # file
         gitp "$1"
      )
+elif test -e "${file}"; then
+    f=$(
+        gitp "$file"
+     )
 fi
 
 if test "${branch}" != @empty@; then

@@ -375,7 +375,7 @@ if (is_exact_action "id2name") {
     $dom->find('arg')->each
         (
             sub {
-                if ($_->{name} =~ m,^(hidFieldsList|selectedTargetGeneralizedField|fieldsList)$,) {
+                if ($_->{name} =~ m,^(hidFieldsList|selectedUserCustomField|selectedTargetGeneralizedField|fieldsList)$,) {
                     my @field_ids = grep {m/./} split('@@', $_->text);
                     my @field_names;
                     push @field_names, map {
@@ -454,7 +454,7 @@ if (is_exact_action "id2name") {
     $dom->find('arg')->each
         (
             sub {
-                if ($_->{name} =~ m,^(hidFieldsList|selectedTargetGeneralizedField|fieldsList)$,) {
+                if ($_->{name} =~ m,^(hidFieldsList|selectedUserCustomField|selectedTargetGeneralizedField|fieldsList)$,) {
                     my @field_names = grep {m/./} split('@@', $_->text);
                     my @field_ids;
                     my $arg_name = $_->{name};

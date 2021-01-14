@@ -99,4 +99,13 @@ use URI::Escape;
 ($project = uri_escape("$project")) =~ s,/,\%2F,g;
 ($branch = uri_escape("$branch")) =~ s,/,\%2F,g;
 
-runx("gr", "rest", "a/projects/${project}/check.access?account=${user}&ref=${branch}&perm=${access_type}", );
+my $json_output =
+    $json->decode(scalar capturex(
+        "gr", "rest", "a/projects/${project}/check.access?account=${user}&ref=${branch}&perm=${access_type}", ));
+print decode_utf8($json->encode($json_output));
+
+if ($json_output->{status} == 200) {
+    exit 0;
+} else {
+    exit 1;
+}

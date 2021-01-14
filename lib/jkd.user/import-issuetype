@@ -150,8 +150,16 @@ if (not $to_jira_json->{project}) {
 }
 
 my $from_fieldconfig = $from_jira_json->{fieldconfig};
-if (not $from_fieldconfig && runx("yes-or-no-p", "from field config is null; create field config?")) {
-    $from_fieldconfig = "$from_project.$from_issuetype.fieldconfig"
+if (! $from_fieldconfig) {
+    if (runx("yes-or-no-p", "from field config is null; create field config?")) {
+        $from_fieldconfig = "$from_project.$from_issuetype.fieldconfig"
+    } else {
+        say STDERR "################################################################";
+        say STDERR decode_utf8($json->encode($from_jira_json));
+        say STDERR "################################################################";
+
+        exit 1;
+    }
 }
 
 my $fieldconfigs =
