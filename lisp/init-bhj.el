@@ -39,6 +39,15 @@ Returns (point) if current-char is visible."
 (defun fix-cjk-spaces ()
   "Fix cjk spaces."
   (interactive)
+  (unless (or
+           (eq major-mode 'org-mode)
+           (eq major-mode 'fundamental-mode)
+           (eq major-mode 'text-mode))
+    (if (yes-or-no-p "Are you sure to fix cjk spaces in non-org mode?")
+        (when (not (region-active-p))
+          (push-mark (line-beginning-position) nil t)
+          (goto-char (line-end-position)))
+      (user-error "Be careful to use fix-cjk-spaces in non-org mode")))
   (catch 'single-char-done
     (let ((my-point (point))
           (current-line-num (line-number-at-pos))
