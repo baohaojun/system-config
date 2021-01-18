@@ -52,7 +52,7 @@ M.open_dd = function(target_activity) -- target_activity can be one of ["search"
          end
 
          if found_duihua then
-            jump_from_to("dd-plus-button", "dd-xiaoxi-sousuo", {click_times = 2, x = -600})
+            jump_from_to("dd-plus-button", "dd-xiaoxi-sousuo", {click_times = 2, x = -400})
             jump_from_to("dd-xiaoxi-sousuo", "dd-xiaoxi-sousuozhong")
             return
          end
