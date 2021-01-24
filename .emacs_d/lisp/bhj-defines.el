@@ -1677,7 +1677,7 @@ to the value of `temporary-file-directory'."
   (string-match-p (regexp-quote str2) str1))
 
 (defun insert-kill-ring (text)
-  (let ((first-entry (car kill-ring)))
+  (let ((first-entry (or (car kill-ring) "")))
     (cond
      ((string= text first-entry) t)
      ((bhj-string-contains text first-entry)
