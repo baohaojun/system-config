@@ -130,3 +130,6 @@
 (define-key global-map (kbd "<XF86Search>") 's-dicts)
 (define-key global-map (kbd "<C-M-mouse-1>") 'netease-music-jump-into)
 (define-key global-map (kbd "<f12>") 'bhj-wrench-post)
+(global-set-key "\C-w" 'backward-kill-word)
+(global-set-key "\C-x\C-k" 'kill-region)
+(global-set-key "\C-c\C-k" 'kill-region)
