@@ -146,7 +146,7 @@ $result =~ s,\\uD83D,,g;
 
 my $json = decode_json $result;
 
-for my $file (keys %{$json->{results}}) {
+for my $file (sort {$a cmp $b} keys %{$json->{results}}) {
     for (@{$json->{results}{$file}}) {
         my $line = $_->{line};
         my $lineNumber = $_->{lineNumber};
