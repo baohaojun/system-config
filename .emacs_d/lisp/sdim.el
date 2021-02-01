@@ -283,10 +283,10 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
                                                  " ")
                                                prefix
                                                str))) cands-list))))
+  (when (and transient-mark-mode (region-active-p))
+    (delete-region (point) (mark))
+    (deactivate-mark))
   (let ((buffer-undo-list t))
-    (when (and transient-mark-mode (region-active-p))
-      (delete-region (point) (mark))
-      (deactivate-mark))
     (insert sdim-comp-str)
     (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))
   (when (and (not input-method-use-echo-area)

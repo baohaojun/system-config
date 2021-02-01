@@ -130,7 +130,7 @@ fi
 bhj-notify "abbrevs" "abbrev_file: $abbrev_file"
 expand_text=$(
     if test -x "${abbrev_file}"; then
-        "$abbrev_file"
+        timeout 300 "$abbrev_file"
     else
         cat "$abbrev_file"
     fi
