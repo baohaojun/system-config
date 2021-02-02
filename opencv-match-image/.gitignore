@@ -1,0 +1,5 @@
+Makefile
+CMakeFiles/
+DisplayImage
+CMakeCache.txt
+cmake_install.cmake
