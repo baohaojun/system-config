@@ -11,8 +11,7 @@ import getopt, sys
 from os.path import abspath, join, basename
 import os
 
-if os.uname()[0] == "FreeBSD":
-        sys.path.insert(0, os.environ['scm_common_libdir'])
+sys.path.insert(0, os.environ['scm_common_libdir'])
 
 import glipper, glipper.defs
 from glipper.Clipboards import *

@@ -3,8 +3,12 @@
 # works with glipper, put the argument into kill-ring
 
 tmpfile=~/tmp/emacs-clipmon.$$.txt
-. atexit rm -f $tmpfile
+. atexit mv $tmpfile ~/tmp/emacs-clipmon.last.txt
 echo -n "$@" > $tmpfile
+
+if diff -q "${tmpfile}" ~/tmp/emacs-clipmon.last.txt; then
+    exit
+fi
 
 exec 9> ~/.cache/system-config/emacs-clipmon.lock
 flock 9

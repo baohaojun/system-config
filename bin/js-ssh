@@ -164,7 +164,8 @@ expect "MFA auth" {
         exit 1
     }
 }
-expect_background "Opt> " {
+expect_background -re {O[\r|\n]*p[\r|\n]*t[\r|\n]*>[\r|\n]* } {
+    log "hello world"
     exit_opt
 }
 # -re "(.)" {
