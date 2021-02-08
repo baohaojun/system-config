@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+yes-or-no-p "This will make all files/dirs world readable, continue?"
+
+sudo find . -type f -readable -print0 | xargs -0 -n 100 sudo chmod a+r
+sudo find . -type f -executable -print0 | xargs -0 -n 100 sudo chmod a+rx
+
+sudo find . -type d -print0 | xargs -0 -n 100 sudo chmod a+rx
