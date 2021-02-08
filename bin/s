@@ -98,6 +98,14 @@ search_engines=$(
         if test -e $last_search; then
             cat $last_search;
         fi;
+
+        cd ~/system-config/lib/s
+
+        for x in *; do
+            if test -e $x; then
+                echo $x
+            fi
+        done
         cd ~/system-config/bin;
         (
             for x in search-* gerrit-browser-review; do
@@ -106,6 +114,8 @@ search_engines=$(
         )|sort -u
     ) | uniq-even-non-ajacent | grep .
               )
+
+PATH=~/system-config/lib/s:$PATH
 
 engine1=$(echo "$search_engines" | perl -ne 'print if 1..1' )
 

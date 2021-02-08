@@ -94,6 +94,7 @@ GetOptions (
 ## end generated code
 use JSON;
 use Encode;
+use HTML::Entities;
 
 use URI::Encode qw(uri_encode uri_decode);
 
@@ -135,7 +136,7 @@ my $command = "curl -s '${opengrok_url}api/v1/search?projects=$project&full=$ent
 (my $url = $command) =~ s,api/v1/,,;
 $url =~ s,curl -s ,,;
 
-print STDERR "$command\nopengrok url is $url\n";
+# print STDERR "$command\nopengrok url is $url\n";
 
 my $result = qx($command);
 if ( $? != 0 ) {
@@ -148,7 +149,7 @@ my $json = decode_json $result;
 
 for my $file (sort {$a cmp $b} keys %{$json->{results}}) {
     for (@{$json->{results}{$file}}) {
-        my $line = $_->{line};
+        my $line = decode_entities($_->{line});
         my $lineNumber = $_->{lineNumber};
 
         $line =~ s,</?b>,,g;
