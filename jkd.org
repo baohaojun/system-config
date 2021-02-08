@@ -1068,7 +1068,7 @@ This is simple using Perl's “reflection”.
         my $res = $ua->request($request);
 
         say "PUT res code:" . $res->code, "result: ", $res->content;
-        die sprintf("invalid request result: code = %d, content = '%s'", $res->code, $res->content) if ($res->code < 200 or $res->code >= 300);
+        die sprintf("invalid request result: code = %d, content = '%s', for request: %s", $res->code, $res->content, decode_utf8($request->as_string)) if ($res->code < 200 or $res->code >= 300);
 
     }
 
