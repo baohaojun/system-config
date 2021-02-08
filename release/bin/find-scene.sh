@@ -224,6 +224,15 @@ function find-scene() {
     local matched_x=$(echo $matched_xy | pn 1)
     local matched_y=$(echo $matched_xy | pn 2)
 
+    if test -z "${matched_x}"; then
+        (
+            . aterr bhj-notify find-scene.sh "match_image not built?"
+            cd ~/src/github/Wrench/opencv-match-image
+            cmake .
+            make
+        )
+    fi
+
     convert -crop $(get-image-size ${scene_png})+$matched_x+$matched_y ${full_jpg} ${full_jpg}.png
 
 

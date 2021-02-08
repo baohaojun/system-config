@@ -71,6 +71,9 @@ M.weixin_open_search = function(depth)
             break
          elseif top_window == W.weixinLauncherActivity then
             log("We are in %s when %d@%d", top_window, i_search, i)
+            if find_scene("wx-ShouYe.grey") then
+               jump_from_to("wx-ShouYe.grey", "wx-ShouYe")
+            end
             break
          end
       end
@@ -324,7 +327,7 @@ M.picture_to_weixin_chat = function(pics, ...)
    jump_from_to("wx/qita-gongneng", "wx/qita-xiangce")
 
    if #pics == 1 then
-      jump_from_to(true, "wx/maybe-this-picture")
+      jump_from_to(true, "wx/maybe-this-picture|wx/qita-xiangce")
    end
 
    if #pics == 1 and find_scene("wx/maybe-this-picture") then

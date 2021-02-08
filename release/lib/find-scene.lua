@@ -172,6 +172,15 @@ M.find_scene = function(scene, times)
    elseif scene:match("^window:") then
       scene = scene:gsub("window:", "")
       return adb_top_window() == scene
+   elseif scene:match("|") then
+      local scenes = split("|", scene)
+      for i = 1, #scenes do
+         scene = scenes[i]
+         if find_scene(scene, times) then
+            return true
+         end
+      end
+      return false
    end
    load_scene_map()
    times = times or 1
