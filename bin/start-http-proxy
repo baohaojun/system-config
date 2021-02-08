@@ -9,9 +9,9 @@ else
     if ! type tinyproxy >/dev/null 2>&1; then
         die sudo apt-get install -y tinyproxy
     fi
-    export http_proxy=http://localhost:$port
-    export https_proxy=http://localhost:$port
-    export ALL_PROXY=socks5://localhost:3080
+    export http_proxy=http://127.0.0.1:$port
+    export https_proxy=http://127.0.0.1:$port
+    export ALL_PROXY=socks5://127.0.0.1:3080
 
     if ! is-tty-io || yes-or-no-p "restart tinyproxy?"; then
         ps-killall tinyproxy.conf || true
