@@ -33,17 +33,42 @@
 #+END_SRC
 ** 写个脚本，把某个.tex文件里的emoji字符替换成对应的tex命令
 
+   #+name: move-cn-lines
+   #+BEGIN_SRC perl :var items='() :results output :exports output
+     my $elisp_template = <<~'EOFc83131117f09';
+     # {%emacs-lisp-mode%}
+       (goto-char (point-min))
+       (search-forward-regexp "^\\\\[%item%]{")
+       (setq [%item%]-text (thing-at-point 'line t))
+       (beginning-of-line)
+       (kill-line)
+     # {%/emacs-lisp-mode%}
+     EOFc83131117f09
+
+     $elisp_template =~ s,^#.*$,,gm;
+
+     for (@$items) {
+         (my $elisp = $elisp_template) =~ s,\Q[%item%]\E,$_,g;
+         print $elisp;
+     }
+   #+END_SRC
+
 参考 =org2pdf-emojify= elisp 命令
 #+name: org2pdf-emojify
-#+BEGIN_SRC emacs-lisp
-  (progn
+#+BEGIN_SRC emacs-lisp :noweb yes
+  (let (title-text subtitle-text author-text)
     (find-file "<%tex-file%>")
     (org2pdf-emojify)
     (goto-char (point-min))
     (search-forward "\\usepackage{graphicx}")
     (insert "\n\\usepackage[export]{adjustbox}")
     (insert "\n\\usepackage{lmodern}")
-    (save-buffer))
+    <<move-cn-lines(items='("title" "subtitle" "author"))>>
+    (search-forward-regexp "^\\\\maketitle")
+    (beginning-of-line)
+    (insert title-text subtitle-text author-text "\n")
+    (save-buffer)
+    (kill-buffer))
 #+END_SRC
 #+name: handle-tex
 #+BEGIN_SRC perl
@@ -56,6 +81,24 @@ s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
    #+BEGIN_SRC sh :tangle ~/system-config/bin/org2pdf :comments link :shebang "#!/usr/bin/env bash" :noweb yes
      set -e
 
+     error-msg() {
+         hint "$(
+     cat <<'EOF423e92c7f0e5' | . .replace-%% -- | grep -v '^#' -P
+     # {%text-mode%}
+
+     ,****************************************************************
+
+     在生成 pdf 演示稿的时候，如果提示 .toc 文件中 inputenc 错误，一般是因为在「* 章节」下直接输入文字导致，必须有「** 小节」才可以输入文字
+
+     另外，有可能需要删除所有的 .toc 文件才能修复相关问题。
+     # {%/text-mode%}
+     EOF423e92c7f0e5
+
+     )"
+
+     }
+
+     . aterr error-msg
 
      ## start code-generator "^\\s *#\\s *"
      # generate-getopt s:style=default c:color=default
