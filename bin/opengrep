@@ -1,15 +1,24 @@
 #!/usr/bin/env perl
 use strict;
 
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+opengrok 的命令行接口
+# {%/org-mode%}
+EOFc83131117f09
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P \
-# '?"调用 opengrok rest api 的命令行程序，允许在 emacs、vim 等软件中集成 opengrok 搜索"' \
-# p:project '?"指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表"' \
-# e:entry '?"默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助"' \
-# rraw-entry '?"不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api"' \
-# ssmart-short-relative-path '?"根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project"' \
-# @:username='":null:"' '?"opengrok 登录用户名（默认为环境变量 scm_opengrok_user 的值）"' \
-# @:password='":null:"' '?"opengrok 登录密码，与 USERNAME 联用"'
+# generate-getopt -s perl -P '?"$comment_doc"' \
+    # p:project '?"指定搜索哪个项目的代码，请在内部 opengrok 网页上查看项目列表"' \
+    # e:entry '?"默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助"' \
+    # rraw-entry '?"不要修改我的 ENTRY，它是符合 opengrok 的参数格式的，直接传给 opengrok rest api"' \
+    # ssmart-short-relative-path '?"根据本地安卓 repo 目录，打印出相对路径，允许自动计算 project"' \
+    # @:username='":null:"' '?"opengrok 登录用户名（默认为环境变量 scm_opengrok_user 的值）"' \
+    # @:password='":null:"' '?"opengrok 登录密码，与 USERNAME 联用"' \
+    # f:field='"full"' '?"搜索哪个字段，默认是 full"' \
+    # v:extra-field-values='()' '?"指定额外的字段及其值，可指定多次，比如 [refs|defs|path|type]=???"' \
+    # ddebug '?"debug"' \
+
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -18,7 +27,10 @@ Getopt::Long::Configure("posix_default");
 
 
 
+my $debug = 0;
 my $entry = "";
+my @extra_field_values = ();
+my $field = "full";
 my $password = ":null:";
 my $project = "";
 my $raw_entry = 0;
@@ -26,8 +38,16 @@ my $smart_short_relative_path = 0;
 my $username = ":null:";
 
 my $handler_help = sub {
-    print "调用 opengrok rest api 的命令行程序，允许在 emacs、vim 等软件中集成 opengrok 搜索";
+    print "$comment_doc";
     print "\n\n选项和参数：\n";
+    printf "%6s", '-d, ';
+    printf "%-24s", '--[no]debug';
+    if (length('--[no]debug') > 24 and length("debug") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "debug";
+    print "\n";
     printf "%6s", '-e, ';
     printf "%-24s", '--entry=ENTRY';
     if (length('--entry=ENTRY') > 24 and length("默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助") > 0) {
@@ -35,6 +55,22 @@ my $handler_help = sub {
         printf "%30s", "";
     }
     printf "%s", "默认为指定搜索的正则表达式，与 --raw-entry 参数联动，请查看 opengrok 网页上的帮助";
+    print "\n";
+    printf "%6s", '-v, ';
+    printf "%-24s", '--extra-field-values=EXTRA-FIELD-VALUES';
+    if (length('--extra-field-values=EXTRA-FIELD-VALUES') > 24 and length("指定额外的字段及其值，可指定多次，比如 [refs|defs|path|type]=???") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "指定额外的字段及其值，可指定多次，比如 [refs|defs|path|type]=???";
+    print "\n";
+    printf "%6s", '-f, ';
+    printf "%-24s", '--field=FIELD';
+    if (length('--field=FIELD') > 24 and length("搜索哪个字段，默认是 full") > 0) {
+        print "\n";
+        printf "%30s", "";
+    }
+    printf "%s", "搜索哪个字段，默认是 full";
     print "\n";
     printf "%6s", '';
     printf "%-24s", '--password=PASSWORD';
@@ -77,11 +113,20 @@ my $handler_help = sub {
     printf "%s", "opengrok 登录用户名（默认为环境变量 scm_opengrok_user 的值）";
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
+    'debug|d!' => \$debug,
     'entry|e=s' => \$entry,
+    'extra-field-values|v=s' => \@extra_field_values,
+    'field|f=s' => \$field,
     'password=s' => \$password,
     'project|p=s' => \$project,
     'raw-entry|r!' => \$raw_entry,
@@ -92,6 +137,7 @@ GetOptions (
 
 
 ## end generated code
+
 use JSON;
 use Encode;
 use HTML::Entities;
@@ -100,7 +146,7 @@ use URI::Encode qw(uri_encode uri_decode);
 
 if ($smart_short_relative_path) {
     my $manifest_dir = qx(lookup-file -e .repo/manifests);
-    die "Can't find manifest dir" unless $manifest_dir;
+    die "Can't find manifest dir, required for short output" unless $manifest_dir;
 
     chomp(my $manifest_branch = qx(cd $manifest_dir; git config branch.default.merge | perl -pe 's,^refs/heads/,,'));
 
@@ -132,7 +178,15 @@ if ($username) {
     }
 }
 
-my $command = "curl -s '${opengrok_url}api/v1/search?projects=$project&full=$entry&defs=&refs=&path=&hist=&type='";
+my $extra_field_values;
+if (@extra_field_values) {
+    map {$_ =~ s,(.*?=)(.*),$1 . uri_encode($2),e} @extra_field_values;
+    $extra_field_values = "&" . join("&", @extra_field_values);
+}
+
+my $debug_run = $debug ? "debug-run" : "";
+my $command = "$debug_run curl -s '${opengrok_url}api/v1/search?projects=$project&${field}=$entry${extra_field_values}'";
+
 (my $url = $command) =~ s,api/v1/,,;
 $url =~ s,curl -s ,,;
 
