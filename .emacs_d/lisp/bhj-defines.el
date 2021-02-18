@@ -451,10 +451,22 @@ might be bad."
              (format " %s" tab-width))))
   (pop-to-buffer "*Shell Command Output*")
   (end-of-buffer)
+  (read-only-mode 0)
   (insert "\n")
   (beginning-of-buffer)
   (forward-line)
-  (waw-mode))
+  (waw-mode)
+  (let ((note (buffer-substring-no-properties (point-min) (point-max)))
+        mark)
+    (find-file "~/src/github/projects/notebook.org")
+    (goto-char (point-max))
+    (setq mark (point))
+    (insert "\n#+begin_src waw\n")
+    (insert note)
+    (insert "\n#+end_src\n")
+    (goto-char mark)))
+
+
 
 ;;;###autoload
 (defun android-get-help ()

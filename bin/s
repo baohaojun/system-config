@@ -122,7 +122,7 @@ engine1=$(echo "$search_engines" | perl -ne 'print if 1..1' )
 if test "$select_search_engine" = false; then
     engineX=$engine1
 else
-    engineX=$(select-args -p "Which search engine for $s_how?" $search_engines)
+    engineX=$(select-args -o -p "Which search engine for $s_how?" $search_engines)
 fi
 
 if test "$select_search_engine" = true; then

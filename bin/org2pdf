@@ -2,6 +2,24 @@
 # [[file:~/system-config/knuth-mode/org2pdf.org::the-ultimate-script][the-ultimate-script]]
 set -e
 
+error-msg() {
+    hint "$(
+cat <<'EOF423e92c7f0e5' | . .replace-%% -- | grep -v '^#' -P
+# {%text-mode%}
+
+****************************************************************
+
+在生成 pdf 演示稿的时候，如果提示 .toc 文件中 inputenc 错误，一般是因为在「* 章节」下直接输入文字导致，必须有「** 小节」才可以输入文字
+
+另外，有可能需要删除所有的 .toc 文件才能修复相关问题。
+# {%/text-mode%}
+EOF423e92c7f0e5
+
+)"
+
+}
+
+. aterr error-msg
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt s:style=default c:color=default
@@ -147,14 +165,40 @@ EOF
     emacs-close "${tex_file}"
 
     emacsclient -e "$(cat <<'EOF6405e5bce1d2' | . .replace-%% --
-(progn
+(let (title-text subtitle-text author-text)
   (find-file "<%tex-file%>")
   (org2pdf-emojify)
   (goto-char (point-min))
   (search-forward "\\usepackage{graphicx}")
   (insert "\n\\usepackage[export]{adjustbox}")
   (insert "\n\\usepackage{lmodern}")
-  (save-buffer))
+  
+    (goto-char (point-min))
+    (search-forward-regexp "^\\\\title{")
+    (setq title-text (thing-at-point 'line t))
+    (beginning-of-line)
+    (kill-line)
+  
+  
+    (goto-char (point-min))
+    (search-forward-regexp "^\\\\subtitle{")
+    (setq subtitle-text (thing-at-point 'line t))
+    (beginning-of-line)
+    (kill-line)
+  
+  
+    (goto-char (point-min))
+    (search-forward-regexp "^\\\\author{")
+    (setq author-text (thing-at-point 'line t))
+    (beginning-of-line)
+    (kill-line)
+  
+  
+  (search-forward-regexp "^\\\\maketitle")
+  (beginning-of-line)
+  (insert title-text subtitle-text author-text "\n")
+  (save-buffer)
+  (kill-buffer))
 EOF6405e5bce1d2
 )"
     set -- "${1/%.org/.tex}"

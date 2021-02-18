@@ -55,6 +55,7 @@
  '(fill-column 70)
  '(flycheck-color-mode-line-face-to-color 'mode-line-buffer-id)
  '(flycheck-shellcheck-excluded-warnings '("2034"))
+ '(flycheck-standard-error-navigation nil)
  '(frame-background-mode 'dark)
  '(gc-cons-threshold 3500000)
  '(gdb-find-source-frame t)
@@ -181,7 +182,30 @@
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
       ("\\paragraph{%s}" . "\\paragraph*{%s}")
       ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+     ("cn_article" "\\documentclass[11pt,dvipdfmx,CJKbookmarks]{article}
+\\usepackage{CJKutf8}
+\\usepackage{atbegshi}
+\\AtBeginShipoutFirst{\\special{pdf:tounicode UTF8-UTF16}} % for UTF-8
+ [DEFAULT-PACKAGES]
+ [PACKAGES]
+ [EXTRA]"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
      ("中文演示" "\\documentclass[presentation,dvipdfmx,CJKbookmarks]{beamer}
+\\usepackage{bxdpx-beamer}
+\\usepackage{CJKutf8}
+\\usepackage{atbegshi}
+\\AtBeginShipoutFirst{\\special{pdf:tounicode UTF8-UTF16}} % for UTF-8
+ [DEFAULT-PACKAGES]
+ [PACKAGES]
+ [EXTRA]"
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
+     ("cn_beamer" "\\documentclass[presentation,dvipdfmx,CJKbookmarks]{beamer}
 \\usepackage{bxdpx-beamer}
 \\usepackage{CJKutf8}
 \\usepackage{atbegshi}
@@ -210,6 +234,13 @@
       ("\\section{%s}" . "\\section*{%s}")
       ("\\subsection{%s}" . "\\subsection*{%s}")
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+ '(org-latex-minted-langs
+   '((emacs-lisp "common-lisp")
+     (cc "c++")
+     (cperl "perl")
+     (shell-script "bash")
+     (caml "ocaml")
+     (waw "text")))
  '(org-mobile-directory "~/today/MobileOrg")
  '(org-mobile-inbox-for-pull "~/system-config/doc/projects/from-mobile.org")
  '(org-modules
