@@ -2,13 +2,14 @@
 
 set -e
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -P a:abbrev
+# generate-getopt -P a:abbrev sshow-only
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o a:h \
-                      --long abbrev:,help \
-                      -n $(basename -- $0) -- "$@")
+TEMP=$(POSIXLY_CORRECT=true getopt -o a:sh \
+                      --long abbrev:,show-only,help,no-show-only \
+                      -n "$(basename -- "$0")" -- "$@")
 declare abbrev=
+declare show_only=false
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -18,6 +19,15 @@ while true; do
             shift 2
 
             ;;
+        -s|--show-only|--no-show-only)
+            if test "$1" = --no-show-only; then
+                show_only=false
+            else
+                show_only=true
+            fi
+            shift
+
+            ;;
         -h|--help)
             set +x
             echo -e
@@ -25,6 +35,9 @@ while true; do
             echo Options and arguments:
             printf %6s '-a, '
             printf %-24s '--abbrev=ABBREV'
+            echo
+            printf %6s '-s, '
+            printf %-24s '--[no-]show-only'
             echo
             exit
             shift
@@ -136,6 +149,11 @@ expand_text=$(
     fi
            )
 sawfish-window mark -t abbrevs.$$ -r
+
 if test "${expand_text}"; then
-    sawfish-window paste "${expand_text}"
+    if test "${show_only}" = true; then
+        ask-for-input-with-emacs -e --init-text "${expand_text}"
+    else
+        sawfish-window paste "${expand_text}"
+    fi
 fi

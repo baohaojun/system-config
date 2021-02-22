@@ -788,6 +788,7 @@ EOF856ceee4ab57
 (bind-keys s-h-keymap "Super-p" '(system "illPass&"))
 (bind-keys s-h-keymap "Super-P" '(system "illPass --confirm&"))
 (bind-keys s-h-keymap "Super-a" '(system "abbrevs&"))
+(bind-keys s-h-keymap "Super-A" '(system "abbrevs -s&"))
 (bind-keys s-h-keymap "Super-SPC" '(synthesize-event-gnome? "Menu" (input-focus)))
 (bind-keys s-h-keymap "Super-+" '(system "terminal-font-change +&"))
 (bind-keys s-h-keymap "Super--" '(system "terminal-font-change -&"))
