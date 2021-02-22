@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+
+if test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+
+fill=$(echo "$@" | perl -pe 's,.*_,,; s,(?!\b)([A-Z]),-$1,g; $_ = lc $_;')
+fill=$(echo "$fill" | urlify)
+
+url=https://docs.sel4.systems/projects/sel4/api-doc.html#$fill
+
+firefox $url

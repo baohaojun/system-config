@@ -1678,7 +1678,8 @@ to the value of `temporary-file-directory'."
     (while (not found)
       (forward-line -1)
       (setq new-indentation (save-excursion (back-to-indentation) (current-column)))
-      (when (< new-indentation old-indentation)
+      (when (and (< new-indentation old-indentation)
+                 (string-match "\\S .*\n" (thing-at-point 'line)))
         (setq found t)))))
 
 (defun bhj-string-contains-each-other (str1 str2)
