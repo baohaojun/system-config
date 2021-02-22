@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-if test "$RUNNING_EN_US" != true; then
-    export RUNNING_EN_US=true
+if ! [[ "$LANG" =~ en_US ]]; then
     exec en_US Wrench.sh "$@"
 fi
 
@@ -156,7 +155,8 @@ if test "$exclusive" = true; then
         export ANDROID_SERIAL=$(select-output-line -o -p "Select the adb device" my-adb devices?|pn 1)
     fi
 
-    postfix=${ANDROID_SERIAL}${DISPLAY//:/.}
+    postfix=${ANDROID_SERIAL//:/.}${DISPLAY//:/.}
+
     if test ! -e ~/.config/system-config/Wrench-adb.map; then
         echo -e "declare -A wrench_adb_map\nwrench_adb_map[max]=1" > ~/.config/system-config/Wrench-adb.map
     fi
