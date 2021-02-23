@@ -16,7 +16,7 @@
 - 手机 App/Java 程序
   - 一个专门用于执行各种命令（SetClip 目录）、读取手机通知中心信息的 App
   - 一个输入法 App（WrenchIME），从开源谷歌拼音移植而来（用于中文输入）
-  - 一个 Java 后台进程，用于执行 input 操作（优化 adb input 命令）
+  - 一个 Java 后台进程，用于执行 input 操作（优化 adb input 命令）、启动 activity/services（优化 adb am start 命令）
     - 进程执行的命令：=sh /sdcard/setclip-apk.txt app_process /system/bin/ com.Wrench.Input=
     - Java 的逻辑包含在 SetClip.apk 里
 
