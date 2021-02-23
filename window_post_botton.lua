@@ -96,6 +96,7 @@ map['com.sonelli.juicessh/com.sonelli.juicessh.activities.ManageConnectionActivi
 map['com.sonelli.juicessh/com.sonelli.juicessh.activities.TerminalEmulatorActivity'] = 'No-Post'
 map['com.ss.android.lark/com.bytedance.ee.bear.document.DocActivity'] = 'No-Post'
 map['com.ss.android.lark/com.bytedance.lark.webview.container.impl.WebContainerActivity'] = 'No-Post'
+map['com.ss.android.lark/com.ss.android.lark.calendar.impl.features.events.edit.EditActivity'] = 'No-Post'
 map['com.ss.android.lark/com.ss.android.lark.chatsetting.impl.group.info.edit.LarkGroupInfoEditActivity'] = 'No-Post'
 map['com.ss.android.lark/com.ss.android.lark.chatwindow.ChatWindowActivity'] = 'Find-Button'
 map['com.ss.android.lark/com.ss.android.lark.create.groupchat.impl.select_member.GroupCreateActivity'] = 'No-Post'
