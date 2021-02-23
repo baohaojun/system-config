@@ -86,5 +86,4 @@ def ali_folder_match(folder, pats):
 
 
 if __name__ == '__main__':
-    getcred("localhost", "bhj", 143)
-    print ali_mailbox_conv("Outbox/&mZmZmZmZ--outbox-&mZk-")
+    print getcred("imap.feishu.cn", "baohaojun@lixiang.com", 993)
