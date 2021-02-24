@@ -4,22 +4,29 @@
 
 其模块框架如下。
 
-- 图形界面（主线程）
+- [[https://github.com/baohaojun/Wrench/blob/master/wrenchmainwindow.cpp][图形界面（主线程）]]
 - 一些 Qt 后台线程
-  - Lua 线程（包含一个 Lua 解释器，从主线程接收 Lua 命令语句，并解释执行）
-  - Adb 线程（与手机 adb 通信，源码拷贝自安卓 adb）
-  - VNC 线程（qt 线程与手机 vnc service 进程通信），实现手机投屏功能
-  - 手机通知消息线程（在 PC 桌面同步显示手机上的通知）
+  - [[https://github.com/baohaojun/Wrench/blob/master/luaexecutethread.cpp][Lua 线程]]（包含一个 Lua 解释器，从主线程接收 Lua 命令语句，并解释执行）
+
+  - [[https://github.com/baohaojun/Wrench/blob/master/adbstatethread.cpp][Adb 线程]]（与手机 adb 通信，[[https://github.com/baohaojun/Wrench/blob/master/adb-client/adbclient.cpp][源码拷贝自安卓 adb]]）
+  - [[https://github.com/baohaojun/Wrench/blob/master/adbvncthread.cpp][VNC 线程]]（qt 线程与手机 [[https://github.com/baohaojun/Wrench/tree/master/droidVncServer][vnc service ]]进程通信），实现手机投屏功能
+  - [[https://github.com/baohaojun/Wrench/blob/master/adbnotificationthread.cpp][手机通知消息线程]]（在 PC 桌面同步显示手机上的通知）
 
   PC 与手机之间通过 adb、adb tcp forward 进行 socket 通信
 
 - 手机 App/Java 程序
-  - 一个专门用于执行各种命令（SetClip 目录）、读取手机通知中心信息的 App
-  - 一个输入法 App（WrenchIME），从开源谷歌拼音移植而来（用于中文输入）
+  - 一个专门用于执行各种命令（[[https://github.com/baohaojun/Wrench/tree/master/SetClip][SetClip]]）、读取手机通知中心信息的 App
+  - 一个输入法 App（[[https://github.com/baohaojun/Wrench/tree/master/WrenchIME][WrenchIME]]），从开源谷歌拼音移植而来（用于中文输入）
   - 一个 Java 后台进程，用于执行 input 操作（优化 adb input 命令）、启动 activity/services（优化 adb am start 命令）
     - 进程执行的命令：=sh /sdcard/setclip-apk.txt app_process /system/bin/ com.Wrench.Input=
-    - Java 的逻辑包含在 SetClip.apk 里
+    - Java 的逻辑包含在 [[https://github.com/baohaojun/Wrench/blob/master/SetClip/app/src/main/java/com/Wrench/Input.java][SetClip.apk]] 里
 
-- 命令行接口
+- [[https://github.com/baohaojun/Wrench/blob/master/main.cpp][命令行接口]]
 
   可以从命令行发送 Lua 语句给小扳手执行，方便与 Emacs 等外部工具集成。
+
+  #+begin_src c++
+    if (argc == 2) {
+        w.startTask(argv[1]);
+     }
+  #+end_src
