@@ -98,6 +98,7 @@ void AdbStateThread::onDisconnected()
         if (!res.contains("yes")) {
             res = AdbClient::doAdbShell("rm /sdcard/setclip-apk.txt;"
                                         "am start -n com.bhj.setclip/.MainActivity;"
+                                        "sleep 1;"
                                         "am startservice --user 0 -n com.bhj.setclip/.PutClipService --ei getapk 1;"
                                         "for x in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do "
                                         "if test -e /sdcard/setclip-apk.txt; then echo -n ye && echo s; break; fi; sleep .1; done");
