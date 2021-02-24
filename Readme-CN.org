@@ -1,8 +1,8 @@
 #+title: 小扳手设计简介
 
-小扳手这个工具，主要用来实现用 PC 操控手机 App，可以实现聊天等功能。
+小扳手这个工具，主要用来实现通过 PC 操控手机 App，其原型与想法来自于一些手机研发测试工具。
 
-其模块框架如下。
+* 代码结构
 
 - [[https://github.com/baohaojun/Wrench/blob/master/wrenchmainwindow.cpp][图形界面（主线程）]]
 - 一些 Qt 后台线程
@@ -30,3 +30,13 @@
         w.startTask(argv[1]);
      }
   #+end_src
+
+* 编译
+
+1. 先编译 snore-notify，一个显示桌面弹窗通知的 Qt 插件
+
+   方法是 cd 到 SnoreNotify 子目录下，然后运行 =./build-SYS.sh=，其中 SYS 要替换为当前的系统类型，分别支持 linux、mac、wine（这个用于编译 Windows 版本，我只在 Linux 下用 Wine 配置过编译方法，没有本地编译过）。
+
+2. 编译 Wrench
+
+   方法是一样的，在 Wrench 源码目录下运行 =./build-SYS.sh=
