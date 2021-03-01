@@ -98,3 +98,8 @@
 --langdef=cmake
 --langmap=cmake:.cmake
 --regex-cmake=/^function\(([a-zA-Z0-9.-_]+)/\1/f,function/
+
+--langdef=bf
+--langmap=bf:.bf
+--regex-bf=/^[ \t]*block[ \t]+([a-zA-Z0-9.-_]+)/\1_t/t,type/
+--regex-bf=/^[ \t]*block[ \t]+([a-zA-Z0-9.-_]+)/\1/t,type/
