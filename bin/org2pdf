@@ -142,7 +142,7 @@ if test $org_file = true || yes-or-no-p -y "Export from .org"; then
     if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
         exp_func=org-beamer-export-to-latex
         notify-presentation() {
-            bhj-notify "org2pdf" "记住：分享的时候，不要用笔记本自带的键盘和鼠标！"
+            true bhj-notify "org2pdf" "记住：分享的时候，不要用笔记本自带的键盘和鼠标！"
         }
         . atexit notify-presentation
     fi
@@ -172,28 +172,28 @@ EOF
   (search-forward "\\usepackage{graphicx}")
   (insert "\n\\usepackage[export]{adjustbox}")
   (insert "\n\\usepackage{lmodern}")
-  
+
     (goto-char (point-min))
     (search-forward-regexp "^\\\\title{")
     (setq title-text (thing-at-point 'line t))
     (beginning-of-line)
     (kill-line)
-  
-  
+
+
     (goto-char (point-min))
     (search-forward-regexp "^\\\\subtitle{")
     (setq subtitle-text (thing-at-point 'line t))
     (beginning-of-line)
     (kill-line)
-  
-  
+
+
     (goto-char (point-min))
     (search-forward-regexp "^\\\\author{")
     (setq author-text (thing-at-point 'line t))
     (beginning-of-line)
     (kill-line)
-  
-  
+
+
   (search-forward-regexp "^\\\\maketitle")
   (beginning-of-line)
   (insert title-text subtitle-text author-text "\n")

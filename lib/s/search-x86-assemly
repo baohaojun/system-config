@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+firefox https://c9x.me/x86/

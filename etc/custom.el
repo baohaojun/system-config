@@ -160,7 +160,7 @@
    '((auto-mode . emacs)
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" . default)
-     ("\\.pdf\\'" . "of %s")))
+     ("\\(\\.pdf\\|\\.ps\\)\\'" . "of %s")))
  '(org-html-htmlize-output-type 'css)
  '(org-jira-coding-system 'utf-8)
  '(org-jira-done-states '("Closed" "Resolved" "Done" "完成"))

@@ -280,7 +280,7 @@
       (unbind-keys window-keymap key))))
 
 ;; *** xterm emacs style ***
-(setq emacs-style-window-class-re "rdesktop|wrench|jetbrains-studio|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|xterm|Chromium-browser")
+(setq emacs-style-window-class-re "rdesktop|wrench|jetbrains-studio|emacs|lxterminal|xfce4-terminal|konsole|gnome-terminal|urxvt|krdc|vncviewer|xterm|Chromium")
 (defvar global-emacs-remap-alist nil
   "Window specific remap list")
 
@@ -502,7 +502,8 @@ EOF856ceee4ab57
             (when (string-match "^M-" from 0 nil)
               (bind-keys esc-map (substring from 2) `(classed-key-synthesize ,from ,to)))
             (bind-keys c-x-map from `(synthesize-event-gnome? ,from ,(input-focus)))
-            (do-bind-keys-nil-unbind global-keymap from to window-mapped-to class)))
+            (do-bind-keys-nil-unbind global-keymap from to window-mapped-to class)
+            (do-bind-keys-nil-unbind window-keymap from to window-mapped-to class)))
         global-emacs-remap-alist)
   (mapc (lambda (key-map-1)
           (let* ((from (substring (car key-map-1) 4))
@@ -744,13 +745,13 @@ EOF856ceee4ab57
 
 (bind-keys s-h-keymap "Super-c" 'cycle-class-bhj)
 (bind-both-global&window-keymaps "Super-$" 'cycle-class-bhj)
-(bind-keys s-h-keymap "c"  '(system "EMACS=t do-capture&"))
+(bind-keys s-h-keymap "c" '(system "find-or-exec -p $HOME/external/firefox\\|chromium chromium chromium&"))
 
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards
   (lambda () (filter-windows
-              (lambda (x) (string-match im-class (bhj-window-class x)))
-              (stacking-order))))
+         (lambda (x) (string-match im-class (bhj-window-class x)))
+         (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-br-window 'cycle-br-window-backwards
