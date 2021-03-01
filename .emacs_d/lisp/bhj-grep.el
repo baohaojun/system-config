@@ -258,4 +258,58 @@
   (interactive)
   (bhj-grep-mode 1))
 
+
+(setq image-load-path
+      (cons "~/src/github/Wrench/release/emojis/emojis.emacs.load" image-load-path))
+
+(defun bhj-exit-minibuffer ()
+  "Exit minibuffer and select first error."
+  (interactive)
+  (shell-setsid "emacs-do-grep-1")
+  (exit-minibuffer))
+
+(tool-bar-add-item "OK_HAND_SIGN" 'bhj-exit-minibuffer
+                   'ok
+                   :help "Really run grep")
+
+(tool-bar-add-item "RIGHT-POINTING_MAGNIFYING_GLASS" 'grep-beatags
+                   'def
+                   :help "Run grep-beatags")
+
+(tool-bar-add-item "LEFT-POINTING_MAGNIFYING_GLASS" 'bhj-grep
+                   'grep
+                   :help "run bhj-grep")
+
+(tool-bar-add-item "ANTICLOCKWISE_DOWNWARDS_AND_UPWARDS_OPEN_CIRCLE_ARROWS" 'grep-func-call
+                   'call
+                   :help "run grep-func-call")
+
+(tool-bar-add-item "ARROW_POINTING_RIGHTWARDS_THEN_CURVING_UPWARDS" 'ajoke-search-local-id
+                   'local
+                   :help "run ajoke-search-local-id")
+
+(tool-bar-add-item "DOWNWARDS_BLACK_ARROW" 'next-error
+                   'next
+                   :help "run next-error")
+
+(tool-bar-add-item "UPWARDS_BLACK_ARROW" 'previous-error
+                   'prev
+                   :help "run prev-error")
+
+(tool-bar-add-item "LEFTWARDS_BLACK_ARROW" 'ajoke-pop-mark
+                   'back
+                   :help "run ajoke-pop-mark")
+
+(tool-bar-add-item "BLACK_RIGHTWARDS_ARROW" 'ajoke-pop-mark-back
+                   'forth
+                   :help "run ajoke-pop-mark-back")
+
+
+
+(tool-bar-add-item "CHRISTMAS_TREE" 'counsel-imenu
+                   'imenu
+                   :help "run imenu")
+
+(tool-bar-mode 1)
+
 (provide 'bhj-grep)

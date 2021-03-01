@@ -1141,7 +1141,7 @@ criteria can be provided via the optional match-string argument "
   "Start a process with COMMAND-AND-ARGS with setsid in emacs."
   (let ((command-str
          (format
-          "setsid nohup %s >~/tmp/shell-setsid.log 2>&1"
+          "setsid setsid nohup %s >~/tmp/shell-setsid.log 2>&1"
           (string-join
            (mapcar
             (lambda (str)

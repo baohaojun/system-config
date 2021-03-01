@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -x
+date
+sleep 1
+emacsclient -e "$(
+cat <<'EOFae6274a7593d' | . .replace-%% --
+; {%emacs-lisp-mode%}
+(progn
+  (next-error)
+  (delete-other-windows))
+; {%/emacs-lisp-mode%}
+EOFae6274a7593d
+
+)"
