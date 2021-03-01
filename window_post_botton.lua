@@ -78,6 +78,7 @@ map['com.google.android.apps.pdfviewer/com.google.android.apps.viewer.PdfViewerA
 map['com.google.android.googlequicksearchbox/com.google.android.apps.gsa.searchnow.SearchNowActivity'] = 'No-Post'
 map['com.gotokeep.keep/com.gotokeep.keep.su.social.search.activity.SearchActivity'] = 'No-Post'
 map['com.greenpoint.android.mc10086.activity/com.leadeon.cmcc.view.mine.userinfo.VideoAuthenActivity'] = 'No-Post'
+map['com.hpbr.bosszhipin/com.hpbr.bosszhipin.module.my.activity.information.BossEditMyPositionActivity'] = 'No-Post'
 map['com.instagram.android/com.instagram.nux.activity.SignedOutFragmentActivity'] = 'No-Post'
 map['com.jingdong.app.mall/com.jd.lib.search.view.Activity.SearchActivity'] = 'No-Post'
 map['com.netease.cloudmusic/com.netease.cloudmusic.activity.SearchActivity'] = 'No-Post'
