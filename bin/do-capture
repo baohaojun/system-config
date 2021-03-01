@@ -65,15 +65,6 @@ elif test -e ~/.cache/system-config/do-capture.show-all; then
     show_all_tasks=true
 fi
 
-if test -e ~/external/local/emacs25u/bin/emacs; then
-    if test "$(lsb_release -cs)" = trusty; then
-        export PATH=~/external/local/emacs25u/bin:$PATH
-        if ! emacs --version; then
-            xterm -e 'hint 你需要安装Emacs的依赖; sudo apt-get build-dep emacs24-lucid'
-        fi
-    fi
-fi
-
 file=$(select-output-line -o -- bash -c 'cd ~/system-config/doc/projects; ls -t *.org; echo daily; echo agenda')
 
 if test -z "$file"; then
