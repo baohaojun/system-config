@@ -133,19 +133,19 @@ EOFf8df153f3112
             cat
         fi | tee ~/tmp/find-or-exec.list |
         (
-        while read wid desktop pid class user name; do
-            if [[ ${class,,} =~ ${to_match,,} ]]; then
-                if test $pid != 0 -a "${process_pattern}"; then
-                    if ! (ls -l /proc/$pid/exe /proc/$pid/file; cat /proc/$pid/cmdline) | tr '\0' ' ' | grep -P "$process_pattern"; then
-                        continue
+            while read wid desktop pid class user name; do
+                if [[ ${class,,} =~ ${to_match,,} ]]; then
+                    if test $pid != 0 -a "${process_pattern}"; then
+                        if ! (ls -l /proc/$pid/exe /proc/$pid/file; cat /proc/$pid/cmdline) | tr '\0' ' ' | grep -P "$process_pattern"; then
+                            continue
+                        fi
                     fi
+                    wmctrl -a $wid -i
+                    exit 0
                 fi
-                wmctrl -a $wid -i
-                exit 0
-            fi
-        done
-        exit 1
-    ) || (
+            done
+            exit 1
+        ) || (
         $window_not_found_command &
 
         if test "$error_exit" = true; then
