@@ -451,8 +451,6 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
          if not ime_connected then
             if M.is_weixin_chat_window(window) then
                M.weixin_open_keyboard()
-            elseif window == "com.ss.android.lark/com.ss.android.lark.chatwindow.ChatWindowActivity" then
-               jump_from_to("fs/xiaolian-down", "fs/xiaolian-up", {y = -100})
             end
             wait_input_target(window)
             if not adb_top_window():match("^PopupWindow") then
@@ -474,7 +472,12 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       if ime_height ~= 0 then
          post_button = ('send-button/%s.ime-on'):format(window)
       else
-         post_button = ('send-button/%s.ime-off'):format(window)
+         if window == M.fs_chat_activity then
+            jump_from_to("fs/xiaolian-down", "fs/xiaolian-up", {y = -100})
+            post_button = ('send-button/%s.ime-on'):format(window)
+         else
+            post_button = ('send-button/%s.ime-off'):format(window)
+         end
       end
 
       local window_type = (how_to_post or window_post_button_map[window])
