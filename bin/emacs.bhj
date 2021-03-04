@@ -2,6 +2,8 @@
 
 . ~/system-config/etc/re-init-bash.rc
 
+export RUST_SRC_PATH=$(c rustc --print sysroot)/lib/rustlib/src/rust/library
+
 EMACS=emacs
 
 if test "$USER" = bhj; then
