@@ -51,6 +51,7 @@ M.wait_input_target_n = function(n_loop, ...)
                   if ime_connected then
                      local fields = split(" ", adb_window_dump[x])
                      local last = fields[#fields]:gsub("}", "")
+                     log("ime window is %s", last)
                      return last
                   end
                end
@@ -448,7 +449,9 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       -- debugging("ime_xy is %s", ime_xy)
 
       if not input_method then
-         if not ime_connected then
+         if not ime_connected and window == M.fs_chat_activity then
+            jump_from_to("fs/xiaolian-down", "fs/xiaolian-up", {y = -100})
+         elseif not ime_connected then
             if M.is_weixin_chat_window(window) then
                M.weixin_open_keyboard()
             end
