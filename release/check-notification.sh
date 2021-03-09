@@ -5,7 +5,7 @@
 set -ex
 sleep 2
 
-bhj-notify check-notification.sh.$$ "$(which Wrench.sh) $* $ANDROID_SERIAL"
+# bhj-notify check-notification.sh.$$ "$(which Wrench.sh) $* $ANDROID_SERIAL"
 
 if [[ $ANDROID_SERIAL =~ : ]]; then
     exit 0
