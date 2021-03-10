@@ -206,3 +206,4 @@ else
 fi >/dev/null 2>&1
 
 sawfish-re-maximize >/dev/null 2>&1
+do-natural-scrolling&

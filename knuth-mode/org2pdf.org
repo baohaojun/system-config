@@ -38,10 +38,11 @@
      my $elisp_template = <<~'EOFc83131117f09';
      # {%emacs-lisp-mode%}
        (goto-char (point-min))
-       (search-forward-regexp "^\\\\[%item%]{")
-       (setq [%item%]-text (thing-at-point 'line t))
-       (beginning-of-line)
-       (kill-line)
+       (if (not (search-forward-regexp "^\\\\[%item%]{" nil t))
+           (setq [%item%]-text "")
+         (setq [%item%]-text (thing-at-point 'line t))
+         (beginning-of-line)
+         (kill-line))
      # {%/emacs-lisp-mode%}
      EOFc83131117f09
 
@@ -221,7 +222,7 @@ s,(\\\Qend{document}\E),\\end{CJK*}\n$1,;
          if grep -q -P -i 'org-beamer-mode|BEAMER_THEME|LaTeX_CLASS:.*beamer' "${1/%.tex/.org}"; then
              exp_func=org-beamer-export-to-latex
              notify-presentation() {
-                 bhj-notify "org2pdf" "记住：分享的时候，不要用笔记本自带的键盘和鼠标！"
+                 true bhj-notify "org2pdf" "记住：分享的时候，不要用笔记本自带的键盘和鼠标！"
              }
              . atexit notify-presentation
          fi
