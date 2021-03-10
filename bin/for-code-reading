@@ -105,7 +105,7 @@ function mkbeagrepidx() {
     else
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$(for x in */; do if test -d $x/.ccache; then echo -n $PWD/$x,; fi; done)*/out,*/.repo,*/.git")
     fi
-    bhj-notify for-code-reading ADDITIONAL_OPTIONS is $ADDITIONAL_OPTIONS || true
+    # bhj-notify for-code-reading ADDITIONAL_OPTIONS is $ADDITIONAL_OPTIONS || true
 
     subdir=.beagrep
     if test "$SOURCECODETAGSMODE" = true; then

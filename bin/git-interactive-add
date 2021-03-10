@@ -355,8 +355,9 @@ if test "$selective_review" = true; then
             special_ops[quit]="quit：退出 Review"
             special_ops[all]="show-all：重新显示完整文件列表"
             special_ops[back]="back：按错了，返回继续"
+            special_ops[shell]="shell：启动一个子 shell，让我执行一些命令"
             x=$(
-                select-args -p "请选择你想要执行的操作" "${special_ops[quit]}" "${special_ops[all]}" "${special_ops[back]}"
+                select-args -p "请选择你想要执行的操作" "${special_ops[quit]}" "${special_ops[all]}" "${special_ops[back]}" "${special_ops[shell]}"
              )
             if test "$x" = "${special_ops[all]}"; then
                 list_of_files=(
@@ -366,6 +367,12 @@ if test "$selective_review" = true; then
             elif test "$x" = "${special_ops[quit]}"; then
                 break
             elif test "$x" = "${special_ops[back]}"; then
+                continue
+            elif test "$x" = "${special_ops[shell]}"; then
+                bash || true
+                continue
+            else
+                hint "未知输入，请正确选择上述选项"
                 continue
             fi
         fi

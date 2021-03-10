@@ -172,28 +172,31 @@ EOF
   (search-forward "\\usepackage{graphicx}")
   (insert "\n\\usepackage[export]{adjustbox}")
   (insert "\n\\usepackage{lmodern}")
-
+  
     (goto-char (point-min))
-    (search-forward-regexp "^\\\\title{")
-    (setq title-text (thing-at-point 'line t))
-    (beginning-of-line)
-    (kill-line)
-
-
+    (if (not (search-forward-regexp "^\\\\title{" nil t))
+        (setq title-text "")
+      (setq title-text (thing-at-point 'line t))
+      (beginning-of-line)
+      (kill-line))
+  
+  
     (goto-char (point-min))
-    (search-forward-regexp "^\\\\subtitle{")
-    (setq subtitle-text (thing-at-point 'line t))
-    (beginning-of-line)
-    (kill-line)
-
-
+    (if (not (search-forward-regexp "^\\\\subtitle{" nil t))
+        (setq subtitle-text "")
+      (setq subtitle-text (thing-at-point 'line t))
+      (beginning-of-line)
+      (kill-line))
+  
+  
     (goto-char (point-min))
-    (search-forward-regexp "^\\\\author{")
-    (setq author-text (thing-at-point 'line t))
-    (beginning-of-line)
-    (kill-line)
-
-
+    (if (not (search-forward-regexp "^\\\\author{" nil t))
+        (setq author-text "")
+      (setq author-text (thing-at-point 'line t))
+      (beginning-of-line)
+      (kill-line))
+  
+  
   (search-forward-regexp "^\\\\maketitle")
   (beginning-of-line)
   (insert title-text subtitle-text author-text "\n")
