@@ -206,4 +206,7 @@ else
 fi >/dev/null 2>&1
 
 sawfish-re-maximize >/dev/null 2>&1
-do-natural-scrolling&
+
+if test -e ~/.local-config/lib/hooks/switch-to-vga; then
+    ~/.local-config/lib/hooks/switch-to-vga
+fi
