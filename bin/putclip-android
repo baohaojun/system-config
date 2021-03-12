@@ -50,12 +50,20 @@ EOFd79e06b367a3
 )"
 )"
 elif test "$b0" = getclip-android; then
+    current_ime=$(
+        adb-get-ime|perl -ne 'print $1 if m,package=(.*?) ,'
+               )
 
     command adb shell sh -c "$(
 printf %q "$(
 cat <<'EOFb1b66edbb725' | . .replace-%% --
 # {%sh-mode%}
 rm -f /sdcard/putclip.txt
+
+if test "[%current_ime%]" != com.wrench.inputmethod.pinyin; then
+    ime set com.wrench.inputmethod.pinyin/.PinyinIME
+fi
+
 input keyevent GUIDE
 for x in $(seq 1 20); do
     if test -e /sdcard/putclip.txt; then
@@ -65,6 +73,11 @@ for x in $(seq 1 20); do
         sleep .1
     fi
 done
+
+if test "[%current_ime%]" = com.google.android.inputmethod.latin; then
+    ime set com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME
+fi
+
 # {%/sh-mode%}
 EOFb1b66edbb725
 )"
