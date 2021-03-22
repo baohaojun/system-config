@@ -103,3 +103,5 @@
 --langmap=bf:.bf
 --regex-bf=/^[ \t]*block[ \t]+([a-zA-Z0-9.-_]+)/\1_t/t,type/
 --regex-bf=/^[ \t]*block[ \t]+([a-zA-Z0-9.-_]+)/\1/t,type/
+--regex-bf=/^[ \t]*field[ \t]+([a-zA-Z0-9.-_]+)/\1/f,function/
+--regex-bf=/^[ \t]*field_high[ \t]+([a-zA-Z0-9.-_]+)/\1/f,function/
