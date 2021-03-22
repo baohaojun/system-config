@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -e
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+
+if test -z "${GITLAB_ENV_CHECKED}"; then
+    export GITLAB_ENV_CHECKED=true
+    gitlab check-env
+fi
+
+for libdir in ${b0} ${b0}.user ${b0}.local; do
+    for top_libdir in "${scm_common_libdir}" "${scm_local_libdir}"; do
+        if test "${top_libdir}" -a -x ${top_libdir}/${libdir}/$1; then
+            action=${top_libdir}/${libdir}/$1
+            shift
+            $action "$@"
+            exit
+        fi
+    done
+done
+
+die "Can't execute ${b0} $*, sub command not found in COMMON:($scm_common_libdir) and LOCAL:($scm_local_libdir)"
