@@ -29,7 +29,8 @@ flock -n 9
     fi
 
     if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
-        start-cuty& # do not watch weibo for too long.
+        # start-cuty& # do not watch weibo for too long.
+        ~/external/etc/at/14:00
         which_wrench=$(
             emacsclient -e '(shell-command-to-string "which Wrench.sh")' | em str2text
                     )
