@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+repos=$(
+    repo forall -c 'if git status -s |grep . -q; then pwd; log will work with $(pwd); fi'
+     )
+
+for repo in $repos ; do
+    (
+        cd $repo
+        myscr -w bash
+    )
+done

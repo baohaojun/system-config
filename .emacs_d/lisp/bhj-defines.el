@@ -927,7 +927,7 @@ might be bad."
   "open help for the current word for qt"
   (interactive)
   (ajoke--setup-env)
-  (shell-command-to-string (format "%s %s >~/.cache/system-config/logs/bhj-help-qt.log 2>&1&" bhj-help-qt-prog (shell-quote-argument (bhj-current-word)))))
+  (shell-command-to-string (format "setsid setsid nohup %s %s &>~/.cache/system-config/logs/bhj-help-qt.log </dev/null" bhj-help-qt-prog (shell-quote-argument (bhj-current-word)))))
 
 ;;;###autoload
 (defun bhj-view-mail-external ()

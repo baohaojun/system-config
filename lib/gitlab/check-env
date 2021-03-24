@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+if test -z "$GITLAB_PRIVATE_TOKEN"; then
+    die "Must specify gitlab token"
+fi
+
+if test -z "${GITLAB_USERNAME}"; then
+    die "Must specify gitlab username"
+fi
+
+if test -z "${GITLAB_URL}"; then
+    die "Must specify gitlab url"
+fi

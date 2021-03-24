@@ -95,6 +95,11 @@ if (@ARGV == 3 and $ARGV[1] eq "line" and $ARGV[2] =~ m/^\d+\.?$/) {
   exit;
 }
 
+if ($ARGV[0] =~ m,^\+\d+$, and -e $ARGV[1]) {
+    (my $file = "$ARGV[1]:$ARGV[0]") =~ s,\+(\d+)$,$1,;
+    @ARGV = ($file);
+}
+
 if (@ARGV > 1 and $0 =~ m!(^|/)e$!) {
   map {$_ = shell_quote($_)} @ARGV;
   chomp(my $file = qx(select-file-from-where @ARGV));

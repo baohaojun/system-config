@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+if test -e /usr/share/X11/xorg.conf.d/40-libinput.conf &&
+        ! grep NaturalScrolling -q /usr/share/X11/xorg.conf.d/40-libinput.conf; then
+    bhj-notify do-natural-scrolling "you should set it in libinput.conf"
+fi || true
+
 set -e
 
 me=$(readlink -f $BASH_SOURCE)
