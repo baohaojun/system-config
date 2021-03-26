@@ -82,7 +82,8 @@ else
     cmd=$(
         input-lock \
             -l "abbrev.SOL" \
-            select-args --ask-for-input -1 -m 1000 --select-from-history-too -o -p "请输入你想执行的历史命令的搜索片断"
+            select-args --ask-for-input -1 -m 1000 --select-from-history-too -o -p "请输入你想执行的历史命令的搜索片断" |
+            perl -pe 's, , ,g'
        )
 fi
 if test "${print_only}" = true; then
