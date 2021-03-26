@@ -27,11 +27,11 @@ fi
 
 ## start code-generator "^\\s *#\\s *"
     # generate-getopt r:revision \
-        # skeep-it-simple '?"不要显示太多问题，用于代码review"' \
+        # Skeep-it-simple '?"不要显示太多问题，用于代码review"' \
         # b:review-base sselective-review=true odups-only '?"只检查重复提交的文件。必须与 REVISION 合用"'
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o osb:r:sh \
+TEMP=$( getopt -o oSb:r:sh \
                --long dups-only,keep-it-simple,review-base:,revision:,selective-review,help,no-dups-only,no-keep-it-simple,no-selective-review \
                -n "$(basename -- "$0")" -- "$@")
 declare dups_only=false
@@ -52,7 +52,7 @@ while true; do
             shift
 
             ;;
-        -s|--keep-it-simple|--no-keep-it-simple)
+        -S|--keep-it-simple|--no-keep-it-simple)
             if test "$1" = --no-keep-it-simple; then
                 keep_it_simple=false
             else
@@ -88,7 +88,7 @@ while true; do
             printf %6s '-o, '
             printf %-24s '--[no-]dups-only'
             echo "只检查重复提交的文件。必须与 REVISION 合用"
-            printf %6s '-s, '
+            printf %6s '-S, '
             printf %-24s '--[no-]keep-it-simple'
             echo "不要显示太多问题，用于代码review"
             printf %6s '-b, '

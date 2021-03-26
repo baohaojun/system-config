@@ -28,10 +28,30 @@ if test -z "${GITLAB_ENV_CHECKED}"; then
     gitlab check-env
 fi
 
+if test "$1" = e; then
+    EDIT_SCRIPT=true
+    shift
+fi
+
 for libdir in ${b0} ${b0}.user ${b0}.local; do
     for top_libdir in "${scm_common_libdir}" "${scm_local_libdir}"; do
+        if test "$#" = 0; then
+            if test -d "${top_libdir}"/"${libdir}"; then
+                (
+                    cd "${top_libdir}"/"${libdir}"
+                    for sub in *; do
+                        echo $sub
+                    done
+                )
+            fi
+            continue
+        fi
         if test "${top_libdir}" -a -x ${top_libdir}/${libdir}/$1; then
             action=${top_libdir}/${libdir}/$1
+            if test "${EDIT_SCRIPT}" = true; then
+                e $action
+                exit
+            fi
             shift
             $action "$@"
             exit
@@ -39,4 +59,6 @@ for libdir in ${b0} ${b0}.user ${b0}.local; do
     done
 done
 
-die "Can't execute ${b0} $*, sub command not found in COMMON:($scm_common_libdir) and LOCAL:($scm_local_libdir)"
+if test $# != 0; then
+    die "Can't execute ${b0} $*, sub command not found in COMMON:($scm_common_libdir) and LOCAL:($scm_local_libdir)"
+fi
