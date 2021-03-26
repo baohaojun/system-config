@@ -313,7 +313,7 @@ for (@ARGV) {
 # {%/perl-mode%}
 EOF68b65b38dc35
 
-)" "$@"
+)" -- "$@"
             elif test $# = 1; then
                 bash -c "$1"
             else
@@ -411,7 +411,7 @@ else
         edit_history="@@@edit the history file@@@"
         selection_entries+=("${edit_history}")
     fi
-    output=$(my-select "${selection_entries[@]}")
+    output=$(my-select -- "${selection_entries[@]}")
 
     if test "${select_from_history_too}" = true -a "$output" = "${edit_history}"; then
         ew $histfile
