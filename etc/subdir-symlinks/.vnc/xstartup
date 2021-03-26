@@ -48,6 +48,12 @@ fi
 
 xterm -e myscr bash -c '
 # {%sh-mode%}
+if test "$(host flonk-zj.6655.la | pn 4|tee ~/tmp/my-ip.host)" != "$(cat ~/tmp/my-ip)"; then
+    rm -f ~/tmp/my-ip
+fi
+
+update-my-ip &> ~/tmp/update-my-ip.log &
+
 for adb_serial in 9dbe919 162c850; do
     if ! adb -s $adb_serial shell true; then
         (

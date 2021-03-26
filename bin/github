@@ -2,3 +2,4 @@
 set -e
 
 exec python3 ~/system-config/bin/github.py "$@"
+
