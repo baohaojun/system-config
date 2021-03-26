@@ -1037,7 +1037,7 @@ M.wrench_config = function(passedConfigDirPath, passedAppDirPath)
    reset_input_method()
    system("bash ./check-notification.sh " .. android_serial)
    adb_quick_input{"input keyevent UNKNOWN"}
-   return ("brand is %s, adb serial is %s"):format(brand, android_serial)
+   return ("brand is %s, adb serial is %s, time is %s"):format(brand, android_serial, qx('date'))
 end
 
 M.adb_get_last_pic = function(which, remove)

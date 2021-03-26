@@ -30,7 +30,6 @@ flock -n 9
 
     if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
         # start-cuty& # do not watch weibo for too long.
-        ~/external/etc/at/14:00
         which_wrench=$(
             emacsclient -e '(shell-command-to-string "which Wrench.sh")' | em str2text
                     )
@@ -70,12 +69,14 @@ EOFd729818fb0ba
         ret=$?
 
         if test "$ret" = 124; then
+            ~/external/etc/at/14:00
             exit 0
         fi
 
         if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
             adb shell am start -a android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
             onmyoji -o noshit restart-notification
+            ~/external/etc/at/14:00
         fi
     fi
 )&
