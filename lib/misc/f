@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+
+declare -a args=()
+
+for a in "$@"; do
+    if [[ $a =~ file:// ]]; then
+        a=$(echo ${a#file://} | urlify -u)
+    fi
+    args+=("$a")
+done
+
+"${args[@]}"
