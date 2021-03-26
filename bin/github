@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 
-exec python3 ~/system-config/bin/github.py "$@"
-
+# add prefix _ to github to avoid loop importing github.
+exec python3 ~/system-config/bin/_github.py "$@"
