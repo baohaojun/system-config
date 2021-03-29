@@ -75,7 +75,7 @@ EOFd729818fb0ba
 
         if test "${ANDROID_SERIAL}" = "$(get-about-me adb-serial)"; then
             adb shell am start -a android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
-            onmyoji -o noshit restart-notification
+            onmyoji -o noshit restart-notification || true
             ~/external/etc/at/14:00
         fi
     fi
