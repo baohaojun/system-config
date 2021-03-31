@@ -157,6 +157,13 @@ export SYSTEM_CONFIG_INITED=true
 export STAY_OFF_MY_LAWN=true # for android build/envsetup.sh
 export scm_common_libdir=~/system-config/lib
 
-export PATH=~/.pyenv/bin:$PATH
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+if test -d ~/.pyenv/bin; then
+    export PATH=~/.pyenv/bin:$PATH
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+fi
+
+if test -d ~/.plenv/bin; then
+    export PATH=~/.plenv/bin:$PATH
+    eval "$(plenv init -)"
+fi

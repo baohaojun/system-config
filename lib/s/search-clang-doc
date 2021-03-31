@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
+if test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+
+fill=$(echo "$@"|urlify)
+
+firefox file:///usr/share/doc/clang-12-doc/html/search.html?q=${fill}
+
+# __restrict
