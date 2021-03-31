@@ -98,6 +98,7 @@
 --langdef=cmake
 --langmap=cmake:.cmake
 --regex-cmake=/^function\(([a-zA-Z0-9.-_]+)/\1/f,function/
+--regex-cmake=/^macro\(([a-zA-Z0-9.-_]+)/\1/f,function/
 
 --langdef=bf
 --langmap=bf:.bf
