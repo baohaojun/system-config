@@ -293,11 +293,17 @@ EOF284559d578b2
 }
 
 function rename-files() {
+    log "working with $1"
     dir=$1
     shift
     (
         cd -- "$dir";
         for x in $(get-files-this-dir|sort -u); do
+            if test "$x" = ..; then
+                hint -t 1 do not work with .. || true
+                continue
+            fi
+
             if test -d "$x"; then
                 test -L "$x" || rename-files "$x" "$@"
             fi

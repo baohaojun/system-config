@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 (
+    export PATH="/home/bhj/.pyenv/bin:$PATH"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+
     flock -n 5 || { echo "lock failed for manage.py, exit"; exit; }
     while true; do
         cd ~/system-config/gcode/offline.wikipedia/mywiki

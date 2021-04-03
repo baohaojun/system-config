@@ -2,7 +2,21 @@
 
 if test -e /usr/share/X11/xorg.conf.d/40-libinput.conf &&
         ! grep NaturalScrolling -q /usr/share/X11/xorg.conf.d/40-libinput.conf; then
-    bhj-notify do-natural-scrolling "you should set it in libinput.conf"
+
+    command=$(
+        cat <<'EOF8bcc8a376421' | . .replace-%% --
+# {%sh-mode%}
+  perl -pe \
+       's,(\s+)MatchIsPointer "on",${1}MatchIsPointer "on"\n${1}Option "NaturalScrolling" "on",' \
+       /usr/share/X11/xorg.conf.d/40-libinput.conf
+# {%/sh-mode%}
+EOF8bcc8a376421
+
+           )
+    bhj-notify do-natural-scrolling "you should set it in libinput.conf:
+
+$command
+"
 fi || true
 
 set -e

@@ -149,11 +149,15 @@ function git-diff() {
         fi
     else
         if test "${revision}" && git diff --quiet HEAD -- "$@"; then
+            # 当前代码没有改动，指定了 revision，需要详细 review
             LESS="RSX" git log -w -p "${revision}"..HEAD "$@" || true
+
             for rev in $(git log --pretty=%H "${revision}"..HEAD "$@"); do
-                LESS="RSX" git log --name-status -1 $rev || true
-                if test "${keep_it_simple}" = false && yes-or-no-p -y "show details?"; then
-                    LESS="RSX" git log -w -p -1 $rev || true
+                if test "${keep_it_simple}" = false; then
+                    LESS="RSX" git log --name-status -1 $rev || true
+                    if yes-or-no-p -y "show details?"; then
+                        LESS="RSX" git log -w -p -1 $rev || true
+                    fi
                 fi
             done
             if test "${keep_it_simple}" = false && yes-or-no-p -n "start new shell for $*"?; then

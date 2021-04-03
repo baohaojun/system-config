@@ -9,7 +9,7 @@ elif lookup-file -e .repo/manifest.xml >/dev/null 2>&1 && ! [[ $PWD =~ /.repo/ma
     (
         if git_dir=$(lookup-file -e .git/..); then
             cd "$git_dir"
-            repo forall . -c 'echo $REPO_PROJECT'
+            repo forall . -c 'echo $REPO_PROJECT' || basename $(git-remote-url)
         elif [[ $PWD =~ \.git($|/) ]]; then
             cd $(echo "$PWD" | perl -npe 's,\.git($|/.*),.git,')
             ap | perl -pe 's,\.git,,'

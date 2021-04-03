@@ -25,7 +25,7 @@ b0=$(basename $BASH_SOURCE)
 
 if test -z "${GITLAB_ENV_CHECKED}"; then
     export GITLAB_ENV_CHECKED=true
-    gitlab check-env
+    gl check-env
 fi
 
 if test "$1" = e; then
