@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -e
+
+if test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+
+search_args=$(string-join '.*' $*)
+
+export SELECT_DIST_WORD=$(echo $search_args | md5sum | pn 1)
+function select-output-line() {
+    command select-output-line -O $(basename $0).$SELECT_DIST_WORD -m 1000 "$@"
+}
+
+file=$(
+    (
+        cd /usr/share/cppreference/doc/html
+
+        exp=$(
+            dq=\"
+            nq='[^"]*'
+            n_bracket='[^<>]*'
+            string-join '|' \
+                        "$( \
+                            printf "a name=${dq}${nq}%s${nq}${dq}" "$search_args"
+                        )" \
+                        "$(
+                            printf "<a href=${dq}${nq}${dq}>${n_bracket}%s${n_bracket}</a>" "${search_args}"
+                        )" \
+                        "$( # <title>std::remove, std::remove_if - cppreference.com</title>
+                            printf "<title>${n_bracket}%s${n_bracket}</title>" "${search_args}"
+                        )"
+           )
+        beagrep -e "${exp}" -t "a href $(beagrep-break-words $* | tr '\n' ' ')" --grep "-l -P"
+        beagrep -e "$search_args" -f |perl -npe 's/:.*//'
+    ) | select-output-line cat
+    )
+if test -z "$file"; then
+    search-google "$2" site:en.cppreference.com
+    exit
+fi
+
+firefox file://$file
+# lambda
