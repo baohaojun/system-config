@@ -42,6 +42,7 @@ Returns (point) if current-char is visible."
   (unless (or
            (eq major-mode 'org-mode)
            (eq major-mode 'fundamental-mode)
+           (eq major-mode 'markdown-mode)
            (eq major-mode 'text-mode))
     (if (yes-or-no-p "Are you sure to fix cjk spaces in non-org mode?")
         (when (not (region-active-p))
