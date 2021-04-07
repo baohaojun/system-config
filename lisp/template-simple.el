@@ -385,27 +385,7 @@ Use `template-expand-function' to expand the parsed template."
   nil)
 ;; Hope auto-insert can add a test for template-derive-template
 (defun template-auto-insert ()
-  (and (not buffer-read-only)
-       (or (eq this-command 'template-auto-insert)
-           (and (bobp) (eobp)))
-       (let ((file (template-derive-template)))
-         (when file
-           (switch-to-buffer (current-buffer))
-           (if (or (null template-query)
-                   (y-or-n-p (format "Use template %s? " file)))
-               (template-simple-expand-template file)))))
   nil)
-
-(let ((hook (if (boundp 'find-file-hook)
-                'find-file-hook
-              'find-file-hooks)))
-  ;; make template-auto-insert the last, so session history
-  ;; will not affect point set by template
-  (add-hook hook 'template-auto-insert t)
-  ;; make auto-insert lower priority
-  (when (memq 'auto-insert (symbol-value hook))
-    (remove-hook hook 'auto-insert)
-    (add-hook hook 'auto-insert t)))
 
 (provide 'template-simple)
 ;;; template-simple.el ends here
