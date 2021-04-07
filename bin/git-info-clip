@@ -74,7 +74,17 @@ fi
 
 cd -P .
 git_dir=$(dirname $(lookup-file .git))
-git_proj_http=$(repo-remote-url|perl -npe 's,(git\@)?github.com:,https://github.com/,; s,git://,http://,; s,\.git$,,')
+git_proj_http=$(repo-remote-url|perl -npe "$(
+cat <<'EOF95fde57e036f' | . .replace-%% --
+# {%perl-mode%}
+s,(git\@)?github.com:,https://github.com/,;
+s,git://,http://,;
+s,\.git$,,;
+s,^gl:,$ENV{GITLAB_URL},;
+# {%/perl-mode%}
+EOF95fde57e036f
+
+)")
 
 if test "$blob" = true; then
     where=blob

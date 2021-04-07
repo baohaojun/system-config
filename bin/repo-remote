@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if test "${REPO_REMOTE_NO_RECURSE}" = true; then
+    die "Can't recurse into repo-remote"
+    exit 1
+fi
+
 if test "$REPO_REMOTE"; then
     echo $REPO_REMOTE
     exit
@@ -22,6 +27,7 @@ elif lookup-file-dir -e .repo >/dev/null 2>&1; then
             git rev-parse --abbrev-ref HEAD@{upstream} | perl -npe 's!/.*!!'
         fi
     else
+        REPO_REMOTE_NO_RECURSE=true \
         repo forall $(repo-project) -c 'echo $REPO_REMOTE' 2>/dev/null
     fi
 else

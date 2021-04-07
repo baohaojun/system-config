@@ -93,7 +93,6 @@ done
 
 if grep '^deb htt' /etc/apt/sources.list; then
     sudo dpkg --add-architecture i386 || true
-    sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
     sudo apt-get update
 fi
 

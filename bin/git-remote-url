@@ -15,10 +15,14 @@ fi
 if test -e $gitd/svn/.metadata; then
     url=$(git svn info | grep "^URL:" | pn 2 | head -n 1)
 else
-    test $# == 0 -o -z "$1" && set -- $(repo-remote)
+    test $# == 0 -o -z "$1" &&
+        if test "${REPO_REMOTE_NO_RECURSE}" = true; then
+            set -- $(git remote | head -n 1)
+        else
+            set -- $(repo-remote)
+        fi
 
     url=$(git config remote.$1.url)
-
 fi
 
 if test -e ~/src/github/smartcm/etc/fix-git-remote-url; then

@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""minidom pretty print"""
+
+import xml.dom.minidom as minidom
+import click
+
+def _walk_n_apply(func, cond, parent):
+    """walk and apply, recursively"""
+    if parent.childNodes:
+        for child in list(parent.childNodes):
+            if cond(child):
+                func(parent, child)
+                continue
+            _walk_n_apply(func, cond, child)
+
+def remove_child(parent, child):
+    """Remove a child"""
+    parent.removeChild(child)
+
+def is_empty_text_node(node):
+    """is it blank?"""
+    return node.nodeType == node.TEXT_NODE and node.data.strip(" \t\n\r") == ''
+
+@click.command()
+@click.option('-m', '--manifest', help='manifest.xml file to fix')
+@click.option('-r', '--remote-name', default='origin', help='remote name')
+@click.option('-u', '--remote-url', default='.', help='remote url')
+@click.option('-b', '--branch-name', help='branch name')
+def fix_manifest(manifest, remote_url, remote_name, branch_name):
+    dom = minidom.parse(manifest)
+    _walk_n_apply(remove_child, is_empty_text_node, dom)
+
+    root = dom.documentElement
+    for remote in list(dom.getElementsByTagName('remote')):
+        root.removeChild(remote)
+
+    for default in list(dom.getElementsByTagName('default')):
+        root.removeChild(default)
+
+
+    firstChild = root.childNodes[0]
+    remote = minidom.parseString(
+        f'<remote fetch="{remote_url}" name="{remote_name}"/>'
+    ).documentElement
+
+    root.insertBefore(remote, firstChild)
+
+    default = minidom.parseString(
+        f'<default remote="{remote_name}" revision="{branch_name}"/>'
+    ).documentElement
+
+    root.insertBefore(default, firstChild)
+    for project in dom.getElementsByTagName('project'):
+        for attr in ('dest-branch', 'remote', 'upstream'):
+            if project.hasAttribute(attr):
+                project.removeAttribute(attr)
+
+    pretty_xml_as_string = dom.toprettyxml(indent='  ', newl="\n")
+
+    file_handle = open(manifest, "w", encoding='utf-8')
+    file_handle.write(pretty_xml_as_string)
+    file_handle.close()
+
+if __name__ == '__main__':
+    fix_manifest()
