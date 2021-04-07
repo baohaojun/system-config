@@ -17,5 +17,37 @@ fi
 if test "$REPO_INFO"; then
     $REPO_INFO branch
 else
-    repo forall $(repo-project) -c 'echo $REPO_RREV'
+    repo forall $(repo-project) -c bash -c "$(
+cat <<'EOFaa4b1fa48f87' | . .replace-%% --
+# {%sh-mode%}
+set -e
+
+if [[ $REPO_RREV =~ ^[a-fA-F0-9]{40}$ ]]; then
+    path=$(repo-path)
+    (
+        cd $(lookup-file-dir -e .repo)
+        if test ! -d .repo; then
+            die "Can't work with non repo dir"
+        fi
+
+        if find .repo/manifests .repo/local_manifests -newer .repo/manifest-infos.xml 2>/dev/null | grep . -q; then
+            (
+                flock 9
+                repo manifest -r -o .repo/manifest-infos.xml
+            ) 9< .repo/manifest.xml
+        fi
+
+        if upstream=$(xmlstarlet sel -t -m "//project[@name = '$path' and not(@path) or @path = '$path']" -v @upstream -n .repo/manifest-infos.xml) && test "${upstream}"; then
+            echo $upstream
+        else
+            xmlstarlet sel -t -m "//default" -v @revision -n .repo/manifest-infos.xml
+        fi
+    )
+else
+    echo "${REPO_RREV}"
+fi
+# {%/sh-mode%}
+EOFaa4b1fa48f87
+
+)"
 fi

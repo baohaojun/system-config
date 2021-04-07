@@ -49,11 +49,15 @@ def fix_manifest(manifest, remote_url, remote_name, branch_name):
         f'<default remote="{remote_name}" revision="{branch_name}"/>'
     ).documentElement
 
+    import re
+    commit_re = re.compile('^[a-f0-9]{40}$', re.I)
     root.insertBefore(default, firstChild)
     for project in dom.getElementsByTagName('project'):
         for attr in ('dest-branch', 'remote', 'upstream'):
             if project.hasAttribute(attr):
                 project.removeAttribute(attr)
+        if commit_re.match(project.getAttribute('revision')):
+            project.setAttribute('upstream', branch_name)
 
     pretty_xml_as_string = dom.toprettyxml(indent='  ', newl="\n")
 

@@ -81,6 +81,7 @@ s,(git\@)?github.com:,https://github.com/,;
 s,git://,http://,;
 s,\.git$,,;
 s,^gl:,$ENV{GITLAB_URL},;
+s,^$ENV{GITLAB_SSH_URL},$ENV{GITLAB_URL},;
 # {%/perl-mode%}
 EOF95fde57e036f
 
@@ -94,14 +95,14 @@ else
     where=raw
 fi
 
-stem=/$where/$(git-remote-branch|xargs basename)
+stem=/$where/$(git-remote-branch|perl -pe 's,.*?/,,')
 if test -d "$1"; then
     stem=/tree/${stem#/$where/}
 fi
 
 
 
-url=$(lookup-file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n')
+url=$(lookup-file "$1" |perl -npe 's,\Q'$git_dir'\E,'$git_proj_http$stem','|tr -d '\r\n')
 echo "$url"
 
 if is-tty-io; then

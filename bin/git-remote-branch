@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-branch=$(wgit symbolic-ref --short HEAD)
+branch=$(wgit symbolic-ref --short HEAD 2>/dev/null)
 if test "$branch"; then
     remote=$(git config branch.$branch.remote)
     rbranch=$(git config branch.$branch.merge|perl -npe 's,^refs/heads/,,')
@@ -13,4 +13,9 @@ if test "$branch"; then
         exit 0
     fi
 fi
-echo origin/master
+
+if lookup-file -e .repo &>/dev/null && repo_branch=$(repo-branch); then
+    echo $(repo-remote)/${repo_branch}
+else
+    echo origin/master
+fi
