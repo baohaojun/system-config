@@ -61,7 +61,7 @@ cat <<'EOFb1b66edbb725' | . .replace-%% --
 rm -f /sdcard/putclip.txt
 
 if test "[%current_ime%]" != com.wrench.inputmethod.pinyin; then
-    ime set com.wrench.inputmethod.pinyin/.PinyinIME
+    ime set com.wrench.inputmethod.pinyin/.PinyinIME &>/dev/null
 fi
 
 input keyevent GUIDE
@@ -75,7 +75,7 @@ for x in $(seq 1 20); do
 done
 
 if test "[%current_ime%]" = com.google.android.inputmethod.latin; then
-    ime set com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME
+    ime set com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME &>/dev/null
 fi
 
 # {%/sh-mode%}

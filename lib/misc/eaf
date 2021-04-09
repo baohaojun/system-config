@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+
+# edit adb file
+
+if ! [[ $1 =~ / ]]; then
+    set -- /data/data/com.android.shell/$1
+fi
+
+tmpdir=$(mktemp -d)
+. atexit rm -rf "$tmpdir"
+
+tmpfile="$tmpdir/${1##*/}"
+my-adb touch "$1"
+adb pull "$1" "${tmpfile}"
+
+ew "$tmpfile"
+
+adb push "${tmpfile}" "$1.$$"
+my-adb "cat $1.$$ > $1; rm -f $1.$$"

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+# open a file with a smart guess
+
+of $(git-info-clip --blob "$@")

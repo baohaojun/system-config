@@ -14,12 +14,13 @@ fi
         # eexact-query-input '?"不要修改我的 query input，比如「description=*系统软件*」"' \
         # @:group '?"在某个组中搜索此用户"' \
         # 1in-1-line '?"用一行显示"' \
+        # s:search-type '?"可以指定 user 或 group，如为 group，则搜索 groups"' \
 
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o deg:1m:p:u:h \
-               --long decode,exact-query-input,glob:,group:,in-1-line,match-regexp:,pass:,user:,help,no-decode,no-exact-query-input,no-in-1-line \
-               -n $(basename -- $0) -- "$@")
+TEMP=$( getopt -o deg:1m:p:s:u:h \
+               --long decode,exact-query-input,glob:,group:,in-1-line,match-regexp:,pass:,search-type:,user:,help,no-decode,no-exact-query-input,no-in-1-line \
+               -n "$(basename -- "$0")" -- "$@")
 declare decode=false
 declare exact_query_input=false
 declare glob="*"
@@ -27,6 +28,7 @@ declare group=
 declare in_1_line=false
 declare match_regexp=.
 declare pass=
+declare search_type=
 declare user=${scm_ldap_user:-$(get-about-me ldap-user)}
 eval set -- "$TEMP"
 while true; do
@@ -79,6 +81,11 @@ while true; do
             shift 2
 
             ;;
+        -s|--search-type)
+            search_type=$2
+            shift 2
+
+            ;;
         -u|--user)
             user=$2
             shift 2
@@ -112,6 +119,11 @@ while true; do
             printf %6s '-p, '
             printf %-24s '--pass=PASS'
             echo
+            printf %6s '-s, '
+            printf %-24s '--search-type=SEARCH_TYPE'
+            echo
+            printf "%30s" ""
+            echo "可以指定 user 或 group，如为 group，则搜索 groups"
             printf %6s '-u, '
             printf %-24s '--user=USER...'
             echo
@@ -168,7 +180,7 @@ if test $# = 1; then
     elif [[ "$1" =~ = ]]; then
         query=$1
     else
-        query=$(printf "(|(sAMAccountName=${glob}%s${glob})(cn=${glob}%s${glob})(sn=${glob}%s${glob})(mail=${glob}%s${glob})(displayName=${glob}%s${glob}))" "$1" "$1" "$1" "$1" "$1")
+        query=$(printf "(|(sAMAccountName=${glob}%s${glob})(description=${glob}%s${glob})(cn=${glob}%s${glob})(sn=${glob}%s${glob})(mail=${glob}%s${glob})(displayName=${glob}%s${glob}))" "$1" "$1" "$1" "$1" "$1" "$1")
     fi
 elif test $# = 2; then
     query='(|'
@@ -230,7 +242,12 @@ if test -z "${pass}"; then
     pass=$(git config -f "${scm_secrets_conf}" ldap.password)
 fi
 
-cached-run ldapsearch -LLL -b "${scm_ldap_dc}" \
+ldap_base=${scm_ldap_dc}
+if test "${search_type}" = group; then
+    ldap_base=${scm_ldap_group_search_base}
+fi
+
+cached-run ldapsearch -LLL -b "${ldap_base}" \
     -P 3 \
     -H "${scm_ldap_url}" \
     -D "$user" \

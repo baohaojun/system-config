@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -e
+
+# run some command on SOURCE machine from docker
+
+command="$(for x in "$@"; do printf "%q " "$x"; done)"
+
+ssh-tty $REMOTEUSER@$REMOTEIP "$(
+cat <<'EOF8ebc2da79a0d' | . .replace-%% --
+# {%sh-mode%}
+cd [%PWD%]
+unset SSH_CLIENT SSH_CONNECTION SSH_TTY
+. ~/system-config/.bashrc
+[%command%]
+# {%/sh-mode%}
+EOF8ebc2da79a0d
+
+)"

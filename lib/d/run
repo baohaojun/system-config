@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+docker run --cap-add=SYS_PTRACE -it \
+       -v ~/.cache/docker-home:/home/build \
+       -v ~/src:/home/build/src \
+       -v ~/system-config/:/home/build/system-config \
+       -v ~/.ssh:/home/build/.ssh \
+       -v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK \
+       "$@"
