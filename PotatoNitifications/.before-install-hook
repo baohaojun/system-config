@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+(
+    cp $apk ~/src/github/Wrench/release/PotatoNotifications.apk
+    cd ~/src/github/Wrench/release/
+    md5sum PotatoNotifications.apk > PotatoNotifications.apk.md5
+    adb push PotatoNotifications.apk.md5 /sdcard/
+)
+

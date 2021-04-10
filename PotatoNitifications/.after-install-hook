@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+my-adb am start -n com.android.settings/com.android.settings.NotificationAccessSettingsActivity
+sleep 1
+adb-tap 882 297
+sleep 1
+adb-tap 758 1259

@@ -1,0 +1,37 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        applicationId "com.bhj.potatonotifications"
+
+        ndk {
+            moduleName "wrench-jni"
+        }
+        minSdkVersion 21
+        targetSdkVersion 25
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            // Tells Gradle to find the root ndk-build script in the same
+            // directory as the module's build.gradle file. Gradle requires this
+            // build script to add your ndk-build project as a build dependency and
+            // pull your native sources into your Android project.
+            path "src/main/jni/Android.mk"
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+}
