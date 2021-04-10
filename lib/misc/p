@@ -134,11 +134,11 @@ fuser -k ~/potato.lock || true
         start-potato $x
         sleep [%work_time%]
         if (( x % [%big_break_times%] == 0)); then
-            sleep [%rest_time2%]
             big-break $x
+            sleep [%rest_time2%]
         else
-            sleep [%rest_time1%]
             small-break $x
+            sleep [%rest_time1%]
         fi
     done
 ) 9> ~/potato.lock
