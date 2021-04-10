@@ -484,6 +484,7 @@ public class PutClipService extends Service implements MediaScannerConnection.Me
                     dataCursor.close();
                 }
             } else {
+                Log.e("bhj", String.format("%s:%d: ", "PutClipService.java • setclip", 487));
                 myClipStr = readAndDelete("putclip.txt");
                 mClipboard.setPrimaryClip(ClipData.newPlainText("Styled Text", myClipStr));
             }
