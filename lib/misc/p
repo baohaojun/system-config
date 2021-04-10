@@ -109,7 +109,9 @@ title() {
 }
 
 text() {
-    echo "$*" > /sdcard/potato.text
+    echo "$*
+
+$(date)" > /sdcard/potato.text
     am start-foreground-service -n com.bhj.potatonotifications/.PutClipService --ei notify 1
 }
 

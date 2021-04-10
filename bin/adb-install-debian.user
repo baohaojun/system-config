@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+# [[file:../knuth-mode/adb-install-debian.org::the-ultimate-script][the-ultimate-script]]
+set -e
+local-pc-script() {
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt @:arch=arm64 @:mirror=http://deb.debian.org/debian
+    ## end code-generator
+    ## start generated code
+    TEMP=$( getopt -o h \
+                   --long arch:,mirror:,help \
+                   -n $(basename -- $0) -- "$@")
+    arch=arm64
+    mirror=http://deb.debian.org/debian
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            --arch)
+                arch=$2
+                shift 2
+                ;;
+            --mirror)
+                mirror=$2
+                shift 2
+                ;;
+            -h|--help)
+                set +x
+                echo -e
+                echo
+                echo Options and arguments:
+                printf "%6s" " "
+                printf %-24s '--arch=ARCH'
+                echo
+                printf "%6s" " "
+                printf %-24s '--mirror=MIRROR'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+    ## end generated code
+
+    if test ! -d ~/external/debian.$arch; then
+        mkdir -p ~/external/
+        sudo debootstrap --include=bash-completion,ssh,rsync,locales --verbose --arch "$arch" --foreign testing ~/external/debian.$arch.$$ "$mirror"
+        mv ~/external/debian.$arch.$$ ~/external/debian.$arch
+        sudo perl -npe 's!(^\s*in_target mount -t sysfs sysfs /sys[ \t]*)$!$& || true\n!' -i ~/external/debian.$arch/debootstrap/functions
+        sudo perl -npe 's,1/test-dev-null,1/dev/test-dev-null,g' -i ~/external/debian.$arch/debootstrap/functions
+        sudo touch ~/external/debian.$arch/dev/.dev-not-mounted
+    fi
+
+    if test ! -e ~/external/debian.$arch.tgz; then
+
+        (
+            cd ~/external
+            sudo tar czfv debian.$arch.tgz debian.$arch --exclude-vcs
+        )
+    fi
+
+    adb-fix-busybox
+    if ! my-adb "test -d /data/debian.$arch"; then
+        my-adb push ~/external/debian.$arch.tgz deb.tgz
+        my-adb sc-shell "cd; mv deb.tgz debian.tgz; tar zxvf debian.tgz; rm -f debian; ln -s debian.$arch debian"
+    fi
+
+    my-adb push $me /data/$(basename $0) # 把我自己 push 到手机上
+    if ! my-adb sc-shell bash -e -x /data/$(basename $0) 2>&1; then
+        die "Can't run this script's on-phone part, please check the above output"
+    fi
+
+    my-adb sc-shell chroot /data/debian.$arch /bin/bash -c "$(cat <<EOFa3616cfa6b68
+<<setup-debian-on-phone>>
+EOFa3616cfa6b68
+)"
+    # my-adb -r stop
+    my-adb shell sync
+    if test ! -e ~/.ssh/authorized_keys; then
+        if test ! -e ~/.ssh/id_rsa.pub; then
+            if yes-or-no-p -y "You don't have authorized_keys and id_rsa.pub, create one now?"; then
+                mkdir -p ~/.ssh
+                ssh-keygen -C "$USER" -f ~/.ssh/id_rsa
+            fi
+        fi
+        cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+    fi
+
+    my-adb push ~/.ssh/authorized_keys /data/data/com.android.shell/debian/root/.ssh/authorized_keys
+    my-adb chmod 600 /data/data/com.android.shell/debian/root/.ssh/authorized_keys
+
+    my-adb push ~/.ssh/authorized_keys /data/data/com.android.shell/debian/home/$USER/.ssh/authorized_keys
+    my-adb sc-shell busybox chown -R 1000.1000 /data/data/com.android.shell/debian/home/$USER/.ssh/
+    my-adb chmod 600 /data/data/com.android.shell/debian/home/$USER/.ssh/authorized_keys
+
+    my-adb push ~/.ssh/authorized_keys /data/data/com.android.shell/debian/home/media_rw/.ssh/authorized_keys
+    my-adb sc-shell busybox chown -R 1023.1023 /data/data/com.android.shell/debian/home/media_rw/.ssh/
+    my-adb chmod 600 /data/data/com.android.shell/debian/home/media_rw/.ssh/authorized_keys
+
+    my-adb forward tcp:22222 tcp:22
+}
+  # 这些是在手机上执行的内容
+function prepare-chroot() {
+    mount -o remount /data # rm the nodev flag
+
+    if [ ! -d /tmp ]; then
+        mount -o rw,remount / && mkdir /tmp && chmod 1777 /tmp && mount -o ro,remount /
+    fi
+    if [ ! -f /tmp/.mounted ] ; then
+        mount -t tmpfs none /tmp && touch /tmp/.mounted
+    fi
+
+    # setup posix shared memory
+    if [ ! -d /dev/shm ] ; then mkdir /dev/shm ; fi
+    chmod 1777 /dev/shm
+    if mount | grep /dev/shm; then
+        true
+    else
+        mount -t tmpfs none /dev/shm/
+    fi
+
+    # configure debian chroot
+    if [ -d /data/data/com.android.shell/debian/proc ] && [ ! -d /data/data/com.android.shell/debian/proc/1 ] ; then
+        mount -o bind /proc /data/data/com.android.shell/debian/proc
+    fi
+
+    if [ -d /data/data/com.android.shell/debian/sys ] && [ ! -d /data/data/com.android.shell/debian/sys/class ] ; then
+        mount -o bind /sys /data/data/com.android.shell/debian/sys
+    fi
+
+    if [ -d /data/data/com.android.shell/debian/sys/kernel/debug ] && [ ! -d /data/data/com.android.shell/debian/sys/kernel/debug/tracing ] ; then
+        mount -o bind /sys/kernel/debug/ /data/data/com.android.shell/debian/sys/kernel/debug
+    fi
+
+    if test ! -e /data/data/com.android.shell/debian/dev/null || test -e /data/data/com.android.shell/debian/dev/.dev-not-mounted -o -f /data/data/com.android.shell/debian/dev/null; then
+        mount -o bind /dev /data/data/com.android.shell/debian/dev
+        mount -o bind /dev/pts /data/data/com.android.shell/debian/dev/pts
+        mount -o bind /dev/shm /data/data/com.android.shell/debian/dev/shm
+        for x in system data cache factory d acct; do
+            if test ! -e /$x; then
+                continue
+            fi
+            mkdir -p /data/data/com.android.shell/debian/android/$x
+            mount -o bind /$x /data/data/com.android.shell/debian/android/$x
+        done
+    fi
+}
+
+#!/usr/bin/env bash
+
+set -e
+
+me=$(readlink -f $0)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $0)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+b0=$(basename $0)
+
+if test ! -e /system/bin/getprop; then # 没有 getprop 命令，在 PC 上而不是手机上
+    local-pc-script
+else # on the phone
+    prepare-chroot
+fi
+
+# Local Variables: #
+# eval: (read-only-mode 1) #
+# End: #
+# the-ultimate-script ends here

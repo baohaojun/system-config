@@ -1,5 +1,5 @@
 #!/system/bin/sh
 set -e
+export HOME=/data/data/com.android.shell
 PATH=/data/data/com.android.shell/bin:$PATH
 "$@"
-

@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -e
+
+# run adb debian system-config command
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # ddebug '?"不删除临时文件，调试"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o dh \
+                      --long debug,help,no-debug \
+                      -n "$(basename -- "$0")" -- "$@")
+declare debug=false
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -d|--debug|--no-debug)
+            if test "$1" = --no-debug; then
+                debug=false
+            else
+                debug=true
+            fi
+            shift
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-d, '
+            printf %-24s '--[no-]debug'
+            echo "不删除临时文件，调试"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+if test "${debug}" != true; then
+    debug=
+else
+    set -x
+    my-adb sc-shell 'rm -f tmp/*' || true
+fi
+
+command=$(
+    if test $# = 1 && [[ $1 =~ \  ]]; then
+        set -- bash -c "$1"
+    fi
+    for x in "$@"; do
+        printf "%q " "$x"
+    done
+       )
+command=$(
+    printf %q "$command"
+       )
+
+sc_command="$(
+cat <<'EOFf07f4fbccf86' | . .replace-%% --
+# {%sh-mode%}
+cd ~/
+(
+    exit
+    for f in $(find ~/debian/bin/ ~/debian/usr/bin/ -type f); do
+        echo $f
+        cat > ~/debian-bin/${f##*/} <<EOF
+#!/data/data/com.android.shell/bin/bash
+~/debian/lib/ld-linux-aarch64.so.1 \
+    --library-path ${HOME}/debian/lib/aarch64-linux-gnu/:${HOME}/debian/usr/lib/aarch64-linux-gnu/ \
+    $f "\$@"
+EOF
+        chmod +x ~/debian-bin/${f##*/}
+    done
+)
+(
+    export PATH=${HOME}/debian-bin:${HOME}/.nix-profile/bin:${HOME}/.pyenv/plugins/pyenv-virtualenv/shims:/usr/lib/jvm/java-8-openjdk-amd64/bin:${HOME}/src/github/emacs/bin:${HOME}/.pyenv/shims:${HOME}/.pyenv/bin:${HOME}/.pyenv/plugins/pyenv-virtualenv/shims:${HOME}/.pyenv/shims:${HOME}/.pyenv/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin:${HOME}/src/github/emacs/bin:${HOME}/external/bin/Linux/ext/debug:${HOME}/system-config/bin/overide:${HOME}/src/github/guilt:${HOME}/.rvm/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin:${HOME}/external/bin/Linux/ext/x86_64:${HOME}/external/bin/Linux/ext:${HOME}/system-config/bin/Linux:${HOME}/src/github/private-config/bin:${HOME}/external/emacs/bin:${HOME}/src/github/ajoke/bin:${HOME}/system-config/bin:${HOME}/external/pycharm-community-2020.3.1/bin:${HOME}/testbed/bin:${HOME}/external/eclipse:/usr/local/bin:${HOME}/external/bin/Linux/ext/android-sdk-linux/tools/ndk/android-ndk-r4b:${HOME}/external/bin/Linux/ext/ndk:${HOME}/.linuxbrew/bin:/snap/bin:/usr/bin:/usr/local/games:/usr/games:${HOME}/external/bin/Linux/ext/arm-eabi-4.4.0/bin:${HOME}/external/bin/Linux/ext/arm-2010q1/bin:${HOME}/external/bin/Linux/ext/arm-linux-4.1.1/bin:${HOME}/external/bin/Linux/ext/android-sdk-linux/tools:${HOME}/external/bin/Linux/ext/android-sdk-linux/platform-tools:${HOME}/.local/bin:/sbin:/usr/sbin:/usr/local/sbin:${HOME}/src/android/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin:${HOME}/src/github/smartcm/bin:${HOME}/src/github/smartcm/scm-utils:${HOME}/snap/rustup/common/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin:${HOME}/.cargo/bin:${HOME}/src/reading/emscripten:${HOME}/src/github/private-config/tests:${HOME}/system-config/bin/Linux/missing:${HOME}/external/local/bin:${HOME}/external/local/sbin:${HOME}/external/bin/Linux/ext/android-sdk-linux/flutter/flutter/bin:${HOME}/external/bin/Linux/ext/android-sdk-linux/build-tools/28.0.3:${HOME}/system-config/bin/windows:/bin:${HOME}/src/github/smartcm/scm-helpers:${HOME}/src/ep-tools/build_scripts/bin/:${HOME}/src/ep-tools/change_log_utils/bin/:${HOME}/src/ep-tools/common_utils/bin/:${HOME}/src/ep-tools/jenkins_job_scripts/bin/:${HOME}/src/ep-tools/jenkins_tools/bin/:${HOME}/src/ep-tools/jira_workflow/bin/:${HOME}/src/ep-tools/templates/bin/:${HOME}/src/ep-tools/tests/bin/:${HOME}/src/ep-tools/vendor_push_validator/bin/:/usr/local/DS-5_v5.23.1/sw/ARMCompiler5.06u1/bin/:/pkg/qct/software/arm/RVDS/5.01bld94/bin64:/pkg/qct/software/arm/RVDS/5.01bld94/bin:${HOME}/src/github/smartcm/scm-helpers:$PATH
+
+    echo [%command%] > tmp/ads.$$
+    bash tmp/ads.$$
+)
+[%debug%] rm -f tmp/ads.$$
+# {%/sh-mode%}
+EOFf07f4fbccf86
+
+)"
+
+if test "${debug}"; then
+    echo sc_command is "$sc_command"
+else
+    . atexit rm -f ~/tmp/ads.sc.$$
+fi
+
+echo "$sc_command" > ~/tmp/ads.sc.$$
+my-adb push ~/tmp/ads.sc.$$ tmp/ &>/dev/null
+
+my-adb sc-shell "cd ~; bash tmp/ads.sc.$$; ${debug} rm -f tmp/ads.sc.$$" 2>&1 |
+    perl -ne "$(
+cat <<'EOF1ec11aecb0b6' | . .replace-%% --
+# {%perl-mode%}
+push @lines, $_;
+
+@lines = () if m,error retrieving current directory: getcwd:,;
+
+END {
+    print @lines;
+}
+# {%/perl-mode%}
+EOF1ec11aecb0b6
+
+)"
