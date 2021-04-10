@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -e
+
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+patato work method
+
+蕃茄工作法，用固定的时间段，短频快的工作，中间 3 分钟小休息、10 分钟大休
+息，等等等等。
+
+参考 https://github.com/baohaojun/Wrench/tree/master/PotatoNitifications
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # t:times=8 '?"执行 8 次蕃茄工作法"' \
+    # T:timeout=45m '?"每次的时间是 45 分钟"' \
+    # r:rest-time1=2m '?"小休息 2 分钟"' \
+    # R:rest-time2=10m '?"大休息 10 分钟"' \
+    # b:big-break-times=4 '?"4 个蕃茄一次大休息"' \
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o b:r:R:T:t:h \
+                      --long big-break-times:,rest-time1:,rest-time2:,timeout:,times:,help \
+                      -n "$(basename -- "$0")" -- "$@")
+declare big_break_times=4
+declare rest_time1=2m
+declare rest_time2=10m
+declare timeout=45m
+declare times=8
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -b|--big-break-times)
+            big_break_times=$2
+            shift 2
+
+            ;;
+        -r|--rest-time1)
+            rest_time1=$2
+            shift 2
+
+            ;;
+        -R|--rest-time2)
+            rest_time2=$2
+            shift 2
+
+            ;;
+        -T|--timeout)
+            timeout=$2
+            shift 2
+
+            ;;
+        -t|--times)
+            times=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-b, '
+            printf %-24s '--big-break-times=BIG_BREAK_TIMES'
+            echo
+            printf "%30s" ""
+            echo "4 个蕃茄一次大休息"
+            printf %6s '-r, '
+            printf %-24s '--rest-time1=REST_TIME1'
+            echo "小休息 2 分钟"
+            printf %6s '-R, '
+            printf %-24s '--rest-time2=REST_TIME2'
+            echo "大休息 10 分钟"
+            printf %6s '-T, '
+            printf %-24s '--timeout=TIMEOUT'
+            echo "每次的时间是 45 分钟"
+            printf %6s '-t, '
+            printf %-24s '--times=TIMES'
+            echo "执行 8 次蕃茄工作法"
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+
+adb_script=$(
+    cat <<'EOF2cebd151d598' | . .replace-%% --
+# {%sh-mode%}
+title() {
+    echo "$*" > /sdcard/potato.title
+}
+
+text() {
+    echo "$*" > /sdcard/potato.text
+    am start-foreground-service -n com.bhj.potatonotifications/.PutClipService --ei notify 1
+}
+
+start-potato() {
+    title potato start $*
+    text 'start working, dude!'
+}
+
+small-break() {
+    title potato small break $*
+    text 'take a small break, dude!'
+}
+
+big-break() {
+    title potato big break $*
+    text 'take a big break, dude!'
+}
+
+fuser -k ~/potato.lock || true
+(
+    for x in $(seq 1 [%times%]); do
+        start-potato $x
+        if (( x % [%big_break_times%] == 0)); then
+            sleep [%rest_time2%]
+            big-break $x
+        else
+            sleep [%rest_time1%]
+            small-break $x
+        fi
+    done
+) 9> ~/potato.lock
+# {%/sh-mode%}
+EOF2cebd151d598
+
+          )
+
+adb_script=$(printf %q "$adb_script")
+
+my-adb "echo ${adb_script} > /data/data/com.android.shell/potato.sh"
+adb-bg 'bash ~/potato.sh'

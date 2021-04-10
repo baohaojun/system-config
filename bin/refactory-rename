@@ -225,6 +225,7 @@ xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x is
 xargs -d \\n log-run perl -npe "$(
 cat <<'EOF53f3c820af3c' | . .replace-%% --
 # {%perl-mode%}
+use String::ShellQuote;
 BEGIN{
     $from = $ENV{ARG1};
     $to = $ENV{ARG2};
@@ -244,8 +245,8 @@ while (m#($prepend$from$postpend)#ig) {
         next;
     } else {
         if ($ENV{ask_replacer} eq "true") {
-            system("echo please input your replacement for \"$1\" > /tmp/get-stdin.$$");
-            chomp($rep_save{$1} = qx(get-stdin /tmp/get-stdin.$$));
+            my $prompt = shell_quote("please input your replacement for \"$1\"");
+            chomp($rep_save{$1} = qx(get-stdin -p $prompt));
             $rep_save{$1} =~ s/^please input your replacement for //;
         } else {
             $rep_save{$1} = $to;

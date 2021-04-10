@@ -61,7 +61,8 @@ adb_command=$(
     cat <<'EOF1d03d067624f' | . .replace-%% --
 # {%sh-mode%}
 cd /data/data/com.android.shell
-PATH=/data/data/com.android.shell/bin:$PATH
+export HOME=/data/data/com.android.shell
+export PATH=/data/data/com.android.shell/bin:$PATH
 touch not-started.$$
 setsid nohup setsid sh -c 'set -x
 rm 'not-started.$$'
