@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -e
+
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+-ex 'file arm64/iwasm'
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
+
+## start code-generator "^\\s *#\\s *"
+# generate-getopt -P '?"${comment_doc}"' \
+    # f:gdb-which-file
+
+## end code-generator
+## start generated code
+TEMP=$(POSIXLY_CORRECT=true getopt -o f:h \
+                      --long gdb-which-file:,help \
+                      -n "$(basename -- "$0")" -- "$@")
+declare gdb_which_file=
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+
+        -f|--gdb-which-file)
+            gdb_which_file=$2
+            shift 2
+
+            ;;
+        -h|--help)
+            set +x
+            echo -e "${comment_doc}"
+            echo
+            echo Options and arguments:
+            printf %6s '-f, '
+            printf %-24s '--gdb-which-file=GDB_WHICH_FILE'
+            echo
+            exit
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error: $(. bt; echo; bt | indent-stdin)"
+            ;;
+    esac
+done
+
+
+## end generated code
+
+gdb-multiarch -q --nh -ex 'set architecture aarch64' -ex "file ${gdb_which_file}" -ex 'target remote localhost:1234' -ex 'layout split' -ex 'layout regs' -ex 'set sysroot /usr/aarch64-linux-gnu/' -ex 'b main' -ex 'source ~/.gdbinit' "$@"

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+if test $# = 0; then
+    set -- "$(xclip -o)"
+fi
+
+fill=$(echo "$@"|urlify)
+
+firefox "https://developer.android.com/s/results?hl=en&q=${fill}"

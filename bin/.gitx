@@ -235,6 +235,7 @@ print $_ . "\n";
         fi
 
         if test "$1" = co -a $# = 2; then
+            set -- checkout "$2"
             command git "$@" || {
                 git fetch -v $(repo-remote) || true
                 git checkout $(git-choose-branch "$2")

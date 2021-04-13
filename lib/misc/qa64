@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+# run with qemu arm 64bit
+
+qemu-aarch64 -L /usr/aarch64-linux-gnu/ "$@"

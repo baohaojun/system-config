@@ -10,7 +10,7 @@ patato work method
 蕃茄工作法，用固定的时间段，短频快的工作，中间 3 分钟小休息、10 分钟大休
 息，等等等等。
 
-参考 https://github.com/baohaojun/Wrench/tree/master/PotatoNitifications
+参考 https://github.com/baohaojun/Wrench/tree/master/TomatoNitifications
 # {%/org-mode%}
 EOFe9576f8668e0
         )
@@ -105,35 +105,35 @@ adb_script=$(
     cat <<'EOF2cebd151d598' | . .replace-%% --
 # {%sh-mode%}
 title() {
-    echo "$*" > /sdcard/potato.title
+    echo "$*" > /sdcard/tomato.title
 }
 
 text() {
     echo "$*
 
-$(date)" > /sdcard/potato.text
-    am start-foreground-service -n com.bhj.potatonotifications/.PutClipService --ei notify 1
+$(date)" > /sdcard/tomato.text
+    am start-foreground-service -n com.bhj.tomatonotifications/.PutClipService --ei notify 1
 }
 
-start-potato() {
-    title potato start $*
+start-tomato() {
+    title tomato start $*
     text 'start working, dude!'
 }
 
 small-break() {
-    title potato small break $*
+    title tomato small break $*
     text 'take a small break, dude!'
 }
 
 big-break() {
-    title potato big break $*
+    title tomato big break $*
     text 'take a big break, dude!'
 }
 
-fuser -k ~/potato.lock || true
+fuser -k ~/tomato.lock || true
 (
     for x in $(seq 1 [%times%]); do
-        start-potato $x
+        start-tomato $x
         sleep [%work_time%]
         if (( x % [%big_break_times%] == 0)); then
             big-break $x
@@ -143,7 +143,7 @@ fuser -k ~/potato.lock || true
             sleep [%rest_time1%]
         fi
     done
-) 9> ~/potato.lock
+) 9> ~/tomato.lock
 # {%/sh-mode%}
 EOF2cebd151d598
 
@@ -151,5 +151,5 @@ EOF2cebd151d598
 
 adb_script=$(printf %q "$adb_script")
 
-my-adb "echo ${adb_script} > /data/data/com.android.shell/potato.sh"
-adb-bg 'bash ~/potato.sh'
+my-adb "echo ${adb_script} > /data/data/com.android.shell/tomato.sh"
+adb-bg 'bash ~/tomato.sh'

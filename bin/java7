@@ -18,6 +18,8 @@ fi
 number=${b0#java}
 if test -e /usr/lib/jvm/java-$number-openjdk-amd64/bin; then
     PATH=/usr/lib/jvm/java-$number-openjdk-amd64/bin:$PATH
+elif test -e /usr/lib/jvm/adoptopenjdk-$number-hotspot-amd64/bin; then
+    PATH=/usr/lib/jvm/adoptopenjdk-$number-hotspot-amd64/bin:$PATH
 elif test "$number" = 6; then
     PATH=~/external/bin/Linux/ext/jdk/bin:$PATH
 else

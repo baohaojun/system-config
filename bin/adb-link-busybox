@@ -9,7 +9,9 @@ else
     adb shell mkdir -p /data/data/com.android.shell/bin
     adb push $busybox_file /data/data/com.android.shell/bin/$(basename $busybox_file)
     adb push $bash_file /data/data/com.android.shell/bin/$(basename $bash_file)
-    adb push ~/system-config/bin/adb-sc-shell /data/data/com.android.shell/bin/sc-shell
+    for x in ~/system-config/bin/adb-sc-*; do
+        adb push $x /data/data/com.android.shell/bin/${x##*adb-}
+    done
     my-adb shell "chmod 755 /data/data/com.android.shell/bin/*"
 fi
 
@@ -26,6 +28,3 @@ applets=$(
 ) > /tmp/ln.sh.$$
 adb push /tmp/ln.sh.$$ /data/data/com.android.shell/ln.sh
 adb shell 'PATH=/data/data/com.android.shell/bin:$PATH; sh -x /data/data/com.android.shell/ln.sh'
-
-
-
