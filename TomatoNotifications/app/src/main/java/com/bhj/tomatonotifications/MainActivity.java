@@ -1,4 +1,4 @@
-package com.bhj.potatonotifications;
+package com.bhj.tomatonotifications;
 
 import android.app.Notification;
 import android.os.Handler;

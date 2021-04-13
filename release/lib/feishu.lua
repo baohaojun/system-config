@@ -44,7 +44,8 @@ M.open_fs = function(target_activity) -- target_activity can be one of ["search"
          if not found_grey and not found_duihua then
             if M.m_focused_window == M.fs_home then
                click_scene("feishu/plus-eclipsed", {skip_refind = true})
-            elseif i >= 15 then
+               log("not found_grey and not found_duihua, i = %d", i)
+            elseif i >= 8 then
                M.g_find_scene_debug = true
             else
                adb_back_from_activity()

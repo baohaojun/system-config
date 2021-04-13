@@ -5,13 +5,13 @@ android {
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId "com.bhj.potatonotifications"
+        applicationId "com.bhj.tomatonotifications"
 
         ndk {
             moduleName "wrench-jni"
         }
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
     }
 
     buildTypes {

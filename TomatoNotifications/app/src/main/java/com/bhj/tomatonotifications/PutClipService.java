@@ -1,5 +1,6 @@
-package com.bhj.potatonotifications;
+package com.bhj.tomatonotifications;
 
+import android.app.AlarmManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -13,6 +14,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.app.PendingIntent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -54,6 +56,7 @@ public class PutClipService extends Service implements MediaScannerConnection.Me
     }
     private static final String CHANNEL_ID = "channel_id";
     private NotificationManager mNotificationManager;
+
     @Override
     public void onCreate()  {
         super.onCreate();
@@ -433,9 +436,31 @@ public class PutClipService extends Service implements MediaScannerConnection.Me
                 notesIntent.putExtra(Intent.EXTRA_TEXT, str);
                 notesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(notesIntent);
-            } else if (intent.getIntExtra("notify", 0) == 1) {
-                String title = readAndDelete("potato.title");
-                String text = readAndDelete("potato.text");
+            } else if (intent.getIntExtra("notify", 0) != 0) {
+                int seconds = intent.getIntExtra("notify", 0);
+                Log.e("bhj", String.format("%s:%d: seconds: %d", "PutClipService.java", 440, seconds));
+
+                if (seconds > 1) {
+                    final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+                    Intent intent2 = new Intent(intent);
+                    intent2.putExtra("notify", 1);
+
+                    final PendingIntent pi = PendingIntent.getService(this, 0, intent2, 0);
+                    final long time = System.currentTimeMillis();
+                    am.set(AlarmManager.RTC_WAKEUP, time + seconds * 1000, pi);
+                    return 0;
+                }
+
+                String title = intent.getStringExtra("notifyTitle");
+                if (title == null) {
+                    title = readAndDelete("tomato.title");
+                }
+
+                String text = intent.getStringExtra("notifyText");
+                if (text == null) {
+                    text = readAndDelete("tomato.text");
+                }
 
                 Notification.Builder notifBuidler = new Notification.Builder(this) // the context to use
                     .setSmallIcon(R.drawable.ic_launcher)  // the status icon
@@ -448,12 +473,12 @@ public class PutClipService extends Service implements MediaScannerConnection.Me
             } else if (intent.getIntExtra("getapk", 0) == 1) {
                 try {
                     PackageManager pm = getPackageManager();
-                    PackageInfo pi = pm.getPackageInfo("com.bhj.potatonotifications", 0);
+                    PackageInfo pi = pm.getPackageInfo("com.bhj.tomatonotifications", 0);
 
-                    FileWriter f = new FileWriter(new File(sdcard, "potatonotifications-apk.txt.1"));
+                    FileWriter f = new FileWriter(new File(sdcard, "tomatonotifications-apk.txt.1"));
                     f.write(String.format("if test -e %s; then CLASSPATH=%s LD_LIBRARY_PATH=%s:/system/app/miui/lib/arm64/ \"$@\"; else echo %s not found; fi", pi.applicationInfo.sourceDir, pi.applicationInfo.sourceDir, pi.applicationInfo.nativeLibraryDir, pi.applicationInfo.sourceDir));
                     f.close();
-                    new File(sdcard, "potatonotifications-apk.txt.1").renameTo(new File(sdcard, "potatonotifications-apk.txt"));
+                    new File(sdcard, "tomatonotifications-apk.txt.1").renameTo(new File(sdcard, "tomatonotifications-apk.txt"));
                 } catch (Throwable e) {
                     Toast.makeText(PutClipService.this, String.format("%s", "小蕃茄没有权限写 /sdcard/ 目录？新版安卓上需在系统设置中手动设置一下小蕃茄的权限"), Toast.LENGTH_LONG).show();
                     Log.e("bhj", String.format("%s:%d: ", "PutClipService.java", 134), e);
