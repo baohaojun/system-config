@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 # An ncurses based UI to quickly select a git commit from a 'git log --online'
 # output and press a key on it to perform a single action (Checkout, reword
 # changelog, edit patch, etc).  Opens up vim editor when needed. Inspired by a
@@ -73,7 +74,29 @@ if test "${start_item}"; then
 fi
 
 export LESS="RSX"
-spath="$(dirname "$(readlink -f "$0")")"
+
+me=$(readlink -f $BASH_SOURCE)
+if test ! -e "$me"; then
+    me=$(readlink -f "$(which $BASH_SOURCE)")
+    if test ! -e "$me"; then
+        die "Can't find out about me"
+        exit 1
+    fi
+fi
+
+abs0=$BASH_SOURCE
+if ! [[ $abs0 =~ ^/ ]]; then
+    if [[ $abs0 =~ / ]] && test -e $PWD/$abs0; then
+        abs0=$PWD/$abs0
+    elif test -e "$(which $BASH_SOURCE)"; then
+        abs0=$(which $BASH_SOURCE)
+    else
+        die "Can't find abs path for $BASH_SOURCE"
+    fi
+fi
+
+b0=$(basename $BASH_SOURCE)
+spath="$(dirname "$(readlink -f "$abs0")")"
 
 function do_quit() {
   rm /tmp/ncurses*
