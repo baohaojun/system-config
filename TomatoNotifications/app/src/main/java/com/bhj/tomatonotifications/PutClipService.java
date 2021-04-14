@@ -446,9 +446,11 @@ public class PutClipService extends Service implements MediaScannerConnection.Me
                     Intent intent2 = new Intent(intent);
                     intent2.putExtra("notify", 1);
 
-                    final PendingIntent pi = PendingIntent.getService(this, 0, intent2, 0);
                     final long time = System.currentTimeMillis();
-                    am.set(AlarmManager.RTC_WAKEUP, time + seconds * 1000, pi);
+                    final long fire = time + seconds * 1000;
+                    final PendingIntent pi = PendingIntent.getService(this, (int)fire, intent2, 0);
+
+                    am.set(AlarmManager.RTC_WAKEUP, fire, pi);
                     return 0;
                 }
 
