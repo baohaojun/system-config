@@ -1,8 +1,15 @@
 #!/usr/bin/env perl
 use strict;
 
+(my $comment_doc = <<~'EOFc83131117f09') =~ s,^# .*org-mode.*,,gm;
+# {%org-mode%}
+把 ARG1 用 SPLIT（根据 REGEXP 参数，可以是普通字符串或正则表达式）或 IFS（bash 环境变量）切割开，然后减去后续的 ARGS，返回集合的差。
+# {%/org-mode%}
+EOFc83131117f09
+
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt -s perl -P s:split rregexp vverbose
+# generate-getopt -s perl -P '?"$comment_doc"' \
+# s:split rregexp vverbose
 ## end code-generator
 ## start generated code
 use Getopt::Long;
@@ -16,7 +23,7 @@ my $split = "";
 my $verbose = 0;
 
 my $handler_help = sub {
-    print ;
+    print "$comment_doc";
     print "\n\n选项和参数：\n";
     printf "%6s", '-r, ';
     printf "%-24s", '--[no]regexp';
@@ -43,7 +50,13 @@ my $handler_help = sub {
     printf "%s", ;
     print "\n";
 
-    exit(0);
+    my $exit_value = 0;
+    if (@_ && $_[0] ne "help" && $_[1] != 1) {
+        $exit_value = shift @_;
+        print "@_\n";
+    }
+
+    exit($exit_value);
 };
 
 GetOptions (
@@ -67,7 +80,7 @@ my $arg1 = $ARGV[0];
 my @arg1 = split($split, $arg1);
 if ($verbose) {
     local $, = ", ";
-    print "arg1 is @arg1\n";
+    say STDERR "arg1 is ", @arg1, "split is '$split'\n";
 }
 
 sub debug(@) {
