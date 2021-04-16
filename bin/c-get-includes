@@ -13,15 +13,17 @@ export LC_ALL=C
 function get-includes-for-compilation()
 {
     tee ~/.cache/system-config/logs/$(basename $0).input | perl -ne '
-    if (m/error: .(.*?). was not declared in this scope/) {
+    if (m/error: .(.*?). (undeclared|was not declared in this scope)/) {
+        print "$1\n";
+    } elsif (m/error: unknown type name .(\w+)./) {
         print "$1\n";
     }
-' | sort -u | xargs c-get-includes man
+' | sort -u | tee ~/.cache/system-config/logs/c-get-includes.tee | xargs c-get-includes man
 }
 
 function get-includes-for-file()
 {
-    g++ -c "$1" -o /dev/null 2>&1 | get-includes-for-compilation
+    gcc -pedantic -c "$1" -o /dev/null 2>&1 | get-includes-for-compilation
 }
 
 if test $# = 1 -a "$1" != man; then
@@ -37,6 +39,7 @@ fi
 shift # the 'man'
 
 for func in "$@"; do
+    bhj-notify c-get-includes $func
     (
         man 2 "$func" ||
         man 3 "$func"
@@ -44,5 +47,13 @@ for func in "$@"; do
     perl -ne '
         if (m/^SYN/..m/^DES/) {
             print "$&\n" if m/#include.*>/;
-        }'
+        }' | grep . || (
+        head_file=$(
+            EMACS=t select-output-line -p "which include?" grep-beatags -e "${func}" -d /usr/include || true
+                 )
+        if test "${head_file}"; then
+            echo "#include <${head_file%%:*}>"
+        fi
+    )
+
 done

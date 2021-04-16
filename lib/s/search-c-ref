@@ -15,6 +15,9 @@ function select-output-line() {
 file=$(
     (
         cd /usr/share/cppreference/doc/html
+        if test ! -d ~/.cache/system-config/for-code-reading/usr/share/cppreference/doc/html/.beagrep; then
+            for-code-reading </dev/null &>/dev/null
+        fi
 
         exp=$(
             dq=\"
@@ -31,8 +34,11 @@ file=$(
                             printf "<title>${n_bracket}%s${n_bracket}</title>" "${search_args}"
                         )"
            )
-        beagrep -e "${exp}" -t "a href $(beagrep-break-words $* | tr '\n' ' ')" --grep "-l -P"
-        beagrep -e "$search_args" -f |perl -npe 's/:.*//'
+        (
+            beagrep -e "${exp}" -t "a href $(beagrep-break-words $* | tr '\n' ' ')" --grep "-l -P"
+            beagrep -e "$search_args" -f |perl -npe 's/:.*//'
+        ) | grep . ||
+            beagrep -e "${search_args}" --grep "-l -P"
     ) | select-output-line cat
     )
 if test -z "$file"; then
