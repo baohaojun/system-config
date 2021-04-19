@@ -174,4 +174,10 @@ export NVM_DIR="$HOME/.nvm"
 
 if test -e ~/src/reading/emsdk/emsdk_env.sh; then
     source ~/src/reading/emsdk/emsdk_env.sh &>/dev/null
+
+    if test -d ~/.pyenv/bin; then
+        export PATH=~/.pyenv/bin:$PATH
+        eval "$(pyenv init -)"
+        eval "$(pyenv virtualenv-init -)"
+    fi
 fi
