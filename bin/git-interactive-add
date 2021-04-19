@@ -132,7 +132,7 @@ if test "${dups_only}" = true; then
     if test $# -gt 0; then
         die "Must not specify any args: $*"
     fi
-    set -- $(git log --name-only  ${revision}..HEAD --pretty=''|perl -ne 'print if $a{$_}++' |sort -u)
+    set -- $(git log --name-only  ${revision}...HEAD --pretty=''|perl -ne 'print if $a{$_}++' |sort -u)
     if test $# = 0; then
         echo "Every file has only 1 commit, good!"
         exit 0
@@ -150,9 +150,9 @@ function git-diff() {
     else
         if test "${revision}" && git diff --quiet HEAD -- "$@"; then
             # 当前代码没有改动，指定了 revision，需要详细 review
-            LESS="RSX" git log -w -p "${revision}"..HEAD "$@" || true
+            LESS="RSX" git log -w -p "${revision}"...HEAD "$@" || true
 
-            for rev in $(git log --pretty=%H "${revision}"..HEAD "$@"); do
+            for rev in $(git log --pretty=%H "${revision}"...HEAD "$@"); do
                 if test "${keep_it_simple}" = false; then
                     LESS="RSX" git log --name-status -1 $rev || true
                     if yes-or-no-p -y "show details?"; then
@@ -251,7 +251,7 @@ git-interactive-review-1() {
         fi
 
         if test "${out}" = "${gia_options[history]}"; then
-            LESS="RSX" git log -p "${revision}"..HEAD "$x"
+            LESS="RSX" git log -p "${revision}"...HEAD "$x"
             continue
         fi
 
