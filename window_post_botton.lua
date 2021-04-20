@@ -76,6 +76,7 @@ map['com.ecitic.bank.mobile/com.ecitic.bank.mobile.ui.webview.CordovaWebViewActi
 map['com.eg.android.AlipayGphone/com.ali.user.mobile.loginregunion.view.AccountRouterActivity'] = 'No-Post'
 map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'No-Post'
 map['com.google.android.apps.pdfviewer/com.google.android.apps.viewer.PdfViewerActivity'] = 'No-Post'
+map['com.google.android.gm/com.google.android.gm.ComposeActivityGmail'] = 'No-Post'
 map['com.google.android.googlequicksearchbox/com.google.android.apps.gsa.searchnow.SearchNowActivity'] = 'No-Post'
 map['com.gotokeep.keep/com.gotokeep.keep.su.social.search.activity.SearchActivity'] = 'No-Post'
 map['com.greenpoint.android.mc10086.activity/com.leadeon.cmcc.view.mine.userinfo.VideoAuthenActivity'] = 'No-Post'

@@ -129,6 +129,10 @@ M.picture_to_feishu_chat = function(pics, ...)
    end
 
    local fs_tupian_button="fs/liaotian-tupian"
+
+   if not ime_is_active() then
+      jump_from_to("fs/send-text-init", "fs/send-text-up", {y = -100, x = -600, skip_refind = 1})
+   end
    if ime_is_active() then
       fs_tupian_button = fs_tupian_button .. "@ime"
    end
