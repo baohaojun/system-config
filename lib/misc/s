@@ -8,7 +8,9 @@ command="$(for x in "$@"; do printf "%q " "$x"; done)"
 ssh-tty $REMOTEUSER@$REMOTEIP "$(
 cat <<'EOF8ebc2da79a0d' | . .replace-%% --
 # {%sh-mode%}
-cd [%PWD%]
+pwd=[%PWD%]
+pwd=$(echo $pwd | perl -pe 's,^[%HOME%],$ENV{HOME},')
+cd "$pwd"
 unset SSH_CLIENT SSH_CONNECTION SSH_TTY
 . ~/system-config/.bashrc
 [%command%]
