@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+if true; then
+    tt() {
+        if test "$1" = -d; then
+            rm -f ~/tmp/tt.txt
+        fi
+        echo $(date --rfc-3339=ns) "$*" >> ~/tmp/tt.txt
+    }
+    export -f tt
+else
+    tt() {
+        true
+    }
+fi
+
+tt -d start of s
 if test "$s_how"; then
     true
 elif is-tty-io; then
@@ -72,7 +87,9 @@ if is-sawfish; then
         else
             select_search_engine=false
             if [[ ${start_event} =~ button1 ]] && test "$use_clip" = true; then
+                tt start of engine $engineX $*
                 s-dicts "$*"
+                tt end of engine: $engineX $*
                 exit
             fi
         fi
@@ -147,7 +164,9 @@ if test -x ~/system-config/bin/"$engineX"; then
 fi&
 
 if test ! -x ~/system-config/bin/"$engineX" -a "${engineX:0:2}" = "s "; then
+    tt start of engine $engineX $*
     s "${engineX:2}"
+    tt end of engine: $engineX $*
     exit
 fi
 
@@ -155,4 +174,8 @@ if test "$(sawfish-top-window)" = Wrench -a "$use_clip" = true; then
     set -- "$(getclip-android|perl -npe 's/(、|……。|。)$//')"
 fi
 
+tt start of engine $engineX $*
+
 "$engineX" "$@"
+
+tt end of engine: $engineX $*

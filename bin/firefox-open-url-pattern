@@ -150,9 +150,10 @@ if test $in_firefox = true -a "${current_url:0-8}" = 'file:///' || current_url_m
     new_tab=
 elif firefox-search-for-tab $exact "$pattern"; then
     new_tab=
-else
-    sawfish-browser-input "M-$WHICH_TAB" "C-TAB"
-    new_tab=
+fi
+
+if test "${new_tab}"; then
+    export FIREFOX_SWITCH_TO_NEW_TAB=true
 fi
 
 if test "$exact"; then

@@ -9,7 +9,7 @@ export LANGUAGE=en_US:
 export INFOPATH=${HOME}/src/github/org-mode/doc:${INFOPATH}
 export ANDROID_HOME=${ANDROID_HOME:-~/external/bin/Linux/ext/android-sdk-linux}
 export ANDROIDSDK_HOME=${ANDROIDSDK_HOME:-$ANDROID_HOME}
-export ANDROID_NDK_HOME=${ANDROID_NDK_HOME:-~/external/bin/Linux/ext/ndk}
+export ANDROID_NDK_HOME=${ANDROID_NDK_HOME:-~/external/bin/Linux/ext/android-sdk-linux/ndk-bundle}
 . ~/system-config/.by-user/bhj/.profile
 if test -e ~/.local-config/.bashrc; then
     . ~/.local-config/.bashrc
@@ -18,4 +18,3 @@ fi
 if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
     source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 fi
-

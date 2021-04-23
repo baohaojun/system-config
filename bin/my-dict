@@ -26,4 +26,6 @@ if test $(basename $0) = my-dict-maybe -a -e ~/.config/system-config/$USER/using
     exit 0;
 fi
 
-WHICH_TAB=1 firefox-open-url-pattern "localhost.*/dict" http://localhost:34567/dict/"$(echo "$@" | urlify)"
+# WHICH_TAB=1
+
+FIREFOX_SWITCH_TO_NEW_TAB=true firefox -new-tab http://localhost:34567/dict/"$(echo "$@" | urlify)"
