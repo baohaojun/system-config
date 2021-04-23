@@ -17,6 +17,8 @@ function get-includes-for-compilation()
         print "$1\n";
     } elsif (m/error: unknown type name .(\w+)./) {
         print "$1\n";
+    } elsif (m/incompatible implicit declaration of built-in function .(\w+)./) {
+        print "$1\n";
     }
 ' | sort -u | tee ~/.cache/system-config/logs/c-get-includes.tee | xargs c-get-includes man
 }

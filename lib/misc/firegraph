@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+
+if test ! -d ~/src/reading/FlameGraph; then
+    (
+        cd ~/src/reading/
+        git clone https://github.com/brendangregg/FlameGraph
+    )
+fi
+
+PATH=~/src/reading/FlameGraph:$PATH
+
+if test "$#" != 0; then
+    "$@" || true
+fi
+
+sudo perf script | stackcollapse-perf.pl > ~/tmp/out.perf-folded
+flamegraph.pl ~/tmp/out.perf-folded > ~/tmp/perf-kernel.svg
+of ~/tmp/perf-kernel.svg
