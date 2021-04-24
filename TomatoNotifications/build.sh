@@ -102,9 +102,9 @@ else
 fi
 
 adb install -g -r ${apk} ||
-    adb install -r ${apk}
+    adb install -r ${apk} ||
     (
-        adb uninstall com.bhj.potatonotifications &&
+        adb uninstall com.bhj.tomatonotifications &&
             adb install -g -r ${apk} ||
                 adb install ${apk}
     )

@@ -588,13 +588,6 @@ M.wrench_mail = function (window)
       sleep(.5)
    end
    adb_event("key scroll_lock sleep .5")
-   if yes_or_no_p("确认发送邮件") then
-      if window == 'com.google.android.gm/com.google.android.gm.ComposeActivityGmail' then
-         adb_event{806, 178}
-      else
-         tap_top_right()
-      end
-   end
 end
 
 M.wrench_paste = function ()

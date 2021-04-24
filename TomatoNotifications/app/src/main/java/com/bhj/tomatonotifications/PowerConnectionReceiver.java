@@ -1,4 +1,4 @@
-package com.bhj.potatonotifications;
+package com.bhj.tomatonotifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

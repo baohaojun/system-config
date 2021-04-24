@@ -419,9 +419,6 @@ M.wrench_post = function(text, how_to_post, confirm_before_post) -- use weixin
       return
    elseif postAfterBackKey(window) then
       return
-   elseif window == "com.google.android.gm/com.google.android.gm.ComposeActivityGmail" then
-      adb_event("key scroll_lock adb-tap 870 173")
-      return
    elseif window == "com.tencent.mobileqq/com.tencent.mobileqq.activity.QQLSActivity" then
       adb_event("adb-tap 297 884 key scroll_lock adb-tap 923 909")
    elseif text and (

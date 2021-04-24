@@ -44,7 +44,8 @@ M.open_fs = function(target_activity) -- target_activity can be one of ["search"
          if not found_grey and not found_duihua then
             if M.m_focused_window == M.fs_home then
                click_scene("feishu/plus-eclipsed", {skip_refind = true})
-            elseif i >= 15 then
+               log("not found_grey and not found_duihua, i = %d", i)
+            elseif i >= 8 then
                M.g_find_scene_debug = true
             else
                adb_back_from_activity()
@@ -128,6 +129,10 @@ M.picture_to_feishu_chat = function(pics, ...)
    end
 
    local fs_tupian_button="fs/liaotian-tupian"
+
+   if not ime_is_active() then
+      jump_from_to("fs/send-text-init", "fs/send-text-up", {y = -100, x = -600, skip_refind = 1})
+   end
    if ime_is_active() then
       fs_tupian_button = fs_tupian_button .. "@ime"
    end
