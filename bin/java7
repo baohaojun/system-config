@@ -27,6 +27,19 @@ else
 请参考 http://172.16.2.18/docs/cm/workflow.html#java7-not-found"
     die "Can't find the java binary for $number at /usr/lib/jvm/java-$number-openjdk-amd64/bin"
 fi
+
+if test "$1" = lib; then
+    path=${PATH%%:*}/../
+    export JAVA_HOME=${path}
+    for so in $path/lib/libjava.so $path/jre/lib/*/libjava.so; do
+        if test -e $so; then
+            path=${so%/*}
+            break
+        fi
+    done
+    export LD_LIBRARY_PATH=$path:$LD_LIBRARY_PATH
+    shift
+fi
 if test $# = 0; then
     start_recursive_shell $(basename $0)
 else
