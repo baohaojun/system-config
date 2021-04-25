@@ -7,3 +7,4 @@ app/build
 .idea/
 app/.externalNativeBuild/
 build/
+app/.cxx/
