@@ -156,9 +156,7 @@ sub title($t) {
 
 my $json_data = [];
 sub text($t) {
-    $text = "${t}[%extra_txt%]
-
-" . capturex("date");
+    $text = "${t}[%extra_txt%]";
 
     push @$json_data,
         {
