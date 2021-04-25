@@ -105,13 +105,18 @@ if test "$do_fetch" = true; then
             extra_fetch_args=$(repo-remote-branch|perl -npe 's,.*?/,,')
         fi
 
+        declare -a fetch_cmd=(
+            git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args
+        )
+
         for x in $(seq 1 3); do
-            if timeout $((x * 10)) git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args; then
+            if timeout $((x * 10)) "${fetch_cmd[@]}"; then
                 exit
             fi
-            echo failed $PWD at $x
+            echo failed $PWD at $x: "${fetch_cmd[@]}"
             sleep $(random 10)
             tsocks1 git fetch $origin_name_or_url $cron_fetch_refspec $extra_fetch_args || {
+                log failed $PWD with tsocks1 at $x: "${fetch_cmd[@]}", exit
                 kill $$
             }
         done
@@ -122,7 +127,6 @@ if test "$do_fetch" = true; then
         sleep 1
     fi
 fi
-
 
 for x in remotes/$(git-remote-branch); do
     remote=$(echo $x|awk -F/ '{print $2}')
@@ -153,7 +157,7 @@ if test "$fetch_only" = true; then
     fi
     cd $1
     echo recurse: $1
-    git-pull-mac --fetch-only || exit -1
+    git-pull-mac --fetch-only || true
 ' true
     wait
     exit 0
