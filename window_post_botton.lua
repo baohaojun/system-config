@@ -74,6 +74,7 @@ map['com.ecitic.bank.mobile/com.ecitic.bank.mobile.ui.login.LoginActivity'] = 'N
 map['com.ecitic.bank.mobile/com.ecitic.bank.mobile.ui.MainActivity'] = 'No-Post'
 map['com.ecitic.bank.mobile/com.ecitic.bank.mobile.ui.webview.CordovaWebViewActivity'] = 'No-Post'
 map['com.eg.android.AlipayGphone/com.ali.user.mobile.loginregunion.view.AccountRouterActivity'] = 'No-Post'
+map['com.example.laptoptcc.android7_pomodoro/com.example.laptoptcc.android7_pomodoro.activities.LoginActivity'] = 'No-Post'
 map['com.github.shadowsocks/com.github.shadowsocks.ProfileConfigActivity'] = 'No-Post'
 map['com.google.android.apps.pdfviewer/com.google.android.apps.viewer.PdfViewerActivity'] = 'No-Post'
 map['com.google.android.gm/com.google.android.gm.ComposeActivityGmail'] = 'No-Post'
