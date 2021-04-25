@@ -50,8 +50,16 @@ if test "$TMPDIR" -a "$TMPDIR" != /tmp; then
     fi
 fi
 
-if test -x /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient; then
-    exec /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient "$@"
-else
-    exec emacsclient "$@"
+do-edit() {
+    if test -x /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient; then
+        /Applications/MacPorts/Emacs.app/Contents/MacOS/bin/emacsclient "$@"
+    else
+        emacsclient "$@"
+    fi
+}
+
+if ! do-edit "$@"; then
+    unset XDG_DATA_DIRS XDG_RUNTIME_DIR XDG_SESSION_CLASS XDG_SESSION_ID XDG_SESSION_TYPE
+    log retry after unsetting XDG vars
+    do-edit "$@"
 fi

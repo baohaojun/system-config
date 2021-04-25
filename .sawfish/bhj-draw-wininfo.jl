@@ -1,4 +1,3 @@
-
 (define-structure bhj-draw-wininfo
 
     (export bhj-draw-wininfo)
@@ -26,7 +25,7 @@
 
   ;; window currently displayed, or nil
   (define info-window nil)
-  (define Kill-image (make-image "~/system-config/.sawfish/Kill.png"))
+  (define Kill-image (scale-image (make-image "~/system-config/.sawfish/Kill.png") icon-size icon-size))
 
 ;;; utilities
 
@@ -60,7 +59,7 @@
     (let* ((text (window-info w))
            (wi (make-window-info-1 w ; window
                                    text ; text
-                                   (let ((i (window-icon-image w)))
+                                   (let ((i (or (window-icon-image w) (window-icon-image w 128))))
                                      (or (and i (scale-image i icon-size icon-size))
                                          Kill-image)) ; icon
                                    nil ; selected
@@ -75,7 +74,7 @@
     (do ((wlist wlist (cdr wlist))
          (wi-list nil))
         ((null wlist ) wi-list)
-      (setq wi-list (append wi-list (list (make-window-info (car wlist) font))))))
+        (setq wi-list (append wi-list (list (make-window-info (car wlist) font))))))
 
   ;; Calculates where to put an info window associated with W with size
   ;; DIMS
@@ -179,69 +178,69 @@ the active window ACTIVE should be highlighted"
         (define (event-handler type xw)
           ;; XW is the handle of the X drawable to draw in
           (case type
-            ((expose)
-             (x-clear-window xw)
+                ((expose)
+                 (x-clear-window xw)
 
-             ;; draw the icon
-             (setq dealing 0)
-             (while (< dealing max-display)
-               (setq icon (wi-get-icon (nth dealing wi-list)))
-               (when icon
-                 (x-draw-image icon xw
-                               (cons x-margin
-                                     (+ 2y-margin
-                                        line-height
-                                        (* dealing
-                                           line-height)
-                                        2))))
-               (setq dealing (1+ dealing)))
+                 ;; draw the icon
+                 (setq dealing 0)
+                 (while (< dealing max-display)
+                   (setq icon (wi-get-icon (nth dealing wi-list)))
+                   (when icon
+                     (x-draw-image icon xw
+                                   (cons x-margin
+                                         (+ 2y-margin
+                                            line-height
+                                            (* dealing
+                                               line-height)
+                                            2))))
+                   (setq dealing (1+ dealing)))
 
-             ;; draw lines of text one at a time
-             (let ((gc (x-create-gc xw
-                                    `((foreground . ,(get-color "black"))
-                                      (background . ,(get-color "white")))))
-                   (x (+ (* 2 x-margin) icon-size)))
+                 ;; draw lines of text one at a time
+                 (let ((gc (x-create-gc xw
+                                        `((foreground . ,(get-color "black"))
+                                          (background . ,(get-color "white")))))
+                       (x (+ (* 2 x-margin) icon-size)))
 
-               (x-draw-string xw gc (cons (quotient (- (car win-size) (text-width match default-font)) 2)
-                                          (+ y-margin
-                                             (font-ascent default-font)
-                                             (quotient (- line-height
-                                                          (font-height default-font)) 2)))
-                              match)
-               (let* ((rest wi-list)
-                      (y (+ 2y-margin
-                            line-height
-                            (font-ascent default-font)
-                            (quotient (- line-height
-                                         (font-height default-font)) 2))))
-                 (while rest
-                   (x-draw-string xw gc (cons x y)
-                                  (if (car rest)
-                                      (wi-get-text (car rest))
-                                    "") (wi-get-font (car rest)))
-                   (setq rest (cdr rest)
-                         y (+ y line-height))))
+                   (x-draw-string xw gc (cons (quotient (- (car win-size) (text-width match default-font)) 2)
+                                              (+ y-margin
+                                                 (font-ascent default-font)
+                                                 (quotient (- line-height
+                                                              (font-height default-font)) 2)))
+                                  match)
+                   (let* ((rest wi-list)
+                          (y (+ 2y-margin
+                                line-height
+                                (font-ascent default-font)
+                                (quotient (- line-height
+                                             (font-height default-font)) 2))))
+                     (while rest
+                       (x-draw-string xw gc (cons x y)
+                                      (if (car rest)
+                                          (wi-get-text (car rest))
+                                        "") (wi-get-font (car rest)))
+                       (setq rest (cdr rest)
+                             y (+ y line-height))))
 
-               (x-destroy-gc gc))
+                   (x-destroy-gc gc))
 
-             (let ((gc (x-create-gc xw
-                                    `((foreground . ,(get-color "yellow"))
-                                      (background . ,(get-color "green"))
-                                      (function . ,'xor)))))
-               (x-fill-rectangle xw
-                                 gc
-                                 (cons (+ 2x-margin icon-size) (+ 2y-margin
-                                                                  line-height
-                                                                  (* active line-height)))
-                                 (cons (- (car win-size)
-                                          2x-margin
-                                          x-margin
-                                          icon-size
-                                          )
-                                       line-height))
-               (x-destroy-gc gc))
+                 (let ((gc (x-create-gc xw
+                                        `((foreground . ,(get-color "yellow"))
+                                          (background . ,(get-color "green"))
+                                          (function . ,'xor)))))
+                   (x-fill-rectangle xw
+                                     gc
+                                     (cons (+ 2x-margin icon-size) (+ 2y-margin
+                                                                      line-height
+                                                                      (* active line-height)))
+                                     (cons (- (car win-size)
+                                              2x-margin
+                                              x-margin
+                                              icon-size
+                                              )
+                                           line-height))
+                   (x-destroy-gc gc))
 
-             )))
+                 )))
 
         ;; create new window
         (setq info-window (x-create-window

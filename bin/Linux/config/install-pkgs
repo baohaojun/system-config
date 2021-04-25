@@ -5,19 +5,31 @@ if echo $SHELLOPTS | grep -q xtrace; then
     export SHELLOPTS
 fi
 
+declare comment_doc=$(
+    cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+后面指定参数的时候，
+
+- 可以指定一个目录，目录下的每个文件，其名字代表一个 deb 包
+- 可以指定 N 个 deb 包的名字
+# {%/org-mode%}
+EOFe9576f8668e0
+        )
 
 ## start code-generator "^\\s *#\\s *"
-# generate-getopt @check-first @:extra-apt-args @:max-retry=20 @check-only eexit-on-err
+# generate-getopt -P '?"${comment_doc}"' \
+    # @check-first E:extra-apt-args @:max-retry=20 @check-only eexit-on-err \
+
 ## end code-generator
 ## start generated code
-TEMP=$( getopt -o eh \
-               --long check-first,check-only,exit-on-err,extra-apt-args:,max-retry:,help,no-check-first,no-check-only,no-exit-on-err \
-               -n $(basename -- $0) -- "$@")
-check_first=false
-check_only=false
-exit_on_err=false
-extra_apt_args=
-max_retry=20
+TEMP=$(POSIXLY_CORRECT=true getopt -o eE:h \
+                      --long check-first,check-only,exit-on-err,extra-apt-args:,max-retry:,help,no-check-first,no-check-only,no-exit-on-err \
+                      -n "$(basename -- "$0")" -- "$@")
+declare check_first=false
+declare check_only=false
+declare exit_on_err=false
+declare extra_apt_args=
+declare max_retry=20
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -29,6 +41,7 @@ while true; do
                 check_first=true
             fi
             shift
+
             ;;
         --check-only|--no-check-only)
             if test "$1" = --no-check-only; then
@@ -37,6 +50,7 @@ while true; do
                 check_only=true
             fi
             shift
+
             ;;
         -e|--exit-on-err|--no-exit-on-err)
             if test "$1" = --no-exit-on-err; then
@@ -45,18 +59,21 @@ while true; do
                 exit_on_err=true
             fi
             shift
+
             ;;
-        --extra-apt-args)
+        -E|--extra-apt-args)
             extra_apt_args=$2
             shift 2
+
             ;;
         --max-retry)
             max_retry=$2
             shift 2
+
             ;;
         -h|--help)
             set +x
-            echo -e
+            echo -e "${comment_doc}"
             echo
             echo Options and arguments:
             printf "%6s" " "
@@ -68,7 +85,7 @@ while true; do
             printf %6s '-e, '
             printf %-24s '--[no-]exit-on-err'
             echo
-            printf "%6s" " "
+            printf %6s '-E, '
             printf %-24s '--extra-apt-args=EXTRA_APT_ARGS'
             echo
             printf "%6s" " "
@@ -90,11 +107,6 @@ done
 
 ## end generated code
 
-
-if grep '^deb htt' /etc/apt/sources.list; then
-    sudo dpkg --add-architecture i386 || true
-    sudo apt-get update
-fi
 
 if test $# = 1; then
     if test ! -d "$1" && test -d ~/system-config/bin/Linux/config/"$1"; then

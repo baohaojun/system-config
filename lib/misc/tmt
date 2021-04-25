@@ -194,14 +194,14 @@ sub my_sleep($s) {
 
 for my $x (1..[%times%]) {
     start_tomato "$x";
-    my_sleep [%work_time%];
+    my_sleep "[%work_time%]";
 
     if ($x % [%big_break_times%] == 0) {
         big_break $x;
-        my_sleep [%rest_time2%];
+        my_sleep "[%rest_time2%]";
     } else {
         small_break $x;
-        my_sleep [%rest_time1%];
+        my_sleep "[%rest_time1%]";
     }
 }
 
