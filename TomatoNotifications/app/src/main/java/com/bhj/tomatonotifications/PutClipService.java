@@ -460,6 +460,9 @@ public class PutClipService extends Service implements MediaScannerConnection.Me
                         text = readAndDelete("tomato.text");
                     }
 
+                    Date d = new Date();
+                    text += "\n\n" + d.toString();
+
                     Notification.Builder notifBuidler = new Notification.Builder(this) // the context to use
                         .setSmallIcon(R.drawable.ic_launcher)  // the status icon
                         .setWhen(System.currentTimeMillis())  // the timestamp for the notification
