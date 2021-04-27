@@ -38,7 +38,7 @@ if id | grep 'uid=0\b' -P; then
             fi
 
             pid_display=$(
-                if test -e /proc/$pid/environ; then
+                if test -e /proc/$$/environ; then
                     cat /proc/$pid/environ | tr '\0' '\n' | grep ^DISPLAY=
                 else
                     procstat -e $pid | grep -o -P '\bDISPLAY=\S+'

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 set-lang() {
+    if test "$1" = lang; then
+        set -- en_US
+    fi
     export LANG=$1.UTF-8
     export LC_ALL=$1.UTF-8
     export LANGUAGE=$1:en

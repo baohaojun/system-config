@@ -18,8 +18,8 @@ EOFe9576f8668e0
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -P '?"${comment_doc}"' \
     # t:times=4 '?"执行 4 次蕃茄工作法"' \
-    # T:work-time=25m '?"每次的时间是 25 分钟"' \
-    # r:rest-time1=2m '?"小休息 2 分钟"' \
+    # T:work-time=45m '?"每次的时间是 45 分钟"' \
+    # r:rest-time1=3m '?"小休息 3 分钟"' \
     # R:rest-time2=10m '?"大休息 10 分钟"' \
     # b:big-break-times=4 '?"4 个蕃茄一次大休息"' \
     # pprint-only \
@@ -33,10 +33,10 @@ TEMP=$(POSIXLY_CORRECT=true getopt -o b:e:pr:R:t:T:h \
 declare big_break_times=4
 declare extra_txt=
 declare print_only=false
-declare rest_time1=2m
+declare rest_time1=3m
 declare rest_time2=10m
 declare times=4
-declare work_time=25m
+declare work_time=45m
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -98,7 +98,7 @@ while true; do
             echo
             printf %6s '-r, '
             printf %-24s '--rest-time1=REST_TIME1'
-            echo "小休息 2 分钟"
+            echo "小休息 3 分钟"
             printf %6s '-R, '
             printf %-24s '--rest-time2=REST_TIME2'
             echo "大休息 10 分钟"
@@ -107,7 +107,7 @@ while true; do
             echo "执行 4 次蕃茄工作法"
             printf %6s '-T, '
             printf %-24s '--work-time=WORK_TIME'
-            echo "每次的时间是 25 分钟"
+            echo "每次的时间是 45 分钟"
             exit
             shift
             ;;

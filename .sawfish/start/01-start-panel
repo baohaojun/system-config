@@ -8,7 +8,11 @@
 if test "${DESKTOP_SESSION}" = sawfish; then
     # maybe using lxde
     while true; do
-        xfce4-session
+        if test "$(get-about-me desktop-env)" = kde; then
+            startkde
+        else
+            xfce4-session
+        fi
         sleep 2
     done
 fi

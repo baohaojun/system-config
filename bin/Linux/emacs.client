@@ -57,6 +57,13 @@ do-edit() {
         emacsclient "$@"
     fi
 }
+for socket in /run/user/${UID}/emacs/server \
+                        /tmp/emacs${UID}/server; do
+    if test -e "${socket}"; then
+        export EMACS_SOCKET_NAME=$socket
+        break
+    fi
+done
 
 if ! do-edit "$@"; then
     unset XDG_DATA_DIRS XDG_RUNTIME_DIR XDG_SESSION_CLASS XDG_SESSION_ID XDG_SESSION_TYPE

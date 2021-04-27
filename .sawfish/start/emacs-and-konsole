@@ -2,9 +2,7 @@
 
 . .funlock ~/system-config/.sawfish/start/.run-dir-once.lock
 
-while test "$(sawfish-client -e '(window-exists-p "xfce4-panel")')" != t; do
-    sleep 1
-done
+m wait-for-desktop-env
 
 if xrandr | grep -P 'HDMI. connected|^DP1 connected'; then
     switch-to-hdmi
