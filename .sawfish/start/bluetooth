@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+m wait-for-desktop-env
+
+blueman-applet

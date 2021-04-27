@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+
+init-da
+
+
+scene_abspath=$(scene-abspath "$1")
+
+if test $# = 0 -o ! -e "$scene_abspath"; then
+    list_of_scenes=$(list-of-scenes | grep -e "$1" || list-of-scenes)
+    set -- $(select-args -o -p "which scene" $list_of_scenes)
+    scene_abspath=$(scene-abspath "$1")
+
+    if test $scene_abspath.click; then
+        set -- $(cat $scene_abspath.click) "$1"
+    fi
+fi
+
+echo "$@" > ~/.cache/da-cs.last
+
+click-scene "$@"

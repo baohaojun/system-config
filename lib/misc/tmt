@@ -24,17 +24,21 @@ EOFe9576f8668e0
     # b:big-break-times=4 '?"4 个蕃茄一次大休息"' \
     # pprint-only \
     # e:extra-txt '?"用于调试（分清楚哪个是哪个）"' \
+    # @rest-first '?"先休息一下，用于番茄烂掉的时候"' \
+    # s:start-with '?"从第几个番茄开始，用于番茄烂掉的时候"' \
 
 ## end code-generator
 ## start generated code
-TEMP=$(POSIXLY_CORRECT=true getopt -o b:e:pr:R:t:T:h \
-                      --long big-break-times:,extra-txt:,print-only,rest-time1:,rest-time2:,times:,work-time:,help,no-print-only \
+TEMP=$(POSIXLY_CORRECT=true getopt -o b:e:pr:R:s:t:T:h \
+                      --long big-break-times:,extra-txt:,print-only,rest-first,rest-time1:,rest-time2:,start-with:,times:,work-time:,help,no-print-only,no-rest-first \
                       -n "$(basename -- "$0")" -- "$@")
 declare big_break_times=4
 declare extra_txt=
 declare print_only=false
+declare rest_first=false
 declare rest_time1=3m
 declare rest_time2=10m
+declare start_with=
 declare times=4
 declare work_time=45m
 eval set -- "$TEMP"
@@ -60,6 +64,15 @@ while true; do
             shift
 
             ;;
+        --rest-first|--no-rest-first)
+            if test "$1" = --no-rest-first; then
+                rest_first=false
+            else
+                rest_first=true
+            fi
+            shift
+
+            ;;
         -r|--rest-time1)
             rest_time1=$2
             shift 2
@@ -67,6 +80,11 @@ while true; do
             ;;
         -R|--rest-time2)
             rest_time2=$2
+            shift 2
+
+            ;;
+        -s|--start-with)
+            start_with=$2
             shift 2
 
             ;;
@@ -96,12 +114,18 @@ while true; do
             printf %6s '-p, '
             printf %-24s '--[no-]print-only'
             echo
+            printf "%6s" " "
+            printf %-24s '--[no-]rest-first'
+            echo "先休息一下，用于番茄烂掉的时候"
             printf %6s '-r, '
             printf %-24s '--rest-time1=REST_TIME1'
             echo "小休息 3 分钟"
             printf %6s '-R, '
             printf %-24s '--rest-time2=REST_TIME2'
             echo "大休息 10 分钟"
+            printf %6s '-s, '
+            printf %-24s '--start-with=START_WITH'
+            echo "从第几个番茄开始，用于番茄烂掉的时候"
             printf %6s '-t, '
             printf %-24s '--times=TIMES'
             echo "执行 4 次蕃茄工作法"
@@ -155,6 +179,12 @@ sub title($t) {
 }
 
 my $json_data = [];
+
+my $start_with = 0 + "[%start_with%]";
+my $rest_first = "[%rest_first%]";
+my $small_rest_time = "[%rest_time1%]";
+my $big_rest_time = "[%rest_time2%]";
+
 sub text($t) {
     $text = "${t}[%extra_txt%]";
 
@@ -168,17 +198,17 @@ sub text($t) {
 }
 
 sub start_tomato($t) {
-    title "tomato start $t";
+    title "tmt start $t";
     text 'start working, dude!';
 }
 
 sub small_break($t) {
-    title "tomato small break $t";
+    title "tmt small break $t";
     text 'take a small break, dude!';
 }
 
 sub big_break($t) {
-    title "tomato big break $t";
+    title "tmt big break $t";
     text 'take a big break, dude!';
 }
 
@@ -190,7 +220,12 @@ sub my_sleep($s) {
     $fire = $s;
 }
 
-for my $x (1..[%times%]) {
+if ($rest_first eq 'true') {
+    small_break $start_with;
+    my_sleep $small_rest_time;
+}
+
+for my $x ([%start_with%]..[%times%]) {
     start_tomato "$x";
     my_sleep "[%work_time%]";
 

@@ -38,6 +38,7 @@
  '(dictem-server "localhost")
  '(dictionary-server "localhost")
  '(douban-music-default-channel 6)
+ '(eaf-python-command "/usr/bin/python3")
  '(ecb-options-version "2.40")
  '(eclim-executable "eclim")
  '(eclim-interactive-completion-function 'anything-completing-read)

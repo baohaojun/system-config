@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+
+init-da() {
+    declare -a -g da_scenes_dirs=(
+        ~/.local-config/share/da-scenes ~/system-config/share/da-scenes
+    )
+}
+
+find-scene() {
+    local scene_png=$(scene-abspath "$1")
+
+    local tmp_jpg=~/tmp/da.$$.jpg
+    . atexit rm -f $tmp_jpg
+    scrot $tmp_jpg
+
+    local match_xy=$(
+        match_image $tmp_jpg "${scene_png}"
+            )
+    local size=$(identify "${scene_png}" | perl -ne 'print $1 if m,.*? (\d+x\d+) ,')
+
+    echo $match_xy $size | tee "${scene_png}".loc
+}
+
+new-scene() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # llocal=true
+
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o lh \
+                          --long local,help,no-local \
+                          -n "$(basename -- "$0")" -- "$@")
+    declare local=true
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -l|--local|--no-local)
+                if test "$1" = --no-local; then
+                    local=false
+                else
+                    local=true
+                fi
+                shift
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %6s '-l, '
+                printf %-24s '--[no-]local'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    if test "${local}" = true; then
+        d=${da_scenes_dirs[0]}
+    else
+        d=${da_scenes_dirs[1]}
+    fi
+
+    mkdir -p ${d}/$(dirname ${1})
+    scene_png="${d}/${1}.png"
+
+    clip 2png > "$scene_png"
+    find-scene "$1"
+}
+
+click-scene() {
+    declare comment_doc=$(
+        cat <<'EOFe9576f8668e0' | grep -v '#.*org-mode%'
+# {%org-mode%}
+
+# {%/org-mode%}
+EOFe9576f8668e0
+            )
+
+    ## start code-generator "^\\s *#\\s *"
+    # generate-getopt -P '?"${comment_doc}"' \
+        # x:plus-x=0 y:plus-y=0
+
+    ## end code-generator
+    ## start generated code
+    TEMP=$(POSIXLY_CORRECT=true getopt -o x:y:h \
+                          --long plus-x:,plus-y:,help \
+                          -n "$(basename -- "$0")" -- "$@")
+    declare plus_x=0
+    declare plus_y=0
+    eval set -- "$TEMP"
+    while true; do
+        case "$1" in
+
+            -x|--plus-x)
+                plus_x=$2
+                shift 2
+
+                ;;
+            -y|--plus-y)
+                plus_y=$2
+                shift 2
+
+                ;;
+            -h|--help)
+                set +x
+                echo -e "${comment_doc}"
+                echo
+                echo Options and arguments:
+                printf %6s '-x, '
+                printf %-24s '--plus-x=PLUS_X'
+                echo
+                printf %6s '-y, '
+                printf %-24s '--plus-y=PLUS_Y'
+                echo
+                exit
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                die "internal error: $(. bt; echo; bt | indent-stdin)"
+                ;;
+        esac
+    done
+
+
+    ## end generated code
+
+    local scene=$1
+    local center=$(get-scene-center "$scene")
+
+    local x=$(( ${center% *} + $plus_x))
+    local y=$(( ${center#* } + $plus_y))
+
+    mouse-move-to $x $y
+    sleep .3
+    click-it
+}
+
+list-of-scenes() {
+    c find "${da_scenes_dirs[@]}" -name '*.loc' |perl -pe 's,.*/da-scenes/,,; s,.png.loc,,'
+}
+
+mouse-move-to() {
+    xdotool mousemove $*
+}
+
+click-it() {
+    xdotool click 1
+}
+
+get-scene-center() {
+    local loc=$(get-scene-loc "$1")
+    echo $loc | perl -ne 'm,(\d+) (\d+) (\d+)x(\d+),; print int($1 + $3 / 2), " ", int($2 + $4 / 2)'
+}
+
+scene-abspath() {
+    local scene=$1
+    for d in ${da_scenes_dirs[@]}; do
+        if test -e $d/$scene.png; then
+            echo $d/$scene.png
+            return
+        fi
+    done
+}
+
+get-scene-loc() {
+    local scene=$(scene-abspath $1)
+    if test -e "${scene}" -a -e "${scene}".loc; then
+        cat "${scene}".loc
+    fi
+}
+
+funcs=(
+    ## start code-generator "^\\s *#"
+    # cat ~/system-config/lib/da/init |
+    # perl -ne 'print "$1\n" if m,^(\w.*)\(\).*,'
+    ## end code-generator
+    ## start generated code
+    init-da
+    find-scene
+    new-scene
+    click-scene
+    list-of-scenes
+    mouse-move-to
+    click-it
+    get-scene-center
+    scene-abspath
+    get-scene-loc
+
+    ## end generated code
+)
+
+init-da
+for f in ${funcs[@]}; do
+    export -f $f
+done
