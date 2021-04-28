@@ -184,6 +184,7 @@ my $start_with = 0 + "[%start_with%]";
 my $rest_first = "[%rest_first%]";
 my $small_rest_time = "[%rest_time1%]";
 my $big_rest_time = "[%rest_time2%]";
+my $times = 0 + "[%times%]";
 
 sub text($t) {
     $text = "${t}[%extra_txt%]";
@@ -225,7 +226,7 @@ if ($rest_first eq 'true') {
     my_sleep $small_rest_time;
 }
 
-for my $x ([%start_with%]..[%times%]) {
+for my $x ($start_with..$times) {
     start_tomato "$x";
     my_sleep "[%work_time%]";
 
