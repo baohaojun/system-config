@@ -25,7 +25,7 @@ EOFe9576f8668e0
     # pprint-only \
     # e:extra-txt '?"用于调试（分清楚哪个是哪个）"' \
     # @rest-first '?"先休息一下，用于番茄烂掉的时候"' \
-    # s:start-with '?"从第几个番茄开始，用于番茄烂掉的时候"' \
+    # s:start-with=1 '?"从第几个番茄开始，用于番茄烂掉的时候"' \
 
 ## end code-generator
 ## start generated code
@@ -38,7 +38,7 @@ declare print_only=false
 declare rest_first=false
 declare rest_time1=3m
 declare rest_time2=10m
-declare start_with=
+declare start_with=1
 declare times=4
 declare work_time=45m
 eval set -- "$TEMP"
