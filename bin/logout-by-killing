@@ -9,6 +9,11 @@ fi
 if id | grep 'uid=0\b' -P; then
     screen_pid=$SCREEN_PID
 
+    /etc/init.d/dbus restart || true
+    /etc/init.d/network-manager restart || true
+    dm=$(cat /etc/X11/default-display-manager |perl -pe 's,.*/,,')
+    /etc/init.d/${dm} restart || true
+
     uid=$(id ${OLDUSER:-bhj} | perl -npe 's,^uid=(\d+).*,$1,')
     if ! [[ $uid =~ ^[0-9]+$ ]]; then
         echo "Can't determine your uid: $uid"
@@ -56,10 +61,6 @@ if id | grep 'uid=0\b' -P; then
                 kill -9 "$pid"
             ) >/dev/null 2>&1&
         done
-    /etc/init.d/dbus restart || true
-    /etc/init.d/network-manager restart || true
-    dm=$(cat /etc/X11/default-display-manager |perl -pe 's,.*/,,')
-    /etc/init.d/${dm} restart || true
 else
     ## start code-generator "^\\s *#\\s *"
     # generate-getopt wwait

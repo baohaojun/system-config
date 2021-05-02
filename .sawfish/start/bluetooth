@@ -3,4 +3,6 @@ set -e
 
 m wait-for-desktop-env
 
+pulseaudio&
+
 blueman-applet
