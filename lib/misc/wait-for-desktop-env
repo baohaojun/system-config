@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+wait_win=xfce4-panel
+if test "$(get-about-me desktop-env)" = kde; then
+    wait_win=Plasma
+fi
+
+while test "$(sawfish-client -e '(window-exists-p "'${wait_win}'")')" != t; do
+    log "waiting for ${wait_win} to start"
+    sleep 1
+done

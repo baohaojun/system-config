@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+
+init-da
+if test -z "$1"; then
+    set -- "$(ask-for-input-with-sawfish -p "what is the scene's name")"
+fi
+new-scene "$1"

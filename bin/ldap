@@ -23,6 +23,10 @@ fi
 
 b0=$(basename $BASH_SOURCE)
 
+if test -e "${scm_common_libdir}/${b0}/init"; then
+    . "${scm_common_libdir}/${b0}/init"
+fi
+
 for libdir in ${b0} ${b0}.user ${b0}.local; do
     for top_libdir in "${scm_common_libdir}" "${scm_local_libdir}"; do
         if test "${top_libdir}" -a -x ${top_libdir}/${libdir}/$1; then

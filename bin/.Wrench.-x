@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+export INTERACTIVE_BASH_PID=$$
+Wrench.sh -x --silent &
+sleep 2
+. ~/system-config/bin/reget-env

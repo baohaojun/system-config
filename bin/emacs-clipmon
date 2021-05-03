@@ -13,7 +13,7 @@ fi
 exec 9> ~/.cache/system-config/emacs-clipmon.lock
 flock 9
 
-timeout 5 emacsclient -e "$(
+timeout 5 emacs.client -e "$(
 cat <<'EOFc045b40a70cf' | . .replace-%% -- | grep -v '^;'
 ; {%emacs-lisp-mode%}
 (with-temp-buffer

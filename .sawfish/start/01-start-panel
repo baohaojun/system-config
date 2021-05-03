@@ -4,7 +4,15 @@
     cd ~/.cache/sessions/
     rm xfce4-session-* -f
 )
-while true; do
-    xfce4-session
-    sleep 2
-done
+
+if test "${DESKTOP_SESSION}" = sawfish; then
+    # maybe using lxde
+    while true; do
+        if test "$(get-about-me desktop-env)" = kde; then
+            startkde
+        else
+            xfce4-session
+        fi
+        sleep 2
+    done
+fi

@@ -44,12 +44,9 @@ touch $mark_file
     }
 
     function unlock-SMARTISAN() {
-        if test "$adb_top_activity" =  警告 -o "$adb_top_activity" = "Warning"; then
-            if test "$phone_size" != init=1080x1920; then
-                adb-tap 736 1086
-            else
-                adb-tap 747 1186
-            fi
+        if test "$adb_top_activity" = "警告" -o "$adb_top_activity" = "Warning"; then
+            . .Wrench.-x
+            onmyoji -o jump-out-of-sth adb-install-tongyi
             break
         fi
     }
