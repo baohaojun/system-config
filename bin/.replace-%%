@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+PATH=/usr/bin:$PATH # do not use plenv, huge performance hit!
 
 ## start code-generator "^\\s *#\\s *"
 # generate-getopt -p sc_rep -e b:begin='"[<[]%"' e:end='"%[]>]"'

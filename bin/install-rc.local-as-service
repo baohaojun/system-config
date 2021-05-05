@@ -76,6 +76,7 @@ port=$port
 
 # nohup \${s}\${s}\${s}erver -k "\${password}" -p "\${port}"&
 nohup \${s}\${s}-\${s}erver --plugin obf\${s}-\${s}erver --plugin-opt\${s} "obf\${s}=http" -p "\${port}" -k "\${password}"&
+nohup ss-server --plugin v2ray-plugin  -p 443 --plugin-opts "server;mode=quic;host=flonk-zj.6655.la" -k "\${password}" &> v2ray.log&
 EOF
     chmod +x /etc/rc.local
     killall ss-server || trrue
@@ -83,7 +84,7 @@ EOF
     rm /etc/init.d/shadowsocks-libev -f
 fi
 
-apt-get install -y shadowsocks-libev simple-obfs
+apt-get install -y shadowsocks-libev simple-obfs rsync
 if which systemctl >/dev/null 2>&1 && test ! -e /etc/systemd/system/rc-local.service && test -d /etc/systemd/system/; then
     echo need install rc.local service 1>&2
     cat <<EOF | tee /etc/systemd/system/rc-local.service

@@ -5,4 +5,4 @@ if test ! -e "${real_jnettop}"; then
     real_jnettop=/usr/local/bin/jnettop
 fi
 
-sudo ${real_jnettop} -i $(select-output-line -o get-network-devs)
+sudo ${real_jnettop} -i $(select-output-line -o c get-network-devs)

@@ -59,7 +59,7 @@ do-edit() {
 }
 for socket in /run/user/${UID}/emacs/server \
                         /tmp/emacs${UID}/server; do
-    if test -e "${socket}" && fuser "${socket}"; then
+    if test -e "${socket}" && fuser "${socket}" &>/dev/null; then
         export EMACS_SOCKET_NAME=$socket
         break
     fi

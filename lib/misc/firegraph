@@ -4,7 +4,7 @@ set -e
 if test ! -d ~/src/reading/FlameGraph; then
     (
         cd ~/src/reading/
-        git clone https://github.com/brendangregg/FlameGraph
+        proxychains git clone https://github.com/brendangregg/FlameGraph
     )
 fi
 
