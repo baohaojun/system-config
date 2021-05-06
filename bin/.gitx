@@ -143,7 +143,8 @@ function git()
             fi
 
             if test "$1" = submodule -a "$2" = foreach ||
-               test "$1" = submodule -a "$2" = --quiet -a "$3" = foreach; then
+                    test "$1" = submodule -a "$3" = foreach -a \
+                         \( "$2" = --quiet -o "$2" == -q \); then
                 for x in ~/src/github/*; do
                     if test -d $x -a -d $x/.git; then
                         (

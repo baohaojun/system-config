@@ -151,7 +151,7 @@ if test "$fetch_only" = true; then
     if test "$gpm_recurse" = true; then
         wait
     fi
-    git submodule foreach -q "pwd" | xargs -P 3 -n 1 bash -c '
+    git submodule -q foreach "pwd" | xargs -P 3 -n 1 bash -c '
     export gpm_recurse=true
     if test ! -d "$1"; then
         exit
@@ -186,9 +186,9 @@ EOFf150e327ac04
 
 )")
 
-git submodule foreach -q "bash -c $submodule_bash_command" | grep -v '^Entering '|grep 'FAILED in' || true # wait...
+git submodule -q foreach "bash -c $submodule_bash_command" | grep -v '^Entering '|grep 'FAILED in' || true # wait...
 if git config --global user.email| grep -q baohaojun; then
-    git submodule foreach -q 'git config user.email baohaojun@gmail.com'
+    git submodule -q foreach 'git config user.email baohaojun@gmail.com'
     git config user.email baohaojun@gmail.com
 fi >/dev/null 2>&1&
 if test "$PWD" = ~/system-config; then
