@@ -1173,14 +1173,19 @@ end
 
 M.call_ext = function(ext, ...)
    M.ext_args = {...}
+   found = false
    for _, dir in pairs{configDirFile("ext"), "ext"} do
-      local file = configDirFile("ext") .. package.config:sub(1, 1) .. ext .. ".lua"
+      local file = dir .. package.config:sub(1, 1) .. ext .. ".lua"
       if file_exists(file) then
+         found = true
          wrench_run(file)
          break
       end
    end
 
+   if not found then
+      log("ext file %s not found", file)
+   end
    M.ext_args = {}
 end
 
