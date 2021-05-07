@@ -1171,10 +1171,10 @@ M.start_or_stop_recording = function()
    end
 end
 
-M.call_ext = function(ext, ...)
+M.call_ext = function(ext_script, ...)
    M.ext_args = {...}
    for _, dir in pairs{configDirFile("ext"), "ext"} do
-      local file = configDirFile("ext") .. package.config:sub(1, 1) .. ext .. ".lua"
+      local file = dir .. package.config:sub(1, 1) .. ext_script .. ".lua"
       if file_exists(file) then
          wrench_run(file)
          break
