@@ -970,3 +970,6 @@ EOF856ceee4ab57
 ;; (bind-both-global&window-keymaps "Super-F11" '(synthesize-event "c" (input-focus)))
 ;; (bind-both-global&window-keymaps "Super-F11" (lambda ()))
 (system "bhj-notify sawfish 'load complete'&")
+
+(when (file-exists-p "~/.local-config/.sawfishrc")
+  (load-file "~/.local-config/.sawfishrc"))

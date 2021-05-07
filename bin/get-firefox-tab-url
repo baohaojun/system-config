@@ -64,7 +64,7 @@ for x in $(seq 1 2); do
         sawfish-browser-input C-S-F11
     else
         if test "${with_xkeytool}" = true; then
-            sawfish-browser-input C-l C-c
+            sawfish-browser-input C-l C-c ESC
         fi
     fi
 

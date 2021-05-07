@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+exit
+
 if test -d ~/src/github/NeteaseCloudMusicApi; then
     cd ~/src/github/NeteaseCloudMusicApi
     while true; do
