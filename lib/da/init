@@ -88,6 +88,8 @@ EOFe9576f8668e0
 
     clip 2png > "$scene_png"
     find-scene "$1"
+    bhj-notify new-scene "found it: $1"
+
 }
 
 click-scene() {

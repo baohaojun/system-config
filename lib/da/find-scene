@@ -4,9 +4,7 @@ set -e
 init-da
 if test -z "$1"; then
     set -- "$(ask-for-input-with-sawfish -p "what is the scene's name")"
-
-    screenshot -f&
-    sawfish-wait-for-start
 fi
 
-new-scene "$1"
+find-scene "$1"
+bhj-notify "find-scene" "find-scene $1 completed"
