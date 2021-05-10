@@ -138,20 +138,3 @@ THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLU
 * Contribute
 
 Bug reports, patches, ideas are welcome.
-
-Or, if you like it, you may also donate some money.
-
-** With a paypal account:
-
-#+BEGIN_HTML
-<a href='https://pledgie.com/campaigns/33066'><img alt='Click here to lend your support to: Well done, Mr. Bao Haojun. and
-make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33066.png?skin_name=chrome' border='0' ></a>
-#+END_HTML
-
-** 支付宝（AliPay）
-
-[[http://baohaojun.github.io/images/bhj-alipay.png]]
-
-** 微信支付（WeChat Pay）
-
-[[http://baohaojun.github.io/images/bhj-wechat-pay.png]]
