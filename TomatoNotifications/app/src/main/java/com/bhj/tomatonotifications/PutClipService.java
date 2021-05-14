@@ -1,20 +1,18 @@
 package com.bhj.tomatonotifications;
 
-import android.app.AlarmManager;
-import android.app.ActivityManager.RunningTaskInfo;
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.app.AlarmManager;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ContentProvider;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.app.PendingIntent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -27,23 +25,23 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.provider.ContactsContract.Contacts.Entity;
-import android.provider.ContactsContract.Data;
-import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract;
-import android.provider.MediaStore;
+import android.provider.ContactsContract.Data;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -440,38 +438,83 @@ public class PutClipService extends Service implements MediaScannerConnection.Me
                 int seconds = intent.getIntExtra("notify", 0);
                 Log.e("bhj", String.format("%s:%d: seconds: %d", "PutClipService.java", 440, seconds));
 
+                Intent intent2 = new Intent(intent);
                 if (seconds > 1) {
                     final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-                    Intent intent2 = new Intent(intent);
                     intent2.putExtra("notify", 1);
 
-                    final long time = System.currentTimeMillis();
-                    final long fire = time + seconds * 1000;
-                    final PendingIntent pi = PendingIntent.getService(this, (int)fire, intent2, 0);
+                    final long time = System.currentTimeMillis() + seconds * 1000;
+                    final PendingIntent pi = PendingIntent.getService(this, (int)time, intent2, 0);
 
-                    am.set(AlarmManager.RTC_WAKEUP, fire, pi);
+                    am.set(AlarmManager.RTC_WAKEUP, time, pi);
                     return 0;
+                } else if (seconds == 1) {
+                    String title = intent.getStringExtra("notifyTitle");
+                    if (title == null) {
+                        title = readAndDelete("tomato.title");
+                    }
+
+                    String text = intent.getStringExtra("notifyText");
+                    if (text == null) {
+                        text = readAndDelete("tomato.text");
+                    }
+
+                    Date d = new Date();
+                    text += "\n\n" + d.toString();
+
+                    Notification.Builder notifBuidler = new Notification.Builder(this) // the context to use
+                        .setSmallIcon(R.drawable.ic_launcher)  // the status icon
+                        .setWhen(System.currentTimeMillis())  // the timestamp for the notification
+                        .setContentTitle(title)  // the title for the notification
+                        .setContentText(text)  // the details to display in the notification
+                        .setChannelId(CHANNEL_ID)
+                        .setAutoCancel(true);
+                    mNotificationManager.notify(0, notifBuidler.build());
                 }
 
-                String title = intent.getStringExtra("notifyTitle");
-                if (title == null) {
-                    title = readAndDelete("tomato.title");
-                }
+                String extra = intent.getStringExtra("notifyExtra");
+                if (extra != null) {
+                    try {
+                        JSONArray ja = new JSONArray(extra);
+                        if (ja.length() > 0) {
+                            Log.e("bhj", String.format("%s:%d: original title is %s, text is %s, extra is %s", "PutClipService.java", 478,
+                                                       intent.getStringExtra("notifyTitle"),
+                                                       intent.getStringExtra("notifyText"),
+                                                       intent.getStringExtra("notifyExtra")));
+                            JSONObject jo = ja.getJSONObject(0);
+                            ja.remove(0);
+                            extra = ja.toString(2);
+                            String title = jo.getString("title");
+                            String text = jo.getString("text");
+                            long fire = jo.getLong("fire");
 
-                String text = intent.getStringExtra("notifyText");
-                if (text == null) {
-                    text = readAndDelete("tomato.text");
-                }
+                            final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-                Notification.Builder notifBuidler = new Notification.Builder(this) // the context to use
-                    .setSmallIcon(R.drawable.ic_launcher)  // the status icon
-                    .setWhen(System.currentTimeMillis())  // the timestamp for the notification
-                    .setContentTitle(title)  // the title for the notification
-                    .setContentText(text)  // the details to display in the notification
-                    .setChannelId(CHANNEL_ID)
-                    .setAutoCancel(true);
-                mNotificationManager.notify(0, notifBuidler.build());
+                            Intent intent_new = new Intent();
+                            intent_new.putExtra("notify", 1);
+                            intent_new.putExtra("notifyTitle", title);
+                            intent_new.putExtra("notifyText", text);
+                            intent_new.putExtra("notifyExtra", extra);
+                            intent2.replaceExtras(intent_new);
+
+                            final long time = System.currentTimeMillis() + fire * 1000;
+                            final PendingIntent pi = PendingIntent.getService(this, (int)time, intent2, 0);
+
+                            am.set(AlarmManager.RTC_WAKEUP, time, pi);
+
+                            Log.e("bhj", String.format("%s:%d: title is %s, text is %s, extra is %s, time is %dl", "PutClipService.java", 478,
+                                                       intent2.getStringExtra("notifyTitle"),
+                                                       intent2.getStringExtra("notifyText"),
+                                                       intent2.getStringExtra("notifyExtra"),
+                                                       time));
+                        }
+                    } catch (JSONException e) {
+                        Log.e("bhj", String.format("%s:%d: got json exception ", "PutClipService.java", 459));
+                        return 0;
+                    }
+
+                }
             } else if (intent.getIntExtra("getapk", 0) == 1) {
                 try {
                     PackageManager pm = getPackageManager();

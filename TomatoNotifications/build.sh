@@ -101,12 +101,16 @@ else
               app/build/outputs/apk/release/app-release-aligned.apk
 fi
 
-adb install -g -r ${apk} ||
-    adb install -r ${apk} ||
+if type adb-install &>/dev/null; then
+    inst_command=adb-install
+else
+    inst_command='adb install'
+fi
+
+$inst_command -g -r ${apk} ||
+    $inst_command -r ${apk} ||
     (
         adb uninstall com.bhj.tomatonotifications &&
-            adb install -g -r ${apk} ||
-                adb install ${apk}
+            $inst_command -g -r ${apk} ||
+                $inst_command ${apk}
     )
-
-. .before-install-hook
