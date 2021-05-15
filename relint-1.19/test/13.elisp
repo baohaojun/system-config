@@ -1,0 +1,19 @@
+;;; Relint test file 13          -*- emacs-lisp -*-
+
+;; Test ineffective backslashes in strings
+
+(defun f1 ()
+  "doc string:
+\! \( \) \[ \] \' all ignored
+not ignored: \{ \} \| \` \? \* \. \+ \; \q etc"
+  (list
+   "\more"
+   "not ignored: \( \) \[ \] \'"
+   "long string \;
+\; and so on"
+   "valid: \\ \" \x5e \172 \u1234 \u00000041 \C-x \M-e \ \
+and \a \b \f \n \r \t \v \d \e \s \^P"))
+
+(defun f2 ()
+  (re-search-forward "\$\.x\+\+")
+  '("bracketed \q string"))

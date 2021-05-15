@@ -1,0 +1,16 @@
+;;; Relint test file 8          -*- emacs-lisp -*-
+
+(defun test-cl-flet ()
+  (looking-at
+   (cl-flet ((f (x) (concat "+" x)))    ; "+A"
+     (f "A"))))
+
+(defun test-cl-flet* ()
+  (looking-at
+   (cl-flet* ((f (x) (concat "+" x)))   ; "+B"
+     (f "B"))))
+
+(defun test-cl-labels ()
+  (looking-at
+   (cl-labels ((f (x) (concat "*" x)))  ; "*C"
+     (f "C"))))

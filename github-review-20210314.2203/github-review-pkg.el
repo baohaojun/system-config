@@ -1,0 +1,2 @@
+;;; Generated package description from github-review.el  -*- no-byte-compile: t -*-
+(define-package "github-review" "20210314.2203" "GitHub based code review" '((emacs "25.1") (s "1.12.0") (ghub "2.0") (dash "2.11.0") (deferred "0.5.1") (a "0.1.1")) :commit "341b7a1352e4ee1f1119756360ac0714abbaf460" :authors '(("Laurent Charignon" . "l.charignon@gmail.com")) :maintainer '("Laurent Charignon" . "l.charignon@gmail.com") :keywords '("git" "tools" "vc" "github") :url "https://github.com/charignon/github-review")

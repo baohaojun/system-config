@@ -1,0 +1,42 @@
+;;; Relint test file 9          -*- emacs-lisp -*-
+
+;; Test mutation/binding of known variables for detecting regexps.
+
+(defun test-9 ()
+  (setq-local page-delimiter "[aa]")
+  (setq-local paragraph-separate "[bb]")
+  (setq-local paragraph-start "[cc]")
+  (setq-local sentence-end "[dd]")
+  (setq-local comment-start-skip "[ee]")
+  (setq-local comment-end-skip "[ff]")
+
+  (setq sentence-end "[gg]")
+  (set (make-local-variable 'paragraph-start) "[hh]")
+
+  (let ((paragraph-separate "[ii]")
+        (page-delimiter "[jj]"))
+    (let* ((comment-start-skip "[kk]")
+           (comment-end-skip "[ll]"))
+      (asdf))))
+
+(defun test-9-ge ()
+  (setq-local imenu-generic-expression
+              '((nil "oh" 0)
+                ("*more*" "+a+" 0))))
+
+(defun test-9-fl-kw ()
+  (setq-local font-lock-keywords '(("[mm]" . tag)))
+  (setq font-lock-keywords '(("[nn]" . tag)))
+  (set (make-local-variable 'font-lock-keywords) '(("[oo]" . tag))))
+
+(defconst my-fl-keyw-1
+  '(("[pp]" . alpha)))
+
+(defconst my-font-lock-keywords-2
+  '(("[qq]" . beta)))
+
+(defun test-9-fl-def ()
+  (setq font-lock-defaults
+        '((my-fl-keyw-1
+           my-font-lock-keywords-2)
+          moo mooo)))

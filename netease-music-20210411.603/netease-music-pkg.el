@@ -1,0 +1,2 @@
+;;; Generated package description from netease-music.el  -*- no-byte-compile: t -*-
+(define-package "netease-music" "20210411.603" "listen netease music" '((names "0.5") (emacs "25")) :commit "db7f1eef2d8544983509db679be1cbe6a5678071" :authors '(("hiro方圆" . "wfy11235813@gmail.com")) :maintainer '("hiro方圆" . "wfy11235813@gmail.com") :keywords '("multimedia" "chinese" "music") :url "https://github.com/nicehiro/netease-music")

@@ -1,2 +1,0 @@
-;;; -*- no-byte-compile: t -*-
-(define-package "nvm" "20190912.626" "Manage Node versions within Emacs" '((s "1.8.0") (dash "2.4.0") (f "0.14.0") (dash-functional "2.4.0")) :commit "e93e5216e311c665c593ac68c5456d624120ea42" :keywords '("node" "nvm") :authors '(("Johan Andersson" . "johan.rejeep@gmail.com")) :maintainer '("Johan Andersson" . "johan.rejeep@gmail.com") :url "http://github.com/rejeep/nvm.el")

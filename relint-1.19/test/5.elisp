@@ -1,0 +1,75 @@
+;;; Relint test file 5          -*- emacs-lisp -*-
+
+;; Test let bindings
+(defun test-let-inside (x y)
+  (looking-at (let ((x "a")
+                    (y "b"))
+                (let* ((y "^")
+                       (z (concat x y)))
+                  z))))
+
+(defun test-let-outside (x y)
+  (let ((x "A")
+        (y "B"))
+    (let* ((y "^")
+           (z (concat x y)))
+      (looking-at z))))
+
+;; Test setq
+(defun test-setq-inside (x)
+  (looking-at
+   (progn
+     (let ((y "A")
+           (z "B"))
+       (setq z "A")
+       (concat "[" y z "]")))))
+
+(defun test-setq-outside (x c)
+  (setq x "[")
+  (let ((y "B")
+        (z "M"))
+    (setq z "B")
+    (looking-at (concat x y z "]"))))
+
+(defun test-push (x)
+  (let ((x (list "a")))
+    (push "+" x)
+    (looking-at (string-join x))))
+
+(defun test-pop (x)
+  (let ((x (list "a" "b" "^")))
+    (pop x)
+    (looking-at (string-join x))))
+
+(defun test-setq-defun (x)
+  (setq x "[CC]")
+  (looking-at x))
+
+(defun test-setq-lambda ()
+  (lambda (y)
+    (setq y "[DD]")
+    (looking-at y)))
+
+(defun f1 (x)
+  (let ((y "D"))
+    (setq x "E" y "E")
+    (concat x y)))
+
+(defun test-setq-inside-fun ()
+  (looking-at (concat "[" (f1 "C") "]")))
+
+(defun test-push-inside ()
+  (looking-at (let ((x (list "b")))
+                (push "*" x)
+                (string-join x))))
+
+(defun test-pop-inside ()
+  (looking-at (let* ((x (list "u" "+" "v"))
+                     (y (pop x)))
+                (string-join (append x (list y))))))
+
+(defun test-prog1 ()
+  (looking-at (prog1 "[UU]" "a" "b" "c")))
+
+(defun test-prog2 ()
+  (looking-at (prog2 "a" "[VV]" "b" "c")))

@@ -1,0 +1,39 @@
+5.elisp:5:15: In call to looking-at: Unescaped literal `^' (pos 1)
+  "a^"
+   .^
+5.elisp:16:19: In call to looking-at: Unescaped literal `^' (pos 1)
+  "A^"
+   .^
+5.elisp:21:4: In call to looking-at: Duplicated `A' inside character alternative (pos 2)
+  "[AA]"
+   ..^
+5.elisp:32:17: In call to looking-at: Duplicated `B' inside character alternative (pos 2)
+  "[BB]"
+   ..^
+5.elisp:37:17: In call to looking-at: Unescaped literal `+' (pos 0)
+  "+a"
+   ^
+5.elisp:42:17: In call to looking-at: Unescaped literal `^' (pos 1)
+  "b^"
+   .^
+5.elisp:46:15: In call to looking-at: Duplicated `C' inside character alternative (pos 2)
+  "[CC]"
+   ..^
+5.elisp:51:17: In call to looking-at: Duplicated `D' inside character alternative (pos 2)
+  "[DD]"
+   ..^
+5.elisp:59:15: In call to looking-at: Duplicated `E' inside character alternative (pos 2)
+  "[EE]"
+   ..^
+5.elisp:62:15: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*b"
+   ^
+5.elisp:67:15: In call to looking-at: Unescaped literal `+' (pos 0)
+  "+vu"
+   ^
+5.elisp:72:15: In call to looking-at: Duplicated `U' inside character alternative (pos 2)
+  "[UU]"
+   ..^
+5.elisp:75:15: In call to looking-at: Duplicated `V' inside character alternative (pos 2)
+  "[VV]"
+   ..^

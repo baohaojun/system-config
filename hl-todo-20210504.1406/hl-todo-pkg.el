@@ -1,0 +1,2 @@
+;;; Generated package description from hl-todo.el  -*- no-byte-compile: t -*-
+(define-package "hl-todo" "20210504.1406" "highlight TODO and similar keywords" '((emacs "25")) :commit "57378bd4511887a815725a7850e1ff2c6e9fda16" :authors '(("Jonas Bernoulli" . "jonas@bernoul.li")) :maintainer '("Jonas Bernoulli" . "jonas@bernoul.li") :keywords '("convenience") :url "https://github.com/tarsius/hl-todo")

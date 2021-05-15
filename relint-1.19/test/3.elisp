@@ -1,0 +1,174 @@
+;;; Relint test file 3          -*- emacs-lisp -*-
+
+;;; Test evaluation of built-in functions
+
+(defun test-eval-num ()
+  (looking-at
+   (format
+    "%c"
+    (+ (string-to-number (number-to-string ?*))  ; <-- bad regexp
+       (1+ 0)
+       (1- 0)
+       (* 2 2)
+       (- (/ 8 2))
+       (% 5 3)
+       (- (mod 5 3))
+       (max 3 4)
+       (min -3 -4)
+       (abs 0)
+       (ash 0 -2)
+       (lsh 0 1)
+       (logand 5 10)
+       (logior 0 0)
+       (logxor 3 3)
+       (- (length "abc") (safe-length '(1 2 3)))
+       (and (= 3 3)
+            (< 2 3)
+            (> 4 3)
+            (/= 1 2)
+            (<= 1 1 2)
+            (>= 2 1 1)
+            0)))))
+
+(defun test-eval-bool ()
+  (looking-at
+   (if (and t (not t))
+       (/ 1 0)
+     (or nil
+         (and (consp '(a))
+              (atom 'a)
+              (stringp "s")
+              (symbolp 'a)
+              (listp nil)
+              (nlistp 0)
+              (booleanp t)
+              (integerp 3)
+              (numberp -5)
+              (natnump 1)
+              (characterp ?A)
+              (zerop 0)
+              (sequencep nil)
+              (vectorp [])
+              (arrayp [])
+              (eq 'a 'a)
+              (eql 2 2)
+              (equal '(1 2) '(1 2))
+              (string-equal "ab" "ab")
+              (string= "ab" "ab")
+              (string-lessp "ab" "bc")
+              (string< "ab" "bc")
+              (string-greaterp "bc" "ab")
+              (string> "bc" "ab")
+              (char-equal ?! ?!)
+              (string-match "b" "abc")
+              (string-match-p "b" "abc")
+              (string-prefix-p "A" "AB")
+              (string-suffix-p "B" "AB")
+              (string-blank-p "  ")
+              (identity "++"))))))      ; <--- bad regexp
+
+(defun test-eval-str ()
+  (looking-at
+   (substring
+    (concat
+     (format "%s!" "[QQ]")                           ; 1   <--- bad regexp
+     (string ?a ?b)                                  ; 2
+     (make-string 3 ?x)                              ; 3
+     (symbol-name 'bof)                              ; 3
+     (string-to-unibyte (string-to-multibyte "AB"))  ; 2
+     (string-join (split-string "I  think")  "-")    ; 7
+     (string-trim-left "  mm")                       ; 2
+     (string-trim-right "nn  ")                      ; 2
+     (string-trim "  kk  ")                          ; 2
+     (string-remove-prefix "A" "AB")                 ; 1
+     (string-remove-suffix "A" "AB")                 ; 2
+     (char-to-string (string-to-char "t"))           ; 1
+     (wildcard-to-regexp "az")                       ; 6
+     (upcase (downcase (capitalize "zzA")))          ; 3
+     (combine-and-quote-strings
+      (split-string-and-unquote "oh dear")))         ; 7
+    0 (- (+ 1 2 3 3 2 7 2 2 2 1 2 1 6 3 7)))))
+
+(defun test-eval-list ()
+  (looking-at
+   (nth (+ 1 1 2 1 2 1 1 2 2 2 2 2 2 2 2 2 1 1 2 3 3 2 1 4 2 1 2 2)
+        (append
+         (cons 'a nil)                            ; 1
+         (cadr '(a (b)))                          ; 1
+         (cdar '((b c d)))                        ; 2
+         (caar '(((e))))                          ; 1
+         (cddr '(d e f g))                        ; 2
+         (car-safe '((h)))                        ; 1
+         (cdr-safe '(g h))                        ; 1
+         (nthcdr 2 '(g h i j))                    ; 2
+         (member "B" '("A" "B" "C"))              ; 2
+         (memq 'k '(j k l))                       ; 2
+         (memql 2 '(1 2 3))                       ; 2
+         (member-ignore-case "d" '("C" "D" "E"))  ; 2
+         (remove "!" '("F" "!" "G" "!"))          ; 2
+         (remq 'a '(m a n a))                     ; 2
+         (assoc "p" '(("p" 1) ("q" 2)))           ; 2
+         (assq 'r '((q 1) (r 2)))                 ; 2
+         (car (rassoc 2 '(((u) . 1) ((v) . 2))))  ; 1
+         (car (rassq 'x '(((w) . x) ((u) . y))))  ; 1
+         (butlast '(z x y))                       ; 2
+         (number-sequence 1 3)                    ; 3
+         (make-list 3 'M)                         ; 3
+         (reverse '(9 8))                         ; 2
+         (last '(a b c))                          ; 1
+         (nconc (list 1 2) (list 3 4))            ; 4
+         (delete 3 (list 1 2 3))                  ; 2
+         (delq 'x (list 'x 'y))                   ; 1
+         (nreverse (list 1 2))                    ; 2
+         (nbutlast (list 1 2 3))                  ; 2
+         (list "^m^")))))                         ; <-- bad regexp
+
+(defvar my-unknown (list (unknown-fun) "[11]"))
+
+;; Test partial list evaluation: skip elements that cannot be computed
+(defvar another-bad-regexp-list
+  (append
+   my-unknown
+   (cons "[22]" my-unknown)
+   (cons my-unknown '(my-unknown "[33]"))
+   (purecopy (reverse (list my-unknown "[44]")))
+   (copy-sequence (remove my-unknown (list my-unknown "[55]")))
+   (copy-alist (remq my-unknown (list my-unknown "[66]")))
+   (delete-dups (list my-unknown "[77]" my-unknown "[77]"))))
+
+(defun test-eval-cxxxr ()
+  (looking-at
+   (concat "+"                          ; "+abcdefgh"
+           (mapconcat
+            #'symbol-name
+            (list
+             (caaar '(((a . b) . (c . d)) . ((e . f) . (g . h))))
+             (cdaar '(((a . b) . (c . d)) . ((e . f) . (g . h))))
+             (cadar '(((a . b) . (c . d)) . ((e . f) . (g . h))))
+             (cddar '(((a . b) . (c . d)) . ((e . f) . (g . h))))
+             (caadr '(((a . b) . (c . d)) . ((e . f) . (g . h))))
+             (cdadr '(((a . b) . (c . d)) . ((e . f) . (g . h))))
+             (caddr '(((a . b) . (c . d)) . ((e . f) . (g . h))))
+             (cdddr '(((a . b) . (c . d)) . ((e . f) . (g . h)))))
+            ""))))
+
+(defun test-eval-intern ()
+  (looking-at
+   (concat "?"                          ; "?abc"
+           (symbol-name (intern "a"))
+           (symbol-name (intern-soft "b"))
+           (symbol-name (make-symbol "c")))))
+
+(defun test-eval-compare-strings ()
+  (looking-at
+   (progn                               ; "[AA]"
+     (cl-assert 'haha)
+     (and (compare-strings "abc" 0 2 "ABC" 0 2 t)
+          "[AA]"))))
+
+;;; `flatten-tree' appeared in 27.1; disable this part until that Emacs
+;;; version has been released.
+;;;
+;;;(defun test-eval-flatten-tree ()
+;;;  (looking-at
+;;;   (apply #'concat (flatten-tree '("$" ((("a") "b") ("c")))))))   ; "$abc"

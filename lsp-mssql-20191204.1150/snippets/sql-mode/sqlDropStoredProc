@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: Drop a stored procedure
+# key: sqlDropStoredProc
+# --
+-- Drop the stored procedure called '${1:StoredProcedureName}' in schema '${2:SchemaName}'
+IF EXISTS (
+SELECT *
+	FROM INFORMATION_SCHEMA.ROUTINES
+WHERE SPECIFIC_SCHEMA = N'$2'
+	AND SPECIFIC_NAME = N'$1'
+)
+DROP PROCEDURE $2.$1
+GO

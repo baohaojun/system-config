@@ -1,0 +1,66 @@
+;;; Relint test file 2          -*- emacs-lisp -*-
+
+;; Test regexp detection in arguments of known regexp-detecting functions.
+(defun f1 (s)
+  (looking-at "[aa]")
+  (re-search-forward "[bb]")
+  (re-search-backward "[cc]")
+  (search-forward-regexp "[BB]")
+  (search-forward-regexp "[CC]")
+  (string-match "[dd]" s)
+  (string-match-p "[ee]" s)
+  (looking-at-p "[ff]")
+  (looking-back "[gg]" nil)
+  (replace-regexp-in-string "[hh]" "x" s)
+  (query-replace-regexp "[jj]" s)
+  (posix-looking-at "[kk]")
+  (posix-search-backward "[ll]")
+  (posix-search-forward "[mm]")
+  (posix-string-match "[nn]" s)
+  (load-history-filename-element "[oo]")
+  (kill-matching-buffers "[pp]")
+  (keep-lines "[qq]")
+  (flush-lines "[rr]")
+  (how-many "[ss]")
+  (split-string s "[tt]" nil "[uu]")
+  (split-string-and-unquote s "[vv]")
+  (string-trim-left s "[ww]")
+  (string-trim-right s "[xx]")
+  (string-trim s "[yy]" "[zz]")
+  (directory-files s nil "+1")
+  (directory-files-and-attributes s nil "+2")
+  (directory-files-recursively s "+3")
+  (delete-matching-lines "+4")
+  (delete-non-matching-lines "+5")
+  (count-matches "+6"))
+
+;; Test argument names as means of detecting regexps.
+(defun f2 (x1 my-regexp x2 my-regex x3 my-re x4 my-pattern x5 re)
+  (list x1 my-regexp x1 my-regex x3 my-re x4 my-pattern x5 re))
+
+(defsubst s2 (x1 my-regexp x2 my-regex x3 my-re x4 my-pattern x5 re)
+  (list x1 my-regexp x1 my-regex x3 my-re x4 my-pattern x5 re))
+
+(defmacro m2 (x1 my-regexp x2 my-regex x3 my-re x4 my-pattern x5 re)
+  (list 'quote (list x1 my-regexp x1 my-regex x3 my-re x4 my-pattern x5 re)))
+
+(defun f4 (s)
+  (f2 "[AA]" "[BB]" "[CC]" "[DD]" "[EE]" "[FF]" "[GG]" "[HH]" "[II]" "[JJ]")
+  (s2 "[AA]" "[BB]" "[CC]" "[DD]" "[EE]" "[FF]" "[GG]" "[HH]" "[II]" "[JJ]")
+  (m2 "[AA]" "[BB]" "[CC]" "[DD]" "[EE]" "[FF]" "[GG]" "[HH]" "[II]" "[JJ]"))
+
+;; Test function doc string as means of detecting regexps.
+(defun f5 (a b c d e)
+  "Chew regular expression B, regexp C and regex D."
+  (list a b c d e))
+
+(defun f6 ()
+  (f5 "[aa]" "[bb]" "[cc]" "[dd]" "[ee]"))
+
+(defun f7 ()
+  (alpha beta :regexp "[11]")
+  (gamma :regex "[22]" delta))
+
+(defun f8 ()
+  (sort-regexp-fields nil "^.*$x" "\\&" (point-min) (point-max))
+  (sort-regexp-fields nil "^.*$" "\\%" (point-min) (point-max)))

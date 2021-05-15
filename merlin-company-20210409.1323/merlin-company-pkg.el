@@ -1,0 +1,2 @@
+;;; Generated package description from merlin-company.el  -*- no-byte-compile: t -*-
+(define-package "merlin-company" "20210409.1323" "Merlin and company mode integration." '((emacs "25.1") (merlin "3") (company "0.9")) :commit "e0f4648b3c713030471e09d42b65265471e853b3" :authors '(("Simon Castellan <simon.castellan(_)iuwt.fr>") ("Frédéric Bour <frederic.bour(_)lakaban.net>") ("Thomas Refis <thomas.refis(_)gmail.com>")) :maintainer '("Simon Castellan <simon.castellan(_)iuwt.fr>") :keywords '("ocaml" "languages") :url "http://github.com/ocaml/merlin")

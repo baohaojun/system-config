@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Delete rows from a Table
+# key: sqlDeleteRows
+# --
+-- Delete rows from table '${1:TableName}'
+DELETE FROM $1
+WHERE $2	/* add search conditions here */
+GO

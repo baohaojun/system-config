@@ -1,2 +1,0 @@
-;;; Generated package description from /home/bhj/.emacs.d/elpa-27.0/anaconda-mode-20200129.1718/anaconda-mode.el  -*- no-byte-compile: t -*-
-(define-package "anaconda-mode" "20200129.1718" "Code navigation, documentation lookup and completion for Python" '((emacs "25.1") (pythonic "0.1.0") (dash "2.6.0") (s "1.9") (f "0.16.2")) :commit "10299bd9ff38c4f0da1d892905d02ef828e7fdce" :authors '(("Artem Malyshev" . "proofit404@gmail.com")) :maintainer '("Artem Malyshev" . "proofit404@gmail.com") :url "https://github.com/proofit404/anaconda-mode")

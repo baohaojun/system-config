@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Select rows from a Table or a View
+# key: sqlSelect
+# --
+-- Select rows from a Table or View '${1:TableOrViewName}' in schema '${2:SchemaName}'
+SELECT * FROM $2.$1
+WHERE $3	/* add search conditions here */
+GO

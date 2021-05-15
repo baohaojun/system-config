@@ -1,0 +1,2 @@
+;;; Generated package description from biblio-core.el  -*- no-byte-compile: t -*-
+(define-package "biblio-core" "20210418.406" "A framework for looking up and displaying bibliographic entries" '((emacs "24.3") (let-alist "1.0.4") (seq "1.11") (dash "2.12.1")) :commit "517ec18f00f91b61481214b178f7ae0b8fbc499b" :authors '(("Clément Pit-Claudel" . "clement.pitclaudel@live.com")) :maintainer '("Clément Pit-Claudel" . "clement.pitclaudel@live.com") :keywords '("bib" "tex" "convenience" "hypermedia") :url "https://github.com/cpitclaudel/biblio.el")

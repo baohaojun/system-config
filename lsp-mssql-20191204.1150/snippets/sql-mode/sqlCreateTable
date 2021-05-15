@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: Create a new Table
+# key: sqlCreateTable
+# --
+-- Create a new table called '${1:TableName}' in schema '${2:SchemaName}'
+-- Drop the table if it already exists
+IF OBJECT_ID('$2.$1', 'U') IS NOT NULL
+DROP TABLE $2.$1
+GO
+-- Create the table in the specified schema
+CREATE TABLE $2.$1
+(
+	$1Id INT NOT NULL PRIMARY KEY, -- primary key column
+	$3Column1 [NVARCHAR](50) NOT NULL,
+	$4Column2 [NVARCHAR](50) NOT NULL
+	-- specify more columns here
+);
+GO

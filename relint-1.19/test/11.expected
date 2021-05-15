@@ -1,0 +1,61 @@
+11.elisp:7:23: Duplicated character `c' (pos 2)
+  "abc"
+   ..^
+11.elisp:7:26: Duplicated character `b'
+11.elisp:8:30: Single-character range `c-c' (pos 4)
+  "0-9ac-ceg-h3"
+   ....^
+11.elisp:8:34: Two-character range `g-h' (pos 8)
+  "0-9ac-ceg-h3"
+   ........^
+11.elisp:8:37: Character `3' included in range `0-9' (pos 11)
+  "0-9ac-ceg-h3"
+   ...........^
+11.elisp:9:25: Range `f-t' overlaps previous `a-m'
+11.elisp:9:37: Character `s' included in range `f-t' (pos 1)
+  "!s"
+   .^
+11.elisp:10:45: Duplicated class `space'
+11.elisp:11:21: Suspect range `)-+' (pos 4)
+  "0-9()-+"
+   ....^
+11.elisp:12:20: Suspect range `+-.' (pos 3)
+  "0-9+-."
+   ...^
+11.elisp:15:20: Literal `-' not first or last (pos 3)
+  "A-F-K-T"
+   ...^
+11.elisp:16:19: In rx `regexp' form: Duplicated `1' inside character alternative (pos 2)
+  "[11]"
+   ..^
+11.elisp:17:18: In rx `regex' form: Duplicated `2' inside character alternative (pos 2)
+  "[22]"
+   ..^
+11.elisp:18:14: Duplicated character `3' (pos 1)
+  "33"
+   .^
+11.elisp:20:29: Duplicated character `A' (pos 1)
+  "AA"
+   .^
+11.elisp:22:23: Duplicated character `B' (pos 1)
+  "BB"
+   .^
+11.elisp:23:10: Duplicated character `C' (pos 1)
+  "CC"
+   .^
+11.elisp:24:11: Duplicated character `D' (pos 1)
+  "DD"
+   .^
+11.elisp:29:25: Character `\177' included in range `\000-\177' (pos 0)
+  "\177"
+   ^
+11.elisp:29:32: Character `\240' included in range `\200-\377' (pos 0)
+  "\240"
+   ^
+11.elisp:31:18: Character `m' included in range `a-z'
+11.elisp:32:19: Range `\000-\377' overlaps previous `a-f' (pos 0)
+  "\000-\377"
+   ^
+11.elisp:33:25: Range `\000-\377' overlaps previous `\240-\277' (pos 0)
+  "\000-\377"
+   ^

@@ -1,0 +1,69 @@
+;;; Relint test file 6          -*- emacs-lisp -*-
+
+;; Test mixup of regexp and character alternative
+(defun myrefun (things)
+  (if (listp things)
+      (regexp-opt things)
+    things))
+
+(defun test-mixup (x y z)
+  (list
+   (concat "a*[^" some-regexp "]")
+   (concat stuff "[" (regexp-quote x) "]" stuff)
+   (concat "[" (myrefun y) "]")
+   (concat "[" (rx ?a "b" nonl) "]")
+   (concat "[" (rx-to-string z) "]")
+   (format "^%s[%s]*%s$" stuff some-regex stuff)
+   (format "[%s]" (regexp-quote x))
+   (format "[%s]" (myrefun y))
+   (format "[%s]" (rx ?a "b" nonl))
+   (format "[%s]" (rx-to-string z))
+   (format "[%s]" (f (string-match (regexp-quote x) a))) ; ok
+   (format "[%s]" (f (replace-regexp-in-string (regexp-quote x) a b))) ; ok
+   (format "[%s]" (f (replace-regexp-in-string a b (regexp-quote x)))) ; bad
+   ))
+
+;; Test skip-chars
+(defun test-skip-chars (x y z)
+  (skip-chars-forward "[a-z]")
+  (skip-chars-backward "aa")
+  (skip-chars-forward some-re)
+  (skip-chars-backward (regexp-quote x))
+  (skip-chars-forward (myrefun y))
+  (skip-chars-backward (rx "abc"))
+  (skip-chars-forward (rx-to-string z)))
+
+;; Test skip-syntax
+(defun test-skip-syntax (x y z)
+  (skip-syntax-forward "\\s-")
+  (skip-syntax-backward "- ")
+  (skip-syntax-forward some-re)
+  (skip-syntax-backward (regexp-quote x))
+  (skip-syntax-forward (myrefun y))
+  (skip-syntax-backward (rx "w-"))
+  (skip-syntax-forward (rx-to-string z)))
+
+;; Test incorrect provenance tracing
+(defun test-regexp-in-condition (x y z)
+  (format "[%s]" (if (regexp-quote x) y z))
+  (skip-chars-forward (when some-regexp y))
+  (skip-syntax-backward (unless (myrefun x) y))
+  (skip-chars-backward (while (myrefun x) z)))
+
+;; Test suppression
+(defun test-suppression ()
+  ;; relint suppression: Unescaped literal .\$
+  ;; relint suppression: Duplicated .a
+  (looking-at "$[aa]"))
+
+;; Test user-defined regexp-generating functions
+(defun make-a-nice-regexp ()
+  (stuff))
+
+(defun make-something ()
+  "Return a regexp made from whole cloth."
+  (stuff))
+
+(defun test-user-defined-generator ()
+  (skip-chars-forward (make-a-nice-regexp))
+  (skip-chars-backward (make-something)))

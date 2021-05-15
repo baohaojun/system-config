@@ -1,0 +1,2 @@
+;;; Generated package description from nvm.el  -*- no-byte-compile: t -*-
+(define-package "nvm" "20210217.744" "Manage Node versions within Emacs" '((s "1.8.0") (dash "2.18.0") (f "0.14.0")) :commit "6f47fac1bc42526a7474488f560d064c08f8dd6e" :authors '(("Johan Andersson" . "johan.rejeep@gmail.com")) :maintainer '("Johan Andersson" . "johan.rejeep@gmail.com") :keywords '("node" "nvm") :url "http://github.com/rejeep/nvm.el")

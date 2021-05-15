@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: Update rows in a Table
+# key: sqlUpdateRows
+# --
+-- Update rows in table '${1:TableName}'
+UPDATE $1
+SET
+	$2[Colum1] = Colum1_Value,
+	$3[Colum2] = Colum2_Value
+	-- add more columns and values here
+WHERE $4	/* add search conditions here */
+GO

@@ -1,0 +1,62 @@
+;;; Relint test file 4          -*- emacs-lisp -*-
+
+;; Test user-defined function application.
+(defun my-char-seq-str (start end)
+  (if (<= start end)
+      (concat (string start) (my-char-seq-str (1+ start) end))
+    ""))
+
+(defun test-fun-call ()
+  (looking-at (my-char-seq-str ?$ ?*)))      ; "$%&'()*"
+
+;; Test higher-order functions.
+(defun test-hof ()
+  (looking-at (apply 'string '(?+ ?x)))
+  (looking-at (funcall #'string ?*))
+  (looking-at (mapconcat #'identity '("x" "^") "-"))
+  (looking-at (if (cl-some 'numberp '('a 2 nil)) "[AA]" ""))
+  (looking-at (if (cl-every 'numberp '('a 2 nil)) "" "[BB]"))
+  (looking-at (apply 'string (mapcar (lambda (c) (1+ c)) '(?* ?a))))
+  (looking-at (apply 'string (mapcan (lambda (c) (list ?+)) '(1 2))))
+  (looking-at (apply 'string (sort (list ?$ ?+ ?a) #'<))))
+
+;; Test higher-order functions with keywords.
+(defun test-hof-kw ()
+  (looking-at (cl-reduce #'concat '(?* ?a ?b) :key #'char-to-string))
+  (looking-at (concat "+" (cl-find "c" '("a" "b" "c") :test #'equal))))
+
+;; Test rx
+(defvar my-sub-rx '(one-or-more nonl))
+
+;;;(defun test-rx ()    ; Emacs 27-specific test; disable until it's out.
+;;;  (looking-at (concat (rx (eval my-sub-rx)
+;;;                          (literal (string ?a ?b))
+;;;                          (regexp (concat "c" "+"))
+;;;                          (regex (string ?d)))
+;;;                      "^")))
+
+;; Test macro expansion
+(defmacro my-macro (x)
+  (list 'string ?a x))
+
+(defun test-macro ()
+  (looking-at (my-macro ?^))
+  (looking-at (when t "b++"))
+  (looking-at (unless nil "c++"))
+  (looking-at (string-join `("a" ,@(list "$") ,"b")))
+  (looking-at (pcase 'a ((pred symbolp) "d++")))
+  (looking-at (cl-case 'z (b "m") (z "*"))))
+
+;; Test repeated use of global variable
+(defconst my-var-a "*")
+(defconst my-var-b (concat my-var-a "b"))
+
+(defun test-var-ref ()
+  (looking-at my-var-b)
+  (looking-at (concat my-var-b "c")))
+
+;; Test global variable redefinition
+(defconst my-var-a (concat my-var-a "a"))
+
+(defun test-var-redef ()
+  (looking-at my-var-a))

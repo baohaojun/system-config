@@ -1,0 +1,2 @@
+;;; Generated package description from auth-source-pass.el  -*- no-byte-compile: t -*-
+(define-package "auth-source-pass" "20210210.1908" "Integrate auth-source with password-store" '((emacs "27.1")) :commit "fa8b964494c1ef42035fad340ff5f29fcdbed21c" :authors '(("Damien Cassou" . "damien@cassou.me") ("Nicolas Petton" . "nicolas@petton.fr") ("Keith Amidon" . "camalot@picnicpark.org")) :maintainer '("Damien Cassou" . "damien@cassou.me") :url "https://github.com/DamienCassou/auth-source-pass")

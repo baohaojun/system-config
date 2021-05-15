@@ -1,0 +1,2 @@
+;;; Generated package description from tree-sitter-indent.el  -*- no-byte-compile: t -*-
+(define-package "tree-sitter-indent" "20210322.2033" "Provide indentation with a Tree-sitter backend" '((emacs "26.1") (tree-sitter "0.12.1") (seq "2.20")) :commit "18d263720c5a8f7fde0db368c7c36ea70437fc0b" :authors '(("Felipe Lema" . "felipelema@mortemale.org")) :maintainer '("Felipe Lema" . "felipelema@mortemale.org") :keywords '("convenience" "internal") :url "https://codeberg.org/FelipeLema/tree-sitter-indent.el")

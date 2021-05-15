@@ -1,0 +1,2 @@
+;;; Generated package description from ivy-dired-history.el  -*- no-byte-compile: t -*-
+(define-package "ivy-dired-history" "20210418.1444" "use ivy to open recent directories" '((ivy "0.9.0") (counsel "0.9.0") (cl-lib "0.5")) :commit "1ffa9b705c52a9d5b03c97150addb4f746c08380" :authors '(("纪秀峰" . "jixiuf@gmail.com")) :maintainer '("纪秀峰" . "jixiuf@gmail.com") :url "https://github.com/jixiuf/ivy-dired-history")

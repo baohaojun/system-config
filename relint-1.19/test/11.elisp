@@ -1,0 +1,34 @@
+;;; Relint test file 11          -*- emacs-lisp -*-
+
+;; Test errors in rx
+
+(defun my-fun ()
+  (list
+   (rx nonl (in ?c "abc" ?b))
+   (rx (: (* (not (char "0-9ac-ceg-h3"))
+             (any "a-m" (?f . ?t) "!s")
+             (opt (not-char space "q" digit space)))
+          (any "0-9()-+")
+          (any "0-9+-.")
+          (any "-a-e")
+          (any "k-m-")
+          (any "A-F-K-T")))
+   (rx (regexp "[11]")
+       (regex "[22]")
+       (eval (list 'any "33")))
+   (rx-to-string '(: bol
+                     (any "AA")))
+   (rx-to-string `(: bol
+                     ,(list 'in "BB")))
+   `(rx ,(list 'char "CC"))
+   `(rx ,@(list nonl (list 'any "DD"))))
+
+  ;; No error here.
+  (rx (any "\000-\377" ?å) (any "\377" 255))
+  ;; But here.
+  (rx (any "\000-\377" "\177" "\240"))
+
+  (rx (any "a-z" ?m))
+  (rx (any "a-f" "\000-\377"))
+  (rx (any "\240-\277" "\000-\377"))
+  )

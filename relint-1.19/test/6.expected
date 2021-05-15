@@ -1,0 +1,35 @@
+6.elisp:11:19: Value from `some-regexp' cannot be spliced into `[...]'
+6.elisp:12:22: Value from `regexp-quote' cannot be spliced into `[...]'
+6.elisp:13:16: Value from `regexp-opt' cannot be spliced into `[...]'
+6.elisp:14:16: Value from `rx' cannot be spliced into `[...]'
+6.elisp:15:16: Value from `rx-to-string' cannot be spliced into `[...]'
+6.elisp:16:32: Value from `some-regex' cannot be spliced into `[...]'
+6.elisp:17:19: Value from `regexp-quote' cannot be spliced into `[...]'
+6.elisp:18:19: Value from `regexp-opt' cannot be spliced into `[...]'
+6.elisp:19:19: Value from `rx' cannot be spliced into `[...]'
+6.elisp:20:19: Value from `rx-to-string' cannot be spliced into `[...]'
+6.elisp:23:19: Value from `regexp-quote' cannot be spliced into `[...]'
+6.elisp:28:24: In call to skip-chars-forward: Suspect skip set framed in `[...]' (pos 0)
+  "[a-z]"
+   ^
+6.elisp:29:26: In call to skip-chars-backward: Duplicated character `a' (pos 1)
+  "aa"
+   .^
+6.elisp:30:23: `some-re' cannot be used for arguments to `skip-chars-forward'
+6.elisp:31:24: `regexp-quote' cannot be used for arguments to `skip-chars-backward'
+6.elisp:32:23: `regexp-opt' cannot be used for arguments to `skip-chars-forward'
+6.elisp:33:24: `rx' cannot be used for arguments to `skip-chars-backward'
+6.elisp:34:23: `rx-to-string' cannot be used for arguments to `skip-chars-forward'
+6.elisp:38:27: In call to skip-syntax-forward: Invalid char `s' in syntax string (pos 1)
+  "\\s-"
+   ..^
+6.elisp:39:27: In call to skip-syntax-backward: Duplicated syntax code ` ' (pos 1)
+  "- "
+   .^
+6.elisp:40:24: `some-re' cannot be used for arguments to `skip-syntax-forward'
+6.elisp:41:25: `regexp-quote' cannot be used for arguments to `skip-syntax-backward'
+6.elisp:42:24: `regexp-opt' cannot be used for arguments to `skip-syntax-forward'
+6.elisp:43:25: `rx' cannot be used for arguments to `skip-syntax-backward'
+6.elisp:44:24: `rx-to-string' cannot be used for arguments to `skip-syntax-forward'
+6.elisp:68:23: `make-a-nice-regexp' cannot be used for arguments to `skip-chars-forward'
+6.elisp:69:24: `make-something' cannot be used for arguments to `skip-chars-backward'

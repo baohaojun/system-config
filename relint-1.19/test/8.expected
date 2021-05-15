@@ -1,0 +1,9 @@
+8.elisp:5:4: In call to looking-at: Unescaped literal `+' (pos 0)
+  "+A"
+   ^
+8.elisp:10:4: In call to looking-at: Unescaped literal `+' (pos 0)
+  "+B"
+   ^
+8.elisp:15:4: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*C"
+   ^

@@ -1,0 +1,635 @@
+This is purescript-mode.info, produced by makeinfo version 6.7 from
+purescript-mode.texi.
+
+This manual is for PureScript mode, version @GIT_VERSION@
+
+   Copyright © 2013 PureScript Mode contributors.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License
+     (http://www.gnu.org/licenses/fdl.html), Version 1.3 or any later
+     version published by the Free Software Foundation; with no
+     Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* PureScript Mode: (purescript-mode).             PureScript Development Environment for Emacs(en)
+END-INFO-DIR-ENTRY
+
+
+File: purescript-mode.info,  Node: Top,  Next: Introduction,  Up: (dir)
+
+PureScript Mode
+***************
+
+PureScript Mode is an PureScript development Environment for GNU Emacs
+version 23 or later.  It provides syntax-based indentation, font
+locking, editing cabal files, and supports running an inferior
+PureScript interpreter (e.g.  GHCi).
+
+* Menu:
+
+* Introduction::
+* Getting Help and Reporting Bugs::
+* Getting Started::
+* Editing PureScript Code::
+* Unicode::
+* Indentation::
+* Compilation::
+* purescript-decl-scan-mode::
+* inferior-purescript-mode::
+* purescript-interactive-mode::
+* purescript-cabal-mode::
+* Concept index::
+* Function index::
+* Variable index::
+
+
+File: purescript-mode.info,  Node: Introduction,  Next: Getting Help and Reporting Bugs,  Prev: Top,  Up: Top
+
+1 Introduction
+**************
+
+“PureScript Mode” is a major mode providing a convenient environment for
+editing PureScript (http://www.purescript.org) programs.
+
+   Some of its major features are:
+
+   • Syntax highlighting (font lock),
+   • automatic indentation,
+   • on-the-fly documentation,
+   • interaction with inferior GHCi/Hugs instance, and
+   • scanning declarations and placing them in a menu.
+
+
+File: purescript-mode.info,  Node: Getting Help and Reporting Bugs,  Next: Getting Started,  Prev: Introduction,  Up: Top
+
+2 Getting Help and Reporting Bugs
+*********************************
+
+This Info manual is work in progress and incomplete.  However, you can
+find more information at these locations in the meantime:
+
+   • PureScript Mode’s GitHub Home
+     (https://github.com/purescript-emacs/purescript-mode)
+   • PureScript Wiki Emacs Page
+     (http://www.purescript.org/purescriptwiki/PureScript_mode_for_Emacs)
+
+   If you have any questions or like to discuss something regarding
+PureScript Mode, please consider sending an email to the
+PureScriptmode-emacs mailing list
+(http://projects.purescript.org/cgi-bin/mailman/listinfo/purescriptmode-emacs).
+The mailing list is also available on Gmane (http://gmane.org/) via the
+gmane.comp.lang.purescript.emacs
+(http://dir.gmane.org/gmane.comp.lang.purescript.emacs) newsgroup.
+
+   If you have discovered a bug or wish to request a new feature, you
+can file a new issue
+(https://github.com/purescript-emacs/purescript-mode/issues/new) with
+PureScript Mode’s issue tracker.  When filing a bug, please state your
+currently used software version (‘M-x purescript-version’, ‘M-x
+version’) and what steps to perform in order to reproduce the bug you’re
+experiencing.  Finally, if you happen to be proficient in *note Emacs
+Lisp: (elisp)Top. you are welcome to submit patches via GitHub Pull
+Requests (https://help.github.com/articles/using-pull-requests).
+
+
+File: purescript-mode.info,  Node: Getting Started,  Next: Editing PureScript Code,  Prev: Getting Help and Reporting Bugs,  Up: Top
+
+3 Getting Started
+*****************
+
+If you are reading this, you have most likely already managed to install
+PureScript Mode in one way or another.  However, just for the record,
+the officially recommended way is to install PureScript Mode via the
+Marmalade package archive
+(http://marmalade-repo.org/packages/purescript-mode) which contains the
+latest stable release of PureScript Mode.
+
+   Most of PureScript Mode’s settings are configurable via customizable
+variables (*note (emacs)Easy Customization::, for details).  You can use
+‘M-x purescript-customize’ to browse the ‘purescript’ customization
+sub-tree.
+
+   One of the important setting you should customize is the
+‘purescript-mode-hook’ variable (*note (emacs)Hooks::) which gets run
+right after the ‘purescript-mode’ major mode is initialized for a
+buffer.  You can customize ‘purescript-mode-hook’ by ‘M-x
+customize-variable <RET> purescript-mode-hook’.  It’s highly recommended
+you set up indentation to match your preferences; *Note Indentation::,
+for more details about the indentation modes included with PureScript
+Mode.
+
+
+File: purescript-mode.info,  Node: Editing PureScript Code,  Next: Unicode,  Prev: Getting Started,  Up: Top
+
+4 Editing PureScript Code
+*************************
+
+“PureScript Mode” is actually a collection of so-called major modes(1)
+one of which is called ‘purescript-mode’.  To avoid confusion, when
+referring to this package the name “PureScript mode” is written in a
+normal font, whereas when referring the major mode of the same name
+‘purescript-mode’ written with a dash in-between in a typewriter font is
+used.
+
+   As one might guess, ‘purescript-mode’ is the (programming
+language(2)) major mode for editing (non-literate) PureScript source
+code.  ‘purescript-mode’ is associated with the file extensions listed
+below by default(3).
+
+‘.purs’
+     official file extension for (non-literate) PureScript 98/2010 files
+‘.pursc’
+     “almost-PureScript” input file for the pursc2purs
+     (http://www.purescript.org/ghc/docs/latest/html/users_guide/pursc2purs.html)
+     pre-processor
+‘.cpppurs’
+     input file for the cpppurs
+     (http://projects.purescript.org/cpppurs/) pre-processor
+
+The major mode ‘literate-purescript-mode’ (which is derived from
+‘purescript-mode’ and thus transitively from ‘prog-mode’) provides
+support for literate PureScript programs
+(http://www.purescript.org/purescriptwiki/Literate_programming) and is
+associated with the ‘.lpurs’ file extension by default.
+
+   ‘literate-purescript-mode’ supports Bird-style as well as TeX-style
+literate PureScript files.  The currently detected literate PureScript
+variant is shown in the mode line (*note (emacs)Mode Line::) as either
+‘LitPureScript/bird’ or ‘LitPureScript/tex’.
+
+4.1 Font Lock Support
+=====================
+
+‘purescript-mode’ supports “syntax highlighting” via Emacs’ Font Lock
+minor mode which should be enabled by default in current Emacsen.  *Note
+(emacs)Font Lock::, for more information on how to control
+‘font-lock-mode’.
+
+   ---------- Footnotes ----------
+
+   (1) for more information about the concept of “major modes” *note
+(emacs)Major Modes::
+
+   (2) ‘purescript-mode’ is derived from ‘prog-mode’
+
+   (3) for more information about file associations, *note
+(emacs)Choosing Modes::
+
+
+File: purescript-mode.info,  Node: Unicode,  Next: Indentation,  Prev: Editing PureScript Code,  Up: Top
+
+5 Unicode support
+*****************
+
+See the PureScript Wiki’s entry on Unicode Symbols
+(http://www.purescript.org/purescriptwiki/Unicode-symbols) for general
+information about Unicode support in PureScript.
+
+   As Emacs supports editing files containing Unicode out of the box, so
+does PureScript Mode.  As an add-on, PureScript Mode includes the
+‘purescript-unicode’ input method which allows you to easily type a
+number of Unicode symbols that are useful when writing PureScript code;
+*Note (emacs)Input Methods::, for more details.
+
+   To automatically enable the ‘purescript-unicode’ input method in
+purescript-mode buffers use ‘M-x customize-variable <RET>
+purescript-mode-hook’ or put the following code in your ‘.emacs’ file:
+
+     (add-hook 'purescript-mode-hook 'turn-on-purescript-unicode-input-method)
+
+To temporarily enable this input method for a single buffer you can use
+‘M-x turn-on-purescript-unicode-input-method’.
+
+   When the ‘purescript-unicode’ input method is active, you can simply
+type ‘->’ and it is immediately replaced with ‘→’.  Use ‘C-\’ to toggle
+the input method.  To see a table of all key sequences use ‘M-x
+describe-input-method <RET> purescript-unicode’.  A sequence like ‘<=’
+is ambiguous and can mean either ‘⇐’ or ‘≤’.  Typing it presents you
+with a choice.  Type ‘1’ or ‘2’ to select an option or keep typing to
+use the default option.
+
+   If you don’t like the highlighting of partially matching tokens you
+can turn it off by setting ‘input-method-highlight-flag’ to ‘nil’ via
+‘M-x customize-variable’.
+
+
+File: purescript-mode.info,  Node: Indentation,  Next: purescript-decl-scan-mode,  Prev: Unicode,  Up: Top
+
+6 Indentation
+*************
+
+For general information about indentation support in GNU Emacs, *note
+(emacs)Indentation::.
+
+   In PureScript, code indentation has semantic meaning as it defines
+the block structure(1).
+
+   As GNU Emacs’ default indentation function (i.e.  ‘indent-relative’)
+is not designed for use with PureScript’s layout rule, PureScript mode
+includes three different indentation minor modes with different
+trade-offs:
+
+‘turn-on-purescript-simple-indent’
+
+     A very simple indentation scheme; In this scheme, <TAB> will now
+     move the cursor to the next indent point in the previous non-blank
+     line.  An indent point is a non-whitespace character following
+     whitespace.
+
+‘turn-on-purescript-indent’
+
+     Intelligent semi-automatic indentation for PureScript’s layout
+     rule.  The basic idea is to have <TAB> cycle through possibilities
+     indentation points based on some clever heuristics.
+
+     The rationale and the implementation principles are described in
+     more detail in the article ‘Dynamic tabbing for automatic
+     indentation with the layout rule’ published in the Journal of
+     Functional Programming 8.5 (1998).
+
+‘turn-on-purescript-indentation’
+
+     Improved variation of ‘turn-on-purescript-indent’ indentation mode.
+     Rebinds <RET> and <DEL>, so that indentations can be set and
+     deleted as if they were real tabs.
+
+   To enable one of these three mutually exclusive indentation schemes,
+you just need call one (and only one!)  of the ‘turn-on-*’ commands
+while in the buffer you want the indentation scheme to be activated for.
+
+   The recommended way is to add one of ‘turn-on-*’ commands to
+‘purescript-mode-hook’.  This can be done either by using ‘M-x
+customize-variable <RET> purescript-mode-hook’ which provides a
+convenient user interface or by adding _one_ of the following three
+lines to your ‘.emacs’ file:
+
+     (add-hook 'purescript-mode-hook 'turn-on-purescript-simple-indent)
+     (add-hook 'purescript-mode-hook 'turn-on-purescript-indent)
+     (add-hook 'purescript-mode-hook 'turn-on-purescript-indentation)
+
+6.1 Interactive Block Indentation
+=================================
+
+By inserting the key bindings for ‘C-,’ and ‘C-.’ (these bindings are
+convenient on keyboard layouts where <,> and <.> are adjacent keys) as
+shown below you can interactively de/indent either the following nested
+block or, if a region is active while in Transient Mark Mode (*note
+(emacs)Disabled Transient Mark::), de/indent the active region.
+
+   By using a numeric prefix argument (*note (elisp)Prefix Command
+Arguments::) you can modify the shift-amount; for instance, ‘C-u C-,’
+increases indentation by 4 characters at once.
+
+     (eval-after-load "purescript-mode"
+       '(progn
+          (define-key purescript-mode-map (kbd "C-,") 'purescript-move-nested-left)
+          (define-key purescript-mode-map (kbd "C-.") 'purescript-move-nested-right)))
+
+6.2 Rectangle Commands
+======================
+
+GNU Emacs provides so-called “rectangle commands” which operate on
+rectangular areas of text, which are particularly useful for languages
+with a layout rule such as PureScript.  *Note (emacs)Rectangles::, to
+learn more about rectangle commands.
+
+   Moreover, CUA mode (*note (emacs)CUA Bindings::) provides enhanced
+rectangle support with visible rectangle highlighting.  When CUA mode is
+active, you can initiate a rectangle selection by ‘C-RET’ and extend it
+simply by movement commands.  You don’t have to enable full CUA mode to
+benefit from these enhanced rectangle commands; you can activate CUA
+selection mode (without redefining ‘C-x’,‘C-c’,‘C-v’, and ‘C-z’) by
+calling ‘M-x cua-selection-mode’ (or adding ‘(cua-selection-mode nil)’
+to your ‘purescript-mode-hook’).
+
+   ---------- Footnotes ----------
+
+   (1) PureScript also supports braces and semicolons notation for
+conveying the block structure.  However, most PureScript programs
+written by humans use indentation for block structuring.
+
+
+File: purescript-mode.info,  Node: purescript-decl-scan-mode,  Next: Compilation,  Prev: Indentation,  Up: Top
+
+7 ‘purescript-decl-scan-mode’
+*****************************
+
+‘purescript-decl-scan-mode’ is a minor mode which performs declaration
+scanning and provides ‘M-x imenu’ support (*note (emacs)Imenu:: for more
+information).
+
+   For non-literate and TeX-style literate scripts, the common
+convention that top-level declarations start at the first column is
+assumed.  For Bird-style literate scripts, the common convention that
+top-level declarations start at the third column, ie.  after ‘> ’, is
+assumed.
+
+   When ‘purescript-decl-scan-mode’ is active, the standard Emacs
+top-level definition movement commands (*note (emacs)Moving by Defuns::)
+are enabled to operate on PureScript declarations:
+
+‘C-M-a’
+     Move to beginning of current or preceding declaration
+     (‘beginning-of-defun’).
+
+‘C-M-e’
+     Move to end of current or following declaration (‘end-of-defun’).
+
+‘C-M-h’
+     Select whole current or following declaration (‘mark-defun’).
+
+   Moreover, if enabled via the option
+‘purescript-decl-scan-add-to-menubar’, a menu item “Declarations” is
+added to the menu bar listing the scanned declarations and allowing to
+jump to declarations in the source buffer.
+
+   It’s recommended to have font lock mode enabled (*note (emacs)Font
+Lock::) as ‘purescript-decl-scan-mode’ ignores text highlighted with
+‘font-lock-comment-face’.
+
+   As usual, in order to activate ‘purescript-decl-scan-mode’
+automatically for PureScript buffers, add ‘turn-on-purescript-decl-scan’
+to ‘purescript-mode-hook’:
+
+     (add-hook 'purescript-mode-hook 'turn-on-purescript-decl-scan)
+
+   ‘purescript-decl-scan-mode’ enables the use of features that build
+upon ‘imenu’ support such as Speedbar Frames (*note (emacs)Speedbar::)
+or the global “Which Function” minor mode (*note (emacs)Which
+Function::).
+
+   In order to enable ‘which-function-mode’ for PureScript buffers you
+need to add the following to your Emacs initialization:
+
+     (eval-after-load "which-func"
+       '(add-to-list 'which-func-modes 'purescript-mode))
+
+
+File: purescript-mode.info,  Node: Compilation,  Next: inferior-purescript-mode,  Prev: purescript-decl-scan-mode,  Up: Top
+
+8 Compilation
+*************
+
+PureScript mode comes equipped with a specialized “Compilation mode”
+tailored to GHC’s compiler messages with optional support for Cabal
+projects.  *Note (emacs)Compilation Mode::, for more information about
+the basic commands provided by the Compilation mode which are available
+in the PureScript compilation sub-mode as well.  The additional features
+provided compared to Emacs’ basic Compilation mode are:
+
+   • DWIM-style auto-detection of compile command (including support for
+     CABAL projects)
+   • Support for GHC’s compile messages and recognizing error, warning
+     and info source locations (including ‘-ferror-spans’ syntax)
+   • Support for filtering out GHC’s uninteresting ‘Loading package...’
+     linker messages
+
+   In order to use it, invoke the ‘purescript-compile’ command instead
+of ‘compile’ as you would for the ordinary Compilation mode.  It’s
+recommended to bind ‘purescript-compile’ to a convenient key binding.
+For instance, you can add the following to your Emacs initialization to
+bind ‘purescript-compile’ to ‘C-c C-c’.
+
+     (eval-after-load "purescript-mode"
+         '(define-key purescript-mode-map (kbd "C-c C-c") 'purescript-compile))
+
+     (eval-after-load "purescript-cabal"
+         '(define-key purescript-cabal-mode-map (kbd "C-c C-c") 'purescript-compile))
+
+The following description assumes that ‘purescript-compile’ has been
+bound to ‘C-c C-c’.
+
+   When invoked, ‘purescript-compile’ tries to guess how to compile the
+PureScript program your currently visited buffer belongs to, by
+searching for a ‘.cabal’ file in the current of enclosing parent
+folders.  If a ‘.cabal’ file was found, the command defined in the
+‘purescript-compile-cabal-build-command’ option is used.  Moreover, when
+requesting to compile a ‘.cabal’-file is detected and a negative prefix
+argument (e.g.  ‘C-- C-c C-c’) was given, the alternative
+‘purescript-compile-cabal-build-command-alt’ is invoked.  By default,
+‘purescript-compile-cabal-build-command-alt’ contains a ‘cabal clean -s’
+command in order to force a full rebuild.
+
+   Otherwise if no ‘.cabal’ could be found, a single-module compilation
+is assumed and ‘purescript-compile-command’ is used (_if_ the currently
+visited buffer contains PureScript source code).
+
+   You can also inspect and modify the compile command to be invoked
+temporarily by invoking ‘purescript-compile’ with a prefix argument
+(e.g.  ‘C-u C-c C-c’).  If later-on you want to recompile using the same
+customized compile command, invoke ‘recompile’ (bound to ‘g’) inside the
+‘*purescript-compilation*’ buffer.
+
+
+File: purescript-mode.info,  Node: inferior-purescript-mode,  Next: purescript-interactive-mode,  Prev: Compilation,  Up: Top
+
+9 ‘inferior-purescript-mode’
+****************************
+
+The major mode ‘inferior-purescript-mode’ provides support for
+interacting with an inferior PureScript process based on ‘comint-mode’.
+
+   By default the ‘purescript-mode-map’ keymap is setup to use this
+mode:
+
+‘C-c C-z’
+     is bound to ‘switch-to-purescript’
+‘C-c C-b’
+     is bound to ‘switch-to-purescript’
+‘C-c C-l’
+     is bound to ‘inferior-purescript-load-file’
+‘C-c C-t’
+     is bound to ‘inferior-purescript-type’
+‘C-c C-i’
+     is bound to ‘inferior-purescript-info’
+
+   The PureScript interpreter used by the inferior PureScript mode is
+auto-detected by default, but is customizable via the
+‘purescript-program-name’ variable.
+
+   Currently, GHCi and Hugs are support as PureScript interpreter.
+
+   TODO/WRITEME
+
+
+File: purescript-mode.info,  Node: purescript-interactive-mode,  Next: purescript-cabal-mode,  Prev: inferior-purescript-mode,  Up: Top
+
+10 ‘purescript-interactive-mode’
+********************************
+
+An alternative mode providing a REPL (read–eval–print loop) via GHCi
+sessions is called ‘purescript-interactive-mode’, which effectively
+replaces ‘inferior-purescript-mode’, but comes with a different set of
+features:
+
+   • Separate sessions per Cabal project ‘purescript-session.el’.
+   • A new inferior PureScript process handling code
+     ‘purescript-process.el’.
+   • New REPL implementation similiar to SLIME/IELM
+     ‘purescript-interactive-mode.el’.
+
+   In order to use ‘purescript-interactive-mode’ instead of the default
+‘inferior-purescript-mode’, you need to replace some of the default
+keybindings in the ‘purescript-mode-map’ keymap with the respective
+‘purescript-interactive-mode’ counterparts:
+
+     (eval-after-load "purescript-mode"
+       '(progn
+         (define-key purescript-mode-map (kbd "C-x C-d") nil)
+         (define-key purescript-mode-map (kbd "C-c C-z") 'purescript-interactive-switch)
+         (define-key purescript-mode-map (kbd "C-c C-l") 'purescript-process-load-file)
+         (define-key purescript-mode-map (kbd "C-c C-b") 'purescript-interactive-switch)
+         (define-key purescript-mode-map (kbd "C-c C-t") 'purescript-process-do-type)
+         (define-key purescript-mode-map (kbd "C-c C-i") 'purescript-process-do-info)
+         (define-key purescript-mode-map (kbd "C-c M-.") nil)
+         (define-key purescript-mode-map (kbd "C-c C-d") nil)))
+
+   With ‘purescript-interactive-mode’, each PureScript source buffer is
+associated with at most one GHCi session, so when you call
+‘purescript-process-load-file’ for a PureScript source buffer which has
+no session associated yet, you’re asked which GHCi session to create or
+associate with.
+
+   TODO/WRITEME
+
+
+File: purescript-mode.info,  Node: purescript-cabal-mode,  Next: Concept index,  Prev: purescript-interactive-mode,  Up: Top
+
+11 ‘purescript-cabal-mode’
+**************************
+
+‘purescript-cabal-mode’ is a major mode for editing Cabal package
+description files
+(http://www.purescript.org/cabal/users-guide/developing-packages.html)
+and is automatically associated with files having a ‘.cabal’ extension.
+
+   For quickly locating and jumping to the nearest ‘.cabal’ file from a
+PureScript source buffer, you can use ‘M-x purescript-cabal-visit-file’;
+with a prefix argument (i.e.  ‘C-u’) ‘find-file-other-window’ is used to
+visit the ‘.cabal’ file.  If you wish, you can bind
+‘purescript-cabal-visit-file’ to a convenient key sequence, e.g.
+
+     (eval-after-load "purescript-mode"
+       (define-key purescript-mode-map (kbd "C-c v c") 'purescript-cabal-visit-file))
+
+   TODO/WRITEME
+
+
+File: purescript-mode.info,  Node: Concept index,  Next: Function index,  Prev: purescript-cabal-mode,  Up: Top
+
+Concept index
+*************
+
+ [index ]
+* Menu:
+
+* CUA mode:                              Indentation.          (line 76)
+* indentation:                           Indentation.          (line  6)
+* layout rule:                           Indentation.          (line  6)
+* literate programming:                  Editing PureScript Code.
+                                                               (line 28)
+* off-side rule:                         Indentation.          (line  6)
+* purescript-mode:                       Editing PureScript Code.
+                                                               (line  6)
+* rectangle:                             Indentation.          (line 76)
+* Unicode:                               Unicode.              (line  6)
+
+
+File: purescript-mode.info,  Node: Function index,  Next: Variable index,  Prev: Concept index,  Up: Top
+
+Function index
+**************
+
+ [index ]
+* Menu:
+
+* inferior-purescript-find-definition:   inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-find-haddock:      inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-info:              inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-load-and-run:      inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-load-file:         inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-mode:              inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-reload-file:       inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-start-process:     inferior-purescript-mode.
+                                                               (line  6)
+* inferior-purescript-type:              inferior-purescript-mode.
+                                                               (line  6)
+* literate-purescript-mode:              Editing PureScript Code.
+                                                               (line 28)
+* purescript-cabal-mode:                 purescript-cabal-mode.
+                                                               (line  6)
+* purescript-cabal-visit-file:           purescript-cabal-mode.
+                                                               (line 11)
+* purescript-compile:                    Compilation.          (line  6)
+* purescript-customize:                  Getting Started.      (line 13)
+* purescript-decl-scan-mode:             purescript-decl-scan-mode.
+                                                               (line  6)
+* purescript-mode:                       Editing PureScript Code.
+                                                               (line  6)
+* purescript-move-nested-left:           Indentation.          (line 68)
+* purescript-move-nested-right:          Indentation.          (line 68)
+* turn-on-purescript-decl-scan:          purescript-decl-scan-mode.
+                                                               (line  6)
+* turn-on-purescript-indent:             Indentation.          (line 24)
+* turn-on-purescript-indentation:        Indentation.          (line 35)
+* turn-on-purescript-simple-indent:      Indentation.          (line 17)
+
+
+File: purescript-mode.info,  Node: Variable index,  Prev: Function index,  Up: Top
+
+Variable index
+**************
+
+ [index ]
+* Menu:
+
+* inferior-purescript-mode-hook:         inferior-purescript-mode.
+                                                               (line  6)
+* purescript-cabal-mode-hook:            purescript-cabal-mode.
+                                                               (line  6)
+* purescript-compile-cabal-build-command: Compilation.         (line 35)
+* purescript-compile-cabal-build-command-alt: Compilation.     (line 35)
+* purescript-compile-command:            Compilation.          (line 35)
+* purescript-decl-scan-mode-hook:        purescript-decl-scan-mode.
+                                                               (line  6)
+* purescript-mode-hook:                  Getting Started.      (line 18)
+* purescript-program-name:               inferior-purescript-mode.
+                                                               (line  6)
+
+
+
+Tag Table:
+Node: Top704
+Node: Introduction1377
+Node: Getting Help and Reporting Bugs1910
+Node: Getting Started3438
+Node: Editing PureScript Code4691
+Ref: Editing PureScript Code-Footnote-16730
+Ref: Editing PureScript Code-Footnote-26825
+Ref: Editing PureScript Code-Footnote-36887
+Node: Unicode6971
+Node: Indentation8707
+Ref: Indentation-Footnote-112696
+Node: purescript-decl-scan-mode12887
+Node: Compilation15096
+Node: inferior-purescript-mode17937
+Node: purescript-interactive-mode18910
+Node: purescript-cabal-mode20880
+Node: Concept index21807
+Node: Function index22689
+Node: Variable index25455
+
+End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:

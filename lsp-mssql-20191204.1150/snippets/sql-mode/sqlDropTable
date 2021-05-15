@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: Drop a Table
+# key: sqlDropTable
+# --
+-- Drop the table '${1:TableName}' in schema '${2:SchemaName}'
+IF EXISTS (
+	SELECT *
+		FROM sys.tables
+		JOIN sys.schemas
+			ON sys.tables.schema_id = sys.schemas.schema_id
+	WHERE sys.schemas.name = N'$2'
+		AND sys.tables.name = N'$1'
+)
+	DROP TABLE $2.$1
+GO

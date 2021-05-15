@@ -1,0 +1,54 @@
+9.elisp:6:33: In page-delimiter: Duplicated `a' inside character alternative (pos 2)
+  "[aa]"
+   ..^
+9.elisp:7:37: In paragraph-separate: Duplicated `b' inside character alternative (pos 2)
+  "[bb]"
+   ..^
+9.elisp:8:34: In paragraph-start: Duplicated `c' inside character alternative (pos 2)
+  "[cc]"
+   ..^
+9.elisp:9:31: In sentence-end: Duplicated `d' inside character alternative (pos 2)
+  "[dd]"
+   ..^
+9.elisp:10:37: In comment-start-skip: Duplicated `e' inside character alternative (pos 2)
+  "[ee]"
+   ..^
+9.elisp:11:35: In comment-end-skip: Duplicated `f' inside character alternative (pos 2)
+  "[ff]"
+   ..^
+9.elisp:13:25: In sentence-end: Duplicated `g' inside character alternative (pos 2)
+  "[gg]"
+   ..^
+9.elisp:14:50: In paragraph-start: Duplicated `h' inside character alternative (pos 2)
+  "[hh]"
+   ..^
+9.elisp:16:32: In paragraph-separate: Duplicated `i' inside character alternative (pos 2)
+  "[ii]"
+   ..^
+9.elisp:17:28: In page-delimiter: Duplicated `j' inside character alternative (pos 2)
+  "[jj]"
+   ..^
+9.elisp:18:35: In comment-start-skip: Duplicated `k' inside character alternative (pos 2)
+  "[kk]"
+   ..^
+9.elisp:19:33: In comment-end-skip: Duplicated `l' inside character alternative (pos 2)
+  "[ll]"
+   ..^
+9.elisp:25:28: In imenu-generic-expression: Unescaped literal `+' (pos 0)
+  "+a+"
+   ^
+9.elisp:28:40: In font-lock-keywords (tag): Duplicated `m' inside character alternative (pos 2)
+  "[mm]"
+   ..^
+9.elisp:29:34: In font-lock-keywords (tag): Duplicated `n' inside character alternative (pos 2)
+  "[nn]"
+   ..^
+9.elisp:30:56: In font-lock-keywords (tag): Duplicated `o' inside character alternative (pos 2)
+  "[oo]"
+   ..^
+9.elisp:36:9: In my-font-lock-keywords-2 (beta): Duplicated `q' inside character alternative (pos 2)
+  "[qq]"
+   ..^
+9.elisp:40:9: In font-lock-defaults (alpha): Duplicated `p' inside character alternative (pos 2)
+  "[pp]"
+   ..^

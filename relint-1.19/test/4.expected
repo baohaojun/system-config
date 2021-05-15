@@ -1,0 +1,60 @@
+4.elisp:10:15: In call to looking-at: Unescaped literal `$' (pos 0)
+  "$%&'()*"
+   ^
+4.elisp:14:15: In call to looking-at: Unescaped literal `+' (pos 0)
+  "+x"
+   ^
+4.elisp:15:15: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*"
+   ^
+4.elisp:16:15: In call to looking-at: Unescaped literal `^' (pos 2)
+  "x-^"
+   ..^
+4.elisp:17:15: In call to looking-at: Duplicated `A' inside character alternative (pos 2)
+  "[AA]"
+   ..^
+4.elisp:18:15: In call to looking-at: Duplicated `B' inside character alternative (pos 2)
+  "[BB]"
+   ..^
+4.elisp:19:15: In call to looking-at: Unescaped literal `+' (pos 0)
+  "+b"
+   ^
+4.elisp:20:15: In call to looking-at: Unescaped literal `+' (pos 0)
+  "++"
+   ^
+4.elisp:21:15: In call to looking-at: Unescaped literal `$' (pos 0)
+  "$+a"
+   ^
+4.elisp:25:15: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*ab"
+   ^
+4.elisp:26:24: In call to looking-at: Unescaped literal `+' (pos 0)
+  "+c"
+   ^
+4.elisp:43:15: In call to looking-at: Unescaped literal `^' (pos 1)
+  "a^"
+   .^
+4.elisp:44:15: In call to looking-at: Repetition of repetition (pos 2)
+  "b++"
+   ..^
+4.elisp:45:15: In call to looking-at: Repetition of repetition (pos 2)
+  "c++"
+   ..^
+4.elisp:46:15: In call to looking-at: Unescaped literal `$' (pos 1)
+  "a$b"
+   .^
+4.elisp:47:15: In call to looking-at: Repetition of repetition (pos 2)
+  "d++"
+   ..^
+4.elisp:48:15: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*"
+   ^
+4.elisp:55:15: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*b"
+   ^
+4.elisp:56:15: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*bc"
+   ^
+4.elisp:62:15: In call to looking-at: Unescaped literal `*' (pos 0)
+  "*a"
+   ^

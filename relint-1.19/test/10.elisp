@@ -1,0 +1,19 @@
+;;; Relint test file 10          -*- emacs-lisp -*-
+
+;; Test error position in lists
+
+(defconst test-1-regexp-list
+  (append
+   (list "1" "[aa]")
+   (list "2" "3" "[bb]")))
+
+(defconst test-2-regexp-alist
+  `((c . "[cc]")
+    ,(cons 'd "[dd]")
+    (e . ,(concat "[e" "e]"))
+    ,@(list '(f . "[ff]") '(g . "[gg]"))
+    (i . "[hh]")))
+
+(defconst test-3-regexp-alist
+  (list
+   '("[ii]" . "[jj]")))

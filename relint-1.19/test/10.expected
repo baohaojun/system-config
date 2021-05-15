@@ -1,0 +1,30 @@
+10.elisp:7:17: In test-1-regexp-list: Duplicated `a' inside character alternative (pos 2)
+  "[aa]"
+   ..^
+10.elisp:8:21: In test-1-regexp-list: Duplicated `b' inside character alternative (pos 2)
+  "[bb]"
+   ..^
+10.elisp:11:13: In test-2-regexp-alist: Duplicated `c' inside character alternative (pos 2)
+  "[cc]"
+   ..^
+10.elisp:12:5: In test-2-regexp-alist: Duplicated `d' inside character alternative (pos 2)
+  "[dd]"
+   ..^
+10.elisp:13:5: In test-2-regexp-alist: Duplicated `e' inside character alternative (pos 2)
+  "[ee]"
+   ..^
+10.elisp:14:5: In test-2-regexp-alist: Duplicated `f' inside character alternative (pos 2)
+  "[ff]"
+   ..^
+10.elisp:14:5: In test-2-regexp-alist: Duplicated `g' inside character alternative (pos 2)
+  "[gg]"
+   ..^
+10.elisp:15:13: In test-2-regexp-alist: Duplicated `h' inside character alternative (pos 2)
+  "[hh]"
+   ..^
+10.elisp:19:9: In test-3-regexp-alist: Duplicated `i' inside character alternative (pos 2)
+  "[ii]"
+   ..^
+10.elisp:19:18: In test-3-regexp-alist: Duplicated `j' inside character alternative (pos 2)
+  "[jj]"
+   ..^

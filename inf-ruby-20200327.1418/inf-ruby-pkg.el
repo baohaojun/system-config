@@ -1,2 +1,0 @@
-;;; Generated package description from /home/bhj/.emacs.d/elpa-27.0/inf-ruby-20200327.1418/inf-ruby.el  -*- no-byte-compile: t -*-
-(define-package "inf-ruby" "20200327.1418" "Run a Ruby process in a buffer" 'nil :commit "41e5ed3a886fca56990486f1987bb3bae0dbd54b" :keywords '("languages" "ruby") :authors '(("Yukihiro Matsumoto") ("Nobuyoshi Nakada") ("Cornelius Mika" . "cornelius.mika@gmail.com") ("Dmitry Gutov" . "dgutov@yandex.ru") ("Kyle Hargraves" . "pd@krh.me")) :maintainer '("Yukihiro Matsumoto") :url "http://github.com/nonsequitur/inf-ruby")

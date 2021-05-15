@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: Insert rows into a Table
+# key: sqlInsertRows
+# --
+-- Insert rows into table '${1:TableName}'
+INSERT INTO $1
+( -- columns to insert data into
+ $2[Column1], [Column2], [Column3]
+)
+VALUES
+( -- first row: values for the columns in the list above
+ $3Column1_Value, Column2_Value, Column3_Value
+),
+( -- second row: values for the columns in the list above
+ $4Column1_Value, Column2_Value, Column3_Value
+)
+-- add more rows here
+GO

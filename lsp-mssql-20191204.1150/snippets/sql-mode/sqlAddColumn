@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Add a new column to a Table
+# key: sqlAddColumn
+# --
+-- Add a new column '${1:NewColumnName}' to table '${2:TableName}' in schema '${3:SchemaName}'
+ALTER TABLE $3.$2
+	ADD $1 /*new_column_name*/ int /*new_column_datatype*/ NULL /*new_column_nullability*/
+GO

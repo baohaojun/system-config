@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: List databases
+# key: sqlListDatabases
+# --
+-- Get a list of databases
+SELECT name FROM sys.databases
+GO

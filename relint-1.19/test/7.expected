@@ -1,0 +1,18 @@
+7.elisp:10:15: In call to looking-at: Unescaped literal `^' (pos 2)
+  "ab^"
+   ..^
+7.elisp:21:15: In call to looking-at: Unescaped literal `$' (pos 3)
+  "!\"#$%"
+   ....^
+7.elisp:24:15: In call to looking-at: Duplicated `*' inside character alternative (pos 2)
+  "[**]"
+   ..^
+7.elisp:31:4: In call to looking-at: Unescaped literal `$' (pos 3)
+  "!\"#$%"
+   ....^
+7.elisp:34:15: In call to looking-at: Duplicated `X' inside character alternative (pos 2)
+  "[XX]"
+   ..^
+7.elisp:37:15: In call to looking-at: Duplicated `X' inside character alternative (pos 2)
+  "[XX]"
+   ..^

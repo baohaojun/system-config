@@ -1,0 +1,2 @@
+;;; Generated package description from lsp-latex.el  -*- no-byte-compile: t -*-
+(define-package "lsp-latex" "20210110.1914" "lsp-mode client for LaTeX, on texlab" '((emacs "25.1") (lsp-mode "6.0")) :commit "5fc536f24dc659f998bc673129d9e7c4b20d297c" :authors '(("ROCKTAKEY" . "rocktakey@gmail.com")) :maintainer '("ROCKTAKEY" . "rocktakey@gmail.com") :keywords '("languages" "tex") :url "https://github.com/ROCKTAKEY/lsp-latex")

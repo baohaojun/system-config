@@ -1,0 +1,205 @@
+This is bbdb-vcard.info, produced by makeinfo version 6.7 from
+bbdb-vcard.texi.
+
+Copyright © 2010 Bert Burgemeister Copyright © 2013 Toke
+Høiland-Jørgensen, Kevin Brubeck Unhammer, Steve Purcell, Vincent Geddes
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.2 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, with no Front-Cover Texts,
+     and with no Back-Cover Texts.  A copy of the license is included in
+     the section entitled “GNU Free Documentation License”.
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* BBDB vCard: (bbdb-vcard).        vCard import/export for BBDB.
+END-INFO-DIR-ENTRY
+
+
+File: bbdb-vcard.info,  Node: Top,  Next: Setup,  Up: (dir)
+
+BBDB vCard Documentation
+************************
+
+Import and export of vCards as defined in RFC 2425 and RFC 2426 to/from
+The Insidious Big Brother Database (BBDB).
+
+* Menu:
+
+* Setup::
+* Import Contacts::
+* Export Contacts::
+* Implementation::
+
+
+File: bbdb-vcard.info,  Node: Setup,  Next: Import Contacts,  Prev: Top,  Up: Top
+
+1 Setup
+*******
+
+Put this file and file vcard.el into your ‘load-path’ and add the
+following line to your Emacs initialization file:
+
+     (require 'bbdb-vcard)
+     (bbdb-vcard-default-keybindings) ; optional, binds v/V keys in bbdb
+
+If you use ‘use-package’ for deferred loading, you may prefer:
+
+     (use-package bbdb-vcard
+       :ensure t    ; get it from Melpa
+       :after bbdb  ; defer until bbdb loaded
+       :config      ; bind v/V keys
+       (bbdb-vcard-default-keybindings))
+
+
+File: bbdb-vcard.info,  Node: Import Contacts,  Next: Export Contacts,  Prev: Setup,  Up: Top
+
+2 Import Contacts
+*****************
+
+On a file, a buffer or a region containing one or more vCards, use
+‘bbdb-vcard-import-file’, ‘bbdb-vcard-import-buffer’, or
+‘bbdb-vcard-import-region’ respectively to import them into BBDB.
+
+   Preferred input format is vCard version 3.0.  Version 2.1 vCards are
+converted to version 3.0 on import.
+
+
+File: bbdb-vcard.info,  Node: Export Contacts,  Next: Implementation,  Prev: Import Contacts,  Up: Top
+
+3 Export Contacts
+*****************
+
+In buffer *BBDB*, press v to export the record under point.  Press ‘* v’
+to export all records in buffer into one vCard file.  Press ‘* C-u v’ to
+export them into one file each.  To put one or all vCard(s) into the
+kill ring, press ‘V’ or ‘* V’ respectively.
+
+   Exported vCards are always version 3.0.  They can be re-imported
+without data loss with one exception: North American phone numbers lose
+their structure and are stored as flat strings.
+
+   There are a few customization variables grouped under ‘bbdb-vcard’.
+
+
+File: bbdb-vcard.info,  Node: Implementation,  Prev: Export Contacts,  Up: Top
+
+4 Implementation
+****************
+
+* Menu:
+
+* vCard Import::
+* vCard Export::
+
+
+File: bbdb-vcard.info,  Node: vCard Import,  Next: vCard Export,  Up: Implementation
+
+4.1 vCard Import
+================
+
+Noah Friedman’s vcard.el (included) is used to convert v2.1 vCards to
+the v3.0 form.
+
+   An existing BBDB record is extended by new information from a vCard
+
+   (a) if name and organization and an email address match (b) or if
+name and organization match (c) or if name and an email address match
+(d) or if name and birthday match (e) or if name and a phone number
+match.
+
+   Otherwise, a fresh BBDB record is created.
+
+   When ‘bbdb-vcard-try-merge’ is set to nil, there is always a fresh
+record created.
+
+   In cases (c), (d), and (e), if the vCard has ORG defined, this ORG
+would overwrite an existing Organization in BBDB.
+
+   Phone numbers are always imported as strings.
+
+   For vCard types that have more or less direct counterparts in BBDB,
+labels and parameters are translated and structured values (lastname;
+firstname; additional names; prefixes etc.)  are converted appropriately
+with the risk of some (hopefully unessential) information loss.  For
+labels of the vCard types ADR and TEL, parameter translation is defined
+in ‘bbdb-vcard-import-translation-table’.
+
+   If there is a REV element, it is stored in BBDB’s creation-date in
+newly created BBDB records, or discarded for existing ones.  Time and
+time zone information from REV are stored there as well if there are
+any, but are ignored by BBDB (v2.36).
+
+   VCard type prefixes (A.ADR:..., B.ADR:...  etc.)  are stripped off
+and discarded from the following types: N, FN, NICKNAME, ORG (first
+occurrence), ADR, TEL, EMAIL, URL, BDAY (first occurrence), NOTE.
+
+   VCard types that are prefixed ‘X-BBDB-’ are stored in BBDB without
+the prefix.
+
+   VCard type X-BBDB-ANNIVERSARY may contain (previously exported)
+newline-separated non-birthday anniversaries that are meant to be read
+by org-mode.
+
+   All remaining vCard types that don’t match the regexp in
+‘bbdb-vcard-skip-on-import’ and that have a non-empty value are stored
+unaltered in the BBDB Notes alist where, for instance,
+‘TZ;VALUE=text:-05:00’ is stored as ‘(tz\;value=text .  "-05:00")’.
+From the BBDB data fields AKA, Phones, Addresses, Net Addresses, and
+Notes, duplicates are removed, respectively.
+
+   VCards found inside other vCards (as values of type AGENT) are
+imported as well.
+
+   Handling of the individual types defined in RFC2426 during import
+(assuming default label translation and no vCard type exclusion):
+
+
+File: bbdb-vcard.info,  Node: vCard Export,  Prev: vCard Import,  Up: Implementation
+
+4.2 vCard Export
+================
+
+VCard types N (only fields lastname, firstname) and FN both come from
+BBDB’s Name.
+
+   Members of BBDB field AKA are stored comma-separated under the vCard
+type NICKNAME.
+
+   Labels of Addresses and Phones are translated as defined in
+‘bbdb-vcard-export-translation-table’ into type parameters of vCard
+types ADR and TEL, respectively.
+
+   In vCard type ADR, fields postbox and extended address are always
+empty.  Newlines which subdivide BBDB Address fields are converted into
+commas subdividing vCard ADR fields.
+
+   The value of ’anniversary in Notes is supposed to be subdivided by
+newlines.  The birthday part (either just a date or a date followed by
+\"birthday\") is stored under vCard type BDAY. The rest is stored
+newline-separated in the non-standard vCard type X-BBDB-ANNIVERSARY.
+
+   Field names listed in ‘bbdb-vcard-x-bbdb-candidates’ are in the
+exported vCard prepended by ‘X-BBDB-’.
+
+   The creation-date of the BBDB record is stored as vCard type REV.
+
+   Remaining members of BBDB Notes are exported to the vCard without
+change.
+
+
+
+Tag Table:
+Node: Top757
+Node: Setup1066
+Node: Import Contacts1651
+Node: Export Contacts2097
+Node: Implementation2781
+Node: vCard Import2942
+Node: vCard Export5449
+
+End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:

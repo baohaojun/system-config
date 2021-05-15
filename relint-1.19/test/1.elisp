@@ -1,0 +1,114 @@
+;;; Relint test file 1          -*- emacs-lisp -*-
+
+;; Test variable name heuristics for detecting regexps.
+(defconst innocent-thing "+bad**regexp^")
+
+(defconst bad-regexp "[AA]")
+(defconst bad-regex "[AA]")
+(defconst bad-re "[AA]")
+(defconst bad-pattern "[AA]")
+
+(defconst bad-regexps '("a" "+a" "a"))
+(defconst bad-regexes '("b" "+b" "b"))
+(defconst bad-regexp-list '("c" "+c" "c"))
+(defconst bad-regex-list '("d" "+d" "d"))
+(defconst bad-re-list '("e" "+e" "e"))
+
+(defconst bad-regexp-alist '((a . "**") ("??" . a) (".^" . "$.")))
+(defconst bad-regex-alist '((a . "**") ("??" . a) (".^" . "$.")))
+(defconst bad-re-alist '((a . "**") ("??" . a) (".^" . "$.")))
+(defconst bad-pattern-alist '((a . "**") ("??" . a) (".^" . "$.")))
+
+(defconst bad-mode-alist '((a . "**") ("??" . a) (".^" . "$.")))
+
+(defconst bad-rules-list '((eins
+                            (this . that)
+                            (regexp . "$$"))
+                           (zwei
+                            (tata . toto)
+                            (regexp . "[a-Z]"))))
+
+(defconst bad-font-lock-keywords '(("[xx]" . tag) "[yy]"))
+(defconst more-font-lock-keywords-bad '(("[uu]" . tag) "[vv]"))
+(font-lock-add-keywords 'mymode '(("[ss]" . tag) "[tt]"))
+
+;; Test variable doc string heuristics.
+(defconst bad-var-1 "a^"
+  "Regexp, or something.")
+(defvar bad-var-2 "[zz]"
+  "A regular expression with flaws.")
+(defcustom bad-var-3 "[o-O]"
+  "This regexp looks at you."
+  :group 'relint-test
+  :type 'string)
+
+;; Test defcustom type heuristics.
+(defcustom bad-custom-1 "[nn]"
+  "Doc"
+  :group 'relint-test
+  :type 'regexp)
+(defcustom bad-custom-2 "[ss]"
+  "Doc"
+  :group 'relint-test
+  :type '(regexp :tag "tag"))
+(defcustom bad-custom-3-regexp nil
+  "Doc"
+  :group 'relint-test
+  :type '(choice (const :tag "*" "+a+")
+                 (radio (const "*b*")
+                        (const "^c^"))))
+(defcustom bad-custom-4-regexp nil
+  "Doc"
+  :group 'relint-test
+  :type 'string
+  :options '("a" "+b"))
+(defcustom bad-custom-5 '(("a" . tata) ("^x^" . toto))
+  "Doc"
+  :group 'relint-test
+  :type '(alist :key-type regexp :value-type symbol))
+(defcustom bad-custom-6 '((toto . "humbug") (tata . "[[:bah:]]"))
+  "Doc"
+  :group 'relint-test
+  :type '(alist :key-type symbol :value-type regexp))
+(defcustom bad-custom-7 '("aa" "[aa]")
+  "Doc"
+  :group 'relint-test
+  :type '(repeat regexp))
+
+(defcustom bad-custom-8 nil
+  "Doc"
+  :type '(choice (regexp :tag "*" :value "[11]")
+                 (string :tag "+" :value "[22]")))
+
+(defcustom bad-custom-9-regexp nil
+  "Doc"
+  :type '(string :tag "+" :value "[33]"))
+
+(defcustom bad-custom-10 nil
+  "regular expression"
+  :type '(string :tag "+" "[44]"))
+
+;; Special case.
+(defvar compilation-error-regexp-alist-alist
+  '((aa "a^a" 1 2)
+    (bb "b$b" 3 4)))
+
+(define-generic-mode my-mode
+  nil
+  nil
+  '(("1^" bla)
+    ("2^" argl))
+  '("a" "b++" "c")
+  nil)
+
+(defun my-syn-1 ()
+  (syntax-propertize-rules
+   ("thing" stuff)
+   ("$1$" bad)
+   ("^2^" alsobad)))
+
+(defun my-syn-2 ()
+  (syntax-propertize-precompile-rules
+   ("thing" stuff)
+   ("$3$" bad)
+   ("^4^" alsobad)))

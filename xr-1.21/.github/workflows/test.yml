@@ -1,0 +1,30 @@
+name: test
+
+on:
+  push:
+    paths-ignore:
+      - '**README*'
+  pull_request:
+    paths-ignore:
+      - '**README*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        emacs_version:
+          - "26.3"
+          - "27.1"
+          - snapshot
+    steps:
+      - name: Set up Emacs
+        uses: purcell/setup-emacs@master
+        with:
+          version: ${{matrix.emacs_version}}
+
+      - name: Check out xr
+        uses: actions/checkout@v2
+
+      - name: Test
+        run: make build check

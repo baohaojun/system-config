@@ -1,2 +1,0 @@
-;;; Generated package description from /home/bhj/.emacs.d/elpa-27.0/whitespace-cleanup-mode-20200304.2227/whitespace-cleanup-mode.el  -*- no-byte-compile: t -*-
-(define-package "whitespace-cleanup-mode" "20200304.2227" "Intelligently call whitespace-cleanup on save" '((emacs "24.1")) :commit "5fac49636cd72a0043e2473c9a09a788cfd68d5f" :keywords '("convenience") :authors '(("Steve Purcell" . "steve@sanityinc.com")) :maintainer '("Steve Purcell" . "steve@sanityinc.com") :url "https://github.com/purcell/whitespace-cleanup-mode")

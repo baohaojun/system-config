@@ -1,0 +1,25 @@
+;;; Relint test file 12          -*- emacs-lisp -*-
+
+;; Test auto-mode-alist
+
+(define-generic-mode my-mode
+  nil
+  nil
+  nil
+  '(".aa\\'" "\\.bb$" "^cc.*dd"))
+
+(add-to-list 'auto-mode-alist '("\\.ee$" . some-mode))
+(push '(".ff\\'" . some-mode) auto-mode-alist)
+(setq auto-mode-alist (cons '(".gg\\'" . some-mode) auto-mode-alist))
+(setq auto-mode-alist (append '((".hh\\'" . some-mode)
+                                (".ii\\'" . some-mode))
+                              auto-mode-alist))
+
+;; File-matching regexp functions
+
+(defun f12 (d)
+  (directory-files d nil ".txt\\'")
+  (directory-files-and-attributes d nil "\\.pas$")
+  (directory-files-recursively d "^abc")
+  (modify-coding-system-alist 'file "\\.ml$" 'utf-8)
+  (modify-coding-system-alist 'process "+xx$" 'utf-8))

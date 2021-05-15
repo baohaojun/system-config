@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Drop a column from a Table
+# key: sqlDropColumn
+# --
+-- Drop '${1:ColumnName}' from table '${2:TableName}' in schema '${3:SchemaName}'
+ALTER TABLE $3.$2
+	DROP COLUMN $1
+GO

@@ -1,0 +1,2 @@
+;;; Generated package description from shfmt.el  -*- no-byte-compile: t -*-
+(define-package "shfmt" "20200421.103" "Reformat shell scripts using shfmt" '((emacs "24") (reformatter "0.3")) :commit "49c9e11567874bc4c5c4b3578a6b8f6b1948c691" :authors '(("Steve Purcell" . "steve@sanityinc.com")) :maintainer '("Steve Purcell" . "steve@sanityinc.com") :keywords '("languages") :url "https://github.com/purcell/emacs-shfmt")

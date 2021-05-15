@@ -1,0 +1,39 @@
+12.elisp:9:6: In define-generic-mode my-mode: Possibly unescaped `.' in file-matching regexp (pos 0)
+  ".aa\\'"
+   ^
+12.elisp:9:20: In define-generic-mode my-mode: Use \' instead of $ in file-matching regexp (pos 4)
+  "\\.bb$"
+   .....^
+12.elisp:9:24: In define-generic-mode my-mode: Use \` instead of ^ in file-matching regexp (pos 0)
+  "^cc.*dd"
+   ^
+12.elisp:11:39: In add-to-list: Use \' instead of $ in file-matching regexp (pos 4)
+  "\\.ee$"
+   .....^
+12.elisp:12:10: In auto-mode-alist: Possibly unescaped `.' in file-matching regexp (pos 0)
+  ".ff\\'"
+   ^
+12.elisp:13:32: In auto-mode-alist: Possibly unescaped `.' in file-matching regexp (pos 0)
+  ".gg\\'"
+   ^
+12.elisp:14:35: In auto-mode-alist: Possibly unescaped `.' in file-matching regexp (pos 0)
+  ".hh\\'"
+   ^
+12.elisp:15:35: In auto-mode-alist: Possibly unescaped `.' in file-matching regexp (pos 0)
+  ".ii\\'"
+   ^
+12.elisp:21:27: In call to directory-files: Possibly unescaped `.' in file-matching regexp (pos 0)
+  ".txt\\'"
+   ^
+12.elisp:22:48: In call to directory-files-and-attributes: Use \' instead of $ in file-matching regexp (pos 5)
+  "\\.pas$"
+   ......^
+12.elisp:23:35: In call to directory-files-recursively: Use \` instead of ^ in file-matching regexp (pos 0)
+  "^abc"
+   ^
+12.elisp:24:43: In call to modify-coding-system-alist: Use \' instead of $ in file-matching regexp (pos 4)
+  "\\.ml$"
+   .....^
+12.elisp:25:41: In call to modify-coding-system-alist: Unescaped literal `+' (pos 0)
+  "+xx$"
+   ^
