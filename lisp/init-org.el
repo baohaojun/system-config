@@ -499,6 +499,16 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
      (sql . t)
      (sqlite . t))))
 
+(use-package org
+  :init
+  (setq org-emphasis-regexp-components
+        '(
+          "！？；：，。、  \t('\"{（“「『"              ;pre
+          "- —；：，。、 \t.!,:!?？;！'\")}（）\\”」』" ;post
+          " \t\r\n,"                                ;border *forbidden*
+          "."                                       ;body-regexp
+          1                                         ; newline
+          )))
 
 (provide 'init-org)
 ;;; init-org.el ends here

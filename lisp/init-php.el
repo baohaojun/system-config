@@ -9,5 +9,15 @@
     (after-load 'company
       (push 'company-ac-php-backend company-backends))))
 
+(use-package php-mode
+  :defer t
+  :init
+  (autoload 'php-mode "php-mode" nil t)
+  :config
+  (mapc (lambda (x) (add-hook x (lambda ()
+                             (setq beginning-of-defun-function nil)
+                             (local-set-key [?\C-\M-a] 'beginning-of-defun)
+                             (local-set-key [?\C-\M-e] 'end-of-defun))))
+        (list 'php-mode-hook)))
 (provide 'init-php)
 ;;; init-php.el ends here

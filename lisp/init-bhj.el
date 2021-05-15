@@ -107,9 +107,5 @@ Returns (point) if current-char is visible."
       (forward-char)
       (insert "」\n--------------------------------\n"))))
 
-
-
-(add-hook 'before-save-hook #'fix-cjk-spaces)
-
 (define-key global-map (kbd "s-SPC") #'fix-cjk-spaces)
 (provide 'init-bhj)
