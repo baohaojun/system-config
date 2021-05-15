@@ -20,14 +20,14 @@
              :buffer buf
              :category 'compilation))))
 
-(after-load 'compile
+(with-eval-after-load 'compile
   (add-hook 'compilation-finish-functions
             'sanityinc/alert-after-compilation-finish))
 
 (defvar sanityinc/last-compilation-buffer nil
   "The last buffer in which compilation took place.")
 
-(after-load 'compile
+(with-eval-after-load 'compile
   (defun sanityinc/save-compilation-buffer (&rest _)
     "Save the compilation buffer to find it later."
     (setq sanityinc/last-compilation-buffer next-error-last-buffer))
@@ -56,15 +56,12 @@
 
 ;(ad-deactivate 'shell-command-on-region)
 
-(after-load 'compile
+(with-eval-after-load 'compile
   (require 'ansi-color)
   (defun sanityinc/colourise-compilation-buffer ()
     (when (eq major-mode 'compilation-mode)
       (ansi-color-apply-on-region compilation-filter-start (point-max))))
   (add-hook 'compilation-filter-hook 'sanityinc/colourise-compilation-buffer))
-
-
-(maybe-require-package 'cmd-to-echo)
 
 
 (provide 'init-compile)
