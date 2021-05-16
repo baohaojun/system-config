@@ -1,4 +1,4 @@
-;;; init-python.el --- Python editing -*- lexical-binding: t -*-
+;;; init-lsp.el --- Lsp editing -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
 
@@ -7,20 +7,17 @@
 ;; screencast about this: https://www.youtube.com/watch?v=TbIHRHy7_JM
 
 
-(setq auto-mode-alist
-      (append '(("SConstruct\\'" . python-mode)
-                ("SConscript\\'" . python-mode))
-              auto-mode-alist))
-
-(setq python-shell-interpreter "python3")
-
-(require-package 'pip-requirements)
-
+(require-package 'lsp-mode)
+(use-package lsp-mode
+  :commands lsp
+  :hook (python-mode . lsp)
+  (isearch-mode . (lambda () (lsp-ui-doc-mode -1)))
+  (isearch-mode-end . (lambda () (lsp-ui-doc-mode +1))))
 (when (maybe-require-package 'toml-mode)
   (add-to-list 'auto-mode-alist '("poetry\\.lock\\'" . toml-mode)))
 
 (when (maybe-require-package 'reformatter)
   (reformatter-define black :program "black"))
 
-(provide 'init-python)
-;;; init-python.el ends here
+(provide 'init-lsp)
+;;; init-lsp.el ends here
