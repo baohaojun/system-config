@@ -11,8 +11,8 @@
 (use-package lsp-mode
   :commands lsp
   :hook (python-mode . lsp)
-  (isearch-mode . (lambda () (lsp-ui-doc-mode -1)))
-  (isearch-mode-end . (lambda () (lsp-ui-doc-mode +1))))
+  (isearch-mode . (lambda () (when (fboundp 'lsp-ui-doc-mode) (lsp-ui-doc-mode -1))))
+  (isearch-mode-end . (lambda () (when (fboundp 'lsp-ui-doc-mode) (lsp-ui-doc-mode +1)))))
 (when (maybe-require-package 'toml-mode)
   (add-to-list 'auto-mode-alist '("poetry\\.lock\\'" . toml-mode)))
 

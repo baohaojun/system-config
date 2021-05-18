@@ -107,5 +107,9 @@ Returns (point) if current-char is visible."
       (forward-char)
       (insert "」\n--------------------------------\n"))))
 
+(use-package cperl-mode
+  :config
+  (define-key cperl-mode-map (kbd "C-c C-k") nil))
+
 (define-key global-map (kbd "s-SPC") #'fix-cjk-spaces)
 (provide 'init-bhj)

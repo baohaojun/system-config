@@ -469,6 +469,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
      (ledger . t)
      (ocaml . nil)
      (octave . t)
+     (perl . t)
      (plantuml . t)
      (python . t)
      (ruby . t)
@@ -486,7 +487,9 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
           " \t\r\n,"                                ;border *forbidden*
           "."                                       ;body-regexp
           1                                         ; newline
-          )))
+          ))
+  :config
+  (define-key org-mode-map (kbd "C-c C-k") nil))
 
 (provide 'init-org)
 ;;; init-org.el ends here
