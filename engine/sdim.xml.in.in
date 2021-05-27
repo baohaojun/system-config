@@ -10,7 +10,7 @@
     <homepage>http://github.com/baohaojun/system-config/raw/master/gcode/ibus-sdim/</homepage>
     <textdomain>ibus-sdim</textdomain>
     <observed-paths>
-        <path>${pkgdatadir}/sdims/</path>
+        <path>${pkgdatadir}/engine/</path>
     </observed-paths>
     <engines exec='${libexecdir}/ibus-engine-sdim --xml'/>
 </component>
