@@ -61,9 +61,6 @@
 (require-package 'oauth2)
 (require-package 'yasnippet)
 (yas-global-mode)
-(setq yas-snippet-dirs
-      '("~/system-config/.emacs_d/yasnippet/snippets" "~/system-config/.emacs_d/yasnippet-snippets"))
-(yas-reload-all)
 
 (browse-kill-ring-default-keybindings)
 (require-package 'project-local-variables)
