@@ -94,7 +94,9 @@ locate PACKAGE."
 ;;; Fire up package.el
 
 (setq package-enable-at-startup nil)
-(package-initialize)
+(unless (and (boundp package--initialized)
+             package--initialized)
+  (package-initialize))
 
 
 ;; package.el updates the saved version of package-selected-packages correctly only
