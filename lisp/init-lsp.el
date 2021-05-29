@@ -10,7 +10,19 @@
 (require-package 'lsp-mode)
 (use-package lsp-mode
   :commands lsp
-  :hook (python-mode . lsp)
+  :bind-keymap
+  ("M-s-l" . lsp-command-map)
+  :config
+  (mapc (lambda (f)
+          (eval `(defadvice ,f (before bhj/push-mark activate)
+                   (ajoke--push-marker-ring))))
+        (seq-filter (lambda (f)
+                      (and (symbolp f)
+                           (string-match "^lsp-find-" (symbol-name f))))
+                    obarray))
+  :hook
+  (python-mode . lsp)
+  (csharp-mode . lsp)
   (isearch-mode . (lambda () (when (fboundp 'lsp-ui-doc-mode) (lsp-ui-doc-mode -1))))
   (isearch-mode-end . (lambda () (when (fboundp 'lsp-ui-doc-mode) (lsp-ui-doc-mode +1)))))
 (when (maybe-require-package 'toml-mode)

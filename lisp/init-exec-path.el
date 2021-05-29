@@ -12,6 +12,7 @@
 (when (or (memq window-system '(mac ns x))
           (unless (memq system-type '(ms-dos windows-nt))
             (daemonp)))
+  (setq exec-path-from-shell-shell-name "~/system-config/bin/emacs-exec-path-from-shell")
   (exec-path-from-shell-initialize))
 
 (provide 'init-exec-path)
