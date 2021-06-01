@@ -64,8 +64,9 @@ M.cue_funcs = {
 
    ['com.tencent.mm'] = function ()
       wrench_post(ce.who, "No-Post")
+      sleep(.1)
       ce.click_1 = function()
-         click_scene(ce.search_button, {skip_refind = true, x = -430, y = 220})
+         click_scene(ce.search_button, {skip_refind = true, x = 30, y = 240})
       end
    end
 }
@@ -92,6 +93,8 @@ M.wrench_cue = function(who, ...)
    ce.is_back_to_chat = function()
       if (ce.current_pkg == 'com.alibaba.android.rimet') then
          return not find_scene "dd/at-sbd-title"
+      elseif (ce.current_pkg == 'com.tencent.mm') then
+         return not find_scene "wx/close-cue-search"
       else
          return adb_top_window() == ce.current_win
       end
