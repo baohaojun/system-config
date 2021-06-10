@@ -2143,7 +2143,7 @@ history item and exit use `selectrum-select-current-candidate'."
                         (text-properties-at (point))))))
                 (catch 'selectrum-insert-action
                   (completing-read
-                   (minibuffer-prompt) history nil t nil t))))))
+                   (minibuffer-prompt) history nil t nil nil))))))
       (if (get-text-property 0 'selectum--insert result)
           (progn
             (delete-minibuffer-contents)
