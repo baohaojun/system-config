@@ -192,6 +192,8 @@ map['com.zhaopin.social/com.zhaopin.ihr.position.rd5.OldPositionDescribeActivity
 map['com.zhaopin.social/com.zhaopin.ihr.position.rd5.OldPositionPlaceActivity'] = 'No-Post'
 map['com.zhaopin.social/com.zhaopin.ihr.weex.ui.ZLWeexFragmentActivity'] = 'No-Post'
 map['com.zhaopin.social/com.zhaopin.ihr.weex.ui.ZLWeexFromBottomActivity'] = 'No-Post'
+map['hk.com.hsbc.hsbchkmobilebanking/com.hsbc.mobilebanking.landing.activity.LogonActivity'] = 'No-Post'
+map['hk.com.hsbc.hsbchkmobilebanking/com.hsbc.mobilebanking.saas.digitalsecurekey.activity.DigitalSecureKeyActivity'] = 'No-Post'
 map['lixiang'] = 'No-Post'
 map['org.mozilla.firefox/org.mozilla.fenix.HomeActivity'] = 'No-Post'
 map['org.mozilla.firefox/org.mozilla.gecko.BrowserApp'] = 'No-Post'
